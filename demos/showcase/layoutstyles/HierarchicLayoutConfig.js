@@ -297,7 +297,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
     if (incrementalLayout && selectedElements) {
       // configure the mode
       const ihf = layout.createIncrementalHintsFactory()
-      layoutData.incrementalHints.delegate = item => {
+      layoutData.incrementalHints.delegate = (item) => {
         // Return the correct hint type for each model item that appears in one of these sets
         if (INode.isInstance(item) && graphComponent.selection.isSelected(item)) {
           return ihf.createLayerIncrementallyHint(item)
@@ -310,12 +310,12 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
     }
 
     if (this.rankingPolicyItem === HierarchicLayoutLayeringStrategy.BFS) {
-      layoutData.bfsLayererCoreNodes.delegate = node => graphComponent.selection.isSelected(node)
+      layoutData.bfsLayererCoreNodes.delegate = (node) => graphComponent.selection.isSelected(node)
     }
 
     if (this.gridEnabledItem) {
       const nld = layout.nodeLayoutDescriptor
-      layoutData.nodeLayoutDescriptors.delegate = node =>
+      layoutData.nodeLayoutDescriptors.delegate = (node) =>
         new HierarchicLayoutNodeLayoutDescriptor({
           layerAlignment: nld.layerAlignment,
           minimumDistance: nld.minimumDistance,
@@ -328,7 +328,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
     }
 
     if (this.edgeDirectednessItem) {
-      layoutData.edgeDirectedness.delegate = edge => {
+      layoutData.edgeDirectedness.delegate = (edge) => {
         const style = edge.style
         if (
           style instanceof PolylineEdgeStyle &&
@@ -343,7 +343,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
     }
 
     if (this.edgeThicknessItem) {
-      layoutData.edgeThickness.delegate = edge => {
+      layoutData.edgeThickness.delegate = (edge) => {
         const style = edge.style
         if (style instanceof PolylineEdgeStyle) {
           return style.stroke.thickness
@@ -386,11 +386,12 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
       const feedbackEdgeSetResult = new FeedbackEdgeSet().run(graph)
       const longestPath = new LongestPath({
         subgraphEdges: {
-          excludes: edge => feedbackEdgeSetResult.feedbackEdgeSet.contains(edge) || edge.isSelfloop
+          excludes: (edge) =>
+            feedbackEdgeSetResult.feedbackEdgeSet.contains(edge) || edge.isSelfloop
         }
       }).run(graph)
       if (longestPath.edges.size > 0) {
-        layoutData.criticalEdgePriorities.delegate = edge => {
+        layoutData.criticalEdgePriorities.delegate = (edge) => {
           if (longestPath.edges.contains(edge)) {
             return 10
           }
@@ -401,7 +402,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
     if (this.automaticBusRoutingEnabledItem) {
       const allBusNodes = new Set()
-      graph.nodes.forEach(node => {
+      graph.nodes.forEach((node) => {
         if (!graph.isGroupNode(node) && !allBusNodes.has(node)) {
           // search for good opportunities for bus structures rooted at this node
           if (graph.inDegree(node) >= 4) {
@@ -511,7 +512,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * @param graph The input graph
    */
   containsTable(graph) {
-    return graph.nodes.find(node => !!node.lookup(ITable.$class)) !== null
+    return graph.nodes.find((node) => !!node.lookup(ITable.$class)) !== null
   },
 
   /** @type {boolean} */

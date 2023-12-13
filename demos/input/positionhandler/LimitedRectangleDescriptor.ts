@@ -51,13 +51,6 @@ export default class LimitingRectangleDescriptor extends BaseClass(
   private rectangle: MutableRectangle = null!
 
   /**
-   * Creates a new instance of {@link LimitingRectangleDescriptor}.
-   */
-  constructor() {
-    super()
-  }
-
-  /**
    * Gets the {@link IVisualCreator} for a given {@link ICanvasObject}.
    */
   getVisualCreator(forUserObject: object): IVisualCreator {

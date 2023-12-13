@@ -38,7 +38,7 @@ module.exports = function (config) {
         shouldOptimize(module) {
           return (
             !/node_modules/.test(module.resource) ||
-            /node_modules[\\/](demo-resources|demo-utils)/.test(module.resource)
+            /node_modules[\\/](demo-resources)/.test(module.resource)
           )
         }
       })

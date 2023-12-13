@@ -113,7 +113,7 @@ export function initializeDefaultStyles(graphComponent: GraphComponent): void {
 export function updateStyles(graph: IGraph): void {
   const label2color = new Map<string, number>()
 
-  graph.nodeLabels.forEach(label => {
+  graph.nodeLabels.forEach((label) => {
     const node = label.owner as INode
     // if no colorId is assigned, get one from the demo's colors
     if (getPoliticalParty(node).colorId === undefined) {

@@ -527,7 +527,7 @@ export class Sample2GroupNodeStyle extends NodeStyleBase {
         )
       }
     } else if (type === INodeInsetsProvider.$class) {
-      return INodeInsetsProvider.create(_ => {
+      return INodeInsetsProvider.create((_) => {
         const margin = 5
         return new Insets(
           BORDER_THICKNESS + margin,
@@ -622,10 +622,6 @@ export class Sample2GroupNodeStyleExtension extends MarkupExtension {
   cssClass = ''
   isCollapsible = false
   solidHitTest = false
-
-  constructor() {
-    super()
-  }
 
   /**
    * @type {!object}

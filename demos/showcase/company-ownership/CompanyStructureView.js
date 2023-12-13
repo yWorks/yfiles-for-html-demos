@@ -63,13 +63,13 @@ import { modifyGraph } from './prepare-smooth-animation.js'
  * Returns whether the edge is a hierarchy edge.
  * @param edge The edge to be checked
  */
-const isHierarchyEdge = edge => getRelationship(edge).type === EdgeTypeEnum.Hierarchy
+const isHierarchyEdge = (edge) => getRelationship(edge).type === EdgeTypeEnum.Hierarchy
 
 /**
  * Returns the ownership percentage for the given edge.
  * @param edge The edge to be checked
  */
-const ownershipPercentage = edge => {
+const ownershipPercentage = (edge) => {
   const relationship = getRelationship(edge)
   if (relationship.type === EdgeTypeEnum.Hierarchy) {
     return relationship.ownership
@@ -82,7 +82,7 @@ const ownershipPercentage = edge => {
  * Checks whether the given node should be visible.
  * @param node The node to be checked
  */
-const isVisible = node => !getCompany(node).invisible
+const isVisible = (node) => !getCompany(node).invisible
 /**
  * Sets the visibility of the given node.
  * @param node The given node
@@ -103,7 +103,7 @@ const collapseInput = (node, collapse) => {
 /**
  * Checks whether the node has collapsed neighbors (from the outgoing edges)
  */
-const isOutputCollapsed = node => getCompany(node).outputCollapsed
+const isOutputCollapsed = (node) => getCompany(node).outputCollapsed
 /**
  * Collapses/expands the neighbors of the given node (from the outgoing edges)
  * @param node The given node
@@ -123,12 +123,12 @@ const setDominantHierarchyEdge = (edge, dominant) => {
 /**
  * Returns the node id needed for the `NormalizeGraphElementOrderStage`.
  */
-const getNodeId = node => 'node-' + getCompany(node).id.toString()
+const getNodeId = (node) => 'node-' + getCompany(node).id.toString()
 
 /**
  * Returns the edge id needed for the `NormalizeGraphElementOrderStage`.
  */
-const getEdgeId = edge => getRelationship(edge).id
+const getEdgeId = (edge) => getRelationship(edge).id
 
 /**
  * Central class of the application that manages the graph component and the handling of the data.
@@ -160,9 +160,9 @@ export class CompanyStructureView {
     enableBridgeRendering(graphComponent)
     graphComponent.graph = new FilteredGraphWrapper(
       (this.completeGraph = graphComponent.graph),
-      node =>
+      (node) =>
         this.completeGraph.isGroupNode(node)
-          ? !this.completeGraph.getChildren(node).every(child => !isVisible(child))
+          ? !this.completeGraph.getChildren(node).every((child) => !isVisible(child))
           : isVisible(node)
     )
     configureLayoutNormalizationIds(graphComponent.graph, getNodeId, getEdgeId)
@@ -268,13 +268,13 @@ export class CompanyStructureView {
    * @param {!function} collapse The collapse function
    */
   addToggleButtonPorts(graph, nodes, expand, collapse) {
-    nodes.forEach(n => {
+    nodes.forEach((n) => {
       if (graph.outDegree(n) > 0) {
         this.toggleButtonSupport.addPort(
           graph,
           n,
           FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED,
-          collapsed => (collapsed ? collapse(n, false) : expand(n, false))
+          (collapsed) => (collapsed ? collapse(n, false) : expand(n, false))
         )
       }
     })
@@ -308,7 +308,7 @@ export class CompanyStructureView {
    */
   async adjustVisibility() {
     this.updateVisibility(this.completeGraph)
-    modifyGraph(graph => graph.nodePredicateChanged(), this.graphComponent.graph)
+    modifyGraph((graph) => graph.nodePredicateChanged(), this.graphComponent.graph)
     await this.layout()
   }
 
@@ -319,9 +319,9 @@ export class CompanyStructureView {
   calculateHierarchy(graph) {
     const treeResult = new SpanningTree({
       subgraphEdges: isHierarchyEdge,
-      costs: item => 1 - ownershipPercentage(item)
+      costs: (item) => 1 - ownershipPercentage(item)
     }).run(graph)
-    graph.edges.forEach(e => {
+    graph.edges.forEach((e) => {
       setDominantHierarchyEdge(e, treeResult.edges.contains(e))
     })
   }
@@ -332,11 +332,11 @@ export class CompanyStructureView {
    */
   updateVisibility(graph) {
     if (graph.nodes.some(isOutputCollapsed)) {
-      graph.nodes.forEach(n => {
+      graph.nodes.forEach((n) => {
         setVisible(n, this.shouldBeShown(graph, n))
       })
     } else {
-      graph.nodes.forEach(n => {
+      graph.nodes.forEach((n) => {
         setVisible(n, true)
       })
     }
@@ -354,8 +354,8 @@ export class CompanyStructureView {
       graph.inDegree(node) === 0 ||
       graph
         .inEdgesAt(node)
-        .map(e => e.sourceNode)
-        .some(parent => !isOutputCollapsed(parent) && this.shouldBeShown(graph, parent))
+        .map((e) => e.sourceNode)
+        .some((parent) => !isOutputCollapsed(parent) && this.shouldBeShown(graph, parent))
     )
   }
 
@@ -402,8 +402,8 @@ export class CompanyStructureView {
 
     const nodeSource = builder.createNodesSource({
       data: filteredNodes,
-      id: dataItem => dataItem.id,
-      style: dataItem => getNodeStyle(dataItem, this.useShapeNodeStyle),
+      id: (dataItem) => dataItem.id,
+      style: (dataItem) => getNodeStyle(dataItem, this.useShapeNodeStyle),
       layout: () => getNodeLayout(this.useShapeNodeStyle)
     })
 
@@ -416,7 +416,7 @@ export class CompanyStructureView {
     // adds the node labels if the shape node style is selected
     if (this.useShapeNodeStyle) {
       const nameLabel = nodeSource.nodeCreator.createLabelBinding({
-        text: dataItem => dataItem.name,
+        text: (dataItem) => dataItem.name,
         defaults: nameLabelDefaults,
         preferredSize: () => labelSizeDefaults
       })
@@ -429,14 +429,15 @@ export class CompanyStructureView {
     const filteredEdges = graphData.edges.filter(edgePredicate)
     const edgeSource = builder.createEdgesSource({
       data: filteredEdges,
-      id: data => data.id,
-      sourceId: data => data.sourceId,
-      targetId: data => data.targetId,
+      id: (data) => data.id,
+      sourceId: (data) => data.sourceId,
+      targetId: (data) => data.targetId,
       style: getEdgeStyle
     })
 
     const edgeLabel = edgeSource.edgeCreator.createLabelBinding({
-      text: dataItem => (dataItem.type === EdgeTypeEnum.Hierarchy ? `${dataItem.ownership}` : null),
+      text: (dataItem) =>
+        dataItem.type === EdgeTypeEnum.Hierarchy ? `${dataItem.ownership}` : null,
       defaults: edgeLabelDefaults
     })
     edgeSource.edgeCreator.addEdgeUpdatedListener((_, evt) => {

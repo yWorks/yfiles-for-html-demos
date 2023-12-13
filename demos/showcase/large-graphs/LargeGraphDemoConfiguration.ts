@@ -143,7 +143,7 @@ abstract class LargeGraphDemoConfiguration extends DemoConfiguration {
    * Returns a promise, which draws an image into the canvas after loading it.
    */
   private createImageDataPromise(ctx: CanvasRenderingContext2D, image: HTMLImageElement) {
-    return new Promise<ImageData>(resolve => {
+    return new Promise<ImageData>((resolve) => {
       image.onload = () => {
         ctx.clearRect(0, 0, 128, 128)
         ctx.drawImage(image, 0, 0, 75, 75, 0, 0, 128, 128)

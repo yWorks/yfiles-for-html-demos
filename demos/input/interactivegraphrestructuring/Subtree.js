@@ -106,7 +106,7 @@ export default class Subtree {
    */
   get bounds() {
     let subtreeBounds = Rect.EMPTY
-    this.nodes.forEach(node => {
+    this.nodes.forEach((node) => {
       subtreeBounds = Rect.add(subtreeBounds, node.layout.toRect())
     })
     return subtreeBounds
@@ -117,7 +117,7 @@ export default class Subtree {
    * @param {!INode} root The root node of the subtree
    */
   initializeSubtree(root) {
-    this.graph.outEdgesAt(root).forEach(outEdge => {
+    this.graph.outEdgesAt(root).forEach((outEdge) => {
       this.edges.add(outEdge)
       this.initializeSubtree(outEdge.targetNode)
     })

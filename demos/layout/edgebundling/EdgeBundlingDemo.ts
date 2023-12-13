@@ -201,7 +201,7 @@ function createInputMode(): void {
     if (item) {
       highlightIndicatorManager.addHighlight(item)
       if (INode.isInstance(item)) {
-        graphComponent.graph.edgesAt(item).forEach(edge => {
+        graphComponent.graph.edgesAt(item).forEach((edge) => {
           highlightIndicatorManager.addHighlight(edge)
         })
       } else if (IEdge.isInstance(item)) {
@@ -218,7 +218,7 @@ function createInputMode(): void {
   // Add event listeners to the various events that open the context menu. These listeners then
   // call the provided callback function which in turn asks the current ContextMenuInputMode if a
   // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     if (mode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
       contextMenu.show(location)
     }
@@ -276,7 +276,7 @@ function populateContextMenu(
       selectedNodes.push(hit)
 
       selectedEdges = []
-      selectedNodes.forEach(node => {
+      selectedNodes.forEach((node) => {
         if (graphComponent.graph.degree(node) > 0) {
           selectedEdges = selectedEdges.concat(graphComponent.graph.edgesAt(node).toArray())
         }
@@ -310,7 +310,7 @@ function countBundledEdges(edges: Array<IEdge>): { countBundled: number; countUn
   let countBundled = 0
   let countUnbundled = 0
 
-  edges.forEach(edge => {
+  edges.forEach((edge) => {
     if (bundlesMap.get(edge)) {
       countBundled++
     }
@@ -334,7 +334,7 @@ async function updateBundlingForSelectedEdges(
   edges: Array<IEdge>,
   isBundled: boolean
 ): Promise<void> {
-  edges.forEach(edge => {
+  edges.forEach((edge) => {
     bundlesMap.set(edge, isBundled)
     if (!isBundled) {
       bundleDescriptorMap.set(
@@ -376,7 +376,7 @@ function initializeGraph(): void {
     const selection = graphComponent.selection
     if (INode.isInstance(item) && evt.itemSelected) {
       selection.setSelected(item, true)
-      graph.edgesAt(item).forEach(edge => {
+      graph.edgesAt(item).forEach((edge) => {
         selection.setSelected(edge, true)
       })
     }
@@ -456,7 +456,7 @@ async function loadGraph(graph: IGraph, graphData: GraphData): Promise<void> {
   })
   graph = builder.buildGraph()
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     bundlesMap.set(edge, true)
   })
 
@@ -635,7 +635,7 @@ function updateNodeInformation(layoutData: CircularLayoutData): void {
   const circleCenters = new Mapper<string, Point>()
 
   // store the nodes that belong to each circle
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const circleId = layoutData.circleIds.get(node)
     const componentId = componentsMap.get(node)
     const id = circleId !== null ? `${circleId} ${componentId}` : '-1'
@@ -658,7 +658,7 @@ function updateNodeInformation(layoutData: CircularLayoutData): void {
 
   // store to the node's tag the circle id, the center of the circle and the nodes that belong to the node's circle
   // this information is needed for the creation of the circular sector node style
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const circleId = layoutData.circleIds.get(node)
     const componentId = componentsMap.get(node)
     // add to the tag an id consisted of the component to which this node belongs plus the circle id

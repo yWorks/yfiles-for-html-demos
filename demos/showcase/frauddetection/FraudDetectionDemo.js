@@ -117,7 +117,7 @@ function initializeUI() {
   const bankFraudDescription = document.querySelector('#bank-fraud-detection')
   const insuranceFraudDescription = document.querySelector('#insurance-fraud-detection')
   const samples = document.querySelector('#samples')
-  samples.addEventListener('change', async event => {
+  samples.addEventListener('change', async (event) => {
     clearPropertiesView()
     // if an inspection view is open, close it
     closeFraudDetectionView()
@@ -196,12 +196,12 @@ async function buildGraph(graph, data) {
   graph.clear()
 
   function convertDates(dates) {
-    return Array.isArray(dates) ? dates.map(e => new Date(e)) : [new Date(dates)]
+    return Array.isArray(dates) ? dates.map((e) => new Date(e)) : [new Date(dates)]
   }
 
   const builder = new GraphBuilder(graph)
   const entityNodesSource = builder.createNodesSource(data.nodesSource, 'id')
-  entityNodesSource.nodeCreator.tagProvider = entity => ({
+  entityNodesSource.nodeCreator.tagProvider = (entity) => ({
     ...entity,
     enter: convertDates(entity.enter),
     exit: convertDates(entity.exit)
@@ -280,7 +280,7 @@ function initializeTimelineComponent(selector, graphComponent) {
   timeline = new Timeline(selector, getTimeEntry)
 
   // filter the elements that are not part of the current timeframe
-  const filteredGraph = new FilteredGraphWrapper(graphComponent.graph, node =>
+  const filteredGraph = new FilteredGraphWrapper(graphComponent.graph, (node) =>
     timeline.filter(getEntityData(node))
   )
   graphComponent.graph = filteredGraph
@@ -294,25 +294,25 @@ function initializeTimelineComponent(selector, graphComponent) {
 
     updateFraudWarnings(fraudsters)
   })
-  timeline.addBarSelectListener(items => {
+  timeline.addBarSelectListener((items) => {
     const selection = graphComponent.selection
     selection.clear()
 
-    const selectedItems = new Set(items.map(item => item.id))
-    graphComponent.graph.nodes.forEach(node => {
+    const selectedItems = new Set(items.map((item) => item.id))
+    graphComponent.graph.nodes.forEach((node) => {
       const entity = getEntityData(node)
       if (selectedItems.has(entity.id)) {
         selection.setSelected(node, true)
       }
     })
   })
-  timeline.addBarHoverListener(items => {
+  timeline.addBarHoverListener((items) => {
     const highlightManager = graphComponent.highlightIndicatorManager
     highlightManager.clearHighlights()
 
-    const selected = new Set(items.map(item => item.id))
+    const selected = new Set(items.map((item) => item.id))
 
-    graphComponent.graph.nodes.forEach(node => {
+    graphComponent.graph.nodes.forEach((node) => {
       const entity = getEntityData(node)
       if (selected.has(entity.id)) {
         highlightManager.addHighlight(node)

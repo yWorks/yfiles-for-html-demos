@@ -190,7 +190,7 @@ let changing = false
  */
 function synchronizeGraphComponents(): void {
   for (const graphComponent of graphComponents) {
-    const otherComponents = graphComponents.filter(g => g !== graphComponent)
+    const otherComponents = graphComponents.filter((g) => g !== graphComponent)
     graphComponent.addUpdatedVisualListener(() => {
       for (const otherComponent of otherComponents) {
         otherComponent.invalidate()
@@ -295,7 +295,7 @@ function selectSampleItems(): void {
 
 function initColorButtons(): void {
   const toolbar = document.querySelector('.demo-page__toolbar')!
-  Object.keys(colorPalettes).forEach(paletteName => {
+  Object.keys(colorPalettes).forEach((paletteName) => {
     const palette = colorPalettes[paletteName]
     const button = document.createElement('button')
     button.style.backgroundColor = palette.secondaryColor

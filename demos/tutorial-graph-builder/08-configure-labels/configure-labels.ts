@@ -115,7 +115,7 @@ export function configureLabelSizeWithBinding(
 ): void {
 
   // set different widths for nodes with type 'Trust'
-  typeLabelCreator.preferredSizeBindings.addBinding('width', data => {
+  typeLabelCreator.preferredSizeBindings.addBinding('width', (data) => {
     return data.type === 'Trust' ? 200 : 100
   })
 }
@@ -124,7 +124,7 @@ export function configureEdgeLabels(
   edgesSource: EdgesSource<ConnectionData>
 ): void {
   // bind the label text data and add some more text information
-  const edgeLabelCreator = edgesSource.edgeCreator.createLabelBinding(data =>
+  const edgeLabelCreator = edgesSource.edgeCreator.createLabelBinding((data) =>
     data.ownership ?? 0 ? `Owns ${data.ownership}%` : ''
   )
   const red = '#ab2346'
@@ -137,7 +137,7 @@ export function configureEdgeLabels(
 
   // configure its style
   edgeLabelCreator.defaults.shareStyleInstance = false
-  edgeLabelCreator.styleBindings.addBinding('textFill', data => {
+  edgeLabelCreator.styleBindings.addBinding('textFill', (data) => {
     return (data.ownership ?? 0) > 50 ? red : grey
   })
 }
@@ -223,7 +223,7 @@ export function createLabelsForName(
   nodesSource: NodesSource<EntityData>
 ): LabelCreator<EntityData> {
   const labelCreator = nodesSource.nodeCreator.createLabelBinding(
-    data => data.name
+    (data) => data.name
   )
   return labelCreator
 }

@@ -44,7 +44,7 @@ import { addIconDescription, removeIconDescription } from './draw-icon-descripti
 export function configureHighlight(graphComponent) {
   // defines the highlight style for the nodes based on their type
   graphComponent.graph.decorator.nodeDecorator.highlightDecorator.setFactory(
-    node =>
+    (node) =>
       new NodeStyleDecorationInstaller({
         nodeStyle: new ShapeNodeStyle({
           fill: 'transparent',

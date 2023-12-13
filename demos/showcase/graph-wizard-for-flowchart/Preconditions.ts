@@ -36,7 +36,7 @@ export type PreCondition = (mode: GraphWizardInputMode) => boolean
  * @param conditions The conditions to combine.
  */
 export function checkAnd(conditions: PreCondition[]): PreCondition {
-  return mode => conditions.every(condition => condition(mode))
+  return (mode) => conditions.every((condition) => condition(mode))
 }
 
 /**
@@ -44,7 +44,7 @@ export function checkAnd(conditions: PreCondition[]): PreCondition {
  * @param conditions The conditions to combine.
  */
 export function checkOr(conditions: PreCondition[]): PreCondition {
-  return mode => conditions.some(condition => condition(mode))
+  return (mode) => conditions.some((condition) => condition(mode))
 }
 
 /**
@@ -52,7 +52,7 @@ export function checkOr(conditions: PreCondition[]): PreCondition {
  * @param condition The condition to negate.
  */
 export function checkNot(condition: PreCondition): PreCondition {
-  return mode => !condition(mode)
+  return (mode) => !condition(mode)
 }
 
 /**
@@ -77,7 +77,7 @@ export function checkForEdge(mode: GraphWizardInputMode): boolean {
  * @param styleClass The style class the current node is checked for.
  */
 export function checkForNodeStyle(styleClass: any): PreCondition {
-  return mode => mode.currentItem instanceof INode && mode.currentItem.style instanceof styleClass
+  return (mode) => mode.currentItem instanceof INode && mode.currentItem.style instanceof styleClass
 }
 
 /**
@@ -86,7 +86,7 @@ export function checkForNodeStyle(styleClass: any): PreCondition {
  * @param styleClass The style class the current edge is checked for.
  */
 export function checkForEdgeStyle(styleClass: any): PreCondition {
-  return mode => mode.currentItem instanceof IEdge && mode.currentItem.style instanceof styleClass
+  return (mode) => mode.currentItem instanceof IEdge && mode.currentItem.style instanceof styleClass
 }
 
 /**

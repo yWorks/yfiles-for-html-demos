@@ -91,7 +91,7 @@ function configureFiltering(graphComponent) {
   // only nodes with frequency greater than or equal to the minimum frequency will be visible.
   graphComponent.graph = new FilteredGraphWrapper(
     graphComponent.graph,
-    node => !node.tag || node.tag.frequency >= minFrequency,
+    (node) => !node.tag || node.tag.frequency >= minFrequency,
     () => false
   )
 }

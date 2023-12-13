@@ -552,7 +552,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
         gradientsToRemove.push(child)
       }
     }
-    gradientsToRemove.forEach(gradient => defs.removeChild(gradient))
+    gradientsToRemove.forEach((gradient) => defs.removeChild(gradient))
   }
 
   /**
@@ -609,7 +609,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     const path = new GeneralPath()
     path.moveTo(edge.sourcePort.location)
     path.lineTo(edge.sourcePort.location.add(new Point(5, 0)))
-    edge.bends.forEach(bend => path.lineTo(bend.location))
+    edge.bends.forEach((bend) => path.lineTo(bend.location))
     path.lineTo(edge.targetPort.location.subtract(new Point(5, 0)))
     path.lineTo(edge.targetPort.location)
     return path
@@ -692,7 +692,7 @@ function createAnimatedGradient(linearGradient) {
 
   let previousTime = null
 
-  const frameRequestCallback = timestamp => {
+  const frameRequestCallback = (timestamp) => {
     // calculate the time since the last animation frame
     if (previousTime == null) {
       previousTime = timestamp

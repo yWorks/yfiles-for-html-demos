@@ -210,8 +210,8 @@ export class SimpleGraphBuilder {
 
     this.$builderEdgesSource = this.$graphBuilder.createEdgesSource(
       [],
-      dataItem => this.$sourceIdProvider && this.$sourceIdProvider(dataItem),
-      dataItem => this.$targetIdProvider && this.$targetIdProvider(dataItem)
+      (dataItem) => this.$sourceIdProvider && this.$sourceIdProvider(dataItem),
+      (dataItem) => this.$targetIdProvider && this.$targetIdProvider(dataItem)
     )
     this.$builderEdgesSource.edgeCreator = this.$graphBuilderHelper.createEdgeCreator()
 
@@ -294,7 +294,7 @@ export class SimpleGraphBuilder {
     this.$builderGroupsSource.idProvider = GraphBuilderHelper.createIdProvider(this.groupIdBinding)
     this.$builderEdgesSource.idProvider = GraphBuilderHelper.createIdProvider(this.edgeIdBinding)
 
-    this.$builderEdgesSource.edgeCreator.tagProvider = e => e
+    this.$builderEdgesSource.edgeCreator.tagProvider = (e) => e
 
     this.$builderNodesSource.parentIdProvider = GraphBuilderHelper.createBinding(this.groupBinding)
     this.$builderGroupsSource.parentIdProvider = GraphBuilderHelper.createBinding(
@@ -343,16 +343,16 @@ export class SimpleGraphBuilder {
         iteratorResult = iterator.next(newEdgeDataItem)
       }
 
-      this.$sourceIdProvider = e => e.source
-      this.$targetIdProvider = e => e.target
+      this.$sourceIdProvider = (e) => e.source
+      this.$targetIdProvider = (e) => e.target
 
-      const tagProvider = e => e.dataItem
+      const tagProvider = (e) => e.dataItem
 
       const edgesSource = this.$builderEdgesSource
       const helper = this.$graphBuilderHelper
 
       if (edgesSource.idProvider) {
-        edgesSource.idProvider = compose(e => edgesSource.idProvider(e, null), tagProvider)
+        edgesSource.idProvider = compose((e) => edgesSource.idProvider(e, null), tagProvider)
       }
 
       helper.edgeLabelProvider = compose(helper.edgeLabelProvider, tagProvider)
@@ -1180,12 +1180,12 @@ class ObjectNodeCollectionCloner {
     this.$currentIndex = 0
     this.$object = {}
     this.$valueSet = new Set()
-    Object.keys(originalCollection).forEach(key => {
+    Object.keys(originalCollection).forEach((key) => {
       this.$object[key] = originalCollection[key]
       this.$valueSet.add(key)
 
       const numberIndex = parseInt(key)
-      if (!isNaN(numberIndex)) {
+      if (!Number.isNaN(numberIndex)) {
         this.$currentIndex = Math.max(this.$currentIndex, numberIndex)
       }
     })
@@ -2340,22 +2340,22 @@ export class SimpleAdjacentNodesGraphBuilder {
     this.$builderEdgeCreator = this.$graphBuilderHelper.createEdgeCreator(true)
 
     this.$builderNodesSource.addSuccessorsSource(
-      dataItem => this.$successorsProvider && this.$successorsProvider(dataItem),
+      (dataItem) => this.$successorsProvider && this.$successorsProvider(dataItem),
       this.$builderNodesSource,
       this.$builderEdgeCreator
     )
     this.$builderNodesSource.addPredecessorsSource(
-      dataItem => this.$predecessorsProvider && this.$predecessorsProvider(dataItem),
+      (dataItem) => this.$predecessorsProvider && this.$predecessorsProvider(dataItem),
       this.$builderNodesSource,
       this.$builderEdgeCreator
     )
 
     this.$builderNodesSource.addSuccessorIds(
-      dataItem => this.$successorsIdProvider && this.$successorsIdProvider(dataItem),
+      (dataItem) => this.$successorsIdProvider && this.$successorsIdProvider(dataItem),
       this.$builderEdgeCreator
     )
     this.$builderNodesSource.addPredecessorIds(
-      dataItem => this.$predecessorsIdProvider && this.$predecessorsIdProvider(dataItem),
+      (dataItem) => this.$predecessorsIdProvider && this.$predecessorsIdProvider(dataItem),
       this.$builderEdgeCreator
     )
 
@@ -2436,12 +2436,12 @@ export class SimpleAdjacentNodesGraphBuilder {
 
     const predecessorsProvider = GraphBuilderHelper.createBinding(this.predecessorsBinding)
     const distinctPredecessorsProvider = predecessorsProvider
-      ? dataItem => this.$eliminateDuplicateEdges(dataItem, predecessorsProvider(dataItem), false)
+      ? (dataItem) => this.$eliminateDuplicateEdges(dataItem, predecessorsProvider(dataItem), false)
       : null
 
     const successorsProvider = GraphBuilderHelper.createBinding(this.successorsBinding)
     const distinctSuccessorsProvider = successorsProvider
-      ? dataItem => this.$eliminateDuplicateEdges(dataItem, successorsProvider(dataItem), true)
+      ? (dataItem) => this.$eliminateDuplicateEdges(dataItem, successorsProvider(dataItem), true)
       : null
 
     if (this.nodeIdBinding) {
@@ -2459,7 +2459,7 @@ export class SimpleAdjacentNodesGraphBuilder {
     this.$builderNodesSource.idProvider = GraphBuilderHelper.createIdProvider(this.nodeIdBinding)
     this.$builderGroupsSource.idProvider = GraphBuilderHelper.createIdProvider(this.groupIdBinding)
 
-    this.$builderNodesSource.nodeCreator.tagProvider = n => n
+    this.$builderNodesSource.nodeCreator.tagProvider = (n) => n
     this.$builderEdgeCreator.tagProvider = () => null
 
     this.$builderNodesSource.parentIdProvider = GraphBuilderHelper.createBinding(this.groupBinding)
@@ -3581,7 +3581,7 @@ class GraphBuilderHelper {
    * @returns {?IEdge}
    */
   getEdge(businessObject) {
-    return this.$graph.edges.find(e => e.tag === businessObject)
+    return this.$graph.edges.find((e) => e.tag === businessObject)
   }
 
   /**
@@ -3589,7 +3589,7 @@ class GraphBuilderHelper {
    * @returns {?INode}
    */
   getGroup(groupObject) {
-    return this.$graph.nodes.find(n => n.tag === groupObject)
+    return this.$graph.nodes.find((n) => n.tag === groupObject)
   }
 
   /**
@@ -3597,7 +3597,7 @@ class GraphBuilderHelper {
    * @returns {?INode}
    */
   getNode(nodeObject) {
-    return this.$graph.nodes.find(n => n.tag === nodeObject)
+    return this.$graph.nodes.find((n) => n.tag === nodeObject)
   }
 
   /**
@@ -3608,7 +3608,7 @@ class GraphBuilderHelper {
     if (binding === null || binding === undefined) {
       return null
     } else if (typeof binding === 'string') {
-      return dataItem => dataItem[binding]
+      return (dataItem) => dataItem[binding]
     } else {
       return binding
     }
@@ -3622,7 +3622,7 @@ class GraphBuilderHelper {
     if (binding === undefined || binding === null) {
       return null
     } else if (typeof binding === 'string') {
-      return dataItem => dataItem[binding]
+      return (dataItem) => dataItem[binding]
     } else {
       return binding
     }
@@ -3892,7 +3892,7 @@ class GraphBuilderHelper {
    * @param {!TEvent} evt
    */
   $fireEvent(listeners, evt) {
-    listeners.forEach(l => l(this.$eventSender, evt))
+    listeners.forEach((l) => l(this.$eventSender, evt))
   }
 
   /**
@@ -4074,7 +4074,7 @@ class GraphBuilderHelper {
  */
 function compose(f1, f2) {
   if (f2 && f1) {
-    return a => f1(f2(a))
+    return (a) => f1(f2(a))
   }
   return null
 }

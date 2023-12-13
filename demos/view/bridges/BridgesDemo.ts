@@ -107,8 +107,8 @@ function configureBridges(): void {
   // We register a custom obstacle provider in the node's lookup of group nodes
   // that can be used by bridgeManager (through provider...)
   graphComponent.graph.decorator.nodeDecorator.obstacleProviderDecorator.setFactory(
-    node => graphComponent.graph.isGroupNode(node),
-    node => new GroupNodeObstacleProvider(node)
+    (node) => graphComponent.graph.isGroupNode(node),
+    (node) => new GroupNodeObstacleProvider(node)
   )
 }
 
@@ -226,7 +226,7 @@ function initializeToolBarElements(): void {
 
   document
     .querySelector<HTMLInputElement>('#bridge-width-slider')!
-    .addEventListener('change', evt => {
+    .addEventListener('change', (evt) => {
       const value = (evt.target as HTMLInputElement).value
       bridgeManager.defaultBridgeWidth = parseInt(value)
       graphComponent.invalidate()
@@ -234,7 +234,7 @@ function initializeToolBarElements(): void {
     })
   document
     .querySelector<HTMLInputElement>('#bridge-height-slider')!
-    .addEventListener('change', evt => {
+    .addEventListener('change', (evt) => {
       const value = (evt.target as HTMLInputElement).value
       bridgeManager.defaultBridgeHeight = parseInt(value)
       graphComponent.invalidate()

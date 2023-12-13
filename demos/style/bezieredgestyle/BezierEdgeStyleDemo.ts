@@ -142,14 +142,14 @@ function initializeGraph(): void {
 function registerBezierDecorators(): void {
   const graph = graphComponent.graph
   graph.decorator.bendDecorator.handleDecorator.hideImplementation(
-    b =>
+    (b) =>
       !config.enableEditing &&
       b.owner!.style instanceof BezierEdgeStyle &&
       b.owner!.bends.size % 3 === 2
   )
 
   graph.decorator.bendDecorator.handleDecorator.setImplementationWrapper(
-    b =>
+    (b) =>
       config.enableEditing &&
       config.smoothSegments &&
       b.owner!.style instanceof BezierEdgeStyle &&
@@ -177,12 +177,12 @@ function registerBezierDecorators(): void {
 
   // And always show bend handles
   graph.decorator.edgeDecorator.handleProviderDecorator.setImplementationWrapper(
-    edge => config.enableEditing && edge.style instanceof BezierEdgeStyle,
+    (edge) => config.enableEditing && edge.style instanceof BezierEdgeStyle,
     (edge, coreImpl) => new BezierEdgeHandleProvider(edge!, coreImpl!)
   )
 
   graph.decorator.edgeDecorator.selectionDecorator.setImplementationWrapper(
-    e => e.style instanceof BezierEdgeStyle,
+    (e) => e.style instanceof BezierEdgeStyle,
     (e, coreImpl) => new BezierSelectionIndicatorInstaller(coreImpl)
   )
 
@@ -233,7 +233,7 @@ function loadSample(sample: any): void {
   const graph = builder.buildGraph()
 
   // add label with the according label models from the sample data
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     if (edge.tag.bends) {
       edge.tag.bends.forEach((bend: any): void => {
         graph.addBend(edge, bend)
@@ -293,7 +293,7 @@ function initializeUI(): void {
     }
   })
   const angleLabel = document.querySelector<HTMLLabelElement>('#angle-label')!
-  document.querySelector<HTMLInputElement>('#angle-range')!.addEventListener('input', evt => {
+  document.querySelector<HTMLInputElement>('#angle-range')!.addEventListener('input', (evt) => {
     const value = (evt.target as HTMLInputElement).value
     config.angle = Number(value)
     bezierEdgeSegmentLabelModel.angle = (Math.PI * config.angle) / 180.0
@@ -304,7 +304,7 @@ function initializeUI(): void {
     }
   })
 
-  document.querySelector<HTMLSelectElement>('#sample-select')!.addEventListener('change', evt => {
+  document.querySelector<HTMLSelectElement>('#sample-select')!.addEventListener('change', (evt) => {
     const value = (evt.target as HTMLSelectElement).value
     if (value === 'circle') {
       loadSample(SampleCircle)

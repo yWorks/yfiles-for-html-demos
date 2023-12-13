@@ -147,7 +147,7 @@ function configureTableEditing(graphComponent) {
   graphComponent.clipboard = clipboard
 
   // prevent selection of the table node
-  graphEditorInputMode.selectablePredicate = item => {
+  graphEditorInputMode.selectablePredicate = (item) => {
     return !(INode.isInstance(item) && item.lookup(ITable.$class))
   }
 }
@@ -233,7 +233,7 @@ function buildGraph(graph, graphData) {
   const tableGroupNode = graph.createGroupNode(null, table.layout.toRect(), tableStyle)
 
   // Iterate the node data and create the according nodes.
-  graphData.nodesSource.forEach(nodeData => {
+  graphData.nodesSource.forEach((nodeData) => {
     const size = nodeData.size || [50, 50]
     const node = graph.createNode({
       labels: nodeData.label != null ? [nodeData.label] : [],
@@ -264,7 +264,7 @@ function buildGraph(graph, graphData) {
   })
 
   // Iterate the edge data and create the according edges.
-  graphData.edgesSource.forEach(edgeData => {
+  graphData.edgesSource.forEach((edgeData) => {
     // Note that nodes and groups need to have disjoint sets of ids, otherwise it is impossible to determine
     // which node is the correct source/target.
     graph.createEdge({
@@ -289,7 +289,7 @@ function writeToJSON(graph) {
   }
 
   // find the table, we assume there is only one
-  const tableNode = graph.nodes.find(node => !!node.lookup(ITable.$class))
+  const tableNode = graph.nodes.find((node) => !!node.lookup(ITable.$class))
   const table = tableNode ? tableNode.lookup(ITable.$class) : null
 
   // serialize the nodes with their swimlane information
@@ -321,7 +321,7 @@ function writeToJSON(graph) {
         const columnId = `lane${table.findColumn(tableNode, node.layout.center).index}`
         jsonNode.lane = columnId
         // store new lanes in the json
-        if (!jsonOutput.lanesSource.find(lane => lane.id === columnId)) {
+        if (!jsonOutput.lanesSource.find((lane) => lane.id === columnId)) {
           const jsonLane = { id: columnId }
           if (column.labels.size > 0) {
             jsonNode.label = column.labels.first().text
@@ -333,7 +333,7 @@ function writeToJSON(graph) {
   })
 
   // serialize the edges
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     const sourceId = node2id.get(edge.sourceNode)
     const targetId = node2id.get(edge.targetNode)
     jsonOutput.edgesSource.push({

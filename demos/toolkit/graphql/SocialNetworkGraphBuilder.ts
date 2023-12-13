@@ -76,7 +76,7 @@ export class SocialNetworkGraphBuilder {
 
     const existingNodes = this._graphBuilder.graph.nodes.toList()
     this.updateGraph()
-    return this._graphBuilder.graph.nodes.filter(node => !existingNodes.includes(node))
+    return this._graphBuilder.graph.nodes.filter((node) => !existingNodes.includes(node))
   }
 
   /**
@@ -86,7 +86,7 @@ export class SocialNetworkGraphBuilder {
    * @returns The newly added or existing person
    */
   private addPerson(newPerson: Person): Person {
-    const existingPerson = this._persons.find(person => person.id === newPerson.id)
+    const existingPerson = this._persons.find((person) => person.id === newPerson.id)
 
     if (this._seen.has(newPerson)) {
       return existingPerson!
@@ -95,7 +95,7 @@ export class SocialNetworkGraphBuilder {
     this._seen.add(newPerson)
 
     if (newPerson.friends) {
-      newPerson.friends = newPerson.friends.map(friend => this.addPerson(friend))
+      newPerson.friends = newPerson.friends.map((friend) => this.addPerson(friend))
     } else {
       newPerson.friends = []
     }
@@ -133,7 +133,7 @@ export class SocialNetworkGraphBuilder {
         const from = Math.min(person.id, friend.id)
         const to = Math.max(person.id, friend.id)
 
-        if (!edges.some(edge => edge.from === from && edge.to === to)) {
+        if (!edges.some((edge) => edge.from === from && edge.to === to)) {
           edges.push({ from, to })
         }
       }

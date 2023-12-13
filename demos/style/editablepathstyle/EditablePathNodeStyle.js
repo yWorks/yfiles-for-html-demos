@@ -670,7 +670,7 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
       'Change Path',
       'Change Path',
       [this.$node.style, this.$node],
-      item =>
+      (item) =>
         item instanceof INode ? item.lookup(IMementoSupport.$class) : EDITABLE_PATH_MEMENTO_SUPPORT
     )
   }
@@ -821,6 +821,6 @@ export function updateHandles(node, handleInputMode) {
   if (node) {
     node.style
       .getHandles(handleInputMode.inputModeContext, node)
-      .forEach(handle => handleInputMode.handles.add(handle))
+      .forEach((handle) => handleInputMode.handles.add(handle))
   }
 }

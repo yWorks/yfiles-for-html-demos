@@ -73,7 +73,7 @@ export default class OrangeEdgePortCandidateProvider extends BaseClass(
     if (graph === null) {
       return result
     }
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (node !== this.edge.targetPort.owner && node.tag === 'orange') {
         const provider = node.lookup(IPortCandidateProvider.$class)
         // If available, use the candidates from the provider. Otherwise, add a default candidate.
@@ -103,7 +103,7 @@ export default class OrangeEdgePortCandidateProvider extends BaseClass(
     if (graph === null) {
       return result
     }
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (node !== this.edge.sourcePort.owner && node.tag === 'orange') {
         const provider = node.lookup(IPortCandidateProvider.$class)
         // If available, use the candidates from the provider. Otherwise, add a default candidate.

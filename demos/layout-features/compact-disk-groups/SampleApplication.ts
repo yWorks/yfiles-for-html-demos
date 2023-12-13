@@ -102,7 +102,7 @@ function initializeStyleDefaults(graph: IGraph) {
   // add additional insets to the round group nodes to avoid that content may be outside, since
   // the layout algorithms internally always use rectangular group node bounds
   graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementation(
-    node => graph.isGroupNode(node),
+    (node) => graph.isGroupNode(node),
     INodeInsetsProvider.create(() => new Insets(20))
   )
 }

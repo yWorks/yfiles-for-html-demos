@@ -50,7 +50,7 @@ export function detectBankFraud(graphComponent: GraphComponent): INode[] {
   const result = new CycleEdges({
     directed: false,
     // only consider "non-bank branch" nodes to avoid finding cycles other than fraud cycles
-    subgraphNodes: node => getEntityData(node).type !== 'Bank Branch'
+    subgraphNodes: (node) => getEntityData(node).type !== 'Bank Branch'
   }).run(graph)
 
   for (const edge of result.edges) {
@@ -88,11 +88,11 @@ export function detectInsuranceFraud(graphComponent: GraphComponent): INode[] {
 
   const fraudsterNodes: INode[] = []
   const result = new ConnectedComponents().run(graph)
-  result.components.forEach(component => {
+  result.components.forEach((component) => {
     const node2Accidents = new Mapper()
 
     let involvedAccidents = 0
-    component.nodes.forEach(node => {
+    component.nodes.forEach((node) => {
       const entityData = getEntityData(node)
       if (entityData.type === 'Accident') {
         involvedAccidents++
@@ -158,7 +158,7 @@ export function detectInsuranceFraud(graphComponent: GraphComponent): INode[] {
           updateNodeFraudTag(person, true)
           fraudsterNodes.push(person)
 
-          graph.edgesAt(person).forEach(edge => {
+          graph.edgesAt(person).forEach((edge) => {
             updateEdgeFraudTag(edge, true)
           })
         }
@@ -207,10 +207,10 @@ function updateEdgeFraudTag(edge: IEdge, isFraud: boolean): void {
  */
 function resetTags(graphComponent: GraphComponent): void {
   const graph = graphComponent.graph
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     updateNodeFraudTag(node, false)
   })
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     updateEdgeFraudTag(edge, false)
   })
 }

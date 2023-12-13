@@ -196,9 +196,9 @@ export default class Sample1GroupNodeStyle extends NodeStyleBase {
       return IGroupBoundsCalculator.create((graph, groupNode) => {
         let bounds = Rect.EMPTY
         const children = graph.getChildren(groupNode)
-        children.forEach(child => {
+        children.forEach((child) => {
           bounds = Rect.add(bounds, child.layout.toRect())
-          child.labels.forEach(label => {
+          child.labels.forEach((label) => {
             bounds = Rect.add(bounds, label.layout.bounds)
           })
         })

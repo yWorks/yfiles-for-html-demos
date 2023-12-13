@@ -52,7 +52,7 @@ createNodeTags(nodesSource)
 
 graphBuilder.createEdgesSource(data.edgesSource, 'sourceId', 'targetId', 'id')
 
-nodesSource.nodeCreator.createLabelsSource(data => [data.name])
+nodesSource.nodeCreator.createLabelsSource((data) => [data.name])
 
 graphBuilder.buildGraph()
 

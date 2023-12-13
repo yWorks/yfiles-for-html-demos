@@ -87,7 +87,7 @@ export function createGraphBuilder(
     layout: 'layout',
     labels: ['label']
   }).nodeCreator
-  nodeCreator.createLabelBinding(node => {
+  nodeCreator.createLabelBinding((node) => {
     if (node.properties) {
       for (const propertyName of Object.keys(node.properties)) {
         // try to find a suitable node label

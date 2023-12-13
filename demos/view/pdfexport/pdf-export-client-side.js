@@ -35,11 +35,15 @@ import { useWebGL2Rendering } from './webgl-support.js'
 import { jsPDF } from 'jspdf'
 import 'svg2pdf.js'
 
-// Load custom fonts for the custom-fonts sample graph. This is ONLY required if you want to export Cyrillic or Hiragana characters.
-// jsPDF supports the most common fonts out of the box. However, to register other custom fonts, please see
-// https://github.com/MrRio/jsPDF#use-of-unicode-characters--utf-8
-import './resources/fonts/prata-regular-normal.js'
-import './resources/fonts/kosugi.js'
+/**
+ * Holds information about a custom font.
+ * See the file `./load-custom-fonts.ts` for more details on loading custom font data.
+ * @typedef {Object} CustomFontDescriptor
+ * @property {string} filename
+ * @property {string} id
+ * @property {string} style
+ * @property {string} data
+ */
 
 /**
  * @typedef {Object} ClientExportResult
@@ -47,12 +51,13 @@ import './resources/fonts/kosugi.js'
  */
 
 /**
- * Exports the image on the client. This will open a dialog with a preview and the option to save the image as PNG.
+ * Exports the image on the client. This will open a dialog with a preview and the option to save the image as PDF.
  * @param {!GraphComponent} graphComponent
  * @param {number} scale
  * @param {number} margin
  * @param {!PaperSize} paperSize
  * @param {!Rect} [exportRectangle]
+ * @param {!Array.<CustomFontDescriptor>} customFonts
  * @returns {!Promise.<object>}
  */
 export async function exportPdfClientSide(
@@ -60,7 +65,8 @@ export async function exportPdfClientSide(
   scale,
   margin,
   paperSize,
-  exportRectangle
+  exportRectangle,
+  customFonts = []
 ) {
   // configure export, export the PDF and show a dialog to save the PDF file
   const { raw, uri } = await exportPdf(
@@ -68,7 +74,8 @@ export async function exportPdfClientSide(
     scale,
     Insets.from(margin),
     paperSize,
-    exportRectangle
+    exportRectangle,
+    customFonts
   )
 
   const pdfIFrame = createPdfIFrame(raw, uri)
@@ -85,6 +92,7 @@ export async function exportPdfClientSide(
  * @param {*} margins
  * @param {*} paperSize
  * @param {!Rect} [exportRect]
+ * @param {!Array.<CustomFontDescriptor>} customFonts
  * @returns {!Promise.<object>}
  */
 export async function exportPdf(
@@ -92,7 +100,8 @@ export async function exportPdf(
   scale = 1,
   margins = Insets.from(5),
   paperSize = PaperSize.AUTO,
-  exportRect
+  exportRect,
+  customFonts = []
 ) {
   // Create a new graph component for exporting the original SVG content
   const exportComponent = new GraphComponent()
@@ -123,7 +132,7 @@ export async function exportPdf(
   const svgElement = await exporter.exportSvgAsync(exportComponent)
 
   const size = getExportSize(paperSize, exporter)
-  return convertSvgToPdf(svgElement, size)
+  return convertSvgToPdf(svgElement, size, customFonts)
 }
 
 /**
@@ -131,27 +140,26 @@ export async function exportPdf(
  * @yjs:keep = compress,orientation
  * @param {!SVGElement} svgElement
  * @param {!Size} size
+ * @param {!Array.<CustomFontDescriptor>} customFonts
  * @returns {!Promise.<object>}
  */
-function convertSvgToPdf(svgElement, size) {
+async function convertSvgToPdf(svgElement, size, customFonts = []) {
   svgElement = svgElement.cloneNode(true)
 
-  const sizeArray = [size.width, size.height]
   const jsPdf = new jsPDF({
-    orientation: sizeArray[0] > sizeArray[1] ? 'l' : 'p',
+    orientation: size.width > size.height ? 'l' : 'p',
     unit: 'pt',
-    format: sizeArray,
+    format: [size.width, size.height],
     compress: true
   })
 
-  const options = {
-    width: sizeArray[0],
-    height: sizeArray[1]
+  for (const font of customFonts) {
+    jsPdf.addFileToVFS(font.filename, font.data)
+    jsPdf.addFont(font.filename, font.id, font.style)
   }
 
-  return jsPdf
-    .svg(svgElement, options)
-    .then(() => ({ raw: jsPdf.output(), uri: jsPdf.output('datauristring') }))
+  await jsPdf.svg(svgElement, size)
+  return { raw: jsPdf.output(), uri: jsPdf.output('datauristring') }
 }
 
 /**

@@ -38,18 +38,18 @@ import { getProcessStepData, getProcessTransitionData } from '../process-graph-e
 export function prepareProcessVisualization(graph: IGraph, eventLog: EventLog): number {
   const eventsByActivities = Object.fromEntries(
     IEnumerable.from(eventLog).groupBy(
-      event => event.activity,
+      (event) => event.activity,
       (activity, events) => [activity, events?.toList()]
     )
   )
 
   // determine the heat over time for each process step
-  graph.nodes.forEach(processStep => {
+  graph.nodes.forEach((processStep) => {
     const processStepData = getProcessStepData(processStep)
     const events = eventsByActivities[processStepData.label]
 
     // add the event's heat value for its duration
-    events?.forEach(event => {
+    events?.forEach((event) => {
       processStepData.heat.addValues(
         event.timestamp,
         event.timestamp + (event.duration ?? 0),
@@ -61,7 +61,7 @@ export function prepareProcessVisualization(graph: IGraph, eventLog: EventLog): 
   })
 
   // determine the heat over time for each process transition
-  graph.edges.forEach(processTransition => {
+  graph.edges.forEach((processTransition) => {
     const processTransitionData = getProcessTransitionData(processTransition)
     const sourceEvents = eventsByActivities[processTransitionData.sourceLabel]
     const targetEvents = eventsByActivities[processTransitionData.targetLabel]
@@ -69,12 +69,12 @@ export function prepareProcessVisualization(graph: IGraph, eventLog: EventLog): 
     const allEvents = sourceEvents!.concat(targetEvents)
     allEvents
       .groupBy(
-        event => event.caseId,
+        (event) => event.caseId,
         (caseId, events) => events?.toArray() ?? []
       )
-      .filter(events => events.length > 1)
-      .map(events => events.sort((event1, event2) => event1.timestamp - event2.timestamp))
-      .forEach(events => {
+      .filter((events) => events.length > 1)
+      .map((events) => events.sort((event1, event2) => event1.timestamp - event2.timestamp))
+      .forEach((events) => {
         // skip the last event if there is an odd number of events
         const count = events.length % 2 === 0 ? events.length - 1 : events.length - 2
         for (let i = 0; i < count; i += 2) {

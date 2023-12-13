@@ -39,7 +39,7 @@ export function createNodeLabelsWithBinding(graphBuilder) {
   const nodesSource = graphBuilder.createNodesSource(nodeData, 'id')
 
   // create the label binding to the name property
-  nodesSource.nodeCreator.createLabelBinding(data => data.name)
+  nodesSource.nodeCreator.createLabelBinding((data) => data.name)
 }
 /**
  * @param {!GraphBuilder} graphBuilder
@@ -50,7 +50,7 @@ export function createNodeLabelsWithProvider(graphBuilder) {
 
   // create the text provider that will return the name of each node
   const labelCreator = nodesSource.nodeCreator.createLabelBinding()
-  labelCreator.textProvider = data => data.name.toUpperCase()
+  labelCreator.textProvider = (data) => data.name.toUpperCase()
 }
 /**
  * @param {!GraphBuilder} graphBuilder
@@ -63,8 +63,8 @@ export function createNodeLabelsWithSources(graphBuilder) {
   const nodesSource = graphBuilder.createNodesSource(nodeData, 'id')
 
   // create the label sources based on the `owners` property
-  const labelsSource = nodesSource.nodeCreator.createLabelsSource(data => data.owners)
-  labelsSource.labelCreator.layoutParameterProvider = data =>
+  const labelsSource = nodesSource.nodeCreator.createLabelsSource((data) => data.owners)
+  labelsSource.labelCreator.layoutParameterProvider = (data) =>
     data.endsWith('Group') ? InteriorLabelModel.CENTER : InteriorLabelModel.SOUTH
 }
 /**
@@ -90,5 +90,5 @@ export function createEdgeLabelsWithProvider(graphBuilder) {
   const edgesSource = graphBuilder.createEdgesSource(edgeData, 'sourceId', 'targetId', 'id')
 
   // bind the label text data and add some more text information
-  edgesSource.edgeCreator.createLabelBinding(data => `Owns ${data.ownership}%`)
+  edgesSource.edgeCreator.createLabelBinding((data) => `Owns ${data.ownership}%`)
 }

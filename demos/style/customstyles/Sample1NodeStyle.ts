@@ -343,7 +343,7 @@ export default class Sample1NodeStyle extends NodeStyleBase<Sample1NodeStyleVisu
    */
   private createRenderDataCache(node: INode): NodeRenderDataCache {
     // Remember center points of labels to draw label edges, relative the node's top left corner
-    const labelLocations = node.labels.toArray().map(label => {
+    const labelLocations = node.labels.toArray().map((label) => {
       const center = label.layout.orientedRectangleCenter
       const topLeft = node.layout.topLeft
       return new Point(center.x - topLeft.x, center.y - topLeft.y)
@@ -383,7 +383,7 @@ export default class Sample1NodeStyle extends NodeStyleBase<Sample1NodeStyleVisu
     }
     // check for labels connection lines
     clip = clip.getEnlarged(10)
-    return node.labels.some(label =>
+    return node.labels.some((label) =>
       clip.intersectsLine(node.layout.center, label.layout.orientedRectangleCenter)
     )
   }

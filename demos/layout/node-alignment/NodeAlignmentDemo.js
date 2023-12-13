@@ -176,26 +176,26 @@ function configureInteraction(graphComponent) {
 
   // configure the visual hints that are displayed during Drag and Drop operations
   const nodeDropInputMode = inputMode.nodeDropInputMode
-  nodeDropInputMode.addDragEnteredListener(inputNode =>
+  nodeDropInputMode.addDragEnteredListener((inputNode) =>
     initializeHints(inputNode, snapDistanceCanvasObject)
   )
   nodeDropInputMode.addDragLeftListener(() => disposeHints(snapDistanceCanvasObject))
   nodeDropInputMode.addDragDroppedListener(() => disposeHints(snapDistanceCanvasObject))
-  nodeDropInputMode.addDragOverListener(inputNode =>
+  nodeDropInputMode.addDragOverListener((inputNode) =>
     updateHints(inputNode, snapDistanceCanvasObject)
   )
   nodeDropInputMode.enabled = true
 
   // display the same visual hints when moving an existing node
   const mim = inputMode.moveInputMode
-  mim.addDragStartedListener(inputMove => {
+  mim.addDragStartedListener((inputMove) => {
     initializeHints(inputMove, snapDistanceCanvasObject)
 
     // force the graph component to render the initial state of the hints visualization
     getGraphComponent(inputMove).updateVisual()
   })
-  mim.addDraggedListener(inputMove => updateHints(inputMove, snapDistanceCanvasObject))
-  mim.addDragFinishedListener(async inputMove => {
+  mim.addDraggedListener((inputMove) => updateHints(inputMove, snapDistanceCanvasObject))
+  mim.addDragFinishedListener(async (inputMove) => {
     disposeHints(snapDistanceCanvasObject)
 
     // run the alignment layout calculation after a node has been moved

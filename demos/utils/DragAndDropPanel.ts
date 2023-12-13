@@ -178,7 +178,7 @@ export class DragAndDropPanel {
         label.tag
       )
     })
-    originalNode.ports.forEach(port => {
+    originalNode.ports.forEach((port) => {
       graph.addPort(node, port.locationParameter, port.style, port.tag)
     })
 
@@ -270,7 +270,7 @@ export class DragAndDropPanel {
 
     element.addEventListener(
       'mousedown',
-      evt => {
+      (evt) => {
         if (evt.button !== 0) {
           return
         }
@@ -288,7 +288,7 @@ export class DragAndDropPanel {
     if (window.PointerEvent !== undefined) {
       element.addEventListener(
         'pointerdown',
-        evt => {
+        (evt) => {
           if (evt.pointerType === 'touch' || evt.pointerType === 'pen') {
             touchStartListener(evt)
           }

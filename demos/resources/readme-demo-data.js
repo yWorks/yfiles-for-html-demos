@@ -918,6 +918,18 @@ function getDemoData() {
       ]
     },
     {
+      id: 'home-automation',
+      name: 'Home Automation',
+      demoPath: 'showcase/home-automation/',
+      summary: 'Demonstrates visual programming of a home automation network.',
+      description: `This demo simulates a tool for visually programming a home automation network. The nodes represent
+       various stages of data flow within the system.`,
+      category: 'showcase',
+      thumbnailPath: 'resources/image/home-automation.png',
+      tags: ['interaction', 'layout', 'drag and drop'],
+      keywords: ['v2.6.0.3', 'validation', 'grid']
+    },
+    {
       id: 'tree-map',
       name: 'Tree Map',
       demoPath: 'layout/treemap/',
@@ -2650,7 +2662,7 @@ function getDemoData() {
       demoPath: 'view/imageexport/',
       summary: 'Shows how to export the whole diagram or a part of it to a PNG image.',
       category: 'view',
-      thumbnailPath: 'resources/image/export.png',
+      thumbnailPath: 'resources/image/imageexport.png',
       tags: ['export', 'png', 'jpg'],
       keywords: ['jpeg', 'bitmap', 'save', 'handles']
     },
@@ -2660,7 +2672,7 @@ function getDemoData() {
       demoPath: 'view/svgexport/',
       summary: 'Shows how to export the whole diagram or a part of it to an SVG image.',
       category: 'view',
-      thumbnailPath: 'resources/image/export.png',
+      thumbnailPath: 'resources/image/svgexport.png',
       tags: ['export', 'svg', 'vector graphics'],
       keywords: ['scalable vector graphics', 'save', 'handles', 'curves', 'bezier']
     },
@@ -2670,7 +2682,7 @@ function getDemoData() {
       demoPath: 'view/pdfexport/',
       summary: 'Shows how to export the whole diagram or a part of it to a PDF.',
       category: 'view',
-      thumbnailPath: 'resources/image/export.png',
+      thumbnailPath: 'resources/image/pdfexport.png',
       tags: ['export', 'pdf'],
       keywords: ['vector graphics', 'handles']
     },
@@ -2680,7 +2692,7 @@ function getDemoData() {
       demoPath: 'view/printing/',
       summary: 'Shows how to print the whole diagram or a part of it.',
       category: 'view',
-      thumbnailPath: 'resources/image/export.png',
+      thumbnailPath: 'resources/image/printing.png',
       tags: ['printing'],
       keywords: ['posters', 'vector graphics', 'handles']
     },
@@ -2901,17 +2913,6 @@ function getDemoData() {
       tags: ['web components', 'shadow dom', 'html imports']
     },
     {
-      id: 'amd-loading',
-      name: 'AMD Loading',
-      demoPath: 'loading/amdloading/',
-      summary: 'Loads the yFiles library modules with the AMD loading standard (require.js).',
-      category: 'loading',
-      languageType: 'js-only',
-      thumbnailPath: 'resources/image/amdloading.png',
-      tags: ['loader', 'modules'],
-      keywords: ['requirejs', 'require.js', 'non-symbolic']
-    },
-    {
       id: 'basic-module-loading',
       name: 'Basic Module Loading',
       demoPath: 'loading/basic-module-loading/',
@@ -2932,17 +2933,6 @@ function getDemoData() {
       thumbnailPath: 'resources/image/rollupjs.png',
       tags: ['deployment', 'optimizer'],
       keywords: ['v2.2.0.0', 'web worker', 'modules']
-    },
-    {
-      id: 'script-loading',
-      name: 'Script Loading',
-      demoPath: 'loading/scriptloading/',
-      summary: 'Loads the yFiles modules using plain old &lt;script&gt; tags.',
-      category: 'loading',
-      languageType: 'js-only',
-      thumbnailPath: 'resources/image/scriptloading.png',
-      tags: ['loader', 'modules'],
-      keywords: ['script loading', 'non-symbolic']
     },
     {
       id: 'web-worker-webpack',
@@ -2975,27 +2965,6 @@ function getDemoData() {
       distributionType: 'needs-layout',
       tags: ['modules', 'web worker', 'layout'],
       keywords: ['v2.4.0.0', 'threads', 'threading', 'background', 'async', 'modules', 'hierarchic']
-    },
-    {
-      id: 'web-worker-umd',
-      name: 'Web Worker UMD',
-      demoPath: 'loading/webworker-umd/',
-      summary: 'Shows how to run a yFiles layout algorithm in a Web Worker task using AMD modules.',
-      category: 'loading',
-      languageType: 'js-only',
-      thumbnailPath: 'resources/image/webworkerumd.png',
-      tags: ['umd', 'web worker', 'layout'],
-      keywords: [
-        'v2.4.0.0',
-        'threads',
-        'threading',
-        'background',
-        'json',
-        'folding',
-        'hierarchic',
-        'non-symbolic',
-        'umd'
-      ]
     },
     {
       id: 'webpack',

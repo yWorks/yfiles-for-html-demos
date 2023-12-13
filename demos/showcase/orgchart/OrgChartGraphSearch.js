@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import GraphSearch from 'demo-utils/GraphSearch'
+import { GraphSearch } from 'demo-utils/GraphSearch'
 import { getEmployee } from './model/data-loading.js'
 
 /**
@@ -66,6 +66,6 @@ export class OrgChartGraphSearch extends GraphSearch {
     ) {
       return true
     }
-    return node.labels.some(label => label.text.toLowerCase().indexOf(lowercaseText) !== -1)
+    return node.labels.some((label) => label.text.toLowerCase().indexOf(lowercaseText) !== -1)
   }
 }

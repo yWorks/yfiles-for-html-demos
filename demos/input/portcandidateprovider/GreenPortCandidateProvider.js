@@ -94,7 +94,7 @@ export default class GreenPortCandidateProvider extends PortCandidateProviderBas
 
     if (graph) {
       // Create a port candidate for each free port on the node
-      this.node.ports.forEach(port => {
+      this.node.ports.forEach((port) => {
         const portCandidate = new DefaultPortCandidate(port)
         const valid = graph.degree(port) === 0
         hasValid = hasValid || valid

@@ -131,7 +131,7 @@ export function initializeCrossReferences(graphComponent: GraphComponent): void 
   // customize the port candidate provider
   // to ensure that cross-reference edges connect to the node center
   decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
-    node =>
+    (node) =>
       new (class extends PortCandidateProviderBase {
         getPortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
           return List.fromArray([

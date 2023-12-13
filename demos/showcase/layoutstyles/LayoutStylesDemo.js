@@ -223,7 +223,7 @@ function enableGraphML() {
  */
 function initializeSamples(layoutName) {
   const selectedLayout = LayoutStyles.find(
-    entry => !isSeparator(entry) && getNormalizedName(entry.layout) === layoutName
+    (entry) => !isSeparator(entry) && getNormalizedName(entry.layout) === layoutName
   )
   if (selectedLayout) {
     const files = [...selectedLayout.samples]
@@ -241,7 +241,7 @@ function initializeSamples(layoutName) {
  * Loads all layout modules and populates the layout combo box.
  */
 function initializeLayoutAlgorithms() {
-  const layoutNames = LayoutStyles.map(entry =>
+  const layoutNames = LayoutStyles.map((entry) =>
     isSeparator(entry) ? comboBoxSeparatorItem : entry.layout
   )
   initializeComboBox(layoutComboBox, layoutNames)
@@ -436,7 +436,7 @@ async function onLayoutChanged(initSamples = true, appliedPresetId = '') {
     config.collapsedInitialization = true
 
     optionEditor.config = config
-    optionEditor.validateConfigCallback = b => {
+    optionEditor.validateConfigCallback = (b) => {
       configOptionsValid = b
       layoutButton.disabled = !(configOptionsValid && !inLayout)
     }
@@ -716,9 +716,9 @@ function updateModifiedGraphSample() {
  * @param {!IGraph} graph
  */
 function updateStyleDefaults(graph) {
-  const firstNode = graph.nodes.find(n => !graph.isGroupNode(n))
+  const firstNode = graph.nodes.find((n) => !graph.isGroupNode(n))
   const firstGroupNode = graph.nodes.find(
-    n => graph.isGroupNode(n) && !(n.style instanceof TableNodeStyle)
+    (n) => graph.isGroupNode(n) && !(n.style instanceof TableNodeStyle)
   )
   const firstEdge = graph.edges.at(0)
   if (firstNode) {
@@ -1004,7 +1004,7 @@ function addCustomGraphEntry() {
   customGraphSelected = true
   customGraph = customGraph || new DefaultGraph()
   let customGraphIdx = [...sampleComboBox.options].findIndex(
-    entry => entry.value === 'modified-graph'
+    (entry) => entry.value === 'modified-graph'
   )
   if (customGraphIdx === -1) {
     const option = document.createElement('option')
@@ -1076,7 +1076,7 @@ function initializeContextMenu(inputMode) {
   // Add event listeners to the various events that open the context menu. These listeners then
   // call the provided callback function which in turn asks the current ContextMenuInputMode if a
   // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
       contextMenu.show(location)
     }
@@ -1112,7 +1112,7 @@ function populateContextMenu(contextMenu, args) {
   )
 
   // check whether a node was it. If it was, we prefer it over edges
-  const hit = hits.find(item => INode.isInstance(item)) || hits.at(0)
+  const hit = hits.find((item) => INode.isInstance(item)) || hits.at(0)
 
   if (!hit) {
     // empty canvas hit: provide 'select all'
@@ -1128,7 +1128,7 @@ function populateContextMenu(contextMenu, args) {
   if (INode.isInstance(hit)) {
     contextMenu.addMenuItem('Select All Nodes', () => {
       graphComponent.selection.clear()
-      graphComponent.graph.nodes.forEach(node => {
+      graphComponent.graph.nodes.forEach((node) => {
         graphComponent.selection.setSelected(node, true)
       })
     })
@@ -1139,7 +1139,7 @@ function populateContextMenu(contextMenu, args) {
   } else if (IEdge.isInstance(hit)) {
     contextMenu.addMenuItem('Select All Edges', () => {
       graphComponent.selection.clear()
-      graphComponent.graph.edges.forEach(edge => {
+      graphComponent.graph.edges.forEach((edge) => {
         graphComponent.selection.setSelected(edge, true)
       })
     })
@@ -1246,15 +1246,15 @@ function initializeUI() {
   })
 
   // apply layout shortcut with CTRL+Enter
-  window.addEventListener('keydown', e => {
+  window.addEventListener('keydown', (e) => {
     const geim = graphComponent.inputMode
-    if (!geim.textEditorInputMode.editing && e.which === 13 && (e.ctrlKey || e.metaKey)) {
+    if (!geim.textEditorInputMode.editing && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       applyLayout(false)
       e.preventDefault()
     }
   })
   // also allow 'enter' within the option-editor
-  document.querySelector(`#data-editor`).addEventListener('keydown', e => {
+  document.querySelector(`#data-editor`).addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       applyLayout(false)
       e.preventDefault()

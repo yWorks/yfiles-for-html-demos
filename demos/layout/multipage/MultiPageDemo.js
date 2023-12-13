@@ -138,12 +138,12 @@ function runMultiPageLayout() {
   // parse the pageWidth and pageHeight parameters
   const pageWidthTextBox = document.querySelector('#pageWidthTextBox')
   let pageWidth = parseFloat(pageWidthTextBox.value)
-  if (isNaN(pageWidth)) {
+  if (Number.isNaN(pageWidth)) {
     pageWidth = 800
   }
   const pageHeightTextBox = document.querySelector('#pageHeightTextBox')
   let pageHeight = parseFloat(pageHeightTextBox.value)
-  if (isNaN(pageHeight)) {
+  if (Number.isNaN(pageHeight)) {
     pageHeight = 800
   }
 
@@ -169,16 +169,16 @@ function runMultiPageLayout() {
     createProxyReferenceNodes: createProxyNodes,
     multipleComponentsOnSinglePage: placeComponentsOnSinglePage,
     additionalParentCount: Number.parseInt(document.querySelector('#additionalParentCount').value),
-    layoutCallback: ILayoutCallback.create(async result => {
+    layoutCallback: ILayoutCallback.create(async (result) => {
       await applyLayoutResult(result, pageWidth, pageHeight)
     })
   })
 
   const multiPageLayoutData = new MultiPageLayoutData({
-    nodeIds: key => key,
-    edgeIds: key => key,
-    nodeLabelIds: key => key,
-    edgeLabelIds: key => key
+    nodeIds: (key) => key,
+    edgeIds: (key) => key,
+    nodeLabelIds: (key) => key,
+    edgeLabelIds: (key) => key
   })
 
   setTimeout(() => {
@@ -257,8 +257,8 @@ function setPageNumber(newPageNumber, targetNode = null) {
     newPageNumber < 0
       ? 0
       : newPageNumber > viewGraphs.length - 1
-      ? viewGraphs.length - 1
-      : newPageNumber
+        ? viewGraphs.length - 1
+        : newPageNumber
 
   const pageNumberTextBox = document.querySelector('#page-number-text-box')
   pageNumberTextBox.value = (pageNumber + 1).toString()
@@ -322,7 +322,7 @@ function goToReferencingNode(viewNode) {
  * @returns {boolean}
  */
 function checkPageNumber(pageNo) {
-  return !isNaN(pageNo) && viewGraphs && pageNo >= 0 && pageNo < viewGraphs.length
+  return !Number.isNaN(pageNo) && viewGraphs && pageNo >= 0 && pageNo < viewGraphs.length
 }
 
 /**
@@ -340,15 +340,15 @@ function initializeUI() {
       setPageNumber(pageNumber + 1)
     }
   })
-  document.querySelector('#page-number-text-box').addEventListener('change', evt => {
+  document.querySelector('#page-number-text-box').addEventListener('change', (evt) => {
     const page = evt.target.value
     const pageNo = parseInt(page) - 1
-    if (!isNaN(pageNo) && checkPageNumber(pageNo)) {
+    if (!Number.isNaN(pageNo) && checkPageNumber(pageNo)) {
       setPageNumber(pageNo)
     }
   })
 
-  document.querySelector('#samples').addEventListener('change', async evt => {
+  document.querySelector('#samples').addEventListener('change', async (evt) => {
     const value = evt.target.value
     if (value === 'yFiles Layout Namespaces') {
       document.querySelector('#coreLayoutComboBox').value = 'Tree'

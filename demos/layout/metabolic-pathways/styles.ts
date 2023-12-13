@@ -103,7 +103,7 @@ export function initializeDefaultStyles(graph: IGraph): void {
  * Updates the node and edge styles based on the node types.
  */
 export function updateStyles(graph: IGraph): void {
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const type = getType(node)
     const colorSet = predefinedColorSets.get(type)!
     graph.setStyle(
@@ -132,7 +132,7 @@ export function updateStyles(graph: IGraph): void {
   })
 
   const visited = new Set()
-  graph.edges.toArray().forEach(edge => {
+  graph.edges.toArray().forEach((edge) => {
     if (visited.has(edge)) {
       return
     }
@@ -192,7 +192,7 @@ function getArcHeight(graph: IGraph, edge: IEdge): number {
   const coReactants = graph
     .neighbors(reaction)
     .filter(
-      neighbor =>
+      (neighbor) =>
         getType(neighbor) === NodeTypes.CO_REACTANT && neighbor.layout.x > reaction.layout.x
     )
   return coReactants.size > 1 ? -40 : 40

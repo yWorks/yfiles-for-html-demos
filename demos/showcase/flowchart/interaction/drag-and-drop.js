@@ -40,7 +40,7 @@ export function initializeDnd(graphEditorInputMode) {
   })
 
   const dndNodes = Object.keys(FlowchartNodeType).map(
-    type =>
+    (type) =>
       new SimpleNode({
         layout: new Rect(0, 0, 80, 40),
         style: new FlowchartNodeStyle(FlowchartNodeType[type])

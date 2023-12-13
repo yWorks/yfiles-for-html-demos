@@ -44,7 +44,7 @@ import { applyDemoTheme } from 'demo-resources/demo-styles'
  * @returns {!Promise.<TData>}
  */
 export async function getData() {
-  return fetch('../ownership-data.json').then(response => response.json())
+  return fetch('../ownership-data.json').then((response) => response.json())
 }
 
 /**

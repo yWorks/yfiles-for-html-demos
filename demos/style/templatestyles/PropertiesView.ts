@@ -136,7 +136,7 @@ export default class PropertiesView {
       nameElement.style.display = 'inline-block'
     }
 
-    nameInput.addEventListener('keypress', evt => {
+    nameInput.addEventListener('keypress', (evt) => {
       const newName = nameInput.value
       employee.name = newName
       // notify the template style binding engine of the property change

@@ -29,7 +29,9 @@
 #data-view {
   width: 400px;
   height: 340px;
-  transition: width 1s, height 1s;
+  transition:
+    width 1s,
+    height 1s;
   font-size: 13px;
 }
 #data-view.collapsed {

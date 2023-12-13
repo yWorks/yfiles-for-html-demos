@@ -115,14 +115,14 @@ function initializeGraph(): void {
 
   // enable edge port candidates
   graph.decorator.edgeDecorator.portCandidateProviderDecorator.setFactory(
-    edge => new EdgePathPortCandidateProvider(edge)
+    (edge) => new EdgePathPortCandidateProvider(edge)
   )
 
   // set IEdgeReconnectionPortCandidateProvider to allow re-connecting edges to other edges
   graph.decorator.edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setImplementation(
     IEdgeReconnectionPortCandidateProvider.ALL_NODE_AND_EDGE_CANDIDATES
   )
-  graph.decorator.edgeDecorator.handleProviderDecorator.setFactory(edge => {
+  graph.decorator.edgeDecorator.handleProviderDecorator.setFactory((edge) => {
     const portRelocationHandleProvider = new PortRelocationHandleProvider(null, edge)
     portRelocationHandleProvider.visualization = Visualization.LIVE
     return portRelocationHandleProvider
@@ -210,7 +210,7 @@ function createSampleGraph(): void {
  */
 function initializeUI(): void {
   const snappingButton = document.querySelector<HTMLInputElement>('#demo-snapping-button')!
-  snappingButton.addEventListener('click', evt => {
+  snappingButton.addEventListener('click', (evt) => {
     const inputMode = graphComponent.inputMode as GraphEditorInputMode
     inputMode.snapContext!.enabled = snappingButton.checked
   })

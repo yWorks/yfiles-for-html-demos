@@ -119,14 +119,14 @@ function buildGraph(graph, graphData) {
 
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id,
-    parentId: item => item.parentId
+    id: (item) => item.id,
+    parentId: (item) => item.parentId
   })
 
-  nodesSource.nodeCreator.styleProvider = item =>
+  nodesSource.nodeCreator.styleProvider = (item) =>
     new ImageNodeStyle({ image: `./resources/${item.tag}.svg` })
 
-  nodesSource.nodeCreator.createLabelBinding(item => item.label)
+  nodesSource.nodeCreator.createLabelBinding((item) => item.label)
 
   nodesSource.nodeCreator.defaults.size = new Size(48, 48)
   nodesSource.nodeCreator.defaults.labels.style = new DefaultLabelStyle({
@@ -145,8 +145,8 @@ function buildGraph(graph, graphData) {
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -167,11 +167,11 @@ function createNeighborhoodView(graphComponent) {
   neighborhoodView.buildNeighborhoodGraph = getBuildGraphCallback(NeighborhoodType.NEIGHBORHOOD, 1)
   neighborhoodView.graphComponent = graphComponent
   // mirror navigation in the neighborhood view to the demo's main GraphComponent
-  neighborhoodView.clickCallback = node => {
+  neighborhoodView.clickCallback = (node) => {
     graphComponent.selection.clear()
     graphComponent.selection.setSelected(node, true)
   }
-  neighborhoodView.onNeighborhoodUpdated = view => {
+  neighborhoodView.onNeighborhoodUpdated = (view) => {
     // show the circles on which the neighborhood nodes have been arranged (unless the neighborhood
     // graph is empty)
     const isEmpty = view.neighborhoodGraph.nodes.size < 1

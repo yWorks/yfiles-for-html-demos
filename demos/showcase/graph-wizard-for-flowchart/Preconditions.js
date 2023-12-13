@@ -38,7 +38,7 @@ import { CreateEdgeInputMode, IEdge, INode } from 'yfiles'
  * @returns {!PreCondition}
  */
 export function checkAnd(conditions) {
-  return mode => conditions.every(condition => condition(mode))
+  return (mode) => conditions.every((condition) => condition(mode))
 }
 
 /**
@@ -47,7 +47,7 @@ export function checkAnd(conditions) {
  * @returns {!PreCondition}
  */
 export function checkOr(conditions) {
-  return mode => conditions.some(condition => condition(mode))
+  return (mode) => conditions.some((condition) => condition(mode))
 }
 
 /**
@@ -56,7 +56,7 @@ export function checkOr(conditions) {
  * @returns {!PreCondition}
  */
 export function checkNot(condition) {
-  return mode => !condition(mode)
+  return (mode) => !condition(mode)
 }
 
 /**
@@ -84,7 +84,7 @@ export function checkForEdge(mode) {
  * @returns {!PreCondition}
  */
 export function checkForNodeStyle(styleClass) {
-  return mode => mode.currentItem instanceof INode && mode.currentItem.style instanceof styleClass
+  return (mode) => mode.currentItem instanceof INode && mode.currentItem.style instanceof styleClass
 }
 
 /**
@@ -94,7 +94,7 @@ export function checkForNodeStyle(styleClass) {
  * @returns {!PreCondition}
  */
 export function checkForEdgeStyle(styleClass) {
-  return mode => mode.currentItem instanceof IEdge && mode.currentItem.style instanceof styleClass
+  return (mode) => mode.currentItem instanceof IEdge && mode.currentItem.style instanceof styleClass
 }
 
 /**

@@ -178,7 +178,7 @@ function runIntersectionAlgorithm() {
 
   // whether to consider only the selected elements
   if (considerSelectionBox.checked) {
-    intersections.affectedItems.delegate = item => graphComponent.selection.isSelected(item)
+    intersections.affectedItems.delegate = (item) => graphComponent.selection.isSelected(item)
   }
 
   // run the algorithm and obtain the result
@@ -250,10 +250,10 @@ function initializeIntersectionVisual() {
 function loadSampleGraph(graph) {
   const builder = new GraphBuilder(graph)
   const ns = builder.createNodesSource({
-    data: GraphData.nodeList.filter(data => !data.isGroup),
+    data: GraphData.nodeList.filter((data) => !data.isGroup),
     id: 'id',
     layout: 'layout',
-    parentId: dataItem => dataItem.parent
+    parentId: (dataItem) => dataItem.parent
   })
   ns.nodeCreator.addNodeCreatedListener((_, evt) => {
     if (evt.dataItem.isEllipse) {
@@ -268,8 +268,10 @@ function loadSampleGraph(graph) {
       )
     }
   })
-  const nodeLabelCreator = ns.nodeCreator.createLabelsSource(data => data.labels || []).labelCreator
-  nodeLabelCreator.textProvider = data => data.text || ''
+  const nodeLabelCreator = ns.nodeCreator.createLabelsSource(
+    (data) => data.labels || []
+  ).labelCreator
+  nodeLabelCreator.textProvider = (data) => data.text || ''
   nodeLabelCreator.addLabelAddedListener((_, evt) => {
     const label = evt.item
     const data = evt.dataItem
@@ -284,14 +286,14 @@ function loadSampleGraph(graph) {
   })
 
   const groupSource = builder.createGroupNodesSource({
-    data: GraphData.nodeList.filter(data => data.isGroup),
+    data: GraphData.nodeList.filter((data) => data.isGroup),
     id: 'id',
     layout: 'layout'
   })
   const groupLabelCreator = groupSource.nodeCreator.createLabelsSource(
-    data => data.labels
+    (data) => data.labels
   ).labelCreator
-  groupLabelCreator.textProvider = data => data.text || ''
+  groupLabelCreator.textProvider = (data) => data.text || ''
 
   const es = builder.createEdgesSource({
     data: GraphData.edgeList,
@@ -300,8 +302,10 @@ function loadSampleGraph(graph) {
     targetId: 'target',
     bends: 'bends'
   })
-  const edgeLabelCreator = es.edgeCreator.createLabelsSource(data => data.labels || []).labelCreator
-  edgeLabelCreator.textProvider = data => data.text || ''
+  const edgeLabelCreator = es.edgeCreator.createLabelsSource(
+    (data) => data.labels || []
+  ).labelCreator
+  edgeLabelCreator.textProvider = (data) => data.text || ''
   edgeLabelCreator.addLabelAddedListener((_, evt) => {
     const label = evt.item
     const data = evt.dataItem
@@ -317,7 +321,7 @@ function loadSampleGraph(graph) {
 
   builder.buildGraph()
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
       graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
     }
@@ -363,7 +367,7 @@ function initializeGraph(graphComponent) {
   graph.decorator.portDecorator.edgePathCropperDecorator.setImplementation(
     new DefaultEdgePathCropper({ cropAtPort: false, extraCropLength: 0 })
   )
-  graph.decorator.labelDecorator.positionHandlerDecorator.setFactory(label => {
+  graph.decorator.labelDecorator.positionHandlerDecorator.setFactory((label) => {
     const positionHandler = new LabelPositionHandler(label)
     positionHandler.visualization = Visualization.LIVE
     return positionHandler

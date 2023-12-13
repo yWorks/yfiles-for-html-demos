@@ -98,17 +98,17 @@ export class D3BarChart {
     // ... the actual bar element
     newGroups
       .append('rect')
-      .style('fill', d => convertLoadToColor(d, 0.75))
-      .attr('y', d => y(d))
-      .attr('height', d => this.chartHeight - y(d))
+      .style('fill', (d) => convertLoadToColor(d, 0.75))
+      .attr('y', (d) => y(d))
+      .attr('height', (d) => this.chartHeight - y(d))
       .attr('width', barWidth - 1)
 
     // Update the already constructed bars and labels if no new data is added
     groups
       .select('rect')
-      .style('fill', d => convertLoadToColor(d, 0.75))
-      .attr('y', d => y(d))
-      .attr('height', d => this.chartHeight - y(d))
+      .style('fill', (d) => convertLoadToColor(d, 0.75))
+      .attr('y', (d) => y(d))
+      .attr('height', (d) => this.chartHeight - y(d))
 
     // Remove bars which are no longer bound to data in the current data set
     groups.exit().remove()
@@ -129,9 +129,9 @@ export class D3BarChart {
 
     newCurrentGroup
       .append('rect')
-      .style('fill', d => convertLoadToColor(d, 1))
-      .attr('y', d => y(d))
-      .attr('height', d => this.chartHeight - y(d))
+      .style('fill', (d) => convertLoadToColor(d, 1))
+      .attr('y', (d) => y(d))
+      .attr('height', (d) => this.chartHeight - y(d))
       .attr('width', currentBarWidth - 1)
 
     newCurrentGroup
@@ -145,9 +145,9 @@ export class D3BarChart {
     // Update data
     currentGroup
       .select('rect')
-      .style('fill', d => convertLoadToColor(d, 1))
-      .attr('y', d => y(d))
-      .attr('height', d => this.chartHeight - y(d))
+      .style('fill', (d) => convertLoadToColor(d, 1))
+      .attr('y', (d) => y(d))
+      .attr('height', (d) => this.chartHeight - y(d))
 
     // Remove old data
     currentGroup.exit().remove()

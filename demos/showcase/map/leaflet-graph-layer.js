@@ -26,7 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { control, DomUtil, LatLng, latLngBounds, Layer, Map, TileLayer } from 'leaflet'
+import {
+  control,
+  DomUtil,
+  LatLng,
+  latLngBounds,
+  Layer,
+  Map as LeafletMap,
+  TileLayer
+} from 'leaflet'
 import { GraphComponent, GraphItemTypes, GraphViewerInputMode, Point } from 'yfiles'
 import { getArcHeight } from './map-styles.js'
 import 'leaflet/dist/leaflet.css'
@@ -45,7 +53,7 @@ import 'leaflet/dist/leaflet.css'
 /**
  * @typedef {Object} MapData
  * @property {GraphLayer} graphLayer
- * @property {Map} map
+ * @property {LeafletMap} map
  */
 
 /**
@@ -64,7 +72,7 @@ export function createMap(containerId, coordinateMapping, zoomChanged, leafletOp
   const osmAttrib = 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
 
   // create the map
-  const worldMap = new Map(containerId, leafletOptions)
+  const worldMap = new LeafletMap(containerId, leafletOptions)
   worldMap.setView(new LatLng(15.538, 16.523), 3)
   worldMap.addLayer(
     new TileLayer(osmUrl, {
@@ -136,7 +144,7 @@ export class GraphLayer extends Layer {
 
   /**
    * @yjs:keep = animate
-   * @param {!Map} map
+   * @param {!LeafletMap} map
    * @returns {*}
    */
   onAdd(map) {
@@ -168,7 +176,7 @@ export class GraphLayer extends Layer {
   }
 
   /**
-   * @param {!Map} map
+   * @param {!LeafletMap} map
    * @returns {*}
    */
   onRemove(map) {
@@ -197,7 +205,7 @@ export class GraphLayer extends Layer {
   /**
    * Synchronizes the viewport of the map and the {@link GraphComponent}.
    * @yjs:keep = getSize,setPosition,getPosition
-   * @param {!Map} map
+   * @param {!LeafletMap} map
    */
   updateGraphDiv(map) {
     const graphComponent = this.graphComponent
@@ -234,12 +242,12 @@ export class GraphLayer extends Layer {
    * Calculates the coordinates of the nodes from their geolocations
    * and updates the arc heights of the edges.
    * @param {!GraphComponent} graphComponent
-   * @param {!Map} map
+   * @param {!LeafletMap} map
    */
   mapLayout(graphComponent, map) {
     const graph = graphComponent.graph
     // transform geolocations and update the node locations
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const coords = this.getGeoCoordinates(node)
       const layerPoint = map.latLngToLayerPoint(new LatLng(coords.lat, coords.lng))
       // apply the new node locations
@@ -247,7 +255,7 @@ export class GraphLayer extends Layer {
     })
 
     // update the arc heights for the edges
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       const style = edge.style
       style.height = getArcHeight(edge)
     })

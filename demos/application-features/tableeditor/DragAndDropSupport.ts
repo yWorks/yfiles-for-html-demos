@@ -60,12 +60,12 @@ export function configureDndInputMode(graph: IGraph): NodeDropInputMode {
   const nodeDropInputMode = new NodeDropInputMode({
     showPreview: true,
     enabled: true,
-    isGroupNodePredicate: draggedNode =>
+    isGroupNodePredicate: (draggedNode) =>
       // tables and tagged nodes should be created as group nodes
       draggedNode.lookup(ITable.$class) !== null || draggedNode.tag === 'GroupNode'
   })
 
-  nodeDropInputMode.isValidParentPredicate = node => {
+  nodeDropInputMode.isValidParentPredicate = (node) => {
     const draggedNode = nodeDropInputMode.lastDragEventArgs!.item.getData('yfiles.graph.INode')
     if (draggedNode.lookup(ITable.$class) !== null && node !== null && graph.isGroupNode(node)) {
       // this node has a table associated - disallow dragging into a group node.

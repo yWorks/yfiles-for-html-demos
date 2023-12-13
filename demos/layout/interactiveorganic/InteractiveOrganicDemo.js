@@ -134,13 +134,13 @@ function buildGraph(graph, graphData) {
 
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
+    id: (item) => item.id
   })
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -220,7 +220,9 @@ function createEditorMode() {
  */
 function initMoveMode(moveInputMode) {
   // register callbacks to notify the organic layout of changes
-  moveInputMode.addDragStartedListener(dragStarted => onMoveInitialized(dragStarted.affectedItems))
+  moveInputMode.addDragStartedListener((dragStarted) =>
+    onMoveInitialized(dragStarted.affectedItems)
+  )
   moveInputMode.addDragCanceledListener(onMoveCanceled)
   moveInputMode.addDraggedListener(onMoving)
   moveInputMode.addDragFinishedListener(onMovedFinished)

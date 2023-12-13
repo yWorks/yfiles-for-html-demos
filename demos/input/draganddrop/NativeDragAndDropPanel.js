@@ -124,7 +124,7 @@ export class NativeDragAndDropPanel {
   addDragEventListeners(element, modelItem, itemId) {
     // Set the item ID as data of the data transfer and configure some other drop properties according to the
     // dragged type
-    element.addEventListener('dragstart', e => {
+    element.addEventListener('dragstart', (e) => {
       if (!e.dataTransfer) {
         return
       }
@@ -199,7 +199,7 @@ export class NativeDragAndDropPanel {
       originalNode.style,
       originalNode.tag
     )
-    originalNode.labels.forEach(label => {
+    originalNode.labels.forEach((label) => {
       exportGraph.addLabel(
         node,
         label.text,
@@ -209,7 +209,7 @@ export class NativeDragAndDropPanel {
         label.tag
       )
     })
-    originalNode.ports.forEach(port => {
+    originalNode.ports.forEach((port) => {
       exportGraph.addPort(node, port.locationParameter, port.style, port.tag)
     })
 
@@ -315,7 +315,7 @@ export class NativeDragAndDropPanel {
   wrapEdgeDropInputMode(graphEditorInputMode) {
     const edgeDropInputMode = graphEditorInputMode
       .getSortedModes()
-      .find(mode => mode instanceof EdgeDropInputMode)
+      .find((mode) => mode instanceof EdgeDropInputMode)
     if (edgeDropInputMode instanceof EdgeDropInputMode) {
       const oldEdgeCreator = edgeDropInputMode.itemCreator
       edgeDropInputMode.itemCreator = (context, graph, info, dropTarget, dropLocation) => {

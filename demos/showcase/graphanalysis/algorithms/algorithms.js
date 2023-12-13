@@ -129,7 +129,7 @@ import {
  * @param {!IGraph} graph
  */
 export function resetTypes(graph) {
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     resetType(node)
   })
 }
@@ -159,17 +159,17 @@ export function applyAlgorithm(graph) {
  * @param {!IGraph} graph
  */
 export function resetGraph(graph) {
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     resetResult(node)
   })
-  graph.edges.forEach(edge => resetResult(edge))
-  graph.nodeLabels.toArray().forEach(label => {
+  graph.edges.forEach((edge) => resetResult(edge))
+  graph.nodeLabels.toArray().forEach((label) => {
     graph.remove(label)
   })
   graph.edgeLabels
     .toArray()
-    .filter(label => label.tag !== 'weight')
-    .forEach(label => {
+    .filter((label) => label.tag !== 'weight')
+    .forEach((label) => {
       graph.remove(label)
     })
 }
@@ -378,7 +378,7 @@ export const algorithms = {
  */
 function getEdgeWeights(graph) {
   const weights = new Map()
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     if (useUniformEdgeWeights()) {
       weights.set(edge, 1)
     } else {
@@ -407,7 +407,7 @@ function getStartNodes(graph) {
     return []
   }
 
-  const startNodes = graph.nodes.filter(node => getTag(node).type === 'start').toArray()
+  const startNodes = graph.nodes.filter((node) => getTag(node).type === 'start').toArray()
   if (startNodes.length === 0) {
     const startNode = graph.nodes.first()
     const tag = copyAndReplaceTag(startNode)
@@ -429,7 +429,7 @@ function getEndNodes(graph) {
     return []
   }
 
-  const endNodes = graph.nodes.filter(node => getTag(node).type === 'end').toArray()
+  const endNodes = graph.nodes.filter((node) => getTag(node).type === 'end').toArray()
   if (endNodes.length === 0) {
     const endNode = graph.nodes.last()
     const tag = copyAndReplaceTag(endNode)

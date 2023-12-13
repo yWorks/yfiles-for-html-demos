@@ -318,8 +318,8 @@ function initializeUI(graphComponent) {
   modifyColors.addEventListener('click', () => {
     // Set the tag of all non-group nodes to a new color
     graphComponent.graph.nodes
-      .filter(node => !graphComponent.graph.isGroupNode(node))
-      .forEach(node => {
+      .filter((node) => !graphComponent.graph.isGroupNode(node))
+      .forEach((node) => {
         node.tag = `hsl(${Math.random() * 360},100%,50%)`
       })
     // Finally, the view is invalidated because the graph cannot know that we have changed values
@@ -333,7 +333,7 @@ function initializeUI(graphComponent) {
   saveButton.disabled = true
 
   const sampleSelectElements = ['#sample-select--sidebar', '#sample-select--toolbar'].map(
-    selector => document.querySelector(selector)
+    (selector) => document.querySelector(selector)
   )
   for (const selectElement of sampleSelectElements) {
     addOptions(selectElement, 'Sample 1', 'Sample 2')

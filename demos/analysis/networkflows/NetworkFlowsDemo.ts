@@ -278,7 +278,7 @@ function createEditorInputMode(): void {
     const deletedCompoundEdit = graphComponent.graph.beginEdit('Element deleted', 'Element deleted')
     // if an edge was removed, calculate the new node size of its endpoints
     if (nodesToChange.length > 0) {
-      nodesToChange.forEach(node => {
+      nodesToChange.forEach((node) => {
         if (graphComponent.graph.contains(node)) {
           calculateNodeSize(node)
         }
@@ -293,7 +293,7 @@ function createEditorInputMode(): void {
   inputMode.addDeletingSelectionListener((_, evt) => {
     edgePopup.currentItem = null
     // collect all nodes that are endpoints of removed edges
-    evt.selection.forEach(item => {
+    evt.selection.forEach((item) => {
       if (item instanceof IEdge) {
         nodesToChange.push(item.sourceNode!)
         nodesToChange.push(item.targetNode!)
@@ -358,8 +358,8 @@ function createEditorInputMode(): void {
 function calculateNodeSize(node: INode): void {
   const graph = graphComponent.graph
 
-  const incomingCapacity = graph.inEdgesAt(node).sum(inEdge => inEdge.tag.capacity)
-  const outgoingCapacity = graph.outEdgesAt(node).sum(outEdge => outEdge.tag.capacity)
+  const incomingCapacity = graph.inEdgesAt(node).sum((inEdge) => inEdge.tag.capacity)
+  const outgoingCapacity = graph.outEdgesAt(node).sum((outEdge) => outEdge.tag.capacity)
 
   const height = Math.max(incomingCapacity, outgoingCapacity)
   const newBounds = new Rect(node.layout.x, node.layout.y, node.layout.width, Math.max(height, 30))
@@ -404,7 +404,7 @@ function runFlowAlgorithm(): void {
   }
 
   // update the node tags
-  graphComponent.graph.nodes.forEach(node => {
+  graphComponent.graph.nodes.forEach((node) => {
     node.tag = { ...node.tag, cut: false, source: false, sink: false }
   })
 
@@ -451,7 +451,7 @@ function calculateMaxFlowMinCut(minCut: boolean): number {
     return 0
   }
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     const labels = edge.labels
     if (labels.size > 1) {
       graph.remove(labels.get(1))
@@ -466,11 +466,11 @@ function calculateMaxFlowMinCut(minCut: boolean): number {
     sources: sourceNodes,
     sinks: sinkNodes,
     // the capacity of an edge is stored in its tag
-    capacities: edge => edge.tag.capacity
+    capacities: (edge) => edge.tag.capacity
   })
 
   const maxFlowMinCutResult = maxFlowMinCut.run(graph)
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const flow = (graph.inDegree(node) > 0 ? graph.inEdgesAt(node) : graph.outEdgesAt(node)).sum(
       (edge: IEdge): number => maxFlowMinCutResult.flow.get(edge) || 0
     )
@@ -481,17 +481,17 @@ function calculateMaxFlowMinCut(minCut: boolean): number {
     }
   })
 
-  sourceNodes.forEach(sourceNode => (sourceNode.tag.source = true))
-  sinkNodes.forEach(sinkNode => (sinkNode.tag.sink = true))
+  sourceNodes.forEach((sourceNode) => (sourceNode.tag.source = true))
+  sinkNodes.forEach((sinkNode) => (sinkNode.tag.sink = true))
 
   // add the flow values as tags to edges
   maxFlowMinCutResult.flow.forEach(({ key, value }) => (key.tag.flow = value))
 
   if (minCut) {
     // add tags for the nodes that belong to the cut
-    maxFlowMinCutResult.sourcePartition.forEach(node => (node.tag.cut = true))
+    maxFlowMinCutResult.sourcePartition.forEach((node) => (node.tag.cut = true))
 
-    maxFlowMinCutResult.sinkPartition.forEach(node => (node.tag.cut = false))
+    maxFlowMinCutResult.sinkPartition.forEach((node) => (node.tag.cut = false))
   }
 
   // show the result
@@ -508,10 +508,10 @@ function calculateMinCostFlow(): number {
   let minCostFlowResult: MinimumCostFlowResult | null = null
   try {
     const minCostFlow = new MinimumCostFlow({
-      maximumCapacities: edge => edge.tag.capacity,
-      costs: edge => (edge.tag && edge.tag.cost ? edge.tag.cost : 0),
+      maximumCapacities: (edge) => edge.tag.capacity,
+      costs: (edge) => (edge.tag && edge.tag.cost ? edge.tag.cost : 0),
       // the supply or demand of a node was calculated in calculateMaxFlow and set as node tag
-      supply: node => (node.tag.supply ? node.tag.supply * node.layout.height : 0)
+      supply: (node) => (node.tag.supply ? node.tag.supply * node.layout.height : 0)
     })
 
     minCostFlowResult = minCostFlow.run(graph)
@@ -519,7 +519,7 @@ function calculateMinCostFlow(): number {
     alert(err)
   } finally {
     // store the flow for each edge in its tag
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       edge.tag.flow = minCostFlowResult ? minCostFlowResult.flow.get(edge) || 0 : 0
 
       if (edge.labels.size > 1) {
@@ -540,9 +540,9 @@ function calculateMinCostFlow(): number {
     visualizeResult()
 
     let flow = 0
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (graph.inDegree(node) > 0) {
-        flow = graph.inEdgesAt(node).sum(edge => edge.tag.flow)
+        flow = graph.inEdgesAt(node).sum((edge) => edge.tag.flow)
       }
       node.tag = {
         flow,
@@ -551,8 +551,8 @@ function calculateMinCostFlow(): number {
       }
     })
 
-    getSupplyNodes(graph).forEach(supplyNode => (supplyNode.tag.source = true))
-    getDemandNodes(graph).forEach(demandNode => (demandNode.tag.sink = true))
+    getSupplyNodes(graph).forEach((supplyNode) => (supplyNode.tag.source = true))
+    getDemandNodes(graph).forEach((demandNode) => (demandNode.tag.sink = true))
   }
   return minCostFlowResult ? minCostFlowResult.totalCost : 0
 }
@@ -564,7 +564,7 @@ function calculateMinCostFlow(): number {
  */
 function getSupplyNodes(graph: IGraph): INode[] {
   const supplyNodes: INode[] = []
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     if (node.tag.supply > 0) {
       supplyNodes.push(node)
     }
@@ -579,7 +579,7 @@ function getSupplyNodes(graph: IGraph): INode[] {
  */
 function getDemandNodes(graph: IGraph): INode[] {
   const demandNodes: INode[] = []
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     if (node.tag.supply < 0) {
       demandNodes.push(node)
     }
@@ -611,7 +611,7 @@ async function runLayout(
   layoutAlgorithm.backLoopRouting = true
 
   const layoutData = new HierarchicLayoutData({
-    edgeThickness: edge => edge.tag.capacity
+    edgeThickness: (edge) => edge.tag.capacity
   })
 
   if (incremental && algorithmComboBox.selectedIndex !== MAX_FLOW_MIN_CUT) {
@@ -620,14 +620,14 @@ async function runLayout(
     // mark all sources and sinks as well as passed additional nodes as incremental
     const hintsFactory = layoutAlgorithm.createIncrementalHintsFactory()!
     const incrementalNodesMapper = new Mapper()
-    getSourceNodes().forEach(node =>
+    getSourceNodes().forEach((node) =>
       incrementalNodesMapper.set(node, hintsFactory.createLayerIncrementallyHint(node))
     )
-    getSinkNodes().forEach(node =>
+    getSinkNodes().forEach((node) =>
       incrementalNodesMapper.set(node, hintsFactory.createLayerIncrementallyHint(node))
     )
     if (additionalIncrementalNodes) {
-      additionalIncrementalNodes.forEach(node =>
+      additionalIncrementalNodes.forEach((node) =>
         incrementalNodesMapper.set(node, hintsFactory.createLayerIncrementallyHint(node))
       )
     }
@@ -638,9 +638,9 @@ async function runLayout(
 
   // sources will be in the first layer, sinks in the last layer
   const layerConstraints = layoutData.layerConstraints
-  getSourceNodes().forEach(node => layerConstraints.placeAtTop(node))
+  getSourceNodes().forEach((node) => layerConstraints.placeAtTop(node))
 
-  getSinkNodes().forEach(node => layerConstraints.placeAtBottom(node))
+  getSinkNodes().forEach((node) => layerConstraints.placeAtBottom(node))
 
   if (algorithmComboBox.selectedIndex === MAX_FLOW_MIN_CUT) {
     layoutData.partitionGridData = new PartitionGridData({
@@ -650,7 +650,7 @@ async function runLayout(
     })
   }
 
-  layoutData.edgeLabelPreferredPlacement.delegate = key => {
+  layoutData.edgeLabelPreferredPlacement.delegate = (key) => {
     const preferredPlacementDescriptor = new PreferredPlacementDescriptor()
     if (key.tag === 'cost') {
       preferredPlacementDescriptor.sideOfEdge = LabelPlacements.LEFT_OF_EDGE
@@ -690,7 +690,7 @@ async function runLayout(
 function getSourceNodes(): INode[] {
   const sourceNodes: INode[] = []
   const graph = graphComponent.graph
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     if (graph.inDegree(node) === 0 && graph.outDegree(node) !== 0) {
       sourceNodes.push(node)
     }
@@ -699,7 +699,7 @@ function getSourceNodes(): INode[] {
   if (sourceNodes.length === 0) {
     sourceNodes.push(graph.nodes.first())
   }
-  sourceNodes.forEach(node => (node.tag.source = true))
+  sourceNodes.forEach((node) => (node.tag.source = true))
   return sourceNodes
 }
 
@@ -710,19 +710,19 @@ function getSourceNodes(): INode[] {
 function getSinkNodes(): INode[] {
   const sinkNodes: INode[] = []
   const graph = graphComponent.graph
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     if (graph.outDegree(node) === 0 && graph.inDegree(node) !== 0) {
       sinkNodes.push(node)
     }
   })
   // Special case: No node with out-degree 0 was found, take the first node of the graph that is not already marked as source
   if (sinkNodes.length === 0) {
-    const randomSink = graph.nodes.find(node => !node.tag.source)
+    const randomSink = graph.nodes.find((node) => !node.tag.source)
     if (randomSink) {
       sinkNodes.push(randomSink)
     }
   }
-  sinkNodes.forEach(node => (node.tag.sink = true))
+  sinkNodes.forEach((node) => (node.tag.sink = true))
   return sinkNodes
 }
 
@@ -741,7 +741,7 @@ function updateMinCutLine(): void {
     minCutLine.visible = true
     let minX: number = Number.NEGATIVE_INFINITY
     let maxX: number = Number.POSITIVE_INFINITY
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (node.tag.cut) {
         minX = Math.max(minX, node.layout.maxX)
       } else {
@@ -749,7 +749,7 @@ function updateMinCutLine(): void {
       }
     })
 
-    if (isFinite(minX) && isFinite(maxX)) {
+    if (Number.isFinite(minX) && Number.isFinite(maxX)) {
       minCutLine.bounds = new Rect(
         (minX + maxX) * 0.5 - 5,
         graphBounds.y - 30,
@@ -786,7 +786,7 @@ function visualizeResult(): void {
   const extrema = calculateExtrema(graph, false)
   const diff = extrema.max - extrema.min
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     let colorIndex = 0
     if (edge.tag.capacity !== 0) {
       if (diff === 0) {
@@ -820,7 +820,7 @@ function calculateExtrema(graph: IGraph, useCapacity: boolean): { min: number; m
   let min: number = Number.MAX_VALUE
   let max: number = -Number.MAX_VALUE
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     let value = 0
     if (edge.tag && edge.tag.capacity !== 0) {
       value = useCapacity ? edge.tag.capacity : (edge.tag.flow * 100) / edge.tag.capacity
@@ -902,7 +902,7 @@ async function onAlgorithmChanged() {
     minCutLine.visible = algorithmComboBox.selectedIndex === MAX_FLOW_MIN_CUT
 
     // make sure that there is flow in case the algorithm changed to "Minimum Cost Problem"
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (graph.inDegree(node) === 0) {
         node.tag.supply = 0.5
       } else if (graph.outDegree(node) === 0) {
@@ -1116,9 +1116,9 @@ function createSampleGraph(): void {
     }
   })
 
-  graph.edges.forEach(edge => updateEdgeThickness(edge))
+  graph.edges.forEach((edge) => updateEdgeThickness(edge))
 
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     let supply = 0
     if (graph.inDegree(node) === 0) {
       supply = 0.5

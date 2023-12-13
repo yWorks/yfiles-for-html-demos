@@ -124,8 +124,8 @@ function createSampleGraph(graph: IGraph): void {
 function initializePalette(): void {
   const palette = document.getElementById('palette')!
   generateColors(PALETTE_SIZE, 100, 50)
-    .map(color => createPaletteEntry(color))
-    .forEach(entry => palette.appendChild(entry))
+    .map((color) => createPaletteEntry(color))
+    .forEach((entry) => palette.appendChild(entry))
 }
 
 /**
@@ -166,7 +166,7 @@ function createPaletteEntry(color: string): HTMLElement {
   // start the drop input mode when a drag from the palette begins
   paletteEntry.addEventListener(
     'dragstart',
-    event => {
+    (event) => {
       event.preventDefault()
       startDrag()
     },

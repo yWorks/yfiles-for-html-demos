@@ -34,7 +34,10 @@ export function createNodesSourceFromArray(
   const nodeData = [{ id: '00' }, { id: '01' }, { id: '02' }]
 
   // nodes source for the turquoise nodes
-  const nodesSource = graphBuilder.createNodesSource(nodeData, item => item.id)
+  const nodesSource = graphBuilder.createNodesSource(
+    nodeData,
+    (item) => item.id
+  )
 
   return nodesSource
 }
@@ -45,7 +48,10 @@ export function createNodesSourceFromIEnumerable(
   const nodeData = IEnumerable.from([{ id: '10' }, { id: '11' }, { id: '12' }])
 
   // nodes source for the blue nodes
-  const nodesSource = graphBuilder.createNodesSource(nodeData, item => item.id)
+  const nodesSource = graphBuilder.createNodesSource(
+    nodeData,
+    (item) => item.id
+  )
 
   return nodesSource
 }
@@ -96,7 +102,7 @@ export function createNodesSourceFromGenerator(
   }
 
   // nodes source for the brown nodes
-  const nodesSource = graphBuilder.createNodesSource(nodes, item => item.id)
+  const nodesSource = graphBuilder.createNodesSource(nodes, (item) => item.id)
 
   return nodesSource
 }

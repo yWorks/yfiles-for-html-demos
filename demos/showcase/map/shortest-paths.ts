@@ -40,7 +40,7 @@ import {
   ShortestPath
 } from 'yfiles'
 import { getArcHeight } from './map-styles'
-import type { Map } from 'leaflet'
+import type { Map as LeafletMap } from 'leaflet'
 import { LatLng } from 'leaflet'
 import { getAirportData } from './data-types'
 
@@ -49,7 +49,7 @@ let lastClickedNode: INode | undefined
 /**
  * Registers listeners to graph changes and clicks to update the highlighted of the shortest paths.
  */
-export function initializeShortestPaths(graphComponent: GraphComponent, map: Map): void {
+export function initializeShortestPaths(graphComponent: GraphComponent, map: LeafletMap): void {
   const inputMode = graphComponent.inputMode as GraphViewerInputMode
   inputMode.addItemClickedListener((_, evt) => {
     updateShortestPathHighlight(evt.item as INode, graphComponent, map)
@@ -86,7 +86,7 @@ function initializeHighlights(graphComponent: GraphComponent): void {
 
   // use highlightDecorator for edges as we want to use different arc heights for individual edges
   graphComponent.graph.decorator.edgeDecorator.highlightDecorator.setFactory(
-    edge =>
+    (edge) =>
       new EdgeStyleDecorationInstaller({
         edgeStyle: new ArcEdgeStyle({
           stroke: '5px dashed #db3a34',
@@ -102,7 +102,7 @@ function initializeHighlights(graphComponent: GraphComponent): void {
 function updateShortestPathHighlight(
   clickedNode: INode,
   graphComponent: GraphComponent,
-  map: Map
+  map: LeafletMap
 ): void {
   const highlightManager = graphComponent.highlightIndicatorManager
   const graph = graphComponent.graph
@@ -126,7 +126,7 @@ function updateShortestPathHighlight(
     highlightManager.clearHighlights()
 
     const result = algorithm.run(graph)
-    result.edges.forEach(edge => {
+    result.edges.forEach((edge) => {
       // highlight the edge, its source/target nodes and their associated labels
       highlightManager.addHighlight(edge)
       const sourceNode = edge.sourceNode!
@@ -155,7 +155,7 @@ export function updateHighlights(graphComponent: GraphComponent): void {
   const highlightManager = graphComponent.highlightIndicatorManager
   const highlightedItems = highlightManager.selectionModel!.toArray()
   highlightManager.clearHighlights()
-  highlightedItems.forEach(item => {
+  highlightedItems.forEach((item) => {
     graphComponent.highlightIndicatorManager.addHighlight(item)
   })
 }

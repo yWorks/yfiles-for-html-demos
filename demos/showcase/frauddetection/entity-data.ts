@@ -164,7 +164,7 @@ export function getTimeEntry(item: Entity): TimeEntry {
 }
 
 export function getNode(graph: IGraph, entityData: Entity): INode | null {
-  return graph.nodes.find(node => {
+  return graph.nodes.find((node) => {
     const data = getEntityData(node)
     return data.id === entityData.id
   })

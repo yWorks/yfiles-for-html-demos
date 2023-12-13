@@ -161,16 +161,16 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id,
-    parentId: item => item.parentId
+    id: (item) => item.id,
+    parentId: (item) => item.parentId
   })
 
   const edgesSource = graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
-  edgesSource.edgeCreator.createLabelsSource(item => item.labels).labelCreator.textProvider = (
+  edgesSource.edgeCreator.createLabelsSource((item) => item.labels).labelCreator.textProvider = (
     item
   ): string => item.text
 
@@ -249,7 +249,7 @@ function onLabelPropertyChanged(source: HTMLElement): void {
  * @param source The HTMLElement that reported a change.
  */
 function updateLabelValues(labels: IEnumerable<ILabel>, source: HTMLElement): void {
-  labels.forEach(edgeLabel => {
+  labels.forEach((edgeLabel) => {
     const oldDescriptor = descriptorMapper.get(edgeLabel)
     const descriptor = oldDescriptor
       ? new PreferredPlacementDescriptor(oldDescriptor)
@@ -303,13 +303,13 @@ function updateLabelValues(labels: IEnumerable<ILabel>, source: HTMLElement): vo
     }
     if (source === angleNumberField) {
       const v = parseFloat(angleNumberField.value)
-      if (!isNaN(v)) {
+      if (!Number.isNaN(v)) {
         descriptor.angle = Geom.toRadians(v)
       }
     }
     if (source === distanceToEdgeNumberField) {
       const v = parseFloat(distanceToEdgeNumberField.value)
-      if (!isNaN(v)) {
+      if (!Number.isNaN(v)) {
         descriptor.distanceToEdge = v
       }
     }
@@ -471,7 +471,7 @@ function initializeUI(): void {
 
   distanceToEdgeNumberField.addEventListener(
     'change',
-    input => {
+    (input) => {
       if (parseFloat((input.target! as HTMLInputElement).value) > 200) {
         alert('Distance cannot be larger than 200.')
         ;(input.target! as HTMLInputElement).value = '-1'
@@ -481,7 +481,7 @@ function initializeUI(): void {
   )
   angleNumberField.addEventListener(
     'change',
-    input => {
+    (input) => {
       const angle = parseFloat((input.target! as HTMLInputElement).value)
       if (angle <= -360 || angle >= 360) {
         ;(input.target! as HTMLInputElement).value = `${angle % 360}`

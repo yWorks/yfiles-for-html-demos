@@ -37,6 +37,4 @@ export class GraphMLProperty {
   name = null
   type = KeyType.INT
   keyScope = KeyScope.ALL
-
-  constructor() {}
 }

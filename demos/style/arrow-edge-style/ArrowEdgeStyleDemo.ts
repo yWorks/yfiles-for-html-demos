@@ -104,7 +104,7 @@ function createSampleGraph(graph: IGraph): void {
     data: SampleGraph.edgeList,
     sourceId: 'source',
     targetId: 'target',
-    style: dataItem =>
+    style: (dataItem) =>
       dataItem.style ? getStyleForOptionsPanel(dataItem.style) : getStyleForOptionsPanel()
   })
   builder.buildGraph()
@@ -148,35 +148,35 @@ function initializeUI(graphComponent: GraphComponent): void {
   basicShape.addEventListener('change', () => {
     const value = basicShape.value
     const shape = ArrowStyleShape.from(value as ArrowStyleShapeStringValues)
-    applyStyleSetting(graphComponent, style => (style.shape = shape))
+    applyStyleSetting(graphComponent, (style) => (style.shape = shape))
     shaftRatioRange.disabled = value === 'PARALLELOGRAM' || value === 'TRAPEZOID'
   })
 
   thicknessRange.addEventListener('input', () => {
     const thickness = parseFloat(thicknessRange.value)
-    applyStyleSetting(graphComponent, style => (style.thickness = thickness))
+    applyStyleSetting(graphComponent, (style) => (style.thickness = thickness))
     thicknessRangeLabel.innerText = thickness.toFixed(0)
   })
 
   angleRange.addEventListener('input', () => {
     const value = angleRange.value
     const angle = toRadians(parseFloat(value))
-    applyStyleSetting(graphComponent, style => (style.angle = angle))
+    applyStyleSetting(graphComponent, (style) => (style.angle = angle))
     angleLabel.innerText = value
   })
 
   shaftRatioRange.addEventListener('input', () => {
     const value = shaftRatioRange.value
     const shaftRatio = parseFloat(value)
-    applyStyleSetting(graphComponent, style => (style.shaftRatio = shaftRatio))
+    applyStyleSetting(graphComponent, (style) => (style.shaftRatio = shaftRatio))
     shaftRatioLabel.innerText = value
   })
 
   croppingRange.addEventListener('input', () => {
     const value = croppingRange.value
     const cropping = parseFloat(value)
-    applyStyleSetting(graphComponent, style => (style.sourceCropping = cropping))
-    applyStyleSetting(graphComponent, style => (style.targetCropping = cropping))
+    applyStyleSetting(graphComponent, (style) => (style.sourceCropping = cropping))
+    applyStyleSetting(graphComponent, (style) => (style.targetCropping = cropping))
     croppingLabel.innerText = value
   })
 
@@ -200,7 +200,7 @@ function applyStyleSetting(
 ): void {
   const graph = graphComponent.graph
 
-  graphComponent.selection.selectedEdges.forEach(edge => {
+  graphComponent.selection.selectedEdges.forEach((edge) => {
     const style = edge.style
     if (style instanceof ArrowEdgeStyle) {
       adjustStyle(style)

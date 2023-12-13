@@ -110,7 +110,7 @@ export function initializeDefaultStyles(graphComponent) {
 export function updateStyles(graph) {
   const label2color = new Map()
 
-  graph.nodeLabels.forEach(label => {
+  graph.nodeLabels.forEach((label) => {
     const node = label.owner
     // if no colorId is assigned, get one from the demo's colors
     if (getPoliticalParty(node).colorId === undefined) {
@@ -193,7 +193,7 @@ export function updateAdjacentEdges(node, graph) {
 export function updateEdgeStyle(edge) {
   const style = edge.style
   style.stroke = new Stroke(getEdgeColor(edge), getVoterShift(edge).thickness)
-  edge.labels.forEach(label => {
+  edge.labels.forEach((label) => {
     const style = label.style
     style.textFill = new SolidColorFill(getLabelColor(label))
   })

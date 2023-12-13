@@ -102,7 +102,7 @@ function createStructureView(graphComponent) {
   const structureView = new StructureView('#structure-view', graphComponent.graph)
 
   // Zoom to the node when clicking on an element in the structure view
-  structureView.elementClickedCallback = node => {
+  structureView.elementClickedCallback = (node) => {
     const viewNode = graphComponent.graph.foldingView
       ? graphComponent.graph.foldingView.getViewItem(node)
       : node
@@ -126,25 +126,25 @@ function createGraph(graph) {
 
   // create nodes
   graphBuilder.createNodesSource({
-    data: sampleData.nodes.filter(item => !item.id.startsWith('Group')),
-    id: item => item.id,
-    parentId: item => item.parentId,
+    data: sampleData.nodes.filter((item) => !item.id.startsWith('Group')),
+    id: (item) => item.id,
+    parentId: (item) => item.parentId,
     labels: ['id']
   })
 
   // create group nodes
   graphBuilder.createGroupNodesSource({
-    data: sampleData.nodes.filter(item => item.id.startsWith('Group')),
-    id: item => item.id,
-    parentId: item => item.parentId,
+    data: sampleData.nodes.filter((item) => item.id.startsWith('Group')),
+    id: (item) => item.id,
+    parentId: (item) => item.parentId,
     labels: ['id']
   })
 
   // create edges
   graphBuilder.createEdgesSource({
     data: sampleData.edges,
-    sourceId: item => item.from,
-    targetId: item => item.to
+    sourceId: (item) => item.from,
+    targetId: (item) => item.to
   })
 
   graphBuilder.buildGraph()
@@ -171,7 +171,7 @@ function createEditorInputMode() {
  * @param {!StructureView} structureView
  */
 function initializeUI(structureView) {
-  document.getElementById('sync-folding-state').addEventListener('change', e => {
+  document.getElementById('sync-folding-state').addEventListener('change', (e) => {
     structureView.syncFoldingState = e.target.checked
   })
 }

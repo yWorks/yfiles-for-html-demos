@@ -152,7 +152,7 @@ export abstract class DemoConfiguration {
       // add the bends
       if (edgeData.b != null) {
         const bendData = edgeData.b as { x: number; y: number }[]
-        bendData.forEach(bend => {
+        bendData.forEach((bend) => {
           graph.addBend(edge, bend)
         })
       }

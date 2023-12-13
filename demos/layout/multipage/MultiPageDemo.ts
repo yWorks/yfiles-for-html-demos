@@ -131,12 +131,12 @@ function runMultiPageLayout(): void {
   // parse the pageWidth and pageHeight parameters
   const pageWidthTextBox = document.querySelector<HTMLInputElement>('#pageWidthTextBox')!
   let pageWidth: number = parseFloat(pageWidthTextBox.value)
-  if (isNaN(pageWidth)) {
+  if (Number.isNaN(pageWidth)) {
     pageWidth = 800
   }
   const pageHeightTextBox = document.querySelector<HTMLInputElement>('#pageHeightTextBox')!
   let pageHeight: number = parseFloat(pageHeightTextBox.value)
-  if (isNaN(pageHeight)) {
+  if (Number.isNaN(pageHeight)) {
     pageHeight = 800
   }
 
@@ -250,8 +250,8 @@ function setPageNumber(newPageNumber: number, targetNode: INode | null = null): 
     newPageNumber < 0
       ? 0
       : newPageNumber > viewGraphs.length - 1
-      ? viewGraphs.length - 1
-      : newPageNumber
+        ? viewGraphs.length - 1
+        : newPageNumber
 
   const pageNumberTextBox = document.querySelector<HTMLInputElement>('#page-number-text-box')!
   pageNumberTextBox.value = (pageNumber + 1).toString()
@@ -317,7 +317,7 @@ function goToReferencingNode(viewNode: INode) {
  * A valid page number lies between 0 and the number of pages.
  */
 function checkPageNumber(pageNo: any): boolean {
-  return !isNaN(pageNo) && viewGraphs && pageNo >= 0 && pageNo < viewGraphs.length
+  return !Number.isNaN(pageNo) && viewGraphs && pageNo >= 0 && pageNo < viewGraphs.length
 }
 
 /**
@@ -337,15 +337,15 @@ function initializeUI(): void {
   })
   document
     .querySelector<HTMLInputElement>('#page-number-text-box')!
-    .addEventListener('change', evt => {
+    .addEventListener('change', (evt) => {
       const page = (evt.target as HTMLInputElement).value
       const pageNo = parseInt(page as string) - 1
-      if (!isNaN(pageNo) && checkPageNumber(pageNo)) {
+      if (!Number.isNaN(pageNo) && checkPageNumber(pageNo)) {
         setPageNumber(pageNo)
       }
     })
 
-  document.querySelector<HTMLSelectElement>('#samples')!.addEventListener('change', async evt => {
+  document.querySelector<HTMLSelectElement>('#samples')!.addEventListener('change', async (evt) => {
     const value = (evt.target as HTMLSelectElement).value
     if (value === 'yFiles Layout Namespaces') {
       document.querySelector<HTMLSelectElement>('#coreLayoutComboBox')!.value = 'Tree'

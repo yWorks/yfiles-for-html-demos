@@ -57,13 +57,6 @@ export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBou
   private arrowFigure: GeneralPath | null = null
 
   /**
-   * Initializes a new instance of the {@link Sample1Arrow} class.
-   */
-  constructor() {
-    super()
-  }
-
-  /**
    * Returns the length of the arrow, i.e. the distance from the arrow's tip to
    * the position where the visual representation of the edge's path should begin.
    * Value: Always returns 7

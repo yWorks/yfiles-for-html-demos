@@ -50,7 +50,7 @@ export function initializeHighlight(graphComponent: GraphComponent): void {
   const graph = graphComponent.graph
   // set a BezierEdgeStyle for the edge highlighting with the color and thickness of the associated edge
   graph.decorator.edgeDecorator.highlightDecorator.setFactory(
-    edge =>
+    (edge) =>
       new EdgeStyleDecorationInstaller({
         edgeStyle: new BezierEdgeStyle({
           stroke: new Stroke(getEdgeColor(edge), getVoterShift(edge).thickness!)
@@ -60,7 +60,7 @@ export function initializeHighlight(graphComponent: GraphComponent): void {
   )
   // set a highlighting style for the labels
   graph.decorator.labelDecorator.highlightDecorator.setFactory(
-    label =>
+    (label) =>
       new LabelStyleDecorationInstaller({
         labelStyle: new DefaultLabelStyle({
           shape: 'pill',

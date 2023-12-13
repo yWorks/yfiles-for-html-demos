@@ -106,7 +106,7 @@ async function run() {
  */
 function initializeAugmentations() {
   // bars should have a floor space of 10x10 at the node center
-  const layoutProvider = node => Rect.fromCenter(node.layout.center, new Size(10, 10))
+  const layoutProvider = (node) => Rect.fromCenter(node.layout.center, new Size(10, 10))
 
   // bars should be visualized on top of the normal content group
   const barGroup = graphComponent.rootGroup.addGroup()
@@ -245,7 +245,7 @@ async function loadSampleGraph() {
 function initializeUI() {
   document.querySelector('#bar-data').addEventListener('change', onBarDataChanged)
 
-  document.querySelector('#toggle-labels').addEventListener('change', e => {
+  document.querySelector('#toggle-labels').addEventListener('change', (e) => {
     toggleLabels(e.target.checked)
   })
 }

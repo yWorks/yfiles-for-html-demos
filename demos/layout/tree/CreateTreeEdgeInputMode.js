@@ -185,7 +185,7 @@ export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
       // fire edge created event
       this.onEdgeCreated(new EdgeEventArgs(edge))
     } else if (edge instanceof Promise) {
-      edge.then(e => {
+      edge.then((e) => {
         if (e) {
           this.onEdgeCreated(new EdgeEventArgs(e))
         }

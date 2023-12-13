@@ -150,7 +150,7 @@ function initializeDemoStyles(graph: IGraph, getHeat: (node: INode) => number): 
 
   graph.nodeDefaults.style = new ProcessingStepNodeStyleDecorator(
     new ShapeNodeStyle({ fill: '#494949', stroke: 'none' }),
-    node => quantize(getHeat(node))
+    (node) => quantize(getHeat(node))
   )
   graph.nodeDefaults.size = new Size(150, 30)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({

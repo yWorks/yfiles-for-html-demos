@@ -264,7 +264,7 @@ export default class DecisionTree {
     const copiedNodes = []
     const copiedParentNodes = new Map()
     // copy the successors from the original graph
-    this.originalGraph.outEdgesAt(originalNode).forEach(originalEdge => {
+    this.originalGraph.outEdgesAt(originalNode).forEach((originalEdge) => {
       const originalTargetNode = originalEdge.targetNode
       if (!this.originalGraph.isGroupNode(originalTargetNode)) {
         // target is not a group, thus copy it
@@ -295,14 +295,14 @@ export default class DecisionTree {
         const copiedGroupNode = this.copyGroupNode(originalTargetNode)
 
         // copy children
-        this.originalGraph.getChildren(originalTargetNode).forEach(originalNode => {
+        this.originalGraph.getChildren(originalTargetNode).forEach((originalNode) => {
           const copiedChildNode = this.copyNode(originalNode, copiedGroupNode)
           copiedNodes.push(copiedChildNode)
         })
 
         this.copyEdge(originalEdge, copiedNode, copiedGroupNode)
 
-        this.graph.getChildren(copiedGroupNode).forEach(copiedChildNode => {
+        this.graph.getChildren(copiedGroupNode).forEach((copiedChildNode) => {
           if (this.getOriginalOutDegree(copiedChildNode) > 0) {
             // child nodes that have outgoing edges are clickable nodes
             this.activeNodes.add(copiedChildNode)
@@ -327,11 +327,11 @@ export default class DecisionTree {
     // get all nodes in this layer
     let layerNodes = this.layerToNodesMap.get(layer)
     // remove all nodes in this layer from the path
-    layerNodes.forEach(node => this.pathNodes.delete(node))
+    layerNodes.forEach((node) => this.pathNodes.delete(node))
     // remove all nodes in lower layers
     for (let l = layer + 1; l <= this.currentLayer; l++) {
       layerNodes = this.layerToNodesMap.get(l)
-      layerNodes.forEach(node => {
+      layerNodes.forEach((node) => {
         this.graph.remove(node)
         this.pathNodes.delete(node)
         this.activeNodes.delete(node)
@@ -349,7 +349,7 @@ export default class DecisionTree {
    * Updates the styles of all nodes.
    */
   updateNodeStyles() {
-    this.graph.nodes.forEach(node => {
+    this.graph.nodes.forEach((node) => {
       if (this.graph.isGroupNode(node)) {
         this.graph.setStyle(node, groupNodeStyle)
       } else if (this.getOriginalOutDegree(node) === 0) {
@@ -379,7 +379,7 @@ export default class DecisionTree {
       originalNode.style,
       originalNode.tag
     )
-    originalNode.labels.forEach(label =>
+    originalNode.labels.forEach((label) =>
       this.graph.addLabel(
         copiedNode,
         label.text,
@@ -410,7 +410,7 @@ export default class DecisionTree {
       originalNode.style,
       originalNode.tag
     )
-    originalNode.labels.forEach(label =>
+    originalNode.labels.forEach((label) =>
       this.graph.addLabel(
         copiedGroupNode,
         label.text,
@@ -454,7 +454,7 @@ export default class DecisionTree {
       edgeStyle,
       originalEdge.tag
     )
-    originalEdge.labels.forEach(label =>
+    originalEdge.labels.forEach((label) =>
       this.graph.addLabel(
         copiedEdge,
         label.text,
@@ -516,7 +516,7 @@ export default class DecisionTree {
       layoutData.incrementalHints.incrementalLayeringNodes = incrementalNodes
 
       // configure critical edges so the path edges are aligned
-      layoutData.criticalEdgePriorities = edge =>
+      layoutData.criticalEdgePriorities = (edge) =>
         this.pathNodes.has(edge.sourceNode) && this.pathNodes.has(edge.targetNode) ? 1 : 0
 
       this.runningLayout = true
@@ -543,7 +543,7 @@ export default class DecisionTree {
 
     // mark the new nodes and place them between their neighbors
     const layoutData = new PlaceNodesAtBarycenterStageData({
-      affectedNodes: node => incrementalNodes.indexOf(node) > -1
+      affectedNodes: (node) => incrementalNodes.indexOf(node) > -1
     })
     const layout = new PlaceNodesAtBarycenterStage()
     graph.applyLayout(layout, layoutData)

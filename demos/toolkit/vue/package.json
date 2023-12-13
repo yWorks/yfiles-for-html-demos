@@ -11,19 +11,19 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false"
   },
   "dependencies": {
-    "core-js": "^3.31.0",
-    "vue": "^3.3.4",
+    "core-js": "^3.33.3",
+    "vue": "^3.3.8",
     "demo-utils": "../../utils",
-    "yfiles": "../../../lib-dev/yfiles-26.0.2+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-26.0.3+dev.tgz"
   },
   "devDependencies": {
-    "@tsconfig/node18": "^2.0.1",
-    "@types/node": "^18.16.18",
-    "@vitejs/plugin-vue": "^4.2.3",
+    "@tsconfig/node18": "^18.2.2",
+    "@types/node": "^20.9.4",
+    "@vitejs/plugin-vue": "^4.5.0",
     "@vue/tsconfig": "^0.4.0",
-    "@yworks/optimizer": "^1.8.1",
-    "typescript": "~5.1.6",
-    "vite": "^4.3.9",
-    "vue-tsc": "^1.8.1"
+    "@yworks/optimizer": "^1.8.2",
+    "typescript": "~5.3.2",
+    "vite": "~4.5.0",
+    "vue-tsc": "^1.8.22"
   }
 }

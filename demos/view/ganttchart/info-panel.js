@@ -70,7 +70,7 @@ export function showActivityInfo(activity, location, graphComponent) {
   const viewLocation = graphComponent.toViewCoordinates(location)
   const pageLocation = graphComponent.toPageFromView(viewLocation)
 
-  const formatted = isoString => {
+  const formatted = (isoString) => {
     return new GanttTimestamp(isoString).format()
   }
 

@@ -106,12 +106,12 @@ const ParallelEdgeRouterConfig = (Class as any)('ParallelEdgeRouterConfig', {
     const selection = graphComponent.selection
 
     if (this.scopeItem === Scope.SCOPE_AT_SELECTED_NODES) {
-      layoutData.affectedEdges.delegate = edge =>
+      layoutData.affectedEdges.delegate = (edge) =>
         selection.isSelected(edge.sourceNode!) || selection.isSelected(edge.targetNode!)
     } else if (this.scopeItem === Scope.SCOPE_SELECTED_EDGES) {
       layoutData.affectedEdges.items = selection.selectedEdges.toList()
     } else {
-      layoutData.affectedEdges.delegate = edge => true
+      layoutData.affectedEdges.delegate = (edge) => true
     }
 
     if (this.useSelectedEdgesAsMasterItem) {

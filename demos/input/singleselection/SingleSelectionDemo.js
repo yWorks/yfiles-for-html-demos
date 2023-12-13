@@ -89,7 +89,7 @@ async function run() {
 
   // wire up the UI
   const singleSelection = document.querySelector('#toggle-single-selection')
-  singleSelection.addEventListener('change', evt => {
+  singleSelection.addEventListener('change', (evt) => {
     toggleSingleSelection(graphComponent, singleSelection.checked)
   })
 
@@ -106,13 +106,13 @@ function buildGraph(graph, graphData) {
 
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
+    id: (item) => item.id
   })
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()

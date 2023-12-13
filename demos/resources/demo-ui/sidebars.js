@@ -91,7 +91,7 @@ function enableDraggableDescription(description) {
   description.append(verticalDragArea, horizontalDragArea)
 
   let resizingElement
-  const resize = event => {
+  const resize = (event) => {
     if (!resizingElement) return
 
     const vertical = resizingElement.classList.contains('demo-description__drag-area--vertical')
@@ -102,10 +102,10 @@ function enableDraggableDescription(description) {
           ? event.pageX
           : window.innerHeight - event.pageY
         : event instanceof TouchEvent
-        ? vertical
-          ? event.touches.item(0).pageX
-          : window.innerHeight - event.touches.item(0).pageY
-        : null
+          ? vertical
+            ? event.touches.item(0).pageX
+            : window.innerHeight - event.touches.item(0).pageY
+          : null
 
     if (eventPos == null) {
       return

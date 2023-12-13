@@ -81,10 +81,10 @@ export function changeLabelLayoutParameters(graph) {
  * @param {!IGraph} graph
  */
 export function resetLabelLayoutParameters(graph) {
-  graph.nodeLabels.forEach(label =>
+  graph.nodeLabels.forEach((label) =>
     graph.setLabelLayoutParameter(label, graph.nodeDefaults.labels.layoutParameter)
   )
-  graph.edgeLabels.forEach(label =>
+  graph.edgeLabels.forEach((label) =>
     graph.setLabelLayoutParameter(label, graph.edgeDefaults.labels.layoutParameter)
   )
 }

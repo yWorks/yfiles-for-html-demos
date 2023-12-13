@@ -148,14 +148,14 @@ function createEditorInputMode() {
     } else {
       const affectedEdges = new List()
       // nodes and edges are selected
-      graphSelection.selectedNodes.forEach(node => {
+      graphSelection.selectedNodes.forEach((node) => {
         // add all edges connected to the selected nodes to the affected edges' list
-        graphComponent.graph.edgesAt(node).forEach(edge => {
+        graphComponent.graph.edgesAt(node).forEach((edge) => {
           affectedEdges.add(edge)
         })
       })
       // add all selected edges to the affected edges' list
-      graphSelection.selectedEdges.forEach(edge => {
+      graphSelection.selectedEdges.forEach((edge) => {
         affectedEdges.add(edge)
       })
       // route the affected edges
@@ -166,14 +166,14 @@ function createEditorInputMode() {
   inputMode.handleInputMode.addDragFinishedListener(() => {
     const affectedEdges = new List()
     const graphSelection = graphComponent.selection
-    graphSelection.selectedNodes.forEach(node => {
+    graphSelection.selectedNodes.forEach((node) => {
       // add all edges connected to the selected nodes to the affected edges' list
-      graphComponent.graph.edgesAt(node).forEach(edge => {
+      graphComponent.graph.edgesAt(node).forEach((edge) => {
         affectedEdges.add(edge)
       })
     })
     // add bend owners to the affected edges' list
-    graphSelection.selectedBends.forEach(bend => {
+    graphSelection.selectedBends.forEach((bend) => {
       affectedEdges.add(bend.owner)
     })
     // route the affected edges
@@ -209,7 +209,7 @@ async function route() {
   filteredGraph.nodePredicateChanged()
 
   // don't draw maze nodes on top of the other nodes
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     if (node.tag && node.tag.maze) {
       graphComponent.graphModelManager.getCanvasObject(node).toBack()
     }
@@ -255,7 +255,7 @@ async function routeWithSettingsScope() {
  * @returns {!Promise} A promise which resolves after the layout is applied without errors.
  */
 async function routeAffectedEdges(affectedEdges) {
-  await routeImpl(edge => affectedEdges.includes(edge), EdgeRouterScope.ROUTE_AFFECTED_EDGES)
+  await routeImpl((edge) => affectedEdges.includes(edge), EdgeRouterScope.ROUTE_AFFECTED_EDGES)
 }
 
 /**
@@ -265,7 +265,7 @@ async function routeAffectedEdges(affectedEdges) {
  */
 async function routeEdgesAtAffectedNodes(affectedNodes) {
   await routeImpl(
-    node => affectedNodes.includes(node),
+    (node) => affectedNodes.includes(node),
     EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES
   )
 }
@@ -324,15 +324,15 @@ function createSampleGraph(graph) {
   builder.createNodesSource({
     data: MazeData.nodes,
     id: 'id',
-    layout: data => data,
-    style: data => {
+    layout: (data) => data,
+    style: (data) => {
       if (data.maze) {
         return mazeNodeStyle
       } else {
         return null
       }
     },
-    tag: data => ({ maze: data.maze })
+    tag: (data) => ({ maze: data.maze })
   })
   builder.createEdgesSource(MazeData.edges, 'from', 'to')
   builder.buildGraph()
@@ -356,7 +356,7 @@ function createMazeVisual() {
   const graph = graphComponent.graph
 
   // determine the nodes that model the obstacles
-  const mazeNodes = graph.nodes.filter(node => node.tag.maze)
+  const mazeNodes = graph.nodes.filter((node) => node.tag.maze)
   // add the maze visualization for the obstacle nodes
   const mazeVisual = new MazeVisual(mazeNodes)
   graphComponent.backgroundGroup.addChild(mazeVisual, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE)
@@ -368,8 +368,8 @@ function createMazeVisual() {
   // the obstacles
   filteredGraph = new FilteredGraphWrapper(
     graphComponent.graph,
-    node => inLayout || !node.tag || !node.tag.maze,
-    edge => true
+    (node) => inLayout || !node.tag || !node.tag.maze,
+    (edge) => true
   )
   graphComponent.graph = filteredGraph
 }

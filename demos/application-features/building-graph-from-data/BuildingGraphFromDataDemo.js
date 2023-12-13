@@ -103,7 +103,7 @@ function buildGraph(graph, graphData) {
   const nodes = {}
 
   // Iterate the group data and create the according group nodes.
-  graphData.groupsSource.forEach(groupData => {
+  graphData.groupsSource.forEach((groupData) => {
     groups[groupData.id] = graph.createGroupNode({
       labels: groupData.label != null ? [groupData.label] : [],
       layout: groupData.layout,
@@ -112,7 +112,7 @@ function buildGraph(graph, graphData) {
   })
 
   // Iterate the node data and create the according nodes.
-  graphData.nodesSource.forEach(nodeData => {
+  graphData.nodesSource.forEach((nodeData) => {
     const node = graph.createNode({
       labels: nodeData.label != null ? [nodeData.label] : [],
       layout: nodeData.layout,
@@ -128,14 +128,14 @@ function buildGraph(graph, graphData) {
   })
 
   // Set the parent groups after all nodes/groups are created.
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     if (node.tag.group) {
       graph.setParent(node, groups[node.tag.group])
     }
   })
 
   // Iterate the edge data and create the according edges.
-  graphData.edgesSource.forEach(edgeData => {
+  graphData.edgesSource.forEach((edgeData) => {
     // Note that nodes and groups need to have disjoint sets of ids, otherwise it is impossible to determine
     // which node is the correct source/target.
     graph.createEdge({
@@ -147,7 +147,7 @@ function buildGraph(graph, graphData) {
   })
 
   // If given, apply the edge layout information
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     const edgeData = edge.tag
     if (edgeData.sourcePort) {
       graph.setPortLocation(edge.sourcePort, Point.from(edgeData.sourcePort))
@@ -156,7 +156,7 @@ function buildGraph(graph, graphData) {
       graph.setPortLocation(edge.targetPort, Point.from(edgeData.targetPort))
     }
     if (edgeData.bends) {
-      edgeData.bends.forEach(bendLocation => {
+      edgeData.bends.forEach((bendLocation) => {
         graph.addBend(edge, bendLocation)
       })
     }

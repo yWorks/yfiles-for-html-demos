@@ -50,7 +50,10 @@ export default class CanvasEdgeStyle extends EdgeStyleBase {
    * @param color The edge color.
    * @param thickness The edge thickness
    */
-  constructor(private readonly color: Color, private readonly thickness: number) {
+  constructor(
+    private readonly color: Color,
+    private readonly thickness: number
+  ) {
     super()
   }
 
@@ -125,7 +128,7 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
     let location: IPoint = this.sourcePortLocation
     htmlCanvasContext.moveTo(location.x, location.y)
     if (this.bends.size > 0) {
-      this.bends.forEach(bend => {
+      this.bends.forEach((bend) => {
         location = bend.location
         htmlCanvasContext.lineTo(location.x, location.y)
       })

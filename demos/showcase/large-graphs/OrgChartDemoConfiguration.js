@@ -97,7 +97,7 @@ export default class OrgChartDemoConfiguration extends DemoConfiguration {
    * @returns {!Promise}
    */
   async initializeStyleDefaults(graph) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       // use the VuejsNodeStyle to display the nodes through a svg template
       // in this svg template you can see three styles in three zoom levels
       graph.nodeDefaults.style = new VuejsNodeStyle(this.nodeStyleTemplate)

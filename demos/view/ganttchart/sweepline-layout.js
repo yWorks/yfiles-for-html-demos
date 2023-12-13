@@ -52,7 +52,7 @@ const subRowCountMap = new Map()
  */
 export function getTaskY(task) {
   const tasks = dataModel.tasks
-  const index = tasks.findIndex(t => t.id === task.id)
+  const index = tasks.findIndex((t) => t.id === task.id)
   let height = ganttTaskSpacing
   for (let i = 0; i < index; i++) {
     height += getCompleteTaskHeight(tasks[i]) + ganttTaskSpacing
@@ -85,7 +85,7 @@ export function getTask(y) {
  */
 export function getActivityY(activity) {
   const taskId = activity.taskId
-  const task = dataModel.tasks.find(t => t.id === taskId)
+  const task = dataModel.tasks.find((t) => t.id === taskId)
   let y = getTaskY(task) + ganttActivitySpacing
   const subRow = getSubRowIndex(activity)
   y += subRow * (ganttActivityHeight + ganttActivitySpacing)
@@ -160,7 +160,7 @@ export function updateSubRowMappings(graphComponent) {
   }
 
   // calculate the sub-row mapping for each task
-  dataModel.tasks.forEach(task => {
+  dataModel.tasks.forEach((task) => {
     const maxRowIndex = calculateMappingForTask(task, taskId2Activities, subRowMap, graphComponent)
     subRowCountMap.set(task.id, maxRowIndex + 1)
   })
@@ -247,7 +247,7 @@ export function calculateMappingForTask(
     // create an array for the sweep-line algorithm
     const sweeplineData = []
     // push the information about start and end dates for each activity to the array
-    activityNodes.forEach(node => {
+    activityNodes.forEach((node) => {
       const bounds = node.style.renderer
         .getBoundsProvider(node, node.style)
         .getBounds(graphComponent.canvasContext)
@@ -272,7 +272,7 @@ export function calculateMappingForTask(
     sweeplineData.sort((t1, t2) => t1.x - t2.x)
     const subRows = [] // holds information about available and unavailable sub-rows
     // sweep (scan) the data
-    sweeplineData.forEach(d => {
+    sweeplineData.forEach((d) => {
       // a new task begins
       if (d.open) {
         // search for the first available sub-row

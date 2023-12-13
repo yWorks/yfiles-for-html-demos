@@ -63,18 +63,18 @@ export function getDefaultWriterOptions() {
       data.layout = { x, y, width, height }
     },
     nodeLabels: (data, node) => {
-      data.labels = node.labels.toArray().map(label => createLabelData(label, 'parameter'))
+      data.labels = node.labels.toArray().map((label) => createLabelData(label, 'parameter'))
     },
 
     edgeBends: (data, edge) => {
-      data.bends = edge.bends.toArray().map(bend => toPoint(bend.location))
+      data.bends = edge.bends.toArray().map((bend) => toPoint(bend.location))
     },
     edgePortLocations: (data, edge) => {
       data.sourcePort = toPoint(edge.sourcePort.location)
       data.targetPort = toPoint(edge.targetPort.location)
     },
     edgeLabels: (data, edge) => {
-      data.labels = edge.labels.toArray().map(label => createLabelData(label, 'parameter'))
+      data.labels = edge.labels.toArray().map((label) => createLabelData(label, 'parameter'))
     }
   }
 }
@@ -93,10 +93,10 @@ export function toJSON(graph, options) {
   return {
     nodeList: graph.nodes
       .toArray()
-      .map(node => createNodeData(node, graph, nodeIdProvider, actualOptions)),
+      .map((node) => createNodeData(node, graph, nodeIdProvider, actualOptions)),
     edgeList: graph.edges
       .toArray()
-      .map(edge => createEdgeData(edge, graph, nodeIdProvider, actualOptions))
+      .map((edge) => createEdgeData(edge, graph, nodeIdProvider, actualOptions))
   }
 }
 
@@ -176,21 +176,21 @@ export function createLabelData(label, details = 'none') {
   return details === 'none'
     ? { text }
     : details === 'parameter'
-    ? {
-        text,
-        layoutParameter: ILabelModelParameter.serializeParameter(layoutParameter)
-      }
-    : {
-        text,
-        layout: {
-          anchorX: layout.anchorX,
-          anchorY: layout.anchorY,
-          upX: layout.upX,
-          upY: layout.upY,
-          width: layout.width,
-          height: layout.height
+      ? {
+          text,
+          layoutParameter: ILabelModelParameter.serializeParameter(layoutParameter)
         }
-      }
+      : {
+          text,
+          layout: {
+            anchorX: layout.anchorX,
+            anchorY: layout.anchorY,
+            upX: layout.upX,
+            upY: layout.upY,
+            width: layout.width,
+            height: layout.height
+          }
+        }
 }
 
 /**
@@ -208,7 +208,7 @@ function toPoint(pointLike) {
  */
 function createNodeIdProvider() {
   const nodeToIdMap = new Map()
-  return node => {
+  return (node) => {
     if (nodeToIdMap.has(node)) {
       return nodeToIdMap.get(node)
     }

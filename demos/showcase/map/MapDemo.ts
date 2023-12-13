@@ -40,7 +40,7 @@ import { finishLoading } from 'demo-resources/demo-page'
 import { flightData } from './resources/flight-data'
 import { initializeDefaultMapStyles } from './map-styles'
 import { createMap } from './leaflet-graph-layer'
-import type { Map } from 'leaflet'
+import type { Map as LeafletMap } from 'leaflet'
 import { initializeShortestPaths, updateHighlights } from './shortest-paths'
 import { getAirportData } from './data-types'
 
@@ -78,7 +78,7 @@ async function run(): Promise<void> {
 /**
  * Builds the initial graph from FlightData.
  */
-function createGraph(graphComponent: GraphComponent, map: Map): void {
+function createGraph(graphComponent: GraphComponent, map: LeafletMap): void {
   const graph = graphComponent.graph
 
   // prepare the styles for the graph
@@ -155,7 +155,7 @@ function zoomChanged(graphComponent: GraphComponent, zoom: number): void {
   updateHighlights(graphComponent)
 
   // update the label for the airports since they depend on the zoom level
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const airportData = getAirportData(node)
     // show the airport's IATA-code when the zoom value is low
     graph.setLabelText(node.labels.at(0)!, zoom >= 4 ? airportData.name : airportData.iata)

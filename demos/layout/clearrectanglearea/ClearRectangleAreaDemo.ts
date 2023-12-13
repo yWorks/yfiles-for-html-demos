@@ -326,7 +326,7 @@ function getHitGroupNode(context: IInputModeContext): INode | null {
   if (nodeHitTester) {
     return nodeHitTester
       .enumerateHits(context, context.canvasComponent!.lastEventLocation)
-      .find(n => graphComponent.graph.isGroupNode(n))
+      .find((n) => graphComponent.graph.isGroupNode(n))
   }
   return null
 }
@@ -385,7 +385,7 @@ function loadGraph(sampleName: string): void {
 
   builder.buildGraph()
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
       graph.setPortLocation(edge.sourcePort!, Point.from(edge.tag.sourcePort))
     }

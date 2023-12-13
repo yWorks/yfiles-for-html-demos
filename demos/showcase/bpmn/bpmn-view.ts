@@ -499,7 +499,7 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
    * @see Specified by {@link ILookup.lookup}.
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     return ScalingLabelModel.STRETCH_MODEL.lookup(type)
   }
 
@@ -694,7 +694,7 @@ export class BpmnPortCandidateProvider extends PortCandidateProviderBase {
     const portCandidates = new List<IPortCandidate>()
 
     // provide existing ports as candidates only if they use EventPortStyle and have no edges attached to them.
-    node.ports.forEach(port => {
+    node.ports.forEach((port) => {
       if (port.style instanceof EventPortStyle && context.graph!.edgesAt(port).size === 0) {
         portCandidates.add(new DefaultPortCandidate(port))
       }
@@ -854,7 +854,7 @@ class AspectRatioHandle extends BaseClass(IHandle) {
     let deltaDragY = newLocation.y - originalLocation.y
     if (this.ratio === 0) {
       deltaDragX = 0
-    } else if (!isFinite(this.ratio)) {
+    } else if (!Number.isFinite(this.ratio)) {
       deltaDragY = 0
     } else if (Math.abs(this.ratio) > 1) {
       const sign =
@@ -1256,7 +1256,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
    * @see Specified by {@link ILookup.lookup}.
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     if (type === ILabelModelParameterProvider.$class) {
       return this as unknown as T
     }
@@ -1320,7 +1320,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
       )
 
       // check which label positions are already taken
-      node.labels.forEach(label => {
+      node.labels.forEach((label) => {
         if (label.layoutParameter instanceof ChoreographyParameter) {
           let index = 0
           const parameter = label.layoutParameter
@@ -1753,7 +1753,7 @@ class LineUpIcon extends Icon {
     const container = new SvgVisualGroup()
 
     let offset = 0
-    this.icons.forEach(pathIcon => {
+    this.icons.forEach((pathIcon) => {
       pathIcon.setBounds(new Rect(offset, 0, this.innerIconSize.width, this.innerIconSize.height))
       const pathIconVisual = pathIcon.createVisual(context)!
       container.add(pathIconVisual)
@@ -1903,7 +1903,7 @@ class CombinedIcon extends Icon {
     const container = new SvgVisualGroup()
 
     const iconBounds = new Rect(Point.ORIGIN, this.bounds.toSize())
-    this.icons.forEach(icon => {
+    this.icons.forEach((icon) => {
       icon.setBounds(iconBounds)
       const iconVisual = icon.createVisual(context)!
       container.add(iconVisual)
@@ -4113,7 +4113,7 @@ class ParticipantList extends BaseClass(IList) {
 
   getHeight(): number {
     let height = 0
-    this.innerList.forEach(participant => {
+    this.innerList.forEach((participant) => {
       height += participant.getSize()
     })
     return height
@@ -4121,7 +4121,7 @@ class ParticipantList extends BaseClass(IList) {
 
   getParticipantModCount(): number {
     let participantCount = 0
-    this.innerList.forEach(participant => {
+    this.innerList.forEach((participant) => {
       participantCount += participant.modCount
     })
     return participantCount
@@ -4668,7 +4668,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     // top participants
     let topOffset = 0
     let first = true
-    this._topParticipants.forEach(participant => {
+    this._topParticipants.forEach((participant) => {
       const participantIcon = this.createParticipantIcon(participant, true, first)
       tpi.add(participantIcon)
       const height = participant.getSize()
@@ -4683,7 +4683,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     // bottom participants
     let bottomOffset = bounds.height
     first = true
-    this._bottomParticipants.forEach(participant => {
+    this._bottomParticipants.forEach((participant) => {
       const participantIcon = this.createParticipantIcon(participant, false, first)
       bpi.add(participantIcon)
       const height = participant.getSize()
@@ -5169,10 +5169,10 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     clone.background = this.background
     clone.messageOutline = this.messageOutline
 
-    this.topParticipants.forEach(participant => {
+    this.topParticipants.forEach((participant) => {
       clone.topParticipants.add(participant.clone())
     })
-    this.bottomParticipants.forEach(participant => {
+    this.bottomParticipants.forEach((participant) => {
       clone.bottomParticipants.add(participant.clone())
     })
     return clone as this
@@ -6748,14 +6748,14 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
           // Get all leaf columns
           const leaves = col.table!.rootColumn.leaves.toList()
           // Determine the index
-          index = leaves.findIndex(curr => col === curr)
+          index = leaves.findIndex((curr) => col === curr)
           // Use the correct descriptor
           descriptor = index % 2 === 0 ? this.evenLeafDescriptor : this.oddLeafDescriptor
           actualBorderThickness = descriptor.borderThickness
         } else {
           const row = stripe as IRow
           const leaves = row.table!.rootRow.leaves.toList()
-          index = leaves.findIndex(curr => row === curr)
+          index = leaves.findIndex((curr) => row === curr)
           descriptor = index % 2 === 0 ? this.evenLeafDescriptor : this.oddLeafDescriptor
           actualBorderThickness = descriptor.borderThickness
         }
@@ -6824,13 +6824,13 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
         if (stripe instanceof IColumn) {
           const col = stripe
           const leaves = col.table!.rootColumn.leaves.toList()
-          index = leaves.findIndex(curr => col === curr)
+          index = leaves.findIndex((curr) => col === curr)
           descriptor = index % 2 === 0 ? this.evenLeafDescriptor : this.oddLeafDescriptor
           actualBorderThickness = descriptor.borderThickness
         } else {
           const row = stripe as IRow
           const leaves = row.table!.rootRow.leaves.toList()
-          index = leaves.findIndex(curr => row === curr)
+          index = leaves.findIndex((curr) => row === curr)
           descriptor = index % 2 === 0 ? this.evenLeafDescriptor : this.oddLeafDescriptor
           actualBorderThickness = descriptor.borderThickness
         }
@@ -8155,7 +8155,7 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
    * @see Specified by {@link ILookup.lookup}.
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     if (type === ILabelModelParameterProvider.$class) {
       return this as unknown as T
     }
@@ -9324,10 +9324,6 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
   private _insets: Insets = new Insets(15)
   private _renderer: GroupNodeStyleRenderer = new GroupNodeStyleRenderer()
 
-  constructor() {
-    super()
-  }
-
   /**
    * Gets the insets for the node.
    * These insets are returned via an {@link INodeInsetsProvider} if such an instance is queried
@@ -9584,7 +9580,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * @see Specified by {@link ILookup.lookup}.
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     if (type === INodeInsetsProvider.$class && this.lastStyle != null) {
       return new GroupInsetsProvider(this.lastStyle) as T
     }
@@ -10064,7 +10060,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * @see Specified by {@link ILookup.lookup}.
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     if (type === IEdgePathCropper.$class) {
       return EventPortEdgeIntersectionCalculator.CalculatorInstance as T
     }
@@ -10163,10 +10159,6 @@ class VisualToggleButton extends SvgVisual {
 class DataObjectIcon extends Icon {
   fill: Fill | null = null
   stroke: Stroke | null = null
-
-  constructor() {
-    super()
-  }
 
   createVisual(context: IRenderContext): SvgVisual {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -11317,10 +11309,10 @@ export class ChoreographyNodeStyleExtension extends MarkupExtension {
     const style = new ChoreographyNodeStyle()
     style.loopCharacteristic = this.loopCharacteristic
     style.subState = this.subState
-    this.topParticipants.forEach(participant => {
+    this.topParticipants.forEach((participant) => {
       style.topParticipants.add(participant)
     })
-    this.bottomParticipants.forEach(participant => {
+    this.bottomParticipants.forEach((participant) => {
       style.bottomParticipants.add(participant)
     })
     style.initiatingMessage = this.initiatingMessage
@@ -11581,10 +11573,10 @@ export class LegacyChoreographyNodeStyleExtension extends MarkupExtension {
     const style = new ChoreographyNodeStyle()
     style.loopCharacteristic = this.loopCharacteristic
     style.subState = this.subState
-    this.topParticipants.forEach(participant => {
+    this.topParticipants.forEach((participant) => {
       style.topParticipants.add(participant)
     })
-    this.bottomParticipants.forEach(participant => {
+    this.bottomParticipants.forEach((participant) => {
       style.bottomParticipants.add(participant)
     })
     style.initiatingMessage = this.initiatingMessage
@@ -12566,10 +12558,10 @@ export const BpmnHandleSerializationListener = (
     markupExtension = new ChoreographyNodeStyleExtension()
     markupExtension.loopCharacteristic = item.loopCharacteristic
     markupExtension.subState = item.subState
-    item.topParticipants.forEach(participant => {
+    item.topParticipants.forEach((participant) => {
       markupExtension.topParticipants.add(participant)
     })
-    item.bottomParticipants.forEach(participant => {
+    item.bottomParticipants.forEach((participant) => {
       markupExtension.bottomParticipants.add(participant)
     })
     markupExtension.initiatingMessage = item.initiatingMessage

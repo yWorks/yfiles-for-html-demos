@@ -56,12 +56,12 @@ export function calculateCycles(graph, config) {
   // consisting only of elements that belong a cycle
   const connectedComponentsResult = new ConnectedComponents({
     subgraphEdges: cycleEdges,
-    subgraphNodes: node => graph.edgesAt(node).some(edge => cycleEdges.includes(edge))
+    subgraphNodes: (node) => graph.edgesAt(node).some((edge) => cycleEdges.includes(edge))
   }).run(graph)
 
   // color the cycle edges depending on which component they belong to
   connectedComponentsResult.components.forEach((cycle, cycleId) => {
-    cycle.nodes.forEach(node => markItem(node, cycleId))
-    cycle.inducedEdges.forEach(edge => markItem(edge, cycleId))
+    cycle.nodes.forEach((node) => markItem(node, cycleId))
+    cycle.inducedEdges.forEach((edge) => markItem(edge, cycleId))
   })
 }

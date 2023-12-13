@@ -114,7 +114,7 @@ async function run(): Promise<void> {
  * @param graph The given graph
  */
 function registerPortCandidateProvider(graph: IGraph): void {
-  graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(node => {
+  graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory((node) => {
     // Obtain the tag from the edge
     const nodeTag = node.tag
 
@@ -156,8 +156,8 @@ function createSampleGraph(graphComponent: GraphComponent): void {
     graphComponent.inputModeContext
   )
   candidates
-    .filter(portCandidate => portCandidate.validity !== PortCandidateValidity.DYNAMIC)
-    .forEach(portCandidate => portCandidate.createPort(graphComponent.inputModeContext))
+    .filter((portCandidate) => portCandidate.validity !== PortCandidateValidity.DYNAMIC)
+    .forEach((portCandidate) => portCandidate.createPort(graphComponent.inputModeContext))
 
   // The orange node
   createNode(graph, 100, 400, 100, 100, 'demo-orange', 'orange', 'Dynamic Ports')

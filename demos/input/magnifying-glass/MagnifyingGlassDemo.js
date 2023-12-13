@@ -108,7 +108,10 @@ function populateGraph(graph) {
     const circle = new GeneralPath()
     circle.appendEllipse(new Rect(0, 0, 1, 1), false)
 
-    obj[name] = new ImageNodeStyle({ image: deviceIcons[name], normalizedOutline: circle })
+    obj[name] = new ImageNodeStyle({
+      image: deviceIcons[name],
+      normalizedOutline: circle
+    })
     return obj
   }, {})
 
@@ -118,8 +121,8 @@ function populateGraph(graph) {
     data: networkData.nodeList,
     id: 'data.id',
     tag: 'data',
-    layout: dataItem => Rect.fromCenter(dataItem.layout, graph.nodeDefaults.size),
-    style: dataItem => deviceStyles[dataItem.data.type]
+    layout: (dataItem) => Rect.fromCenter(dataItem.layout, graph.nodeDefaults.size),
+    style: (dataItem) => deviceStyles[dataItem.data.type]
   })
   graphBuilder.createEdgesSource({
     data: networkData.edgeList,
@@ -134,7 +137,7 @@ function populateGraph(graph) {
  */
 function initializeUI() {
   const zoomSelectElement = document.querySelector('#lens-zoom')
-  zoomSelectElement.addEventListener('change', evt => {
+  zoomSelectElement.addEventListener('change', (evt) => {
     lensInputMode.zoomFactor = parseInt(zoomSelectElement.value)
   })
   zoomSelectElement.selectedIndex = 1

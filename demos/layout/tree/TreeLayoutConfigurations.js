@@ -73,7 +73,7 @@ export function createGenericConfiguration(graph, nodePlacerPanel) {
 
   // configure layout data with node placers, assistant markers and edge order
   const layoutData = new TreeLayoutData({
-    nodePlacers: node => {
+    nodePlacers: (node) => {
       if (graph.outDegree(node) > 0) {
         // return the node placer specified for the node
         return nodePlacerPanel.nodePlacers.get(node)
@@ -83,7 +83,7 @@ export function createGenericConfiguration(graph, nodePlacerPanel) {
       return new LeafNodePlacer()
     },
     // mark assistant nodes
-    assistantNodes: node => node.tag.assistant,
+    assistantNodes: (node) => node.tag.assistant,
     // order out edges by the label of their target nodes
     outEdgeComparers: () => {
       return (edge1, edge2) => {
@@ -108,7 +108,7 @@ function getOrdinal(edge) {
   const targetLabels = edge.targetNode.labels
   if (targetLabels.size > 0) {
     const number = Number.parseFloat(targetLabels.first().text)
-    if (!isNaN(number)) {
+    if (!Number.isNaN(number)) {
       return number
     }
   }

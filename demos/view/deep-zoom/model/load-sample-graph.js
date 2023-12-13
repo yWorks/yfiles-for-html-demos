@@ -46,8 +46,8 @@ export async function loadSampleGraph(graphComponent) {
     id: 'id',
     parentId: 'parentId',
     styleBindings: {
-      fill: data => data.fill,
-      stroke: dataItem => `1.5px ${dataItem.stroke}`
+      fill: (data) => data.fill,
+      stroke: (dataItem) => `1.5px ${dataItem.stroke}`
     }
   })
 
@@ -58,7 +58,7 @@ export async function loadSampleGraph(graphComponent) {
     id: 'id',
     parentId: 'parentId',
     styleBindings: {
-      backgroundStyle: dataItem =>
+      backgroundStyle: (dataItem) =>
         new ShapeNodeStyle({
           fill: dataItem.fill,
           stroke: `2.5px ${dataItem.stroke}`,
@@ -74,8 +74,8 @@ export async function loadSampleGraph(graphComponent) {
     sourceId: 'from',
     targetId: 'to',
     styleBindings: {
-      stroke: dataItem => `1.5px ${dataItem.color}`,
-      targetArrow: data => `${data.color} medium triangle`
+      stroke: (dataItem) => `1.5px ${dataItem.color}`,
+      targetArrow: (data) => `${data.color} medium triangle`
     }
   })
 

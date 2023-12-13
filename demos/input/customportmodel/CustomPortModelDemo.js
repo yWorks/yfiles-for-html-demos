@@ -74,7 +74,7 @@ async function run() {
 
   // for selected nodes show the handles
   graphComponent.graph.decorator.nodeDecorator.handleProviderDecorator.setFactory(
-    node => new PortsHandleProvider(node)
+    (node) => new PortsHandleProvider(node)
   )
 
   // for nodes add a custom port candidate provider implementation which uses our model

@@ -101,7 +101,7 @@ function configureRouterScope(graph: IGraph, router: EdgeRouter, data: EdgeRoute
   router.scope = EdgeRouterScope.ROUTE_AFFECTED_EDGES
 
   // define the set of edges that should be routed by using a delegate function
-  data.affectedEdges.delegate = edge => shouldRouteEdge(edge)
+  data.affectedEdges.delegate = (edge) => shouldRouteEdge(edge)
 }
 
 function shouldRouteEdge(e: IEdge) {
@@ -130,7 +130,7 @@ function configureRoutingStyle(
   // copy the current default descriptor and change the routingStyle property on the copied instance
   const octilinearDescriptor = defaultDescriptor.createCopy()
   octilinearDescriptor.routingStyle = EdgeRouterEdgeRoutingStyle.OCTILINEAR
-  layoutData.edgeLayoutDescriptors.delegate = edge =>
+  layoutData.edgeLayoutDescriptors.delegate = (edge) =>
     routeOctilinear(edge) ? octilinearDescriptor : defaultDescriptor
 }
 
@@ -143,7 +143,7 @@ function routeOctilinear(edge: IEdge) {
  */
 function configureEdgeGrouping(graph: IGraph, router: EdgeRouter, layoutData: EdgeRouterData) {
   const groupId = 'goldenGroup'
-  layoutData.targetGroupIds.delegate = edge => (edge.tag === 10 || edge.tag == 7 ? groupId : null)
+  layoutData.targetGroupIds.delegate = (edge) => (edge.tag === 10 || edge.tag == 7 ? groupId : null)
 }
 
 /**

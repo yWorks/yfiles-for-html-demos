@@ -275,7 +275,7 @@ function updateHighlights(sender, hoveredItemChangedEventArgs) {
   manager.addHighlight(item)
   if (item instanceof INode) {
     // highlight dependencies and their activities
-    sender.inputModeContext.graph.inEdgesAt(item).forEach(edge => {
+    sender.inputModeContext.graph.inEdgesAt(item).forEach((edge) => {
       manager.addHighlight(edge)
       manager.addHighlight(edge.sourceNode)
     })

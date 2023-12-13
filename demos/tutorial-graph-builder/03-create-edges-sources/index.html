@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -73,12 +73,10 @@
       <div
         class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
       >
-        <b>Step 4/14</b
+        <b>Step 3/13</b
         ><span class="demo-toolbar__tutorial-step-title"> &mdash; 03 Create Edges Sources</span>
         <div class="tutorial-dropdown">
           <a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
-            >Tutorial: Graph Builder</a
-          ><a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
             >01 Create Graph</a
           ><a
             href="../../tutorial-graph-builder/02-create-nodes-sources/"
@@ -193,9 +191,9 @@ graphBuilder.<span class="hljs-title function_">createNodesSource</span>(nodeDat
 <span class="hljs-comment">// create an edges source with id providers for sources and targets</span>
 <span class="hljs-keyword">const</span> edgesSource = graphBuilder.<span class="hljs-title function_">createEdgesSource</span>({
   <span class="hljs-attr">data</span>: edgeData,
-  <span class="hljs-attr">id</span>: <span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item.<span class="hljs-property">id</span>,
-  <span class="hljs-attr">sourceId</span>: <span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item.<span class="hljs-property">sourceId</span>,
-  <span class="hljs-attr">targetId</span>: <span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item.<span class="hljs-property">targetId</span>
+  <span class="hljs-attr">id</span>: <span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">id</span>,
+  <span class="hljs-attr">sourceId</span>: <span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">sourceId</span>,
+  <span class="hljs-attr">targetId</span>: <span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">targetId</span>
 })</code></pre>
                 </div>
               </div>

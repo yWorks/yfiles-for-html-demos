@@ -255,7 +255,7 @@ export function getActivityWidth(activity) {
  * @returns {!Task}
  */
 export function getTaskForId(taskId) {
-  return tasks.find(task => task.id === taskId)
+  return tasks.find((task) => task.id === taskId)
 }
 
 /**
@@ -264,7 +264,7 @@ export function getTaskForId(taskId) {
  * @returns {!string}
  */
 export function getTaskColor(task) {
-  const taskIndex = tasks.findIndex(t => t.id === task.id)
+  const taskIndex = tasks.findIndex((t) => t.id === task.id)
   return colorPalette[taskIndex % colorPalette.length]
 }
 

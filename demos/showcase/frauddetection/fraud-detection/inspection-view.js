@@ -160,7 +160,7 @@ function initializeInputMode() {
     const selection = evt.selection
     for (const item of selection) {
       if (item instanceof INode) {
-        filteredGraph.edgesAt(item, AdjacencyTypes.ALL).forEach(edge => {
+        filteredGraph.edgesAt(item, AdjacencyTypes.ALL).forEach((edge) => {
           if (!selection.isSelected(edge.opposite(item))) {
             incrementalNodes.push(edge.opposite(item))
           }
@@ -191,7 +191,7 @@ function copyGraph(graph, componentNodes) {
   const graphCopier = new GraphCopier()
   graphCopier.copy(
     graph,
-    item =>
+    (item) =>
       !INode.isInstance(item) ||
       (componentNodes.has(item) && getEntityData(item).type !== 'Bank Branch'),
     fraudDetectionComponent.graph,
@@ -205,13 +205,13 @@ function copyGraph(graph, componentNodes) {
 function initializeTimelineComponent() {
   fraudDetectionTimeline = new Timeline('fraud-detection-timeline-component', getTimeEntry)
   fraudDetectionTimeline.items = fraudDetectionComponent.graph.nodes.map(getEntityData).toArray()
-  fraudDetectionTimeline.addBarHoverListener(nodes => {
+  fraudDetectionTimeline.addBarHoverListener((nodes) => {
     const highlightManager = fraudDetectionComponent.highlightIndicatorManager
     highlightManager.clearHighlights()
 
-    const selected = new Set(nodes.map(node => node.id))
+    const selected = new Set(nodes.map((node) => node.id))
 
-    fraudDetectionComponent.graph.nodes.forEach(node => {
+    fraudDetectionComponent.graph.nodes.forEach((node) => {
       const entity = getEntityData(node)
       if (selected.has(entity.id)) {
         highlightManager.addHighlight(node)
@@ -219,7 +219,7 @@ function initializeTimelineComponent() {
     })
   })
 
-  fraudDetectionTimeline.addBarSelectListener(nodes => {
+  fraudDetectionTimeline.addBarSelectListener((nodes) => {
     fraudDetectionComponent.selection.clear()
     if (nodes.length > 0) {
       let minX = Number.POSITIVE_INFINITY
@@ -227,9 +227,9 @@ function initializeTimelineComponent() {
       let minY = Number.POSITIVE_INFINITY
       let maxY = Number.NEGATIVE_INFINITY
       nodes
-        .map(node => getNode(fraudDetectionComponent.graph, node))
-        .filter(node => filteredGraph.contains(node))
-        .forEach(node => {
+        .map((node) => getNode(fraudDetectionComponent.graph, node))
+        .filter((node) => filteredGraph.contains(node))
+        .forEach((node) => {
           fraudDetectionComponent.selection.setSelected(node, true)
           const { x, y, width, height } = node.layout
           minX = Math.min(minX, x)
@@ -262,7 +262,7 @@ function initializeTimelineComponent() {
  */
 function initializeGraph(graph) {
   // get the graph from the timeline component
-  filteredGraph = new FilteredGraphWrapper(graph, node => {
+  filteredGraph = new FilteredGraphWrapper(graph, (node) => {
     const visible = fraudDetectionTimeline.filter(getEntityData(node))
 
     if (!visible) {
@@ -278,7 +278,7 @@ function initializeGraph(graph) {
         getEntityData(node).type === 'Bank Branch' &&
         !filteredGraph.wrappedGraph
           .neighbors(node)
-          .every(neighbor => fraudDetectionTimeline.filter(getEntityData(neighbor)))
+          .every((neighbor) => fraudDetectionTimeline.filter(getEntityData(neighbor)))
       ) {
         return false
       }
@@ -449,21 +449,13 @@ export function closeFraudDetectionView() {
  */
 class InitialPositionsStage extends LayoutStageBase {
   /**
-   * Creates a new instance of InitialPositionsStage.
-   * @param {!ILayoutAlgorithm} layout
-   */
-  constructor(layout) {
-    super(layout)
-  }
-
-  /**
    * Applies the layout
    * @param {!LayoutGraph} graph The graph to be laid out.
    */
   applyLayout(graph) {
     const nodesAdded = graph.getDataProvider('NODES_ADDED')
 
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (nodesAdded.getBoolean(node)) {
         const visited = new Set()
         const stack = [node]

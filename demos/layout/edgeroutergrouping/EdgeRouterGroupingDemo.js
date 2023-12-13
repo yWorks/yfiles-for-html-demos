@@ -96,14 +96,14 @@ async function runEdgeRouter() {
   const layoutData = new EdgeRouterData()
 
   if (portGroupMode) {
-    layoutData.sourcePortGroupIds.delegate = edge =>
+    layoutData.sourcePortGroupIds.delegate = (edge) =>
       edge.tag && edge.tag.sourceGroupId ? edge.tag.sourceGroupId : null
-    layoutData.targetPortGroupIds.delegate = edge =>
+    layoutData.targetPortGroupIds.delegate = (edge) =>
       edge.tag && edge.tag.targetGroupId ? edge.tag.targetGroupId : null
   } else {
-    layoutData.sourceGroupIds.delegate = edge =>
+    layoutData.sourceGroupIds.delegate = (edge) =>
       edge.tag && edge.tag.sourceGroupId ? edge.tag.sourceGroupId : null
-    layoutData.targetGroupIds.delegate = edge =>
+    layoutData.targetGroupIds.delegate = (edge) =>
       edge.tag && edge.tag.targetGroupId ? edge.tag.targetGroupId : null
   }
 
@@ -142,16 +142,16 @@ function createSampleGraph() {
   builder.createNodesSource({
     data: SampleData.nodes,
     id: 'id',
-    layout: data =>
+    layout: (data) =>
       new Rect(data.location.x, data.location.y, defaultNodeSize.width, defaultNodeSize.height),
-    tag: data => ({
+    tag: (data) => ({
       id: data.id
     })
   })
   builder.createEdgesSource(SampleData.edges, 'from', 'to', 'id')
   builder.buildGraph()
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     edge.tag = edge.tag.groupIds
     updateStyles(edge)
   })
@@ -189,7 +189,7 @@ function updateSelection(item) {
  */
 function groupEdges(type, edges, override) {
   const id = Date.now()
-  edges.forEach(edge => {
+  edges.forEach((edge) => {
     const tag = {
       sourceGroupId: undefined,
       targetGroupId: undefined
@@ -299,7 +299,7 @@ function configureInteraction() {
   })
 
   const contextMenu = new ContextMenu(graphComponent)
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     const worldLocation = graphComponent.toWorldFromPage(location)
     const showMenu = inputMode.contextMenuInputMode.shouldOpenMenu(worldLocation)
     if (showMenu) {
@@ -363,7 +363,7 @@ function populateContextMenu(contextMenu, args) {
     let outgoingEdges = []
     let incomingEdges = []
     let incidentEdges = []
-    selection.selectedNodes.forEach(node => {
+    selection.selectedNodes.forEach((node) => {
       outgoingEdges = outgoingEdges.concat(graphComponent.graph.outEdgesAt(node).toArray())
       incomingEdges = incomingEdges.concat(graphComponent.graph.inEdgesAt(node).toArray())
       incidentEdges = incidentEdges.concat(graphComponent.graph.edgesAt(node).toArray())
@@ -443,10 +443,10 @@ function populateContextMenu(contextMenu, args) {
 function initializeUI() {
   document.querySelector('#layout').addEventListener('click', runEdgeRouter)
   document.querySelector('#reset').addEventListener('click', createSampleGraph)
-  document.querySelector('#toggle-port-group-mode').addEventListener('change', async evt => {
+  document.querySelector('#toggle-port-group-mode').addEventListener('change', async (evt) => {
     const value = evt.target.value
     portGroupMode = value === 'port-grouping'
-    graphComponent.graph.edges.forEach(edge => {
+    graphComponent.graph.edges.forEach((edge) => {
       updateStyles(edge)
     })
     await runEdgeRouter()

@@ -173,7 +173,7 @@ class EdgeCanvasVisual extends HtmlCanvasVisual {
     let location = this.sourcePortLocation
     ctx.moveTo(location.x, location.y)
     if (this.bends.size > 0) {
-      this.bends.forEach(bend => {
+      this.bends.forEach((bend) => {
         location = bend.location
         ctx.lineTo(location.x, location.y)
       })
@@ -191,10 +191,6 @@ class EdgeCanvasVisual extends HtmlCanvasVisual {
 export class FastLabelStyle extends LabelStyleBase {
   _zoomThreshold = 0.7
   _font = new Font()
-
-  constructor() {
-    super()
-  }
 
   /**
    * @type {number}

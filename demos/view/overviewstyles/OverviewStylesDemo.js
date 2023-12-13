@@ -166,13 +166,13 @@ function buildGraph(graph, graphData) {
 
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
-  }).nodeCreator.tagProvider = item => item.tag
+    id: (item) => item.id
+  }).nodeCreator.tagProvider = (item) => item.tag
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -266,7 +266,7 @@ function getWebGL2GraphOverviewVisualCreator() {
  * toolbar buttons, during the creation of this application.
  */
 function initializeUI() {
-  addNavigationButtons(overViewStyleBox).addEventListener('change', evt => {
+  addNavigationButtons(overViewStyleBox).addEventListener('change', (evt) => {
     const selectedValue = evt.target.value
     overviewStyling(selectedValue)
   })
@@ -305,7 +305,7 @@ function probeWebGL2Support() {
  */
 function initializeConverters() {
   StringTemplateNodeStyle.CONVERTERS.orgChartConverters = {
-    overviewConverter: value => {
+    overviewConverter: (value) => {
       if (typeof value === 'string' && value.length > 0) {
         return value.replace(/^(.)(\S*)(.*)/, '$1.$3')
       }
@@ -336,13 +336,13 @@ function initializeConverters() {
       return value
     },
     // converter function that returns a color according to the employee's status
-    colorConverter: value =>
+    colorConverter: (value) =>
       ({
         busy: '#AB2346',
         present: '#76B041',
         travel: '#A367DC',
         unavailable: '#C1C1C1'
-      }[value] || '#C1C1C1')
+      })[value] || '#C1C1C1'
   }
 }
 

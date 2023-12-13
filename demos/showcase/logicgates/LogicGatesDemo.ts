@@ -103,7 +103,7 @@ function createDragAndDropPanelNodes(): SimpleNode[] {
   ]
 
   const nodeContainer = nodeStyles.map(
-    style =>
+    (style) =>
       new SimpleNode({
         layout: new Rect(0, 0, 100, 50),
         style: style
@@ -130,7 +130,7 @@ function initializeGraph(): void {
   graph.nodeDefaults.ports.labels.style = new VoidLabelStyle()
   // set the port candidate provider
   graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
-    node => new DescriptorDependentPortCandidateProvider(node)
+    (node) => new DescriptorDependentPortCandidateProvider(node)
   )
   graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '2px black' })
   graph.decorator.edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setImplementation(

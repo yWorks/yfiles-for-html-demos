@@ -83,9 +83,9 @@ export class OrthogonalLabelSnapLineProviderWrapper
    * @param labeledItem The item to add snap lines for.
    */
   private addCustomSnapLines(args: CollectGraphSnapLinesEventArgs, labeledItem: ILabelOwner) {
-    labeledItem.labels.forEach(label => {
+    labeledItem.labels.forEach((label) => {
       // round UpX to its first 6 digits
-      const upX = Math.round(label.layout.upX * Math.pow(10, 6)) / Math.pow(10, 6)
+      const upX = Math.round(label.layout.upX * 10 ** 6) / 10 ** 6
       // check if it's orthogonal
       if (upX === 0 || upX === 1 || upX === -1) {
         // label is orthogonal

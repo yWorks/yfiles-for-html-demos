@@ -178,16 +178,16 @@ function configureTableEditing() {
   // provide no candidates for edge creation at pool nodes - this effectively disables
   // edge creations for those nodes
   graph.decorator.nodeDecorator.portCandidateProviderDecorator.setImplementation(
-    node => node.lookup(ITable.$class) !== null,
+    (node) => node.lookup(ITable.$class) !== null,
     IPortCandidateProvider.NO_CANDIDATES
   )
 
   // customize marquee selection handling for pool nodes
   graph.decorator.nodeDecorator.marqueeTestableDecorator.setFactory(
-    node => node.lookup(ITable.$class) !== null,
+    (node) => node.lookup(ITable.$class) !== null,
     // the marquee testable for pool nodes. The pool node should only be selected by marquee, if the entire bounds are
     // within the marquee.
-    node =>
+    (node) =>
       IMarqueeTestable.create((context, box) => {
         const rectangle = node.layout
         return box.contains(rectangle.topLeft) && box.contains(rectangle.bottomRight)
@@ -248,7 +248,7 @@ function configureContextMenu(tableEditorInputMode) {
   // add event listeners to the various events that open the context menu. These listeners then
   // call the provided callback function which in turn asks the current ContextMenuInputMode if a
   // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     if (
       graphInputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))
     ) {
@@ -313,7 +313,7 @@ function populateContextMenu(contextMenu, args, tableEditorInputMode) {
   const tableNode = graphInputMode.findItems(
     args.queryLocation,
     [GraphItemTypes.NODE],
-    item => item.lookup(ITable.$class) !== null
+    (item) => item.lookup(ITable.$class) !== null
   )
   if (tableNode !== null && tableNode.size > 0) {
     contextMenu.addMenuItem(`ContextMenu for ${tableNode.at(0)}`, null)

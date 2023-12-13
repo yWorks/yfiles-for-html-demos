@@ -198,7 +198,7 @@ function createSampleGraph(graph: IGraph, nodeCount: number): void {
   }
 
   // resize nodes
-  graph.nodes.forEach(node => updateNodeSize(node, graph))
+  graph.nodes.forEach((node) => updateNodeSize(node, graph))
 
   // Create some edges
   if (nodes.length > 1) {

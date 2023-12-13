@@ -58,7 +58,7 @@ export default class GreenEdgePortCandidateProvider
       return IListEnumerable.EMPTY
     }
     const candidates = new List<IPortCandidate>()
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (node.tag === 'green') {
         candidates.add(new DefaultPortCandidate(node, FreeNodePortLocationModel.INSTANCE))
       }

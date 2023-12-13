@@ -144,7 +144,7 @@ export function createSampleGraph(graph: IGraph): void {
     id: 'id',
     layout: 'layout',
     tag: 'tag',
-    style: dataItem => {
+    style: (dataItem) => {
       return new ShapeNodeStyle({
         shape: 'round-rectangle',
         cssClass: `node type-${dataItem.tag.type || '0'}`

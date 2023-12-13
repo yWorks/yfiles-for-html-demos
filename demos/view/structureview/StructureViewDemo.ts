@@ -121,25 +121,25 @@ function createGraph(graph: IGraph): void {
 
   // create nodes
   graphBuilder.createNodesSource({
-    data: sampleData.nodes.filter(item => !item.id.startsWith('Group')),
-    id: item => item.id,
-    parentId: item => item.parentId,
+    data: sampleData.nodes.filter((item) => !item.id.startsWith('Group')),
+    id: (item) => item.id,
+    parentId: (item) => item.parentId,
     labels: ['id']
   })
 
   // create group nodes
   graphBuilder.createGroupNodesSource({
-    data: sampleData.nodes.filter(item => item.id.startsWith('Group')),
-    id: item => item.id,
-    parentId: item => item.parentId,
+    data: sampleData.nodes.filter((item) => item.id.startsWith('Group')),
+    id: (item) => item.id,
+    parentId: (item) => item.parentId,
     labels: ['id']
   })
 
   // create edges
   graphBuilder.createEdgesSource({
     data: sampleData.edges,
-    sourceId: item => item.from,
-    targetId: item => item.to
+    sourceId: (item) => item.from,
+    targetId: (item) => item.to
   })
 
   graphBuilder.buildGraph()
@@ -162,7 +162,7 @@ function createEditorInputMode(): GraphEditorInputMode {
  * Binds actions to the demo's UI controls.
  */
 function initializeUI(structureView: StructureView): void {
-  document.getElementById('sync-folding-state')!.addEventListener('change', e => {
+  document.getElementById('sync-folding-state')!.addEventListener('change', (e) => {
     structureView.syncFoldingState = (e.target as HTMLInputElement).checked
   })
 }

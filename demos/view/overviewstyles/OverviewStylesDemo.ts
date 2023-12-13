@@ -161,13 +161,13 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
-  }).nodeCreator.tagProvider = item => item.tag
+    id: (item) => item.id
+  }).nodeCreator.tagProvider = (item) => item.tag
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -261,7 +261,7 @@ function getWebGL2GraphOverviewVisualCreator(): WebGL2GraphOverviewVisualCreator
  * toolbar buttons, during the creation of this application.
  */
 function initializeUI(): void {
-  addNavigationButtons(overViewStyleBox).addEventListener('change', evt => {
+  addNavigationButtons(overViewStyleBox).addEventListener('change', (evt) => {
     const selectedValue = (evt.target as HTMLSelectElement).value
     overviewStyling(selectedValue as string)
   })
@@ -332,14 +332,14 @@ function initializeConverters(): void {
     },
     // converter function that returns a color according to the employee's status
     colorConverter: (value: string): string =>
-      ((
-        {
+      (
+        ({
           busy: '#AB2346',
           present: '#76B041',
           travel: '#A367DC',
           unavailable: '#C1C1C1'
-        } as Record<string, string>
-      )[value] || '#C1C1C1')
+        }) as Record<string, string>
+      )[value] || '#C1C1C1'
   }
 }
 

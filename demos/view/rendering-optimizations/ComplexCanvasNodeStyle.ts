@@ -263,7 +263,10 @@ class NodeRenderVisual extends HtmlCanvasVisual {
    * @param layout A live view of the layout of a node.
    * @param colorScheme The color scheme for this visual.
    */
-  constructor(private readonly layout: IRectangle, private readonly colorScheme: ColorScheme) {
+  constructor(
+    private readonly layout: IRectangle,
+    private readonly colorScheme: ColorScheme
+  ) {
     super()
   }
 

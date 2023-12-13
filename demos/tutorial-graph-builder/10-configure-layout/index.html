@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -73,12 +73,10 @@
       <div
         class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
       >
-        <b>Step 11/14</b
+        <b>Step 10/13</b
         ><span class="demo-toolbar__tutorial-step-title"> &mdash; 10 Configure Layout</span>
         <div class="tutorial-dropdown">
           <a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
-            >Tutorial: Graph Builder</a
-          ><a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
             >01 Create Graph</a
           ><a
             href="../../tutorial-graph-builder/02-create-nodes-sources/"
@@ -212,7 +210,7 @@
                   <pre
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// configure the layout provider that returns the layout information</span>
-nodeSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">layoutProvider</span> = <span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> data.<span class="hljs-property">layout</span></code></pre>
+nodeSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">layoutProvider</span> = <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> data.<span class="hljs-property">layout</span></code></pre>
                 </div>
               </div>
               <div class="paragraph">
@@ -243,7 +241,10 @@ nodeSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-prop
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// create some binding for the x, y, width and height properties of the layout</span>
 nodeSources.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">layoutBindings</span>.<span class="hljs-title function_">addBinding</span>(<span class="hljs-string">&#x27;x&#x27;</span>, <span class="hljs-function">() =&gt;</span> <span class="hljs-number">250</span>)
-nodeSources.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">layoutBindings</span>.<span class="hljs-title function_">addBinding</span>(<span class="hljs-string">&#x27;y&#x27;</span>, <span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> data.<span class="hljs-property">locationY</span>)
+nodeSources.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">layoutBindings</span>.<span class="hljs-title function_">addBinding</span>(
+  <span class="hljs-string">&#x27;y&#x27;</span>,
+  <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> data.<span class="hljs-property">locationY</span>
+)
 nodeSources.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">layoutBindings</span>.<span class="hljs-title function_">addBinding</span>(<span class="hljs-string">&#x27;width&#x27;</span>, <span class="hljs-function">() =&gt;</span> <span class="hljs-number">50</span>)
 nodeSources.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">layoutBindings</span>.<span class="hljs-title function_">addBinding</span>(<span class="hljs-string">&#x27;height&#x27;</span>, <span class="hljs-function">() =&gt;</span> <span class="hljs-number">30</span>)</code></pre>
                 </div>
@@ -302,7 +303,7 @@ nodeSources.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
                   <pre
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// configure the bend provider to return the location of each bend point</span>
-edgeSources.<span class="hljs-property">edgeCreator</span>.<span class="hljs-property">bendsProvider</span> = <span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> data.<span class="hljs-property">bends</span></code></pre>
+edgeSources.<span class="hljs-property">edgeCreator</span>.<span class="hljs-property">bendsProvider</span> = <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> data.<span class="hljs-property">bends</span></code></pre>
                 </div>
               </div>
               <div class="admonitionblock note">

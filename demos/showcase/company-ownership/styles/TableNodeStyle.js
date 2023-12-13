@@ -66,12 +66,12 @@ export const tableNodeStyle = new StringTemplateNodeStyle(`<g>
 export function initializeConverters() {
   TemplateNodeStyle.CONVERTERS.templateNodeConverters = {
     // converter function for the background color of nodes
-    typeColorConverter: value => {
+    typeColorConverter: (value) => {
       return colorSets[predefinedColorSets.get(value) || 'demo-palette-51'].fill || 'white'
     },
 
     // converter function for reading the values of the node attributes
-    valueConverter: value => {
+    valueConverter: (value) => {
       return value || '---'
     }
   }

@@ -117,12 +117,12 @@ function executeLayout() {
     // mark all inheritance edges (generalization, realization) as directed so their target nodes
     // will be placed above their source nodes
     // all other edges are treated as undirected
-    edgeDirectedness: edge => (isInheritance(edge.style) ? 1 : 0),
+    edgeDirectedness: (edge) => (isInheritance(edge.style) ? 1 : 0),
     // combine all inheritance edges (generalization, realization) in edge groups according to
     // their line type
     // do not group the other edges
-    sourceGroupIds: edge => getGroupId(edge, `src-${edge.sourceNode}`),
-    targetGroupIds: edge => getGroupId(edge, `tgt-${edge.targetNode}`)
+    sourceGroupIds: (edge) => getGroupId(edge, `src-${edge.sourceNode}`),
+    targetGroupIds: (edge) => getGroupId(edge, `tgt-${edge.targetNode}`)
   })
 
   return graphComponent.morphLayout(layout, '500ms', layoutData)
@@ -364,7 +364,7 @@ function generateSampleGraph() {
   graph.createEdge(user, administrator, createGeneralizationStyle())
   graph.createEdge(iAddressable, user, createRealizationStyle())
 
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     if (node.style instanceof UMLNodeStyle) {
       node.style.adjustSize(node, graphComponent.inputMode)
     }

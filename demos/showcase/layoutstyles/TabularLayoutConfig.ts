@@ -179,12 +179,12 @@ const TabularLayoutConfig = (Class as any)('TabularLayoutConfig', {
     const minimumRowHeight = this.minimumRowHeightItem
     const minimumColumnWidth = this.minimumColumnWidthItem
     const cellInsets = this.cellInsetsItem
-    partitionGrid.rows.forEach(row => {
+    partitionGrid.rows.forEach((row) => {
       row.minimumHeight = minimumRowHeight
       row.topInset = cellInsets
       row.bottomInset = cellInsets
     })
-    partitionGrid.columns.forEach(column => {
+    partitionGrid.columns.forEach((column) => {
       column.minimumWidth = minimumColumnWidth
       column.leftInset = cellInsets
       column.rightInset = cellInsets

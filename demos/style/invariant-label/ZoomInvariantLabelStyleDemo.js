@@ -107,19 +107,19 @@ function buildGraph(graph, graphData) {
 
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
+    id: (item) => item.id
   })
-  nodesSource.nodeCreator.createLabelBinding(item => item.label)
-  nodesSource.nodeCreator.layoutProvider = item =>
+  nodesSource.nodeCreator.createLabelBinding((item) => item.label)
+  nodesSource.nodeCreator.layoutProvider = (item) =>
     item.tag === 'level 1' ? new Rect(0, 0, 100, 70) : new Rect(0, 0, 30, 70)
 
   graphBuilder
     .createEdgesSource({
       data: graphData.edgeList,
-      sourceId: item => item.source,
-      targetId: item => item.target
+      sourceId: (item) => item.source,
+      targetId: (item) => item.target
     })
-    .edgeCreator.createLabelBinding(item => item.label)
+    .edgeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.buildGraph()
 }
@@ -176,7 +176,7 @@ function initializeUI(graphComponent) {
     { value: 'FIT_OWNER', text: "Fit into the label's owner" },
     { value: 'DEFAULT', text: 'Default behaviour' }
   )
-  addNavigationButtons(modeSelectElement).addEventListener('change', _evt => {
+  addNavigationButtons(modeSelectElement).addEventListener('change', (_evt) => {
     setLabelStyle(graphComponent.graph, modeSelectElement.value)
 
     // hide the threshold controls if not applicable for the selected zoom style

@@ -105,7 +105,7 @@ export function getInfoMap(node) {
     return { info: info }
   } else {
     const records = {}
-    Object.keys(info).forEach(key => {
+    Object.keys(info).forEach((key) => {
       let value = info[key]
       if (Array.isArray(value)) {
         value = value[0]
@@ -184,7 +184,7 @@ export function getTimeEntry(item) {
  * @returns {?INode}
  */
 export function getNode(graph, entityData) {
-  return graph.nodes.find(node => {
+  return graph.nodes.find((node) => {
     const data = getEntityData(node)
     return data.id === entityData.id
   })

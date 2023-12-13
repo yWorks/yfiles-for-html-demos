@@ -46,7 +46,7 @@ export function useLayout(getGraphComponent: () => GraphComponent) {
   function run(): Promise<void> {
     // helper function that performs the actual message passing to the web worker
     function webWorkerMessageHandler(data: unknown): Promise<any> {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         layoutWorker.onmessage = (e: any) => resolve(e.data)
         layoutWorker.postMessage(data)
       })

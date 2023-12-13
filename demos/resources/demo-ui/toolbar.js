@@ -60,7 +60,7 @@ function getToolbarWidthAndPadding(entry) {
   // borderBoxSize and contentBoxSize are not supported by Safari < 15,
   // fallback to contentRect
   if (!entry.borderBoxSize || !entry.contentBoxSize) {
-    toolbarWidth = entry.contentRect.width + 32 ?? 0
+    toolbarWidth = entry.contentRect.width ? entry.contentRect.width + 32 : 0
     toolbarContentWidth = entry.contentRect.width ?? 0
   }
   // old Firefox implemented borderBoxSize and contentBoxSize as non array
@@ -81,7 +81,7 @@ function getToolbarWidthAndPadding(entry) {
  */
 function toolbarSizeChanged(entries, observer) {
   window.requestAnimationFrame(() => {
-    entries.forEach(entry => {
+    entries.forEach((entry) => {
       const { toolbarWidth, toolbarPadding } = getToolbarWidthAndPadding(entry)
       if (toolbarWidth > 0) {
         wrapToolbar(entry.target, toolbarWidth, toolbarPadding)
@@ -109,7 +109,7 @@ function initToolbarResponsiveness(toolbar) {
   overflowButton.classList.add('overflow-button')
   overflowButton.setAttribute('title', 'More...')
 
-  const closeContainerHandler = e => {
+  const closeContainerHandler = (e) => {
     let current = e.target
     while (current !== overflowContainer && current.parentNode) {
       current = current.parentNode
@@ -120,7 +120,7 @@ function initToolbarResponsiveness(toolbar) {
       e.preventDefault()
     }
   }
-  overflowButton.addEventListener('click', e => {
+  overflowButton.addEventListener('click', (e) => {
     if (e.target !== overflowButton) return
 
     overflowContainer.classList.toggle('overflow-container--open')
@@ -243,12 +243,12 @@ function pushBackOverflow(toolbar, overflowContainerContent, toolbarWidth) {
 function initTutorialToolbar(toolbar) {
   const dropdown = toolbar.querySelector('.demo-toolbar__tutorial-dropdown')
 
-  const closeDropdown = e => {
+  const closeDropdown = (e) => {
     dropdown.classList.remove('demo-toolbar__tutorial-dropdown--expanded')
     document.body.removeEventListener('click', closeDropdown)
   }
 
-  dropdown?.addEventListener('click', e => {
+  dropdown?.addEventListener('click', (e) => {
     if (dropdown.classList.contains('demo-toolbar__tutorial-dropdown--expanded')) {
       closeDropdown(e)
     } else {

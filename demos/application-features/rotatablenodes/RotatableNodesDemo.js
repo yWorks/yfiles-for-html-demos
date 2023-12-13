@@ -145,7 +145,7 @@ function initializeInputMode() {
   const handleInputMode = graphComponent.inputMode.handleInputMode
   handleInputMode.addDraggedListener((src, evt) => {
     if (src.currentHandle instanceof RotatableNodes.NodeRotateHandle) {
-      const rotatedNode = src.affectedItems.find(item => item instanceof INode)
+      const rotatedNode = src.affectedItems.find((item) => item instanceof INode)
       if (
         rotatedNode &&
         rotatedNode.style instanceof RotatableNodes.RotatableNodeStyleDecorator &&
@@ -193,7 +193,7 @@ function initializeGraph() {
   // For rotated nodes, need to provide port candidates that are backed by a rotatable port location model
   // If you want to support non-rotated port candidates, you can just provide undecorated instances here
   decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
-    node => node.style instanceof RotatableNodes.RotatableNodeStyleDecorator,
+    (node) => node.style instanceof RotatableNodes.RotatableNodeStyleDecorator,
     createPortCandidateProvider
   )
 
@@ -367,7 +367,7 @@ function createPortCandidateProvider(node) {
     const shapeProvider = IPortCandidateProvider.fromShapeGeometry(dummyNode, 0)
     const shapeCandidates = shapeProvider.getAllTargetPortCandidates(null)
     const rotatingCandidates = shapeCandidates.map(
-      candidate =>
+      (candidate) =>
         new DefaultPortCandidate(
           node,
           rotatedPortModel.createWrappingParameter(candidate.locationParameter)
@@ -423,14 +423,14 @@ function loadGraph(sample) {
   const nodesSource = builder.createNodesSource({
     data: data.nodes,
     id: 'id',
-    layout: data => new Rect(data.cx, data.cy, defaultNodeSize.width, defaultNodeSize.height),
-    style: data => {
+    layout: (data) => new Rect(data.cx, data.cy, defaultNodeSize.width, defaultNodeSize.height),
+    style: (data) => {
       const nodeStyle = graph.nodeDefaults.getStyleInstance()
       nodeStyle.angle = data.angle
       return nodeStyle
     }
   })
-  nodesSource.nodeCreator.createLabelBinding(data => `${data.angle}°`)
+  nodesSource.nodeCreator.createLabelBinding((data) => `${data.angle}°`)
   builder.createEdgesSource(data.edges, 'source', 'target')
 
   builder.buildGraph()
@@ -440,7 +440,7 @@ function loadGraph(sample) {
     INode.$class,
     YObject.$class,
     RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY,
-    node => {
+    (node) => {
       const style = node.style
       return {
         outline: getOutline(style, node),
@@ -494,7 +494,7 @@ async function applyLayout() {
     INode.$class,
     YObject.$class,
     RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY,
-    node => {
+    (node) => {
       const style = node.style
       return {
         outline: getOutline(style, node),
@@ -607,7 +607,7 @@ function initializeUI() {
     inputMode.orthogonalEdgeEditingContext.enabled = orthogonalEditing.checked
   })
 
-  addNavigationButtons(selectSample).addEventListener('change', e => {
+  addNavigationButtons(selectSample).addEventListener('change', (e) => {
     loadGraph(e.target.value)
   })
 
@@ -622,12 +622,12 @@ function initializeUI() {
  */
 function addRotatedStyles() {
   const graph = graphComponent.graph
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     if (!graph.isGroupNode(node)) {
       if (!(node.style instanceof RotatableNodes.RotatableNodeStyleDecorator)) {
         graph.setStyle(node, new RotatableNodes.RotatableNodeStyleDecorator(node.style))
       }
-      node.labels.forEach(label => {
+      node.labels.forEach((label) => {
         if (
           !(
             label.layoutParameter instanceof
@@ -642,7 +642,7 @@ function addRotatedStyles() {
           )
         }
       })
-      node.ports.forEach(port => {
+      node.ports.forEach((port) => {
         if (
           !(
             port.locationParameter instanceof

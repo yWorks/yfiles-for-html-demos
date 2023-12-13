@@ -351,7 +351,7 @@ export class ButtonInputMode extends InputModeBase {
       if (item) {
         this.buttonOwner = item
         this.buttons = this.getButtons(item)
-        this.buttons.forEach(button => {
+        this.buttons.forEach((button) => {
           this.buttonLabels.add(button)
         })
 
@@ -440,7 +440,7 @@ export class ButtonInputMode extends InputModeBase {
   private getHitButtons(context: IInputModeContext, location: Point) {
     return context
       .canvasComponent!.hitElementsAt(context, location, this.buttonLabelManager.canvasObjectGroup)
-      .map(canvasObject => canvasObject.userObject as Button)
+      .map((canvasObject) => canvasObject.userObject as Button)
   }
 
   private getFirstHitButton(location: Point): Button | null {
@@ -743,7 +743,7 @@ export class ButtonInputMode extends InputModeBase {
     }
     // As bends don't have their own visualization, bend hit testing has to be explicitly checked
     const hitBend = hitItem.bends.find(
-      bend => bend.location.distanceTo(location) < context.hitTestRadius
+      (bend) => bend.location.distanceTo(location) < context.hitTestRadius
     )
     return hitBend ?? hitItem
   }

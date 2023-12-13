@@ -139,7 +139,7 @@ function createGraph(graph: IGraph, stylesDefinitions: StyleDefinitions) {
     id: 'id',
     labels: ['label'],
     layout: 'bounds',
-    style: data => createCompositeStyle(stylesDefinitions, data.type as keyof StyleDefinitions)
+    style: (data) => createCompositeStyle(stylesDefinitions, data.type as keyof StyleDefinitions)
   })
   builder.createEdgesSource({
     data: SampleData.edges,

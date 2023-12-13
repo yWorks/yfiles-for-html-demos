@@ -37,7 +37,7 @@ import type { ApplyLayoutCallback, NeighborhoodView } from './NeighborhoodView'
 export function getApplyLayoutCallback(neighborhoodType: NeighborhoodType): ApplyLayoutCallback {
   return neighborhoodType === NeighborhoodType.FOLDER_CONTENTS
     ? (view, nodes) => applyComponentLayout(view, nodes)
-    : view => applyHierarchicLayout(view)
+    : (view) => applyHierarchicLayout(view)
 }
 
 function applyComponentLayout(view: NeighborhoodView, selectedViewNodes: INode[]): void {

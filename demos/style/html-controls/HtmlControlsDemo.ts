@@ -112,7 +112,7 @@ function initGraphDefaults(graph: IGraph): void {
  * When a node is selected or deselected, update the node data JSON in the left panel.
  */
 function initTagView(graphComponent: GraphComponent): void {
-  graphComponent.selection.addItemSelectionChangedListener(graphComponent => {
+  graphComponent.selection.addItemSelectionChangedListener((graphComponent) => {
     const firstSelectedNode = graphComponent.selectedNodes.at(0)
     if (firstSelectedNode) {
       updateTagView(firstSelectedNode)
@@ -155,7 +155,7 @@ async function initExport(graphComponent: GraphComponent): Promise<void> {
   // Copy the CSS rules for our HTML node style to the generated SVG
   const styles = await fetch('./style.css', {
     headers: { Accept: 'text/css' }
-  }).then(r => r.text())
+  }).then((r) => r.text())
 
   const exportBtn = document.querySelector<HTMLButtonElement>('#export-btn')!
 

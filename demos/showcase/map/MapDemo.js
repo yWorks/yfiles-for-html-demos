@@ -72,7 +72,7 @@ async function run() {
 /**
  * Builds the initial graph from FlightData.
  * @param {!GraphComponent} graphComponent
- * @param {!Map} map
+ * @param {!LeafletMap} map
  */
 function createGraph(graphComponent, map) {
   const graph = graphComponent.graph
@@ -92,7 +92,7 @@ function createGraph(graphComponent, map) {
   builder.buildGraph()
 
   // add a filter to determine which nodes are visible depending on the zoom level of the map
-  graphComponent.graph = new FilteredGraphWrapper(graph, node => {
+  graphComponent.graph = new FilteredGraphWrapper(graph, (node) => {
     const zoom = map.getZoom()
     const airportData = getAirportData(node)
     const passengers = airportData.passengers
@@ -158,7 +158,7 @@ function zoomChanged(graphComponent, zoom) {
   updateHighlights(graphComponent)
 
   // update the label for the airports since they depend on the zoom level
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const airportData = getAirportData(node)
     // show the airport's IATA-code when the zoom value is low
     graph.setLabelText(node.labels.at(0), zoom >= 4 ? airportData.name : airportData.iata)

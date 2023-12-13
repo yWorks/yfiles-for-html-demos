@@ -73,7 +73,7 @@ export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
   /**
    * Returns an instance that implements the given type or null.
    * @param {!Class.<T>} type The type for which an instance shall be returned
-   * @template {*} T
+   * @template T
    * @returns {?T}
    */
   lookup(type) {

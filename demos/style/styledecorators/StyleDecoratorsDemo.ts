@@ -93,24 +93,24 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
+    id: (item) => item.id
   })
-  nodesSource.nodeCreator.styleProvider = item =>
+  nodesSource.nodeCreator.styleProvider = (item) =>
     item.tag
       ? new NodeStyleDecorator(
           graph.nodeDefaults.getStyleInstance(),
           `resources/${item.tag.toLowerCase()}.svg`
         )
       : undefined
-  nodesSource.nodeCreator.createLabelBinding(item => item.label)
+  nodesSource.nodeCreator.createLabelBinding((item) => item.label)
 
   const edgesSource = graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
-  edgesSource.edgeCreator.tagProvider = item => item.tag
-  edgesSource.edgeCreator.styleProvider = item =>
+  edgesSource.edgeCreator.tagProvider = (item) => item.tag
+  edgesSource.edgeCreator.styleProvider = (item) =>
     item.tag ? graph.edgeDefaults.getStyleInstance() : undefined
 
   graphBuilder.buildGraph()

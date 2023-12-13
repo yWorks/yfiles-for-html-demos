@@ -104,7 +104,7 @@ export class VoronoiVisual
       container.appendChild(svgPath)
     })
 
-    this.clusters.centroids.forEach(point => {
+    this.clusters.centroids.forEach((point) => {
       VoronoiVisual.drawClusterCenter(point, container)
     })
 
@@ -185,7 +185,7 @@ export class PolygonVisual
       let generalPath: GeneralPath = new GeneralPath()
       if (clusterNodeBounds.length > 1) {
         const points = new YList()
-        clusterNodeBounds.forEach(layout => {
+        clusterNodeBounds.forEach((layout) => {
           const offset = 0
           const x = layout.x
           const y = layout.y
@@ -254,7 +254,10 @@ export class AxisVisual
   extends BaseClass<IVisualCreator>(IVisualCreator)
   implements IVisualCreator
 {
-  constructor(private maxY: number, private rect: Rect) {
+  constructor(
+    private maxY: number,
+    private rect: Rect
+  ) {
     super()
   }
 
@@ -338,7 +341,10 @@ export class CutoffVisual
 {
   public cutOffValue: number
 
-  constructor(public rectangle: IRectangle, private readonly maxY: number) {
+  constructor(
+    public rectangle: IRectangle,
+    private readonly maxY: number
+  ) {
     super()
     this.rectangle = rectangle
     this.maxY = maxY

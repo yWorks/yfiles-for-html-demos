@@ -37,7 +37,7 @@ License.value = license
 
 self.addEventListener(
   'message',
-  e => {
+  (e) => {
     const executor = new LayoutExecutorAsyncWorker(applyLayout)
     executor.process(e.data).then(postMessage).catch(postMessage)
   },

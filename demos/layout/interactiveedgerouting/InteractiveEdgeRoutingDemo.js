@@ -144,8 +144,8 @@ async function reRouteEdges() {
 
   // keep existing edge groups
   const data = new EdgeRouterData({
-    sourceGroupIds: e => `s: ${e.sourceNode.layout.center} - ${e.sourcePort.location}`,
-    targetGroupIds: e => `t: ${e.targetNode.layout.center} - ${e.targetPort.location}`
+    sourceGroupIds: (e) => `s: ${e.sourceNode.layout.center} - ${e.sourcePort.location}`,
+    targetGroupIds: (e) => `t: ${e.targetNode.layout.center} - ${e.targetPort.location}`
   })
 
   await graphComponent.morphLayout({

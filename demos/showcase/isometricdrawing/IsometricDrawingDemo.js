@@ -248,13 +248,13 @@ function initializeGraph() {
 
   // add handle that enables the user to change the height of a node
   graph.decorator.nodeDecorator.handleProviderDecorator.setImplementationWrapper(
-    n => !graph.isGroupNode(n),
+    (n) => !graph.isGroupNode(n),
     (node, delegateProvider) =>
       new HeightHandleProvider(node, delegateProvider, MINIMUM_NODE_HEIGHT)
   )
 
   graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementation(
-    node => graph.isGroupNode(node),
+    (node) => graph.isGroupNode(node),
     INodeInsetsProvider.create(() => new Insets(10, 10, 10, 50))
   )
 
@@ -285,7 +285,7 @@ async function loadGraph() {
     id: 'id',
     parentId: 'group',
     labels: ['label'],
-    layout: data => new Rect(0, 0, data.width, data.depth)
+    layout: (data) => new Rect(0, 0, data.width, data.depth)
   })
   graphBuilder.createGroupNodesSource({
     data: IsometricData.groupsSource,
@@ -297,7 +297,7 @@ async function loadGraph() {
     sourceId: 'from',
     targetId: 'to'
   })
-  edgesSource.edgeCreator.createLabelsSource(edgeData => [edgeData.label])
+  edgesSource.edgeCreator.createLabelsSource((edgeData) => [edgeData.label])
 
   graphBuilder.buildGraph()
 
@@ -311,7 +311,7 @@ async function loadGraph() {
 function adaptGroupNodes() {
   const graph = graphComponent.graph
 
-  for (const groupNode of graph.nodes.filter(n => graph.isGroupNode(n))) {
+  for (const groupNode of graph.nodes.filter((n) => graph.isGroupNode(n))) {
     const nestingLevel = graph.groupingSupport.getPathToRoot(groupNode).size
     groupNode.tag.height = nestingLevel * 0.01
     // make sure edges are still drawn on top of group nodes
@@ -364,7 +364,7 @@ function initializeUI() {
   )
 
   const rotationSlider = document.querySelector('#rotation')
-  rotationSlider.addEventListener('input', evt => {
+  rotationSlider.addEventListener('input', (evt) => {
     const isometricProjection = Matrix.ISOMETRIC.clone()
     isometricProjection.rotate(parseFloat(rotationSlider.value))
     graphComponent.projection = isometricProjection

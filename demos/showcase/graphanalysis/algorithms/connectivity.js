@@ -50,8 +50,8 @@ export function calculateConnectedComponents(graph) {
   const result = new ConnectedComponents().run(graph)
 
   result.components.forEach((component, componentIndex) => {
-    component.nodes.forEach(node => markItem(node, componentIndex))
-    component.inducedEdges.forEach(edge => markItem(edge, componentIndex))
+    component.nodes.forEach((node) => markItem(node, componentIndex))
+    component.inducedEdges.forEach((edge) => markItem(edge, componentIndex))
   })
 }
 
@@ -71,10 +71,10 @@ export function calculateBiconnectedComponents(graph) {
   const result = new BiconnectedComponents().run(graph)
 
   result.components.forEach((component, componentIndex) => {
-    component.nodes.forEach(node => {
+    component.nodes.forEach((node) => {
       markItem(node, componentIndex)
     })
-    component.edges.forEach(edge => {
+    component.edges.forEach((edge) => {
       markItem(edge, componentIndex)
     })
   })
@@ -95,8 +95,8 @@ export function calculateStronglyConnectedComponents(graph) {
   const result = new StronglyConnectedComponents().run(graph)
 
   result.components.forEach((component, componentIndex) => {
-    component.nodes.forEach(node => markItem(node, componentIndex))
-    component.inducedEdges.forEach(edge => markItem(edge, componentIndex))
+    component.nodes.forEach((node) => markItem(node, componentIndex))
+    component.inducedEdges.forEach((edge) => markItem(edge, componentIndex))
   })
 }
 
@@ -126,13 +126,13 @@ export function calculateReachableNodes(graph, config) {
     startNodes: markedSource
   }).run(graph)
 
-  result.reachableNodes.forEach(node => {
+  result.reachableNodes.forEach((node) => {
     markItem(node, 0)
   })
 
   graph.edges
-    .filter(edge => result.isReachable(edge.sourceNode) && result.isReachable(edge.targetNode))
-    .forEach(edge => {
+    .filter((edge) => result.isReachable(edge.sourceNode) && result.isReachable(edge.targetNode))
+    .forEach((edge) => {
       markItem(edge, 0)
     })
 }
@@ -166,13 +166,13 @@ export function calculateKCoreComponents(graph) {
   for (let k = maximumK; k > 0; k--) {
     const kCore = result.getKCore(k)
 
-    kCore.forEach(node => markItem(node, k))
+    kCore.forEach((node) => markItem(node, k))
 
     graph.edges
-      .filter(edge => kCore.contains(edge.sourceNode) && kCore.contains(edge.targetNode))
-      .forEach(edge => markItem(edge, k))
+      .filter((edge) => kCore.contains(edge.sourceNode) && kCore.contains(edge.targetNode))
+      .forEach((edge) => markItem(edge, k))
   }
 
   const kCores = result.kCores
-  graph.nodes.forEach(node => graph.addLabel({ owner: node, text: String(kCores.get(node)) }))
+  graph.nodes.forEach((node) => graph.addLabel({ owner: node, text: String(kCores.get(node)) }))
 }

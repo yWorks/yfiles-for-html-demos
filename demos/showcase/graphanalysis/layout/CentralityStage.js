@@ -38,14 +38,6 @@ export class CentralityStage extends LayoutStageBase {
   directed = false
 
   /**
-   * Creates a new instance of CentralityStage
-   * @param {!ILayoutAlgorithm} layout
-   */
-  constructor(layout) {
-    super(layout)
-  }
-
-  /**
    * Applies the layout to the given graph.
    * @param {!LayoutGraph} graph the given graph
    */
@@ -54,16 +46,16 @@ export class CentralityStage extends LayoutStageBase {
 
     // change the node sizes if a centrality algorithm is applied
     const isCentralityAlgorithm = graph.nodes.find(
-      node => this.getTag(tags, node).centrality !== undefined
+      (node) => this.getTag(tags, node).centrality !== undefined
     )
     if (isCentralityAlgorithm) {
       const mostCentralSize = 100
       const leastCentralSize = 30
-      graph.nodes.forEach(node => {
+      graph.nodes.forEach((node) => {
         const nodeLayout = graph.getLayout(node)
         let centralityId = this.getTag(tags, node).centrality
         // centrality values are already normalized in [0,1]
-        if (isNaN(centralityId)) {
+        if (Number.isNaN(centralityId)) {
           centralityId = 0
         }
         const size = Math.floor(
@@ -72,7 +64,7 @@ export class CentralityStage extends LayoutStageBase {
         nodeLayout.setSize(size, size)
       })
     } else {
-      graph.nodes.forEach(node => {
+      graph.nodes.forEach((node) => {
         const nodeLayout = graph.getLayout(node)
         nodeLayout.setSize(30, 30)
       })

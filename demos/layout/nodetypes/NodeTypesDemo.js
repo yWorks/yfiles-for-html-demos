@@ -343,7 +343,7 @@ async function loadSample(previewWithoutNodeTypes = false) {
     id: 'id',
     layout: 'layout',
     tag: 'tag',
-    style: dataItem => {
+    style: (dataItem) => {
       if (dataItem.tag) {
         // Create node style depending on type tag
         return createDemoNodeStyle(typeColors[dataItem.tag.type])
@@ -388,7 +388,7 @@ async function arrangeGraph(animate, previewWithoutNodeTypes) {
     await applyCurrentLayout(animate, false)
     graphComponent.fitGraphBounds()
     // Add some delay
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 2000))
     updateLayoutPopup(true, 'Node types <u>are considered</u>')
   }
 

@@ -194,7 +194,7 @@ function createOverlappingNodeSample(origin: Point): void {
     layout: [origin.x + 160, origin.y + 50, 50, 50]
   })
   const nodes = [back2, middle2, front2]
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     graph.addPort(node, FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED)
     graph.addPort(node, FreeNodePortLocationModel.NODE_TOP_ANCHORED)
     graph.addPort(node, FreeNodePortLocationModel.NODE_LEFT_ANCHORED)
@@ -341,7 +341,7 @@ function createNestedGroupSample(origin: Point): void {
 function initializeUI(): void {
   addNavigationButtons(
     document.querySelector<HTMLSelectElement>('#select-rendering-order')!
-  ).addEventListener('change', evt => {
+  ).addEventListener('change', (evt) => {
     const value = (evt.target as HTMLSelectElement).value
     selectRenderingOrder(value)
   })

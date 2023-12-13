@@ -68,7 +68,7 @@ export function initializeCommands(graphComponent: GraphComponent): void {
   // create a child node when INSERT is pressed
   keyboardInputMode.addKeyBinding({
     key: Key.INSERT,
-    execute: _ => {
+    execute: (_) => {
       const currentItem = graphComponent.currentItem
       if (currentItem) {
         const depth = getDepth(currentItem as INode)
@@ -81,38 +81,38 @@ export function initializeCommands(graphComponent: GraphComponent): void {
       }
       return true
     },
-    canExecute: _ => canExecuteCreateChild(graphComponent)
+    canExecute: (_) => canExecuteCreateChild(graphComponent)
   })
 
   // remove a child node when DELETE is pressed
   keyboardInputMode.addKeyBinding({
     key: Key.DELETE,
-    execute: _ => {
+    execute: (_) => {
       hidePopup(graphComponent)
       void executeDeleteItem(graphComponent)
       return true
     },
-    canExecute: _ => canExecuteDeleteItem(graphComponent)
+    canExecute: (_) => canExecuteDeleteItem(graphComponent)
   })
 
   // expand the subtree when ADD is pressed
   keyboardInputMode.addKeyBinding({
     key: Key.ADD,
-    execute: _ => executeExpandNode(graphComponent),
-    canExecute: _ => canExecuteExpandNode(graphComponent)
+    execute: (_) => executeExpandNode(graphComponent),
+    canExecute: (_) => canExecuteExpandNode(graphComponent)
   })
 
   // collapse the subtree when SUBTRACT is pressed
   keyboardInputMode.addKeyBinding({
     key: Key.SUBTRACT,
-    execute: _ => executeCollapseNode(graphComponent),
-    canExecute: _ => canExecuteCollapseNode(graphComponent)
+    execute: (_) => executeCollapseNode(graphComponent),
+    canExecute: (_) => canExecuteCollapseNode(graphComponent)
   })
 
   // create a sibling node when ENTER is pressed
   keyboardInputMode.addKeyBinding({
     key: Key.ENTER,
-    execute: _ => {
+    execute: (_) => {
       const currentItem = graphComponent.currentItem
       if (currentItem) {
         const depth = getDepth(currentItem as INode)
@@ -125,7 +125,7 @@ export function initializeCommands(graphComponent: GraphComponent): void {
       }
       return true
     },
-    canExecute: _ => canExecuteCreateSibling(graphComponent)
+    canExecute: (_) => canExecuteCreateSibling(graphComponent)
   })
 }
 
@@ -190,7 +190,7 @@ async function collapseNode(
 
   // collect subtree nodes to expand/collapse them with a nice animation
   let { nodes: subtreeNodes } = getSubtree(fullGraph, node)
-  subtreeNodes = subtreeNodes.filter(subtreeNode => subtreeNode !== node)
+  subtreeNodes = subtreeNodes.filter((subtreeNode) => subtreeNode !== node)
 
   // update the layout
   await layoutTree(graphComponent, subtreeNodes, collapsed)

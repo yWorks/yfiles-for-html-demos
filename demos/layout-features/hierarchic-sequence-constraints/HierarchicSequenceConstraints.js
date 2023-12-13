@@ -47,7 +47,7 @@ export function createFeatureLayoutConfiguration(graph) {
   const sequenceConstraints = layoutData.sequenceConstraints
 
   // assign constraints to place nodes 2, 6 and 11 at the start of the sequence
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     switch (node.tag) {
       case 2:
       case 6:

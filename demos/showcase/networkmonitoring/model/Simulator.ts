@@ -104,7 +104,7 @@ export class Simulator {
     }
 
     // reset packet-related properties on the connections
-    this.activePackets.forEach(packet => {
+    this.activePackets.forEach((packet) => {
       packet.connection.hasForwardPacket = false
       packet.connection.hasBackwardPacket = false
     })
@@ -115,7 +115,7 @@ export class Simulator {
 
     this.createPackets()
 
-    this.activePackets.forEach(packet => {
+    this.activePackets.forEach((packet) => {
       const connection = packet.connection
       connection.hasForwardPacket =
         connection.hasForwardPacket || packet.sender === connection.sender
@@ -135,17 +135,17 @@ export class Simulator {
       Math.random() < Simulator.FAILURE_PROBABILITY * (item.load + 0.1)
 
     this.network.devices
-      .filter(item => !item.failed && isFailing(item))
+      .filter((item) => !item.failed && isFailing(item))
       .slice(0, 3)
-      .forEach(item => {
+      .forEach((item) => {
         item.fail()
         this.network.onDeviceFailure?.(item)
       })
 
     this.network.connections
-      .filter(item => !item.failed && isFailing(item))
+      .filter((item) => !item.failed && isFailing(item))
       .slice(0, 3)
-      .forEach(item => {
+      .forEach((item) => {
         item.fail()
         this.network.onConnectionFailure?.(item)
       })
@@ -160,12 +160,12 @@ export class Simulator {
     // Find all connections that are still enabled and unbroken. Connections are automatically
     // disabled if either endpoint is disabled or broken.
     const enabledConnections = this.network.connections.filter(
-      connection => connection.enabled && !connection.failed
+      (connection) => connection.enabled && !connection.failed
     )
 
     // Restrict them to those edges that are adjacent to a node that can send packets.
     const eligibleConnections = enabledConnections.filter(
-      connection => connection.sender.canSendPackets() || connection.receiver.canSendPackets()
+      (connection) => connection.sender.canSendPackets() || connection.receiver.canSendPackets()
     )
 
     // Pick a number of those edges at random
@@ -174,7 +174,7 @@ export class Simulator {
       Simulator.NEW_PACKETS_PER_TICK + 1
     )
 
-    const packets = selectedConnections.map(connection => {
+    const packets = selectedConnections.map((connection) => {
       const sender = connection.sender.canSendPackets() ? connection.sender : connection.receiver
       const receiver = connection.sender.canSendPackets() ? connection.receiver : connection.sender
       return this.createPacket(sender, receiver, connection)
@@ -195,14 +195,14 @@ export class Simulator {
     // Find packets that need to be considered for moving.
     // This excludes packets that end in a disabled or broken device or that travel along a now-broken connection.
     // We don't care whether the source is alive or not by now.
-    const packetsToMove = this.activePackets.filter(packet => {
+    const packetsToMove = this.activePackets.filter((packet) => {
       const isConnectionWorking = packet.connection.enabled && !packet.connection.failed
       const isReceiverWorking = packet.receiver.enabled && !packet.receiver.failed
       return isConnectionWorking && isReceiverWorking
     })
 
     // Packets that arrive at servers or databases. They result in a reply packet.
-    const replyPackets = packetsToMove.filter(packet => {
+    const replyPackets = packetsToMove.filter((packet) => {
       const isSenderWorking = packet.sender.enabled && !packet.sender.failed
       const doReceiverReply =
         packet.receiver.kind === DeviceKind.SERVER || packet.receiver.kind === DeviceKind.DATABASE
@@ -210,13 +210,13 @@ export class Simulator {
     })
 
     // All other packets that just move on to their next destination.
-    const movingPackets = packetsToMove.filter(packet => !packet.receiver.canReceivePackets())
+    const movingPackets = packetsToMove.filter((packet) => !packet.receiver.canReceivePackets())
 
     // All packets have to be moved to the history list. We create new ones appropriately.
     this.historicalPackets.push(...this.activePackets)
     this.activePackets = []
 
-    movingPackets.forEach(packet => {
+    movingPackets.forEach((packet) => {
       const origin = packet.sender
       const currentConnection = packet.connection
 
@@ -226,13 +226,13 @@ export class Simulator {
       // Try finding a random connection to follow ...
       const possiblePathConnections = this.network
         .getAdjacentConnections(startDevice)
-        .filter(connection => connection !== currentConnection)
-        .filter(connection => {
+        .filter((connection) => connection !== currentConnection)
+        .filter((connection) => {
           const oppositeDevice =
             connection.sender === startDevice ? connection.receiver : connection.sender
           return origin.canConnectTo(oppositeDevice)
         })
-        .filter(connection => connection.enabled && !connection.failed)
+        .filter((connection) => connection.enabled && !connection.failed)
 
       if (possiblePathConnections.length > 0) {
         const connection = shuffle(possiblePathConnections)[0]
@@ -245,7 +245,7 @@ export class Simulator {
       }
     })
 
-    replyPackets.forEach(packet => {
+    replyPackets.forEach((packet) => {
       // We just bounce a new packet on the same edge, but in reverse direction.
       this.activePackets.push(this.createPacket(packet.receiver, packet.sender, packet.connection))
     })
@@ -257,7 +257,7 @@ export class Simulator {
    */
   pruneOldPackets(): void {
     this.historicalPackets = this.historicalPackets.filter(
-      packet => packet.time >= this.time - Simulator.HISTORY_SIZE
+      (packet) => packet.time >= this.time - Simulator.HISTORY_SIZE
     )
   }
 
@@ -271,18 +271,18 @@ export class Simulator {
     const history = [...this.activePackets, ...this.historicalPackets]
 
     // update connection loads
-    this.network.connections.forEach(connection => {
+    this.network.connections.forEach((connection) => {
       const timestamps = history
-        .filter(packet => packet.connection === connection)
-        .map(packet => packet.time)
+        .filter((packet) => packet.connection === connection)
+        .map((packet) => packet.time)
       const numberOfHistoryPackets = new Set(timestamps).size
       connection.load = Math.min(1, numberOfHistoryPackets / Simulator.HISTORY_SIZE)
     })
 
     // update device loads
-    this.network.devices.forEach(device => {
+    this.network.devices.forEach((device) => {
       const timestamps = history.filter(
-        packet => packet.sender === device || packet.receiver === device
+        (packet) => packet.sender === device || packet.receiver === device
       )
       const numberOfHistoryPackets = new Set(timestamps).size
       device.load = Math.min(

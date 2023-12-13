@@ -39,7 +39,7 @@ const yLogo = '/assets/ylogo.svg'
 
 // render ReactGraphComponent only client side
 const ReactGraphComponent = dynamic<ReactGraphComponentProps>(
-  () => import('@/app/components/ReactGraphComponent').then(mod => mod.ReactGraphComponent),
+  () => import('@/app/components/ReactGraphComponent').then((mod) => mod.ReactGraphComponent),
   {
     ssr: false,
     loading: () => <div className={'main-loader'}></div>
@@ -94,7 +94,7 @@ export default function Home() {
   const addNode = useCallback(() => {
     const newIdx = graphData.nodesSource.reduce((maxId, item) => Math.max(maxId, item.id), 0) + 1
     const parentNodeIdx = Math.floor(Math.random() * graphData.nodesSource.length)
-    setGraphData(prevGraphData => {
+    setGraphData((prevGraphData) => {
       const nodesSource = prevGraphData.nodesSource.concat({
         id: newIdx,
         name: `Node ${newIdx}`
@@ -117,14 +117,14 @@ export default function Home() {
   }, [graphData, setGraphData])
 
   const removeNode = useCallback(() => {
-    setGraphData(prevGraphData => {
+    setGraphData((prevGraphData) => {
       const randomNodeIdx = Math.floor(Math.random() * prevGraphData.nodesSource.length)
       const newNodesSource = [...prevGraphData.nodesSource]
       newNodesSource.splice(randomNodeIdx, 1)
 
       const nodeId = prevGraphData.nodesSource[randomNodeIdx].id
       const newEdgesSource = prevGraphData.edgesSource.filter(
-        edge => edge.fromNode !== nodeId && edge.toNode !== nodeId
+        (edge) => edge.fromNode !== nodeId && edge.toNode !== nodeId
       )
       return {
         nodesSource: newNodesSource,

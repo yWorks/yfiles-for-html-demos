@@ -56,7 +56,7 @@ export function applyDeepZoomLayout(foldingView: IFoldingView): void {
 
     const childGroups = masterGraph
       .getChildren(root)
-      .filter(child => masterGraph.isGroupNode(child))
+      .filter((child) => masterGraph.isGroupNode(child))
     for (const childGroup of childGroups) {
       queue.push([childGroup, layer + 1])
     }

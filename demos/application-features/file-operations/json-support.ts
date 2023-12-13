@@ -52,30 +52,30 @@ export function readJSON(graphComponent: GraphComponent, text: string): void {
     graphComponent.graph.clear()
     const graphBuilder = new GraphBuilder(graphComponent.graph)
     const nodesSource = graphBuilder.createNodesSource({
-      data: data.nodeList.filter(item => item.isGroup !== true),
-      id: item => item.id,
-      parentId: item => item.parentId,
-      layout: item => item.layout
+      data: data.nodeList.filter((item) => item.isGroup !== true),
+      id: (item) => item.id,
+      parentId: (item) => item.parentId,
+      layout: (item) => item.layout
     })
     nodesSource.nodeCreator.createLabelsSource<JSONLabel>({
-      data: data => data.labels || [],
-      text: data => data.text,
-      layoutParameter: data =>
+      data: (data) => data.labels || [],
+      text: (data) => data.text,
+      layoutParameter: (data) =>
         data.layoutParameter
           ? ILabelModelParameter.deserializeParameter(data.layoutParameter)
           : null
     })
 
     const groupNodesSource = graphBuilder.createGroupNodesSource({
-      data: data.nodeList.filter(item => item.isGroup === true),
-      id: item => item.id,
-      parentId: item => item.parentId,
-      layout: item => item.layout
+      data: data.nodeList.filter((item) => item.isGroup === true),
+      id: (item) => item.id,
+      parentId: (item) => item.parentId,
+      layout: (item) => item.layout
     })
     groupNodesSource.nodeCreator.createLabelsSource<JSONLabel>({
-      data: data => data.labels || [],
-      text: data => data.text,
-      layoutParameter: data =>
+      data: (data) => data.labels || [],
+      text: (data) => data.text,
+      layoutParameter: (data) =>
         data.layoutParameter
           ? ILabelModelParameter.deserializeParameter(data.layoutParameter)
           : null
@@ -83,13 +83,13 @@ export function readJSON(graphComponent: GraphComponent, text: string): void {
 
     const { edgeCreator } = graphBuilder.createEdgesSource(
       data.edgeList,
-      item => item.source,
-      item => item.target
+      (item) => item.source,
+      (item) => item.target
     )
     edgeCreator.createLabelsSource<JSONLabel>({
-      data: data => data.labels || [],
-      text: data => data.text,
-      layoutParameter: data =>
+      data: (data) => data.labels || [],
+      text: (data) => data.text,
+      layoutParameter: (data) =>
         data.layoutParameter
           ? ILabelModelParameter.deserializeParameter(data.layoutParameter)
           : null

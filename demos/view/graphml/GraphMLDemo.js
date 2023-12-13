@@ -307,10 +307,10 @@ function createGraphMLIOHandler() {
 function initializeEditorSynchronization() {
   editorSync.initialize(foldingView.manager.masterGraph)
   // Update the view when the editor's selection or content changes
-  editorSync.addItemSelectedListener(evt => {
+  editorSync.addItemSelectedListener((evt) => {
     onEditorItemSelected(evt.item)
   })
-  editorSync.addEditorContentChangedListener(evt => {
+  editorSync.addEditorContentChangedListener((evt) => {
     onEditorContentChanged(evt.value)
   })
 
@@ -495,7 +495,7 @@ function parse(type, value) {
  * @param {!QueryOutputHandlersEventArgs} args
  */
 function queryOutputHandlers(args) {
-  propertiesPanel.properties.forEach(property => {
+  propertiesPanel.properties.forEach((property) => {
     if (property.type !== KeyType.COMPLEX && property.keyScope === args.scope) {
       args.addOutputHandler(new SimpleOutputHandler(property, propertiesPanel))
     }
@@ -564,9 +564,9 @@ function getMasterItem(item) {
 function initializeUI() {
   document
     .querySelector('button[data-command="NEW"]')
-    .addEventListener('click', evt => clearGraph())
+    .addEventListener('click', (evt) => clearGraph())
   const openButton = document.querySelector('button[data-command="OPEN"]')
-  openButton.addEventListener('click', evt => onOpenCommandExecuted())
+  openButton.addEventListener('click', (evt) => onOpenCommandExecuted())
   // prevent auto-registering the OPEN command by finishLoading
   openButton.setAttribute('data-command-registered', 'true')
 }

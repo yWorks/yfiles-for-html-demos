@@ -37,7 +37,7 @@ const nodeData = [
 const nodesSource = graphBuilder.createNodesSource(nodeData, 'id')
 
 // create the label binding to the name property
-nodesSource.nodeCreator.createLabelBinding(data => data.name)
+nodesSource.nodeCreator.createLabelBinding((data) => data.name)
 ```
 
 The label binding can also be set explicitly using the [text provider](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-textProvider) property. In this example, the label text is converted to upper-case to show that text can be augmented.
@@ -67,7 +67,7 @@ In this case, the provider which is given as parameter is expected to return an 
 ```
 // create the label sources based on the `owners` property
 const labelsSource = nodesSource.nodeCreator.createLabelsSource(
-  data => data.owners
+  (data) => data.owners
 )
 ```
 
@@ -100,7 +100,9 @@ const edgesSource = graphBuilder.createEdgesSource(
 )
 
 // bind the label text data and add some more text information
-edgesSource.edgeCreator.createLabelBinding(data => `Owns ${data.ownership}%`)
+edgesSource.edgeCreator.createLabelBinding(
+  (data) => `Owns ${data.ownership}%`
+)
 ```
 
 Note

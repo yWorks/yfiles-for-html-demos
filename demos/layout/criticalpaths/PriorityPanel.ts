@@ -130,7 +130,7 @@ export default class PriorityPanel {
   addClickListener(element: HTMLElement, priority: number): void {
     element.addEventListener('click', () => {
       if (this.currentItems) {
-        this.currentItems.forEach(item => {
+        this.currentItems.forEach((item) => {
           const oldPriority = item.tag && item.tag.priority ? item.tag.priority : 0
           if (oldPriority !== priority) {
             this.itemPriorityChanged(item, priority, oldPriority)
@@ -152,7 +152,7 @@ export default class PriorityPanel {
       document.getElementById(`priority-button-${i}`)!.classList.remove('current-priority')
     }
     if (this.currentItems) {
-      this.currentItems.forEach(item => {
+      this.currentItems.forEach((item) => {
         document
           .getElementById(`priority-button-${item.tag.priority || 0}`)!
           .classList.add('current-priority')

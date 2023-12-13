@@ -362,7 +362,7 @@ export class BoundsVisual extends BaseClass(IVisualCreator) {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     g.append(
-      ...graph.nodes.map(n => {
+      ...graph.nodes.map((n) => {
         const rect = document.createElementNS(
           'http://www.w3.org/2000/svg',
           'rect'
@@ -396,7 +396,7 @@ export class BoundsVisual extends BaseClass(IVisualCreator) {
 
 export function startNodeAnimation(graphComponent: GraphComponent): void {
   graphComponent.sizeChangedDetection = SizeChangedDetectionMode.TIMER
-  graphComponent.addSizeChangedListener(_ => {
+  graphComponent.addSizeChangedListener((_) => {
     setTimeout(() => {
       setAnimationStartPoint(graphComponent)
       void animate()

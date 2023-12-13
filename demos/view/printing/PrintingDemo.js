@@ -53,7 +53,7 @@ async function run() {
 
   const printRect = initializeExportRectangle(graphComponent)
 
-  initializeOptionPanel(options => {
+  initializeOptionPanel((options) => {
     const rect = options.usePrintRectangle ? printRect.toRect() : undefined
 
     const printingSupport = new PrintingSupport()

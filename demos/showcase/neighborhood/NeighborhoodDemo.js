@@ -239,7 +239,7 @@ function configureNeighborhoodView(neighborhoodView, type, distance) {
   // mirror navigation in the NeighborhoodView to the demo's main GraphComponent
   neighborhoodView.clickCallback =
     NeighborhoodType.FOLDER_CONTENTS === type
-      ? node => {
+      ? (node) => {
           const foldingView = graphComponent.graph.foldingView
           if (foldingView.manager.masterGraph.contains(node)) {
             const viewNode = foldingView.getViewItem(node)
@@ -249,7 +249,7 @@ function configureNeighborhoodView(neighborhoodView, type, distance) {
             }
           }
         }
-      : node => {
+      : (node) => {
           graphComponent.selection.clear()
           graphComponent.selection.setSelected(node, true)
         }

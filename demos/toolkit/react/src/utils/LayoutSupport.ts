@@ -42,7 +42,7 @@ export class LayoutSupport {
   constructor(graphComponent: GraphComponent) {
     // helper function that performs the actual message passing to the web worker
     const webWorkerMessageHandler = (data: unknown): Promise<any> => {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         layoutWorker.onmessage = (e: any) => resolve(e.data)
         layoutWorker.postMessage(data)
       })

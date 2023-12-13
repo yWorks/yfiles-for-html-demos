@@ -155,7 +155,7 @@ export default class NodeTypePanel {
     }
     element.addEventListener('click', () => {
       if (this.currentItems) {
-        this.currentItems.forEach(item => {
+        this.currentItems.forEach((item) => {
           const oldType = item.tag && item.tag.type
           if (oldType !== type) {
             this.nodeTypeChanged(item, type, oldType)
@@ -177,7 +177,7 @@ export default class NodeTypePanel {
       btn.classList.remove('current-type')
     }
     if (this.currentItems) {
-      this.currentItems.forEach(item => {
+      this.currentItems.forEach((item) => {
         this.div
           .querySelector(`.type-${(item.tag && item.tag.type) || 0}`)
           .classList.add('current-type')

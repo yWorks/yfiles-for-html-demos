@@ -211,10 +211,6 @@ export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
 export class Sample2ArrowExtension extends MarkupExtension {
   _cssClass = ''
 
-  constructor() {
-    super()
-  }
-
   /**
    * @type {!string}
    */

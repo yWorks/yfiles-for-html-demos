@@ -77,13 +77,6 @@ export default class AlignmentStage extends LayoutStageBase {
    */
   private alignmentEdges: Edge[] | null = null
 
-  /**
-   * Creates a new instance of this stage with the given core layout.
-   */
-  constructor(coreLayout: ILayoutAlgorithm | null) {
-    super(coreLayout)
-  }
-
   applyLayout(graph: LayoutGraph): void {
     // Calculate an initial layout. This is needed so that the nodes to align
     // already have their proper vertical order as defined by the core layout.
@@ -118,10 +111,10 @@ export default class AlignmentStage extends LayoutStageBase {
 
     const orderedAlignmentNodes = graph.nodes
       // Handle nodes where the data provider indicates that it is an alignment node
-      .filter(node => dp.getBoolean(node))
+      .filter((node) => dp.getBoolean(node))
       // Order them by y-coordinates
       .orderBy(
-        node => graph.getY(node),
+        (node) => graph.getY(node),
         (a, b) => a - b
       )
       .toArray()

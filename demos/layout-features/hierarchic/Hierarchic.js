@@ -105,22 +105,22 @@ export function createFeatureLayoutConfiguration(graph) {
     HierarchicLayoutEdgeRoutingStyle.OCTILINEAR
   // if different routing settings are necessary, the corresponding descriptors have to be
   // explicitly assigned to the appropriate edges
-  layoutData.edgeLayoutDescriptors.delegate = edge =>
+  layoutData.edgeLayoutDescriptors.delegate = (edge) =>
     isOctilinearEdge(edge) ? octilinearEdgeDescriptor : defaultEdgeDescriptor
 
   // declare some edges as "critical"
   // the set of critical edges will be routed as straight as possible
   // see the edges connecting nodes 19, 0, 1, and 2
-  layoutData.criticalEdgePriorities.delegate = edge => (isCriticalEdge(edge) ? 10 : 0)
+  layoutData.criticalEdgePriorities.delegate = (edge) => (isCriticalEdge(edge) ? 10 : 0)
 
   // force the edge from node 20 to node 21 to leave its source node on the right side
   layoutData.sourcePortConstraints.mapper.set(
-    graph.edges.find(edge => edge.tag === 12),
+    graph.edges.find((edge) => edge.tag === 12),
     PortConstraint.create(PortSide.EAST)
   )
   // force the edge from node 9 to node 7 to enter its target node on the right side
   layoutData.targetPortConstraints.mapper.set(
-    graph.edges.find(edge => edge.tag === 32),
+    graph.edges.find((edge) => edge.tag === 32),
     PortConstraint.create(PortSide.EAST)
   )
 

@@ -321,14 +321,14 @@ async function loadAndFilterGraph() {
 
   colorizeSubtrees(graph)
 
-  graphComponent.graph = new FilteredGraphWrapper(graph, node => isVisible(node))
+  graphComponent.graph = new FilteredGraphWrapper(graph, (node) => isVisible(node))
 
   // center the graph
   graphComponent.fitGraphBounds()
 
   // show and layout the first subtree
   subtreeUpdateRunning = true
-  const root = graph.nodes.find(node => node.tag.name === 'Life on Earth')
+  const root = graph.nodes.find((node) => node.tag.name === 'Life on Earth')
   await showSubtree(root)
   subtreeUpdateRunning = false
 
@@ -390,16 +390,16 @@ function colorizeSubtrees(graph) {
     const subtree = getSubtree(subtreeRoot, graph)
     const palette = palettes[i]
 
-    subtree.nodes.forEach(node => {
+    subtree.nodes.forEach((node) => {
       const extinct = node.tag.EXTINCT !== '0'
       graph.setStyle(node, getNodeStyle(extinct, palette))
-      node.labels.forEach(label => {
+      node.labels.forEach((label) => {
         graph.setStyle(label, getLabelStyle(extinct, palette))
       })
       node.tag = { ...node.tag, color: palettes[i].secondary }
     })
 
-    subtree.edges.forEach(edge => {
+    subtree.edges.forEach((edge) => {
       const extinct = edge.targetNode.tag.EXTINCT !== '0'
       graph.setStyle(edge, getEdgeStyle(extinct, palette))
     })
@@ -466,13 +466,13 @@ async function showSubtree(subtreeRoot, prepareAnimation) {
   })
   const bfsResult = bfs.run(mainGraph())
   const subtreeNodes = subtree.nodes.orderBy(
-    node => bfsResult.nodeLayerIds.get(node),
+    (node) => bfsResult.nodeLayerIds.get(node),
     (layer1, layer2) => layer1 - layer2
   )
 
   // only show the layers up until the graph has 500 nodes + the remaining nodes of the last layer
   let currentLayer = 0
-  subtreeNodes.forEach(node => {
+  subtreeNodes.forEach((node) => {
     const layer = bfsResult.nodeLayerIds.get(node)
     if (visibleNodes.size < 500 || layer === currentLayer) {
       visibleNodes.add(node)
@@ -530,7 +530,7 @@ async function applyNewLayout(graphComponent, prepareAnimation = true, highlight
       const highlightManager = graphComponent.highlightIndicatorManager
       highlightManager.clearHighlights()
 
-      graph.nodes.forEach(node => {
+      graph.nodes.forEach((node) => {
         if (node.tag.EXTINCT !== '0') {
           highlightManager.addHighlight(node.labels.get(0))
         }
@@ -662,7 +662,7 @@ function updateNavigationMenuAndCombobox(selectedRoot) {
 
   // update sample in combo box based on the subtree in which the node belongs
   const selectSubtreeCombo = document.querySelector('#sample-subtrees')
-  const subtrees = Array.from(selectSubtreeCombo.options).map(o => o.text.toLowerCase())
+  const subtrees = Array.from(selectSubtreeCombo.options).map((o) => o.text.toLowerCase())
   for (const node of ancestors) {
     if (subtrees.includes(node.tag.name.toLowerCase())) {
       selectSubtreeCombo.value = node.tag.name
@@ -695,9 +695,9 @@ function updateNavigationMenuAndCombobox(selectedRoot) {
     if (ancestorLabel === selectedRoot.tag.name) {
       ancestorDiv.classList.add('selected')
     }
-    ancestorDiv.addEventListener('click', async evt => {
+    ancestorDiv.addEventListener('click', async (evt) => {
       if (!subtreeUpdateRunning) {
-        const subtreeRoot = mainGraph().nodes.find(node => node.tag.name === evt.target.innerText)
+        const subtreeRoot = mainGraph().nodes.find((node) => node.tag.name === evt.target.innerText)
         await showSubtreeForSelectedRoot(subtreeRoot)
       }
       subtreeUpdateRunning = false
@@ -733,12 +733,12 @@ function createArrow() {
 function initializeUI() {
   addNavigationButtons(document.querySelector('#sample-subtrees')).addEventListener(
     'change',
-    async evt => {
+    async (evt) => {
       const value = evt.target.value
       if (!subtreeUpdateRunning) {
         subtreeUpdateRunning = true
         setUIDisabled(graphComponent, true)
-        const subtreeRoot = mainGraph().nodes.find(node => node.tag.name === value)
+        const subtreeRoot = mainGraph().nodes.find((node) => node.tag.name === value)
         await showSubtreeForSelectedRoot(subtreeRoot, true)
         setUIDisabled(graphComponent, false)
         subtreeUpdateRunning = false

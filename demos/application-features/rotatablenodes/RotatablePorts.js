@@ -73,13 +73,6 @@ export class RotatablePortLocationModelDecorator extends BaseClass(
   }
 
   /**
-   * Creates a new instance wrapping a {@link FreeNodePortLocationModel}.
-   */
-  constructor() {
-    super()
-  }
-
-  /**
    * Delegates to the wrapped location model's lookup.
    * @template T
    * @param {!Class.<T>} type

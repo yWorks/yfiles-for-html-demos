@@ -79,7 +79,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
   initializeDrag(context: IInputModeContext): void {
     this.subtree = new Subtree(context.graph!, this.node!)
 
-    this.subtree.nodes.forEach(node => {
+    this.subtree.nodes.forEach((node) => {
       // store normal style of the node and set the moving node style while dragging
       this.node2NormalStyle.set(node, node.style)
       context.graph!.setStyle(node, this.movingNodeStyle)
@@ -134,7 +134,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
    */
   private resetStyles(graph: IGraph): void {
     const nodeToStyle = this.node2NormalStyle
-    this.subtree.nodes.forEach(node => {
+    this.subtree.nodes.forEach((node) => {
       if (nodeToStyle.has(node)) {
         // reset style to the normal node style of this node
         const style = nodeToStyle.get(node)!

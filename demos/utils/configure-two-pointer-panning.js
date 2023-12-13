@@ -45,18 +45,21 @@ import { BrowserDetection } from './BrowserDetection.js'
 export function configureTwoPointerPanning(graphComponent) {
   const inputMode = graphComponent.inputMode
   if (inputMode instanceof GraphEditorInputMode) {
-    // disable single pointer movement to allow other gestures to start on a simple single press
-    inputMode.moveViewportInputMode.allowSinglePointerMovement = false
+    // start marquee selection on long press to allow other gestures to start on a simple single press
+    inputMode.marqueeSelectionInputMode.pressedRecognizerTouch =
+      TouchEventRecognizers.TOUCH_LONG_PRESS_PRIMARY
+
     // set gestures to an immediate touch-down recognizer instead of the long-press recognizer
     inputMode.moveInputMode.pressedRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
     inputMode.createEdgeInputMode.prepareRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
     inputMode.createBendInputMode.prepareRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
     inputMode.handleInputMode.pressedRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
-    inputMode.marqueeSelectionInputMode.pressedRecognizerTouch =
-      TouchEventRecognizers.TOUCH_DOWN_PRIMARY
     inputMode.moveUnselectedInputMode.pressedRecognizerTouch =
       TouchEventRecognizers.TOUCH_DOWN_PRIMARY
     inputMode.moveLabelInputMode.pressedRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
+
+    // make sure that starting the input modes above has higher priority than moving the viewport
+    inputMode.moveViewportInputMode.priority = inputMode.marqueeSelectionInputMode.priority - 1
   }
 
   // prevent accidental start of edit gesture for now immediate touchdown gestures

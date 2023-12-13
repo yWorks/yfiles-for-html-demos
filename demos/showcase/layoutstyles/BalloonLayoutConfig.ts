@@ -192,7 +192,7 @@ const BalloonLayoutConfig = (Class as any)('BalloonLayoutConfig', {
       this.nodeLabelingStyleItem === NodeLabelingPolicies.RAYLIKE_LEAVES ||
       this.nodeLabelingStyleItem === NodeLabelingPolicies.HORIZONTAL
     ) {
-      graphComponent.graph.nodeLabels.forEach(label => {
+      graphComponent.graph.nodeLabels.forEach((label) => {
         graphComponent.graph.setLabelLayoutParameter(
           label,
           FreeNodeLabelModel.INSTANCE.findBestParameter(

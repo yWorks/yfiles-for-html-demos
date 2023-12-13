@@ -142,11 +142,11 @@ export function setWebGL2Styles(graphComponent) {
     return
   }
   const graph = graphComponent.graph
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     updateNodeStyle(graphComponent, node)
   })
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     updateEdgeStyle(graphComponent, edge)
   })
 }

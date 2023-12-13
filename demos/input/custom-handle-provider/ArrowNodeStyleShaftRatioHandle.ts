@@ -57,7 +57,10 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
    * @param node The node whose style shall be changed.
    * @param shaftRatioChanged An action that is called when the handle has been moved.
    */
-  constructor(private readonly node: INode, private readonly shaftRatioChanged: () => void) {
+  constructor(
+    private readonly node: INode,
+    private readonly shaftRatioChanged: () => void
+  ) {
     super()
     this.style = node.style as ArrowNodeStyle
   }

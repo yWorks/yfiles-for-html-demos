@@ -134,7 +134,7 @@ export class ExpandCollapseNavigationHelper {
     // We create a temporary second FoldingView where we already expand 'node'.
     // This tempView already has the FolderNodeStates and FoldingEdgeStates applied so we can work directly on this view
     // to get and set correct layout information.
-    const tempView = foldingView.manager.createFoldingView(masterGroupNode, n =>
+    const tempView = foldingView.manager.createFoldingView(masterGroupNode, (n) =>
       foldingView.isExpanded(n)
     )
 
@@ -173,7 +173,7 @@ export class ExpandCollapseNavigationHelper {
     this.moveSubgraph(tempView, tempViewDescendents, diffVector)
 
     // clear bends of edges attached to the expanded 'node'
-    foldingView.graph.edgesAt(node).forEach(edge => {
+    foldingView.graph.edgesAt(node).forEach((edge) => {
       const masterEdge = foldingView.getMasterItem(edge)
       if (
         masterEdge!.sourceNode !== masterGroupNode &&
@@ -205,18 +205,18 @@ export class ExpandCollapseNavigationHelper {
     // calculate the bounds of all descendents
     let bounds = Rect.EMPTY
 
-    subGraphNodes.forEach(child => {
+    subGraphNodes.forEach((child) => {
       bounds = Rect.add(bounds, child.layout.toRect())
       // consider node labels that may be external
 
-      child.labels.forEach(label => {
+      child.labels.forEach((label) => {
         bounds = Rect.add(bounds, label.layout.bounds)
       })
 
-      tempView.graph.edgesAt(child).forEach(edge => {
+      tempView.graph.edgesAt(child).forEach((edge) => {
         if (subGraphNodes.includes(edge.opposite(child) as INode)) {
           // edge is between nodes in the subgraph, so consider its bends
-          edge.bends.forEach(bend => {
+          edge.bends.forEach((bend) => {
             bounds = bounds.add(bend.location.toPoint())
           })
         }
@@ -239,16 +239,16 @@ export class ExpandCollapseNavigationHelper {
   ): void {
     const movedEdges = Maps.createHashSet<IEdge>()!
 
-    subGraphNodes.forEach(tempViewDescendent => {
+    subGraphNodes.forEach((tempViewDescendent) => {
       tempView.graph.setNodeLayout(
         tempViewDescendent,
         tempViewDescendent.layout.toRect().getTranslated(vectorToMove)
       )
 
-      tempView.graph.edgesAt(tempViewDescendent).forEach(edge => {
+      tempView.graph.edgesAt(tempViewDescendent).forEach((edge) => {
         if (!movedEdges.includes(edge)) {
           movedEdges.add(edge)
-          edge.bends.forEach(bend => {
+          edge.bends.forEach((bend) => {
             tempView.graph.setBendLocation(bend, bend.location.toPoint().add(vectorToMove))
           })
         }
@@ -294,7 +294,7 @@ export class ExpandCollapseNavigationHelper {
    */
   private prepareFoldedState(groupNode: INode, foldingView: IFoldingView): void {
     // use a second folding view where group node can already be collapsed so we can easily adjust its layout and attached edges
-    const tempView = foldingView.manager.createFoldingView(foldingView.localRoot, node =>
+    const tempView = foldingView.manager.createFoldingView(foldingView.localRoot, (node) =>
       foldingView.isExpanded(node)
     )
 
@@ -306,12 +306,12 @@ export class ExpandCollapseNavigationHelper {
     tempView.graph.setNodeCenter(tempViewFolderNode!, groupNode.layout.center)
 
     // transfer path of edges on folder node
-    tempView.graph.edgesAt(tempViewFolderNode!).forEach(tempEdge => {
+    tempView.graph.edgesAt(tempViewFolderNode!).forEach((tempEdge) => {
       const masterEdge = tempView.getMasterItem(tempEdge)
       const viewEdge = foldingView.getViewItem(masterEdge!)
 
       tempView.graph.clearBends(tempEdge)
-      viewEdge!.bends.forEach(bend => {
+      viewEdge!.bends.forEach((bend) => {
         tempView.graph.addBend(tempEdge, bend.location.toPoint())
       })
     })

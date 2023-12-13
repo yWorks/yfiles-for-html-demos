@@ -170,7 +170,7 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
   }
 
   /**
-   * @template {*} T
+   * @template T
    * @param {!Class.<T>} type
    * @returns {?T}
    */

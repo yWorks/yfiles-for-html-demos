@@ -131,7 +131,10 @@ class NodeRenderVisual extends HtmlCanvasVisual {
    * @param layout A live view of the layout of a node.
    * @param color The color for the node.
    */
-  constructor(private readonly layout: IRectangle, color: Color) {
+  constructor(
+    private readonly layout: IRectangle,
+    color: Color
+  ) {
     super()
     this.color = `rgba(${color.r},${color.g},${color.b},${color.a})`
   }

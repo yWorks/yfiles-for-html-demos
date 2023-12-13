@@ -69,7 +69,7 @@ async function run() {
 
   // this function provides the heat for a node or edge at a specific time
   // it is used to update the heat map or the node decoration
-  const getHeat = item => {
+  const getHeat = (item) => {
     // we define the heat as the ratio of the current heat value to the item's capacity,
     // but not more than 1
     const data = item instanceof INode ? getProcessStepData(item) : getProcessTransitionData(item)
@@ -149,7 +149,7 @@ function initializeDemoStyles(graph, getHeat) {
 
   graph.nodeDefaults.style = new ProcessingStepNodeStyleDecorator(
     new ShapeNodeStyle({ fill: '#494949', stroke: 'none' }),
-    node => quantize(getHeat(node))
+    (node) => quantize(getHeat(node))
   )
   graph.nodeDefaults.size = new Size(150, 30)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({

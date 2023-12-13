@@ -63,7 +63,7 @@ async function run() {
 
   const exportRect = initializeExportRectangle(graphComponent)
 
-  initializeOptionPanel(async options => {
+  initializeOptionPanel(async (options) => {
     const element = await exportSvg(
       graphComponent,
       options.scale,
@@ -73,7 +73,7 @@ async function run() {
     showExportDialog(element)
   })
 
-  initializeExportDialog('SVG Export', svgElement => {
+  initializeExportDialog('SVG Export', (svgElement) => {
     const fileContent = SvgExport.exportSvgString(svgElement)
     try {
       downloadFile(fileContent, 'graph.svg')

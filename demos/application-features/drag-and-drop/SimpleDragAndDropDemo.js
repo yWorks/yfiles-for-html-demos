@@ -109,22 +109,22 @@ function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
 
   graphBuilder.createNodesSource({
-    data: graphData.nodeList.filter(item => !item.isGroup),
-    id: item => item.id,
-    parentId: item => item.parentId
+    data: graphData.nodeList.filter((item) => !item.isGroup),
+    id: (item) => item.id,
+    parentId: (item) => item.parentId
   })
 
   graphBuilder
     .createGroupNodesSource({
-      data: graphData.nodeList.filter(item => item.isGroup),
-      id: item => item.id
+      data: graphData.nodeList.filter((item) => item.isGroup),
+      id: (item) => item.id
     })
-    .nodeCreator.createLabelBinding(item => item.label)
+    .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -139,7 +139,7 @@ function configureDragAndDrop() {
   // By default the mode available in GraphEditorInputMode is disabled, so first enable it.
   nodeDropInputMode.enabled = true
   // Certain nodes should be created as group nodes. In this case, we distinguish them by their style.
-  nodeDropInputMode.isGroupNodePredicate = draggedNode =>
+  nodeDropInputMode.isGroupNodePredicate = (draggedNode) =>
     draggedNode.style instanceof GroupNodeStyle
   // When dragging the node within the GraphComponent, we want to show a preview of that node.
   nodeDropInputMode.showPreview = true
@@ -162,7 +162,7 @@ function initializeDragAndDropPanel() {
   const nodeStyles = [defaultNodeStyle, otherNodeStyle, defaultGroupNodeStyle]
 
   // add a visual for each node style to the palette
-  nodeStyles.forEach(style => {
+  nodeStyles.forEach((style) => {
     addNodeVisual(style, panel)
   })
 }
@@ -216,7 +216,7 @@ function addNodeVisual(style, panel) {
 
   img.addEventListener(
     'mousedown',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },
@@ -224,7 +224,7 @@ function addNodeVisual(style, panel) {
   )
   img.addEventListener(
     'touchstart',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },

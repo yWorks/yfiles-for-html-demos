@@ -55,7 +55,7 @@ export default class ContextMenuSupport {
   createContextMenu() {
     const inputMode = this.graphComponent.inputMode
     const contextMenu = new ContextMenu(this.graphComponent)
-    contextMenu.addOpeningEventListeners(this.graphComponent, location => {
+    contextMenu.addOpeningEventListeners(this.graphComponent, (location) => {
       const worldLocation = this.graphComponent.toWorldFromPage(location)
       const showMenu = inputMode.contextMenuInputMode.shouldOpenMenu(worldLocation)
       if (showMenu) {
@@ -85,9 +85,9 @@ export default class ContextMenuSupport {
 
       if (
         selectedEdges.length > 1 &&
-        selectedEdges.some(edge1 =>
+        selectedEdges.some((edge1) =>
           selectedEdges.find(
-            edge2 =>
+            (edge2) =>
               edge1 !== edge2 &&
               ((graph.isGroupNode(edge1.sourceNode) && edge1.sourceNode === edge2.targetNode) ||
                 (graph.isGroupNode(edge1.targetNode) &&
@@ -102,7 +102,7 @@ export default class ContextMenuSupport {
         )
       }
       if (
-        selectedEdges.some(edge => edge.tag && (edge.tag.sourceSplitId || edge.tag.targetSplitId))
+        selectedEdges.some((edge) => edge.tag && (edge.tag.sourceSplitId || edge.tag.targetSplitId))
       ) {
         args.showMenu = true
         contextMenu.addMenuItem('Unalign Selected Edges', () =>
@@ -113,7 +113,7 @@ export default class ContextMenuSupport {
         )
       }
       if (
-        selectedEdges.some(edge => {
+        selectedEdges.some((edge) => {
           const sourceNode = edge.sourceNode
           const targetNode = edge.targetNode
           return (
@@ -144,10 +144,10 @@ export default class ContextMenuSupport {
     const graph = this.graphComponent.graph
     const splitId = Date.now() + Math.random() // unique id
     const color = getColor()
-    edges.forEach(edge1 => {
+    edges.forEach((edge1) => {
       if (
         edges.find(
-          edge2 =>
+          (edge2) =>
             graph.isGroupNode(edge1.sourceNode) &&
             edge1.sourceNode === edge2.targetNode &&
             graph.getParent(edge1.targetNode) !== graph.getParent(edge2.sourceNode)
@@ -162,7 +162,7 @@ export default class ContextMenuSupport {
       }
       if (
         edges.find(
-          edge2 =>
+          (edge2) =>
             graph.isGroupNode(edge1.targetNode) &&
             edge1.targetNode === edge2.sourceNode &&
             graph.getParent(edge1.sourceNode) !== graph.getParent(edge2.targetNode)
@@ -200,11 +200,11 @@ export default class ContextMenuSupport {
     const graph = this.graphComponent.graph
 
     // unalign predecessor and successor edges that have the same split id but there is no edge to align, anymore
-    edges.forEach(edge => {
+    edges.forEach((edge) => {
       const sourceNode = edge.sourceNode
       const targetNode = edge.targetNode
       if (graph.isGroupNode(sourceNode)) {
-        graph.inEdgesAt(sourceNode).forEach(inEdge => {
+        graph.inEdgesAt(sourceNode).forEach((inEdge) => {
           if (
             inEdge.tag &&
             edge.tag &&
@@ -212,7 +212,7 @@ export default class ContextMenuSupport {
             !graph
               .inEdgesAt(inEdge.sourceNode)
               .some(
-                previousEdge =>
+                (previousEdge) =>
                   previousEdge.tag &&
                   previousEdge.tag.targetSplitId === previousEdge.tag.sourceSplitId
               )
@@ -223,7 +223,7 @@ export default class ContextMenuSupport {
         })
       }
       if (graph.isGroupNode(targetNode)) {
-        graph.outEdgesAt(targetNode).forEach(outEdge => {
+        graph.outEdgesAt(targetNode).forEach((outEdge) => {
           if (
             outEdge.tag &&
             edge.tag &&
@@ -231,7 +231,7 @@ export default class ContextMenuSupport {
             !graph
               .outEdgesAt(outEdge.targetNode)
               .some(
-                nextEdge =>
+                (nextEdge) =>
                   nextEdge.tag && nextEdge.tag.sourceSplitId === nextEdge.tag.targetSplitId
               )
           ) {
@@ -258,7 +258,7 @@ export default class ContextMenuSupport {
     const graph = this.graphComponent.graph
 
     const visited = []
-    edges.forEach(edge => {
+    edges.forEach((edge) => {
       if (visited.includes(edge)) {
         return
       }
@@ -268,7 +268,7 @@ export default class ContextMenuSupport {
         let predecessor = graph
           .inEdgesAt(sourceNode)
           .find(
-            inEdge =>
+            (inEdge) =>
               inEdge.tag &&
               inEdge.tag.targetSplitId &&
               inEdge.tag.targetSplitId === edge.tag.sourceSplitId
@@ -281,7 +281,7 @@ export default class ContextMenuSupport {
           predecessor = graph
             .inEdgesAt(sourceNode)
             .find(
-              inEdge =>
+              (inEdge) =>
                 inEdge.tag &&
                 inEdge.tag.targetSplitId &&
                 inEdge.tag.targetSplitId === edge.tag.sourceSplitId
@@ -291,7 +291,7 @@ export default class ContextMenuSupport {
         let successor = graph
           .outEdgesAt(targetNode)
           .find(
-            outEdge =>
+            (outEdge) =>
               outEdge.tag &&
               outEdge.tag.sourceSplitId &&
               outEdge.tag.sourceSplitId === edge.tag.targetSplitId
@@ -304,7 +304,7 @@ export default class ContextMenuSupport {
           successor = graph
             .outEdgesAt(targetNode)
             .find(
-              outEdge =>
+              (outEdge) =>
                 outEdge.tag &&
                 outEdge.tag.sourceSplitId &&
                 outEdge.tag.sourceSplitId === edge.tag.targetSplitId
@@ -313,7 +313,7 @@ export default class ContextMenuSupport {
         graph.createEdge(sourceNode, targetNode)
       }
     })
-    visited.forEach(edge => {
+    visited.forEach((edge) => {
       graph.remove(edge)
     })
 
@@ -327,7 +327,7 @@ export default class ContextMenuSupport {
    */
   async splitInterEdgesAtGroups(interEdges) {
     const graph = this.graphComponent.graph
-    interEdges.forEach(edge => {
+    interEdges.forEach((edge) => {
       const commonAncestor = graph.groupingSupport.getNearestCommonAncestor(
         edge.sourceNode,
         edge.targetNode
@@ -437,20 +437,20 @@ export default class ContextMenuSupport {
     const graph = this.graphComponent.graph
     const descendants = graph.groupingSupport.getDescendants(group)
     const interEdges = []
-    descendants.forEach(node => {
+    descendants.forEach((node) => {
       graph
         .edgesAt(node)
         .filter(
-          edge =>
+          (edge) =>
             edge.sourceNode !== group &&
             edge.targetNode !== group &&
             graph.getParent(edge.sourceNode) !== graph.getParent(edge.targetNode) &&
             (!descendants.includes(edge.sourceNode) || !descendants.includes(edge.targetNode))
         )
-        .forEach(edge => interEdges.push(edge))
+        .forEach((edge) => interEdges.push(edge))
     })
 
-    interEdges.forEach(edge => {
+    interEdges.forEach((edge) => {
       let splitId
       let color
       if (
@@ -510,7 +510,7 @@ export default class ContextMenuSupport {
     // find the intersecting segment of the edge
     let foundInner = false
     let lastBend = inner
-    edge.bends.forEach(bend => {
+    edge.bends.forEach((bend) => {
       if (!foundInner) {
         if (!group.layout.contains(bend.location)) {
           foundInner = true
@@ -535,7 +535,7 @@ export default class ContextMenuSupport {
   async joinInterEdgesAtGroup(group) {
     const graph = this.graphComponent.graph
     const sourceEdges = {}
-    graph.inEdgesAt(group).forEach(edge => {
+    graph.inEdgesAt(group).forEach((edge) => {
       if (!edge.tag) {
         return
       }
@@ -544,7 +544,7 @@ export default class ContextMenuSupport {
     graph
       .outEdgesAt(group)
       .toArray()
-      .forEach(edge => {
+      .forEach((edge) => {
         if (!edge.tag) {
           return
         }

@@ -132,7 +132,7 @@ const LabelingConfig = Class('LabelingConfig', {
     const selection = graphComponent.selection
     if (selection !== null) {
       layoutData.affectedLabels.dpKey = SELECTED_LABELS_KEY
-      layoutData.affectedLabels.delegate = label =>
+      layoutData.affectedLabels.delegate = (label) =>
         selection.isSelected(label) || selection.isSelected(label.owner)
     }
 

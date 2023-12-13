@@ -31,7 +31,10 @@ In our examples, we add a property named `id` to the business data.
 const nodeData = [{ id: '00' }, { id: '01' }, { id: '02' }]
 
 // nodes source for the turquoise nodes
-const nodesSource = graphBuilder.createNodesSource(nodeData, item => item.id)
+const nodesSource = graphBuilder.createNodesSource(
+  nodeData,
+  (item) => item.id
+)
 ```
 
 Another one is the **[IEnumerable<T>](https://docs.yworks.com/yfileshtml/#/api/IEnumerable)**. The [id provider](https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-property-idProvider) function retrieves the identifiers for the nodes.
@@ -42,7 +45,10 @@ Another one is the **[IEnumerable<T>](https://docs.yworks.com/yfileshtml/#/api/I
 const nodeData = IEnumerable.from([{ id: '10' }, { id: '11' }, { id: '12' }])
 
 // nodes source for the blue nodes
-const nodesSource = graphBuilder.createNodesSource(nodeData, item => item.id)
+const nodesSource = graphBuilder.createNodesSource(
+  nodeData,
+  (item) => item.id
+)
 ```
 
 If you have organized the data in a **[Map](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)** for easy and fast access by a `key`, you can pass it to [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) as is. The map key of an item is passed to the [id provider](https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-property-idProvider) function as a second parameter and can be used as the identifier or a part of it.
@@ -88,7 +94,7 @@ function* nodes(): Generator<{ id: string }> {
 }
 
 // nodes source for the brown nodes
-const nodesSource = graphBuilder.createNodesSource(nodes, item => item.id)
+const nodesSource = graphBuilder.createNodesSource(nodes, (item) => item.id)
 ```
 
 Note

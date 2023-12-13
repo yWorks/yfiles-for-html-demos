@@ -46,7 +46,7 @@ export class BezierEdgeHandleProvider extends BaseClass(IHandleProvider) {
   public getHandles(context: IInputModeContext): IEnumerable<IHandle> {
     return this.coreImpl
       .getHandles(context)
-      .concat(this.edge.bends.map(b => b.lookup(IHandle.$class)))
+      .concat(this.edge.bends.map((b) => b.lookup(IHandle.$class)))
       .toList()
   }
 }

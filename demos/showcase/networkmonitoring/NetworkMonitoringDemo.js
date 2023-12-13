@@ -92,7 +92,7 @@ async function run() {
 
   const graphInputMode = createInputMode()
 
-  initializeToolTips(graphInputMode, item =>
+  initializeToolTips(graphInputMode, (item) =>
     item instanceof INode
       ? getDeviceTooltip(getDevice(item))
       : getConnectionTooltip(getConnection(item))
@@ -122,13 +122,13 @@ async function run() {
     })
   )
 
-  network.onDeviceFailure = async device => {
+  network.onDeviceFailure = async (device) => {
     const node = graphBuilder.getNodeById(device.id)
     addFailureHighlight(node)
     await zoomToBounds(graphComponent, node.layout.toRect())
   }
 
-  network.onConnectionFailure = async connection => {
+  network.onConnectionFailure = async (connection) => {
     const sourceNode = graphBuilder.getNodeById(connection.sender.id)
     const targetNode = graphBuilder.getNodeById(connection.receiver.id)
     // We don't need to consider bends in this demo as there are none.
@@ -214,12 +214,14 @@ function createGraphBuilder(data, graphComponent) {
 
   const nodeCreator = graphBuilder.createNodesSource({
     data: data.devices,
-    id: item => item.id
+    id: (item) => item.id
   }).nodeCreator
   nodeCreator.defaults.style = new DeviceNodeStyle(getDevice, getImage)
   nodeCreator.defaults.size = new Size(64, 64)
 
-  const nodeLabelCreator = nodeCreator.createLabelBinding(device => `${device.name}\n${device.ip}`)
+  const nodeLabelCreator = nodeCreator.createLabelBinding(
+    (device) => `${device.name}\n${device.ip}`
+  )
   nodeLabelCreator.defaults.style = new DefaultLabelStyle({
     backgroundStroke: null,
     backgroundFill: 'rgba(255,255,255,0.5)'
@@ -232,8 +234,8 @@ function createGraphBuilder(data, graphComponent) {
 
   const edgeCreator = graphBuilder.createEdgesSource({
     data: data.connections,
-    sourceId: item => item.sender.id,
-    targetId: item => item.receiver.id
+    sourceId: (item) => item.sender.id,
+    targetId: (item) => item.receiver.id
   }).edgeCreator
 
   // create an animator instance that can be used by the edge style
@@ -266,17 +268,17 @@ async function zoomToBounds(graphComponent, bounds) {
  * @param {!Simulator} simulator
  */
 function initializeUI(graphComponent, simulator) {
-  document.querySelector('#toggleLabels').addEventListener('click', event => {
+  document.querySelector('#toggleLabels').addEventListener('click', (event) => {
     const button = event.target
     graphComponent.graphModelManager.nodeLabelGroup.visible = button.checked
   })
 
-  document.querySelector('#toggleFailures').addEventListener('click', evt => {
+  document.querySelector('#toggleFailures').addEventListener('click', (evt) => {
     const button = evt.target
     simulator.failuresEnabled = button.checked
   })
 
-  document.querySelector('#pauseSimulation').addEventListener('click', evt => {
+  document.querySelector('#pauseSimulation').addEventListener('click', (evt) => {
     const button = evt.target
     edgeAnimator.paused = button.checked
     simulator.paused = button.checked

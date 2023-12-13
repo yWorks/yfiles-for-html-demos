@@ -560,7 +560,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
         gradientsToRemove.push(child)
       }
     }
-    gradientsToRemove.forEach(gradient => defs.removeChild(gradient))
+    gradientsToRemove.forEach((gradient) => defs.removeChild(gradient))
   }
 
   /**
@@ -617,7 +617,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     const path = new GeneralPath()
     path.moveTo(edge.sourcePort!.location)
     path.lineTo(edge.sourcePort!.location.add(new Point(5, 0)))
-    edge.bends.forEach(bend => path.lineTo(bend.location))
+    edge.bends.forEach((bend) => path.lineTo(bend.location))
     path.lineTo(edge.targetPort!.location.subtract(new Point(5, 0)))
     path.lineTo(edge.targetPort!.location)
     return path
@@ -882,7 +882,10 @@ export class MinCutLine extends BaseClass(IVisualCreator) implements IVisualCrea
  * The equals method detects if the cache has changed.
  */
 class MclRenderDataCache {
-  constructor(private bounds: Rect, private visible: boolean) {}
+  constructor(
+    private bounds: Rect,
+    private visible: boolean
+  ) {}
 
   /**
    * Checks if the data stored in the given cache is equal to data in this cache.

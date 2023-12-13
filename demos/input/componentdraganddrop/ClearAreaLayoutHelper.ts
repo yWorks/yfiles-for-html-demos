@@ -136,7 +136,7 @@ export class ClearAreaLayoutHelper {
    */
   private getRect(nodes: IEnumerable<INode>): Rect {
     let bounds = Rect.EMPTY
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       bounds = Rect.add(bounds, node.layout.toRect())
     })
     return bounds
@@ -150,17 +150,17 @@ export class ClearAreaLayoutHelper {
 
     // store the initial coordinates and sizes of all nodes and bends not related to the current component
     this.graph.nodes
-      .filter(node => !this.component.includes(node))
-      .forEach(node => {
+      .filter((node) => !this.component.includes(node))
+      .forEach((node) => {
         givenCoordinatesStageData.nodeLocations.mapper.set(node, node.layout.topLeft.toPoint())
         givenCoordinatesStageData.nodeSizes.mapper.set(node, node.layout.toSize())
       })
     this.graph.edges
       .filter(
-        edge =>
+        (edge) =>
           !this.component.includes(edge.sourceNode!) || !this.component.includes(edge.targetNode!)
       )
-      .forEach(edge => {
+      .forEach((edge) => {
         givenCoordinatesStageData.edgePaths.mapper.set(edge, this.getEdgePath(edge))
       })
     return givenCoordinatesStageData
@@ -172,7 +172,7 @@ export class ClearAreaLayoutHelper {
   private getEdgePath(edge: IEdge): List<Point> {
     const points = new List<Point>()
     points.add(edge.sourcePort!.location.toPoint())
-    edge.bends.forEach(bend => {
+    edge.bends.forEach((bend) => {
       points.add(bend.location.toPoint())
     })
     points.add(edge.targetPort!.location.toPoint())
@@ -206,7 +206,7 @@ export class ClearAreaLayoutHelper {
       graphComponent: this.graphComponent,
       graph: new FilteredGraphWrapper(
         this.graphComponent.graph,
-        node => !this.component.includes(node),
+        (node) => !this.component.includes(node),
         () => true
       ),
       layout: layout,

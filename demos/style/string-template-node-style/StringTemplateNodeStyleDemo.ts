@@ -112,7 +112,7 @@ function initializeEditors(graphComponent: GraphComponent): void {
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
 
-  graphComponent.selection.addItemSelectionChangedListener(graphComponent => {
+  graphComponent.selection.addItemSelectionChangedListener((graphComponent) => {
     const selectedNode = graphComponent.selectedNodes.at(0)
     if (selectedNode) {
       if (selectedNode.style instanceof StringTemplateNodeStyle) {
@@ -242,7 +242,7 @@ function createSampleGraph(graph: IGraph): void {
   builder.createNodesSource({
     data: SampleData.nodes,
     id: 'id',
-    layout: data =>
+    layout: (data) =>
       new Rect(data.layout.x, data.layout.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   builder.createEdgesSource({

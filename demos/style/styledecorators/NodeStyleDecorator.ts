@@ -71,7 +71,10 @@ export default class NodeStyleDecorator extends NodeStyleBase {
    * @param baseStyle The base style.
    * @param imageUrl The URL of the image to use for the decoration.
    */
-  constructor(private readonly baseStyle: INodeStyle, private readonly imageUrl: string) {
+  constructor(
+    private readonly baseStyle: INodeStyle,
+    private readonly imageUrl: string
+  ) {
     super()
     this.dummyDecorationNode.layout = new Rect(0, 0, 32, 32)
   }

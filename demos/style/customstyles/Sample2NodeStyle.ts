@@ -134,10 +134,6 @@ export class Sample2NodeStyle extends NodeStyleBase<Sample2NodeStyleVisual> {
 export class Sample2NodeStyleExtension extends MarkupExtension {
   private _cssClass = ''
 
-  constructor() {
-    super()
-  }
-
   get cssClass(): string {
     return this._cssClass
   }

@@ -75,7 +75,7 @@ export function applyTimelineLayout(graphComponent, styling, zoom, minZoom, maxZ
     partitionGridData: new PartitionGridData({
       grid: new PartitionGrid({ rowCount: 1, columnCount: 31 })
     }),
-    nodeHalos: item => {
+    nodeHalos: (item) => {
       const bucket = getBucket(item)
       const index = bucket.index ?? -1
       return NodeHalo.create(
@@ -152,14 +152,14 @@ class BarScalingStage extends LayoutStageBase {
     const tagProvider = graph.getDataProvider(LayoutGraphAdapter.ORIGINAL_TAG_DP_KEY)
 
     let maxValue = 0
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const tag = tagProvider.get(node)
       if (tag?.type === 'group' && tag.layer === this.zoom) {
         maxValue = Math.max(maxValue, tag.aggregatedValue)
       }
     })
     const scale = maxValue > 0 ? this.maxHeight / maxValue : 1
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const tag = tagProvider.get(node)
       if (tag?.type === 'group') {
         graph.setSize(node, graph.getWidth(node), tag.aggregatedValue * scale)

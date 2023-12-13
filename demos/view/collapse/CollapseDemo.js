@@ -119,9 +119,9 @@ function createGraph() {
   // set the converters for the collapsible node styles
   TemplateNodeStyle.CONVERTERS.collapseDemo = {
     // converter function for node background
-    backgroundConverter: data => (data && data.collapsed ? '#f26419' : '#01baff'),
+    backgroundConverter: (data) => (data && data.collapsed ? '#f26419' : '#01baff'),
     // converter function for node icon
-    iconConverter: data => (data && data.collapsed ? '#expand_icon' : '#collapse_icon')
+    iconConverter: (data) => (data && data.collapsed ? '#expand_icon' : '#collapse_icon')
   }
 
   // set a default edge style
@@ -145,7 +145,7 @@ function createGraph() {
   // The predicate methods specify which should be part of the filtered graph.
   return new FilteredGraphWrapper(
     completeGraph,
-    node => collapseAndExpandNodes.getNodeVisibility(node),
+    (node) => collapseAndExpandNodes.getNodeVisibility(node),
     () => true
   )
 }

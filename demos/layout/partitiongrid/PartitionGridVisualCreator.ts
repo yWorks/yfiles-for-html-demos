@@ -75,7 +75,10 @@ export default class PartitionGridVisualCreator extends BaseClass(IVisualCreator
    * @param rowCount The number of columns of the grid
    * @param columnCount The number of columns of the grid
    */
-  constructor(private readonly rowCount: number, private readonly columnCount: number) {
+  constructor(
+    private readonly rowCount: number,
+    private readonly columnCount: number
+  ) {
     super()
     this.rowCount = rowCount
     this.columnCount = columnCount

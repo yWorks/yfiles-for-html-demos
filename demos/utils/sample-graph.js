@@ -92,7 +92,7 @@ export function createGroupedSampleGraph(graph) {
   }
 
   generateItemLabels(graph, graph.edges.toList())
-  generateItemLabels(graph, graph.nodes.filter(node => !graph.isGroupNode(node)).toList())
+  generateItemLabels(graph, graph.nodes.filter((node) => !graph.isGroupNode(node)).toList())
 }
 
 /**

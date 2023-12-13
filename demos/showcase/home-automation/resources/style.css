@@ -1,0 +1,251 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.6.
+ ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+
+.sidebar-slim {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--toolbar-color);
+  line-height: 140%;
+  border-left: 1px solid #d5d7d8;
+  width: 274px;
+}
+
+#drag-and-drop-panel {
+  padding: 8px 0 0 8px;
+  width: 100%;
+  height: 50%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.demo-dnd-panel__item {
+  height: 64px;
+  padding: 8px 0;
+}
+
+.demo-dnd-panel__item,
+.demo-dnd-panel__item * {
+  cursor: move !important;
+}
+#tags-explorer {
+  width: 100%;
+  height: 50%;
+  padding: 16px 0;
+  border-top: 5px solid #d5d7d8;
+}
+
+.tags-explorer__title {
+  padding: 12px;
+  height: 41px;
+  margin: 0;
+  color: #676767;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 0.28px;
+}
+
+#tags-explorer-list {
+  width: 100%;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  max-height: calc(100% - 41px);
+}
+.tags-explorer-list-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+}
+.tags-explorer-list-label {
+  flex: 1 0 0;
+  display: flex;
+  color: #282828;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.tags-explorer-list-input {
+  max-width: 50%;
+  display: flex;
+  padding: 8px;
+  align-items: center;
+  gap: 4px;
+  border-radius: 8px;
+  border: 1px solid #D5D7D8;
+  background: #FFF;
+}
+.tags-explorer-list-input:focus {
+  outline: #2F80ED solid 2px;
+}
+
+.tags-explorer-list-input:disabled {
+  background: #D5D7D8;
+}
+
+.tags-explorer-list-item__invalid .tags-explorer-list-input {
+  border: #CB1414 1px solid;
+}
+
+.sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--toolbar-color);
+  line-height: 140%;
+  width: var(--sidebar-width);
+  border-left: 1px solid #d5d7d8;
+}
+
+.tooltip {
+  position: relative;
+  padding-left: 12px;
+}
+
+.tooltip:before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  content: "";
+  width: 4px;
+  border-radius: 100px;
+  background: #CB1414;
+}
+
+.tooltip h4 {
+  margin: 4px;
+  color: #2E2E2E;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 148%; /* 20.72px */
+}
+
+.tooltip ul {
+  margin: 4px;
+  color: #2E2E2E;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 148%; /* 20.72px */
+}
+
+.yfiles-tooltip {
+  border-radius: 12px;
+  border: 1px solid #D5D7D8;
+  background: #FFF;
+  /* light shadow */
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+  display: inline-flex;
+  padding: 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.flow-context-menu {
+  display: inline-flex;
+  padding: 12px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  border-radius: 12px;
+  border: 1px solid #D5D7D8;
+  background: #FFF;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+  top: 0;
+  left: 0;
+  list-style: none;
+  margin: 0;
+  min-width: 186px;
+  width: auto;
+  user-select: none;
+  opacity: 0;
+  /* the context menu is faded in */
+  transition: opacity 0.2s ease-in;
+}
+.flow-context-menu--visible {
+  opacity: 1;
+}
+.flow-context-menu--clone {
+  pointer-events: none;
+  transition: opacity 0.2s ease-out;
+}
+.flow-context-menu__item {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: fit-content;
+  width: 100%;
+  padding: 8px 12px;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  color: #2E2E2E;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 148%; /* 20.72px */
+}
+
+.flow-context-menu__item-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.flow-context-menu__item-disabled {
+  background: #FFFFFF;
+  opacity: 32%;
+}
+.flow-context-menu__item:hover {
+  background-color: #EBEBEB !important;
+}
+.flow-context-menu__item:focus {
+  outline: solid #EBEBEB 1px;
+}
+.flow-context-menu__separator {
+  width: 100%;
+  height: 1px;
+  background-color: #D5D7D8;
+}
+.flow-context-menu:last-child {
+  border-bottom: none;
+}

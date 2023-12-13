@@ -38,7 +38,10 @@ export class Connection {
    * @param sender The sending device.
    * @param receiver The receiving device.
    */
-  constructor(readonly sender: Device, readonly receiver: Device) {
+  constructor(
+    readonly sender: Device,
+    readonly receiver: Device
+  ) {
     this.sender = sender
     this.receiver = receiver
   }

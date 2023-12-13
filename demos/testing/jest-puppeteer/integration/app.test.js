@@ -28,27 +28,27 @@
  ***************************************************************************/
 /* global page, y, beforeEach, describe, it */
 function getZoom() {
-  return page.$eval('.yfiles-canvascomponent', e => y.CanvasComponent.getComponent(e).zoom)
+  return page.$eval('.yfiles-canvascomponent', (e) => y.CanvasComponent.getComponent(e).zoom)
 }
 
 function getNodeCount() {
   return page.$eval(
     '.yfiles-canvascomponent',
-    e => y.CanvasComponent.getComponent(e).graph.nodes.size
+    (e) => y.CanvasComponent.getComponent(e).graph.nodes.size
   )
 }
 
 function getEdgeCount() {
   return page.$eval(
     '.yfiles-canvascomponent',
-    e => y.CanvasComponent.getComponent(e).graph.edges.size
+    (e) => y.CanvasComponent.getComponent(e).graph.edges.size
   )
 }
 
 function getBendCount() {
   return page.$eval(
     '.yfiles-canvascomponent',
-    e => y.CanvasComponent.getComponent(e).graph.bends.size
+    (e) => y.CanvasComponent.getComponent(e).graph.bends.size
   )
 }
 async function getGraphComponentBox() {
@@ -93,7 +93,7 @@ describe('app', () => {
     await expect(page).toClick('.demo-icon-yIconZoomIn')
 
     // zooming is animated, thus wait a before checking the value
-    const checkZoomPromise = new Promise(resolve => {
+    const checkZoomPromise = new Promise((resolve) => {
       setTimeout(() => {
         resolve(getZoom())
       }, 1000)

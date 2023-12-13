@@ -183,26 +183,26 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   graphBuilder
     .createNodesSource({
-      data: graphData.nodeList.filter(item => !item.isGroup),
-      id: item => item.id,
-      parentId: item => item.parentId
+      data: graphData.nodeList.filter((item) => !item.isGroup),
+      id: (item) => item.id,
+      parentId: (item) => item.parentId
     })
-    .nodeCreator.createLabelBinding(item => item.label)
+    .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder
     .createGroupNodesSource({
-      data: graphData.nodeList.filter(item => item.isGroup),
-      id: item => item.id
+      data: graphData.nodeList.filter((item) => item.isGroup),
+      id: (item) => item.id
     })
-    .nodeCreator.createLabelBinding(item => item.label)
+    .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder
     .createEdgesSource({
       data: graphData.edgeList,
-      sourceId: item => item.source,
-      targetId: item => item.target
+      sourceId: (item) => item.source,
+      targetId: (item) => item.target
     })
-    .edgeCreator.createLabelBinding(item => item.label)
+    .edgeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.buildGraph()
 }
@@ -3118,7 +3118,7 @@ function createDraggableNode(): HTMLElement {
 
   img.addEventListener(
     'mousedown',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },
@@ -3127,7 +3127,7 @@ function createDraggableNode(): HTMLElement {
 
   img.addEventListener(
     'touchstart',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },
@@ -3187,7 +3187,7 @@ function createDraggableLabel(): HTMLDivElement {
 
   img.addEventListener(
     'mousedown',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },
@@ -3196,7 +3196,7 @@ function createDraggableLabel(): HTMLDivElement {
 
   img.addEventListener(
     'touchstart',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },
@@ -3258,7 +3258,7 @@ function createDraggablePort(): HTMLDivElement {
 
   img.addEventListener(
     'mousedown',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },
@@ -3267,7 +3267,7 @@ function createDraggablePort(): HTMLDivElement {
 
   img.addEventListener(
     'touchstart',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },
@@ -3418,7 +3418,7 @@ function initOptionHeadings(): void {
   const optionsHeadings = document.getElementsByClassName('event-options-heading')
   for (let i = 0; i < optionsHeadings.length; i++) {
     const heading = optionsHeadings[i]
-    optionsHeadings[i].addEventListener('click', e => {
+    optionsHeadings[i].addEventListener('click', (e) => {
       e.preventDefault()
       const parentNode = heading.parentNode as Element
       const optionsElements = parentNode.getElementsByClassName(
@@ -3441,7 +3441,7 @@ function initOptionHeadings(): void {
   const headings = document.getElementsByClassName('event-options-heading')
   for (let i = 0; i < headings.length; i++) {
     const heading = headings[i]
-    heading.addEventListener('click', evt => {
+    heading.addEventListener('click', (evt) => {
       if (evt.target instanceof HTMLDivElement) {
         evt.target.scrollIntoView()
       }

@@ -76,32 +76,32 @@ let graphComponent = null
 let aggregateGraph = null
 
 // selectors for shape and/or color
-const shapeSelector = n => n.style.shape
+const shapeSelector = (n) => n.style.shape
 
-const fillColorSelector = n => {
+const fillColorSelector = (n) => {
   const fill = n.style.fill
   return fill.color
 }
-const shapeAndFillSelector = n => new ShapeAndFill(shapeSelector(n), fillColorSelector(n))
+const shapeAndFillSelector = (n) => new ShapeAndFill(shapeSelector(n), fillColorSelector(n))
 
 const grayBorder = new Stroke('#77776E', 2.0)
 
 // style factories for aggregation nodes
-const shapeStyle = shape =>
+const shapeStyle = (shape) =>
   new ShapeNodeStyle({
     fill: '#C7C7A6',
     shape: shape,
     stroke: grayBorder
   })
 
-const fillStyle = fillColor =>
+const fillStyle = (fillColor) =>
   new ShapeNodeStyle({
     fill: new SolidColorFill(fillColor),
     shape: ShapeNodeShape.ELLIPSE,
     stroke: grayBorder
   })
 
-const shapeAndFillStyle = shapeAndFill =>
+const shapeAndFillStyle = (shapeAndFill) =>
   new ShapeNodeStyle({
     fill: new SolidColorFill(shapeAndFill.fillColor),
     shape: shapeAndFill.shape,
@@ -169,7 +169,7 @@ function configureContextMenu(graphComponent) {
   // Add event listeners to the various events that open the context menu. These listeners then
   // call the provided callback function which in turn asks the current ContextMenuInputMode if a
   // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
       contextMenu.show(location)
     }
@@ -208,7 +208,7 @@ function populateContextMenu(contextMenu, _sender, e) {
   const selectedNodes = graphComponent.selection.selectedNodes
   if (selectedNodes.size > 0) {
     // only allow aggregation operations on nodes that are not aggregation nodes already
-    const aggregateAllowed = selectedNodes.some(n => !aggregateGraph.isAggregationItem(n))
+    const aggregateAllowed = selectedNodes.some((n) => !aggregateGraph.isAggregationItem(n))
 
     if (aggregateAllowed) {
       // add aggregation menu items
@@ -226,7 +226,7 @@ function populateContextMenu(contextMenu, _sender, e) {
       )
     }
 
-    const separateAllowed = selectedNodes.some(n => aggregateGraph.isAggregationItem(n))
+    const separateAllowed = selectedNodes.some((n) => aggregateGraph.isAggregationItem(n))
 
     if (separateAllowed) {
       contextMenu.addMenuItem('Separate', () => separate(selectedNodes.toList()))
@@ -246,7 +246,7 @@ function populateContextMenu(contextMenu, _sender, e) {
       aggregateAll(shapeAndFillSelector, shapeAndFillStyle)
     )
 
-    const separateAllowed = graphComponent.graph.nodes.some(node =>
+    const separateAllowed = graphComponent.graph.nodes.some((node) =>
       aggregateGraph.isAggregationItem(node)
     )
 
@@ -332,9 +332,9 @@ function buildGraph(graph, graphData) {
 
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id,
-    parentId: item => item.parentId
-  }).nodeCreator.styleProvider = item => {
+    id: (item) => item.id,
+    parentId: (item) => item.parentId
+  }).nodeCreator.styleProvider = (item) => {
     switch (item.tag) {
       case 'b1':
         return new ShapeNodeStyle({
@@ -383,8 +383,8 @@ function buildGraph(graph, graphData) {
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -401,15 +401,15 @@ function buildGraph(graph, graphData) {
 function aggregateSame(nodes, selector, styleFactory) {
   // get one representative of each kind of node (determined by the selector) ignoring aggregation nodes
   const distinctNodes = nodes
-    .filter(n => !aggregateGraph.isAggregationItem(n))
+    .filter((n) => !aggregateGraph.isAggregationItem(n))
     .groupBy({
       keySelector: selector,
       resultCreator: (key, enumerable) => ({ key: key, enumerable: enumerable })
     })
-    .map(grouping => grouping.enumerable.first())
+    .map((grouping) => grouping.enumerable.first())
     .toList()
 
-  distinctNodes.forEach(node => {
+  distinctNodes.forEach((node) => {
     // aggregate all nodes of the same kind as the representing node
     const nodesOfSameKind = collectNodesOfSameKind(node, selector)
     aggregate(nodesOfSameKind, selector(node), styleFactory)
@@ -428,8 +428,8 @@ function aggregateSame(nodes, selector, styleFactory) {
 function collectNodesOfSameKind(node, selector) {
   const nodeKind = selector(node)
   return graphComponent.graph.nodes
-    .filter(n => !aggregateGraph.isAggregationItem(n))
-    .filter(n => YObject.equals(selector(n), nodeKind))
+    .filter((n) => !aggregateGraph.isAggregationItem(n))
+    .filter((n) => YObject.equals(selector(n), nodeKind))
     .toList()
 }
 
@@ -450,7 +450,7 @@ function aggregateAll(selector, styleFactory) {
       resultCreator: (key, enumerable) => ({ key: key, enumerable: enumerable })
     })
     .toList()
-    .forEach(arg => {
+    .forEach((arg) => {
       aggregate(arg.enumerable.toList(), arg.key, styleFactory)
     })
 
@@ -478,7 +478,7 @@ function aggregate(nodes, key, styleFactory) {
  * @param {!IEnumerable.<INode>} nodes the nodes to separate
  */
 function separate(nodes) {
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     if (aggregateGraph.isAggregationItem(node)) {
       aggregateGraph.separate(node)
     }

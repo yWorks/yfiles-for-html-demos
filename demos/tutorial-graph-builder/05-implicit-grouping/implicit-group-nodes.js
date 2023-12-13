@@ -34,7 +34,7 @@ import { edgeData, nodeData } from './group-data.js'
  */
 export function createGroupNodes(graphBuilder) {
   // Create the initial set of nodes that correspond to the top level entries in the NodeData array
-  const idProvider = item => item.id
+  const idProvider = (item) => item.id
   const nodesSource = graphBuilder.createNodesSource({
     data: nodeData,
     id: idProvider
@@ -43,21 +43,21 @@ export function createGroupNodes(graphBuilder) {
   nodesSource.nodeCreator.defaults.size = new Size(60, 40)
 
   // Describe how to create the first level of groups from the items in the NodeData
-  const parentsSource = nodesSource.createParentNodesSource(item => item.path)
-  parentsSource.nodeCreator.createLabelBinding(data => data)
+  const parentsSource = nodesSource.createParentNodesSource((item) => item.path)
+  parentsSource.nodeCreator.createLabelBinding((data) => data)
 
   // Describe how to navigate higher up in the hierarchy
-  const parentDataProvider = path => {
+  const parentDataProvider = (path) => {
     const separator = path.lastIndexOf('/')
     return separator === 0 ? null : path.substring(0, separator)
   }
   const ancestorSource = parentsSource.createParentNodesSource(parentDataProvider)
   // Enable recursive processing higher up in the container hierarchy
   ancestorSource.addParentNodesSource(parentDataProvider, ancestorSource)
-  ancestorSource.nodeCreator.createLabelBinding(data => data)
+  ancestorSource.nodeCreator.createLabelBinding((data) => data)
 
   // Enable processing of the contents of the nodes in the NodeData
-  const childDataProvider = item => item.children ?? []
+  const childDataProvider = (item) => item.children ?? []
   const childNodesSource = nodesSource.createChildNodesSource(childDataProvider, idProvider)
   // Enable processing of the contents of the child nodes
   const descendantsSource = childNodesSource.createChildNodesSource(childDataProvider, idProvider)
@@ -67,8 +67,8 @@ export function createGroupNodes(graphBuilder) {
   // Declare edges between all different kinds of entities
   const edgesSource = graphBuilder.createEdgesSource({
     data: edgeData,
-    sourceId: item => item.from,
-    targetId: item => item.to
+    sourceId: (item) => item.from,
+    targetId: (item) => item.to
   })
 
   // Styling for the group nodes
@@ -88,7 +88,7 @@ export function createGroupNodes(graphBuilder) {
     nodesSource.nodeCreator.styleProvider =
       // Since the NodeData and all the ChildNodes can possibly be either group nodes
       // or normal nodes, styling should be done via a style provider
-      item =>
+      (item) =>
         item.children && item.children.length > 0
           ? graph.groupNodeDefaults.style
           : graph.nodeDefaults.style

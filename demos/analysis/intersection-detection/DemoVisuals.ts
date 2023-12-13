@@ -59,13 +59,6 @@ export class IntersectionVisualCreator
   public intersections: Intersection[] = []
 
   /**
-   * Creates a new instance.
-   */
-  constructor() {
-    super()
-  }
-
-  /**
    * Creates the visual showing the intersections found by the intersection algorithm.
    * @param context The context that describes where the visual will be used
    * @returns The intersection visual

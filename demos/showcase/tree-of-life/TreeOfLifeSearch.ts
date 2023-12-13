@@ -33,7 +33,7 @@ import {
   ShapeNodeShape,
   ShapeNodeStyle
 } from 'yfiles'
-import GraphSearch from 'demo-utils/GraphSearch'
+import { GraphSearch } from 'demo-utils/GraphSearch'
 
 let graphSearch: GraphSearch
 
@@ -66,8 +66,8 @@ export function resetGraphSearch() {
 
 function getNodeLabelsForAutoComplete() {
   return graphSearch.graphComponent.graph.nodeLabels
-    .map(l => l.text)
-    .orderBy(s => s)
+    .map((l) => l.text)
+    .orderBy((s) => s)
     .toArray()
 }
 

@@ -152,7 +152,7 @@ function initializeInputMode(): void {
     const selection = evt.selection
     for (const item of selection) {
       if (item instanceof INode) {
-        filteredGraph.edgesAt(item, AdjacencyTypes.ALL).forEach(edge => {
+        filteredGraph.edgesAt(item, AdjacencyTypes.ALL).forEach((edge) => {
           if (!selection.isSelected(edge.opposite(item))) {
             incrementalNodes.push(edge.opposite(item) as INode)
           }
@@ -181,7 +181,7 @@ function copyGraph(graph: IGraph, componentNodes: Set<INode>): void {
   const graphCopier = new GraphCopier()
   graphCopier.copy(
     graph,
-    item =>
+    (item) =>
       !INode.isInstance(item) ||
       (componentNodes.has(item) && getEntityData(item).type !== 'Bank Branch'),
     fraudDetectionComponent.graph,
@@ -195,13 +195,13 @@ function copyGraph(graph: IGraph, componentNodes: Set<INode>): void {
 function initializeTimelineComponent(): void {
   fraudDetectionTimeline = new Timeline('fraud-detection-timeline-component', getTimeEntry)
   fraudDetectionTimeline.items = fraudDetectionComponent.graph.nodes.map(getEntityData).toArray()
-  fraudDetectionTimeline.addBarHoverListener(nodes => {
+  fraudDetectionTimeline.addBarHoverListener((nodes) => {
     const highlightManager = fraudDetectionComponent.highlightIndicatorManager
     highlightManager.clearHighlights()
 
-    const selected = new Set(nodes.map(node => node.id))
+    const selected = new Set(nodes.map((node) => node.id))
 
-    fraudDetectionComponent.graph.nodes.forEach(node => {
+    fraudDetectionComponent.graph.nodes.forEach((node) => {
       const entity = getEntityData(node)
       if (selected.has(entity.id)) {
         highlightManager.addHighlight(node)
@@ -209,7 +209,7 @@ function initializeTimelineComponent(): void {
     })
   })
 
-  fraudDetectionTimeline.addBarSelectListener(nodes => {
+  fraudDetectionTimeline.addBarSelectListener((nodes) => {
     fraudDetectionComponent.selection.clear()
     if (nodes.length > 0) {
       let minX: number = Number.POSITIVE_INFINITY
@@ -217,9 +217,9 @@ function initializeTimelineComponent(): void {
       let minY: number = Number.POSITIVE_INFINITY
       let maxY: number = Number.NEGATIVE_INFINITY
       nodes
-        .map(node => getNode(fraudDetectionComponent.graph, node))
-        .filter(node => filteredGraph.contains(node))
-        .forEach(node => {
+        .map((node) => getNode(fraudDetectionComponent.graph, node))
+        .filter((node) => filteredGraph.contains(node))
+        .forEach((node) => {
           fraudDetectionComponent.selection.setSelected(node!, true)
           const { x, y, width, height } = node!.layout
           minX = Math.min(minX, x)
@@ -251,7 +251,7 @@ function initializeTimelineComponent(): void {
  */
 function initializeGraph(graph: IGraph): void {
   // get the graph from the timeline component
-  filteredGraph = new FilteredGraphWrapper(graph, node => {
+  filteredGraph = new FilteredGraphWrapper(graph, (node) => {
     const visible = fraudDetectionTimeline.filter(getEntityData(node))
 
     if (!visible) {
@@ -267,7 +267,7 @@ function initializeGraph(graph: IGraph): void {
         getEntityData(node).type === 'Bank Branch' &&
         !filteredGraph
           .wrappedGraph!.neighbors(node)
-          .every(neighbor => fraudDetectionTimeline.filter(getEntityData(neighbor)))
+          .every((neighbor) => fraudDetectionTimeline.filter(getEntityData(neighbor)))
       ) {
         return false
       }
@@ -436,12 +436,6 @@ export function closeFraudDetectionView(): void {
  * neighbor that is already placed.
  */
 class InitialPositionsStage extends LayoutStageBase {
-  /**
-   * Creates a new instance of InitialPositionsStage.
-   */
-  constructor(layout: ILayoutAlgorithm) {
-    super(layout)
-  }
 
   /**
    * Applies the layout
@@ -450,7 +444,7 @@ class InitialPositionsStage extends LayoutStageBase {
   applyLayout(graph: LayoutGraph): void {
     const nodesAdded = graph.getDataProvider('NODES_ADDED')!
 
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (nodesAdded.getBoolean(node)) {
         const visited = new Set()
         const stack = [node]

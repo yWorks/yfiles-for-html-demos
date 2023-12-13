@@ -366,7 +366,7 @@ export class IsVisibleLabelStyleDescriptor extends BaseClass(
 
 export function startNodeAnimation(graphComponent: GraphComponent): void {
   graphComponent.sizeChangedDetection = SizeChangedDetectionMode.TIMER
-  graphComponent.addSizeChangedListener(_ => {
+  graphComponent.addSizeChangedListener((_) => {
     setTimeout(() => {
       setAnimationStartPoint(graphComponent)
       void animate()
@@ -439,7 +439,7 @@ export class BoundsVisual extends BaseClass(IVisualCreator) {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     g.append(
-      ...graph.labels.map(label => {
+      ...graph.labels.map((label) => {
         const rect = document.createElementNS(
           'http://www.w3.org/2000/svg',
           'rect'

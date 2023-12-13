@@ -157,9 +157,15 @@
 .demo-button-invisible {
   visibility: hidden;
   opacity: 0;
-  transition: visibility 0s linear 0.3s, opacity 0.3s ease-in-out;
-  -moz-transition: visibility 0s linear 0.3s, opacity 0.3s ease-in-out;
-  -webkit-transition: visibility 0s linear 0.3s, opacity 0.3s ease-in-out;
+  transition:
+    visibility 0s linear 0.3s,
+    opacity 0.3s ease-in-out;
+  -moz-transition:
+    visibility 0s linear 0.3s,
+    opacity 0.3s ease-in-out;
+  -webkit-transition:
+    visibility 0s linear 0.3s,
+    opacity 0.3s ease-in-out;
 }
 
 .demo-button-visible {

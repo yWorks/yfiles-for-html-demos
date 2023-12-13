@@ -177,7 +177,7 @@ function createAlignmentStageLayoutData() {
   const layoutData = new GenericLayoutData()
   layoutData.addNodeItemCollection(
     AlignmentStage.ALIGNED_NODES_DP_KEY,
-    node => node.style.shape === ShapeNodeShape.ELLIPSE
+    (node) => node.style.shape === ShapeNodeShape.ELLIPSE
   )
   return layoutData
 }
@@ -235,7 +235,7 @@ function createGraph(graph) {
     [50, 50],
     [25, 100]
   ]
-  const nodes = nodeLocations.map(location => graph.createNodeAt(location))
+  const nodes = nodeLocations.map((location) => graph.createNodeAt(location))
 
   // We have a few special nodes in this sample
   const greenNodeStyle = new ShapeNodeStyle({
@@ -281,16 +281,16 @@ function createGraph(graph) {
  * Binds actions to the buttons in the tutorial's toolbar.
  */
 function initializeUI() {
-  document.querySelectorAll("button[data-action='RunStage1']").forEach(btn => {
+  document.querySelectorAll("button[data-action='RunStage1']").forEach((btn) => {
     btn.addEventListener('click', runMoveAsideLayout)
   })
-  document.querySelectorAll("button[data-action='RunStage2']").forEach(btn => {
+  document.querySelectorAll("button[data-action='RunStage2']").forEach((btn) => {
     btn.addEventListener('click', runAlignNodesLayout)
   })
-  document.querySelectorAll("button[data-action='RunStage3']").forEach(btn => {
+  document.querySelectorAll("button[data-action='RunStage3']").forEach((btn) => {
     btn.addEventListener('click', runZigZagLayout)
   })
-  document.querySelectorAll("button[data-action='RunAllStages']").forEach(btn => {
+  document.querySelectorAll("button[data-action='RunAllStages']").forEach((btn) => {
     btn.addEventListener('click', runAllLayouts)
   })
 }

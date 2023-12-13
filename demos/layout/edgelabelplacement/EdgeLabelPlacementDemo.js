@@ -146,17 +146,18 @@ function buildGraph(graph, graphData) {
 
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id,
-    parentId: item => item.parentId
+    id: (item) => item.id,
+    parentId: (item) => item.parentId
   })
 
   const edgesSource = graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
-  edgesSource.edgeCreator.createLabelsSource(item => item.labels).labelCreator.textProvider =
-    item => item.text
+  edgesSource.edgeCreator.createLabelsSource((item) => item.labels).labelCreator.textProvider = (
+    item
+  ) => item.text
 
   graphBuilder.buildGraph()
 }
@@ -233,7 +234,7 @@ function onLabelPropertyChanged(source) {
  * @param {!HTMLElement} source The HTMLElement that reported a change.
  */
 function updateLabelValues(labels, source) {
-  labels.forEach(edgeLabel => {
+  labels.forEach((edgeLabel) => {
     const oldDescriptor = descriptorMapper.get(edgeLabel)
     const descriptor = oldDescriptor
       ? new PreferredPlacementDescriptor(oldDescriptor)
@@ -272,13 +273,13 @@ function updateLabelValues(labels, source) {
     }
     if (source === angleNumberField) {
       const v = parseFloat(angleNumberField.value)
-      if (!isNaN(v)) {
+      if (!Number.isNaN(v)) {
         descriptor.angle = Geom.toRadians(v)
       }
     }
     if (source === distanceToEdgeNumberField) {
       const v = parseFloat(distanceToEdgeNumberField.value)
-      if (!isNaN(v)) {
+      if (!Number.isNaN(v)) {
         descriptor.distanceToEdge = v
       }
     }
@@ -433,7 +434,7 @@ function initializeUI() {
 
   distanceToEdgeNumberField.addEventListener(
     'change',
-    input => {
+    (input) => {
       if (parseFloat(input.target.value) > 200) {
         alert('Distance cannot be larger than 200.')
         input.target.value = '-1'
@@ -443,7 +444,7 @@ function initializeUI() {
   )
   angleNumberField.addEventListener(
     'change',
-    input => {
+    (input) => {
       const angle = parseFloat(input.target.value)
       if (angle <= -360 || angle >= 360) {
         input.target.value = `${angle % 360}`

@@ -163,7 +163,7 @@ function configureStyles(graph) {
  */
 function initConverters() {
   // convert each business unit to its own color
-  TemplateNodeStyle.CONVERTERS.backgroundColor = val => {
+  TemplateNodeStyle.CONVERTERS.backgroundColor = (val) => {
     switch (val) {
       case 'Executive Unit':
         return 'rgb(185,96,105)'
@@ -183,7 +183,7 @@ function initConverters() {
   }
 
   // convert a status to a color
-  TemplateNodeStyle.CONVERTERS.statusColor = val => {
+  TemplateNodeStyle.CONVERTERS.statusColor = (val) => {
     switch (val) {
       case 'present':
         return 'rgb(110,165,106)'
@@ -196,13 +196,13 @@ function initConverters() {
   }
 
   // convert the icon identifier to the image path
-  TemplateNodeStyle.CONVERTERS.icon = val => `./resources/${val}.svg`
+  TemplateNodeStyle.CONVERTERS.icon = (val) => `./resources/${val}.svg`
 
   // convert a node size to a font size
-  TemplateNodeStyle.CONVERTERS.fontSize = val => (val / 10) | 0
+  TemplateNodeStyle.CONVERTERS.fontSize = (val) => (val / 10) | 0
 
   // convert a boolean to a visibility value
-  TemplateNodeStyle.CONVERTERS.visibility = val => (val ? 'visible' : 'hidden')
+  TemplateNodeStyle.CONVERTERS.visibility = (val) => (val ? 'visible' : 'hidden')
 
   // A converter that does simple calculations, consisting of numbers, +, -, / and * as well as parentheses.
   // The parameter must contain the calculation expression. $v is replaced by the bound value.
@@ -262,7 +262,7 @@ function initializeGraph(graphComponent) {
  */
 function createGraph(graph) {
   // make each data item observable to be able to update the template style bindings
-  const dataSource = OrgChartData.map(data => TemplateNodeStyle.makeObservable(data))
+  const dataSource = OrgChartData.map((data) => TemplateNodeStyle.makeObservable(data))
 
   // use AdjacencyGraphBuilder to automatically create a graph from the data
   const adjacencyGraphBuilder = new AdjacencyGraphBuilder(graph)
@@ -283,7 +283,7 @@ function createGraph(graph) {
       evt.graph.addLabel(edge, 'Assistant')
     }
   })
-  adjacencyNodesSource.addSuccessorIds(data => data.subordinates, edgeCreator)
+  adjacencyNodesSource.addSuccessorIds((data) => data.subordinates, edgeCreator)
 
   // create the graph from the given data
   adjacencyGraphBuilder.buildGraph()
@@ -303,8 +303,8 @@ function adjustNodeSizes(graph) {
   const layoutGraph = graphAdapter.createCopiedLayoutGraph()
   const rootNodes = new YNodeList(
     graph.nodes
-      .filter(node => graph.inDegree(node) === 0)
-      .map(node => layoutGraph.getCopiedNode(node))
+      .filter((node) => graph.inDegree(node) === 0)
+      .map((node) => layoutGraph.getCopiedNode(node))
       .toArray()
   )
   const layerMap = layoutGraph.createNodeMap()
@@ -313,7 +313,7 @@ function adjustNodeSizes(graph) {
   // adjust the size of each node
   const baseSize = graph.nodeDefaults.size
   const growthFactor = 0.3
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const treeLevel = layers.length - layerMap.get(layoutGraph.getCopiedNode(node)) - 1
     const size = new Size(
       baseSize.width + baseSize.width * treeLevel * growthFactor,
@@ -364,7 +364,7 @@ function runLayout(graphComponent) {
  * @param {!IGraph} graph
  */
 function adjustPorts(graph) {
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     const sourcePort = edge.sourcePort
     const targetPort = edge.targetPort
     const sourcePortLocation = sourcePort.locationParameter.model.getLocation(

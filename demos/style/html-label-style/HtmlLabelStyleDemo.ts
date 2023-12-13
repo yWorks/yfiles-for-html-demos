@@ -51,23 +51,9 @@ import graphData from './graph-data.json'
 
 /**
  * Simple demo that shows how to create a custom style that uses HTML for rendering the labels.
- * This is done using the foreignObject SVG element.
  */
 async function run(): Promise<void> {
   License.value = await fetchLicense()
-  // Check whether foreignObjects are supported...
-  const foreignObject = window.document.createElementNS(
-    'http://www.w3.org/2000/svg',
-    'foreignObject'
-  )
-
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (foreignObject.transform === undefined) {
-    alert('This browser does not support SVG foreignObjects. Demo functionality not available')
-    document.getElementById('note')!.classList.add('unsupported')
-    document.body.classList.add('loaded')
-    return
-  }
 
   const graphComponent = new GraphComponent('graphComponent')
   applyDemoTheme(graphComponent)
@@ -114,14 +100,14 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   graphBuilder
     .createNodesSource({
       data: graphData.nodeList,
-      id: item => item.id
+      id: (item) => item.id
     })
-    .nodeCreator.createLabelBinding(item => item.label)
+    .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()

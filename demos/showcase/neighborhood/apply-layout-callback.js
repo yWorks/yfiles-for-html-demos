@@ -37,7 +37,7 @@ import { NeighborhoodType } from './NeighborhoodType.js'
 export function getApplyLayoutCallback(neighborhoodType) {
   return neighborhoodType === NeighborhoodType.FOLDER_CONTENTS
     ? (view, nodes) => applyComponentLayout(view, nodes)
-    : view => applyHierarchicLayout(view)
+    : (view) => applyHierarchicLayout(view)
 }
 
 /**

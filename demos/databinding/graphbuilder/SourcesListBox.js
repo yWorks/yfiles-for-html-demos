@@ -46,7 +46,7 @@ export class SourcesListBox {
    *        connector via the factory class
    * @param {!object} dialogFactory the Node- or Edge- {@link SourceDialog} to use
    * @param {!HTMLElement} rootElement the HTMLElement used to display the list box
-   * @param {!function} dataUpdatedCallback the callback arrow function used to update the graph after the
+   * @param {!function} dataUpdatedCallback the callback arrow function used to update the graph after
    *        the SourceDialog was closed as accepted
    */
   constructor(factory, dialogFactory, rootElement, dataUpdatedCallback) {
@@ -87,11 +87,12 @@ export class SourcesListBox {
 
     const label = document.createElement('span')
     label.textContent = newDefinition.sourceDefinition.name
+    label.classList.add('sourceLabel')
 
     const editButton = document.createElement('button')
     editButton.classList.add('editButton')
     editButton.addEventListener('click', () => {
-      new this.DialogFactory(newDefinition, () => {
+      void new this.DialogFactory(newDefinition, () => {
         label.textContent = newDefinition.sourceDefinition.name
         this.dataUpdatedCallback()
       }).show()

@@ -53,7 +53,7 @@ const subtrees = new Map()
  */
 export function getGlobalRoot(graph) {
   if (!globalRoot) {
-    globalRoot = graph.nodes.find(node => graph.inDegree(node) === 0)
+    globalRoot = graph.nodes.find((node) => graph.inDegree(node) === 0)
   }
   return globalRoot
 }
@@ -107,11 +107,11 @@ export function highlightSubtree(item, graphComponent) {
   const subtreeRoot = getNode(item)
   const subtree = getSubtree(subtreeRoot, graph.wrappedGraph)
   subtree.nodes
-    .filter(node => graph.contains(node))
-    .forEach(node => highlightManager.addHighlight(node))
+    .filter((node) => graph.contains(node))
+    .forEach((node) => highlightManager.addHighlight(node))
   subtree.edges
-    .filter(edge => graph.contains(edge))
-    .forEach(edge => highlightManager.addHighlight(edge))
+    .filter((edge) => graph.contains(edge))
+    .forEach((edge) => highlightManager.addHighlight(edge))
   highlightManager.addHighlight(subtreeRoot.labels.first())
 }
 

@@ -139,21 +139,21 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
+    id: (item) => item.id
   })
   nodesSource.nodeCreator.styleProvider = (item: JSONNode): ImageNodeStyle | undefined =>
     item.tag === 'icon' ? new ImageNodeStyle('resources/y.svg') : undefined
   nodesSource.nodeCreator.layoutProvider = (item: JSONNode): Rect | undefined =>
     item.tag === 'icon' ? new Rect(0, 0, 50, 50) : undefined
   nodesSource.nodeCreator.createLabelBinding({
-    text: data => data.label,
-    layoutParameter: _ => ExteriorLabelModel.SOUTH
+    text: (data) => data.label,
+    layoutParameter: (_) => ExteriorLabelModel.SOUTH
   })
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -374,7 +374,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
     // by default the mode available in GraphEditorInputMode is disabled, so first enable it
     enabled: true,
     // nodes that have a GroupNodeStyle assigned have to be created as group nodes
-    isGroupNodePredicate: draggedNode => draggedNode.style instanceof GroupNodeStyle
+    isGroupNodePredicate: (draggedNode) => draggedNode.style instanceof GroupNodeStyle
   })
 
   // create a new LabelDropInputMode to configure the drag and drop operation
@@ -384,7 +384,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
     enabled: true,
     useBestMatchingParameter: true,
     // allow for nodes and edges to be the new label owner
-    isValidLabelOwnerPredicate: labelOwner =>
+    isValidLabelOwnerPredicate: (labelOwner) =>
       labelOwner instanceof INode || labelOwner instanceof IEdge || labelOwner instanceof IPort
   })
 
@@ -395,7 +395,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
     enabled: true,
     useBestMatchingParameter: true,
     // allow only for nodes to be the new port owner
-    isValidPortOwnerPredicate: portOwner => portOwner instanceof INode
+    isValidPortOwnerPredicate: (portOwner) => portOwner instanceof INode
   })
 
   // add the edge drop input mode
@@ -410,7 +410,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
 function initializeUI(graphComponent: GraphComponent): void {
   document
     .getElementById('preview-snapping-checkbox')!
-    .addEventListener('change', e =>
+    .addEventListener('change', (e) =>
       updatePreviewSnapping(e.currentTarget as HTMLInputElement, graphComponent)
     )
 }

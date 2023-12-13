@@ -49,7 +49,9 @@
 legend {
   color: grey;
   padding: 3px 6px;
-  font: 1rem 'Fira Sans', sans-serif;
+  font:
+    1rem 'Fira Sans',
+    sans-serif;
 }
 
 .demo-overlay {
@@ -66,7 +68,9 @@ legend {
   background-color: #e1e3e5;
   border: 1px solid #ccc;
   border-radius: 3px;
-  box-shadow: 0 1px 0 rgb(0 0 0), 0 0 0 0.1em #fff inset;
+  box-shadow:
+    0 1px 0 rgb(0 0 0),
+    0 0 0 0.1em #fff inset;
   white-space: nowrap;
   font-style: normal;
   color: #000;

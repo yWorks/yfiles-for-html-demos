@@ -71,7 +71,7 @@ export function initializeCrossReferences(graphComponent) {
 
   // disable all edge handles except for height handle
   decorator.edgeDecorator.handleProviderDecorator.setFactory(
-    edge => new CrossReferenceEdgeHandleProvider(edge)
+    (edge) => new CrossReferenceEdgeHandleProvider(edge)
   )
 
   const edgeDefaults = graph.edgeDefaults
@@ -122,7 +122,7 @@ export function initializeCrossReferences(graphComponent) {
   // customize the port candidate provider
   // to ensure that cross-reference edges connect to the node center
   decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
-    node =>
+    (node) =>
       new (class extends PortCandidateProviderBase {
         /**
          * @param {!IInputModeContext} context

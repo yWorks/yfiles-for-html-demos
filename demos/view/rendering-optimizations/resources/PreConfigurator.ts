@@ -325,7 +325,7 @@ export default class PreConfigurator {
     const styleLimits = this.preConfigurationLimits[graphItemStyle!]
 
     // set unrecommended classes
-    Object.keys(styleLimits).forEach(gmmOptimization => {
+    Object.keys(styleLimits).forEach((gmmOptimization) => {
       const styleLimit = styleLimits[gmmOptimization][editMode]
       if (
         {}.hasOwnProperty.call(styleLimits, gmmOptimization) &&

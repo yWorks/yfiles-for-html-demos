@@ -128,7 +128,8 @@
   font-family: Tahoma, Verdana, sans-serif;
   font-size: 14px;
   letter-spacing: 1px;
-  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .settings-editor-row5.flat-button:disabled {

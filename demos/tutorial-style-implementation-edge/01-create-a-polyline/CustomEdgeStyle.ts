@@ -49,7 +49,7 @@ export class CustomEdgeStyle extends EdgeStyleBase {
 
   private createPathData(edge: IEdge): string {
     const points = IEdge.getPathPoints(edge).toArray()
-    return 'M ' + points.map(point => `${point.x} ${point.y}`).join(' L ')
+    return 'M ' + points.map((point) => `${point.x} ${point.y}`).join(' L ')
   }
 
 }

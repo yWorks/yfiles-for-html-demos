@@ -11,30 +11,29 @@
     "build": "node --max_old_space_size=6144 node_modules/@angular/cli/bin/ng build --base-href ./"
   },
   "dependencies": {
-    "@angular/common": "~16.1.2",
-    "@angular/compiler": "~16.1.2",
-    "@angular/core": "~16.1.2",
-    "@angular/forms": "~16.1.2",
-    "@angular/platform-browser": "~16.1.2",
-    "@angular/platform-browser-dynamic": "~16.1.2",
+    "@angular/common": "~17.0.4",
+    "@angular/compiler": "~17.0.4",
+    "@angular/core": "~17.0.4",
+    "@angular/forms": "~17.0.4",
+    "@angular/platform-browser": "~17.0.4",
+    "@angular/platform-browser-dynamic": "~17.0.4",
     "demo-resources": "../../resources",
-    "demo-utils": "../../utils",
     "rxjs": "~7.8.1",
-    "tslib": "^2.5.3",
-    "yfiles": "../../../lib-dev/yfiles-26.0.2+dev.tgz",
-    "zone.js": "~0.13.1"
+    "tslib": "^2.6.2",
+    "yfiles": "../../../lib-dev/yfiles-26.0.3+dev.tgz",
+    "zone.js": "~0.14.2"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "~16.0.0",
-    "@angular-devkit/build-angular": "~16.1.2",
-    "@angular/cli": "~16.1.2",
-    "@angular/compiler-cli": "~16.1.2",
-    "@angular/language-service": "~16.1.2",
-    "@babel/core": "^7.22.5",
-    "@babel/preset-env": "^7.22.5",
-    "@babel/preset-typescript": "^7.22.5",
-    "@yworks/optimizer": "^1.8.1",
+    "@angular-builders/custom-webpack": "~17.0.0",
+    "@angular-devkit/build-angular": "~17.0.3",
+    "@angular/cli": "~17.0.3",
+    "@angular/compiler-cli": "~17.0.4",
+    "@angular/language-service": "~17.0.4",
+    "@babel/core": "^7.23.3",
+    "@babel/preset-env": "^7.23.3",
+    "@babel/preset-typescript": "^7.23.3",
+    "@yworks/optimizer": "^1.8.2",
     "fs-extra": "^11.1.1",
-    "typescript": "~5.1.6"
+    "typescript": "~5.2.2"
   }
 }

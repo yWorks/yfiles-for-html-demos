@@ -61,7 +61,7 @@ export function createFeatureLayoutConfiguration(graph) {
   // overlap a bit more than by default (0.2), so that the drawing becomes more compact,
   // expect for some nodes with a specific flag, we do not want to have overlaps at all
   const layoutData = new CactusGroupLayoutData()
-  layoutData.parentOverlapRatios.delegate = node =>
+  layoutData.parentOverlapRatios.delegate = (node) =>
     node.tag && node.tag.avoidParentOverlap ? 0 : 0.5
 
   return { layout, layoutData }

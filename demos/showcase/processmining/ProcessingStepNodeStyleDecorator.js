@@ -61,7 +61,7 @@ export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
   constructor(wrappedStyle, valueGetter) {
     super()
     this.wrappedStyle = wrappedStyle
-    this.valueGetter = valueGetter || (node => node?.tag?.value ?? 0)
+    this.valueGetter = valueGetter || ((node) => node?.tag?.value ?? 0)
   }
 
   /**

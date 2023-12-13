@@ -30,7 +30,7 @@ import { HtmlVisual, ICommand, NodeStyleBase } from 'yfiles'
 import { avatars, statusValues } from './data.js'
 
 const avatarImages = avatars
-  .map(path => `<img class='editable-node-style__avatar-select-image' src="${path}">`)
+  .map((path) => `<img class='editable-node-style__avatar-select-image' src="${path}">`)
   .join('')
 
 /**
@@ -80,7 +80,7 @@ export class HtmlEditableNodeStyle extends NodeStyleBase {
     const data = node.tag
 
     const statusOptions = statusValues.map(
-      status => `<option${status === data.status ? ' selected' : ''}>${status}</option>`
+      (status) => `<option${status === data.status ? ' selected' : ''}>${status}</option>`
     )
 
     element.innerHTML = `
@@ -147,7 +147,7 @@ export class HtmlEditableNodeStyle extends NodeStyleBase {
       // prevent yFiles from handling events we need for the form elements
       preventPropagation(input)
     }
-    form.addEventListener('submit', evt => {
+    form.addEventListener('submit', (evt) => {
       const since = element.querySelector('.editable-node-style__since').value
       const status = element.querySelector('.editable-node-style__status').value
       const description = element.querySelector('.editable-node-style__description').value

@@ -103,7 +103,7 @@ export class Styling {
     nodeDecorator.focusIndicatorDecorator.hideImplementation()
     nodeDecorator.highlightDecorator.hideImplementation()
     nodeDecorator.selectionDecorator.setFactory(
-      node =>
+      (node) =>
         new NodeStyleDecorationInstaller({
           nodeStyle: graphComponent.graph.isGroupNode(node)
             ? new ShapeNodeStyle(style.sectionSelect ?? defaultStyling.sectionSelect)

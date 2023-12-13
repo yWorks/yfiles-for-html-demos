@@ -60,7 +60,7 @@ export function initializeExportDialog(
     saveCallback(previewElement)
   })
 
-  closeButton.addEventListener('click', _ => {
+  closeButton.addEventListener('click', (_) => {
     // Hide the popup
     dialog.style.display = 'none'
     // Remove the exported SVG element from the popup since it is no longer needed

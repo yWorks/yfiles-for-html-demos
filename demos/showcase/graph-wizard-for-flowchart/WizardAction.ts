@@ -188,7 +188,7 @@ export default class WizardAction {
         evt.eventType === KeyEventType.DOWN
       ) {
         return this.shortcuts.some(
-          shortCut =>
+          (shortCut) =>
             shortCut.key == evt.key &&
             (shortCut.modifier === undefined || shortCut.modifier == evt.modifiers)
         )
@@ -389,7 +389,7 @@ export default class WizardAction {
     } else if (options.tooltipFactory) {
       tooltip = options.tooltipFactory(owner)
     }
-    return this.getTextWithShortcuts(tooltip, 'tooltip', shortcuts)
+    return WizardAction.getTextWithShortcuts(tooltip, 'tooltip', shortcuts)
   }
 
   /**
@@ -439,7 +439,7 @@ export default class WizardAction {
           tooltip += startKey + 'Alt' + endKey + '+'
         }
       }
-      tooltip += startKey + this.getKeyName(shortcut.key) + endKey
+      tooltip += startKey + WizardAction.getKeyName(shortcut.key) + endKey
     }
     return tooltip
   }

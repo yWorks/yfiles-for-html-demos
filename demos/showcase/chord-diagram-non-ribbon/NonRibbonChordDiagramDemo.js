@@ -165,7 +165,7 @@ async function initializeGraph(graphComponent) {
     nodeStyle: VoidNodeStyle.INSTANCE,
     edgeStyle: VoidEdgeStyle.INSTANCE
   })
-  const graphData = await fetch('resources/GraphData.json').then(response => response.json())
+  const graphData = await fetch('resources/GraphData.json').then((response) => response.json())
 
   const builder = new GraphBuilder(graph)
   const nodesSource = builder.createNodesSource({
@@ -176,7 +176,7 @@ async function initializeGraph(graphComponent) {
     tag: 'tag'
   })
 
-  nodesSource.nodeCreator.styleProvider = data => {
+  nodesSource.nodeCreator.styleProvider = (data) => {
     const colorSet = colorSets[predefinedColorSets.get(data.tag?.department) || 'demo-palette-41']
     return new ShapeNodeStyle({
       shape: 'ellipse',
@@ -196,7 +196,7 @@ async function initializeGraph(graphComponent) {
   builder.buildGraph()
 
   // sets the style for the labels
-  graph.labels.forEach(label => {
+  graph.labels.forEach((label) => {
     const colorSet =
       colorSets[predefinedColorSets.get(label.owner.tag?.department) || 'demo-palette-41']
     graph.setStyle(
@@ -213,7 +213,7 @@ async function initializeGraph(graphComponent) {
   // normalizes the nodes based on the number of connections stored in the tag
   let minConnections = Number.MAX_VALUE
   let maxConnections = -Number.MAX_VALUE
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const connections = node.tag?.connections || 1
     minConnections = Math.min(minConnections, connections)
     maxConnections = Math.max(maxConnections, connections)
@@ -222,7 +222,7 @@ async function initializeGraph(graphComponent) {
 
   const largest = 100
   const smallest = 40
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const connections = node.tag?.connections || 1
     const sizeScale = (largest - smallest) / connectionsDelta
     const size = Math.floor(smallest + (connections - minConnections) * sizeScale)
@@ -235,7 +235,7 @@ async function initializeGraph(graphComponent) {
  * @param {!GraphComponent} graphComponent The given graphComponent
  */
 function initializeUI(graphComponent) {
-  document.querySelector('#labelStyleSelect').addEventListener('change', async evt => {
+  document.querySelector('#labelStyleSelect').addEventListener('change', async (evt) => {
     await configureAndRunChordLayout(graphComponent, evt.target.value)
   })
   document.querySelector('#labelStyleRayLike').addEventListener('click', async () => {
@@ -279,7 +279,7 @@ async function configureAndRunChordLayout(graphComponent, labelingPolicy) {
 
   // creates the layout data needed in order to sort the edges based on their type
   const chordLayoutData = new CircularLayoutData({
-    nodeTypes: node => node.tag?.department
+    nodeTypes: (node) => node.tag?.department
   })
 
   // apply the layout

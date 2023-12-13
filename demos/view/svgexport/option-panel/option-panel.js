@@ -59,7 +59,7 @@ export function initializeOptionPanel(exportCallback) {
       useExportRectangle: useRectInput.checked
     }
 
-    if (isNaN(options.scale) || options.scale <= 0) {
+    if (Number.isNaN(options.scale) || options.scale <= 0) {
       alert('Scale must be a positive number.')
       return
     }

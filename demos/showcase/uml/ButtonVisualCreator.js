@@ -167,7 +167,7 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     }, 0)
 
     // we animate the position 'manually' because doing it via CSS causes animation artifacts
-    animations.forEach(animation => {
+    animations.forEach((animation) => {
       this.animator.animate(animation)
     })
 

@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { defineConfig, devices } from '@playwright/test'
 
-declare var process: { env: { CI: boolean | undefined } }
+declare let process: { env: { CI: boolean | undefined } }
 
 /**
  * See https://playwright.dev/docs/test-configuration.

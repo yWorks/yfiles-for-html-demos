@@ -43,8 +43,8 @@ export function createFeatureLayoutConfiguration(graph) {
   const layout = new HierarchicLayout()
   const layoutData = new HierarchicLayoutData()
 
-  const node4 = graph.nodes.find(node => node.tag === 4)
-  const node5 = graph.nodes.find(node => node.tag === 5)
+  const node4 = graph.nodes.find((node) => node.tag === 4)
+  const node5 = graph.nodes.find((node) => node.tag === 5)
 
   // node 5 shall follow node 4 in the sequence...
   layoutData.sequenceConstraints.placeAfter(node4, node5)

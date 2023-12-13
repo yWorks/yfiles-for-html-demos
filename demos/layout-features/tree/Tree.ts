@@ -87,7 +87,7 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
 
   // define a comparison function for the out-edges at a tree node such that the respective
   // child nodes are order with respect to the label text (if they have a label)
-  layoutData.outEdgeComparers.delegate = node => (edge1: IEdge, edge2: IEdge) => {
+  layoutData.outEdgeComparers.delegate = (node) => (edge1: IEdge, edge2: IEdge) => {
     const targetLabel1 = edge1.targetNode!.labels.at(0)
     const targetLabel2 = edge2.targetNode!.labels.at(0)
     if (targetLabel1 && targetLabel2) {

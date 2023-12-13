@@ -57,9 +57,9 @@ createGroupNodes(graph)
 
 configureInteraction(graphComponent)
 const nodes = graph.nodes.filter(
-  node => !graph.isGroupNode(node) && node.labels.size > 0
+  (node) => !graph.isGroupNode(node) && node.labels.size > 0
 )
-nodes.forEach(node => graphComponent.selection.setSelected(node, true))
+nodes.forEach((node) => graphComponent.selection.setSelected(node, true))
 
 fitGraphBounds(graphComponent)
 finishLoading()

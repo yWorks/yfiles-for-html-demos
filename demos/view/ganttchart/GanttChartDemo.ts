@@ -116,7 +116,10 @@ async function populateGraph(): Promise<void> {
   const graph = graphComponent.graph
   const graphBuilder = new AdjacencyGraphBuilder(graph)
 
-  const nodesSource = graphBuilder.createNodesSource(dataModel.activities, activity => activity.id)
+  const nodesSource = graphBuilder.createNodesSource(
+    dataModel.activities,
+    (activity) => activity.id
+  )
   nodesSource.nodeCreator.layoutProvider = (activity): Rect => {
     return new Rect(
       getX(new GanttTimestamp(activity.startDate)) - getLeadWidth(activity),

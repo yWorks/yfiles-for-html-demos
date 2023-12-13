@@ -128,23 +128,23 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   const graphBuilder = new GraphBuilder(graph)
 
   graphBuilder.createNodesSource({
-    data: graphData.nodeList.filter(item => !item.isGroup),
-    id: item => item.id,
-    parentId: item => item.parentId
+    data: graphData.nodeList.filter((item) => !item.isGroup),
+    id: (item) => item.id,
+    parentId: (item) => item.parentId
   })
 
   graphBuilder
     .createGroupNodesSource({
-      data: graphData.nodeList.filter(item => item.isGroup),
-      id: item => item.id,
-      parentId: item => item.parentId
+      data: graphData.nodeList.filter((item) => item.isGroup),
+      id: (item) => item.id,
+      parentId: (item) => item.parentId
     })
-    .nodeCreator.createLabelBinding(item => item.label)
+    .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -185,7 +185,7 @@ function createEditorMode(): GraphEditorInputMode {
   // Add event listeners to the various events that open the context menu. These listeners then
   // call the provided callback function, which in turn asks the current ContextMenuInputMode if a
   // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     if (mode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
       contextMenu.show(location)
     }
@@ -286,12 +286,12 @@ function initializeUI(graphComponent: GraphComponent): void {
 
 function selectAllEdges(): void {
   graphComponent.selection.clear()
-  graphComponent.graph.edges.forEach(edge => graphComponent.selection.setSelected(edge, true))
+  graphComponent.graph.edges.forEach((edge) => graphComponent.selection.setSelected(edge, true))
 }
 
 function selectAllNodes(): void {
   graphComponent.selection.clear()
-  graphComponent.graph.nodes.forEach(node => graphComponent.selection.setSelected(node, true))
+  graphComponent.graph.nodes.forEach((node) => graphComponent.selection.setSelected(node, true))
 }
 
 /**
@@ -314,7 +314,7 @@ function populateContextMenu(
   const hits = graphComponent.graphModelManager.hitElementsAt(args.queryLocation)
 
   // Check whether a node was it. If it was, we prefer it over edges
-  const hit = hits.find(item => INode.isInstance(item)) || hits.at(0)
+  const hit = hits.find((item) => INode.isInstance(item)) || hits.at(0)
 
   const graphSelection = graphComponent.selection
   if (INode.isInstance(hit)) {

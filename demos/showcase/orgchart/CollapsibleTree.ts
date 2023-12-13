@@ -566,10 +566,10 @@ export class CollapsibleTree {
 
   private static findEmptyGroups(graph: IGraph, nodesToHide: Set<INode>): IEnumerable<INode> {
     return graph.nodes.filter(
-      node =>
+      (node) =>
         graph.isGroupNode(node) &&
         graph.degree(node) === 0 &&
-        graph.getChildren(node).every(child => nodesToHide.has(child))
+        graph.getChildren(node).every((child) => nodesToHide.has(child))
     )
   }
 
@@ -593,9 +593,9 @@ export class CollapsibleTree {
    * Creates an array of all nodes excluding the nodes in the subtree rooted in the excluded sub-root.
    */
   private static collectAllNodesExceptSubtree(graph: IGraph, excludedRoot: INode): Set<INode> {
-    const subtree = this.collectDescendants(graph, excludedRoot)
+    const subtree = CollapsibleTree.collectDescendants(graph, excludedRoot)
     subtree.add(excludedRoot)
-    return new Set(graph.nodes.filter(node => !subtree.has(node)))
+    return new Set(graph.nodes.filter((node) => !subtree.has(node)))
   }
 
   /**

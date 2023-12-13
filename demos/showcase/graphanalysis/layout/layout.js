@@ -79,7 +79,7 @@ function getOrganicLayoutConfiguration(affectedNodes) {
   organicLayout.prependStage(new CentralityStage(organicLayout))
 
   const organicLayoutData = new OrganicLayoutData({
-    preferredEdgeLengths: edge =>
+    preferredEdgeLengths: (edge) =>
       edge.labels.reduce((width, label) => {
         return Math.max(label.layout.width + 50, width)
       }, 100),
@@ -88,7 +88,7 @@ function getOrganicLayoutConfiguration(affectedNodes) {
   })
 
   const labelingData = new LabelingData({
-    edgeLabelPreferredPlacement: label => {
+    edgeLabelPreferredPlacement: (label) => {
       return new PreferredPlacementDescriptor({
         sideOfEdge: label.tag === 'centrality' ? 'on-edge' : 'left-of-edge',
         distanceToEdge: 5

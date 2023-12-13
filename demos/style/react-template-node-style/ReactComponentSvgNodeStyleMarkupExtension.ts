@@ -52,6 +52,7 @@ import {
 
 type OneOrMoreAttributes = Attribute | Attribute[]
 type MarkupExtensionMetaAttributes<T> = {
+  // biome-ignore lint/complexity/noBannedTypes: Function is used on purpose
   [K in keyof T as T[K] extends Function ? never : K]: OneOrMoreAttributes[]
 } & { $self?: OneOrMoreAttributes[] }
 

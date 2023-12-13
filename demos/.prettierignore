@@ -2,8 +2,10 @@
 **/dist/
 **/node_modules/
 /application-features/webgl-rendering/resources/*.json
-/showcase/tree-of-life/resources/TreeOfLifeData.json
+/showcase/large-graphs/resources/*.json
 /internal/webgl-performance-tests/resources/*.json
+/showcase/tree-of-life/resources/TreeOfLifeData.json
 /starter-kits/**
 /view/large-graphs/resources/*.json
 /view/rendering-optimizations/resources/*.json
+/view/webgl-label-fading/resources/hierarchic_2000_2100.json

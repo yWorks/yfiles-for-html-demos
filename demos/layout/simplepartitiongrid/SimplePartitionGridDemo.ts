@@ -90,7 +90,7 @@ function createPartitionGrid(): PartitionGrid | null {
   // find the desired number of rows/columns
   let columnCount = Number.NEGATIVE_INFINITY
   let rowCount = Number.NEGATIVE_INFINITY
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     if (!graph.isGroupNode(node)) {
       const columnIndex = node.tag.column
       const rowIndex = node.tag.row
@@ -112,13 +112,13 @@ function createPartitionGrid(): PartitionGrid | null {
   if (rowCount > 0 && columnCount > 0) {
     partitionGrid = new PartitionGrid(rowCount, columnCount)
 
-    partitionGrid.columns.forEach(columnDescriptor => {
+    partitionGrid.columns.forEach((columnDescriptor) => {
       columnDescriptor.minimumWidth = 50
       columnDescriptor.leftInset = 10
       columnDescriptor.rightInset = 10
     })
 
-    partitionGrid.rows.forEach(rowDescriptor => {
+    partitionGrid.rows.forEach((rowDescriptor) => {
       rowDescriptor.minimumHeight = 50
       rowDescriptor.topInset = 10
       rowDescriptor.bottomInset = 10

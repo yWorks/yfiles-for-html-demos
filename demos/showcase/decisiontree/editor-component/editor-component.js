@@ -69,7 +69,7 @@ export function initializeEditorComponent(graphComponent) {
   // configures a green outline as custom highlight for the root node of the decision tree
   // see also setAsRootNode action
   graphComponent.graph.decorator.nodeDecorator.highlightDecorator.setImplementation(
-    node => node === rootNode,
+    (node) => node === rootNode,
     new NodeStyleDecorationInstaller({
       nodeStyle: new ShapeNodeStyle({
         fill: null,
@@ -115,8 +115,8 @@ function initializeGraph(graph) {
 
   // provide a single port at the top of the node for group nodes
   graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
-    node => graph.isGroupNode(node),
-    node => new GroupNodePortCandidateProvider(node)
+    (node) => graph.isGroupNode(node),
+    (node) => new GroupNodePortCandidateProvider(node)
   )
 }
 
@@ -242,7 +242,7 @@ export async function readSampleGraph(graphComponent) {
 function setLayoutRunning(running, graphComponent) {
   runningLayout = running
   graphComponent.inputMode.waitInputMode.waiting = running
-  document.querySelectorAll('#editor-toolbar Button').forEach(button => {
+  document.querySelectorAll('#editor-toolbar Button').forEach((button) => {
     button.disabled = running
   })
 }

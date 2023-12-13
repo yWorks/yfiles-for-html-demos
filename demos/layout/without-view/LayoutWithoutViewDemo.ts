@@ -131,7 +131,7 @@ function runAlgorithm(graph: Graph): YNode {
 
   // find the most central node
   const centralNode = graph.nodes
-    .map(node => ({ node, centrality: closenessResult.getNumber(node) }))
+    .map((node) => ({ node, centrality: closenessResult.getNumber(node) }))
     .reduce((a, b) => (a.centrality > b.centrality ? a : b)).node
 
   // release resources
@@ -159,7 +159,7 @@ function runLayout(layoutGraph: DefaultLayoutGraph, centralNode: YNode): void {
   otherLane.indexFixed = true
   otherLane.minimumLaneWidth = 30
 
-  layoutGraph.nodes.forEach(node => {
+  layoutGraph.nodes.forEach((node) => {
     if (node === centralNode) {
       swimlaneMap.set(node, centerLane)
     } else {

@@ -66,7 +66,7 @@ export class CustomGroupNodeStyle extends NodeStyleBase {
   lookup(node, type) {
     if (type === INodeInsetsProvider.$class) {
       // use a custom insets provider that reserves space for the tab
-      return INodeInsetsProvider.create(group => new Insets(4, tabHeight + 4, 4, 4))
+      return INodeInsetsProvider.create((group) => new Insets(4, tabHeight + 4, 4, 4))
     }
 
     // Determines the minimum and maximum node size.
@@ -74,11 +74,11 @@ export class CustomGroupNodeStyle extends NodeStyleBase {
       // use a custom size constraint provider to make sure that the node doesn't get smaller than the tab
       return INodeSizeConstraintProvider.create({
         // returns the tab size plus a small margin
-        getMinimumSize: item => new Size(tabWidth + 20, tabHeight + 20),
+        getMinimumSize: (item) => new Size(tabWidth + 20, tabHeight + 20),
         // don't limit the maximum size
-        getMaximumSize: item => Size.INFINITE,
+        getMaximumSize: (item) => Size.INFINITE,
         // don't constrain the area
-        getMinimumEnclosedArea: item => Rect.EMPTY
+        getMinimumEnclosedArea: (item) => Rect.EMPTY
       })
     }
 
@@ -89,9 +89,9 @@ export class CustomGroupNodeStyle extends NodeStyleBase {
       return IGroupBoundsCalculator.create((graph, groupNode) => {
         let bounds = Rect.EMPTY
         const children = graph.getChildren(groupNode)
-        children.forEach(child => {
+        children.forEach((child) => {
           bounds = Rect.add(bounds, child.layout.toRect())
-          child.labels.forEach(label => {
+          child.labels.forEach((label) => {
             bounds = Rect.add(bounds, label.layout.bounds)
           })
         })

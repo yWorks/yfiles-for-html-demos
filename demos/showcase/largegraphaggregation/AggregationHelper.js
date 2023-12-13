@@ -103,7 +103,7 @@ export class AggregationHelper {
    */
   get visibleNodes() {
     return this.aggregateGraph
-      ? this.aggregateGraph.nodes.filter(node => this.isOriginalNodeOrPlaceHolder(node)).size
+      ? this.aggregateGraph.nodes.filter((node) => this.isOriginalNodeOrPlaceHolder(node)).size
       : 0
   }
 
@@ -127,7 +127,7 @@ export class AggregationHelper {
    * @type {number}
    */
   get visibleEdges() {
-    return this.aggregateGraph ? this.aggregateGraph.edges.filter(e => !e.tag).size : 0
+    return this.aggregateGraph ? this.aggregateGraph.edges.filter((e) => !e.tag).size : 0
   }
 
   /**
@@ -321,7 +321,7 @@ export class AggregationHelper {
     const aggregate = aggregationInfo.aggregate
     const aggregatedItems = this.aggregateGraph
       .getAggregatedItems(node)
-      .filter(n => n !== aggregate.node)
+      .filter((n) => n !== aggregate.node)
       .toList()
     this.aggregateGraph.separate(node)
 
@@ -402,7 +402,7 @@ export class AggregationHelper {
     this.aggregateGraph.wrappedGraph
       .edgesAt(originalNode, AdjacencyTypes.ALL)
       .toList()
-      .forEach(edge => {
+      .forEach((edge) => {
         if (edge.targetPort.owner === originalNode) {
           this.$createReplacementEdge(edge.sourceNode, node, edge, true)
         } else {

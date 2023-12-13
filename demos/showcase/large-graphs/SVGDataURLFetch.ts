@@ -52,7 +52,7 @@ function encodeSvgDataUrl(data: string): string {
  * @param text the text to escape
  */
 function escapeUnicodeSurrogatePair(text: string): string {
-  return text.replace(new RegExp('[\uD800-\uDBFF][\uDC00-\uDFFF]', 'g'), txt => {
+  return text.replace(new RegExp('[\uD800-\uDBFF][\uDC00-\uDFFF]', 'g'), (txt) => {
     const high = txt.charCodeAt(0)
     const low = txt.charCodeAt(1)
     const codepoint = (((high & 0x03ff) << 10) | (low & 0x03ff)) + 0x10000
@@ -66,5 +66,5 @@ function escapeUnicodeSurrogatePair(text: string): string {
  */
 function escapeNonLatin1(text: string): string {
   // eslint-disable-next-line no-control-regex
-  return text.replace(new RegExp('[^\x00-\x7F]', 'g'), txt => `&#${txt.charCodeAt(0)};`)
+  return text.replace(new RegExp('[^\x00-\x7F]', 'g'), (txt) => `&#${txt.charCodeAt(0)};`)
 }

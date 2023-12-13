@@ -124,7 +124,7 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
   // create and configure layout data for the hierarchic layout algorithm
   const layoutData = new HierarchicLayoutData()
   // register all the descriptors
-  layoutData.edgeLabelPreferredPlacement.delegate = label => {
+  layoutData.edgeLabelPreferredPlacement.delegate = (label) => {
     switch (label.text) {
       case 'Close to Source':
         return closeToSourceDesc

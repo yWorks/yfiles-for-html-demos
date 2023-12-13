@@ -288,23 +288,23 @@ export class BpmnDiParser {
 
     // Get the Diagram to load
     let diaToLoad
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (selectDiagramCallback) {
         selectDiagramCallback(
-          topLevelDiagrams.map(d => ({
+          topLevelDiagrams.map((d) => ({
             name: d.name,
             nodeCount: d.plane.listOfShapes.size,
             edgeCount: d.plane.listOfEdges.size
           }))
-        ).then(chosenName => {
-          diaToLoad = topLevelDiagrams.find(d => d.name === chosenName)
+        ).then((chosenName) => {
+          diaToLoad = topLevelDiagrams.find((d) => d.name === chosenName)
           resolve(diaToLoad)
         })
       } else {
         diaToLoad = topLevelDiagrams.at(0) ?? null
         resolve(diaToLoad)
       }
-    }).then(diaToLoad => {
+    }).then((diaToLoad) => {
       // Loads the selected Diagram into the supplied Graph
       if (diaToLoad) {
         this.loadDiagram(diaToLoad, null)
@@ -595,14 +595,14 @@ export class BpmnDiParser {
     }
 
     const groupNodes = this.masterGraph.nodes
-      .filter(node => node.style instanceof GroupNodeStyle)
+      .filter((node) => node.style instanceof GroupNodeStyle)
       .toList()
     for (const groupNode of groupNodes) {
       if (this.masterGraph.getChildren(groupNode).size === 0) {
         const newChildren = this.masterGraph
           .getChildren(this.masterGraph.getParent(groupNode))
           .filter(
-            child =>
+            (child) =>
               child !== groupNode &&
               groupNode.layout.contains(child.layout.topLeft) &&
               groupNode.layout.contains(child.layout.bottomRight)
@@ -769,7 +769,7 @@ export class BpmnDiParser {
       return
     }
     const labelingData = new LabelingData()
-    labelingData.edgeLabelPreferredPlacement.delegate = label => {
+    labelingData.edgeLabelPreferredPlacement.delegate = (label) => {
       if (/yes|no/i.test(label.text)) {
         const preferredPlacementDescriptor = new PreferredPlacementDescriptor()
         preferredPlacementDescriptor.placeAlongEdge = LabelPlacements.AT_SOURCE
@@ -1433,7 +1433,7 @@ export class BpmnDiParser {
       this.masterGraph.setStyle(node, partStyle)
 
       const table = partStyle.tableNodeStyle.table
-      if (shape.isHorizontal) {
+      if (shape.isHorizontal ?? false) {
         const row = table.rootRow.childRows.first()
         BpmnDiParser.addTableLabel(table, row, shape)
       } else {
@@ -2148,7 +2148,7 @@ export class BpmnDiParser {
     }
 
     let layout = Rect.EMPTY
-    let isHorizontal = false
+    let isHorizontal = null
     let multipleInstance = false
 
     let tableShape = this.getShape(element, plane)
@@ -2171,20 +2171,30 @@ export class BpmnDiParser {
     if (tableShape) {
       // table has a shape itself so we use its layout to initialize the table
       layout = new Rect(tableShape.x, tableShape.y, tableShape.width, tableShape.height)
-      isHorizontal = tableShape.isHorizontal
-    } else {
+      if (tableShape.isHorizontal != null) {
+        isHorizontal = tableShape.isHorizontal
+      }
+    }
+    const calculateRect = layout.isEmpty
+    if (calculateRect || isHorizontal == null) {
       // check the child lanes for their shapes
       for (const lane of element.getChildren('lane')) {
         const laneShape = this.getShape(lane, plane)
         if (laneShape) {
-          layout = Rect.add(
-            layout,
-            new Rect(laneShape.x, laneShape.y, laneShape.width, laneShape.height)
-          )
-          isHorizontal = laneShape.isHorizontal
+          if (calculateRect) {
+            layout = Rect.add(
+              layout,
+              new Rect(laneShape.x, laneShape.y, laneShape.width, laneShape.height)
+            )
+          }
+          if (isHorizontal == null && laneShape.isHorizontal != null) {
+            isHorizontal = laneShape.isHorizontal
+          }
         }
       }
     }
+    // fallback
+    isHorizontal = isHorizontal ?? false
     let node
     if (!layout.isEmpty) {
       let table
@@ -2227,7 +2237,7 @@ export class BpmnDiParser {
         ? table.rootRow.childRows.at(0) ?? table.rootRow
         : table.rootColumn.childColumns.at(0) ?? table.rootColumn
       if (tableShape) {
-        parentStripe = this.addToTable(tableShape, table, node, parentStripe)
+        parentStripe = this.addToTable(tableShape, table, node, parentStripe, isHorizontal)
       }
 
       element.node = node
@@ -2235,17 +2245,17 @@ export class BpmnDiParser {
         parent.node = node
       }
 
-      this.addChildLanes(element, table, parentStripe, plane, node)
+      this.addChildLanes(element, table, parentStripe, plane, node, isHorizontal)
 
       // Resize the root row/column after adding a column/row with insets
       if (isHorizontal) {
         const max = table.rootRow.leaves
-          .map(s => s.layout.x - table.layout.x + s.insets.left)
+          .map((s) => s.layout.x - table.layout.x + s.insets.left)
           .reduce((acc, val) => Math.max(acc, val), Number.MIN_VALUE)
         table.setSize(table.rootColumn.childColumns.first(), node.layout.width - max)
       } else {
         const max = table.rootColumn.leaves
-          .map(s => s.layout.y - table.layout.y + s.insets.top)
+          .map((s) => s.layout.y - table.layout.y + s.insets.top)
           .reduce((acc, val) => Math.max(acc, val), Number.MIN_VALUE)
         table.setSize(table.rootRow.childRows.first(), node.layout.height - max)
       }
@@ -2276,12 +2286,13 @@ export class BpmnDiParser {
    * @param {!IStripe} parentStripe
    * @param {!BpmnPlane} plane
    * @param {!INode} node
+   * @param {boolean} isHorizontal
    */
-  addChildLanes(element, table, parentStripe, plane, node) {
+  addChildLanes(element, table, parentStripe, plane, node, isHorizontal) {
     for (const lane of element.getChildren('lane')) {
       const laneShape = this.getShape(lane, plane)
       if (laneShape) {
-        const addedStripe = this.addToTable(laneShape, table, node, parentStripe)
+        const addedStripe = this.addToTable(laneShape, table, node, parentStripe, isHorizontal)
         for (const refElement of lane.getChildren('flowNodeRef')) {
           const bpmnElement = { value: null }
           if (refElement.value && this.tryGetElementForId(refElement.value, bpmnElement)) {
@@ -2290,7 +2301,7 @@ export class BpmnDiParser {
         }
         const childLaneSet = lane.getChild('childLaneSet')
         if (childLaneSet) {
-          this.addChildLanes(childLaneSet, table, addedStripe, plane, node)
+          this.addChildLanes(childLaneSet, table, addedStripe, plane, node, isHorizontal)
         }
       }
     }
@@ -2302,20 +2313,21 @@ export class BpmnDiParser {
    * @param {!ITable} table
    * @param {!INode} node
    * @param {!IStripe} parentStripe
+   * @param {boolean} isHorizontal
    * @returns {!IStripe}
    */
-  addToTable(shape, table, node, parentStripe) {
+  addToTable(shape, table, node, parentStripe, isHorizontal) {
     // lane element
     const element = shape.element
 
     // Link the node to the BpmnElement of the lane
 
     element.node = node
-    if (shape.isHorizontal) {
+    if (isHorizontal) {
       const parentRow = parentStripe instanceof IRow ? parentStripe : null
       // getIndex
       const index = parentRow
-        ? parentRow.childRows.filter(siblingRow => siblingRow.tag.y < shape.y).size
+        ? parentRow.childRows.filter((siblingRow) => siblingRow.tag.y < shape.y).size
         : -1
 
       const row = table.createChildRow(parentRow, shape.height, null, null, null, null, index)
@@ -2327,7 +2339,7 @@ export class BpmnDiParser {
       const parentCol = IColumn.isInstance(parentStripe) ? parentStripe : null
       // getIndex
       const index = parentCol
-        ? parentCol.childColumns.filter(siblingCol => siblingCol.tag.x < shape.x).size
+        ? parentCol.childColumns.filter((siblingCol) => siblingCol.tag.x < shape.x).size
         : -1
 
       const col = table.createChildColumn(parentCol, shape.width, null, null, null, null, index)
@@ -2343,7 +2355,7 @@ export class BpmnDiParser {
    * @returns {!PoolNodeStyle}
    */
   static createTable(shape) {
-    const poolNodeStyle = BpmnDiParser.createPoolNodeStyle(shape.isHorizontal)
+    const poolNodeStyle = BpmnDiParser.createPoolNodeStyle(shape.isHorizontal ?? false)
     const table = poolNodeStyle.tableNodeStyle.table
 
     // Create first row & column
@@ -3500,7 +3512,7 @@ export class BpmnNamespaceManager {
    */
   static attributesInNamespace(list, nameSpace) {
     // Some Attributes do not have a namespace declared explicitly. Since we test the parent for the correct namespace this is ok.
-    return list.filter(el => !el.namespaceURI || el.namespaceURI === nameSpace)
+    return list.filter((el) => !el.namespaceURI || el.namespaceURI === nameSpace)
   }
 
   /**
@@ -3635,7 +3647,7 @@ export class BpmnShape {
   id = null
   // Get all additional Attributes
   // Attribute which indicates the orientation if this is a pool or lane
-  isHorizontal = false
+  isHorizontal = null
   // String id of the expansion state of this shape
   isExpanded = null
   // Determines, if a marker should be depicted on the shape for exclusive Gateways.
@@ -3666,9 +3678,12 @@ export class BpmnShape {
 
     this.id = BpmnNamespaceManager.getAttributeValue(xShape, BpmnNamespaceManager.BPMN_DI, 'id')
 
-    this.isHorizontal = convertToBoolean(
-      BpmnNamespaceManager.getAttributeValue(xShape, BpmnNamespaceManager.BPMN_DI, 'isHorizontal')
+    const isHorizontalString = BpmnNamespaceManager.getAttributeValue(
+      xShape,
+      BpmnNamespaceManager.BPMN_DI,
+      'isHorizontal'
     )
+    this.isHorizontal = isHorizontalString != null ? convertToBoolean(isHorizontalString) : null
     this.isExpanded = BpmnNamespaceManager.getAttributeValue(
       xShape,
       BpmnNamespaceManager.BPMN_DI,
@@ -3842,10 +3857,6 @@ export class MultiLabelFolderNodeConverter extends DefaultFolderNodeConverter {
    * @see DefaultFolderNodeConverter.labelLayoutParameter
    */
   copyLabels = false
-
-  constructor() {
-    super()
-  }
 
   /**
    * @param {!FolderNodeState} state

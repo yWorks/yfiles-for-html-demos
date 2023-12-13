@@ -99,7 +99,7 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
       container.appendChild(svgPath)
     })
 
-    this.clusters.centroids.forEach(point => {
+    this.clusters.centroids.forEach((point) => {
       VoronoiVisual.drawClusterCenter(point, container)
     })
 
@@ -172,7 +172,7 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
       let generalPath = new GeneralPath()
       if (clusterNodeBounds.length > 1) {
         const points = new YList()
-        clusterNodeBounds.forEach(layout => {
+        clusterNodeBounds.forEach((layout) => {
           const offset = 0
           const x = layout.x
           const y = layout.y

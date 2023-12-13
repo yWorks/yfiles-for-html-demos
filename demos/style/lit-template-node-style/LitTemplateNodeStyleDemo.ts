@@ -214,7 +214,7 @@ function loadSampleGraph(): void {
     layout: (data: SampleDataType): Rect =>
       new Rect(data.layout.x, data.layout.y, defaultNodeSize.width, defaultNodeSize.height)
   })
-  graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt').edgeCreator.bendsProvider = e =>
+  graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt').edgeCreator.bendsProvider = (e) =>
     e.bends
 
   const graph = graphBuilder.buildGraph()
@@ -255,7 +255,7 @@ function initializeUI(): void {
         .getVisualCreator(graphComponent.selection.selectedNodes.first(), style)
         .createVisual(graphComponent.createRenderContext())
 
-      graphComponent.selection.selectedNodes.forEach(node => {
+      graphComponent.selection.selectedNodes.forEach((node) => {
         graphComponent.graph.setStyle(node, style)
       })
 
@@ -270,7 +270,7 @@ function initializeUI(): void {
 
   document.querySelector('#apply-tag-button')!.addEventListener('click', () => {
     const errorArea = document.getElementById('tag-text-area-error')!
-    graphComponent.selection.selectedNodes.forEach(node => {
+    graphComponent.selection.selectedNodes.forEach((node) => {
       try {
         node.tag = JSON.parse(tagTextArea.getValue())
         errorArea.classList.remove('open-error')

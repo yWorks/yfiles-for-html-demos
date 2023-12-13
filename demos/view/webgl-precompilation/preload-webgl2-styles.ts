@@ -78,7 +78,7 @@ export async function preloadWebGL2Styles(...styles: WebGL2Style[]): Promise<voi
   const gc = new GraphComponent()
   const splitStyles = splitStylesByType(styles)
   const { selection, focus, highlight } = createGraph(gc.graph, splitStyles)
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const gmm = new PreloadingWebGL2GraphModelManager()
     gmm.addShadersCompiledListener(() => {
       resolve()

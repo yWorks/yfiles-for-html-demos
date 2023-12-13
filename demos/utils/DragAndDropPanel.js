@@ -177,7 +177,7 @@ export class DragAndDropPanel {
 
     const originalNode = original instanceof INode ? original : original.modelItem
     const node = graph.createNode(originalNode.layout, originalNode.style, originalNode.tag)
-    originalNode.labels.forEach(label => {
+    originalNode.labels.forEach((label) => {
       graph.addLabel(
         node,
         label.text,
@@ -187,7 +187,7 @@ export class DragAndDropPanel {
         label.tag
       )
     })
-    originalNode.ports.forEach(port => {
+    originalNode.ports.forEach((port) => {
       graph.addPort(node, port.locationParameter, port.style, port.tag)
     })
 
@@ -284,7 +284,7 @@ export class DragAndDropPanel {
 
     element.addEventListener(
       'mousedown',
-      evt => {
+      (evt) => {
         if (evt.button !== 0) {
           return
         }
@@ -294,7 +294,7 @@ export class DragAndDropPanel {
       false
     )
 
-    const touchStartListener = evt => {
+    const touchStartListener = (evt) => {
       doDragOperation()
       evt.preventDefault()
     }
@@ -302,7 +302,7 @@ export class DragAndDropPanel {
     if (window.PointerEvent !== undefined) {
       element.addEventListener(
         'pointerdown',
-        evt => {
+        (evt) => {
           if (evt.pointerType === 'touch' || evt.pointerType === 'pen') {
             touchStartListener(evt)
           }
@@ -312,7 +312,7 @@ export class DragAndDropPanel {
     } else if (window.MSPointerEvent !== undefined) {
       element.addEventListener(
         'MSPointerDown',
-        evt => {
+        (evt) => {
           if (
             evt.pointerType === evt.MSPOINTER_TYPE_TOUCH ||
             evt.pointerType === evt.MSPOINTER_TYPE_PEN

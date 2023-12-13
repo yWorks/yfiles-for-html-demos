@@ -208,9 +208,9 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     const minNewZOrder = Math.min(...this.tempZOrders.values)
     const delta = maxExistingZOrder - minNewZOrder + 1
     this.tempZOrders.keys
-      .filter(n => this.masterGraph.getParent(n) == null)
+      .filter((n) => this.masterGraph.getParent(n) == null)
       .toList()
-      .forEach(key => {
+      .forEach((key) => {
         const value = this.tempZOrders.get(key)
         this.tempZOrders.set(key, value! + delta)
       })
@@ -274,7 +274,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
 
   onZIndexChanged(item: IModelItem, newValue: number, oldValue: number | null): void {
     const eventArgs = new ZIndexChangedEventArgs(item, newValue, oldValue)
-    this.zOrderChangedListeners.forEach(listener => {
+    this.zOrderChangedListeners.forEach((listener) => {
       listener(this, eventArgs)
     })
   }
@@ -336,8 +336,8 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     const masterParent = tempParent
       ? this.getMasterNode(tempParent)
       : this.foldingView
-      ? this.foldingView.localRoot
-      : null
+        ? this.foldingView.localRoot
+        : null
     this.tempParents.set(master, masterParent)
   }
 
@@ -369,7 +369,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
    * Transfers all temporary z-orders that have been set previously via {@link ZOrderSupport.setTempZOrder}.
    */
   public applyTempZOrders(update = false): void {
-    this.tempZOrders.forEach(keyValuePair => {
+    this.tempZOrders.forEach((keyValuePair) => {
       this.setZOrder(keyValuePair.key, keyValuePair.value)
       if (update) {
         this.update(keyValuePair.key)
@@ -433,7 +433,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
 
   public toFront(nodes: List<INode>): void {
     for (const grouping of nodes.groupBy(
-      node => this.graphComponent.graph.getParent(node),
+      (node) => this.graphComponent.graph.getParent(node),
       (type: INode | null, elements: IEnumerable<INode> | null) => ({
         groupNode: type,
         children: elements ? elements.toList() : new List<INode>()
@@ -460,7 +460,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
 
   public toBack(nodes: List<INode>): void {
     for (const grouping of nodes.groupBy(
-      node => this.graphComponent.graph.getParent(node),
+      (node) => this.graphComponent.graph.getParent(node),
       (type: INode | null, elements: IEnumerable<INode> | null) => ({
         groupNode: type,
         children: elements ? elements.toList() : new List<INode>()
@@ -803,7 +803,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
       }
       return nodes
     } else if (parameter instanceof IEnumerable) {
-      const nodes = parameter.filter(para => para instanceof INode).toList()
+      const nodes = parameter.filter((para) => para instanceof INode).toList()
       return nodes.size > 0 ? nodes : null
     }
     return null
@@ -1267,8 +1267,8 @@ class ZOrderReparentHandler extends BaseClass<IReparentNodeHandler>(IReparentNod
     return (
       Math.max(
         ...children
-          .filter(current => current != masterNode)
-          .map(n => this.zOrderSupport.getZOrder(n))
+          .filter((current) => current != masterNode)
+          .map((n) => this.zOrderSupport.getZOrder(n))
       ) + 1
     )
   }

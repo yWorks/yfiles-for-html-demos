@@ -159,7 +159,7 @@ function initializeUI(graphComponent: GraphComponent): void {
     document.querySelector<HTMLInputElement>('#font-size-label')!.textContent = fontSize.toString()
     const graph = graphComponent.graph
 
-    graph.labels.forEach(label => {
+    graph.labels.forEach((label) => {
       const oldFont = (label.style as MarkupLabelStyle).font
       graph.setStyle(label, getLabelStyle(new Font({ fontSize, fontWeight: oldFont.fontWeight })))
     })

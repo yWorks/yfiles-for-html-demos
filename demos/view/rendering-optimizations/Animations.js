@@ -93,7 +93,7 @@ export class ZoomInAndBackAnimation extends BaseClass(IAnimation) {
       time < 0.5
         ? this.initialZoomLog + this.delta * (time * 2)
         : this.targetZoomLog - this.delta * ((time - 0.5) * 2)
-    this.canvas.zoom = Math.pow(2, newZoom)
+    this.canvas.zoom = 2 ** newZoom
   }
 
   /**
@@ -216,7 +216,7 @@ export class CircleNodeAnimation extends BaseClass(IAnimation) {
    * @see Specified by {@link IAnimation.initialize}.
    */
   initialize() {
-    this.startBounds = this.nodes.map(n => n.layout.toRect()).toList()
+    this.startBounds = this.nodes.map((n) => n.layout.toRect()).toList()
   }
 
   /**

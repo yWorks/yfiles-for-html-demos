@@ -89,7 +89,7 @@ export class VoronoiDiagram {
 
     const existOnlyTwoFaces = faces.size === 2
     let externalFaceFound = false
-    faces.forEach(face => {
+    faces.forEach((face) => {
       // for each face, except the outerFace add a Voronoi node for this face that lies on the faces circumcenter
       if (!face.outer || (existOnlyTwoFaces && externalFaceFound)) {
         const circumcenter = face.calculateCircumcenter()
@@ -133,10 +133,10 @@ export class VoronoiDiagram {
     const edges: Edge[] = outerFace != null ? (outerFace as VoronoiFace).edges : []
     const outerFaceEdges = new Set<Edge>(edges)
     const visitedEdges = new Set<Edge>()
-    faces.forEach(face => {
+    faces.forEach((face) => {
       if (!face.outer || (existOnlyTwoFaces && face.circumcenter)) {
         const circumcenter = face.circumcenter!
-        face.edges.forEach(edge => {
+        face.edges.forEach((edge) => {
           const oppositeEdge = edge.target.getEdge(edge.source)!
           if (!visitedEdges.has(edge) && !visitedEdges.has(oppositeEdge)) {
             visitedEdges.add(edge)
@@ -332,7 +332,7 @@ export class VoronoiDiagram {
     // determine which nodes of the graph belong to the boundary so that we connect the consecutive ones and create
     // the Voronoi areas
     const boundaryNodes: YNode[] = []
-    voronoiGraph.nodes.forEach(node => {
+    voronoiGraph.nodes.forEach((node) => {
       if (this.belongsToBoundary(voronoiNodeCoordinates.get(node))) {
         boundaryNodes.push(node)
       }
@@ -379,7 +379,7 @@ export class VoronoiDiagram {
 
     // remove nodes that might lie on the exterior of the graph's bounding box, these can occur only if a
     // circumcenter lies on the exterior of the bounding box after the triangulation
-    voronoiGraph.nodes.toArray().forEach(node => {
+    voronoiGraph.nodes.toArray().forEach((node) => {
       if (node.degree === 0) {
         voronoiGraph.removeNode(node)
       }
@@ -405,7 +405,7 @@ export class VoronoiDiagram {
     const revMap = delauneyGraph.createEdgeMap()
 
     // fill the pointData with the coordinates of the nodes of the delauney graph
-    this.centroids.forEach(centroid => {
+    this.centroids.forEach((centroid) => {
       const center = delauneyGraph.createNode()
       pointData.set(center, new YPoint(centroid.x, centroid.y))
     })
@@ -449,7 +449,7 @@ export class VoronoiDiagram {
   ): IEnumerable<VoronoiFace> {
     const mark: boolean[] = []
     const faceList = new List<VoronoiFace>()
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       if (!mark[edge.index]) {
         const face = this.createFace(edge, mark, reversedEdgesMap)
         faceList.add(face)
@@ -457,8 +457,8 @@ export class VoronoiDiagram {
       }
     })
 
-    faceList.forEach(face => {
-      face.edges.forEach(edge => {
+    faceList.forEach((face) => {
+      face.edges.forEach((edge) => {
         this.addEdgeToFace(edge, face, edge2face)
         this.addEdgeToFace(reversedEdgesMap.get(edge), face, edge2face)
       })
@@ -627,7 +627,7 @@ export class VoronoiDiagram {
 
     // for each edge segment, we create two darts, one for each direction s -> t and t -> s
     let index = -1
-    voronoiGraph.edges.forEach(edge => {
+    voronoiGraph.edges.forEach((edge) => {
       const source = edge.source
       const target = edge.target
       const dart1 = new VoronoiDart(source, target, edge, index++)
@@ -651,7 +651,7 @@ export class VoronoiDiagram {
     })
 
     // for each dart, we calculate the angle that creates with the x-axis in counter-clockwise order
-    darts.forEach(dart => {
+    darts.forEach((dart) => {
       const sourceCenter = voronoiNodeCoordinates.get(dart.source)
       const targetCenter = voronoiNodeCoordinates.get(dart.target)
       const angle = Math.atan2(sourceCenter.y - targetCenter.y, sourceCenter.x - targetCenter.x)
@@ -659,7 +659,7 @@ export class VoronoiDiagram {
     })
 
     // we sort the darts around their origin based on the angle the form with the x-axis
-    voronoiGraph.nodes.forEach(node => {
+    voronoiGraph.nodes.forEach((node) => {
       const nodeDarts = node2Darts.get(node)
       if (nodeDarts !== null) {
         nodeDarts.sort((dart1, dart2) => {
@@ -679,7 +679,7 @@ export class VoronoiDiagram {
 
     // we iterate over the darts to create the faces
     const faces: VoronoiDart[][] = []
-    darts.forEach(dart => {
+    darts.forEach((dart) => {
       const face: VoronoiDart[] = []
       if (!dart.marked) {
         let d: VoronoiDart = dart
@@ -708,7 +708,7 @@ export class VoronoiDiagram {
 
     // we create the general paths that form the geometric face
     const voronoiFaces: GeneralPath[] = []
-    faces.forEach(face => {
+    faces.forEach((face) => {
       if (face.length > 2) {
         const facePath = new GeneralPath()
         for (let i = 0; i < face.length - 1; i++) {
@@ -865,8 +865,6 @@ class VoronoiFace {
    * Whether this face is the outer face.
    */
   outer = false
-
-  constructor() {}
 
   /**
    * Adds the given edges to the list of edges of the given face.

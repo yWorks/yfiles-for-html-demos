@@ -50,7 +50,7 @@ function compileRenderFunction(jsx) {
   }).code
   // eslint-disable-next-line
   const renderFn = new Function('SvgText', transpiledCode + '\n return renderFunction')(SvgText)
-  return props => {
+  return (props) => {
     try {
       return renderFn(props)
     } catch (e) {

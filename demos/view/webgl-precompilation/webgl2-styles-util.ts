@@ -72,14 +72,14 @@ const webGL2IndicatorStyles = [
 ]
 
 export function isWebGL2NodeStyle(style: WebGL2Style): style is WebGL2NodeStyle {
-  return webGL2NodeStyles.some(ns => style instanceof ns)
+  return webGL2NodeStyles.some((ns) => style instanceof ns)
 }
 export function isWebGL2EdgeStyle(style: WebGL2Style): style is WebGL2EdgeStyle {
-  return webGL2EdgeStyles.some(es => style instanceof es)
+  return webGL2EdgeStyles.some((es) => style instanceof es)
 }
 export function isWebGL2LabelStyle(style: WebGL2Style): style is WebGL2LabelStyle {
-  return webGL2LabelStyles.some(ls => style instanceof ls)
+  return webGL2LabelStyles.some((ls) => style instanceof ls)
 }
 export function isWebGL2IndicatorStyle(style: WebGL2Style): style is WebGL2IndicatorStyle {
-  return webGL2IndicatorStyles.some(is => style instanceof is)
+  return webGL2IndicatorStyles.some((is) => style instanceof is)
 }

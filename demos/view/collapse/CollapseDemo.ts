@@ -141,7 +141,7 @@ function createGraph(): FilteredGraphWrapper {
   // The predicate methods specify which should be part of the filtered graph.
   return new FilteredGraphWrapper(
     completeGraph,
-    node => collapseAndExpandNodes.getNodeVisibility(node),
+    (node) => collapseAndExpandNodes.getNodeVisibility(node),
     () => true
   )
 }

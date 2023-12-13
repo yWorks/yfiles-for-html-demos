@@ -87,7 +87,7 @@ export default class NodeStyleDecorator extends NodeStyleBase {
     // register a native click listener on the SVG element
     button.addEventListener('click', showToast)
     // the input mode should not handle any event on the the button where we registered a native click listener
-    button.addEventListener('mousedown', e => e.preventDefault())
+    button.addEventListener('mousedown', (e) => e.preventDefault())
 
     const decorationVisual = new SvgVisual(button)
 

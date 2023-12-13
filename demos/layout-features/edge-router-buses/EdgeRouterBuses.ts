@@ -71,7 +71,7 @@ function configureFirstBus(layoutData: EdgeRouterData) {
   const descriptorFirstBus = new EdgeRouterBusDescriptor()
   const firstBus = layoutData.buses.add(descriptorFirstBus)
   // specify the edges that belong to the first bus via a delegate
-  firstBus.delegate = e => e.tag.bus === 1
+  firstBus.delegate = (e) => e.tag.bus === 1
 }
 
 /**
@@ -84,13 +84,13 @@ function configureSecondBus(layoutData: EdgeRouterData, graph: IGraph) {
 
   // specify the edges that belong to the second bus via a list of items (just for the
   // purpose of the example, could be defined using a delegate as for the first bus as well)
-  const secondBusEdges = graph.edges.filter(e => e.tag.bus === 2).toList()
+  const secondBusEdges = graph.edges.filter((e) => e.tag.bus === 2).toList()
   secondBus.items = secondBusEdges
 
   // now define the custom backbone that this bus should use: in this example we assume a node
   // arrangement in a row-like fashion and we define the backbone to be left and in between
   // the node rows
-  const secondBusNodes = graph.nodes.filter(n => graph.edgesAt(n).some(e => e.tag.bus === 2))
+  const secondBusNodes = graph.nodes.filter((n) => graph.edgesAt(n).some((e) => e.tag.bus === 2))
 
   // get the bounding box of the nodes on the bus
   const bounds = getBoundingBox(secondBusNodes)

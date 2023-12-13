@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable no-eval */
-/* eslint-disable no-var */
+/* eslint-disable no-eval, no-var */
 ;(function () {
   var demoRoot = window.location.toString().indexOf('/demos-ts/') > -1 ? 'demos-ts' : 'demos-js'
 

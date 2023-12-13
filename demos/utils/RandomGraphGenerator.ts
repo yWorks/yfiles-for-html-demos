@@ -130,7 +130,7 @@ export default class RandomGraphGenerator {
     }
 
     if (!this.allowCycles) {
-      graph.edges.forEach(edge => {
+      graph.edges.forEach((edge) => {
         const sourcePort = edge.sourcePort!
         const targetPort = edge.targetPort!
         if (index.get(sourcePort.owner as INode)! > index.get(targetPort.owner as INode)!) {
@@ -206,7 +206,7 @@ export default class RandomGraphGenerator {
     }
 
     if (!this.allowCycles) {
-      graph.edges.forEach(edge => {
+      graph.edges.forEach((edge) => {
         const sourcePort = edge.sourcePort!
         const targetPort = edge.targetPort!
         if (index.get(sourcePort.owner as INode)! > index.get(targetPort.owner as INode)!) {

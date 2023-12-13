@@ -82,7 +82,7 @@ async function run() {
 function runLayout(graphComponent) {
   const familyTreeLayout = new FamilyTreeLayout()
   const familyTreeLayoutData = new FamilyTreeLayoutData({
-    familyTypes: node => {
+    familyTypes: (node) => {
       switch (node.tag.familyType) {
         case 'MALE':
           return FamilyType.MALE
@@ -153,12 +153,12 @@ function createSampleGraph(graph) {
   const nodesSource = builder.createNodesSource({
     data: GraphBuilderData.nodes,
     id: 'id',
-    layout: data => new Rect(0, 0, data.layout.width, data.layout.height)
+    layout: (data) => new Rect(0, 0, data.layout.width, data.layout.height)
   })
 
   // Configure the styles to use for nodes
   const nodeCreator = nodesSource.nodeCreator
-  nodeCreator.styleProvider = data => {
+  nodeCreator.styleProvider = (data) => {
     switch (data.familyType) {
       case 'MALE':
         return maleStyle
@@ -171,11 +171,11 @@ function createSampleGraph(graph) {
     }
   }
 
-  const labelCreator = nodeCreator.createLabelsSource(data =>
-    data.labels.map(label => ({ text: label.text, familyType: data.familyType }))
+  const labelCreator = nodeCreator.createLabelsSource((data) =>
+    data.labels.map((label) => ({ text: label.text, familyType: data.familyType }))
   ).labelCreator
-  labelCreator.textProvider = data => data.text
-  labelCreator.layoutParameterProvider = data => {
+  labelCreator.textProvider = (data) => data.text
+  labelCreator.layoutParameterProvider = (data) => {
     const text = data.text
     if (isBirthDate(text)) {
       return FreeNodeLabelModel.INSTANCE.createParameter({
@@ -197,20 +197,20 @@ function createSampleGraph(graph) {
     })
   }
   // Configure the styles to use for labels
-  labelCreator.styleProvider = data => {
+  labelCreator.styleProvider = (data) => {
     const text = data.text
     if (isBirthDate(text) || isDeathDate(text)) {
       return data.familyType === 'MALE'
         ? dateMaleStyle
         : data.familyType === 'FEMALE'
-        ? dateFemaleStyle
-        : null
+          ? dateFemaleStyle
+          : null
     } else {
       return data.familyType === 'MALE'
         ? nameMaleStyle
         : data.familyType === 'FEMALE'
-        ? nameFemaleStyle
-        : null
+          ? nameFemaleStyle
+          : null
     }
   }
 

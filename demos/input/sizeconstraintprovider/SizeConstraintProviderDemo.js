@@ -64,7 +64,7 @@ function registerSizeConstraintProvider(graph, boundaryRectangle) {
   const blueSizeConstraintProvider = new BlueSizeConstraintProvider()
 
   const nodeDecorator = graph.decorator.nodeDecorator
-  nodeDecorator.sizeConstraintProviderDecorator.setFactory(node => {
+  nodeDecorator.sizeConstraintProviderDecorator.setFactory((node) => {
     // obtain the tag from the node
     const nodeTag = node.tag
 

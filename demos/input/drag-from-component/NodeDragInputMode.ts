@@ -72,8 +72,8 @@ export class NodeDragInputMode extends InputModeBase {
     this.onMouseDragListener = (_, _evt) => this.onMouseDrag()
     this.onMouseDownListener = (_, evt) => this.onMouseDown(evt.modifiers, evt.location)
     this.onMouseUpListener = (_, _evt) => this.onMouseUp()
-    this.onDragStartedListener = evt => this.onDragStarted(evt)
-    this.onDragEndListener = _evt => this.onDragEnd()
+    this.onDragStartedListener = (evt) => this.onDragStarted(evt)
+    this.onDragEndListener = (_evt) => this.onDragEnd()
   }
 
   /////////////////// common input mode handling ///////////////////////
@@ -118,7 +118,7 @@ export class NodeDragInputMode extends InputModeBase {
       this.img.parentNode?.removeChild(this.img)
     }
     this.img = null
-    return super.cancel()
+    super.cancel()
   }
 
   //////////////////////////// native drag events
@@ -328,7 +328,7 @@ export class NodeDragInputMode extends InputModeBase {
     target: HTMLElement,
     dropped: (evt: DragEvent, item: INode | undefined) => void
   ): void {
-    target.addEventListener('drop', evt => {
+    target.addEventListener('drop', (evt) => {
       const node = this.getNode(evt.dataTransfer!.getData('text/plain'))
       dropped(evt, node)
       if (evt.stopPropagation) {
@@ -338,7 +338,7 @@ export class NodeDragInputMode extends InputModeBase {
         evt.preventDefault()
       }
     })
-    target.addEventListener('dragover', evt => {
+    target.addEventListener('dragover', (evt) => {
       if (evt.dataTransfer!.getData(INode.$class.name)) {
         evt.dataTransfer!.dropEffect = 'none'
         return

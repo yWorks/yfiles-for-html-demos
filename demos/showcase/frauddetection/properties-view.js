@@ -125,7 +125,7 @@ function showEntityProperties(node, parentContainer) {
   tableContainer.appendChild(table)
 
   const infoMap = getInfoMap(node)
-  Object.keys(infoMap).forEach(key => {
+  Object.keys(infoMap).forEach((key) => {
     const tr = document.createElement('tr')
     tr.appendChild(createElement('td', key))
     tr.appendChild(createElement('td', infoMap[key]))

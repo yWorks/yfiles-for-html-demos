@@ -104,7 +104,7 @@ class ObservedContext {
     this.observed = {}
     if (
       oldState &&
-      ['tag', 'layout', 'zoom', 'selected', 'highlighted', 'focused'].some(name =>
+      ['tag', 'layout', 'zoom', 'selected', 'highlighted', 'focused'].some((name) =>
         oldState.hasOwnProperty(name)
       )
     ) {
@@ -888,8 +888,8 @@ function initializeDesignerVueComponents(): void {
         return this.align === 'end'
           ? Number(this.width)
           : this.align === 'middle'
-          ? Number(this.width) * 0.5
-          : 0
+            ? Number(this.width) * 0.5
+            : 0
       },
       $textAnchor(this: TextPropsType): string | boolean {
         return this.align === 'end' || this.align === 'middle' ? this.align : false

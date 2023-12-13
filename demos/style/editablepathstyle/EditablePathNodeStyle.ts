@@ -715,6 +715,6 @@ export function updateHandles(node: INode | null, handleInputMode: HandleInputMo
   if (node) {
     ;(node.style as EditablePathNodeStyle)
       .getHandles(handleInputMode.inputModeContext!, node)
-      .forEach(handle => handleInputMode.handles.add(handle))
+      .forEach((handle) => handleInputMode.handles.add(handle))
   }
 }

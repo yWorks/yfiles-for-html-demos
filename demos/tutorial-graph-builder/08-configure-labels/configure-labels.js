@@ -79,7 +79,7 @@ export function configureLabelStylingWithProvider(nameLabelCreator) {
   // disable the sharing of the label style
   nameLabelCreator.defaults.shareStyleInstance = false
   // create a provider that will assign a new style, based on the type property
-  nameLabelCreator.styleProvider = data => {
+  nameLabelCreator.styleProvider = (data) => {
     if (data.type === 'Corporation') {
       return new DefaultLabelStyle({
         backgroundFill: orange,
@@ -104,7 +104,7 @@ export function configureLabelStylingWithProvider(nameLabelCreator) {
  */
 export function configureLabelSizeWithProvider(typeLabelCreator) {
   // set a new size for the labels with type 'Trust'
-  typeLabelCreator.preferredSizeProvider = data =>
+  typeLabelCreator.preferredSizeProvider = (data) =>
     data.type === 'Trust' ? new Size(70, 15) : new Size(100, 15)
 }
 
@@ -114,7 +114,7 @@ export function configureLabelSizeWithProvider(typeLabelCreator) {
 export function configureLabelSizeWithBinding(typeLabelCreator) {
 
   // set different widths for nodes with type 'Trust'
-  typeLabelCreator.preferredSizeBindings.addBinding('width', data => {
+  typeLabelCreator.preferredSizeBindings.addBinding('width', (data) => {
     return data.type === 'Trust' ? 200 : 100
   })
 }
@@ -124,7 +124,7 @@ export function configureLabelSizeWithBinding(typeLabelCreator) {
  */
 export function configureEdgeLabels(edgesSource) {
   // bind the label text data and add some more text information
-  const edgeLabelCreator = edgesSource.edgeCreator.createLabelBinding(data =>
+  const edgeLabelCreator = edgesSource.edgeCreator.createLabelBinding((data) =>
     data.ownership ?? 0 ? `Owns ${data.ownership}%` : ''
   )
   const red = '#ab2346'
@@ -137,7 +137,7 @@ export function configureEdgeLabels(edgesSource) {
 
   // configure its style
   edgeLabelCreator.defaults.shareStyleInstance = false
-  edgeLabelCreator.styleBindings.addBinding('textFill', data => {
+  edgeLabelCreator.styleBindings.addBinding('textFill', (data) => {
     return (data.ownership ?? 0) > 50 ? red : grey
   })
 }
@@ -220,7 +220,7 @@ export function createEdgesSource(graphBuilder) {
  * @returns {!LabelCreator.<EntityData>}
  */
 export function createLabelsForName(nodesSource) {
-  const labelCreator = nodesSource.nodeCreator.createLabelBinding(data => data.name)
+  const labelCreator = nodesSource.nodeCreator.createLabelBinding((data) => data.name)
   return labelCreator
 }
 
@@ -230,6 +230,6 @@ export function createLabelsForName(nodesSource) {
  */
 export function createLabelsForType(nodesSource) {
   const labelCreator = nodesSource.nodeCreator.createLabelBinding()
-  labelCreator.textProvider = data => data.type
+  labelCreator.textProvider = (data) => data.type
   return labelCreator
 }

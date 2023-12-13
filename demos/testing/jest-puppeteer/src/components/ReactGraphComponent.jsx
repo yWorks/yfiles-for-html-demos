@@ -103,7 +103,7 @@ export default class ReactGraphComponent extends Component {
         </div>
         <div
           className="demo-main__graph-component"
-          ref={node => {
+          ref={(node) => {
             this.div = node
           }}
         />

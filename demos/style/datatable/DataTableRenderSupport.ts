@@ -56,7 +56,7 @@ export class DataTableRenderSupport {
   private static createTableMarkup(names: string[], data: UserData, cssClass: string) {
     let tableText = `<table class="${cssClass}">`
     if (names) {
-      names.forEach(name => {
+      names.forEach((name) => {
         const userDatum = data[name as keyof UserData]
         tableText += `<tr><td>${DataTableRenderSupport.toTitleCase(
           name
@@ -75,7 +75,7 @@ export class DataTableRenderSupport {
   private static toTitleCase(text: string): string {
     return text.replace(
       new RegExp('\\w\\S*', 'g'),
-      txt => txt.substring(0, 1).toUpperCase() + txt.substring(1).toLowerCase()
+      (txt) => txt.substring(0, 1).toUpperCase() + txt.substring(1).toLowerCase()
     )
   }
 

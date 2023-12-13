@@ -70,8 +70,8 @@ let ctrlPressed = false
 function registerReshapeHandleProvider(graph) {
   const portDecorator = graph.decorator.portDecorator
   portDecorator.getDecoratorFor(IReshapeHandleProvider.$class).setFactory(
-    port => port.style instanceof NodeStylePortStyleAdapter,
-    port => {
+    (port) => port.style instanceof NodeStylePortStyleAdapter,
+    (port) => {
       return new PortReshapeHandleProvider(port, port.style, new Size(5, 5))
     }
   )

@@ -52,9 +52,9 @@ export function createFeatureLayoutConfiguration(graph) {
   // use LayoutData to configure edge grouping
   const layoutData = new HierarchicLayoutData({
     //group edges at their source side if the source node's tag is '0' (equal to label in this sample)
-    sourceGroupIds: edge => (edge.sourceNode.tag === 0 ? nodeSourceGroupId : null),
+    sourceGroupIds: (edge) => (edge.sourceNode.tag === 0 ? nodeSourceGroupId : null),
     //group edges at their target side if the target node's tag is '5' (equal to label in this sample)
-    targetGroupIds: edge => (edge.targetNode.tag === 5 ? nodeTargetGroupId : null)
+    targetGroupIds: (edge) => (edge.targetNode.tag === 5 ? nodeTargetGroupId : null)
   })
 
   return { layout, layoutData }

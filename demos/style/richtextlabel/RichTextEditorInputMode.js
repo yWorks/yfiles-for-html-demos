@@ -81,7 +81,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
           ],
           handlers: {
             // a custom Quill handler that utilizes <small> and <large> tags for the size dropdown
-            size: value => {
+            size: (value) => {
               const range = this.quill.getSelection()
               if (range && range.length > 0) {
                 if (value === 'small') {
@@ -140,8 +140,8 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
       'pointerup',
       'pointerdown',
       'pointermove'
-    ].forEach(event => {
-      container.addEventListener(event, container => container.stopPropagation(), {
+    ].forEach((event) => {
+      container.addEventListener(event, (container) => container.stopPropagation(), {
         passive: false
       })
     })
@@ -164,7 +164,7 @@ SmallBlock.tagName = 'small'
  */
 export class LargeBlock extends Inline {
   static create() {
-    const node = super.create()
+    const node = Inline.create()
     node.setAttribute('style', 'font-size: 1.5em')
     return node
   }

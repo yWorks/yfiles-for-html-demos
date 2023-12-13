@@ -101,7 +101,7 @@ function enableTargetNodeCreation(createEdgeInputMode) {
   createEdgeInputMode.dummyEdgeGraph.nodeDefaults.size = new Size(40, 40)
 
   // each edge creation should use another random target node color
-  createEdgeInputMode.addGestureStartingListener(src => {
+  createEdgeInputMode.addGestureStartingListener((src) => {
     const randomColor = getRandomColor()
     const randomNodeStyle = newNodeStyle(randomColor)
     src.dummyEdgeGraph.nodeDefaults.style = randomNodeStyle
@@ -118,7 +118,7 @@ function enableTargetNodeCreation(createEdgeInputMode) {
     const dummyEdgeGraph = createEdgeInputMode.dummyEdgeGraph
     if (evt.item && evt.item.owner instanceof INode) {
       dummyEdgeGraph.setStyle(createEdgeInputMode.dummyTargetNode, VoidNodeStyle.INSTANCE)
-      createEdgeInputMode.dummyEdgeGraph.ports.toArray().forEach(port => {
+      createEdgeInputMode.dummyEdgeGraph.ports.toArray().forEach((port) => {
         createEdgeInputMode.dummyEdgeGraph.remove(port)
       })
     } else {
@@ -230,7 +230,7 @@ function initializePortBehavior(graphComponent) {
   // prevent cleanup of ports when edges are removed
   graph.nodeDefaults.ports.autoCleanUp = false
   // each node should provide its ports as port candidates
-  graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(node =>
+  graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory((node) =>
     IPortCandidateProvider.fromExistingPorts(node)
   )
 }
@@ -433,7 +433,7 @@ function getRoutingStrategy() {
  * @param {boolean} checked
  */
 function onTogglePortVisualization(graph, checked) {
-  graph.ports.forEach(port => {
+  graph.ports.forEach((port) => {
     let portStyle = VoidPortStyle.INSTANCE
     if (checked) {
       portStyle = new NodeStylePortStyleAdapter(
@@ -463,12 +463,12 @@ function initializeUI(graphComponent) {
       onCreateEdgeModeChanged(graphComponent.inputMode.createEdgeInputMode)
     )
 
-  document.querySelector('#toggle-target-node').addEventListener('click', evt => {
+  document.querySelector('#toggle-target-node').addEventListener('click', (evt) => {
     const button = evt.target
     initializeInputMode(graphComponent, button.checked)
   })
 
-  document.querySelector('#toggle-port-visualization').addEventListener('click', evt => {
+  document.querySelector('#toggle-port-visualization').addEventListener('click', (evt) => {
     const button = evt.target
     onTogglePortVisualization(graphComponent.graph, button.checked)
   })

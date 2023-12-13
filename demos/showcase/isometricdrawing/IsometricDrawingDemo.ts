@@ -234,13 +234,13 @@ function initializeGraph(): void {
 
   // add handle that enables the user to change the height of a node
   graph.decorator.nodeDecorator.handleProviderDecorator.setImplementationWrapper(
-    n => !graph.isGroupNode(n),
+    (n) => !graph.isGroupNode(n),
     (node, delegateProvider) =>
       new HeightHandleProvider(node!, delegateProvider!, MINIMUM_NODE_HEIGHT)
   )
 
   graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementation(
-    node => graph.isGroupNode(node),
+    (node) => graph.isGroupNode(node),
     INodeInsetsProvider.create(() => new Insets(10, 10, 10, 50))
   )
 
@@ -296,7 +296,7 @@ async function loadGraph(): Promise<void> {
 function adaptGroupNodes(): void {
   const graph = graphComponent.graph
 
-  for (const groupNode of graph.nodes.filter(n => graph.isGroupNode(n))) {
+  for (const groupNode of graph.nodes.filter((n) => graph.isGroupNode(n))) {
     const nestingLevel = graph.groupingSupport.getPathToRoot(groupNode).size
     groupNode.tag.height = nestingLevel * 0.01
     // make sure edges are still drawn on top of group nodes
@@ -348,7 +348,7 @@ function initializeUI(): void {
   )
 
   const rotationSlider = document.querySelector<HTMLInputElement>('#rotation')!
-  rotationSlider.addEventListener('input', evt => {
+  rotationSlider.addEventListener('input', (evt) => {
     const isometricProjection = Matrix.ISOMETRIC.clone()
     isometricProjection.rotate(parseFloat(rotationSlider.value))
     graphComponent.projection = isometricProjection

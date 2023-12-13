@@ -205,7 +205,7 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
     // register reshaped nodes
     const snapContext = event.context.lookup(GraphSnapContext.$class)
     if (snapContext && snapContext.enabled) {
-      this.rectangle.nodes.forEach(node => {
+      this.rectangle.nodes.forEach((node) => {
         snapContext.addItemToBeReshaped(node)
       })
     }
@@ -381,9 +381,9 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
    */
   collectReshapeNodes(graph, selection) {
     const nodes = new Set()
-    selection.selectedNodes.forEach(node => {
+    selection.selectedNodes.forEach((node) => {
       if (nodes.add(node) && graph.isGroupNode(node)) {
-        graph.groupingSupport.getDescendants(node).forEach(descendant => {
+        graph.groupingSupport.getDescendants(node).forEach((descendant) => {
           nodes.add(descendant)
         })
       }
@@ -587,7 +587,7 @@ class EncompassingRectangle extends BaseClass(IRectangle) {
     this.rectangle.x = 0
     this.rectangle.y = 0
 
-    this.nodes.forEach(node => {
+    this.nodes.forEach((node) => {
       this.rectangle.setToUnion(this.rectangle, node.layout)
     })
     this.tightRect = this.rectangle.toRect()
@@ -742,7 +742,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
     }
 
     // store original node layouts, reshape handlers and reshape snap result providers
-    this.reshapeNodes.forEach(node => {
+    this.reshapeNodes.forEach((node) => {
       this.originalNodeLayouts.set(node, node.layout.toRect())
 
       // store reshape handler to change the shape of node
@@ -989,7 +989,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
         reshapeHandler.handleReshape(context, originalLayout, newLayout)
       }
     })
-    this.orthogonalEdgeDragHandlers.forEach(handler => {
+    this.orthogonalEdgeDragHandlers.forEach((handler) => {
       handler.handleMove()
     })
   }
@@ -1003,7 +1003,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
     this.reshapeHandlers.forEach((handler, node) => {
       handler.cancelReshape(context, this.originalNodeLayouts.get(node))
     })
-    this.orthogonalEdgeDragHandlers.forEach(handler => {
+    this.orthogonalEdgeDragHandlers.forEach((handler) => {
       handler.cancelDrag()
     })
     this.compoundEdit.cancel()
@@ -1019,7 +1019,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
     this.reshapeHandlers.forEach((handler, node) => {
       handler.reshapeFinished(context, this.originalNodeLayouts.get(node), handler.bounds.toRect())
     })
-    this.orthogonalEdgeDragHandlers.forEach(handler => {
+    this.orthogonalEdgeDragHandlers.forEach((handler) => {
       handler.finishDrag()
     })
 
@@ -1066,7 +1066,7 @@ class ScalingReshapeHandler extends ReshapeHandlerBase {
    */
   calculateMinimumSize() {
     const minSize = new MutableSize()
-    this.reshapeNodes.forEach(node => {
+    this.reshapeNodes.forEach((node) => {
       minSize.width = Math.max(minSize.width, node.layout.width)
       minSize.height = Math.max(minSize.height, node.layout.height)
     })
@@ -1159,7 +1159,7 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
     let minScaleX = 0
     let minScaleY = 0
 
-    this.reshapeNodes.forEach(node => {
+    this.reshapeNodes.forEach((node) => {
       const constraintProvider = node.lookup(INodeSizeConstraintProvider.$class)
       if (constraintProvider) {
         const minSize = constraintProvider.getMinimumSize(node)
@@ -1185,7 +1185,7 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
     let maxScaleX = Number.POSITIVE_INFINITY
     let maxScaleY = Number.POSITIVE_INFINITY
 
-    this.reshapeNodes.forEach(node => {
+    this.reshapeNodes.forEach((node) => {
       const constraintProvider = node.lookup(INodeSizeConstraintProvider.$class)
       if (constraintProvider) {
         const maxSize = constraintProvider.getMaximumSize(node)

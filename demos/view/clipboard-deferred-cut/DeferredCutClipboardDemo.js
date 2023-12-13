@@ -87,17 +87,17 @@ async function run() {
     graphBuilder
       .createNodesSource({
         data: graphData.nodeList,
-        id: item => item.id
+        id: (item) => item.id
       })
-      .nodeCreator.createLabelBinding(item => item.label)
+      .nodeCreator.createLabelBinding((item) => item.label)
 
     graphBuilder
       .createEdgesSource({
         data: graphData.edgeList,
-        sourceId: item => item.source,
-        targetId: item => item.target
+        sourceId: (item) => item.source,
+        targetId: (item) => item.target
       })
-      .edgeCreator.createLabelBinding(item => item.label)
+      .edgeCreator.createLabelBinding((item) => item.label)
 
     graphBuilder.buildGraph()
   }
@@ -119,7 +119,7 @@ async function run() {
   // configure the clipboard itself
   const clipboard = new DeferredCutClipboard()
   // trigger a repaint after copy since copy removed the "marked for cut" mark from the elements
-  clipboard.addElementsCopiedListener(_ => graphComponent.invalidate())
+  clipboard.addElementsCopiedListener((_) => graphComponent.invalidate())
   graphComponent.clipboard = clipboard
 
   // set up the input mode
@@ -144,7 +144,7 @@ function configureContextMenu(graphComponent) {
   const inputMode = graphComponent.inputMode
 
   const contextMenu = new ContextMenu(graphComponent)
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
       contextMenu.show(location)
     }

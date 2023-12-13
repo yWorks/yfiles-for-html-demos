@@ -92,7 +92,7 @@ async function run(): Promise<void> {
 
   const graphInputMode = createInputMode()
 
-  initializeToolTips(graphInputMode, item =>
+  initializeToolTips(graphInputMode, (item) =>
     item instanceof INode
       ? getDeviceTooltip(getDevice(item))
       : getConnectionTooltip(getConnection(item))
@@ -202,12 +202,14 @@ function createGraphBuilder(data: Network, graphComponent: GraphComponent): Grap
 
   const nodeCreator = graphBuilder.createNodesSource({
     data: data.devices,
-    id: item => item.id
+    id: (item) => item.id
   }).nodeCreator
   nodeCreator.defaults.style = new DeviceNodeStyle(getDevice, getImage)
   nodeCreator.defaults.size = new Size(64, 64)
 
-  const nodeLabelCreator = nodeCreator.createLabelBinding(device => `${device.name}\n${device.ip}`)
+  const nodeLabelCreator = nodeCreator.createLabelBinding(
+    (device) => `${device.name}\n${device.ip}`
+  )
   nodeLabelCreator.defaults.style = new DefaultLabelStyle({
     backgroundStroke: null,
     backgroundFill: 'rgba(255,255,255,0.5)'
@@ -220,8 +222,8 @@ function createGraphBuilder(data: Network, graphComponent: GraphComponent): Grap
 
   const edgeCreator = graphBuilder.createEdgesSource({
     data: data.connections,
-    sourceId: item => item.sender.id,
-    targetId: item => item.receiver.id
+    sourceId: (item) => item.sender.id,
+    targetId: (item) => item.receiver.id
   }).edgeCreator
 
   // create an animator instance that can be used by the edge style
@@ -250,12 +252,12 @@ function initializeUI(graphComponent: GraphComponent, simulator: Simulator): voi
     graphComponent.graphModelManager.nodeLabelGroup.visible = button.checked
   })
 
-  document.querySelector('#toggleFailures')!.addEventListener('click', evt => {
+  document.querySelector('#toggleFailures')!.addEventListener('click', (evt) => {
     const button = evt.target as HTMLInputElement
     simulator.failuresEnabled = button.checked
   })
 
-  document.querySelector('#pauseSimulation')!.addEventListener('click', evt => {
+  document.querySelector('#pauseSimulation')!.addEventListener('click', (evt) => {
     const button = evt.target as HTMLInputElement
     edgeAnimator.paused = button.checked
     simulator.paused = button.checked

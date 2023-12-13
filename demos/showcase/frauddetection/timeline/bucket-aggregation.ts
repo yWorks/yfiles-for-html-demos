@@ -200,11 +200,11 @@ function collectLeafBuckets<TDataItem>(
   items: TDataItem[],
   getTimeEntry: (t: TDataItem) => TimeEntry | undefined
 ): Bucket<TDataItem>[] {
-  const entries: Bucket<TDataItem>[] = items.flatMap(item => {
+  const entries: Bucket<TDataItem>[] = items.flatMap((item) => {
     const timeEntry = getTimeEntry(item)
     if (timeEntry) {
       if (Array.isArray(timeEntry)) {
-        return timeEntry.flatMap(entry => {
+        return timeEntry.flatMap((entry) => {
           if (typeof entry === 'number') {
             const date = new Date(entry)
             return createLeafBucket(item, `${date.getHours()}:${date.getMinutes()}`, date, date)
@@ -234,6 +234,6 @@ function getLeaves<TDataItem>(bucket: Bucket<TDataItem>): TDataItem[] {
   if (bucket.type === 'leaf') {
     return [bucket.item]
   } else {
-    return bucket.children.flatMap(child => getLeaves(child))
+    return bucket.children.flatMap((child) => getLeaves(child))
   }
 }

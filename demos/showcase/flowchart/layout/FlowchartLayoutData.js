@@ -240,14 +240,14 @@ export class FlowchartLayoutData {
   create(graph) {
     const data = new GenericLayoutData()
 
-    data.addEdgeItemMapping(FlowchartLayout.PREFERRED_DIRECTION_DP_KEY).delegate = edge =>
+    data.addEdgeItemMapping(FlowchartLayout.PREFERRED_DIRECTION_DP_KEY).delegate = (edge) =>
       this.getBranchType(edge)
 
-    data.addNodeItemMapping(NODE_TYPE_DP_KEY).delegate = node => this.getType(node)
-    data.addEdgeItemMapping(EDGE_TYPE_DP_KEY).delegate = edge => this.getType(edge)
+    data.addNodeItemMapping(NODE_TYPE_DP_KEY).delegate = (node) => this.getType(node)
+    data.addEdgeItemMapping(EDGE_TYPE_DP_KEY).delegate = (edge) => this.getType(edge)
 
     if (graph.groupingSupport.hasGroupNodes()) {
-      data.addLabelItemMapping(FlowchartLayout.LABEL_LAYOUT_DP_KEY).delegate = label => {
+      data.addLabelItemMapping(FlowchartLayout.LABEL_LAYOUT_DP_KEY).delegate = (label) => {
         const node = label.owner
         return node instanceof INode && label === node.labels.at(0) && !graph.isGroupNode(node)
       }
@@ -264,7 +264,7 @@ export class FlowchartLayoutData {
         degreeThreshold = 4
       }
 
-      data.addEdgeItemMapping(PortConstraintKeys.TARGET_GROUP_ID_DP_KEY).delegate = edge => {
+      data.addEdgeItemMapping(PortConstraintKeys.TARGET_GROUP_ID_DP_KEY).delegate = (edge) => {
         const node = edge.targetNode
         return graph.inDegree(node) >= 2 &&
           graph.inDegree(node) >= inDegreeThreshold &&

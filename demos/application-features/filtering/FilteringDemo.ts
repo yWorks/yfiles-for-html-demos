@@ -125,22 +125,22 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   const graphBuilder = new GraphBuilder(graph)
 
   graphBuilder.createNodesSource({
-    data: graphData.nodeList.filter(item => !item.isGroup),
-    id: item => item.id,
-    parentId: item => item.parentId
+    data: graphData.nodeList.filter((item) => !item.isGroup),
+    id: (item) => item.id,
+    parentId: (item) => item.parentId
   })
 
   graphBuilder
     .createGroupNodesSource({
-      data: graphData.nodeList.filter(item => item.isGroup),
-      id: item => item.id
+      data: graphData.nodeList.filter((item) => item.isGroup),
+      id: (item) => item.id
     })
-    .nodeCreator.createLabelBinding(item => item.label)
+    .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -171,10 +171,10 @@ function createFilterGraph(): FilteredGraphWrapper {
  */
 function filterItems(): void {
   // mark the selected items such that the nodePredicate or edgePredicate will filter them
-  graphComponent.selection.selectedNodes.forEach(node => {
+  graphComponent.selection.selectedNodes.forEach((node) => {
     filterItemWithUndoUnit(node, true)
   })
-  graphComponent.selection.selectedEdges.forEach(edge => {
+  graphComponent.selection.selectedEdges.forEach((edge) => {
     filterItemWithUndoUnit(edge, true)
   })
 
@@ -191,10 +191,10 @@ function restoreItems(): void {
   // access the unfiltered, unfolded graph to remove the filter mark from all items
   const filteredGraph = graphComponent.graph as FilteredGraphWrapper
   const fullGraph = filteredGraph.wrappedGraph!
-  fullGraph.nodes.forEach(node => {
+  fullGraph.nodes.forEach((node) => {
     filterItemWithUndoUnit(node, false)
   })
-  fullGraph.edges.forEach(edge => {
+  fullGraph.edges.forEach((edge) => {
     filterItemWithUndoUnit(edge, false)
   })
 
@@ -282,8 +282,8 @@ function initializeUI(): void {
 function updateResetButtonState(): void {
   const fullGraph = (graphComponent.graph as FilteredGraphWrapper).wrappedGraph!
   const hasFilteredItems =
-    fullGraph.nodes.some(node => node.tag && node.tag.filtered) ||
-    fullGraph.edges.some(edge => edge.tag && edge.tag.filtered)
+    fullGraph.nodes.some((node) => node.tag && node.tag.filtered) ||
+    fullGraph.edges.some((edge) => edge.tag && edge.tag.filtered)
   // set the reset button
   document.querySelector<HTMLButtonElement>('#reset-filter')!.disabled = !hasFilteredItems
 }

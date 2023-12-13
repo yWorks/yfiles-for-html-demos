@@ -73,7 +73,7 @@ if (modulesWorkersSupported) {
   // As the yFiles demos run in a vite dev-server, this method does not work,
   // and we have to fall back to the import of the worker above.)
   worker = new WorkerLayout()
-  worker.onmessage = e => {
+  worker.onmessage = (e) => {
     if (e.data === 'ready') {
       layoutButton.disabled = false
       // run the initial layout after the web worker is ready
@@ -123,8 +123,8 @@ async function runWebWorkerLayout(clearUndo) {
 
   // helper function that performs the actual message passing to the web worker
   function webWorkerMessageHandler(data) {
-    return new Promise(resolve => {
-      worker.onmessage = e => resolve(e.data)
+    return new Promise((resolve) => {
+      worker.onmessage = (e) => resolve(e.data)
       worker.postMessage(data)
     })
   }
@@ -184,7 +184,7 @@ function createLayoutDescriptor() {
 function createLayoutData() {
   return new HierarchicLayoutData({
     nodeHalos: () => NodeHalo.create(10),
-    targetGroupIds: edge => edge.targetNode
+    targetGroupIds: (edge) => edge.targetNode
   })
 }
 

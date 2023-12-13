@@ -46,7 +46,7 @@ If no layout information is provided, the [default size](https://docs.yworks.com
 
 ```
 // configure the layout provider that returns the layout information
-nodeSource.nodeCreator.layoutProvider = data => data.layout
+nodeSource.nodeCreator.layoutProvider = (data) => data.layout
 ```
 
 Consider, for example, the dataset below. It only contains a property for the y-coordinate of the location.
@@ -63,7 +63,10 @@ To use this y-coordinate and assign the same x-coordinate to all nodes, use a la
 ```
 // create some binding for the x, y, width and height properties of the layout
 nodeSources.nodeCreator.layoutBindings.addBinding('x', () => 250)
-nodeSources.nodeCreator.layoutBindings.addBinding('y', data => data.locationY)
+nodeSources.nodeCreator.layoutBindings.addBinding(
+  'y',
+  (data) => data.locationY
+)
 nodeSources.nodeCreator.layoutBindings.addBinding('width', () => 50)
 nodeSources.nodeCreator.layoutBindings.addBinding('height', () => 30)
 ```
@@ -99,7 +102,7 @@ Transfer the bend information to the [edge layout](https://docs.yworks.com/yfile
 
 ```
 // configure the bend provider to return the location of each bend point
-edgeSources.edgeCreator.bendsProvider = data => data.bends
+edgeSources.edgeCreator.bendsProvider = (data) => data.bends
 ```
 
 Note

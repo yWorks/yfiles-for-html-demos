@@ -99,7 +99,7 @@ async function loadGraph(graphComponent, config) {
   await config.initializeStyleDefaults(graph)
   const svgThresholdSelect = document.querySelector('#svgThreshold')
   const newIndex = Array.from(svgThresholdSelect.options).findIndex(
-    item => item.value === String(config.svgThreshold)
+    (item) => item.value === String(config.svgThreshold)
   )
   svgThresholdSelect.selectedIndex = newIndex !== -1 ? newIndex : 1
   renderingTypesManager = new RenderingTypesManager(
@@ -142,7 +142,7 @@ function configureInteraction(graphComponent) {
   // Disable moving of individual edge segments
   graphComponent.graph.decorator.edgeDecorator.positionHandlerDecorator.hideImplementation()
 
-  graphComponent.graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory(node => {
+  graphComponent.graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory((node) => {
     const keepAspectRatio = new NodeReshapeHandleProvider(
       node,
       node.lookup(IReshapeHandler.$class),
@@ -187,13 +187,13 @@ function updateGraphInformation(graph) {
  * @param {!GraphComponent} graphComponent
  */
 function initRenderingInformationUI(graphComponent) {
-  graphComponent.addZoomChangedListener(graphComponent => {
+  graphComponent.addZoomChangedListener((graphComponent) => {
     updateRenderingInformationUI(graphComponent)
   })
   updateRenderingInformationUI(graphComponent)
 
   // Show a popup when the rendering type changes
-  renderingTypesManager.addRenderingTypeChangedListener(newMode => {
+  renderingTypesManager.addRenderingTypeChangedListener((newMode) => {
     const thresholdPercent = Math.floor(renderingTypesManager.svgThreshold * 100)
     const renderingInfoPopup = document.querySelector('#renderingInfoPopup')
     renderingInfoPopup.textContent =
@@ -226,7 +226,7 @@ function setUIDisabled(disabled) {
 
   document.querySelector('#sampleSelection').disabled = disabled
   document.querySelector('#svgThreshold').disabled = disabled
-  return new Promise(resolve => setTimeout(resolve, 0))
+  return new Promise((resolve) => setTimeout(resolve, 0))
 }
 
 /**
@@ -236,7 +236,7 @@ function setUIDisabled(disabled) {
 function initToolbar(graphComponent) {
   const sampleSelect = document.querySelector('#sampleSelection')
   addOptions(sampleSelect, 'Hierarchic', 'Organic', 'OrgChart')
-  sampleSelect.addEventListener('change', async e => {
+  sampleSelect.addEventListener('change', async (e) => {
     await setUIDisabled(true)
     sampleSelect.disabled = true
     const hierarchicOrganicDescription = document.querySelector('#hierarchicOrganic')
@@ -281,7 +281,7 @@ function initToolbar(graphComponent) {
     { text: '\u2265 100%', value: '1.0' },
     { text: 'WebGL only', value: '-1' }
   )
-  svgThresholdSelect.addEventListener('change', e => {
+  svgThresholdSelect.addEventListener('change', (e) => {
     const selectElement = e.target
     const newThreshold = Number(selectElement.value)
     renderingTypesManager.svgThreshold = newThreshold < 0 ? Number.POSITIVE_INFINITY : newThreshold

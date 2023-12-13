@@ -777,7 +777,7 @@ export default class BpmnPopupSupport {
       )
     })
 
-    document.querySelectorAll('.close-popup-button').forEach(btn =>
+    document.querySelectorAll('.close-popup-button').forEach((btn) =>
       btn.addEventListener('click', () => {
         this.hidePropertyPopup()
       })
@@ -854,7 +854,7 @@ export default class BpmnPopupSupport {
  * @param {!Class} enumType
  */
 function populateComboBox(comboBox, enumType) {
-  Enum.getValueNames(enumType).forEach(name => {
+  Enum.getValueNames(enumType).forEach((name) => {
     const option = document.createElement('option')
     option.innerText = getFriendlyName(name)
     option.value = name

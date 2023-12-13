@@ -188,7 +188,7 @@ const addLayerConstraints = (
   // use layer constraints via HierarchicLayoutData
   const layerConstraints = hierarchicLayoutData.layerConstraints
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     if (isMessageFlow(edge) && !compactMessageFlowLayering) {
       // message flow layering compaction is disabled, we add a 'weak' same layer constraint, i.e. source node shall
       // be placed at least 0 layers above target node
@@ -208,7 +208,7 @@ const addLayerConstraints = (
 
   // if start events should be pulled to the first layer, add PlaceNodeAtTop constraint.
   if (startNodesFirst) {
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (
         node.style instanceof EventNodeStyle &&
         node.style.characteristic === EventCharacteristic.START &&
@@ -236,8 +236,8 @@ function addAboveLayerConstraint(
   const targetNodes: INode[] = []
   collectLeafNodes(graph, sourceNode, sourceNodes)
   collectLeafNodes(graph, targetNode, targetNodes)
-  sourceNodes.forEach(source => {
-    targetNodes.forEach(target => {
+  sourceNodes.forEach((source) => {
+    targetNodes.forEach((target) => {
       layerConstraints.placeAbove(target, source)
     })
   })
@@ -249,7 +249,7 @@ function addAboveLayerConstraint(
 function collectLeafNodes(graph: IGraph, node: INode, leafNodes: INode[]): void {
   const children = graph.getChildren(node)
   if (children.size > 0) {
-    children.forEach(child => {
+    children.forEach((child) => {
       collectLeafNodes(graph, child, leafNodes)
     })
   } else {
@@ -269,7 +269,7 @@ function addMinimumEdgeLength(
   const minLabelToLabelDistance = 5
   hierarchicLayoutData.edgeLayoutDescriptors.delegate = (edge: IEdge) => {
     let minLength = 0
-    edge.labels.forEach(label => {
+    edge.labels.forEach((label) => {
       const labelSize = label.layout.bounds
       minLength += Math.max(labelSize.width, labelSize.height)
     })
@@ -344,14 +344,14 @@ function addNodeHalos(
   layoutOnlySelection: boolean
 ): void {
   const nodeHalos: Mapper<INode, NodeHalo> = new Mapper()
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     let top = 0.0
     let left = 0.0
     let bottom = 0.0
     let right = 0.0
 
     // for each port with an EventPortStyle extend the node halo to cover the ports render size
-    node.ports.forEach(port => {
+    node.ports.forEach((port) => {
       if (port.style instanceof EventPortStyle) {
         const eventPortStyle = port.style
         const renderSize = eventPortStyle.renderSize
@@ -366,7 +366,7 @@ function addNodeHalos(
     // for each node without incoming or outgoing edges reserve space for laid out exterior labels
     if (graph.inDegree(node) === 0 || graph.outDegree(node) === 0) {
       const margin = 15
-      node.labels.forEach(label => {
+      node.labels.forEach((label) => {
         if (isNodeLabelAffected(graph, selection, label, layoutOnlySelection)) {
           const labelBounds = label.layout.bounds
           if (graph.inDegree(node) === 0) {

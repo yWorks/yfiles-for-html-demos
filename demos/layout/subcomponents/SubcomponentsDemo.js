@@ -159,8 +159,8 @@ function createSubcomponent(graph, nodes, layout) {
     // find the next free subcomponent index
     let newSubcomponent
     let newSubcomponentIndex = subcomponents.findIndex(
-      component =>
-        component.nodes.length === 0 || component.nodes.every(node => nodes.includes(node))
+      (component) =>
+        component.nodes.length === 0 || component.nodes.every((node) => nodes.includes(node))
     )
     if (newSubcomponentIndex < 0) {
       // add a new subcomponent
@@ -244,7 +244,7 @@ async function createSampleGraph(graph) {
   builder.createNodesSource({
     data: data.nodes,
     id: 'id',
-    tag: data => (data.tag != null ? data.tag : null)
+    tag: (data) => (data.tag != null ? data.tag : null)
   })
   builder.createEdgesSource(data.edges, 'source', 'target')
 
@@ -262,31 +262,31 @@ function initializeSubcomponents(graphComponent) {
   hierarchicLayout.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
   createSubcomponent(
     graph,
-    graph.nodes.filter(node => node.tag === 0),
+    graph.nodes.filter((node) => node.tag === 0),
     hierarchicLayout
   )
   const treeLayout = createTreeLayout()
   createSubcomponent(
     graph,
-    graph.nodes.filter(node => node.tag === 1),
+    graph.nodes.filter((node) => node.tag === 1),
     treeLayout
   )
   const organicLayout = createOrganicLayout()
   createSubcomponent(
     graph,
-    graph.nodes.filter(node => node.tag === 2),
+    graph.nodes.filter((node) => node.tag === 2),
     organicLayout
   )
   createSubcomponent(
     graph,
-    graph.nodes.filter(node => node.tag === 3),
+    graph.nodes.filter((node) => node.tag === 3),
     hierarchicLayout
   )
   const treeLayout2 = createTreeLayout()
   treeLayout2.layoutOrientation = LayoutOrientation.RIGHT_TO_LEFT
   createSubcomponent(
     graph,
-    graph.nodes.filter(node => node.tag === 4),
+    graph.nodes.filter((node) => node.tag === 4),
     treeLayout2
   )
 }
@@ -378,7 +378,7 @@ function registerSelectionListener(graphComponent) {
  */
 function initializeUI(graphComponent) {
   const selectOrientation = document.querySelector('#orientation-select')
-  document.querySelector('#layout-select').addEventListener('change', evt => {
+  document.querySelector('#layout-select').addEventListener('change', (evt) => {
     const value = evt.target.value
     selectOrientation.disabled = value !== 'tree' && value !== 'hierarchic'
   })

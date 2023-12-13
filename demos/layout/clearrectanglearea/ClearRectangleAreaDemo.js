@@ -330,7 +330,7 @@ function getHitGroupNode(context) {
   if (nodeHitTester) {
     return nodeHitTester
       .enumerateHits(context, context.canvasComponent.lastEventLocation)
-      .find(n => graphComponent.graph.isGroupNode(n))
+      .find((n) => graphComponent.graph.isGroupNode(n))
   }
   return null
 }
@@ -374,14 +374,14 @@ function loadGraph(sampleName) {
     data: data.nodes,
     id: 'id',
     parentId: 'parentId',
-    layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
+    layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   if (data.groups) {
     const nodesSource = builder.createGroupNodesSource({
       data: data.groups,
       id: 'id',
       parentId: 'parentId',
-      layout: data => data // the data object itself has x, y, width, height properties
+      layout: (data) => data // the data object itself has x, y, width, height properties
     })
     const groupStyle = createDemoGroupStyle({})
     // set hitTransparentContentArea to false so group nodes are properly hit in getHitGroupNode
@@ -392,14 +392,14 @@ function loadGraph(sampleName) {
 
   builder.buildGraph()
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
       graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
     }
     if (edge.tag.targetPort) {
       graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
     }
-    edge.tag.bends.forEach(bend => {
+    edge.tag.bends.forEach((bend) => {
       graph.addBend(edge, bend)
     })
   })

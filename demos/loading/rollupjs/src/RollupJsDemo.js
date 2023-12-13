@@ -79,8 +79,8 @@ function initializeUI() {
 function runLayout() {
   // helper function that performs the actual message passing to the web worker
   function webWorkerMessageHandler(data) {
-    return new Promise(resolve => {
-      layoutWorker.onmessage = e => resolve(e.data)
+    return new Promise((resolve) => {
+      layoutWorker.onmessage = (e) => resolve(e.data)
       layoutWorker.postMessage(data)
     })
   }

@@ -40,7 +40,7 @@ import {
  */
 export function createFeatureLayoutConfiguration(graph: IGraph) {
   const layoutData = new HierarchicLayoutData()
-  layoutData.givenLayersLayererIds.delegate = node => +node.tag
+  layoutData.givenLayersLayererIds.delegate = (node) => +node.tag
 
   const layout = new HierarchicLayout()
   layout.fromScratchLayeringStrategy = HierarchicLayoutLayeringStrategy.USER_DEFINED

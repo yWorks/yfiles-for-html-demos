@@ -232,9 +232,9 @@ async function buildGraph(graph: IGraph): Promise<void> {
   initializeNodeData(graph)
 
   // create the styles for the nodes and edges based on the elements' data
-  updateStyles(graph.nodes.find(node => graph.inDegree(node) === 0)!, graph)
+  updateStyles(graph.nodes.find((node) => graph.inDegree(node) === 0)!, graph)
   // calculate the bounds for each node based on its label's size
-  graph.nodes.forEach(node => adjustNodeBounds(node, graph))
+  graph.nodes.forEach((node) => adjustNodeBounds(node, graph))
   graphComponent.fitGraphBounds()
 
   // arrange the graph using a tree layout
@@ -256,7 +256,7 @@ function initializeNodeData(graph: IGraph): void {
       '#' +
       color
         .substring(1)
-        .replace(/../g, colorValue =>
+        .replace(/../g, (colorValue) =>
           Math.min(255, Math.max(0, parseInt(colorValue, 16) + amount)).toString(16)
         )
     )
@@ -267,7 +267,7 @@ function initializeNodeData(graph: IGraph): void {
     // i.e., the distance of a node from the root node.
     // Ignore the cross-reference edges, because they do not belong to the tree structure
     const treeAnalysis = new TreeAnalysis({
-      subgraphEdges: e => !isCrossReference(e)
+      subgraphEdges: (e) => !isCrossReference(e)
     })
 
     const analysisResult = treeAnalysis.run(graph)
@@ -291,7 +291,7 @@ function initializeNodeData(graph: IGraph): void {
       nodeData.stateIcon = 0
       // get the subtree of the node
       const subtreeNodes = analysisResult.getSubtree(node)
-      subtreeNodes.nodes.forEach(subtreeNode => {
+      subtreeNodes.nodes.forEach((subtreeNode) => {
         if (subtreeNode !== node) {
           const subtreeNodeData = getNodeData(subtreeNode)
           const depth = analysisResult.getDepth(subtreeNode)

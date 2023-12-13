@@ -41,7 +41,7 @@ export function createLayoutExecutorAsyncWorker(
   // when a message is received..
   addEventListener(
     'message',
-    e => {
+    (e) => {
       if (!initialized) {
         // The Web Worker is running in a different context, so before calling any yFiles API
         // we need to set the license. In this case, we send the license string from the client as
@@ -54,8 +54,8 @@ export function createLayoutExecutorAsyncWorker(
         // and send its result back to the client.
         executorWorker
           .process(e.data)
-          .then(data => postMessage(data))
-          .catch(errorObj => postMessage(errorObj))
+          .then((data) => postMessage(data))
+          .catch((errorObj) => postMessage(errorObj))
       }
     },
     false

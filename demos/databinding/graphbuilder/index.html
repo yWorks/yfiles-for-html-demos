@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -103,19 +103,19 @@
         padding: 10px;
         margin: 0 0 5px;
         position: relative;
+        display: flex;
+        align-items: baseline;
       }
 
-      .sourceCard button {
-        position: absolute;
-        width: 70px;
-        top: 10px;
+      .sourceCard .sourceLabel {
+        flex: 1 0 auto;
       }
-
-      .sourceCard .editButton {
-        right: 90px;
+      .sourceCard button.editButton {
+        width: 80px;
       }
-      .sourceCard .removeButton {
-        right: 10px;
+      .sourceCard button.removeButton {
+        width: 80px;
+        margin-right: 0;
       }
 
       .buttonsContainer {

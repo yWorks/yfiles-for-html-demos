@@ -126,7 +126,7 @@ function createHierarchicLayoutData(graph, fromSketchMode) {
   const hierarchicLayoutData = new HierarchicLayoutData({
     // maps each edge with its thickness so that the layout algorithm takes the edge
     // thickness under consideration
-    edgeThickness: edge => getVoterShift(edge).thickness ?? 1,
+    edgeThickness: (edge) => getVoterShift(edge).thickness ?? 1,
     // since orientation is LEFT_TO_RIGHT, we add port constraints so that the edges
     // leave the source node at its right side and enter the target node at its left side
     sourcePortConstraints: () => PortConstraint.create(PortSide.EAST, false),
@@ -140,7 +140,7 @@ function createHierarchicLayoutData(graph, fromSketchMode) {
     // In this demo, the nodes are ordered in the layers based on their size to show how the party
     // strength gets modified along the elections.
     // From this ordering the non-voters are excluded and are placed at the bottom of the layer
-    hierarchicLayoutData.sequenceConstraints.itemComparables = item =>
+    hierarchicLayoutData.sequenceConstraints.itemComparables = (item) =>
       item instanceof INode && !isNonVoter(item)
         ? graph.edgesAt(item).reduce((acc, edge) => acc + getVoterShift(edge).thickness, 0)
         : 0
@@ -232,7 +232,7 @@ class NodeResizingStage extends LayoutStageBase {
    * @param {!LayoutGraph} graph The given graph
    */
   applyLayout(graph) {
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       this.adjustNodeSize(node, graph)
     })
 
@@ -267,7 +267,7 @@ class NodeResizingStage extends LayoutStageBase {
     // adjust size for edges with strong port constraints
     const edgeThicknessDP = graph.getDataProvider(HierarchicLayout.EDGE_THICKNESS_DP_KEY)
     if (edgeThicknessDP !== null) {
-      node.edges.forEach(edge => {
+      node.edges.forEach((edge) => {
         const thickness = edgeThicknessDP.getNumber(edge)
 
         const spc = PortConstraint.getSPC(graph, edge)

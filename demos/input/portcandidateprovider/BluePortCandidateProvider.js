@@ -72,7 +72,7 @@ export default class BluePortCandidateProvider extends PortCandidateProviderBase
 
     // Create the candidate for each port
     if (graph) {
-      this.node.ports.forEach(port => {
+      this.node.ports.forEach((port) => {
         const portCandidate = new DefaultPortCandidate(port)
         portCandidate.validity =
           graph.degree(port) === 0 ? PortCandidateValidity.VALID : PortCandidateValidity.INVALID

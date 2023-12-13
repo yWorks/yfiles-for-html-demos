@@ -209,11 +209,11 @@ function createInputMode() {
     for (const record of result.records) {
       const node = record.get('m')
       const edge = record.get('e')
-      if (nodes.every(n => !n.identity.equals(node.identity))) {
+      if (nodes.every((n) => !n.identity.equals(node.identity))) {
         nodes.push(node)
         updated = true
       }
-      if (edges.every(e => !e.identity.equals(edge.identity))) {
+      if (edges.every((e) => !e.identity.equals(edge.identity))) {
         edges.push(edge)
         updated = true
       }
@@ -282,7 +282,7 @@ async function loadGraph() {
   // letters that are used as names for nodes in the cypher query
   const letters = ['a', 'b', 'c', 'd', 'e'].slice(0, numLabels)
   // we match a chain of nodes that is at least numLabels long
-  const matchClause = letters.map(letter => `(${letter})`).join('--')
+  const matchClause = letters.map((letter) => `(${letter})`).join('--')
   const whereClauses = []
   for (let i = 1; i < numLabels; ++i) {
     for (let j = 0; j < i; ++j) {
@@ -299,9 +299,9 @@ async function loadGraph() {
       UNWIND nodes AS node
       RETURN DISTINCT node`)
   // extract the nodes from the query result
-  nodes = nodeResult.records.map(record => record.get('node'))
+  nodes = nodeResult.records.map((record) => record.get('node'))
   // obtain an array of all node ids
-  const nodeIds = nodes.map(node => node.identity)
+  const nodeIds = nodes.map((node) => node.identity)
   // get all edges between all nodes that we have, omitting self loops and limiting the overall number of
   // results to a multiple of numNodes, as some graphs have nodes wth degrees in the thousands
   const edgeResult = await runCypherQuery(
@@ -313,7 +313,7 @@ async function loadGraph() {
     { nodeIds }
   )
   // extract the edges from the query result
-  edges = edgeResult.records.map(record => record.get('edge'))
+  edges = edgeResult.records.map((record) => record.get('edge'))
   // custom GraphBuilder that assigns nodes different styles based on their labels
   graphBuilder = createGraphBuilder(graphComponent, nodes, edges)
 
@@ -344,7 +344,7 @@ function onHoveredItemChanged(hoveredItem) {
   manager.addHighlight(hoveredItem)
   if (hoveredItem instanceof INode) {
     // and if it's a node, we highlight all adjacent edges, too
-    graphComponent.graph.edgesAt(hoveredItem).forEach(edge => {
+    graphComponent.graph.edgesAt(hoveredItem).forEach((edge) => {
       manager.addHighlight(edge)
     })
   } else if (hoveredItem instanceof IEdge) {
@@ -418,7 +418,7 @@ function initializeUI() {
   const passwordEl = document.querySelector('#passwordInput')
   const databaseEl = document.querySelector('#databaseNameInput')
 
-  document.querySelector('#login-form').addEventListener('submit', async e => {
+  document.querySelector('#login-form').addEventListener('submit', async (e) => {
     e.preventDefault()
     let url = hostEl.value
     if (url.indexOf('://') < 0) {
@@ -483,7 +483,7 @@ function initializeUI() {
     nodes = []
     edges = []
     for (const record of result.records) {
-      record.forEach(field => {
+      record.forEach((field) => {
         if (field instanceof Neo4jNode) {
           nodes.push(field)
         } else if (field instanceof Neo4jEdge) {

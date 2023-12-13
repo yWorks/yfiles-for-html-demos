@@ -147,7 +147,7 @@ export default class PropertiesPanelUI {
     const nameInputGraph = inputsGraph[0]
     const valueInputGraph = inputsGraph[1]
 
-    const graphDataListener = event => {
+    const graphDataListener = (event) => {
       if (event.key === 'Enter') {
         if (this.graphPropertyAddedCallback && nameInputGraph.value) {
           this.graphPropertyAddedCallback(nameInputGraph.value, valueInputGraph.value)
@@ -166,7 +166,7 @@ export default class PropertiesPanelUI {
     const nameInputItem = inputsItem[0]
     const valueInputItem = inputsItem[1]
 
-    const itemDataListener = event => {
+    const itemDataListener = (event) => {
       if (event.key === 'Enter') {
         if (this.itemPropertyAddedCallback) {
           this.itemPropertyAddedCallback(nameInputItem.value, valueInputItem.value)

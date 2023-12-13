@@ -56,7 +56,7 @@ run()
 
 self.addEventListener(
   'message',
-  e => {
+  (e) => {
     // create a new remote layout executor
     const executor = new LayoutExecutorAsyncWorker(applyLayout)
     executor

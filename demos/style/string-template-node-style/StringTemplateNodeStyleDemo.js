@@ -111,7 +111,7 @@ function initializeEditors(graphComponent) {
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
 
-  graphComponent.selection.addItemSelectionChangedListener(graphComponent => {
+  graphComponent.selection.addItemSelectionChangedListener((graphComponent) => {
     const selectedNode = graphComponent.selectedNodes.at(0)
     if (selectedNode) {
       if (selectedNode.style instanceof StringTemplateNodeStyle) {
@@ -203,10 +203,10 @@ function initializeConverters() {
 
   TemplateNodeStyle.CONVERTERS.demoConverters = {
     // converter function for the background color of nodes
-    statusColorConverter: value => colors[value] || 'white',
+    statusColorConverter: (value) => colors[value] || 'white',
 
     // converter function for the border color nodes
-    selectedStrokeConverter: value => {
+    selectedStrokeConverter: (value) => {
       if (typeof value === 'boolean') {
         return value ? '#ff6c00' : 'rgba(0,0,0,0)'
       }
@@ -244,7 +244,7 @@ function createSampleGraph(graph) {
   builder.createNodesSource({
     data: SampleData.nodes,
     id: 'id',
-    layout: data =>
+    layout: (data) =>
       new Rect(data.layout.x, data.layout.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   builder.createEdgesSource({

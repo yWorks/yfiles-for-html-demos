@@ -48,9 +48,9 @@ export function createEdgesSourceFromArray(
   // create an edges source with id providers for sources and targets
   const edgesSource = graphBuilder.createEdgesSource({
     data: edgeData,
-    id: item => item.id,
-    sourceId: item => item.sourceId,
-    targetId: item => item.targetId
+    id: (item) => item.id,
+    sourceId: (item) => item.sourceId,
+    targetId: (item) => item.targetId
   })
 
   return edgesSource

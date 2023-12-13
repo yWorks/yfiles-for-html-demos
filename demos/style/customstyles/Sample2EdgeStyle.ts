@@ -475,10 +475,6 @@ export class Sample2EdgeStyleExtension extends MarkupExtension {
   private _showTargetArrows = true
   private _useMarkerArrows = true
 
-  constructor() {
-    super()
-  }
-
   get cssClass(): string {
     return this._cssClass
   }

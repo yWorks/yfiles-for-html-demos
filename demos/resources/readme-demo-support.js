@@ -26,39 +26,37 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable no-var,no-eval */
-;(function () {
-  var isTsReadme = location.pathname.includes('demos-ts')
-  var isJsReadme = location.pathname.includes('demos-js')
+/* eslint-disable no-eval */
+;(() => {
+  const isTsReadme = location.pathname.includes('demos-ts')
+  const isJsReadme = location.pathname.includes('demos-js')
 
   document.body.className += isTsReadme ? ' ts' : isJsReadme ? ' js' : ''
 
   const demoData = window.getDemoData()
-  var categoryNames = window.getCategoryNames()
-  var layoutCategories = window.getLayoutCategories()
+  const categoryNames = window.getCategoryNames()
+  const layoutCategories = window.getLayoutCategories()
 
-  var tutorialIds = demoData.filter(item => item.category === 'tutorial').map(item => item.id)
+  const tutorialIds = demoData.filter((item) => item.category === 'tutorial').map((item) => item.id)
 
-  var isViewerPackage = document.title.indexOf('Viewer') > -1
-  var isLayoutPackage = document.title.indexOf('Layout') > -1
-  var isCompletePackage = !isViewerPackage && !isLayoutPackage
+  const isViewerPackage = document.title.indexOf('Viewer') > -1
+  const isLayoutPackage = document.title.indexOf('Layout') > -1
+  const isCompletePackage = !isViewerPackage && !isLayoutPackage
 
-  var demos = demoData.filter(function (demo) {
-    return !demo.hidden
-  })
+  const demos = demoData.filter((demo) => !demo.hidden)
 
   const accordionItems = []
 
   if (isTsReadme) {
     // Thumbnails are only in /demos-js/ directory
-    demos.forEach(function (demo) {
+    demos.forEach((demo) => {
       if (demo.thumbnailPath != null) {
         demo.thumbnailPath = '../demos-js/' + demo.thumbnailPath
       }
     })
   }
 
-  demos.forEach(function (item) {
+  demos.forEach((item) => {
     item.availableInPackage =
       isCompletePackage ||
       (isViewerPackage &&
@@ -67,16 +65,16 @@
       (isLayoutPackage && item.distributionType === 'no-viewer')
   })
 
-  var gridItemTemplate = document.querySelector('#grid-item-template')
-  var accordionItemTemplate = document.querySelector('#accordion-template')
-  var demoHeaderTemplate = document.querySelector('#demo-header-template')
+  const gridItemTemplate = document.querySelector('#grid-item-template')
+  const accordionItemTemplate = document.querySelector('#accordion-template')
+  const demoHeaderTemplate = document.querySelector('#demo-header-template')
 
   function createGridItem(demo, index) {
-    var gridItem = document.createElement('div')
+    const gridItem = document.createElement('div')
     gridItem.className = 'grid-item'
     gridItem.innerHTML = gridItemTemplate.innerHTML.replace(
       /{{([^}]+)}}/gi,
-      function (match, propertyName) {
+      (match, propertyName) => {
         if (propertyName === 'demoPath' && isTsReadme && demo.languageType === 'js-only') {
           return '../demos-js/' + demo.demoPath
         } else if (propertyName === 'demoPath' && isJsReadme && demo.languageType === 'ts-only') {
@@ -91,10 +89,10 @@
       }
     )
     if (demo.tags) {
-      var tagContainer = gridItem.querySelector('.tags')
-      demo.tags.forEach(function (tag) {
-        var tagItem = document.createElement('span')
-        var anchor = document.createElement('a')
+      const tagContainer = gridItem.querySelector('.tags')
+      demo.tags.forEach((tag) => {
+        const tagItem = document.createElement('span')
+        const anchor = document.createElement('a')
         anchor.setAttribute('href', '#' + encodeURIComponent(tag))
         tagItem.className += ' tag'
         anchor.textContent = tag
@@ -103,14 +101,14 @@
       })
     }
 
-    var languageTypeBadge = createLanguageTypeBatch(demo)
+    const languageTypeBadge = createLanguageTypeBatch(demo)
     if (languageTypeBadge != null) {
       gridItem.querySelector('.thumbnail').appendChild(languageTypeBadge)
     }
 
     if (!demo.availableInPackage) {
       gridItem.className += ' not-available'
-      var notAvailableNotice = document.createElement('div')
+      const notAvailableNotice = document.createElement('div')
       notAvailableNotice.className = 'not-available-notice'
       notAvailableNotice.innerHTML = `<div>Requires "${
         isViewerPackage ? 'layout' : 'viewer'
@@ -123,10 +121,10 @@
   }
 
   function createDemoHeader(category) {
-    var tmpDiv = document.createElement('div')
+    const tmpDiv = document.createElement('div')
     tmpDiv.innerHTML = demoHeaderTemplate.innerHTML.replace(
       /{{([^}]+)}}/gi,
-      function (match, propertyName) {
+      (match, propertyName) => {
         if (Object.prototype.hasOwnProperty.call(category, propertyName)) {
           return category[propertyName]
         } else {
@@ -139,10 +137,10 @@
   }
 
   function createAccordionItem(category) {
-    var tmpDiv = document.createElement('div')
+    const tmpDiv = document.createElement('div')
     tmpDiv.innerHTML = accordionItemTemplate.innerHTML.replace(
       /{{([^}]+)}}/gi,
-      function (match, propertyName) {
+      (match, propertyName) => {
         if (Object.prototype.hasOwnProperty.call(category, propertyName)) {
           return category[propertyName]
         } else {
@@ -151,14 +149,14 @@
         }
       }
     )
-    var item = tmpDiv.firstElementChild
-    item.querySelector('.accordion-title').addEventListener('click', function () {
+    const item = tmpDiv.firstElementChild
+    item.querySelector('.accordion-title').addEventListener('click', () => {
       if (item.classList.contains('expanded')) {
         item.classList.remove('expanded')
         filterByCategory('')
         changeTextContent('')
       } else {
-        accordionItems.forEach(accordion => accordion.classList.remove('expanded'))
+        accordionItems.forEach((accordion) => accordion.classList.remove('expanded'))
         item.classList.add('expanded')
         clearSearchBox()
         filterByCategory(category.identifier)
@@ -169,17 +167,17 @@
   }
 
   function createSidebarItem(demo) {
-    var sidebarItem = document.createElement('div')
+    const sidebarItem = document.createElement('div')
     sidebarItem.className = 'demo-sidebar-item'
     if (!demo.availableInPackage) {
       sidebarItem.className += ' not-available'
       sidebarItem.className += isViewerPackage ? ' viewer-package' : ' layout-package'
     }
-    var link = document.createElement('a')
+    const link = document.createElement('a')
     link.textContent = demo.name
     link.setAttribute('href', demo.demoPath)
 
-    var languageTypeBadge = createLanguageTypeBatch(demo)
+    const languageTypeBadge = createLanguageTypeBatch(demo)
     if (languageTypeBadge != null) {
       link.appendChild(languageTypeBadge)
       if (isTsReadme && demo.languageType === 'js-only')
@@ -203,7 +201,7 @@
     ) {
       return null
     }
-    var badge = document.createElement('span')
+    const badge = document.createElement('span')
     badge.className = 'js-badge'
     if (demo.languageType === 'js-only') {
       badge.textContent = 'JS'
@@ -216,10 +214,10 @@
   }
 
   function insertSortedChild(parent, newChild) {
-    var children = parent.querySelectorAll('div')
+    const children = parent.querySelectorAll('div')
     parent.appendChild(newChild)
-    for (var i = 0; i < children.length; i++) {
-      var child = children[i]
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i]
       if (child.textContent > newChild.textContent) {
         parent.insertBefore(newChild, child)
         break
@@ -238,12 +236,10 @@
     if (categoryFilter && demo.category !== categoryFilter) {
       return 0
     }
-    var words = needle.split(/[^.\w/]/)
+    const words = needle.split(/[^.\w/]/)
     return words
-      .map(function (word) {
-        return matchWord(demo, word)
-      })
-      .reduce(function (prev, curr) {
+      .map((word) => matchWord(demo, word))
+      .reduce((prev, curr) => {
         if (categoryFilter) {
           // when filtering a specific demo category, avoid any priorities, but show demos in the given order
           return prev > 0 || curr > 0 ? 1 : 0
@@ -262,23 +258,14 @@
    *   the value is 0 if the demo doesn't match at all.
    */
   function matchWord(demo, word) {
-    var regex = new RegExp(word, 'gi')
+    const regex = new RegExp(word, 'gi')
     if (regex.test(demo.name)) {
       return 100
     }
-    if (
-      demo.tags.some(function (tag) {
-        return regex.test(normalize(tag))
-      })
-    ) {
+    if (demo.tags.some((tag) => regex.test(normalize(tag)))) {
       return 50
     }
-    if (
-      demo.keywords &&
-      demo.keywords.some(function (keyword) {
-        return regex.test(normalize(keyword))
-      })
-    ) {
+    if (demo.keywords && demo.keywords.some((keyword) => regex.test(normalize(keyword)))) {
       return 20
     }
     if (regex.test(demo.category)) {
@@ -291,26 +278,28 @@
     return word.replaceAll(/\s|-/g, '')
   }
 
-  var demoGrid = document.getElementById('non-tutorial-grid')
-  var tutBasicFeaturesGrid = document.getElementById('tutorial-basic-features-grid')
-  var tutCustomNodeStyleGrid = document.getElementById('tutorial-node-style-implementation-grid')
-  var tutCustomLabelStyleGrid = document.getElementById('tutorial-label-style-implementation-grid')
-  var tutCustomEdgeStyleGrid = document.getElementById('tutorial-edge-style-implementation-grid')
-  var tutCustomPortStyleGrid = document.getElementById('tutorial-port-style-implementation-grid')
-  var tutGraphBuilderGrid = document.getElementById('tutorial-graph-builder-grid')
-  var searchBox = document.querySelector('#search')
-  var noSearchResultsElement = document.querySelector('#no-search-results')
-  var resetSearchButton = document.querySelector('.reset-search')
-  var unAvailableGrid = document.getElementById('unavailable-grid')
-  var unAvailableGridHeader = document.getElementById('unavailable-header')
+  const demoGrid = document.getElementById('non-tutorial-grid')
+  const tutBasicFeaturesGrid = document.getElementById('tutorial-basic-features-grid')
+  const tutCustomNodeStyleGrid = document.getElementById('tutorial-node-style-implementation-grid')
+  const tutCustomLabelStyleGrid = document.getElementById(
+    'tutorial-label-style-implementation-grid'
+  )
+  const tutCustomEdgeStyleGrid = document.getElementById('tutorial-edge-style-implementation-grid')
+  const tutCustomPortStyleGrid = document.getElementById('tutorial-port-style-implementation-grid')
+  const tutGraphBuilderGrid = document.getElementById('tutorial-graph-builder-grid')
+  const searchBox = document.querySelector('#search')
+  const noSearchResultsElement = document.querySelector('#no-search-results')
+  const resetSearchButton = document.querySelector('.reset-search')
+  const unAvailableGrid = document.getElementById('unavailable-grid')
+  const unAvailableGridHeader = document.getElementById('unavailable-header')
 
   if (isViewerPackage || isLayoutPackage) {
     unAvailableGrid.style.display = 'block'
     unAvailableGridHeader.style.display = 'block'
   }
 
-  demos.forEach(function (demo, index) {
-    var gridItem = createGridItem(demo, index)
+  demos.forEach((demo, index) => {
+    const gridItem = createGridItem(demo, index)
     if (demo.category === 'tutorial-basic-features') {
       tutBasicFeaturesGrid.appendChild(gridItem)
     } else if (demo.category === 'tutorial-node-style-implementation') {
@@ -329,8 +318,8 @@
       demoGrid.appendChild(gridItem)
     }
     demo.element = gridItem
-    var sidebarItem = createSidebarItem(demo)
-    var element = document.querySelector('.demo-items-' + demo.category)
+    const sidebarItem = createSidebarItem(demo)
+    let element = document.querySelector('.demo-items-' + demo.category)
     if (!element) {
       let categoryName = categoryNames[demo.category] || demo.category
       if (categoryName.match(/^Tutorial:/)) {
@@ -338,7 +327,7 @@
           .replace('Tutorial: ', '<span class="accordion-tutorial-prefix">Tutorial: </span>')
           .replace(' Implementation', '')
       }
-      let accordionItem = createAccordionItem({
+      const accordionItem = createAccordionItem({
         title: categoryName,
         identifier: demo.category
       })
@@ -347,7 +336,7 @@
       element = document.querySelector('.demo-items-' + demo.category)
       // insert demo-header
       if (!demo.category.match(/tutorial-.*/)) {
-        let demoHeader = createDemoHeader({
+        const demoHeader = createDemoHeader({
           title: categoryName,
           identifier: demo.category
         })
@@ -362,7 +351,7 @@
   searchBox.addEventListener(
     'input',
     debounce(
-      function () {
+      () => {
         searchBoxChanged()
         updateHash()
       },
@@ -371,10 +360,10 @@
     )
   )
   searchBox.addEventListener('click', searchBoxClicked)
-  searchBox.addEventListener('blur', function () {
+  searchBox.addEventListener('blur', () => {
     searchBox.addEventListener('click', searchBoxClicked)
   })
-  resetSearchButton.addEventListener('click', function () {
+  resetSearchButton.addEventListener('click', () => {
     searchBox.value = ''
   })
 
@@ -394,7 +383,7 @@
       // Don't care about IE 9
       return
     }
-    var searchTerm = searchBox.value.trim()
+    const searchTerm = searchBox.value.trim()
     history.replaceState({}, '', `#${searchTerm}`)
   }
 
@@ -413,7 +402,7 @@
   function showDemoCategoryHeader(categoryName) {
     document
       .querySelectorAll('.tutorial-header')
-      .forEach(element => element.classList.add('hidden'))
+      .forEach((element) => element.classList.add('hidden'))
 
     document.getElementById(categoryName + '-header')?.classList.remove('hidden')
   }
@@ -428,20 +417,20 @@
     const searchBoxEmpty = searchTerm === ''
 
     // when the search term is a category, use category matching/sorting
-    const matchedCategory = Object.keys(categoryNames).find(categoryId => categoryId === searchTerm)
+    const matchedCategory = Object.keys(categoryNames).find(
+      (categoryId) => categoryId === searchTerm
+    )
     if (matchedCategory) {
       categoryFilter = matchedCategory
       searchTerm = ''
     }
 
-    const sortedDemos = demos.map(function (demo) {
-      return {
-        demo: demo,
-        prio: matchDemo(demo, searchTerm, categoryFilter)
-      }
-    })
+    const sortedDemos = demos.map((demo) => ({
+      demo: demo,
+      prio: matchDemo(demo, searchTerm, categoryFilter)
+    }))
 
-    sortedDemos.sort(function (i1, i2) {
+    sortedDemos.sort((i1, i2) => {
       if (i1.prio === i2.prio) {
         return 0
       }
@@ -456,7 +445,7 @@
 
     // The first indexes are reserved for other elements.
     let baseTabIndex = 2
-    sortedDemos.forEach(function (item, index) {
+    sortedDemos.forEach((item, index) => {
       const demo = item.demo
       // Reorder the nodes in each grid section
       demo.element.parentElement.appendChild(demo.element)
@@ -492,14 +481,14 @@
     })
 
     baseTabIndex += sortedDemos.length
-    tutorialIds.forEach(function (id) {
+    tutorialIds.forEach((id) => {
       const gridElement = document.getElementById(id + '-grid')
       if (!gridElement) {
         return
       }
       const children = gridElement.children
       let allHidden = true
-      for (var i = 0; i < children.length; i++) {
+      for (let i = 0; i < children.length; i++) {
         const demoCard = children[i]
         if (demoCard.getAttribute('class').indexOf('filtered') === -1) {
           allHidden = false
@@ -519,10 +508,10 @@
   }
 
   function searchBoxChanged() {
-    var searchTerm = searchBox.value.trim()
+    const searchTerm = searchBox.value.trim()
 
     showDemoCategoryHeader('')
-    accordionItems.forEach(accordion => accordion.classList.remove('expanded'))
+    accordionItems.forEach((accordion) => accordion.classList.remove('expanded'))
 
     filterDemos(searchTerm, '')
 
@@ -531,16 +520,16 @@
 
   function getDemosWithDescriptionElement() {
     return demoData
-      .map(item => item.category)
-      .map(category => document.getElementById(category))
-      .filter(element => element != null)
+      .map((item) => item.category)
+      .map((category) => document.getElementById(category))
+      .filter((element) => element != null)
   }
 
   function changeTextContent(categoryName) {
-    getDemosWithDescriptionElement().forEach(element => {
+    getDemosWithDescriptionElement().forEach((element) => {
       element.style.display = 'none'
     })
-    var content = document.getElementById(categoryName)
+    const content = document.getElementById(categoryName)
     if (content != null) {
       content.style.display = 'block'
     }
@@ -554,21 +543,20 @@
    * @returns {(function(): void)|*}
    */
   function debounce(func, delay, immediate) {
-    var timeout
+    let timeout
     return function () {
-      var context = this,
-        args = arguments
-      var later = function () {
+      const args = arguments
+      const later = () => {
         timeout = null
         if (!immediate) {
-          func.apply(context, args)
+          func.apply(this, args)
         }
       }
-      var callNow = immediate && !timeout
+      const callNow = immediate && !timeout
       clearTimeout(timeout)
       timeout = setTimeout(later, delay)
       if (callNow) {
-        func.apply(context, args)
+        func.apply(this, args)
       }
     }
   }

@@ -92,8 +92,8 @@ function initializeGraph(): void {
 
   // Highlight the selected nodes along their outline
   graph.decorator.nodeDecorator.selectionDecorator.setFactory(
-    node => node.style instanceof EditablePathNodeStyle,
-    node =>
+    (node) => node.style instanceof EditablePathNodeStyle,
+    (node) =>
       new NodeStyleDecorationInstaller({
         zoomPolicy: 'view-coordinates',
         margins: 0,
@@ -163,8 +163,8 @@ function createEditorMode(): GraphEditorInputMode {
 
   changeShapeHandleInputMode.snapContext.addCollectSnapResultsListener((_, evt) => {
     locations
-      .filter(p => Math.abs(p.x - evt.newLocation.x) < evt.snapDistance)
-      .forEach(p => {
+      .filter((p) => Math.abs(p.x - evt.newLocation.x) < evt.snapDistance)
+      .forEach((p) => {
         const sl = new PointBasedSnapLine(
           new Point(p.x, evt.newLocation.y),
           SnapLineOrientation.VERTICAL,
@@ -187,8 +187,8 @@ function createEditorMode(): GraphEditorInputMode {
         )
       })
     locations
-      .filter(p => Math.abs(p.y - evt.newLocation.y) < evt.snapDistance)
-      .forEach(p => {
+      .filter((p) => Math.abs(p.y - evt.newLocation.y) < evt.snapDistance)
+      .forEach((p) => {
         const sl = new PointBasedSnapLine(
           new Point(evt.newLocation.x, p.y),
           SnapLineOrientation.HORIZONTAL,
@@ -235,7 +235,7 @@ function createEditorMode(): GraphEditorInputMode {
     if (evt.item instanceof INode && evt.item.style instanceof EditablePathNodeStyle) {
       const existingHandle = evt.item.style
         .getHandles(evt.context, evt.item)
-        .find(handle => handle.location.distanceTo(evt.location) < evt.context.hitTestRadius)
+        .find((handle) => handle.location.distanceTo(evt.location) < evt.context.hitTestRadius)
       if (existingHandle) {
         changeShapeHandleInputMode.handles.clear()
         // if we were clicked with the modifier presses, remove the corresponding segment instead
@@ -255,7 +255,7 @@ function createEditorMode(): GraphEditorInputMode {
         // find the closest handle, which should be the new handle...
         const createdHandle = evt.item.style
           .getHandles(evt.context, evt.item)
-          .orderBy(handle => handle.location.distanceTo(evt.location))
+          .orderBy((handle) => handle.location.distanceTo(evt.location))
           .at(0)
         if (createdHandle) {
           changeShapeHandleInputMode.handles.clear()
@@ -276,7 +276,7 @@ function createEditorMode(): GraphEditorInputMode {
     let handle = null
     if (currentNode && changeShapeHandleInputMode.handles.size > 3) {
       handle = changeShapeHandleInputMode.handles.find(
-        h => h instanceof PathHandle && h.location.distanceTo(evt.location) < 10
+        (h) => h instanceof PathHandle && h.location.distanceTo(evt.location) < 10
       )
       if (handle) {
         ;(handle as PathHandle).removeSegment()
@@ -289,7 +289,7 @@ function createEditorMode(): GraphEditorInputMode {
         changeShapeHandleInputMode.handles.clear()
         ;(currentNode.style as EditablePathNodeStyle)
           .getHandles(evt.context, currentNode)
-          .forEach(handle => changeShapeHandleInputMode.handles.add(handle))
+          .forEach((handle) => changeShapeHandleInputMode.handles.add(handle))
         graphEditorInputMode.graph!.invalidateDisplays()
       }
     }

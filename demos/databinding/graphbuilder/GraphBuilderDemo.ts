@@ -222,7 +222,7 @@ function loadSample(sample: GraphBuilderSample): void {
 
   const { nodesSourcesListBox, edgesSourcesListBox } = createSourcesLists(sourcesFactory)
 
-  sampleClone.nodesSources.forEach(nodesSourceDefinition => {
+  sampleClone.nodesSources.forEach((nodesSourceDefinition) => {
     const connector = sourcesFactory.createNodesSourceConnector(
       nodesSourceDefinition.name,
       nodesSourceDefinition
@@ -231,7 +231,7 @@ function loadSample(sample: GraphBuilderSample): void {
     nodesSourcesListBox.addDefinition(connector)
   })
 
-  sampleClone.edgesSources.forEach(edgesSourceDefinition => {
+  sampleClone.edgesSources.forEach((edgesSourceDefinition) => {
     const connector = sourcesFactory.createEdgesSourceConnector(
       edgesSourceDefinition.name,
       edgesSourceDefinition
@@ -273,7 +273,7 @@ function createSourcesLists(sourcesFactory: SourcesFactory): {
   removeAllChildren(edgesSourcesListRootElement)
 
   const nodesSourcesListBox = new SourcesListBox(
-    sourceName => sourcesFactory.createNodesSourceConnector(sourceName),
+    (sourceName) => sourcesFactory.createNodesSourceConnector(sourceName),
     NodesSourceDialog,
     nodeSourcesListRootElement,
     () => {
@@ -282,7 +282,7 @@ function createSourcesLists(sourcesFactory: SourcesFactory): {
   )
 
   const edgesSourcesListBox = new SourcesListBox(
-    sourceName => sourcesFactory.createEdgesSourceConnector(sourceName),
+    (sourceName) => sourcesFactory.createEdgesSourceConnector(sourceName),
     EdgesSourceDialog,
     edgesSourcesListRootElement,
     () => {

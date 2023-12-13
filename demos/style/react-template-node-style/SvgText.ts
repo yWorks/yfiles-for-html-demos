@@ -77,8 +77,8 @@ export function SvgText(props: Partial<SvgTextProps>) {
     props.align === 'end'
       ? Number(props.width)
       : props.align === 'middle'
-      ? Number(props.width) * 0.5
-      : 0
+        ? Number(props.width) * 0.5
+        : 0
 
   useEffect(() => {
     const textElement = textRef.current

@@ -14,11 +14,11 @@
   },
   "dependencies": {
     "demo-resources": "../../resources",
-    "yfiles": "../../../lib-dev/yfiles-26.0.2+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-26.0.3+dev.tgz"
   },
   "devDependencies": {
-    "typescript": "~5.1.6",
-    "parcel": "~2.10.0",
-    "@parcel/transformer-typescript-tsc": "~2.10.0"
+    "typescript": "~5.3.2",
+    "parcel": "~2.10.3",
+    "@parcel/transformer-typescript-tsc": "~2.10.3"
   }
 }

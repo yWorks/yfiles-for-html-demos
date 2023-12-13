@@ -227,7 +227,7 @@ export class EditorSync {
    * Map editor markers to graph items.
    */
   setMarkers() {
-    this.itemToMarkerMap.values.forEach(marker => {
+    this.itemToMarkerMap.values.forEach((marker) => {
       marker.clear()
     })
     this.itemToMarkerMap.clear()
@@ -236,10 +236,10 @@ export class EditorSync {
     const editorText = this.editor.getValue()
 
     const graph = this._graph
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       this.setMarkersForItem(node, 'node', editorText)
     })
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       this.setMarkersForItem(edge, 'edge', editorText)
     })
   }

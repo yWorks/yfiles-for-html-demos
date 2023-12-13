@@ -362,9 +362,9 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
    * @returns {number} The length of the arrow head for the given style and node layout.
    */
   static getArrowHeadLength(nodeLayout, style) {
-    const maxArrowLength = this.getMaxArrowHeadLength(nodeLayout, style)
-    const arrowSideWidth = this.getArrowSideWidth(nodeLayout, style)
-    const angle = this.getClampedAngle(style)
+    const maxArrowLength = ArrowNodeStyleAngleHandle.getMaxArrowHeadLength(nodeLayout, style)
+    const arrowSideWidth = ArrowNodeStyleAngleHandle.getArrowSideWidth(nodeLayout, style)
+    const angle = ArrowNodeStyleAngleHandle.getClampedAngle(style)
     const maxHeadLength = arrowSideWidth * Math.tan(Math.abs(angle))
     return Math.min(maxHeadLength, maxArrowLength)
   }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -73,12 +73,10 @@
       <div
         class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
       >
-        <b>Step 8/14</b
+        <b>Step 7/13</b
         ><span class="demo-toolbar__tutorial-step-title"> &mdash; 07 Create Labels Sources</span>
         <div class="tutorial-dropdown">
           <a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
-            >Tutorial: Graph Builder</a
-          ><a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
             >01 Create Graph</a
           ><a
             href="../../tutorial-graph-builder/02-create-nodes-sources/"
@@ -194,7 +192,7 @@
 <span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>(nodeData, <span class="hljs-string">&#x27;id&#x27;</span>)
 
 <span class="hljs-comment">// create the label binding to the name property</span>
-nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-title function_">createLabelBinding</span>(<span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> data.<span class="hljs-property">name</span>)</code></pre>
+nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-title function_">createLabelBinding</span>(<span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> data.<span class="hljs-property">name</span>)</code></pre>
                   </div>
                 </div>
                 <div class="paragraph">
@@ -252,7 +250,7 @@ labelCreator.<span class="hljs-property">textProvider</span> = (data): <span cla
                       class="highlight"
                     ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// create the label sources based on the `owners` property</span>
 <span class="hljs-keyword">const</span> labelsSource = nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-title function_">createLabelsSource</span>(
-  <span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> data.<span class="hljs-property">owners</span>
+  <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> data.<span class="hljs-property">owners</span>
 )</code></pre>
                   </div>
                 </div>
@@ -294,7 +292,9 @@ labelCreator.<span class="hljs-property">textProvider</span> = (data): <span cla
 )
 
 <span class="hljs-comment">// bind the label text data and add some more text information</span>
-edgesSource.<span class="hljs-property">edgeCreator</span>.<span class="hljs-title function_">createLabelBinding</span>(<span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> <span class="hljs-string">`Owns <span class="hljs-subst">${data.ownership}</span>%`</span>)</code></pre>
+edgesSource.<span class="hljs-property">edgeCreator</span>.<span class="hljs-title function_">createLabelBinding</span>(
+  <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> <span class="hljs-string">`Owns <span class="hljs-subst">${data.ownership}</span>%`</span>
+)</code></pre>
                   </div>
                 </div>
                 <div class="admonitionblock note">

@@ -39,7 +39,7 @@ function createGraphBuilder(graph: IGraph) {
     // Identifies the id property of a node object
     id: 'id',
     // Use the 'name' property as node label
-    tag: item => ({ name: item.name })
+    tag: (item) => ({ name: item.name })
   })
   const edgesSource = graphBuilder.createEdgesSource({
     // Stores the edges of the graph
@@ -55,8 +55,8 @@ function createGraphBuilder(graph: IGraph) {
   // Add edge labels
   edgesSource.edgeCreator.createLabelBinding({
     // Edge label text should contain the names of the source and target node
-    text: edgeData => idToName(edgeData.fromNode) + ' - ' + idToName(edgeData.toNode),
-    tag: edgeData => {
+    text: (edgeData) => idToName(edgeData.fromNode) + ' - ' + idToName(edgeData.toNode),
+    tag: (edgeData) => {
       return {
         fromNode: idToName(edgeData.fromNode),
         toNode: idToName(edgeData.toNode)

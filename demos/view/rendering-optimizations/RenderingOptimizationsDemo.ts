@@ -474,7 +474,7 @@ function loadGraphCore(
     // add the bends
     const bends = e.b
     if (bends) {
-      bends.forEach(bend => {
+      bends.forEach((bend) => {
         graph.addBend(edge, bend)
       })
     }
@@ -673,7 +673,7 @@ function getDetailLevel(graphModelManager: GraphModelManager): string {
  * Initializes the graph chooser.
  */
 function initializeGraphChooserBox(): void {
-  samples.forEach(sample => {
+  samples.forEach((sample) => {
     const displayName = sample.displayName
     const option = document.createElement('option')
     option.text = displayName
@@ -748,17 +748,17 @@ function onFixLabelPositionsChanged(): void {
 
   if (fixLabelPositions) {
     const freeLabelModel = new FreeLabelModel()
-    graph.edgeLabels.forEach(label => {
+    graph.edgeLabels.forEach((label) => {
       graph.setLabelLayoutParameter(label, freeLabelModel.createDynamic(label.layout))
     })
-    graph.nodeLabels.forEach(label => {
+    graph.nodeLabels.forEach((label) => {
       graph.setLabelLayoutParameter(label, freeLabelModel.createDynamic(label.layout))
     })
   } else {
-    graph.edgeLabels.forEach(label => {
+    graph.edgeLabels.forEach((label) => {
       graph.setLabelLayoutParameter(label, graph.edgeDefaults.labels.layoutParameter)
     })
-    graph.nodeLabels.forEach(label => {
+    graph.nodeLabels.forEach((label) => {
       graph.setLabelLayoutParameter(label, graph.nodeDefaults.labels.layoutParameter)
     })
   }
@@ -885,7 +885,7 @@ function onSelectNothingClicked(): void {
 function onSelect1000NodesClicked(): void {
   const shuffledNodes = shuffle(graphComponent.graph.nodes.toArray())
   const selectNodes = shuffledNodes.slice(0, 1000)
-  selectNodes.forEach(node => {
+  selectNodes.forEach((node) => {
     graphComponent.selection.setSelected(node, true)
   })
 }
@@ -896,7 +896,7 @@ function onSelect1000NodesClicked(): void {
 function onSelect1000EdgesClicked(): void {
   const shuffledEdges = shuffle(graphComponent.graph.edges.toArray())
   const selectEdges = shuffledEdges.slice(0, 1000)
-  selectEdges.forEach(edge => {
+  selectEdges.forEach((edge) => {
     graphComponent.selection.setSelected(edge, true)
   })
 }
@@ -909,7 +909,7 @@ function onSelect1000LabelsClicked(): void {
   labels.concat(graphComponent.graph.edgeLabels.toArray())
   const shuffledLabels = shuffle(labels)
   const selectLabels = shuffledLabels.slice(0, 1000)
-  selectLabels.forEach(label => {
+  selectLabels.forEach((label) => {
     graphComponent.selection.setSelected(label, true)
   })
 }
@@ -919,7 +919,7 @@ function onSelect1000LabelsClicked(): void {
  */
 function onSelectAllNodesClicked(): void {
   const nodes = graphComponent.graph.nodes
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     graphComponent.selection.setSelected(node, true)
   })
 }
@@ -929,7 +929,7 @@ function onSelectAllNodesClicked(): void {
  */
 function onSelectAllEdgesClicked(): void {
   const edges = graphComponent.graph.edges
-  edges.forEach(edge => {
+  edges.forEach((edge) => {
     graphComponent.selection.setSelected(edge, true)
   })
 }
@@ -940,7 +940,7 @@ function onSelectAllEdgesClicked(): void {
 function onSelectAllLabelsClicked(): void {
   const labels = graphComponent.graph.nodeLabels.toArray()
   labels.concat(graphComponent.graph.edgeLabels.toArray())
-  labels.forEach(label => {
+  labels.forEach((label) => {
     graphComponent.selection.setSelected(label, true)
   })
 }
@@ -1014,7 +1014,7 @@ function endAnimation(): void {
  * Updates the buttons after animation is done.
  */
 function updateButtonStateAtAnimation(disabled: boolean): void {
-  disabledButtonsDuringAnimation.forEach(button => {
+  disabledButtonsDuringAnimation.forEach((button) => {
     button.disabled = disabled
     disabled ? button.classList.add('disabled-button') : button.classList.remove('disabled-button')
   })
@@ -1030,19 +1030,19 @@ function setWebGLItemStyles(): void {
   const webGLStyles = updateDefaultStyles(graph)
   webGLgmm.defaultStyles = webGLStyles
 
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const nodeStyle = webGLgmm.getDefaultNodeStyle(node)
     if (nodeStyle != null) {
       webGLgmm.setStyle(node, nodeStyle)
     }
   })
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     webGLgmm.setStyle(edge, webGLStyles.edgeStyle)
   })
-  graph.nodeLabels.forEach(label => {
+  graph.nodeLabels.forEach((label) => {
     webGLgmm.setStyle(label, webGLStyles.labelStyle)
   })
-  graph.edgeLabels.forEach(label => {
+  graph.edgeLabels.forEach((label) => {
     webGLgmm.setStyle(label, webGLStyles.labelStyle)
   })
 }
@@ -1058,16 +1058,16 @@ function updateItemStyles(): void {
   if (graphComponent.graphModelManager instanceof WebGL2GraphModelManager) {
     setWebGLItemStyles()
   } else {
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       graph.setStyle(node, graph.nodeDefaults.style)
     })
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       graph.setStyle(edge, graph.edgeDefaults.style)
     })
-    graph.nodeLabels.forEach(label => {
+    graph.nodeLabels.forEach((label) => {
       graph.setStyle(label, graph.nodeDefaults.labels.style)
     })
-    graph.edgeLabels.forEach(label => {
+    graph.edgeLabels.forEach((label) => {
       graph.setStyle(label, graph.edgeDefaults.labels.style)
     })
 
@@ -1102,7 +1102,7 @@ async function createWebGLImageData(webGLImageData: ImageData[]): Promise<void> 
   const ctx = createCanvasContext(128, 128)
 
   for (const image of await Promise.all(
-    imageNames.map(name => createUrlIcon(ctx, `resources/${name}.svg`, imageSize))
+    imageNames.map((name) => createUrlIcon(ctx, `resources/${name}.svg`, imageSize))
   )) {
     webGLImageData.push(image)
   }
@@ -1235,8 +1235,8 @@ function onNodeLabelsChanged(graph: IGraph): void {
     })
   } else {
     // remove all node labels
-    graph.nodes.forEach(node => {
-      node.labels.toArray().forEach(label => {
+    graph.nodes.forEach((node) => {
+      node.labels.toArray().forEach((label) => {
         graph.remove(label)
       })
     })
@@ -1255,7 +1255,7 @@ function onEdgeLabelsChanged(graph: IGraph): void {
     })
     const freeLabelModel = new FreeLabelModel()
     graph.edgeDefaults.labels.layoutParameter = edgeLabelModel.createDefaultParameter()
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       const label = graph.addLabel(edge, 'Edge')
       if (fixLabelPositionsEnabled) {
         graph.setLabelLayoutParameter(label, freeLabelModel.createDynamic(label.layout))
@@ -1263,8 +1263,8 @@ function onEdgeLabelsChanged(graph: IGraph): void {
     })
   } else {
     // remove all edge labels
-    graph.edges.forEach(edge => {
-      edge.labels.toArray().forEach(label => {
+    graph.edges.forEach((edge) => {
+      edge.labels.toArray().forEach((label) => {
         graph.remove(label)
       })
     })

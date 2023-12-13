@@ -117,22 +117,22 @@ function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
 
   graphBuilder.createNodesSource({
-    data: graphData.nodeList.filter(item => !item.isGroup),
-    id: item => item.id,
-    parentId: item => item.parentId
+    data: graphData.nodeList.filter((item) => !item.isGroup),
+    id: (item) => item.id,
+    parentId: (item) => item.parentId
   })
 
   graphBuilder
     .createGroupNodesSource({
-      data: graphData.nodeList.filter(item => item.isGroup),
-      id: item => item.id
+      data: graphData.nodeList.filter((item) => item.isGroup),
+      id: (item) => item.id
     })
-    .nodeCreator.createLabelBinding(item => item.label)
+    .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -212,7 +212,7 @@ function createGraphMLIOHandler() {
     graphMLIOHandler.addInputMapper(
       INode.$class,
       YObject.$class,
-      element => GraphMLIOHandler.matchesName(element, DATE_TIME_MAPPER_KEY),
+      (element) => GraphMLIOHandler.matchesName(element, DATE_TIME_MAPPER_KEY),
       dateMapper,
       (sender, e) => {
         // The actual value is a text node that can be retrieved from the event

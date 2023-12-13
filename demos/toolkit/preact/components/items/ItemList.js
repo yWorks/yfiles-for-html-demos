@@ -37,18 +37,17 @@ import Item from './Item.js'
  * @property {function} addDataItem
  */
 
-export default props => {
+export default (props) => {
   const itemElements = props.itemData.map(
-    (dataItem, index) =>
-      html`
-        <${Item}
-          data="${dataItem}"
-          key="${index}"
-          index="${index}"
-          toggleState="${props.toggleState}"
-          removeDataItem="${props.removeDataItem}"
-        />
-      `
+    (dataItem, index) => html`
+      <${Item}
+        data="${dataItem}"
+        key="${index}"
+        index="${index}"
+        toggleState="${props.toggleState}"
+        removeDataItem="${props.removeDataItem}"
+      />
+    `
   )
   return html`
     <div class="item-list">

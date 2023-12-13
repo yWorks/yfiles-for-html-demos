@@ -65,7 +65,7 @@ function registerSizeConstraintProvider(graph: IGraph, boundaryRectangle: Mutabl
   const blueSizeConstraintProvider = new BlueSizeConstraintProvider()
 
   const nodeDecorator = graph.decorator.nodeDecorator
-  nodeDecorator.sizeConstraintProviderDecorator.setFactory(node => {
+  nodeDecorator.sizeConstraintProviderDecorator.setFactory((node) => {
     // obtain the tag from the node
     const nodeTag = node.tag as string
 

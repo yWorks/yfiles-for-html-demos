@@ -83,7 +83,7 @@ function setPortStylesToFirstOutgoingPorts(orgChartGraph) {
  */
 function initializeStringTemplatePortStyle() {
   StringTemplatePortStyle.CONVERTERS.orgChartConverters = {
-    portIconStateConverter: val =>
+    portIconStateConverter: (val) =>
       'port-icon ' + (val.collapsed ?? false ? 'port-icon-expand' : 'port-icon-collapse')
   }
 }

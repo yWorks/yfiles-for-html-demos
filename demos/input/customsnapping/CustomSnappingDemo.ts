@@ -125,8 +125,8 @@ function createGraphSnapContext(): GraphSnapContext {
     // Creates and adds snap lines for the free AdditionalSnapLineVisualCreator to a GraphSnapContext.
     // While the AdditionalSnapLineVisualCreators are used to visualize free snap lines, corresponding
     // OrthogonalSnapLines have to be added to the snapping mechanism to provide the snapping behavior.
-    additionalSnapLineVisualCreators.forEach(creator =>
-      creator.createSnapLines().forEach(snapLine => evt.addAdditionalSnapLine(snapLine))
+    additionalSnapLineVisualCreators.forEach((creator) =>
+      creator.createSnapLines().forEach((snapLine) => evt.addAdditionalSnapLine(snapLine))
     )
   })
   return context
@@ -145,8 +145,8 @@ function createLabelSnapContext(): LabelSnapContext {
     // Creates and adds snap lines for the free AdditionalSnapLineVisualCreator to a LabelSnapContext.
     // While the AdditionalSnapLineVisualCreators are used to visualize free snap lines, corresponding
     // OrthogonalSnapLines have to be added to the snapping mechanism to provide the snapping behavior.
-    additionalSnapLineVisualCreators.forEach(creator =>
-      creator.createSnapLines().forEach(snapLine => evt.addSnapLine(snapLine))
+    additionalSnapLineVisualCreators.forEach((creator) =>
+      creator.createSnapLines().forEach((snapLine) => evt.addSnapLine(snapLine))
     )
   })
 

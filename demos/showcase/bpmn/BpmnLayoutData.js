@@ -147,11 +147,11 @@ export default class BpmnLayoutData {
     data.addEdgeItemCollection(BpmnLayout.SEQUENCE_FLOW_EDGES_DP_KEY).delegate = isSequenceFlow
 
     // mark boundary interrupting edges for the BalancingPortOptimizer
-    data.addEdgeItemCollection(BpmnLayout.BOUNDARY_INTERRUPTING_EDGES_DP_KEY).delegate = edge =>
+    data.addEdgeItemCollection(BpmnLayout.BOUNDARY_INTERRUPTING_EDGES_DP_KEY).delegate = (edge) =>
       edge.sourcePort.style instanceof EventPortStyle
 
     // mark conversations, events and gateways so their port locations are adjusted
-    data.addNodeItemCollection(BpmnLayout.ADJUST_PORT_LOCATION_NODES_DP_KEY).delegate = node =>
+    data.addNodeItemCollection(BpmnLayout.ADJUST_PORT_LOCATION_NODES_DP_KEY).delegate = (node) =>
       node.style instanceof ConversationNodeStyle ||
       node.style instanceof EventNodeStyle ||
       node.style instanceof GatewayNodeStyle
@@ -169,7 +169,7 @@ export default class BpmnLayoutData {
     markFixedAndAffectedItems(data, hierarchicLayoutData, selection, layoutOnlySelection)
 
     // mark associations and message flows as undirected so they have less impact on layering
-    hierarchicLayoutData.edgeDirectedness.delegate = edge =>
+    hierarchicLayoutData.edgeDirectedness.delegate = (edge) =>
       isMessageFlow(edge) || isAssociation(edge) ? 0 : 1
 
     // add layer constraints for start events, sub processes and message flows
@@ -197,7 +197,7 @@ const addLayerConstraints = (
   // use layer constraints via HierarchicLayoutData
   const layerConstraints = hierarchicLayoutData.layerConstraints
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     if (isMessageFlow(edge) && !compactMessageFlowLayering) {
       // message flow layering compaction is disabled, we add a 'weak' same layer constraint, i.e. source node shall
       // be placed at least 0 layers above target node
@@ -217,7 +217,7 @@ const addLayerConstraints = (
 
   // if start events should be pulled to the first layer, add PlaceNodeAtTop constraint.
   if (startNodesFirst) {
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (
         node.style instanceof EventNodeStyle &&
         node.style.characteristic === EventCharacteristic.START &&
@@ -244,8 +244,8 @@ function addAboveLayerConstraint(layerConstraints, edge, graph) {
   const targetNodes = []
   collectLeafNodes(graph, sourceNode, sourceNodes)
   collectLeafNodes(graph, targetNode, targetNodes)
-  sourceNodes.forEach(source => {
-    targetNodes.forEach(target => {
+  sourceNodes.forEach((source) => {
+    targetNodes.forEach((target) => {
       layerConstraints.placeAbove(target, source)
     })
   })
@@ -260,7 +260,7 @@ function addAboveLayerConstraint(layerConstraints, edge, graph) {
 function collectLeafNodes(graph, node, leafNodes) {
   const children = graph.getChildren(node)
   if (children.size > 0) {
-    children.forEach(child => {
+    children.forEach((child) => {
       collectLeafNodes(graph, child, leafNodes)
     })
   } else {
@@ -277,9 +277,9 @@ function addMinimumEdgeLength(hierarchicLayoutData, minimumEdgeLength) {
   // each edge should have a minimum length so that all its labels can be placed on it one
   // after another with a minimum label-to-label distance
   const minLabelToLabelDistance = 5
-  hierarchicLayoutData.edgeLayoutDescriptors.delegate = edge => {
+  hierarchicLayoutData.edgeLayoutDescriptors.delegate = (edge) => {
     let minLength = 0
-    edge.labels.forEach(label => {
+    edge.labels.forEach((label) => {
       const labelSize = label.layout.bounds
       minLength += Math.max(labelSize.width, labelSize.height)
     })
@@ -361,14 +361,14 @@ function isAssociation(edge) {
  */
 function addNodeHalos(data, graph, selection, layoutOnlySelection) {
   const nodeHalos = new Mapper()
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     let top = 0.0
     let left = 0.0
     let bottom = 0.0
     let right = 0.0
 
     // for each port with an EventPortStyle extend the node halo to cover the ports render size
-    node.ports.forEach(port => {
+    node.ports.forEach((port) => {
       if (port.style instanceof EventPortStyle) {
         const eventPortStyle = port.style
         const renderSize = eventPortStyle.renderSize
@@ -383,7 +383,7 @@ function addNodeHalos(data, graph, selection, layoutOnlySelection) {
     // for each node without incoming or outgoing edges reserve space for laid out exterior labels
     if (graph.inDegree(node) === 0 || graph.outDegree(node) === 0) {
       const margin = 15
-      node.labels.forEach(label => {
+      node.labels.forEach((label) => {
         if (isNodeLabelAffected(graph, selection, label, layoutOnlySelection)) {
           const labelBounds = label.layout.bounds
           if (graph.inDegree(node) === 0) {
@@ -444,7 +444,7 @@ function addEdgeLabelPlacementDescriptors(data) {
   })
   data.addLabelItemMapping(
     LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY
-  ).delegate = label => {
+  ).delegate = (label) => {
     const labelOwner = label.owner
     const edgeType = labelOwner.style.type
     if (
@@ -469,7 +469,7 @@ function addEdgeLabelPlacementDescriptors(data) {
 function markFixedAndAffectedItems(data, hierarchicLayoutData, selection, layoutOnlySelection) {
   if (layoutOnlySelection) {
     const affectedEdges = IMapper.fromDelegate(
-      edge =>
+      (edge) =>
         selection.isSelected(edge) ||
         selection.isSelected(edge.sourceNode) ||
         selection.isSelected(edge.targetNode)
@@ -478,13 +478,13 @@ function markFixedAndAffectedItems(data, hierarchicLayoutData, selection, layout
     data.addEdgeItemCollection(LayoutKeys.AFFECTED_EDGES_DP_KEY).mapper = affectedEdges
 
     // fix ports of unselected edges and edges at event ports
-    data.addEdgeItemMapping(PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY).delegate = edge => {
+    data.addEdgeItemMapping(PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY).delegate = (edge) => {
       if (!affectedEdges.get(edge) || edge.sourcePort.style instanceof EventPortStyle) {
         return PortConstraint.create(getSide(edge, true))
       }
       return null
     }
-    data.addEdgeItemMapping(PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY).delegate = edge => {
+    data.addEdgeItemMapping(PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY).delegate = (edge) => {
       if (!affectedEdges.get(edge)) {
         return PortConstraint.create(getSide(edge, false))
       }
@@ -500,7 +500,7 @@ function markFixedAndAffectedItems(data, hierarchicLayoutData, selection, layout
       }
       return null
     }
-    data.addLabelItemCollection(BpmnLayout.AFFECTED_LABELS_DP_KEY).delegate = label => {
+    data.addLabelItemCollection(BpmnLayout.AFFECTED_LABELS_DP_KEY).delegate = (label) => {
       if (label.owner instanceof IEdge) {
         return affectedEdges.get(label.owner)
       }
@@ -515,14 +515,14 @@ function markFixedAndAffectedItems(data, hierarchicLayoutData, selection, layout
     }
   } else {
     // fix source port of edges at event ports
-    data.addEdgeItemMapping(PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY).delegate = edge => {
+    data.addEdgeItemMapping(PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY).delegate = (edge) => {
       if (edge.sourcePort.style instanceof EventPortStyle) {
         return PortConstraint.create(getSide(edge, true))
       }
       return null
     }
 
-    data.addLabelItemCollection(BpmnLayout.AFFECTED_LABELS_DP_KEY).delegate = label => {
+    data.addLabelItemCollection(BpmnLayout.AFFECTED_LABELS_DP_KEY).delegate = (label) => {
       if (label.owner instanceof IEdge) {
         return true
       }

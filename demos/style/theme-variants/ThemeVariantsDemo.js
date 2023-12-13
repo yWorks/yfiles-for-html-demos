@@ -194,7 +194,7 @@ let changing = false
  */
 function synchronizeGraphComponents() {
   for (const graphComponent of graphComponents) {
-    const otherComponents = graphComponents.filter(g => g !== graphComponent)
+    const otherComponents = graphComponents.filter((g) => g !== graphComponent)
     graphComponent.addUpdatedVisualListener(() => {
       for (const otherComponent of otherComponents) {
         otherComponent.invalidate()
@@ -300,7 +300,7 @@ function selectSampleItems() {
 
 function initColorButtons() {
   const toolbar = document.querySelector('.demo-page__toolbar')
-  Object.keys(colorPalettes).forEach(paletteName => {
+  Object.keys(colorPalettes).forEach((paletteName) => {
     const palette = colorPalettes[paletteName]
     const button = document.createElement('button')
     button.style.backgroundColor = palette.secondaryColor
@@ -328,7 +328,7 @@ function initializeUI() {
     ICommand.ZOOM.execute(1.0, graphComponents[0])
   })
 
-  document.querySelector('#scale-slider').addEventListener('input', e => {
+  document.querySelector('#scale-slider').addEventListener('input', (e) => {
     const target = e.target
     themeScale = parseFloat(target.value)
     initGraphComponents()

@@ -55,7 +55,7 @@ export function initializeSvgWebGlSwitchButton(selector, graphComponent) {
     optionElement.title = 'This style is disabled since WebGL2 is not available.'
   }
 
-  changeListener = e => {
+  changeListener = (e) => {
     changeRenderMode(graphComponent, e.target.value)
   }
   renderModeSelectElement.addEventListener('change', changeListener)
@@ -88,7 +88,7 @@ export function updateSvgWebGlSwitchButton(selector, graphComponent) {
   const renderModeSelectElement = document.querySelector(selector)
   renderModeSelectElement.removeEventListener('change', changeListener)
 
-  changeListener = e => {
+  changeListener = (e) => {
     changeRenderMode(graphComponent, e.target.value)
   }
   renderModeSelectElement.addEventListener('change', changeListener)

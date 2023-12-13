@@ -46,7 +46,7 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
   layoutData: LayoutData
 } {
   const layoutData = new OrganicLayoutData({
-    affectedNodes: node => node.tag && node.tag.includeInLayout
+    affectedNodes: (node) => node.tag && node.tag.includeInLayout
   })
 
   const layout = new OrganicLayout({ scope: OrganicLayoutScope.SUBSET })

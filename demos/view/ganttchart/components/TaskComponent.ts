@@ -48,7 +48,7 @@ export class TaskComponent {
     this.parent.append(this.taskWrapper)
 
     // synchronize with y-axis with the graphComponent
-    graphComponent.addViewportChangedListener(graphComponent => {
+    graphComponent.addViewportChangedListener((graphComponent) => {
       this.taskWrapper.style.top = `${-graphComponent.viewPoint.y}px`
     })
   }
@@ -57,7 +57,7 @@ export class TaskComponent {
    * Creates a div element for each task stored in the data and assigns the corresponding task color.
    */
   createTasks(): void {
-    dataModel.tasks.forEach(task => {
+    dataModel.tasks.forEach((task) => {
       const height = getCompleteTaskHeight(task) + ganttTaskSpacing
       const taskDiv = document.createElement('div')
       taskDiv.className = 'task-list__task'
@@ -75,7 +75,7 @@ export class TaskComponent {
    * Called when node positions have been modified.
    */
   updateTasks(): void {
-    dataModel.tasks.forEach(task => {
+    dataModel.tasks.forEach((task) => {
       const elem = this.getTaskElementById(task.id)
       if (elem) {
         const height = getCompleteTaskHeight(task) + ganttTaskSpacing

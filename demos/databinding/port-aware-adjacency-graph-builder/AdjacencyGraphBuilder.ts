@@ -383,7 +383,10 @@ class PortAwareNodeCreator extends NodeCreator<NodeData> {
  * Determines the port with that ID and connects the edge to that port.
  */
 class PortAwareEdgeCreator extends EdgeCreator<NodeData> {
-  constructor(private successor: boolean, defaults: IEdgeDefaults) {
+  constructor(
+    private successor: boolean,
+    defaults: IEdgeDefaults
+  ) {
     super()
     this.defaults = defaults
   }
@@ -409,12 +412,12 @@ class PortAwareEdgeCreator extends EdgeCreator<NodeData> {
     // if no ID is specified: get the first port
     const sourcePortId = this.getSourcePortId(data)
     const sourcePort = sourcePortId
-      ? source.ports.find(p => p.tag === sourcePortId)
+      ? source.ports.find((p) => p.tag === sourcePortId)
       : source.ports.at(0)
     // same for the target port
     const targetPortId = this.getTargetPortId(data)
     const targetPort = targetPortId
-      ? target.ports.find(p => p.tag === targetPortId)
+      ? target.ports.find((p) => p.tag === targetPortId)
       : target.ports.at(0)
 
     // create the edges between source and target port. if no port is provided, add a default port.
@@ -446,13 +449,13 @@ class PortAwareEdgeCreator extends EdgeCreator<NodeData> {
     const sourcePortId = this.getSourcePortId(data)
     const sourcePort =
       sourcePortId && sourcePortId !== edge.sourcePort!.tag
-        ? edge.sourcePort!.owner!.ports.find(p => p.tag === sourcePortId)
+        ? edge.sourcePort!.owner!.ports.find((p) => p.tag === sourcePortId)
         : edge.sourcePort
     // same for the target port
     const targetPortId = this.getTargetPortId(data)
     const targetPort =
       targetPortId && targetPortId !== edge.targetPort!.tag
-        ? edge.targetPort!.owner!.ports.find(p => p.tag === targetPortId)
+        ? edge.targetPort!.owner!.ports.find((p) => p.tag === targetPortId)
         : edge.targetPort
     // remember the current source and target ports
     const oldSource = edge.sourcePort!

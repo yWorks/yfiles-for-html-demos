@@ -535,7 +535,7 @@ class DummyContext extends BaseClass(IRenderContext) {
   }
 
   /**
-   * @template {*} T
+   * @template T
    * @param {!Class.<T>} type
    * @returns {?T}
    */

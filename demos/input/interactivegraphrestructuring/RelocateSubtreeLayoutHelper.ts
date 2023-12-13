@@ -240,8 +240,8 @@ export default class RelocateSubtreeLayoutHelper {
   private onLayoutFinished(): void {
     if (this.initializing) {
       this.resetToWorkingGraphStageData = this.createGivenCoordinatesStageData(
-        n => !this.subtree.nodes.has(n),
-        e => !this.subtree.edges.has(e)
+        (n) => !this.subtree.nodes.has(n),
+        (e) => !this.subtree.edges.has(e)
       )
       this.executor = this.createDraggingLayoutExecutor()
       this.initializing = false
@@ -377,7 +377,7 @@ export default class RelocateSubtreeLayoutHelper {
       // the FillAreaLayout is only applied to the part of the tree that does not belong to the subtree
       graph: new FilteredGraphWrapper(
         this.graphComponent.graph,
-        n => !this.subtree.nodes.has(n),
+        (n) => !this.subtree.nodes.has(n),
         () => true
       ),
       layout: new FillAreaLayout({
@@ -503,7 +503,7 @@ class DraggingLayoutExecutor extends LayoutExecutor {
     super(graphComponent, layout)
     this.filteredGraph = new FilteredGraphWrapper(
       graphComponent.graph,
-      n => !nodes.has(n),
+      (n) => !nodes.has(n),
       () => true
     )
   }

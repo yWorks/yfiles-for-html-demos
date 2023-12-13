@@ -29,7 +29,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
-    "yfiles": "../../../lib-dev/yfiles-26.0.2+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-26.0.3+dev.tgz"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",

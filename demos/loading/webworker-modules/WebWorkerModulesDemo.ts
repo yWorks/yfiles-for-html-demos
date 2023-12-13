@@ -72,7 +72,7 @@ if (modulesWorkersSupported) {
   // As the yFiles demos run in a vite dev-server, this method does not work,
   // and we have to fall back to the import of the worker above.)
   worker = new WorkerLayout()
-  worker.onmessage = e => {
+  worker.onmessage = (e) => {
     if (e.data === 'ready') {
       layoutButton.disabled = false
       // run the initial layout after the web worker is ready
@@ -118,7 +118,7 @@ async function runWebWorkerLayout(clearUndo: boolean): Promise<void> {
 
   // helper function that performs the actual message passing to the web worker
   function webWorkerMessageHandler(data: unknown): Promise<any> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       worker.onmessage = (e: any) => resolve(e.data)
       worker.postMessage(data)
     })

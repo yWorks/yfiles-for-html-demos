@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.6.
+     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <title id="title">Home Automation Demo [yFiles for HTML]</title>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="./resources/style.css" />
+
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script src="../../resources/filesystem-warning.js"></script>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Home Automation</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="OPEN_JSON" class="demo-icon-yIconOpen"></button>
+      <button data-command="SAVE_JSON" class="demo-icon-yIconSave"></button>
+      <span class="demo-separator"></span>
+
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+      <button data-command="UNDO"></button>
+      <button data-command="REDO"></button>
+
+      <span class="demo-separator"></span>
+      <input type="checkbox" id="grid-button" class="demo-toggle-button" checked="" />
+      <label for="grid-button" class="demo-icon-yIconGrid" title="Show Grid"></label>
+
+      <span class="demo-separator"></span>
+      <button id="layoutButton" title="Run Hierarchic Layout" class="demo-icon-yIconLayout labeled">
+        Layout
+      </button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Home Automation Demo</h1>
+
+        <p>
+          This demo simulates a tool for visually programming a home automation network. The nodes
+          represent various stages of data flow within the system. The graph features basic
+          validation: output ports can only be connected to input ports, no edges can be duplicated,
+          and nodes with required properties display an error indicator if some of those properties
+          are missing.
+        </p>
+
+        <h3>Things to Try</h3>
+        <ul>
+          <li>Add nodes by dragging and dropping them from the node palette on the right.</li>
+          <li>
+            Connect nodes. Note that the output port (right) of one node can only connect to the
+            input port (left) of another node.
+          </li>
+          <li>Reconnect existing edges to other nodes.</li>
+          <li>Select a node to highlight all of its connected edges.</li>
+          <li>Move connected nodes around to see how edges dynamically change their shape.</li>
+          <li>Apply automatic <em>Layout</em> to arrange the graph hierarchically.</li>
+          <li>Select a node to view and edit its properties in the right panel.</li>
+          <li>
+            Enter a long <em>label</em> in the node properties to observe how the node size changes.
+          </li>
+          <li>
+            Note that some node properties are required. If not set, the corresponding node will
+            display an error indicator. Hover over a node to see a popup with more details about the
+            missing properties.
+          </li>
+          <li>Save/load the current graph using JSON.</li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+      <aside class="sidebar-slim">
+        <div id="drag-and-drop-panel" class="overflow-container"></div>
+        <div id="tags-explorer">
+          <h6 class="tags-explorer__title">NODE PROPERTIES</h6>
+          <ol id="tags-explorer-list" class="overflow-container"></ol>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="HomeAutomationDemo.ts" async></script>
+  </body>
+</html>

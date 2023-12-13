@@ -197,7 +197,7 @@ const LayoutConfiguration = (Class as any)('LayoutConfiguration', {
 
     // change to a free edge label model to support integrated edge labeling
     const model = new FreeEdgeLabelModel()
-    graph.edgeLabels.forEach(label => {
+    graph.edgeLabels.forEach((label) => {
       if (!(label.layoutParameter.model instanceof FreeEdgeLabelModel)) {
         graph.setLabelLayoutParameter(label, model.findBestParameter(label, model, label.layout))
       }

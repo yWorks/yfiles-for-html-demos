@@ -225,7 +225,10 @@ class TopInsetsHitTestable extends BaseClass<IHitTestable>(IHitTestable) impleme
   /**
    * Creates a new instance of {@link TopInsetsHitTestable}.
    */
-  constructor(original: IHitTestable, private inputMode: GraphEditorInputMode) {
+  constructor(
+    original: IHitTestable,
+    private inputMode: GraphEditorInputMode
+  ) {
     super()
     this.original = original
   }
@@ -251,7 +254,7 @@ class TopInsetsHitTestable extends BaseClass<IHitTestable>(IHitTestable) impleme
     }
     // get an enumerator over all elements at the given location
     const hits = hitTester.enumerateHits(inputModeContext, location)
-    return hits.some(node => {
+    return hits.some((node) => {
       // determine whether the given location lies inside the top insets
       const insets = node.lookup(INodeInsetsProvider.$class)?.getInsets(node)
       const layout = node.layout

@@ -89,7 +89,7 @@ function configureFiltering(graphComponent: GraphComponent): void {
   // only nodes with frequency greater than or equal to the minimum frequency will be visible.
   graphComponent.graph = new FilteredGraphWrapper(
     graphComponent.graph,
-    node => !node.tag || node.tag.frequency >= minFrequency,
+    (node) => !node.tag || node.tag.frequency >= minFrequency,
     () => false
   )
 }
@@ -159,9 +159,8 @@ function initializeUI(graphComponent: GraphComponent): void {
   })
 
   document.querySelector('#frequencySlider')!.addEventListener('change', async () => {
-    document.querySelector<HTMLElement>('#frequencySliderLabel')!.textContent = String(
-      getMinFrequencyValue()
-    )
+    document.querySelector<HTMLElement>('#frequencySliderLabel')!.textContent =
+      String(getMinFrequencyValue())
     updateFilteredGraph(graphComponent)
     await runLayout(graphComponent)
   })

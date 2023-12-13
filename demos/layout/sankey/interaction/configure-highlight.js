@@ -48,7 +48,7 @@ export function initializeHighlight(graphComponent) {
   const graph = graphComponent.graph
   // set a BezierEdgeStyle for the edge highlighting with the color and thickness of the associated edge
   graph.decorator.edgeDecorator.highlightDecorator.setFactory(
-    edge =>
+    (edge) =>
       new EdgeStyleDecorationInstaller({
         edgeStyle: new BezierEdgeStyle({
           stroke: new Stroke(getEdgeColor(edge), getVoterShift(edge).thickness)
@@ -58,7 +58,7 @@ export function initializeHighlight(graphComponent) {
   )
   // set a highlighting style for the labels
   graph.decorator.labelDecorator.highlightDecorator.setFactory(
-    label =>
+    (label) =>
       new LabelStyleDecorationInstaller({
         labelStyle: new DefaultLabelStyle({
           shape: 'pill',
@@ -88,7 +88,7 @@ export function initializeHighlight(graphComponent) {
       // when an edge is being hovered, highlight first the edge and then its associated labels,
       // so that the label highlighting stays above the edge highlighting
       highlightManager.addHighlight(item)
-      item.labels.forEach(label => {
+      item.labels.forEach((label) => {
         highlightManager.addHighlight(label)
       })
     } else if (item instanceof ILabel) {

@@ -124,7 +124,7 @@ function initializeInteraction(graphComponent) {
 
   // add handles that enable the user to change the angle and shaft ratio of an arrow node style
   nodeDecorator.handleProviderDecorator.setImplementationWrapper(
-    n => n.style instanceof ArrowNodeStyle,
+    (n) => n.style instanceof ArrowNodeStyle,
     (node, delegateProvider) =>
       new ArrowNodeStyleHandleProvider(node, () => updateLabel(graph, node), delegateProvider)
   )
@@ -132,7 +132,7 @@ function initializeInteraction(graphComponent) {
   // only provide reshape handles for the east, south and south-east sides, so they don't clash with
   // the custom handles
   nodeDecorator.reshapeHandleProviderDecorator.setFactory(
-    node =>
+    (node) =>
       new NodeReshapeHandleProvider(
         node,
         node.lookup(IReshapeHandler.$class),

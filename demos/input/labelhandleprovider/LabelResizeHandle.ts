@@ -59,7 +59,10 @@ export default class LabelResizeHandle extends BaseClass(IHandle) implements IHa
    * @param label The label this handle is for
    * @param symmetricResize A value indicating whether resizing should be symmetric
    */
-  constructor(readonly label: ILabel, private readonly symmetricResize: boolean) {
+  constructor(
+    readonly label: ILabel,
+    private readonly symmetricResize: boolean
+  ) {
     super()
   }
 

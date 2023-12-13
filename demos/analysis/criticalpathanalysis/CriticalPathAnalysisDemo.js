@@ -102,7 +102,7 @@ function showResult(graphComponent) {
   const startNodeStyle = createDemoNodeStyle('demo-palette-402')
   const finishNodeStyle = createDemoNodeStyle('demo-palette-403')
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     const sourceNode = edge.sourceNode
     const targetNode = edge.targetNode
 
@@ -181,7 +181,7 @@ function loadSampleGraph(graphComponent) {
   builder.buildGraph()
 
   // we add a label that shows the duration of each task
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     if (node.labels.get(0).text !== 'START' && node.labels.get(0).text !== 'FINISH') {
       graph.addLabel(node, `${node.tag.duration} d`, InteriorLabelModel.CENTER)
     }

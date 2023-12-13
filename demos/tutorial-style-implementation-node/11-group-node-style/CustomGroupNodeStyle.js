@@ -158,7 +158,7 @@ export class CustomGroupNodeStyle extends NodeStyleBase {
   lookup(node, type) {
     if (type === INodeInsetsProvider.$class) {
       // use a custom insets provider that reserves space for the tab
-      return INodeInsetsProvider.create(node => new Insets(4, tabHeight + 4, 4, 4))
+      return INodeInsetsProvider.create((node) => new Insets(4, tabHeight + 4, 4, 4))
     }
     return super.lookup(node, type)
   }

@@ -258,7 +258,7 @@ async function loadFriends(item: IModelItem): Promise<void> {
   }
 
   const friends = data.person.friends as Person[]
-  const copiedFriends = friends.map(friend => copyWithFriends(friend, [person]))
+  const copiedFriends = friends.map((friend) => copyWithFriends(friend, [person]))
   const copiedPerson = copyWithFriends(person, copiedFriends)
   const newNodes = graphBuilder.addPersons([copiedPerson].concat(copiedFriends))
 

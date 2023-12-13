@@ -140,12 +140,12 @@ function createEditorMode(graphComponent: GraphComponent): GraphEditorInputMode 
 
   // deletion
   const graph = graphComponent.graph
-  inputMode.addDeletingSelectionListener(async _ => {
+  inputMode.addDeletingSelectionListener(async (_) => {
     applyAlgorithm(graph)
     await runLayout(graphComponent, true, [])
   })
 
-  inputMode.addDeletedSelectionListener(async _ => {
+  inputMode.addDeletedSelectionListener(async (_) => {
     applyAlgorithm(graph)
     await runLayout(graphComponent, true, [])
   })
@@ -169,9 +169,9 @@ function createEditorMode(graphComponent: GraphComponent): GraphEditorInputMode 
     await runLayout(graphComponent, true, incrementalNodes)
   })
 
-  inputMode.moveInputMode.addDragFinishedListener(async inputModeMove => {
+  inputMode.moveInputMode.addDragFinishedListener(async (inputModeMove) => {
     const affectedNodes = inputModeMove.affectedItems
-      .filter(item => item instanceof INode)
+      .filter((item) => item instanceof INode)
       .toArray() as INode[]
     if (affectedNodes.length < graph.nodes.size) {
       applyAlgorithm(graph)
@@ -180,11 +180,11 @@ function createEditorMode(graphComponent: GraphComponent): GraphEditorInputMode 
   })
 
   // run the algorithm on node creation, edge port changes or label text changes
-  inputMode.addEdgePortsChangedListener(async _ => {
+  inputMode.addEdgePortsChangedListener(async (_) => {
     applyAlgorithm(graph)
   })
 
-  inputMode.addNodeCreatedListener(_ => {
+  inputMode.addNodeCreatedListener((_) => {
     applyAlgorithm(graph)
   })
 

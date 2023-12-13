@@ -95,7 +95,7 @@ function initializeGraph(): void {
   })
 
   graphComponent.graph.decorator.labelDecorator.selectionDecorator.setImplementation(
-    label =>
+    (label) =>
       label.layoutParameter.model instanceof FreeNodeLabelModel ||
       label.layoutParameter.model instanceof FreeEdgeLabelModel ||
       label.layoutParameter.model instanceof FreeLabelModel,

@@ -65,13 +65,6 @@ export default class Sample1EdgeStyle extends EdgeStyleBase {
   pathThickness = 3
 
   /**
-   * Initializes a new instance of the {@link Sample1EdgeStyle} class.
-   */
-  constructor() {
-    super()
-  }
-
-  /**
    * Creates the visual for an edge.
    * @see Overrides {@link EdgeStyleBase.createVisual}
    * @param {!IRenderContext} context
@@ -211,7 +204,7 @@ export default class Sample1EdgeStyle extends EdgeStyleBase {
     // Create a general path from the locations of the ports and the bends of the edge.
     const path = new GeneralPath()
     path.moveTo(edge.sourcePort.location)
-    edge.bends.forEach(bend => {
+    edge.bends.forEach((bend) => {
       path.lineTo(bend.location)
     })
     path.lineTo(edge.targetPort.location)

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -73,12 +73,10 @@
       <div
         class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
       >
-        <b>Step 9/14</b
+        <b>Step 8/13</b
         ><span class="demo-toolbar__tutorial-step-title"> &mdash; 08 Configure Labels</span>
         <div class="tutorial-dropdown">
           <a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
-            >Tutorial: Graph Builder</a
-          ><a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
             >01 Create Graph</a
           ><a
             href="../../tutorial-graph-builder/02-create-nodes-sources/"
@@ -359,7 +357,7 @@ typeLabelCreator.<span class="hljs-property">preferredSizeProvider</span> = (dat
   data.<span class="hljs-property">type</span> === <span class="hljs-string">&#x27;Trust&#x27;</span> ? <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(<span class="hljs-number">70</span>, <span class="hljs-number">15</span>) : <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(<span class="hljs-number">100</span>, <span class="hljs-number">15</span>)
 
 <span class="hljs-comment">// set different widths for nodes with type &#x27;Trust&#x27;</span>
-typeLabelCreator.<span class="hljs-property">preferredSizeBindings</span>.<span class="hljs-title function_">addBinding</span>(<span class="hljs-string">&#x27;width&#x27;</span>, <span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> {
+typeLabelCreator.<span class="hljs-property">preferredSizeBindings</span>.<span class="hljs-title function_">addBinding</span>(<span class="hljs-string">&#x27;width&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> {
   <span class="hljs-keyword">return</span> data.<span class="hljs-property">type</span> === <span class="hljs-string">&#x27;Trust&#x27;</span> ? <span class="hljs-number">200</span> : <span class="hljs-number">100</span>
 })</code></pre>
                   </div>
@@ -391,7 +389,7 @@ edgeLabelCreator.<span class="hljs-property">layoutParameterProvider</span> = ()
 
 <span class="hljs-comment">// configure its style</span>
 edgeLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">shareStyleInstance</span> = <span class="hljs-literal">false</span>
-edgeLabelCreator.<span class="hljs-property">styleBindings</span>.<span class="hljs-title function_">addBinding</span>(<span class="hljs-string">&#x27;textFill&#x27;</span>, <span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> {
+edgeLabelCreator.<span class="hljs-property">styleBindings</span>.<span class="hljs-title function_">addBinding</span>(<span class="hljs-string">&#x27;textFill&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> {
   <span class="hljs-keyword">return</span> (data.<span class="hljs-property">ownership</span> ?? <span class="hljs-number">0</span>) &gt; <span class="hljs-number">50</span> ? red : grey
 })</code></pre>
                 </div>

@@ -96,7 +96,7 @@ export function HtmlNodeComponent({ tag }: ReactComponentHtmlNodeStyleProps<Node
               sx={{ marginLeft: 'auto' }}
               href={moreUrl}
               target="_blank"
-              onClick={e => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               Learn more
             </Button>

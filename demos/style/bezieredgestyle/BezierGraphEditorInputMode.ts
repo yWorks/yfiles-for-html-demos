@@ -62,14 +62,14 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
   public onDeletingSelection(args: SelectionEventArgs<IModelItem>): void {
     const selectedCurveBends = args.selection
       .filter(
-        bend =>
+        (bend) =>
           bend instanceof IBend &&
           bend.owner!.style instanceof BezierEdgeStyle &&
           bend.owner!.bends.size % 3 === 2 &&
           bend.index % 3 === 2
       )
       .toList()
-    selectedCurveBends.forEach(selectedCurveBend => {
+    selectedCurveBends.forEach((selectedCurveBend) => {
       const curveBend = selectedCurveBend as IBend
       args.selection.setSelected(curveBend.owner!.bends.get(curveBend.index - 1), true)
       args.selection.setSelected(curveBend.owner!.bends.get(curveBend.index + 1), true)
@@ -77,7 +77,7 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
     // Remove remaining single control points from the list...
     const singularControlPoints = args.selection
       .filter(
-        bend =>
+        (bend) =>
           bend instanceof IBend &&
           bend.owner!.style instanceof BezierEdgeStyle &&
           bend.owner!.bends.size % 3 === 2 &&
@@ -89,7 +89,7 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
               !args.selection.isSelected(bend.owner!.bends.get(bend.index + -1))))
       )
       .toList()
-    singularControlPoints.forEach(singularControlPoint => {
+    singularControlPoints.forEach((singularControlPoint) => {
       const owner = (singularControlPoint as IBend).owner!
       if (owner.bends.size > 2) {
         args.selection.setSelected(singularControlPoint, false)

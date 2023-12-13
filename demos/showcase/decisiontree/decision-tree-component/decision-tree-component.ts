@@ -50,7 +50,7 @@ export function initializeDecisionTreeComponent(graphComponent: GraphComponent):
 
   // add the sample graphs
   const samples = document.querySelector<HTMLSelectElement>('#samples')!
-  ;['cars', 'what-to-do', 'quiz'].forEach(graph => {
+  ;['cars', 'what-to-do', 'quiz'].forEach((graph) => {
     const option = document.createElement('option')
     option.text = graph
     option.value = graph
@@ -105,7 +105,7 @@ function setLayoutRunning(running: boolean, graphComponent: GraphComponent): voi
   ;(graphComponent.inputMode as GraphEditorInputMode).waitInputMode.waiting = running
   document
     .querySelectorAll<HTMLInputElement>('#decision-tree-toolbar Button,Select')
-    .forEach(element => {
+    .forEach((element) => {
       element.disabled = running
     })
 }

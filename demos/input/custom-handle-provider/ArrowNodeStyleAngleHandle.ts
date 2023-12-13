@@ -76,7 +76,10 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
    * @param node The node whose style shall be changed.
    * @param angleChanged An action that is called when the handle has been moved.
    */
-  constructor(private readonly node: INode, private readonly angleChanged: () => void) {
+  constructor(
+    private readonly node: INode,
+    private readonly angleChanged: () => void
+  ) {
     super()
     this.style = node.style as ArrowNodeStyle
   }
@@ -355,9 +358,9 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
    * @returns The length of the arrow head for the given style and node layout.
    */
   public static getArrowHeadLength(nodeLayout: IRectangle, style: ArrowNodeStyle): number {
-    const maxArrowLength = this.getMaxArrowHeadLength(nodeLayout, style)
-    const arrowSideWidth = this.getArrowSideWidth(nodeLayout, style)
-    const angle = this.getClampedAngle(style)
+    const maxArrowLength = ArrowNodeStyleAngleHandle.getMaxArrowHeadLength(nodeLayout, style)
+    const arrowSideWidth = ArrowNodeStyleAngleHandle.getArrowSideWidth(nodeLayout, style)
+    const angle = ArrowNodeStyleAngleHandle.getClampedAngle(style)
     const maxHeadLength = arrowSideWidth * Math.tan(Math.abs(angle))
     return Math.min(maxHeadLength, maxArrowLength)
   }

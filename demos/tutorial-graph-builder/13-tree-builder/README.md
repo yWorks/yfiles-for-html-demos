@@ -76,7 +76,10 @@ In the second step, we configure a child [NodesSource](https://docs.yworks.com/y
 
 ```
 // the childDataProvider identifies the property of a node object that contains its child nodes
-rootNodesSource.addChildNodesSource(data => data.colleagues, rootNodesSource)
+rootNodesSource.addChildNodesSource(
+  (data) => data.colleagues,
+  rootNodesSource
+)
 ```
 
 Note that we have used the `rootNodesSource` as the source for the colleagues _recursively._ The [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) makes sure no nodes or edges with the same `id` are created twice.
@@ -85,7 +88,7 @@ Finally, we add labels to the graph building process by providing a label bindin
 
 ```
 rootNodesSource.nodeCreator.createLabelBinding({
-  text: dataItem => dataItem.name
+  text: (dataItem) => dataItem.name
 })
 ```
 

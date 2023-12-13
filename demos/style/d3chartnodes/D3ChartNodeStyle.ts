@@ -89,11 +89,11 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
       .enter()
       .append('rect')
       .attr('x', (d, i) => xHelper(i)!)
-      .attr('y', d => yHelper(d as NumberValue))
-      .attr('height', d => yHelper(0) - yHelper(d as NumberValue))
+      .attr('y', (d) => yHelper(d as NumberValue))
+      .attr('height', (d) => yHelper(0) - yHelper(d as NumberValue))
       .attr('width', xHelper.bandwidth())
-      .attr('data-value', d => d as number)
-      .attr('fill', d => color(d as NumberValue))
+      .attr('data-value', (d) => d as number)
+      .attr('fill', (d) => color(d as NumberValue))
       .attr('stroke', 'none')
 
     const svgVisual = new SvgVisual(g)
@@ -139,11 +139,11 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
         .enter()
         .append('rect')
         .attr('x', (d, i) => xHelper(i)!)
-        .attr('y', d => yHelper(d as NumberValue))
-        .attr('height', d => yHelper(0) - yHelper(d as NumberValue))
+        .attr('y', (d) => yHelper(d as NumberValue))
+        .attr('height', (d) => yHelper(0) - yHelper(d as NumberValue))
         .attr('width', xHelper.bandwidth())
-        .attr('data-value', d => d as number)
-        .attr('fill', d => color(d as NumberValue))
+        .attr('data-value', (d) => d as number)
+        .attr('fill', (d) => color(d as NumberValue))
         .attr('stroke', 'none')
 
       dataSelection.exit().remove()
@@ -152,16 +152,20 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
         .transition()
         .attr('x', (d, i) => xHelper(i)!)
         .attr('width', xHelper.bandwidth())
-        .attr('y', d => yHelper(d as NumberValue))
-        .attr('fill', d => color(d as NumberValue))
-        .attr('height', d => yHelper(0) - yHelper(d as NumberValue))
+        .attr('y', (d) => yHelper(d as NumberValue))
+        .attr('fill', (d) => color(d as NumberValue))
+        .attr('height', (d) => yHelper(0) - yHelper(d as NumberValue))
     }
     return oldVisual
   }
 }
 
 class RenderDataCache {
-  constructor(public width: number, public height: number, public data: number[]) {}
+  constructor(
+    public width: number,
+    public height: number,
+    public data: number[]
+  ) {}
   equals(other: RenderDataCache) {
     return (
       other &&

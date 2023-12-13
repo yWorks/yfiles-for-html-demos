@@ -69,7 +69,7 @@ export function ReactGraphComponent({ graphData, onResetData }: ReactGraphCompon
           zoomOut={() => ICommand.DECREASE_ZOOM.execute(null, graphComponent)}
           resetZoom={() => ICommand.ZOOM.execute(1.0, graphComponent)}
           fitContent={() => ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)}
-          searchChange={evt => setSearchQuery(evt.target.value)}
+          searchChange={(evt) => setSearchQuery(evt.target.value)}
         />
       </div>
       <div className="main">

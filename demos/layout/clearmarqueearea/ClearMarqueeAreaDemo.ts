@@ -195,7 +195,7 @@ function getHitGroupNode(context: IInputModeContext, location: Point): INode | n
   return context
     .lookup(INodeHitTester.$class)!
     .enumerateHits(context, location)
-    .find(n => graphComponent.graph.isGroupNode(n))
+    .find((n) => graphComponent.graph.isGroupNode(n))
 }
 
 /**
@@ -232,7 +232,7 @@ function loadGraph(sampleName: string): void {
 
   builder.buildGraph()
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
       graph.setPortLocation(edge.sourcePort!, Point.from(edge.tag.sourcePort))
     }

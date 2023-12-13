@@ -177,7 +177,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
       this.nodeLabelingStyleItem === NodeLabelingPolicies.RAYLIKE ||
       this.nodeLabelingStyleItem === NodeLabelingPolicies.HORIZONTAL
     ) {
-      graphComponent.graph.nodeLabels.forEach(label => {
+      graphComponent.graph.nodeLabels.forEach((label) => {
         graphComponent.graph.setLabelLayoutParameter(
           label,
           FreeNodeLabelModel.INSTANCE.findBestParameter(
@@ -200,7 +200,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
     let layoutData
     if (this.centerStrategyItem === CenterNodesPolicy.CUSTOM) {
       layoutData = new RadialLayoutData({
-        centerNodes: node => graphComponent.selection.isSelected(node)
+        centerNodes: (node) => graphComponent.selection.isSelected(node)
       })
     } else {
       layoutData = new RadialLayoutData()

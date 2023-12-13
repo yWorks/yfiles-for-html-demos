@@ -24,7 +24,6 @@
     "loading/webpack",
     "loading/webpack-lazy-layout",
     "loading/webpack-lazy-yfiles",
-    "loading/webworker-umd",
     "loading/webworker-webpack",
     "node_modules",
     "style/angular-component-node-style",

@@ -204,11 +204,11 @@ function createInputMode(): void {
     for (const record of result.records) {
       const node = record.get('m')
       const edge = record.get('e')
-      if (nodes.every(n => !n.identity.equals(node.identity))) {
+      if (nodes.every((n) => !n.identity.equals(node.identity))) {
         nodes.push(node)
         updated = true
       }
-      if (edges.every(e => !e.identity.equals(edge.identity))) {
+      if (edges.every((e) => !e.identity.equals(edge.identity))) {
         edges.push(edge)
         updated = true
       }
@@ -276,7 +276,7 @@ async function loadGraph(): Promise<void> {
   // letters that are used as names for nodes in the cypher query
   const letters = ['a', 'b', 'c', 'd', 'e'].slice(0, numLabels)
   // we match a chain of nodes that is at least numLabels long
-  const matchClause = letters.map(letter => `(${letter})`).join('--')
+  const matchClause = letters.map((letter) => `(${letter})`).join('--')
   const whereClauses = []
   for (let i = 1; i < numLabels; ++i) {
     for (let j = 0; j < i; ++j) {
@@ -295,7 +295,7 @@ async function loadGraph(): Promise<void> {
   // extract the nodes from the query result
   nodes = nodeResult.records.map((record: Neo4jRecord) => record.get('node'))
   // obtain an array of all node ids
-  const nodeIds = nodes.map(node => node.identity)
+  const nodeIds = nodes.map((node) => node.identity)
   // get all edges between all nodes that we have, omitting self loops and limiting the overall number of
   // results to a multiple of numNodes, as some graphs have nodes wth degrees in the thousands
   const edgeResult = await runCypherQuery(
@@ -338,7 +338,7 @@ function onHoveredItemChanged(hoveredItem: IModelItem | null): void {
   manager.addHighlight(hoveredItem)
   if (hoveredItem instanceof INode) {
     // and if it's a node, we highlight all adjacent edges, too
-    graphComponent.graph.edgesAt(hoveredItem).forEach(edge => {
+    graphComponent.graph.edgesAt(hoveredItem).forEach((edge) => {
       manager.addHighlight(edge)
     })
   } else if (hoveredItem instanceof IEdge) {
@@ -413,7 +413,7 @@ function initializeUI(): void {
   const passwordEl = document.querySelector<HTMLInputElement>('#passwordInput')!
   const databaseEl = document.querySelector<HTMLInputElement>('#databaseNameInput')!
 
-  document.querySelector<HTMLFormElement>('#login-form')!.addEventListener('submit', async e => {
+  document.querySelector<HTMLFormElement>('#login-form')!.addEventListener('submit', async (e) => {
     e.preventDefault()
     let url = hostEl.value
     if (url.indexOf('://') < 0) {
@@ -431,9 +431,8 @@ function initializeUI(): void {
       document.querySelector<HTMLElement>('#queryPane')!.style.visibility = 'visible'
       await loadGraph()
     } catch (e) {
-      document.querySelector<HTMLDivElement>(
-        '#connectionError'
-      )!.innerHTML = `An error occurred: ${e}`
+      document.querySelector<HTMLDivElement>('#connectionError')!.innerHTML =
+        `An error occurred: ${e}`
       // In some cases (connecting from https to http) an exception is thrown outside the promise
       if (window.location.protocol === 'https:') {
         document.querySelector<HTMLDivElement>('#openInHttp')!.hidden = false

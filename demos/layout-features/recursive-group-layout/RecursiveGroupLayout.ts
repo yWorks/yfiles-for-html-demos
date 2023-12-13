@@ -49,10 +49,10 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
   layoutData: LayoutData
 } {
   // gets the group nodes
-  const groupNode1 = graph.nodes.find(node => node.tag === 'Group 1')
-  const groupNode2 = graph.nodes.find(node => node.tag === 'Group 2')
-  const groupNode3 = graph.nodes.find(node => node.tag === 'Group 3')
-  const groupNode4 = graph.nodes.find(node => node.tag === 'Group 4')
+  const groupNode1 = graph.nodes.find((node) => node.tag === 'Group 1')
+  const groupNode2 = graph.nodes.find((node) => node.tag === 'Group 2')
+  const groupNode3 = graph.nodes.find((node) => node.tag === 'Group 3')
+  const groupNode4 = graph.nodes.find((node) => node.tag === 'Group 4')
 
   // the RecursiveGroupLayout can use a core layout algorithm to arrange the top level hierarchy
   const coreLayout = new HierarchicLayout()

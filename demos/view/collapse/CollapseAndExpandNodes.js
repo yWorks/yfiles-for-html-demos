@@ -127,9 +127,9 @@ export default class CollapseAndExpandNodes {
     this.setCollapsed(node, collapse)
 
     const filteredGraph = this.graphComponent.graph
-    CollapseAndExpandNodes.getDescendants(filteredGraph.wrappedGraph, node, succ =>
+    CollapseAndExpandNodes.getDescendants(filteredGraph.wrappedGraph, node, (succ) =>
       this.isCollapsed(succ)
-    ).forEach(succ => {
+    ).forEach((succ) => {
       this.setNodeVisibility(succ, !collapse)
     })
   }
@@ -169,7 +169,7 @@ export default class CollapseAndExpandNodes {
 
     // mark the new nodes and place them between their neighbors
     const layoutData = new PlaceNodesAtBarycenterStageData({
-      affectedNodes: node => incrementalNodes.has(node)
+      affectedNodes: (node) => incrementalNodes.has(node)
     })
 
     const layout = new PlaceNodesAtBarycenterStage()
@@ -199,10 +199,10 @@ export default class CollapseAndExpandNodes {
       const incrementalNodes = CollapseAndExpandNodes.getDescendants(
         graph,
         toggledNode,
-        node => false
+        (node) => false
       )
       const incrementalMap = new HashMap()
-      incrementalNodes.forEach(node => {
+      incrementalNodes.forEach((node) => {
         incrementalMap.set(node, true)
         const co = this.graphComponent.graphModelManager.getMainCanvasObject(node)
         const toggledNodeCo = this.graphComponent.graphModelManager.getMainCanvasObject(toggledNode)
@@ -218,7 +218,7 @@ export default class CollapseAndExpandNodes {
         // configure PlaceNodesAtBarycenterStage for a smooth animation
         currentLayoutData.items.add(
           new PlaceNodesAtBarycenterStageData({
-            affectedNodes: node => incrementalMap.has(node)
+            affectedNodes: (node) => incrementalMap.has(node)
           })
         )
       }
@@ -240,8 +240,8 @@ export default class CollapseAndExpandNodes {
 
         currentLayoutData.items.add(
           new OrganicLayoutData({
-            nodeInertia: obj => 1 - 1 / (layerIds.get(obj) + 1),
-            nodeStress: obj => 1 / (layerIds.get(obj) + 1)
+            nodeInertia: (obj) => 1 - 1 / (layerIds.get(obj) + 1),
+            nodeStress: (obj) => 1 / (layerIds.get(obj) + 1)
           })
         )
       } else if (currentLayout instanceof HierarchicLayout) {

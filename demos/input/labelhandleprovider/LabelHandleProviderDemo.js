@@ -87,10 +87,10 @@ function initializeGraph() {
          </g>`
 
   TemplateLabelStyle.CONVERTERS.demoBindings = {
-    halfConverter: value => value * 0.5,
-    flippedHandlePosition: height => height + 15,
-    showUpsideHandle: isUpsideDown => (isUpsideDown ? '0' : '3'),
-    showFlippedHandle: isUpsideDown => (isUpsideDown ? '3' : '0')
+    halfConverter: (value) => value * 0.5,
+    flippedHandlePosition: (height) => height + 15,
+    showUpsideHandle: (isUpsideDown) => (isUpsideDown ? '0' : '3'),
+    showFlippedHandle: (isUpsideDown) => (isUpsideDown ? '3' : '0')
   }
   const templateLabelStyle = new StringTemplateLabelStyle(templateString)
 
@@ -99,7 +99,7 @@ function initializeGraph() {
   })
 
   graphComponent.graph.decorator.labelDecorator.selectionDecorator.setImplementation(
-    label =>
+    (label) =>
       label.layoutParameter.model instanceof FreeNodeLabelModel ||
       label.layoutParameter.model instanceof FreeEdgeLabelModel ||
       label.layoutParameter.model instanceof FreeLabelModel,

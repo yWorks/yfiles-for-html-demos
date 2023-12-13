@@ -50,7 +50,7 @@ Class.ensure(LayoutExecutor)
  * @property {Array.<ConnectionItem>} connectionData
  */
 
-export default props => {
+export default (props) => {
   const gcRef = useRef(null)
   const graphComponentRef = useRef(null)
   const graphBuilderRef = useRef(null)
@@ -98,7 +98,7 @@ export default props => {
    * SVG element. Therefore, the visualizations can be adapted depending on the
    * item state in pure CSS (see the style.css next to this component).
    */
-  const initializeStyles = graphComponent => {
+  const initializeStyles = (graphComponent) => {
     graphComponent.graph.nodeDefaults.style = new PreactComponentNodeStyle(NodeTemplate)
     graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
       stroke: `1.2px solid #304f52`,
@@ -121,7 +121,7 @@ export default props => {
     const nodesSource = graphBuilder.createNodesSource({
       data: props.itemData,
       id: 'id',
-      tag: item => item
+      tag: (item) => item
     })
     const edgesSource = graphBuilder.createEdgesSource({
       data: props.connectionData,

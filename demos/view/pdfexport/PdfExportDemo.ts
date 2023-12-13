@@ -41,6 +41,7 @@ import { exportPdfServerSide, NODE_SERVER_URL } from './pdf-export-server-side'
 import { exportPdfClientSide } from './pdf-export-client-side'
 import { retainAspectRatio } from './aspect-ratio'
 import { downloadFile } from 'demo-utils/file-support'
+import { loadExternalFonts } from './load-external-fonts'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -64,7 +65,7 @@ async function run(): Promise<void> {
 
   let pdf = ''
 
-  initializeOptionPanel(async options => {
+  initializeOptionPanel(async (options) => {
     const rect = options.useExportRectangle ? exportRect.toRect() : undefined
 
     if (options.serverExport) {
@@ -75,7 +76,8 @@ async function run(): Promise<void> {
         options.scale,
         options.margin,
         options.paperSize,
-        rect
+        rect,
+        await loadExternalFonts()
       )
       pdf = pdfData
       showExportDialog(previewElement)

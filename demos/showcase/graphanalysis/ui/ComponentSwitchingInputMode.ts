@@ -343,7 +343,7 @@ class ComponentOverlayDescriptor extends BaseClass(
       if (
         visual.size === width &&
         components.length === visual.components.size &&
-        components.every(c => visual.components!.has(c))
+        components.every((c) => visual.components!.has(c))
       ) {
         const g = visual.svgElement
 

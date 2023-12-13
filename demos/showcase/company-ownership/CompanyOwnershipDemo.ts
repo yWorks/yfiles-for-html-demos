@@ -60,8 +60,8 @@ async function run(): Promise<void> {
   applyDemoTheme(graphComponent)
 
   // add the listeners for the companyStructureView
-  companyStructureView.addNodeClickedListener(node => propertiesView.showNodeProperties(node))
-  companyStructureView.addEdgeClickedListener(edge => propertiesView.showEdgeProperties(edge))
+  companyStructureView.addNodeClickedListener((node) => propertiesView.showNodeProperties(node))
+  companyStructureView.addEdgeClickedListener((edge) => propertiesView.showEdgeProperties(edge))
 
   // initialize graph search
   graphSearch = new CompanyOwnershipSearch(graphComponent)
@@ -98,20 +98,22 @@ function createPropertiesView(): void {
  * Binds actions to the buttons in the toolbar.
  */
 function initializeUI(graphComponent: GraphComponent): void {
-  document.querySelector<HTMLSelectElement>('#styles')!.addEventListener('change', async event => {
-    const select = event.target as HTMLSelectElement
-    companyStructureView.useShapeNodeStyle = select.value === 'shapes'
-    await loadGraph(graphComponent)
-  })
+  document
+    .querySelector<HTMLSelectElement>('#styles')!
+    .addEventListener('change', async (event) => {
+      const select = event.target as HTMLSelectElement
+      companyStructureView.useShapeNodeStyle = select.value === 'shapes'
+      await loadGraph(graphComponent)
+    })
 
-  document.querySelectorAll<HTMLButtonElement>('[data-command="Shapes"]').forEach(element => {
+  document.querySelectorAll<HTMLButtonElement>('[data-command="Shapes"]').forEach((element) => {
     element.addEventListener('click', async () => {
       document.querySelector<HTMLSelectElement>('#styles')!.value = 'shapes'
       companyStructureView.useShapeNodeStyle = true
       await loadGraph(graphComponent)
     })
   })
-  document.querySelectorAll<HTMLButtonElement>('[data-command="Tables"]').forEach(element => {
+  document.querySelectorAll<HTMLButtonElement>('[data-command="Tables"]').forEach((element) => {
     element.addEventListener('click', async () => {
       document.querySelector<HTMLSelectElement>('#styles')!.value = 'tables'
       companyStructureView.useShapeNodeStyle = false
@@ -143,10 +145,10 @@ async function loadGraph(graphComponent: GraphComponent, animate = true): Promis
  */
 function setUIDisabled(disabled: boolean): void {
   document.querySelector<HTMLSelectElement>('#styles')!.disabled = disabled
-  document.querySelectorAll<HTMLButtonElement>('[data-command="Shapes"]').forEach(element => {
+  document.querySelectorAll<HTMLButtonElement>('[data-command="Shapes"]').forEach((element) => {
     element.disabled = disabled
   })
-  document.querySelectorAll<HTMLButtonElement>('[data-command="Tables"]').forEach(element => {
+  document.querySelectorAll<HTMLButtonElement>('[data-command="Tables"]').forEach((element) => {
     element.disabled = disabled
   })
 }

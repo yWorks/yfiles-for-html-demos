@@ -52,11 +52,11 @@ export function initializeOptionPanel(exportCallback) {
       serverExport: serverExportInput.checked
     }
 
-    if (isNaN(options.scale) || options.scale <= 0) {
+    if (Number.isNaN(options.scale) || options.scale <= 0) {
       alert('Scale must be a positive number.')
       return false
     }
-    if (isNaN(options.margin) || options.margin < 0) {
+    if (Number.isNaN(options.margin) || options.margin < 0) {
       alert('Margin must be a non-negative number.')
       return false
     }

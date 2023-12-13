@@ -153,8 +153,8 @@ function createSubcomponent(
     // find the next free subcomponent index
     let newSubcomponent: Subcomponent
     let newSubcomponentIndex: number = subcomponents.findIndex(
-      component =>
-        component.nodes.length === 0 || component.nodes.every(node => nodes.includes(node))
+      (component) =>
+        component.nodes.length === 0 || component.nodes.every((node) => nodes.includes(node))
     )
     if (newSubcomponentIndex < 0) {
       // add a new subcomponent
@@ -249,31 +249,31 @@ function initializeSubcomponents(graphComponent: GraphComponent): void {
   hierarchicLayout.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
   createSubcomponent(
     graph,
-    graph.nodes.filter(node => node.tag === 0),
+    graph.nodes.filter((node) => node.tag === 0),
     hierarchicLayout
   )
   const treeLayout = createTreeLayout()
   createSubcomponent(
     graph,
-    graph.nodes.filter(node => node.tag === 1),
+    graph.nodes.filter((node) => node.tag === 1),
     treeLayout
   )
   const organicLayout = createOrganicLayout()
   createSubcomponent(
     graph,
-    graph.nodes.filter(node => node.tag === 2),
+    graph.nodes.filter((node) => node.tag === 2),
     organicLayout
   )
   createSubcomponent(
     graph,
-    graph.nodes.filter(node => node.tag === 3),
+    graph.nodes.filter((node) => node.tag === 3),
     hierarchicLayout
   )
   const treeLayout2 = createTreeLayout()
   treeLayout2.layoutOrientation = LayoutOrientation.RIGHT_TO_LEFT
   createSubcomponent(
     graph,
-    graph.nodes.filter(node => node.tag === 4),
+    graph.nodes.filter((node) => node.tag === 4),
     treeLayout2
   )
 }
@@ -363,7 +363,7 @@ function registerSelectionListener(graphComponent: GraphComponent): void {
  */
 function initializeUI(graphComponent: GraphComponent): void {
   const selectOrientation = document.querySelector<HTMLSelectElement>('#orientation-select')!
-  document.querySelector<HTMLSelectElement>('#layout-select')!.addEventListener('change', evt => {
+  document.querySelector<HTMLSelectElement>('#layout-select')!.addEventListener('change', (evt) => {
     const value = (evt.target as HTMLSelectElement).value
     selectOrientation.disabled = value !== 'tree' && value !== 'hierarchic'
   })

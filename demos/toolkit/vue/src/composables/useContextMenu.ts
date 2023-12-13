@@ -60,7 +60,7 @@ export function useContextMenu(getGraphComponent: () => GraphComponent) {
   })
 
   // close the context menu when display has been set to false
-  watch(toRef(data, 'display'), value => {
+  watch(toRef(data, 'display'), (value) => {
     if (!value) {
       close()
     }
@@ -70,7 +70,7 @@ export function useContextMenu(getGraphComponent: () => GraphComponent) {
    * Registers the context menu on the current input mode.
    */
   function register(inputMode: GraphEditorInputMode | GraphViewerInputMode): void {
-    addOpeningEventListeners(graphComponent, location => {
+    addOpeningEventListeners(graphComponent, (location) => {
       const worldLocation = graphComponent.toWorldFromPage(location)
       const displayMenu = inputMode.contextMenuInputMode.shouldOpenMenu(worldLocation)
       if (displayMenu) {
@@ -177,7 +177,7 @@ export function useContextMenu(getGraphComponent: () => GraphComponent) {
     }
 
     // Listen to the context menu key to make it work in Chrome
-    componentDiv.addEventListener('keyup', evt => {
+    componentDiv.addEventListener('keyup', (evt) => {
       if (evt.key === 'ContextMenu') {
         evt.preventDefault()
         openingCallback(getCenterInPage(componentDiv))

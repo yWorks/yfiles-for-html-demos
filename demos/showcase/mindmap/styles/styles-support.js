@@ -93,7 +93,7 @@ export function initializeStyles() {
 export function updateStyles(subtreeRoot, fullGraph) {
   const { nodes: subtreeNodes, edges: subtreeEdges } = getSubtree(fullGraph, subtreeRoot)
 
-  subtreeNodes.forEach(node => {
+  subtreeNodes.forEach((node) => {
     const depth = getDepth(node)
     const label = node.labels.first()
     const nodeStyle = getNodeStyle(depth)
@@ -102,7 +102,7 @@ export function updateStyles(subtreeRoot, fullGraph) {
     fullGraph.setStyle(label, labelStyle)
   })
 
-  subtreeEdges.forEach(edge => {
+  subtreeEdges.forEach((edge) => {
     const depth = getDepth(edge.sourceNode)
     const edgeStyle = getEdgeStyle(depth)
     fullGraph.setStyle(edge, edgeStyle)

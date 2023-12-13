@@ -194,7 +194,7 @@ function allowEditing(geim, enabled) {
  */
 function initializeUI(graphComponent) {
   const allowEditing = document.querySelector('#allowed-editing-operations')
-  allowEditing.addEventListener('change', evt =>
+  allowEditing.addEventListener('change', (evt) =>
     configureEditing(graphComponent, allowEditing.value)
   )
 }

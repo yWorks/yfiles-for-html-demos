@@ -214,7 +214,7 @@ function initializeGraphComponent() {
   graphComponent.clipboard = graphClipboard
 
   const decorator = graphComponent.graph.decorator
-  decorator.nodeDecorator.editLabelHelperDecorator.setFactory(node => {
+  decorator.nodeDecorator.editLabelHelperDecorator.setFactory((node) => {
     const style = node.style
     if (style.lookup && style.lookup(node, IEditLabelHelper.$class)) {
       return style.lookup(node, IEditLabelHelper.$class)
@@ -266,7 +266,7 @@ function initializeInputMode() {
   const nodeDropInputMode = new NoNestedTablesDropInputMode()
   nodeDropInputMode.showPreview = true
   nodeDropInputMode.enabled = true
-  nodeDropInputMode.isGroupNodePredicate = draggedNode =>
+  nodeDropInputMode.isGroupNodePredicate = (draggedNode) =>
     !!draggedNode.lookup(ITable.$class) || draggedNode.tag === 'GroupNode'
   graphEditorInputMode.nodeDropInputMode = nodeDropInputMode
 
@@ -347,7 +347,7 @@ function enableFolding() {
   graphComponent.graph.nodeDefaults.labels.layoutParameter =
     compositeLabelModel.createDefaultParameter()
 
-  manager.masterGraph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(node => {
+  manager.masterGraph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory((node) => {
     if (node.lookup(ITable.$class)) {
       // Pool only have a dynamic PortCandidate
       return IPortCandidateProvider.fromCandidates([
@@ -528,7 +528,7 @@ function onFileSelected(e) {
     const isGraphML = file.name.toLowerCase().endsWith('.graphml')
     if (isBPMN || isGraphML) {
       const reader = new FileReader()
-      reader.onload = async ev => {
+      reader.onload = async (ev) => {
         // get the file content that shall be parsed by a BpmnDiParser or a GraphMLIOHandler
         const content = ev.target.result
         if (isBPMN) {
@@ -563,7 +563,7 @@ function initializeContextMenu() {
   // Add event listeners to the various events that open the context menu. These listeners then
   // call the provided callback function which in turn asks the current ContextMenuInputMode if a
   // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
       contextMenu.show(location)
     }
@@ -920,8 +920,8 @@ class AdditionalEditLabelHelper extends EditLabelHelper {
       return InteriorLabelModel.NORTH
     }
     // eslint-disable-next-line arrow-body-style
-    const validParameters = parameters.filter(parameter =>
-      owner.labels.every(label => {
+    const validParameters = parameters.filter((parameter) =>
+      owner.labels.every((label) => {
         const bounds = label.layoutParameter.model.getGeometry(label, label.layoutParameter)
         return !parameter.model.getGeometry(label, parameter).bounds.intersects(bounds)
       })

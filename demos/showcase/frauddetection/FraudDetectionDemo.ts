@@ -120,7 +120,7 @@ function initializeUI(): void {
     '#insurance-fraud-detection'
   )!
   const samples = document.querySelector<HTMLSelectElement>('#samples')!
-  samples.addEventListener('change', async event => {
+  samples.addEventListener('change', async (event) => {
     clearPropertiesView()
     // if an inspection view is open, close it
     closeFraudDetectionView()
@@ -293,25 +293,25 @@ function initializeTimelineComponent(
 
     updateFraudWarnings(fraudsters)
   })
-  timeline.addBarSelectListener(items => {
+  timeline.addBarSelectListener((items) => {
     const selection = graphComponent.selection
     selection.clear()
 
-    const selectedItems = new Set(items.map(item => item.id))
-    graphComponent.graph.nodes.forEach(node => {
+    const selectedItems = new Set(items.map((item) => item.id))
+    graphComponent.graph.nodes.forEach((node) => {
       const entity = getEntityData(node)
       if (selectedItems.has(entity.id)) {
         selection.setSelected(node, true)
       }
     })
   })
-  timeline.addBarHoverListener(items => {
+  timeline.addBarHoverListener((items) => {
     const highlightManager = graphComponent.highlightIndicatorManager
     highlightManager.clearHighlights()
 
-    const selected = new Set(items.map(item => item.id))
+    const selected = new Set(items.map((item) => item.id))
 
-    graphComponent.graph.nodes.forEach(node => {
+    graphComponent.graph.nodes.forEach((node) => {
       const entity = getEntityData(node)
       if (selected.has(entity.id)) {
         highlightManager.addHighlight(node)

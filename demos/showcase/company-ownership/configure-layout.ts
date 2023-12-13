@@ -94,7 +94,7 @@ export function createLayoutData(
     configureEdgeHierarchyCandidates(isHierarchyEdge)
 
   const layoutData = new HierarchicLayoutData({
-    edgeDirectedness: item => (isHierarchyEdge(item) ? 1 : 0),
+    edgeDirectedness: (item) => (isHierarchyEdge(item) ? 1 : 0),
     sourceGroupIds: (item: IEdge) =>
       isHierarchyEdge(item) ? 's-' + nodeId(item.sourceNode!).toString() : null,
     targetGroupIds: (item: IEdge) =>
@@ -105,7 +105,7 @@ export function createLayoutData(
   })
 
   if (moveToTop) {
-    layoutData.partitionGridData.rowIndices = new ItemMapping(node =>
+    layoutData.partitionGridData.rowIndices = new ItemMapping((node) =>
       graph.inEdgesAt(node).filter(isHierarchyEdge).size === 0 ? 0 : 1
     )
   }

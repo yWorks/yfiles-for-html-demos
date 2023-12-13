@@ -335,8 +335,8 @@ class ExistingAndFreePortCandidateProvider extends PortCandidateProviderBase {
     // Create the candidate for each port
     if (graph) {
       this.node.ports
-        .filter(port => port.tag.incoming === incoming)
-        .forEach(port => {
+        .filter((port) => port.tag.incoming === incoming)
+        .forEach((port) => {
           const portCandidate = new DefaultPortCandidate(port)
           portCandidate.validity =
             graph.degree(port) === 0 ? PortCandidateValidity.VALID : PortCandidateValidity.INVALID

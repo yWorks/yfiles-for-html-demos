@@ -94,7 +94,7 @@ export function createFeatureLayoutConfiguration(graph) {
 
   // use the layout data to pass the information about the placement of individual edges
   const organicLayoutData = new OrganicLayoutData()
-  organicLayoutData.edgeLabelPreferredPlacement = label => {
+  organicLayoutData.edgeLabelPreferredPlacement = (label) => {
     switch (label.text) {
       case 'Source':
       case 'Parallel Source':
@@ -132,7 +132,7 @@ export function createFeatureLayoutConfiguration(graph) {
   const labelingData = new LabelingData()
   // define the edges that have to be arranged by the generic labeling,
   // i.e., the labels of self-loops and parallel edges
-  labelingData.affectedLabels = label => {
+  labelingData.affectedLabels = (label) => {
     const owner = label.owner
     if (owner instanceof IEdge) {
       const isParallelEdge = parallelEdgeRouterData.routedParallelEdges.includes(owner)

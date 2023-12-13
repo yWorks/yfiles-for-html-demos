@@ -52,7 +52,7 @@ export function createFeatureLayoutConfiguration(graph) {
   // create the (optional) layout data to configure node types
   const compactDiskData = new CompactDiskLayoutData()
   // the node types are taken from an optional nodeType property on the node's tag
-  compactDiskData.nodeTypes.delegate = node => (node.tag ? node.tag.nodeType : null)
+  compactDiskData.nodeTypes.delegate = (node) => (node.tag ? node.tag.nodeType : null)
 
   // create a recursive layout that will apply the compact disk layout to each grouping
   // hierarchy independently

@@ -93,15 +93,15 @@ async function run() {
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
 
-  const nodesSource = graphBuilder.createNodesSource(graphData.nodeList, item => item.id)
-  nodesSource.nodeCreator.layoutProvider = item =>
+  const nodesSource = graphBuilder.createNodesSource(graphData.nodeList, (item) => item.id)
+  nodesSource.nodeCreator.layoutProvider = (item) =>
     item.label === 'Hobbies' ? new Rect(0, 0, 130, 70) : new Rect(0, 0, 80, 40)
-  nodesSource.nodeCreator.createLabelBinding(data => data.label)
+  nodesSource.nodeCreator.createLabelBinding((data) => data.label)
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -138,7 +138,7 @@ function updateSearch(searchText) {
   // first remove previous highlights
   manager.clearHighlights()
   if (searchText.trim() !== '') {
-    graphComponent.graph.nodes.forEach(node => {
+    graphComponent.graph.nodes.forEach((node) => {
       if (matches(node, searchText)) {
         // if the node is a match, highlight it
         manager.addHighlight(node)
@@ -154,7 +154,7 @@ function updateSearch(searchText) {
  * @returns {boolean} True if the node matches the text, false otherwise
  */
 function matches(node, text) {
-  return node.labels.some(label => label.text.toLowerCase().includes(text.toLowerCase()))
+  return node.labels.some((label) => label.text.toLowerCase().includes(text.toLowerCase()))
 }
 
 /**
@@ -177,7 +177,7 @@ function initializeGraph(graph) {
  */
 function initializeUI() {
   // adds the listener to the search box
-  document.querySelector('#searchBox').addEventListener('input', e => {
+  document.querySelector('#searchBox').addEventListener('input', (e) => {
     updateSearch(e.target.value)
   })
 }

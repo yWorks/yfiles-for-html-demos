@@ -63,14 +63,14 @@ export async function runLayout(
       orthogonalRouting: true
     })
     layoutData = new HierarchicLayoutData({
-      sourcePortConstraints: _ => PortConstraint.create(PortSide.EAST, true),
-      targetPortConstraints: _ => PortConstraint.create(PortSide.WEST, true)
+      sourcePortConstraints: (_) => PortConstraint.create(PortSide.EAST, true),
+      targetPortConstraints: (_) => PortConstraint.create(PortSide.WEST, true)
     })
   } else {
     layout = new EdgeRouter()
     layoutData = new EdgeRouterData({
-      sourcePortConstraints: _ => PortConstraint.create(PortSide.EAST, true),
-      targetPortConstraints: _ => PortConstraint.create(PortSide.WEST, true)
+      sourcePortConstraints: (_) => PortConstraint.create(PortSide.EAST, true),
+      targetPortConstraints: (_) => PortConstraint.create(PortSide.WEST, true)
     })
   }
 

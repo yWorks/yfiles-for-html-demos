@@ -47,7 +47,7 @@ export function scaleData(trail) {
   const { maxX, maxY } = getMax(trail)
 
   return trail
-    .map(point => {
+    .map((point) => {
       const xScaled = scalePoint(point.x, maxX, SCALED_MAX_X)
       const yScaled = -scalePoint(point.y, maxY, SCALED_MAX_Y)
       return new Point(xScaled, yScaled)
@@ -61,8 +61,8 @@ export function scaleData(trail) {
  * @returns {!object}
  */
 export function getMax(trail) {
-  const xCoords = trail.map(point => point.x)
-  const yCoords = trail.map(point => point.y)
+  const xCoords = trail.map((point) => point.x)
+  const yCoords = trail.map((point) => point.y)
   const maxX = Math.max(...xCoords)
   const maxY = Math.max(...yCoords)
   return { maxX, maxY }

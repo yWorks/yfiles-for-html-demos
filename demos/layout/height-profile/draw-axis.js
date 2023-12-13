@@ -286,8 +286,8 @@ class AxisVisual extends BaseClass(IVisualCreator, IBoundsProvider) {
     const graphComponent = context.canvasComponent
 
     // calculate the bounding box that contains all nodes
-    const xValues = graphComponent.graph.nodes.map(node => node.layout.x)
-    const yValues = graphComponent.graph.nodes.map(node => node.layout.y)
+    const xValues = graphComponent.graph.nodes.map((node) => node.layout.x)
+    const yValues = graphComponent.graph.nodes.map((node) => node.layout.y)
 
     const minX = Math.min(...xValues)
     const minY = Math.min(...yValues)

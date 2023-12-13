@@ -78,7 +78,7 @@ export default class OrgchartOverviewCanvasVisualCreator extends GraphOverviewCa
   paintEdge(renderContext: IRenderContext, ctx: CanvasRenderingContext2D, edge: IEdge): void {
     ctx.beginPath()
     ctx.moveTo(edge.sourcePort!.location.x, edge.sourcePort!.location.y)
-    edge.bends.forEach(bend => {
+    edge.bends.forEach((bend) => {
       ctx.lineTo(bend.location.x, bend.location.y)
     })
     ctx.lineTo(edge.targetPort!.location.x, edge.targetPort!.location.y)

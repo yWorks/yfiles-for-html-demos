@@ -400,18 +400,18 @@ export class StructureView {
 
     // create the label
     const label = document.createElement('label')
-    label.setAttribute('data-groupElement', `group#${groupId}`)
+    label.setAttribute('data-groupElement', `group-${groupId}`)
     label.textContent = groupNode.labels.at(0)?.text ?? this.groupLabelPlaceholder
     label.addEventListener('click', () => this.elementClickedCallback(groupNode))
 
     // the collapse/expand control is done via checkbox
     const collapseBox = document.createElement('input')
-    collapseBox.id = `group#${groupId}`
+    collapseBox.id = `group-${groupId}`
     collapseBox.type = 'checkbox'
     collapseBox.checked = true
 
     // sync the folding state with the graph if enabled
-    collapseBox.addEventListener('change', e => this.syncGroupNodeStateWithElement(e))
+    collapseBox.addEventListener('change', (e) => this.syncGroupNodeStateWithElement(e))
 
     const childRoot = document.createElement('ol')
 

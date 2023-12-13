@@ -266,7 +266,7 @@ function onPasteSpecialCommand(component) {
   component.selection.clear()
 
   // This is the filter for the Paste call.
-  const filter = item => item instanceof INode || item instanceof ILabel
+  const filter = (item) => item instanceof INode || item instanceof ILabel
   // This callback is executed for every pasted element. We use it to select the pasted nodes.
   const pasted = (originalItem, pastedItem) => {
     if (pastedItem instanceof INode) {
@@ -289,11 +289,11 @@ function onEditNameCommand(component, elementID) {
   const nodeNameInput = nameDialog.querySelector('#node-name-input')
   nodeNameInput.value = getCommonName(component.selection.selectedNodes)
 
-  const applyListener = evt => {
+  const applyListener = (evt) => {
     evt.preventDefault()
     nameDialog.style.display = 'none'
     const name = nodeNameInput.value
-    component.selection.selectedNodes.forEach(node => {
+    component.selection.selectedNodes.forEach((node) => {
       node.tag.name = name
       // The firePropertyChanged method is available on the tag because it was added by the
       // {@link StringTemplateNodeStyle.makeObservable} method.

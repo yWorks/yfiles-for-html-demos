@@ -125,10 +125,10 @@ function initializeInputModes() {
   // use a position handler that avoids overlapping,
   // but only apply it to the selected node and not to the children of groups
   graph.decorator.nodeDecorator.positionHandlerDecorator.setFactory(
-    node => {
+    (node) => {
       return node === graphComponent.selection.selectedNodes.at(0)
     },
-    node => {
+    (node) => {
       // Lookup the node position handler that only handles the location of the node itself
       const defaultPositionHandler = DefaultGraph.DEFAULT_NODE_LOOKUP.contextLookup(
         node,
@@ -144,7 +144,7 @@ function initializeInputModes() {
   )
 
   // use a reshape handler that avoids overlapping
-  graph.decorator.nodeDecorator.reshapeHandlerDecorator.setFactory(node => {
+  graph.decorator.nodeDecorator.reshapeHandlerDecorator.setFactory((node) => {
     // Lookup the node reshape handler that only reshapes the node itself (and not its parent group node)
     const defaultReshapeHandler = DefaultGraph.DEFAULT_NODE_LOOKUP.contextLookup(
       node,
@@ -213,28 +213,28 @@ function loadGraph(sampleName) {
     data: data.nodes,
     id: 'id',
     parentId: 'parentId',
-    layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
+    layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   if (data.groups) {
     builder.createGroupNodesSource({
       data: data.groups,
       id: 'id',
       parentId: 'parentId',
-      layout: data => data // the data object itself has x, y, width, height properties
+      layout: (data) => data // the data object itself has x, y, width, height properties
     })
   }
   builder.createEdgesSource(data.edges, 'source', 'target', 'id')
 
   builder.buildGraph()
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
       graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
     }
     if (edge.tag.targetPort) {
       graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
     }
-    edge.tag.bends.forEach(bend => {
+    edge.tag.bends.forEach((bend) => {
       graph.addBend(edge, bend)
     })
   })

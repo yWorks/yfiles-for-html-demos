@@ -138,7 +138,7 @@ function initializeInputMode(): void {
   // handle changes on the hovered items
   mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
     if (subTree !== null) {
-      subTree.nodes.forEach(node => {
+      subTree.nodes.forEach((node) => {
         const style = node.style as RectangleNodeStyle
         style.stroke = normalStroke
       })
@@ -147,7 +147,7 @@ function initializeInputMode(): void {
     const newItem = evt.item as INode
     if (newItem) {
       subTree = new Subtree(graph, newItem)
-      subTree.nodes.forEach(node => {
+      subTree.nodes.forEach((node) => {
         const style = node.style as RectangleNodeStyle
         style.stroke = hoveredThickStroke
       })

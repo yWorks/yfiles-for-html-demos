@@ -166,7 +166,7 @@ function configureContextMenu(graphComponent: GraphComponent): void {
   // Add event listeners to the various events that open the context menu. These listeners then
   // call the provided callback function which in turn asks the current ContextMenuInputMode if a
   // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
       contextMenu.show(location)
     }
@@ -244,7 +244,7 @@ function populateContextMenu(
       aggregateAll(shapeAndFillSelector, shapeAndFillStyle)
     )
 
-    const separateAllowed = graphComponent.graph.nodes.some(node =>
+    const separateAllowed = graphComponent.graph.nodes.some((node) =>
       aggregateGraph.isAggregationItem(node)
     )
 
@@ -328,9 +328,9 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id,
-    parentId: item => item.parentId
-  }).nodeCreator.styleProvider = item => {
+    id: (item) => item.id,
+    parentId: (item) => item.parentId
+  }).nodeCreator.styleProvider = (item) => {
     switch (item.tag) {
       case 'b1':
         return new ShapeNodeStyle({
@@ -379,8 +379,8 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -400,15 +400,15 @@ function aggregateSame<TKey>(
 ): void {
   // get one representative of each kind of node (determined by the selector) ignoring aggregation nodes
   const distinctNodes: IList<INode> = nodes
-    .filter(n => !aggregateGraph.isAggregationItem(n))
+    .filter((n) => !aggregateGraph.isAggregationItem(n))
     .groupBy({
       keySelector: selector,
       resultCreator: (key, enumerable) => ({ key: key, enumerable: enumerable })
     })
-    .map(grouping => grouping.enumerable.first())
+    .map((grouping) => grouping.enumerable.first())
     .toList()
 
-  distinctNodes.forEach(node => {
+  distinctNodes.forEach((node) => {
     // aggregate all nodes of the same kind as the representing node
     const nodesOfSameKind = collectNodesOfSameKind(node, selector)
     aggregate(nodesOfSameKind, selector(node), styleFactory)
@@ -425,8 +425,8 @@ function aggregateSame<TKey>(
 function collectNodesOfSameKind<TKey>(node: INode, selector: (arg: INode) => TKey): IList<INode> {
   const nodeKind = selector(node)
   return graphComponent.graph.nodes
-    .filter(n => !aggregateGraph.isAggregationItem(n))
-    .filter(n => YObject.equals(selector(n), nodeKind))
+    .filter((n) => !aggregateGraph.isAggregationItem(n))
+    .filter((n) => YObject.equals(selector(n), nodeKind))
     .toList()
 }
 
@@ -447,7 +447,7 @@ function aggregateAll<TKey>(
       resultCreator: (key, enumerable) => ({ key: key, enumerable: enumerable })
     })
     .toList()
-    .forEach(arg => {
+    .forEach((arg) => {
       aggregate(arg.enumerable.toList(), arg.key, styleFactory)
     })
 
@@ -478,7 +478,7 @@ function aggregate<TKey>(
  * @param nodes the nodes to separate
  */
 function separate(nodes: IEnumerable<INode>): void {
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     if (aggregateGraph.isAggregationItem(node)) {
       aggregateGraph.separate(node)
     }

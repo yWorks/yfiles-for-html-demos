@@ -88,13 +88,13 @@ export function changeLabelLayoutParameters(graph: IGraph) {
  * Resets each label layout to the graph default.
  */
 export function resetLabelLayoutParameters(graph: IGraph) {
-  graph.nodeLabels.forEach(label =>
+  graph.nodeLabels.forEach((label) =>
     graph.setLabelLayoutParameter(
       label,
       graph.nodeDefaults.labels.layoutParameter
     )
   )
-  graph.edgeLabels.forEach(label =>
+  graph.edgeLabels.forEach((label) =>
     graph.setLabelLayoutParameter(
       label,
       graph.edgeDefaults.labels.layoutParameter

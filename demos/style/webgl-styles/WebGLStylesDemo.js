@@ -190,11 +190,11 @@ function configureInteraction(graphComponent) {
   graph.decorator.edgeDecorator.positionHandlerDecorator.hideImplementation()
 
   // Do not show bend handles and disable bend creation for styles that do not support bends
-  graph.decorator.bendDecorator.handleDecorator.hideImplementation(bend => {
+  graph.decorator.bendDecorator.handleDecorator.hideImplementation((bend) => {
     const style = gmm.getStyle(bend.owner)
     return !(style instanceof WebGL2PolylineEdgeStyle)
   })
-  graph.decorator.edgeDecorator.bendCreatorDecorator.hideImplementation(edge => {
+  graph.decorator.edgeDecorator.bendCreatorDecorator.hideImplementation((edge) => {
     const style = gmm.getStyle(edge)
     return !(style instanceof WebGL2PolylineEdgeStyle)
   })
@@ -301,7 +301,7 @@ function createFontAwesomeIcons() {
     'fas fa-camera-retro'
   ]
   const ctx = createCanvasContext(128, 128)
-  return faClasses.map(faClass => createFontAwesomeIcon(ctx, faClass))
+  return faClasses.map((faClass) => createFontAwesomeIcon(ctx, faClass))
 }
 
 /**
@@ -807,7 +807,7 @@ function updateSelectedItems(graphComponent, type) {
         if (style instanceof WebGL2DefaultLabelStyle) {
           gmm.setStyle(label, getConfiguredLabelStyle())
         } else {
-          const idx = fontAwesomeIcons.findIndex(icon => icon === style.icon)
+          const idx = fontAwesomeIcons.findIndex((icon) => icon === style.icon)
           gmm.setStyle(label, getConfiguredIconLabelStyle(idx))
         }
       }
@@ -833,11 +833,11 @@ function getModelManager(graphComponent) {
  * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
-  configureEditor(type => updateSelectedItems(graphComponent, type))
+  configureEditor((type) => updateSelectedItems(graphComponent, type))
 
   // enable height property only when the edge style supports it
   const height = document.querySelector('#height')
-  document.querySelector('#edgeStyle').addEventListener('change', e => {
+  document.querySelector('#edgeStyle').addEventListener('change', (e) => {
     height.disabled = e.target.value === 'Default'
   })
 }

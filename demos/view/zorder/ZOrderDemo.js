@@ -185,7 +185,7 @@ function createGraph(graph) {
  * Updates the labels of all nodes. Called after duplicate or paste
  */
 function updateLabels() {
-  graphComponent.graph.nodes.forEach(node => {
+  graphComponent.graph.nodes.forEach((node) => {
     updateLabel(node, zOrderSupport.getZOrder(node))
   })
 }
@@ -202,9 +202,9 @@ function updateLabel(node, zIndex) {
     ? graphComponent.graph
     : graphComponent.graph.foldingView.manager.masterGraph
 
-  if (node.labels.some(label => label.tag && label.tag.showZIndex)) {
+  if (node.labels.some((label) => label.tag && label.tag.showZIndex)) {
     graph.setLabelText(
-      node.labels.find(label => label.tag.showZIndex),
+      node.labels.find((label) => label.tag.showZIndex),
       `Level: ${zIndex}`
     )
   } else {

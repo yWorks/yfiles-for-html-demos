@@ -163,7 +163,7 @@ function createPaletteEntry(graph: IGraph): HTMLElement {
   // listen for mouse drag events
   paletteEntry.addEventListener(
     'mousedown',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },
@@ -173,7 +173,7 @@ function createPaletteEntry(graph: IGraph): HTMLElement {
   // listen for touch drag events
   paletteEntry.addEventListener(
     'touchstart',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },

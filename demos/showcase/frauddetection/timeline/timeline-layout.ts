@@ -140,7 +140,10 @@ export function applyTimelineLayout<TDataItem>(
  * components bounds.
  */
 class BarScalingStage<TDataItem> extends LayoutStageBase {
-  constructor(private maxHeight: number, private zoom: number) {
+  constructor(
+    private maxHeight: number,
+    private zoom: number
+  ) {
     super()
   }
 
@@ -148,14 +151,14 @@ class BarScalingStage<TDataItem> extends LayoutStageBase {
     const tagProvider = graph.getDataProvider(LayoutGraphAdapter.ORIGINAL_TAG_DP_KEY)!
 
     let maxValue = 0
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const tag = tagProvider.get(node) as Bucket<TDataItem> | null
       if (tag?.type === 'group' && tag.layer === this.zoom) {
         maxValue = Math.max(maxValue, tag.aggregatedValue)
       }
     })
     const scale = maxValue > 0 ? this.maxHeight / maxValue : 1
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const tag = tagProvider.get(node) as Bucket<TDataItem> | null
       if (tag?.type === 'group') {
         graph.setSize(node, graph.getWidth(node), tag.aggregatedValue * scale)

@@ -412,7 +412,7 @@ export class UMLNodeStyle extends NodeStyleBase {
     let width = 125
     const elementFont = getFont(this.elementLabel)
     const elements = data.attributes.concat(data.operations)
-    elements.forEach(element => {
+    elements.forEach((element) => {
       const size = TextRenderSupport.measureText(element, elementFont)
       width = Math.max(width, size.width + LEFT_SPACING + 5)
     })

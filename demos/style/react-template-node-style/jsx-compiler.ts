@@ -47,10 +47,10 @@ window.React = React
 function compileRenderFunction(jsx: string): (props: any) => any {
   const transpiledCode: string = transform('const renderFunction = ' + jsx, {
     presets: ['react', 'env']
-  }).code
+  }).code!
   // eslint-disable-next-line
   const renderFn = new Function('SvgText', transpiledCode + '\n return renderFunction')(SvgText)
-  return props => {
+  return (props) => {
     try {
       return renderFn(props)
     } catch (e: any) {

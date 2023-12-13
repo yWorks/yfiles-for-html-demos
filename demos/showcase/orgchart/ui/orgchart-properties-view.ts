@@ -69,7 +69,7 @@ export function showNodeProperties(node: INode, orgChartGraph: CollapsibleTree):
   if (employee.parent) {
     properties.append(createProperty('Superior', createLinkEntry(employee.parent, orgChartGraph)))
 
-    const colleagues = employee.parent.subordinates!.filter(c => c !== employee)
+    const colleagues = employee.parent.subordinates!.filter((c) => c !== employee)
     if (colleagues.length > 0) {
       properties.append(
         createProperty('Colleagues', ...createLinkEntryList(colleagues, orgChartGraph))
@@ -132,13 +132,13 @@ function createSVGIcon(
 function createLinkEntry(employee: Employee, orgChartGraph: CollapsibleTree): HTMLElement {
   const element = createElement('a', employee.name ?? '')
   element.setAttribute('href', '#')
-  element.addEventListener('click', event => {
+  element.addEventListener('click', (event) => {
     if (employee.email == null) {
       return
     }
 
     const node = orgChartGraph.completeGraph.nodes.find(
-      n => getEmployee(n)?.email === employee.email
+      (n) => getEmployee(n)?.email === employee.email
     )
 
     if (node) {

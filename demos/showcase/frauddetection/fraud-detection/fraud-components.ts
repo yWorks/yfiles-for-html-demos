@@ -88,7 +88,7 @@ export function updateFraudWarnings(fraudsters: INode[]): void {
   const currentFraudComponents = new Set()
 
   // add fraud warning for new fraud components
-  fraudsters.forEach(node => {
+  fraudsters.forEach((node) => {
     const componentIdx = getComponentIdx(node)
     if (visibleFraudComponents.indexOf(componentIdx) < 0) {
       visibleFraudComponents.push(componentIdx)
@@ -105,7 +105,7 @@ export function updateFraudWarnings(fraudsters: INode[]): void {
       visibleFraudComponents.splice(i, 1)
       const componentNodes = getComponentNodes(componentIdx)
       // remove highlight from the component related to the removed warning sign
-      componentNodes.forEach(node => {
+      componentNodes.forEach((node) => {
         fraudHighlightManager.removeHighlight(node)
       })
       removeFraudWarning(componentIdx)
@@ -134,7 +134,7 @@ function createFraudWarning(componentIdx: number): void {
   warningButton.addEventListener('click', () =>
     openFraudDetectionView(componentIdx, graphComponent)
   )
-  warningButton.addEventListener('mouseover', event =>
+  warningButton.addEventListener('mouseover', (event) =>
     addFraudComponentHighlight(parseInt((event.currentTarget as HTMLElement).id))
   )
   warningButton.addEventListener('mouseleave', () => removeFraudComponentHighlight())
@@ -188,7 +188,7 @@ async function animateViewPort(componentIdx: number): Promise<void> {
   let maxX: number = Number.NEGATIVE_INFINITY
   let minY: number = Number.POSITIVE_INFINITY
   let maxY: number = Number.NEGATIVE_INFINITY
-  componentNodes.forEach(node => {
+  componentNodes.forEach((node) => {
     if (graphComponent.graph.contains(node) && isFraud(node)) {
       const { x, y, width, height } = node.layout
       minX = Math.min(minX, x)
@@ -197,7 +197,7 @@ async function animateViewPort(componentIdx: number): Promise<void> {
       maxY = Math.max(maxY, y + height)
     }
   })
-  if (isFinite(minX) && isFinite(maxX) && isFinite(minY) && isFinite(maxY)) {
+  if (Number.isFinite(minX) && Number.isFinite(maxX) && Number.isFinite(minY) && Number.isFinite(maxY)) {
     let rect: Rect = new Rect(minX, minY, maxX - minX, maxY - minY)
     if (graphComponent.viewport.contains(rect) && graphComponent.zoom > 0.8) {
       return
@@ -252,12 +252,12 @@ function updateFraudHighlights(item: IModelItem | null, oldItem: IModelItem | nu
 function highlightFraudComponent(componentIndex: number): void {
   const componentNodes = getComponentNodes(componentIndex)
   const componentNodesSet = new Set(componentNodes)
-  graphComponent.graph.edges.forEach(edge => {
+  graphComponent.graph.edges.forEach((edge) => {
     if (componentNodesSet.has(edge.sourceNode!) && isFraud(edge)) {
       fraudHighlightManager.addHighlight(edge)
     }
   })
-  componentNodes.forEach(node => {
+  componentNodes.forEach((node) => {
     if (isFraud(node)) {
       fraudHighlightManager.addHighlight(node)
     }
@@ -287,11 +287,11 @@ export function calculateComponents(): void {
   // for bank fraud, we remove the bank branch nodes to avoid having
   // large components that contain nodes that have no actual relationship with each other
   const result = new ConnectedComponents({
-    subgraphNodes: node => !bankFraud || getEntityData(node).type !== 'Bank Branch'
+    subgraphNodes: (node) => !bankFraud || getEntityData(node).type !== 'Bank Branch'
   }).run(fullGraph)
 
   const nodeComponentIds = result.nodeComponentIds
-  fullGraph.nodes.forEach(node => {
+  fullGraph.nodes.forEach((node) => {
     const componentIdx = nodeComponentIds.get(node)
     node2Component.set(node, componentIdx)
     if (!component2Nodes.get(componentIdx)) {
@@ -303,9 +303,9 @@ export function calculateComponents(): void {
   if (bankFraud) {
     // we un-hide the bank branch nodes
     // and add them to the components to which their neighbor nodes belong
-    fullGraph.nodes.forEach(node => {
+    fullGraph.nodes.forEach((node) => {
       if (getEntityData(node).type === 'Bank Branch') {
-        fullGraph.edgesAt(node).forEach(edge => {
+        fullGraph.edgesAt(node).forEach((edge) => {
           const sourceNode = edge.sourceNode!
           const targetNode = edge.targetNode!
           const componentIdx =

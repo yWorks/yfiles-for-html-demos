@@ -53,7 +53,7 @@ export default class HtmlLabelStyle extends LabelStyleBase<TypedHtmlVisual<Cachi
   }
 
   /**
-   * Creates a visual that uses a <foreignObject> element to display an HTML-formatted text.
+   * Creates an HTML-based visual to display an HTML-formatted text.
    * @see Overrides {@link LabelStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, label: ILabel): HtmlVisual {
@@ -81,7 +81,7 @@ export default class HtmlLabelStyle extends LabelStyleBase<TypedHtmlVisual<Cachi
 
     // Prevent event propagation for the click event.
     // Otherwise, it will be captured by the graph component, which calls preventDefault on it.
-    htmlElement.querySelectorAll<HTMLElement>('a').forEach(element => {
+    htmlElement.querySelectorAll<HTMLElement>('a').forEach((element) => {
       element.addEventListener(
         'click',
         HtmlLabelStyle.stopPropagationAlwaysListener,
@@ -96,7 +96,7 @@ export default class HtmlLabelStyle extends LabelStyleBase<TypedHtmlVisual<Cachi
   }
 
   /**
-   * Updates the visual that uses a <foreignObject> element to display an HTML-formatted text.
+   * Updates the HTML-based visual to display an HTML-formatted text.
    * @see Overrides {@link LabelStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: HtmlVisual, label: ILabel): HtmlVisual {

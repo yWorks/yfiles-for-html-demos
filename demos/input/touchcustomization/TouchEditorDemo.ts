@@ -171,7 +171,7 @@ function createEditorMode(): GraphEditorInputMode {
   // configure drag and drop
   const nodeDropInputMode = geim.nodeDropInputMode
   nodeDropInputMode.enabled = true
-  nodeDropInputMode.isGroupNodePredicate = node => node.style instanceof GroupNodeStyle
+  nodeDropInputMode.isGroupNodePredicate = (node) => node.style instanceof GroupNodeStyle
   nodeDropInputMode.showPreview = true
 
   // configure input mode priorities
@@ -392,7 +392,7 @@ function addNodeActions(contextMenu: DialContextMenu, node: INode): void {
       graphComponent.selection.size === 0
     )
     .addContextMenuItem(
-      location => ICommand.PASTE.execute(location, graphComponent),
+      (location) => ICommand.PASTE.execute(location, graphComponent),
       'resources/paste.svg',
       'Paste',
       graphComponent.clipboard.empty
@@ -427,7 +427,7 @@ function addEdgeActions(contextMenu: DialContextMenu, edge: IEdge): void {
       graphComponent.selection.size === 0
     )
     .addContextMenuItem(
-      location => ICommand.PASTE.execute(location, graphComponent),
+      (location) => ICommand.PASTE.execute(location, graphComponent),
       'resources/paste.svg',
       'Paste',
       graphComponent.clipboard.empty
@@ -504,7 +504,7 @@ function addCanvasActions(contextMenu: DialContextMenu): void {
       !ICommand.REDO.canExecute(null, graphComponent)
     )
     .addContextMenuItem(
-      location => {
+      (location) => {
         graphComponent.graph.createNodeAt(location)
       },
       'resources/create-node.svg',
@@ -524,7 +524,7 @@ function addCanvasActions(contextMenu: DialContextMenu): void {
       graphComponent.selection.size === 0
     )
     .addContextMenuItem(
-      location => ICommand.PASTE.execute(location, graphComponent),
+      (location) => ICommand.PASTE.execute(location, graphComponent),
       'resources/paste.svg',
       'Paste',
       graphComponent.clipboard.empty
@@ -654,10 +654,10 @@ function configureSelectionIndication(graphComponent: GraphComponent): void {
 function configurePortInteraction(graph: IGraph): void {
   const decorator = graph.decorator
   decorator.edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setFactory(
-    edge => new EdgeReconnectionPortCandidateProvider(edge)
+    (edge) => new EdgeReconnectionPortCandidateProvider(edge)
   )
   decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
-    node => new NodePortCandidateProvider(node)
+    (node) => new NodePortCandidateProvider(node)
   )
 }
 
@@ -692,7 +692,7 @@ function createConfiguredGraph(): IGraph {
  */
 function deleteSelectedNodes(): void {
   const nodesToRemove = graphComponent.selection.selectedNodes.toArray()
-  nodesToRemove.forEach(node => graphComponent.graph.remove(node))
+  nodesToRemove.forEach((node) => graphComponent.graph.remove(node))
 }
 
 /**
@@ -700,7 +700,7 @@ function deleteSelectedNodes(): void {
  */
 function deleteSelectedEdges(): void {
   const edgesToRemove = graphComponent.selection.selectedEdges.toArray()
-  edgesToRemove.forEach(edge => graphComponent.graph.remove(edge))
+  edgesToRemove.forEach((edge) => graphComponent.graph.remove(edge))
 }
 
 /**
@@ -708,7 +708,7 @@ function deleteSelectedEdges(): void {
  */
 function deleteSelectedLabels(): void {
   const labelsToRemove = graphComponent.selection.selectedLabels.toArray()
-  labelsToRemove.forEach(label => graphComponent.graph.remove(label))
+  labelsToRemove.forEach((label) => graphComponent.graph.remove(label))
 }
 
 /**
@@ -716,7 +716,7 @@ function deleteSelectedLabels(): void {
  */
 function deleteSelectedBends(): void {
   const bendsToRemove = graphComponent.selection.selectedBends.toArray()
-  bendsToRemove.forEach(bend => graphComponent.graph.remove(bend))
+  bendsToRemove.forEach((bend) => graphComponent.graph.remove(bend))
 }
 
 /**

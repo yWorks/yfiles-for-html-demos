@@ -9,9 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-#
-
-      Tutorial: Edge Style Implementation - Tutorial: Edge Style Implementation
+# 01 Create a Polyline - Tutorial: Edge Style Implementation
 
 # Custom edge visualizations
 
@@ -57,7 +55,7 @@ The `createPathData` method generates the path data for the SVG path element usi
 ```
 private createPathData(edge: IEdge): string {
   const points = IEdge.getPathPoints(edge).toArray()
-  return 'M ' + points.map(point => `${point.x} ${point.y}`).join(' L ')
+  return 'M ' + points.map((point) => `${point.x} ${point.y}`).join(' L ')
 }
 ```
 
@@ -65,4 +63,4 @@ Note
 
 It’s important that SvgVisual contains an SVG element in the 'http://www.w3.org/2000/svg' namespace. HTML elements are not supported.
 
-[01 Create a Polyline](../../tutorial-style-implementation-edge/01-create-a-polyline/)
+[02 Crop the Polyline](../../tutorial-style-implementation-edge/02-crop-the-polyline/)

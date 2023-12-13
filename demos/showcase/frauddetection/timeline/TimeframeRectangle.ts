@@ -180,7 +180,10 @@ class RectangleVisual extends BaseClass(IVisualCreator) {
    * @param rectangle The rectangle that determines the bounds of this visual object.
    * @param style The styling for the rectangle
    */
-  constructor(public rectangle: MutableRectangle, private readonly style?: TimeFrameStyle) {
+  constructor(
+    public rectangle: MutableRectangle,
+    private readonly style?: TimeFrameStyle
+  ) {
     super()
   }
 
@@ -244,7 +247,10 @@ class RectangleVisual extends BaseClass(IVisualCreator) {
 class RectanglePositionHandler extends BaseClass(IPositionHandler) {
   private initialPosition = new Point(0, 0)
 
-  constructor(private readonly rectangle: IMutableRectangle, public limits: Rect = Rect.INFINITE) {
+  constructor(
+    private readonly rectangle: IMutableRectangle,
+    public limits: Rect = Rect.INFINITE
+  ) {
     super()
   }
 

@@ -141,10 +141,6 @@ export class Sample2NodeStyle extends NodeStyleBase {
 export class Sample2NodeStyleExtension extends MarkupExtension {
   _cssClass = ''
 
-  constructor() {
-    super()
-  }
-
   /**
    * @type {!string}
    */

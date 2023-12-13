@@ -104,25 +104,25 @@ function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
 
   const nodesSource = graphBuilder.createNodesSource({
-    data: graphData.nodeList.filter(item => !item.isGroup),
-    id: item => item.id,
-    parentId: item => item.parentId
+    data: graphData.nodeList.filter((item) => !item.isGroup),
+    id: (item) => item.id,
+    parentId: (item) => item.parentId
   })
-  nodesSource.nodeCreator.createLabelBinding(item => item.label)
-  nodesSource.nodeCreator.layoutProvider = item =>
+  nodesSource.nodeCreator.createLabelBinding((item) => item.label)
+  nodesSource.nodeCreator.layoutProvider = (item) =>
     item.label ? new Rect(0, 0, 400, 250) : undefined
 
   graphBuilder
     .createGroupNodesSource({
-      data: graphData.nodeList.filter(item => item.isGroup),
-      id: item => item.id
+      data: graphData.nodeList.filter((item) => item.isGroup),
+      id: (item) => item.id
     })
-    .nodeCreator.createLabelBinding(item => item.label)
+    .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()

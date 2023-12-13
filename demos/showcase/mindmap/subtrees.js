@@ -48,10 +48,10 @@ import { SubtreePositionHandler } from './interaction/MindMapPositionHandlers.js
 export function initializeSubtrees(graphComponent) {
   const inputMode = graphComponent.inputMode
   // register handlers for dragging and relocating subtrees
-  inputMode.moveInputMode.addDragStartedListener(_ => prepareRelocateSubtree(graphComponent))
-  inputMode.moveInputMode.addDraggedListener(_ => updateSubtreeStylesAndLayout(graphComponent))
-  inputMode.moveInputMode.addDragCanceledListener(_ => resetSubtree(graphComponent))
-  inputMode.moveInputMode.addDragFinishedListener(_ => relocateSubtree(graphComponent))
+  inputMode.moveInputMode.addDragStartedListener((_) => prepareRelocateSubtree(graphComponent))
+  inputMode.moveInputMode.addDraggedListener((_) => updateSubtreeStylesAndLayout(graphComponent))
+  inputMode.moveInputMode.addDragCanceledListener((_) => resetSubtree(graphComponent))
+  inputMode.moveInputMode.addDragFinishedListener((_) => relocateSubtree(graphComponent))
 
   // customize the position handler to move a whole subtree and update the styles and layout
   const filteredGraph = graphComponent.graph
@@ -150,8 +150,8 @@ export async function relocateSubtree(graphComponent) {
         oldNodeData,
         newNodeData,
         movedNode,
-        node =>
-          getSubtree(fullGraph, node).nodes.forEach(n => {
+        (node) =>
+          getSubtree(fullGraph, node).nodes.forEach((n) => {
             const nData = getNodeData(n)
             nData.left = isLeft(node)
           })
@@ -169,7 +169,7 @@ export async function relocateSubtree(graphComponent) {
         oldNodeData,
         newTagData,
         movedNode,
-        node => filteredGraph.nodePredicateChanged(node)
+        (node) => filteredGraph.nodePredicateChanged(node)
       )
     )
 
@@ -237,7 +237,7 @@ export function collapseSubtree(node, collapsed, filteredGraph) {
  */
 export function getRoot(graph) {
   // find the first node with no incoming mind map edges
-  return graph.nodes.find(node => !getInEdge(node, graph))
+  return graph.nodes.find((node) => !getInEdge(node, graph))
 }
 
 /**
@@ -248,7 +248,7 @@ export function getRoot(graph) {
  */
 export function getSubtree(graph, subtreeRoot) {
   const treeAnalysis = new TreeAnalysis({
-    subgraphEdges: e => !isCrossReference(e)
+    subgraphEdges: (e) => !isCrossReference(e)
   })
   const analysisResult = treeAnalysis.run(graph)
   const subtree = analysisResult.getSubtree(subtreeRoot)
@@ -262,7 +262,7 @@ export function getSubtree(graph, subtreeRoot) {
  * @returns {?IEdge}
  */
 export function getInEdge(node, graph) {
-  return graph.inEdgesAt(node).find(edge => !isCrossReference(edge))
+  return graph.inEdgesAt(node).find((edge) => !isCrossReference(edge))
 }
 
 /**
@@ -310,7 +310,7 @@ export function createChild(graph, parent, nodeStyle, edgeStyle, labelStyle) {
   if (isRoot(parent)) {
     // get all edges starting at root and count left or right
     let balance = 0
-    graph.outEdgesAt(parent).forEach(edge => {
+    graph.outEdgesAt(parent).forEach((edge) => {
       if (!isCrossReference(edge)) {
         balance += isLeft(edge.targetNode) ? -1 : 1
       }
@@ -342,7 +342,7 @@ export function removeSubtree(graph, subtreeRoot) {
 
   while (nodesToCheck.length > 0) {
     const node = nodesToCheck.pop()
-    for (const outEdge of graph.outEdgesAt(node).filter(edge => !isCrossReference(edge))) {
+    for (const outEdge of graph.outEdgesAt(node).filter((edge) => !isCrossReference(edge))) {
       nodesToCheck.push(outEdge.targetNode)
     }
     graph.remove(node)
@@ -356,7 +356,7 @@ export function removeSubtree(graph, subtreeRoot) {
  * @param {number} depth The given depth.
  */
 export function setSubtreeDepths(graph, node, depth) {
-  graph.outEdgesAt(node).forEach(edge => {
+  graph.outEdgesAt(node).forEach((edge) => {
     if (!isCrossReference(edge)) {
       setSubtreeDepths(graph, edge.targetNode, depth + 1)
     }
@@ -372,7 +372,7 @@ export function setSubtreeDepths(graph, node, depth) {
  * @returns {boolean} True if a node ahs children, false otherwise
  */
 export function hasChildNodes(node, graph) {
-  return graph.outEdgesAt(node).filter(edge => !isCrossReference(edge)).size > 0
+  return graph.outEdgesAt(node).filter((edge) => !isCrossReference(edge)).size > 0
 }
 
 /**

@@ -300,7 +300,7 @@ export default class FlowchartConfiguration {
     const wizardMode = new GraphWizardInputMode(legendDiv)
     mode.moveUnselectedInputMode.enabled = true
     mode.moveUnselectedInputMode.priority = mode.moveViewportInputMode.priority - 1
-    mode.moveUnselectedInputMode.addDragFinishedListener(_ =>
+    mode.moveUnselectedInputMode.addDragFinishedListener((_) =>
       runLayout(wizardMode, this.createLayout(true), this.layoutData!)
     )
 
@@ -365,7 +365,7 @@ export default class FlowchartConfiguration {
       createChangeNodeColorSet(
         checkAnd([checkNotCreatingEdge, checkForNodeStyle(FlowchartNodeStyle)]),
         this.colorTheme,
-        node => (node.style as FlowchartNodeStyle).fill,
+        (node) => (node.style as FlowchartNodeStyle).fill,
         (style, fill, outline) => {
           ;(style as FlowchartNodeStyle).fill = Fill.from(fill)
           ;(style as FlowchartNodeStyle).stroke = new Stroke({ fill: outline, thickness: 1.5 })
@@ -408,8 +408,8 @@ export default class FlowchartConfiguration {
       [{ key: Key.T }],
       'Change the node type',
       {
-        typeFactory: item => this.getFlowchartType(item as INode),
-        styleFactory: item => {
+        typeFactory: (item) => this.getFlowchartType(item as INode),
+        styleFactory: (item) => {
           return {
             type: 'icon',
             iconPath: 'resources/icons/flowchart-' + this.getFlowchartType(item as INode) + '.svg'
@@ -446,8 +446,8 @@ export default class FlowchartConfiguration {
   private createChangeFlowchartTypeButtons(): ButtonOptions[] {
     const typeToTooltip = (type: FlowchartNodeType) => {
       const name = type
-        .replace(/\d+/, value => ' ' + value)
-        .replace(/([a-z][A-Z])/g, value => value.substring(0, 1) + ' ' + value.substring(1, 2))
+        .replace(/\d+/, (value) => ' ' + value)
+        .replace(/([a-z][A-Z])/g, (value) => value.substring(0, 1) + ' ' + value.substring(1, 2))
       return name.substring(0, 1).toUpperCase() + name.substring(1, name.length)
     }
     const pickerButtons: ButtonOptions[] = []
@@ -704,7 +704,7 @@ export default class FlowchartConfiguration {
           outData: { child, edge }
         }
       },
-      undo: undoData => {
+      undo: (undoData) => {
         const { currentItem, child, edge } = undoData as {
           currentItem: IModelItem
           child: INode
@@ -726,7 +726,7 @@ export default class FlowchartConfiguration {
     ) {
       // only add an edge label when parent was a decision node
       const step2: ActionStep = {
-        action: async inData => {
+        action: async (inData) => {
           const { edge } = inData as { edge: IEdge }
           const labelPicked = await mode.showPickerSelection(
             this.createSelectEdgeLabelTextAction(edge, parentInputMode),
@@ -739,7 +739,7 @@ export default class FlowchartConfiguration {
             outData: inData
           }
         },
-        undo: inData => {
+        undo: (inData) => {
           if (inData) {
             mode.graph.remove(inData as ILabel)
           }
@@ -767,7 +767,7 @@ export default class FlowchartConfiguration {
         }
         return { success, undoData: null, outData: inData }
       },
-      undo: undoData => {
+      undo: (undoData) => {
         // don't undo setting the flowchart type so the new picker selection starts with the previous
         // choice
       }
@@ -777,7 +777,7 @@ export default class FlowchartConfiguration {
     if (parentInputMode instanceof GraphEditorInputMode) {
       // edit node label
       const step4: ActionStep = {
-        action: async inData => {
+        action: async (inData) => {
           const { child, edge } = inData as { child: INode; edge: IEdge }
           // when label editing was canceled, it returns null
           const label = await parentInputMode.addLabel(child)
@@ -788,7 +788,7 @@ export default class FlowchartConfiguration {
           }
           return { success: label != null, undoData: label, outData: edge }
         },
-        undo: inData => {
+        undo: (inData) => {
           if (inData) {
             mode.graph.remove(inData as ILabel)
           }
@@ -810,7 +810,7 @@ export default class FlowchartConfiguration {
   createSelectEdgeLabelTextAction(edge: IEdge, geim: GraphEditorInputMode): WizardAction {
     return new WizardAction(
       'text',
-      mode => true,
+      (mode) => true,
       async (mode, item, type) => {
         if (type === 'custom') {
           const newLabel = await geim.addLabel(edge)
@@ -897,7 +897,7 @@ export default class FlowchartConfiguration {
    * @param type The type of flowchart node to check for.
    */
   isNodeType(type: FlowchartNodeType): PreCondition {
-    return mode =>
+    return (mode) =>
       mode.currentItem instanceof INode &&
       mode.currentItem.style instanceof FlowchartNodeStyle &&
       mode.currentItem.style.type === type
@@ -908,9 +908,6 @@ export default class FlowchartConfiguration {
  * A {@link FlowchartLayout} using an incremental {@link HierarchicLayout}.
  */
 class IncrementalFlowchartLayout extends FlowchartLayout {
-  constructor() {
-    super()
-  }
 
   createHierarchicLayout(): HierarchicLayout {
     const hierarchicLayout = super.createHierarchicLayout()

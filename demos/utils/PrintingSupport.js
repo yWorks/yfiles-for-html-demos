@@ -62,8 +62,6 @@ export default class PrintingSupport {
   // this should be set to the same value.
   projection = Matrix.IDENTITY
 
-  constructor() {}
-
   /**
    * Prints the detail of the given graph that is specified by either a
    * rectangle in world coordinates or a collection of world coordinate points which
@@ -100,11 +98,11 @@ export default class PrintingSupport {
       targetRect = this.getBoundsFromPoints(
         graphComponent
           .getCanvasObjects(graphComponent.rootGroup)
-          .map(co =>
+          .map((co) =>
             co.descriptor.getBoundsProvider(co.userObject).getBounds(graphComponent.canvasContext)
           )
-          .filter(bounds => bounds.isFinite)
-          .flatMap(bounds =>
+          .filter((bounds) => bounds.isFinite)
+          .flatMap((bounds) =>
             IEnumerable.from([
               bounds.topLeft,
               bounds.topRight,
@@ -221,7 +219,7 @@ export default class PrintingSupport {
     }
 
     // This function has to be global, because it is called from the print preview window.
-    window.addPrintDom = win => {
+    window.addPrintDom = (win) => {
       win.document.body.innerHTML = resultingHTML
       win.document.close()
       // Wait for everything to be rendered before printing

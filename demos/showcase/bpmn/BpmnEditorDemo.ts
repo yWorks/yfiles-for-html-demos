@@ -208,7 +208,7 @@ function initializeGraphComponent(): void {
   graphComponent.clipboard = graphClipboard
 
   const decorator = graphComponent.graph.decorator
-  decorator.nodeDecorator.editLabelHelperDecorator.setFactory(node => {
+  decorator.nodeDecorator.editLabelHelperDecorator.setFactory((node) => {
     const style = node.style as BpmnNodeStyle
     if (style.lookup && style.lookup(node, IEditLabelHelper.$class)) {
       return style.lookup(node, IEditLabelHelper.$class) as IEditLabelHelper
@@ -341,7 +341,7 @@ function enableFolding(): void {
   graphComponent.graph.nodeDefaults.labels.layoutParameter =
     compositeLabelModel.createDefaultParameter()
 
-  manager.masterGraph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(node => {
+  manager.masterGraph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory((node) => {
     if (node.lookup(ITable.$class)) {
       // Pool only have a dynamic PortCandidate
       return IPortCandidateProvider.fromCandidates([
@@ -516,7 +516,7 @@ function onFileSelected(e: Event): void {
     const isGraphML = file.name.toLowerCase().endsWith('.graphml')
     if (isBPMN || isGraphML) {
       const reader = new FileReader()
-      reader.onload = async ev => {
+      reader.onload = async (ev) => {
         // get the file content that shall be parsed by a BpmnDiParser or a GraphMLIOHandler
         const content = ev.target!.result as string
         if (isBPMN) {
@@ -894,8 +894,8 @@ class AdditionalEditLabelHelper extends EditLabelHelper {
       return InteriorLabelModel.NORTH
     }
     // eslint-disable-next-line arrow-body-style
-    const validParameters = parameters.filter(parameter =>
-      owner.labels.every(label => {
+    const validParameters = parameters.filter((parameter) =>
+      owner.labels.every((label) => {
         const bounds = label.layoutParameter.model.getGeometry(label, label.layoutParameter)
         return !parameter.model.getGeometry(label, parameter).bounds.intersects(bounds)
       })

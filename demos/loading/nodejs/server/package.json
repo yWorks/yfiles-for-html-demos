@@ -5,10 +5,11 @@
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
-  "main": "server.js",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node ./server.mjs"
+  },
   "dependencies": {
-    "express": "4.18.2",
-    "body-parser": "1.20.2",
-    "yfiles-umd": "../../../../lib-dev/yfiles-umd-26.0.2+dev.tgz"
+    "express": "4.18.2"
   }
 }

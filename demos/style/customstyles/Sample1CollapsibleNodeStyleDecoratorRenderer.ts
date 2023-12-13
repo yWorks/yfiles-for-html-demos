@@ -110,7 +110,7 @@ export default class Sample1CollapsibleNodeStyleDecoratorRenderer extends Collap
    * @see Specified by {@link ILookup.lookup}.
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     if (type === INodeInsetsProvider.$class) {
       // Return the implementation of the wrapped style directly
       const wrappedStyle = this.getWrappedStyle()

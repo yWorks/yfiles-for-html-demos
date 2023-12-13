@@ -39,7 +39,7 @@ import {
   StyleDecorationZoomPolicy
 } from 'yfiles'
 
-export default class GraphSearch {
+export class GraphSearch {
   graphComponent
   searchHighlightIndicatorManager
   matchingNodes = []
@@ -66,7 +66,7 @@ export default class GraphSearch {
       graphSearch.updateAutoCompleteSuggestions(searchBox, autoCompleteSuggestions)
     }
 
-    searchBox.addEventListener('input', e => {
+    searchBox.addEventListener('input', (e) => {
       const input = e.target
       const searchText = input.value
       graphSearch.updateSearch(searchText)
@@ -85,7 +85,7 @@ export default class GraphSearch {
     })
 
     // adds the listener that will focus to the result of the search
-    searchBox.addEventListener('keypress', e => {
+    searchBox.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault()
         graphSearch.zoomToSearchResult()
@@ -93,7 +93,7 @@ export default class GraphSearch {
     })
 
     // adds the listener to enable auto-completion
-    searchBox.addEventListener('keyup', e => {
+    searchBox.addEventListener('keyup', (e) => {
       if (e.key === 'Enter') {
         return
       }
@@ -152,8 +152,8 @@ export default class GraphSearch {
     this.matchingNodes = []
     if (searchText.trim() !== '') {
       this.graphComponent.graph.nodes
-        .filter(node => this.matches(node, searchText))
-        .forEach(node => {
+        .filter((node) => this.matches(node, searchText))
+        .forEach((node) => {
           manager.addHighlight(node)
           this.matchingNodes.push(node)
         })
@@ -195,7 +195,7 @@ export default class GraphSearch {
     }
 
     const maxRect = this.matchingNodes
-      .map(node => node.layout.toRect())
+      .map((node) => node.layout.toRect())
       .reduce((prev, current) => Rect.add(prev, current))
     if (!maxRect.isFinite) {
       return Promise.resolve()
@@ -220,7 +220,7 @@ export default class GraphSearch {
    * @returns {boolean} True if the node matches the text, false otherwise
    */
   matches(node, text) {
-    return node.labels.some(label => label.text.toLowerCase().indexOf(text.toLowerCase()) !== -1)
+    return node.labels.some((label) => label.text.toLowerCase().indexOf(text.toLowerCase()) !== -1)
   }
 }
 

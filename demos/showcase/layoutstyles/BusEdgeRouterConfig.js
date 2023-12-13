@@ -142,7 +142,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
       edgeDescriptors: busIds
     })
 
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       const isFixed =
         scopePartial &&
         !graphSelection.isSelected(edge.sourceNode) &&
@@ -156,25 +156,25 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
     const selectedIds = new Set()
     switch (this.scopeItem) {
       case BusRouterScope.SUBSET:
-        layoutData.affectedEdges.delegate = edge => graphSelection.isSelected(edge)
+        layoutData.affectedEdges.delegate = (edge) => graphSelection.isSelected(edge)
         break
       case BusRouterScope.SUBSET_BUS:
         graph.edges
-          .filter(item => graphSelection.isSelected(item))
-          .forEach(edge => {
+          .filter((item) => graphSelection.isSelected(item))
+          .forEach((edge) => {
             const busId = busIds.get(edge).busId
             if (!selectedIds.has(busId)) {
               selectedIds.add(busId)
             }
           })
 
-        layoutData.affectedEdges.delegate = edge => selectedIds.has(busIds.get(edge).busId)
+        layoutData.affectedEdges.delegate = (edge) => selectedIds.has(busIds.get(edge).busId)
         break
       case BusRouterScope.PARTIAL: {
         graph.nodes
-          .filter(item => graphSelection.isSelected(item))
-          .flatMap(node => graph.edgesAt(node, AdjacencyTypes.ALL))
-          .forEach(edge => {
+          .filter((item) => graphSelection.isSelected(item))
+          .flatMap((node) => graph.edgesAt(node, AdjacencyTypes.ALL))
+          .forEach((edge) => {
             const busId = busIds.get(edge).busId
             if (!selectedIds.has(busId)) {
               selectedIds.add(busId)
@@ -186,7 +186,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
           HideNonOrthogonalEdgesStage.SELECTED_NODES_DP_KEY,
           graphSelection.selectedNodes
         )
-        layoutData.affectedEdges.delegate = edge => selectedIds.has(busIds.get(edge).busId)
+        layoutData.affectedEdges.delegate = (edge) => selectedIds.has(busIds.get(edge).busId)
 
         return layoutData.combineWith(hideNonOrthogonalEdgesLayoutData)
       }
@@ -527,7 +527,7 @@ class HideNonOrthogonalEdgesStage extends LayoutStageBase {
     const selectedNodes = graph.getDataProvider(HideNonOrthogonalEdgesStage.SELECTED_NODES_DP_KEY)
     const hider = new LayoutGraphHider(graph)
     const hiddenEdges = new Set()
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       if (
         affectedEdges.getBoolean(edge) &&
         selectedNodes !== null &&
@@ -544,7 +544,7 @@ class HideNonOrthogonalEdgesStage extends LayoutStageBase {
         }
       }
     })
-    hiddenEdges.forEach(edge => {
+    hiddenEdges.forEach((edge) => {
       hider.hide(edge)
     })
 

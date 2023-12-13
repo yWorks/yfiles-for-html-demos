@@ -365,7 +365,7 @@ function generateSampleGraph(): void {
   graph.createEdge(user, administrator, createGeneralizationStyle())
   graph.createEdge(iAddressable, user, createRealizationStyle())
 
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     if (node.style instanceof UMLNodeStyle) {
       node.style.adjustSize(node, graphComponent.inputMode as GraphEditorInputMode)
     }

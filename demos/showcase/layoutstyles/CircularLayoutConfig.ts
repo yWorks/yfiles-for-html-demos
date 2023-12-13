@@ -208,7 +208,7 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
       this.nodeLabelingStyleItem === NodeLabelingPolicies.RAYLIKE_LEAVES ||
       this.nodeLabelingStyleItem === NodeLabelingPolicies.HORIZONTAL
     ) {
-      graphComponent.graph.nodeLabels.forEach(label => {
+      graphComponent.graph.nodeLabels.forEach((label) => {
         graphComponent.graph.setLabelLayoutParameter(
           label,
           FreeNodeLabelModel.INSTANCE.findBestParameter(
@@ -237,7 +237,7 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
     const layoutData = new CircularLayoutData()
 
     if (this.layoutStyleItem === CircularLayoutStyle.CUSTOM_GROUPS) {
-      layoutData.customGroups.delegate = node => graphComponent.graph.getParent(node)
+      layoutData.customGroups.delegate = (node) => graphComponent.graph.getParent(node)
     }
 
     if (this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.MARKED_EXTERIOR) {

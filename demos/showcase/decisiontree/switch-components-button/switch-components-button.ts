@@ -100,7 +100,7 @@ export function updateButtonState(graphComponent: GraphComponent): void {
   if (activeDecisionTree) {
     switchComponentsButton.classList.remove('disabled')
     switchComponentsButton.title = 'Edit Decision Tree Graph'
-  } else if (graph.nodes.size > 0 && graph.nodes.some(node => !graph.isGroupNode(node))) {
+  } else if (graph.nodes.size > 0 && graph.nodes.some((node) => !graph.isGroupNode(node))) {
     switchComponentsButton.classList.remove('disabled')
     switchComponentsButton.title = 'Show Decision Tree'
   } else {

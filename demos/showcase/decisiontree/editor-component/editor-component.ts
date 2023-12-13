@@ -69,7 +69,7 @@ export function initializeEditorComponent(graphComponent: GraphComponent): void 
   // configures a green outline as custom highlight for the root node of the decision tree
   // see also setAsRootNode action
   graphComponent.graph.decorator.nodeDecorator.highlightDecorator.setImplementation(
-    node => node === rootNode,
+    (node) => node === rootNode,
     new NodeStyleDecorationInstaller({
       nodeStyle: new ShapeNodeStyle({
         fill: null,
@@ -116,8 +116,8 @@ function initializeGraph(graph: IGraph): void {
 
   // provide a single port at the top of the node for group nodes
   graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
-    node => graph.isGroupNode(node),
-    node => new GroupNodePortCandidateProvider(node)
+    (node) => graph.isGroupNode(node),
+    (node) => new GroupNodePortCandidateProvider(node)
   )
 }
 
@@ -237,7 +237,7 @@ export async function readSampleGraph(graphComponent: GraphComponent): Promise<I
 function setLayoutRunning(running: boolean, graphComponent: GraphComponent): void {
   runningLayout = running
   ;(graphComponent.inputMode as GraphEditorInputMode).waitInputMode.waiting = running
-  document.querySelectorAll<HTMLButtonElement>('#editor-toolbar Button').forEach(button => {
+  document.querySelectorAll<HTMLButtonElement>('#editor-toolbar Button').forEach((button) => {
     button.disabled = running
   })
 }

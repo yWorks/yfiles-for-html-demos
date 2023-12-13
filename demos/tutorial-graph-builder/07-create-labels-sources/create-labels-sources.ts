@@ -37,7 +37,7 @@ export function createNodeLabelsWithBinding(graphBuilder: GraphBuilder): void {
   const nodesSource = graphBuilder.createNodesSource(nodeData, 'id')
 
   // create the label binding to the name property
-  nodesSource.nodeCreator.createLabelBinding(data => data.name)
+  nodesSource.nodeCreator.createLabelBinding((data) => data.name)
 }
 export function createNodeLabelsWithProvider(graphBuilder: GraphBuilder): void {
   const nodeData = [{ id: '2', name: 'Monster Inc' }]
@@ -56,7 +56,7 @@ export function createNodeLabelsWithSources(graphBuilder: GraphBuilder): void {
 
   // create the label sources based on the `owners` property
   const labelsSource = nodesSource.nodeCreator.createLabelsSource(
-    data => data.owners
+    (data) => data.owners
   )
   labelsSource.labelCreator.layoutParameterProvider = (
     data
@@ -90,5 +90,7 @@ export function createEdgeLabelsWithProvider(graphBuilder: GraphBuilder): void {
   )
 
   // bind the label text data and add some more text information
-  edgesSource.edgeCreator.createLabelBinding(data => `Owns ${data.ownership}%`)
+  edgesSource.edgeCreator.createLabelBinding(
+    (data) => `Owns ${data.ownership}%`
+  )
 }

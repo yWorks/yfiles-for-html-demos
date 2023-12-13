@@ -710,7 +710,7 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
 
     this.portHandles.clear()
     const portContext = new DelegatingContext(inputModeContext)
-    this.node.ports.forEach(port => {
+    this.node.ports.forEach((port) => {
       const portHandle = new DummyPortLocationModelParameterHandle(port)
       portHandle.initializeDrag(portContext)
       this.portHandles.add(portHandle)
@@ -779,7 +779,7 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
     )
 
     const portContext = new DelegatingContext(inputModeContext)
-    this.portHandles.forEach(portHandle => {
+    this.portHandles.forEach((portHandle) => {
       portHandle.handleMove(portContext, this.dummyLocation, newLocation)
     })
     if (this.reshapeHandler) {
@@ -859,7 +859,7 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
       this.initialLayout.size.toSize()
     )
     const portContext = new DelegatingContext(inputModeContext)
-    this.portHandles.forEach(portHandle => {
+    this.portHandles.forEach((portHandle) => {
       portHandle.cancelDrag(portContext, originalLocation)
     })
     this.portHandles.clear()
@@ -883,7 +883,7 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
       this.dummySize
     )
     const portContext = new DelegatingContext(inputModeContext)
-    this.portHandles.forEach(portHandle => {
+    this.portHandles.forEach((portHandle) => {
       portHandle.dragFinished(portContext, originalLocation, newLocation)
     })
     this.portHandles.clear()
@@ -1178,7 +1178,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
 
     this.portHandles.clear()
     const portContext = new DelegatingContext(inputModeContext)
-    this.node.ports.forEach(port => {
+    this.node.ports.forEach((port) => {
       const portHandle = new DummyPortLocationModelParameterHandle(port)
       portHandle.initializeDrag(portContext)
       this.portHandles.add(portHandle)
@@ -1193,7 +1193,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
       // only collect nodes that are in the viewport
       const rotatedNodes = canvas
         .getCanvasObjects()
-        .filter(co => {
+        .filter((co) => {
           const userObject = co.userObject
           return (
             userObject !== this.node &&
@@ -1202,11 +1202,11 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
             canvas.viewport.intersects(userObject.layout.toRect())
           )
         })
-        .map(co => co.userObject)
+        .map((co) => co.userObject)
       // Group nodes by identical angles
       this.nodeAngles = rotatedNodes.reduce((groups, node) => {
         const angle = node.style.angle
-        const group = groups.find(g => g.angle === angle)
+        const group = groups.find((g) => g.angle === angle)
         if (group) {
           group.nodes.push(node)
         } else {
@@ -1236,7 +1236,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
     this.setAngle(inputModeContext, angle)
 
     const portContext = new DelegatingContext(inputModeContext)
-    this.portHandles.forEach(portHandle => {
+    this.portHandles.forEach((portHandle) => {
       portHandle.handleMove(portContext, originalLocation, newLocation)
     })
     if (this.reshapeHandler) {
@@ -1278,7 +1278,8 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
       const candidate = this.nodeAngles
         .sort((nodeAngle1, nodeAngle2) => nodeAngle2.angle - nodeAngle1.angle)
         .find(
-          nodeAngle => normalizeAngle(Math.abs(nodeAngle.angle - angle)) < this.snapToSameAngleDelta
+          (nodeAngle) =>
+            normalizeAngle(Math.abs(nodeAngle.angle - angle)) < this.snapToSameAngleDelta
         )
       if (candidate) {
         // Add highlight to every matching node
@@ -1286,7 +1287,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
         if (this.sameAngleHighlightedNodes !== candidate.nodes) {
           this.clearSameAngleHighlights(inputModeContext)
         }
-        candidate.nodes.forEach(matchingNode => {
+        candidate.nodes.forEach((matchingNode) => {
           canvas.highlightIndicatorManager.addHighlight(matchingNode)
         })
         this.sameAngleHighlightedNodes = candidate.nodes
@@ -1312,7 +1313,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
     this.setAngle(context, this.initialAngle)
 
     const portContext = new DelegatingContext(context)
-    this.portHandles.forEach(portHandle => {
+    this.portHandles.forEach((portHandle) => {
       portHandle.cancelDrag(portContext, originalLocation)
     })
     this.portHandles.clear()
@@ -1349,7 +1350,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
     }
 
     const portContext = new DelegatingContext(context)
-    this.portHandles.forEach(portHandle => {
+    this.portHandles.forEach((portHandle) => {
       portHandle.dragFinished(portContext, originalLocation, newLocation)
     })
     this.portHandles.clear()
@@ -1384,7 +1385,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
    */
   clearSameAngleHighlights(context) {
     if (this.sameAngleHighlightedNodes) {
-      this.sameAngleHighlightedNodes.forEach(highlightedNode => {
+      this.sameAngleHighlightedNodes.forEach((highlightedNode) => {
         context.canvasComponent.highlightIndicatorManager.removeHighlight(highlightedNode)
       })
       this.sameAngleHighlightedNodes = null
@@ -1764,7 +1765,7 @@ class DelegatingContext extends BaseClass(IInputModeContext) {
 
   /**
    * Delegates to the wrapped context's lookup but cancels the snap context.
-   * @template {*} T
+   * @template T
    * @param {!Class.<T>} type
    * @returns {?T}
    */
@@ -1816,10 +1817,6 @@ class DummyPortLocationModelParameterHandle extends PortLocationModelParameterHa
 export class RotatableNodeStyleDecoratorExtension extends MarkupExtension {
   _angle = 0
   _wrapped
-
-  constructor() {
-    super()
-  }
 
   /**
    * @type {number}

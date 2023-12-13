@@ -61,7 +61,7 @@ export function openFile(encoding = 'utf-8') {
         }
 
         const reader = new FileReader()
-        reader.addEventListener('loadend', evt => {
+        reader.addEventListener('loadend', (evt) => {
           const fileReader = evt.target
           if (fileReader.error == null) {
             resolve({
@@ -107,13 +107,14 @@ export function downloadFile(content, filename, contentType) {
  */
 function createBlob(content, type) {
   switch (type) {
-    case 'application/pdf':
+    case 'application/pdf': {
       const uint8Array = new Uint8Array(content.length)
       for (let i = 0; i < content.length; i++) {
         uint8Array[i] = content.charCodeAt(i)
       }
       return new Blob([uint8Array], { type })
-    case 'application/png':
+    }
+    case 'application/png': {
       const dataUrlParts = content.split(',')
       const bString = window.atob(dataUrlParts[1])
       const byteArray = []
@@ -121,6 +122,7 @@ function createBlob(content, type) {
         byteArray.push(bString.charCodeAt(i))
       }
       return new Blob([new Uint8Array(byteArray)], { type })
+    }
     default:
       return new Blob([content], { type })
   }

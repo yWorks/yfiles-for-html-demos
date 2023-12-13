@@ -74,7 +74,7 @@ export default class CustomNodeLabelModel
    * Returns instances of the support interfaces (which are actually the model instance itself)
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     if (type === ILabelModelParameterProvider.$class && this.candidateCount > 0) {
       // If we request a ILabelModelParameterProvider AND we use discrete label candidates, we return the label model
       // itself, otherwise, null is returned, which means that continuous label positions are supported.
@@ -186,7 +186,10 @@ export class CustomNodeLabelModelParameter extends BaseClass(ILabelModelParamete
    * @param _model The model for this parameter
    * @param ratio The ratio for the given label model parameter
    */
-  constructor(readonly _model: CustomNodeLabelModel, readonly ratio: number) {
+  constructor(
+    readonly _model: CustomNodeLabelModel,
+    readonly ratio: number
+  ) {
     super()
   }
 

@@ -68,7 +68,7 @@ export function calculateDegreeCentrality(graph) {
 
   const nodeCentrality = result.nodeCentrality
   const normalizedNodeCentrality = result.normalizedNodeCentrality
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const centrality = normalizedNodeCentrality.get(node)
     setCentrality(node, centrality)
     graph.addLabel({
@@ -100,7 +100,7 @@ export const weightCentralityDescription = `
 
   const nodeCentrality = result.nodeCentrality
   const normalizedNodeCentrality = result.normalizedNodeCentrality
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const centrality = normalizedNodeCentrality.get(node)
     setCentrality(node, centrality)
     graph.addLabel({ owner: node, text: nodeCentrality.get(node).toFixed(2) })
@@ -131,7 +131,7 @@ export function calculateGraphCentrality(graph, config) {
 
   const nodeCentrality = result.nodeCentrality
   const normalizedNodeCentrality = result.normalizedNodeCentrality
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const centrality = normalizedNodeCentrality.get(node)
     setCentrality(node, centrality)
     graph.addLabel({ owner: node, text: nodeCentrality.get(node).toFixed(2) })
@@ -160,7 +160,7 @@ export function calculateNodeEdgeBetweennessCentrality(graph, config) {
 
   const nodeCentrality = result.nodeCentrality
   const normalizedNodeCentrality = result.normalizedNodeCentrality
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const centrality = normalizedNodeCentrality.get(node)
     setCentrality(node, centrality)
     graph.addLabel({ owner: node, text: nodeCentrality.get(node).toFixed(2) })
@@ -168,7 +168,7 @@ export function calculateNodeEdgeBetweennessCentrality(graph, config) {
 
   const edgeCentrality = result.edgeCentrality
   const normalizedEdgeCentrality = result.normalizedEdgeCentrality
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     const centrality = normalizedEdgeCentrality.get(edge)
     setCentrality(edge, centrality)
     graph.addLabel({
@@ -204,7 +204,7 @@ export function calculateClosenessCentrality(graph, config) {
     }).run(graph)
 
     const normalizedNodeCentrality = result.normalizedNodeCentrality
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const centrality = normalizedNodeCentrality.get(node)
       setCentrality(node, centrality)
       graph.addLabel({
@@ -217,7 +217,7 @@ export function calculateClosenessCentrality(graph, config) {
     // if the graph is not connected, we run the algorithm separately to each connected component
     const connectedComponentsResult = new ConnectedComponents().run(graph)
 
-    connectedComponentsResult.components.forEach(component => {
+    connectedComponentsResult.components.forEach((component) => {
       const result = new ClosenessCentrality({
         weights: config.edgeWeights,
         directed: config.directed,
@@ -225,7 +225,7 @@ export function calculateClosenessCentrality(graph, config) {
       }).run(graph)
 
       const normalizedNodeCentrality = result.normalizedNodeCentrality
-      component.nodes.forEach(node => {
+      component.nodes.forEach((node) => {
         const centrality = normalizedNodeCentrality.get(node)
         setCentrality(node, centrality)
         // we use normalized node centrality for the labels to avoid very small values
@@ -252,12 +252,12 @@ export function calculateEigenvectorCentrality(graph) {
   const result = new EigenvectorCentrality().run(graph)
 
   const nodeCentrality = result.nodeCentrality
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const centrality = nodeCentrality.get(node)
     setCentrality(node, centrality)
     graph.addLabel({
       owner: node,
-      text: isNaN(centrality) ? 'Inf' : centrality.toFixed(2)
+      text: Number.isNaN(centrality) ? 'Inf' : centrality.toFixed(2)
     })
   })
 }
@@ -296,7 +296,7 @@ export function calculatePageRankCentrality(graph, config) {
     return Math.max(maxRank, pageRank.get(node))
   }, 0)
 
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const rank = pageRank.get(node)
     setCentrality(node, rank / maximumRank)
     graph.addLabel({

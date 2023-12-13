@@ -269,7 +269,7 @@ async function loadFriends(item) {
   }
 
   const friends = data.person.friends
-  const copiedFriends = friends.map(friend => copyWithFriends(friend, [person]))
+  const copiedFriends = friends.map((friend) => copyWithFriends(friend, [person]))
   const copiedPerson = copyWithFriends(person, copiedFriends)
   const newNodes = graphBuilder.addPersons([copiedPerson].concat(copiedFriends))
 

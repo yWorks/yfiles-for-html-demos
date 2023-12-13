@@ -244,12 +244,12 @@ export class FlowchartLayout
     const grid = PartitionGrid.getPartitionGrid(graph)
     if (grid) {
       // adjust insets
-      grid.columns.forEach(column => {
+      grid.columns.forEach((column) => {
         column.leftInset = this.laneInsets
         column.rightInset = this.laneInsets
       })
 
-      grid.rows.forEach(row => {
+      grid.rows.forEach((row) => {
         row.topInset = this.laneInsets
         row.bottomInset = this.laneInsets
       })
@@ -267,7 +267,7 @@ export class FlowchartLayout
         graph.removeDataProvider(HierarchicLayout.LAYER_INDEX_DP_KEY)
       }
       const edge2LayoutDescriptor = Maps.createHashedEdgeMap()
-      graph.edges.forEach(edge => {
+      graph.edges.forEach((edge) => {
         edge2LayoutDescriptor.set(
           edge,
           this.createEdgeLayoutDescriptor(
@@ -348,7 +348,7 @@ export class FlowchartLayout
   ): HierarchicLayoutEdgeLayoutDescriptor {
     const ell = graph.getLabelLayout(edge)
     let minLength = 0.0
-    ell.forEach(label => {
+    ell.forEach((label) => {
       const labelSize = label.boundingBox
       if (isRegularEdge(graph, edge)) {
         minLength += horizontal ? labelSize.width : labelSize.height
@@ -504,10 +504,6 @@ class FlowchartTransformerStage extends LayoutStageBase {
   dummyLayerIds: INodeMap = null!
   groupNodeIdWrapper: HashedDataProviderWrapper | null = null
 
-  constructor() {
-    super()
-  }
-
   applyLayout(graph: LayoutGraph): void {
     const hierarchicLayout = getHierarchicCoreLayout(this)
     if (!hierarchicLayout) {
@@ -646,7 +642,7 @@ class FlowchartTransformerStage extends LayoutStageBase {
     const succeedingGroupingConfigurator = new SucceedingLayersInEdgeGroupingConfigurator(this)
     const edgesToReverse = new EdgeList()
     const groupingLists = getGroupingLists(graph)
-    groupingLists.forEach(groupingList => {
+    groupingLists.forEach((groupingList) => {
       if (groupingList === null || groupingList.isEmpty()) {
         return
       }
@@ -660,7 +656,7 @@ class FlowchartTransformerStage extends LayoutStageBase {
         )
       } else {
         const target = groupingList.firstEdge()!.target
-        groupingList.forEach(edge => {
+        groupingList.forEach((edge) => {
           this.targetGroupIds.set(edge, target)
         })
       }
@@ -690,11 +686,11 @@ class FlowchartTransformerStage extends LayoutStageBase {
     if (!directions) {
       return
     }
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       let leftCount = 0
       let rightCount = 0
 
-      node.outEdges.forEach(edge => {
+      node.outEdges.forEach((edge) => {
         const dir = directions.getInt(edge)
         if (dir === BranchDirection.LeftInFlow) {
           leftCount++
@@ -709,7 +705,7 @@ class FlowchartTransformerStage extends LayoutStageBase {
 
       // If there is more than one edge to the left or right side,
       // set less restrictive candidates to allow nicer images.
-      node.outEdges.forEach(edge => {
+      node.outEdges.forEach((edge) => {
         const dir = directions.getInt(edge)
         if (dir === BranchDirection.LeftInFlow || dir === BranchDirection.RightInFlow) {
           this.sourceCandidates.set(edge, this.getPortCandidateCollection(BranchDirection.Flatwise))
@@ -882,7 +878,10 @@ class IdProvider extends DataProviderBase {
  * or else the value in the provider.
  */
 class NodeIdDataProvider extends DataProviderBase {
-  constructor(private backupNodeIdDP: IDataProvider, private provider: IdProvider) {
+  constructor(
+    private backupNodeIdDP: IDataProvider,
+    private provider: IdProvider
+  ) {
     super()
   }
 
@@ -912,7 +911,10 @@ class EdgeIndexComparer extends BaseClass<IComparer<Edge>>(IComparer) implements
  * Comparer, which uses the layer index of the edges' source nodes as an order.
  */
 class LayerIndexComparer extends BaseClass<IComparer<Edge>>(IComparer) implements IComparer<Edge> {
-  constructor(private enclosing: FlowchartTransformerStage, private hasLayerIds: boolean) {
+  constructor(
+    private enclosing: FlowchartTransformerStage,
+    private hasLayerIds: boolean
+  ) {
     super()
   }
 
@@ -1001,7 +1003,7 @@ class InEdgeGroupingConfigurator {
     const target = layers[0].firstEdge()!.target
     const nonSingletonLayerEdges = new EdgeList()
     const unfinishedEdges = new EdgeList()
-    layers.forEach(layer => {
+    layers.forEach((layer) => {
       // maybe we should also check if a singleton node is connected to too many such buses
       if (nonSingletonLayerEdges.isEmpty() && layer.size === 1) {
         const edge = layer.firstEdge()!
@@ -1126,10 +1128,6 @@ class InEdgeGroupingConfigurator {
  */
 class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigurator {
   private edgesToReverse: EdgeList | null = null
-
-  constructor(enclosing: FlowchartTransformerStage) {
-    super(enclosing)
-  }
 
   /**
    * Creates the complete grouping dummy structure.
@@ -1274,7 +1272,10 @@ class HashedDataProviderWrapper
   extends BaseClass<IDataProvider>(IDataProvider)
   implements IDataProvider
 {
-  constructor(readonly map: IMap<any, any>, readonly fallback: IDataProvider) {
+  constructor(
+    readonly map: IMap<any, any>,
+    readonly fallback: IDataProvider
+  ) {
     super()
   }
 
@@ -1342,7 +1343,7 @@ function getGroupingLists(graph: LayoutGraph): EdgeList[] {
   })
   // Divide the group id partitions according to edge target nodes
   const targetGroupLists: EdgeList[] = []
-  idToListsMap.values.forEach(groupList => {
+  idToListsMap.values.forEach((groupList) => {
     // Sort the edges according to target nodes such that edges with the same target have consecutive indices
     groupList.sort(new EdgeIndexComparer())
     // Add edges to lists and start a new list whenever a new target is found
@@ -1569,7 +1570,7 @@ class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
     itemFactory: IItemFactory
   ): void {
     // set EAST or WEST temporary constraints for the same layer edges
-    node.edges.forEach(edge => {
+    node.edges.forEach((edge) => {
       if (FlowchartPortOptimizer.isTemporarySameLayerEdge(edge, ldp)) {
         const preferredSide = FlowchartPortOptimizer.getPreferredSideForTemporarySameLayerEdge(
           edge,
@@ -1600,7 +1601,7 @@ class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
     const flatwiseEdges = Maps.createHashSet()
     const centralEdges = new EdgeList()
     const edges = source ? node.outEdges : node.inEdges
-    edges.forEach(edge => {
+    edges.forEach((edge) => {
       const edgeData = ldp.getEdgeData(edge)!
       const constraint = source ? edgeData.sourcePortConstraint : edgeData.targetPortConstraint
       const candidates = (
@@ -1623,7 +1624,7 @@ class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
     centralEdges.addAll(flatwiseEdges)
     centralEdges.sort(edgeOrder)
     centralEdges.forEach((edge: Edge, i) => {
-      if (flatwiseEdges.some(flatwiseEdge => flatwiseEdge === edge)) {
+      if (flatwiseEdges.some((flatwiseEdge) => flatwiseEdge === edge)) {
         const side = i < ((centralEdges.size / 2) | 0) ? PortSide.WEST : PortSide.EAST
         itemFactory.setTemporaryPortConstraint(edge, source, PortConstraint.create(side))
       }
@@ -1640,7 +1641,7 @@ class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
     node2AlignWith: IDataProvider,
     edge2Length: IDataProvider
   ): void {
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (!this.alignmentCalculator.isSpecialNode(graph, node, ldp) || node.degree < 2) {
         return
       }
@@ -1657,7 +1658,7 @@ class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
       // port constraint for the same side at the opposite end, too. Otherwise, such an edge gets many bends and
       // may even destroy the alignment.
       if (criticalInEdge !== null) {
-        node.inEdges.forEach(edge => {
+        node.inEdges.forEach((edge) => {
           if (criticalInEdge !== edge && criticalInEdge.source === edge.source) {
             const pc = ldp.getEdgeData(edge)!.targetPortConstraint!
             if (FlowchartPortOptimizer.isFlatwisePortConstraint(pc)) {
@@ -1667,7 +1668,7 @@ class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
         })
       }
       if (criticalOutEdge !== null) {
-        node.outEdges.forEach(edge => {
+        node.outEdges.forEach((edge) => {
           if (criticalOutEdge !== edge && criticalOutEdge.target === edge.target) {
             const pc = ldp.getEdgeData(edge)!.sourcePortConstraint!
             if (FlowchartPortOptimizer.isFlatwisePortConstraint(pc)) {
@@ -1720,7 +1721,7 @@ class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
   static getAllSameLayerEdges(graph: LayoutGraph, ldp: ILayoutDataProvider): EdgeList {
     const sameLayerEdges = new EdgeList()
     const edge2Seen = Maps.createHashedEdgeMap()
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const nData = ldp.getNodeData(node)!
       for (let cell = nData.firstSameLayerEdgeCell; cell !== null; cell = cell.succ()) {
         const sameLayerEdge = cell.info as Edge
@@ -1778,7 +1779,7 @@ class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
     }
     let containsEast = false
     let containsWest = false
-    portCandidates.forEach(pc => {
+    portCandidates.forEach((pc) => {
       const direction = pc.getDirectionForLayoutOrientation(layoutOrientation)
       if (!containsEast && (PortDirections.EAST & direction) !== 0) {
         containsEast = true
@@ -1867,7 +1868,10 @@ class PositionEdgeComparer
   private sameLayerNodePositionComparer: SameLayerNodePositionComparer
   private portConstraintComparer: SingleSidePortConstraintComparer
 
-  constructor(private source: boolean, private ldp: ILayoutDataProvider) {
+  constructor(
+    private source: boolean,
+    private ldp: ILayoutDataProvider
+  ) {
     super()
     this.sameLayerNodePositionComparer = new SameLayerNodePositionComparer(ldp)
     this.portConstraintComparer = new SingleSidePortConstraintComparer()
@@ -2151,7 +2155,7 @@ function getCriticalInEdge(
   edge2Length: IDataProvider
 ): Edge | null {
   let bestEdge: Edge | null = null
-  node.inEdges.forEach(edge => {
+  node.inEdges.forEach((edge) => {
     if (
       node2AlignWith.get(node) === edge.source &&
       (bestEdge === null || edge2Length.getNumber(bestEdge) < edge2Length.getInt(edge))
@@ -2173,7 +2177,7 @@ function getCriticalOutEdge(
   edge2Length: IDataProvider
 ): Edge | null {
   let bestEdge: Edge | null = null
-  node.outEdges.forEach(edge => {
+  node.outEdges.forEach((edge) => {
     if (
       node2AlignWith.get(edge.target) === node &&
       (bestEdge === null || edge2Length.getNumber(bestEdge) < edge2Length.getInt(edge))
@@ -2201,13 +2205,6 @@ const CYCLE_WEIGHT_NON_BACKEDGE = 5.0
 class FlowchartLayerer extends BaseClass<ILayerer>(ILayerer) implements ILayerer {
   private $assignStartNodesToLeftOrTop = false
   private $allowFlatwiseDefaultFlow = false
-
-  // Be careful: due to the handling of edges attaching to group nodes the degree of "degree-one" nodes may be > 1.
-  // We are interested in nodes with degree one in the initial graph.
-
-  constructor() {
-    super()
-  }
 
   /**
    * Returns whether start nodes are assigned at the top or to the left of the layout.
@@ -2260,7 +2257,7 @@ class FlowchartLayerer extends BaseClass<ILayerer>(ILayerer) implements ILayerer
       })
 
       // special handling for some single degree nodes (draw the incident edge as the same layer edge)
-      graph.nodes.forEach(node => {
+      graph.nodes.forEach((node) => {
         if (isDegreeOneNode(node, ldp)) {
           handleDegreeOneNode(node, graph, node2Layer, ldp)
         }
@@ -2270,7 +2267,7 @@ class FlowchartLayerer extends BaseClass<ILayerer>(ILayerer) implements ILayerer
       for (let i = 0; i < layerCount; i++) {
         layers.insert(LayerType.NORMAL, i)
       }
-      graph.nodes.forEach(node => {
+      graph.nodes.forEach((node) => {
         const layer = node2Layer.getInt(node)
         layers.getLayer(layer)!.add(node)
       })
@@ -2297,16 +2294,16 @@ class FlowchartLayerer extends BaseClass<ILayerer>(ILayerer) implements ILayerer
     const groupingNodesDP = graph.getDataProvider(FlowchartTransformerStage.GROUPING_NODES_DP_KEY)!
     const targetGroupIdDP = graph.getDataProvider(PortConstraintKeys.TARGET_GROUP_ID_DP_KEY)!
     const outEdgeBranchTypes = graph.createNodeMap()
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       let type = 0
-      node.outEdges.forEach(edge => {
+      node.outEdges.forEach((edge) => {
         type |= preferredDirectionDP.getInt(edge)
       })
       outEdgeBranchTypes.setInt(node, type)
     })
     const dummies = new YNodeList()
     const edges = graph.getEdgeArray()
-    edges.forEach(edge => {
+    edges.forEach((edge) => {
       let dummyEdge2: Edge
       let dummyEdge1: Edge
       let dummyNode: YNode
@@ -2371,7 +2368,7 @@ class FlowchartLayerer extends BaseClass<ILayerer>(ILayerer) implements ILayerer
    */
   insertSuperRoot(graph: LayoutGraph, weight: IDataAcceptor, minLength: IDataAcceptor): YNode {
     const superRoot = graph.createNode()
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (!node.equals(superRoot) && node.inDegree === 0) {
         const dummyEdge = graph.createEdge(superRoot, node)
         weight.setInt(
@@ -2391,7 +2388,7 @@ class FlowchartLayerer extends BaseClass<ILayerer>(ILayerer) implements ILayerer
 function reverseCycles(graph: LayoutGraph): EdgeList {
   // we only consider edges of type sequence flow
   const hider = new LayoutGraphHider(graph)
-  graph.edges.forEach(e => {
+  graph.edges.forEach((e) => {
     if (getType(graph, e) !== EdgeType.SequenceFlow) {
       hider.hide(e)
     }
@@ -2402,7 +2399,7 @@ function reverseCycles(graph: LayoutGraph): EdgeList {
   try {
     // try to identify backedges and assign lower weights to them
     const coreNodes = new YNodeList()
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (node.inDegree === 0) {
         coreNodes.addLast(node)
       }
@@ -2410,7 +2407,7 @@ function reverseCycles(graph: LayoutGraph): EdgeList {
     const node2Depth = graph.createNodeMap()
     try {
       BfsAlgorithm.getLayers(graph, coreNodes, true, node2Depth)
-      graph.edges.forEach(edge => {
+      graph.edges.forEach((edge) => {
         if (node2Depth.getInt(edge.source) > node2Depth.getInt(edge.target)) {
           // likely to be a back-edge
           edge2Weight.setNumber(edge, CYCLE_WEIGHT_BACKEDGE)
@@ -2425,7 +2422,7 @@ function reverseCycles(graph: LayoutGraph): EdgeList {
     reversedEdges = new EdgeList()
     CycleAlgorithm.findCycleEdges(graph, cyclingEdges, edge2Weight)
 
-    graph.edges.forEach(e => {
+    graph.edges.forEach((e) => {
       if (cyclingEdges.getBoolean(e)) {
         graph.reverseEdge(e)
         reversedEdges.addLast(e)
@@ -2519,7 +2516,7 @@ function handleDegreeOneNode(
   let sameLayerEdgeCount = 0
   let oppositeOutDegree = 0
   let oppositeInDegree = 0
-  opposite.outEdges.forEach(edge => {
+  opposite.outEdges.forEach((edge) => {
     if (!edge.equals(realEdge) && isNormalEdge(ldp.getEdgeData(edge))) {
       const layerDiff = node2Layer.getInt(edge.source) - node2Layer.getInt(edge.target)
       if (layerDiff > 0) {
@@ -2532,7 +2529,7 @@ function handleDegreeOneNode(
     }
   })
 
-  opposite.inEdges.forEach(edge => {
+  opposite.inEdges.forEach((edge) => {
     if (!edge.equals(realEdge) && isNormalEdge(ldp.getEdgeData(edge))) {
       const layerDiff = node2Layer.getInt(edge.source) - node2Layer.getInt(edge.target)
       if (layerDiff > 0) {
@@ -2666,7 +2663,7 @@ class FlowchartLabelProfitModel
   constructor(private graph: LayoutGraph) {
     super()
     this.label2OriginalBox = Maps.createHashMap<INodeLabelLayout, any>()
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const nll = graph.getLabelLayout(node)
       for (let i = 0; i < nll.length; i++) {
         const nlm = nll[i].labelModel
@@ -2881,7 +2878,7 @@ class FlowchartAlignmentCalculator {
     ldp: ILayoutDataProvider
   ): IDataProvider {
     const edgeIsAlignable = Maps.createHashedEdgeMap()
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       edgeIsAlignable.setBoolean(
         edge,
         this.isAlignable(graph, ldp, edge) && this.isRelevant(graph, edge, ldp)
@@ -2905,7 +2902,7 @@ class FlowchartAlignmentCalculator {
     const BasicEdgeLength = 5
     const PenaltyLength = BasicEdgeLength + graph.nodeCount
     const HighPenaltyLength = PenaltyLength * 8
-    graph.edges.forEach(e => {
+    graph.edges.forEach((e) => {
       if (hasFlatwisePortConstraint(layoutData.getEdgeData(e)!)) {
         edgeLength.setInt(e, ZeroLength)
       } else if (isRealEdge(e, layoutData)) {
@@ -2914,7 +2911,7 @@ class FlowchartAlignmentCalculator {
         edgeLength.setInt(e, BasicDummyEdgeLength)
       }
     })
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       let i: number
       let edges: Edge[]
       const nodeData = layoutData.getNodeData(node)!
@@ -2964,7 +2961,7 @@ class FlowchartAlignmentCalculator {
         }
       }
       let hasStraightBranch = false
-      node.edges.forEach(edge => {
+      node.edges.forEach((edge) => {
         if (isStraightBranch(graph, edge, layoutData)) {
           hasStraightBranch = true
           edgeLength.setInt(edge, edgeLength.getInt(edge) + PenaltyLength)
@@ -3041,7 +3038,7 @@ class NodeAlignmentCalculator {
     const groupNode2EndRep = Maps.createHashMap<YNode, YNode>()
     const network = new Graph()
     // create network nodes
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const data = ldp.getNodeData(node)
       if (data !== null && data.type === NodeDataType.GROUP_BEGIN) {
         // all groups begin dummies of the same group node are mapped to the same network node
@@ -3064,7 +3061,7 @@ class NodeAlignmentCalculator {
     })
     // consider edges
     const nonAlignableEdges = new EdgeList()
-    graph.edges.forEach(e => {
+    graph.edges.forEach((e) => {
       if (e.selfLoop || (isGroupNodeBorder(e.source, ldp) && isGroupNodeBorder(e.target, ldp))) {
         return
       }
@@ -3263,7 +3260,7 @@ class NodeAlignmentCalculator {
     ldp: ILayoutDataProvider
   ): INodeMap {
     const node2LaneAlignment = Maps.createHashedNodeMap()
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       node2LaneAlignment.setInt(node, this.getLaneAlignment(node, ldp))
     })
     return node2LaneAlignment
@@ -3488,7 +3485,7 @@ function determineEdgePriorities(
   const hider = new LayoutGraphHider(graph)
   try {
     // hide irrelevant edges
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       edgePriority.setInt(edge, Priority.Basic)
       if (!edgeIsAlignable.getBoolean(edge)) {
         hider.hide(edge)
@@ -3500,6 +3497,7 @@ function determineEdgePriorities(
     const gpm = new GraphPartitionManager(graph, node2CompId)
     try {
       gpm.hideAll()
+      // biome-ignore lint/correctness/noUnreachable: Seems to be an incorrect warning
       for (let i = 0; i < compCount; i++) {
         gpm.displayPartition(i)
         const localHider = new LayoutGraphHider(graph)

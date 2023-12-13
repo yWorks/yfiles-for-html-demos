@@ -139,7 +139,7 @@ typeLabelCreator.preferredSizeProvider = (data): Size =>
   data.type === 'Trust' ? new Size(70, 15) : new Size(100, 15)
 
 // set different widths for nodes with type 'Trust'
-typeLabelCreator.preferredSizeBindings.addBinding('width', data => {
+typeLabelCreator.preferredSizeBindings.addBinding('width', (data) => {
   return data.type === 'Trust' ? 200 : 100
 })
 ```
@@ -157,7 +157,7 @@ edgeLabelCreator.layoutParameterProvider = (): ILabelModelParameter =>
 
 // configure its style
 edgeLabelCreator.defaults.shareStyleInstance = false
-edgeLabelCreator.styleBindings.addBinding('textFill', data => {
+edgeLabelCreator.styleBindings.addBinding('textFill', (data) => {
   return (data.ownership ?? 0) > 50 ? red : grey
 })
 ```

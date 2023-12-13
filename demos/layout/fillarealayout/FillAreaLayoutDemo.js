@@ -140,12 +140,12 @@ async function onDeletedSelection(sender, evt) {
  */
 function getBounds(selection) {
   let bounds = Rect.EMPTY
-  selection.forEach(item => {
+  selection.forEach((item) => {
     if (item instanceof INode) {
       bounds = Rect.add(bounds, item.layout.toRect())
     } else if (item instanceof IEdge) {
       bounds = bounds.add(item.sourcePort.location)
-      item.bends.forEach(bend => {
+      item.bends.forEach((bend) => {
         bounds = bounds.add(bend.location.toPoint())
       })
       bounds = bounds.add(item.targetPort.location)
@@ -172,28 +172,28 @@ function loadGraph(sampleName) {
     data: data.nodes,
     id: 'id',
     parentId: 'parentId',
-    layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
+    layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   if (data.groups) {
     builder.createGroupNodesSource({
       data: data.groups,
       id: 'id',
       parentId: 'parentId',
-      layout: data => data // the data object itself has x, y, width, height properties
+      layout: (data) => data // the data object itself has x, y, width, height properties
     })
   }
   builder.createEdgesSource(data.edges, 'source', 'target', 'id')
 
   builder.buildGraph()
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
       graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
     }
     if (edge.tag.targetPort) {
       graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
     }
-    edge.tag.bends.forEach(bend => {
+    edge.tag.bends.forEach((bend) => {
       graph.addBend(edge, bend)
     })
   })

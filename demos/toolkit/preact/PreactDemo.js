@@ -67,13 +67,13 @@ const App = () => {
   /**
    * Toggle the state property of a specific item.
    */
-  const toggleItemState = index => {
+  const toggleItemState = (index) => {
     const newItems = [...items]
     newItems[index] = { id: newItems[index].id, state: !newItems[index].state }
     setItems(newItems)
   }
 
-  const removeDataItem = index => {
+  const removeDataItem = (index) => {
     const newItems = [...items]
     newItems.splice(index, 1)
     setItems(newItems)

@@ -51,7 +51,7 @@ export default class HtmlLabelStyle extends LabelStyleBase {
    */
   static get stopPropagationAlwaysListener() {
     if (typeof HtmlLabelStyle.$stopPropagationAlwaysListener === 'undefined') {
-      HtmlLabelStyle.$stopPropagationAlwaysListener = evt => {
+      HtmlLabelStyle.$stopPropagationAlwaysListener = (evt) => {
         evt.stopImmediatePropagation()
       }
     }
@@ -69,7 +69,7 @@ export default class HtmlLabelStyle extends LabelStyleBase {
   }
 
   /**
-   * Creates a visual that uses a <foreignObject> element to display an HTML-formatted text.
+   * Creates an HTML-based visual to display an HTML-formatted text.
    * @see Overrides {@link LabelStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!ILabel} label
@@ -100,7 +100,7 @@ export default class HtmlLabelStyle extends LabelStyleBase {
 
     // Prevent event propagation for the click event.
     // Otherwise, it will be captured by the graph component, which calls preventDefault on it.
-    htmlElement.querySelectorAll('a').forEach(element => {
+    htmlElement.querySelectorAll('a').forEach((element) => {
       element.addEventListener(
         'click',
         HtmlLabelStyle.stopPropagationAlwaysListener,
@@ -115,7 +115,7 @@ export default class HtmlLabelStyle extends LabelStyleBase {
   }
 
   /**
-   * Updates the visual that uses a <foreignObject> element to display an HTML-formatted text.
+   * Updates the HTML-based visual to display an HTML-formatted text.
    * @see Overrides {@link LabelStyleBase.updateVisual}
    * @param {!IRenderContext} context
    * @param {!HtmlVisual} oldVisual
@@ -212,7 +212,7 @@ export default class HtmlLabelStyle extends LabelStyleBase {
    * @returns {!function}
    */
   static createStopPropagationListenerForScrolling(element) {
-    return evt => {
+    return (evt) => {
       if (HtmlLabelStyle.needsScrollbar(element)) {
         evt.stopImmediatePropagation()
       }

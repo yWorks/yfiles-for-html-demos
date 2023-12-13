@@ -127,13 +127,13 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
+    id: (item) => item.id
   })
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -211,7 +211,9 @@ function createEditorMode(): IInputMode {
  */
 function initMoveMode(moveInputMode: MoveInputMode): void {
   // register callbacks to notify the organic layout of changes
-  moveInputMode.addDragStartedListener(dragStarted => onMoveInitialized(dragStarted.affectedItems))
+  moveInputMode.addDragStartedListener((dragStarted) =>
+    onMoveInitialized(dragStarted.affectedItems)
+  )
   moveInputMode.addDragCanceledListener(onMoveCanceled)
   moveInputMode.addDraggedListener(onMoving)
   moveInputMode.addDragFinishedListener(onMovedFinished)

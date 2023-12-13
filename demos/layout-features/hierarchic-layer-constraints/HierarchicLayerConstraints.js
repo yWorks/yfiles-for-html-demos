@@ -45,10 +45,10 @@ export function createFeatureLayoutConfiguration(graph) {
   const layoutData = new HierarchicLayoutData()
 
   // get the nodes for which we want to define layer constraints
-  const node0 = graph.nodes.find(node => node.tag === 0)
-  const node2 = graph.nodes.find(node => node.tag === 2)
-  const node7 = graph.nodes.find(node => node.tag === 7)
-  const node9 = graph.nodes.find(node => node.tag === 9)
+  const node0 = graph.nodes.find((node) => node.tag === 0)
+  const node2 = graph.nodes.find((node) => node.tag === 2)
+  const node7 = graph.nodes.find((node) => node.tag === 7)
+  const node9 = graph.nodes.find((node) => node.tag === 9)
 
   // this is the factory that we apply the constraints to
   const layerConstraints = layoutData.layerConstraints

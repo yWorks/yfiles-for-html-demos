@@ -92,7 +92,7 @@ export class DiagramComponent {
     // enable the buttons of the toolbar
     Array.prototype.slice
       .apply(document.querySelectorAll('.demo-page__toolbar button'))
-      .forEach(button => button.removeAttribute('disabled'))
+      .forEach((button) => button.removeAttribute('disabled'))
 
     // wire up buttons
     document.getElementById('zoom-in-btn')!.addEventListener('click', () => {

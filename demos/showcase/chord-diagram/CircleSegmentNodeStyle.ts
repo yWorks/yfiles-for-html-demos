@@ -356,7 +356,10 @@ type NodeData = {
 }
 
 class NodeRenderDataCache {
-  constructor(public readonly nodeData: NodeData, public readonly showStyleHints: boolean) {}
+  constructor(
+    public readonly nodeData: NodeData,
+    public readonly showStyleHints: boolean
+  ) {}
 
   equals(other?: NodeRenderDataCache): boolean {
     if (!other) {

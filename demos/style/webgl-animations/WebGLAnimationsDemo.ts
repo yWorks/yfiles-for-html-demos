@@ -134,11 +134,11 @@ async function run(): Promise<void> {
  * Configures the UI elements.
  */
 function configureUI(graphComponent: GraphComponent) {
-  document.querySelector('#use-labels')!.addEventListener('change', e => {
+  document.querySelector('#use-labels')!.addEventListener('change', (e) => {
     changeLabels(graphComponent, (e.target as HTMLInputElement).checked)
   })
 
-  document.querySelector('#shape-select')!.addEventListener('change', e => {
+  document.querySelector('#shape-select')!.addEventListener('change', (e) => {
     setWebGLStyles(
       graphComponent,
       connectedComponents,
@@ -150,7 +150,7 @@ function configureUI(graphComponent: GraphComponent) {
   document
     .getElementById('animation-configuration')!
     .querySelectorAll<HTMLSelectElement>('select')
-    .forEach(element => {
+    .forEach((element) => {
       element.addEventListener('change', () => {
         changeAnimation(graphComponent, currentSelectedItem)
       })
@@ -167,7 +167,7 @@ function configureUI(graphComponent: GraphComponent) {
 
   const animations: BaseAnimation[] = ['fade', 'pulse', 'beacon', 'scale', 'shake']
   const options: Map<BaseAnimation, HTMLDivElement> = new Map<BaseAnimation, HTMLDivElement>(
-    animations.map(animation => [
+    animations.map((animation) => [
       animation,
       document.querySelector<HTMLDivElement>(`#${animation}-options`)!
     ])
@@ -186,19 +186,19 @@ function configureUI(graphComponent: GraphComponent) {
   )!
 
   const pulseTypeSelect = document.querySelector<HTMLSelectElement>('#pulse-type')!
-  pulseTypeSelect.addEventListener('change', e => {
+  pulseTypeSelect.addEventListener('change', (e) => {
     const select = e.target as HTMLSelectElement
     updateMagnitudeOptions(select.value as PulseType)
   })
 
   const scaleTypeSelect = document.querySelector<HTMLSelectElement>('#scale-type')!
-  scaleTypeSelect.addEventListener('change', e => {
+  scaleTypeSelect.addEventListener('change', (e) => {
     const select = e.target as HTMLSelectElement
     updateMagnitudeOptions(select.value as PulseType)
   })
 
   const baseAnimationSelect = document.querySelector<HTMLSelectElement>('#base-animation')!
-  baseAnimationSelect.addEventListener('change', e => {
+  baseAnimationSelect.addEventListener('change', (e) => {
     const select = e.target as HTMLSelectElement
     const animationType = select.value as BaseAnimation
     const animationMagnitudeSelect =
@@ -385,7 +385,7 @@ function setWebGLStyles(
   connectedComponents.forEach((component, idx) => {
     const fillColor = fillColors[idx % connectedComponents.length]
     const strokeColor = strokeColors[idx % connectedComponents.length]
-    component.nodes.forEach(node => {
+    component.nodes.forEach((node) => {
       gmm.setStyle(
         node,
         new WebGL2ShapeNodeStyle({
@@ -395,7 +395,7 @@ function setWebGLStyles(
           effect: WebGL2Effect.AMBIENT_FILL_COLOR
         })
       )
-      node.labels.forEach(label => {
+      node.labels.forEach((label) => {
         gmm.setStyle(
           label,
           new WebGL2DefaultLabelStyle({
@@ -409,7 +409,7 @@ function setWebGLStyles(
         graphComponent.graph.setLabelLayoutParameter(label, nodeLabelParameter)
       })
     })
-    component.edges.forEach(edge => {
+    component.edges.forEach((edge) => {
       gmm.setStyle(
         edge,
         new WebGL2ArcEdgeStyle({
@@ -470,17 +470,17 @@ function startNewAnimation(graphComponent: GraphComponent, component: Component)
   const animations = [animation]
   const nodesToAnimate = applyToComponentMembers
     ? component.nodes
-    : graphComponent.graph.nodes.filter(node => !component.nodes.has(node))
+    : graphComponent.graph.nodes.filter((node) => !component.nodes.has(node))
   const edgesToAnimate = applyToComponentMembers
     ? component.edges
-    : graphComponent.graph.edges.filter(edge => !component.edges.has(edge))
+    : graphComponent.graph.edges.filter((edge) => !component.edges.has(edge))
 
   nodesToAnimate.forEach((node: INode) => {
     if (animateNodes) {
       gmm.setAnimations(node, animations)
     }
     if (animateLabels) {
-      node.labels.forEach(label => {
+      node.labels.forEach((label) => {
         gmm.setAnimations(label, animations)
       })
     }
@@ -490,7 +490,7 @@ function startNewAnimation(graphComponent: GraphComponent, component: Component)
       gmm.setAnimations(edge, animations)
     }
     if (animateLabels) {
-      edge.labels.forEach(label => {
+      edge.labels.forEach((label) => {
         gmm.setAnimations(label, animations)
       })
     }
@@ -541,7 +541,7 @@ function stopAnimation(graphComponent: GraphComponent, item: IModelItem | null |
   }
 
   const existingAnimation = componentToAnimationMap.get(component)
-  existingAnimation?.stop().then(reachedFinalState => {
+  existingAnimation?.stop().then((reachedFinalState) => {
     // If we haven't reached the final state, this is because we have been restarted in
     // tryStartAnimation, and we should not yet remove the animation.
     // This will happen in a later "start" or "stop" call, instead.
@@ -583,7 +583,7 @@ function changeAnimation(graphComponent: GraphComponent, item: IModelItem | null
   const existingAnimation = componentToAnimationMap.get(component)
   return existingAnimation == null
     ? startNewAnimation(graphComponent, component)
-    : existingAnimation.stop().then(reachedInitialState => {
+    : existingAnimation.stop().then((reachedInitialState) => {
         if (reachedInitialState) {
           removeAnimation(graphComponent, existingAnimation)
           componentToAnimationMap.delete(component)
@@ -598,21 +598,21 @@ function changeAnimation(graphComponent: GraphComponent, item: IModelItem | null
 function removeAnimation(graphComponent: GraphComponent, animation: WebGL2Animation) {
   const graph = graphComponent.graph
   const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const currentAnimations = gmm.getAnimations(node)
     if (currentAnimations.length) {
       gmm.setAnimations(
         node,
-        currentAnimations.filter(currentAnimation => currentAnimation !== animation)
+        currentAnimations.filter((currentAnimation) => currentAnimation !== animation)
       )
     }
   })
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     const currentAnimations = gmm.getAnimations(edge)
     if (currentAnimations.length) {
       gmm.setAnimations(
         edge,
-        currentAnimations.filter(currentAnimation => currentAnimation !== animation)
+        currentAnimations.filter((currentAnimation) => currentAnimation !== animation)
       )
     }
   })
@@ -838,8 +838,8 @@ function getAnimationConfiguration(): {
     color1: colorFade
       ? colors.color1
       : baseAnimation === 'beacon'
-      ? Color.from(document.querySelector<HTMLInputElement>('#beacon-color')!.value)
-      : null,
+        ? Color.from(document.querySelector<HTMLInputElement>('#beacon-color')!.value)
+        : null,
     color2: colorFade ? colors.color2 : null,
     count: Number(document.querySelector<HTMLSelectElement>('#pulse-count')!.value),
     pulseWidth: Number(document.querySelector<HTMLSelectElement>('#pulse-width')!.value),
@@ -951,11 +951,11 @@ async function loadGraph(graphComponent: GraphComponent) {
 function changeLabels(graphComponent: GraphComponent, showLabels: boolean) {
   if (!showLabels) {
     const list = graphComponent.graph.labels.toList()
-    list.forEach(label => graphComponent.graph.remove(label))
+    list.forEach((label) => graphComponent.graph.remove(label))
   } else {
-    connectedComponents.forEach(component => {
+    connectedComponents.forEach((component) => {
       let idx = 0
-      component.nodes.forEach(node => {
+      component.nodes.forEach((node) => {
         const style = new DefaultLabelStyle({ insets: 3 })
         graphComponent.graph.addLabel(node, `${idx}`, InteriorLabelModel.CENTER, style)
         idx++
@@ -976,7 +976,7 @@ function changeLabels(graphComponent: GraphComponent, showLabels: boolean) {
  */
 function calculateComponents(graph: IGraph): Array<Component> {
   const components = new Array<Component>()
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     if (!node.tag) {
       components.push(collectComponent(graph, node))
     }
@@ -992,7 +992,7 @@ function collectComponent(graph: IGraph, node: INode): Component {
   const nodes = new Array<INode>(node)
   while (nodes.length > 0) {
     const currentNode = nodes.pop()
-    graph.edgesAt(currentNode!, AdjacencyTypes.ALL).forEach(edge => {
+    graph.edgesAt(currentNode!, AdjacencyTypes.ALL).forEach((edge) => {
       component.edges.add(edge)
       const oppositeNode = edge.opposite(currentNode!) as INode
       if (!oppositeNode.tag) {

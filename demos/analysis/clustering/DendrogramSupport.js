@@ -227,14 +227,14 @@ export class DendrogramComponent {
       layers.set(hierarchicClusteredNode, layer)
       maxLayer = Math.max(layer, maxLayer)
 
-      node.children.forEach(child => {
+      node.children.forEach((child) => {
         stack.push(child)
       })
     }
 
     // calculate the distance values and move all leaf-nodes to the bottommost layer
     const distanceValues = new Mapper()
-    hierarchicalGraph.nodes.forEach(node => {
+    hierarchicalGraph.nodes.forEach((node) => {
       // move all leaves at the bottom-most layers
       if (hierarchicalGraph.outDegree(node) === 0) {
         layers.set(node, maxLayer - 1)
@@ -365,8 +365,8 @@ export class DendrogramComponent {
     )
 
     this.visited = new Set()
-    result.clusters.forEach(cluster => {
-      cluster.nodes.forEach(node => {
+    result.clusters.forEach((cluster) => {
+      cluster.nodes.forEach((node) => {
         // get the color of the cluster in the original graph
         const color = colors[result.nodeClusterIds.get(node)]
         if (result.getDendrogramNode(node)) {
@@ -380,7 +380,7 @@ export class DendrogramComponent {
               this.updateNodeStyle(hierarchicalParent, color)
 
               // update the style of the out-edges
-              this.dendrogramComponent.graph.outEdgesAt(hierarchicalParent).forEach(edge => {
+              this.dendrogramComponent.graph.outEdgesAt(hierarchicalParent).forEach((edge) => {
                 this.updateEdgeStyle(edge, color)
               })
               this.visited.add(parent)
@@ -441,7 +441,7 @@ export class DendrogramComponent {
       const stack = [dendrogramNode]
       while (stack.length > 0) {
         const descendant = stack.pop()
-        descendant.children.forEach(childNode => {
+        descendant.children.forEach((childNode) => {
           highlightIndicatorManager.addHighlight(this.dendro2hierarchical.get(childNode))
           stack.push(childNode)
         })
@@ -590,7 +590,7 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
 
     const distanceValues = graph.getDataProvider(DendrogramLayout.DISTANCE_VALUES_DP_KEY)
 
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const edges = node.outEdges.toArray()
       if (edges.length > 0) {
         // apply port constraints so that one of the edges adjacent to the source node uses the right side while
@@ -604,7 +604,7 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
     })
 
     // use the difference of the distances between the source and the target node as minimum length
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       const edgeLength = distanceValues.get(edge.source) - distanceValues.get(edge.target)
       edgeLayoutDescriptors.set(
         edge,
@@ -630,7 +630,7 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
 
     let maxYValue = -Number.MIN_VALUE
     let maxDistanceValue = -Number.MIN_VALUE
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const layer = layers.get(node)
       if (!layersMap.get(layer)) {
         layersMap.set(layer, [])
@@ -641,18 +641,18 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
     })
 
     this.maxY = -Number.MIN_VALUE
-    layersMap.forEach(layerNodes => {
-      layerNodes.forEach(node => {
+    layersMap.forEach((layerNodes) => {
+      layerNodes.forEach((node) => {
         const distanceValue = distanceValues.get(node)
         const newY = maxYValue - distanceValue
         // adjust the node center
         graph.setCenter(node, graph.getCenterX(node), newY)
 
-        node.outEdges.forEach(edge => {
+        node.outEdges.forEach((edge) => {
           // move also the bends
           const points = graph.getPointList(edge)
           const newBendPositions = new YList()
-          points.forEach(point => {
+          points.forEach((point) => {
             newBendPositions.add(new YPoint(point.x, newY))
           })
           graph.setPoints(edge, newBendPositions)
@@ -666,7 +666,7 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
     // bends of the
     this.adjustXCoordinates(graph, graph.nodes.at(0))
 
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       const updatedPath = new YList()
       updatedPath.add(new YPoint(graph.getCenterX(edge.target), graph.getCenterY(edge.source)))
       graph.setPoints(edge, updatedPath)
@@ -686,7 +686,7 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
     if (root == null) {
       return
     }
-    root.outEdges.forEach(edge => {
+    root.outEdges.forEach((edge) => {
       this.adjustXCoordinates(graph, edge.target)
     })
 

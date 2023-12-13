@@ -80,7 +80,7 @@ export function initializeTypePanel(graphComponent) {
   graphComponent.selection.addItemSelectionChangedListener(
     () =>
       (typePanel.currentItems = graphComponent.selection.selectedNodes
-        .filter(n => !graph.isGroupNode(n))
+        .filter((n) => !graph.isGroupNode(n))
         .toArray())
   )
 

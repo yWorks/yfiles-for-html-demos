@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -73,12 +73,10 @@
       <div
         class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
       >
-        <b>Step 14/14</b
+        <b>Step 13/13</b
         ><span class="demo-toolbar__tutorial-step-title"> &mdash; 13 Tree Builder</span>
         <div class="tutorial-dropdown">
           <a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
-            >Tutorial: Graph Builder</a
-          ><a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
             >01 Create Graph</a
           ><a
             href="../../tutorial-graph-builder/02-create-nodes-sources/"
@@ -236,7 +234,10 @@
                   <pre
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// the childDataProvider identifies the property of a node object that contains its child nodes</span>
-rootNodesSource.<span class="hljs-title function_">addChildNodesSource</span>(<span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> data.<span class="hljs-property">colleagues</span>, rootNodesSource)</code></pre>
+rootNodesSource.<span class="hljs-title function_">addChildNodesSource</span>(
+  <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> data.<span class="hljs-property">colleagues</span>,
+  rootNodesSource
+)</code></pre>
                 </div>
               </div>
               <div class="paragraph">
@@ -257,7 +258,7 @@ rootNodesSource.<span class="hljs-title function_">addChildNodesSource</span>(<s
                   <pre
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript">rootNodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-title function_">createLabelBinding</span>({
-  <span class="hljs-attr">text</span>: <span class="hljs-function"><span class="hljs-params">dataItem</span> =&gt;</span> dataItem.<span class="hljs-property">name</span>
+  <span class="hljs-attr">text</span>: <span class="hljs-function">(<span class="hljs-params">dataItem</span>) =&gt;</span> dataItem.<span class="hljs-property">name</span>
 })</code></pre>
                 </div>
               </div>

@@ -99,14 +99,14 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   graphBuilder
     .createNodesSource({
       data: graphData.nodeList,
-      id: item => item.id
+      id: (item) => item.id
     })
-    .nodeCreator.createLabelBinding(data => data.label)
+    .nodeCreator.createLabelBinding((data) => data.label)
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -217,7 +217,7 @@ class GraphOverviewVisualCreator extends GraphOverviewCanvasVisualCreator {
     ctx.strokeStyle = '#f7f7f7'
     ctx.beginPath()
     ctx.moveTo(edge.sourcePort!.location.x, edge.sourcePort!.location.y)
-    edge.bends.forEach(bend => ctx.lineTo(bend.location.x, bend.location.y))
+    edge.bends.forEach((bend) => ctx.lineTo(bend.location.x, bend.location.y))
     ctx.lineTo(edge.targetPort!.location.x, edge.targetPort!.location.y)
     ctx.stroke()
   }

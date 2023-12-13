@@ -236,14 +236,14 @@ export function getActivityWidth(activity: Activity): number {
  * Returns the task with the given id.
  */
 export function getTaskForId(taskId: number): Task {
-  return tasks.find(task => task.id === taskId)!
+  return tasks.find((task) => task.id === taskId)!
 }
 
 /**
  * Returns the color for the given task.
  */
 export function getTaskColor(task: Task): string {
-  const taskIndex = tasks.findIndex(t => t.id === task.id)
+  const taskIndex = tasks.findIndex((t) => t.id === task.id)
   return colorPalette[taskIndex % colorPalette.length]
 }
 

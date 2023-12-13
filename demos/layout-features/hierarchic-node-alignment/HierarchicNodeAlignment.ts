@@ -49,7 +49,7 @@ export function createFeatureLayoutConfiguration(graph: IGraph) {
 
   const layoutData = new HierarchicLayoutData()
   // define as 'critical' the edges on the longest path - here any other predicate can be used, of course
-  layoutData.criticalEdgePriorities.delegate = edge => (longestPathEdges.contains(edge) ? 10 : 1)
+  layoutData.criticalEdgePriorities.delegate = (edge) => (longestPathEdges.contains(edge) ? 10 : 1)
 
   const layout = new HierarchicLayout()
 

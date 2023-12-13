@@ -98,13 +98,13 @@ function buildGraph(graph, graphData) {
 
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
+    id: (item) => item.id
   })
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -203,7 +203,7 @@ function setLassoTestables(mode) {
   }
   if (mode === 'nodes-complete') {
     // the nodes must be completely contained in the lasso to end up in the selection
-    decoration = lassoTestableDecorator.setFactory(node =>
+    decoration = lassoTestableDecorator.setFactory((node) =>
       ILassoTestable.create(
         (_context, lassoPath) =>
           !lassoPath.intersects(node.layout.toRect(), 0) &&
@@ -212,12 +212,12 @@ function setLassoTestables(mode) {
     )
   } else if (mode === 'nodes-intersected') {
     // the nodes must be intersected by or completely contained in the lasso to end up in the selection
-    decoration = lassoTestableDecorator.setFactory(node =>
+    decoration = lassoTestableDecorator.setFactory((node) =>
       LassoTestables.fromRectangle(node.layout)
     )
   } else if (mode === 'nodes-center') {
     // the nodes' center must be contained in the lasso to end up in the selection
-    decoration = lassoTestableDecorator.setFactory(node =>
+    decoration = lassoTestableDecorator.setFactory((node) =>
       LassoTestables.fromPoint(node.layout.center)
     )
   }
@@ -228,15 +228,15 @@ function setLassoTestables(mode) {
  */
 function initializeUI() {
   const selectionStyles = document.querySelector('#selection-styles')
-  selectionStyles.addEventListener('change', _evt => {
+  selectionStyles.addEventListener('change', (_evt) => {
     setSelectionStyle(selectionStyles.value)
   })
   const selectFinishRadius = document.querySelector('#select-finish-radius')
-  selectFinishRadius.addEventListener('change', _evt => {
+  selectFinishRadius.addEventListener('change', (_evt) => {
     setFinishRadius(Number.parseFloat(selectFinishRadius.value))
   })
   const lassoTestable = document.querySelector('#choose-lasso-testable')
-  lassoTestable.addEventListener('change', _evt => {
+  lassoTestable.addEventListener('change', (_evt) => {
     setLassoTestables(lassoTestable.value)
   })
 }

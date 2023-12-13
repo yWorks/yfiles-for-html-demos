@@ -9,9 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-#
-
-      Tutorial: Port Style Implementation - Tutorial: Port Style Implementation
+# 01 Rendering the Port - Tutorial: Port Style Implementation
 
 # Custom port visualizations
 
@@ -76,4 +74,4 @@ protected getBounds(context: ICanvasContext, port: IPort): Rect {
 }
 ```
 
-[01 Rendering the Port](../../tutorial-style-implementation-port/01-render-port-shape/)
+[02 Port Size](../../tutorial-style-implementation-port/02-port-size/)

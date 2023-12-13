@@ -38,7 +38,7 @@ import { IEdge, IModelItem, INode, Intersection, Point } from 'yfiles'
  */
 export function createToolTipContent(item, intersectionInfoArray) {
   const filteredIntersections = intersectionInfoArray.filter(
-    intersection => item === intersection.item1 || item === intersection.item2
+    (intersection) => item === intersection.item1 || item === intersection.item2
   )
   if (filteredIntersections.length === 0) {
     return null

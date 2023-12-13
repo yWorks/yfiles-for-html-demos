@@ -66,7 +66,7 @@ async function run() {
 
   const exportRect = initializeExportRectangle(graphComponent)
 
-  initializeOptionPanel(async options => {
+  initializeOptionPanel(async (options) => {
     const rect = options.useExportRectangle ? exportRect.toRect() : undefined
 
     if (options.serverExport) {
@@ -77,7 +77,7 @@ async function run() {
     }
   })
 
-  initializeExportDialog('Client-side Image Export', imageElement => {
+  initializeExportDialog('Client-side Image Export', (imageElement) => {
     const image = imageElement
     try {
       downloadFile(image.src, 'graph.png')

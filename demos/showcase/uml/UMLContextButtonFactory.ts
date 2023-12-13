@@ -64,7 +64,7 @@ export function createExtensibilityButtons(
   const buttonSize = buttonStyle.getButtonSize()
   const paramFactory = new FreeNodeLabelModel()
   event.addButton({
-    onAction: button => {
+    onAction: (button) => {
       const model = style.model
       const isInterface = model.stereotype === 'interface'
       model.stereotype = isInterface ? '' : 'interface'
@@ -85,7 +85,7 @@ export function createExtensibilityButtons(
     text: 'I'
   })
   event.addButton({
-    onAction: button => {
+    onAction: (button) => {
       const model = style.model
       const isAbstract = model.constraint === 'abstract'
       model.constraint = isAbstract ? '' : 'abstract'
@@ -125,7 +125,7 @@ export function createEdgeCreationButtons(sender: ButtonInputMode, event: QueryB
     const buttonStyle = new RelationButtonStyle(style)
     const buttonSize = buttonStyle.getButtonSize()
     event.addButton({
-      onAction: button => {
+      onAction: (button) => {
         const graphComponent = sender.inputModeContext!.canvasComponent as GraphComponent
         graphComponent.selection.clear()
         graphComponent.currentItem = null

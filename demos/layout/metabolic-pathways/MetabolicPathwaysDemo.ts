@@ -104,8 +104,8 @@ async function runLayout(): Promise<void> {
   // update arc edges based on the source/target positions
   const graph = graphComponent.graph
   graph.edges
-    .filter(edge => edge.style instanceof ArcEdgeStyle)
-    .forEach(edge => graph.setStyle(edge, getArcEdgeStyle(graph, edge)))
+    .filter((edge) => edge.style instanceof ArcEdgeStyle)
+    .forEach((edge) => graph.setStyle(edge, getArcEdgeStyle(graph, edge)))
 }
 
 /**
@@ -120,7 +120,7 @@ function createGraph(): void {
   builder.createNodesSource({
     data: sampleData.nodes,
     id: 'id',
-    tag: data => {
+    tag: (data) => {
       return { ...data.tag, type: nodeTypesMap.get(data.tag.type) }
     },
     labels: [(data: InputNodeData): string | null => data.label ?? '']

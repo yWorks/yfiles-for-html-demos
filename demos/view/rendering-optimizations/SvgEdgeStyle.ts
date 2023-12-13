@@ -51,7 +51,10 @@ export default class SvgEdgeStyle extends EdgeStyleBase {
    * @param [color] The edge color.
    * @param [thickness] The edge thickness
    */
-  constructor(private readonly color?: Color, private readonly thickness?: number) {
+  constructor(
+    private readonly color?: Color,
+    private readonly thickness?: number
+  ) {
     super()
     this.color = color || Color.BLACK
     this.thickness = thickness || 1
@@ -143,7 +146,11 @@ const helperEdgeStyle = new PolylineEdgeStyle({
 class RenderDataCache {
   public readonly bendLocations: Point[]
 
-  constructor(edge: IEdge, public readonly source: Point, public readonly target: Point) {
+  constructor(
+    edge: IEdge,
+    public readonly source: Point,
+    public readonly target: Point
+  ) {
     this.bendLocations = getBendLocations(edge)
   }
 }

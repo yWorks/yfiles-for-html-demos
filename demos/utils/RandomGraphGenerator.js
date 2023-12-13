@@ -66,7 +66,7 @@ export default class RandomGraphGenerator {
    * @param {!object} config
    */
   constructor(config) {
-    this.nodeCreator = config.nodeCreator || (graph => graph.createNode())
+    this.nodeCreator = config.nodeCreator || ((graph) => graph.createNode())
     this.nodeCount = config.$nodeCount || 30
     this.edgeCount = config.$edgeCount || 40
     this.allowSelfLoops = config.$allowSelfLoops || false
@@ -126,7 +126,7 @@ export default class RandomGraphGenerator {
     }
 
     if (!this.allowCycles) {
-      graph.edges.forEach(edge => {
+      graph.edges.forEach((edge) => {
         const sourcePort = edge.sourcePort
         const targetPort = edge.targetPort
         if (index.get(sourcePort.owner) > index.get(targetPort.owner)) {
@@ -204,7 +204,7 @@ export default class RandomGraphGenerator {
     }
 
     if (!this.allowCycles) {
-      graph.edges.forEach(edge => {
+      graph.edges.forEach((edge) => {
         const sourcePort = edge.sourcePort
         const targetPort = edge.targetPort
         if (index.get(sourcePort.owner) > index.get(targetPort.owner)) {

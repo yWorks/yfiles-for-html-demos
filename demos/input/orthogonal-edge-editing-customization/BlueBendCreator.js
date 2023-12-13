@@ -141,7 +141,7 @@ function determineBendSegmentIndex(points, location) {
 function getEdgePoints(edge) {
   const points = new List()
   points.add(edge.sourcePort.location.toPoint())
-  edge.bends.forEach(bend => {
+  edge.bends.forEach((bend) => {
     points.add(bend.location.toPoint())
   })
   points.add(edge.targetPort.location.toPoint())

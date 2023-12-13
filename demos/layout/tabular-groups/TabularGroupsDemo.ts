@@ -290,7 +290,7 @@ function initializeUI(): void {
 
   document
     .querySelector<HTMLInputElement>('#child-distance-slider')!
-    .addEventListener('change', async evt => {
+    .addEventListener('change', async (evt) => {
       distanceLabel.textContent = (evt.target as HTMLInputElement).value
       await runHierarchicLayoutWithTabularGroups()
     })

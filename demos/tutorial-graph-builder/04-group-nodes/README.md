@@ -39,15 +39,15 @@ You can use `GraphBuilder.createGroupNodes` to import the group nodes data. Then
 
 ```
 const nodesSource = graphBuilder.createNodesSource({
-  data: nodeData.filter(item => item.id.startsWith('item')),
-  id: item => item.id,
-  parentId: item => item.parentId
+  data: nodeData.filter((item) => item.id.startsWith('item')),
+  id: (item) => item.id,
+  parentId: (item) => item.parentId
 })
 
 const groupNodesSource = graphBuilder.createGroupNodesSource({
-  data: nodeData.filter(item => item.id.startsWith('group')),
-  id: item => item.id,
-  parentId: item => item.parentId
+  data: nodeData.filter((item) => item.id.startsWith('group')),
+  id: (item) => item.id,
+  parentId: (item) => item.parentId
 })
 ```
 

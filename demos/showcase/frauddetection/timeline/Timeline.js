@@ -201,7 +201,7 @@ export default class Timeline {
   get selectedItems() {
     return this.graphComponent.selection.selectedNodes
       .toArray()
-      .flatMap(selectedNode => getItemsFromBucket(selectedNode))
+      .flatMap((selectedNode) => getItemsFromBucket(selectedNode))
   }
 
   /**
@@ -318,7 +318,7 @@ export default class Timeline {
     })
 
     // install a tooltip on the timeline items that reports the content of the possibly aggregated entry
-    initializeToolTips(inputMode, item => {
+    initializeToolTips(inputMode, (item) => {
       if (item instanceof INode) {
         const bucket = getBucket(item)
         if (bucket.label !== undefined) {
@@ -354,7 +354,7 @@ export default class Timeline {
         }
       }
     })
-    inputMode.addCanvasClickedListener(_ => {
+    inputMode.addCanvasClickedListener((_) => {
       this.barSelectListener?.([])
     })
 
@@ -596,16 +596,16 @@ export default class Timeline {
    */
   initializeGraphBuilder(masterGraph) {
     const graphBuilder = new GraphBuilder(masterGraph)
-    const getBucketId = b => `${b.layer}-${b.start.getTime()}-${b.end.getTime()}`
+    const getBucketId = (b) => `${b.layer}-${b.start.getTime()}-${b.end.getTime()}`
     const nodesSource = graphBuilder.createGroupNodesSource({
       data: this.buckets,
       id: getBucketId,
-      parentId: b => (b.parent ? getBucketId(b.parent) : null)
+      parentId: (b) => (b.parent ? getBucketId(b.parent) : null)
     })
 
     const nodeCreator = nodesSource.nodeCreator
     nodeCreator.createLabelsSource({
-      data: b => (b.label != null ? [b] : []),
+      data: (b) => (b.label != null ? [b] : []),
       text: 'label'
     })
 
@@ -627,7 +627,7 @@ export default class Timeline {
     rectangleIndicator.setBounds(graphComponent.contentRect)
     rectangleIndicator.limits = graphComponent.contentRect
 
-    rectangleIndicator.addBoundsChangedListener(bounds => {
+    rectangleIndicator.addBoundsChangedListener((bounds) => {
       this.updateTimeframe(bounds)
     })
 
@@ -657,8 +657,8 @@ export default class Timeline {
   getTimeframeFromBounds(bounds) {
     const graph = this.graphComponent.graph
     const nodesInFrame = graph.nodes
-      .filter(node => !graph.isGroupNode(node))
-      .filter(node => bounds.contains(node.layout.center))
+      .filter((node) => !graph.isGroupNode(node))
+      .filter((node) => bounds.contains(node.layout.center))
 
     if (nodesInFrame.size === 0) {
       // no nodes in timeframe, this returns an "empty" timeframe to trigger the update
@@ -710,8 +710,8 @@ export default class Timeline {
     const graphComponent = this.graphComponent
     const graph = graphComponent.graph
     const nodesInTimeframe = graph.nodes
-      .filter(node => !graph.isGroupNode(node))
-      .filter(node => {
+      .filter((node) => !graph.isGroupNode(node))
+      .filter((node) => {
         const bucket = getBucket(node)
         return intervalsIntersect(bucket.start, bucket.end, timeframe[0], timeframe[1])
       })
@@ -725,7 +725,7 @@ export default class Timeline {
 
     let minX = Number.POSITIVE_INFINITY
     let maxX = Number.NEGATIVE_INFINITY
-    nodesInTimeframe.forEach(current => {
+    nodesInTimeframe.forEach((current) => {
       minX = Math.min(minX, current.layout.x)
       maxX = Math.max(maxX, current.layout.maxX)
     })
@@ -778,7 +778,7 @@ export default class Timeline {
 
     const timeEntry = this.getTimeEntry(item)
     if (Array.isArray(timeEntry)) {
-      return timeEntry.some(entry => {
+      return timeEntry.some((entry) => {
         if (typeof entry === 'number') {
           const time = entry
           return start <= time && time < end
@@ -926,7 +926,7 @@ export default class Timeline {
     ) {
       // create a new animation object if there is none or if the timeframe has changed
       this.timeframeAnimation = new TimeframeAnimation(this.timeframeRect.rect, this.graphComponent)
-      this.timeframeAnimation.addTimeframeListener(rect => this.updateTimeframe(rect))
+      this.timeframeAnimation.addTimeframeListener((rect) => this.updateTimeframe(rect))
       this.timeframeAnimation.addAnimationEndedListener(() => {
         // stop the animation and revert the state of the play button
         if (this.showPlayButton && !(this.timeframeAnimation?.animating ?? false)) {
@@ -982,7 +982,7 @@ export default class Timeline {
       },
       true
     )
-    playButton.addEventListener('mousedown', evt => {
+    playButton.addEventListener('mousedown', (evt) => {
       // prevent events to trigger a selection in the timeline
       evt.stopPropagation()
     })

@@ -213,7 +213,10 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
   private readonly activity: Activity
   private originalExtent = 0
 
-  constructor(readonly node: INode, readonly isFollowUpTime = false) {
+  constructor(
+    readonly node: INode,
+    readonly isFollowUpTime = false
+  ) {
     super()
     this.activity = getActivity(this.node)
   }

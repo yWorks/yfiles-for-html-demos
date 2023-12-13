@@ -120,7 +120,7 @@ async function run(): Promise<void> {
     // show loading screen
     webGLLoadingOverlay.classList.add('loading')
     // wait for a frame to give the browser a chance to actually render the loading screen
-    await new Promise(resolve => setTimeout(resolve, 0))
+    await new Promise((resolve) => setTimeout(resolve, 0))
     // set rendering mode to WebGL2 on the component without preload to show the difference
     enableWebGLRendering(graphComponentWithoutPreload)
     // preload all the WebGL2 styles that we want to use
@@ -151,9 +151,9 @@ async function run(): Promise<void> {
  */
 function enableWebGLRendering(graphComponent: GraphComponent, afterCompileAction?: () => void) {
   const myWebGL2GraphModelManager = new MyWebGL2GraphModelManager(
-    node => webGL2NodeStyles[(node.tag || 0) % webGL2NodeStyles.length],
-    edge => webGL2EdgeStyles[(edge.tag || 0) % webGL2EdgeStyles.length],
-    label => webGL2LabelStyles[(label.tag || 0) % webGL2LabelStyles.length]
+    (node) => webGL2NodeStyles[(node.tag || 0) % webGL2NodeStyles.length],
+    (edge) => webGL2EdgeStyles[(edge.tag || 0) % webGL2EdgeStyles.length],
+    (label) => webGL2LabelStyles[(label.tag || 0) % webGL2LabelStyles.length]
   )
 
   if (afterCompileAction) {

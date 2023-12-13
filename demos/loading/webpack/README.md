@@ -16,7 +16,7 @@ This demo shows how to integrate the yFiles library in a [webpack](https://webpa
 Two fundamental concepts for webpack projects are demonstrated:
 
 - [Code Splitting](https://webpack.js.org/guides/code-splitting/)
-- Separate webpack configurations for development and [production](https://webpack.js.org/guides/production-build/)
+- Separate webpack configurations for development and [production](https://webpack.js.org/guides/production/)
 
 ## Running the demo
 
@@ -26,7 +26,7 @@ First, install the required npm modules in the demo directory:
 
 ### Development
 
-For development, the [webpack dev server](https://github.com/webpack/docs/wiki/webpack-dev-server) offers convenient live reloading support to minimize turnaround times.
+For development, the [webpack dev server](https://webpack.js.org/configuration/dev-server/) offers convenient live reloading support to minimize turnaround times.
 
 The dev server will serve the webpack bundles from memory (no bundles will be created on disc), update the app bundle and refresh the page when changes are made to the source files.
 
@@ -47,7 +47,7 @@ Debugging of application files in the browser's developer tools should work fine
 The following build steps are specific to the production configuration:
 
 - Append a content-based hash to the bundle filename to enable long-term caching.
-- [Minify](https://webpack.js.org/guides/production-build/#minification) the bundles using webpack's minification plugin.
+- [Minify](https://webpack.js.org/guides/production/#minification) the bundles using webpack's minification plugin.
 
 To run the production build:
 

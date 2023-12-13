@@ -54,11 +54,11 @@ export function configurePentosePhosphateLayout(graphComponent) {
   // create the layout data to assign different edge lengths for edges attached to enzymes
   // and to add node halos to reaction nodes
   const organicLayoutData = new OrganicLayoutData({
-    preferredEdgeLengths: edge =>
+    preferredEdgeLengths: (edge) =>
       getType(edge.sourceNode) === NodeTypes.ENZYME || getType(edge.targetNode) === NodeTypes.ENZYME
         ? 5
         : 80,
-    nodeHalos: node =>
+    nodeHalos: (node) =>
       getType(node) === NodeTypes.REACTION ? NodeHalo.create(60, 15, 15, 60) : NodeHalo.ZERO_HALO
   })
 
@@ -69,7 +69,7 @@ export function configurePentosePhosphateLayout(graphComponent) {
   const reactionPath = alignReactionPath(graph, organicLayoutData)
 
   // determine the nodes that represent the reactions
-  const reactions = graph.nodes.filter(node => getType(node) === NodeTypes.REACTION).toArray()
+  const reactions = graph.nodes.filter((node) => getType(node) === NodeTypes.REACTION).toArray()
   // place the nodes in layers
   const layers = placeNodesOnLayers(graph, reactions, organicLayoutData)
 
@@ -104,7 +104,7 @@ function alignReactionPath(graph, organicLayoutData) {
   // exclude the reaction nodes that contain more than two reactants - these do not need to
   // be vertically aligned since they are attached to four nodes
   const excludeMultiProductReactions = pathNodes.filter(
-    node => getType(node) !== NodeTypes.REACTION || !isMultipleProductReaction(graph, node)
+    (node) => getType(node) !== NodeTypes.REACTION || !isMultipleProductReaction(graph, node)
   )
   // align the main path vertically and order its nodes based on their order in the path
   organicLayoutData.constraints.addAlignmentConstraint(
@@ -137,12 +137,12 @@ function placeNodesOnLayers(graph, reactions, organicLayoutData) {
   // for this reaction we consider only the edges that connect to the product with the maximum layer
   const excludeEdges = []
   reactions
-    .filter(reaction => isMultipleProductReaction(graph, reaction))
-    .forEach(reaction => {
+    .filter((reaction) => isMultipleProductReaction(graph, reaction))
+    .forEach((reaction) => {
       // get the edges attached toto product/reactant nodes
       const productEdges = graph
         .inEdgesAt(reaction)
-        .filter(edge => isProductOrReactant(edge.sourceNode))
+        .filter((edge) => isProductOrReactant(edge.sourceNode))
       const reactionLayer = firstBfs.nodeLayerIds.get(reaction)
 
       // get the maximum layer of these edges
@@ -154,7 +154,7 @@ function placeNodesOnLayers(graph, reactions, organicLayoutData) {
       if (maxLayer !== reactionLayer) {
         // use the first edge that does not belong to the maximum layer of these edges
         const edgesToUse = productEdges
-          .filter(edge => firstBfs.nodeLayerIds.get(edge.sourceNode) !== maxLayer)
+          .filter((edge) => firstBfs.nodeLayerIds.get(edge.sourceNode) !== maxLayer)
           .at(0)
 
         if (edgesToUse !== undefined) {
@@ -171,7 +171,7 @@ function placeNodesOnLayers(graph, reactions, organicLayoutData) {
   }
 
   // create the constraints for each layer
-  bfs.layers.forEach(bfsLayer => {
+  bfs.layers.forEach((bfsLayer) => {
     // nodes that belong in the same layer have to be horizontally aligned
     organicLayoutData.constraints.addAlignmentConstraint(
       OrganicLayoutConstraintOrientation.HORIZONTAL,
@@ -201,14 +201,14 @@ function placeNodesOnLayers(graph, reactions, organicLayoutData) {
  */
 function addCoReactantConstraints(graph, bfs, organicLayoutData) {
   // find the nodes representing the co-reactants
-  const coReactants = graph.nodes.filter(node => getType(node) === NodeTypes.CO_REACTANT)
+  const coReactants = graph.nodes.filter((node) => getType(node) === NodeTypes.CO_REACTANT)
 
   // align vertically the co-reactants
   organicLayoutData.constraints.addAlignmentConstraint(
     OrganicLayoutConstraintOrientation.VERTICAL
   ).items = coReactants
 
-  coReactants.forEach(coReactant => {
+  coReactants.forEach((coReactant) => {
     if (graph.outDegree(coReactant) > 0) {
       const reaction = graph.outEdgesAt(coReactant).at(0).targetNode
       // for each co-reactant, find the associated reaction and place:
@@ -244,8 +244,8 @@ function addCoReactantConstraints(graph, bfs, organicLayoutData) {
  * @param {!OrganicLayoutData} organicLayoutData
  */
 function addEnzymeConstraints(graph, organicLayoutData) {
-  const enzymes = graph.nodes.filter(node => getType(node) === NodeTypes.ENZYME)
-  enzymes.forEach(enzyme => {
+  const enzymes = graph.nodes.filter((node) => getType(node) === NodeTypes.ENZYME)
+  enzymes.forEach((enzyme) => {
     const reaction = graph.neighbors(enzyme).at(0)
     // align horizontally the reaction and the enzyme
     organicLayoutData.constraints.addAlignmentConstraint(
@@ -267,8 +267,8 @@ function addEnzymeConstraints(graph, organicLayoutData) {
  * @param {!OrganicLayoutData} organicLayoutData
  */
 function addReactionConstraints(reactions, graph, reactionPath, organicLayoutData) {
-  reactions.forEach(reaction => {
-    graph.edgesAt(reaction).forEach(edge => {
+  reactions.forEach((reaction) => {
+    graph.edgesAt(reaction).forEach((edge) => {
       const opposite = edge.opposite(reaction)
       if (
         isProductOrReactant(opposite) &&
@@ -293,8 +293,8 @@ function addReactionConstraints(reactions, graph, reactionPath, organicLayoutDat
  */
 function addMultiProductReactionConstraints(reactions, graph, organicLayoutData) {
   reactions
-    .filter(reaction => isMultipleProductReaction(graph, reaction))
-    .forEach(reaction => {
+    .filter((reaction) => isMultipleProductReaction(graph, reaction))
+    .forEach((reaction) => {
       const in1 = graph.inEdgesAt(reaction).at(0).sourceNode
       const in2 = graph.inEdgesAt(reaction).at(1).sourceNode
       const out1 = graph.outEdgesAt(reaction).at(0).targetNode
@@ -319,14 +319,14 @@ function addMultiProductReactionConstraints(reactions, graph, organicLayoutData)
  * @returns {!ResultItemCollection.<INode>}
  */
 function calculateMainReactionPath(graph) {
-  const startNodes = graph.nodes.filter(node => graph.inEdgesAt(node).size === 0).at(0)
-  const endNodes = graph.nodes.filter(node => getMetabolicData(node).vAlign === 'end').at(0)
+  const startNodes = graph.nodes.filter((node) => graph.inEdgesAt(node).size === 0).at(0)
+  const endNodes = graph.nodes.filter((node) => getMetabolicData(node).vAlign === 'end').at(0)
 
   const shortestPath = new ShortestPath({
     source: startNodes,
     sink: endNodes,
     subgraphNodes: {
-      excludes: node =>
+      excludes: (node) =>
         getType(node) === NodeTypes.ENZYME || getType(node) === NodeTypes.CO_REACTANT
     }
   })
@@ -345,17 +345,17 @@ function calculateMainReactionPath(graph) {
  */
 function calculateLayers(graph, excludedEdges) {
   const startNodes = graph.nodes
-    .filter(node => graph.inEdgesAt(node).size === 0 && isProductOrReactant(node))
+    .filter((node) => graph.inEdgesAt(node).size === 0 && isProductOrReactant(node))
     .first()
   const bfsTraversal = new Bfs({
     coreNodes: startNodes,
     traversalDirection: TraversalDirection.SUCCESSOR,
     subgraphNodes: {
-      excludes: node =>
+      excludes: (node) =>
         getType(node) === NodeTypes.ENZYME || getType(node) === NodeTypes.CO_REACTANT
     },
     subgraphEdges: {
-      excludes: edge => (excludedEdges !== undefined ? excludedEdges.includes(edge) : false)
+      excludes: (edge) => (excludedEdges !== undefined ? excludedEdges.includes(edge) : false)
     }
   })
   return bfsTraversal.run(graph)
@@ -377,6 +377,6 @@ function isProductOrReactant(node) {
  * @returns {boolean}
  */
 function isMultipleProductReaction(graph, node) {
-  const neighbors = graph.neighbors(node).filter(neighbor => isProductOrReactant(neighbor))
+  const neighbors = graph.neighbors(node).filter((neighbor) => isProductOrReactant(neighbor))
   return new Set(neighbors).size > 2
 }

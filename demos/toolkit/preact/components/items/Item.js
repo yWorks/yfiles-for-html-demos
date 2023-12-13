@@ -36,7 +36,7 @@ import { h, html } from '../../preact-loader.js'
  * @property {function} removeDataItem
  */
 
-export default props => html`
+export default (props) => html`
   <div class="item">
     <div class="item-row item-head">
       <h3>Item ${props.data.id}</h3>

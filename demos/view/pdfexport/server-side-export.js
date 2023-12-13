@@ -40,7 +40,7 @@ export function initializeServerSideExport(url) {
 
   // if a server is available, enable the server export button
   isServerAlive(url)
-    .then(response => {
+    .then((response) => {
       document.querySelector('#server-export').disabled = false
     })
     .catch(() => {

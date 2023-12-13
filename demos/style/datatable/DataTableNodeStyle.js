@@ -139,7 +139,7 @@ export default class DataTableNodeStyle extends NodeStyleBase {
    * @param {!Element} element
    */
   static createStopPropagationListenerForScrolling(element) {
-    return evt => {
+    return (evt) => {
       if (DataTableNodeStyle.needsScrollbar(element)) {
         evt.stopImmediatePropagation()
       }

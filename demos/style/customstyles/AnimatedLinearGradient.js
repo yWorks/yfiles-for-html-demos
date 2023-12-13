@@ -62,7 +62,7 @@ function createGradient() {
 const gradient = createGradient()
 
 const defsCreator = ISvgDefsCreator.create({
-  createDefsElement: context => gradient,
+  createDefsElement: (context) => gradient,
 
   accept: (context, node, id) =>
     node instanceof Element &&
@@ -82,7 +82,7 @@ const startGradientAnimation = () => {
 
   let previousTime = null
 
-  const frameRequestCallback = timestamp => {
+  const frameRequestCallback = (timestamp) => {
     // calculate the time since the last animation frame
     if (previousTime == null) {
       previousTime = timestamp

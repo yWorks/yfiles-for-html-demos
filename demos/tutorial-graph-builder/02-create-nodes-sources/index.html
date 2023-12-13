@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -73,12 +73,10 @@
       <div
         class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
       >
-        <b>Step 3/14</b
+        <b>Step 2/13</b
         ><span class="demo-toolbar__tutorial-step-title"> &mdash; 02 Create Nodes Sources</span>
         <div class="tutorial-dropdown">
           <a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
-            >Tutorial: Graph Builder</a
-          ><a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
             >01 Create Graph</a
           ><a
             href="../../tutorial-graph-builder/02-create-nodes-sources/"
@@ -190,7 +188,10 @@
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeData = [{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;00&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;01&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;02&#x27;</span> }]
 
 <span class="hljs-comment">// nodes source for the turquoise nodes</span>
-<span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>(nodeData, <span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item.<span class="hljs-property">id</span>)</code></pre>
+<span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>(
+  nodeData,
+  <span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">id</span>
+)</code></pre>
                 </div>
               </div>
               <div class="paragraph">
@@ -217,7 +218,10 @@
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeData = <span class="hljs-title class_">IEnumerable</span>.<span class="hljs-title function_">from</span>([{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;10&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;11&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;12&#x27;</span> }])
 
 <span class="hljs-comment">// nodes source for the blue nodes</span>
-<span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>(nodeData, <span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item.<span class="hljs-property">id</span>)</code></pre>
+<span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>(
+  nodeData,
+  <span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">id</span>
+)</code></pre>
                 </div>
               </div>
               <div class="paragraph">
@@ -302,7 +306,7 @@ nodeData.<span class="hljs-title function_">set</span>(<span class="hljs-string"
 }
 
 <span class="hljs-comment">// nodes source for the brown nodes</span>
-<span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>(nodes, <span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item.<span class="hljs-property">id</span>)</code></pre>
+<span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>(nodes, <span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">id</span>)</code></pre>
                 </div>
               </div>
               <div class="admonitionblock note">

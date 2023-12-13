@@ -91,13 +91,13 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
+    id: (item) => item.id
   })
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -195,7 +195,7 @@ function setLassoTestables(mode: 'nodes-complete' | 'nodes-intersected' | 'nodes
   }
   if (mode === 'nodes-complete') {
     // the nodes must be completely contained in the lasso to end up in the selection
-    decoration = lassoTestableDecorator.setFactory(node =>
+    decoration = lassoTestableDecorator.setFactory((node) =>
       ILassoTestable.create(
         (_context, lassoPath) =>
           !lassoPath.intersects(node.layout.toRect(), 0) &&
@@ -204,12 +204,12 @@ function setLassoTestables(mode: 'nodes-complete' | 'nodes-intersected' | 'nodes
     )
   } else if (mode === 'nodes-intersected') {
     // the nodes must be intersected by or completely contained in the lasso to end up in the selection
-    decoration = lassoTestableDecorator.setFactory(node =>
+    decoration = lassoTestableDecorator.setFactory((node) =>
       LassoTestables.fromRectangle(node.layout)
     )
   } else if (mode === 'nodes-center') {
     // the nodes' center must be contained in the lasso to end up in the selection
-    decoration = lassoTestableDecorator.setFactory(node =>
+    decoration = lassoTestableDecorator.setFactory((node) =>
       LassoTestables.fromPoint(node.layout.center)
     )
   }
@@ -220,17 +220,17 @@ function setLassoTestables(mode: 'nodes-complete' | 'nodes-intersected' | 'nodes
  */
 function initializeUI(): void {
   const selectionStyles = document.querySelector<HTMLSelectElement>('#selection-styles')!
-  selectionStyles.addEventListener('change', _evt => {
+  selectionStyles.addEventListener('change', (_evt) => {
     setSelectionStyle(
       selectionStyles.value as 'free-hand-selection' | 'polyline-selection' | 'marquee-selection'
     )
   })
   const selectFinishRadius = document.querySelector<HTMLInputElement>('#select-finish-radius')!
-  selectFinishRadius.addEventListener('change', _evt => {
+  selectFinishRadius.addEventListener('change', (_evt) => {
     setFinishRadius(Number.parseFloat(selectFinishRadius.value))
   })
   const lassoTestable = document.querySelector<HTMLInputElement>('#choose-lasso-testable')!
-  lassoTestable.addEventListener('change', _evt => {
+  lassoTestable.addEventListener('change', (_evt) => {
     setLassoTestables(
       lassoTestable.value as 'nodes-complete' | 'nodes-intersected' | 'nodes-center'
     )

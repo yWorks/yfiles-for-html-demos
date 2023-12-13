@@ -208,7 +208,7 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
   getPath(edge) {
     const path = new GeneralPath()
     path.moveTo(edge.sourcePort.location)
-    edge.bends.forEach(bend => {
+    edge.bends.forEach((bend) => {
       path.lineTo(bend.location)
     })
     path.lineTo(edge.targetPort.location)
@@ -264,7 +264,7 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
     imageExclamation.setAttribute('cursor', 'pointer')
 
     // TODO - add exclamation mark to hit test of edge and get rid of click and touch handling
-    const repairEdge = evt => {
+    const repairEdge = (evt) => {
       const connection = edge.tag
       connection.repair()
       evt.stopImmediatePropagation()

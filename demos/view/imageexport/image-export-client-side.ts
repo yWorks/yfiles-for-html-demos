@@ -110,7 +110,7 @@ function renderSvgToPng(
   const svgString = SvgExport.exportSvgString(svgElement)
   const svgUrl = SvgExport.encodeSvgDataUrl(svgString)
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     // The SVG image is now used as the source of an HTML image element,
     // which is then rendered onto a Canvas element.
 

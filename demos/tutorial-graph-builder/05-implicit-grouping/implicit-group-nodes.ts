@@ -42,8 +42,8 @@ export function createGroupNodes(graphBuilder: GraphBuilder): void {
   nodesSource.nodeCreator.defaults.size = new Size(60, 40)
 
   // Describe how to create the first level of groups from the items in the NodeData
-  const parentsSource = nodesSource.createParentNodesSource(item => item.path)
-  parentsSource.nodeCreator.createLabelBinding(data => data)
+  const parentsSource = nodesSource.createParentNodesSource((item) => item.path)
+  parentsSource.nodeCreator.createLabelBinding((data) => data)
 
   // Describe how to navigate higher up in the hierarchy
   const parentDataProvider = (path: string | null): string | null => {
@@ -54,7 +54,7 @@ export function createGroupNodes(graphBuilder: GraphBuilder): void {
     parentsSource.createParentNodesSource(parentDataProvider)
   // Enable recursive processing higher up in the container hierarchy
   ancestorSource.addParentNodesSource(parentDataProvider, ancestorSource)
-  ancestorSource.nodeCreator.createLabelBinding(data => data)
+  ancestorSource.nodeCreator.createLabelBinding((data) => data)
 
   // Enable processing of the contents of the nodes in the NodeData
   const childDataProvider = (item: ChildData | ItemData): ChildData[] =>
@@ -74,8 +74,8 @@ export function createGroupNodes(graphBuilder: GraphBuilder): void {
   // Declare edges between all different kinds of entities
   const edgesSource = graphBuilder.createEdgesSource({
     data: edgeData,
-    sourceId: item => item.from,
-    targetId: item => item.to
+    sourceId: (item) => item.from,
+    targetId: (item) => item.to
   })
 
   // Styling for the group nodes

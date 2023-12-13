@@ -79,7 +79,7 @@ async function run() {
 function modifyData() {
   graphComponent.graph.nodes
     .filter(() => Math.random() < 0.1)
-    .forEach(node => {
+    .forEach((node) => {
       node.tag = createRandomSparklineData()
     })
   // make the graphComponent repaint it's content
@@ -117,7 +117,7 @@ function loadSampleGraph() {
   builder.createNodesSource({
     data: SampleData.nodes,
     id: 'id',
-    layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height),
+    layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height),
     labels: ['label'],
     // put random data in tag of each node
     tag: () => createRandomSparklineData()

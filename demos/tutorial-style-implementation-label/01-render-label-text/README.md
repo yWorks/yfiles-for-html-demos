@@ -11,7 +11,7 @@
 -->
 #
 
-      Tutorial: Label Style Implementation - Tutorial: Label Style Implementation
+      01 Rendering the Label Text - Tutorial: Label Style Implementation
 
 # Custom label visualizations
 
@@ -85,4 +85,4 @@ Since the SVG text anchor point is bottom-left and the label layout anchor point
 textElement.setAttribute('dy', String(label.layout.height))
 ```
 
-[01 Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/)
+[02 Using Text Utilities](../../tutorial-style-implementation-label/02-using-text-utilities/)

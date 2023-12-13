@@ -122,17 +122,17 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   graphBuilder
     .createNodesSource({
       data: graphData.nodeList,
-      id: item => item.id
+      id: (item) => item.id
     })
-    .nodeCreator.createLabelBinding(item => item.label)
+    .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder
     .createEdgesSource({
       data: graphData.edgeList,
-      sourceId: item => item.source,
-      targetId: item => item.target
+      sourceId: (item) => item.source,
+      targetId: (item) => item.target
     })
-    .edgeCreator.createLabelBinding(item => item.label)
+    .edgeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.buildGraph()
 }

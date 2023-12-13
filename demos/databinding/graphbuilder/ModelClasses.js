@@ -219,7 +219,7 @@ function createBinding(bindingString) {
 
       // wrap the binding function with a function that catches and reports errors
       // that occur in the binding functions
-      return dataItem => {
+      return (dataItem) => {
         try {
           // eslint-disable-next-line no-useless-call
           const result = func.apply(null, [dataItem])
@@ -233,10 +233,10 @@ function createBinding(bindingString) {
         }
       }
     } catch (ignored) {
-      return dataItem => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
+      return (dataItem) => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
     }
   }
-  return dataItem => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
+  return (dataItem) => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
 }
 
 /**
@@ -315,9 +315,9 @@ export class SourcesFactory {
 
     const edgesSource = this.graphBuilder.createEdgesSource(
       [],
-      edgeDataItem =>
+      (edgeDataItem) =>
         definition.sourceProvider ? definition.sourceProvider(edgeDataItem) : undefined,
-      edgeDataItem =>
+      (edgeDataItem) =>
         definition.targetProvider ? definition.targetProvider(edgeDataItem) : undefined
     )
 
@@ -327,7 +327,7 @@ export class SourcesFactory {
       targetArrow: new Arrow({ color: '#662b00', type: 'triangle' })
     })
     edgeCreator.defaults.shareStyleInstance = false
-    edgeCreator.styleBindings.addBinding('stroke', edgeDataItem =>
+    edgeCreator.styleBindings.addBinding('stroke', (edgeDataItem) =>
       definition.strokeProvider ? definition.strokeProvider(edgeDataItem) : '#662b00'
     )
 
@@ -336,7 +336,7 @@ export class SourcesFactory {
       edgeCreator.updateLabels(evt.graph, evt.item, evt.dataItem)
     })
 
-    edgeCreator.createLabelBinding(edgeDataItem =>
+    edgeCreator.createLabelBinding((edgeDataItem) =>
       definition.labelTextProvider ? definition.labelTextProvider(edgeDataItem) : undefined
     )
 

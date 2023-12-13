@@ -68,7 +68,7 @@ export function configureKrebsCycleLayout(): {
   // creates the layout data to pass the information about the types of the nodes and their placement
   const layoutData: GenericLayoutData = new GenericLayoutData()
   // passes the information about the types of the nodes
-  layoutData.addNodeItemMapping(KrebsCycleLayout.NODE_TYPES, node => getType(node))
+  layoutData.addNodeItemMapping(KrebsCycleLayout.NODE_TYPES, (node) => getType(node))
   // passes the information about the nodes that have to be vertically aligned
   layoutData.addNodeItemMapping(
     KrebsCycleLayout.ALIGNED_NODES_DP_KEY,
@@ -77,7 +77,7 @@ export function configureKrebsCycleLayout(): {
   // passes the information about the nodes that belong on the cycle
   layoutData.addNodeItemMapping(
     KrebsCycleLayout.CIRCLE_NODES_DP_KEY,
-    node => getMetabolicData(node).circle
+    (node) => getMetabolicData(node).circle
   )
 
   // applies a generic labeling for the labels of co-reactants, co-enzymes or nodes of type 'Other'
@@ -144,7 +144,7 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
   private getVerticallyAlignedNodes(graph: LayoutGraph): YNode[] | null {
     const alignedNodesDp = graph.getDataProvider(KrebsCycleLayout.ALIGNED_NODES_DP_KEY)!
     // get the nodes to be aligned from the data-provider and sort them based on their order
-    const alignedNodes = graph.nodes.filter(node => alignedNodesDp.getNumber(node) > 0).toArray()
+    const alignedNodes = graph.nodes.filter((node) => alignedNodesDp.getNumber(node) > 0).toArray()
     alignedNodes.sort(
       (n1: YNode, n2: YNode) => alignedNodesDp.getNumber(n1) - alignedNodesDp.getNumber(n2)
     )
@@ -160,11 +160,11 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
     const nodeTypesDp = graph.getDataProvider(KrebsCycleLayout.NODE_TYPES)!
 
     const circleNodes: YNode[] = []
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       if (circleNodesDp.getBoolean(node)) {
         circleNodes.push(node)
         // get the reaction nodes that are connected with these reactant nodes
-        node.neighbors.forEach(node => {
+        node.neighbors.forEach((node) => {
           if (isReaction(nodeTypesDp, node) && !circleNodes.includes(node)) {
             circleNodes.push(node)
           }
@@ -199,14 +199,14 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
 
     if (circleNodes) {
       // find the circle nodes and store their ids
-      const circleNodeIds = circleNodes.map(node => nodeIds.get(node) as YNode)
+      const circleNodeIds = circleNodes.map((node) => nodeIds.get(node) as YNode)
       // create the ellipse constraint so that the nodes are placed on the boundary of a circle
       constraintFactory.addEllipse(circleNodeIds, true, 1)
     }
 
     const preferredEdgeLength = graph.createEdgeMap()
     if (vAlignedNodes) {
-      const vAlignedNodeIds = vAlignedNodes.map(node => nodeIds.get(node) as YNode)
+      const vAlignedNodeIds = vAlignedNodes.map((node) => nodeIds.get(node) as YNode)
       // order the nodes based on the vAlign stored in the data
       constraintFactory.addOrderConstraint(
         vAlignedNodeIds,
@@ -220,7 +220,7 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
       )
 
       // make the vertical edges of the aligned nodes a bit shorter
-      graph.edges.forEach(edge => {
+      graph.edges.forEach((edge) => {
         if (vAlignedNodes.includes(edge.source) && vAlignedNodes.includes(edge.target)) {
           preferredEdgeLength.set(edge, 100)
         }
@@ -302,12 +302,12 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
     const halos = graph.createNodeMap()
     graph.nodes
       .filter(
-        node =>
+        (node) =>
           nodeTypesDp.get(node) === NodeTypes.ENZYME ||
           nodeTypesDp.get(node) === NodeTypes.OTHER ||
           nodeTypesDp.get(node) === NodeTypes.CO_REACTANT
       )
-      .forEach(node => {
+      .forEach((node) => {
         affectedNodesMap.setBoolean(node, true)
         halos.set(node, NodeHalo.create(20))
       })
@@ -316,7 +316,7 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
 
     // assign some preferred edge lengths for the edges
     const preferredEdgeLength = graph.createEdgeMap()
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       const sType = nodeTypesDp.getNumber(edge.source)
       const tType = nodeTypesDp.getNumber(edge.target)
 
@@ -359,13 +359,13 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
     const visited = new Set<YNode>()
     graph.nodes
       // get all co-reactants that are not already handled
-      .filter(node => isCoReactant(nodeTypesDp, node) && !handledNodes.has(node))
-      .forEach(coReactant => {
+      .filter((node) => isCoReactant(nodeTypesDp, node) && !handledNodes.has(node))
+      .forEach((coReactant) => {
         if (!visited.has(coReactant)) {
           // get the reaction node to which this coReactant is connected and find the other otherReactant
           const reaction = coReactant.edges.at(0)!.opposite(coReactant)
           const otherReactant = reaction.neighbors.find(
-            neighbor => neighbor !== coReactant && isCoReactant(nodeTypesDp, neighbor)
+            (neighbor) => neighbor !== coReactant && isCoReactant(nodeTypesDp, neighbor)
           )!
 
           // order the coReactant pair based on whether they have incoming/outgoing edges
@@ -389,8 +389,8 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
     // create some constraints between the reactions and the nodes of type 'other' to make sure
     // that they are separated and placed with some distance
     graph.nodes
-      .filter(node => nodeTypesDp.get(node) === NodeTypes.OTHER)
-      .forEach(node => {
+      .filter((node) => nodeTypesDp.get(node) === NodeTypes.OTHER)
+      .forEach((node) => {
         const reaction = node.neighbors.at(0)!
         // create a constraint to force the reaction and the 'other' node to have a minimum distance
         constraintFactory.addSeparationConstraint(
@@ -412,8 +412,8 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
     nodeTypesDp: IDataProvider
   ): YNode[] {
     return graph.nodes
-      .filter(node => isEnzyme(nodeTypesDp, node) && connectsToCircle(node, circleNodes))
-      .map(node => nodeIds.get(node) as YNode)
+      .filter((node) => isEnzyme(nodeTypesDp, node) && connectsToCircle(node, circleNodes))
+      .map((node) => nodeIds.get(node) as YNode)
       .toArray()
   }
 
@@ -429,8 +429,8 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
     constraintFactory: OrganicLayoutConstraintFactory
   ): void {
     alignedNodes
-      .filter(node => isReaction(nodeTypesDp, node) && !circleNodes.has(node))
-      .forEach(reaction => {
+      .filter((node) => isReaction(nodeTypesDp, node) && !circleNodes.has(node))
+      .forEach((reaction) => {
         const coReactantIds: YNode[] = []
         // get the id of the reaction node
         const reactionId = nodeIds.get(reaction) as YNode
@@ -447,7 +447,7 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
             }
             return 0
           })
-          .forEach(neighbor => {
+          .forEach((neighbor) => {
             const type = nodeTypesDp.get(neighbor) as NodeTypes
             const neighborId = nodeIds.get(neighbor) as YNode
             if (type === NodeTypes.ENZYME) {
@@ -508,7 +508,7 @@ function calculateCircleBounds(graph: LayoutGraph, circleNodes: YNode[]): Rect {
  */
 function connectsToCircle(node: YNode, circleNodes: Set<YNode>): boolean {
   return (
-    node.edges.find(edge => circleNodes.has(edge.source) || circleNodes.has(edge.target)) !== null
+    node.edges.find((edge) => circleNodes.has(edge.source) || circleNodes.has(edge.target)) !== null
   )
 }
 

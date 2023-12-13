@@ -85,10 +85,10 @@ export function createLayoutData(graph, isHierarchyEdge, nodeId, moveToTop = fal
     configureEdgeHierarchyCandidates(isHierarchyEdge)
 
   const layoutData = new HierarchicLayoutData({
-    edgeDirectedness: item => (isHierarchyEdge(item) ? 1 : 0),
-    sourceGroupIds: item =>
+    edgeDirectedness: (item) => (isHierarchyEdge(item) ? 1 : 0),
+    sourceGroupIds: (item) =>
       isHierarchyEdge(item) ? 's-' + nodeId(item.sourceNode).toString() : null,
-    targetGroupIds: item =>
+    targetGroupIds: (item) =>
       isHierarchyEdge(item) ? 't-' + nodeId(item.targetNode).toString() : null,
     nodePortCandidateSets: createPortCandidateSet,
     sourcePortCandidates: createSourcePortCandidates,
@@ -96,7 +96,7 @@ export function createLayoutData(graph, isHierarchyEdge, nodeId, moveToTop = fal
   })
 
   if (moveToTop) {
-    layoutData.partitionGridData.rowIndices = new ItemMapping(node =>
+    layoutData.partitionGridData.rowIndices = new ItemMapping((node) =>
       graph.inEdgesAt(node).filter(isHierarchyEdge).size === 0 ? 0 : 1
     )
   }
@@ -129,9 +129,9 @@ function configureEdgeHierarchyCandidates(isHierarchyEdge) {
     return portCandidateSet
   }
 
-  const createSourcePortCandidates = edge =>
+  const createSourcePortCandidates = (edge) =>
     isHierarchyEdge(edge) ? hierarchyEdgeSourceSideCandidates : regularEdgeSourceSideCandidates
-  const createTargetPortCandidates = edge =>
+  const createTargetPortCandidates = (edge) =>
     isHierarchyEdge(edge) ? hierarchyEdgeTargetSideCandidates : regularEdgeTargetSideCandidates
 
   return { createPortCandidateSet, createSourcePortCandidates, createTargetPortCandidates }

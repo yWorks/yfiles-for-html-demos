@@ -276,7 +276,7 @@ function configureUserInteraction(graphComponent) {
  */
 function configureDendrogramComponent(dendrogramComponent) {
   // add a dragging listener to run the hierarchical algorithm when the dragging of the cutoff line has finished
-  dendrogramComponent.addDragFinishedListener(cutOffValue => {
+  dendrogramComponent.addDragFinishedListener((cutOffValue) => {
     removeClusterVisuals()
     runHierarchicalClustering(cutOffValue)
   })
@@ -474,7 +474,7 @@ function visualizeClusteringResult() {
 
   // creates a map the holds for each cluster id, the list of nodes that belong to the particular cluster
   const clustering = new Map()
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     let clusterId = result.nodeClusterIds.get(node)
     // biconnected components returns -1 as cluster id when only one node is present.
     // We change the clusterId manually here, as otherwise we'll get an exception in
@@ -592,7 +592,7 @@ function loadGraph(sampleData) {
       {
         data: sampleData.nodes,
         id: 'id',
-        layout: data => new Rect(data.x, data.y, data.w, data.h),
+        layout: (data) => new Rect(data.x, data.y, data.w, data.h),
         labels: ['label']
       }
     ],
@@ -623,10 +623,10 @@ function initializeUI() {
 
   // edge-betweenness menu
   const minInput = document.querySelector(`#ebMinClusterNumber`)
-  minInput.addEventListener('change', _ => {
+  minInput.addEventListener('change', (_) => {
     const value = parseFloat(minInput.value)
     const maximumClusterNumber = parseFloat(document.querySelector(`#ebMaxClusterNumber`).value)
-    if (isNaN(value) || value < 1) {
+    if (Number.isNaN(value) || value < 1) {
       alert('Number of clusters should be non-negative.')
       minInput.value = '1'
       return
@@ -647,10 +647,10 @@ function initializeUI() {
   })
 
   const maxInput = document.querySelector(`#ebMaxClusterNumber`)
-  maxInput.addEventListener('change', _ => {
+  maxInput.addEventListener('change', (_) => {
     const value = parseFloat(maxInput.value)
     const minimumClusterNumber = parseFloat(document.querySelector(`#ebMinClusterNumber`).value)
-    if (isNaN(value) || value < minimumClusterNumber || minimumClusterNumber < 1) {
+    if (Number.isNaN(value) || value < minimumClusterNumber || minimumClusterNumber < 1) {
       const message =
         value < minimumClusterNumber
           ? 'Desired maximum number of clusters cannot be smaller than the desired minimum number of clusters.'
@@ -665,7 +665,7 @@ function initializeUI() {
   const considerEdgeDirection = document.querySelector(`#directed`)
   considerEdgeDirection.addEventListener('click', () => {
     const isChecked = considerEdgeDirection.checked
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       graph.setStyle(edge, isChecked ? directedEdgeStyle : graph.edgeDefaults.style)
     })
 
@@ -674,7 +674,7 @@ function initializeUI() {
 
   const considerEdgeCosts = document.querySelector(`#edgeCosts`)
   considerEdgeCosts.addEventListener('click', () => {
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       if (considerEdgeCosts.checked) {
         const edgeCost = Math.floor(Math.random() * 200 + 1)
         if (edge.labels.size > 0) {
@@ -683,7 +683,7 @@ function initializeUI() {
           graph.addLabel(edge, `${edgeCost}`)
         }
       } else {
-        edge.labels.toArray().forEach(label => {
+        edge.labels.toArray().forEach((label) => {
           graph.remove(label)
         })
       }
@@ -695,9 +695,9 @@ function initializeUI() {
   const distanceCombobox = document.querySelector(`#distance-metrics`)
   distanceCombobox.addEventListener('change', runAlgorithm)
   const kMeansInput = document.querySelector(`#kMeansMaxClusterNumber`)
-  kMeansInput.addEventListener('change', _ => {
+  kMeansInput.addEventListener('change', (_) => {
     const value = parseFloat(kMeansInput.value)
-    if (isNaN(value) || value < 1) {
+    if (Number.isNaN(value) || value < 1) {
       alert('Desired maximum number of clusters should be greater than zero.')
       kMeansInput.value = '1'
       return
@@ -705,9 +705,9 @@ function initializeUI() {
     runAlgorithm()
   })
   const iterationInput = document.querySelector(`#iterations`)
-  iterationInput.addEventListener('change', _ => {
+  iterationInput.addEventListener('change', (_) => {
     const value = parseFloat(iterationInput.value)
-    if (isNaN(value) || value < 0) {
+    if (Number.isNaN(value) || value < 0) {
       alert('Desired maximum number of iterations should be non-negative.')
       iterationInput.value = '0'
       return
@@ -748,7 +748,7 @@ function getEdgeWeight(edge) {
   if (edge.labels.size > 0) {
     // ...try to return its value
     const edgeWeight = parseFloat(edge.labels.first().text)
-    if (!isNaN(edgeWeight)) {
+    if (!Number.isNaN(edgeWeight)) {
       return edgeWeight > 0 ? edgeWeight : 1
     }
   }

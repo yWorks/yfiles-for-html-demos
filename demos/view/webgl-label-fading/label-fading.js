@@ -57,7 +57,7 @@ export function registerLabelFading(graphComponent, labelFadeThreshold) {
     graphComponent.removeZoomChangedListener(toggleLabelVisibility)
   }
 
-  toggleLabelVisibility = graphComponent => {
+  toggleLabelVisibility = (graphComponent) => {
     const zoom = graphComponent.zoom
     document.querySelector('#current-zoom').textContent = `${Math.round(zoom * 100)}%`
     if (zoom <= labelFadeThreshold) {
@@ -90,7 +90,7 @@ function fadeOutLabels(graphComponent) {
     timing: '500ms ease'
   })
 
-  graphComponent.graph.labels.forEach(label => {
+  graphComponent.graph.labels.forEach((label) => {
     graphModelManager.setAnimations(label, [labelsFadeAnimation])
   })
 
@@ -111,7 +111,7 @@ function fadeInLabels(graphComponent) {
   const graphModelManager = graphComponent.graphModelManager
 
   labelsFadeAnimation?.stop().then(() => {
-    graphComponent.graph.labels.forEach(label => {
+    graphComponent.graph.labels.forEach((label) => {
       graphModelManager.setAnimations(label, [])
     })
   })

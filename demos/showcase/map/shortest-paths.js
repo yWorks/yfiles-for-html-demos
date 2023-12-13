@@ -45,7 +45,7 @@ let lastClickedNode
 /**
  * Registers listeners to graph changes and clicks to update the highlighted of the shortest paths.
  * @param {!GraphComponent} graphComponent
- * @param {!Map} map
+ * @param {!LeafletMap} map
  */
 export function initializeShortestPaths(graphComponent, map) {
   const inputMode = graphComponent.inputMode
@@ -85,7 +85,7 @@ function initializeHighlights(graphComponent) {
 
   // use highlightDecorator for edges as we want to use different arc heights for individual edges
   graphComponent.graph.decorator.edgeDecorator.highlightDecorator.setFactory(
-    edge =>
+    (edge) =>
       new EdgeStyleDecorationInstaller({
         edgeStyle: new ArcEdgeStyle({
           stroke: '5px dashed #db3a34',
@@ -99,7 +99,7 @@ function initializeHighlights(graphComponent) {
  * Highlights the shortest path between the current clickNode and the last clicked node.
  * @param {!INode} clickedNode
  * @param {!GraphComponent} graphComponent
- * @param {!Map} map
+ * @param {!LeafletMap} map
  */
 function updateShortestPathHighlight(clickedNode, graphComponent, map) {
   const highlightManager = graphComponent.highlightIndicatorManager
@@ -111,7 +111,7 @@ function updateShortestPathHighlight(clickedNode, graphComponent, map) {
     const algorithm = new ShortestPath({
       source: start,
       sink: clickedNode,
-      costs: edge => {
+      costs: (edge) => {
         // use the actual distance between the two airports as costs
         const { lat: sourceLat, lng: sourceLng } = getAirportData(edge.sourceNode)
         const { lat: targetLat, lng: targetLng } = getAirportData(edge.targetNode)
@@ -124,7 +124,7 @@ function updateShortestPathHighlight(clickedNode, graphComponent, map) {
     highlightManager.clearHighlights()
 
     const result = algorithm.run(graph)
-    result.edges.forEach(edge => {
+    result.edges.forEach((edge) => {
       // highlight the edge, its source/target nodes and their associated labels
       highlightManager.addHighlight(edge)
       const sourceNode = edge.sourceNode
@@ -154,7 +154,7 @@ export function updateHighlights(graphComponent) {
   const highlightManager = graphComponent.highlightIndicatorManager
   const highlightedItems = highlightManager.selectionModel.toArray()
   highlightManager.clearHighlights()
-  highlightedItems.forEach(item => {
+  highlightedItems.forEach((item) => {
     graphComponent.highlightIndicatorManager.addHighlight(item)
   })
 }

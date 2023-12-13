@@ -472,7 +472,7 @@ async function loadGraph(): Promise<void> {
 
   const graph = builder.buildGraph()
 
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const label = node.labels.first()
     const nodeLayout = new Rect(
       node.layout.x,
@@ -503,7 +503,7 @@ async function loadGraph(): Promise<void> {
  */
 function getInitialPackage(packageName: string): INode | null {
   let initialPackageNode: INode | null = null
-  filteredGraph.wrappedGraph!.nodes.forEach(node => {
+  filteredGraph.wrappedGraph!.nodes.forEach((node) => {
     if (packageName === node.labels.get(0).text) {
       initialPackageNode = node
     }
@@ -552,7 +552,7 @@ function applyAlgorithm(): void {
         const transitivityClosureResult = transitivityClosure.run(graph)
 
         const newEdges = transitivityClosureResult.edgesToAdd
-        newEdges.forEach(edge => {
+        newEdges.forEach((edge) => {
           const newEdge = graph.createEdge(edge.source, edge.target)
           graph.setStyle(newEdge, addedEdgeStyle)
 
@@ -574,7 +574,7 @@ function applyAlgorithm(): void {
         }
 
         const transitiveEdges = transitivityReductionResult.edgesToRemove
-        transitiveEdges.forEach(edge => {
+        transitiveEdges.forEach((edge) => {
           if (showTransitiveEdges) {
             graph.setStyle(edge, removedEdgeStyle)
             incrementalEdges.push(edge)
@@ -641,7 +641,7 @@ async function filterGraph(clickedNode: INode): Promise<void> {
   startNode = clickedNode
 
   // take all in-edges and mark the other endpoint as a neighbor of clickedNode
-  fullGraph.inEdgesAt(clickedNode).forEach(edge => {
+  fullGraph.inEdgesAt(clickedNode).forEach((edge) => {
     const oppositeNode = edge.opposite(clickedNode) as INode
     // we have to check if the node is already taken into consideration in the calculation of dependents
     if (!filteredNodes!.has(oppositeNode)) {
@@ -659,7 +659,7 @@ async function filterGraph(clickedNode: INode): Promise<void> {
 
   // check if new nodes are inserted in the graph
   if (existingNodes) {
-    fullGraph.nodes.forEach(node => {
+    fullGraph.nodes.forEach((node) => {
       if (!existingNodes.has(node)) {
         incrementalNodes.push(node)
       }
@@ -686,7 +686,7 @@ function collectConnectedNodes(initialNode: INode, graph: IGraph, out: boolean):
   while (stack.length > 0) {
     const node = stack.pop()!
     const edges = out ? graph.outEdgesAt(node) : graph.inEdgesAt(node)
-    edges.forEach(edge => {
+    edges.forEach((edge) => {
       filteredEdges!.add(edge)
       const oppositeNode = edge.opposite(node)! as INode
       stack.push(oppositeNode)
@@ -709,7 +709,7 @@ function collectConnectedNodes(initialNode: INode, graph: IGraph, out: boolean):
  */
 function resetGraph(): void {
   if (addedEdges.length !== 0) {
-    addedEdges.forEach(edge => filteredGraph.remove(edge))
+    addedEdges.forEach((edge) => filteredGraph.remove(edge))
 
     addedEdges = []
   }
@@ -717,9 +717,9 @@ function resetGraph(): void {
   removedEdgesSet = null
   filteredGraph.edgePredicateChanged()
 
-  filteredGraph.edges.forEach(edge => filteredGraph.setStyle(edge, normalEdgeStyle))
+  filteredGraph.edges.forEach((edge) => filteredGraph.setStyle(edge, normalEdgeStyle))
 
-  filteredGraph.nodes.forEach(node => (node.tag.highlight = false))
+  filteredGraph.nodes.forEach((node) => (node.tag.highlight = false))
 }
 
 /**
@@ -754,10 +754,10 @@ async function applyLayout(incremental: boolean): Promise<void> {
 
   if (incremental) {
     layout.layoutMode = LayoutMode.INCREMENTAL
-    layoutData.incrementalHints.incrementalLayeringNodes = incrementalNodes.filter(node =>
+    layoutData.incrementalHints.incrementalLayeringNodes = incrementalNodes.filter((node) =>
       filteredGraph.contains(node)
     )
-    layoutData.incrementalHints.incrementalSequencingItems = incrementalEdges.filter(edge =>
+    layoutData.incrementalHints.incrementalSequencingItems = incrementalEdges.filter((edge) =>
       filteredGraph.contains(edge)
     )
 
@@ -801,7 +801,7 @@ function prepareSmoothLayoutAnimation(): void {
   layout.removeBends = true
 
   const layoutData = new PlaceNodesAtBarycenterStageData({
-    affectedNodes: node => incrementalNodes.includes(node) && filteredGraph.contains(node)
+    affectedNodes: (node) => incrementalNodes.includes(node) && filteredGraph.contains(node)
   })
 
   graph.applyLayout(layout, layoutData)

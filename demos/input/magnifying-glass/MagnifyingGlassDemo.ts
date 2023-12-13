@@ -99,13 +99,19 @@ function populateGraph(graph: IGraph): void {
   )
 
   // Create shared image node styles
-  const deviceStyles = Object.getOwnPropertyNames(deviceIcons).reduce((obj, name) => {
-    const circle = new GeneralPath()
-    circle.appendEllipse(new Rect(0, 0, 1, 1), false)
+  const deviceStyles = Object.getOwnPropertyNames(deviceIcons).reduce(
+    (obj, name) => {
+      const circle = new GeneralPath()
+      circle.appendEllipse(new Rect(0, 0, 1, 1), false)
 
-    obj[name] = new ImageNodeStyle({ image: (deviceIcons as any)[name], normalizedOutline: circle })
-    return obj
-  }, {} as Record<string, ImageNodeStyle>)
+      obj[name] = new ImageNodeStyle({
+        image: (deviceIcons as any)[name],
+        normalizedOutline: circle
+      })
+      return obj
+    },
+    {} as Record<string, ImageNodeStyle>
+  )
 
   // Build the graph
   const graphBuilder = new GraphBuilder(graph)
@@ -113,8 +119,8 @@ function populateGraph(graph: IGraph): void {
     data: networkData.nodeList,
     id: 'data.id',
     tag: 'data',
-    layout: dataItem => Rect.fromCenter(dataItem.layout, graph.nodeDefaults.size),
-    style: dataItem => deviceStyles[dataItem.data.type]
+    layout: (dataItem) => Rect.fromCenter(dataItem.layout, graph.nodeDefaults.size),
+    style: (dataItem) => deviceStyles[dataItem.data.type]
   })
   graphBuilder.createEdgesSource({
     data: networkData.edgeList,
@@ -129,7 +135,7 @@ function populateGraph(graph: IGraph): void {
  */
 function initializeUI(): void {
   const zoomSelectElement = document.querySelector<HTMLSelectElement>('#lens-zoom')!
-  zoomSelectElement.addEventListener('change', evt => {
+  zoomSelectElement.addEventListener('change', (evt) => {
     lensInputMode.zoomFactor = parseInt(zoomSelectElement.value)
   })
   zoomSelectElement.selectedIndex = 1

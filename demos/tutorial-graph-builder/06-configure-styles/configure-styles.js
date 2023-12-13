@@ -69,7 +69,7 @@ export function configureStylesWithBinding(nodesSource) {
   // disable sharing of styles
   nodesSource.nodeCreator.defaults.shareStyleInstance = false
 
-  nodesSource.nodeCreator.styleBindings.addBinding('stroke', entityData => {
+  nodesSource.nodeCreator.styleBindings.addBinding('stroke', (entityData) => {
     return new Stroke({
       fill: entityData.currency === 'EUR' ? darkBlue : red,
       thickness: 3
@@ -83,7 +83,7 @@ export function configureStylesWithBinding(nodesSource) {
 export function configureStylesWithProvider(nodesSource) {
   const gold = '#F0C808'
   const green = '#56926E'
-  nodesSource.nodeCreator.styleProvider = entityData => {
+  nodesSource.nodeCreator.styleProvider = (entityData) => {
     if (entityData.type === 'Branch') {
       return new ShapeNodeStyle({
         shape: 'round-rectangle',
@@ -104,7 +104,7 @@ export function configureStylesWithProvider(nodesSource) {
 export function configureEdgeStylesWithProvider(edgesSource) {
   const red = '#DB3A34'
   const gray = '#C1C1C1'
-  edgesSource.edgeCreator.styleProvider = connectionData => {
+  edgesSource.edgeCreator.styleProvider = (connectionData) => {
     if (connectionData.ownership) {
       return new PolylineEdgeStyle({
         stroke: new Stroke({

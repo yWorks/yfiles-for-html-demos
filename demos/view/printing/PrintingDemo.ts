@@ -50,7 +50,7 @@ async function run(): Promise<void> {
 
   const printRect = initializeExportRectangle(graphComponent)
 
-  initializeOptionPanel(options => {
+  initializeOptionPanel((options) => {
     const rect = options.usePrintRectangle ? printRect.toRect() : undefined
 
     const printingSupport = new PrintingSupport()

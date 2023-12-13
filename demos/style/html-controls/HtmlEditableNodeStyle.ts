@@ -38,7 +38,7 @@ import {
 import { avatars, statusValues, type UserData } from './data'
 
 const avatarImages = avatars
-  .map(path => `<img class='editable-node-style__avatar-select-image' src="${path}">`)
+  .map((path) => `<img class='editable-node-style__avatar-select-image' src="${path}">`)
   .join('')
 
 type HtmlEditableNodeStyleVisual = TypedHtmlVisual<HTMLDivElement>
@@ -76,7 +76,7 @@ export class HtmlEditableNodeStyle extends NodeStyleBase<HtmlEditableNodeStyleVi
     const data = node.tag as UserData
 
     const statusOptions = statusValues.map(
-      status => `<option${status === data.status ? ' selected' : ''}>${status}</option>`
+      (status) => `<option${status === data.status ? ' selected' : ''}>${status}</option>`
     )
 
     element.innerHTML = `
@@ -147,7 +147,7 @@ export class HtmlEditableNodeStyle extends NodeStyleBase<HtmlEditableNodeStyleVi
       // prevent yFiles from handling events we need for the form elements
       preventPropagation(input)
     }
-    form.addEventListener('submit', evt => {
+    form.addEventListener('submit', (evt) => {
       const since = element.querySelector<HTMLInputElement>('.editable-node-style__since')!.value
       const status = element.querySelector<HTMLSelectElement>('.editable-node-style__status')!.value
       const description = element.querySelector<HTMLTextAreaElement>(

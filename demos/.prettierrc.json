@@ -1,13 +1,9 @@
 {
   "printWidth": 100,
-  "tabWidth": 2,
-  "endOfLine": "auto",
-  "useTabs": false,
   "semi": false,
   "singleQuote": true,
-  "bracketSpacing": true,
   "trailingComma": "none",
-  "arrowParens": "avoid",
+  "endOfLine": "auto",
   "overrides": [
     {
       "files": ["tutorial-*/**/*.ts"],

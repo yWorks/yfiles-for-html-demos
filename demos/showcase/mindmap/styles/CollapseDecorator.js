@@ -196,7 +196,7 @@ export class CollapseDecorator extends NodeStyleBase {
     // register the click and touch listeners for the collapse/expand operation
     g.addEventListener(
       'click',
-      _ => {
+      (_) => {
         if (canExecuteToggleCollapseState(graphComponent, node)) {
           executeToggleCollapseState(graphComponent, node)
         }
@@ -205,7 +205,7 @@ export class CollapseDecorator extends NodeStyleBase {
     )
     g.addEventListener(
       'touchstart',
-      evt => {
+      (evt) => {
         // prevent subsequent firing of a click event
         evt.preventDefault()
         if (canExecuteToggleCollapseState(graphComponent, node)) {

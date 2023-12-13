@@ -143,7 +143,7 @@ function initializeOptions() {
   ]
 
   const genericLabelModel = new GenericLabelModel(labelModelParameters[0])
-  labelModelParameters.forEach(labelModelParameter => {
+  labelModelParameters.forEach((labelModelParameter) => {
     const insets = labelModelParameter.model.insets.top
     const profit = insets < 10 ? 1.0 : insets < 15 ? 0.9 : 0.8
     const labelCandidateDescriptor = new LabelCandidateDescriptor({ profit })
@@ -205,7 +205,7 @@ async function placeLabels() {
   // Check if the label size input is valid. Valid inputs are greater than zero and less than 50.
   const fontSizeElement = document.querySelector('#label-font-size')
   const textSize = parseFloat(fontSizeElement.value)
-  if (isNaN(textSize) || textSize <= 0 || textSize > 50) {
+  if (Number.isNaN(textSize) || textSize <= 0 || textSize > 50) {
     return alert('Label size should be greater than 0 and less than 50.')
   }
 
@@ -216,8 +216,8 @@ async function placeLabels() {
   const labelModel = labelModels[labelModelComboBox.selectedIndex]
   // sets the label model based on the selected value of the corresponding combo-box
   graph.labels
-    .filter(label => label.owner instanceof INode)
-    .forEach(label => {
+    .filter((label) => label.owner instanceof INode)
+    .forEach((label) => {
       // if the default label model is not the selected, change it
       if (labelModel !== graph.nodeDefaults.labels.layoutParameter.model) {
         graph.setLabelLayoutParameter(label, labelModel.createDefaultParameter())
@@ -299,7 +299,7 @@ async function createSampleGraph() {
   builder.createNodesSource({
     data: SampleData.nodes,
     id: 'id',
-    layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height),
+    layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height),
     labels: ['label']
   })
   builder.buildGraph()

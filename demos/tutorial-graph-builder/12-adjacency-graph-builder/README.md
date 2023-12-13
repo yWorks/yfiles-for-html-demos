@@ -64,7 +64,7 @@ const adjacencyGraphBuilder = new AdjacencyGraphBuilder(graph)
 
 const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(
   nodesData,
-  item => item.id
+  (item) => item.id
 )
 ```
 
@@ -72,7 +72,7 @@ In the second step, we configure the _colleagues_ or _successors_ on the [Adjace
 
 ```
 adjacencyNodesSource.addSuccessorIds(
-  data => data.colleagues,
+  (data) => data.colleagues,
   new EdgeCreator({ defaults: graph.edgeDefaults })
 )
 ```
@@ -81,7 +81,7 @@ Finally, we add labels to the graph building process by providing a label bindin
 
 ```
 adjacencyNodesSource.nodeCreator.createLabelBinding({
-  text: dataItem => dataItem.name
+  text: (dataItem) => dataItem.name
 })
 ```
 

@@ -200,12 +200,12 @@ export default class BpmnLayout extends BaseClass(ILayoutAlgorithm) {
   configurePartitionGrid(graph) {
     const grid = PartitionGrid.getPartitionGrid(graph)
     if (grid != null) {
-      grid.columns.forEach(columnObject => {
+      grid.columns.forEach((columnObject) => {
         const column = columnObject
         column.leftInset += this.laneInsets
         column.rightInset += this.laneInsets
       })
-      grid.rows.forEach(rowObject => {
+      grid.rows.forEach((rowObject) => {
         const row = rowObject
         row.topInset += this.laneInsets
         row.bottomInset += this.laneInsets
@@ -586,7 +586,7 @@ class BalancingPortOptimizer extends PortConstraintOptimizerBase {
     const criticalEdges = Maps.createHashedEdgeMap()
 
     // determine whether an edge crosses a swim-lane border and if so in which direction
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       const originalEdge = this.getOriginalEdge(edge, ldp)
 
       // now we have a 'real' edge with valid source and target nodes
@@ -605,12 +605,12 @@ class BalancingPortOptimizer extends PortConstraintOptimizerBase {
     })
 
     // determine basic node alignment
-    graph.nodes.forEach(n => {
+    graph.nodes.forEach((n) => {
       const alignment = this.calculateLaneAlignment(n)
       this.node2LaneAlignment.set(n, alignment)
     })
 
-    graph.nodes.forEach(n => {
+    graph.nodes.forEach((n) => {
       // sort the edges with the provided comparer
       n.sortInEdges(inEdgeOrder)
       n.sortOutEdges(outEdgeOrder)
@@ -907,7 +907,7 @@ class BalancingPortOptimizer extends PortConstraintOptimizerBase {
   calculateLaneAlignment(n) {
     let toRightCount = 0
     let toLeftCount = 0
-    n.edges.forEach(edge => {
+    n.edges.forEach((edge) => {
       const crossing = this.edge2LaneCrossing.get(edge)
       if (n === edge.source) {
         if (crossing === LaneCrossing.TO_EAST) {
@@ -1061,7 +1061,7 @@ class BpmnLabelProfitModel extends BaseClass(IProfitModel) {
       // diagonal candidates get a bit less profit
       profit = 0.9
     }
-    node.edges.forEach(edge => {
+    node.edges.forEach((edge) => {
       const portLocation =
         edge.source === node
           ? this.graph.getSourcePointRel(edge)

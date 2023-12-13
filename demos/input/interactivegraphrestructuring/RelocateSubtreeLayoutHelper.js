@@ -243,8 +243,8 @@ export default class RelocateSubtreeLayoutHelper {
   onLayoutFinished() {
     if (this.initializing) {
       this.resetToWorkingGraphStageData = this.createGivenCoordinatesStageData(
-        n => !this.subtree.nodes.has(n),
-        e => !this.subtree.edges.has(e)
+        (n) => !this.subtree.nodes.has(n),
+        (e) => !this.subtree.edges.has(e)
       )
       this.executor = this.createDraggingLayoutExecutor()
       this.initializing = false
@@ -280,9 +280,9 @@ export default class RelocateSubtreeLayoutHelper {
     const graph = this.graphComponent.graph
     this.components.clear()
     if (this.subtree.newParent) {
-      graph.outEdgesAt(this.subtree.newParent).forEach(edge => {
+      graph.outEdgesAt(this.subtree.newParent).forEach((edge) => {
         const siblingSubtree = new Subtree(graph, edge.targetNode)
-        siblingSubtree.nodes.forEach(node => {
+        siblingSubtree.nodes.forEach((node) => {
           this.components.set(node, siblingSubtree)
         })
       })
@@ -298,7 +298,7 @@ export default class RelocateSubtreeLayoutHelper {
     const nodesOnTop = new List()
     const rootY = this.subtree.root.layout.y
     let maxY = Number.NEGATIVE_INFINITY
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const nodeMaxY = node.layout.maxY
       if (!this.subtree.nodes.has(node) && nodeMaxY < rootY) {
         maxY = Math.max(maxY, nodeMaxY)
@@ -309,7 +309,7 @@ export default class RelocateSubtreeLayoutHelper {
     let minDist = Number.POSITIVE_INFINITY
     let result = null
     const rootCenter = this.subtree.root.layout.center
-    nodesOnTop.forEach(node => {
+    nodesOnTop.forEach((node) => {
       if (node.layout.maxY > maxY - 30) {
         const dist = rootCenter.distanceTo(node.layout.center)
         if (dist < minDist) {
@@ -347,19 +347,19 @@ export default class RelocateSubtreeLayoutHelper {
     const layoutData = new GivenCoordinatesStageData()
     const graph = this.graphComponent.graph
     graph.nodes
-      .filter(node => nodePredicate(node))
-      .forEach(node => {
+      .filter((node) => nodePredicate(node))
+      .forEach((node) => {
         const layout = node.layout
         layoutData.nodeLocations.mapper.set(node, layout.topLeft)
         layoutData.nodeSizes.mapper.set(node, layout.toSize())
       })
 
     graph.edges
-      .filter(edge => edgePredicate(edge))
-      .forEach(edge => {
+      .filter((edge) => edgePredicate(edge))
+      .forEach((edge) => {
         const points = new List()
         points.add(edge.sourcePort.location)
-        points.addRange(edge.bends.map(bend => bend.location.toPoint()))
+        points.addRange(edge.bends.map((bend) => bend.location.toPoint()))
         points.add(edge.targetPort.location)
         layoutData.edgePaths.mapper.set(edge, points)
       })
@@ -379,7 +379,7 @@ export default class RelocateSubtreeLayoutHelper {
       // the FillAreaLayout is only applied to the part of the tree that does not belong to the subtree
       graph: new FilteredGraphWrapper(
         this.graphComponent.graph,
-        n => !this.subtree.nodes.has(n),
+        (n) => !this.subtree.nodes.has(n),
         () => true
       ),
       layout: new FillAreaLayout({
@@ -479,7 +479,7 @@ export default class RelocateSubtreeLayoutHelper {
     return new CompositeLayoutData(
       this.resetToWorkingGraphStageData,
       new ClearAreaLayoutData({
-        areaNodes: node => this.subtree.nodes.has(node),
+        areaNodes: (node) => this.subtree.nodes.has(node),
         componentIds: this.components,
         // force the router to let edges leave the nodes at the center of the south side
         // and to let enter the nodes in the center of the north side
@@ -511,7 +511,7 @@ class DraggingLayoutExecutor extends LayoutExecutor {
     super(graphComponent, layout)
     this.filteredGraph = new FilteredGraphWrapper(
       graphComponent.graph,
-      n => !nodes.has(n),
+      (n) => !nodes.has(n),
       () => true
     )
   }

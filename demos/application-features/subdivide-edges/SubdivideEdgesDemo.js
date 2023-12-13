@@ -96,7 +96,7 @@ function configureDragAndDrop() {
   // create and configure the node drop input mode
   const nodeDropInputMode = new SubdivideEdgeDropInputMode()
   // nodes with GroupNodeStyle should be created as group nodes
-  nodeDropInputMode.isGroupNodePredicate = draggedNode =>
+  nodeDropInputMode.isGroupNodePredicate = (draggedNode) =>
     draggedNode.style instanceof GroupNodeStyle
   // assign the new node input mode to the graphComponent
   inputMode.nodeDropInputMode = nodeDropInputMode
@@ -121,7 +121,7 @@ function initializeDragAndDropPanel() {
   const nodeStyles = [defaultNodeStyle, otherNodeStyle, defaultGroupNodeStyle]
 
   // add a visual for each node style to the palette
-  nodeStyles.forEach(style => {
+  nodeStyles.forEach((style) => {
     addNodeVisual(style, panel)
   })
 }
@@ -175,7 +175,7 @@ function addNodeVisual(style, panel) {
 
   img.addEventListener(
     'mousedown',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },
@@ -183,7 +183,7 @@ function addNodeVisual(style, panel) {
   )
   img.addEventListener(
     'touchstart',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },

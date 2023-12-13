@@ -33,12 +33,12 @@ import { PolylineEdgeStyle, ShapeNodeStyle, Size, StringTemplateNodeStyle } from
  */
 export function initializeStyles(graph) {
   StringTemplateNodeStyle.CONVERTERS.labelConverters = {
-    center: value => value * 0.5,
-    altitude: value => `${value} m`,
-    iconHeight: value => value * 0.6,
-    iconConverter: wayPoint => getIcon(wayPoint) ?? '',
-    iconVisible: wayPoint => (getIcon(wayPoint) != null ? 'visible' : 'hidden'),
-    textVisible: wayPoint => (getIcon(wayPoint) != null ? 'hidden' : 'visible')
+    center: (value) => value * 0.5,
+    altitude: (value) => `${value} m`,
+    iconHeight: (value) => value * 0.6,
+    iconConverter: (wayPoint) => getIcon(wayPoint) ?? '',
+    iconVisible: (wayPoint) => (getIcon(wayPoint) != null ? 'visible' : 'hidden'),
+    textVisible: (wayPoint) => (getIcon(wayPoint) != null ? 'hidden' : 'visible')
   }
 
   graph.nodeDefaults.style = new ShapeNodeStyle({

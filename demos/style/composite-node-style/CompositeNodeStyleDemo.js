@@ -142,7 +142,7 @@ function createGraph(graph, stylesDefinitions) {
     id: 'id',
     labels: ['label'],
     layout: 'bounds',
-    style: data => createCompositeStyle(stylesDefinitions, data.type)
+    style: (data) => createCompositeStyle(stylesDefinitions, data.type)
   })
   builder.createEdgesSource({
     data: SampleData.edges,

@@ -142,7 +142,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     // keep labels at their owners for this demo
     graphComponent.graphModelManager.labelLayerPolicy = LabelLayerPolicy.AT_OWNER
 
-    graphComponent.graph.decorator.nodeDecorator.positionHandlerDecorator.setFactory(node => {
+    graphComponent.graph.decorator.nodeDecorator.positionHandlerDecorator.setFactory((node) => {
       return new ZOrderNodePositionHandler(node, this, null)
     })
 
@@ -221,9 +221,9 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     const minNewZOrder = Math.min(...this.tempZOrders.values)
     const delta = maxExistingZOrder - minNewZOrder + 1
     this.tempZOrders.keys
-      .filter(n => this.masterGraph.getParent(n) == null)
+      .filter((n) => this.masterGraph.getParent(n) == null)
       .toList()
-      .forEach(key => {
+      .forEach((key) => {
         const value = this.tempZOrders.get(key)
         this.tempZOrders.set(key, value + delta)
       })
@@ -301,7 +301,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
    */
   onZIndexChanged(item, newValue, oldValue) {
     const eventArgs = new ZIndexChangedEventArgs(item, newValue, oldValue)
-    this.zOrderChangedListeners.forEach(listener => {
+    this.zOrderChangedListeners.forEach((listener) => {
       listener(this, eventArgs)
     })
   }
@@ -367,8 +367,8 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     const masterParent = tempParent
       ? this.getMasterNode(tempParent)
       : this.foldingView
-      ? this.foldingView.localRoot
-      : null
+        ? this.foldingView.localRoot
+        : null
     this.tempParents.set(master, masterParent)
   }
 
@@ -403,7 +403,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
    * @param {boolean} [update=false]
    */
   applyTempZOrders(update = false) {
-    this.tempZOrders.forEach(keyValuePair => {
+    this.tempZOrders.forEach((keyValuePair) => {
       this.setZOrder(keyValuePair.key, keyValuePair.value)
       if (update) {
         this.update(keyValuePair.key)
@@ -476,7 +476,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
    */
   toFront(nodes) {
     for (const grouping of nodes.groupBy(
-      node => this.graphComponent.graph.getParent(node),
+      (node) => this.graphComponent.graph.getParent(node),
       (type, elements) => ({
         groupNode: type,
         children: elements ? elements.toList() : new List()
@@ -488,7 +488,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
       if (toFrontChildren.size < allChildren.size) {
         allChildren.sort(this)
         toFrontChildren.sort(this)
-        allChildren.removeAll(node => {
+        allChildren.removeAll((node) => {
           return toFrontChildren.includes(node)
         })
         const last = allChildren.last()
@@ -506,7 +506,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
    */
   toBack(nodes) {
     for (const grouping of nodes.groupBy(
-      node => this.graphComponent.graph.getParent(node),
+      (node) => this.graphComponent.graph.getParent(node),
       (type, elements) => ({
         groupNode: type,
         children: elements ? elements.toList() : new List()
@@ -518,7 +518,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
       if (toBackChildren.size < allChildren.size) {
         allChildren.sort(this)
         toBackChildren.sort(this)
-        allChildren.removeAll(node => {
+        allChildren.removeAll((node) => {
           return toBackChildren.includes(node)
         })
         const first = allChildren.get(0)
@@ -778,7 +778,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
    */
   storeInitialZOrder(sourceGraph, filter) {
     // determine the view items involved in the clipboard operation and sort them by their visual z-order
-    const items = sourceGraph.nodes.filter(node => filter(node)).toList()
+    const items = sourceGraph.nodes.filter((node) => filter(node)).toList()
     if (items.size > 1) {
       items.sort(this)
     }
@@ -976,7 +976,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
       }
       return nodes
     } else if (parameter instanceof IEnumerable) {
-      const nodes = parameter.filter(para => para instanceof INode).toList()
+      const nodes = parameter.filter((para) => para instanceof INode).toList()
       return nodes.size > 0 ? nodes : null
     }
     return null
@@ -1007,7 +1007,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     const graph = this.$graphComponent.graph
     // store all selected nodes that have a parent group
     const nodes = e.selection.selectedNodes
-      .filter(node => {
+      .filter((node) => {
         return graph.getParent(node) !== null
       })
       .toList()
@@ -1141,7 +1141,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     this.$movedNodes.sort(this)
 
     // calculate max z-order for all group nodes containing any moved node
-    this.$movedNodes.forEach(node => {
+    this.$movedNodes.forEach((node) => {
       const parent = graph.getParent(node)
       this.$oldParents.set(node, parent)
       this.getOrCalculateMaxZOrder(parent)
@@ -1163,7 +1163,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
       if (this.$maxRootZOrder === Number.MIN_VALUE) {
         this.$maxRootZOrder = graph
           .getChildren(null)
-          .map(node => {
+          .map((node) => {
             return this.getZOrder(node)
           })
           .reduce((acc, current) => Math.max(acc, current), Number.MIN_VALUE)
@@ -1562,8 +1562,8 @@ class ZOrderReparentHandler extends BaseClass(IReparentNodeHandler) {
     return (
       Math.max(
         ...children
-          .filter(current => current != masterNode)
-          .map(n => this.zOrderSupport.getZOrder(n))
+          .filter((current) => current != masterNode)
+          .map((n) => this.zOrderSupport.getZOrder(n))
       ) + 1
     )
   }

@@ -771,7 +771,7 @@ function createPartitionGridData() {
     const graph = graphComponent.graph
     return new PartitionGridData({
       grid: partitionGrid,
-      cellIds: node => {
+      cellIds: (node) => {
         if (!graph.isGroupNode(node)) {
           return createNodeCellId(node)
         }
@@ -925,7 +925,7 @@ function initializeUI() {
   // for each input, add a change listener to validate that the input is within the desired limits [0, 200]
   const inputFields = document.getElementsByClassName('option-input')
   for (const inputField of inputFields) {
-    inputField.addEventListener('change', event => isValidInput(event, 200), false)
+    inputField.addEventListener('change', (event) => isValidInput(event, 200), false)
   }
 }
 
@@ -1117,7 +1117,7 @@ function canExecuteRemoveRestrictions() {
   const graph = graphComponent.graph
   return (
     selection.size > 0 &&
-    selection.filter(node => !graph.isGroupNode(node) && hasActiveRestrictions(node)).size > 0
+    selection.filter((node) => !graph.isGroupNode(node) && hasActiveRestrictions(node)).size > 0
   )
 }
 
@@ -1149,7 +1149,7 @@ function canExecuteAddRestrictions() {
   const graph = graphComponent.graph
   return (
     selection.size > 0 &&
-    selection.filter(node => !graph.isGroupNode(node) && !hasActiveRestrictions(node)).size > 0
+    selection.filter((node) => !graph.isGroupNode(node) && !hasActiveRestrictions(node)).size > 0
   )
 }
 

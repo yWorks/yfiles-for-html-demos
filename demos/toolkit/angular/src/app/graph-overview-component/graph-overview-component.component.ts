@@ -38,7 +38,10 @@ export class GraphOverviewComponentComponent implements AfterViewInit {
   @ViewChild('graphOverviewComponentRef') graphOverviewComponentRef!: ElementRef
   graphOverviewComponent!: GraphOverviewComponent
   private readonly graphComponent: GraphComponent
-  constructor(private zone: NgZone, graphComponentService: GraphComponentService) {
+  constructor(
+    private zone: NgZone,
+    graphComponentService: GraphComponentService
+  ) {
     this.graphComponent = graphComponentService.getGraphComponent()
   }
 

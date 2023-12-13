@@ -185,13 +185,13 @@ function initializeInteraction(graphComponent) {
 
   // add handle that enables the user to change the corner size of a node
   nodeDecorator.handleProviderDecorator.setImplementationWrapper(
-    n => n.style instanceof RectangleNodeStyle,
+    (n) => n.style instanceof RectangleNodeStyle,
     (node, delegateProvider) => new CornerSizeHandleProvider(node, delegateProvider)
   )
 
   // only provide reshape handles for the east, south and south-east sides, so they don't clash with the corner size handle
   nodeDecorator.reshapeHandleProviderDecorator.setFactory(
-    node =>
+    (node) =>
       new NodeReshapeHandleProvider(node, node.lookup(IReshapeHandler.$class), [
         'east',
         'south',
@@ -320,14 +320,14 @@ function cornersToText(corners) {
     RectangleCorners.BOTTOM_LEFT,
     RectangleCorners.BOTTOM_RIGHT
   ]
-    .filter(corner => {
+    .filter((corner) => {
       if ((corners & corner) === corner) {
         corners &= ~corner
         return true
       }
       return false
     })
-    .map(corner => cornerValueToText(corner))
+    .map((corner) => cornerValueToText(corner))
   return affected.length > 0 ? affected.join(' & ') : 'none'
 }
 
@@ -350,7 +350,7 @@ function initializeUI(graphComponent) {
   }
 
   // Update the values of the input elements when the selected element changes
-  graphComponent.selection.addItemSelectionChangedListener(graphComponent =>
+  graphComponent.selection.addItemSelectionChangedListener((graphComponent) =>
     onSelectionChanged(graphComponent.selectedNodes.find())
   )
 }

@@ -52,7 +52,10 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
   private originalState: RowMoveInfo[] = []
   private portHandle: Map<IPort, RowMoveInfo> = new Map<IPort, RowMoveInfo>()
 
-  constructor(private node: INode, private index: number) {
+  constructor(
+    private node: INode,
+    private index: number
+  ) {
     super()
   }
 
@@ -81,7 +84,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     for (let i = 0; i < this.originalState.length; i++) {
       const portMoveInfo = this.originalState[i]
       const ports = getPortForData(this.node, portMoveInfo.info)
-      ports.forEach(port => {
+      ports.forEach((port) => {
         const portLocation = port.location
         portMoveInfo.handle.dragFinished(context, portMoveInfo.originalHandleLocation, portLocation)
         // Moving ports through their handle might result in port location parameters whose anchor
@@ -133,7 +136,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     nodeInfo.rows[this.currentIndex] = otherInfo
     nodeInfo.rows[newIndex] = rowInfo
 
-    ports.forEach(port => {
+    ports.forEach((port) => {
       const newMoveInfo = this.portHandle.get(port)!
       newMoveInfo.handle.handleMove(
         context,
@@ -144,7 +147,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
         )
       )
     })
-    otherPorts.forEach(port => {
+    otherPorts.forEach((port) => {
       const otherMoveInfo = this.portHandle.get(port)!
       otherMoveInfo.handle.handleMove(
         context,
@@ -176,7 +179,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     // besides the one at the current row
     for (const p of nodeInfo.rows) {
       const ports = getPortForData(this.node, p)
-      ports.forEach(port => {
+      ports.forEach((port) => {
         const handle = port.lookup(IHandle.$class)!
         const info = {
           info: p,
@@ -214,7 +217,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
  * @param rowInfo the row information that identifies the row whose port is returned.
  */
 export function getPortForData(node: INode, rowInfo: RowInfo): IEnumerable<IPort> {
-  return node.ports.filter(p => p.tag.rowInfo === rowInfo)!
+  return node.ports.filter((p) => p.tag.rowInfo === rowInfo)!
 }
 
 /**

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -75,14 +75,10 @@
       <div
         class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
       >
-        <b>Step 12/13</b
+        <b>Step 11/12</b
         ><span class="demo-toolbar__tutorial-step-title"> &mdash; 11 Group Node Style</span>
         <div class="tutorial-dropdown">
           <a
-            href="../../tutorial-style-implementation-node/01-create-a-rectangle/"
-            class="tutorial-dropdown__item"
-            >Tutorial: Node Style Implementation</a
-          ><a
             href="../../tutorial-style-implementation-node/01-create-a-rectangle/"
             class="tutorial-dropdown__item"
             >01 Create A Rectangle</a
@@ -168,7 +164,7 @@
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">INodeInsetsProvider</span>.<span class="hljs-property">$class</span>) {
     <span class="hljs-comment">// use a custom insets provider that reserves space for the tab</span>
     <span class="hljs-keyword">return</span> <span class="hljs-title class_">INodeInsetsProvider</span>.<span class="hljs-title function_">create</span>(
-      <span class="hljs-function"><span class="hljs-params">node</span> =&gt;</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Insets</span>(<span class="hljs-number">4</span>, tabHeight + <span class="hljs-number">4</span>, <span class="hljs-number">4</span>, <span class="hljs-number">4</span>)
+      <span class="hljs-function">(<span class="hljs-params">node</span>) =&gt;</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Insets</span>(<span class="hljs-number">4</span>, tabHeight + <span class="hljs-number">4</span>, <span class="hljs-number">4</span>, <span class="hljs-number">4</span>)
     )
   }
   <span class="hljs-keyword">return</span> <span class="hljs-variable language_">super</span>.<span class="hljs-title function_">lookup</span>(node, <span class="hljs-keyword">type</span>)

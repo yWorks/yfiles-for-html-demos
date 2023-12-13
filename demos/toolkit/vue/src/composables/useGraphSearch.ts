@@ -34,7 +34,7 @@ import {
   StyleDecorationZoomPolicy
 } from 'yfiles'
 import { onMounted } from 'vue'
-import GraphSearch from 'demo-utils/GraphSearch.ts'
+import { GraphSearch } from 'demo-utils/GraphSearch.ts'
 
 export function useGraphSearch(getGraphComponent: () => GraphComponent) {
   let graphComponent: GraphComponent

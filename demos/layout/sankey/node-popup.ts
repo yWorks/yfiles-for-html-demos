@@ -83,7 +83,7 @@ function createNodePopup(graphComponent: GraphComponent): void {
   createColorPicker(graphComponent)
   document
     .getElementById('color-picker')!
-    .addEventListener('click', evt =>
+    .addEventListener('click', (evt) =>
       showPickerContainer(graphComponent, evt.target as HTMLInputElement)
     )
 }

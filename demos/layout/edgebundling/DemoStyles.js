@@ -237,7 +237,7 @@ export class DemoEdgeStyle extends EdgeStyleBase {
       }
     } else {
       path.moveTo(edge.sourcePort.location)
-      edge.bends.forEach(bend => {
+      edge.bends.forEach((bend) => {
         path.lineTo(bend.location)
       })
       path.lineTo(edge.targetPort.location)
@@ -567,7 +567,7 @@ function calculateControlPoints(edge) {
   // add the source port
   controlPoints.push(edge.sourcePort.location)
   // add all edge bends
-  edge.bends.forEach(bend => {
+  edge.bends.forEach((bend) => {
     controlPoints.push(new Point(bend.location.x, bend.location.y))
   })
   // add the target port

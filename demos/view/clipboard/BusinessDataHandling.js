@@ -55,5 +55,5 @@ export function getCommonName(selectedNodes) {
     return ''
   }
   const name = selectedNodes.first().tag.name
-  return selectedNodes.some(node => name !== node.tag.name) ? '' : name
+  return selectedNodes.some((node) => name !== node.tag.name) ? '' : name
 }

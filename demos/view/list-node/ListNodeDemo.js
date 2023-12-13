@@ -289,7 +289,7 @@ function removeRow(graph, node, rowIndex) {
   const nodeInfo = node.tag
 
   const portForData = getPortForData(node, nodeInfo.rows[rowIndex])
-  portForData.toArray().forEach(port => {
+  portForData.toArray().forEach((port) => {
     graph.remove(port)
   })
   nodeInfo.rows.splice(rowIndex, 1)
@@ -298,7 +298,7 @@ function removeRow(graph, node, rowIndex) {
   for (let i = rowIndex; i < nodeInfo.rows.length; i++) {
     const ri = nodeInfo.rows[i]
     const portForData = getPortForData(node, ri)
-    portForData.forEach(port => {
+    portForData.forEach((port) => {
       const incoming = port.tag.incoming
       graph.setPortLocationParameter(port, createPortLocationParameter(i, incoming, node.style))
       // keep adjacent edges orthogonal
@@ -392,7 +392,7 @@ function createSampleGraph(graph) {
  */
 function registerContextMenu(graphComponent, geim) {
   const contextMenu = new ContextMenu(graphComponent)
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     if (geim.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
       contextMenu.show(location)
     }

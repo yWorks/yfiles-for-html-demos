@@ -418,10 +418,10 @@ function updateStyle(item: IModelItem, fixed: boolean): void {
  */
 function setSelectionFixed(fixed: boolean): void {
   const selection = graphComponent.selection
-  selection.selectedNodes.forEach(node => {
+  selection.selectedNodes.forEach((node) => {
     setFixed(node, fixed)
   })
-  selection.selectedEdges.forEach(edge => {
+  selection.selectedEdges.forEach((edge) => {
     setFixed(edge, fixed)
   })
 }
@@ -495,11 +495,11 @@ async function loadScenario(): Promise<void> {
 
   const graph = graphComponent.graph
   await ioHandler.readFromURL(graph, path)
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const fixed = isFixed(node)
     updateStyle(node, fixed)
   })
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     updateStyle(edge, isFixed(edge))
   })
   graphComponent.fitGraphBounds()

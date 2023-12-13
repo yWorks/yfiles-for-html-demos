@@ -293,7 +293,7 @@ function removeRow(graph: IGraph, node: INode, rowIndex: number): void {
   const nodeInfo = node.tag as NodeInfo
 
   const portForData = getPortForData(node, nodeInfo.rows[rowIndex])
-  portForData.toArray().forEach(port => {
+  portForData.toArray().forEach((port) => {
     graph.remove(port)
   })
   nodeInfo.rows.splice(rowIndex, 1)
@@ -302,7 +302,7 @@ function removeRow(graph: IGraph, node: INode, rowIndex: number): void {
   for (let i = rowIndex; i < nodeInfo.rows.length; i++) {
     const ri = nodeInfo.rows[i]
     const portForData = getPortForData(node, ri)
-    portForData.forEach(port => {
+    portForData.forEach((port) => {
       const incoming = port.tag.incoming
       graph.setPortLocationParameter(
         port,
@@ -395,7 +395,7 @@ function createSampleGraph(graph: IGraph): void {
  */
 function registerContextMenu(graphComponent: GraphComponent, geim: GraphEditorInputMode): void {
   const contextMenu = new ContextMenu(graphComponent)
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     if (geim.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
       contextMenu.show(location)
     }

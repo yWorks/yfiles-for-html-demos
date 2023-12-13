@@ -85,7 +85,7 @@ function loadGraph() {
     data: GraphData.nodesSource,
     id: 'id',
     parentId: 'parent',
-    layout: data =>
+    layout: (data) =>
       new Rect(data.x, data.y, graph.nodeDefaults.size.width, graph.nodeDefaults.size.height)
   })
   graphBuilder.createEdgesSource(GraphData.edgesSource, 'source', 'target', 'id')
@@ -93,8 +93,8 @@ function loadGraph() {
   graph = graphBuilder.buildGraph()
 
   // adds the bends
-  graph.edges.forEach(edge => {
-    edge.tag.bends.forEach(bend => {
+  graph.edges.forEach((edge) => {
+    edge.tag.bends.forEach((bend) => {
       graph.addBend(edge, bend)
     })
   })
@@ -142,7 +142,7 @@ function initializeInputMode() {
   // handle changes on the hovered items
   mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
     if (subTree !== null) {
-      subTree.nodes.forEach(node => {
+      subTree.nodes.forEach((node) => {
         const style = node.style
         style.stroke = normalStroke
       })
@@ -151,7 +151,7 @@ function initializeInputMode() {
     const newItem = evt.item
     if (newItem) {
       subTree = new Subtree(graph, newItem)
-      subTree.nodes.forEach(node => {
+      subTree.nodes.forEach((node) => {
         const style = node.style
         style.stroke = hoveredThickStroke
       })

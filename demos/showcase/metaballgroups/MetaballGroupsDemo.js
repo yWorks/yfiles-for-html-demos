@@ -81,7 +81,7 @@ async function run() {
   // add a blob visualization for the reddish group
   graphComponent.backgroundGroup.addChild(
     new BlobBackground(
-      n => {
+      (n) => {
         const color = n.style.fill.color
         return color == redColor || color == purpleColor
       },
@@ -94,7 +94,7 @@ async function run() {
   // add a blob visualization for the bluish group
   graphComponent.backgroundGroup.addChild(
     new BlobBackground(
-      n => {
+      (n) => {
         const color = n.style.fill.color
         return color == blueColor || color == purpleColor
       },
@@ -156,7 +156,7 @@ function createSampleGraph() {
     '47:54,49:51,50:51,51:53,21:12,10:2,0:37'
   )
     .split(',')
-    .map(e => e.split(':').map(Number))
+    .map((e) => e.split(':').map(Number))
 
   const nodes = graph.nodes.toArray()
   for (const e of edges) {
@@ -222,7 +222,7 @@ class BlobBackground extends BaseClass(IVisualCreator) {
     return new WebglBlobVisual(
       renderContext.canvasComponent.graph.nodes
         .filter(this.selector)
-        .map(n => n.layout.center.toPoint()),
+        .map((n) => n.layout.center.toPoint()),
       this.color,
       this.size
     )

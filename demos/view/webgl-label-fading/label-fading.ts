@@ -86,7 +86,7 @@ function fadeOutLabels(graphComponent: GraphComponent) {
     timing: '500ms ease'
   })
 
-  graphComponent.graph.labels.forEach(label => {
+  graphComponent.graph.labels.forEach((label) => {
     graphModelManager.setAnimations(label, [labelsFadeAnimation!])
   })
 
@@ -106,7 +106,7 @@ function fadeInLabels(graphComponent: GraphComponent) {
   const graphModelManager = graphComponent.graphModelManager
 
   labelsFadeAnimation?.stop().then(() => {
-    graphComponent.graph.labels.forEach(label => {
+    graphComponent.graph.labels.forEach((label) => {
       graphModelManager.setAnimations(label, [])
     })
   })

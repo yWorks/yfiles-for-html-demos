@@ -72,7 +72,7 @@ async function run() {
     new Size(100, 100)
   )
   graphComponent.graph.decorator.nodeDecorator.sizeConstraintProviderDecorator.setFactory(
-    node => !graphComponent.graph.isGroupNode(node),
+    (node) => !graphComponent.graph.isGroupNode(node),
     () => sizeConstraintProvider
   )
 
@@ -104,22 +104,22 @@ function loadSampleGraph() {
   const defaultNodeSize = graphComponent.graph.nodeDefaults.size
   const builder = new GraphBuilder(graphComponent.graph)
   builder.createNodesSource({
-    data: SampleData.nodes.filter(node => !node.isGroup),
+    data: SampleData.nodes.filter((node) => !node.isGroup),
     id: 'id',
     parentId: 'parent',
-    layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
+    layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   builder.createGroupNodesSource({
-    data: SampleData.nodes.filter(node => node.isGroup),
+    data: SampleData.nodes.filter((node) => node.isGroup),
     id: 'id',
-    layout: data => data // the data object itself has x, y, width, height properties
+    layout: (data) => data // the data object itself has x, y, width, height properties
   })
   builder.createEdgesSource(SampleData.edges, 'source', 'target', 'id')
 
   builder.buildGraph()
-  graphComponent.graph.edges.forEach(edge => {
+  graphComponent.graph.edges.forEach((edge) => {
     edge.tag.bends &&
-      edge.tag.bends.forEach(bend => {
+      edge.tag.bends.forEach((bend) => {
         graphComponent.graph.addBend(edge, bend)
       })
   })
@@ -138,7 +138,7 @@ function initializeUI() {
   })
 
   const changeResizeModeButton = document.querySelector('#change-resize-mode')
-  changeResizeModeButton.addEventListener('change', evt => {
+  changeResizeModeButton.addEventListener('change', (evt) => {
     if (nodeSelectionResizingInputMode) {
       nodeSelectionResizingInputMode.mode = changeResizeModeButton.value
     }

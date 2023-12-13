@@ -45,7 +45,7 @@ export function initializeContextMenu(inputMode, graphComponent) {
   // Add event listeners to the various events that open the context menu. These listeners then
   // call the provided callback-function which in turn asks the current ContextMenuInputMode if a
   // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
       contextMenu.show(location)
     }
@@ -88,7 +88,7 @@ function populateContextMenu(graphComponent, contextMenu, args) {
   // get the item which is located at the mouse position
   const hits = graphComponent.graphModelManager.hitElementsAt(args.queryLocation).toArray()
   // use the first hit node
-  const hitNode = hits.find(hit => hit instanceof INode)
+  const hitNode = hits.find((hit) => hit instanceof INode)
   const selection = graphComponent.selection
   if (hitNode) {
     selection.setSelected(hitNode, true)
@@ -104,7 +104,7 @@ function populateContextMenu(graphComponent, contextMenu, args) {
   if (needsStartNodes) {
     contextMenu.addMenuItem('Mark as Start Node', () => {
       // clear previous start nodes
-      graphComponent.graph.nodes.forEach(node => {
+      graphComponent.graph.nodes.forEach((node) => {
         if (getTag(node).type === 'start') {
           const tag = copyAndReplaceTag(node)
           delete tag.type
@@ -116,7 +116,7 @@ function populateContextMenu(graphComponent, contextMenu, args) {
         const tag = copyAndReplaceTag(hitNode || selectedNodes.first())
         tag.type = 'start'
       } else {
-        selectedNodes.forEach(node => {
+        selectedNodes.forEach((node) => {
           const tag = copyAndReplaceTag(node)
           tag.type = 'start'
         })
@@ -128,7 +128,7 @@ function populateContextMenu(graphComponent, contextMenu, args) {
   }
   if (needsEndNodes) {
     contextMenu.addMenuItem('Mark as End Node', () => {
-      graphComponent.graph.nodes.forEach(node => {
+      graphComponent.graph.nodes.forEach((node) => {
         // clear previous end nodes
         if (getTag(node).type === 'end') {
           const tag = copyAndReplaceTag(node)
@@ -136,7 +136,7 @@ function populateContextMenu(graphComponent, contextMenu, args) {
         }
       })
 
-      selectedNodes.forEach(node => {
+      selectedNodes.forEach((node) => {
         const tag = copyAndReplaceTag(node)
         tag.type = 'end'
       })

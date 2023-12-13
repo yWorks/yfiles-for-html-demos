@@ -164,7 +164,7 @@ async function initializeGraph(graphComponent: GraphComponent): Promise<void> {
     nodeStyle: VoidNodeStyle.INSTANCE,
     edgeStyle: VoidEdgeStyle.INSTANCE
   })
-  const graphData = await fetch('resources/GraphData.json').then(response => response.json())
+  const graphData = await fetch('resources/GraphData.json').then((response) => response.json())
 
   const builder = new GraphBuilder(graph)
   const nodesSource = builder.createNodesSource({
@@ -195,7 +195,7 @@ async function initializeGraph(graphComponent: GraphComponent): Promise<void> {
   builder.buildGraph()
 
   // sets the style for the labels
-  graph.labels.forEach(label => {
+  graph.labels.forEach((label) => {
     const colorSet =
       colorSets[predefinedColorSets.get(label.owner!.tag?.department) || 'demo-palette-41']
     graph.setStyle(
@@ -212,7 +212,7 @@ async function initializeGraph(graphComponent: GraphComponent): Promise<void> {
   // normalizes the nodes based on the number of connections stored in the tag
   let minConnections = Number.MAX_VALUE
   let maxConnections = -Number.MAX_VALUE
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const connections = node.tag?.connections || 1
     minConnections = Math.min(minConnections, connections)
     maxConnections = Math.max(maxConnections, connections)
@@ -221,7 +221,7 @@ async function initializeGraph(graphComponent: GraphComponent): Promise<void> {
 
   const largest = 100
   const smallest = 40
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const connections = node.tag?.connections || 1
     const sizeScale = (largest - smallest) / connectionsDelta
     const size = Math.floor(smallest + (connections - minConnections) * sizeScale)
@@ -236,7 +236,7 @@ async function initializeGraph(graphComponent: GraphComponent): Promise<void> {
 function initializeUI(graphComponent: GraphComponent): void {
   document
     .querySelector<HTMLSelectElement>('#labelStyleSelect')!
-    .addEventListener('change', async evt => {
+    .addEventListener('change', async (evt) => {
       await configureAndRunChordLayout(
         graphComponent,
         (evt.target as HTMLSelectElement).value as NodeLabelingPolicyStringValues

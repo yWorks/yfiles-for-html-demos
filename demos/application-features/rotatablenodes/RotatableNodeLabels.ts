@@ -86,7 +86,7 @@ export class RotatableNodeLabelModelDecorator
    * Wraps the default implementations in a special wrapper which supports rotation.
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     if (type === ILabelModelParameterProvider.$class) {
       const provider = this.wrapped.lookup(ILabelModelParameterProvider.$class)
       if (provider) {
@@ -295,7 +295,7 @@ class RotatedNodeLabelModelParameterProvider
     const wrapperModel = model as RotatableNodeLabelModelDecorator
     const parameters = this.wrappedProvider.getParameters(label, wrapperModel.wrapped)
     const result = new List<ILabelModelParameter>()
-    parameters.forEach(parameter => {
+    parameters.forEach((parameter) => {
       result.add(wrapperModel.createWrappingParameter(parameter))
     })
     return result
@@ -360,10 +360,6 @@ class RotatedNodeLabelModelParameterFinder
 export class RotatableNodeLabelModelDecoratorExtension extends MarkupExtension {
   private _useNodeRotation = true
   private _wrapped: ILabelModel = null!
-
-  constructor() {
-    super()
-  }
 
   get useNodeRotation(): boolean {
     return this._useNodeRotation

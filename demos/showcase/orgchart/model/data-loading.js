@@ -45,7 +45,7 @@ export function buildGraph(graph) {
   // configure the root nodes
   const rootSource = treeBuilder.createRootNodesSource(data)
   // configure the recursive structure of the children
-  rootSource.addChildNodesSource(dataItem => dataItem.subordinates, rootSource)
+  rootSource.addChildNodesSource((dataItem) => dataItem.subordinates, rootSource)
   treeBuilder.buildGraph()
 }
 

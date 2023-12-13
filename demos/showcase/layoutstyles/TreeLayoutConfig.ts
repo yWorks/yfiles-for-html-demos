@@ -183,8 +183,8 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
       this.nodePlacerItem === TreeNodePlacer.HV
         ? this.createLayoutDataHorizontalVertical(graphComponent)
         : this.nodePlacerItem === TreeNodePlacer.DELEGATING_LAYERED
-        ? this.createLayoutDataDelegatingPlacer(graphComponent)
-        : this.createLayoutDataTree(graphComponent, layout)
+          ? this.createLayoutDataDelegatingPlacer(graphComponent)
+          : this.createLayoutDataTree(graphComponent, layout)
 
     return layoutData.combineWith(
       this.createLabelingLayoutData(
@@ -200,7 +200,7 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
   createLayoutDataTree: function (graphComponent: GraphComponent, layout: TreeLayout): LayoutData {
     const graph = graphComponent.graph
     return new TreeLayoutData({
-      gridNodePlacerRowIndices: node => {
+      gridNodePlacerRowIndices: (node) => {
         const predecessors = graph.predecessors(node)
         const parent = predecessors.at(0)
         if (parent) {
@@ -209,7 +209,7 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
         }
         return 0
       },
-      leftRightNodePlacerLeftNodes: node => {
+      leftRightNodePlacerLeftNodes: (node) => {
         const predecessors = graph.predecessors(node)
         const parent = predecessors.at(0)
         if (parent) {
@@ -219,7 +219,7 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
         return false
       },
       compactNodePlacerStrategyMementos: new Mapper(),
-      assistantNodes: node => {
+      assistantNodes: (node) => {
         return node.tag ? node.tag.assistant : null
       }
     })
@@ -227,7 +227,7 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
 
   createLayoutDataHorizontalVertical: function (graphComponent: GraphComponent): TreeLayoutData {
     return new TreeLayoutData({
-      nodePlacers: node => {
+      nodePlacers: (node) => {
         // children of selected nodes should be placed vertical and to the right of their child nodes, while
         // the children of non-selected horizontal downwards
         const childPlacement = graphComponent.selection.isSelected(node)
@@ -249,7 +249,7 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
     const graph = graphComponent.graph
     //half the subtrees are delegated to the left placer and half to the right placer
     const leftNodes = new Set()
-    const root = graph.nodes.find(node => graph.inDegree(node) === 0)!
+    const root = graph.nodes.find((node) => graph.inDegree(node) === 0)!
     let left = true
     for (const successor of graph.successors(root)) {
       const stack = [successor]
@@ -264,9 +264,9 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
       left = !left
     }
     const layoutData = new TreeLayoutData({
-      delegatingNodePlacerPrimaryNodes: node => leftNodes.has(node),
+      delegatingNodePlacerPrimaryNodes: (node) => leftNodes.has(node),
       // tells the layout which node placer to use for a node
-      nodePlacers: node => {
+      nodePlacers: (node) => {
         if (node === root) {
           return this.delegatingRootPlacer
         }

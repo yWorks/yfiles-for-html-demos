@@ -74,7 +74,7 @@ export function calculateCriticalPathEdges(graphComponent: GraphComponent) {
 
   // adds the result information to the edges' tags
   const criticalEdgeSet = new Set(criticalPathEdges)
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     edge.tag.slack = results.slack(edge)
     if (criticalEdgeSet.has(edge)) {
       edge.tag.critical = true
@@ -88,7 +88,7 @@ export function calculateCriticalPathEdges(graphComponent: GraphComponent) {
  */
 export function findHighestLowestNodes(graph: IGraph) {
   const order = graph.nodes.orderBy(
-    node => node.tag.layerId || 0,
+    (node) => node.tag.layerId || 0,
     (a, b) => Math.sign(Number(a) - Number(b))
   )
   const lowestNode = order.first()
@@ -117,17 +117,17 @@ function calculateRanksAndSlacks(
 
   // run the rank assignment algorithm
   const rankAssignmentResult = new RankAssignment({
-    minimumEdgeLengths: edge => transitionDuration(edge) + taskDuration(edge.sourceNode!)
+    minimumEdgeLengths: (edge) => transitionDuration(edge) + taskDuration(edge.sourceNode!)
   }).run(graph)
 
   // store the ranking of each node at its tag
   const rankIds = rankAssignmentResult.nodeRankIds
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     node.tag.layerId = rankIds.get(node) || 0
   })
 
   return {
-    slack: edge =>
+    slack: (edge) =>
       (rankIds.get(edge.targetNode) || 0) - (rankIds.get(edge.sourceNode) || 0) - minDistance(edge)
   }
 }
@@ -150,9 +150,9 @@ export async function runLayout(graphComponent: GraphComponent): Promise<void> {
 
   const layoutData = new HierarchicLayoutData({
     // the information about the layering is stored in the node tags
-    givenLayersLayererIds: node => node.tag.layerId,
+    givenLayersLayererIds: (node) => node.tag.layerId,
     // edges that belong to the critical path have priority
-    criticalEdgePriorities: edge => (edge.tag.critical ? 1 : 0),
+    criticalEdgePriorities: (edge) => (edge.tag.critical ? 1 : 0),
     // configure the edge placement
     edgeLabelPreferredPlacement: () => {
       const preferredPlacementDescriptor = new PreferredPlacementDescriptor()

@@ -170,9 +170,9 @@ export class CompanyStructureView {
     enableBridgeRendering(graphComponent)
     graphComponent.graph = new FilteredGraphWrapper(
       (this.completeGraph = graphComponent.graph),
-      node =>
+      (node) =>
         this.completeGraph.isGroupNode(node)
-          ? !this.completeGraph.getChildren(node).every(child => !isVisible(child))
+          ? !this.completeGraph.getChildren(node).every((child) => !isVisible(child))
           : isVisible(node)
     )
     configureLayoutNormalizationIds(graphComponent.graph, getNodeId, getEdgeId)
@@ -285,13 +285,13 @@ export class CompanyStructureView {
     expand: (node: INode, incoming: boolean) => void,
     collapse: (node: INode, incoming: boolean) => void
   ): void {
-    nodes.forEach(n => {
+    nodes.forEach((n) => {
       if (graph.outDegree(n) > 0) {
         this.toggleButtonSupport.addPort(
           graph,
           n,
           FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED,
-          collapsed => (collapsed ? collapse(n, false) : expand(n, false))
+          (collapsed) => (collapsed ? collapse(n, false) : expand(n, false))
         )
       }
     })
@@ -323,7 +323,7 @@ export class CompanyStructureView {
   private async adjustVisibility(): Promise<void> {
     this.updateVisibility(this.completeGraph)
     modifyGraph(
-      graph => (graph as FilteredGraphWrapper).nodePredicateChanged(),
+      (graph) => (graph as FilteredGraphWrapper).nodePredicateChanged(),
       this.graphComponent.graph
     )
     await this.layout()
@@ -336,9 +336,9 @@ export class CompanyStructureView {
   private calculateHierarchy(graph: IGraph): void {
     const treeResult = new SpanningTree({
       subgraphEdges: isHierarchyEdge,
-      costs: item => 1 - ownershipPercentage(item)
+      costs: (item) => 1 - ownershipPercentage(item)
     }).run(graph)
-    graph.edges.forEach(e => {
+    graph.edges.forEach((e) => {
       setDominantHierarchyEdge(e, treeResult.edges.contains(e))
     })
   }
@@ -349,11 +349,11 @@ export class CompanyStructureView {
    */
   private updateVisibility(graph: IGraph): void {
     if (graph.nodes.some(isOutputCollapsed)) {
-      graph.nodes.forEach(n => {
+      graph.nodes.forEach((n) => {
         setVisible(n, this.shouldBeShown(graph, n))
       })
     } else {
-      graph.nodes.forEach(n => {
+      graph.nodes.forEach((n) => {
         setVisible(n, true)
       })
     }
@@ -368,7 +368,7 @@ export class CompanyStructureView {
       graph.inDegree(node) === 0 ||
       graph
         .inEdgesAt(node)
-        .map(e => e.sourceNode!)
+        .map((e) => e.sourceNode!)
         .some((parent: INode) => !isOutputCollapsed(parent) && this.shouldBeShown(graph, parent))
     )
   }
@@ -414,8 +414,8 @@ export class CompanyStructureView {
 
     const nodeSource = builder.createNodesSource({
       data: filteredNodes,
-      id: dataItem => dataItem.id,
-      style: dataItem => getNodeStyle(dataItem, this.useShapeNodeStyle),
+      id: (dataItem) => dataItem.id,
+      style: (dataItem) => getNodeStyle(dataItem, this.useShapeNodeStyle),
       layout: () => getNodeLayout(this.useShapeNodeStyle)
     })
 
@@ -428,7 +428,7 @@ export class CompanyStructureView {
     // adds the node labels if the shape node style is selected
     if (this.useShapeNodeStyle) {
       const nameLabel = nodeSource.nodeCreator.createLabelBinding({
-        text: dataItem => dataItem.name,
+        text: (dataItem) => dataItem.name,
         defaults: nameLabelDefaults,
         preferredSize: () => labelSizeDefaults
       })
@@ -441,14 +441,15 @@ export class CompanyStructureView {
     const filteredEdges = graphData.edges.filter(edgePredicate)
     const edgeSource = builder.createEdgesSource({
       data: filteredEdges,
-      id: data => data.id,
-      sourceId: data => data.sourceId,
-      targetId: data => data.targetId,
+      id: (data) => data.id,
+      sourceId: (data) => data.sourceId,
+      targetId: (data) => data.targetId,
       style: getEdgeStyle
     })
 
     const edgeLabel = edgeSource.edgeCreator.createLabelBinding({
-      text: dataItem => (dataItem.type === EdgeTypeEnum.Hierarchy ? `${dataItem.ownership}` : null),
+      text: (dataItem) =>
+        dataItem.type === EdgeTypeEnum.Hierarchy ? `${dataItem.ownership}` : null,
       defaults: edgeLabelDefaults
     })
     edgeSource.edgeCreator.addEdgeUpdatedListener((_, evt) => {

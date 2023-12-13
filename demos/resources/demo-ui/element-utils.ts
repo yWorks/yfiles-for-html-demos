@@ -72,7 +72,7 @@ export function addNavigationButtons(
   const prevButton = document.createElement('button')
   prevButton.classList.add('demo-icon-yIconPrevious', 'navigation-button', ...classes)
   prevButton.setAttribute('title', 'Previous')
-  prevButton.addEventListener('click', _ => {
+  prevButton.addEventListener('click', (_) => {
     const oldIndex = selectElement.selectedIndex
     const newIndex = lastIndexOfEnabled(selectElement, oldIndex - 1, wrapAround)
     if (oldIndex != newIndex && newIndex > -1) {
@@ -84,7 +84,7 @@ export function addNavigationButtons(
   const nextButton = document.createElement('button')
   nextButton.classList.add('demo-icon-yIconNext', 'navigation-button', ...classes)
   nextButton.setAttribute('title', 'Next')
-  nextButton.addEventListener('click', _ => {
+  nextButton.addEventListener('click', (_) => {
     const oldIndex = selectElement.selectedIndex
     const newIndex = indexOfEnabled(selectElement, oldIndex + 1, wrapAround)
     if (oldIndex != newIndex && newIndex > -1) {
@@ -116,11 +116,11 @@ export function addNavigationButtons(
       selectElement.disabled || (!wrapAround && selectElement.selectedIndex === lastIndex)
   }
 
-  selectElement.addEventListener('change', _ => {
+  selectElement.addEventListener('change', (_) => {
     updateDisabled()
   })
 
-  const disabledObserver = new MutationObserver(mutations => {
+  const disabledObserver = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       if (mutation.attributeName === 'disabled') {
         updateDisabled()
@@ -281,7 +281,7 @@ export function bindYFilesCommand(
  */
 export function disableUIElements(...elementSelectors: string[]): void {
   for (const selector of elementSelectors) {
-    document.querySelectorAll<HTMLElement>(selector).forEach(element => {
+    document.querySelectorAll<HTMLElement>(selector).forEach((element) => {
       if (!element || element.hasAttribute('disabled')) return
 
       element.setAttribute('disabled', '')
@@ -294,7 +294,7 @@ export function disableUIElements(...elementSelectors: string[]): void {
  * Re-enables all elements which were previously disabled by {@see disableUIElements}.
  */
 export function enableUIElements() {
-  document.querySelectorAll('[data-disabled]').forEach(e => {
+  document.querySelectorAll('[data-disabled]').forEach((e) => {
     e.removeAttribute('disabled')
   })
 }
@@ -310,5 +310,5 @@ export async function showLoadingIndicator(visible: boolean, message?: string): 
   if (message) {
     loadingIndicator.innerText = message
   }
-  return new Promise(resolve => setTimeout(resolve, 0))
+  return new Promise((resolve) => setTimeout(resolve, 0))
 }

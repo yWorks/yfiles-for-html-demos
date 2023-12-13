@@ -44,7 +44,7 @@ import {
 export function createFeatureLayoutConfiguration(graph) {
   // whether an edge should be routed or not depends on the value stored in the edge's tag
   const layoutData = new EdgeRouterData({
-    affectedEdges: edge => edge.tag && edge.tag.incremental
+    affectedEdges: (edge) => edge.tag && edge.tag.incremental
   })
 
   const layout = new EdgeRouter({ scope: EdgeRouterScope.ROUTE_AFFECTED_EDGES })

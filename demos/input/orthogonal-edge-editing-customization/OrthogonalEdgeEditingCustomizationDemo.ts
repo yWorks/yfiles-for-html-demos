@@ -69,40 +69,40 @@ function registerOrthogonalEdgeHelperDecorators(graph: IGraph): void {
 
   // Add different IOrthogonalEdgeHelpers to demonstrate various custom behaviour
   edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
-    edge => edge.tag === 'red',
+    (edge) => edge.tag === 'red',
     new RedOrthogonalEdgeHelper()
   )
 
   // Green edges have the regular orthogonal editing behavior and therefore,
   // don't need a custom implementation
   edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
-    edge => edge.tag === 'green',
+    (edge) => edge.tag === 'green',
     new OrthogonalEdgeHelper()
   )
 
   edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
-    edge => edge.tag === 'purple',
+    (edge) => edge.tag === 'purple',
     new PurpleOrthogonalEdgeHelper()
   )
 
   edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
-    edge => edge.tag === 'orange',
+    (edge) => edge.tag === 'orange',
     new OrangeOrthogonalEdgeHelper()
   )
 
   edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
-    edge => edge.tag === 'yellow',
+    (edge) => edge.tag === 'yellow',
     new YellowOrthogonalEdgeHelper()
   )
 
   edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
-    edge => edge.tag === 'blue',
+    (edge) => edge.tag === 'blue',
     new BlueOrthogonalEdgeHelper()
   )
 
   // Disable moving of the complete edge for orthogonal edges since this would create way too many bends
   edgeDecorator.positionHandlerDecorator.hideImplementation(
-    edge =>
+    (edge) =>
       edge.tag === 'orange' ||
       edge.tag === 'yellow' ||
       edge.tag === 'green' ||
@@ -112,14 +112,14 @@ function registerOrthogonalEdgeHelperDecorators(graph: IGraph): void {
   // Add a custom BendCreator for blue edges that ensures orthogonality
   // if a bend is added to the first or last (non-orthogonal) segment
   edgeDecorator.bendCreatorDecorator.setImplementation(
-    edge => edge.tag === 'blue',
+    (edge) => edge.tag === 'blue',
     new BlueBendCreator()
   )
 
   // Add a custom EdgePortHandleProvider to make the handles of a
   // orange edge move within the bounds of the node
   edgeDecorator.edgePortHandleProviderDecorator.setImplementationWrapper(
-    edge => edge.tag === 'orange',
+    (edge) => edge.tag === 'orange',
     () => new PortLookupEdgePortHandleProvider()
   )
 

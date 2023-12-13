@@ -203,7 +203,7 @@ export class SubtreePositionHandler
   mirrorSubtree(left: boolean, graph: IGraph): void {
     if (isLeft(this.movedNode) !== left) {
       // set isLeft state
-      this.subtreeNodes.forEach(n => (getNodeData(n).left = !isLeft(n)))
+      this.subtreeNodes.forEach((n) => (getNodeData(n).left = !isLeft(n)))
       // calculate an automatic layout
       layoutSubtree(graph, this.movedNode, this.subtreeNodes, this.subtreeEdges)
     }
@@ -214,15 +214,15 @@ export class SubtreePositionHandler
    */
   moveSubtree(delta: Point, graph: IGraph): void {
     // move all subtree nodes
-    this.subtreeNodes.forEach(n =>
+    this.subtreeNodes.forEach((n) =>
       graph.setNodeLayout(
         n,
         new Rect(n.layout.x + delta.x, n.layout.y + delta.y, n.layout.width, n.layout.height)
       )
     )
     // move all bends of subtree edges
-    this.subtreeEdges.forEach(e =>
-      e.bends.forEach(bend =>
+    this.subtreeEdges.forEach((e) =>
+      e.bends.forEach((bend) =>
         graph.setBendLocation(bend, new Point(bend.location.x + delta.x, bend.location.y + delta.y))
       )
     )
@@ -262,7 +262,7 @@ export class SubtreePositionHandler
     let dMin: number = Number.POSITIVE_INFINITY
     let newParent: INode | null = null
 
-    graph.nodes.forEach(n => {
+    graph.nodes.forEach((n) => {
       if (!this.subtreeNodes.includes(n)) {
         let /** @type {Point} */ q
 
@@ -306,7 +306,7 @@ export class SubtreePositionHandler
    */
   getBendLocations(edge: IEdge): List<Point> {
     const points = new List<Point>()
-    edge.bends.forEach(bend => points.add(bend.location.toPoint()))
+    edge.bends.forEach((bend) => points.add(bend.location.toPoint()))
     return points
   }
 }

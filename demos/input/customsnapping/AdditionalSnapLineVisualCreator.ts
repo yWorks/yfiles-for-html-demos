@@ -53,7 +53,10 @@ export class AdditionalSnapLineVisualCreator
    * @param from The start point
    * @param to The end point
    */
-  constructor(public from: Point, public to: Point) {
+  constructor(
+    public from: Point,
+    public to: Point
+  ) {
     super()
   }
 

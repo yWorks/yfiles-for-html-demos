@@ -106,23 +106,23 @@ function buildGraph(graph, graphData) {
 
   graphBuilder
     .createNodesSource({
-      data: graphData.nodeList.filter(item => !item.isGroup),
-      id: item => item.id,
-      parentId: item => item.parentId
+      data: graphData.nodeList.filter((item) => !item.isGroup),
+      id: (item) => item.id,
+      parentId: (item) => item.parentId
     })
-    .nodeCreator.createLabelBinding(item => item.label)
+    .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder
     .createGroupNodesSource({
-      data: graphData.nodeList.filter(item => item.isGroup),
-      id: item => item.id
+      data: graphData.nodeList.filter((item) => item.isGroup),
+      id: (item) => item.id
     })
-    .nodeCreator.createLabelBinding(item => item.label)
+    .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -142,7 +142,7 @@ function initializeLinkListener() {
       url = label.text.startsWith('www.') || label.text.startsWith('http') ? label.text : ''
     } else if (INode.isInstance(clickedItem) || IEdge.isInstance(clickedItem)) {
       // if a node or edge was clicked, we see whether it has any label that resembles a link
-      clickedItem.labels.forEach(label => {
+      clickedItem.labels.forEach((label) => {
         const text = label.text
         if (text.startsWith('www.') || text.startsWith('http')) {
           url = text

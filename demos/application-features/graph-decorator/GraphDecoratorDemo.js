@@ -96,22 +96,22 @@ function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
 
   graphBuilder.createNodesSource({
-    data: graphData.nodeList.filter(item => !item.isGroup),
-    id: item => item.id,
-    parentId: item => item.parentId
+    data: graphData.nodeList.filter((item) => !item.isGroup),
+    id: (item) => item.id,
+    parentId: (item) => item.parentId
   })
 
   graphBuilder
     .createGroupNodesSource({
-      data: graphData.nodeList.filter(item => item.isGroup),
-      id: item => item.id
+      data: graphData.nodeList.filter((item) => item.isGroup),
+      id: (item) => item.id
     })
-    .nodeCreator.createLabelBinding(item => item.label)
+    .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -146,7 +146,7 @@ function configurePortCandidateProvider(graph) {
   // IPortCandidateProvider.fromExistingPorts provides port candidates at the locations of already existing ports.
   // IPortCandidateProvider.fromNodeCenter provides a single port candidate at the center of the node.
   // IPortCandidateProvider.fromShapeGeometry provides several port candidates based on the shape of the node's style.
-  portCandidateProviderDecorator.setFactory(node =>
+  portCandidateProviderDecorator.setFactory((node) =>
     IPortCandidateProvider.combine([
       IPortCandidateProvider.fromExistingPorts(node),
       IPortCandidateProvider.fromNodeCenter(node),

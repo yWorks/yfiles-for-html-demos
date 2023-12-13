@@ -55,10 +55,6 @@ export class LayerVisual
   // the opacity of the drawing
   private readonly opacity: string = '0.5'
 
-  constructor() {
-    super()
-  }
-
   /**
    * updates the layer drawing from the information passed in
    */
@@ -67,14 +63,14 @@ export class LayerVisual
     let nodes: IEnumerable<INode>
     if (graph.groupingSupport.hasGroupNodes()) {
       nodes = graph.nodes.filter(
-        node => !graph.isGroupNode(node) || graph.getChildren(node).size === 0
+        (node) => !graph.isGroupNode(node) || graph.getChildren(node).size === 0
       )
     } else {
       nodes = graph.nodes
     }
 
     let layerCount = 0
-    nodes.forEach(node => (layerCount = Math.max(layerCount, layerMapper.get(node)!)))
+    nodes.forEach((node) => (layerCount = Math.max(layerCount, layerMapper.get(node)!)))
     layerCount++
 
     // calculate min and max values
@@ -90,7 +86,7 @@ export class LayerVisual
 
     let minX: number = Number.POSITIVE_INFINITY
     let maxX: number = Number.NEGATIVE_INFINITY
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       mins[layerMapper.get(node)!] = Math.min(mins[layerMapper.get(node)!], node.layout.y | 0)
       maxs[layerMapper.get(node)!] = Math.max(maxs[layerMapper.get(node)!], node.layout.maxY | 0)
       minX = Math.min(minX, node.layout.x)
@@ -235,7 +231,7 @@ export class LayerVisual
 
     let y: number = this.bounds.y
     let count = 0
-    this.dividers.forEach(divider => {
+    this.dividers.forEach((divider) => {
       let rectangle: SVGRectElement
       if (g.childNodes.length <= count) {
         // no element to reuse => create a new rectangle

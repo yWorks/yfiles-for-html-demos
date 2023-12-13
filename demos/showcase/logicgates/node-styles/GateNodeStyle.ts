@@ -147,8 +147,8 @@ export function getPointOnCurve(
   c2: Point
 ): number {
   return (
-    Math.pow(1 - t, 3) * firstPoint.x +
-    3 * Math.pow(1 - t, 2) * t * c1.x +
+    (1 - t) ** 3 * firstPoint.x +
+    3 * (1 - t) ** 2 * t * c1.x +
     3 * (1 - t) * t * t * c2.x +
     t * t * t * endPoint.x
   )

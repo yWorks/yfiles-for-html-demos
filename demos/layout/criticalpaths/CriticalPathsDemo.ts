@@ -99,7 +99,7 @@ function loadGraph(sample: 'hierarchic' | 'tree'): void {
 
   builder.buildGraph()
 
-  graph.edges.forEach(edge => setPriority(edge, edge.tag.priority || 0))
+  graph.edges.forEach((edge) => setPriority(edge, edge.tag.priority || 0))
 
   graphComponent.fitGraphBounds()
 
@@ -169,11 +169,11 @@ function configureHierarchicLayout(): {
 
   const layoutData = new HierarchicLayoutData({
     // Define priorities for edges on critical paths
-    criticalEdgePriorities: edge => (edge.tag ? edge.tag.priority || 0 : 0),
+    criticalEdgePriorities: (edge) => (edge.tag ? edge.tag.priority || 0 : 0),
 
     // Use the edge crossing costs to avoid crossings of different critical paths,
     // when the priority of the edge is high then the probability of crossing is low.
-    edgeCrossingCosts: edge => (edge.tag ? (edge.tag.priority as number) + 1 || 1 : 1)
+    edgeCrossingCosts: (edge) => (edge.tag ? (edge.tag.priority as number) + 1 || 1 : 1)
   })
 
   return {
@@ -194,7 +194,7 @@ function configureTreeLayout(): { layout: TreeLayout; layoutData: TreeLayoutData
 
   const layoutData = new TreeLayoutData({
     // Define priorities for edges on critical paths
-    criticalEdgePriorities: edge => (edge.tag ? edge.tag.priority || 0 : 0)
+    criticalEdgePriorities: (edge) => (edge.tag ? edge.tag.priority || 0 : 0)
   })
 
   return {
@@ -212,11 +212,11 @@ function markRandomPredecessorsPaths(): void {
   }
 
   const leaves = graphComponent.graph.nodes.filter(
-    node => graphComponent.graph.outEdgesAt(node).size === 0
+    (node) => graphComponent.graph.outEdgesAt(node).size === 0
   )
 
   // clear priorities
-  graphComponent.graph.edges.forEach(edge => {
+  graphComponent.graph.edges.forEach((edge) => {
     setPriority(edge, 0)
   })
 
@@ -252,7 +252,7 @@ function markPredecessorsPath(node: INode, priority: number): void {
  * Clears all edge priorities and reapplies the layout.
  */
 function clearPriorities(): void {
-  graphComponent.graph.edges.forEach(edge => {
+  graphComponent.graph.edges.forEach((edge) => {
     setPriority(edge, 0)
   })
 
@@ -314,7 +314,7 @@ function initializeUI(): void {
 
   addNavigationButtons(
     document.querySelector<HTMLSelectElement>('#change-sample')!
-  ).addEventListener('change', async evt => {
+  ).addEventListener('change', async (evt) => {
     const value = (evt.target as HTMLSelectElement).value
     layoutStyle = value === 'Hierarchic Layout' ? 'hierarchic' : 'tree'
     loadGraph(layoutStyle)

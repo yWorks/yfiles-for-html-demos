@@ -29,8 +29,7 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core'
 import { GraphComponent, GraphInputMode } from 'yfiles'
 import { GraphComponentService } from '../services/graph-component.service'
-// needs .js extension since it resides in node_modules
-import { BrowserDetection } from 'demo-utils/BrowserDetection.js'
+import { BrowserDetection } from '../../utils/BrowserDetection'
 
 export type ContextMenuAction = { title: string; action: () => void }
 
@@ -68,7 +67,7 @@ export class ContextMenuComponent implements AfterViewInit {
 
   private register(graphComponent: GraphComponent): void {
     this.inputMode = graphComponent.inputMode as GraphInputMode
-    this.addOpeningEventListeners(graphComponent, location => {
+    this.addOpeningEventListeners(graphComponent, (location) => {
       const worldLocation = graphComponent.toWorldFromPage(location)
       const showMenu = this.inputMode.contextMenuInputMode.shouldOpenMenu(worldLocation)
       if (showMenu) {
@@ -142,7 +141,7 @@ export class ContextMenuComponent implements AfterViewInit {
     }
 
     // Listen to the context menu key to make it work in Chrome
-    componentDiv.addEventListener('keyup', evt => {
+    componentDiv.addEventListener('keyup', (evt) => {
       if (evt.key === 'ContextMenu') {
         evt.preventDefault()
         openingCallback(getCenterInPage(componentDiv))

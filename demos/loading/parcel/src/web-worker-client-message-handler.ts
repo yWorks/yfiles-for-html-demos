@@ -34,15 +34,15 @@ function getWebWorkerMessageHandler(
   worker.postMessage(licenseString)
 
   // helper function that performs the actual message passing to the web worker
-  function webWorkerMessageHandler(data: Object): Promise<Object> {
-    return new Promise(resolve => {
+  function webWorkerMessageHandler(data: object): Promise<object> {
+    return new Promise((resolve) => {
       worker.onmessage = (e: any) => resolve(e.data)
       worker.postMessage(data)
     })
   }
 
   return new Promise<typeof webWorkerMessageHandler>((resolve, reject) => {
-    worker.onmessage = ev => {
+    worker.onmessage = (ev) => {
       if (ev.data === 'started') {
         resolve(webWorkerMessageHandler)
       } else {
@@ -52,11 +52,11 @@ function getWebWorkerMessageHandler(
   })
 }
 
-let promise: Promise<(data: Object) => Promise<Object>> | null = null
+let promise: Promise<(data: object) => Promise<object>> | null = null
 
 export function getLayoutExecutorAsyncMessageHandler(
-  license: Object
-): Promise<(data: Object) => Promise<Object>> {
+  license: object
+): Promise<(data: object) => Promise<object>> {
   if (!promise) {
     promise = getWebWorkerMessageHandler(JSON.stringify(license))
   }

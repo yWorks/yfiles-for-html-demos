@@ -195,7 +195,7 @@ export class NodePlacerPanel {
       nodePlacerLabelElement.style.display = 'inline-block'
     }
 
-    const nodePlacers = selectedNodes.map(node => {
+    const nodePlacers = selectedNodes.map((node) => {
       const placer = this.nodePlacers.get(node)
       if (placer === null) {
         // make sure every node has an associated node placer in the nodePlacers-map
@@ -209,7 +209,7 @@ export class NodePlacerPanel {
     let referencePlacer = nodePlacers[0]
     const referenceConfig = getConfigurationName(referencePlacer)
     //check that all node placers are of same instance - otherwise the MultipleNodePlacerConfiguration is used
-    if (!nodePlacers.every(placer => getConfigurationName(placer) === referenceConfig)) {
+    if (!nodePlacers.every((placer) => getConfigurationName(placer) === referenceConfig)) {
       referencePlacer = null
     }
     const configurationName = getConfigurationName(referencePlacer)
@@ -262,7 +262,7 @@ export class NodePlacerPanel {
    * Notifies all registered change listeners.
    */
   updateChangeListeners() {
-    this.changeListeners.forEach(listener => {
+    this.changeListeners.forEach((listener) => {
       listener()
     })
   }
@@ -285,10 +285,10 @@ async function runPreviewLayout(nodePlacer, graphComponent) {
   const treeLayout = new TreeLayout()
   const leafNodePlacer = new LeafNodePlacer()
   const treeLayoutData = new TreeLayoutData({
-    nodePlacers: node => {
+    nodePlacers: (node) => {
       return graphComponent.graph.inDegree(node) ? leafNodePlacer : nodePlacer
     },
-    assistantNodes: node => node.tag && node.tag.assistant
+    assistantNodes: (node) => node.tag && node.tag.assistant
   })
 
   await graphComponent.morphLayout(treeLayout, '0.2s', treeLayoutData)
@@ -328,7 +328,7 @@ function bindActions(panel) {
 
   const rotationLeft = document.querySelector('#rotation-left')
   rotationLeft.addEventListener('click', () => {
-    panel.graphComponent.selection.selectedNodes.forEach(node => {
+    panel.graphComponent.selection.selectedNodes.forEach((node) => {
       updateModificationMatrix(node, RotatableNodePlacerMatrix.ROT90, panel)
     })
     panel.updateChangeListeners()
@@ -336,7 +336,7 @@ function bindActions(panel) {
 
   const rotationRight = document.querySelector('#rotation-right')
   rotationRight.addEventListener('click', () => {
-    panel.graphComponent.selection.selectedNodes.forEach(node => {
+    panel.graphComponent.selection.selectedNodes.forEach((node) => {
       updateModificationMatrix(node, RotatableNodePlacerMatrix.ROT270, panel)
     })
     panel.updateChangeListeners()
@@ -344,7 +344,7 @@ function bindActions(panel) {
 
   const mirrorHorizontal = document.querySelector('#mirror-horizontal')
   mirrorHorizontal.addEventListener('click', () => {
-    panel.graphComponent.selection.selectedNodes.forEach(node => {
+    panel.graphComponent.selection.selectedNodes.forEach((node) => {
       updateModificationMatrix(node, RotatableNodePlacerMatrix.MIR_HOR, panel)
     })
     panel.updateChangeListeners()
@@ -352,7 +352,7 @@ function bindActions(panel) {
 
   const mirrorVertical = document.querySelector('#mirror-vertical')
   mirrorVertical.addEventListener('click', () => {
-    panel.graphComponent.selection.selectedNodes.forEach(node => {
+    panel.graphComponent.selection.selectedNodes.forEach((node) => {
       updateModificationMatrix(node, RotatableNodePlacerMatrix.MIR_VERT, panel)
     })
     panel.updateChangeListeners()
@@ -1531,7 +1531,7 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
     this.indeterminateRootAlignment = false
 
     if (nodePlacers.length > 1) {
-      nodePlacers.forEach(nodePlacer => {
+      nodePlacers.forEach((nodePlacer) => {
         if (!this.rootAlignment.equals(nodePlacer.rootAlignment)) {
           this.indeterminateRootAlignment = true
         }
@@ -2039,7 +2039,7 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
 
     this.childNodePlacer = nodePlacers[0].childNodePlacer
     this.indeterminateChildNodePlacer = false
-    nodePlacers.forEach(nodePlacer => {
+    nodePlacers.forEach((nodePlacer) => {
       if (
         this.indeterminateChildNodePlacer ||
         this.childNodePlacer !== nodePlacer.childNodePlacer

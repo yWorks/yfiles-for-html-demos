@@ -205,7 +205,7 @@ function loadGraph(graph) {
     data: data.edges, // array of { source: string, target: string, color: string }
     sourceId: 'source', // uses the 'source' property to determine the source node for each created edge
     targetId: 'target', // uses the 'target' property to determine the target node for each created edge
-    style: item => {
+    style: (item) => {
       // uses the 'color' property to determine the style for each created edge
       if ('#AB2346' === item.color) {
         return red
@@ -267,7 +267,7 @@ async function routeEdgesCore(edgesToRoute) {
     for (const fill of colorUtil.usedFills()) {
       layoutData.buses.add(
         new EdgeRouterBusDescriptor({ multipleBackboneSegments: false })
-      ).delegate = edge => {
+      ).delegate = (edge) => {
         const edgeFill = edge.style.stroke.fill
         return fill.hasSameValue(edgeFill)
       }

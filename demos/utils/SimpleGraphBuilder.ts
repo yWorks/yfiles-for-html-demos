@@ -205,8 +205,8 @@ export class SimpleGraphBuilder {
 
     this.$builderEdgesSource = this.$graphBuilder.createEdgesSource<any>(
       [],
-      dataItem => this.$sourceIdProvider && this.$sourceIdProvider(dataItem),
-      dataItem => this.$targetIdProvider && this.$targetIdProvider(dataItem)
+      (dataItem) => this.$sourceIdProvider && this.$sourceIdProvider(dataItem),
+      (dataItem) => this.$targetIdProvider && this.$targetIdProvider(dataItem)
     )
     this.$builderEdgesSource.edgeCreator = this.$graphBuilderHelper.createEdgeCreator()
 
@@ -341,7 +341,7 @@ export class SimpleGraphBuilder {
       const helper = this.$graphBuilderHelper
 
       if (edgesSource.idProvider) {
-        edgesSource.idProvider = compose(e => edgesSource.idProvider!(e, null), tagProvider)
+        edgesSource.idProvider = compose((e) => edgesSource.idProvider!(e, null), tagProvider)
       }
 
       helper.edgeLabelProvider = compose(helper.edgeLabelProvider, tagProvider)
@@ -1104,12 +1104,12 @@ class ObjectNodeCollectionCloner implements NodeCollectionCloner {
     this.$currentIndex = 0
     this.$object = {}
     this.$valueSet = new Set()
-    Object.keys(originalCollection).forEach(key => {
+    Object.keys(originalCollection).forEach((key) => {
       this.$object[key] = originalCollection[key]
       this.$valueSet.add(key)
 
       const numberIndex = parseInt(key)
-      if (!isNaN(numberIndex)) {
+      if (!Number.isNaN(numberIndex)) {
         this.$currentIndex = Math.max(this.$currentIndex, numberIndex)
       }
     })
@@ -2162,22 +2162,22 @@ export class SimpleAdjacentNodesGraphBuilder {
     this.$builderEdgeCreator = this.$graphBuilderHelper.createEdgeCreator(true)
 
     this.$builderNodesSource.addSuccessorsSource(
-      dataItem => this.$successorsProvider && this.$successorsProvider(dataItem),
+      (dataItem) => this.$successorsProvider && this.$successorsProvider(dataItem),
       this.$builderNodesSource,
       this.$builderEdgeCreator
     )
     this.$builderNodesSource.addPredecessorsSource(
-      dataItem => this.$predecessorsProvider && this.$predecessorsProvider(dataItem),
+      (dataItem) => this.$predecessorsProvider && this.$predecessorsProvider(dataItem),
       this.$builderNodesSource,
       this.$builderEdgeCreator
     )
 
     this.$builderNodesSource.addSuccessorIds(
-      dataItem => this.$successorsIdProvider && this.$successorsIdProvider(dataItem),
+      (dataItem) => this.$successorsIdProvider && this.$successorsIdProvider(dataItem),
       this.$builderEdgeCreator
     )
     this.$builderNodesSource.addPredecessorIds(
-      dataItem => this.$predecessorsIdProvider && this.$predecessorsIdProvider(dataItem),
+      (dataItem) => this.$predecessorsIdProvider && this.$predecessorsIdProvider(dataItem),
       this.$builderEdgeCreator
     )
 
@@ -3351,15 +3351,15 @@ class GraphBuilderHelper {
   }
 
   getEdge(businessObject: any): IEdge | null {
-    return this.$graph.edges.find(e => e.tag === businessObject)
+    return this.$graph.edges.find((e) => e.tag === businessObject)
   }
 
   getGroup(groupObject: any): INode | null {
-    return this.$graph.nodes.find(n => n.tag === groupObject)
+    return this.$graph.nodes.find((n) => n.tag === groupObject)
   }
 
   getNode(nodeObject: any): INode | null {
-    return this.$graph.nodes.find(n => n.tag === nodeObject)
+    return this.$graph.nodes.find((n) => n.tag === nodeObject)
   }
 
   public static createIdProvider(binding: any): ((dataItem: any, canonicalId: any) => any) | null {
@@ -3544,7 +3544,7 @@ class GraphBuilderHelper {
   }
 
   private $fireEvent<TEvent>(listeners: ((sender: any, evt: TEvent) => void)[], evt: TEvent): void {
-    listeners.forEach(l => l(this.$eventSender, evt))
+    listeners.forEach((l) => l(this.$eventSender, evt))
   }
 
   private $onNodeCreated(node: INode, dataItem: any): INode {

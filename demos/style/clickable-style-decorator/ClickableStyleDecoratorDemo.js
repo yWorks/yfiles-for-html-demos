@@ -101,16 +101,16 @@ function buildGraph(graph, graphData) {
 
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
-  }).nodeCreator.styleProvider = item =>
+    id: (item) => item.id
+  }).nodeCreator.styleProvider = (item) =>
     item.tag
       ? new NodeStyleDecorator(graph.nodeDefaults.getStyleInstance(), `resources/${item.tag}.svg`)
       : undefined
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()

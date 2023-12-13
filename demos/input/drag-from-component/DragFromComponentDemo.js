@@ -96,10 +96,10 @@ function buildGraph(graph, graphData) {
 
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
+    id: (item) => item.id
   })
 
-  nodesSource.nodeCreator.styleBindings.addBinding('fill', item => {
+  nodesSource.nodeCreator.styleBindings.addBinding('fill', (item) => {
     if (item.label) {
       if (item.label.startsWith('Red')) {
         return Fill.from('#ab2346')
@@ -113,7 +113,7 @@ function buildGraph(graph, graphData) {
     }
   })
 
-  nodesSource.nodeCreator.createLabelBinding(item => item.label).styleProvider = item => {
+  nodesSource.nodeCreator.createLabelBinding((item) => item.label).styleProvider = (item) => {
     if (item.label) {
       if (item.label.startsWith('Red')) {
         return new DefaultLabelStyle({
@@ -141,8 +141,8 @@ function buildGraph(graph, graphData) {
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()

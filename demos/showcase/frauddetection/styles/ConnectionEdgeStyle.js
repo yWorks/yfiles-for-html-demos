@@ -102,7 +102,7 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
     ctx.beginPath()
     let location = this.edge.sourcePort.location
     ctx.moveTo(location.x, location.y)
-    this.edge.bends.forEach(bend => {
+    this.edge.bends.forEach((bend) => {
       location = bend.location
       ctx.lineTo(location.x, location.y)
     })

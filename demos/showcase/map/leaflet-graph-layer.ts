@@ -34,7 +34,7 @@ import {
   Layer,
   type LayerOptions,
   type LeafletEvent,
-  Map,
+  Map as LeafletMap,
   type MapOptions,
   TileLayer
 } from 'leaflet'
@@ -57,7 +57,7 @@ export type GraphLayerOptions = {
   zoomChanged?: ZoomChanged
 } & LayerOptions
 
-export type MapData = { graphLayer: GraphLayer; map: Map }
+export type MapData = { graphLayer: GraphLayer; map: LeafletMap }
 
 /**
  * Creates a Leaflet map and adds a graph layer which contains a {@link GraphComponent}.
@@ -75,7 +75,7 @@ export function createMap(
   const osmAttrib = 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
 
   // create the map
-  const worldMap = new Map(containerId, leafletOptions)
+  const worldMap = new LeafletMap(containerId, leafletOptions)
   worldMap.setView(new LatLng(15.538, 16.523), 3)
   worldMap.addLayer(
     new TileLayer(osmUrl, {
@@ -147,7 +147,7 @@ export class GraphLayer extends Layer {
   /**
    * @yjs:keep = animate
    */
-  onAdd(map: Map): this {
+  onAdd(map: LeafletMap): this {
     this.pane = map.getPane('overlayPane')!
     this.pane.appendChild(this.graphComponent.div)
     this.mapPane = map.getPane('mapPane')
@@ -175,7 +175,7 @@ export class GraphLayer extends Layer {
     return this
   }
 
-  onRemove(map: Map): this {
+  onRemove(map: LeafletMap): this {
     map.off(
       'zoom viewreset resize move moveend zoomend',
       this.updateGraphDivHandler.bind(this),
@@ -194,14 +194,14 @@ export class GraphLayer extends Layer {
    * Listener for various {@link Map} events, see {@link onAdd} and {@link onRemove}.
    */
   updateGraphDivHandler(evt: LeafletEvent): void {
-    this.updateGraphDiv(evt.target as Map)
+    this.updateGraphDiv(evt.target as LeafletMap)
   }
 
   /**
    * Synchronizes the viewport of the map and the {@link GraphComponent}.
    * @yjs:keep = getSize,setPosition,getPosition
    */
-  updateGraphDiv(map: Map): void {
+  updateGraphDiv(map: LeafletMap): void {
     const graphComponent = this.graphComponent
     // get the size of the map in DOM coordinates
     const mapSize = map.getSize()
@@ -236,10 +236,10 @@ export class GraphLayer extends Layer {
    * Calculates the coordinates of the nodes from their geolocations
    * and updates the arc heights of the edges.
    */
-  private mapLayout(graphComponent: GraphComponent, map: Map): void {
+  private mapLayout(graphComponent: GraphComponent, map: LeafletMap): void {
     const graph = graphComponent.graph
     // transform geolocations and update the node locations
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const coords = this.getGeoCoordinates(node)
       const layerPoint = map.latLngToLayerPoint(new LatLng(coords.lat, coords.lng))
       // apply the new node locations
@@ -247,7 +247,7 @@ export class GraphLayer extends Layer {
     })
 
     // update the arc heights for the edges
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       const style = edge.style as ArcEdgeStyle
       style.height = getArcHeight(edge)
     })

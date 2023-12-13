@@ -166,10 +166,10 @@ function initializesInputModes(): void {
   inputMode.addDeletingSelectionListener((_, evt) => {
     const selectedNodes = evt.selection
     const nodesToDelete: INode[] = []
-    selectedNodes.forEach(selectedNode => {
+    selectedNodes.forEach((selectedNode) => {
       collectSubtreeNodes(selectedNode as INode, nodesToDelete)
     })
-    nodesToDelete.forEach(node => {
+    nodesToDelete.forEach((node) => {
       if (graphComponent.graph.inDegree(node)) {
         evt.selection.setSelected(node, true)
       } else {
@@ -210,12 +210,12 @@ function initializesInputModes(): void {
 
   // labels may influence the order of child nodes, if they are changed a new layout should be calculated
   inputMode.addLabelAddedListener((_, evt) => {
-    if (!isNaN(Number(evt.item.text))) {
+    if (!Number.isNaN(Number(evt.item.text))) {
       runLayout(false)
     }
   })
   inputMode.addLabelTextChangedListener((_, evt) => {
-    if (!isNaN(Number(evt.item.text))) {
+    if (!Number.isNaN(Number(evt.item.text))) {
       runLayout(false)
     }
   })
@@ -233,7 +233,7 @@ function initializesInputModes(): void {
 function collectSubtreeNodes(selectedNode: INode, nodesToDelete: INode[]): void {
   nodesToDelete.push(selectedNode)
 
-  graphComponent.graph.outEdgesAt(selectedNode).forEach(outEdge => {
+  graphComponent.graph.outEdgesAt(selectedNode).forEach((outEdge) => {
     const target = outEdge.targetNode!
     collectSubtreeNodes(target, nodesToDelete)
   })
@@ -292,7 +292,7 @@ async function loadGraph(): Promise<void> {
   // configure the tree builder
   const builder = new TreeBuilder(graph)
   const rootNodesSource = builder.createRootNodesSource(nodesSource, 'id')
-  rootNodesSource.addChildNodesSource(data => data.children, rootNodesSource)
+  rootNodesSource.addChildNodesSource((data) => data.children, rootNodesSource)
 
   // create the graph
   builder.buildGraph()
@@ -305,7 +305,7 @@ async function loadGraph(): Promise<void> {
   }
 
   // update the node fill colors according to their layers
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const layerColor = LayerColors[node.tag.layer % LayerColors.length]
     const style = node.style as ShapeNodeStyle
     style.fill = layerColor.fill

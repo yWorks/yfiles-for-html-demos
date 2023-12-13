@@ -74,7 +74,7 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
       const hitItems = parentMode.findItems(
         dragLocation,
         [GraphItemTypes.EDGE],
-        e => !foldingView?.isInFoldingState(e)
+        (e) => !foldingView?.isInFoldingState(e)
       )
       hitItem = hitItems.at(0)
     }
@@ -102,7 +102,7 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
     if (dropTarget instanceof IEdge) {
       const groupAtDropLocation = context
         .lookup(GraphInputMode.$class)
-        ?.findItems(context, this.dropLocation, [GraphItemTypes.NODE], item =>
+        ?.findItems(context, this.dropLocation, [GraphItemTypes.NODE], (item) =>
           graph.isGroupNode(item as INode)
         )
         ?.at(0)
@@ -152,7 +152,7 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
     })
 
     // copy the labels of the original edge to the newly created edges
-    edge.labels.forEach(label => {
+    edge.labels.forEach((label) => {
       targetGraph.addLabel(
         newEdge1,
         label.text,

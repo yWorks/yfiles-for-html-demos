@@ -115,7 +115,7 @@ export function createBinding(bindingString) {
       const func = new Function(`return (${bindingString})`)()
       // wrap the binding function with a function that catches and reports errors
       // that occur in the binding functions
-      return dataItem => {
+      return (dataItem) => {
         try {
           // eslint-disable-next-line no-useless-call
           const result = func.apply(null, [dataItem])
@@ -129,10 +129,10 @@ export function createBinding(bindingString) {
         }
       }
     } catch (ignored) {
-      return dataItem => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
+      return (dataItem) => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
     }
   }
-  return dataItem => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
+  return (dataItem) => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
 }
 
 /**

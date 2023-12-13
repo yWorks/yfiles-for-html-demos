@@ -99,10 +99,10 @@ function enableDraggableDescription(description: Element) {
           ? event.pageX
           : window.innerHeight - event.pageY
         : event instanceof TouchEvent
-        ? vertical
-          ? event.touches.item(0)!.pageX
-          : window.innerHeight - event.touches.item(0)!.pageY
-        : null
+          ? vertical
+            ? event.touches.item(0)!.pageX
+            : window.innerHeight - event.touches.item(0)!.pageY
+          : null
 
     if (eventPos == null) {
       return

@@ -340,7 +340,11 @@ export class ZoomInvariantAboveThresholdLabelStyle extends ZoomInvariantLabelSty
 }
 
 export class ZoomInvariantOutsideRangeLabelStyle extends ZoomInvariantLabelStyleBase {
-  constructor(innerLabelStyle: ILabelStyle, zoomThreshold: number, public maxScale: number) {
+  constructor(
+    innerLabelStyle: ILabelStyle,
+    zoomThreshold: number,
+    public maxScale: number
+  ) {
     super(innerLabelStyle, zoomThreshold)
   }
 
@@ -469,7 +473,7 @@ class DummyContext extends BaseClass(IRenderContext) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     return this.innerContext.lookup(type)
   }
 

@@ -154,7 +154,7 @@ export default class MultiPageIGraphBuilder {
 
     for (let i = 0; i < viewGraphs.length; i++) {
       const graph = viewGraphs[i]
-      graph.nodes.forEach(node => {
+      graph.nodes.forEach((node) => {
         const nodeInfo = this.layout.getNodeInfo(this.getLayoutNode(node))
         const tag = node.tag
         if (tag.isReferenceNode) {
@@ -187,7 +187,7 @@ export default class MultiPageIGraphBuilder {
    */
   copyPage(pageLayoutGraph, pageView, pageNo) {
     // copy all nodes
-    pageLayoutGraph.nodes.forEach(layoutNode => {
+    pageLayoutGraph.nodes.forEach((layoutNode) => {
       const copiedNode = this.copyNode(pageLayoutGraph, layoutNode, pageView)
       // add a mapping from layout node to view node
       this.layoutToViewNode.set(layoutNode, copiedNode)
@@ -196,7 +196,7 @@ export default class MultiPageIGraphBuilder {
     })
 
     // copy all edges
-    pageLayoutGraph.edges.forEach(layoutEdge => {
+    pageLayoutGraph.edges.forEach((layoutEdge) => {
       this.copyEdge(pageLayoutGraph, layoutEdge, pageView)
     })
   }
@@ -303,8 +303,8 @@ export default class MultiPageIGraphBuilder {
       labelDefaults.style !== NULL_LABEL_STYLE
         ? labelDefaults.getStyleInstance(viewNode)
         : modelLabel !== null
-        ? modelLabel.style.clone()
-        : pageView.nodeDefaults.labels.style
+          ? modelLabel.style.clone()
+          : pageView.nodeDefaults.labels.style
     const text = modelLabel !== null ? modelLabel.text : ''
     const tag = modelLabel !== null ? modelLabel.tag : null
     return pageView.addLabel(viewNode, text, parameter, style, null, tag)
@@ -430,7 +430,7 @@ export default class MultiPageIGraphBuilder {
    */
   createEdgeCore(pageLayoutGraph, pageView, layoutEdge, modelEdge, edgeDefaults) {
     // Check if there is another layout edge on this page which represents the same normal edge
-    const conflictingEdge = pageLayoutGraph.edges.some(edge => {
+    const conflictingEdge = pageLayoutGraph.edges.some((edge) => {
       const representedEdge = this.getRepresentedEdge(edge)
       return edge !== layoutEdge && representedEdge === modelEdge
     })
@@ -636,8 +636,8 @@ export default class MultiPageIGraphBuilder {
       nodeDefaults.style !== NULL_NODE_STYLE
         ? nodeDefaults.getStyleInstance()
         : modelNode !== null
-        ? modelNode.style.clone()
-        : pageView.nodeDefaults.style.clone()
+          ? modelNode.style.clone()
+          : pageView.nodeDefaults.style.clone()
     const tag = modelNode !== null ? modelNode.tag : null
     // create the copied node
     const viewNode = pageView.createNode(
@@ -697,7 +697,7 @@ export default class MultiPageIGraphBuilder {
    * @param {!INode} modelNode
    */
   copyPorts(pageView, layoutNode, viewNode, modelNode) {
-    modelNode.ports.forEach(port => {
+    modelNode.ports.forEach((port) => {
       const viewPort = pageView.addPort(viewNode, port.locationParameter.clone())
       if (port.style !== null) {
         pageView.setStyle(viewPort, port.style.clone())

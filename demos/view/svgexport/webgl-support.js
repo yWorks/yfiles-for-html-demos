@@ -63,7 +63,7 @@ export function initializeToggleWebGl2RenderingButton(graphComponent, addSeparat
   toggleButton.type = 'checkbox'
   toggleButton.classList.add('demo-toggle-button', 'labeled')
   toggleButton.disabled = true
-  toggleButton.addEventListener('change', evt => {
+  toggleButton.addEventListener('change', (evt) => {
     if (evt.target.checked) {
       useWebGL2Rendering(graphComponent)
     } else {
@@ -109,7 +109,7 @@ export async function createIconImageData() {
   const svgSize = new Size(70, 70)
   const ctx = createCanvasContext(128, 128)
   const imageDataArray = await Promise.all(
-    deviceNames.map(device => createUrlIcon(ctx, `./resources/${device}.svg`, svgSize))
+    deviceNames.map((device) => createUrlIcon(ctx, `./resources/${device}.svg`, svgSize))
   )
 
   for (let i = 0; i < deviceNames.length; i++) {

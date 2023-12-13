@@ -104,7 +104,7 @@ export default class LinkItemHoverInputMode extends ItemHoverInputMode {
     if (ILabel.isInstance(item) && (item.text.startsWith('www.') || item.text.startsWith('http'))) {
       labelLink = item
     } else if (INode.isInstance(item) || IEdge.isInstance(item)) {
-      item.labels.forEach(label => {
+      item.labels.forEach((label) => {
         const text = label.text
         if (text.startsWith('www.') || text.startsWith('http')) {
           labelLink = label

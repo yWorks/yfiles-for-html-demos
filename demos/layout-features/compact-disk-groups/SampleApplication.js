@@ -105,7 +105,7 @@ function initializeStyleDefaults(graph) {
   // add additional insets to the round group nodes to avoid that content may be outside, since
   // the layout algorithms internally always use rectangular group node bounds
   graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementation(
-    node => graph.isGroupNode(node),
+    (node) => graph.isGroupNode(node),
     INodeInsetsProvider.create(() => new Insets(20))
   )
 }
@@ -126,14 +126,14 @@ async function loadSampleGraph(graph) {
 
   // define source and creation options for nodes and group nodes
   const nodesSource = builder.createNodesSource({
-    data: data.nodeList.filter(node => !node.isGroup),
+    data: data.nodeList.filter((node) => !node.isGroup),
     id: 'id',
     tag: 'tag',
     layout: 'layout',
     parentId: 'parent'
   })
   builder.createGroupNodesSource({
-    data: data.nodeList.filter(node => node.isGroup),
+    data: data.nodeList.filter((node) => node.isGroup),
     id: 'id',
     tag: 'tag',
     layout: 'layout',

@@ -64,7 +64,7 @@ import {
   YString
 } from 'yfiles'
 
-import GraphSearch from 'demo-utils/GraphSearch'
+import { GraphSearch } from 'demo-utils/GraphSearch'
 import FastCanvasStyles from './FastCanvasStyles'
 import { ContextMenu } from 'demo-utils/ContextMenu'
 import { applyDemoTheme, DemoStyleOverviewPaintable } from 'demo-resources/demo-styles'
@@ -219,7 +219,7 @@ function initializeHighlightStyles(): void {
     zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
   })
 
-  graphComponent.graph.decorator.edgeDecorator.highlightDecorator.setFactory(edge =>
+  graphComponent.graph.decorator.edgeDecorator.highlightDecorator.setFactory((edge) =>
     edge.style instanceof BezierEdgeStyle ? bezierEdgeStyleHighlight : edgeStyleHighlight
   )
 }
@@ -312,7 +312,7 @@ function initializeContextMenu(inputMode: GraphInputMode): void {
   // Add event listeners to the various events that open the context menu. These listeners then
   // call the provided callback function which in turn asks the current ContextMenuInputMode if a
   // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
       contextMenu.show(location)
     }
@@ -649,7 +649,7 @@ class CustomGraphSearch extends GraphSearch {
     if (
       node.tag &&
       Object.getOwnPropertyNames(node.tag).some(
-        prop =>
+        (prop) =>
           prop !== 'icon' &&
           node.tag[prop] &&
           node.tag[prop].toString().toLowerCase().indexOf(lowercaseText) !== -1
@@ -657,7 +657,7 @@ class CustomGraphSearch extends GraphSearch {
     ) {
       return true
     }
-    return node.labels.some(label => label.text.toLowerCase().indexOf(lowercaseText) !== -1)
+    return node.labels.some((label) => label.text.toLowerCase().indexOf(lowercaseText) !== -1)
   }
 }
 

@@ -133,8 +133,8 @@ function unwindStack(error: any): string | undefined {
   return !stack || stack.length === 0
     ? '<no stack available>'
     : error.cause
-    ? `${stack}\nCaused by:\n${unwindStack(error.cause)}`
-    : stack
+      ? `${stack}\nCaused by:\n${unwindStack(error.cause)}`
+      : stack
 }
 
 /**

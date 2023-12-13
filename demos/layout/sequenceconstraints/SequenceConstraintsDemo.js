@@ -196,7 +196,7 @@ function createGraph(graph) {
     $allowSelfLoops: false,
     $edgeCount: 25,
     $nodeCount: 20,
-    nodeCreator: graph => createNodeCallback(null, graph, Point.ORIGIN, null)
+    nodeCreator: (graph) => createNodeCallback(null, graph, Point.ORIGIN, null)
   }).generate(graph)
 }
 
@@ -257,7 +257,7 @@ function setConstraintsEnabled(graph, enabled) {
  * Initializes the converters for the constraint node styles.
  */
 function initializeConverters() {
-  const backgroundconverter = value => {
+  const backgroundconverter = (value) => {
     if (Number.isInteger(value)) {
       switch (value) {
         case 0:
@@ -272,7 +272,7 @@ function initializeConverters() {
     return '#FFF'
   }
 
-  const textcolorconverter = value => {
+  const textcolorconverter = (value) => {
     if (Number.isInteger(value)) {
       if (value === 0 || value > 3) {
         return 'black'
@@ -281,7 +281,7 @@ function initializeConverters() {
     return 'white'
   }
 
-  const constraintconverter = value => {
+  const constraintconverter = (value) => {
     switch (value) {
       case 0:
         return 'First'
@@ -292,8 +292,8 @@ function initializeConverters() {
     }
   }
 
-  const constraintsvisibilityconverter = constraints => (constraints ? 'visible' : 'hidden')
-  const noconstraintsvisibilityconverter = constraints => (constraints ? 'hidden' : 'visible')
+  const constraintsvisibilityconverter = (constraints) => (constraints ? 'visible' : 'hidden')
+  const noconstraintsvisibilityconverter = (constraints) => (constraints ? 'hidden' : 'visible')
 
   // create an object to store the converter functions
   TemplateNodeStyle.CONVERTERS.constraintsdemos = {

@@ -102,7 +102,7 @@ export class ChordDiagramLayout extends LayoutStageBase {
     )
 
     // normalize the edge weights
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       const votesOnEdge = edgeThicknessProvider.getNumber(edge)
       const normalizedThickness = (votesOnEdge / totalEdgeWeights) * (Math.PI * (1 - this.gapRatio)) // reserve half the circle for gaps between nodes
       edgeThicknessProvider.setNumber(edge, normalizedThickness)
@@ -117,21 +117,23 @@ export class ChordDiagramLayout extends LayoutStageBase {
 
     // compute a map of node sizes. The node size is equal to the compound size of all edges at the node
     const nodeSizes = graph.nodes
-      .map(node => node.edges.reduce((acc, curr) => acc + edgeThicknessProvider.getNumber(curr), 0))
+      .map((node) =>
+        node.edges.reduce((acc, curr) => acc + edgeThicknessProvider.getNumber(curr), 0)
+      )
       .toArray()
 
     // sort edges to prevent intra-node crossings
     graph.nodes.forEach((n, idx) => {
       const outComparer = IComparer.create((edge0: Edge, edge1: Edge) => {
-        const targetIndex0 = graph.nodes.findIndex(node => node == edge0.target)
-        const targetIndex1 = graph.nodes.findIndex(node => node == edge1.target)
+        const targetIndex0 = graph.nodes.findIndex((node) => node == edge0.target)
+        const targetIndex1 = graph.nodes.findIndex((node) => node == edge1.target)
         return compareEdges(idx, targetIndex0, targetIndex1, nodeSizes, gap)
       })
       n.sortOutEdges(outComparer)
 
       const inComparer = IComparer.create((edge0: Edge, edge1: Edge) => {
-        const targetIndex0 = graph.nodes.findIndex(node => node == edge0.source)
-        const targetIndex1 = graph.nodes.findIndex(node => node == edge1.source)
+        const targetIndex0 = graph.nodes.findIndex((node) => node == edge0.source)
+        const targetIndex1 = graph.nodes.findIndex((node) => node == edge1.source)
         return compareEdges(idx, targetIndex0, targetIndex1, nodeSizes, gap)
       })
       n.sortInEdges(inComparer)

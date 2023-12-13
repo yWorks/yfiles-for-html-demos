@@ -55,23 +55,23 @@ class WdioDemoPage extends Page {
   }
 
   async nodeCountAt(location) {
-    return browser.execute(location => {
+    return browser.execute((location) => {
       const graphComponent = yfiles.CanvasComponent.getComponent(
         document.getElementById('graphComponent')
       )
       const worldLocation = graphComponent.toWorldFromPage(location)
-      return graphComponent.graph.nodes.filter(node => node.layout.contains(worldLocation)).size
+      return graphComponent.graph.nodes.filter((node) => node.layout.contains(worldLocation)).size
     }, location)
   }
 
   async bendCountAt(location) {
-    return browser.execute(async location => {
+    return browser.execute(async (location) => {
       const graphComponent = yfiles.CanvasComponent.getComponent(
         document.getElementById('graphComponent')
       ) as GraphComponent
       const worldLocation = graphComponent.toWorldFromPage(location)
 
-      return graphComponent.graph.bends.filter(bend =>
+      return graphComponent.graph.bends.filter((bend) =>
         worldLocation.equalsEps(bend.location.toPoint(), 2)
       ).size
     }, location)

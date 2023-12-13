@@ -43,7 +43,7 @@ describe('Wdio Demo', () => {
       await zoomInButton.click()
 
       // zooming is animated, thus wait a before checking the value
-      const checkZoomPromise = new Promise(resolve => {
+      const checkZoomPromise = new Promise((resolve) => {
         setTimeout(() => {
           resolve(WdioDemoPage.zoom)
         }, 1000)

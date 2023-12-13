@@ -61,7 +61,7 @@ export function enableHoverHighlights(
 
   // configures the highlighting style for the edges
   const decorator = graphComponent.graph.decorator
-  decorator.nodeDecorator.highlightDecorator.setFactory(node => {
+  decorator.nodeDecorator.highlightDecorator.setFactory((node) => {
     const shape =
       node.style instanceof CustomShapeNodeStyle
         ? highlightShapes.get(getCompany(node).nodeType)
@@ -77,7 +77,7 @@ export function enableHoverHighlights(
     })
   })
   decorator.edgeDecorator.highlightDecorator.setFactory(
-    edge =>
+    (edge) =>
       new EdgeStyleDecorationInstaller({
         edgeStyle: new PolylineEdgeStyle({
           stroke: '3px #ab2346',
@@ -117,14 +117,14 @@ export function enableHoverHighlights(
     if (evt.item) {
       highlightIndicatorManager.addHighlight(evt.item)
       if (evt.item instanceof INode) {
-        graphComponent.graph.edgesAt(evt.item).forEach(edge => {
+        graphComponent.graph.edgesAt(evt.item).forEach((edge) => {
           highlightIndicatorManager.addHighlight(edge)
-          edge.labels.forEach(label => {
+          edge.labels.forEach((label) => {
             highlightIndicatorManager.addHighlight(label)
           })
         })
       } else if (evt.item instanceof IEdge) {
-        evt.item.labels.forEach(label => {
+        evt.item.labels.forEach((label) => {
           highlightIndicatorManager.addHighlight(label)
         })
       } else if (evt.item instanceof ILabel) {

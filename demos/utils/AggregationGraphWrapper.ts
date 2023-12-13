@@ -185,13 +185,15 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       )
     )
     this.$ports = new ListEnumerable<IPort>(
-      this.$nodes.flatMap(node => node.ports).concat(this.$edges.flatMap(edge => edge.ports))
+      this.$nodes.flatMap((node) => node.ports).concat(this.$edges.flatMap((edge) => edge.ports))
     )
     this.$labels = new ListEnumerable<ILabel>(
       this.$nodes
-        .flatMap(node => node.labels)
+        .flatMap((node) => node.labels)
         .concat(
-          this.$edges.flatMap(edge => edge.labels).concat(this.$ports.flatMap(port => port.labels))
+          this.$edges
+            .flatMap((edge) => edge.labels)
+            .concat(this.$ports.flatMap((port) => port.labels))
         )
     )
   }
@@ -305,8 +307,8 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
 
     // hide adjacent aggregation edges (which are not hidden by filtered graph)
     this.edgesAt(portOwner, AdjacencyTypes.ALL)
-      .filter(edge => edge instanceof AggregationEdge)
-      .forEach(edge => {
+      .filter((edge) => edge instanceof AggregationEdge)
+      .forEach((edge) => {
         this.$hide(edge)
       })
     this.$filteredOriginalNodes.add(portOwner)
@@ -314,7 +316,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   private $hideAdjacentEdges(portOwner: AggregationNode | AggregationEdge | AggregationPort): void {
-    this.edgesAt(portOwner, AdjacencyTypes.ALL).forEach(edge => this.$hide(edge))
+    this.edgesAt(portOwner, AdjacencyTypes.ALL).forEach((edge) => this.$hide(edge))
   }
 
   /**
@@ -355,7 +357,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   private $showAdjacentEdges(portOwner: IPortOwner): void {
     // - cannot use EdgesAt() here, since hidden edges are not considered there
     const adjacentEdges = this.$edges.filter(
-      edge =>
+      (edge) =>
         portOwner.ports.includes(edge.sourcePort!) || portOwner.ports.includes(edge.targetPort!)
     )
     for (const edge of adjacentEdges) {
@@ -422,7 +424,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     style?: INodeStyle,
     tag?: any
   ): INode {
-    const badNode = nodes.find(node => !this.contains(node))
+    const badNode = nodes.find((node) => !this.contains(node))
     if (badNode != null) {
       throw new Error(
         `ArgumentError: Affected parameter nodes: Cannot aggregate node ${badNode} that is not in this graph.`
@@ -645,7 +647,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   ): void {
     const isIncoming = adjacencyType === AdjacencyTypes.INCOMING
 
-    let edgesAt: IEnumerable<IEdge> = this.$aggregationEdges.filter(edge =>
+    let edgesAt: IEnumerable<IEdge> = this.$aggregationEdges.filter((edge) =>
       node.ports.includes(isIncoming ? edge.targetPort : edge.sourcePort)
     )
 
@@ -683,7 +685,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   private $findAggregationNode(node: INode): AggregationNode | null {
-    return this.aggregationNodes.find(n => n.aggregatedNodes.includes(node))
+    return this.aggregationNodes.find((n) => n.aggregatedNodes.includes(node))
   }
 
   /**
@@ -826,14 +828,14 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       isAggregationItem
         ? this.aggregationNodeDefaults
         : this.isGroupNode((tmp = port.owner) instanceof INode ? tmp : null)
-        ? this.wrappedGraph!.groupNodeDefaults
-        : this.wrappedGraph!.nodeDefaults
+          ? this.wrappedGraph!.groupNodeDefaults
+          : this.wrappedGraph!.nodeDefaults
     ).ports.autoCleanUp
     if (!autoCleanUp) {
       return
     }
     let edgesAtPort = this.$aggregationEdges.filter(
-      edge => edge.sourcePort === port || edge.targetPort === port
+      (edge) => edge.sourcePort === port || edge.targetPort === port
     ).size
     if (!isAggregationItem) {
       edgesAtPort += super.edgesAt(port, AdjacencyTypes.ALL).size
@@ -916,17 +918,17 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
           return IListEnumerable.EMPTY
         case AdjacencyTypes.INCOMING:
           return new ListEnumerable<IEdge>(
-            this.edges.filter(edge => owner.ports.includes(edge.targetPort!))
+            this.edges.filter((edge) => owner.ports.includes(edge.targetPort!))
           )
         case AdjacencyTypes.OUTGOING:
           return new ListEnumerable<IEdge>(
-            this.edges.filter(edge => owner.ports.includes(edge.sourcePort!))
+            this.edges.filter((edge) => owner.ports.includes(edge.sourcePort!))
           )
         default:
         case AdjacencyTypes.ALL:
           return new ListEnumerable<IEdge>(
             this.edges.filter(
-              edge =>
+              (edge) =>
                 owner.ports.includes(edge.sourcePort!) || owner.ports.includes(edge.targetPort!)
             )
           )
@@ -936,13 +938,13 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         case AdjacencyTypes.NONE:
           return IListEnumerable.EMPTY
         case AdjacencyTypes.INCOMING:
-          return new ListEnumerable<IEdge>(this.edges.filter(edge => owner === edge.targetPort))
+          return new ListEnumerable<IEdge>(this.edges.filter((edge) => owner === edge.targetPort))
         case AdjacencyTypes.OUTGOING:
-          return new ListEnumerable<IEdge>(this.edges.filter(edge => owner === edge.sourcePort))
+          return new ListEnumerable<IEdge>(this.edges.filter((edge) => owner === edge.sourcePort))
         default:
         case AdjacencyTypes.ALL:
           return new ListEnumerable<IEdge>(
-            this.edges.filter(edge => owner === edge.sourcePort || owner === edge.targetPort)
+            this.edges.filter((edge) => owner === edge.sourcePort || owner === edge.targetPort)
           )
       }
     }
@@ -999,7 +1001,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (!this.contains(node)) {
       throw new Error('ArgumentError: Affected parameter node: Node is not in this graph.')
     }
-    if (isNaN(layout.x) || isNaN(layout.y) || isNaN(layout.width) || isNaN(layout.height)) {
+    if (Number.isNaN(layout.x) || Number.isNaN(layout.y) || Number.isNaN(layout.width) || Number.isNaN(layout.height)) {
       throw new Error(
         `ArgumentError: Affected parameter layout: The layout must not contain a NaN value. ${layout}`
       )
@@ -1106,7 +1108,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (!this.contains(edge)) {
       throw new Error('ArgumentError: Affected parameter edge: Edge is not in this graph.')
     }
-    if (isNaN(location.x) || isNaN(location.y)) {
+    if (Number.isNaN(location.x) || Number.isNaN(location.y)) {
       throw new Error(
         'ArgumentError: Affected parameter location: The location must not contain a NaN value.'
       )
@@ -1134,7 +1136,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (!this.contains(bend)) {
       throw new Error('ArgumentError: Affected parameter bend: Edge is not in this graph.')
     }
-    if (isNaN(location.x) || isNaN(location.y)) {
+    if (Number.isNaN(location.x) || Number.isNaN(location.y)) {
       throw new Error(
         'ArgumentError: Affected parameter location: The location must not contain a NaN value.'
       )
@@ -1191,7 +1193,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       if (!this.contains(owner)) {
         throw new Error('ArgumentError: Affected parameter owner: Owner is not in this graph.')
       }
-      if (!!preferredSize && (isNaN(preferredSize.width) || isNaN(preferredSize.height))) {
+      if (!!preferredSize && (Number.isNaN(preferredSize.width) || Number.isNaN(preferredSize.height))) {
         throw new Error(
           'ArgumentError: Affected parameter preferredSize: The size must not contain a NaN value.'
         )
@@ -1277,7 +1279,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (!this.contains(label)) {
       throw new Error('ArgumentError: Affected parameter label: Label is not in this graph.')
     }
-    if (isNaN(preferredSize.width) || isNaN(preferredSize.height)) {
+    if (Number.isNaN(preferredSize.width) || Number.isNaN(preferredSize.height)) {
       throw new Error(
         'ArgumentError: Affected parameter preferredSize: The size must not contain a NaN value.'
       )
@@ -1383,7 +1385,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   public getChildren(node: INode): IListEnumerable<INode> {
     if (!node) {
       // top-level nodes
-      return new ListEnumerable<INode>(this.nodes.filter(n => this.getParent(n) === null))
+      return new ListEnumerable<INode>(this.nodes.filter((n) => this.getParent(n) === null))
     }
 
     if (!this.contains(node)) {
@@ -1396,7 +1398,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
 
     return new ListEnumerable<INode>(
-      super.getChildren(node).concat(this.aggregationNodes.filter(an => an.parent === node))
+      super.getChildren(node).concat(this.aggregationNodes.filter((an) => an.parent === node))
     )
   }
 
@@ -1411,7 +1413,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
 
     const aggregationNodeParent = this.aggregationNodes.find(
-      parent => !!parent.children && parent.children.includes(node)
+      (parent) => !!parent.children && parent.children.includes(node)
     )
     if (aggregationNodeParent) {
       return aggregationNodeParent
@@ -1568,7 +1570,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public lookup<T extends any>(type: Class<T>): T | null {
+  public lookup<T>(type: Class<T>): T | null {
     return this.$lookupDecorator.lookup(type)
   }
 
@@ -1716,7 +1718,7 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public lookup<T extends any>(type: Class<T>): T | null {
+  public lookup<T>(type: Class<T>): T | null {
     if (type === ILookupDecorator.$class) {
       this.$wrappedDecorator = this.$graph.baseLookup(type) as ILookupDecorator
       return this as unknown as T
@@ -1903,7 +1905,7 @@ class AggregationNode extends BaseClass(INode) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public innerLookup<T extends any>(type: Class<T>): T | null {
+  public innerLookup<T>(type: Class<T>): T | null {
     if (type === INodeStyle.$class) {
       return this.style as T
     }
@@ -1917,7 +1919,7 @@ class AggregationNode extends BaseClass(INode) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
@@ -2047,12 +2049,12 @@ class AggregationEdge extends BaseClass(IEdge) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public innerLookup<T extends any>(type: Class<T>): T | null {
+  public innerLookup<T>(type: Class<T>): T | null {
     if (type === IEdgeStyle.$class) {
       return this.style as T
     }
@@ -2126,12 +2128,12 @@ class AggregationBend extends BaseClass(IBend) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public innerLookup<T extends any>(type: Class<T>): T | null {
+  public innerLookup<T>(type: Class<T>): T | null {
     if (type.isInstance(this.location)) {
       return this.location
     }
@@ -2220,12 +2222,12 @@ class AggregationPort extends BaseClass(IPort) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public innerLookup<T extends any>(type: Class<T>): T | null {
+  public innerLookup<T>(type: Class<T>): T | null {
     if (type === IPortStyle.$class) {
       return this.style as T
     }
@@ -2349,12 +2351,12 @@ class AggregationLabel extends BaseClass(ILabel) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public innerLookup<T extends any>(type: Class<T>): T | null {
+  public innerLookup<T>(type: Class<T>): T | null {
     if (type === ILabelStyle.$class) {
       return this.style as T
     }

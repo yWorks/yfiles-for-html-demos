@@ -91,9 +91,9 @@ export function normalizeThickness(graphComponent) {
   const smallestThickness = 2
 
   // normalize the thickness of the graph's edges
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     let thickness = 2
-    if (edge.labels.size !== 0 && !isNaN(max - min)) {
+    if (edge.labels.size !== 0 && !Number.isNaN(max - min)) {
       const normalizedThickness = getThickness(edge.labels.at(0).text)
       const thicknessScale = (largestThickness - smallestThickness) / (max - min)
       thickness = Math.floor(smallestThickness + (normalizedThickness - min) * thicknessScale)

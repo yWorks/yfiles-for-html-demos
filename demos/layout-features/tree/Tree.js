@@ -84,7 +84,7 @@ export function createFeatureLayoutConfiguration(graph) {
 
   // define a comparison function for the out-edges at a tree node such that the respective
   // child nodes are order with respect to the label text (if they have a label)
-  layoutData.outEdgeComparers.delegate = node => (edge1, edge2) => {
+  layoutData.outEdgeComparers.delegate = (node) => (edge1, edge2) => {
     const targetLabel1 = edge1.targetNode.labels.at(0)
     const targetLabel2 = edge2.targetNode.labels.at(0)
     if (targetLabel1 && targetLabel2) {

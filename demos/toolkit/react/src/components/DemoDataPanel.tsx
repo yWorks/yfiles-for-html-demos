@@ -39,11 +39,11 @@ interface DemoDataPanelProps {
 }
 
 export default function DemoDataPanel(props: DemoDataPanelProps) {
-  const nodeItems = props.graphData.nodesSource.map(node => (
+  const nodeItems = props.graphData.nodesSource.map((node) => (
     <ItemElement item={node} key={node.id} />
   ))
 
-  const edgeItems = props.graphData.edgesSource.map(edge => (
+  const edgeItems = props.graphData.edgesSource.map((edge) => (
     <ItemElement item={edge} key={`${edge.fromNode}-${edge.toNode}`} />
   ))
 

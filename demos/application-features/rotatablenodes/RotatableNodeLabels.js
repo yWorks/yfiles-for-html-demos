@@ -85,7 +85,7 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
    * Provides custom implementations of {@link ILabelModelParameterProvider} and
    * {@link ILabelModelParameterFinder} that consider the nodes rotation.
    * Wraps the default implementations in a special wrapper which supports rotation.
-   * @template {*} T
+   * @template T
    * @param {!Class.<T>} type
    * @returns {?T}
    */
@@ -326,7 +326,7 @@ class RotatedNodeLabelModelParameterProvider extends BaseClass(ILabelModelParame
     const wrapperModel = model
     const parameters = this.wrappedProvider.getParameters(label, wrapperModel.wrapped)
     const result = new List()
-    parameters.forEach(parameter => {
+    parameters.forEach((parameter) => {
       result.add(wrapperModel.createWrappingParameter(parameter))
     })
     return result
@@ -389,10 +389,6 @@ class RotatedNodeLabelModelParameterFinder extends BaseClass(ILabelModelParamete
 export class RotatableNodeLabelModelDecoratorExtension extends MarkupExtension {
   _useNodeRotation = true
   _wrapped = null
-
-  constructor() {
-    super()
-  }
 
   /**
    * @type {boolean}

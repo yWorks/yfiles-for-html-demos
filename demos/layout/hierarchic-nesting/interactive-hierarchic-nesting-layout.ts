@@ -238,8 +238,8 @@ export default class InteractiveHierarchicNestingLayout {
       // reset the paths and the centers of the child nodes so that morphing looks smoother
       const descendants = groupingSupport.getDescendants(group)
       const visitedEdges = new Set()
-      descendants.forEach(childNode => {
-        graph.edgesAt(childNode).forEach(edge => {
+      descendants.forEach((childNode) => {
+        graph.edgesAt(childNode).forEach((edge) => {
           // store path and clear bends afterwards
           if (!visitedEdges.has(edge)) {
             edgesCoordinates.set(edge, getPointList(edge))
@@ -256,7 +256,7 @@ export default class InteractiveHierarchicNestingLayout {
     }
 
     // reset the paths of the edges connected to the group node to get smoother layout transitions
-    graph.edgesAt(group).forEach(edge => {
+    graph.edgesAt(group).forEach((edge) => {
       // store path and clear bends afterwards
       edgesCoordinates.set(edge, getPointList(edge))
       graph.clearBends(edge)
@@ -264,7 +264,7 @@ export default class InteractiveHierarchicNestingLayout {
 
     // we register a new insets provider that holds the old insets of the group nodes, before the resizing
     const chainLink = graph.decorator.nodeDecorator.insetsProviderDecorator.setFactory(
-      node => new NodeInsetsProvider(insets.get(node) ?? new Insets(0))
+      (node) => new NodeInsetsProvider(insets.get(node) ?? new Insets(0))
     )
 
     // run the incremental layout
@@ -318,7 +318,7 @@ export default class InteractiveHierarchicNestingLayout {
           return this.alternativeEdgePaths.get(masterEdge)
         },
         // mark folder nodes to treat them differently than normal nodes during layout
-        folderNodes: node => !foldingView.isExpanded(node)
+        folderNodes: (node) => !foldingView.isExpanded(node)
       }),
       new FixNodeLayoutData({
         fixedNodes: this.changedGroupNode
@@ -360,8 +360,8 @@ export default class InteractiveHierarchicNestingLayout {
     const groupingSupport: GroupingSupport = graph.groupingSupport
     const descendants = groupingSupport.getDescendants(group)
     const visitedEdges = new Set()
-    descendants.forEach(descendant => {
-      graph.edgesAt(descendant).forEach(edge => {
+    descendants.forEach((descendant) => {
+      graph.edgesAt(descendant).forEach((edge) => {
         if (!visitedEdges.has(edge)) {
           if (!groupingSupport.isDescendant(edge.opposite(descendant) as INode, group)) {
             crossingEdges.push(edge)

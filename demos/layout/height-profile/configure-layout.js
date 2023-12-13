@@ -56,7 +56,7 @@ export function configureLayout(graph) {
 
   // mark the label nodes as affected so that they are arranged by the layout algorithm
   const organicLayoutData = new OrganicLayoutData({
-    affectedNodes: node => getWayPoint(node)?.type === NodeType.LABEL
+    affectedNodes: (node) => getWayPoint(node)?.type === NodeType.LABEL
   })
 
   // create a constraint for each waypoint-label node pair that forces the algorithm to

@@ -188,7 +188,7 @@ function createGraph(graph: IGraph): void {
     $allowSelfLoops: false,
     $edgeCount: 25,
     $nodeCount: 20,
-    nodeCreator: graph => createNodeCallback(null!, graph, Point.ORIGIN, null)
+    nodeCreator: (graph) => createNodeCallback(null!, graph, Point.ORIGIN, null)
   }).generate(graph)
 }
 

@@ -66,14 +66,14 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
   onDeletingSelection(args) {
     const selectedCurveBends = args.selection
       .filter(
-        bend =>
+        (bend) =>
           bend instanceof IBend &&
           bend.owner.style instanceof BezierEdgeStyle &&
           bend.owner.bends.size % 3 === 2 &&
           bend.index % 3 === 2
       )
       .toList()
-    selectedCurveBends.forEach(selectedCurveBend => {
+    selectedCurveBends.forEach((selectedCurveBend) => {
       const curveBend = selectedCurveBend
       args.selection.setSelected(curveBend.owner.bends.get(curveBend.index - 1), true)
       args.selection.setSelected(curveBend.owner.bends.get(curveBend.index + 1), true)
@@ -81,7 +81,7 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
     // Remove remaining single control points from the list...
     const singularControlPoints = args.selection
       .filter(
-        bend =>
+        (bend) =>
           bend instanceof IBend &&
           bend.owner.style instanceof BezierEdgeStyle &&
           bend.owner.bends.size % 3 === 2 &&
@@ -93,7 +93,7 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
               !args.selection.isSelected(bend.owner.bends.get(bend.index + -1))))
       )
       .toList()
-    singularControlPoints.forEach(singularControlPoint => {
+    singularControlPoints.forEach((singularControlPoint) => {
       const owner = singularControlPoint.owner
       if (owner.bends.size > 2) {
         args.selection.setSelected(singularControlPoint, false)
@@ -190,7 +190,7 @@ class BezierCreateBendInputMode extends CreateBendInputMode {
    */
   createBend(edge, location) {
     this.locationMementos.clear()
-    edge.bends.forEach(existingBend => {
+    edge.bends.forEach((existingBend) => {
       this.locationMementos.set(existingBend, existingBend.location.toPoint())
     })
     return super.createBend(edge, location)

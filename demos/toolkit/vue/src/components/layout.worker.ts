@@ -32,12 +32,12 @@ import licenseData from '../../../../../lib/license.json'
 License.value = licenseData
 
 function applyLayout(graph: LayoutGraph): void {
-  return new HierarchicLayout().applyLayout(graph)
+  new HierarchicLayout().applyLayout(graph)
 }
 
 self.addEventListener(
   'message',
-  e => {
+  (e) => {
     const executor = new LayoutExecutorAsyncWorker(applyLayout)
     executor.process(e.data).then(postMessage)
   },

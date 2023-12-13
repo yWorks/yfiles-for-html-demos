@@ -180,7 +180,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
       })
     } else {
       layoutData = new OrthogonalLayoutData({
-        directedEdges: edge => false
+        directedEdges: (edge) => false
       })
     }
 

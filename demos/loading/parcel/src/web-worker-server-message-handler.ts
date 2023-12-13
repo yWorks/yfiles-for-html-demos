@@ -41,7 +41,7 @@ export function createLayoutExecutorAsyncWorker(
   // when a message is received..
   workerSelf.addEventListener(
     'message',
-    e => {
+    (e) => {
       if (!initialized) {
         License.value = JSON.parse(e.data)
         workerSelf.postMessage('started')
@@ -51,8 +51,8 @@ export function createLayoutExecutorAsyncWorker(
         // back to the caller
         executorWorker
           .process(e.data)
-          .then(data => workerSelf.postMessage(data))
-          .catch(errorObj => workerSelf.postMessage(errorObj))
+          .then((data) => workerSelf.postMessage(data))
+          .catch((errorObj) => workerSelf.postMessage(errorObj))
       }
     },
     false

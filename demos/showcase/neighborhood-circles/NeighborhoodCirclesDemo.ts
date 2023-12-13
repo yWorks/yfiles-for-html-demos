@@ -120,14 +120,14 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id,
-    parentId: item => item.parentId
+    id: (item) => item.id,
+    parentId: (item) => item.parentId
   })
 
   nodesSource.nodeCreator.styleProvider = (item): INodeStyle =>
     new ImageNodeStyle({ image: `./resources/${item.tag}.svg` })
 
-  nodesSource.nodeCreator.createLabelBinding(item => item.label)
+  nodesSource.nodeCreator.createLabelBinding((item) => item.label)
 
   nodesSource.nodeCreator.defaults.size = new Size(48, 48)
   nodesSource.nodeCreator.defaults.labels.style = new DefaultLabelStyle({
@@ -146,8 +146,8 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()

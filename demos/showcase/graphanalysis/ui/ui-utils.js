@@ -198,7 +198,7 @@ function loadGraph(graph, sample) {
   edgeCreator.tagProvider = () => ({
     components: []
   })
-  nodesSource.addSuccessorIds(item => item, edgeCreator)
+  nodesSource.addSuccessorIds((item) => item, edgeCreator)
   graphBuilder.buildGraph()
 }
 
@@ -231,7 +231,7 @@ async function switchAlgorithm(graphComponent) {
 export function setUIDisabled(disabled, graphComponent) {
   document
     .querySelectorAll('.demo-page__toolbar select, .demo-page__toolbar button')
-    .forEach(element => {
+    .forEach((element) => {
       if (element instanceof HTMLSelectElement || element instanceof HTMLButtonElement) {
         element.disabled = disabled
       }
@@ -255,8 +255,8 @@ export function setUIDisabled(disabled, graphComponent) {
 function deleteWeightLabels(graph) {
   graph.edgeLabels
     .toArray()
-    .filter(label => label.tag === 'weight')
-    .forEach(label => {
+    .filter((label) => label.tag === 'weight')
+    .forEach((label) => {
       graph.remove(label)
     })
 }
@@ -266,7 +266,7 @@ function deleteWeightLabels(graph) {
  * @param {!IGraph} graph
  */
 function generateWeightLabels(graph) {
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     graph.addLabel({
       owner: edge,
       // select a weight from 1 to 20

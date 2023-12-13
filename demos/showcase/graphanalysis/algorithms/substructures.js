@@ -58,10 +58,10 @@ export function calculateChainSubstructures(graph, config) {
   const substructures = chainSubstructures.run(graph)
 
   substructures.chains.forEach((chain, chainIndex) => {
-    chain.nodes.forEach(node => {
+    chain.nodes.forEach((node) => {
       markItem(node, chainIndex)
     })
-    chain.edges.forEach(edge => {
+    chain.edges.forEach((edge) => {
       markItem(edge, chainIndex)
     })
   })
@@ -92,10 +92,10 @@ export function calculateCycleSubstructures(graph, config) {
   const substructures = cycleSubstructures.run(graph)
 
   substructures.cycles.forEach((cycle, cycleIndex) => {
-    cycle.nodes.forEach(node => {
+    cycle.nodes.forEach((node) => {
       markItem(node, cycleIndex)
     })
-    cycle.edges.forEach(edge => {
+    cycle.edges.forEach((edge) => {
       markItem(edge, cycleIndex)
     })
   })
@@ -124,10 +124,10 @@ export function calculateStarSubstructures(graph, config) {
   const substructures = starSubstructures.run(graph)
 
   substructures.stars.forEach((star, starIndex) => {
-    star.nodes.forEach(node => {
+    star.nodes.forEach((node) => {
       markItem(node, starIndex)
     })
-    star.edges.forEach(edge => {
+    star.edges.forEach((edge) => {
       markItem(edge, starIndex)
     })
   })
@@ -155,10 +155,10 @@ export function calculateTreeSubstructures(graph, config) {
   const substructures = treeSubstructures.run(graph)
 
   substructures.trees.forEach((tree, treeIndex) => {
-    tree.nodes.forEach(node => {
+    tree.nodes.forEach((node) => {
       markItem(node, treeIndex)
     })
-    tree.edges.forEach(edge => {
+    tree.edges.forEach((edge) => {
       markItem(edge, treeIndex)
     })
   })
@@ -185,10 +185,10 @@ export function calculateCliqueSubstructures(graph) {
   const substructures = cliqueSubstructures.run(graph)
 
   substructures.cliques.forEach((clique, cliqueIndex) => {
-    clique.nodes.forEach(node => {
+    clique.nodes.forEach((node) => {
       markItem(node, cliqueIndex)
     })
-    clique.edges.forEach(edge => {
+    clique.edges.forEach((edge) => {
       markItem(edge, cliqueIndex)
     })
   })

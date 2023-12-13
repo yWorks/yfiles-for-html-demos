@@ -48,7 +48,10 @@ export class MindMapEdgeStyle extends EdgeStyleBase {
    * @param thicknessStart The thickness of the edge at its start.
    * @param thicknessEnd The thickness of the edge at its end.
    */
-  constructor(public thicknessStart: number, public thicknessEnd: number) {
+  constructor(
+    public thicknessStart: number,
+    public thicknessEnd: number
+  ) {
     super()
   }
 
@@ -108,7 +111,11 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
    * @param thicknessStart The thickness of the edge at its start.
    * @param thicknessEnd The thickness of the edge at its end.
    */
-  constructor(public edge: IEdge, public thicknessStart: number, public thicknessEnd: number) {
+  constructor(
+    public edge: IEdge,
+    public thicknessStart: number,
+    public thicknessEnd: number
+  ) {
     super()
     this.edge = edge
     this.thicknessStart = thicknessStart

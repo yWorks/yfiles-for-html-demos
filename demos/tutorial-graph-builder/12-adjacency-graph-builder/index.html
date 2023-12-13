@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -73,12 +73,10 @@
       <div
         class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
       >
-        <b>Step 13/14</b
+        <b>Step 12/13</b
         ><span class="demo-toolbar__tutorial-step-title"> &mdash; 12 Adjacency Graph Builder</span>
         <div class="tutorial-dropdown">
           <a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
-            >Tutorial: Graph Builder</a
-          ><a href="../../tutorial-graph-builder/01-create-graph/" class="tutorial-dropdown__item"
             >01 Create Graph</a
           ><a
             href="../../tutorial-graph-builder/02-create-nodes-sources/"
@@ -212,7 +210,7 @@
 
 <span class="hljs-keyword">const</span> adjacencyNodesSource = adjacencyGraphBuilder.<span class="hljs-title function_">createNodesSource</span>(
   nodesData,
-  <span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item.<span class="hljs-property">id</span>
+  <span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">id</span>
 )</code></pre>
                 </div>
               </div>
@@ -228,7 +226,7 @@
                   <pre
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript">adjacencyNodesSource.<span class="hljs-title function_">addSuccessorIds</span>(
-  <span class="hljs-function"><span class="hljs-params">data</span> =&gt;</span> data.<span class="hljs-property">colleagues</span>,
+  <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> data.<span class="hljs-property">colleagues</span>,
   <span class="hljs-keyword">new</span> <span class="hljs-title class_">EdgeCreator</span>({ <span class="hljs-attr">defaults</span>: graph.<span class="hljs-property">edgeDefaults</span> })
 )</code></pre>
                 </div>
@@ -244,7 +242,7 @@
                   <pre
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript">adjacencyNodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-title function_">createLabelBinding</span>({
-  <span class="hljs-attr">text</span>: <span class="hljs-function"><span class="hljs-params">dataItem</span> =&gt;</span> dataItem.<span class="hljs-property">name</span>
+  <span class="hljs-attr">text</span>: <span class="hljs-function">(<span class="hljs-params">dataItem</span>) =&gt;</span> dataItem.<span class="hljs-property">name</span>
 })</code></pre>
                 </div>
               </div>

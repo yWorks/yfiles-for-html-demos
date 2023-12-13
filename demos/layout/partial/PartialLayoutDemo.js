@@ -134,8 +134,8 @@ async function runLayout() {
 
   // mark partial elements for the layout algorithm
   const partialLayoutData = new PartialLayoutData({
-    affectedNodes: node => !isFixed(node),
-    affectedEdges: edge => !isFixed(edge)
+    affectedNodes: (node) => !isFixed(node),
+    affectedEdges: (edge) => !isFixed(edge)
   })
   // run layout algorithm
   try {
@@ -442,10 +442,10 @@ function updateStyle(item, fixed) {
  */
 function setSelectionFixed(fixed) {
   const selection = graphComponent.selection
-  selection.selectedNodes.forEach(node => {
+  selection.selectedNodes.forEach((node) => {
     setFixed(node, fixed)
   })
-  selection.selectedEdges.forEach(edge => {
+  selection.selectedEdges.forEach((edge) => {
     setFixed(edge, fixed)
   })
 }
@@ -521,11 +521,11 @@ async function loadScenario() {
 
   const graph = graphComponent.graph
   await ioHandler.readFromURL(graph, path)
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const fixed = isFixed(node)
     updateStyle(node, fixed)
   })
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     updateStyle(edge, isFixed(edge))
   })
   graphComponent.fitGraphBounds()

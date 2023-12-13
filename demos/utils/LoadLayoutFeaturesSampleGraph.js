@@ -65,35 +65,37 @@ export async function loadLayoutSampleGraph(graph, fileName) {
 
   const builder = new GraphBuilder(graph)
   const nodesSource = builder.createNodesSource({
-    data: data.nodeList.filter(node => !node.isGroup),
+    data: data.nodeList.filter((node) => !node.isGroup),
     id: 'id',
     tag: 'tag',
     layout: 'layout',
     parentId: 'parent'
   })
   const groupSource = builder.createGroupNodesSource({
-    data: data.nodeList.filter(node => node.isGroup),
+    data: data.nodeList.filter((node) => node.isGroup),
     id: 'id',
     tag: 'tag',
     layout: 'layout'
   })
 
   const nodeCreator = nodesSource.nodeCreator
-  nodeCreator.styleProvider = data => getNodeStyle(data)
+  nodeCreator.styleProvider = (data) => getNodeStyle(data)
 
-  const nodeLabelCreator = nodeCreator.createLabelsSource(data => data.labels || []).labelCreator
-  nodeLabelCreator.textProvider = data => data.text
-  nodeLabelCreator.layoutParameterProvider = data => InteriorLabelModel.CENTER
-  nodeLabelCreator.styleProvider = data => getLabelStyle(2.5, data)
+  const nodeLabelCreator = nodeCreator.createLabelsSource((data) => data.labels || []).labelCreator
+  nodeLabelCreator.textProvider = (data) => data.text
+  nodeLabelCreator.layoutParameterProvider = (data) => InteriorLabelModel.CENTER
+  nodeLabelCreator.styleProvider = (data) => getLabelStyle(2.5, data)
 
   const groupCreator = groupSource.nodeCreator
-  groupCreator.styleProvider = data => getGroupNodeStyle(data)
+  groupCreator.styleProvider = (data) => getGroupNodeStyle(data)
 
-  const groupLabelCreator = groupCreator.createLabelsSource(data => data.labels || []).labelCreator
-  groupLabelCreator.textProvider = data => data.text
-  groupLabelCreator.layoutParameterProvider = data =>
+  const groupLabelCreator = groupCreator.createLabelsSource(
+    (data) => data.labels || []
+  ).labelCreator
+  groupLabelCreator.textProvider = (data) => data.text
+  groupLabelCreator.layoutParameterProvider = (data) =>
     new GroupNodeLabelModel().createTabBackgroundParameter()
-  groupLabelCreator.styleProvider = data => getGroupLabelStyle()
+  groupLabelCreator.styleProvider = (data) => getGroupLabelStyle()
 
   const edgesSource = builder.createEdgesSource({
     data: data.edgeList,
@@ -104,13 +106,13 @@ export async function loadLayoutSampleGraph(graph, fileName) {
     tag: 'tag'
   })
   const edgeCreator = edgesSource.edgeCreator
-  edgeCreator.styleProvider = data => getEdgeStyle(data)
+  edgeCreator.styleProvider = (data) => getEdgeStyle(data)
 
-  const edgeLabelCreator = edgeCreator.createLabelsSource(data => data.labels || []).labelCreator
-  edgeLabelCreator.textProvider = data => data.text || ''
-  edgeLabelCreator.layoutParameterProvider = data =>
+  const edgeLabelCreator = edgeCreator.createLabelsSource((data) => data.labels || []).labelCreator
+  edgeLabelCreator.textProvider = (data) => data.text || ''
+  edgeLabelCreator.layoutParameterProvider = (data) =>
     new FreeEdgeLabelModel().createDefaultParameter()
-  edgeLabelCreator.styleProvider = data => getLabelStyle(2.0, data)
+  edgeLabelCreator.styleProvider = (data) => getLabelStyle(2.0, data)
 
   builder.buildGraph()
 }

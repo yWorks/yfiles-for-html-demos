@@ -50,7 +50,11 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
   /**
    * Creates the custom style for the given type of node.
    */
-  constructor(public type?: NodeTypeEnum, public stroke?: Stroke, public fill?: Fill) {
+  constructor(
+    public type?: NodeTypeEnum,
+    public stroke?: Stroke,
+    public fill?: Fill
+  ) {
     super()
     this.type = type ?? NodeTypeEnum.CORPORATION
     this.stroke = Stroke.from(stroke ?? 'black')

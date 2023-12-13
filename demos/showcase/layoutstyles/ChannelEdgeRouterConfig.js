@@ -123,12 +123,12 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
     const layoutData = new ChannelEdgeRouterData()
     const selection = graphComponent.selection
     if (this.scopeItem === EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES) {
-      layoutData.affectedEdges.delegate = edge =>
+      layoutData.affectedEdges.delegate = (edge) =>
         selection.isSelected(edge.sourceNode) || selection.isSelected(edge.targetNode)
     } else if (this.scopeItem === EdgeRouterScope.ROUTE_AFFECTED_EDGES) {
-      layoutData.affectedEdges.delegate = edge => selection.isSelected(edge)
+      layoutData.affectedEdges.delegate = (edge) => selection.isSelected(edge)
     } else {
-      layoutData.affectedEdges.delegate = _ => true
+      layoutData.affectedEdges.delegate = (_) => true
     }
     return layoutData
   },

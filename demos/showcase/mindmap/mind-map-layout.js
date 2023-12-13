@@ -112,7 +112,7 @@ function createLayoutData() {
     // tells the DelegatingNodePlacer which side a node is on
     delegatingNodePlacerPrimaryNodes: isLeft,
     // tells the layout which node placer to use for a node
-    nodePlacers: node => {
+    nodePlacers: (node) => {
       if (isRoot(node)) {
         return placerRoot
       }
@@ -122,7 +122,7 @@ function createLayoutData() {
       return placerRight
     },
     // tells the layout how to sort the children of specific nodes
-    outEdgeComparers: _ => {
+    outEdgeComparers: (_) => {
       return (edge1, edge2) => {
         if (edge1 === edge2) {
           return 0
@@ -137,10 +137,10 @@ function createLayoutData() {
       }
     },
     // tells the layout which side to place a source port on
-    sourcePortConstraints: edge =>
+    sourcePortConstraints: (edge) =>
       PortConstraint.create(isLeft(edge.targetNode) ? PortSide.WEST : PortSide.EAST, true),
     // tells the layout which side to place a target port on
-    targetPortConstraints: edge =>
+    targetPortConstraints: (edge) =>
       PortConstraint.create(isLeft(edge.targetNode) ? PortSide.EAST : PortSide.WEST, true)
     // a layout stage that hides cross-reference edges from the layout
   }).combineWith(

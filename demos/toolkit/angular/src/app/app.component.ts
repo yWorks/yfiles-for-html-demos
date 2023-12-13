@@ -51,8 +51,7 @@ import { EDGE_DATA, NODE_DATA } from './data'
 import { Person } from './person'
 import { NodeComponentStyle } from './NodeComponentStyle'
 import { GraphComponentService } from './services/graph-component.service'
-// needs .js extension since it resides in node_modules
-import GraphSearch from 'demo-utils/GraphSearch.js'
+import { GraphSearch } from '../utils/GraphSearch'
 import { zoomDetail, zoomIntermediate } from './node.component'
 
 // Run layout calculation on a Web Worker
@@ -166,7 +165,7 @@ export class AppComponent implements AfterViewInit {
 function createSampleGraph(graph: IGraph): void {
   const nodeMap: { [name: string]: INode } = {}
 
-  NODE_DATA.forEach(nodeData => {
+  NODE_DATA.forEach((nodeData) => {
     nodeMap[nodeData.name] = graph.createNode({
       tag: new Person(nodeData)
     })
@@ -187,7 +186,7 @@ async function runLayout(graphComponent: GraphComponent): Promise<void> {
 
     // helper function that performs the actual message passing to the web worker
     function webWorkerMessageHandler(data: unknown): Promise<any> {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         layoutWorker.onmessage = (e: any) => resolve(e.data)
         layoutWorker.postMessage(data)
       })

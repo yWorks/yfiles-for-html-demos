@@ -51,7 +51,7 @@ function createMenu(items: MenuItem[], location: Point): SVGElement {
   const tempParent = document.body
   tempParent.appendChild(svg)
 
-  svg.addEventListener('contextmenu', e => e.preventDefault())
+  svg.addEventListener('contextmenu', (e) => e.preventDefault())
   svg.setAttribute('class', 'demo-dial-menu')
   svg.setAttribute('width', `${outerRadius}`)
   svg.setAttribute('height', `${outerRadius}`)
@@ -246,19 +246,19 @@ function addEventListeners(items: MenuItem[], location: Point, contextMenu: Dial
     contextMenu.close()
   }
 
-  touchMoveListener = evt => {
+  touchMoveListener = (evt) => {
     const touch = evt.changedTouches.item(0)!
     updateHover(new Point(touch.pageX, touch.pageY))
   }
-  touchEndListener = evt => {
+  touchEndListener = (evt) => {
     const touch = evt.changedTouches.item(0)!
     endGesture(new Point(touch.pageX, touch.pageY))
   }
-  mouseMoveListener = evt => {
+  mouseMoveListener = (evt) => {
     evt.preventDefault()
     updateHover(new Point(evt.pageX, evt.pageY))
   }
-  mouseUpListener = evt => {
+  mouseUpListener = (evt) => {
     evt.preventDefault()
     endGesture(new Point(evt.pageX, evt.pageY))
   }

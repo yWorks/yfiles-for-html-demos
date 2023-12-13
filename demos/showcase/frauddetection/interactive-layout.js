@@ -79,16 +79,16 @@ export function initializeLayout(gc) {
 function prepareInteraction() {
   const inputMode = graphComponent.inputMode
   const moveUnselectedInputMode = inputMode.moveUnselectedInputMode
-  moveUnselectedInputMode.addDragStartedListener(moveInputMode => {
+  moveUnselectedInputMode.addDragStartedListener((moveInputMode) => {
     restartLayout(moveInputMode.affectedItems.at(0))
   })
-  moveUnselectedInputMode.addDraggedListener(moveInputMode => {
+  moveUnselectedInputMode.addDraggedListener((moveInputMode) => {
     updateDraggedComponent(moveInputMode.affectedItems.at(0))
   })
-  moveUnselectedInputMode.addDragCanceledListener(moveInputMode => {
+  moveUnselectedInputMode.addDragCanceledListener((moveInputMode) => {
     setFinalNodeLocation(moveInputMode.affectedItems.at(0))
   })
-  moveUnselectedInputMode.addDragFinishedListener(moveInputMode => {
+  moveUnselectedInputMode.addDragFinishedListener((moveInputMode) => {
     setFinalNodeLocation(moveInputMode.affectedItems.at(0))
   })
 }
@@ -137,7 +137,7 @@ export function startLayout() {
 
   // make the nodes unmovable at the beginning,
   // so that the layout of the graph is maintained as it is in the initial layout
-  copiedLayoutGraph.nodes.forEach(node => {
+  copiedLayoutGraph.nodes.forEach((node) => {
     organicLayout.setInertia(node, 1)
   })
 
@@ -149,7 +149,7 @@ export function startLayout() {
 
     // configure how the new edges with their source/target node can move when an edge is added in the graph
     if (edgesAdded.length > 0) {
-      edgesAdded.forEach(edge => {
+      edgesAdded.forEach((edge) => {
         const copiedSource = copiedLayoutGraph.getCopiedNode(edge.sourceNode)
         const copiedTarget = copiedLayoutGraph.getCopiedNode(edge.targetNode)
 
@@ -184,7 +184,7 @@ export function startLayout() {
     // configure how the new node can move when they are added in the graph
     if (nodesAdded.length > 0) {
       // configure how the new nodes can be moved
-      graph.nodes.forEach(node => {
+      graph.nodes.forEach((node) => {
         if (nodesAdded.includes(node)) {
           const copiedNode = copiedLayoutGraph.getCopiedNode(node)
           if (copiedNode) {
@@ -200,7 +200,7 @@ export function startLayout() {
 
     // configure how the source/target nodes of an edge can move when an edge is removed from the graph
     if (edgesRemoved.length > 0) {
-      edgesRemoved.forEach(edge => {
+      edgesRemoved.forEach((edge) => {
         const sourceNode = edge.sourceNode
         if (graph.contains(sourceNode)) {
           const copiedSource = copiedLayoutGraph.getCopiedNode(sourceNode)
@@ -347,7 +347,7 @@ function updateStressAndInertiaForOtherNodes(draggedNode) {
     graphComponent.graph
   )
 
-  movedComponent.reachableNodes.forEach(node => {
+  movedComponent.reachableNodes.forEach((node) => {
     const copiedNode = copiedLayoutGraph.getCopiedNode(node)
     if (copiedNode && copiedNode !== copiedMovedNode) {
       // allow the nodes of the moved component to move close to the dragged node

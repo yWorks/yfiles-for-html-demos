@@ -33,7 +33,7 @@ import { GraphEditorInputMode, IEdge, INode, Reachability, ShortestPath } from '
  * @param {!GraphComponent} graphComponent
  */
 export function runReachabilityAlgorithm(graphComponent) {
-  const nodes = graphComponent.graph.nodes.filter(node => !graphComponent.graph.isGroupNode(node))
+  const nodes = graphComponent.graph.nodes.filter((node) => !graphComponent.graph.isGroupNode(node))
   if (nodes.size === 0) {
     return
   }
@@ -56,7 +56,7 @@ export function runReachabilityAlgorithm(graphComponent) {
   const reachabilityResult = reachability.run(graphComponent.graph)
 
   // highlight the reachable nodes
-  reachabilityResult.reachableNodes.forEach(n => {
+  reachabilityResult.reachableNodes.forEach((n) => {
     graphComponent.highlightIndicatorManager.addHighlight(n)
   })
 }
@@ -71,7 +71,7 @@ export function runShortestPathAlgorithm(graphComponent) {
 
   const graph = graphComponent.graph
 
-  const nodes = graph.nodes.filter(node => !graph.isGroupNode(node))
+  const nodes = graph.nodes.filter((node) => !graph.isGroupNode(node))
   if (nodes.size < 2) {
     return
   }
@@ -96,7 +96,7 @@ export function runShortestPathAlgorithm(graphComponent) {
     sink: sinkNode,
     directed: false, // don't consider edge direction
     // calculate the cost per edge as the distance between source and target node
-    costs: edge =>
+    costs: (edge) =>
       edge.sourceNode.layout.center.subtract(edge.targetNode.layout.center).vectorLength
   })
   const shortestPathResult = shortestPath.run(graph)
@@ -106,16 +106,16 @@ export function runShortestPathAlgorithm(graphComponent) {
   const endNode = shortestPathResult.path?.end
   const pathEdges = shortestPathResult.edges
 
-  if (!isFinite(pathDistance)) {
+  if (!Number.isFinite(pathDistance)) {
     return
   }
-  pathNodes.forEach(node => {
+  pathNodes.forEach((node) => {
     graphComponent.highlightIndicatorManager.addHighlight(node)
   })
   graph.edges
-    .filter(edge => pathEdges.contains(edge))
+    .filter((edge) => pathEdges.contains(edge))
     // and we select all matching edges
-    .forEach(edge => graphComponent.highlightIndicatorManager.addHighlight(edge))
+    .forEach((edge) => graphComponent.highlightIndicatorManager.addHighlight(edge))
 
   // finally, we use the explicit "path.end" field to show the distance as a tooltip above
   // the sink node

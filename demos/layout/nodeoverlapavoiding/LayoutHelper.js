@@ -125,7 +125,7 @@ export class LayoutHelper {
     if (this.graph.isGroupNode(node)) {
       this.graph.groupingSupport
         .getDescendants(node)
-        .forEach(descendant => this.nodes.add(descendant))
+        .forEach((descendant) => this.nodes.add(descendant))
     }
     const descriptor = graphComponent.graphModelManager.edgeDescriptor
     this.hiddenEdges =
@@ -198,10 +198,10 @@ export class LayoutHelper {
     return anySmaller && anyGreater
       ? 'BOTH'
       : anySmaller
-      ? 'SHRINKING'
-      : anyGreater
-      ? 'GROWING'
-      : 'NONE'
+        ? 'SHRINKING'
+        : anyGreater
+          ? 'GROWING'
+          : 'NONE'
   }
 
   /**
@@ -327,10 +327,10 @@ export class LayoutHelper {
    */
   initializeLayout() {
     this.resetToOriginalGraphStageData = this.createGivenCoordinatesStageData(
-      n => {
+      (n) => {
         return !this.nodes.has(n)
       },
-      e => {
+      (e) => {
         return !this.isSubgraphEdge(e)
       }
     )
@@ -387,7 +387,7 @@ export class LayoutHelper {
   cancelLayout() {
     this.state = 'CANCELLING'
     this.runLayout()
-    return new Promise(resolve => (this.resolveFinishLayoutPromise = resolve))
+    return new Promise((resolve) => (this.resolveFinishLayoutPromise = resolve))
   }
 
   /**
@@ -397,7 +397,7 @@ export class LayoutHelper {
   finishLayout() {
     this.state = 'FINISHING'
     this.runLayout()
-    return new Promise(resolve => (this.resolveFinishLayoutPromise = resolve))
+    return new Promise((resolve) => (this.resolveFinishLayoutPromise = resolve))
   }
 
   /**
@@ -475,7 +475,7 @@ class DragLayoutExecutor extends LayoutExecutor {
     super(graphComponent, layout)
     this.filteredGraph = new FilteredGraphWrapper(
       graphComponent.graph,
-      n => {
+      (n) => {
         return !nodes.has(n)
       },
       null
@@ -544,7 +544,9 @@ export class LayoutRunner {
    * @type {!LayoutRunner}
    */
   static get INSTANCE() {
-    return this.instance ? this.instance : (this.instance = new LayoutRunner())
+    return LayoutRunner.instance
+      ? LayoutRunner.instance
+      : (LayoutRunner.instance = new LayoutRunner())
   }
 
   /**

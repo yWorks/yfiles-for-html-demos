@@ -60,7 +60,7 @@ async function run(): Promise<void> {
 
   const exportRect = initializeExportRectangle(graphComponent)
 
-  initializeOptionPanel(async options => {
+  initializeOptionPanel(async (options) => {
     const element = await exportSvg(
       graphComponent,
       options.scale,

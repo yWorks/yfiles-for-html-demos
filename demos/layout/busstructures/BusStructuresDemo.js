@@ -126,7 +126,7 @@ async function runLayout() {
   const busses = busStructuresToggle.checked ? getBusStructures(graph) : []
 
   // clear previous edge highlights
-  graph.edges.forEach(edge => graph.setStyle(edge, graph.edgeDefaults.getStyleInstance()))
+  graph.edges.forEach((edge) => graph.setStyle(edge, graph.edgeDefaults.getStyleInstance()))
   // set new highlights: use a common line color for all edges belonging to the same bus structure
   for (const busEdges of busses) {
     highlightEdges(graph, busEdges)
@@ -193,12 +193,13 @@ function getBusSettings(busStylePreset, elementCount) {
     case 'balanced':
       // the default bus structure setting without further configuration
       return null
-    case 'squares':
+    case 'squares': {
       // eslint-disable-next-line no-case-declarations
       const rowLength = Math.ceil(Math.sqrt(elementCount))
       beforeBusValue = Math.floor(rowLength / 2)
       afterBusValue = Math.ceil(rowLength / 2)
       break
+    }
     case 'leaves':
       beforeBusValue = 1
       afterBusValue = 1
@@ -232,12 +233,12 @@ function getBusStructures(graph) {
   const busStructures = []
 
   // find star roots with incoming edges
-  const starRootsIncoming = graph.nodes.filter(node => graph.inEdgesAt(node).size > 5)
-  starRootsIncoming.forEach(root => busStructures.push(graph.inEdgesAt(root).toList()))
+  const starRootsIncoming = graph.nodes.filter((node) => graph.inEdgesAt(node).size > 5)
+  starRootsIncoming.forEach((root) => busStructures.push(graph.inEdgesAt(root).toList()))
 
   // find star roots with outgoing edges
-  const starRootsOutgoing = graph.nodes.filter(node => graph.outEdgesAt(node).size > 5)
-  starRootsOutgoing.forEach(root => busStructures.push(graph.outEdgesAt(root).toList()))
+  const starRootsOutgoing = graph.nodes.filter((node) => graph.outEdgesAt(node).size > 5)
+  starRootsOutgoing.forEach((root) => busStructures.push(graph.outEdgesAt(root).toList()))
 
   return busStructures
 }
@@ -303,7 +304,7 @@ function loadGraph(graph) {
  */
 function setSliderValue(slider, value) {
   const sliderLabel = slider.nextElementSibling
-  slider.value = String(isFinite(value) ? value : 20)
+  slider.value = String(Number.isFinite(value) ? value : 20)
   sliderLabel.textContent = value.toString()
 }
 

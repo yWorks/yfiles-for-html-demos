@@ -52,7 +52,7 @@
  */
 export function createNodeTags(nodesSource) {
   // configure the provider that returns an object with the name and the type property of the nodes
-  nodesSource.nodeCreator.tagProvider = data => {
+  nodesSource.nodeCreator.tagProvider = (data) => {
     return { name: data.name, type: data.type }
   }
 }

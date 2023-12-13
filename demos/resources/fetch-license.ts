@@ -71,7 +71,7 @@ function checkLicense(licenseData: Record<string, unknown>): Promise<any> {
   const g = new DefaultGraph()
   g.createNode()
   if (g.nodes.size === 1) {
-    return new Promise(resolve => resolve(licenseData))
+    return new Promise((resolve) => resolve(licenseData))
   }
 
   window.setTimeout(() => {
@@ -99,7 +99,9 @@ function parseLicense(licenseString: string | undefined): Record<string, unknown
   }
 }
 
-function loadLicenseFromLocalStorage(): Promise<Record<string, unknown> | void> {
+function loadLicenseFromLocalStorage():
+  | Promise<Record<string, unknown> | undefined>
+  | Promise<void> {
   if (typeof window === 'undefined') {
     console.warn('yFiles demo app: No yFiles for HTML license included!')
     return Promise.resolve()
@@ -114,8 +116,8 @@ function loadLicenseFromLocalStorage(): Promise<Record<string, unknown> | void> 
   return showLicenseDialog()
 }
 
-async function showLicenseDialog(): Promise<Record<string, unknown> | void> {
-  return new Promise(resolve => {
+async function showLicenseDialog(): Promise<Record<string, unknown> | undefined> {
+  return new Promise((resolve) => {
     window.setTimeout(function () {
       const div = document.createElement('div')
       div.setAttribute(

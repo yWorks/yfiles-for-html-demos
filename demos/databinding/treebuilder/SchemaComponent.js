@@ -300,20 +300,23 @@ export class SchemaComponent {
     this.treeBuilder = new TreeBuilder(this.resultGraph)
 
     const schemaGraphBuilder = new GraphBuilder(this.schemaGraphComponent.graph)
-    const schemaNodesSource = schemaGraphBuilder.createNodesSource(sample.nodesSources, n => n.name)
+    const schemaNodesSource = schemaGraphBuilder.createNodesSource(
+      sample.nodesSources,
+      (n) => n.name
+    )
 
-    schemaNodesSource.nodeCreator.createLabelBinding(n => n.name)
+    schemaNodesSource.nodeCreator.createLabelBinding((n) => n.name)
 
-    schemaNodesSource.nodeCreator.tagProvider = sourceDefinition =>
+    schemaNodesSource.nodeCreator.tagProvider = (sourceDefinition) =>
       this.createTreeNodesSourceConnector(sourceDefinition)
 
-    schemaNodesSource.nodeCreator.styleProvider = data =>
+    schemaNodesSource.nodeCreator.styleProvider = (data) =>
       SchemaComponent.createSchemaNodeStyle(data)
 
     const schemaEdgesSource = schemaGraphBuilder.createEdgesSource(
       sample.edgesSource,
-      e => e.parentSource,
-      e => e.childSource
+      (e) => e.parentSource,
+      (e) => e.childSource
     )
     schemaEdgesSource.edgeCreator.addEdgeCreatedListener((_, evt) => {
       this.createChildRelationship(evt.dataItem.childBinding, evt.item)
@@ -334,14 +337,14 @@ export class SchemaComponent {
 
     // gather remaining source definitions
     const treeNodesSourcesDefinitions = []
-    schemaGraph.nodes.forEach(node => {
+    schemaGraph.nodes.forEach((node) => {
       const sourceConnector = node.tag
       treeNodesSourcesDefinitions.push(sourceConnector.sourceDefinition)
     })
 
     // gather remaining edge definitions
     const edgesSourceDefinitions = []
-    schemaGraph.edges.forEach(edge => {
+    schemaGraph.edges.forEach((edge) => {
       const sourceConnector = edge.sourceNode.tag
       const targetConnector = edge.targetNode.tag
 
@@ -377,7 +380,7 @@ export class SchemaComponent {
     edge.tag = { provider: childDataProvider, binding: createBinding(childDataProvider) }
 
     sourceConnector.nodesSource.addChildNodesSource(
-      dataItem => edge.tag.binding(dataItem),
+      (dataItem) => edge.tag.binding(dataItem),
       targetConnector.nodesSource
     )
 
@@ -485,7 +488,7 @@ export class SchemaComponent {
       this.schemaGraphComponent.graph.nodeDefaults.size
 
     // each edge creation should use another random target node color
-    createEdgeInputMode.addGestureStartingListener(src => {
+    createEdgeInputMode.addGestureStartingListener((src) => {
       const nodeStyle = new ShapeNodeStyle({
         shape: 'ellipse',
         fill: '#6495ED',

@@ -112,7 +112,7 @@ function findGroupNodeToEnter(
   masterGraph: IGraph,
   viewport: Rect
 ): INode | null {
-  return graphComponent.graph.nodes.find(node => {
+  return graphComponent.graph.nodes.find((node) => {
     const nodeLayout = node.layout.toRect()
     const masterNode = foldingView.getMasterItem(node)
     return (
@@ -248,7 +248,7 @@ function hasGrandChildren(masterGraph: IGraph, groupNode: INode | null): boolean
   return (
     masterGraph
       .getChildren(groupNode)
-      .filter(child => masterGraph.isGroupNode(child))
-      .flatMap(child => masterGraph.getChildren(child)).size > 0
+      .filter((child) => masterGraph.isGroupNode(child))
+      .flatMap((child) => masterGraph.getChildren(child)).size > 0
   )
 }

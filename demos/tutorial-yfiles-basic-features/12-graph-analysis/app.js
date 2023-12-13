@@ -52,7 +52,7 @@ configureHighlights(graphComponent)
 createSampleGraphAnalysis(graphComponent.graph)
 
 graphComponent.selection.setSelected(
-  graphComponent.graph.nodes.first(node => node.labels.first().text === '15'),
+  graphComponent.graph.nodes.first((node) => node.labels.first().text === '15'),
   true
 )
 

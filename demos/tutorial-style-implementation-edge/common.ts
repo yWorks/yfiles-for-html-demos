@@ -309,7 +309,7 @@ export function addHoverEffect(
 
 function createPathData(edge: IEdge): string {
   const points = IEdge.getPathPoints(edge).toArray()
-  return 'M ' + points.map(point => `${point.x} ${point.y}`).join(' L ')
+  return 'M ' + points.map((point) => `${point.x} ${point.y}`).join(' L ')
 }
 
 export function zoomToContent(graphComponent: GraphComponent): void {
@@ -390,7 +390,7 @@ export class IsVisibleEdgeStyleDescriptor extends BaseClass(
 
 export function startAnimation(graphComponent: GraphComponent): void {
   graphComponent.sizeChangedDetection = SizeChangedDetectionMode.TIMER
-  graphComponent.addSizeChangedListener(_ => {
+  graphComponent.addSizeChangedListener((_) => {
     setTimeout(() => {
       setAnimationStartPoint(graphComponent)
       void animate()
@@ -456,7 +456,7 @@ export class BoundsVisual extends BaseClass(IVisualCreator) {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     g.append(
-      ...graph.edges.map(e => {
+      ...graph.edges.map((e) => {
         const rect = document.createElementNS(
           'http://www.w3.org/2000/svg',
           'rect'

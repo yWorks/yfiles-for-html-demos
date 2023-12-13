@@ -250,7 +250,7 @@ function createLargeSampleGraph(graphComponent) {
   const ctx = createCanvasContext(128, 128)
   const webGL2GraphModelManager = graphComponent.graphModelManager
 
-  const fontAwesomeIcons = faClasses.map(faClass => createFontAwesomeIcon(ctx, faClass))
+  const fontAwesomeIcons = faClasses.map((faClass) => createFontAwesomeIcon(ctx, faClass))
 
   for (let i = 0; i < 400; i++) {
     for (let k = 0; k < 250; k++) {

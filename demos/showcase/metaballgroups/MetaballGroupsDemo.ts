@@ -152,7 +152,7 @@ function createSampleGraph(): void {
     '47:54,49:51,50:51,51:53,21:12,10:2,0:37'
   )
     .split(',')
-    .map(e => e.split(':').map(Number))
+    .map((e) => e.split(':').map(Number))
 
   const nodes = graph.nodes.toArray()
   for (const e of edges) {

@@ -257,7 +257,7 @@ async function routeEdgesCore(edgesToRoute: IEdge[] | null): Promise<void> {
     for (const fill of colorUtil.usedFills()) {
       layoutData.buses.add(
         new EdgeRouterBusDescriptor({ multipleBackboneSegments: false })
-      ).delegate = edge => {
+      ).delegate = (edge) => {
         const edgeFill = (edge.style as PolylineEdgeStyle).stroke!.fill
         return fill.hasSameValue(edgeFill)
       }

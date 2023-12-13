@@ -56,7 +56,7 @@ export function createFeatureLayoutConfiguration(graph) {
 
   // Only use the candidate set for node number 5.
   const layoutData = new HierarchicLayoutData({
-    nodePortCandidateSets: node => (parseInt(node.tag) === 5 ? pcs : null)
+    nodePortCandidateSets: (node) => (parseInt(node.tag) === 5 ? pcs : null)
   })
 
   return { layout, layoutData }

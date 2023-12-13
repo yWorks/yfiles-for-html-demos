@@ -126,7 +126,7 @@ export class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
     renderingContext2D.setLineDash([5, 5])
 
     renderingContext2D.beginPath()
-    this.dataModel.tasks.forEach(task => {
+    this.dataModel.tasks.forEach((task) => {
       const y = getTaskY(task) + getCompleteTaskHeight(task) + ganttTaskSpacing * 0.5
       renderingContext2D.moveTo(beginX, y)
       renderingContext2D.lineTo(endX, y)

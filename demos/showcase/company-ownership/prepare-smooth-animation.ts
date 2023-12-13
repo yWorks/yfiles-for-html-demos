@@ -100,7 +100,7 @@ export function modifyGraph(modification: (graph: IGraph) => void, graph: IGraph
 
   // then we reset the new edges so that they grow out of their source nodes by placing the target port at
   // the source port's location
-  newEdges.forEach(e => {
+  newEdges.forEach((e) => {
     graph.clearBends(e)
     graph.setPortLocationParameter(
       e.targetPort!,

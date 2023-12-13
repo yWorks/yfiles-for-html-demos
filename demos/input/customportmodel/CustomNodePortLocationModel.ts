@@ -72,7 +72,7 @@ export class CustomNodePortLocationModel
    * @param type The type for which an instance shall be returned
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     return null
   }
 

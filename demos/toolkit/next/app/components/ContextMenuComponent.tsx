@@ -38,7 +38,7 @@ import {
   PopulateItemContextMenuEventArgs,
   Rect
 } from 'yfiles'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
+import { BrowserDetection } from '../utils/BrowserDetection'
 
 interface ContextMenuItem {
   title: string

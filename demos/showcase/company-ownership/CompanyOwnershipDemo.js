@@ -64,8 +64,8 @@ async function run() {
   applyDemoTheme(graphComponent)
 
   // add the listeners for the companyStructureView
-  companyStructureView.addNodeClickedListener(node => propertiesView.showNodeProperties(node))
-  companyStructureView.addEdgeClickedListener(edge => propertiesView.showEdgeProperties(edge))
+  companyStructureView.addNodeClickedListener((node) => propertiesView.showNodeProperties(node))
+  companyStructureView.addEdgeClickedListener((edge) => propertiesView.showEdgeProperties(edge))
 
   // initialize graph search
   graphSearch = new CompanyOwnershipSearch(graphComponent)
@@ -100,20 +100,20 @@ function createPropertiesView() {
  * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
-  document.querySelector('#styles').addEventListener('change', async event => {
+  document.querySelector('#styles').addEventListener('change', async (event) => {
     const select = event.target
     companyStructureView.useShapeNodeStyle = select.value === 'shapes'
     await loadGraph(graphComponent)
   })
 
-  document.querySelectorAll('[data-command="Shapes"]').forEach(element => {
+  document.querySelectorAll('[data-command="Shapes"]').forEach((element) => {
     element.addEventListener('click', async () => {
       document.querySelector('#styles').value = 'shapes'
       companyStructureView.useShapeNodeStyle = true
       await loadGraph(graphComponent)
     })
   })
-  document.querySelectorAll('[data-command="Tables"]').forEach(element => {
+  document.querySelectorAll('[data-command="Tables"]').forEach((element) => {
     element.addEventListener('click', async () => {
       document.querySelector('#styles').value = 'tables'
       companyStructureView.useShapeNodeStyle = false
@@ -147,10 +147,10 @@ async function loadGraph(graphComponent, animate = true) {
  */
 function setUIDisabled(disabled) {
   document.querySelector('#styles').disabled = disabled
-  document.querySelectorAll('[data-command="Shapes"]').forEach(element => {
+  document.querySelectorAll('[data-command="Shapes"]').forEach((element) => {
     element.disabled = disabled
   })
-  document.querySelectorAll('[data-command="Tables"]').forEach(element => {
+  document.querySelectorAll('[data-command="Tables"]').forEach((element) => {
     element.disabled = disabled
   })
 }

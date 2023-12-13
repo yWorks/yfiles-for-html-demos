@@ -66,7 +66,7 @@ class LargeGraphDemoConfiguration extends DemoConfiguration {
   /**
    * Creates a random integer in the range [0, upper[.
    */
-  getRandomInt = upper => Math.floor(Math.random() * upper)
+  getRandomInt = (upper) => Math.floor(Math.random() * upper)
 
   webGL2EdgeStyleProvider = (edge, graph) => {
     return this.webGL2EdgeStyle
@@ -147,7 +147,7 @@ class LargeGraphDemoConfiguration extends DemoConfiguration {
    * @param {!HTMLImageElement} image
    */
   createImageDataPromise(ctx, image) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       image.onload = () => {
         ctx.clearRect(0, 0, 128, 128)
         ctx.drawImage(image, 0, 0, 75, 75, 0, 0, 128, 128)

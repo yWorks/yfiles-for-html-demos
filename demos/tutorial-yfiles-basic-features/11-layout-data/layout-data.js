@@ -49,7 +49,7 @@ export async function runLayout(graphComponent) {
 
   // Configure the layout data using the information from the node labels
   const hierarchicLayoutData = new HierarchicLayoutData({
-    nodeLayoutDescriptors: node =>
+    nodeLayoutDescriptors: (node) =>
       new HierarchicLayoutNodeLayoutDescriptor({
         // Set the alignment of the node based on the label
         layerAlignment: getAlignment(node)

@@ -191,7 +191,7 @@ export function enableGraphEditing(
   graphComponent.inputMode = graphEditorInputMode
   graphComponent.graph.nodeDefaults.ports.autoCleanUp = false
   graphComponent.graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
-    node => IPortCandidateProvider.fromExistingPorts(node)
+    (node) => IPortCandidateProvider.fromExistingPorts(node)
   )
   return graphEditorInputMode
 }

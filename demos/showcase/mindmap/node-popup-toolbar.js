@@ -81,7 +81,7 @@ export function initializeNodePopups(graphComponent) {
     showToolbar(evt.item)
   })
 
-  inputMode.moveInputMode.addDragStartedListener(_ => {
+  inputMode.moveInputMode.addDragStartedListener((_) => {
     hidePopup(graphComponent)
   })
 
@@ -113,14 +113,14 @@ function createNodePopup(graphComponent) {
 
   document
     .getElementById('state-icon-picker')
-    .addEventListener('click', evt => showPickerContainer(graphComponent, evt.target))
+    .addEventListener('click', (evt) => showPickerContainer(graphComponent, evt.target))
   document
     .getElementById('color-picker')
-    .addEventListener('click', evt => showPickerContainer(graphComponent, evt.target))
+    .addEventListener('click', (evt) => showPickerContainer(graphComponent, evt.target))
 
   document.getElementById('cross-edge-creation').addEventListener(
     'click',
-    async evt => {
+    async (evt) => {
       const currentItem = nodePopup.currentItem
       hidePopup(graphComponent)
       if (!isInLayout() && currentItem) {
@@ -133,7 +133,7 @@ function createNodePopup(graphComponent) {
 
   document.getElementById('child-creation').addEventListener(
     'click',
-    async evt => {
+    async (evt) => {
       const currentItem = nodePopup.currentItem
       hidePopup(graphComponent)
       if (currentItem) {
@@ -151,7 +151,7 @@ function createNodePopup(graphComponent) {
   )
   document.getElementById('node-removal').addEventListener(
     'click',
-    async evt => {
+    async (evt) => {
       hidePopup(graphComponent)
       await executeDeleteItem(graphComponent)
       evt.target.checked = false
@@ -273,7 +273,7 @@ function createColorPicker(graphComponent) {
   ]
 
   const colorContainer = document.querySelector('#color-picker-colors')
-  colorPickerColors.forEach(color => {
+  colorPickerColors.forEach((color) => {
     const colorButton = document.createElement('button')
     colorButton.setAttribute('data-color', color)
     colorButton.setAttribute('style', `background-color:${color}`)

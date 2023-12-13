@@ -81,7 +81,7 @@ export class AdditionalSnapLineMoveInputMode extends MoveInputMode {
    */
   tryGetAdditionalSnapLineCreatorAt(location) {
     const surrounding = new Rect(location.add(new Point(-3, -3)), new Size(6, 6))
-    return this.snapLineCreators.find(line => surrounding.intersectsLine(line.from, line.to))
+    return this.snapLineCreators.find((line) => surrounding.intersectsLine(line.from, line.to))
   }
 
   /**

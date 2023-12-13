@@ -112,7 +112,7 @@ function init() {
   // initialize the helper UI
   const items = ['Mixed', 'Zoom with Graph', 'Always the same size']
 
-  items.forEach(name => {
+  items.forEach((name) => {
     const option = document.createElement('option')
     option.text = name
     zoomModeComboBox.add(option)
@@ -240,21 +240,21 @@ function updateZoomModeDecoration() {
 
 function selectAllNodes() {
   const nodeSelection = graphComponent.selection.selectedNodes
-  graphComponent.graph.nodes.forEach(node => {
+  graphComponent.graph.nodes.forEach((node) => {
     nodeSelection.setSelected(node, true)
   })
 }
 
 function selectAllEdges() {
   const edgeSelection = graphComponent.selection.selectedEdges
-  graphComponent.graph.edges.forEach(edge => {
+  graphComponent.graph.edges.forEach((edge) => {
     edgeSelection.setSelected(edge, true)
   })
 }
 
 function selectAllLabels() {
   const labelSelection = graphComponent.selection.selectedLabels
-  graphComponent.graph.labels.forEach(label => {
+  graphComponent.graph.labels.forEach((label) => {
     labelSelection.setSelected(label, true)
   })
 }
@@ -265,13 +265,13 @@ function selectAllLabels() {
 function initializeUI() {
   document
     .querySelector('#node-button')
-    .addEventListener('change', evt => customNodeDecorationChanged(evt.target.checked))
+    .addEventListener('change', (evt) => customNodeDecorationChanged(evt.target.checked))
   document
     .querySelector('#edge-button')
-    .addEventListener('change', evt => customEdgeDecorationChanged(evt.target.checked))
+    .addEventListener('change', (evt) => customEdgeDecorationChanged(evt.target.checked))
   document
     .querySelector('#label-button')
-    .addEventListener('change', evt => customLabelDecorationChanged(evt.target.checked))
+    .addEventListener('change', (evt) => customLabelDecorationChanged(evt.target.checked))
 
   document.querySelector('#zoom-mode').addEventListener('change', zoomModeChanged)
 }

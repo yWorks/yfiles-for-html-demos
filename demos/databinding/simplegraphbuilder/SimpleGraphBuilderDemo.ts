@@ -160,7 +160,7 @@ function createGraphBuilder(graph: IGraph): GraphBuilder {
     parentId: 'parentGroup'
   })
   // Add some labels to the group nodes
-  groupsSource.nodeCreator.createLabelBinding(group => group.id)
+  groupsSource.nodeCreator.createLabelBinding((group) => group.id)
 
   graphBuilder.createEdgesSource({
     // stores the edges of the graph
@@ -200,12 +200,12 @@ function createGraphBuilderWithImplicitGrouping(graph: IGraph): GraphBuilder {
   // The children of each group are defined directly in the data
   const childSource = nodesSource.createChildNodesSource(
     // specifies how to retrieve the children for each group
-    group => group.members,
+    (group) => group.members,
     // specifies how the child nodes are identified globally
-    item => item.id
+    (item) => item.id
   )
   // And the groups are additionally grouped again by location
-  const parentSource = nodesSource.createParentNodesSource(group => group.location)
+  const parentSource = nodesSource.createParentNodesSource((group) => group.location)
 
   // We want to set up reasonable defaults for the styles.
   // Since the entities in the nodesSource and the parentsSource are both group nodes, they
@@ -213,8 +213,8 @@ function createGraphBuilderWithImplicitGrouping(graph: IGraph): GraphBuilder {
   nodesSource.nodeCreator.defaults.style = parentSource.nodeCreator.defaults.style =
     graph.groupNodeDefaults.style
   // We also show labels for the groups
-  nodesSource.nodeCreator.createLabelBinding(group => group.id)
-  parentSource.nodeCreator.createLabelBinding(location => location)
+  nodesSource.nodeCreator.createLabelBinding((group) => group.id)
+  parentSource.nodeCreator.createLabelBinding((location) => location)
   nodesSource.nodeCreator.defaults.labels = parentSource.nodeCreator.defaults.labels =
     graph.groupNodeDefaults.labels
   // The nodes in the childSource are just plain leaf nodes and are styles with a normal node style
@@ -344,7 +344,7 @@ async function arrangeGraph(graphComponent: GraphComponent): Promise<void> {
  * Registers the actions for the toolbar buttons during the creation of this application.
  */
 function initializeUI(graphComponent: GraphComponent): void {
-  selectBox.addEventListener('change', async e => {
+  selectBox.addEventListener('change', async (e) => {
     // build graph from new data
     selectBox.disabled = true
     buildGraph(graphComponent.graph, (e.target as HTMLSelectElement).value)

@@ -41,7 +41,7 @@ function highlightConnectedItems({ graph, selection }) {
       if (selection.isSelected(node)) {
         // selected nodes
         node.style.cssClass = `${baseCssClass} ${cssSelected}`
-      } else if (graph.neighbors(node).some(n => selection.isSelected(n))) {
+      } else if (graph.neighbors(node).some((n) => selection.isSelected(n))) {
         // nodes adjacent to a selected node
         node.style.cssClass = `${baseCssClass} ${cssConnected}`
       } else {

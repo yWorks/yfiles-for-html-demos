@@ -51,30 +51,30 @@ export function readJSON(graphComponent, text) {
     graphComponent.graph.clear()
     const graphBuilder = new GraphBuilder(graphComponent.graph)
     const nodesSource = graphBuilder.createNodesSource({
-      data: data.nodeList.filter(item => item.isGroup !== true),
-      id: item => item.id,
-      parentId: item => item.parentId,
-      layout: item => item.layout
+      data: data.nodeList.filter((item) => item.isGroup !== true),
+      id: (item) => item.id,
+      parentId: (item) => item.parentId,
+      layout: (item) => item.layout
     })
     nodesSource.nodeCreator.createLabelsSource({
-      data: data => data.labels || [],
-      text: data => data.text,
-      layoutParameter: data =>
+      data: (data) => data.labels || [],
+      text: (data) => data.text,
+      layoutParameter: (data) =>
         data.layoutParameter
           ? ILabelModelParameter.deserializeParameter(data.layoutParameter)
           : null
     })
 
     const groupNodesSource = graphBuilder.createGroupNodesSource({
-      data: data.nodeList.filter(item => item.isGroup === true),
-      id: item => item.id,
-      parentId: item => item.parentId,
-      layout: item => item.layout
+      data: data.nodeList.filter((item) => item.isGroup === true),
+      id: (item) => item.id,
+      parentId: (item) => item.parentId,
+      layout: (item) => item.layout
     })
     groupNodesSource.nodeCreator.createLabelsSource({
-      data: data => data.labels || [],
-      text: data => data.text,
-      layoutParameter: data =>
+      data: (data) => data.labels || [],
+      text: (data) => data.text,
+      layoutParameter: (data) =>
         data.layoutParameter
           ? ILabelModelParameter.deserializeParameter(data.layoutParameter)
           : null
@@ -82,18 +82,18 @@ export function readJSON(graphComponent, text) {
 
     const { edgeCreator } = graphBuilder.createEdgesSource(
       data.edgeList,
-      item => item.source,
-      item => item.target
+      (item) => item.source,
+      (item) => item.target
     )
     edgeCreator.createLabelsSource({
-      data: data => data.labels || [],
-      text: data => data.text,
-      layoutParameter: data =>
+      data: (data) => data.labels || [],
+      text: (data) => data.text,
+      layoutParameter: (data) =>
         data.layoutParameter
           ? ILabelModelParameter.deserializeParameter(data.layoutParameter)
           : null
     })
-    edgeCreator.bendsProvider = item => item.bends
+    edgeCreator.bendsProvider = (item) => item.bends
 
     // Ports are not handled by GraphBuilder by default, so we use the EdgeCreated event for this.
     const tryDeserializePortParameter = (portParameter, port, graph) => {

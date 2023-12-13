@@ -28,7 +28,7 @@
  ***************************************************************************/
 const YWorksOptimizerPlugin = require('@yworks/optimizer/webpack-plugin')
 
-module.exports = config => {
+module.exports = (config) => {
   if (config.mode === 'production') {
     config.plugins.push(
       new YWorksOptimizerPlugin({

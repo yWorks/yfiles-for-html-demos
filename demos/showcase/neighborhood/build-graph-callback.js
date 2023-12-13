@@ -80,8 +80,8 @@ function buildFolderContents(view, selectedSourceNodes, elementCopiedCallback) {
   // Get descendants of root nodes.
   const masterGraph = foldingView.manager.masterGraph
   const groupingSupport = masterGraph.groupingSupport
-  selectedSourceNodes.forEach(node => {
-    groupingSupport.getDescendants(foldingView.getMasterItem(node)).forEach(descendant => {
+  selectedSourceNodes.forEach((node) => {
+    groupingSupport.getDescendants(foldingView.getMasterItem(node)).forEach((descendant) => {
       nodesToCopy.add(descendant)
     })
   })
@@ -92,11 +92,11 @@ function buildFolderContents(view, selectedSourceNodes, elementCopiedCallback) {
   graphCopier.copy({
     sourceGraph: masterGraph,
     targetGraph: view.neighborhoodGraph,
-    filter: item => {
+    filter: (item) => {
       if (item instanceof IEdge) {
         // filter intra-component edges
         return !!selectedSourceNodes.find(
-          node =>
+          (node) =>
             groupingSupport.isDescendant(item.sourceNode, foldingView.getMasterItem(node)) &&
             groupingSupport.isDescendant(item.targetNode, foldingView.getMasterItem(node))
         )
@@ -144,7 +144,7 @@ function buildNeighborhood(
   graphCopier.copy({
     sourceGraph: sourceGraph,
     targetGraph: view.neighborhoodGraph,
-    filter: item => !(item instanceof INode) || nodesToCopy.has(item),
+    filter: (item) => !(item instanceof INode) || nodesToCopy.has(item),
     elementCopiedCallback
   })
 }

@@ -95,7 +95,7 @@ async function buildGraph(graphComponent) {
     sourceId: 'source',
     targetId: 'target',
     labels: ['voters'],
-    tag: data => {
+    tag: (data) => {
       return { ...data, thickness: getThickness(data.voters) }
     }
   })

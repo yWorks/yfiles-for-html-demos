@@ -144,7 +144,7 @@ export function createSampleGraph(graph) {
     id: 'id',
     layout: 'layout',
     tag: 'tag',
-    style: dataItem => {
+    style: (dataItem) => {
       return new ShapeNodeStyle({
         shape: 'round-rectangle',
         cssClass: `node type-${dataItem.tag.type || '0'}`
@@ -162,7 +162,7 @@ export function createSampleGraph(graph) {
     shape: 'round-rectangle'
   })
   nodeLabelCreator.styleProvider = () => labelStyle.clone()
-  nodeLabelCreator.textProvider = dataItem => `.node\n.type-${dataItem.tag.type || '0'}`
+  nodeLabelCreator.textProvider = (dataItem) => `.node\n.type-${dataItem.tag.type || '0'}`
 
   const edgesSource = builder.createEdgesSource({
     data: SampleData.edgeList,
@@ -198,7 +198,7 @@ export function createSampleGraph(graph) {
   })
   const layoutData = new HierarchicLayoutData({
     // consider the node types of the sample data
-    nodeTypes: node => node.tag.type
+    nodeTypes: (node) => node.tag.type
   })
 
   graph.applyLayout({ layout, layoutData, portAdjustmentPolicy: PortAdjustmentPolicy.ALWAYS })

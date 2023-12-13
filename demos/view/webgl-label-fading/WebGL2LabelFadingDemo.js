@@ -95,7 +95,7 @@ function enableWebGLRendering(graphComponent) {
  */
 function initializeUI(graphComponent) {
   const labelFadeoutThresholdSelect = document.querySelector('#label-fadeout-threshold')
-  labelFadeoutThresholdSelect.addEventListener('change', e => {
+  labelFadeoutThresholdSelect.addEventListener('change', (e) => {
     const selectElement = e.target
     registerLabelFading(graphComponent, Number(selectElement.value))
   })
@@ -112,7 +112,7 @@ async function createGraph(graph) {
   const response = await fetch('./resources/hierarchic_2000_2100.json')
   const graphData = await response.json()
 
-  const getRandomInt = upper => Math.floor(Math.random() * upper)
+  const getRandomInt = (upper) => Math.floor(Math.random() * upper)
 
   graph.clear()
   // create a map to store the nodes for edge creation
@@ -152,7 +152,7 @@ async function createGraph(graph) {
     // add the bends
     if (edgeData.b != null) {
       const bendData = edgeData.b
-      bendData.forEach(bend => {
+      bendData.forEach((bend) => {
         graph.addBend(edge, Point.from(bend))
       })
     }

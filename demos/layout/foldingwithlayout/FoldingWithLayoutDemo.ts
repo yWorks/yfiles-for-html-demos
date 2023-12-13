@@ -104,12 +104,12 @@ function createGraphBuilder(masterGraph: IGraph): GraphBuilder {
     data: GraphData.nodesSource,
     id: 'id',
     parentId: 'group',
-    layout: data => data.layout
+    layout: (data) => data.layout
   })
   graphBuilder.createGroupNodesSource({
     data: GraphData.groupsSource,
     id: 'id',
-    layout: data => data.layout,
+    layout: (data) => data.layout,
     labels: ['label'],
     parentId: 'parentGroup'
   })
@@ -130,7 +130,7 @@ function buildGraph(graph: IGraph): void {
   builder.buildGraph()
 
   // Iterate the edge data and create the according bends and Ports
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     if (edge.tag.bends) {
       edge.tag.bends.forEach((bend: Point) => {
         graph.addBend(edge, bend)
@@ -141,7 +141,7 @@ function buildGraph(graph: IGraph): void {
   })
 
   // collapsing the groups whose tags are collapsed
-  graph.foldingView!.manager.masterGraph.nodes.toArray().forEach(node => {
+  graph.foldingView!.manager.masterGraph.nodes.toArray().forEach((node) => {
     if (node.tag.collapsed) {
       graph.foldingView!.collapse(node)
     }

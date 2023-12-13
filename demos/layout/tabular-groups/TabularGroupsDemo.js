@@ -121,13 +121,13 @@ async function loadSampleGraph() {
 
   // define source and creation options for nodes and group nodes
   const nodesSource = builder.createNodesSource({
-    data: data.nodeList.filter(node => !node.isGroup),
+    data: data.nodeList.filter((node) => !node.isGroup),
     id: 'id',
     layout: 'layout',
     parentId: 'parent'
   })
   const groupSource = builder.createGroupNodesSource({
-    data: data.nodeList.filter(node => node.isGroup),
+    data: data.nodeList.filter((node) => node.isGroup),
     id: 'id',
     layout: 'layout',
     parentId: 'parent'
@@ -135,13 +135,13 @@ async function loadSampleGraph() {
 
   // create labels for the normal nodes
   const nodeCreator = nodesSource.nodeCreator
-  const nodeLabelCreator = nodeCreator.createLabelsSource(data => data.labels || []).labelCreator
-  nodeLabelCreator.textProvider = data => data.text
+  const nodeLabelCreator = nodeCreator.createLabelsSource((data) => data.labels || []).labelCreator
+  nodeLabelCreator.textProvider = (data) => data.text
   nodeLabelCreator.layoutParameterProvider = () =>
     isSimple ? InteriorLabelModel.CENTER : InteriorLabelModel.WEST
 
   const groupCreator = groupSource.nodeCreator
-  groupCreator.styleProvider = data => {
+  groupCreator.styleProvider = (data) => {
     return data.parent === undefined
       ? graph.groupNodeDefaults.style
       : new GroupNodeStyle({
@@ -161,9 +161,9 @@ async function loadSampleGraph() {
 
   // create labels for the group nodes
   const groupLabelCreator = groupSource.nodeCreator.createLabelsSource(
-    data => data.labels || []
+    (data) => data.labels || []
   ).labelCreator
-  groupLabelCreator.textProvider = data => data.text
+  groupLabelCreator.textProvider = (data) => data.text
   groupLabelCreator.layoutParameterProvider = () => InteriorStretchLabelModel.NORTH
 
   // define source for creation of edges
@@ -286,7 +286,7 @@ function initializeUI() {
     }
   )
 
-  document.querySelector('#child-distance-slider').addEventListener('change', async evt => {
+  document.querySelector('#child-distance-slider').addEventListener('change', async (evt) => {
     distanceLabel.textContent = evt.target.value
     await runHierarchicLayoutWithTabularGroups()
   })

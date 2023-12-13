@@ -296,7 +296,7 @@ function onHoveredItemChanged(sender: object, evt: HoveredItemChangedEventArgs):
     if (node && aggregationHelper.isOriginalNodeOrPlaceHolder(node)) {
       addHighlight(node)
       // and if it's a node, we highlight all adjacent edges, too
-      graphComponent.graph.edgesAt(node, AdjacencyTypes.ALL).forEach(adjacentEdge => {
+      graphComponent.graph.edgesAt(node, AdjacencyTypes.ALL).forEach((adjacentEdge) => {
         if (aggregationHelper.isHierarchyEdge(adjacentEdge)) {
           return
         }
@@ -415,7 +415,7 @@ function createFilteredView(): FilteredGraphWrapper {
   // create a new FilteredGraphWrapper that filters the original graph and shows only the currently visible nodes
   const filteredGraph = new FilteredGraphWrapper(
     originalGraph,
-    node => {
+    (node) => {
       node = aggregationHelper.getPlaceholder(node)
       const aggregateGraph = aggregationHelper.aggregateGraph
       return aggregateGraph.contains(node)
@@ -462,7 +462,7 @@ async function applyAggregation(
   originalGraph: IGraph,
   aggregateGraph: AggregationGraphWrapper
 ): Promise<void> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const nodeAggregation = createConfiguredAggregation()
     const aggregationResult = nodeAggregation.run(originalGraph)
 
@@ -527,7 +527,7 @@ async function runBalloonLayout(affectedNodes?: IListEnumerable<INode>): Promise
   treeReductionStage.edgeBundling.bundlingStrength = 1
   layout.prependStage(treeReductionStage)
   const nonTreeEdges = graphComponent.graph.edges
-    .filter(e => !aggregationHelper.isHierarchyEdge(e))
+    .filter((e) => !aggregationHelper.isHierarchyEdge(e))
     .toList()
 
   const treeReductionStageData = new TreeReductionStageData({
@@ -577,7 +577,7 @@ async function runCactusLayout(affectedNodes?: IListEnumerable<INode>): Promise<
   const innerTreeNodes: INode[] = []
   const innerTreeNode2Descriptor = new Map<INode, TemporaryGroupDescriptor>()
   for (const node of graph.nodes) {
-    if (graph.outEdgesAt(node).some(e => aggregationHelper.isHierarchyEdge(e))) {
+    if (graph.outEdgesAt(node).some((e) => aggregationHelper.isHierarchyEdge(e))) {
       innerTreeNodes.push(node)
       innerTreeNode2Descriptor.set(node, new TemporaryGroupDescriptor())
     }
@@ -593,13 +593,13 @@ async function runCactusLayout(affectedNodes?: IListEnumerable<INode>): Promise<
     // ... members of the group are all the successor nodes
     temporaryGroup.source = graph
       .outEdgesAt(treeNode)
-      .filter(e => aggregationHelper.isHierarchyEdge(e))
-      .map(e => e.targetNode!)
+      .filter((e) => aggregationHelper.isHierarchyEdge(e))
+      .map((e) => e.targetNode!)
 
     // if the tree node has a parent too, then the parent descriptor must be setup as well
     const inEdge = graph
       .inEdgesAt(treeNode)
-      .filter(e => aggregationHelper.isHierarchyEdge(e))
+      .filter((e) => aggregationHelper.isHierarchyEdge(e))
       .at(0)
     if (inEdge) {
       const parentGroupDescriptor = innerTreeNode2Descriptor.get(inEdge.sourceNode!)
@@ -615,7 +615,7 @@ async function runCactusLayout(affectedNodes?: IListEnumerable<INode>): Promise<
     INode.$class,
     TemporaryGroupDescriptor.$class,
     'INNER_TREE_NODES',
-    n => {
+    (n) => {
       if (innerTreeNode2Descriptor.has(n)) {
         return innerTreeNode2Descriptor.get(n)
       }
@@ -682,9 +682,6 @@ class CustomCactusLayoutStage extends LayoutStageBase {
  * {@link TemporaryGroupDescriptor} for the {@link CactusGroupLayout} algorithm.
  */
 class TemporaryGroupCustomizationStage extends LayoutStageBase {
-  constructor(cactus: CactusGroupLayout) {
-    super(cactus)
-  }
 
   applyLayout(graph: LayoutGraph): void {
     const innerNodesDp = graph.getDataProvider('INNER_TREE_NODES')!
@@ -699,11 +696,11 @@ class TemporaryGroupCustomizationStage extends LayoutStageBase {
     // collect the temporary group nodes inserted by TemporaryGroupNodeInsertionStage earlier
     // and the respective original tree node
     const temporaryGroups = graph.nodes
-      .filter(n => isInsertedTmpGroupDp.getBoolean(n))
-      .map(tmpGroup => {
+      .filter((n) => isInsertedTmpGroupDp.getBoolean(n))
+      .map((tmpGroup) => {
         const child = grouping.getChildren(tmpGroup)!.firstNode()
         const originalTreeNode = graph.nodes.find(
-          n => innerNodesDp.get(n) === childNode2DescriptorDp.get(child)
+          (n) => innerNodesDp.get(n) === childNode2DescriptorDp.get(child)
         )!
         return { group: tmpGroup, treeNode: originalTreeNode }
       })
@@ -851,7 +848,7 @@ function switchHierarchyEdgeVisibility(graph: IGraph, visible: boolean) {
  * Enables/disables the UI.
  */
 function setUiDisabled(disabled: boolean): Promise<void> {
-  return new Promise<void>(resolve => {
+  return new Promise<void>((resolve) => {
     document.querySelector<HTMLElement>('#calculating-indicator')!.style.display = !disabled
       ? 'none'
       : 'block'
@@ -866,7 +863,7 @@ function setUiDisabled(disabled: boolean): Promise<void> {
     // otherwise the graph in filtered view will be empty
     document.querySelector<HTMLButtonElement>('#switch-view')!.disabled =
       disabled ||
-      graphComponent.graph.nodes.every(node =>
+      graphComponent.graph.nodes.every((node) =>
         aggregationHelper.aggregateGraph.isAggregationItem(node)
       )
 
@@ -943,7 +940,7 @@ function onInfoPanelPropertiesChanged(): void {
   // enable switching to filtered view only if there are some real edges in the graph
   // otherwise the graph in filtered view will be empty
   document.querySelector<HTMLButtonElement>('#switch-view')!.disabled =
-    graphComponent.graph.nodes.every(node =>
+    graphComponent.graph.nodes.every((node) =>
       aggregationHelper.aggregateGraph.isAggregationItem(node)
     )
 }
@@ -968,13 +965,13 @@ class ZoomToNodesLayoutExecutor extends LayoutExecutor {
       return super.createViewportAnimation(targetBounds)
     }
 
-    if (!this.nodes.every(node => this.graph.contains(node))) {
+    if (!this.nodes.every((node) => this.graph.contains(node))) {
       throw new Error('Cannot zoom to nodes that are not in the graph')
     }
 
     const layoutGraph = this.layoutGraph
     const bounds = this.nodes
-      .map(node => layoutGraph.getBoundingBox(layoutGraph.getCopiedNode(node)!))
+      .map((node) => layoutGraph.getBoundingBox(layoutGraph.getCopiedNode(node)!))
       .reduce((acc: Rect, current: YRectangle) => Rect.add(acc, current.toRect()), Rect.EMPTY)
 
     const viewportAnimation = new ViewportAnimation(this.graphComponent, bounds, this.duration)
@@ -990,14 +987,14 @@ class ZoomToNodesLayoutExecutor extends LayoutExecutor {
 function initializeUI(): void {
   document
     .querySelector<HTMLInputElement>('#maximum-duration-range')!
-    .addEventListener('change', evt => {
+    .addEventListener('change', (evt) => {
       const maximumDurationLabel =
         document.querySelector<HTMLLabelElement>('#maximum-duration-label')!
       maximumDurationLabel.innerText = (evt.target as HTMLInputElement).value as string
     })
   document
     .querySelector<HTMLInputElement>('#minimum-cluster-size-range')!
-    .addEventListener('change', evt => {
+    .addEventListener('change', (evt) => {
       const minimumClusterSizeLabel = document.querySelector<HTMLLabelElement>(
         '#minimum-cluster-size-label'
       )!
@@ -1005,7 +1002,7 @@ function initializeUI(): void {
     })
   document
     .querySelector<HTMLInputElement>('#maximum-cluster-size-range')!
-    .addEventListener('change', evt => {
+    .addEventListener('change', (evt) => {
       const maximumClusterSizeLabel = document.querySelector<HTMLLabelElement>(
         '#maximum-cluster-size-label'
       )!

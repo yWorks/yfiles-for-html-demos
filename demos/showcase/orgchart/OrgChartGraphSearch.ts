@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import type { INode, GraphComponent } from 'yfiles'
-import GraphSearch from 'demo-utils/GraphSearch'
+import { GraphSearch } from 'demo-utils/GraphSearch'
 import { getEmployee } from './model/data-loading'
 import type { CollapsibleTree } from './CollapsibleTree'
 
@@ -69,6 +69,6 @@ export class OrgChartGraphSearch extends GraphSearch {
     ) {
       return true
     }
-    return node.labels.some(label => label.text.toLowerCase().indexOf(lowercaseText) !== -1)
+    return node.labels.some((label) => label.text.toLowerCase().indexOf(lowercaseText) !== -1)
   }
 }

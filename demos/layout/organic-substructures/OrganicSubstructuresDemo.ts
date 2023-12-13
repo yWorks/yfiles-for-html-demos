@@ -307,7 +307,7 @@ function configureGraph(graph: IGraph): void {
   graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.size = new Size(40, 40)
   graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementation(
-    node => graph.isGroupNode(node),
+    (node) => graph.isGroupNode(node),
     INodeInsetsProvider.create(() => new Insets(40))
   )
 
@@ -328,7 +328,7 @@ function initializeTypePanel(graphComponent: GraphComponent): void {
     () =>
       (typePanel.currentItems = allowNodeTypeChange
         ? graphComponent.selection.selectedNodes
-            .filter(n => !graphComponent.graph.isGroupNode(n))
+            .filter((n) => !graphComponent.graph.isGroupNode(n))
             .toArray()
         : null)
   )

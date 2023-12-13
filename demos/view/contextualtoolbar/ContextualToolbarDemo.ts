@@ -99,11 +99,11 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
+    id: (item) => item.id
   })
-  nodesSource.nodeCreator.createLabelBinding(item => item.label)
-  nodesSource.nodeCreator.styleBindings.addBinding('shape', item => item.tag)
-  nodesSource.nodeCreator.styleBindings.addBinding('fill', item => {
+  nodesSource.nodeCreator.createLabelBinding((item) => item.label)
+  nodesSource.nodeCreator.styleBindings.addBinding('shape', (item) => item.tag)
+  nodesSource.nodeCreator.styleBindings.addBinding('fill', (item) => {
     if (item.id === 0 || item.id === 4) {
       return '#e01a4f'
     }
@@ -114,10 +114,10 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   const edgesSource = graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
-  edgesSource.edgeCreator.createLabelBinding(item => item.label)
+  edgesSource.edgeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.buildGraph()
 }
@@ -155,7 +155,7 @@ function initializeInputMode(): void {
   mode.addMultiSelectionFinishedListener((_, evt) => {
     // this implementation of the contextual toolbar only supports nodes, edges and labels
     contextualToolbar.selectedItems = evt.selection
-      .filter(item => item instanceof INode || item instanceof ILabel || item instanceof IEdge)
+      .filter((item) => item instanceof INode || item instanceof ILabel || item instanceof IEdge)
       .toArray()
   })
   // ... or when an item is right clicked
@@ -172,7 +172,7 @@ function initializeInputMode(): void {
   graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
     if (!evt.itemSelected) {
       // remove the element from the selectedItems of the contextual toolbar
-      const idx = contextualToolbar.selectedItems.findIndex(item => item === evt.item)
+      const idx = contextualToolbar.selectedItems.findIndex((item) => item === evt.item)
       const newSelection = contextualToolbar.selectedItems.slice()
       newSelection.splice(idx, 1)
       contextualToolbar.selectedItems = newSelection

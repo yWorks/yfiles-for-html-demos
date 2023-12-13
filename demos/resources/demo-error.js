@@ -74,7 +74,7 @@ export function registerErrorDialog() {
   }
 
   // Register a handler for unhandled errors
-  window.addEventListener('error', e => {
+  window.addEventListener('error', (e) => {
     e.preventDefault()
     if (inErrorState()) {
       return
@@ -86,7 +86,7 @@ export function registerErrorDialog() {
   })
 
   // Register a handler for unhandled promise rejections
-  window.addEventListener('unhandledrejection', e => {
+  window.addEventListener('unhandledrejection', (e) => {
     e.preventDefault()
     if (inErrorState()) {
       return
@@ -102,11 +102,11 @@ export function registerErrorDialog() {
 
   // Forward errors occurring in internal event handlers of yFiles to the standard reportError function
   // https://docs.yworks.com/yfileshtml/#/api/Exception
-  Exception.handler = error => openErrorOverlay(error)
+  Exception.handler = (error) => openErrorOverlay(error)
 
   // Forward errors occurring during require.js module loading to the standard reportError function
   if (anyWindow.require != null) {
-    anyWindow.onError = error => openErrorOverlay(error)
+    anyWindow.onError = (error) => openErrorOverlay(error)
   }
 }
 
@@ -140,8 +140,8 @@ function unwindStack(error) {
   return !stack || stack.length === 0
     ? '<no stack available>'
     : error.cause
-    ? `${stack}\nCaused by:\n${unwindStack(error.cause)}`
-    : stack
+      ? `${stack}\nCaused by:\n${unwindStack(error.cause)}`
+      : stack
 }
 
 /**

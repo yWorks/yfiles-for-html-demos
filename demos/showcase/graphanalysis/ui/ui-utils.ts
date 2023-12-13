@@ -200,7 +200,7 @@ function loadGraph(graph: IGraph, sample: SampleData): void {
   edgeCreator.defaults.style = graph.edgeDefaults.style
   // add an array to each edge's tag to store the component to which it belongs
   edgeCreator.tagProvider = (): Tag => ({ components: [] })
-  nodesSource.addSuccessorIds(item => item, edgeCreator)
+  nodesSource.addSuccessorIds((item) => item, edgeCreator)
   graphBuilder.buildGraph()
 }
 
@@ -229,7 +229,7 @@ async function switchAlgorithm(graphComponent: GraphComponent): Promise<void> {
 export function setUIDisabled(disabled: boolean, graphComponent: GraphComponent): void {
   document
     .querySelectorAll('.demo-page__toolbar select, .demo-page__toolbar button')
-    .forEach(element => {
+    .forEach((element) => {
       if (element instanceof HTMLSelectElement || element instanceof HTMLButtonElement) {
         element.disabled = disabled
       }
@@ -252,8 +252,8 @@ export function setUIDisabled(disabled: boolean, graphComponent: GraphComponent)
 function deleteWeightLabels(graph: IGraph): void {
   graph.edgeLabels
     .toArray()
-    .filter(label => label.tag === 'weight')
-    .forEach(label => {
+    .filter((label) => label.tag === 'weight')
+    .forEach((label) => {
       graph.remove(label)
     })
 }
@@ -262,7 +262,7 @@ function deleteWeightLabels(graph: IGraph): void {
  * Generates labels for each edge in the graph with a random weight.
  */
 function generateWeightLabels(graph: IGraph): void {
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     graph.addLabel({
       owner: edge,
       // select a weight from 1 to 20

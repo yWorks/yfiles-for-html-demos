@@ -61,9 +61,12 @@ export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
    * @param wrappedStyle the style that is augmented with the workload visualization
    * @param valueGetter a function that provides the current amount of workload for a node
    */
-  constructor(private readonly wrappedStyle: INodeStyle, valueGetter?: (node: INode) => number) {
+  constructor(
+    private readonly wrappedStyle: INodeStyle,
+    valueGetter?: (node: INode) => number
+  ) {
     super()
-    this.valueGetter = valueGetter || (node => node?.tag?.value ?? 0)
+    this.valueGetter = valueGetter || ((node) => node?.tag?.value ?? 0)
   }
 
   /**

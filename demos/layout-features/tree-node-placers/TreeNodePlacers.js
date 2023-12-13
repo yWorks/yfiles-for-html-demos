@@ -46,7 +46,7 @@ export function createFeatureLayoutConfiguration(graph) {
   const layout = new TreeLayout()
   const layoutData = new TreeLayoutData({
     // assign a node placer depending on the number stored in the node's tag
-    nodePlacers: node => {
+    nodePlacers: (node) => {
       switch (node.tag) {
         case 1:
           return new LayeredNodePlacer()

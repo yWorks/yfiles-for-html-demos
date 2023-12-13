@@ -34,7 +34,7 @@ import { BrowserDetection } from './BrowserDetection'
  * A demo implementation of a context menu that is used in various yFiles demos.
  *
  * The yFiles for HTML library can easily be used with any context menu implementation. For your project, we recommend to
- * use the context menu that comes with your GUI framework, if any. However, feel tree to re-use parts of this
+ * use the context menu that comes with your GUI framework, if any. However, feel free to re-use parts of this
  * implementation in your project if it fits your needs.
  *
  * This context menu uses buttons as menu items and thus works with mouse, touch, and keyboard. Once a menu item is
@@ -89,16 +89,12 @@ export class ContextMenu {
       this.onClosedCallback()
     }
 
-    // A ESC key press listener that closes the menu and calls the callback.
+    // An ESC key press listener that closes the menu and calls the callback.
     this.closeOnEscListener = (evt): void => {
       if (evt.key === 'Escape' && this.element.parentNode) {
         this.closeListener(evt)
       }
     }
-
-    // We lower the default long-press duration to 100ms to avoid conflicts between the context menu and
-    // other gestures on long-press, e.g. edge creation.
-    graphComponent.longPressTime = TimeSpan.fromMilliseconds(100)
   }
 
   /**
@@ -140,7 +136,7 @@ export class ContextMenu {
    * This menu only shows if it has at least one menu item.
    *
    * @param location The location of the menu relative to the left edge of the entire
-   *   document. This are typically the pageX and pageY coordinates of the contextmenu event.
+   *   document. These are typically the pageX and pageY coordinates of the contextmenu event.
    */
   show(location: Point): void {
     if (this.element.childElementCount <= 0) {
@@ -240,21 +236,22 @@ export class ContextMenu {
     graphComponent: GraphComponent,
     openingCallback: (p: Point) => void
   ): void {
-    const contextMenuListener = (evt: MouseEvent): void => {
-      evt.preventDefault()
-      if (this.isOpen) {
-        // might be open already because of the longpress listener
-        return
-      }
-      openingCallback(new Point(evt.pageX, evt.pageY))
-    }
-
     // Listen for the contextmenu event
     // Note: On Linux based systems (e.g. Ubuntu), the contextmenu event is fired on mouse down
-    // which triggers the ContextMenuInputMode before the ClickInputMode. Therefore handling the
-    // event, will prevent the ItemRightClicked event from firing.
+    // which triggers the ContextMenuInputMode before the ClickInputMode. Therefore, handling the
+    // event will prevent the ItemRightClicked event from firing.
     // For more information, see https://docs.yworks.com/yfileshtml/#/kb/article/780/
-    graphComponent.div.addEventListener('contextmenu', contextMenuListener, false)
+    graphComponent.div.addEventListener(
+      'contextmenu',
+      (evt: MouseEvent): void => {
+        evt.preventDefault()
+        if (!this.isOpen) {
+          // might be open already because of the long press event listener
+          openingCallback(new Point(evt.pageX, evt.pageY))
+        }
+      },
+      false
+    )
 
     if (BrowserDetection.safariVersion > 0 || BrowserDetection.iOSVersion > 0) {
       // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
@@ -265,11 +262,10 @@ export class ContextMenu {
           clearTimeout(contextMenuTimer)
           return
         }
-        contextMenuTimer = setTimeout(() => {
-          openingCallback(
-            graphComponent.toPageFromView(graphComponent.toViewCoordinates(evt.location))
-          )
-        }, 500) as any as number
+        contextMenuTimer = window.setTimeout(() => {
+          const viewLocation = graphComponent.toViewCoordinates(evt.location)
+          openingCallback(graphComponent.toPageFromView(viewLocation))
+        }, 500)
       })
       graphComponent.addTouchUpListener(() => {
         clearTimeout(contextMenuTimer)
@@ -277,7 +273,7 @@ export class ContextMenu {
     }
 
     // Listen to the context menu key to make it work in Chrome
-    graphComponent.div.addEventListener('keyup', evt => {
+    graphComponent.div.addEventListener('keyup', (evt) => {
       if (evt.key === 'ContextMenu') {
         evt.preventDefault()
         openingCallback(ContextMenu.getCenterInPage(graphComponent.div))

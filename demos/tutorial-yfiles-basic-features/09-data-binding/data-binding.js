@@ -119,7 +119,7 @@ export function setupContextMenu(graphComponent, graphEditorInputMode) {
   // Add event listeners to the various events that open the context menu. These listeners then
   // call the provided callback function which in turn asks the current ContextMenuInputMode if a
   // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     const worldLocation = graphComponent.toWorldFromPage(location)
 
     // Inform the input mode that a context menu should be opened.

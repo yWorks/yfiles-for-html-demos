@@ -214,7 +214,7 @@ function initializeInputModes() {
     inputMode.defaultCursor = Cursor.DEFAULT
     if (item instanceof INode) {
       // get the node from the master graph to be able to check the hierarchy information
-      let root = masterGraph.nodes.find(node => equalTags(item, node))
+      let root = masterGraph.nodes.find((node) => equalTags(item, node))
 
       const itemGraph = graphComponent.graph
       if (masterGraph.isGroupNode(root)) {
@@ -252,7 +252,7 @@ function onNodeClicked(clickedNode) {
   let isDrillDown = true
 
   // get the node from the master graph to be able to check the hierarchy information
-  let root = masterGraph.nodes.find(node => equalTags(clickedNode, node))
+  let root = masterGraph.nodes.find((node) => equalTags(clickedNode, node))
 
   // group nodes can be entered, or they lead to a higher hierarchy level
   if (root && masterGraph.isGroupNode(root)) {
@@ -308,7 +308,7 @@ function updateGraph(root, clickedNode, isDrillDown = false) {
     copier.copy(
       masterGraph,
       // there are only nodes and labels in this demo
-      item => visibleNodes.includes(item instanceof ILabel ? item.owner : item),
+      (item) => visibleNodes.includes(item instanceof ILabel ? item.owner : item),
       graph,
       Point.ORIGIN,
       () => {}
@@ -328,7 +328,7 @@ function updateGraph(root, clickedNode, isDrillDown = false) {
           if (visibleGraph.isGroupNode(clickedNode)) {
             // also transfer the layout of the children
             for (const child of visibleGraph.getChildren(clickedNode)) {
-              const copiedChild = graph.nodes.find(n => equalTags(child, n))
+              const copiedChild = graph.nodes.find((n) => equalTags(child, n))
               if (copiedChild) {
                 graph.setNodeLayout(copiedChild, child.layout.toRect())
               }
@@ -361,7 +361,7 @@ function updateGraph(root, clickedNode, isDrillDown = false) {
     labelLayoutParameter: InteriorStretchLabelModel.CENTER
   })
   graph = foldingManager.createFoldingView({
-    isExpanded: node => {
+    isExpanded: (node) => {
       const parent = graph.getParent(node)
       return !parent || !graph.getParent(parent)
     }
@@ -406,7 +406,7 @@ function updateGraph(root, clickedNode, isDrillDown = false) {
   // if it is an outward animation, bring the clicked node to the front
   if (clickedNodeCopy && !isDrillDown) {
     const clickedItem = graphComponent.graph.nodes
-      .filter(n => n.tag.groupTag === clickedNodeCopy.tag.groupTag)
+      .filter((n) => n.tag.groupTag === clickedNodeCopy.tag.groupTag)
       .first()
     const itemCo = graphComponent.graphModelManager.getCanvasObject(clickedItem)
     if (itemCo) {
@@ -494,7 +494,7 @@ async function applyLayout() {
   const goalWeightRange = maximumWeight - minimumWeight
 
   const layoutData = new TreeMapLayoutData({
-    nodeWeights: node => {
+    nodeWeights: (node) => {
       if (graph.isGroupNode(node)) {
         return 0
       }
@@ -536,10 +536,10 @@ function getPreferredSize(graph) {
   const zoomingMode = document.querySelector(`#select-zooming-mode`).value
   const defaultMapSize = 1000
   const preferredSizes = masterGraph.mapperRegistry.getMapper(PREFERRED_SIZE_KEY)
-  const root = graph.nodes.filter(node => !graph.getParent(node)).at(0)
+  const root = graph.nodes.filter((node) => !graph.getParent(node)).at(0)
   const groupTag = root && root.tag ? root.tag.groupTag : null
   const preferredSize = preferredSizes.get(
-    masterGraph.nodes.filter(node => node.tag && node.tag.groupTag === groupTag).at(0)
+    masterGraph.nodes.filter((node) => node.tag && node.tag.groupTag === groupTag).at(0)
   )
   if (zoomingMode === 'aspect-ratio' && preferredSize) {
     // if we have a preferred size specified, then the according property on the layout algorithm is configured
@@ -580,7 +580,7 @@ function createNodeComparer(graph) {
       INode.$class,
       YString.$class,
       NAME_KEY,
-      node => node.labels.first().text
+      (node) => node.labels.first().text
     )
   }
   return new TreeMapNodeComparer(ascending, useNameAsCriterion, considerLeafState, leavesTrailing)

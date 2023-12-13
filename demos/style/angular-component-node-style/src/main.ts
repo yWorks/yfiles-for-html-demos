@@ -36,4 +36,4 @@ License.value = licenseData
 
 platformBrowserDynamic()
   .bootstrapModule(AppModule)
-  .catch(err => console.error(err))
+  .catch((err) => console.error(err))

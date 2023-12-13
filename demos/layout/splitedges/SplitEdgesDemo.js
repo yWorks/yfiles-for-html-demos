@@ -106,29 +106,29 @@ function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
 
   graphBuilder.createNodesSource({
-    data: graphData.nodeList.filter(item => !item.isGroup),
-    id: item => item.id,
-    parentId: item => item.parentId
+    data: graphData.nodeList.filter((item) => !item.isGroup),
+    id: (item) => item.id,
+    parentId: (item) => item.parentId
   })
 
   graphBuilder
     .createGroupNodesSource({
-      data: graphData.nodeList.filter(item => item.isGroup),
-      id: item => item.id,
-      parentId: item => item.parentId
+      data: graphData.nodeList.filter((item) => item.isGroup),
+      id: (item) => item.id,
+      parentId: (item) => item.parentId
     })
-    .nodeCreator.createLabelBinding(item => item.label)
+    .nodeCreator.createLabelBinding((item) => item.label)
 
   const edgesSource = graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
-  edgesSource.edgeCreator.tagProvider = item => item.tag
-  edgesSource.edgeCreator.styleBindings.addBinding('stroke', item =>
+  edgesSource.edgeCreator.tagProvider = (item) => item.tag
+  edgesSource.edgeCreator.styleBindings.addBinding('stroke', (item) =>
     item.tag ? `3px ${item.tag.color}` : undefined
   )
-  edgesSource.edgeCreator.styleBindings.addBinding('targetArrow', item =>
+  edgesSource.edgeCreator.styleBindings.addBinding('targetArrow', (item) =>
     item.tag ? new Arrow({ fill: item.tag.color, type: 'triangle', scale: 1.5 }) : undefined
   )
 
@@ -159,8 +159,8 @@ async function runLayout() {
 
   // use the split ids from the edge tags
   const layoutData = new RecursiveGroupLayoutData({
-    sourceSplitIds: edge => (edge.tag && edge.tag.sourceSplitId ? edge.tag.sourceSplitId : null),
-    targetSplitIds: edge => (edge.tag && edge.tag.targetSplitId ? edge.tag.targetSplitId : null)
+    sourceSplitIds: (edge) => (edge.tag && edge.tag.sourceSplitId ? edge.tag.sourceSplitId : null),
+    targetSplitIds: (edge) => (edge.tag && edge.tag.targetSplitId ? edge.tag.targetSplitId : null)
   }).combineWith(
     new HierarchicLayoutData({
       edgeThickness: 3

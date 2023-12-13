@@ -153,14 +153,14 @@ function initializeTextAreas(): void {
         selectedItem.style instanceof ReactComponentHtmlNodeStyle
     }
 
-    jsxRenderFunctionTextArea.setOption('readOnly', !Boolean(jsx))
+    jsxRenderFunctionTextArea.setOption('readOnly', !jsx)
     jsxRenderFunctionTextArea.setValue(jsx ?? 'Style is not an instance with attached JSX sources.')
-    applyTemplateButton.disabled = !Boolean(jsx)
-    htmlTemplateToggle.disabled = !Boolean(jsx)
+    applyTemplateButton.disabled = !jsx
+    htmlTemplateToggle.disabled = !jsx
 
     tagTextArea.setOption('readOnly', false)
     tagTextArea.setValue(tag ? JSON.stringify(tag, null, 2) : '{}')
-    applyTagButton.disabled = !Boolean(selectedItem)
+    applyTagButton.disabled = !selectedItem
   })
 }
 
@@ -194,7 +194,7 @@ function toggleHtmlSvgTemplate(event: Event) {
   const isHtml = (event.target as HTMLInputElement).checked
   if (
     graphComponent.selection.selectedNodes.some(
-      label =>
+      (label) =>
         label.style instanceof ReactComponentSvgNodeStyle ||
         label.style instanceof ReactComponentHtmlNodeStyle
     )
@@ -204,7 +204,7 @@ function toggleHtmlSvgTemplate(event: Event) {
     )
   } else if (
     graphComponent.selection.selectedLabels.some(
-      label =>
+      (label) =>
         label.style instanceof ReactComponentSvgLabelStyle ||
         label.style instanceof ReactComponentHtmlLabelStyle
     )
@@ -400,7 +400,7 @@ function loadSampleGraph(): void {
   const nodesSource = graphBuilder.createNodesSource<FullNodeData>({
     data: SampleData.nodes,
     id: 'id',
-    tag: data => {
+    tag: (data) => {
       // for this demo, we don't want the layout and id information as part of the tag
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { layout, id, ...rest } = data
@@ -412,9 +412,9 @@ function loadSampleGraph(): void {
       new Rect(data.layout.x, data.layout.y, defaultNodeSize.width, defaultNodeSize.height)
   })
 
-  nodesSource.nodeCreator.createLabelBinding(dataItem => dataItem.name)
+  nodesSource.nodeCreator.createLabelBinding((dataItem) => dataItem.name)
 
-  graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt').edgeCreator.bendsProvider = e =>
+  graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt').edgeCreator.bendsProvider = (e) =>
     e.bends
 
   const graph = graphBuilder.buildGraph()
@@ -435,7 +435,7 @@ function applyJSXtoSelectedNodes(jsxSource: string, svg: boolean) {
   // check whether there is an error in the style or template
   ReactDOM.flushSync(() => {})
 
-  graphComponent.selection.selectedNodes.forEach(node => {
+  graphComponent.selection.selectedNodes.forEach((node) => {
     graphComponent.graph.setStyle(node, style)
   })
 }
@@ -453,7 +453,7 @@ function applyJSXtoSelectedLabels(jsxSource: string, svg: boolean) {
   // check whether there is an error in the style or template
   ReactDOM.flushSync(() => {})
 
-  graphComponent.selection.selectedLabels.forEach(label => {
+  graphComponent.selection.selectedLabels.forEach((label) => {
     graphComponent.graph.setStyle(label, style)
   })
 }
@@ -503,11 +503,11 @@ function initializeUI(): void {
   })
 
   document.querySelector('#apply-tag-button')!.addEventListener('click', () => {
-    graphComponent.selection.selectedNodes.forEach(node => {
+    graphComponent.selection.selectedNodes.forEach((node) => {
       try {
         const tag = JSON.parse(tagTextArea.getValue())
         tagErrorArea.classList.remove('open-error')
-        graphComponent.selection.forEach(item => {
+        graphComponent.selection.forEach((item) => {
           item.tag = tag
         })
       } catch (err) {

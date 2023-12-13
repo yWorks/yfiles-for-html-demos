@@ -140,7 +140,7 @@ async function loadSample(sample) {
         data: sampleData.nodes,
         id: 'id',
         tag: 'tag',
-        style: data => createDemoNodeStyle(nodeTypeColors[data.tag.type])
+        style: (data) => createDemoNodeStyle(nodeTypeColors[data.tag.type])
       }
     ],
     edges: [{ data: sampleData.edges, sourceId: 'source', targetId: 'target' }]

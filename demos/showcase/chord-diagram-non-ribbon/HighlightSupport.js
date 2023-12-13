@@ -167,7 +167,7 @@ export function configureHighlight(graphComponent) {
       // highlight the node, its adjacent edges and the node labels
       const node = item
       highlightNode(node, highlightIndicatorManager)
-      graphComponent.graph.edgesAt(node).forEach(edge => {
+      graphComponent.graph.edgesAt(node).forEach((edge) => {
         highlightIndicatorManager.addHighlight(edge)
       })
     } else if (item instanceof IEdge) {
@@ -187,7 +187,7 @@ export function configureHighlight(graphComponent) {
  */
 function highlightNode(node, highlightIndicatorManager) {
   highlightIndicatorManager.addHighlight(node)
-  node.labels.forEach(label => {
+  node.labels.forEach((label) => {
     highlightIndicatorManager.addHighlight(label)
   })
 }

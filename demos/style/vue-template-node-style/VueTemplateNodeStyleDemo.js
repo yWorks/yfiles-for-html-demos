@@ -234,11 +234,12 @@ function loadSampleGraph() {
     id: 'id',
     // This example uses hard coded locations. If no predefined layout data is given, an automatic layout could have
     // been applied to the graph after buildGraph, which is a common use case. For example, see the Organization Chart Demo
-    layout: data =>
+    layout: (data) =>
       new Rect(data.layout.x, data.layout.y, defaultNodeSize.width, defaultNodeSize.height)
   })
-  graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt').edgeCreator.bendsProvider = data =>
-    data.bends
+  graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt').edgeCreator.bendsProvider = (
+    data
+  ) => data.bends
 
   const graph = graphBuilder.buildGraph()
   graphComponent.fitGraphBounds(30)
@@ -262,7 +263,7 @@ function initializeUI() {
         .getVisualCreator(graphComponent.selection.selectedNodes.first(), style)
         .createVisual(graphComponent.createRenderContext())
 
-      graphComponent.selection.selectedNodes.forEach(node => {
+      graphComponent.selection.selectedNodes.forEach((node) => {
         graphComponent.graph.setStyle(node, style)
       })
 
@@ -277,7 +278,7 @@ function initializeUI() {
 
   document.querySelector('#apply-tag-button').addEventListener('click', () => {
     const errorArea = document.getElementById('tag-text-area-error')
-    graphComponent.selection.selectedNodes.forEach(node => {
+    graphComponent.selection.selectedNodes.forEach((node) => {
       try {
         node.tag = JSON.parse(tagTextArea.getValue())
         errorArea.classList.remove('open-error')

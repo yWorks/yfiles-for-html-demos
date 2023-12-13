@@ -145,7 +145,7 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T extends any>(type: Class<T>): T | null {
+  lookup<T>(type: Class<T>): T | null {
     return null
   }
 }

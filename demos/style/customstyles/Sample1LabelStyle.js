@@ -64,13 +64,6 @@ export default class Sample1LabelStyle extends LabelStyleBase {
   })
 
   /**
-   * Initializes a new instance of the {@link Sample1LabelStyle} class using the "Arial" font.
-   */
-  constructor() {
-    super()
-  }
-
-  /**
    * Creates the visual for a label to be drawn.
    * @see Overrides {@link LabelStyleBase.createVisual}
    * @param {!IRenderContext} context

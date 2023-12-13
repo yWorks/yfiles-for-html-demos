@@ -86,7 +86,7 @@ function getOrganicLayoutConfiguration(affectedNodes?: INode[] | undefined): {
   organicLayout.prependStage(new CentralityStage(organicLayout))
 
   const organicLayoutData = new OrganicLayoutData({
-    preferredEdgeLengths: edge =>
+    preferredEdgeLengths: (edge) =>
       edge.labels.reduce((width, label) => {
         return Math.max(label.layout.width + 50, width)
       }, 100),

@@ -92,7 +92,10 @@ export default class ButtonVisualCreator
    * @param node The node for which the buttons should be created.
    * @param graphComponent The graph component in which the node resides.
    */
-  constructor(private node: INode, graphComponent: GraphComponent) {
+  constructor(
+    private node: INode,
+    graphComponent: GraphComponent
+  ) {
     super()
     this.renderer = new ButtonIconRenderer()
     this.animator = new Animator(graphComponent)
@@ -160,7 +163,7 @@ export default class ButtonVisualCreator
     }, 0)
 
     // we animate the position 'manually' because doing it via CSS causes animation artifacts
-    animations.forEach(animation => {
+    animations.forEach((animation) => {
       this.animator.animate(animation)
     })
 

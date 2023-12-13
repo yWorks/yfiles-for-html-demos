@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -73,13 +73,9 @@
       <div
         class="demo-toolbar__tutorial-dropdown demo-toolbar__button demo-toolbar__button--low-emphasis"
       >
-        <b>Step 9/13</b><span class="demo-toolbar__tutorial-step-title"> &mdash; 08 Grouping</span>
+        <b>Step 8/12</b><span class="demo-toolbar__tutorial-step-title"> &mdash; 08 Grouping</span>
         <div class="tutorial-dropdown">
           <a
-            href="../../tutorial-yfiles-basic-features/01-graphcomponent/"
-            class="tutorial-dropdown__item"
-            >Tutorial: Basic Features</a
-          ><a
             href="../../tutorial-yfiles-basic-features/01-graphcomponent/"
             class="tutorial-dropdown__item"
             >01 Creating the View</a
@@ -290,7 +286,7 @@ graph.<span class="hljs-title function_">addLabel</span>(groupNode, <span class=
               <pre
                 class="highlight"
               ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Get a group node</span>
-<span class="hljs-keyword">const</span> groupNode = graph.<span class="hljs-property">nodes</span>.<span class="hljs-title function_">first</span>(<span class="hljs-function"><span class="hljs-params">node</span> =&gt;</span> graph.<span class="hljs-title function_">isGroupNode</span>(node))
+<span class="hljs-keyword">const</span> groupNode = graph.<span class="hljs-property">nodes</span>.<span class="hljs-title function_">first</span>(<span class="hljs-function">(<span class="hljs-params">node</span>) =&gt;</span> graph.<span class="hljs-title function_">isGroupNode</span>(node))
 <span class="hljs-comment">// Create a child node that&#x27;s outside the group bounds</span>
 graph.<span class="hljs-title function_">createNode</span>({ <span class="hljs-attr">parent</span>: groupNode, <span class="hljs-attr">layout</span>: [<span class="hljs-number">100</span>, -<span class="hljs-number">60</span>, <span class="hljs-number">30</span>, <span class="hljs-number">30</span>] })
 <span class="hljs-comment">// Adjust the group node layout to contain the new child</span>

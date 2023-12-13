@@ -132,12 +132,12 @@ async function onDeletedSelection(
  */
 function getBounds(selection: ISelectionModel<IModelItem>): Rect {
   let bounds = Rect.EMPTY
-  selection.forEach(item => {
+  selection.forEach((item) => {
     if (item instanceof INode) {
       bounds = Rect.add(bounds, item.layout.toRect())
     } else if (item instanceof IEdge) {
       bounds = bounds.add(item.sourcePort!.location)
-      item.bends.forEach(bend => {
+      item.bends.forEach((bend) => {
         bounds = bounds.add(bend.location.toPoint())
       })
       bounds = bounds.add(item.targetPort!.location)
@@ -178,7 +178,7 @@ function loadGraph(sampleName: string): void {
 
   builder.buildGraph()
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
       graph.setPortLocation(edge.sourcePort!, Point.from(edge.tag.sourcePort))
     }

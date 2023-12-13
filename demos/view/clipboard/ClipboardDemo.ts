@@ -290,7 +290,7 @@ function onEditNameCommand(component: GraphComponent, elementID: string): void {
     evt.preventDefault()
     nameDialog.style.display = 'none'
     const name = nodeNameInput.value
-    component.selection.selectedNodes.forEach(node => {
+    component.selection.selectedNodes.forEach((node) => {
       node.tag.name = name
       // The firePropertyChanged method is available on the tag because it was added by the
       // {@link StringTemplateNodeStyle.makeObservable} method.

@@ -92,7 +92,7 @@ function initializeUI(graphComponent: GraphComponent) {
   const labelFadeoutThresholdSelect = document.querySelector<HTMLSelectElement>(
     '#label-fadeout-threshold'
   )!
-  labelFadeoutThresholdSelect.addEventListener('change', e => {
+  labelFadeoutThresholdSelect.addEventListener('change', (e) => {
     const selectElement = e.target as HTMLSelectElement
     registerLabelFading(graphComponent, Number(selectElement.value))
   })
@@ -148,7 +148,7 @@ async function createGraph(graph: IGraph) {
     // add the bends
     if (edgeData.b != null) {
       const bendData = edgeData.b as { x: number; y: number }[]
-      bendData.forEach(bend => {
+      bendData.forEach((bend) => {
         graph.addBend(edge, Point.from(bend))
       })
     }

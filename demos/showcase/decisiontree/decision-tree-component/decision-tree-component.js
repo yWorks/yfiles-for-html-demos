@@ -55,7 +55,7 @@ export function initializeDecisionTreeComponent(graphComponent) {
 
   // add the sample graphs
   const samples = document.querySelector('#samples')
-  ;['cars', 'what-to-do', 'quiz'].forEach(graph => {
+  ;['cars', 'what-to-do', 'quiz'].forEach((graph) => {
     const option = document.createElement('option')
     option.text = graph
     option.value = graph
@@ -109,7 +109,7 @@ export function hideDecisionTree() {
  */
 function setLayoutRunning(running, graphComponent) {
   graphComponent.inputMode.waitInputMode.waiting = running
-  document.querySelectorAll('#decision-tree-toolbar Button,Select').forEach(element => {
+  document.querySelectorAll('#decision-tree-toolbar Button,Select').forEach((element) => {
     element.disabled = running
   })
 }

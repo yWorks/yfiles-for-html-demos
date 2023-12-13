@@ -297,8 +297,8 @@ function adjustNodeSizes(graph: IGraph): void {
   const layoutGraph = graphAdapter.createCopiedLayoutGraph()
   const rootNodes = new YNodeList(
     graph.nodes
-      .filter(node => graph.inDegree(node) === 0)
-      .map(node => layoutGraph.getCopiedNode(node)!)
+      .filter((node) => graph.inDegree(node) === 0)
+      .map((node) => layoutGraph.getCopiedNode(node)!)
       .toArray()
   )
   const layerMap = layoutGraph.createNodeMap()
@@ -307,7 +307,7 @@ function adjustNodeSizes(graph: IGraph): void {
   // adjust the size of each node
   const baseSize = graph.nodeDefaults.size
   const growthFactor = 0.3
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     const treeLevel = layers.length - layerMap.get(layoutGraph.getCopiedNode(node)) - 1
     const size = new Size(
       baseSize.width + baseSize.width * treeLevel * growthFactor,
@@ -355,7 +355,7 @@ function runLayout(graphComponent: GraphComponent): void {
  * Moves the ports from the node center to outside the node.
  */
 function adjustPorts(graph: IGraph): void {
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     const sourcePort = edge.sourcePort!
     const targetPort = edge.targetPort!
     const sourcePortLocation = sourcePort.locationParameter.model.getLocation(

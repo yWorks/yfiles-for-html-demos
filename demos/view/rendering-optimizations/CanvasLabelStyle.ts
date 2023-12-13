@@ -53,13 +53,6 @@ export default class CanvasLabelStyle extends LabelStyleBase {
   private readonly font: Font = new Font('Arial', 14)
 
   /**
-   * Create a new HTML5 Canvas label style instance.
-   */
-  constructor() {
-    super()
-  }
-
-  /**
    * Creates the visual representation for the given label.
    * @param context The render context.
    * @param label The label to which this style instance is assigned.

@@ -126,7 +126,7 @@ async function loadSampleGraph(graph: IGraph): Promise<void> {
   ]).labelCreator
   labelCreator.textProvider = () => 'Leaf'
   labelCreator.layoutParameterProvider = () => FreeNodeLabelModel.INSTANCE.createDefaultParameter()
-  labelCreator.styleProvider = avoidOverlap => {
+  labelCreator.styleProvider = (avoidOverlap) => {
     const labelStyle = createDemoNodeLabelStyle(avoidOverlap ? nonOverlapTheme : overlapTheme)
     labelStyle.textSize = 20
     labelStyle.insets = new Insets(5, 2, 6, 1)

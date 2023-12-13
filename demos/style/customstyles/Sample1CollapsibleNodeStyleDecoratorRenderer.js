@@ -121,7 +121,7 @@ export default class Sample1CollapsibleNodeStyleDecoratorRenderer extends Collap
    * This is implemented to override the base insets provider, which would add insets for the label.
    * @see Overrides {@link CollapsibleNodeStyleDecoratorRenderer.lookup}
    * @see Specified by {@link ILookup.lookup}.
-   * @template {*} T
+   * @template T
    * @param {!Class.<T>} type
    * @returns {?T}
    */

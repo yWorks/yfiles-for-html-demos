@@ -64,7 +64,7 @@ async function run(): Promise<void> {
 function initializeUI(graphComponent: GraphComponent): void {
   document
     .querySelector<HTMLInputElement>('#toggle-feature')!
-    .addEventListener('click', async event => {
+    .addEventListener('click', async (event) => {
       const useFeature = (event.target as HTMLInputElement).checked
       const { layout, layoutData } = useFeature
         ? createFeatureLayoutConfiguration(graphComponent.graph)

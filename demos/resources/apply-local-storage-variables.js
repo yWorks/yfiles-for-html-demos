@@ -63,7 +63,7 @@ function getNumberItemFromLocalStorage(key) {
   }
   const size = parseFloat(storageItem)
 
-  return isFinite(size) ? size : null
+  return Number.isFinite(size) ? size : null
 }
 
 applyLocalStorageVariables()

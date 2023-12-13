@@ -93,7 +93,7 @@ const nodesSource = graphBuilder.createNodesSource({
 In the next step, we describe how to navigate from an entity to its path container
 
 ```
-const parentsSource = nodesSource.createParentNodesSource(item => item.path)
+const parentsSource = nodesSource.createParentNodesSource((item) => item.path)
 ```
 
 To ascend further in the hierarchy, we add another parent source on top and enable recursion by augmenting that source. For the higher levels, we strip the last path entry from the existing path and terminate when we don’t have any further levels to ascend to.

@@ -423,7 +423,7 @@ export class UMLNodeStyle extends NodeStyleBase {
     let width = 125
     const elementFont = getFont(this.elementLabel)
     const elements = data.attributes.concat(data.operations)
-    elements.forEach(element => {
+    elements.forEach((element) => {
       const size = TextRenderSupport.measureText(element, elementFont)
       width = Math.max(width, size.width + LEFT_SPACING + 5)
     })
@@ -496,9 +496,9 @@ export class UMLNodeStyle extends NodeStyleBase {
       })
     } else if (type === INodeSizeConstraintProvider.$class) {
       return INodeSizeConstraintProvider.create({
-        getMinimumSize: item => this.getPreferredSize(item),
-        getMaximumSize: _item => Size.INFINITE,
-        getMinimumEnclosedArea: _item => Rect.EMPTY
+        getMinimumSize: (item) => this.getPreferredSize(item),
+        getMaximumSize: (_item) => Size.INFINITE,
+        getMinimumEnclosedArea: (_item) => Rect.EMPTY
       })
     } else if (type === IClipboardHelper.$class) {
       return IClipboardHelper.create({

@@ -123,7 +123,7 @@ async function initializePalette() {
   if (response.ok) {
     const graphDataList = await response.json()
     // add for each graph a div element to the palette element
-    graphDataList.forEach(graphData => {
+    graphDataList.forEach((graphData) => {
       const graph = toGraph(graphData)
       const paletteEntry = createPaletteEntry(graph)
       palette.appendChild(paletteEntry)
@@ -171,7 +171,7 @@ function createPaletteEntry(graph) {
   // listen for mouse drag events
   paletteEntry.addEventListener(
     'mousedown',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },
@@ -181,7 +181,7 @@ function createPaletteEntry(graph) {
   // listen for touch drag events
   paletteEntry.addEventListener(
     'touchstart',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },

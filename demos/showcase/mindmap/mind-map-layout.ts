@@ -138,10 +138,10 @@ function createLayoutData(): LayoutData {
       }
     },
     // tells the layout which side to place a source port on
-    sourcePortConstraints: edge =>
+    sourcePortConstraints: (edge) =>
       PortConstraint.create(isLeft(edge.targetNode!) ? PortSide.WEST : PortSide.EAST, true),
     // tells the layout which side to place a target port on
-    targetPortConstraints: edge =>
+    targetPortConstraints: (edge) =>
       PortConstraint.create(isLeft(edge.targetNode!) ? PortSide.EAST : PortSide.WEST, true)
     // a layout stage that hides cross-reference edges from the layout
   }).combineWith(

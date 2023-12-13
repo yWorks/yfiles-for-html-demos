@@ -40,24 +40,24 @@ import './graph-structure-information.css'
 export function initializeGraphInformation(graphComponent: GraphComponent): void {
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
 
-  inputMode.addDeletingSelectionListener(async _ => {
+  inputMode.addDeletingSelectionListener(async (_) => {
     updateGraphInformation(graphComponent)
   })
 
-  inputMode.addDeletedSelectionListener(async _ => {
+  inputMode.addDeletedSelectionListener(async (_) => {
     updateGraphInformation(graphComponent)
   })
 
   // edge creation
-  inputMode.createEdgeInputMode.addEdgeCreatedListener(async _ => {
+  inputMode.createEdgeInputMode.addEdgeCreatedListener(async (_) => {
     updateGraphInformation(graphComponent)
   })
 
-  inputMode.addEdgePortsChangedListener(async _ => {
+  inputMode.addEdgePortsChangedListener(async (_) => {
     updateGraphInformation(graphComponent)
   })
 
-  inputMode.addNodeCreatedListener(_ => {
+  inputMode.addNodeCreatedListener((_) => {
     updateGraphInformation(graphComponent)
   })
 
@@ -176,7 +176,7 @@ function updateNumberOfElements(graph: IGraph, container: HTMLDivElement): void 
     container.lastElementChild?.remove()
   }
 
-  ;['Nodes', 'Edges'].forEach(element => {
+  ;['Nodes', 'Edges'].forEach((element) => {
     const row = document.createElement('div')
     row.classList.add('row', 'bold')
     container.appendChild(row)
@@ -203,7 +203,7 @@ function updateStructureAnalysis(graph: IGraph, container: Element): void {
     container.lastElementChild?.remove()
   }
 
-  structureAnalysis.forEach(algorithm => {
+  structureAnalysis.forEach((algorithm) => {
     const row = document.createElement('div')
     row.className = 'row'
     container.appendChild(row)

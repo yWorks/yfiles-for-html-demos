@@ -28,7 +28,7 @@
  ***************************************************************************/
 const data = require('./data.js')
 
-const persons = new Map(data.persons.map(person => [person.id, person]))
+const persons = new Map(data.persons.map((person) => [person.id, person]))
 
 function getPersons() {
   const persons = []

@@ -182,9 +182,9 @@ function buildGraph(graph: IGraph): void {
 
   // collapsing the groups whose tags are collapsed
   graph.nodes
-    .filter(node => graph.isGroupNode(node))
+    .filter((node) => graph.isGroupNode(node))
     .toArray()
-    .forEach(node => {
+    .forEach((node) => {
       const tag = node.tag as GroupData
       if (tag.collapsed ?? false) {
         foldingView.collapse(node)

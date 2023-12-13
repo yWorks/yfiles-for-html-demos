@@ -41,8 +41,8 @@ import {
  */
 export function retainAspectRatio(graph) {
   graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory(
-    node => node.style instanceof ImageNodeStyle,
-    node => {
+    (node) => node.style instanceof ImageNodeStyle,
+    (node) => {
       const keepAspectRatio = new NodeReshapeHandleProvider(
         node,
         node.lookup(IReshapeHandler.$class),

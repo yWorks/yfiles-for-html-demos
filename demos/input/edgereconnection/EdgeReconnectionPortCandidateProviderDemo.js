@@ -63,7 +63,7 @@ import { finishLoading } from 'demo-resources/demo-page'
  */
 function registerEdgePortCandidateProvider(graph) {
   const edgeDecorator = graph.decorator.edgeDecorator
-  edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setFactory(edge => {
+  edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setFactory((edge) => {
     // obtain the tag from the edge
     const edgeTag = edge.tag
 
@@ -155,7 +155,7 @@ function createSampleGraph(graphComponent) {
   const candidateProvider = IPortCandidateProvider.fromShapeGeometry(nodes[2], 0, 0.25, 0.5, 0.75)
   candidateProvider.style = blackPortStyle
   const candidates = candidateProvider.getAllSourcePortCandidates(graphComponent.inputModeContext)
-  candidates.forEach(portCandidate => {
+  candidates.forEach((portCandidate) => {
     if (portCandidate.validity !== PortCandidateValidity.DYNAMIC) {
       portCandidate.createPort(graphComponent.inputModeContext)
     }

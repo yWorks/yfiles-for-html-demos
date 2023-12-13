@@ -58,7 +58,7 @@ export function wireUpUI(style, graphComponent) {
     graphComponent.selection.clear()
   })
 
-  document.getElementById('change-style-pattern')?.addEventListener('change', e => {
+  document.getElementById('change-style-pattern')?.addEventListener('change', (e) => {
     const target = e.target
     style.stylePattern = target.value
     const selectedIndex = target.selectedIndex
@@ -69,49 +69,49 @@ export function wireUpUI(style, graphComponent) {
     updateSelectionStyles(style, graphComponent)
   })
 
-  document.getElementById('change-primary-color')?.addEventListener('change', e => {
+  document.getElementById('change-primary-color')?.addEventListener('change', (e) => {
     const target = e.target
     style.primaryColor = target.value
     updateSelectionStyles(style, graphComponent)
   })
 
-  document.getElementById('change-primary-transparency')?.addEventListener('change', e => {
+  document.getElementById('change-primary-transparency')?.addEventListener('change', (e) => {
     const target = e.target
     style.primaryTransparency = parseFloat(target.value) / 100
     updateSelectionStyles(style, graphComponent)
   })
 
-  document.getElementById('change-secondary-color')?.addEventListener('change', e => {
+  document.getElementById('change-secondary-color')?.addEventListener('change', (e) => {
     const target = e.target
     style.secondaryColor = target.value
     updateSelectionStyles(style, graphComponent)
   })
 
-  document.getElementById('change-secondary-transparency')?.addEventListener('change', e => {
+  document.getElementById('change-secondary-transparency')?.addEventListener('change', (e) => {
     const target = e.target
     style.secondaryTransparency = parseFloat(target.value) / 100
     updateSelectionStyles(style, graphComponent)
   })
 
-  document.getElementById('change-thickness')?.addEventListener('change', e => {
+  document.getElementById('change-thickness')?.addEventListener('change', (e) => {
     const target = e.target
     style.thickness = parseFloat(target.value)
     updateSelectionStyles(style, graphComponent)
   })
 
-  document.getElementById('change-margins')?.addEventListener('change', e => {
+  document.getElementById('change-margins')?.addEventListener('change', (e) => {
     const target = e.target
     style.margins = parseFloat(target.value)
     updateSelectionStyles(style, graphComponent)
   })
 
-  document.getElementById('change-transitioned')?.addEventListener('change', e => {
+  document.getElementById('change-transitioned')?.addEventListener('change', (e) => {
     const target = e.target
     style.transition = target.checked ? createTransition(style.easing) : null
     updateSelectionStyles(style, graphComponent)
   })
 
-  document.getElementById('change--dash-animated')?.addEventListener('change', e => {
+  document.getElementById('change--dash-animated')?.addEventListener('change', (e) => {
     const target = e.target
     style.animationTiming = target.checked
       ? new WebGL2AnimationTiming(
@@ -125,7 +125,7 @@ export function wireUpUI(style, graphComponent) {
     updateSelectionStyles(style, graphComponent)
   })
 
-  document.getElementById('change-easing')?.addEventListener('change', e => {
+  document.getElementById('change-easing')?.addEventListener('change', (e) => {
     const target = e.target
     style.easing = target.value
 
@@ -144,7 +144,7 @@ export function wireUpUI(style, graphComponent) {
     updateSelectionStyles(style, graphComponent)
   })
 
-  document.getElementById('change-zoom-policy')?.addEventListener('change', e => {
+  document.getElementById('change-zoom-policy')?.addEventListener('change', (e) => {
     const target = e.target
     style.zoomPolicy = target.value
     updateSelectionStyles(style, graphComponent)
@@ -155,21 +155,21 @@ export function wireUpUI(style, graphComponent) {
  * @param {!GraphComponent} graphComponent
  */
 export function selectNodes(graphComponent) {
-  graphComponent.graph.nodes.forEach(item => graphComponent.selection.setSelected(item, true))
+  graphComponent.graph.nodes.forEach((item) => graphComponent.selection.setSelected(item, true))
 }
 
 /**
  * @param {!GraphComponent} graphComponent
  */
 function selectEdges(graphComponent) {
-  graphComponent.graph.edges.forEach(item => graphComponent.selection.setSelected(item, true))
+  graphComponent.graph.edges.forEach((item) => graphComponent.selection.setSelected(item, true))
 }
 
 /**
  * @param {!GraphComponent} graphComponent
  */
 function selectLabels(graphComponent) {
-  graphComponent.graph.labels.forEach(item => graphComponent.selection.setSelected(item, true))
+  graphComponent.graph.labels.forEach((item) => graphComponent.selection.setSelected(item, true))
 }
 
 /**

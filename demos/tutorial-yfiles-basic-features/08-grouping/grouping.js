@@ -90,7 +90,7 @@ export function createGroupNodes(graph) {
  */
 export function adjustGroupNodeSize(graph) {
   // Get a group node
-  const groupNode = graph.nodes.first(node => graph.isGroupNode(node))
+  const groupNode = graph.nodes.first((node) => graph.isGroupNode(node))
   // Create a child node that's outside the group bounds
   graph.createNode({ parent: groupNode, layout: [100, -60, 30, 30] })
   // Adjust the group node layout to contain the new child

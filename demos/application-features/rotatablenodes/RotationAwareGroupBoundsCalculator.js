@@ -50,7 +50,7 @@ export default class RotationAwareGroupBoundsCalculator extends BaseClass(IGroup
    */
   calculateBounds(graph, groupNode) {
     let bounds = Rect.EMPTY
-    graph.getChildren(groupNode).forEach(node => {
+    graph.getChildren(groupNode).forEach((node) => {
       const style = node.style
       if (style instanceof RotatableNodeStyleDecorator) {
         // if the node supports rotation: add the outer bounds of the rotated layout

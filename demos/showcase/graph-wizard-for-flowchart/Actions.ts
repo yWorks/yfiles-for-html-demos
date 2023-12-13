@@ -76,7 +76,7 @@ import { GraphWizardInputMode, WizardEventArgs } from './GraphWizardInputMode'
 export function createSmartNavigate(): WizardAction {
   return new WizardAction(
     'navigate',
-    mode => true,
+    (mode) => true,
     (mode, item, type, args) => {
       const graph = mode.graph
       const key = (args as KeyEventArgs).key
@@ -138,9 +138,9 @@ export function createSmartNavigate(): WizardAction {
         // check for connected hits in 90°
         let children = graph
           .outEdgesAt(item)
-          .map(edge => edge.targetNode!)
-          .concat(graph.inEdgesAt(item).map(edge => edge.sourceNode))
-          .filter(child => {
+          .map((edge) => edge.targetNode!)
+          .concat(graph.inEdgesAt(item).map((edge) => edge.sourceNode))
+          .filter((child) => {
             const childCenter = child.layout.center
             const dx = center.x - childCenter.x
             const dy = center.y - childCenter.y
@@ -151,7 +151,7 @@ export function createSmartNavigate(): WizardAction {
         // check for unconnected hits in 90°
         if (children.length === 0) {
           children = graph.nodes
-            .filter(child => {
+            .filter((child) => {
               const childCenter = child.layout.center
               const dx = center.x - childCenter.x
               const dy = center.y - childCenter.y
@@ -164,9 +164,9 @@ export function createSmartNavigate(): WizardAction {
         if (children.length === 0) {
           children = graph
             .outEdgesAt(item)
-            .map(edge => edge.targetNode!)
-            .concat(graph.inEdgesAt(item).map(edge => edge.sourceNode))
-            .filter(child => {
+            .map((edge) => edge.targetNode!)
+            .concat(graph.inEdgesAt(item).map((edge) => edge.sourceNode))
+            .filter((child) => {
               const childCenter = child.layout.center
               const dx = center.x - childCenter.x
               const dy = center.y - childCenter.y
@@ -178,7 +178,7 @@ export function createSmartNavigate(): WizardAction {
         // check for unconnected hits in general direction
         if (children.length === 0) {
           children = graph.nodes
-            .filter(child => {
+            .filter((child) => {
               const childCenter = child.layout.center
               const dx = center.x - childCenter.x
               const dy = center.y - childCenter.y
@@ -187,7 +187,7 @@ export function createSmartNavigate(): WizardAction {
             .toArray()
         }
 
-        const childScores = children.map(child => {
+        const childScores = children.map((child) => {
           const childCenter = child.layout.center
           const dx = Math.abs(center.x - childCenter.x)
           const dy = Math.abs(center.y - childCenter.y)
@@ -215,7 +215,7 @@ export function createSmartNavigate(): WizardAction {
       } else {
         // no current item => select the one closest to the center of the viewport
         const center = mode.graphComponent.viewport.center
-        target = mode.graph.nodes.orderBy(node => center.distanceTo(node.layout.center)).at(0)
+        target = mode.graph.nodes.orderBy((node) => center.distanceTo(node.layout.center)).at(0)
       }
       if (target) {
         mode.graphComponent.currentItem = target
@@ -249,7 +249,7 @@ export function createSmartNavigateEdge(direction: 'NextOutgoing' | 'NextIncomin
       checkForEdge,
       checkAnd([
         checkForNode,
-        mode => {
+        (mode) => {
           const item = mode.currentItem as INode
           return (
             (direction === 'NextOutgoing' && mode.graph.outDegree(item) > 0) ||
@@ -368,7 +368,7 @@ export function createChangeNodeColorSet(
     const fill = getItemFill(node)
     if (fill instanceof SolidColorFill) {
       const fillString = colorToHexString(fill.color)
-      return colorTheme.findIndex(colorSet => colorSet.fill === fillString)
+      return colorTheme.findIndex((colorSet) => colorSet.fill === fillString)
     }
     return 0
   }
@@ -379,7 +379,7 @@ export function createChangeNodeColorSet(
     (mode, item, type, args) => {
       const currentItem = item as INode
       let colorSetIndex = parseInt(type)
-      if (isNaN(colorSetIndex)) {
+      if (Number.isNaN(colorSetIndex)) {
         colorSetIndex = itemToColorSetIndex(currentItem)
       }
       let colorSet = colorTheme[colorSetIndex]
@@ -391,7 +391,7 @@ export function createChangeNodeColorSet(
       const nodeStyle = currentItem.style.clone()
       setStyleColors(nodeStyle, colorSet.fill, colorSet.outline)
       mode.graph.setStyle(currentItem, nodeStyle)
-      currentItem.labels.forEach(label => {
+      currentItem.labels.forEach((label) => {
         const style = label.style.clone() as DefaultLabelStyle
         style.textFill = colorSet.labelText
         style.backgroundFill = colorSet.labelFill
@@ -402,8 +402,8 @@ export function createChangeNodeColorSet(
     [{ key: Key.C }],
     'Change the node color',
     {
-      typeFactory: item => String(itemToColorSetIndex(item as INode)),
-      styleFactory: item => {
+      typeFactory: (item) => String(itemToColorSetIndex(item as INode)),
+      styleFactory: (item) => {
         const colorSet = colorTheme[itemToColorSetIndex(item as INode)]
         return { type: 'rect', fill: colorSet.fill, outline: colorSet.outline }
       },
@@ -424,7 +424,7 @@ export function createStartEdgeCreation(
 ): WizardAction {
   return new WizardAction(
     'startEdgeCreation',
-    checkAnd([checkNotCreatingEdge, checkForNode, mode => mode.graph.nodes.size > 1]),
+    checkAnd([checkNotCreatingEdge, checkForNode, (mode) => mode.graph.nodes.size > 1]),
     (mode, item) => {
       mode.createEdgeMode.doStartEdgeCreation(
         new DefaultPortCandidate(item as INode, FreeNodePortLocationModel.NODE_CENTER_ANCHORED),
@@ -493,7 +493,7 @@ export function runLayout(
   const oldNodeSizes = new Mapper<INode, Size>()
   if (newNodes) {
     const graph = mode.graph
-    newNodes.forEach(node => {
+    newNodes.forEach((node) => {
       oldNodeSizes.set(node, node.layout.toSize())
       graph.setNodeLayout(node, new Rect(node.layout.center, Size.ZERO))
     })

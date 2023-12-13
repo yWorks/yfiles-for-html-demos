@@ -106,7 +106,7 @@ function updatePowerButtonState(enabled: boolean): void {
 
 function updateDeviceInfoElement(device: Device): void {
   // Find and update elements according to their data-id attribute
-  devicePopup.div.querySelectorAll('div[data-id]').forEach(element => {
+  devicePopup.div.querySelectorAll('div[data-id]').forEach((element) => {
     const key = element.getAttribute('data-id') as keyof Device
     element.textContent = String(device[key] ?? '')
   })

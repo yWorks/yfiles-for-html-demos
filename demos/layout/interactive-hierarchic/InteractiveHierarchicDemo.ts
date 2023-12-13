@@ -115,13 +115,13 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
-    id: item => item.id
+    id: (item) => item.id
   })
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
-    sourceId: item => item.source,
-    targetId: item => item.target
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
   })
 
   graphBuilder.buildGraph()
@@ -184,7 +184,7 @@ function createEditorMode(): IInputMode {
   // Add event listeners to the various events that open the context menu. These listeners then
   // call the provided callback function which in turn asks the current ContextMenuInputMode if a
   // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     if (mode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
       contextMenu.show(location)
     }
@@ -269,14 +269,14 @@ async function updateLayout() {
   // and a factory for the hints
   const hintsFactory = layout.createIncrementalHintsFactory()
   // now mark incremental nodes with the corresponding hints
-  incrementalNodes.forEach(incrementalNode => {
+  incrementalNodes.forEach((incrementalNode) => {
     hintMapper.set(incrementalNode, hintsFactory.createLayerIncrementallyHint(incrementalNode))
   })
   // and forget the nodes for the next run
   incrementalNodes.clear()
 
   // the same for edges
-  incrementalEdges.forEach(incrementalEdge => {
+  incrementalEdges.forEach((incrementalEdge) => {
     hintMapper.set(incrementalEdge, hintsFactory.createSequenceIncrementallyHint(incrementalEdge))
   })
   // reset...
@@ -306,10 +306,10 @@ async function updateLayout() {
 function updateMovedNodes(): void {
   if (newLayerMapper.entries.some()) {
     // spread out existing layers
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       layerMapper.set(node, layerMapper.get(node)! * 2)
     })
-    newLayerMapper.entries.forEach(pair => {
+    newLayerMapper.entries.forEach((pair) => {
       const node = pair.key
       // if a node has been moved, reinsert the adjacent edges incrementally and not from sketch
       incrementalEdges.addRange(graph.edgesAt(node))
@@ -347,7 +347,7 @@ function initializeGraph(): void {
   // register a custom PositionHandler for the nodes.
   // this enables interactive layer reassignment with layer preview
   graph.decorator.nodeDecorator.positionHandlerDecorator.setImplementationWrapper(
-    node => !graph.groupingSupport.hasGroupNodes() || !graph.isGroupNode(node),
+    (node) => !graph.groupingSupport.hasGroupNodes() || !graph.isGroupNode(node),
     (node, positionHandler) =>
       new LayerPositionHandler(positionHandler!, layerVisual, node!, newLayerMapper)
   )
@@ -355,7 +355,7 @@ function initializeGraph(): void {
   // register custom handles for the first and last bends of an edge
   // this enables interactive port constraint assignment.
   graph.decorator.bendDecorator.handleDecorator.setImplementationWrapper(
-    bend =>
+    (bend) =>
       bend.owner!.bends.get(0) === bend ||
       bend.owner!.bends.get(bend.owner!.bends.size - 1) === bend,
     createBendHandle

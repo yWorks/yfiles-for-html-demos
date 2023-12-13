@@ -56,13 +56,6 @@ export class IntersectionVisualCreator extends BaseClass(IVisualCreator) {
   intersections = []
 
   /**
-   * Creates a new instance.
-   */
-  constructor() {
-    super()
-  }
-
-  /**
    * Creates the visual showing the intersections found by the intersection algorithm.
    * @param {!IRenderContext} context The context that describes where the visual will be used
    * @returns {!Visual} The intersection visual

@@ -74,7 +74,7 @@ function checkLicense(licenseData) {
   const g = new DefaultGraph()
   g.createNode()
   if (g.nodes.size === 1) {
-    return new Promise(resolve => resolve(licenseData))
+    return new Promise((resolve) => resolve(licenseData))
   }
 
   window.setTimeout(() => {
@@ -107,7 +107,7 @@ function parseLicense(licenseString) {
 }
 
 /**
- * @returns {!Promise.<(Record.<string,unknown>|void)>}
+ * @returns {!(Promise.<Record.<string,unknown>>|Promise)}
  */
 function loadLicenseFromLocalStorage() {
   if (typeof window === 'undefined') {
@@ -125,10 +125,10 @@ function loadLicenseFromLocalStorage() {
 }
 
 /**
- * @returns {!Promise.<(Record.<string,unknown>|void)>}
+ * @returns {!Promise.<Record.<string,unknown>>}
  */
 async function showLicenseDialog() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     window.setTimeout(function () {
       const div = document.createElement('div')
       div.setAttribute(

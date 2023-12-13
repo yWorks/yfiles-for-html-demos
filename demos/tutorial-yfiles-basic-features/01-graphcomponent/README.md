@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Tutorial: Basic Features - Tutorial: Basic Features
+# 01 Creating the View - Tutorial: Basic Features
 
 # Creating the View
 
@@ -63,4 +63,4 @@ For a minimal example of using yFiles for HTML to display a graph on a web page,
 
 Alternatively, you may use the [App Generator](https://www.yworks.com/products/app-generator) to create visualization prototypes – quickly and easily. It will allow you to scaffold a working code example using your preferred UI framework (React, Vue, Angular, Plain, etc.)
 
-[01 Creating the View](../../tutorial-yfiles-basic-features/01-graphcomponent/)
+[02 Creating Graph Elements](../../tutorial-yfiles-basic-features/02-graph-element-creation/)

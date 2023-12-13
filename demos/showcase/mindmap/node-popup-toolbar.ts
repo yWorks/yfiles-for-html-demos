@@ -81,7 +81,7 @@ export function initializeNodePopups(graphComponent: GraphComponent): void {
     showToolbar(evt.item)
   })
 
-  inputMode.moveInputMode.addDragStartedListener(_ => {
+  inputMode.moveInputMode.addDragStartedListener((_) => {
     hidePopup(graphComponent)
   })
 
@@ -111,18 +111,18 @@ function createNodePopup(graphComponent: GraphComponent): void {
 
   document
     .getElementById('state-icon-picker')!
-    .addEventListener('click', evt =>
+    .addEventListener('click', (evt) =>
       showPickerContainer(graphComponent, evt.target as HTMLInputElement)
     )
   document
     .getElementById('color-picker')!
-    .addEventListener('click', evt =>
+    .addEventListener('click', (evt) =>
       showPickerContainer(graphComponent, evt.target as HTMLInputElement)
     )
 
   document.getElementById('cross-edge-creation')!.addEventListener(
     'click',
-    async evt => {
+    async (evt) => {
       const currentItem = nodePopup.currentItem
       hidePopup(graphComponent)
       if (!isInLayout() && currentItem) {
@@ -135,7 +135,7 @@ function createNodePopup(graphComponent: GraphComponent): void {
 
   document.getElementById('child-creation')!.addEventListener(
     'click',
-    async evt => {
+    async (evt) => {
       const currentItem = nodePopup.currentItem
       hidePopup(graphComponent)
       if (currentItem) {
@@ -153,7 +153,7 @@ function createNodePopup(graphComponent: GraphComponent): void {
   )
   document.getElementById('node-removal')!.addEventListener(
     'click',
-    async evt => {
+    async (evt) => {
       hidePopup(graphComponent)
       await executeDeleteItem(graphComponent)
       ;(evt.target as HTMLInputElement).checked = false
@@ -278,7 +278,7 @@ function createColorPicker(graphComponent: GraphComponent): void {
   ]
 
   const colorContainer = document.querySelector<HTMLDivElement>('#color-picker-colors')!
-  colorPickerColors.forEach(color => {
+  colorPickerColors.forEach((color) => {
     const colorButton = document.createElement('button')
     colorButton.setAttribute('data-color', color)
     colorButton.setAttribute('style', `background-color:${color}`)

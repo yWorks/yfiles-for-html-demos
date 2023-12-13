@@ -84,7 +84,7 @@ const CompactDiskLayoutConfig = (Class as any)('CompactDiskLayoutConfig', {
   createConfiguredLayout: function (graphComponent: GraphComponent): ILayoutAlgorithm {
     if (
       this.layoutGroupsItem === GroupLayout.RECURSIVE &&
-      graphComponent.graph.nodes.some(n => graphComponent.graph.isGroupNode(n))
+      graphComponent.graph.nodes.some((n) => graphComponent.graph.isGroupNode(n))
     ) {
       // if the recursive group layout option is enabled, use RecursiveGroupLayout with organic for
       // the top-level hierarchy - the actual compact disk layout will be specified as layout for
@@ -155,7 +155,7 @@ const CompactDiskLayoutConfig = (Class as any)('CompactDiskLayoutConfig', {
       this.nodeLabelingStyleItem === NodeLabelingPolicies.RAYLIKE_LEAVES ||
       this.nodeLabelingStyleItem === NodeLabelingPolicies.HORIZONTAL
     ) {
-      graphComponent.graph.nodeLabels.forEach(label => {
+      graphComponent.graph.nodeLabels.forEach((label) => {
         graphComponent.graph.setLabelLayoutParameter(
           label,
           FreeNodeLabelModel.INSTANCE.findBestParameter(

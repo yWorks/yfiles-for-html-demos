@@ -206,7 +206,7 @@ export default class ContextualToolbar {
       newSelection.push(newNode)
     }
     this.graphComponent.selection.clear()
-    newSelection.forEach(item => this.graphComponent.selection.setSelected(item, true))
+    newSelection.forEach((item) => this.graphComponent.selection.setSelected(item, true))
   }
 
   /**
@@ -227,7 +227,7 @@ export default class ContextualToolbar {
             originalLayout.width,
             originalLayout.height
           )
-          const noOverlaps = nodes.every(node => {
+          const noOverlaps = nodes.every((node) => {
             const layout = node.layout
             return (
               layout.x + layout.width < newLayout.x ||
@@ -356,7 +356,7 @@ export default class ContextualToolbar {
    * @returns {!Array.<IEdge>}
    */
   getSelectedEdges() {
-    return this.selectedItems.filter(item => item instanceof IEdge)
+    return this.selectedItems.filter((item) => item instanceof IEdge)
   }
 
   /**
@@ -364,7 +364,7 @@ export default class ContextualToolbar {
    * @returns {!Array.<INode>}
    */
   getSelectedNodes() {
-    return this.selectedItems.filter(item => item instanceof INode)
+    return this.selectedItems.filter((item) => item instanceof INode)
   }
 
   /**
@@ -484,7 +484,7 @@ export default class ContextualToolbar {
 
     if (this.containsEdges && !this.containsNodes) {
       // if only edges are selected, we want to use the first edge as position reference
-      dummyOwner = this.selectedItems.find(item => item instanceof IEdge)
+      dummyOwner = this.selectedItems.find((item) => item instanceof IEdge)
       labelModelParameter = this.edgeLabelModelParameter
     } else {
       // if nodes and edges are selected, we use the union of the node's bounding boxes as position reference
@@ -568,22 +568,22 @@ export default class ContextualToolbar {
   registerClickListeners() {
     document
       .querySelector('#clipboard')
-      ?.addEventListener('click', e => this.showPickerContainer(e))
+      ?.addEventListener('click', (e) => this.showPickerContainer(e))
     document
       .querySelector('#color-picker')
-      ?.addEventListener('click', e => this.showPickerContainer(e))
+      ?.addEventListener('click', (e) => this.showPickerContainer(e))
     document
       .querySelector('#shape-picker')
-      ?.addEventListener('click', e => this.showPickerContainer(e))
+      ?.addEventListener('click', (e) => this.showPickerContainer(e))
     document
       .querySelector('#font-color-picker')
-      ?.addEventListener('click', e => this.showPickerContainer(e))
+      ?.addEventListener('click', (e) => this.showPickerContainer(e))
     document
       .querySelector('#edge-color-picker')
-      ?.addEventListener('click', e => this.showPickerContainer(e))
+      ?.addEventListener('click', (e) => this.showPickerContainer(e))
     const sourceArrowPicker = document.querySelector('#source-arrow-picker')
     const targetArrowPicker = document.querySelector('#target-arrow-picker')
-    sourceArrowPicker?.addEventListener('click', e => {
+    sourceArrowPicker?.addEventListener('click', (e) => {
       targetArrowPicker.checked = false
       const pickerContainer = document.getElementById(
         sourceArrowPicker.getAttribute('data-container-id')
@@ -591,7 +591,7 @@ export default class ContextualToolbar {
       pickerContainer.classList.remove('target')
       this.showPickerContainer(e)
     })
-    targetArrowPicker?.addEventListener('click', e => {
+    targetArrowPicker?.addEventListener('click', (e) => {
       sourceArrowPicker.checked = false
       const pickerContainer = document.getElementById(
         targetArrowPicker.getAttribute('data-container-id')
@@ -601,21 +601,21 @@ export default class ContextualToolbar {
     })
 
     for (const button of document.querySelectorAll('#color-picker-colors > button')) {
-      button.addEventListener('click', e => {
+      button.addEventListener('click', (e) => {
         const color = button.getAttribute('data-color')
         this.applyNodeStyle(color)
       })
     }
 
     for (const button of document.querySelectorAll('#font-color-picker-colors > button')) {
-      button.addEventListener('click', e => {
+      button.addEventListener('click', (e) => {
         const color = button.getAttribute('data-color')
         this.applyFontStyle({}, color)
       })
     }
 
     for (const button of document.querySelectorAll('#shape-picker-shapes > button')) {
-      button.addEventListener('click', e => {
+      button.addEventListener('click', (e) => {
         const shape = button.getAttribute('data-shape')
         this.applyNodeStyle(null, shape)
       })
@@ -626,7 +626,7 @@ export default class ContextualToolbar {
       ?.addEventListener('click', () => this.createConnectedNode())
 
     for (const button of document.querySelectorAll('#arrow-picker-types > button')) {
-      button.addEventListener('click', e => {
+      button.addEventListener('click', (e) => {
         const arrowType = button.getAttribute('data-type')
         const isTarget = button.parentElement.classList.contains('target')
         if (isTarget) {
@@ -638,27 +638,27 @@ export default class ContextualToolbar {
     }
 
     for (const button of document.querySelectorAll('#edge-colors > button')) {
-      button.addEventListener('click', e => {
+      button.addEventListener('click', (e) => {
         const color = button.getAttribute('data-color')
         this.applyEdgeStyle(color, null, null)
       })
     }
 
-    document.querySelector('#font-bold')?.addEventListener('click', e => {
+    document.querySelector('#font-bold')?.addEventListener('click', (e) => {
       this.hideAllPickerContainer()
       const target = e.target
       this.applyFontStyle({
         fontWeight: target.checked ? target.getAttribute('data-fontWeight') : 'normal'
       })
     })
-    document.querySelector('#font-italic')?.addEventListener('click', e => {
+    document.querySelector('#font-italic')?.addEventListener('click', (e) => {
       this.hideAllPickerContainer()
       const target = e.target
       this.applyFontStyle({
         fontStyle: target.checked ? target.getAttribute('data-fontStyle') : 'normal'
       })
     })
-    document.querySelector('#font-underline')?.addEventListener('click', e => {
+    document.querySelector('#font-underline')?.addEventListener('click', (e) => {
       this.hideAllPickerContainer()
       const target = e.target
       this.applyFontStyle({

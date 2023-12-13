@@ -118,7 +118,7 @@ export default class WebglBlobVisual extends WebGLVisual {
     )
 
     const ballSize = this.size
-    const centers = this.locations.map(p => renderContext.toViewCoordinates(p))
+    const centers = this.locations.map((p) => renderContext.toViewCoordinates(p))
 
     const dataToSend = this.dataToSend
     const maxDist = ballSize * 2 * renderContext.zoom
@@ -129,7 +129,7 @@ export default class WebglBlobVisual extends WebGLVisual {
     const pixelRatio = renderContext.canvasComponent.devicePixelRatio
 
     let count = 0
-    centers.forEach(center => {
+    centers.forEach((center) => {
       if (
         center.x > -maxDist &&
         center.y > -maxDist &&

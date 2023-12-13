@@ -68,8 +68,8 @@ export function configureLayout(graph, imageRect) {
 
   // specifies desired edge lengths and the set of node to be arranged, i.e., the label nodes
   const organicLayoutData = new OrganicLayoutData({
-    affectedNodes: node => getPointData(node).type === NodeType.LABEL,
-    preferredEdgeLengths: edge => (isLeftPoint(edge.sourceNode, imageRect) ? 50 : 25)
+    affectedNodes: (node) => getPointData(node).type === NodeType.LABEL,
+    preferredEdgeLengths: (edge) => (isLeftPoint(edge.sourceNode, imageRect) ? 50 : 25)
   })
 
   // create the constraints for the layout algorithm
@@ -177,20 +177,20 @@ function addVerticalConstraints(point, labelNode, organicLayoutData, imageRect) 
 function addVerticalLabelToLabelConstraints(graph, imageRect, organicLayoutData) {
   // get all label nodes that do not lie on the topmost/bottommost part
   const nonVerticalPoints = graph.nodes.filter(
-    node => isLabel(node) && !isVerticalPoint(node, imageRect)
+    (node) => isLabel(node) && !isVerticalPoint(node, imageRect)
   )
 
   // get the labels on the left side and create a constraint to align them vertically
   const leftAlignmentConstraint = organicLayoutData.constraints.addAlignmentConstraint(
     OrganicLayoutConstraintOrientation.VERTICAL
   )
-  leftAlignmentConstraint.items = nonVerticalPoints.filter(node => isLeftPoint(node, imageRect))
+  leftAlignmentConstraint.items = nonVerticalPoints.filter((node) => isLeftPoint(node, imageRect))
 
   // get the labels on the right side and create a constraint to align them vertically
   const rightAlignmentConstraint = organicLayoutData.constraints.addAlignmentConstraint(
     OrganicLayoutConstraintOrientation.VERTICAL
   )
-  rightAlignmentConstraint.items = nonVerticalPoints.filter(node => !isLeftPoint(node, imageRect))
+  rightAlignmentConstraint.items = nonVerticalPoints.filter((node) => !isLeftPoint(node, imageRect))
 }
 
 /**
@@ -243,8 +243,8 @@ function isVerticalPoint(point, imageRect) {
  */
 function assignLabelModels(graph, imageRect) {
   graph.nodes
-    .filter(node => isLabel(node))
-    .forEach(labelNode => {
+    .filter((node) => isLabel(node))
+    .forEach((labelNode) => {
       const label = labelNode.labels.at(0)
 
       if (isVerticalPoint(labelNode, imageRect)) {
@@ -274,8 +274,8 @@ function assignLabelModels(graph, imageRect) {
  */
 function resetLabelPositions(graph) {
   graph.nodes
-    .filter(node => isLabel(node))
-    .forEach(labelNode => {
+    .filter((node) => isLabel(node))
+    .forEach((labelNode) => {
       const point = graph.edgesAt(labelNode).at(0).sourceNode
       graph.setNodeLayout(
         labelNode,

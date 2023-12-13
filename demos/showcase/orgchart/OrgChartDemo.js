@@ -90,8 +90,8 @@ async function run() {
  * @param {!CollapsibleTree} orgChartGraph
  */
 function configureOrgChartLayout(orgChartGraph) {
-  orgChartGraph.isAssistantNode = node => getEmployee(node)?.assistant ?? false
-  orgChartGraph.nodeTypesMapping = node => getEmployee(node)?.status ?? null
+  orgChartGraph.isAssistantNode = (node) => getEmployee(node)?.assistant ?? false
+  orgChartGraph.nodeTypesMapping = (node) => getEmployee(node)?.status ?? null
 
   // sort subtrees by a fixed order of the business units
   const businessUnitOrder = ['Engineering', 'Production', 'Accounting', 'Sales', 'Marketing']

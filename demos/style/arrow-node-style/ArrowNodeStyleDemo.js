@@ -225,24 +225,24 @@ function initializeInteraction(graphComponent) {
 function initializeUI(graphComponent) {
   basicShape.addEventListener('change', () => {
     const shape = ArrowStyleShape.from(basicShape.value)
-    applyStyleSetting(graphComponent, style => (style.shape = shape))
+    applyStyleSetting(graphComponent, (style) => (style.shape = shape))
   })
 
   shapeDirection.addEventListener('change', () => {
     const direction = ArrowNodeDirection.from(shapeDirection.value)
-    applyStyleSetting(graphComponent, style => (style.direction = direction))
+    applyStyleSetting(graphComponent, (style) => (style.direction = direction))
   })
 
   angleRange.addEventListener('change', () => {
     const value = angleRange.value
     const angle = parseFloat(value)
-    applyStyleSetting(graphComponent, style => (style.angle = toRadians(angle)))
+    applyStyleSetting(graphComponent, (style) => (style.angle = toRadians(angle)))
     angleLabel.innerText = value
   })
 
   shaftRatioRange.addEventListener('change', () => {
     const shaftRatio = parseFloat(shaftRatioRange.value)
-    applyStyleSetting(graphComponent, style => (style.shaftRatio = shaftRatio))
+    applyStyleSetting(graphComponent, (style) => (style.shaftRatio = shaftRatio))
     shaftRatioLabel.innerText = shaftRatioRange.value
   })
 
@@ -262,7 +262,7 @@ function initializeUI(graphComponent) {
 function applyStyleSetting(graphComponent, adjustStyle) {
   const graph = graphComponent.graph
 
-  graphComponent.selection.selectedNodes.forEach(node => {
+  graphComponent.selection.selectedNodes.forEach((node) => {
     const style = node.style
     if (style instanceof ArrowNodeStyle) {
       adjustStyle(style)

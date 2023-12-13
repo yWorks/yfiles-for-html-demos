@@ -83,7 +83,7 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
     }
 
     // find the root node of the graph
-    const root = graph.nodes.find(node => graph.inDegree(node) === 0)
+    const root = graph.nodes.find((node) => graph.inDegree(node) === 0)
     if (!root) {
       this.sectors = []
       return
@@ -100,8 +100,8 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
 
     // determine sector radius
     this.radius = graph.nodes
-      .map(node => sectorMapper.get(node))
-      .filter(info => info != null)
+      .map((node) => sectorMapper.get(node))
+      .filter((info) => info != null)
       .reduce((previous, info) => Math.max(info.radius, previous), 100)
 
     // create one sector for each child of the root node
@@ -109,7 +109,7 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
     this.sectors = graph
       .successors(root)
       .toArray()
-      .filter(child => sectorMapper.get(child) instanceof RadialLayoutNodeInfo)
+      .filter((child) => sectorMapper.get(child) instanceof RadialLayoutNodeInfo)
       .map((child, i) => {
         const info = sectorMapper.get(child)
         const startAngle = normalizeAngle(Geom.toRadians(info.sectorStart))
@@ -131,7 +131,7 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
 
     // fill sectors to get a full circle
     let lastSector
-    this.sectors.forEach(sector => {
+    this.sectors.forEach((sector) => {
       if (!lastSector) {
         lastSector = this.sectors[this.sectors.length - 1]
         if (sector.endAngle > sector.startAngle) {
@@ -205,7 +205,7 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
       sectorPath.style.strokeWidth = '2px'
       g.appendChild(sectorPath)
     } else {
-      this.sectors.forEach(sector => {
+      this.sectors.forEach((sector) => {
         // create new sector element
         const sectorPath = document.createElementNS('http://www.w3.org/2000/svg', 'path')
         g.appendChild(sectorPath)
@@ -279,7 +279,7 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
     // location is inside the circle and there are multiple sectors
     // find the sector that contains the location
     const angle = getAngle(location, this.center)
-    return this.sectors.find(sector => isAngleBetween(angle, sector.startAngle, sector.endAngle))
+    return this.sectors.find((sector) => isAngleBetween(angle, sector.startAngle, sector.endAngle))
   }
 
   /**

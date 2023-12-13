@@ -284,7 +284,7 @@ export class AssignNodeSizesStage extends LayoutStageBase {
     }
 
     // assign the new size to the nodes
-    graph.nodes.forEach(node => {
+    graph.nodes.forEach((node) => {
       const size = dp.get(node)
       if (size) {
         graph.setSize(node, size.width, size.height)
@@ -301,7 +301,7 @@ export class AssignNodeSizesStage extends LayoutStageBase {
 export function createAssignNodeSizeStageLayoutData() {
   // use the GenericLayoutData to pass the information about the node sizes to the AssignNodeSizesStage
   const layoutData = new GenericLayoutData()
-  layoutData.addNodeItemMapping(AssignNodeSizesStage.NODE_SIZE_DP_KEY, node => {
+  layoutData.addNodeItemMapping(AssignNodeSizesStage.NODE_SIZE_DP_KEY, (node) => {
     const label = node.labels.get(0)
     const style = label.style
 

@@ -222,14 +222,14 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         // do nothing...
         break
       case GroupLayoutPolicy.FIX_GROUP_BOUNDS:
-        layoutData.groupNodeModes.delegate = node => {
+        layoutData.groupNodeModes.delegate = (node) => {
           return graphComponent.graph.isGroupNode(node)
             ? GroupNodeMode.FIX_BOUNDS
             : GroupNodeMode.NORMAL
         }
         break
       case GroupLayoutPolicy.FIX_GROUP_CONTENTS:
-        layoutData.groupNodeModes.delegate = node => {
+        layoutData.groupNodeModes.delegate = (node) => {
           return graphComponent.graph.isGroupNode(node)
             ? GroupNodeMode.FIX_CONTENTS
             : GroupNodeMode.NORMAL
@@ -242,7 +242,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     }
 
     if (this.edgeDirectednessItem) {
-      layoutData.edgeDirectedness.delegate = edge => {
+      layoutData.edgeDirectedness.delegate = (edge) => {
         if (
           edge.style instanceof PolylineEdgeStyle &&
           edge.style.targetArrow &&
@@ -259,7 +259,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     }
 
     if (this.orientationItem !== null) {
-      layoutData.edgeOrientations.delegate = edge => {
+      layoutData.edgeOrientations.delegate = (edge) => {
         if (
           edge.style instanceof PolylineEdgeStyle &&
           edge.style.targetArrow &&

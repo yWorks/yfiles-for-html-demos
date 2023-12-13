@@ -34,7 +34,10 @@ import type { PropertiesPanel } from './PropertiesPanel'
  * An output handler that writes primitive data types and ignores complex types.
  */
 export class SimpleOutputHandler extends OutputHandlerBase<any, any> {
-  constructor(private property: GraphMLProperty, private propertiesPanel: PropertiesPanel) {
+  constructor(
+    private property: GraphMLProperty,
+    private propertiesPanel: PropertiesPanel
+  ) {
     super(YObject.$class, YObject.$class, property.keyScope, property.name, property.type)
     this.defaultExists = property.defaultExists
     if (property.defaultExists) {

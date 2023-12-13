@@ -194,7 +194,7 @@ function allowEditing(geim: GraphEditorInputMode, enabled: boolean): void {
  */
 function initializeUI(graphComponent: GraphComponent): void {
   const allowEditing = document.querySelector<HTMLSelectElement>('#allowed-editing-operations')!
-  allowEditing.addEventListener('change', evt =>
+  allowEditing.addEventListener('change', (evt) =>
     configureEditing(graphComponent, allowEditing.value as 'none' | 'moving' | 'all')
   )
 }

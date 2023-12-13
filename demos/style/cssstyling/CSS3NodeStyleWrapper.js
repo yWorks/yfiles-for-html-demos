@@ -94,7 +94,7 @@ export default class CSS3NodeStyleWrapper extends NodeStyleBase {
         // remove the node-created class after the created animation is finished
         // to avoid re-triggering it on subsequent redraws
         for (const event of ['animationend', 'animationcancel']) {
-          shine.addEventListener(event, e => {
+          shine.addEventListener(event, (e) => {
             if (e.animationName === 'nodeCreatedAnimation') {
               shine.classList.remove('node-created')
             }

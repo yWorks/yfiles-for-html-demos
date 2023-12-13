@@ -349,7 +349,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
 
     // clear all active actions and find new ones whose pre-condition is met
     this.clear()
-    this._activeActions = this._actions.filter(action => action.preCondition(this)).toList()
+    this._activeActions = this._actions.filter((action) => action.preCondition(this)).toList()
 
     // update the buttons and the legend for the active actions
     this.updateButtons()
@@ -367,8 +367,8 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       const gridDiv = document.createElement('div')
       this._legendDiv.appendChild(gridDiv)
       this._activeActions
-        .filter(action => !!action.description)
-        .forEach(action => {
+        .filter((action) => !!action.description)
+        .forEach((action) => {
           const div = document.createElement('div')
           div.innerHTML = WizardAction.getTextWithShortcuts(
             action.description!,
@@ -447,7 +447,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     }
 
     // find an active action that is triggered by the source/event combination
-    const triggeredAction = this._activeActions.find(action => action.trigger(source, e))
+    const triggeredAction = this._activeActions.find((action) => action.trigger(source, e))
     if (triggeredAction !== null) {
       if (e instanceof KeyEventArgs || e instanceof MouseEventArgs) {
         e.preventDefault()
@@ -599,11 +599,11 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       autoPlacedActions.map((action: WizardAction) => action.buttonOptions!),
       PickerLayout.Row,
       GraphWizardInputMode.getBaseLayout(this.currentItem!),
-      index => this.createWizardActionHandler(autoPlacedActions[index]),
+      (index) => this.createWizardActionHandler(autoPlacedActions[index]),
       (button, index) => {
         autoPlacedActions[index].button = button
       },
-      index => autoPlacedActions[index].shortcuts,
+      (index) => autoPlacedActions[index].shortcuts,
       evt
     )
 
@@ -627,9 +627,9 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
         options.pickerButtons!,
         options.pickerLayout ?? PickerLayout.Grid,
         backgroundLayout,
-        options => defaultActionHandler,
+        (options) => defaultActionHandler,
         this.setPickerButton.bind(this),
-        index => undefined,
+        (index) => undefined,
         evt
       )
     }
@@ -643,7 +643,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
   private addPickerSelectionButtons(action: WizardAction, evt: QueryButtonsEvent): void {
     const parentOptions = action.buttonOptions!
     // handle action and close picker selection afterwards
-    const handler: ButtonActionListener = async button => {
+    const handler: ButtonActionListener = async (button) => {
       this.buttonMode.hideButtons()
       const actionSuccessful = await action.handler(
         this,
@@ -659,9 +659,9 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       parentOptions.pickerButtons!,
       parentOptions.pickerLayout ?? PickerLayout.Grid,
       WizardAction.getButtonLayout(parentOptions, evt.owner),
-      index => handler.bind(this),
+      (index) => handler.bind(this),
       this.setPickerButton.bind(this),
-      index => undefined,
+      (index) => undefined,
       evt
     )
   }
@@ -804,10 +804,10 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     }
 
     // if no picker button has its own layout parameter set, add a common background 'button'
-    if (options.every(opt => !opt.layout && !opt.layoutFactory)) {
+    if (options.every((opt) => !opt.layout && !opt.layoutFactory)) {
       // add background button
       evt.addButton({
-        onAction: button => {},
+        onAction: (button) => {},
         layoutParameter: baseLayout,
         style: new DefaultLabelStyle({
           renderer: new DropShadowLabelRenderer(),
@@ -944,7 +944,9 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     if (hidePickers) {
       const pickerButtonWasFocused =
         this.pickerButtons &&
-        this.pickerButtons.some(row => row.some(button => button === this.buttonMode.focusedButton))
+        this.pickerButtons.some((row) =>
+          row.some((button) => button === this.buttonMode.focusedButton)
+        )
       const pickerActionWasFocused =
         this.activePickersAction &&
         this.activePickersAction.button === this.buttonMode.focusedButton
@@ -961,7 +963,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       let newActivePickersAction: WizardAction | null = action ? action : null
       if (!newActivePickersAction && this.buttonMode.focusedButton) {
         newActivePickersAction = this._activeActions.find(
-          action =>
+          (action) =>
             action.button === this.buttonMode.focusedButton &&
             action.buttonOptions !== null &&
             action.buttonOptions.pickerButtons !== null
@@ -983,8 +985,8 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
   }
 
   private findPickerButtonToFocus(mainTag: any) {
-    this.pickerButtons!.forEach(row => {
-      row.forEach(button => {
+    this.pickerButtons!.forEach((row) => {
+      row.forEach((button) => {
         if (button.tag == mainTag) {
           return button
         }
@@ -1051,7 +1053,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
    * Calls {@link WizardAction.clear clear} for all active actions.
    */
   public cleanupActiveAction(): void {
-    this._activeActions.forEach(action => action.clear())
+    this._activeActions.forEach((action) => action.clear())
     this.activePickersAction = null
     this.pickerButtons = null
   }
@@ -1198,9 +1200,6 @@ export class WizardEventArgs extends EventArgs {
  * Adds the __container-drop-shadow__ style class to the {@link SVGElement} of the created visual.
  */
 class DropShadowLabelRenderer extends DefaultLabelStyleRenderer {
-  constructor() {
-    super()
-  }
 
   createVisual(context: IRenderContext): Visual | null {
     const visual = super.createVisual(context) as SvgVisual

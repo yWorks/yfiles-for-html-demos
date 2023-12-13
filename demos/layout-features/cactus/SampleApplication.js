@@ -103,21 +103,21 @@ async function loadSampleGraph(graph) {
 
   // define source and creation options for nodes and group nodes
   const nodesSource = builder.createNodesSource({
-    data: data.nodeList.filter(node => !node.isGroup),
+    data: data.nodeList.filter((node) => !node.isGroup),
     id: 'id',
     tag: 'tag',
     layout: 'layout',
     parentId: 'parent'
   })
   builder.createGroupNodesSource({
-    data: data.nodeList.filter(node => node.isGroup),
+    data: data.nodeList.filter((node) => node.isGroup),
     id: 'id',
     tag: 'tag',
     layout: 'layout',
     parentId: 'parent'
   })
 
-  nodesSource.nodeCreator.styleProvider = item => {
+  nodesSource.nodeCreator.styleProvider = (item) => {
     const theme = item.tag && item.tag.avoidParentOverlap ? nonOverlapTheme : overlapTheme
     // use round nodes which are typical for cactus layouts
     return new ShapeNodeStyle({
@@ -127,12 +127,12 @@ async function loadSampleGraph(graph) {
     })
   }
 
-  const labelCreator = nodesSource.nodeCreator.createLabelsSource(item => [
+  const labelCreator = nodesSource.nodeCreator.createLabelsSource((item) => [
     !!(item.tag && item.tag.avoidParentOverlap)
   ]).labelCreator
   labelCreator.textProvider = () => 'Leaf'
   labelCreator.layoutParameterProvider = () => FreeNodeLabelModel.INSTANCE.createDefaultParameter()
-  labelCreator.styleProvider = avoidOverlap => {
+  labelCreator.styleProvider = (avoidOverlap) => {
     const labelStyle = createDemoNodeLabelStyle(avoidOverlap ? nonOverlapTheme : overlapTheme)
     labelStyle.textSize = 20
     labelStyle.insets = new Insets(5, 2, 6, 1)

@@ -50,7 +50,7 @@ const subtrees: Map<INode, Subtree> = new Map()
  */
 export function getGlobalRoot(graph: IGraph): INode {
   if (!globalRoot) {
-    globalRoot = graph.nodes.find(node => graph.inDegree(node) === 0)!
+    globalRoot = graph.nodes.find((node) => graph.inDegree(node) === 0)!
   }
   return globalRoot
 }
@@ -97,11 +97,11 @@ export function highlightSubtree(item: IModelItem, graphComponent: GraphComponen
   const subtreeRoot = getNode(item)
   const subtree = getSubtree(subtreeRoot, graph.wrappedGraph!)
   subtree.nodes
-    .filter(node => graph.contains(node))
-    .forEach(node => highlightManager.addHighlight(node))
+    .filter((node) => graph.contains(node))
+    .forEach((node) => highlightManager.addHighlight(node))
   subtree.edges
-    .filter(edge => graph.contains(edge))
-    .forEach(edge => highlightManager.addHighlight(edge))
+    .filter((edge) => graph.contains(edge))
+    .forEach((edge) => highlightManager.addHighlight(edge))
   highlightManager.addHighlight(subtreeRoot.labels.first())
 }
 
@@ -112,6 +112,6 @@ function getNode(item: IModelItem): INode {
   return item instanceof INode
     ? item
     : item instanceof IEdge
-    ? item.sourceNode!
-    : ((item as ILabel).owner as INode)
+      ? item.sourceNode!
+      : ((item as ILabel).owner as INode)
 }

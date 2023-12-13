@@ -94,11 +94,15 @@
 
 .option-ui-tab .tab-content {
   text-align: center;
-  -webkit-transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0s,
+  -webkit-transition:
+    opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0s,
     color 0.1s cubic-bezier(0.4, 0, 1, 1) 0s;
-  -moz-transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0s,
+  -moz-transition:
+    opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0s,
     color 0.1s cubic-bezier(0.4, 0, 1, 1) 0s;
-  transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0s, color 0.1s cubic-bezier(0.4, 0, 1, 1) 0s;
+  transition:
+    opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0s,
+    color 0.1s cubic-bezier(0.4, 0, 1, 1) 0s;
   cursor: default;
   pointer-events: none;
   -ms-user-select: initial;
@@ -114,9 +118,15 @@
   left: 0;
   width: 0;
   background-color: #efefef;
-  -webkit-transition: width 0.15s ease-in-out 0.18s, left 0.15s ease-in-out 0.18s;
-  -moz-transition: width 0.15s ease-in-out 0.18s, left 0.15s ease-in-out 0.18s;
-  transition: width 0.15s ease-in-out 0.18s, left 0.15s ease-in-out 0.18s;
+  -webkit-transition:
+    width 0.15s ease-in-out 0.18s,
+    left 0.15s ease-in-out 0.18s;
+  -moz-transition:
+    width 0.15s ease-in-out 0.18s,
+    left 0.15s ease-in-out 0.18s;
+  transition:
+    width 0.15s ease-in-out 0.18s,
+    left 0.15s ease-in-out 0.18s;
 }
 
 .option-ui-tab:not(.active) .tab-content {
@@ -511,7 +521,8 @@ form.option-ui-spinner div.spinner-container label {
 }
 
 .option-ui-form-group .option-ui-button {
-  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+  transition:
+    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: Tahoma, Verdana, sans-serif;
   font-size: 14px;

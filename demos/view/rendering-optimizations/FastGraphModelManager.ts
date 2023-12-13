@@ -1022,31 +1022,31 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     const graph = this.graph
     if (graph !== null) {
       let bounds: Rect = Rect.EMPTY
-      graph.nodes.forEach(node => {
+      graph.nodes.forEach((node) => {
         bounds = Rect.add(
           bounds,
           node.style.renderer.getBoundsProvider(node, node.style).getBounds(context)
         )
       })
-      graph.edges.forEach(edge => {
+      graph.edges.forEach((edge) => {
         bounds = Rect.add(
           bounds,
           edge.style.renderer.getBoundsProvider(edge, edge.style).getBounds(context)
         )
       })
-      graph.nodeLabels.forEach(label => {
+      graph.nodeLabels.forEach((label) => {
         bounds = Rect.add(
           bounds,
           label.style.renderer.getBoundsProvider(label, label.style).getBounds(context)
         )
       })
-      graph.edgeLabels.forEach(label => {
+      graph.edgeLabels.forEach((label) => {
         bounds = Rect.add(
           bounds,
           label.style.renderer.getBoundsProvider(label, label.style).getBounds(context)
         )
       })
-      graph.ports.forEach(port => {
+      graph.ports.forEach((port) => {
         bounds = Rect.add(
           bounds,
           port.style.renderer.getBoundsProvider(port, port.style).getBounds(context)
@@ -1205,7 +1205,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     const scaleX = targetWidth / exportRect.width
     const scaleY = targetHeight / exportRect.height
     let scale: number = Math.min(scaleX, scaleY)
-    if (scale <= 0 || isNaN(scale)) {
+    if (scale <= 0 || Number.isNaN(scale)) {
       scale = 1
     }
 
@@ -1224,19 +1224,19 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     canvasContext.translate(-exportRect.x, -exportRect.y)
 
     // draw the graph items in world coordinates
-    this.graph.edges.forEach(edge => {
+    this.graph.edges.forEach((edge) => {
       this.drawEdge(edge, canvasContext)
     })
 
-    this.graph.nodes.forEach(node => {
+    this.graph.nodes.forEach((node) => {
       this.drawNode(node, canvasContext)
     })
 
-    this.graph.nodeLabels.forEach(label => {
+    this.graph.nodeLabels.forEach((label) => {
       this.drawNodeLabel(label, canvasContext)
     })
 
-    this.graph.edgeLabels.forEach(label => {
+    this.graph.edgeLabels.forEach((label) => {
       this.drawEdgeLabel(label, canvasContext)
     })
 
@@ -1282,7 +1282,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
       )
       canvasContext.beginPath()
       canvasContext.moveTo(sourceLocation.x, sourceLocation.y)
-      edge.bends.forEach(bend => {
+      edge.bends.forEach((bend) => {
         canvasContext.lineTo(bend.location.x, bend.location.y)
       })
       canvasContext.lineTo(targetLocation.x, targetLocation.y)
@@ -1357,7 +1357,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     const scaleY = targetHeight / exportRect.height
     let scale: number = Math.min(scaleX, scaleY)
 
-    if (scale <= 0 || isNaN(scale)) {
+    if (scale <= 0 || Number.isNaN(scale)) {
       scale = 1
     }
 
@@ -1400,7 +1400,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     const scaleY = exportRect.height > maxSize.height ? maxSize.height / exportRect.height : 1
 
     let scale: number = Math.min(scaleX, scaleY)
-    if (scale <= 0 || isNaN(scale)) {
+    if (scale <= 0 || Number.isNaN(scale)) {
       scale = 1
     }
     return scale
@@ -1530,14 +1530,14 @@ class GLVisual extends WebGLVisual {
   render(ctx: IRenderContext, gl: WebGLRenderingContext): void {
     if (!this.visuals) {
       this.visuals = []
-      this.graph.edges.forEach(edge => {
+      this.graph.edges.forEach((edge) => {
         this.visuals!.push(
           this.edgeStyle.renderer
             .getVisualCreator(edge, this.edgeStyle)
             .createVisual(ctx) as WebGLVisual
         )
       })
-      this.graph.nodes.forEach(node => {
+      this.graph.nodes.forEach((node) => {
         this.visuals!.push(
           this.nodeStyle.renderer
             .getVisualCreator(node, this.nodeStyle)
@@ -1545,7 +1545,7 @@ class GLVisual extends WebGLVisual {
         )
       })
     }
-    this.visuals.forEach(visual => {
+    this.visuals.forEach((visual) => {
       visual.render(ctx, gl)
     })
   }
@@ -1629,22 +1629,22 @@ class MyHitTestEnumerator extends BaseClass(IHitTester) {
    */
   enumerateHits(context: IInputModeContext, location: Point): IEnumerable<IModelItem> {
     const hits = new List<IModelItem>()
-    this.graph.nodeLabels.forEach(label => {
+    this.graph.nodeLabels.forEach((label) => {
       if (label.style.renderer.getHitTestable(label, label.style).isHit(context, location)) {
         hits.add(label)
       }
     })
-    this.graph.edgeLabels.forEach(label => {
+    this.graph.edgeLabels.forEach((label) => {
       if (label.style.renderer.getHitTestable(label, label.style).isHit(context, location)) {
         hits.add(label)
       }
     })
-    this.graph.edges.forEach(edge => {
+    this.graph.edges.forEach((edge) => {
       if (edge.style.renderer.getHitTestable(edge, edge.style).isHit(context, location)) {
         hits.add(edge)
       }
     })
-    this.graph.nodes.forEach(node => {
+    this.graph.nodes.forEach((node) => {
       if (node.style.renderer.getHitTestable(node, node.style).isHit(context, location)) {
         hits.add(node)
       }
@@ -1672,7 +1672,7 @@ class MyNodeHitTestEnumerator extends BaseClass<INodeHitTester>(INodeHitTester) 
    */
   enumerateHits(context: IInputModeContext, location: Point): IEnumerable<INode> {
     const hits = new List<INode>()
-    this.graph.nodes.forEach(node => {
+    this.graph.nodes.forEach((node) => {
       if (node.style.renderer.getHitTestable(node, node.style).isHit(context, location)) {
         hits.add(node)
       }
@@ -1700,7 +1700,7 @@ class MyEdgeHitTestEnumerator extends BaseClass(IEdgeHitTester) {
    */
   enumerateHits(context: IInputModeContext, location: Point): IEnumerable<IEdge> {
     const hits = new List<IEdge>()
-    this.graph.edges.forEach(edge => {
+    this.graph.edges.forEach((edge) => {
       if (edge.style.renderer.getHitTestable(edge, edge.style).isHit(context, location)) {
         hits.add(edge)
       }
@@ -1728,12 +1728,12 @@ class MyLabelHitTestEnumerator extends BaseClass<ILabelHitTester>(ILabelHitTeste
    */
   enumerateHits(context: IInputModeContext, location: Point): IEnumerable<ILabel> {
     const hits = new List<ILabel>()
-    this.graph.edgeLabels.forEach(label => {
+    this.graph.edgeLabels.forEach((label) => {
       if (label.style.renderer.getHitTestable(label, label.style).isHit(context, location)) {
         hits.add(label)
       }
     })
-    this.graph.nodeLabels.forEach(label => {
+    this.graph.nodeLabels.forEach((label) => {
       if (label.style.renderer.getHitTestable(label, label.style).isHit(context, location)) {
         hits.add(label)
       }
@@ -1761,7 +1761,7 @@ class MyPortHitTestEnumerator extends BaseClass(IPortHitTester) {
    */
   enumerateHits(context: IInputModeContext, location: Point): IEnumerable<IPort> {
     const hits = new List<IPort>()
-    this.graph.ports.forEach(port => {
+    this.graph.ports.forEach((port) => {
       if (port.style.renderer.getHitTestable(port, port.style).isHit(context, location)) {
         hits.add(port)
       }
@@ -1789,12 +1789,12 @@ class MyLabelOwnerHitTestEnumerator extends BaseClass(ILabelOwnerHitTester) {
    */
   enumerateHits(context: IInputModeContext, location: Point): IEnumerable<ILabelOwner> {
     const hits = new List<ILabelOwner>()
-    this.graph.edges.forEach(edge => {
+    this.graph.edges.forEach((edge) => {
       if (edge.style.renderer.getHitTestable(edge, edge.style).isHit(context, location)) {
         hits.add(edge)
       }
     })
-    this.graph.nodes.forEach(node => {
+    this.graph.nodes.forEach((node) => {
       if (node.style.renderer.getHitTestable(node, node.style).isHit(context, location)) {
         hits.add(node)
       }

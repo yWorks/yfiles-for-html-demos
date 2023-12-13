@@ -118,15 +118,15 @@ export function extractGraph(eventLog, graphComponent) {
   // group events by case-id to get the path of each case through the process steps
   IEnumerable.from(eventLog)
     .groupBy(
-      event => event.caseId,
+      (event) => event.caseId,
       (caseId, events) => events?.toArray() ?? []
     )
-    .forEach(events => {
+    .forEach((events) => {
       let lastEvent
       events
         // sort the events by timestamp to have the correct order of traversal
         .sort((event1, event2) => event1.timestamp - event2.timestamp)
-        .forEach(event => {
+        .forEach((event) => {
           const activity = event.activity
 
           // add a node for the event's activity

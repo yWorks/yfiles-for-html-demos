@@ -113,8 +113,8 @@ function calculateGrid(policy: TabularLayoutPolicy): PartitionGrid {
     maxHeight = Math.max(maxHeight, nodeBounds.height)
   }
 
-  partitionGrid.rows.forEach(row => (row.minimumHeight = maxHeight + 20))
-  partitionGrid.columns.forEach(column => (column.minimumWidth = maxWidth + 20))
+  partitionGrid.rows.forEach((row) => (row.minimumHeight = maxHeight + 20))
+  partitionGrid.columns.forEach((column) => (column.minimumWidth = maxWidth + 20))
 
   return partitionGrid
 }

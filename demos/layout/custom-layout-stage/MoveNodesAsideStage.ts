@@ -138,7 +138,7 @@ export default class MoveNodesAsideStage extends LayoutStageBase {
     // We also have to tell the EdgeRouter which edges to route (in this case,
     // edges at affected nodes, so we tell it the affected nodes)
     const affectedNodesDp = Maps.createHashedNodeMap()
-    asideNodes.forEach(node => affectedNodesDp.setBoolean(node, true))
+    asideNodes.forEach((node) => affectedNodesDp.setBoolean(node, true))
     graph.addDataProvider(edgeRouter.affectedNodesDpKey, affectedNodesDp)
 
     // Finally, EdgeRouter can calculate routes for the remaining edges.

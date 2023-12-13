@@ -68,10 +68,10 @@ export function calculatedShortestPaths(graph: IGraph, config: AlgorithmConfig):
       sink: endNodes[0]
     }).run(graph)
 
-    result.nodes.forEach(node => {
+    result.nodes.forEach((node) => {
       markItem(node)
     })
-    result.edges.forEach(edge => {
+    result.edges.forEach((edge) => {
       markItem(edge)
     })
   } else {
@@ -83,10 +83,10 @@ export function calculatedShortestPaths(graph: IGraph, config: AlgorithmConfig):
     }).run(graph)
 
     result.paths.forEach((path, pathIndex) => {
-      path.nodes.forEach(node => {
+      path.nodes.forEach((node) => {
         markItem(node, pathIndex)
       })
-      path.edges.forEach(edge => {
+      path.edges.forEach((edge) => {
         markItem(edge, pathIndex)
       })
     })
@@ -121,10 +121,10 @@ export function calculateAllPaths(graph: IGraph, config: AlgorithmConfig): void 
   }).run(graph)
 
   result.paths.forEach((path, pathIndex) => {
-    path.nodes.forEach(node => {
+    path.nodes.forEach((node) => {
       markItem(node, pathIndex)
     })
-    path.edges.forEach(edge => {
+    path.edges.forEach((edge) => {
       markItem(edge, pathIndex)
     })
   })
@@ -146,10 +146,10 @@ export function calculateAllChains(graph: IGraph, config: AlgorithmConfig): void
   const result = new Chains({ directed: config.directed }).run(graph)
 
   result.chains.forEach((chain, pathIndex) => {
-    chain.nodes.forEach(node => {
+    chain.nodes.forEach((node) => {
       markItem(node, pathIndex)
     })
-    chain.edges.forEach(edge => {
+    chain.edges.forEach((edge) => {
       markItem(edge, pathIndex)
     })
   })
@@ -196,11 +196,11 @@ export function calculateSingleSourceShortestPaths(graph: IGraph, config: Algori
   const predecessors = result.predecessors
   result.paths
     .orderBy(
-      path => path.nodes.size,
+      (path) => path.nodes.size,
       (p1, p2) => p1 - p2
     )
     .forEach((path, pathIndex) => {
-      path.nodes.forEach(node => {
+      path.nodes.forEach((node) => {
         const distance = distances.get(node)! / longestPathLength
 
         setComponent(node, pathIndex)

@@ -111,7 +111,7 @@ export function createPortAwareGraphBuilder(
   })
   // change the node creator but keep the original's defaults
   nodesSource.nodeCreator = new TypeAwareNodeCreator({ defaults: nodesSource.nodeCreator.defaults })
-  nodesSource.nodeCreator.styleProvider = nodeData => {
+  nodesSource.nodeCreator.styleProvider = (nodeData) => {
     switch (nodeData.type) {
       case 'or':
         return new OrNodeStyle(false, '#A49966', '#625F50', '#FFFFFF')
@@ -138,8 +138,8 @@ export function createPortAwareGraphBuilder(
     data: sampleEdges,
     // we extract the node Id from source Id and target Id
     // that way EdgeCreator.createEdgeCore will already get the correct source and target nodes
-    sourceId: data => getNodeId(data.from),
-    targetId: data => getNodeId(data.to),
+    sourceId: (data) => getNodeId(data.from),
+    targetId: (data) => getNodeId(data.to),
     id: 'id'
   })
   edgesSource.edgeCreator = new PortAwareEdgeCreator({ defaults: edgesSource.edgeCreator.defaults })
@@ -193,7 +193,7 @@ class TypeAwareNodeCreator extends NodeCreator<NodeData> {
     const node = super.createNodeCore(graph, groupNode, parent, layout, style, tag)
 
     // add ports according to their type
-    this.getPorts(nodeData).forEach(pin => {
+    this.getPorts(nodeData).forEach((pin) => {
       this.addPort(graph, node, pin)
     })
     return node
@@ -391,11 +391,11 @@ class PortAwareEdgeCreator extends EdgeCreator<EdgeData> {
     // if no ID is specified: get the first port
     const sourcePortId = this.getSourcePortId(edgeData)
     const sourcePort = sourcePortId
-      ? source.ports.find(p => p.tag === sourcePortId)
+      ? source.ports.find((p) => p.tag === sourcePortId)
       : source.ports.at(0)
     const targetPortId = this.getTargetPortId(edgeData)
     const targetPort = targetPortId
-      ? target.ports.find(p => p.tag === targetPortId)
+      ? target.ports.find((p) => p.tag === targetPortId)
       : target.ports.at(0)
 
     // create the edges between source and target port. If no port is provided add a default port.
@@ -423,13 +423,13 @@ class PortAwareEdgeCreator extends EdgeCreator<EdgeData> {
     const sourcePortId = this.getSourcePortId(dataItem)
     const sourcePort =
       sourcePortId && sourcePortId !== edge.sourcePort!.tag
-        ? edge.sourcePort!.owner!.ports.find(p => p.tag === sourcePortId)
+        ? edge.sourcePort!.owner!.ports.find((p) => p.tag === sourcePortId)
         : edge.sourcePort
     // same for the target port
     const targetPortId = this.getTargetPortId(dataItem)
     const targetPort =
       targetPortId && targetPortId !== edge.targetPort!.tag
-        ? edge.targetPort!.owner!.ports.find(p => p.tag === targetPortId)
+        ? edge.targetPort!.owner!.ports.find((p) => p.tag === targetPortId)
         : edge.targetPort
     // remember the current source and target ports
     const oldSource = edge.sourcePort!

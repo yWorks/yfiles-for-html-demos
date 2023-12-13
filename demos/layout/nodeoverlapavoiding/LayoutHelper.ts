@@ -120,7 +120,7 @@ export class LayoutHelper implements PendingLayout {
     if (this.graph.isGroupNode(node)) {
       this.graph.groupingSupport
         .getDescendants(node)
-        .forEach(descendant => this.nodes.add(descendant))
+        .forEach((descendant) => this.nodes.add(descendant))
     }
     const descriptor = graphComponent.graphModelManager.edgeDescriptor
     this.hiddenEdges =
@@ -187,10 +187,10 @@ export class LayoutHelper implements PendingLayout {
     return anySmaller && anyGreater
       ? 'BOTH'
       : anySmaller
-      ? 'SHRINKING'
-      : anyGreater
-      ? 'GROWING'
-      : 'NONE'
+        ? 'SHRINKING'
+        : anyGreater
+          ? 'GROWING'
+          : 'NONE'
   }
 
   /**
@@ -364,7 +364,7 @@ export class LayoutHelper implements PendingLayout {
   public cancelLayout(): Promise<void> {
     this.state = 'CANCELLING'
     this.runLayout()
-    return new Promise(resolve => (this.resolveFinishLayoutPromise = resolve))
+    return new Promise((resolve) => (this.resolveFinishLayoutPromise = resolve))
   }
 
   /**
@@ -373,7 +373,7 @@ export class LayoutHelper implements PendingLayout {
   public finishLayout(): Promise<void> {
     this.state = 'FINISHING'
     this.runLayout()
-    return new Promise(resolve => (this.resolveFinishLayoutPromise = resolve))
+    return new Promise((resolve) => (this.resolveFinishLayoutPromise = resolve))
   }
 
   /**
@@ -501,7 +501,7 @@ export class LayoutRunner {
    * Returns the singleton instance of this class.
    */
   public static get INSTANCE(): LayoutRunner {
-    return this.instance ? this.instance : (this.instance = new LayoutRunner())
+    return LayoutRunner.instance ? LayoutRunner.instance : (LayoutRunner.instance = new LayoutRunner())
   }
 
   /**

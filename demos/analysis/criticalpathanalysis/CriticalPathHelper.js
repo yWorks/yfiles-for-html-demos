@@ -51,9 +51,9 @@ import {
 export function calculateCriticalPathEdges(graphComponent) {
   const graph = graphComponent.graph
   // the duration of each task is stored in the node's tag
-  const taskDuration = node => node.tag.duration | 0
+  const taskDuration = (node) => node.tag.duration | 0
   // the duration when moving from the source's task to the target's task
-  const transitionDuration = edge => edge.tag.transitionDuration | 0
+  const transitionDuration = (edge) => edge.tag.transitionDuration | 0
 
   // runs the rank assignment algorithm to calculate the ranks and the slacks
   const results = calculateRanksAndSlacks(graph, taskDuration, transitionDuration)
@@ -74,7 +74,7 @@ export function calculateCriticalPathEdges(graphComponent) {
 
   // adds the result information to the edges' tags
   const criticalEdgeSet = new Set(criticalPathEdges)
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     edge.tag.slack = results.slack(edge)
     if (criticalEdgeSet.has(edge)) {
       edge.tag.critical = true
@@ -88,7 +88,7 @@ export function calculateCriticalPathEdges(graphComponent) {
  */
 export function findHighestLowestNodes(graph) {
   const order = graph.nodes.orderBy(
-    node => node.tag.layerId || 0,
+    (node) => node.tag.layerId || 0,
     (a, b) => Math.sign(Number(a) - Number(b))
   )
   const lowestNode = order.first()
@@ -108,23 +108,23 @@ export function findHighestLowestNodes(graph) {
 function calculateRanksAndSlacks(graph, taskDuration, transitionDuration) {
   // for each edge the min distance is the time needed for the task of each source node to be completed
   // plus the time needed to move from the source task to the target task
-  const minDistance = edge => {
+  const minDistance = (edge) => {
     return transitionDuration(edge) + taskDuration(edge.sourceNode)
   }
 
   // run the rank assignment algorithm
   const rankAssignmentResult = new RankAssignment({
-    minimumEdgeLengths: edge => transitionDuration(edge) + taskDuration(edge.sourceNode)
+    minimumEdgeLengths: (edge) => transitionDuration(edge) + taskDuration(edge.sourceNode)
   }).run(graph)
 
   // store the ranking of each node at its tag
   const rankIds = rankAssignmentResult.nodeRankIds
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     node.tag.layerId = rankIds.get(node) || 0
   })
 
   return {
-    slack: edge =>
+    slack: (edge) =>
       (rankIds.get(edge.targetNode) || 0) - (rankIds.get(edge.sourceNode) || 0) - minDistance(edge)
   }
 }
@@ -148,9 +148,9 @@ export async function runLayout(graphComponent) {
 
   const layoutData = new HierarchicLayoutData({
     // the information about the layering is stored in the node tags
-    givenLayersLayererIds: node => node.tag.layerId,
+    givenLayersLayererIds: (node) => node.tag.layerId,
     // edges that belong to the critical path have priority
-    criticalEdgePriorities: edge => (edge.tag.critical ? 1 : 0),
+    criticalEdgePriorities: (edge) => (edge.tag.critical ? 1 : 0),
     // configure the edge placement
     edgeLabelPreferredPlacement: () => {
       const preferredPlacementDescriptor = new PreferredPlacementDescriptor()

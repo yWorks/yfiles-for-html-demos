@@ -121,8 +121,11 @@ async function populateGraph() {
   const graph = graphComponent.graph
   const graphBuilder = new AdjacencyGraphBuilder(graph)
 
-  const nodesSource = graphBuilder.createNodesSource(dataModel.activities, activity => activity.id)
-  nodesSource.nodeCreator.layoutProvider = activity => {
+  const nodesSource = graphBuilder.createNodesSource(
+    dataModel.activities,
+    (activity) => activity.id
+  )
+  nodesSource.nodeCreator.layoutProvider = (activity) => {
     return new Rect(
       getX(new GanttTimestamp(activity.startDate)) - getLeadWidth(activity),
       getActivityY(activity),
@@ -130,11 +133,11 @@ async function populateGraph() {
       ganttActivityHeight
     )
   }
-  nodesSource.nodeCreator.styleProvider = activity => {
+  nodesSource.nodeCreator.styleProvider = (activity) => {
     const task = getTaskForId(activity.taskId)
     return new ActivityNodeStyle(getTaskColor(task))
   }
-  nodesSource.nodeCreator.tagProvider = activity => activity
+  nodesSource.nodeCreator.tagProvider = (activity) => activity
 
   nodesSource.nodeCreator.createLabelBinding('name')
 

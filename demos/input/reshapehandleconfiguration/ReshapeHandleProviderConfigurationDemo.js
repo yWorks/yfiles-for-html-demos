@@ -67,18 +67,18 @@ function registerReshapeHandleProvider(graph, boundaryRectangle) {
   const nodeDecorator = graph.decorator.nodeDecorator
 
   // deactivate reshape handling for the red node
-  nodeDecorator.reshapeHandleProviderDecorator.hideImplementation(node => node.tag === 'red')
+  nodeDecorator.reshapeHandleProviderDecorator.hideImplementation((node) => node.tag === 'red')
 
   // return customized reshape handle provider for the orange, blue and green node
   nodeDecorator.reshapeHandleProviderDecorator.setFactory(
-    node =>
+    (node) =>
       node.tag === 'orange' ||
       node.tag === 'blue' ||
       node.tag === 'green' ||
       node.tag === 'purple' ||
       node.tag === 'darkblue' ||
       node.tag === 'gold',
-    node => {
+    (node) => {
       // Obtain the tag from the node
       const nodeTag = node.tag
 

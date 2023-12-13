@@ -54,8 +54,8 @@ function getWebWorkerMessageHandler(
 
   // helper function that performs the actual message passing between the Web Worker and the
   // LayoutExecutorAsync on the client side
-  function webWorkerMessageHandler(data: Object): Promise<Object> {
-    return new Promise(resolve => {
+  function webWorkerMessageHandler(data: object): Promise<object> {
+    return new Promise((resolve) => {
       worker.onmessage = (e: any) => resolve(e.data)
       worker.postMessage(data)
     })
@@ -72,7 +72,7 @@ function getWebWorkerMessageHandler(
   })
 }
 
-let promise: Promise<(data: Object) => Promise<Object>> | null = null
+let promise: Promise<(data: object) => Promise<object>> | null = null
 
 /**
  * Creates a message handler that performs the actual message passing between the
@@ -81,7 +81,7 @@ let promise: Promise<(data: Object) => Promise<Object>> | null = null
  */
 export function getLayoutExecutorAsyncMessageHandler(
   license: Record<string, unknown>
-): Promise<(data: Object) => Promise<Object>> {
+): Promise<(data: object) => Promise<object>> {
   if (!promise) {
     promise = getWebWorkerMessageHandler(license)
   }

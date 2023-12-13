@@ -49,7 +49,7 @@ export function createFeatureLayoutConfiguration(graph) {
 
   const layoutData = new HierarchicLayoutData()
   // define as 'critical' the edges on the longest path - here any other predicate can be used, of course
-  layoutData.criticalEdgePriorities.delegate = edge => (longestPathEdges.contains(edge) ? 10 : 1)
+  layoutData.criticalEdgePriorities.delegate = (edge) => (longestPathEdges.contains(edge) ? 10 : 1)
 
   const layout = new HierarchicLayout()
 
@@ -79,6 +79,6 @@ function getCycleEdges(graph) {
   // Feedback edges and self loops have to be excluded here
   const feedbackEdgeSetResult = new FeedbackEdgeSet().run(graph)
   return graph.edges.filter(
-    edge => feedbackEdgeSetResult.feedbackEdgeSet.contains(edge) || edge.isSelfloop
+    (edge) => feedbackEdgeSetResult.feedbackEdgeSet.contains(edge) || edge.isSelfloop
   )
 }

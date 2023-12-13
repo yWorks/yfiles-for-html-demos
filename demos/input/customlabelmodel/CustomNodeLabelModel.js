@@ -73,7 +73,7 @@ export default class CustomNodeLabelModel extends BaseClass(
 
   /**
    * Returns instances of the support interfaces (which are actually the model instance itself)
-   * @template {*} T
+   * @template T
    * @param {!Class.<T>} type
    * @returns {?T}
    */

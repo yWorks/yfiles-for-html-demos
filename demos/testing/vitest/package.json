@@ -10,13 +10,13 @@
   },
   "dependencies": {
     "demo-resources": "../../resources",
-    "yfiles": "../../../lib-dev/yfiles-26.0.2+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-26.0.3+dev.tgz"
   },
   "devDependencies": {
-    "@playwright/test": "^1.35.1",
-    "@vitest/ui": "^0.32.2",
-    "playwright": "^1.35.1",
-    "vite": "^4.3.9",
-    "vitest": "^0.32.2"
+    "@playwright/test": "^1.40.1",
+    "@vitest/ui": "^0.34.6",
+    "playwright": "^1.40.1",
+    "vite": "^5.0.4",
+    "vitest": "^0.34.6"
   }
 }

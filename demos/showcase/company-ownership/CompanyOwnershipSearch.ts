@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import GraphSearch from 'demo-utils/GraphSearch'
+import { GraphSearch } from 'demo-utils/GraphSearch'
 import type { INode } from 'yfiles'
 import { getEntityData } from '../frauddetection/entity-data'
 
@@ -52,6 +52,6 @@ export class CompanyOwnershipSearch extends GraphSearch {
     ) {
       return true
     }
-    return node.labels.some(label => label.text.toLowerCase().indexOf(lowercaseText) !== -1)
+    return node.labels.some((label) => label.text.toLowerCase().indexOf(lowercaseText) !== -1)
   }
 }

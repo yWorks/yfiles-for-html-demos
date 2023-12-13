@@ -41,7 +41,10 @@
 }
 
 .orgchart-label text {
-  font: 22px Tahoma, Verdana, sans-serif;
+  font:
+    22px Tahoma,
+    Verdana,
+    sans-serif;
 }
 
 .yfiles-svgpanel {

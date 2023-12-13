@@ -101,7 +101,7 @@ function configureRouterScope(graph, router, data) {
   router.scope = EdgeRouterScope.ROUTE_AFFECTED_EDGES
 
   // define the set of edges that should be routed by using a delegate function
-  data.affectedEdges.delegate = edge => shouldRouteEdge(edge)
+  data.affectedEdges.delegate = (edge) => shouldRouteEdge(edge)
 }
 
 /**
@@ -132,7 +132,7 @@ function configureRoutingStyle(graph, router, layoutData) {
   // copy the current default descriptor and change the routingStyle property on the copied instance
   const octilinearDescriptor = defaultDescriptor.createCopy()
   octilinearDescriptor.routingStyle = EdgeRouterEdgeRoutingStyle.OCTILINEAR
-  layoutData.edgeLayoutDescriptors.delegate = edge =>
+  layoutData.edgeLayoutDescriptors.delegate = (edge) =>
     routeOctilinear(edge) ? octilinearDescriptor : defaultDescriptor
 }
 
@@ -151,7 +151,7 @@ function routeOctilinear(edge) {
  */
 function configureEdgeGrouping(graph, router, layoutData) {
   const groupId = 'goldenGroup'
-  layoutData.targetGroupIds.delegate = edge => (edge.tag === 10 || edge.tag == 7 ? groupId : null)
+  layoutData.targetGroupIds.delegate = (edge) => (edge.tag === 10 || edge.tag == 7 ? groupId : null)
 }
 
 /**
@@ -161,7 +161,7 @@ function configureEdgeGrouping(graph, router, layoutData) {
  * @param {!EdgeRouterData} layoutData
  */
 function configurePortCandidates(graph, router, layoutData) {
-  layoutData.sourcePortCandidates = edge => {
+  layoutData.sourcePortCandidates = (edge) => {
     if (edge.sourceNode.tag === 5 || edge.sourceNode.tag === 7) {
       return new List([
         PortCandidate.createCandidate(PortDirections.EAST),
@@ -170,7 +170,7 @@ function configurePortCandidates(graph, router, layoutData) {
     }
     return null
   }
-  layoutData.targetPortCandidates = edge => {
+  layoutData.targetPortCandidates = (edge) => {
     if (edge.targetNode.tag === 5 || edge.targetNode.tag === 7) {
       return new List([
         PortCandidate.createCandidate(PortDirections.EAST),

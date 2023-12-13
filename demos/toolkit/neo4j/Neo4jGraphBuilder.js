@@ -84,11 +84,11 @@ export function createGraphBuilder(graphComponent, nodes, edges) {
   const graphBuilder = new GraphBuilder(graph)
   const nodeCreator = graphBuilder.createNodesSource({
     data: nodes,
-    id: node => getId(node.identity),
+    id: (node) => getId(node.identity),
     layout: 'layout',
     labels: ['label']
   }).nodeCreator
-  nodeCreator.createLabelBinding(node => {
+  nodeCreator.createLabelBinding((node) => {
     if (node.properties) {
       for (const propertyName of Object.keys(node.properties)) {
         // try to find a suitable node label
@@ -102,14 +102,14 @@ export function createGraphBuilder(graphComponent, nodes, edges) {
   })
   graphBuilder.createEdgesSource({
     data: edges,
-    sourceId: edge => getId(edge.start),
-    targetId: edge => getId(edge.end),
+    sourceId: (edge) => getId(edge.start),
+    targetId: (edge) => getId(edge.end),
     labels: ['type']
   })
 
   graphBuilder.addNodeCreatedListener((_, { graph, item, dataItem }) => {
     // look for a mapping for any of the nodes labels and use the mapped style
-    let matchingLabel = dataItem.labels.find(label => label in nodeStyleMapping)
+    let matchingLabel = dataItem.labels.find((label) => label in nodeStyleMapping)
     if (!matchingLabel) {
       matchingLabel = dataItem.labels[0]
       nodeStyleMapping[matchingLabel] = predefinedNodesStyles[nodeStyleCounter]

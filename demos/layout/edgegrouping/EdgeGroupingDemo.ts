@@ -150,7 +150,7 @@ function createSampleGraph(): void {
   builder.createEdgesSource(SampleData.edges, 'from', 'to', 'id')
   builder.buildGraph()
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     edge.tag = edge.tag.groupIds
     updateStyles(edge)
   })
@@ -188,7 +188,7 @@ function groupEdges(
   override: boolean
 ): void {
   const id = Date.now()
-  edges.forEach(edge => {
+  edges.forEach((edge) => {
     const tag: EdgeTag = {}
     switch (type) {
       case 'source':
@@ -292,7 +292,7 @@ function configureInteraction(): void {
   })
 
   const contextMenu = new ContextMenu(graphComponent)
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
+  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
     const worldLocation = graphComponent.toWorldFromPage(location)
     const showMenu = inputMode.contextMenuInputMode.shouldOpenMenu(worldLocation)
     if (showMenu) {
@@ -357,7 +357,7 @@ function populateContextMenu(
     let outgoingEdges: IEdge[] = []
     let incomingEdges: IEdge[] = []
     let incidentEdges: IEdge[] = []
-    selection.selectedNodes.forEach(node => {
+    selection.selectedNodes.forEach((node) => {
       outgoingEdges = outgoingEdges.concat(graphComponent.graph.outEdgesAt(node).toArray())
       incomingEdges = incomingEdges.concat(graphComponent.graph.inEdgesAt(node).toArray())
       incidentEdges = incidentEdges.concat(graphComponent.graph.edgesAt(node).toArray())
@@ -441,10 +441,10 @@ function initializeUI(): void {
   document.querySelector<HTMLButtonElement>('#reset')!.addEventListener('click', createSampleGraph)
   document
     .querySelector<HTMLSelectElement>('#toggle-port-group-mode')!
-    .addEventListener('change', evt => {
+    .addEventListener('change', (evt) => {
       const value = (evt.target as HTMLSelectElement).value
       portGroupMode = value === 'port-grouping'
-      graphComponent.graph.edges.forEach(edge => {
+      graphComponent.graph.edges.forEach((edge) => {
         updateStyles(edge)
       })
       runLayout(true)

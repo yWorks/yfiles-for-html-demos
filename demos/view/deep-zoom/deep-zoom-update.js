@@ -120,7 +120,7 @@ function updateGraphComponentOnViewportChange(graphComponent) {
  * @returns {?INode}
  */
 function findGroupNodeToEnter(graphComponent, foldingView, masterGraph, viewport) {
-  return graphComponent.graph.nodes.find(node => {
+  return graphComponent.graph.nodes.find((node) => {
     const nodeLayout = node.layout.toRect()
     const masterNode = foldingView.getMasterItem(node)
     return (
@@ -268,7 +268,7 @@ function hasGrandChildren(masterGraph, groupNode) {
   return (
     masterGraph
       .getChildren(groupNode)
-      .filter(child => masterGraph.isGroupNode(child))
-      .flatMap(child => masterGraph.getChildren(child)).size > 0
+      .filter((child) => masterGraph.isGroupNode(child))
+      .flatMap((child) => masterGraph.getChildren(child)).size > 0
   )
 }

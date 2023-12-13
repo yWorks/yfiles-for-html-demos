@@ -170,7 +170,7 @@ export class PropertiesPanel {
     this._currentItem = currentItem
 
     if (currentItem) {
-      this.itemMap.keys.forEach(property => {
+      this.itemMap.keys.forEach((property) => {
         if (PropertiesPanel.suitsScope(currentItem, property.keyScope)) {
           this.ui.addItemProperty(property, this.getItemValue(currentItem, property))
         }
@@ -182,7 +182,7 @@ export class PropertiesPanel {
    * Displays the graph properties in the UI after all properties have been added.
    */
   showGraphProperties(): void {
-    this.graphMap.keys.forEach(property => {
+    this.graphMap.keys.forEach((property) => {
       this.ui.addGraphProperty(property, this.graphMap.get(property))
     })
   }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -39,7 +39,7 @@
         w = parseInt(w)
         h = parseInt(h)
         margin = parseInt(margin)
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           const targetCanvas = document.createElement('canvas')
           const targetContext = targetCanvas.getContext('2d')
           const image = new Image()

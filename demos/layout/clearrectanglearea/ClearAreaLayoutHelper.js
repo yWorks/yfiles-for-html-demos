@@ -120,12 +120,12 @@ export class ClearAreaLayoutHelper {
   createGivenCoordinateStageData() {
     const data = new GivenCoordinatesStageData()
 
-    this.graph.nodes.forEach(node => {
+    this.graph.nodes.forEach((node) => {
       data.nodeLocations.mapper.set(node, node.layout.topLeft)
       data.nodeSizes.mapper.set(node, node.layout.toSize())
     })
 
-    this.graph.edges.forEach(edge => {
+    this.graph.edges.forEach((edge) => {
       data.edgePaths.mapper.set(edge, IEdge.getPathPoints(edge))
     })
 
@@ -184,7 +184,7 @@ export class ClearAreaLayoutHelper {
    */
   createDraggingLayoutData() {
     const clearAreaLayoutData = new ClearAreaLayoutData()
-    clearAreaLayoutData.areaGroupNode.delegate = node => node === this.groupNode
+    clearAreaLayoutData.areaGroupNode.delegate = (node) => node === this.groupNode
 
     return new CompositeLayoutData(this.resetToOriginalGraphStageData, clearAreaLayoutData)
   }

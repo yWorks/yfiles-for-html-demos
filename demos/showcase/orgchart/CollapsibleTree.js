@@ -100,7 +100,7 @@ export class CollapsibleTree {
   constructor(graphComponent, completeGraph = new DefaultGraph()) {
     this.completeGraph = completeGraph
     this.graphComponent = graphComponent
-    const nodeFilter = node => !this.hiddenNodesSet.has(node)
+    const nodeFilter = (node) => !this.hiddenNodesSet.has(node)
     this.filteredGraph = new FilteredGraphWrapper(completeGraph, nodeFilter)
   }
 
@@ -477,11 +477,11 @@ export class CollapsibleTree {
    * @returns {!TreeLayoutData}
    */
   createConfiguredLayoutData(graph = null, incrementalNodes = new Set()) {
-    const hasIncrementalParent = node =>
+    const hasIncrementalParent = (node) =>
       graph.inDegree(node) > 0 && incrementalNodes.has(graph.predecessors(node).first())
 
     return new TreeLayoutData({
-      assistantNodes: node =>
+      assistantNodes: (node) =>
         this.isAssistantNode(node) && graph.inDegree(node) > 0 && !hasIncrementalParent(node),
       outEdgeComparers: this.outEdgeComparers,
       nodeTypes: this.nodeTypesMapping,
@@ -599,10 +599,10 @@ export class CollapsibleTree {
    */
   static findEmptyGroups(graph, nodesToHide) {
     return graph.nodes.filter(
-      node =>
+      (node) =>
         graph.isGroupNode(node) &&
         graph.degree(node) === 0 &&
-        graph.getChildren(node).every(child => nodesToHide.has(child))
+        graph.getChildren(node).every((child) => nodesToHide.has(child))
     )
   }
 
@@ -631,9 +631,9 @@ export class CollapsibleTree {
    * @returns {!Set.<INode>}
    */
   static collectAllNodesExceptSubtree(graph, excludedRoot) {
-    const subtree = this.collectDescendants(graph, excludedRoot)
+    const subtree = CollapsibleTree.collectDescendants(graph, excludedRoot)
     subtree.add(excludedRoot)
-    return new Set(graph.nodes.filter(node => !subtree.has(node)))
+    return new Set(graph.nodes.filter((node) => !subtree.has(node)))
   }
 
   /**

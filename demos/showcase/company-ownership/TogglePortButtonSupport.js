@@ -65,7 +65,7 @@ export default class TogglePortButtonSupport {
   constructor() {
     // initialize converter
     StringTemplatePortStyle.CONVERTERS.companyOwnershipConverters = {
-      portIconStateConverter: val =>
+      portIconStateConverter: (val) =>
         'port-icon ' + (val.collapsed ?? false ? 'port-icon-expand' : 'port-icon-collapse')
     }
   }

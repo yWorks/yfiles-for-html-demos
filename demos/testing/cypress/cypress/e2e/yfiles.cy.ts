@@ -37,7 +37,7 @@ describe('yfiles spec', () => {
      */
     cy.visit('http://localhost:4242/demos-ts/testing/application-under-test/index.html').then(() => {
       cy.get('.loaded').should('exist')
-      cy.window().then(win => {
+      cy.window().then((win) => {
         // win is the remote window
         const graphComponent = (win as Cypress.AUTWindow & { graphComponent: GraphComponent })
           .graphComponent

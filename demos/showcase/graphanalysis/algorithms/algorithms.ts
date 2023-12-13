@@ -131,7 +131,7 @@ export type AlgorithmConfig = {
  * Resets the node types.
  */
 export function resetTypes(graph: IGraph): void {
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     resetType(node)
   })
 }
@@ -159,17 +159,17 @@ export function applyAlgorithm(graph: IGraph): void {
  * Removes all result-labels and resets the tag.
  */
 export function resetGraph(graph: IGraph): void {
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     resetResult(node)
   })
-  graph.edges.forEach(edge => resetResult(edge))
-  graph.nodeLabels.toArray().forEach(label => {
+  graph.edges.forEach((edge) => resetResult(edge))
+  graph.nodeLabels.toArray().forEach((label) => {
     graph.remove(label)
   })
   graph.edgeLabels
     .toArray()
-    .filter(label => label.tag !== 'weight')
-    .forEach(label => {
+    .filter((label) => label.tag !== 'weight')
+    .forEach((label) => {
       graph.remove(label)
     })
 }
@@ -376,7 +376,7 @@ export const algorithms: Record<string, Algorithm> = {
  */
 function getEdgeWeights(graph: IGraph): Map<IEdge, number> {
   const weights = new Map<IEdge, number>()
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     if (useUniformEdgeWeights()) {
       weights.set(edge, 1)
     } else {
@@ -403,7 +403,7 @@ function getStartNodes(graph: IGraph): INode[] {
     return []
   }
 
-  const startNodes = graph.nodes.filter(node => getTag(node).type === 'start').toArray()
+  const startNodes = graph.nodes.filter((node) => getTag(node).type === 'start').toArray()
   if (startNodes.length === 0) {
     const startNode = graph.nodes.first()
     const tag = copyAndReplaceTag(startNode)
@@ -423,7 +423,7 @@ function getEndNodes(graph: IGraph): INode[] {
     return []
   }
 
-  const endNodes = graph.nodes.filter(node => getTag(node).type === 'end').toArray()
+  const endNodes = graph.nodes.filter((node) => getTag(node).type === 'end').toArray()
   if (endNodes.length === 0) {
     const endNode = graph.nodes.last()
     const tag = copyAndReplaceTag(endNode)

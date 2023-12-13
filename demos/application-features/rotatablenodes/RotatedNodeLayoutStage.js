@@ -66,14 +66,6 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
   edgeRoutingMode = 'shortest-straight-path-to-border'
 
   /**
-   * Creates a new instance with an optional core layout algorithm.
-   * @param {?ILayoutAlgorithm} [coreLayout=null]
-   */
-  constructor(coreLayout = null) {
-    super(coreLayout)
-  }
-
-  /**
    * The {@link IDataProvider} key to register a data provider that provides the outline and
    * oriented layout to this stage.
    * @type {!string}
@@ -135,7 +127,7 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
     }
     try {
       const originalDimensions = Maps.createHashedNodeMap()
-      graph.nodes.forEach(node => {
+      graph.nodes.forEach((node) => {
         const { outline, orientedLayout } = boundsProvider.get(node)
         if (orientedLayout) {
           // if the current node is rotated: apply fixes
@@ -173,7 +165,7 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
             )
 
             // for each out edge
-            node.outEdges.forEach(edge => {
+            node.outEdges.forEach((edge) => {
               // create a strong port constraint for the side which is closest to the port location (without rotation)
               const constraint = sourcePortConstraints.get(edge)
               if (!constraint) {
@@ -182,7 +174,7 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
                 sourcePortConstraints.set(edge, PortConstraint.create(side, true))
               }
             })
-            node.inEdges.forEach(edge => {
+            node.inEdges.forEach((edge) => {
               // create a strong port constraint for the side which is closest to the port location (without rotation)
               const constraint = targetPortConstraints.get(edge)
               if (!constraint) {
@@ -196,12 +188,12 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
           // For source and target port constraints: fix the PortSide according to the rotation
           const angle = Math.atan2(orientedLayout.upY, orientedLayout.upX)
           if (sourcePortConstraints) {
-            node.outEdges.forEach(edge => {
+            node.outEdges.forEach((edge) => {
               this.fixPortConstraintSide(sourcePortConstraints, edge, angle)
             })
           }
           if (targetPortConstraints) {
-            node.inEdges.forEach(edge => {
+            node.inEdges.forEach((edge) => {
               this.fixPortConstraintSide(targetPortConstraints, edge, angle)
             })
           }
@@ -218,7 +210,7 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
       layout.applyLayout(graph)
 
       const groups = graph.getDataProvider(GroupingKeys.GROUP_DP_KEY)
-      graph.nodes.forEach(node => {
+      graph.nodes.forEach((node) => {
         if (groups && groups.getBoolean(node)) {
           // groups don't need to be adjusted to their former size and location because their bounds are entirely
           // calculated by the layout algorithm and they are not rotated
@@ -245,7 +237,7 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
 
         if (this.edgeRoutingMode === 'no-routing') {
           // NoRouting still needs fix for self-loops
-          node.edges.forEach(edge => {
+          node.edges.forEach((edge) => {
             if (edge.selfLoop) {
               this.fixPorts(graph, edge, path, false)
               this.fixPorts(graph, edge, path, true)
@@ -260,10 +252,10 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
 
         // enlarge the adjacent segment to the oriented rectangle (represented by the path)
         // handling in and out edges separately will automatically cause self-loops to be handled correctly
-        node.inEdges.forEach(edge => {
+        node.inEdges.forEach((edge) => {
           this.fixPorts(graph, edge, path, false)
         })
-        node.outEdges.forEach(edge => {
+        node.outEdges.forEach((edge) => {
           this.fixPorts(graph, edge, path, true)
         })
       })

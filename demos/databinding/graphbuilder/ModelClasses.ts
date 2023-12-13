@@ -320,9 +320,9 @@ export class SourcesFactory {
 
     const edgesSource = this.graphBuilder.createEdgesSource<any>(
       [],
-      edgeDataItem =>
+      (edgeDataItem) =>
         definition.sourceProvider ? definition.sourceProvider(edgeDataItem) : undefined,
-      edgeDataItem =>
+      (edgeDataItem) =>
         definition.targetProvider ? definition.targetProvider(edgeDataItem) : undefined
     )
 
@@ -332,7 +332,7 @@ export class SourcesFactory {
       targetArrow: new Arrow({ color: '#662b00', type: 'triangle' })
     })
     edgeCreator.defaults.shareStyleInstance = false
-    edgeCreator.styleBindings.addBinding('stroke', edgeDataItem =>
+    edgeCreator.styleBindings.addBinding('stroke', (edgeDataItem) =>
       definition.strokeProvider ? definition.strokeProvider(edgeDataItem) : '#662b00'
     )
 
@@ -341,7 +341,7 @@ export class SourcesFactory {
       edgeCreator.updateLabels(evt.graph, evt.item, evt.dataItem)
     })
 
-    edgeCreator.createLabelBinding(edgeDataItem =>
+    edgeCreator.createLabelBinding((edgeDataItem) =>
       definition.labelTextProvider ? definition.labelTextProvider(edgeDataItem) : undefined
     )
 

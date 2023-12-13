@@ -50,13 +50,6 @@ export default class SvgLabelStyle extends LabelStyleBase {
   private readonly font: Font = new Font({ fontSize: 14 })
 
   /**
-   * Create a new instance of this label style.
-   */
-  constructor() {
-    super()
-  }
-
-  /**
    * Creates the visual representation for the given label.
    * @param context The render context.
    * @param label The label to which this style instance is assigned.

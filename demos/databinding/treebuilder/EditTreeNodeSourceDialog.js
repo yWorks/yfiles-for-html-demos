@@ -123,7 +123,7 @@ export class EditTreeNodesSourceDialog {
     // CodeMirror requires the textArea to be in the DOM and visible already when instantiating
     this.dialogContainerModal.style.removeProperty('display')
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       setTimeout(() => {
         this.initialize()
 

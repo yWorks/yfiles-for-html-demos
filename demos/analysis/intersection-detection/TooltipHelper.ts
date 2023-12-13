@@ -38,7 +38,7 @@ export function createToolTipContent(
   intersectionInfoArray: Intersection[]
 ): HTMLElement | null {
   const filteredIntersections = intersectionInfoArray.filter(
-    intersection => item === intersection.item1 || item === intersection.item2
+    (intersection) => item === intersection.item1 || item === intersection.item2
   )
   if (filteredIntersections.length === 0) {
     return null

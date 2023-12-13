@@ -160,7 +160,7 @@ async function validateTextAsync(newText) {
  * @returns {!Promise}
  */
 async function fakeDatabaseAccess(time) {
-  return new Promise(resolve => setTimeout(resolve, time))
+  return new Promise((resolve) => setTimeout(resolve, time))
 }
 
 /**
@@ -177,12 +177,12 @@ function registerCustomEditLabelHelper() {
   // label helper
   graphComponent.graph.decorator.nodeDecorator.editLabelHelperDecorator.setFactory(
     () => customHelperEnabled,
-    node => new CustomEditLabelHelper(node, null, ExteriorLabelModel.NORTH, firstLabelStyle)
+    (node) => new CustomEditLabelHelper(node, null, ExteriorLabelModel.NORTH, firstLabelStyle)
   )
   // The decorator on labels is called when a label is edited
   graphComponent.graph.decorator.labelDecorator.editLabelHelperDecorator.setFactory(
     () => customHelperEnabled,
-    label => new CustomEditLabelHelper(null, label, ExteriorLabelModel.NORTH, firstLabelStyle)
+    (label) => new CustomEditLabelHelper(null, label, ExteriorLabelModel.NORTH, firstLabelStyle)
   )
 }
 
@@ -212,27 +212,27 @@ function handleInstantTyping(sender, args) {
  */
 function initializeUI() {
   const labelCreation = document.querySelector('#labelCreation')
-  labelCreation.addEventListener('change', evt => {
+  labelCreation.addEventListener('change', (evt) => {
     graphEditorInputMode.allowAddLabel = labelCreation.checked
   })
   const labelEditing = document.querySelector('#labelEditing')
-  labelEditing.addEventListener('change', evt => {
+  labelEditing.addEventListener('change', (evt) => {
     graphEditorInputMode.allowEditLabel = labelEditing.checked
   })
   const hideLabel = document.querySelector('#hideLabel')
-  hideLabel.addEventListener('change', evt => {
+  hideLabel.addEventListener('change', (evt) => {
     graphEditorInputMode.hideLabelDuringEditing = hideLabel.checked
   })
   const instantTyping = document.querySelector('#instantTyping')
-  instantTyping.addEventListener('change', evt => (instantTypingEnabled = instantTyping.checked))
+  instantTyping.addEventListener('change', (evt) => (instantTypingEnabled = instantTyping.checked))
   const customLabelHelper = document.querySelector('#customLabelHelper')
   customLabelHelper.addEventListener(
     'change',
-    evt => (customHelperEnabled = customLabelHelper.checked)
+    (evt) => (customHelperEnabled = customLabelHelper.checked)
   )
 
   const nodesEnabled = document.querySelector('#nodesEnabled')
-  nodesEnabled.addEventListener('change', evt => {
+  nodesEnabled.addEventListener('change', (evt) => {
     if (nodesEnabled.checked) {
       graphEditorInputMode.labelEditableItems =
         graphEditorInputMode.labelEditableItems | GraphItemTypes.NODE | GraphItemTypes.NODE_LABEL
@@ -242,7 +242,7 @@ function initializeUI() {
     }
   })
   const edgesEnabled = document.querySelector('#edgesEnabled')
-  edgesEnabled.addEventListener('change', evt => {
+  edgesEnabled.addEventListener('change', (evt) => {
     if (edgesEnabled.checked) {
       graphEditorInputMode.labelEditableItems =
         graphEditorInputMode.labelEditableItems | GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL
@@ -254,12 +254,12 @@ function initializeUI() {
 
   const validationEnabledElement = document.querySelector('#validationEnabled')
   const validationPatternElement = document.querySelector('#validationPattern')
-  validationEnabledElement.addEventListener('change', evt => {
+  validationEnabledElement.addEventListener('change', (evt) => {
     const checked = validationEnabledElement.checked
     validationEnabled = checked
     validationPatternElement.disabled = !checked
   })
-  validationPatternElement.addEventListener('input', e => {
+  validationPatternElement.addEventListener('input', (e) => {
     try {
       validationPattern = new RegExp(validationPatternElement.value)
     } catch (ex) {

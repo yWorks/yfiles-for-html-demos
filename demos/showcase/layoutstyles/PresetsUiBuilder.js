@@ -122,7 +122,7 @@ export class PresetsUiBuilder {
   createPresetButton(preset, presetId, handler, invalidPresets) {
     const btn = document.createElement('button')
     btn.innerText = preset.label
-    btn.addEventListener('click', e => {
+    btn.addEventListener('click', (e) => {
       if (btn.classList.contains(CSS_CLASS_INVALID_PRESET)) {
         //ignore click because preset is invalid for current sample
         return
@@ -141,7 +141,7 @@ export class PresetsUiBuilder {
     }
 
     if (preset.description) {
-      btn.onmouseenter = e => {
+      btn.onmouseenter = (e) => {
         const invalid = btn.classList.contains(CSS_CLASS_INVALID_PRESET)
         // open tooltip with delay
         this.tooltipTimer = setTimeout(() => {
@@ -205,7 +205,7 @@ function newButtonHandler(optionEditor, preset) {
     }
   }
 
-  return htmlElement => {
+  return (htmlElement) => {
     updateCss(htmlElement, CSS_CLASS_PRESET_APPLIED)
     applyValues(optionEditor, setters)
   }

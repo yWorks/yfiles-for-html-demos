@@ -44,9 +44,9 @@ import {
  */
 export function createFeatureLayoutConfiguration(graph) {
   const layoutData = new HierarchicLayoutData()
-  layoutData.incrementalHints.incrementalLayeringNodes = node =>
+  layoutData.incrementalHints.incrementalLayeringNodes = (node) =>
     node.tag && node.tag.includeInLayout
-  layoutData.incrementalHints.incrementalSequencingItems = edge =>
+  layoutData.incrementalHints.incrementalSequencingItems = (edge) =>
     edge.tag && edge.tag.includeInLayout
 
   const layout = new HierarchicLayout({ layoutMode: LayoutMode.INCREMENTAL })

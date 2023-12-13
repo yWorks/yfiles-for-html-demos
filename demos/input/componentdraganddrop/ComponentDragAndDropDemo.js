@@ -177,13 +177,13 @@ function initializeInputModes() {
 
     if (changedNode) {
       const component = graphComponent.graph.nodes.filter(
-        node => node.tag.component === changedNode.tag.component
+        (node) => node.tag.component === changedNode.tag.component
       )
-      component.forEach(node => {
+      component.forEach((node) => {
         graphComponent.selection.setSelected(node, evt.itemSelected)
-        graphComponent.graph.edgesAt(node).forEach(edge => {
+        graphComponent.graph.edgesAt(node).forEach((edge) => {
           if (component.includes(edge.sourceNode) && component.includes(edge.targetNode)) {
-            edge.bends.forEach(bend => {
+            edge.bends.forEach((bend) => {
               graphComponent.selection.setSelected(bend, evt.itemSelected)
             })
             graphComponent.selection.setSelected(edge, evt.itemSelected)
@@ -201,7 +201,7 @@ function initializeInputModes() {
  */
 function updateGraph() {
   const component = graphComponent.graph.nodes
-    .filter(node => node.tag.component === componentCount)
+    .filter((node) => node.tag.component === componentCount)
     .toList()
 
   const layoutHelper = new ClearAreaLayoutHelper(graphComponent, component, keepComponents)
@@ -210,7 +210,7 @@ function updateGraph() {
 
   // update the selection of the new component
   graphComponent.selection.clear()
-  graphComponent.graph.nodes.forEach(node =>
+  graphComponent.graph.nodes.forEach((node) =>
     graphComponent.selection.setSelected(node, node.tag.component === componentCount)
   )
 }
@@ -245,7 +245,7 @@ async function initializePalette() {
   }
 
   // add a visual for each node style to the palette
-  sampleComponents.forEach(component => {
+  sampleComponents.forEach((component) => {
     addComponentVisual(component, panel)
   })
 }
@@ -286,7 +286,7 @@ function addComponentVisual(component, panel) {
 
   img.addEventListener(
     'mousedown',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },
@@ -294,7 +294,7 @@ function addComponentVisual(component, panel) {
   )
   img.addEventListener(
     'touchstart',
-    event => {
+    (event) => {
       startDrag()
       event.preventDefault()
     },
@@ -324,7 +324,7 @@ function getComponentGraph(component) {
   builder.createNodesSource({
     data: component.nodeData,
     id: 'id',
-    layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
+    layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   builder.createEdgesSource(component.edgeData, 'source', 'target', 'id')
 
@@ -360,7 +360,7 @@ function onDragStarted(sender) {
     component = graph.nodes
   } else if (sender instanceof MoveInputMode) {
     const moveInputMode = sender
-    component = moveInputMode.affectedItems.filter(item => item instanceof INode)
+    component = moveInputMode.affectedItems.filter((item) => item instanceof INode)
   }
   layoutHelper = new ClearAreaLayoutHelper(graphComponent, component, keepComponents)
   layoutHelper.initializeLayout()
@@ -404,7 +404,7 @@ function onDragFinished(sender, itemEventArgs) {
     layoutHelper.location = graphDropInputMode.dropLocation
     layoutHelper.component = eventArgs.item.nodes
     // specify the dropped nodes as a single component
-    eventArgs.item.nodes.forEach(node => {
+    eventArgs.item.nodes.forEach((node) => {
       node.tag = { component: componentCount }
     })
     componentCount++
@@ -413,7 +413,7 @@ function onDragFinished(sender, itemEventArgs) {
     const moveInputMode = sender
     layoutHelper.location =
       moveInputMode.inputModeContext.canvasComponent.lastEventLocation.toPoint()
-    layoutHelper.component = moveInputMode.affectedItems.filter(item => item instanceof INode)
+    layoutHelper.component = moveInputMode.affectedItems.filter((item) => item instanceof INode)
   }
 }
 
@@ -432,14 +432,14 @@ async function loadSampleGraph() {
     builder.createNodesSource({
       data: sample.nodeData,
       id: 'id',
-      layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
+      layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
     })
     builder.createEdgesSource(sample.edgeData, 'source', 'target', 'id')
     builder.buildGraph()
 
     graphComponent.fitGraphBounds()
 
-    graphComponent.graph.nodes.forEach(node => {
+    graphComponent.graph.nodes.forEach((node) => {
       node.tag.component = componentCount
     })
     componentCount++

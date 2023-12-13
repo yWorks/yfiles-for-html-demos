@@ -46,7 +46,7 @@ export function createSimulatedEventLog(): EventLog {
     let time = Math.random() * 10
     const traversalDuration = Math.random() * 0.2 + 0.5
 
-    let startNode = getRandom(graph.nodes.filter(node => graph.inDegree(node) === 0).toList())
+    let startNode = getRandom(graph.nodes.filter((node) => graph.inDegree(node) === 0).toList())
     if (startNode) {
       let startNodeTag = getProcessStepTag(startNode)
       const duration = Math.random() * Math.random() * 0.5
@@ -87,12 +87,12 @@ export function createSimulatedEventLog(): EventLog {
  * Returns an out-edge at the given node which is chosen randomly.
  */
 function getRandomOutEdge(graph: IGraph, node: INode): IEdge | null {
-  const probabilitySum = graph.outEdgesAt(node).sum(edge => {
+  const probabilitySum = graph.outEdgesAt(node).sum((edge) => {
     const edgeTag = getProcessTransitionTag(edge)
     return edgeTag.probability ?? 1
   })
   let value = Math.random() * probabilitySum
-  return graph.outEdgesAt(node).find(edge => {
+  return graph.outEdgesAt(node).find((edge) => {
     const edgeTag = getProcessTransitionTag(edge)
     value -= edgeTag.probability ?? 1
     return value <= 0

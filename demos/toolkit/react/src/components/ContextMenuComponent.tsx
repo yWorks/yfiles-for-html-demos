@@ -84,7 +84,7 @@ export function ContextMenuComponent({ graphComponent }: ContextMenuProps) {
 
   const populateContextMenu = useCallback(
     (args: PopulateItemContextMenuEventArgs<IModelItem>) => {
-      let contextMenuItems: ContextMenuItem[] = []
+      const contextMenuItems: ContextMenuItem[] = []
       const item = args.item
       if (item instanceof INode || item instanceof IEdge) {
         contextMenuItems.push({

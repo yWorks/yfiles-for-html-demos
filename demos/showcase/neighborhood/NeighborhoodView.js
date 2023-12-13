@@ -96,7 +96,7 @@ export class NeighborhoodView {
   /**
    * Invoked after the neighborhood graph has been updated.
    */
-  onNeighborhoodUpdated = view => {
+  onNeighborhoodUpdated = (view) => {
     // Ensure the neighborhood graph fits inside the neighborhood graph component.
     view.neighborhoodComponent.fitGraphBounds(new Insets(5))
   }
@@ -523,7 +523,7 @@ export class NeighborhoodView {
     if (this.showHighlight && copiedStartNodes.length > 0) {
       const manager = this.neighborhoodComponent.highlightIndicatorManager
       manager.clearHighlights()
-      copiedStartNodes.forEach(startNode => {
+      copiedStartNodes.forEach((startNode) => {
         manager.addHighlight(startNode)
       })
     }

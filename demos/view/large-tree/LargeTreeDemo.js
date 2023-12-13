@@ -98,7 +98,7 @@ async function run() {
  * Initializes the WebGL2 node and edge styles
  */
 function initializeStyleDefaults() {
-  ;['#242265', '#01baff', '#f26419', '#fdca40'].forEach(color => {
+  ;['#242265', '#01baff', '#f26419', '#fdca40'].forEach((color) => {
     nodeStyles.push(new WebGL2ShapeNodeStyle('round-rectangle', color, '#0000'))
   })
 
@@ -140,7 +140,7 @@ function updateLayersUI(graphComponent) {
 
   // disable/enable add layer button
   const leaves = graphComponent.graph.nodes.filter(
-    node => graphComponent.graph.outDegree(node) == 0
+    (node) => graphComponent.graph.outDegree(node) == 0
   ).size
   const childCount = Number(document.querySelector('#childCountInput').value)
   document.querySelector('#add-layer').disabled =
@@ -228,8 +228,8 @@ async function addLayer(graphComponent) {
 
   const queue = []
   graph.nodes
-    .filter(node => node.tag.layer == graphInfo.maxLayer)
-    .forEach(node => {
+    .filter((node) => node.tag.layer == graphInfo.maxLayer)
+    .forEach((node) => {
       queue.push(node)
     })
 
@@ -313,7 +313,7 @@ async function runExtendLayout(graphComponent, fadeInAnimation) {
   const graph = graphComponent.graph
 
   const fixedNodeData = new FixNodeLayoutData({
-    fixedNodes: graph.nodes.find(n => graph.inDegree(n) == 0)
+    fixedNodes: graph.nodes.find((n) => graph.inDegree(n) == 0)
   })
   const layout = new FixNodeLayoutStage(coreLayout)
 
@@ -333,7 +333,7 @@ async function removeLayer(graphComponent) {
 
   setUIDisabled(true)
   const removeNodes = []
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     if (node.tag == null || node.tag.layer > currentLayers) {
       removeNodes.push(node)
     }
@@ -365,7 +365,7 @@ async function reduceTree(graphComponent, removeNodes) {
 
   const barycenterData = new PlaceNodesAtBarycenterStageData({ affectedNodes: removeNodes })
   const subgraphData = new SubgraphLayoutData({
-    subgraphNodes: node => !removeNodes.includes(node)
+    subgraphNodes: (node) => !removeNodes.includes(node)
   })
 
   const barycenterStage = new PlaceNodesAtBarycenterStage()
@@ -392,7 +392,7 @@ async function reduceTree(graphComponent, removeNodes) {
     timing: '500ms ease'
   })
 
-  removeNodes.forEach(node => {
+  removeNodes.forEach((node) => {
     gmm.setAnimations(node, [nodeFadeOutAnimation])
     gmm.setAnimations(graph.edgesAt(node).get(0), [edgeFadeOutAnimation])
   })
@@ -405,7 +405,7 @@ async function reduceTree(graphComponent, removeNodes) {
     edgeFadeOutAnimation
   )
 
-  removeNodes.forEach(node => {
+  removeNodes.forEach((node) => {
     graph.remove(node)
   })
 }
@@ -427,10 +427,10 @@ function shouldReduceEdgeLength(graph) {
 function cleanupAnimations(graphComponent) {
   const graph = graphComponent.graph
   const gmm = graphComponent.graphModelManager
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     gmm.setAnimations(node, [])
   })
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     gmm.setAnimations(edge, [])
   })
 }

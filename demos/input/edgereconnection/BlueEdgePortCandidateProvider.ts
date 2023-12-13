@@ -54,8 +54,8 @@ export default class BlueEdgePortCandidateProvider
     const result = new List<IPortCandidate>()
     const graph = context.graph
     if (graph !== null) {
-      graph.nodes.forEach(node => {
-        node.ports.forEach(port => {
+      graph.nodes.forEach((node) => {
+        node.ports.forEach((port) => {
           // don't reuse the existing ports, but create new ones at the same location
           result.add(
             new DefaultPortCandidate(
@@ -78,8 +78,8 @@ export default class BlueEdgePortCandidateProvider
     const result = new List<IPortCandidate>()
     const graph = context.graph
     if (graph !== null) {
-      graph.nodes.forEach(node => {
-        node.ports.forEach(port => {
+      graph.nodes.forEach((node) => {
+        node.ports.forEach((port) => {
           // reuse the existing port - the edge will be connected to the very same port after reconnection
           result.add(new DefaultPortCandidate(port))
         })

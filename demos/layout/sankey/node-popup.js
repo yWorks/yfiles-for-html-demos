@@ -86,7 +86,7 @@ function createNodePopup(graphComponent) {
   createColorPicker(graphComponent)
   document
     .getElementById('color-picker')
-    .addEventListener('click', evt => showPickerContainer(graphComponent, evt.target))
+    .addEventListener('click', (evt) => showPickerContainer(graphComponent, evt.target))
 }
 
 /**
@@ -97,7 +97,7 @@ function createNodePopup(graphComponent) {
 function createColorPicker(graphComponent) {
   const colorContainer = document.querySelector('#color-picker-colors')
 
-  const darkColors = colors.map(c => c.dark)
+  const darkColors = colors.map((c) => c.dark)
   for (const color of darkColors) {
     const colorButton = document.createElement('button')
     colorButton.setAttribute('data-color', color)
@@ -112,8 +112,8 @@ function createColorPicker(graphComponent) {
           const oldLabelText = currentItem.labels.at(0).text
           const graph = graphComponent.graph
           graph.nodes
-            .filter(node => node.labels.at(0).text === oldLabelText)
-            .forEach(node => {
+            .filter((node) => node.labels.at(0).text === oldLabelText)
+            .forEach((node) => {
               // store the new color to the node's data
               const colorId = darkColors.indexOf(color)
               const oldData = { ...getPoliticalParty(node) }

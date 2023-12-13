@@ -40,7 +40,7 @@ import {
  */
 export function runReachabilityAlgorithm(graphComponent: GraphComponent): void {
   const nodes = graphComponent.graph.nodes.filter(
-    node => !graphComponent.graph.isGroupNode(node)
+    (node) => !graphComponent.graph.isGroupNode(node)
   )
   if (nodes.size === 0) {
     return
@@ -78,7 +78,7 @@ export function runShortestPathAlgorithm(graphComponent: GraphComponent): void {
 
   const graph = graphComponent.graph
 
-  const nodes = graph.nodes.filter(node => !graph.isGroupNode(node))
+  const nodes = graph.nodes.filter((node) => !graph.isGroupNode(node))
   if (nodes.size < 2) {
     return
   }
@@ -114,7 +114,7 @@ export function runShortestPathAlgorithm(graphComponent: GraphComponent): void {
   const endNode = shortestPathResult.path?.end
   const pathEdges = shortestPathResult.edges
 
-  if (!isFinite(pathDistance)) {
+  if (!Number.isFinite(pathDistance)) {
     return
   }
   pathNodes.forEach((node: INode): void => {
@@ -123,7 +123,7 @@ export function runShortestPathAlgorithm(graphComponent: GraphComponent): void {
   graph.edges
     .filter((edge: IEdge): boolean => pathEdges.contains(edge))
     // and we select all matching edges
-    .forEach(edge =>
+    .forEach((edge) =>
       graphComponent.highlightIndicatorManager.addHighlight(edge)
     )
 

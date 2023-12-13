@@ -202,10 +202,6 @@ export class Sample2Arrow
 export class Sample2ArrowExtension extends MarkupExtension {
   private _cssClass = ''
 
-  constructor() {
-    super()
-  }
-
   get cssClass(): string {
     return this._cssClass
   }

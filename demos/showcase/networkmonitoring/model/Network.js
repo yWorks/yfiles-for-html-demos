@@ -44,7 +44,7 @@ export class Network {
    */
   static loadFromJSON(data) {
     const idMap = new Map()
-    const devices = data.nodeList.map(tag => {
+    const devices = data.nodeList.map((tag) => {
       const device = new Device()
       device.name = tag.name
       device.ip = tag.ip
@@ -58,7 +58,7 @@ export class Network {
     })
 
     const connections = data.edgeList.map(
-      edge => new Connection(idMap.get(edge.source), idMap.get(edge.target))
+      (edge) => new Connection(idMap.get(edge.source), idMap.get(edge.target))
     )
 
     return new Network(devices, connections)
@@ -80,7 +80,7 @@ export class Network {
    * @returns {!Array.<Connection>} The connections that are connected to the device.
    */
   getAdjacentConnections(device) {
-    return this.connections.filter(connection => Network.isAdjacentConnection(connection, device))
+    return this.connections.filter((connection) => Network.isAdjacentConnection(connection, device))
   }
 
   /**

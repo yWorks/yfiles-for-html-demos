@@ -60,22 +60,22 @@ export function initializeOptionPanel(exportCallback: (options: PrintingOptions)
       tileHeight: parseInt(tileHeight.value, 10)
     }
 
-    if (isNaN(options.scale) || options.scale <= 0) {
+    if (Number.isNaN(options.scale) || options.scale <= 0) {
       alert('Scale must be a positive number.')
       return
     }
 
-    if (isNaN(options.margin) || options.margin < 0) {
+    if (Number.isNaN(options.margin) || options.margin < 0) {
       alert('Scale must be a non-negative number.')
       return
     }
 
     if (useTilePrinting.checked) {
-      if (isNaN(options.tileWidth) || options.tileWidth <= 0) {
+      if (Number.isNaN(options.tileWidth) || options.tileWidth <= 0) {
         alert('Tile width must be a positive number.')
         return
       }
-      if (isNaN(options.tileHeight) || options.tileHeight <= 0) {
+      if (Number.isNaN(options.tileHeight) || options.tileHeight <= 0) {
         alert('Tile height must be a positive number.')
         return
       }

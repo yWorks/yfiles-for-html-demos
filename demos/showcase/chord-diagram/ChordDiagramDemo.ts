@@ -105,14 +105,14 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
 
   gvim.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
     // reset opacities of all edges
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge) => {
       edge.tag.opacity = ChordEdgeStyle.defaultOpacity
     })
 
     // if hovered on a node, highlight all edges of this node
     if (evt.item instanceof INode) {
       const node = evt.item
-      graph.edgesAt(node).forEach(edge => {
+      graph.edgesAt(node).forEach((edge) => {
         edge.tag.opacity = 1.0
         manager.toFront(edge)
       })
@@ -142,9 +142,9 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
 
         // deselect all other edges
         graphComponent.selection.selectedEdges
-          .filter(e => e != edge)
+          .filter((e) => e != edge)
           .toList()
-          .forEach(e => graphComponent.selection.setSelected(e, false))
+          .forEach((e) => graphComponent.selection.setSelected(e, false))
       } else {
         edge.tag.highlighted = false
         slider.disabled = graphComponent.selection.selectedEdges.size == 0
@@ -185,7 +185,7 @@ function createSampleGraph(graph: IGraph): void {
   builder.createNodesSource({
     data: SampleData.nodes,
     id: 'id',
-    layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
+    layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   builder.createEdgesSource({
     data: SampleData.edges,
@@ -200,7 +200,7 @@ function createSampleGraph(graph: IGraph): void {
     ChordDiagramLayout.EDGE_WEIGHT_KEY
   ).mapper
 
-  graph.edges.forEach(edge => {
+  graph.edges.forEach((edge) => {
     // create initial weights for the edges, these are relative and will be normalized by the layout
     weightMapping.set(edge, parseFloat(edge.tag.thickness))
   })
@@ -261,19 +261,19 @@ function updateGapRatio(graphComponent: GraphComponent, gapRatio: number) {
 function initializeUI(graphComponent: GraphComponent): void {
   document
     .querySelector<HTMLInputElement>('#toggle-actual-graph')!
-    .addEventListener('change', evt =>
+    .addEventListener('change', (evt) =>
       showGraph(graphComponent, (evt.target as HTMLInputElement).checked)
     )
   // when the slider is moved, increase/decrease the weight of the edge and update the chord layout
   document
     .querySelector<HTMLInputElement>('#thickness')!
-    .addEventListener('input', evt =>
+    .addEventListener('input', (evt) =>
       updateDiagram(graphComponent, parseFloat((evt.target as HTMLInputElement).value))
     )
   // when the gap slider is moved increase/decrease the gaps between the nodes
   document
     .querySelector<HTMLInputElement>('#gap-ratio')!
-    .addEventListener('input', evt =>
+    .addEventListener('input', (evt) =>
       updateGapRatio(graphComponent, parseFloat((evt.target as HTMLInputElement).value))
     )
 }

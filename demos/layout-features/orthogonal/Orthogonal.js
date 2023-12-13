@@ -79,16 +79,16 @@ export function createLayoutConfiguration(graph) {
 
   // define some edges to be directed: they must flow in the direction of the main layout
   // orientation - in this example we select a top-to-bottom orientation
-  layoutData.directedEdges.delegate = edge => isDirectedEdge(edge)
+  layoutData.directedEdges.delegate = (edge) => isDirectedEdge(edge)
   layout.layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM
 
   // increasing the bend cost for an edge causes the layout algorithm to prefer not creating bends
   // there (in favor of bending other edges instead) - in the example we want that the directed
   // edges are not bended if possible
-  layoutData.edgeBendCosts.delegate = edge => (isDirectedEdge(edge) ? 4 : 1)
+  layoutData.edgeBendCosts.delegate = (edge) => (isDirectedEdge(edge) ? 4 : 1)
 
   // node halos are reserving additional space around nodes.
-  layoutData.nodeHalos.delegate = node =>
+  layoutData.nodeHalos.delegate = (node) =>
     node.labels.get(0).text === 'Halo' ? NodeHalo.create(50) : NodeHalo.create(0)
 
   return { layoutAlgorithm: layout, layoutData: layoutData }

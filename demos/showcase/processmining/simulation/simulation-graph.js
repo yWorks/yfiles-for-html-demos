@@ -80,7 +80,7 @@ export function getSimulationGraph() {
   builder.createNodesSource({
     data: graphData.nodes,
     id: 'id'
-  }).nodeCreator.tagProvider = dataItem => ({
+  }).nodeCreator.tagProvider = (dataItem) => ({
     duration: Math.random() * 0.5,
     ...dataItem
   })

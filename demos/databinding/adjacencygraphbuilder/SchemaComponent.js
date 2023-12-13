@@ -322,7 +322,7 @@ export class SchemaComponent {
 
     const contextMenu = new ContextMenu(graphComponent)
 
-    contextMenu.addOpeningEventListeners(graphComponent, location => {
+    contextMenu.addOpeningEventListeners(graphComponent, (location) => {
       const worldLocation = graphComponent.toWorldFromPage(location)
       const showMenu = inputMode.contextMenuInputMode.shouldOpenMenu(worldLocation)
       if (showMenu) {
@@ -384,20 +384,23 @@ export class SchemaComponent {
     this.adjacencyGraphBuilder = new AdjacencyGraphBuilder(this.resultGraph)
 
     const schemaGraphBuilder = new GraphBuilder(this.schemaGraphComponent.graph)
-    const schemaNodesSource = schemaGraphBuilder.createNodesSource(sample.nodesSources, n => n.name)
+    const schemaNodesSource = schemaGraphBuilder.createNodesSource(
+      sample.nodesSources,
+      (n) => n.name
+    )
 
-    schemaNodesSource.nodeCreator.createLabelBinding(n => n.name)
+    schemaNodesSource.nodeCreator.createLabelBinding((n) => n.name)
 
-    schemaNodesSource.nodeCreator.tagProvider = sourceDefinition =>
+    schemaNodesSource.nodeCreator.tagProvider = (sourceDefinition) =>
       this.createAdjacencyNodesSourceConnector(sourceDefinition)
 
-    schemaNodesSource.nodeCreator.styleProvider = data =>
+    schemaNodesSource.nodeCreator.styleProvider = (data) =>
       SchemaComponent.createSchemaNodeStyle(data)
 
     const schemaEdgesSource = schemaGraphBuilder.createEdgesSource(
       sample.edgesSource,
-      e => e.thisSource,
-      e => e.neighborSource
+      (e) => e.thisSource,
+      (e) => e.neighborSource
     )
     schemaEdgesSource.edgeCreator.addEdgeCreatedListener((_, evt) => {
       this.createNeighborRelationship(
@@ -422,14 +425,14 @@ export class SchemaComponent {
 
     // gather remaining source definitions
     const adjacencyNodesSourcesDefinitions = []
-    schemaGraph.nodes.forEach(node => {
+    schemaGraph.nodes.forEach((node) => {
       const sourceConnector = node.tag
       adjacencyNodesSourcesDefinitions.push(sourceConnector.sourceDefinition)
     })
 
     // gather remaining edge definitions
     const edgesSourceDefinitions = []
-    schemaGraph.edges.forEach(edge => {
+    schemaGraph.edges.forEach((edge) => {
       const sourceConnector = edge.sourceNode.tag
       const targetConnector = edge.targetNode.tag
 
@@ -470,7 +473,7 @@ export class SchemaComponent {
       neighborType
     }
 
-    const neighborProvider = dataItem => edge.tag.binding(dataItem)
+    const neighborProvider = (dataItem) => edge.tag.binding(dataItem)
     const neighborSource = targetConnector.nodesSource
 
     if (neighborType === 'successor') {
@@ -591,7 +594,7 @@ export class SchemaComponent {
       this.schemaGraphComponent.graph.nodeDefaults.size
 
     // each edge creation should use another random target node color
-    createEdgeInputMode.addGestureStartingListener(src => {
+    createEdgeInputMode.addGestureStartingListener((src) => {
       const nodeStyle = new ShapeNodeStyle({
         shape: 'ellipse',
         fill: '#6495ED',

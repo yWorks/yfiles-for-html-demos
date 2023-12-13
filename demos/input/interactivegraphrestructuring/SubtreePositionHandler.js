@@ -79,7 +79,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
   initializeDrag(context) {
     this.subtree = new Subtree(context.graph, this.node)
 
-    this.subtree.nodes.forEach(node => {
+    this.subtree.nodes.forEach((node) => {
       // store normal style of the node and set the moving node style while dragging
       this.node2NormalStyle.set(node, node.style)
       context.graph.setStyle(node, this.movingNodeStyle)
@@ -132,7 +132,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
    */
   resetStyles(graph) {
     const nodeToStyle = this.node2NormalStyle
-    this.subtree.nodes.forEach(node => {
+    this.subtree.nodes.forEach((node) => {
       if (nodeToStyle.has(node)) {
         // reset style to the normal node style of this node
         const style = nodeToStyle.get(node)
@@ -149,7 +149,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
    */
   static createCompositeHandler(subtree) {
     const positionHandlers = new List()
-    subtree.nodes.forEach(node => {
+    subtree.nodes.forEach((node) => {
       const positionHandler = node.lookup(IPositionHandler.$class)
       if (positionHandler) {
         const subtreeHandler = positionHandler
@@ -157,7 +157,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
       }
     })
 
-    subtree.edges.forEach(edge => {
+    subtree.edges.forEach((edge) => {
       const positionHandler = edge.lookup(IPositionHandler.$class)
       if (positionHandler) {
         positionHandlers.add(positionHandler)

@@ -137,8 +137,8 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
       'pointerup',
       'pointerdown',
       'pointermove'
-    ].forEach(event => {
-      container.addEventListener(event, container => container.stopPropagation(), {
+    ].forEach((event) => {
+      container.addEventListener(event, (container) => container.stopPropagation(), {
         passive: false
       })
     })
@@ -162,7 +162,7 @@ SmallBlock.tagName = 'small'
 export class LargeBlock extends Inline {
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   static create() {
-    const node = super.create()
+    const node = Inline.create()
     node.setAttribute('style', 'font-size: 1.5em')
     return node
   }

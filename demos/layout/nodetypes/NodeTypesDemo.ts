@@ -379,7 +379,7 @@ async function arrangeGraph(animate: boolean, previewWithoutNodeTypes: boolean):
     await applyCurrentLayout(animate, false)
     graphComponent.fitGraphBounds()
     // Add some delay
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 2000))
     updateLayoutPopup(true, 'Node types <u>are considered</u>')
   }
 

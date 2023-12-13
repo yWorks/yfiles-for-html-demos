@@ -54,11 +54,11 @@ export function loadFlowchart(graphComponent, sample) {
         data: data.nodes,
         id: 'id',
         labels: ['label'],
-        layout: dataItem =>
+        layout: (dataItem) =>
           dataItem.type === 'decision'
             ? Rect.fromCenter(Point.ORIGIN, new Size(145, 100))
             : Rect.fromCenter(Point.ORIGIN, new Size(145, 60)),
-        style: dataItem => new FlowchartNodeStyle(dataItem.type)
+        style: (dataItem) => new FlowchartNodeStyle(dataItem.type)
       }
     ],
     edges: [

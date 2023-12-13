@@ -239,11 +239,11 @@ const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
     if (this.scopeItem === EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES) {
       layoutData.affectedNodes.delegate = this.$affectedItems
         ? this.$affectedItems
-        : node => selection.isSelected(node)
+        : (node) => selection.isSelected(node)
     } else if (this.scopeItem === EdgeRouterScope.ROUTE_AFFECTED_EDGES) {
       layoutData.affectedEdges.delegate = this.$affectedItems
         ? this.$affectedItems
-        : edge => selection.isSelected(edge)
+        : (edge) => selection.isSelected(edge)
     } else {
       layoutData.affectedEdges.delegate = () => true
       layoutData.affectedNodes.delegate = () => true

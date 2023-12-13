@@ -372,9 +372,12 @@ export class SchemaComponent {
     this.adjacencyGraphBuilder = new AdjacencyGraphBuilder(this.resultGraph)
 
     const schemaGraphBuilder = new GraphBuilder(this.schemaGraphComponent.graph)
-    const schemaNodesSource = schemaGraphBuilder.createNodesSource(sample.nodesSources, n => n.name)
+    const schemaNodesSource = schemaGraphBuilder.createNodesSource(
+      sample.nodesSources,
+      (n) => n.name
+    )
 
-    schemaNodesSource.nodeCreator.createLabelBinding(n => n.name)
+    schemaNodesSource.nodeCreator.createLabelBinding((n) => n.name)
 
     schemaNodesSource.nodeCreator.tagProvider = (
       sourceDefinition
@@ -386,8 +389,8 @@ export class SchemaComponent {
 
     const schemaEdgesSource = schemaGraphBuilder.createEdgesSource(
       sample.edgesSource,
-      e => e.thisSource,
-      e => e.neighborSource
+      (e) => e.thisSource,
+      (e) => e.neighborSource
     )
     schemaEdgesSource.edgeCreator.addEdgeCreatedListener((_, evt) => {
       this.createNeighborRelationship(
@@ -584,7 +587,7 @@ export class SchemaComponent {
       this.schemaGraphComponent.graph.nodeDefaults.size
 
     // each edge creation should use another random target node color
-    createEdgeInputMode.addGestureStartingListener(src => {
+    createEdgeInputMode.addGestureStartingListener((src) => {
       const nodeStyle = new ShapeNodeStyle({
         shape: 'ellipse',
         fill: '#6495ED',

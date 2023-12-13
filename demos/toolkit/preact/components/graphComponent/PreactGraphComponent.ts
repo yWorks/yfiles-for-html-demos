@@ -122,7 +122,7 @@ export default (props: Props) => {
     const nodesSource = graphBuilder.createNodesSource({
       data: props.itemData,
       id: 'id',
-      tag: item => item
+      tag: (item) => item
     })
     const edgesSource = graphBuilder.createEdgesSource({
       data: props.connectionData,

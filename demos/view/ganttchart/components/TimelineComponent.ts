@@ -48,7 +48,7 @@ export class TimelineComponent {
     this.update(graphComponent)
 
     // synchronize with x-axis with the graph component
-    graphComponent.addViewportChangedListener(src => this.update(src))
+    graphComponent.addViewportChangedListener((src) => this.update(src))
   }
 
   /**

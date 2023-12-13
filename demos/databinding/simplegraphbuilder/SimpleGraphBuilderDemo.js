@@ -164,7 +164,7 @@ function createGraphBuilder(graph) {
     parentId: 'parentGroup'
   })
   // Add some labels to the group nodes
-  groupsSource.nodeCreator.createLabelBinding(group => group.id)
+  groupsSource.nodeCreator.createLabelBinding((group) => group.id)
 
   graphBuilder.createEdgesSource({
     // stores the edges of the graph
@@ -206,12 +206,12 @@ function createGraphBuilderWithImplicitGrouping(graph) {
   // The children of each group are defined directly in the data
   const childSource = nodesSource.createChildNodesSource(
     // specifies how to retrieve the children for each group
-    group => group.members,
+    (group) => group.members,
     // specifies how the child nodes are identified globally
-    item => item.id
+    (item) => item.id
   )
   // And the groups are additionally grouped again by location
-  const parentSource = nodesSource.createParentNodesSource(group => group.location)
+  const parentSource = nodesSource.createParentNodesSource((group) => group.location)
 
   // We want to set up reasonable defaults for the styles.
   // Since the entities in the nodesSource and the parentsSource are both group nodes, they
@@ -219,8 +219,8 @@ function createGraphBuilderWithImplicitGrouping(graph) {
   nodesSource.nodeCreator.defaults.style = parentSource.nodeCreator.defaults.style =
     graph.groupNodeDefaults.style
   // We also show labels for the groups
-  nodesSource.nodeCreator.createLabelBinding(group => group.id)
-  parentSource.nodeCreator.createLabelBinding(location => location)
+  nodesSource.nodeCreator.createLabelBinding((group) => group.id)
+  parentSource.nodeCreator.createLabelBinding((location) => location)
   nodesSource.nodeCreator.defaults.labels = parentSource.nodeCreator.defaults.labels =
     graph.groupNodeDefaults.labels
   // The nodes in the childSource are just plain leaf nodes and are styles with a normal node style
@@ -260,7 +260,7 @@ function createTreeBuilder(graph, builderType) {
   // identifies the property of a node object that contains its child nodes
   const rootNodesSource = treeBuilder.createRootNodesSource(nodesSource)
   // configure the recursive tree structure
-  rootNodesSource.addChildNodesSource(data => data.children, rootNodesSource)
+  rootNodesSource.addChildNodesSource((data) => data.children, rootNodesSource)
 
   return treeBuilder
 }
@@ -285,7 +285,7 @@ function createAdjacencyGraphBuilder(graph, builderType) {
 
     // configure the successor nodes
     adjacencyNodesSource.addSuccessorsSource(
-      data => data.children,
+      (data) => data.children,
       adjacencyNodesSource,
       new EdgeCreator({ defaults: graph.edgeDefaults })
     )
@@ -300,7 +300,7 @@ function createAdjacencyGraphBuilder(graph, builderType) {
     )
     // Configure the successor nodes
     adjacencyNodesSource.addSuccessorIds(
-      data => data.children,
+      (data) => data.children,
       new EdgeCreator({ defaults: graph.edgeDefaults })
     )
   }
@@ -361,7 +361,7 @@ async function arrangeGraph(graphComponent) {
  * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
-  selectBox.addEventListener('change', async e => {
+  selectBox.addEventListener('change', async (e) => {
     // build graph from new data
     selectBox.disabled = true
     buildGraph(graphComponent.graph, e.target.value)

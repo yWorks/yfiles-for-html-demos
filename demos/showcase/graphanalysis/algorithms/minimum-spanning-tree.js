@@ -51,11 +51,11 @@ export function calculateMinimumSpanningTree(graph, config) {
   const result = new SpanningTree({ costs: config.edgeWeights }).run(graph)
 
   // mark those edges
-  result.edges.forEach(edge => {
+  result.edges.forEach((edge) => {
     markItem(edge)
   })
 
-  graph.nodes.forEach(node => {
+  graph.nodes.forEach((node) => {
     markItem(node)
   })
 }

@@ -174,7 +174,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new EdgeRouterData({
-      edgeLayoutDescriptors: edge => {
+      edgeLayoutDescriptors: (edge) => {
         const descriptor = new EdgeRouterEdgeLayoutDescriptor({
           minimumEdgeToEdgeDistance: this.minimumEdgeToEdgeDistanceItem,
           minimumNodeCornerDistance: this.minimumNodeCornerDistanceItem,
@@ -212,7 +212,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
         if (this.useIntermediatePointsItem) {
           const intermediateRoutingPoints = new List()
-          edge.bends.forEach(bend =>
+          edge.bends.forEach((bend) =>
             intermediateRoutingPoints.add(new YPoint(bend.location.x, bend.location.y))
           )
           descriptor.intermediateRoutingPoints = intermediateRoutingPoints
@@ -224,12 +224,12 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
     const selection = graphComponent.selection
     if (this.scopeItem === EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES) {
-      layoutData.affectedNodes.delegate = node => selection.isSelected(node)
+      layoutData.affectedNodes.delegate = (node) => selection.isSelected(node)
     } else if (this.scopeItem === EdgeRouterScope.ROUTE_AFFECTED_EDGES) {
-      layoutData.affectedEdges.delegate = edge => selection.isSelected(edge)
+      layoutData.affectedEdges.delegate = (edge) => selection.isSelected(edge)
     } else {
-      layoutData.affectedEdges.delegate = edge => true
-      layoutData.affectedNodes.delegate = edge => true
+      layoutData.affectedEdges.delegate = (edge) => true
+      layoutData.affectedNodes.delegate = (edge) => true
     }
 
     if (this.portSidesItem !== PortSides.ANY) {
@@ -257,11 +257,11 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
       }
       case BusMembership.LABEL: {
         const visitedLabels = new Set()
-        graphComponent.graph.edgeLabels.forEach(label => {
+        graphComponent.graph.edgeLabels.forEach((label) => {
           if (!visitedLabels.has(label.text)) {
             visitedLabels.add(label.text)
             const busDescriptor = this.createBusDescriptor()
-            layoutData.buses.add(busDescriptor).delegate = edge =>
+            layoutData.buses.add(busDescriptor).delegate = (edge) =>
               edge.labels.size > 0 && edge.labels.first().text === label.text
           }
         })
@@ -269,7 +269,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
       }
       case BusMembership.TAG: {
         const visitedTags = new Set()
-        graphComponent.graph.edges.forEach(edge => {
+        graphComponent.graph.edges.forEach((edge) => {
           const tag = edge.tag
           if (!tag) {
             const busDescriptor = this.createBusDescriptor()
@@ -278,7 +278,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
             visitedTags.add(tag)
 
             const busDescriptor = this.createBusDescriptor()
-            layoutData.buses.add(busDescriptor).delegate = edge => edge.tag === tag
+            layoutData.buses.add(busDescriptor).delegate = (edge) => edge.tag === tag
           }
         })
         break

@@ -161,7 +161,7 @@ export class GraphDropInputMode extends ItemDropInputMode<IGraph> {
     }
 
     // return the dropped graph
-    this.graphWrapper = new FilteredGraphWrapper(targetGraph, node => droppedNodes.has(node))
+    this.graphWrapper = new FilteredGraphWrapper(targetGraph, (node) => droppedNodes.has(node))
 
     return this.graphWrapper
   }
@@ -207,7 +207,7 @@ export class GraphDropInputMode extends ItemDropInputMode<IGraph> {
    */
   private getCenter(graph: IGraph): Point {
     return graph.nodes
-      .map(node => node.layout.toRect())
+      .map((node) => node.layout.toRect())
       .reduce((total, bounds) => Rect.add(total, bounds), Rect.EMPTY).center
   }
 
@@ -221,7 +221,7 @@ export class GraphDropInputMode extends ItemDropInputMode<IGraph> {
       graph.setBendLocation(bend, bend.location.toPoint().add(delta))
 
     graph.nodes.forEach(moveNode)
-    graph.edges.flatMap(edge => edge.bends).forEach(moveBend)
+    graph.edges.flatMap((edge) => edge.bends).forEach(moveBend)
   }
 
   protected getDropTarget(dragLocation: Point): IModelItem | null {
@@ -254,7 +254,7 @@ export class GraphDropInputMode extends ItemDropInputMode<IGraph> {
       const childInputModeContext = IInputModeContext.createInputModeContext(this)
       return hitTestEnumerator
         .enumerateHits(childInputModeContext, dragLocation)
-        .find(node => this.isValidDropTargetParentNode(graph, node))
+        .find((node) => this.isValidDropTargetParentNode(graph, node))
     }
     return null
   }
@@ -286,7 +286,7 @@ export class GraphDropInputMode extends ItemDropInputMode<IGraph> {
     if (!this.previewGraph || !this.draggedItem) {
       return
     }
-    this.previewGraph.nodes.forEach(node => {
+    this.previewGraph.nodes.forEach((node) => {
       const suggestedLayout = this.getNodeLayoutAt(node, evt.newLocation)
       const provider =
         node.lookup(INodeSnapResultProvider.$class) ?? NodeSnapResultProvider.INSTANCE
