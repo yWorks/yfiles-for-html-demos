@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,17 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import VuejsNodeStyle from 'demo-utils/VuejsNodeStyle'
+import Vue2NodeStyle from 'demo-utils/Vue2NodeStyle'
 
 /**
- * Creates a new {@link VuejsNodeStyle} with a template that shows more details on higher
+ * Creates a new {@link Vue2NodeStyle} with a template that shows more details on higher
  * zoom levels and fewer details on lower zoom levels.
  * @param {!GraphComponent} graphComponent
  * @param {!Size} nodeSize
  * @returns {!INodeStyle}
  */
 export function createOrgChartNodeStyle(graphComponent, nodeSize) {
-  const nodeStyle = new VuejsNodeStyle(nodeStyleTemplate)
+  const nodeStyle = new Vue2NodeStyle(nodeStyleTemplate)
 
   // create the drop shadow element only once
   const defsElement = graphComponent.svgDefsManager.defs
@@ -62,7 +62,7 @@ const nodeStyleTemplate = `<g>
   <image :xlink:href="'./resources/' + tag.status + '_icon.svg'" x='25' y='80' height='15' width='60'></image>
   <g style='font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444'>
     <text transform='translate(100 25)' style='font-size:16px; fill:#336699'>{{tag.name}}</text>
-    <!-- use the VuejsNodeStyle svg-text template which supports wrapping -->
+    <!-- use the Vue2NodeStyle svg-text template which supports wrapping -->
     <svg-text x='100' y='35' :width='layout.width - 140' :content='tag.position?.toUpperCase()' :line-spacing='0.2' font-size='10' font-family='Roboto,sans-serif' :wrapping='3'></svg-text>
     <text transform='translate(100 72)' >{{tag.email}}</text>
     <text transform='translate(100 88)' >{{tag.phone}}</text>
@@ -74,7 +74,7 @@ const nodeStyleTemplate = `<g>
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x='15' y='20' width='56.25' height='56.25'/>
   <g style='font-size:15px; font-family:Roboto,sans-serif; fill:#444' width='185'>
     <text transform='translate(75 40)' style='font-size:26px; font-family:Roboto,sans-serif; fill:#336699'>{{tag.name}}</text>
-    <!-- use the VuejsNodeStyle svg-text template which supports wrapping -->
+    <!-- use the Vue2NodeStyle svg-text template which supports wrapping -->
     <svg-text x='75' y='50' :width='layout.width - 85' :content='tag.position?.toUpperCase()' :line-spacing='0.2' font-size='15' font-family='Roboto,sans-serif' :wrapping='3'></svg-text>
   </g>
 </template>

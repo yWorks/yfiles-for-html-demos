@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,7 +35,6 @@ import {
   GraphComponent,
   INode,
   IRenderContext,
-  LabelStyleBase,
   NodeStyleBase,
   Size,
   SvgDefsManager,
@@ -289,9 +288,9 @@ class ObservedContext {
  */
 
 /**
- * A node style which uses a Vuejs component to display a node.
+ * A node style which uses a Vue component to display a node.
  */
-export default class VuejsNodeStyle extends NodeStyleBase {
+export default class Vue2NodeStyle extends NodeStyleBase {
   _template = ''
   _styleTag = null
   constructorFunction
@@ -319,7 +318,7 @@ export default class VuejsNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Returns the Vuejs template.
+   * Returns the Vue template.
    * @type {!string}
    */
   get template() {
@@ -327,102 +326,104 @@ export default class VuejsNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Sets the Vuejs template.
+   * Sets the Vue template.
    * @type {!string}
    */
   set template(value) {
-    if (value !== this._template) {
-      this._template = value
-      this.constructorFunction = Vue.extend({
-        template: value,
-        data() {
-          return {
-            yFilesContext: null,
-            idMap: {},
-            urlMap: {}
-          }
-        },
-        methods: {
-          localId(id) {
-            let localId = this.idMap[id]
-            if (typeof localId === 'undefined') {
-              localId = this.yFilesContext.observedContext.generateDefsId()
-              this.idMap[id] = localId
-            }
-            return localId
-          },
-          localUrl(id) {
-            let localUrl = this.urlMap[id]
-            if (typeof localUrl === 'undefined') {
-              const localId = this.localId(id)
-              localUrl = `url(#${localId})`
-              this.urlMap[id] = localUrl
-            }
-            return localUrl
-          }
-        },
-        computed: {
-          layout() {
-            const yFilesContext = this.yFilesContext
-            if (yFilesContext.hasOwnProperty('layout')) {
-              return yFilesContext.layout
-            }
-            const layout = yFilesContext.observedContext.layout
-            return {
-              width: layout.width,
-              height: layout.height,
-              x: layout.x,
-              y: layout.y
-            }
-          },
-          tag() {
-            const yFilesContext = this.yFilesContext
-            if (yFilesContext.hasOwnProperty('tag')) {
-              return yFilesContext.tag || {}
-            }
-            return yFilesContext.observedContext.tag || {}
-          },
-          selected() {
-            const yFilesContext = this.yFilesContext
-            if (yFilesContext.hasOwnProperty('selected')) {
-              return yFilesContext.selected
-            }
-            return yFilesContext.observedContext.selected
-          },
-          zoom() {
-            const yFilesContext = this.yFilesContext
-            if (yFilesContext.hasOwnProperty('zoom')) {
-              return yFilesContext.zoom
-            }
-            return yFilesContext.observedContext.zoom
-          },
-          focused() {
-            const yFilesContext = this.yFilesContext
-            if (yFilesContext.hasOwnProperty('focused')) {
-              return yFilesContext.focused
-            }
-            return yFilesContext.observedContext.focused
-          },
-          highlighted() {
-            const yFilesContext = this.yFilesContext
-            if (yFilesContext.hasOwnProperty('highlighted')) {
-              return yFilesContext.highlighted
-            }
-            return yFilesContext.observedContext.highlighted
-          },
-          fill() {
-            return this.tag.fill
-          },
-          scale() {
-            return this.tag.scale
-          }
-        }
-      })
+    if (value === this._template) {
+      return
     }
+
+    this._template = value
+    this.constructorFunction = Vue.extend({
+      template: value,
+      data() {
+        return {
+          yFilesContext: null,
+          idMap: {},
+          urlMap: {}
+        }
+      },
+      methods: {
+        localId(id) {
+          let localId = this.idMap[id]
+          if (typeof localId === 'undefined') {
+            localId = this.yFilesContext.observedContext.generateDefsId()
+            this.idMap[id] = localId
+          }
+          return localId
+        },
+        localUrl(id) {
+          let localUrl = this.urlMap[id]
+          if (typeof localUrl === 'undefined') {
+            const localId = this.localId(id)
+            localUrl = `url(#${localId})`
+            this.urlMap[id] = localUrl
+          }
+          return localUrl
+        }
+      },
+      computed: {
+        layout() {
+          const yFilesContext = this.yFilesContext
+          if (yFilesContext.hasOwnProperty('layout')) {
+            return yFilesContext.layout
+          }
+          const layout = yFilesContext.observedContext.layout
+          return {
+            width: layout.width,
+            height: layout.height,
+            x: layout.x,
+            y: layout.y
+          }
+        },
+        tag() {
+          const yFilesContext = this.yFilesContext
+          if (yFilesContext.hasOwnProperty('tag')) {
+            return yFilesContext.tag || {}
+          }
+          return yFilesContext.observedContext.tag || {}
+        },
+        selected() {
+          const yFilesContext = this.yFilesContext
+          if (yFilesContext.hasOwnProperty('selected')) {
+            return yFilesContext.selected
+          }
+          return yFilesContext.observedContext.selected
+        },
+        zoom() {
+          const yFilesContext = this.yFilesContext
+          if (yFilesContext.hasOwnProperty('zoom')) {
+            return yFilesContext.zoom
+          }
+          return yFilesContext.observedContext.zoom
+        },
+        focused() {
+          const yFilesContext = this.yFilesContext
+          if (yFilesContext.hasOwnProperty('focused')) {
+            return yFilesContext.focused
+          }
+          return yFilesContext.observedContext.focused
+        },
+        highlighted() {
+          const yFilesContext = this.yFilesContext
+          if (yFilesContext.hasOwnProperty('highlighted')) {
+            return yFilesContext.highlighted
+          }
+          return yFilesContext.observedContext.highlighted
+        },
+        fill() {
+          return this.tag.fill
+        },
+        scale() {
+          return this.tag.scale
+        }
+      }
+    })
   }
 
   /**
-   * Creates a visual that uses a Vuejs component to display a node.
+   * Creates a visual that uses a Vue component to display a node.
    * @see Overrides {@link LabelStyleBase.createVisual}
    * @param {!IRenderContext} context
    * @param {!INode} node
@@ -439,7 +440,7 @@ export default class VuejsNodeStyle extends NodeStyleBase {
     const svgElement = component.$el
 
     if (!(svgElement instanceof SVGElement)) {
-      throw 'VuejsNodeStyle: Invalid template!'
+      throw 'Vue2NodeStyle: Invalid template!'
     }
 
     const yFilesContext = component.yFilesContext
@@ -470,7 +471,7 @@ export default class VuejsNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Updates the visual by returning the old visual, as Vuejs handles updating the component.
+   * Updates the visual by returning the old visual, as Vue handles updating the component.
    * @see Overrides {@link LabelStyleBase.updateVisual}
    * @param {!IRenderContext} context
    * @param {!SvgVisual} oldVisual
@@ -510,7 +511,7 @@ export default class VuejsNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Prepares the Vuejs component for rendering.
+   * Prepares the Vue component for rendering.
    * @param {*} component
    * @param {!IRenderContext} context
    * @param {!INode} node
@@ -520,7 +521,7 @@ export default class VuejsNodeStyle extends NodeStyleBase {
 
     const ctx = new ObservedContext(node, context)
 
-    // Values added using Object.defineProperty() are immutable and not enumerable and thus are not observed by Vuejs.
+    // Values added using Object.defineProperty() are immutable and not enumerable and thus are not observed by Vue.
     Object.defineProperty(yFilesContext, 'observedContext', {
       configurable: false,
       enumerable: false,
@@ -531,7 +532,7 @@ export default class VuejsNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Updates the Vuejs component for rendering.
+   * Updates the Vue component for rendering.
    * @param {*} component
    * @param {!IRenderContext} context
    * @param {!INode} node
@@ -541,7 +542,7 @@ export default class VuejsNodeStyle extends NodeStyleBase {
 
     const ctx = component.yFilesContext.observedContext
 
-    // Values added using Object.defineProperty() are immutable and not enumerable and thus are not observed by Vuejs.
+    // Values added using Object.defineProperty() are immutable and not enumerable and thus are not observed by Vue.
     Object.defineProperty(yFilesContext, 'observedContext', {
       configurable: false,
       enumerable: false,
@@ -572,7 +573,7 @@ function hasText(el) {
 }
 
 /**
- * Initializes the Vuejs components that are used in the 'Node Template Designer'.
+ * Initializes the Vue components that are used in the 'Node Template Designer'.
  * @yjs:keep = visible,Node
  */
 function initializeDesignerVueComponents() {

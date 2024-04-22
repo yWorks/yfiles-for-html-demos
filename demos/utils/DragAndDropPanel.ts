@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// eslint-disable-next-line import/no-named-as-default
-import yfiles, {
+import {
   DragDropEffects,
   DragDropItem,
   DragSource,
@@ -38,6 +37,7 @@ import yfiles, {
   IModelItem,
   INode,
   IPort,
+  IStripe,
   LabelDropInputMode,
   ListEnumerable,
   NodeDropInputMode,
@@ -45,8 +45,10 @@ import yfiles, {
   PortDropInputMode,
   Rect,
   SimpleNode,
+  StripeDropInputMode,
   SvgExport,
-  VoidNodeStyle
+  VoidNodeStyle,
+  yfiles
 } from 'yfiles'
 
 export type DragAndDropPanelItem<T extends IModelItem> = T | { modelItem: T; tooltip?: string }
@@ -92,65 +94,66 @@ export class DragAndDropPanel {
   }
 
   private beginDrag(element: HTMLElement, data: unknown): void {
-    const dragPreview = element.cloneNode(true) as HTMLElement
-    dragPreview.style.margin = '0'
-
-    // Ensure that the following code still works, even when the view-table module isn't loaded
-    const IStripe = (yfiles as any).graph.IStripe
-    const StripeDropInputMode = (yfiles as any).input.StripeDropInputMode
-
-    let dragSource: DragSource | null = null
-    if (IStripe && StripeDropInputMode && data instanceof IStripe) {
-      dragSource = StripeDropInputMode.startDrag(
-        element,
-        data,
-        DragDropEffects.ALL,
-        true,
-        dragPreview
-      )
-    } else if (data instanceof ILabel) {
-      dragSource = LabelDropInputMode.startDrag(
-        element,
-        data,
-        DragDropEffects.ALL,
-        true,
-        dragPreview
-      )
-    } else if (data instanceof IPort) {
-      dragSource = PortDropInputMode.startDrag(
-        element,
-        data,
-        DragDropEffects.ALL,
-        true,
-        dragPreview
-      )
-    } else if (data instanceof IEdge) {
-      dragSource = new DragSource(element)
-      void dragSource.startDrag(
-        new DragDropItem(IEdge.$class.name, data),
-        DragDropEffects.ALL,
-        true,
-        dragPreview
-      )
-    } else if (data instanceof INode) {
-      dragSource = NodeDropInputMode.startDrag(
-        element,
-        data,
-        DragDropEffects.ALL,
-        true,
-        dragPreview
-      )
-    }
+    const dragSource = this.startDrag(element, data)
 
     // let the GraphComponent handle the preview rendering if possible
     if (dragSource) {
       dragSource.addQueryContinueDragListener((_, evt) => {
         if (evt.dropTarget === null) {
-          dragPreview.classList.remove('hidden')
+          createDragPreviewElement(element).classList.remove('hidden')
         } else {
-          dragPreview.classList.add('hidden')
+          createDragPreviewElement(element).classList.add('hidden')
         }
       })
+    }
+  }
+
+  private startDrag(element: HTMLElement, data: unknown) {
+    if (data instanceof INode) {
+      return NodeDropInputMode.startDrag(
+        element,
+        data,
+        DragDropEffects.ALL,
+        true,
+        createDragPreviewElement(element)
+      )
+    }
+    if (data instanceof IEdge) {
+      const dragSource = new DragSource(element)
+      void dragSource.startDrag(
+        new DragDropItem(IEdge.$class.name, data),
+        DragDropEffects.ALL,
+        true,
+        createDragPreviewElement(element)
+      )
+      return dragSource
+    }
+    if (data instanceof ILabel) {
+      return LabelDropInputMode.startDrag(
+        element,
+        data,
+        DragDropEffects.ALL,
+        true,
+        createDragPreviewElement(element)
+      )
+    }
+    if (data instanceof IPort) {
+      return PortDropInputMode.startDrag(
+        element,
+        data,
+        DragDropEffects.ALL,
+        true,
+        createDragPreviewElement(element)
+      )
+    }
+    if (data instanceof IStripe) {
+      return StripeDropInputMode.startDrag(
+        element,
+        data,
+        DragDropEffects.ALL,
+        true,
+        createDragPreviewElement(element)
+      )
     }
   }
 
@@ -285,31 +288,24 @@ export class DragAndDropPanel {
       evt.preventDefault()
     }
 
-    if (window.PointerEvent !== undefined) {
-      element.addEventListener(
-        'pointerdown',
-        (evt) => {
-          if (evt.pointerType === 'touch' || evt.pointerType === 'pen') {
-            touchStartListener(evt)
-          }
-        },
-        true
-      )
-    } else if ((window as any).MSPointerEvent !== undefined) {
-      element.addEventListener(
-        'MSPointerDown',
-        (evt: any) => {
-          if (
-            evt.pointerType === evt.MSPOINTER_TYPE_TOUCH ||
-            evt.pointerType === evt.MSPOINTER_TYPE_PEN
-          ) {
-            touchStartListener(evt)
-          }
-        },
-        true
-      )
-    } else {
+    if (window.PointerEvent === undefined) {
       element.addEventListener('touchstart', touchStartListener, { passive: false })
+      return
     }
+    element.addEventListener(
+      'pointerdown',
+      (evt) => {
+        if (evt.pointerType === 'touch' || evt.pointerType === 'pen') {
+          touchStartListener(evt)
+        }
+      },
+      true
+    )
   }
+}
+
+function createDragPreviewElement(templateElement: HTMLElement): HTMLElement {
+  const dragPreview = templateElement.cloneNode(true) as HTMLElement
+  dragPreview.style.margin = '0'
+  return dragPreview
 }

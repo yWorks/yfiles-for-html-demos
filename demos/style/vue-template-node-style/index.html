@@ -3,11 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <link rel="shortcut icon" href="../../resources/icons/favicon.ico" type="image/x-icon" />
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,12 +35,8 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>Vue Template Node Style Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <!-- load Vue.js, a helper package and the demo -->
-    <script src="https://unpkg.com/vue@2.6.12"></script>
+    <link rel="stylesheet" href="./node_modules/demo-resources/style/demo.css" />
     <script src="https://unpkg.com/jsonlint@1.6.3"></script>
 
     <style>
@@ -115,29 +112,17 @@
         padding: 2px 4px;
       }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
-      <a
-        href="https://www.yworks.com/products/yfiles"
-        class="demo-header__y-logo"
-        title="Visit yFiles product details"
-        target="_blank"
-      ></a>
+      <a href="https://www.yworks.com/products/yfiles" class="demo-header__y-logo"></a>
       <div class="demo-header__breadcrumb-wrapper">
         <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
-        <a href="../../README.html">Demos</a>
-
-        <span>Vue Template Node Style</span>
-        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
-      </div>
-      <div class="demo-header__right">
-        <show-source-button></show-source-button>
-        <fullscreen-button></fullscreen-button>
+        <a href="../../../README.html">Demos</a>
+        <span>Vue Template Node Style Demo</span>
+        <a href="../../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
     </header>
-
     <div class="demo-page__toolbar">
       <button data-command="OPEN"></button>
       <button data-command="SAVE"></button>
@@ -150,17 +135,6 @@
       <button id="reload" title="Reload" class="demo-icon-yIconReload"></button>
     </div>
     <aside class="demo-page__description">
-      <div class="demo-description__header">
-        <a
-          href="https://www.yworks.com/products/yfiles"
-          class="demo-description__logo"
-          title="Visit yFiles product details"
-          target="_blank"
-        ></a>
-      </div>
-      <div class="demo-description__toggle-button" title="Toggle description"></div>
-      <div class="demo-description__play-button">Start here</div>
-
       <div class="demo-description__content">
         <h1>Vue Template Node Style Demo</h1>
 
@@ -176,9 +150,20 @@
         </p>
         <p>
           The section
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles" target="_blank">Using Vue Templates in Node Styles</a>
+          <a data-dguide="custom-styles_vuejs-template-styles"
+            >Using Vue Templates in Node Styles</a
+          >
           in the Developer's Guide elaborates on how to create template strings and which properties
           are available for data binding.
+        </p>
+
+        <p>
+          Please ensure that the applied template is consistent with the
+          <a href="https://vuejs.org/guide/essentials/template-syntax.html" target="_blank"
+            >Vue 3</a
+          >
+          guidelines. Template styles created with older versions of Vue might not work in this
+          demo.
         </p>
 
         <h2>Things to Try</h2>
@@ -192,26 +177,43 @@
         <h2>Related Documentation</h2>
         <ul>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles" target="_blank">
+            <a
+              href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles"
+              target="_blank"
+            >
               Using Vue Templates in Node Styles
             </a>
           </li>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_template-styles" target="_blank">Using SVG Templates in Styles</a>
+            <a
+              href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_template-styles"
+              target="_blank"
+              >Using SVG Templates in Styles</a
+            >
           </li>
         </ul>
 
         <h2>Related Demos</h2>
         <ul>
-          <li><a href="../../style/templatestyles/" target="_blank">Template Styles Demo</a></li>
           <li>
-            <a href="../../style/string-template-node-style/" target="_blank">String Template Node Style Demo</a>
+            <a href="https://www.yworks.com/demos/style/templatestyles/" target="_blank"
+              >Template Styles</a
+            >
           </li>
           <li>
-            <a href="../../style/react-template-node-style/" target="_blank">React JSX Component Style Demo</a>
+            <a href="https://www.yworks.com/demos/style/string-template-node-style/" target="_blank"
+              >String Template Node Style</a
+            >
           </li>
           <li>
-            <a href="../../style/lit-template-node-style/" target="_blank">Lit Template Node Style Demo</a>
+            <a href="https://www.yworks.com/demos/style/react-template-node-style/" target="_blank"
+              >React Template Node Style</a
+            >
+          </li>
+          <li>
+            <a href="https://www.yworks.com/demos/style/lit-template-node-style/" target="_blank"
+              >Lit Template Node Style</a
+            >
           </li>
         </ul>
 

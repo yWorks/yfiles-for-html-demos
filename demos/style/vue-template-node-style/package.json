@@ -1,0 +1,30 @@
+{
+  "name": "vue-template-node-style-demo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "preview": "vite preview",
+    "build": "vite build",
+    "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false"
+  },
+  "dependencies": {
+    "vue": "^3.3.4",
+    "vuetify": "^3.3.5",
+    "demo-utils": "../../utils",
+    "demo-resources": "../../resources",
+    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz",
+    "codemirror": "5.65.16"
+  },
+  "devDependencies": {
+    "@tsconfig/node18": "^2.0.1",
+    "@types/node": "^18.16.18",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "@vue/tsconfig": "^0.4.0",
+    "@types/codemirror": "~5.60.15",
+    "@yworks/optimizer": "^1.8.1",
+    "typescript": "~5.3.2",
+    "vite": "^5.0.4",
+    "vue-tsc": "^1.8.1"
+  }
+}

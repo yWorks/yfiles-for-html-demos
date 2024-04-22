@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -70,7 +70,7 @@ import {
   createDemoNodeStyle
 } from 'demo-resources/demo-styles'
 import { createGraphBuilder } from './Neo4jGraphBuilder'
-import type { Neo4jRecord, Node, Relationship, Result } from './Neo4jUtil'
+import type { Integer, Neo4jRecord, Node, Relationship, Result } from './Neo4jUtil'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
@@ -483,17 +483,21 @@ function initializeUI(): void {
         return
       }
       queryErrorContainer.textContent = ''
-      nodes = []
-      edges = []
+      // use maps to make sure that each id gets included only once
+      const nodeMap = new Map<string, Node>()
+      const relationshipMap = new Map<string, Relationship>()
       for (const record of result.records) {
         record.forEach((field: any) => {
           if (field instanceof Neo4jNode) {
-            nodes.push(field)
+            nodeMap.set(String(field.identity), field)
           } else if (field instanceof Neo4jEdge) {
-            edges.push(field)
+            relationshipMap.set(String(field.identity), field)
           }
         })
       }
+      nodes = Array.from(nodeMap.values())
+      edges = Array.from(relationshipMap.values())
+
       graphComponent.graph.clear()
       graphBuilder = createGraphBuilder(graphComponent, nodes, edges)
       graphBuilder.buildGraph()

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,16 +26,31 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ExteriorLabelModel, GraphComponent, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import optimizer from '@yworks/optimizer/rollup-plugin'
 
-License.value = await fetchLicense()
-
-// create a new graph component in the root element with the id 'graphComponent'
-const graphComponent = new GraphComponent('#graphComponent')
-// create a single node as an example
-const node = graphComponent.graph.createNode()
-// and add a label
-graphComponent.graph.addLabel(node, 'Node 1', ExteriorLabelModel.SOUTH)
-// then center the graph in the component
-graphComponent.fitGraphBounds()
+// https://vitejs.dev/config/
+export default defineConfig(({ mode }) => {
+  const plugins = [vue()]
+  if (mode === 'production') {
+    plugins.push(
+      optimizer({
+        shouldOptimize({ id }) {
+          // make sure not to exclude demo-utils since it is in node_modules and uses yFiles API
+          return id.includes('demo-utils') || !id.includes('node_modules')
+        }
+      })
+    )
+  }
+  return {
+    base: './',
+    plugins,
+    resolve: {
+      extensions: ['.ts', '.js'],
+      alias: {
+        vue: 'vue/dist/vue.esm-bundler.js'
+      }
+    }
+  }
+})

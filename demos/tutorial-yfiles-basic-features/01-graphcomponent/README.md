@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML 2.6.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ Note
 
 The yFiles demo and tutorial applications use additional scripts and CSS (demo-ui) to reduce the amount of boilerplate code that is needed to get a good-looking demo app that shows the relevant features. All code samples included in this distribution can be implemented using plain HTML and TypeScript/JavaScript together with yFiles for HTML.
 
-For a minimal example of using yFiles for HTML to display a graph on a web page, please take a look at the [Basic Module Loading Demo](../../loading/basic-module-loading/).
+For a minimal example of using yFiles for HTML to display a graph on a web page, please take a look at the [Basic Demo Demo](../../loading/basic-demo/).
 
 ## App Generator
 

@@ -16,7 +16,7 @@
     "demo-utils": "../../utils",
     "react": "~18.2.0",
     "react-dom": "~18.2.0",
-    "yfiles": "../../../lib-dev/yfiles-26.0.3+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz"
   },
   "devDependencies": {
     "@types/react": "~18.2.38",

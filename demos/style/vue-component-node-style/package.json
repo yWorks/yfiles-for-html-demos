@@ -12,7 +12,7 @@
   "dependencies": {
     "vue": "^3.3.4",
     "vuetify": "^3.3.5",
-    "yfiles": "../../../lib-dev/yfiles-26.0.3+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz"
   },
   "devDependencies": {
     "@mdi/font": "^7.2.96",

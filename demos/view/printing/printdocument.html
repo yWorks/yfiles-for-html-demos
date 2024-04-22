@@ -16,22 +16,19 @@
   </head>
   <body>
     <script>
-      // wait until the web page has finished loading
-      setTimeout(function () {
-        try {
-          window.opener.addPrintDom(window)
-        } catch (e) {
-          // check if the browser complains about cross-origin page access
-          // this is the case for Chrome if the demo is run from the local filesystem.
-          if (e.message.indexOf('cross', 0) >= 0) {
-            alert(
-              'Cannot modify the printing window due to cross-origin policies in effect. Try running the demo from a server!'
-            )
-          } else {
-            alert('There was an error during printing! ' + e.message)
+      window.opener.postMessage({ message: 'print document loaded' })
+      window.addEventListener(
+        'message',
+        (event) => {
+          if (event.data?.message === 'print') {
+            document.body.innerHTML = event.data.content
+
+            // request some time to make sure that the graph is completely rendered before calling print
+            requestAnimationFrame(() => requestAnimationFrame(() => window.print()))
           }
-        }
-      }, 400)
+        },
+        false
+      )
     </script>
   </body>
 </html>

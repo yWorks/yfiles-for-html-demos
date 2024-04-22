@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// eslint-disable-next-line import/no-named-as-default
-import yfiles, { Exception } from 'yfiles'
+import { yfiles, Exception } from 'yfiles'
 import { BrowserDetection } from './demo-ui/BrowserDetection'
 
 /**
@@ -248,15 +247,15 @@ function createErrorDialog(errorOrMessage?: Error | string): HTMLElement {
   contentPanel.appendChild(form)
 
   // create form element
-  addHiddenField(form, 'exact_product', (yfiles as any).productname)
-  if ((yfiles as any).license && (yfiles as any).license.key) {
-    addHiddenField(form, 'license_key', (yfiles as any).license.key.substring(0, 16))
-    addHiddenField(form, 'license_expiry', (yfiles as any).license.expires)
+  addHiddenField(form, 'exact_product', yfiles.productname)
+  if (yfiles.license && yfiles.license.key) {
+    addHiddenField(form, 'license_key', yfiles.license.key.substring(0, 16))
+    addHiddenField(form, 'license_expiry', yfiles.license.expires)
   } else {
     addHiddenField(form, 'license_key', 'No License')
     addHiddenField(form, 'license_expiry', 'No License')
   }
-  addHiddenField(form, 'version', (yfiles as any).version)
+  addHiddenField(form, 'version', yfiles.version)
 
   if (typeof errorOrMessage === 'string') {
     addFormRow(form, 'error_message', 'Error Message', 'text', errorOrMessage)

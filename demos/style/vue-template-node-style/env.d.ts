@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,45 +26,4 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphMLAttribute,
-  ILookup,
-  MarkupExtension,
-  TypeAttribute,
-  XamlAttributeWritePolicy,
-  YString
-} from 'yfiles'
-
-import VuejsNodeStyle from './VuejsNodeStyle'
-
-export default class VuejsNodeStyleMarkupExtension extends MarkupExtension {
-  private _template = ''
-
-  get template(): string {
-    return this._template
-  }
-
-  set template(value: string) {
-    this._template = value
-  }
-
-  static get $meta(): {
-    $self: GraphMLAttribute[]
-    template: (GraphMLAttribute | TypeAttribute)[]
-  } {
-    return {
-      $self: [GraphMLAttribute().init({ contentProperty: 'template' })],
-      template: [
-        GraphMLAttribute().init({
-          defaultValue: '',
-          writeAsAttribute: XamlAttributeWritePolicy.NEVER
-        }),
-        TypeAttribute(YString.$class)
-      ]
-    }
-  }
-
-  provideValue(serviceProvider: ILookup) {
-    return new VuejsNodeStyle(this.template)
-  }
-}
+/// <reference types="vite/client" />

@@ -14,7 +14,7 @@
     "core-js": "^3.33.3",
     "vue": "^3.3.8",
     "demo-utils": "../../utils",
-    "yfiles": "../../../lib-dev/yfiles-26.0.3+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,16 +26,41 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ExteriorLabelModel, GraphComponent, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { GraphComponent, GraphEditorInputMode, type IGraph, License } from 'yfiles'
 
-License.value = await fetchLicense()
+// Register the license
+const response = await fetch('./license.json')
+License.value = await response.json()
 
-// create a new graph component in the root element with the id 'graphComponent'
+// Initialize a graph component and enable interactive editing
 const graphComponent = new GraphComponent('#graphComponent')
-// create a single node as an example
-const node = graphComponent.graph.createNode()
-// and add a label
-graphComponent.graph.addLabel(node, 'Node 1', ExteriorLabelModel.SOUTH)
-// then center the graph in the component
-graphComponent.fitGraphBounds()
+graphComponent.inputMode = new GraphEditorInputMode()
+
+createSampleGraph(graphComponent.graph)
+
+addUIElements(graphComponent)
+
+/**
+ * Creates the sample graph for this demo.
+ */
+function createSampleGraph(graph: IGraph) {
+  graph.nodeDefaults.size = [60, 40]
+  graph.addLabel(graph.createNodeAt([200, 200]), 'Node 1')
+  graph.addLabel(graph.createNodeAt([400, 200]), 'Node 2')
+
+  const nodes = graph.nodes.toArray()
+  graph.createEdge(nodes[0], nodes[1])
+}
+
+/**
+ * Adds UI elements to the demo.
+ */
+function addUIElements(graphComponent: GraphComponent) {
+  const fitButton = document.createElement('button')
+  fitButton.innerText = 'Fit content'
+  fitButton.addEventListener('click', () => {
+    graphComponent.fitGraphBounds()
+  })
+
+  document.querySelector('#actionsArea')!.append(fitButton)
+}

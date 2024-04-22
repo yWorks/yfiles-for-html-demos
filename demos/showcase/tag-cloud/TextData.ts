@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -169,7 +169,7 @@ export default [
   { keyword: 'contact', frequency: 32 },
   { keyword: 'image', frequency: 34 },
   { keyword: 'perfectly', frequency: 34 },
-  { keyword: 'VueJS', frequency: 34 },
+  { keyword: 'Vue', frequency: 34 },
   { keyword: 'underlying', frequency: 35 },
   { keyword: 'monitoring', frequency: 35 },
   { keyword: 'detection', frequency: 36 },

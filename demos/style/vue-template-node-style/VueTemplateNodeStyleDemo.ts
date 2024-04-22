@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -54,8 +54,8 @@ import {
 
 import type { SampleDataType } from './resources/sample'
 import SampleData from './resources/sample'
-import VuejsNodeStyleMarkupExtension from 'demo-utils/VuejsNodeStyleMarkupExtension'
-import VuejsNodeStyle from 'demo-utils/VuejsNodeStyle'
+import { VueTemplateNodeStyle } from './style/VueTemplateNodeStyle'
+import { VueTemplateNodeStyleMarkupExtension } from './style/VueTemplateNodeStyleMarkupExtension'
 import { fetchLicense } from 'demo-resources/fetch-license'
 import { finishLoading } from 'demo-resources/demo-page'
 import { applyDemoTheme } from 'demo-resources/demo-styles'
@@ -65,8 +65,6 @@ let graphComponent: GraphComponent
 let templateTextArea: CodeMirror.EditorFromTextArea
 
 let tagTextArea: CodeMirror.EditorFromTextArea
-
-let graphMLSupport: GraphMLSupport
 
 /**
  * Runs the demo.
@@ -78,7 +76,6 @@ async function run(): Promise<void> {
 
   graphComponent.inputMode = new GraphViewerInputMode()
 
-  // initialize demo
   initializeTextAreas()
   initializeStyles()
   initializeIO()
@@ -117,12 +114,12 @@ function initializeTextAreas(): void {
   graphComponent.selection.addItemSelectionChangedListener(() => {
     const selectedNode = graphComponent.selection.selectedNodes.at(0)
     if (selectedNode) {
-      if (selectedNode.style instanceof VuejsNodeStyle) {
+      if (selectedNode.style instanceof VueTemplateNodeStyle) {
         templateTextArea.setOption('readOnly', false)
         templateTextArea.setValue(selectedNode.style.template)
       } else {
         templateTextArea.setOption('readOnly', true)
-        templateTextArea.setValue('Style is not an instance of VuejsNodeStyle.')
+        templateTextArea.setValue('Style is not an instance of VueTemplateNodeStyle.')
       }
       tagTextArea.setOption('readOnly', false)
       tagTextArea.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
@@ -140,11 +137,11 @@ function initializeTextAreas(): void {
 }
 
 /**
- * Initializes the default styles for the graph. By default org-chart nodes are used.
+ * Initializes the default styles for the graph. By default, org-chart nodes are used.
  */
 function initializeStyles(): void {
   const graph = graphComponent.graph
-  graph.nodeDefaults.style = new VuejsNodeStyle(`<g>
+  graph.nodeDefaults.style = new VueTemplateNodeStyle(`<g>
 <rect fill="#C0C0C0" :width="layout.width" :height="layout.height" x="2" y="2"></rect>
 <rect :fill="localUrl('bottomGradient')" stroke="#C0C0C0" :width="layout.width" :height="layout.height"></rect>
 <rect v-if="tag.status === 'present'" :width="layout.width" height="2" fill="#55B757"></rect>
@@ -192,34 +189,33 @@ function initializeStyles(): void {
 }
 
 /**
- * Initializes GraphML writing and reading for files containing VuejsNodeStyle.
+ * Initializes GraphML writing and reading for files containing VueTemplateNodeStyle.
  */
 function initializeIO(): void {
   const graphmlHandler = new GraphMLIOHandler()
-  // enable serialization of the VueJS node style - without a namespace mapping, serialization will fail
-  graphmlHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0',
-    { VuejsNodeStyle: VuejsNodeStyleMarkupExtension }
-  )
+  // enable serialization of the Vue template node style - without a namespace mapping, serialization will fail
+  graphmlHandler.addXamlNamespaceMapping('http://www.yworks.com/demos/yfiles-vue-node-style/3.0', {
+    VueTemplateNodeStyle: VueTemplateNodeStyleMarkupExtension
+  })
   graphmlHandler.addNamespace(
-    'http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0',
-    'VuejsNodeStyle'
+    'http://www.yworks.com/demos/yfiles-vue-node-style/3.0',
+    'VueTemplateNodeStyle'
   )
   graphmlHandler.addHandleSerializationListener((_, evt) => {
     const item = evt.item
     const context = evt.context
-    if (item instanceof VuejsNodeStyle) {
-      const vuejsNodeStyleMarkupExtension = new VuejsNodeStyleMarkupExtension()
-      vuejsNodeStyleMarkupExtension.template = item.template
+    if (item instanceof VueTemplateNodeStyle) {
+      const vueNodeStyleMarkupExtension = new VueTemplateNodeStyleMarkupExtension()
+      vueNodeStyleMarkupExtension.template = item.template
       context.serializeReplacement(
-        VuejsNodeStyleMarkupExtension.$class,
+        VueTemplateNodeStyleMarkupExtension.$class,
         item,
-        vuejsNodeStyleMarkupExtension
+        vueNodeStyleMarkupExtension
       )
       evt.handled = true
     }
   })
-  graphMLSupport = new GraphMLSupport({
+  new GraphMLSupport({
     graphComponent,
     graphMLIOHandler: graphmlHandler,
     storageLocation: StorageLocation.FILE_SYSTEM
@@ -260,7 +256,7 @@ function initializeUI(): void {
       return
     }
     const templateText = templateTextArea.getValue()
-    const style = new VuejsNodeStyle(templateText)
+    const style = new VueTemplateNodeStyle(templateText)
     try {
       // check if style is valid
       style.renderer

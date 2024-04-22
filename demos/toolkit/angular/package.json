@@ -20,7 +20,7 @@
     "demo-resources": "../../resources",
     "rxjs": "~7.8.1",
     "tslib": "^2.6.2",
-    "yfiles": "../../../lib-dev/yfiles-26.0.3+dev.tgz",
+    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz",
     "zone.js": "~0.14.2"
   },
   "devDependencies": {

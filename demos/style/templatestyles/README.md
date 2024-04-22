@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML 2.6.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -33,6 +33,6 @@ The binding context gives you information about the current state, e.g. the zoom
 ## Related Demos
 
 - [String Template Node Style Demo](../../style/string-template-node-style/)
-- [Vue Template Node Style Demo](../../style/vue-template-node-style/)
+- [Vue Template Node Style Demo](../../../demos-ts/style/vue-template-node-style/)
 - [React JSX Component Style Demo](../../style/react-template-node-style/)
 - [Lit Template Node Style Demo](../../style/lit-template-node-style/)

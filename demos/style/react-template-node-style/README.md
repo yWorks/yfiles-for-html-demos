@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML 2.6.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -27,5 +27,5 @@ Select nodes or labels in the view and inspect their templates and tag values in
 
 - [Template Styles Demo](../../style/templatestyles/)
 - [String Template Node Style Demo](../../style/string-template-node-style/)
-- [Vue Template Node Style Demo](../../style/vue-template-node-style/)
+- [Vue Template Node Style Demo](../../../demos-ts/style/vue-template-node-style/)
 - [Lit Template Node Style Demo](../../style/lit-template-node-style/)

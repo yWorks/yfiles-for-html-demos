@@ -29,6 +29,7 @@
     "style/angular-component-node-style",
     "style/react-component-node-style",
     "style/vue-component-node-style",
+    "style/vue-template-node-style",
     "testing/cypress",
     "testing/jest",
     "testing/jest-puppeteer",

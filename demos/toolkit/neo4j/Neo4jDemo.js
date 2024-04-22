@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -480,17 +480,21 @@ function initializeUI() {
       return
     }
     queryErrorContainer.textContent = ''
-    nodes = []
-    edges = []
+    // use maps to make sure that each id gets included only once
+    const nodeMap = new Map()
+    const relationshipMap = new Map()
     for (const record of result.records) {
       record.forEach((field) => {
         if (field instanceof Neo4jNode) {
-          nodes.push(field)
+          nodeMap.set(String(field.identity), field)
         } else if (field instanceof Neo4jEdge) {
-          edges.push(field)
+          relationshipMap.set(String(field.identity), field)
         }
       })
     }
+    nodes = Array.from(nodeMap.values())
+    edges = Array.from(relationshipMap.values())
+
     graphComponent.graph.clear()
     graphBuilder = createGraphBuilder(graphComponent, nodes, edges)
     graphBuilder.buildGraph()

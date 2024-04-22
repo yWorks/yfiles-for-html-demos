@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML 2.6.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ protected createVisual(context: IRenderContext, port: IPort): Visual | null {
 
 Note
 
-The SVG element returned in `createVisual` does not necessarily have to be created using the JavaScript DOM API. You could also create it using any JavaScript UI framework or API like React, Vuejs, etc.
+The SVG element returned in `createVisual` does not necessarily have to be created using the JavaScript DOM API. You could also create it using any JavaScript UI framework or API like React, Vue, etc.
 
 Note
 

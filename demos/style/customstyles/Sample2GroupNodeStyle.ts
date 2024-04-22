@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,10 +27,11 @@
  **
  ***************************************************************************/
 // eslint-disable-next-line import/no-named-as-default
-import yfiles, {
+import {
   CanvasComponent,
   Class,
   CollapsibleNodeStyleDecoratorRenderer,
+  CreateEdgeInputMode,
   DropInputMode,
   GeneralPath,
   GraphComponent,
@@ -538,11 +539,8 @@ export class Sample2GroupNodeStyle extends NodeStyleBase<Sample2GroupNodeStyleVi
       return layout.containsWithEps(p, inputModeContext.hitTestRadius)
     }
 
-    // @ts-ignore Get class from 'yfiles' object to avoid an explicit import.
-    const CreateEdgeInputMode = yfiles.CreateEdgeInputMode || yfiles.input.CreateEdgeInputMode
     if (
-      (CreateEdgeInputMode &&
-        inputModeContext.parentInputMode instanceof CreateEdgeInputMode &&
+      (inputModeContext.parentInputMode instanceof CreateEdgeInputMode &&
         inputModeContext.parentInputMode.isCreationInProgress) ||
       (inputModeContext.parentInputMode instanceof MoveInputMode &&
         inputModeContext.parentInputMode.isDragging) ||

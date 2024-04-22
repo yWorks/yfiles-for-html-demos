@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -45,7 +45,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
    * @type {!string}
    */
   get editorText() {
-    return this.quill.root.innerHTML
+    return this.quill.getSemanticHTML()
   }
 
   /**
@@ -74,29 +74,10 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
         toolbar: {
           container: [
             [{ header: [1, 2, 3, 4, 5, false] }],
-            [{ size: ['normal', 'small', 'large'] }],
             [{ color: [] }],
             ['bold', 'italic', 'underline', 'strike'],
             ['clean']
-          ],
-          handlers: {
-            // a custom Quill handler that utilizes <small> and <large> tags for the size dropdown
-            size: (value) => {
-              const range = this.quill.getSelection()
-              if (range && range.length > 0) {
-                if (value === 'small') {
-                  this.quill.removeFormat(range, 'large', true)
-                  this.quill.formatText(range, 'small', true)
-                } else if (value === 'large') {
-                  this.quill.removeFormat(range, 'small', true)
-                  this.quill.formatText(range, 'large', true)
-                } else {
-                  this.quill.removeFormat(range, 'small', true)
-                  this.quill.removeFormat(range, 'large', true)
-                }
-              }
-            }
-          }
+          ]
         }
       }
     })
@@ -148,30 +129,3 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
     return container
   }
 }
-
-// We define some custom elements '<small>' and '<large>' for the MarkupLabelStyle and use them in Quill
-const Inline = Quill.import('blots/inline')
-
-/**
- * The <small> element for usage in Quill.
- */
-export class SmallBlock extends Inline {}
-SmallBlock.blotName = 'small'
-SmallBlock.tagName = 'small'
-
-/**
- * The <large> element for usage in Quill.js.
- */
-export class LargeBlock extends Inline {
-  static create() {
-    const node = Inline.create()
-    node.setAttribute('style', 'font-size: 1.5em')
-    return node
-  }
-}
-LargeBlock.blotName = 'large'
-LargeBlock.tagName = 'large'
-
-// Make the custom elements available in Quill
-Quill.register(SmallBlock)
-Quill.register(LargeBlock)

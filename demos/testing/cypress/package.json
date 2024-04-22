@@ -11,6 +11,6 @@
   "devDependencies": {
     "cypress": "^12.17.0",
     "typescript": "~5.3.2",
-    "yfiles": "../../../lib-dev/yfiles-26.0.3+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz"
   }
 }

@@ -22,6 +22,6 @@
   },
   "dependencies": {
     "demo-resources": "../../resources",
-    "yfiles": "../../../lib-dev/yfiles-26.0.3+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz"
   }
 }

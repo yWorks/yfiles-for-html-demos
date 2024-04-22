@@ -13,7 +13,7 @@
   "dependencies": {
     "demo-resources": "../../resources",
     "demo-utils": "../../utils",
-    "yfiles": "../../../lib-dev/yfiles-26.0.3+dev.tgz"
+    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.1",

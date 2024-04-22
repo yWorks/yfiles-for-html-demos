@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -213,20 +213,20 @@ export default class PrintingSupport {
       }
     }
 
-    // This function has to be global, because it is called from the print preview window.
-    ;(window as any).addPrintDom = (win: any): void => {
-      win.document.body.innerHTML = resultingHTML
-      win.document.close()
-      // Wait for everything to be rendered before printing
-      setTimeout(() => {
-        win.print()
-      }, 0)
-    }
-
     // display exported svg in new window
     const printWindow = window.open(this.targetUrl)
 
-    if (!printWindow) {
+    if (printWindow) {
+      window.addEventListener(
+        'message',
+        (event) => {
+          if (event.data?.message === 'print document loaded') {
+            printWindow.postMessage({ message: 'print', content: resultingHTML })
+          }
+        },
+        false
+      )
+    } else {
       alert('Could not open print preview window - maybe it was blocked?')
     }
   }

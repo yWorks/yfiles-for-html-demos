@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML 2.6.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@ This demo shows how to create an interactive organization chart from JSON data.
 
 The source data is easily converted to a yFiles graph using class [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder).
 
-The visualization of the employee is defined by an svg-template which is interpreted by the node style using the [Vue.js-framework](https://vuejs.org/v2/guide/index.html).
+The visualization of the employee is defined by an svg-template which is interpreted by the node style using the [Vue 2 framework](https://vuejs.org/v2/guide/index.html).
 
 The demo also shows how a [FilteredGraphWrapper](https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper) can be used to display a subgraph of the model graph.
 

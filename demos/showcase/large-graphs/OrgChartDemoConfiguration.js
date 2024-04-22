@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -43,7 +43,7 @@ import {
   WebGL2ShapeNodeShape,
   WebGL2ShapeNodeStyle
 } from 'yfiles'
-import VuejsNodeStyle from 'demo-utils/VuejsNodeStyle'
+import Vue2NodeStyle from 'demo-utils/Vue2NodeStyle'
 
 /**
  * @typedef {Object} Employee
@@ -98,9 +98,9 @@ export default class OrgChartDemoConfiguration extends DemoConfiguration {
    */
   async initializeStyleDefaults(graph) {
     return new Promise((resolve) => {
-      // use the VuejsNodeStyle to display the nodes through a svg template
+      // use the Vue2NodeStyle to display the nodes through a svg template
       // in this svg template you can see three styles in three zoom levels
-      graph.nodeDefaults.style = new VuejsNodeStyle(this.nodeStyleTemplate)
+      graph.nodeDefaults.style = new Vue2NodeStyle(this.nodeStyleTemplate)
       graph.nodeDefaults.size = new Size(285, 100)
       graph.edgeDefaults.style = new PolylineEdgeStyle({
         stroke: '2px rgb(170, 170, 170)',
@@ -157,7 +157,7 @@ export default class OrgChartDemoConfiguration extends DemoConfiguration {
   <image :xlink:href="'./resources/icons/' + tag.status + '_icon.svg'" x="25" y="80" height="15" width="60"></image>
   <g style="font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444">
     <text transform="translate(100 25)" style="font-size:16px; fill:#336699">{{tag.name}}</text>
-    <!-- use the VuejsNodeStyle svg-text template which supports wrapping -->
+    <!-- use the Vue2NodeStyle svg-text template which supports wrapping -->
     <svg-text x="100" y="35" :width="layout.width - 140" :content="tag.position?.toUpperCase()" :line-spacing="0.2" font-size="10" font-family="Roboto,sans-serif" :wrapping="3"></svg-text>
     <text transform="translate(100 72)" >{{tag.email}}</text>
     <text transform="translate(100 88)" >{{tag.phone}}</text>
@@ -169,7 +169,7 @@ export default class OrgChartDemoConfiguration extends DemoConfiguration {
   <image :xlink:href="'./resources/icons/' + tag.icon + '.svg'" x="15" y="20" width="56.25" height="56.25"/>
   <g style="font-size:15px; font-family:Roboto,sans-serif; fill:#444" width="185">
     <text transform="translate(75 40)" style="font-size:26px; font-family:Roboto,sans-serif; fill:#336699">{{tag.name}}</text>
-    <!-- use the VuejsNodeStyle svg-text template which supports wrapping -->
+    <!-- use the Vue2NodeStyle svg-text template which supports wrapping -->
     <svg-text x="75" y="50" :width="layout.width - 85" :content="tag.position?.toUpperCase()" :line-spacing="0.2" font-size="15" font-family="Roboto,sans-serif" :wrapping="3"></svg-text>
   </g>
 </template>

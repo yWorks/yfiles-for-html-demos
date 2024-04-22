@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -1604,6 +1604,7 @@ function getDemoData() {
       demoPath: 'style/vue-template-node-style/',
       summary: 'Presents a versatile and easily customizable template node style based on Vue.',
       category: 'style',
+      languageType: 'ts-only',
       thumbnailPath: 'resources/image/generic-template-style.png',
       tags: ['style', 'template', 'vuejs'],
       keywords: ['v2.1.0.0', 'data bindings', 'data panel', 'tree']
@@ -2913,14 +2914,23 @@ function getDemoData() {
       tags: ['web components', 'shadow dom', 'html imports']
     },
     {
-      id: 'basic-module-loading',
-      name: 'Basic Module Loading',
-      demoPath: 'loading/basic-module-loading/',
-      summary: 'A basic example of loading the yFiles library modules.',
+      id: 'basic-demo',
+      name: 'Basic Demo',
+      demoPath: 'loading/basic-demo/',
+      summary: 'A simple demo that you can use as a starting point for your own project.',
       category: 'loading',
-      thumbnailPath: 'resources/image/basic-module-loading.png',
+      thumbnailPath: 'resources/image/basic-demo.png',
       tags: ['loader', 'modules'],
-      keywords: ['minimal', 'start', 'quick']
+      keywords: [
+        'getting starting',
+        'hello world',
+        'starter kit',
+        'boilerplate',
+        'quick',
+        'minimal',
+        'simple',
+        'template'
+      ]
     },
     {
       id: 'rollup',

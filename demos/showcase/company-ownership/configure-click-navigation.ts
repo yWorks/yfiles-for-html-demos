@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2023 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -50,10 +50,8 @@ export function addSmartClickNavigation(graphInputMode: GraphInputMode): void {
         // gets the point where we should zoom in
         let location
         if (item instanceof IEdge) {
-          event.handled = true
           location = getFocusPoint(item, graphComponent)
         } else if (item instanceof ILabel && item.owner instanceof IEdge) {
-          event.handled = true
           location = getFocusPoint(item.owner, graphComponent)
         }
         if (location) {
@@ -65,16 +63,14 @@ export function addSmartClickNavigation(graphInputMode: GraphInputMode): void {
     }
   )
 
-  function getFocusPoint(item: IEdge, graphComponent: GraphComponent): Point {
+  function getFocusPoint(item: IEdge, graphComponent: GraphComponent): Point | null {
     // If the source and the target node are in the view port, then zoom to the middle point of the edge
     const targetNodeCenter = item.targetNode!.layout.center
     const sourceNodeCenter = item.sourceNode!.layout.center
     const viewport = graphComponent.viewport
     if (viewport.contains(targetNodeCenter) && viewport.contains(sourceNodeCenter)) {
-      return new Point(
-        (sourceNodeCenter.x + targetNodeCenter.x) / 2,
-        (sourceNodeCenter.y + targetNodeCenter.y) / 2
-      )
+      // Do nothing if both nodes are visible
+      return null
     } else {
       if (
         viewport.center.subtract(targetNodeCenter).vectorLength <
