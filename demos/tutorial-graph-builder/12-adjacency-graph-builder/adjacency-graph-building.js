@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,26 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { AdjacencyGraphBuilder, EdgeCreator } from 'yfiles'
-
-/**
- * @param {!IGraph} graph
- * @param {!Array.<OrgChartEntry>} nodesData
- * @returns {!AdjacencyGraphBuilder}
- */
+import { AdjacencyGraphBuilder, EdgeCreator } from '@yfiles/yfiles'
 export function configureGraphBuilder(graph, nodesData) {
   const adjacencyGraphBuilder = new AdjacencyGraphBuilder(graph)
-
   const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(nodesData, (item) => item.id)
-
   adjacencyNodesSource.addSuccessorIds(
     (data) => data.colleagues,
     new EdgeCreator({ defaults: graph.edgeDefaults })
   )
-
   adjacencyNodesSource.nodeCreator.createLabelBinding({
     text: (dataItem) => dataItem.name
   })
-
   return adjacencyGraphBuilder
 }

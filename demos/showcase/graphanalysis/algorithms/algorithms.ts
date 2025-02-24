@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@ import {
   substructuresCliquesSample,
   substructuresCyclesSample
 } from '../samples/samples'
-import type { IEdge, IGraph, INode } from 'yfiles'
+import type { IEdge, IGraph, INode } from '@yfiles/yfiles'
 import {
   calculateMinimumSpanningTree,
   minimumSpanningTreeDescription
@@ -89,8 +89,10 @@ import {
   allPathsDescription,
   calculateAllChains,
   calculateAllPaths,
+  calculatedKShortestPaths,
   calculatedShortestPaths,
   calculateSingleSourceShortestPaths,
+  kShortestPathsDescription,
   shortestPathsDescription,
   singleSourceShortestPathsDescription
 } from './paths'
@@ -106,7 +108,7 @@ export type SampleData = Array<Array<number>>
  */
 export type Algorithm = {
   name: string
-  directed?: boolean
+  directedOnly?: boolean
   supportsDirectedness: boolean
   supportsEdgeWeights: boolean
   needsStartNodes?: boolean
@@ -114,6 +116,7 @@ export type Algorithm = {
   sample: SampleData
   apply: (graph: IGraph, config: AlgorithmConfig) => void
   description: string
+  defaultSettings: { directed: boolean; supportsEdgeWeights: boolean }
 }
 
 /**
@@ -182,6 +185,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Minimum Spanning Tree',
     supportsDirectedness: false,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: spanningTreeSample,
     apply: calculateMinimumSpanningTree,
     description: minimumSpanningTreeDescription
@@ -190,6 +194,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Connected Components',
     supportsDirectedness: false,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: connectivitySample,
     apply: calculateConnectedComponents,
     description: connectedComponentsDescription
@@ -198,15 +203,17 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Biconnected Components',
     supportsDirectedness: false,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: connectivitySample,
     apply: calculateBiconnectedComponents,
     description: biconnectedComponentsDescription
   },
   'strongly-connected-components': {
     name: 'Strongly Connected Components',
-    directed: true,
-    supportsDirectedness: false,
+    directedOnly: true,
+    supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: true, supportsEdgeWeights: false },
     sample: connectivitySample,
     apply: calculateStronglyConnectedComponents,
     description: stronglyConnectedComponentsDescription
@@ -215,6 +222,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Reachability',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: true, supportsEdgeWeights: false },
     needsStartNodes: true,
     sample: connectivitySample,
     apply: calculateReachableNodes,
@@ -224,6 +232,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'k-Core Components',
     supportsDirectedness: false,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: kCoreSample,
     apply: calculateKCoreComponents,
     description: kCoreComponentsDescription
@@ -232,16 +241,30 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Shortest Paths',
     supportsDirectedness: true,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     needsStartNodes: true,
     needsEndNodes: true,
     sample: pathsSample,
     apply: calculatedShortestPaths,
     description: shortestPathsDescription
   },
+  'k-shortest-paths': {
+    name: 'k-Shortest Paths',
+    directedOnly: true,
+    supportsDirectedness: true,
+    supportsEdgeWeights: true,
+    defaultSettings: { directed: true, supportsEdgeWeights: false },
+    needsStartNodes: true,
+    needsEndNodes: true,
+    sample: substructuresCliquesSample,
+    apply: calculatedKShortestPaths,
+    description: kShortestPathsDescription
+  },
   'all-paths': {
     name: 'All Paths',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     needsStartNodes: true,
     needsEndNodes: true,
     sample: pathsSample,
@@ -252,6 +275,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'All Chains',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: pathsSample,
     apply: calculateAllChains,
     description: allChainsDescription
@@ -260,6 +284,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Single Source Shortest Paths',
     supportsDirectedness: true,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     needsStartNodes: true,
     sample: pathsSample,
     apply: calculateSingleSourceShortestPaths,
@@ -269,6 +294,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Cycles',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: cycleSample,
     apply: calculateCycles,
     description: cyclesDescription
@@ -277,6 +303,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Degree Centrality',
     supportsDirectedness: false,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculateDegreeCentrality,
     description: degreeCentralityDescription
@@ -285,6 +312,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Weight Centrality',
     supportsDirectedness: false,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculateWeightCentrality,
     description: weightCentralityDescription
@@ -293,6 +321,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Graph Centrality',
     supportsDirectedness: true,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculateGraphCentrality,
     description: graphCentralityDescription
@@ -301,6 +330,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Node Edge Betweenness Centrality',
     supportsDirectedness: true,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculateNodeEdgeBetweennessCentrality,
     description: nodeEdgeBetweennessCentralityDescription
@@ -309,6 +339,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Closeness Centrality',
     supportsDirectedness: true,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculateClosenessCentrality,
     description: closenessCentralityDescription
@@ -317,6 +348,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Eigenvector Centrality',
     supportsDirectedness: true,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculateEigenvectorCentrality,
     description: eigenvectorCentralityDescription
@@ -325,6 +357,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Page Rank',
     supportsDirectedness: false,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculatePageRankCentrality,
     description: pageRankDescription
@@ -333,6 +366,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Substructures Chains',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: substructuresCyclesSample,
     apply: calculateChainSubstructures,
     description: chainsSubstructuresDescription
@@ -341,6 +375,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Substructures Cycles',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: substructuresCyclesSample,
     apply: calculateCycleSubstructures,
     description: cycleSubstructuresDescription
@@ -349,6 +384,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Substructures Stars',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: substructuresCyclesSample,
     apply: calculateStarSubstructures,
     description: starSubstructuresDescription
@@ -357,6 +393,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Substructures Trees',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: substructuresCyclesSample,
     apply: calculateTreeSubstructures,
     description: treeSubstructuresDescription
@@ -365,6 +402,7 @@ export const algorithms: Record<string, Algorithm> = {
     name: 'Substructures Cliques',
     supportsDirectedness: false,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: substructuresCliquesSample,
     apply: calculateCliqueSubstructures,
     description: cliquesSubstructuresDescription
@@ -383,7 +421,7 @@ function getEdgeWeights(graph: IGraph): Map<IEdge, number> {
       // if edge has at least one label ...
       if (edge.labels.size > 0) {
         // ... try to return its value
-        const edgeWeight = parseFloat(edge.labels.first().text)
+        const edgeWeight = parseFloat(edge.labels.first()!.text)
         weights.set(edge, Math.max(edgeWeight, 0))
       } else {
         weights.set(edge, 1)
@@ -403,9 +441,9 @@ function getStartNodes(graph: IGraph): INode[] {
     return []
   }
 
-  const startNodes = graph.nodes.filter((node) => getTag(node).type === 'start').toArray()
+  const startNodes = graph.nodes.filter((node) => getTag(node)?.type === 'start').toArray()
   if (startNodes.length === 0) {
-    const startNode = graph.nodes.first()
+    const startNode = graph.nodes.first()!
     const tag = copyAndReplaceTag(startNode)
     tag.type = 'start'
     startNodes.push(startNode)
@@ -423,9 +461,9 @@ function getEndNodes(graph: IGraph): INode[] {
     return []
   }
 
-  const endNodes = graph.nodes.filter((node) => getTag(node).type === 'end').toArray()
+  const endNodes = graph.nodes.filter((node) => getTag(node)?.type === 'end').toArray()
   if (endNodes.length === 0) {
-    const endNode = graph.nodes.last()
+    const endNode = graph.nodes.last()!
     const tag = copyAndReplaceTag(endNode)
     tag.type = 'end'
     endNodes.push(endNode)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,7 +40,7 @@ import {
   SvgExport,
   SvgVisual,
   type Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 const CONTENT_RECT_MARGINS = 50
 const MIN_NODE_SIZE = 5
@@ -50,7 +50,7 @@ const MAX_ZOOM_CHANGE_THRESHOLD = 3
  * This group node style creates a visualization of its children if used in the context of folding.
  * The contents are scaled and rendered within the bounds of the node.
  */
-export class DeepZoomGroupNodeStyle extends NodeStyleBase {
+export class DeepZoomGroupNodeStyle extends NodeStyleBase<SvgVisual> {
   /**
    * Creates a new group node style with the given backgroundStyle.
    */
@@ -81,12 +81,12 @@ export class DeepZoomGroupNodeStyle extends NodeStyleBase {
   /**
    * Updates the current visual instead of creating a new one.
    */
-  updateVisual(renderContext: IRenderContext, oldVisual: Visual, node: INode): SvgVisual {
-    const outerGroup = (oldVisual as SvgVisual).svgElement
+  updateVisual(renderContext: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
+    const outerGroup = oldVisual.svgElement
 
-    const background = outerGroup.firstChild! as SVGElement
-    const innerGroup = outerGroup.lastElementChild!
-    const contents = innerGroup.firstElementChild! as SVGGElement
+    const background = outerGroup.firstChild as SVGElement
+    const innerGroup = outerGroup.lastElementChild as SVGGElement
+    const contents = innerGroup.firstElementChild as SVGGElement
 
     const renderedZoom = DeepZoomGroupNodeStyle.readRenderCache<number>(contents, 'data-zoom')
 
@@ -102,7 +102,7 @@ export class DeepZoomGroupNodeStyle extends NodeStyleBase {
     this.updateBackgroundVisual(node, renderContext, background)
     this.updateContentsVisual(contents, node)
 
-    return oldVisual as SvgVisual
+    return oldVisual
   }
 
   /**
@@ -180,17 +180,17 @@ export class DeepZoomGroupNodeStyle extends NodeStyleBase {
 
     const tempGraphComponent = new GraphComponent()
     tempGraphComponent.graph = tempView.graph
-    tempGraphComponent.updateContentRect({ margins: CONTENT_RECT_MARGINS })
+    tempGraphComponent.updateContentBounds({ margins: CONTENT_RECT_MARGINS })
 
     const allBounds = new Rect(
       0,
       0,
-      tempGraphComponent.contentRect.width,
-      tempGraphComponent.contentRect.height
+      tempGraphComponent.contentBounds.width,
+      tempGraphComponent.contentBounds.height
     )
 
     // configure a rendering of the groups contents
-    const svgExport = new SvgExport(tempGraphComponent.contentRect)
+    const svgExport = new SvgExport(tempGraphComponent.contentBounds)
 
     // By default, the rendering has a zoom of one and the contained nodes are their 'true' sizes in world coordinates.
     // Thus, the image needs to be scaled down to the apparent size of the group node

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,42 +26,35 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { NodeLabelingPolicyStringValues } from 'yfiles'
 import {
   CircularLayout,
   CircularLayoutData,
   CircularLayoutEdgeRoutingPolicy,
   CircularLayoutOnCircleRoutingStyle,
+  CircularLayoutPartitioningPolicy,
   CircularLayoutRoutingStyle,
-  CircularLayoutStyle,
-  Class,
-  DefaultLabelStyle,
   FreeNodeLabelModel,
   GraphBuilder,
   GraphComponent,
-  GraphFocusIndicatorManager,
-  GraphSelectionIndicatorManager,
   GraphViewerInputMode,
   IModelItem,
   INode,
+  LabelStyle,
   LayoutExecutor,
   License,
-  NodeTypeAwareSequencer,
   Point,
+  type RadialNodeLabelPlacementStringValues,
   Rect,
   ShapeNodeStyle,
-  TimeSpan,
-  VoidEdgeStyle,
-  VoidNodeStyle
-} from 'yfiles'
+  TimeSpan
+} from '@yfiles/yfiles'
 
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { NonRibbonEdgeStyle } from './NonRibbonEdgeStyle'
-import type { ColorSetName } from 'demo-resources/demo-colors'
-import { colorSets } from 'demo-resources/demo-colors'
-import { finishLoading } from 'demo-resources/demo-page'
-import { configureHighlight } from './HighlightSupport'
+import type { ColorSetName } from '@yfiles/demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { configureHighlight } from './configure-highlight'
 
 const predefinedColorSets = new Map<string, ColorSetName>([
   ['Engineering', 'demo-palette-42'],
@@ -76,13 +69,11 @@ const predefinedColorSets = new Map<string, ColorSetName>([
  * Runs this demo.
  */
 async function run(): Promise<void> {
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
 
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // configure the input mode to enable hovered tooltips
   configureInputMode(graphComponent)
   // configure the items to be highlighted on hover
@@ -107,14 +98,14 @@ function configureInputMode(graphComponent: GraphComponent) {
   const gvim = new GraphViewerInputMode()
   gvim.itemHoverInputMode.enabled = true
 
-  const mouseHoverInputMode = gvim.mouseHoverInputMode
-  mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)
-  mouseHoverInputMode.delay = TimeSpan.fromMilliseconds(500)
-  mouseHoverInputMode.duration = TimeSpan.fromSeconds(5)
+  const toolTipInputMode = gvim.toolTipInputMode
+  toolTipInputMode.toolTipLocationOffset = new Point(15, 15)
+  toolTipInputMode.delay = TimeSpan.fromMilliseconds(500)
+  toolTipInputMode.duration = TimeSpan.fromSeconds(5)
 
   // Register a listener for when a tooltip should be shown.
-  gvim.addQueryItemToolTipListener((_, evt) => {
-    if (evt.handled || !INode.isInstance(evt.item)) {
+  gvim.addEventListener('query-item-tool-tip', (evt) => {
+    if (evt.handled || !(evt.item instanceof INode)) {
       // Tooltip content has already been assigned -> nothing to do.
       return
     }
@@ -150,20 +141,17 @@ function createTooltipContent(item: IModelItem): HTMLElement {
 async function initializeGraph(graphComponent: GraphComponent): Promise<void> {
   const graph = graphComponent.graph
   // set the FreeNodeLabelModel as default layout parameter for the labels so that ray-like labeling is supported
-  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createDefaultParameter()
+  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
 
   // use a custom style for the edges to support Bézier curves with two colors
   graph.edgeDefaults.style = new NonRibbonEdgeStyle()
 
   // hide the selection/focus indicators
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE,
-    edgeStyle: VoidEdgeStyle.INSTANCE
-  })
-  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE,
-    edgeStyle: VoidEdgeStyle.INSTANCE
-  })
+  graph.decorator.nodes.selectionRenderer.hide()
+  graph.decorator.edges.selectionRenderer.hide()
+  graph.decorator.nodes.focusRenderer.hide()
+  graph.decorator.edges.focusRenderer.hide()
+
   const graphData = await fetch('resources/GraphData.json').then((response) => response.json())
 
   const builder = new GraphBuilder(graph)
@@ -197,13 +185,13 @@ async function initializeGraph(graphComponent: GraphComponent): Promise<void> {
   // sets the style for the labels
   graph.labels.forEach((label) => {
     const colorSet =
-      colorSets[predefinedColorSets.get(label.owner!.tag?.department) || 'demo-palette-41']
+      colorSets[predefinedColorSets.get(label.owner.tag?.department) || 'demo-palette-41']
     graph.setStyle(
       label,
-      new DefaultLabelStyle({
+      new LabelStyle({
         backgroundFill: colorSet.nodeLabelFill,
         textFill: colorSet.text,
-        insets: 3,
+        padding: 3,
         shape: 'round-rectangle'
       })
     )
@@ -239,7 +227,7 @@ function initializeUI(graphComponent: GraphComponent): void {
     .addEventListener('change', async (evt) => {
       await configureAndRunChordLayout(
         graphComponent,
-        (evt.target as HTMLSelectElement).value as NodeLabelingPolicyStringValues
+        (evt.target as HTMLSelectElement).value as RadialNodeLabelPlacementStringValues
       )
     })
   document
@@ -263,28 +251,25 @@ function initializeUI(graphComponent: GraphComponent): void {
  */
 async function configureAndRunChordLayout(
   graphComponent: GraphComponent,
-  labelingPolicy: NodeLabelingPolicyStringValues
+  labelingPolicy: RadialNodeLabelPlacementStringValues
 ): Promise<void> {
   const chordLayout = new CircularLayout()
   // orders the nodes into a single circle
-  chordLayout.layoutStyle = CircularLayoutStyle.SINGLE_CYCLE
+  chordLayout.partitioningPolicy = CircularLayoutPartitioningPolicy.SINGLE_CYCLE
   // sets edges to be routed inside the circle
   chordLayout.edgeRoutingPolicy = CircularLayoutEdgeRoutingPolicy.INTERIOR
-  chordLayout.singleCycleLayout.minimumNodeDistance = 3
-  //  sort the nodes based on their type using NodeTypeAwareSequencer
-  chordLayout.singleCycleLayout.nodeSequencer = new NodeTypeAwareSequencer()
+  chordLayout.partitionDescriptor.minimumNodeDistance = 3
 
   // defines settings for the non-exterior edges
-  const defaultEdgeLayoutDescriptor = chordLayout.defaultEdgeLayoutDescriptor
-  defaultEdgeLayoutDescriptor.inCircleRoutingStyle = CircularLayoutRoutingStyle.CURVED
-  defaultEdgeLayoutDescriptor.onCircleRoutingStyle = CircularLayoutOnCircleRoutingStyle.CURVED
+  const defaultEdgeDescriptor = chordLayout.edgeDescriptor
+  defaultEdgeDescriptor.inCircleRoutingStyle = CircularLayoutRoutingStyle.CURVED
+  defaultEdgeDescriptor.onCircleRoutingStyle = CircularLayoutOnCircleRoutingStyle.CURVED
 
   // since we use the BezierEdgeStyle, we need to determine the control points for the curves
-  defaultEdgeLayoutDescriptor.createControlPoints = true
+  defaultEdgeDescriptor.createControlPoints = true
 
   // enables and configures the labeling algorithm
-  chordLayout.integratedNodeLabeling = true
-  chordLayout.nodeLabelingPolicy = labelingPolicy
+  chordLayout.nodeLabelPlacement = labelingPolicy
   chordLayout.nodeLabelSpacing = 0
 
   // creates the layout data needed in order to sort the edges based on their type
@@ -293,7 +278,7 @@ async function configureAndRunChordLayout(
   })
 
   // apply the layout
-  await graphComponent.morphLayout(chordLayout, '.5s', chordLayoutData)
+  await graphComponent.applyLayoutAnimated(chordLayout, '.5s', chordLayoutData)
 }
 
 run().then(finishLoading)

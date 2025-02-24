@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { EventArgs, ICommand } from 'yfiles'
+import { CanvasComponent, type Command } from '@yfiles/yfiles'
 import { BrowserDetection } from './BrowserDetection'
 
 export type OptionData = { value: string; text: string }
@@ -243,8 +243,8 @@ function createWebGLSupportWarningMessage(innerHTML: string) {
  */
 export function bindYFilesCommand(
   selector: string,
-  command: ICommand,
-  target: any,
+  command: Command,
+  targetCanvas: CanvasComponent,
   parameter: any,
   tooltip: string
 ): void {
@@ -256,14 +256,14 @@ export function bindYFilesCommand(
 
   // Add a click listener that executes the command
   element.addEventListener('click', () => {
-    if (command.canExecute(parameter, target)) {
-      command.execute(parameter, target)
+    if (targetCanvas.canExecuteCommand(command, parameter)) {
+      targetCanvas.executeCommand(command, parameter)
     }
   })
 
   // Add an event listener that syncs the disabled state of the command to the element
-  command.addCanExecuteChangedListener((command, evt) => {
-    if (command.canExecute(parameter, target)) {
+  targetCanvas.addEventListener('can-execute-changed', () => {
+    if (targetCanvas.canExecuteCommand(command, parameter)) {
       element.removeAttribute('disabled')
     } else {
       element.setAttribute('disabled', 'disabled')

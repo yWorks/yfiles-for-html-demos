@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, type Rect, SvgExport, WebGL2GraphModelManager } from 'yfiles'
-import { useWebGL2Rendering } from './webgl-support'
+import { GraphComponent, type Rect, SvgExport, WebGLGraphModelManager } from '@yfiles/yfiles'
+import { useWebGLRendering } from './webgl-support'
+import { DelayedNodeStyle } from './delayed-node-style'
 
 /**
  * Exports a certain area of the graph to an SVG element.
@@ -50,16 +51,16 @@ export async function exportSvg(
   const exportComponent = new GraphComponent()
   // ... and assign it the same graph.
   exportComponent.graph = graphComponent.graph
-  exportComponent.updateContentRect()
+  exportComponent.updateContentBounds()
 
-  if (graphComponent.graphModelManager instanceof WebGL2GraphModelManager) {
-    useWebGL2Rendering(exportComponent)
+  if (graphComponent.graphModelManager instanceof WebGLGraphModelManager) {
+    useWebGLRendering(exportComponent)
   }
 
   // create the exporter class
   const exporter = new SvgExport({
     // determine the bounds of the exported area
-    worldBounds: rectangle || exportComponent.contentRect,
+    worldBounds: rectangle || exportComponent.contentBounds,
     scale,
     encodeImagesBase64: true,
     inlineSvgImages: true,
@@ -68,6 +69,8 @@ export async function exportSvg(
 
   // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
   exporter.cssStyleSheet = null
-
-  return exporter.exportSvgAsync(exportComponent)
+  return exporter.exportSvgAsync(exportComponent, () =>
+    // wait for styles to finish rendering
+    Promise.all(DelayedNodeStyle.pendingPromises)
+  )
 }

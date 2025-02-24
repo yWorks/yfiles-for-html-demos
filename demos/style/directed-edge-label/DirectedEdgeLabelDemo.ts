@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,42 +27,38 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   EdgePathLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   IEdge,
   IGraph,
+  LabelStyle,
   License,
-  OrthogonalEdgeEditingContext,
   Point,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { DirectedEdgeLabelStyle } from './DirectedEdgeLabelStyle'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
-  initDemoStyles(graphComponent.graph, { theme: 'demo-palette-31' })
-  const labelStyle = graphComponent.graph.edgeDefaults.labels.style as DefaultLabelStyle
+  initDemoStyles(graphComponent.graph, { theme: 'demo-palette-31', orthogonalEditing: true })
+  const labelStyle = graphComponent.graph.edgeDefaults.labels.style as LabelStyle
   labelStyle.minimumSize = new Size(0, 22)
 
   // Initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode({
     allowEditLabel: true,
     allowAddLabel: false,
-    deletableItems: GraphItemTypes.ALL - GraphItemTypes.LABEL,
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext()
+    deletableItems: GraphItemTypes.ALL - GraphItemTypes.LABEL
   })
 
-  graphComponent.graph.addEdgeCreatedListener((graphComponent, evt) =>
+  graphComponent.graph.addEventListener('edge-created', (evt, graphComponent) =>
     addLabels(graphComponent, evt.item)
   )
 

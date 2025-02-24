@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Critical Path Analysis (CPA) Demo
 
-# Critical Path Analysis (CPA) Demo
+<img src="../../../doc/demo-thumbnails/critical-path-analysis.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/analysis/criticalpathanalysis/).
 
 This demo shows how to perform critical path analysis (CPA) in project management with yFiles. Formally, this means identifying the tasks of a project that must be completed on time so that the whole project can be completed on time.
 
@@ -21,4 +23,4 @@ An edge connecting two tasks means that the task of its source node has to be co
 
 The orange edges are the edges that belong to the critical path. The dark-blue edges connect tasks that should be completed on time otherwise, the whole project will be delayed, while the purple ones have slack greater than zero, which means that they can be delayed without affecting the completion time of the project.
 
-For the critical path calculation, we apply the [RankAssignmentAlgorithm](https://docs.yworks.com/yfileshtml/#/api/RankAssignmentAlgorithm) and we assign to each node a number that represents its rank and to each edge a number that represents its slack. Afterwards, we calculate the shortest path between the first/last ranked nodes while taking into consideration the slack values of each edge, i.e. the paths with higher slack are longer. At the end, we apply a [HierarchicLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout) such that nodes are placed in layers based on their ranking, while the edges that belong to the critical path gain priority so that the corresponding nodes incident to them are horizontally-aligned.
+For the critical path calculation, we apply the [RankAssignmentAlgorithm](https://docs.yworks.com/yfileshtml/#/api/RankAssignmentAlgorithm) and we assign to each node a number that represents its rank and to each edge a number that represents its slack. Afterwards, we calculate the shortest path between the first/last ranked nodes while taking into consideration the slack values of each edge, i.e. the paths with higher slack are longer. At the end, we apply a [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) such that nodes are placed in layers based on their ranking, while the edges that belong to the critical path gain priority so that the corresponding nodes incident to them are horizontally-aligned.

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,13 +27,14 @@
  **
  ***************************************************************************/
 import {
+  EventRecognizers,
   GraphComponent,
   GraphEditorInputMode,
   MouseWheelBehaviors,
   MoveViewportInputMode,
-  Size,
-  TouchEventRecognizers
-} from 'yfiles'
+  type PointerEventArgs,
+  PointerType
+} from '@yfiles/yfiles'
 import { BrowserDetection } from './BrowserDetection'
 
 /**
@@ -45,46 +46,42 @@ export function configureTwoPointerPanning(graphComponent: GraphComponent): void
   const inputMode = graphComponent.inputMode
   if (inputMode instanceof GraphEditorInputMode) {
     // start marquee selection on long press to allow other gestures to start on a simple single press
-    inputMode.marqueeSelectionInputMode.pressedRecognizerTouch =
-      TouchEventRecognizers.TOUCH_LONG_PRESS_PRIMARY
+    inputMode.marqueeSelectionInputMode.beginRecognizerTouch =
+      EventRecognizers.TOUCH_PRIMARY_LONG_PRESS
 
     // set gestures to an immediate touch-down recognizer instead of the long-press recognizer
-    inputMode.moveInputMode.pressedRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
-    inputMode.createEdgeInputMode.prepareRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
-    inputMode.createBendInputMode.prepareRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
-    inputMode.handleInputMode.pressedRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
-    inputMode.moveUnselectedInputMode.pressedRecognizerTouch =
-      TouchEventRecognizers.TOUCH_DOWN_PRIMARY
-    inputMode.moveLabelInputMode.pressedRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
+    inputMode.moveSelectedItemsInputMode.beginRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DOWN
+    inputMode.createEdgeInputMode.beginRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DOWN
+    inputMode.createBendInputMode.beginRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DOWN
+    inputMode.handleInputMode.beginRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DOWN
+    inputMode.moveUnselectedItemsInputMode.beginRecognizerTouch =
+      EventRecognizers.TOUCH_PRIMARY_DOWN
 
     // make sure that starting the input modes above has higher priority than moving the viewport
     inputMode.moveViewportInputMode.priority = inputMode.marqueeSelectionInputMode.priority - 1
   }
 
-  // prevent accidental start of edit gesture for now immediate touchdown gestures
-  graphComponent.dragSizeTouch = new Size(40, 40)
-
   // iOS fires bogus mousewheel events during pinch zooming, so disable mousewheel behavior while
   // two pointers are pressed.
   if (BrowserDetection.iOSVersion > 0) {
     let previousWheelBehavior: MouseWheelBehaviors | null = null
-    graphComponent.addTouchDownListener((_, evt) => {
-      if (!evt.device.isPrimaryDevice) {
+    graphComponent.addEventListener('pointer-down', (evt) => {
+      if (evt.pointerType === PointerType.TOUCH && !evt.isPrimary) {
         // a second pointer is down, disable wheel behavior
         previousWheelBehavior = graphComponent.mouseWheelBehavior
         graphComponent.mouseWheelBehavior = MouseWheelBehaviors.NONE
       }
     })
 
-    const resetWheelBehavior = () => {
-      if (previousWheelBehavior !== null) {
+    const resetWheelBehavior = (evt: PointerEventArgs) => {
+      if (evt.pointerType === PointerType.TOUCH && previousWheelBehavior !== null) {
         graphComponent.mouseWheelBehavior = previousWheelBehavior
         previousWheelBehavior = null
       }
     }
     // reset mousewheel behavior in case the application is used with touch and mouse interaction
-    graphComponent.addTouchUpListener(resetWheelBehavior)
-    graphComponent.addTouchLeaveListener(resetWheelBehavior)
-    graphComponent.addTouchLostCaptureListener(resetWheelBehavior)
+    graphComponent.addEventListener('pointer-up', resetWheelBehavior)
+    graphComponent.addEventListener('pointer-leave', resetWheelBehavior)
+    graphComponent.addEventListener('lost-pointer-capture', resetWheelBehavior)
   }
 }

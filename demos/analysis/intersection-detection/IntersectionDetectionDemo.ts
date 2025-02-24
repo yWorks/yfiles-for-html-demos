@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,45 +27,41 @@
  **
  ***************************************************************************/
 import {
-  DefaultEdgePathCropper,
-  DefaultLabelStyle,
-  FreeEdgeLabelModel,
+  EdgePathCropper,
+  SmartEdgeLabelModel,
   FreeNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  GraphHighlightIndicatorManager,
   GraphItemTypes,
   GraphSnapContext,
   HorizontalTextAlignment,
-  ICanvasObjectDescriptor,
   IEdge,
   IGraph,
-  IModelItem,
   INode,
-  Insets,
   Intersection,
   IntersectionItemTypes,
   Intersections,
   LabelPositionHandler,
-  LabelSnapContext,
+  LabelStyle,
   License,
   OrientedRectangle,
-  OrthogonalEdgeEditingContext,
   Point,
   PolylineEdgeStyle,
-  QueryItemToolTipEventArgs,
   ShapeNodeStyle,
   TimeSpan,
   VerticalTextAlignment,
-  Visualization
-} from 'yfiles'
+  Visualization,
+  NodeStyleIndicatorRenderer,
+  LabelStyleIndicatorRenderer,
+  EdgeStyleIndicatorRenderer
+} from '@yfiles/yfiles'
 import { IntersectionVisualCreator } from './DemoVisuals'
-import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
+import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import GraphData from './resources/GraphData'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { createToolTipContent } from './TooltipHelper'
-import { finishLoading } from 'demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * The graph component
@@ -102,8 +98,6 @@ let intersectionInfoArray: Intersection[] = []
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize the input mode
   initializeInputMode()
 
@@ -115,7 +109,7 @@ async function run(): Promise<void> {
 
   // load a sample graph
   loadSampleGraph(graphComponent.graph)
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   initializeIntersectionVisual()
 
@@ -174,7 +168,7 @@ function runIntersectionAlgorithm(): void {
 
   // whether to consider only the selected elements
   if (considerSelectionBox.checked) {
-    intersections.affectedItems.delegate = (item) => graphComponent.selection.isSelected(item)
+    intersections.affectedItems = (item) => graphComponent.selection.includes(item)
   }
 
   // run the algorithm and obtain the result
@@ -232,8 +226,8 @@ function updateIntersectionVisual(intersections: Intersection[]): void {
  */
 function initializeIntersectionVisual(): void {
   intersectionVisualCreator = new IntersectionVisualCreator()
-  graphComponent.highlightGroup
-    .addChild(intersectionVisualCreator, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE)
+  graphComponent.renderTree
+    .createElement(graphComponent.renderTree.highlightGroup, intersectionVisualCreator)
     .toFront()
 }
 
@@ -248,7 +242,7 @@ function loadSampleGraph(graph: IGraph): void {
     layout: 'layout',
     parentId: (dataItem) => dataItem.parent
   })
-  ns.nodeCreator.addNodeCreatedListener((_, evt) => {
+  ns.nodeCreator.addEventListener('node-created', (evt) => {
     if (evt.dataItem.isEllipse) {
       const defaultStyle = graph.nodeDefaults.style as ShapeNodeStyle
       graph.setStyle(
@@ -265,14 +259,13 @@ function loadSampleGraph(graph: IGraph): void {
     (data) => data.labels || []
   ).labelCreator
   nodeLabelCreator.textProvider = (data) => data.text || ''
-  nodeLabelCreator.addLabelAddedListener((_, evt) => {
+  nodeLabelCreator.addEventListener('label-added', (evt) => {
     const label = evt.item
     const data = evt.dataItem
     graph.setLabelLayoutParameter(
       label,
       FreeNodeLabelModel.INSTANCE.findBestParameter(
         label,
-        FreeNodeLabelModel.INSTANCE,
         new OrientedRectangle(data.anchorX, data.anchorY, data.width, data.height)
       )
     )
@@ -299,14 +292,13 @@ function loadSampleGraph(graph: IGraph): void {
     (data) => data.labels || []
   ).labelCreator
   edgeLabelCreator.textProvider = (data) => data.text || ''
-  edgeLabelCreator.addLabelAddedListener((_, evt) => {
+  edgeLabelCreator.addEventListener('label-added', (evt) => {
     const label = evt.item
     const data = evt.dataItem
     graph.setLabelLayoutParameter(
       label,
-      FreeEdgeLabelModel.INSTANCE.findBestParameter(
+      new SmartEdgeLabelModel().findBestParameter(
         label,
-        FreeEdgeLabelModel.INSTANCE,
         new OrientedRectangle(data.anchorX, data.anchorY, data.width, data.height)
       )
     )
@@ -316,10 +308,10 @@ function loadSampleGraph(graph: IGraph): void {
 
   graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
-      graph.setPortLocation(edge.sourcePort!, Point.from(edge.tag.sourcePort))
+      graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
     }
     if (edge.tag.targetPort) {
-      graph.setPortLocation(edge.targetPort!, Point.from(edge.tag.targetPort))
+      graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
     }
   })
 }
@@ -331,64 +323,78 @@ function initializeGraph(graphComponent: GraphComponent): void {
   const graph = graphComponent.graph
   // set style defaults
   const theme = 'demo-palette-75'
-  initDemoStyles(graph, { theme })
+  initDemoStyles(graph, { theme, orthogonalEditing: true })
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'rectangle',
     fill: colorSets[theme].fill,
     stroke: `1px ${colorSets[theme].stroke}`
   })
 
-  const nodeLabelStyle = new DefaultLabelStyle()
-  nodeLabelStyle.backgroundFill = colorSets[theme].nodeLabelFill
-  nodeLabelStyle.textFill = colorSets[theme].text
-  nodeLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
-  nodeLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
-  nodeLabelStyle.insets = new Insets(4, 2, 4, 1)
-  graph.nodeDefaults.labels.style = nodeLabelStyle
-  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createDefaultParameter()
+  graph.nodeDefaults.labels.style = new LabelStyle({
+    backgroundFill: colorSets[theme].nodeLabelFill,
+    textFill: colorSets[theme].text,
+    verticalTextAlignment: VerticalTextAlignment.CENTER,
+    horizontalTextAlignment: HorizontalTextAlignment.CENTER,
+    padding: [2, 4, 1, 4]
+  })
+  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
 
-  const edgeLabelStyle = new DefaultLabelStyle()
-  edgeLabelStyle.backgroundFill = colorSets[theme].edgeLabelFill
-  edgeLabelStyle.textFill = colorSets[theme].text
-  edgeLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
-  edgeLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
-  edgeLabelStyle.insets = new Insets(4, 2, 4, 1)
-  graph.edgeDefaults.labels.style = edgeLabelStyle
-  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+  graph.edgeDefaults.labels.style = new LabelStyle({
+    backgroundFill: colorSets[theme].edgeLabelFill,
+    textFill: colorSets[theme].text,
+    verticalTextAlignment: VerticalTextAlignment.CENTER,
+    horizontalTextAlignment: HorizontalTextAlignment.CENTER,
+    padding: [2, 4, 1, 4]
+  })
+  graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
 
-  graph.decorator.portDecorator.edgePathCropperDecorator.setImplementation(
-    new DefaultEdgePathCropper({ cropAtPort: false, extraCropLength: 0 })
+  graph.decorator.ports.edgePathCropper.addConstant(
+    new EdgePathCropper({ cropAtPort: false, extraCropLength: 0 })
   )
-  graph.decorator.labelDecorator.positionHandlerDecorator.setFactory((label) => {
+  graph.decorator.labels.positionHandler.addFactory((label) => {
     const positionHandler = new LabelPositionHandler(label)
     positionHandler.visualization = Visualization.LIVE
     return positionHandler
   })
 
   // add some highlighting for the nodes/edges/labels involved in an intersection
-  const highlightNodeStyle = new ShapeNodeStyle({
-    shape: 'rectangle',
-    stroke: '2px #f0c808',
-    fill: 'transparent'
+  const highlightNodeStyle = new NodeStyleIndicatorRenderer({
+    nodeStyle: new ShapeNodeStyle({
+      shape: 'rectangle',
+      stroke: '2px #f0c808',
+      fill: 'transparent'
+    }),
+    zoomPolicy: 'world-coordinates'
   })
 
-  const highlightLabelStyle = new DefaultLabelStyle({
-    shape: 'rectangle',
-    backgroundStroke: '2px #56926e',
-    backgroundFill: 'transparent',
-    textFill: 'transparent'
+  const highlightLabelStyle = new LabelStyleIndicatorRenderer({
+    labelStyle: new LabelStyle({
+      shape: 'rectangle',
+      backgroundStroke: '2px #56926e',
+      backgroundFill: 'transparent',
+      textFill: 'transparent'
+    }),
+    zoomPolicy: 'world-coordinates'
   })
 
-  const highlightEdgeStyle = new PolylineEdgeStyle({
-    stroke: '2px #ff6c00'
-  })
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    nodeStyle: highlightNodeStyle,
-    edgeStyle: highlightEdgeStyle,
-    labelStyle: highlightLabelStyle
+  const highlightEdgeStyle = new EdgeStyleIndicatorRenderer({
+    edgeStyle: new PolylineEdgeStyle({
+      stroke: '2px #ff6c00'
+    }),
+    zoomPolicy: 'world-coordinates'
   })
 
-  graphComponent.selection.addItemSelectionChangedListener(() => {
+  graph.decorator.nodes.highlightRenderer.addConstant(highlightNodeStyle)
+  graph.decorator.edges.highlightRenderer.addConstant(highlightEdgeStyle)
+  graph.decorator.labels.highlightRenderer.addConstant(highlightLabelStyle)
+
+  graphComponent.selection.addEventListener('item-added', () => {
+    if (considerSelectionBox.checked) {
+      runIntersectionAlgorithm()
+    }
+  })
+
+  graphComponent.selection.addEventListener('item-removed', () => {
     if (considerSelectionBox.checked) {
       runIntersectionAlgorithm()
     }
@@ -404,34 +410,31 @@ function initializeInputMode(): void {
     allowCreateBend: true,
     selectableItems: 'all',
     marqueeSelectableItems: 'all',
-    allowGroupingOperations: true,
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext(),
-    snapContext: new GraphSnapContext(),
-    labelSnapContext: new LabelSnapContext()
+    snapContext: new GraphSnapContext()
   })
 
   // register listeners so that the intersections are re-calculated when changing the graph
-  inputMode.addDeletedSelectionListener(runIntersectionAlgorithm)
-  inputMode.createEdgeInputMode.addEdgeCreatedListener(runIntersectionAlgorithm)
-  inputMode.addNodeCreatedListener(runIntersectionAlgorithm)
-  inputMode.addLabelTextChangedListener(runIntersectionAlgorithm)
-  inputMode.moveInputMode.addDraggedListener(runIntersectionAlgorithm)
-  inputMode.handleInputMode.addDraggedListener(runIntersectionAlgorithm)
-  inputMode.moveLabelInputMode.addDraggedListener(runIntersectionAlgorithm)
+  inputMode.addEventListener('deleted-selection', runIntersectionAlgorithm)
+  inputMode.createEdgeInputMode.addEventListener('edge-created', runIntersectionAlgorithm)
+  inputMode.addEventListener('node-created', runIntersectionAlgorithm)
+  inputMode.addEventListener('label-edited', runIntersectionAlgorithm)
+  inputMode.moveSelectedItemsInputMode.addEventListener('dragged', runIntersectionAlgorithm)
+  inputMode.moveUnselectedItemsInputMode.addEventListener('dragged', runIntersectionAlgorithm)
+  inputMode.handleInputMode.addEventListener('dragged', runIntersectionAlgorithm)
 
   inputMode.itemHoverInputMode.hoverItems =
     GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+  inputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     const item = evt.item
-    const highlightIndicatorManager = graphComponent.highlightIndicatorManager
-    highlightIndicatorManager.clearHighlights()
+    const highlights = graphComponent.highlights
+    highlights.clear()
 
     for (const intersection of intersectionInfoArray) {
       const item1 = intersection.item1
       const item2 = intersection.item2
       if (item === item1 || item === item2) {
-        highlightIndicatorManager.addHighlight(item1)
-        highlightIndicatorManager.addHighlight(item2)
+        highlights.add(item1)
+        highlights.add(item2)
       }
     }
   })
@@ -465,7 +468,6 @@ function initializeUI(): void {
     const snappingEnabled = document.querySelector<HTMLInputElement>('#snapping-button')!.checked
     const geim = graphComponent.inputMode as GraphEditorInputMode
     geim.snapContext!.enabled = snappingEnabled
-    geim.labelSnapContext!.enabled = snappingEnabled
   })
 }
 
@@ -475,13 +477,13 @@ function initializeUI(): void {
  */
 function configureToolTips(inputMode: GraphEditorInputMode): void {
   // Customize the tool tip's behavior to our liking.
-  const mouseHoverInputMode = inputMode.mouseHoverInputMode
-  mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)
-  mouseHoverInputMode.delay = TimeSpan.fromMilliseconds(50)
-  mouseHoverInputMode.duration = TimeSpan.fromSeconds(10)
+  const toolTipInputMode = inputMode.toolTipInputMode
+  toolTipInputMode.toolTipLocationOffset = new Point(15, 15)
+  toolTipInputMode.delay = TimeSpan.fromMilliseconds(50)
+  toolTipInputMode.duration = TimeSpan.fromSeconds(10)
 
   // Register a listener for when a tool tip should be shown.
-  inputMode.addQueryItemToolTipListener((_, evt): void => {
+  inputMode.addEventListener('query-item-tool-tip', (evt): void => {
     if (evt.handled) {
       // Tool tip content has already been assigned -> nothing to do.
       return

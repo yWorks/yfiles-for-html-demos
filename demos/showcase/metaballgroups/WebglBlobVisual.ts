@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Color, IEnumerable, IRenderContext, Point, WebGLVisual } from 'yfiles'
+import { WebGLVisual, Color, IEnumerable, IRenderContext, Point } from '@yfiles/yfiles'
 
 export default class WebglBlobVisual extends WebGLVisual {
   locations: IEnumerable<Point>
@@ -110,7 +110,7 @@ export default class WebglBlobVisual extends WebGLVisual {
     )
 
     const ballSize = this.size
-    const centers = this.locations.map((p) => renderContext.toViewCoordinates(p))
+    const centers = this.locations.map((p) => renderContext.worldToViewCoordinates(p))
 
     const dataToSend = this.dataToSend!
     const maxDist = ballSize * 2 * renderContext.zoom

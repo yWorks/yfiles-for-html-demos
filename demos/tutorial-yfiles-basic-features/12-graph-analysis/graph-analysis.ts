@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,7 @@ import {
   INode,
   Reachability,
   ShortestPath
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Demonstrates how to quickly configure and run the Reachability algorithm
@@ -46,16 +46,16 @@ export function runReachabilityAlgorithm(graphComponent: GraphComponent): void {
     return
   }
   // first reset the highlights
-  graphComponent.highlightIndicatorManager.clearHighlights()
+  graphComponent.highlights.clear()
 
-  if (graphComponent.selection.selectedNodes.size == 0) {
+  if (graphComponent.selection.nodes.size == 0) {
     graphComponent.selection.clear()
-    graphComponent.selection.setSelected(nodes.first(), true)
+    graphComponent.selection.add(nodes.first()!)
   }
 
   // create, configure and run the algorithm in a single step
   // use the selected nodes as start nodes
-  const startNodes = graphComponent.selection.selectedNodes
+  const startNodes = graphComponent.selection.nodes
 
   const reachability = new Reachability({
     startNodes: startNodes,
@@ -65,7 +65,7 @@ export function runReachabilityAlgorithm(graphComponent: GraphComponent): void {
 
   // highlight the reachable nodes
   reachabilityResult.reachableNodes.forEach((n: INode): void => {
-    graphComponent.highlightIndicatorManager.addHighlight(n)
+    graphComponent.highlights.add(n)
   })
 }
 
@@ -74,7 +74,7 @@ export function runReachabilityAlgorithm(graphComponent: GraphComponent): void {
  */
 export function runShortestPathAlgorithm(graphComponent: GraphComponent): void {
   // first reset the highlights
-  graphComponent.highlightIndicatorManager.clearHighlights()
+  graphComponent.highlights.clear()
 
   const graph = graphComponent.graph
 
@@ -85,18 +85,14 @@ export function runShortestPathAlgorithm(graphComponent: GraphComponent): void {
 
   // select source and sink node for the path finding algorithm
   // use the first two selected nodes if possible
+  const graphSelection = graphComponent.selection
+  const nodeSelection = graphSelection.nodes
   const sourceNode =
-    graphComponent.selection.selectedNodes.size > 0
-      ? graphComponent.selection.selectedNodes.at(0)!
-      : nodes.first()!
-  const sinkNode =
-    graphComponent.selection.selectedNodes.size > 1
-      ? graphComponent.selection.selectedNodes.at(1)!
-      : nodes.last()!
-
-  graphComponent.selection.clear()
-  graphComponent.selection.setSelected(sourceNode, true)
-  graphComponent.selection.setSelected(sinkNode, true)
+    nodeSelection.size > 0 ? nodeSelection.at(0)! : nodes.first()!
+  const sinkNode = nodeSelection.size > 1 ? nodeSelection.at(1)! : nodes.last()!
+  graphSelection.clear()
+  nodeSelection.add(sourceNode)
+  nodeSelection.add(sinkNode)
 
   const shortestPath = new ShortestPath({
     source: sourceNode,
@@ -104,7 +100,7 @@ export function runShortestPathAlgorithm(graphComponent: GraphComponent): void {
     directed: false, // don't consider edge direction
     // calculate the cost per edge as the distance between source and target node
     costs: (edge: IEdge): number =>
-      edge.sourceNode!.layout.center.subtract(edge.targetNode!.layout.center)
+      edge.sourceNode.layout.center.subtract(edge.targetNode.layout.center)
         .vectorLength
   })
   const shortestPathResult = shortestPath.run(graph)
@@ -118,19 +114,17 @@ export function runShortestPathAlgorithm(graphComponent: GraphComponent): void {
     return
   }
   pathNodes.forEach((node: INode): void => {
-    graphComponent.highlightIndicatorManager.addHighlight(node)
+    graphComponent.highlights.add(node)
   })
   graph.edges
     .filter((edge: IEdge): boolean => pathEdges.contains(edge))
     // and we select all matching edges
-    .forEach((edge) =>
-      graphComponent.highlightIndicatorManager.addHighlight(edge)
-    )
+    .forEach((edge) => graphComponent.highlights.add(edge))
 
   // finally, we use the explicit "path.end" field to show the distance as a tooltip above
   // the sink node
   endNode &&
-    (graphComponent.inputMode as GraphEditorInputMode).mouseHoverInputMode.show(
+    (graphComponent.inputMode as GraphEditorInputMode).toolTipInputMode.show(
       endNode.layout.center,
       `Distance: ${pathDistance}`
     )

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,19 +30,20 @@ import {
   ConcurrencyController,
   Cursor,
   GraphComponent,
+  GraphItemTypes,
+  type IEnumerable,
   IGraph,
+  IHitTester,
   IInputModeContext,
   INode,
-  INodeHitTester,
   InputModeBase,
-  Insets,
   ModifierKeys,
-  MouseEventArgs,
   NodeEventArgs,
   Point,
+  PointerEventArgs,
   SvgExport
-} from 'yfiles'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
+} from '@yfiles/yfiles'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 
 /**
  * An input mode which supports dragging nodes from the component to another HTML element.
@@ -57,10 +58,10 @@ export class NodeDragInputMode extends InputModeBase {
   private oldAutoDrag: boolean | null = null
   private img: HTMLImageElement | null = null
 
-  private readonly onNodeRemovedListeners: (_: IGraph, evt: NodeEventArgs) => void
-  private readonly onMouseDragListener: (_: GraphComponent, evt: MouseEventArgs) => void
-  private readonly onMouseDownListener: (_: GraphComponent, evt: MouseEventArgs) => void
-  private readonly onMouseUpListener: (_: GraphComponent, evt: MouseEventArgs) => void
+  private readonly onNodeRemovedListeners: (evt: NodeEventArgs) => void
+  private readonly onMouseDragListener: (evt: PointerEventArgs) => void
+  private readonly onMouseDownListener: (evt: PointerEventArgs) => void
+  private readonly onMouseUpListener: (evt: PointerEventArgs) => void
   private readonly onDragStartedListener: (evt: DragEvent) => void
   private readonly onDragEndListener: (evt: DragEvent) => void
 
@@ -68,10 +69,10 @@ export class NodeDragInputMode extends InputModeBase {
     super()
 
     // initializes listener functions in order to install/uninstall them
-    this.onNodeRemovedListeners = (_, evt) => this.handleNodeRemoved(evt.item)
-    this.onMouseDragListener = (_, _evt) => this.onMouseDrag()
-    this.onMouseDownListener = (_, evt) => this.onMouseDown(evt.modifiers, evt.location)
-    this.onMouseUpListener = (_, _evt) => this.onMouseUp()
+    this.onNodeRemovedListeners = (evt) => this.handleNodeRemoved(evt.item)
+    this.onMouseDragListener = (_evt) => this.onMouseDrag()
+    this.onMouseDownListener = (evt) => this.onMouseDown(evt.modifiers, evt.location)
+    this.onMouseUpListener = (_evt) => this.onMouseUp()
     this.onDragStartedListener = (evt) => this.onDragStarted(evt)
     this.onDragEndListener = (_evt) => this.onDragEnd()
   }
@@ -85,13 +86,13 @@ export class NodeDragInputMode extends InputModeBase {
   install(context: IInputModeContext, controller: ConcurrencyController): void {
     super.install(context, controller)
     this.graphComponent = context.canvasComponent as GraphComponent
-    this.graphComponent.graph.addNodeRemovedListener(this.onNodeRemovedListeners)
-    this.graphComponent.addMouseDragListener(this.onMouseDragListener)
-    this.graphComponent.addMouseDownListener(this.onMouseDownListener)
-    this.graphComponent.addMouseUpListener(this.onMouseUpListener)
-    this.graphComponent.div.addEventListener('dragstart', this.onDragStartedListener)
-    this.graphComponent.div.addEventListener('dragend', this.onDragEndListener)
-    this.graphComponent.div.draggable = true
+    this.graphComponent.graph.addEventListener('node-removed', this.onNodeRemovedListeners)
+    this.graphComponent.addEventListener('pointer-drag', this.onMouseDragListener)
+    this.graphComponent.addEventListener('pointer-down', this.onMouseDownListener)
+    this.graphComponent.addEventListener('pointer-up', this.onMouseUpListener)
+    this.graphComponent.htmlElement.addEventListener('dragstart', this.onDragStartedListener)
+    this.graphComponent.htmlElement.addEventListener('dragend', this.onDragEndListener)
+    this.graphComponent.htmlElement.draggable = true
   }
 
   /**
@@ -99,13 +100,13 @@ export class NodeDragInputMode extends InputModeBase {
    */
   uninstall(context: IInputModeContext): void {
     super.uninstall(context)
-    this.graphComponent.graph.removeNodeRemovedListener(this.onNodeRemovedListeners)
-    this.graphComponent.removeMouseDragListener(this.onMouseDragListener)
-    this.graphComponent.removeMouseDownListener(this.onMouseDownListener)
-    this.graphComponent.removeMouseUpListener(this.onMouseUpListener)
-    this.graphComponent.div.removeEventListener('dragstart', this.onDragStartedListener)
-    this.graphComponent.div.removeEventListener('dragend', this.onDragEndListener)
-    this.graphComponent.div.draggable = false
+    this.graphComponent.graph.removeEventListener('node-removed', this.onNodeRemovedListeners)
+    this.graphComponent.removeEventListener('pointer-drag', this.onMouseDragListener)
+    this.graphComponent.removeEventListener('pointer-down', this.onMouseDownListener)
+    this.graphComponent.removeEventListener('pointer-up', this.onMouseUpListener)
+    this.graphComponent.htmlElement.removeEventListener('dragstart', this.onDragStartedListener)
+    this.graphComponent.htmlElement.removeEventListener('dragend', this.onDragEndListener)
+    this.graphComponent.htmlElement.draggable = false
     this.graphComponent = null!
   }
 
@@ -151,12 +152,11 @@ export class NodeDragInputMode extends InputModeBase {
     // to fix the internal mouse handling:
     // the mouse up was part of the drag and drop gesture,
     // therefore, yFiles thinks that the mouse is still down
-    const evt = document.createEvent('MouseEvents')
-    evt.initEvent('mouseup', true, true)
-    this.graphComponent.div.dispatchEvent(evt)
+    const evt = new PointerEvent('pointerup', { pointerType: 'mouse' })
+    this.graphComponent.htmlElement.dispatchEvent(evt)
 
     if (typeof this.oldAutoDrag === 'boolean') {
-      this.graphComponent.autoDrag = this.oldAutoDrag
+      this.graphComponent.autoScrollOnBounds = this.oldAutoDrag
       this.oldAutoDrag = null
     }
   }
@@ -174,9 +174,11 @@ export class NodeDragInputMode extends InputModeBase {
       // Don't arm this mode if shift is held down
       return
     }
-    const nodeHitTester = this.inputModeContext!.lookup(INodeHitTester.$class)
+    const nodeHitTester = this.parentInputModeContext?.lookup(IHitTester)
     if (nodeHitTester) {
-      const node = nodeHitTester.enumerateHits(this.inputModeContext!, location).at(0)
+      const node = nodeHitTester
+        .enumerateHits(this.parentInputModeContext!, location, GraphItemTypes.NODE)
+        .at(0) as INode | null
       if (node) {
         this.node = node
         // pre-render the image, otherwise it is not shown during the drag
@@ -198,8 +200,8 @@ export class NodeDragInputMode extends InputModeBase {
       if (this.canRequestMutex()) {
         this.requestMutex()
         // Disable auto drag. Otherwise, the component will scroll if we drag outside it.
-        this.oldAutoDrag = this.graphComponent.autoDrag
-        this.graphComponent.autoDrag = false
+        this.oldAutoDrag = this.graphComponent.autoScrollOnBounds
+        this.graphComponent.autoScrollOnBounds = false
       }
     }
   }
@@ -249,10 +251,10 @@ export class NodeDragInputMode extends InputModeBase {
 
     // we create a node in this GraphComponent that should be exported as SVG
     NodeDragInputMode.copyNode(node, exportGraph)
-    exportComponent.updateContentRect(new Insets(5))
+    exportComponent.updateContentBounds(5)
 
     // the SvgExport can export the content of any GraphComponent
-    const svgExport = new SvgExport(exportComponent.contentRect)
+    const svgExport = new SvgExport(exportComponent.contentBounds)
     svgExport.cssStyleSheet = null
     const svg = svgExport.exportSvg(exportComponent)
     const svgString = SvgExport.exportSvgString(svg)
@@ -339,7 +341,7 @@ export class NodeDragInputMode extends InputModeBase {
       }
     })
     target.addEventListener('dragover', (evt) => {
-      if (evt.dataTransfer!.getData(INode.$class.name)) {
+      if (evt.dataTransfer!.getData(INode.name)) {
         evt.dataTransfer!.dropEffect = 'none'
         return
       }

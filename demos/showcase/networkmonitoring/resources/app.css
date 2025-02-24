@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -42,19 +42,11 @@
 
 .enabled {
   opacity: 1;
-  -webkit-transition: opacity 0.5s ease-in-out;
-  -moz-transition: opacity 0.5s ease-in-out;
-  -ms-transition: opacity 0.5s ease-in-out;
-  -o-transition: opacity 0.5s ease-in-out;
   transition: opacity 0.5s ease-in-out;
 }
 
 .disabled {
   opacity: 0.5;
-  -webkit-transition: opacity 0.5s ease-in-out;
-  -moz-transition: opacity 0.5s ease-in-out;
-  -ms-transition: opacity 0.5s ease-in-out;
-  -o-transition: opacity 0.5s ease-in-out;
   transition: opacity 0.5s ease-in-out;
 }
 
@@ -64,10 +56,6 @@
 }
 
 .edgePath {
-  -webkit-transition: stroke 0.5s ease-in-out;
-  -moz-transition: stroke 0.5s ease-in-out;
-  -ms-transition: stroke 0.5s ease-in-out;
-  -o-transition: stroke 0.5s ease-in-out;
   transition: stroke 0.5s ease-in-out;
 }
 
@@ -89,10 +77,6 @@
   overflow: visible;
   background: rgba(255, 255, 255, 0.85);
   z-index: 1;
-  -webkit-transition: opacity 0.3s ease-in-out;
-  -moz-transition: opacity 0.3s ease-in-out;
-  -ms-transition: opacity 0.3s ease-in-out;
-  -o-transition: opacity 0.3s ease-in-out;
   transition: opacity 0.3s ease-in-out;
 }
 
@@ -101,10 +85,6 @@
 }
 
 .popupContentFade {
-  -webkit-transition: opacity 0.3s ease-out;
-  -moz-transition: opacity 0.3s ease-out;
-  -ms-transition: opacity 0.3s ease-out;
-  -o-transition: opacity 0.3s ease-out;
   transition: opacity 0.3s ease-out;
 }
 
@@ -145,10 +125,6 @@
   padding: 5px;
   z-index: 1;
   color: #a9a9a9;
-  -webkit-transition: color 0.1s ease-in-out;
-  -moz-transition: color 0.1s ease-in-out;
-  -ms-transition: color 0.1s ease-in-out;
-  -o-transition: color 0.1s ease-in-out;
   transition: color 0.1s ease-in-out;
 }
 
@@ -175,10 +151,6 @@
   opacity: 0.5;
   stroke-width: 4;
   stroke-linecap: round;
-  -webkit-transition: stroke 0.1s ease-in-out;
-  -moz-transition: stroke 0.1s ease-in-out;
-  -ms-transition: stroke 0.1s ease-in-out;
-  -o-transition: stroke 0.1s ease-in-out;
   transition: stroke 0.1s ease-in-out;
 }
 
@@ -228,6 +200,15 @@ svg:hover .power-button-path {
   margin: -1px 0 0 0;
   top: 100%;
   left: 0;
+}
+
+.d3-loadTooltip {
+  position: absolute;
+  background: white;
+  border: 1px solid black;
+  padding: 8px;
+  border-radius: 4px;
+  width: 85px;
 }
 
 .axis text {

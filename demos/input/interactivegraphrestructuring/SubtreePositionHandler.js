@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,97 +38,88 @@ import {
   IPositionHandler,
   List,
   Point
-} from 'yfiles'
-import Subtree from './Subtree.js'
-import RelocateSubtreeLayoutHelper from './RelocateSubtreeLayoutHelper.js'
-
+} from '@yfiles/yfiles'
+import Subtree from './Subtree'
+import RelocateSubtreeLayoutHelper from './RelocateSubtreeLayoutHelper'
+import { EdgePositionHandler } from './EdgePositionHandler'
 /**
  * An {@link IPositionHandler} that moves a node and its subtree.
  */
 export default class SubtreePositionHandler extends BaseClass(IPositionHandler) {
+  node
+  nodePositionHandler
+  movingNodeStyle
   layoutHelper
   compositeHandler
   subtree
   node2NormalStyle = new Map()
-
   /**
    * Creates a new instance of a SubtreePositionHandler.
-   * @param {?INode} node The selected node
-   * @param {?IPositionHandler} nodePositionHandler The original position handler
-   * @param {!INodeStyle} movingNodeStyle The node style that is set while the node is moving
+   * @param node The selected node
+   * @param nodePositionHandler The original position handler
+   * @param movingNodeStyle The node style that is set while the node is moving
    */
   constructor(node, nodePositionHandler, movingNodeStyle) {
     super()
-    this.movingNodeStyle = movingNodeStyle
-    this.nodePositionHandler = nodePositionHandler
     this.node = node
+    this.nodePositionHandler = nodePositionHandler
+    this.movingNodeStyle = movingNodeStyle
   }
-
   /**
    * Returns the location of the selected node.
-   * @type {!IPoint}
    */
   get location() {
     return this.nodePositionHandler.location
   }
-
   /**
    * The subtree is upon to be dragged.
-   * @param {!IInputModeContext} context The context to retrieve information about the drag from
+   * @param context The context to retrieve information about the drag from
    */
   initializeDrag(context) {
     this.subtree = new Subtree(context.graph, this.node)
-
     this.subtree.nodes.forEach((node) => {
       // store normal style of the node and set the moving node style while dragging
       this.node2NormalStyle.set(node, node.style)
       context.graph.setStyle(node, this.movingNodeStyle)
     })
-
     this.layoutHelper = new RelocateSubtreeLayoutHelper(context.canvasComponent, this.subtree)
     this.layoutHelper.initializeLayout()
-
     this.compositeHandler = SubtreePositionHandler.createCompositeHandler(this.subtree)
     this.compositeHandler.initializeDrag(context)
   }
-
   /**
    * The subtree is dragged.
-   * @param {!IInputModeContext} context The context to retrieve information about the drag from
-   * @param {!Point} originalLocation The value of the location property at the time of initializeDrag
-   * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at
+   * @param context The context to retrieve information about the drag from
+   * @param originalLocation The value of the location property at the time of initializeDrag
+   * @param newLocation The coordinates in the world coordinate system that the client wants the handle to be at
    */
   handleMove(context, originalLocation, newLocation) {
     this.compositeHandler.handleMove(context, originalLocation, newLocation)
     this.layoutHelper.runLayout()
   }
-
   /**
    * The drag is canceled.
-   * @param {!IInputModeContext} context The context to retrieve information about the drag from
-   * @param {!Point} originalLocation The value of the coordinate of the location property at the time of initializeDrag
+   * @param context The context to retrieve information about the drag from
+   * @param originalLocation The value of the coordinate of the location property at the time of initializeDrag
    */
   cancelDrag(context, originalLocation) {
     this.compositeHandler.cancelDrag(context, originalLocation)
     this.layoutHelper.cancelLayout()
     this.resetStyles(context.graph)
   }
-
   /**
    * The drag is finished.
-   * @param {!IInputModeContext} context The context to retrieve information about the drag from
-   * @param {!Point} originalLocation The value of the location property at the time of initializeDrag
-   * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at
+   * @param context The context to retrieve information about the drag from
+   * @param originalLocation The value of the location property at the time of initializeDrag
+   * @param newLocation The coordinates in the world coordinate system that the client wants the handle to be at
    */
   dragFinished(context, originalLocation, newLocation) {
     this.compositeHandler.dragFinished(context, originalLocation, newLocation)
     this.layoutHelper.stopLayout()
     this.resetStyles(context.graph)
   }
-
   /**
    * Replaces the temporary styles used while moving nodes with the original styles.
-   * @param {!IGraph} graph
    */
   resetStyles(graph) {
     const nodeToStyle = this.node2NormalStyle
@@ -141,26 +132,25 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
     })
     nodeToStyle.clear()
   }
-
   /**
    * Creates an {@link IPositionHandler} that moves the whole subtree.
-   * @param {!Subtree} subtree The nodes and edges of the subtree
-   * @returns {!IPositionHandler} An {@link IPositionHandler} that moves the whole subtree
+   * @param subtree The nodes and edges of the subtree
+   * @returns An {@link IPositionHandler} that moves the whole subtree
    */
   static createCompositeHandler(subtree) {
-    const positionHandlers = new List()
+    const positionHandlers = []
     subtree.nodes.forEach((node) => {
-      const positionHandler = node.lookup(IPositionHandler.$class)
+      const positionHandler = node.lookup(IPositionHandler)
       if (positionHandler) {
-        const subtreeHandler = positionHandler
-        positionHandlers.add(subtreeHandler ? subtreeHandler.nodePositionHandler : positionHandler)
+        const subtreeHandler =
+          positionHandler instanceof SubtreePositionHandler ? positionHandler : null
+        positionHandlers.push(subtreeHandler ? subtreeHandler.nodePositionHandler : positionHandler)
       }
     })
-
     subtree.edges.forEach((edge) => {
-      const positionHandler = edge.lookup(IPositionHandler.$class)
+      const positionHandler = new EdgePositionHandler(edge)
       if (positionHandler) {
-        positionHandlers.add(positionHandler)
+        positionHandlers.push(positionHandler)
       }
     })
     return IPositionHandler.combine(positionHandlers)

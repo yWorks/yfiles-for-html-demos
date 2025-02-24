@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,102 +29,38 @@
 /**
  * The types of the edges.
  */
-export /**
- * @readonly
- * @enum {number}
- */
-const EdgeTypeEnum = {
-  Hierarchy: 'Hierarchy',
-  Relation: 'Relation'
-}
-
+export var EdgeTypeEnum
+;(function (EdgeTypeEnum) {
+  EdgeTypeEnum['Hierarchy'] = 'Hierarchy'
+  EdgeTypeEnum['Relation'] = 'Relation'
+})(EdgeTypeEnum || (EdgeTypeEnum = {}))
 /**
  * The types of the nodes.
  */
-export /**
- * @readonly
- * @enum {number}
- */
-const NodeTypeEnum = {
-  CORPORATION: 'Corporation',
-  CTB: 'CTB',
-  PARTNERSHIP: 'Partnership',
-  RCTB: 'RCTB',
-  BRANCH: 'Branch',
-  DISREGARDED: 'Disregarded',
-  DUAL_RESIDENT: 'Dual Resident',
-  MULTIPLE: 'Multiple',
-  TRUST: 'Trust',
-  INDIVIDUAL: 'Individual',
-  THIRD_PARTY: 'Third Party',
-  PE_RISK: 'PE_Risk',
-  TRAPEZOID: 'Trapezoid'
-}
-
-/**
- * Data format that is used to build the company ownership chart.
- * It contains information about nodes and edges.
- * @typedef {Object} GraphData
- * @property {Array.<Company>} nodes
- * @property {Array.<(OwnershipEdge|RelationshipEdge)>} edges
- */
-
-/**
- * Type that describes the format of the input node data in this company ownership demo.
- * @typedef {Object} Company
- * @property {number} id
- * @property {string} name
- * @property {NodeTypeEnum} nodeType
- * @property {number} [units]
- * @property {string} [jurisdiction]
- * @property {string} [taxStatus]
- * @property {string} [currency]
- */
-
-/**
- * Type that describes the format of the input edge data in this company ownership demo.
- * @typedef {Object} CompanyRelationshipEdge
- * @property {number} id
- * @property {number} sourceId
- * @property {number} targetId
- * @property {EdgeTypeEnum} type
- */
-
-/**
- * Type that describes the hierarchy edges in this company ownership demo.
- * @typedef {*} OwnershipEdge
- */
-
-/**
- * Type that describes the relationship edges in this company ownership demo.
- * @typedef {*} RelationshipEdge
- */
-
-/**
- * Type of data associated with a node.
- * It contains information that is used for the node visualization and interaction with the graph.
- * @typedef {*} CompanyNodeData
- */
-
-/**
- * Type of data associated with an edge.
- * It contains information that is used for the edge visualization and layout.
- * @typedef {*} CompanyRelationshipData
- */
-
+export var NodeTypeEnum
+;(function (NodeTypeEnum) {
+  NodeTypeEnum['CORPORATION'] = 'Corporation'
+  NodeTypeEnum['CTB'] = 'CTB'
+  NodeTypeEnum['PARTNERSHIP'] = 'Partnership'
+  NodeTypeEnum['RCTB'] = 'RCTB'
+  NodeTypeEnum['BRANCH'] = 'Branch'
+  NodeTypeEnum['DISREGARDED'] = 'Disregarded'
+  NodeTypeEnum['DUAL_RESIDENT'] = 'Dual Resident'
+  NodeTypeEnum['MULTIPLE'] = 'Multiple'
+  NodeTypeEnum['TRUST'] = 'Trust'
+  NodeTypeEnum['INDIVIDUAL'] = 'Individual'
+  NodeTypeEnum['THIRD_PARTY'] = 'Third Party'
+  NodeTypeEnum['PE_RISK'] = 'PE_Risk'
+  NodeTypeEnum['TRAPEZOID'] = 'Trapezoid'
+})(NodeTypeEnum || (NodeTypeEnum = {}))
 /**
  * Returns the data stored in the node's tag.
- * @param {!INode} node
- * @returns {!CompanyNodeData}
  */
 export function getCompany(node) {
   return node.tag
 }
-
 /**
  * Returns the data stored in the edge's tag.
- * @param {!IEdge} edge
- * @returns {!CompanyRelationshipData}
  */
 export function getRelationship(edge) {
   return edge.tag

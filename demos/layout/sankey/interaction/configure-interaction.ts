@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,12 +27,12 @@
  **
  ***************************************************************************/
 import {
+  EventRecognizers,
   type GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  IEdge,
-  MouseEventRecognizers
-} from 'yfiles'
+  IEdge
+} from '@yfiles/yfiles'
 import { runLayout, updateStylesAndLayout } from '../sankey-layout'
 import { getThickness, updateEdgeThickness } from '../edge-thickness'
 
@@ -50,23 +50,23 @@ export function configureInteraction(graphComponent: GraphComponent): void {
     selectableItems: GraphItemTypes.LABEL,
     deletableItems: GraphItemTypes.NONE,
     focusableItems: GraphItemTypes.NONE,
-    movableItems: GraphItemTypes.NODE,
+    movableSelectedItems: GraphItemTypes.NODE,
     clickableItems: GraphItemTypes.NODE | GraphItemTypes.LABEL,
     contextMenuItems: GraphItemTypes.NODE,
     allowCreateEdge: false,
     allowCreateNode: false,
-    allowAddLabel: false,
-    autoRemoveEmptyLabels: false
+    allowAddLabel: false
   })
 
   // validate the label text before the label is added so that only positive numbers are allowed as text
-  mode.addValidateLabelTextListener((_, evt) => {
+  const editLabelInputMode = mode.editLabelInputMode
+  editLabelInputMode.addEventListener('validate-label-text', (evt) => {
     if (evt.label.owner instanceof IEdge) {
-      evt.cancel = !validationPattern.test(evt.newText)
+      evt.validatedText = validationPattern.test(evt.newText) ? evt.newText : null
     }
   })
 
-  mode.addLabelTextChangedListener(async (_, evt): Promise<void> => {
+  editLabelInputMode.addEventListener('label-edited', async (evt): Promise<void> => {
     const label = evt.item
     if (label.owner instanceof IEdge) {
       // calculate the new thickness from the label text and update the edge's data
@@ -75,6 +75,8 @@ export function configureInteraction(graphComponent: GraphComponent): void {
       await updateStylesAndLayout(graphComponent, true)
     }
   })
+
+  editLabelInputMode.autoRemoveEmptyLabels = false
 
   allowMovingUnselectedNodes(mode, graphComponent)
 
@@ -88,13 +90,11 @@ function allowMovingUnselectedNodes(
   mode: GraphEditorInputMode,
   graphComponent: GraphComponent
 ): void {
-  mode.moveUnselectedInputMode.enabled = true
-  mode.moveInputMode.enabled = false
-  mode.moveUnselectedInputMode.addDragFinishedListener(async () => {
+  mode.moveSelectedItemsInputMode.enabled = false
+  mode.moveUnselectedItemsInputMode.addEventListener('drag-finished', async () => {
     await runLayout(graphComponent, true)
   })
 
   mode.marqueeSelectionInputMode.enabled = false
-  mode.moveViewportInputMode.pressedRecognizer = MouseEventRecognizers.LEFT_DOWN
-  mode.moveUnselectedInputMode.priority = mode.moveViewportInputMode.priority - 1
+  mode.moveViewportInputMode.beginRecognizer = EventRecognizers.MOUSE_DOWN
 }

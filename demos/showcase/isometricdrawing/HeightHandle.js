@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,13 +30,12 @@ import {
   BaseClass,
   ClickEventArgs,
   Cursor,
-  HandleTypes,
+  HandleType,
   IHandle,
   IInputModeContext,
   INode,
   Point
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * An {@link IHandle} implementation that changes the height in a node's tag.
  */
@@ -46,12 +45,6 @@ export default class HeightHandle extends BaseClass(IHandle) {
   node
   inputModeContext
   minimumHeight
-
-  /**
-   * @param {!INode} node
-   * @param {!IInputModeContext} inputModeContext
-   * @param {number} minimumHeight
-   */
   constructor(node, inputModeContext, minimumHeight) {
     super()
     this.node = node
@@ -59,88 +52,61 @@ export default class HeightHandle extends BaseClass(IHandle) {
     this.minimumHeight = minimumHeight
     this.dragging = false
   }
-
-  /**
-   * @type {!HandleTypes}
-   */
   get type() {
-    return HandleTypes.RESIZE
+    return HandleType.RESIZE
   }
-
-  /**
-   * @type {!Cursor}
-   */
+  get tag() {
+    return null
+  }
   get cursor() {
     return this.dragging ? Cursor.GRABBING : Cursor.GRAB
   }
-
-  /**
-   * @type {!Point}
-   */
   get location() {
     const height = this.node.tag.height
     const cc = this.inputModeContext.canvasComponent
-    const vp = cc.toViewCoordinates(this.node.layout.center)
+    const vp = cc.worldToViewCoordinates(this.node.layout.center)
     const up = vp.add(new Point(0, -height * this.inputModeContext.zoom))
-    return cc.toWorldCoordinates(up)
+    return cc.viewToWorldCoordinates(up)
   }
-
   /**
    * Initializes the drag.
-   * @param {!IInputModeContext} inputModeContext
    */
   initializeDrag(inputModeContext) {
     this.originalHeight = this.node.tag.height
     this.dragging = true
   }
-
   /**
    * Updates the node according to the moving handle.
-   * @param {!IInputModeContext} inputModeContext
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   handleMove(inputModeContext, originalLocation, newLocation) {
     this.adjustNodeHeight(inputModeContext, originalLocation, newLocation)
   }
-
   /**
    * Cancels the drag and cleans up.
-   * @param {!IInputModeContext} context
    */
   cancelDrag(context) {
     this.node.tag.height = this.originalHeight
     this.dragging = false
   }
-
   /**
    * Finishes the drag an applies changes.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     this.adjustNodeHeight(context, originalLocation, newLocation)
     this.dragging = false
   }
-
   /**
    * Adjusts the node height according to how much the handle was moved.
-   * @param {!IInputModeContext} context
-   * @param {!Point} oldLocation
-   * @param {!Point} newLocation
    */
   adjustNodeHeight(context, oldLocation, newLocation) {
-    const newY = context.canvasComponent.toViewCoordinates(newLocation).y
-    const oldY = context.canvasComponent.toViewCoordinates(oldLocation).y
+    const newY = context.canvasComponent.worldToViewCoordinates(newLocation).y
+    const oldY = context.canvasComponent.worldToViewCoordinates(oldLocation).y
     const delta = (newY - oldY) / context.zoom
     const newHeight = this.originalHeight - delta
     this.node.tag.height = Math.max(this.minimumHeight, newHeight)
   }
-
   /**
    * This implementation does nothing special when clicked.
-   * @param {!ClickEventArgs} evt
    */
   handleClick(evt) {}
 }

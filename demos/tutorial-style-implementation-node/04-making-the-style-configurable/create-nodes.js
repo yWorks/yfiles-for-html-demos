@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,23 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CustomNodeStyle } from './CustomNodeStyle.js'
-
+import { CustomNodeStyle } from './CustomNodeStyle'
 /**
  * Creates the sample nodes for this tutorial step
- * @param {!IGraph} graph
  */
 export function createNodes(graph) {
   // the color can be specified in the constructor
   const styleWithRedFill = new CustomNodeStyle('#b91c3b')
-
   // the fill color can also be changed later using the property on the style class
   const styleWithPurpleFill = new CustomNodeStyle('grey')
   styleWithPurpleFill.fillColor = '#9e7cb5'
-
   // not specifying the fill color will use the default color
   const styleWithDefaultFill = new CustomNodeStyle()
-
   graph.createNode({
     layout: [0, 0, 100, 70],
     style: styleWithRedFill

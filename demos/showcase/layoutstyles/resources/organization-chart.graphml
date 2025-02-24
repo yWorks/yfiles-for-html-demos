@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <key id="d0" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
   <key id="d1" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
   <key id="d2" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
@@ -122,16 +122,16 @@
       <y:Json x:Key="70">{"position":"Quality Assurance Technician","name":"Martin Cornett","email":"mcornett@yoyodyne.com","phone":"555-0114","fax":"555-0115","businessUnit":"Production","status":"present","icon":"usericon_male2"}</y:Json>
       <y:Json x:Key="71">{"position":"Senior Executive Assistant","name":"Alexander Burns","email":"aburns@yoyodyne.com","phone":"555-0102","fax":"555-0103","businessUnit":"Executive Unit","status":"present","icon":"usericon_male3"}</y:Json>
       <y:Json x:Key="72">{"position":"Junior Executive Assistant","name":"Linda Newland","email":"lnewland@yoyodyne.com","phone":"555-0112","fax":"555-0113","businessUnit":"Executive Unit","status":"present","icon":"usericon_female1"}</y:Json>
-      <yjs:DefaultLabelStyle x:Key="73" textFill="WHITE" textSize="36">
-        <yjs:DefaultLabelStyle.font>
+      <yjs:LabelStyle x:Key="73" textFill="WHITE" textSize="36">
+        <yjs:LabelStyle.font>
           <yjs:Font fontSize="36" fontFamily="sans-serif" lineSpacing="0.2"/>
-        </yjs:DefaultLabelStyle.font>
-      </yjs:DefaultLabelStyle>
+        </yjs:LabelStyle.font>
+      </yjs:LabelStyle>
       <yjs:ShapeNodeStyle x:Key="74" stroke="{x:Null}" fill="#FF55B757"/>
       <yjs:ShapeNodeStyle x:Key="75" stroke="{x:Null}" fill="#FF8D8F91"/>
       <yjs:ShapeNodeStyle x:Key="76" stroke="{x:Null}" fill="#FFE7527C"/>
       <yjs:ShapeNodeStyle x:Key="77" stroke="{x:Null}" fill="#FF9945E9"/>
-      <yjs:PolylineEdgeStyle x:Key="78">
+      <yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="78">
         <yjs:PolylineEdgeStyle.stroke>
           <yjs:Stroke fill="#FFAAAAAA" lineCap="SQUARE" thickness="2"/>
         </yjs:PolylineEdgeStyle.stroke>
@@ -142,7 +142,7 @@
     <node id="n0">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[E. Joplin]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -166,7 +166,7 @@
     <node id="n1">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[G. Roberts]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -187,7 +187,7 @@
     <node id="n2">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[A. Kain]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -211,7 +211,7 @@
     <node id="n3">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[R. Fuller]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -232,7 +232,7 @@
     <node id="n4">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[M. Shark]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -252,7 +252,7 @@
     <node id="n5">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[A. Haase]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -273,7 +273,7 @@
     <node id="n6">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[D. Kerry]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -295,7 +295,7 @@
     <node id="n7">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[W. Hastings]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -317,7 +317,7 @@
     <node id="n8">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[J. Medico]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -339,7 +339,7 @@
     <node id="n9">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[D. Welch]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -361,7 +361,7 @@
     <node id="n10">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[L. Vison]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -380,7 +380,7 @@
     <node id="n11">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[M. Parks]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -399,7 +399,7 @@
     <node id="n12">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[L. Lenhart]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -418,7 +418,7 @@
     <node id="n13">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[E. Lewis]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -437,7 +437,7 @@
     <node id="n14">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[M. Bean]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -456,7 +456,7 @@
     <node id="n15">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[R. Lindley]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -475,7 +475,7 @@
     <node id="n16">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[S. Moran]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -494,7 +494,7 @@
     <node id="n17">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[M. Cruz]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -513,7 +513,7 @@
     <node id="n18">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[R. King]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -532,7 +532,7 @@
     <node id="n19">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[J. Stewart]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -551,7 +551,7 @@
     <node id="n20">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[L. Deaton]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -570,7 +570,7 @@
     <node id="n21">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[M. Barnes]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -592,7 +592,7 @@
     <node id="n22">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[M. Dossantos]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -617,7 +617,7 @@
     <node id="n23">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[L. Aitken]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -641,7 +641,7 @@
     <node id="n24">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[J. Payne]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -673,7 +673,7 @@
     <node id="n25">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[R. Oxborough]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -692,7 +692,7 @@
     <node id="n26">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[G. Olsen]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -711,7 +711,7 @@
     <node id="n27">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[M. Finney]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -730,7 +730,7 @@
     <node id="n28">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[J. Kelly]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -749,7 +749,7 @@
     <node id="n29">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[C. Wylam]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -768,7 +768,7 @@
     <node id="n30">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[S. Dotter]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -787,7 +787,7 @@
     <node id="n31">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[R. Bradshaw]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -806,7 +806,7 @@
     <node id="n32">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[V. Shoe]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -825,7 +825,7 @@
     <node id="n33">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[M. Tucker]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -844,7 +844,7 @@
     <node id="n34">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[D. Long]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -863,7 +863,7 @@
     <node id="n35">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[A. Rice]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -882,7 +882,7 @@
     <node id="n36">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[J. Lewis]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -901,7 +901,7 @@
     <node id="n37">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[S. Reid]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -920,7 +920,7 @@
     <node id="n38">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[C. Clark]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -939,7 +939,7 @@
     <node id="n39">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[C. Judd]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -958,7 +958,7 @@
     <node id="n40">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[R. Finn]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -977,7 +977,7 @@
     <node id="n41">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[W. Schaub]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -996,7 +996,7 @@
     <node id="n42">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[E. Nagy]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1015,7 +1015,7 @@
     <node id="n43">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[H. Donald]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1034,7 +1034,7 @@
     <node id="n44">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[M. Douglas]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1053,7 +1053,7 @@
     <node id="n45">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[B. Penney]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1072,7 +1072,7 @@
     <node id="n46">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[F. Webster]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1091,7 +1091,7 @@
     <node id="n47">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[G. Arnold]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1110,7 +1110,7 @@
     <node id="n48">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[K. Kowalski]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1129,7 +1129,7 @@
     <node id="n49">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[J. Vargas]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1150,7 +1150,7 @@
     <node id="n50">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[R. Hartman]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1171,7 +1171,7 @@
     <node id="n51">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[R. Polite]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1190,7 +1190,7 @@
     <node id="n52">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[M. Daniels]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1209,7 +1209,7 @@
     <node id="n53">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[R. Parson]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1228,7 +1228,7 @@
     <node id="n54">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[M. Noren]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1247,7 +1247,7 @@
     <node id="n55">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[D. Turner]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1268,7 +1268,7 @@
     <node id="n56">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[L. Littlefield]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1287,7 +1287,7 @@
     <node id="n57">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[A. Binger]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1307,7 +1307,7 @@
     <node id="n58">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[R. Hammond]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1328,7 +1328,7 @@
     <node id="n59">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[K. Maxwell]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1347,7 +1347,7 @@
     <node id="n60">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[B. Lacey]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1366,7 +1366,7 @@
     <node id="n61">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[R. Garcia]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1385,7 +1385,7 @@
     <node id="n62">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[T. Jackson]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1406,7 +1406,7 @@
     <node id="n63">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[C. Shortened]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1425,7 +1425,7 @@
     <node id="n64">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[T. Stark]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1444,7 +1444,7 @@
     <node id="n65">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[V. Burnett]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1464,7 +1464,7 @@
     <node id="n66">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[E. Monge]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1485,7 +1485,7 @@
     <node id="n67">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[H. Meyer]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1504,7 +1504,7 @@
     <node id="n68">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[L. Jensen]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1523,7 +1523,7 @@
     <node id="n69">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[M. Cornett]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1542,7 +1542,7 @@
     <node id="n70">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[A. Burns]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -1561,7 +1561,7 @@
     <node id="n71">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 73}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 73}">
             <y:Label.Text><![CDATA[L. Newland]]></y:Label.Text>
           </y:Label>
         </x:List>

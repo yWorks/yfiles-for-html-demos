@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,6 @@
 import {
   BaseClass,
   Color,
-  Comparers,
   IEdge,
   INode,
   Intersection,
@@ -39,8 +38,8 @@ import {
   Point,
   SvgVisual,
   Visual
-} from 'yfiles'
-import { colorSets } from 'demo-resources/demo-styles'
+} from '@yfiles/yfiles'
+import { colorSets } from '@yfiles/demo-resources/demo-styles'
 
 const EDGE_EDGE_INTERSECTION_COLOR = Color.from(colorSets['demo-palette-13'].fill)
 const NODE_EDGE_INTERSECTION_COLOR = Color.from(colorSets['demo-red'].fill)
@@ -52,10 +51,7 @@ const LABEL_INTERSECTION_COLOR_STROKE = Color.from(colorSets['demo-green'].strok
 /**
  * Visualizes intersections calculated by the {@link Intersections} algorithm.
  */
-export class IntersectionVisualCreator
-  extends BaseClass<IVisualCreator>(IVisualCreator)
-  implements IVisualCreator
-{
+export class IntersectionVisualCreator extends BaseClass(IVisualCreator) {
   public intersections: Intersection[] = []
 
   /**
@@ -65,9 +61,7 @@ export class IntersectionVisualCreator
    */
   createVisual(context: IRenderContext): Visual {
     //sort the intersections so that area intersections (contain more points) are drawn first
-    this.intersections.sort(
-      (a, b) => -Comparers.compare(a.intersectionPoints.size, b.intersectionPoints.size)
-    )
+    this.intersections.sort((a, b) => a.intersectionPoints.size - b.intersectionPoints.size)
 
     //draw each intersection
     const element = document.createElementNS('http://www.w3.org/2000/svg', 'g')

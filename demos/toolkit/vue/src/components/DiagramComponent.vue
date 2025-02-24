@@ -4,6 +4,7 @@
     @reload-graph="defaultGraph.create()"
     @toggle-editable="toggleEditable"
     @layout="layout()"
+    @export-svg="exportSvg"
     @search-query-change="graphSearch.onSearchQueryChange"
   ></demo-toolbar>
   <div class="graph-component-container" ref="GraphComponentElement">
@@ -12,16 +13,23 @@
 </template>
 
 <script lang="ts">
-import { GraphComponent, GraphEditorInputMode, GraphViewerInputMode, License } from 'yfiles'
+import {
+  GraphComponent,
+  GraphEditorInputMode,
+  GraphViewerInputMode,
+  License,
+  SvgExport
+} from '@yfiles/yfiles'
 import DemoToolbar from './DemoToolbar.vue'
 import ContextMenu from './ContextMenu.vue'
-import { defineComponent, inject, onBeforeMount, onMounted, ref } from 'vue'
+import { defineComponent, inject, nextTick, onBeforeMount, onMounted, ref } from 'vue'
 import { useContextMenu } from '@/composables/useContextMenu'
 import { useTooltips } from '@/composables/useTooltips'
 import { useGraphSearch } from '@/composables/useGraphSearch'
 import { useLayout } from '@/composables/useLayout'
 import { useDefaultGraph } from '@/composables/useDefaultGraph'
 import licenseData from '../../../../../lib/license.json'
+import { downloadFile } from '@yfiles/demo-utils/file-support'
 
 License.value = licenseData
 
@@ -68,8 +76,27 @@ export default defineComponent({
       tooltips.register(inputMode)
     }
 
-    function initializeGraph() {
-      defaultGraph.create()
+    /**
+     * Export the graph component to an SVG.
+     */
+    async function exportSvg() {
+      const exportComponent = new GraphComponent()
+      exportComponent.graph = graphComponent.graph
+      exportComponent.updateContentBounds()
+      const exporter = new SvgExport({
+        worldBounds: exportComponent.contentBounds,
+        encodeImagesBase64: true,
+        inlineSvgImages: true
+      })
+
+      // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
+      exporter.cssStyleSheet = null
+      const svg = await exporter.exportSvgAsync(exportComponent, async () => {
+        // Wait for Vue to finish rendering. If you have node styles that render asynchronously, you need
+        // to wait for them to finish, also.
+        await nextTick()
+      })
+      downloadFile(SvgExport.exportSvgString(svg), 'graph.svg', 'image/svg+xml')
     }
 
     return {
@@ -78,6 +105,7 @@ export default defineComponent({
       graphSearch,
       layout,
       defaultGraph,
+      exportSvg,
       toggleEditable
     }
   }

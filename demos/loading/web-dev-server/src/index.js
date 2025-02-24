@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, License } from 'yfiles'
+import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
 import { createSampleGraph } from './create-sample-graph'
 
 const licenseJson = await fetch('./license.json')
@@ -38,7 +38,7 @@ License.value = licenseValue
 const graphComponent = new GraphComponent('#graphComponent')
 graphComponent.inputMode = new GraphEditorInputMode()
 createSampleGraph(graphComponent.graph)
-graphComponent.fitGraphBounds()
+void graphComponent.fitGraphBounds()
 
 // hide loading indicator
 document.body.classList.add('loaded')

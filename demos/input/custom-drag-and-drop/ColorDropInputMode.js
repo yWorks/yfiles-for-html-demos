@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,20 +39,18 @@ import {
   IInputModeContext,
   IModelItem,
   INode,
+  InputModeContext,
   InputModeEventArgs,
   Point,
   PolylineEdgeStyle,
-  ShapeNodeStyle,
-  SolidColorFill
-} from 'yfiles'
-
+  ShapeNodeStyle
+} from '@yfiles/yfiles'
 /**
  * An {@link DropInputMode} specialized to drag and drop colors onto {@link INode}s and
  * {@link IEdge}s to change their current color.
  */
 export class ColorDropInputMode extends DropInputMode {
   _dropTarget
-
   /**
    * Constructs a new instance of class {@link ColorDropInputMode}.
    */
@@ -60,62 +58,44 @@ export class ColorDropInputMode extends DropInputMode {
     super('color')
     this._dropTarget = null
   }
-
   /**
    * Gets the currently dragged color from the drop data.
-   * @type {!string}
    */
   get draggedColor() {
     return this.dropData
   }
-
   /**
    * Gets the drop target at current mouse position.
-   * @type {?(INode|IEdge)}
    */
   get dropTarget() {
     return this._dropTarget
   }
-
   /**
    * Sets the the drop target and updates the highlighting.
-   * @type {?(INode|IEdge)}
    */
   set dropTarget(value) {
     if (this._dropTarget !== value) {
-      const highlightManager = this.inputModeContext?.lookup(HighlightIndicatorManager.$class)
-
+      const highlightManager = this.parentInputModeContext?.lookup(HighlightIndicatorManager)
       if (highlightManager) {
+        const selectionModel = highlightManager.items
         if (this._dropTarget) {
-          highlightManager.removeHighlight(this._dropTarget)
+          selectionModel?.remove(this._dropTarget)
         }
         if (value) {
-          highlightManager.addHighlight(value)
+          selectionModel?.add(value)
         }
       }
       this._dropTarget = value
     }
   }
-
-  /**
-   * @param {!InputModeEventArgs} evt
-   */
   onDraggedOver(evt) {
     super.onDraggedOver(this.createInputModeEventArgs())
-    this.updateDropTarget(this.mousePosition.toPoint())
+    this.updateDropTarget(this.pointerPosition.toPoint())
   }
-
-  /**
-   * @param {!InputModeEventArgs} evt
-   */
   onDragLeft(evt) {
     super.onDragLeft(this.createInputModeEventArgs())
     this.cleanup()
   }
-
-  /**
-   * @param {!InputModeEventArgs} evt
-   */
   onDragDropped(evt) {
     super.onDragDropped(this.createInputModeEventArgs())
     if (this.dropTarget && this.draggedColor) {
@@ -123,27 +103,21 @@ export class ColorDropInputMode extends DropInputMode {
     }
     this.cleanup()
   }
-
   /**
    * Updates the {@link dropTarget} at the given location.
-   * @param {!Point} dragLocation
    */
   updateDropTarget(dragLocation) {
     this.dropTarget = this.getDropTarget(dragLocation)
   }
-
   /**
    * Return an {@link INode} or an {@link IEdge} at the given location, when its color can be changed.
    * If there is no such item, `null` will be returned.
-   * @param {!Point} dragLocation
-   * @returns {?(INode|IEdge)}
    */
   getDropTarget(dragLocation) {
     const validDrag =
       !this.lastDragEventArgs || this.lastDragEventArgs.dropEffect !== DragDropEffects.NONE
-    const context = this.inputModeContext
+    const context = this.parentInputModeContext
     const color = this.draggedColor
-
     if (validDrag && context && color) {
       const item = this.findEdgeOrNode(context, dragLocation)
       if (item && this.accept(item, color)) {
@@ -152,66 +126,47 @@ export class ColorDropInputMode extends DropInputMode {
     }
     return null
   }
-
   /**
    * Finds the first edge or node that contains the given location.
-   * @param {!IInputModeContext} context
-   * @param {!Point} location
-   * @returns {?(IEdge|INode)}
    */
   findEdgeOrNode(context, location) {
-    const hitTester = context.lookup(IHitTester.$class)
+    const hitTester = context.lookup(IHitTester)
     // hit testing needs to be done with a context whose parent input mode is this mode,
     // because hit-testables may behave differently depending on context
     // this is e.g. the case for GroupNodeStyle
     return hitTester
-      ?.enumerateHits(IInputModeContext.createInputModeContext(this, context), location)
+      ?.enumerateHits(new InputModeContext(context, this), location)
       .find(isEdgeOrNode)
   }
-
   /**
    * Checks whether the color of the specified {@link IModelItem item} can be changed.
-   * @param {!IModelItem} item
-   * @param {!string} color
-   * @returns {boolean}
    */
   accept(item, color) {
     if (item instanceof INode && item.style instanceof ShapeNodeStyle) {
       return !item.style.fill || !item.style.fill.hasSameValue(color)
     }
-
     if (item instanceof IEdge && item.style instanceof PolylineEdgeStyle && item.style.stroke) {
       return !item.style.stroke.fill || !item.style.stroke.fill.hasSameValue(color)
     }
-
     return false
   }
-
   /**
    * Changes the color of the given {@link INode} or {@link IEdge} to the given color.
-   * @param {?IGraph} graph
-   * @param {!(INode|IEdge)} item
-   * @param {!string} color
    */
   applyColor(graph, item, color) {
     if (item instanceof INode && item.style instanceof ShapeNodeStyle) {
       this.applyNodeColor(graph, item.style, color)
     }
-
     if (item instanceof IEdge && item.style instanceof PolylineEdgeStyle && item.style.stroke) {
       this.applyEdgeColor(graph, item.style, color)
     }
   }
-
   /**
    * Changes the color of the given {@link INode} to the given color.
-   * @param {?IGraph} graph
-   * @param {!ShapeNodeStyle} style
-   * @param {!string} color
    */
   applyNodeColor(graph, style, color) {
     const oldFill = style.fill
-    const newFill = new SolidColorFill(color)
+    const newFill = color
     if (graph) {
       graph.addUndoUnit(
         'Change Node Color',
@@ -222,17 +177,13 @@ export class ColorDropInputMode extends DropInputMode {
     }
     style.fill = newFill
   }
-
   /**
    * Changes the color of the given {@link IEdge} to the given color.
-   * @param {?IGraph} graph
-   * @param {!PolylineEdgeStyle} style
-   * @param {!string} color
    */
   applyEdgeColor(graph, style, color) {
     const oldStroke = style.stroke
     const newStroke = style.stroke.cloneCurrentValue()
-    newStroke.fill = new SolidColorFill(color)
+    newStroke.fill = color
     if (graph) {
       graph.addUndoUnit(
         'Change Edge Color',
@@ -243,7 +194,6 @@ export class ColorDropInputMode extends DropInputMode {
     }
     style.stroke = newStroke
   }
-
   /**
    * Sets the {@link DragEventArgs.dropEffect drop effect} to {@link DragDropEffects.COPY copy} if
    * the current drop target is valid or to {@link DragDropEffects.NONE none} otherwise.
@@ -251,34 +201,24 @@ export class ColorDropInputMode extends DropInputMode {
    * Depending on the current drop effect the CSS class `yfiles-cursor-dragdrop-copy` or
    * `yfiles-cursor-dragdrop-no-drop` is assigned to the element hovered during the drag
    * operation. This allows for updating the mouse cursor using CSS classes.
-   * @param {!DragEventArgs} evt
-   * @returns {boolean}
    */
   adjustEffect(evt) {
     if (super.adjustEffect(evt)) {
-      const target = this.getDropTarget(this.mousePosition.toPoint())
+      const target = this.getDropTarget(this.pointerPosition.toPoint())
       evt.dropEffect = target ? DragDropEffects.COPY : DragDropEffects.NONE
       return true
     }
     return false
   }
-
   /**
    * Resets the {@link dropTarget}.
    */
   cleanup() {
     this.dropTarget = null
   }
-
   /**
    * Starts a drag operation from the given HTML element.
    * The given color string constitutes the tranfer data of the drag operation.
-   * @param {!HTMLElement} dragSource
-   * @param {!string} color
-   * @param {!DragDropEffects} dragDropEffects
-   * @param {boolean} [useCssCursors=true]
-   * @param {?HTMLElement} [dragPreview=null]
-   * @returns {!DragSource}
    */
   static startDrag(
     dragSource,
@@ -292,11 +232,8 @@ export class ColorDropInputMode extends DropInputMode {
     return source
   }
 }
-
 /**
  * Determines if the given item is an {@link IEdge} or an {@link INode} instance.
- * @param {!IModelItem} item
- * @returns {boolean}
  */
 function isEdgeOrNode(item) {
   return item instanceof IEdge || item instanceof INode

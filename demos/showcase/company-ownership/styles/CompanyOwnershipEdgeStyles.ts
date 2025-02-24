@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,12 +30,12 @@ import type { CompanyRelationshipEdge } from '../data-types'
 import { EdgeTypeEnum } from '../data-types'
 import {
   Arrow,
-  DefaultLabelStyle,
   EdgePathLabelModel,
   type IEdgeStyle,
   LabelDefaults,
+  LabelStyle,
   PolylineEdgeStyle
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 // configures the style of the edges based on their type
 const smoothingLength = 5
@@ -68,12 +68,12 @@ export function getEdgeStyle(edge: CompanyRelationshipEdge): IEdgeStyle {
 }
 
 // configures the style of the edge labels
-export const edgeLabelStyle = new DefaultLabelStyle({
+export const edgeLabelStyle = new LabelStyle({
   backgroundFill: '#D3D7D9',
   backgroundStroke: 'none',
   textFill: '#11232C',
   autoFlip: false,
-  insets: [3, 5, 3, 5],
+  padding: [3, 5, 3, 5],
   shape: 'round-rectangle'
 })
 

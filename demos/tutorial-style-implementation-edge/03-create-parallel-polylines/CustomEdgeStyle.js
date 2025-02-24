@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,28 +26,19 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EdgeStyleBase, IArrow, SvgVisual } from 'yfiles'
-
+import { EdgeStyleBase, IArrow, SvgVisual } from '@yfiles/yfiles'
 export class CustomEdgeStyle extends EdgeStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!IEdge} edge
-   * @returns {?Visual}
-   */
   createVisual(context, edge) {
     const generalPath = super.getPath(edge)
     const croppedGeneralPath = super.cropPath(edge, IArrow.NONE, IArrow.NONE, generalPath)
-
     const widePath = croppedGeneralPath.createSvgPath()
     widePath.setAttribute('fill', 'none')
     widePath.setAttribute('stroke', 'black')
     widePath.setAttribute('stroke-width', '4')
-
     const thinPath = croppedGeneralPath.createSvgPath()
     thinPath.setAttribute('fill', 'none')
     thinPath.setAttribute('stroke', 'white')
     thinPath.setAttribute('stroke-width', '2')
-
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     group.append(widePath, thinPath)
     return new SvgVisual(group)

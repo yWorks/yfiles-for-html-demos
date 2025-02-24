@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,25 +27,25 @@
  **
  ***************************************************************************/
 import {
-  Cursor,
   GeneralPath,
   type GraphComponent,
   type GraphInputMode,
   HandleInputMode,
   HandlePositions,
-  type ICanvasObject,
+  HandlesRenderer,
   type IHandle,
   IHitTestable,
+  type IRenderTreeElement,
   MoveInputMode,
   MutableRectangle,
   ObservableCollection,
   RectangleHandle,
-  RectangleIndicatorInstaller,
-  RenderModes
-} from 'yfiles'
+  RenderMode
+} from '@yfiles/yfiles'
 import PositionHandler from './PositionHandler'
+import { RectangleRenderer } from '../../../utils/RectangleRenderer'
 
-let canvasObject: ICanvasObject
+let renderTreeElement: IRenderTreeElement
 let exportHandleInputMode: HandleInputMode
 
 /**
@@ -56,13 +56,13 @@ let exportHandleInputMode: HandleInputMode
 export function initializeExportRectangle(graphComponent: GraphComponent): MutableRectangle {
   // create the model for the export rectangle, ...
   const exportRect = new MutableRectangle(-20, 0, 300, 160)
+
   // ... visualize it in the canvas, ...
-  const installer = new RectangleIndicatorInstaller(exportRect)
-  canvasObject = installer.addCanvasObject(
-    graphComponent.createRenderContext(),
-    graphComponent.backgroundGroup,
-    exportRect
-  )!
+  renderTreeElement = graphComponent.renderTree.createElement(
+    graphComponent.renderTree.highlightGroup,
+    exportRect,
+    new RectangleRenderer()
+  )
 
   // add an input mode that allows the user resizing the rectangle
   makeRectResizable(graphComponent.inputMode as GraphInputMode, exportRect)
@@ -71,7 +71,7 @@ export function initializeExportRectangle(graphComponent: GraphComponent): Mutab
   makeRectMovable(graphComponent.inputMode as GraphInputMode, exportRect)
 
   // initially disable the rectangle
-  canvasObject.visible = false
+  renderTreeElement.visible = false
   exportHandleInputMode.enabled = false
 
   return exportRect
@@ -83,13 +83,13 @@ function makeRectResizable(inputMode: GraphInputMode, exportRect: MutableRectang
     // ensure that this mode takes precedence over most other modes,
     // i.e. resizing the export rectangle takes precedence over another interactive editing
     priority: 1,
-    renderMode: RenderModes.SVG,
+    handlesRenderer: new HandlesRenderer(RenderMode.SVG),
     // specify handles for resizing the export rectangle
     handles: new ObservableCollection<IHandle>([
-      new RectangleHandle(HandlePositions.NORTH_EAST, exportRect),
-      new RectangleHandle(HandlePositions.NORTH_WEST, exportRect),
-      new RectangleHandle(HandlePositions.SOUTH_EAST, exportRect),
-      new RectangleHandle(HandlePositions.SOUTH_WEST, exportRect)
+      new RectangleHandle(HandlePositions.TOP_RIGHT, exportRect),
+      new RectangleHandle(HandlePositions.TOP_LEFT, exportRect),
+      new RectangleHandle(HandlePositions.BOTTOM_RIGHT, exportRect),
+      new RectangleHandle(HandlePositions.BOTTOM_LEFT, exportRect)
     ])
   })
   // ... add it to the demo's main input mode
@@ -121,7 +121,7 @@ function makeRectMovable(inputMode: GraphInputMode, exportRect: MutableRectangle
  * Toggles the visibility of the export rectangle.
  */
 export function toggleExportRectangle(): void {
-  const visible = !canvasObject.visible
-  canvasObject.visible = visible
+  const visible = !renderTreeElement.visible
+  renderTreeElement.visible = visible
   exportHandleInputMode.enabled = visible
 }

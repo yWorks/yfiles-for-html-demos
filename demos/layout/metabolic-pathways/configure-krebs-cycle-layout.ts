@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,35 +28,31 @@
  ***************************************************************************/
 import {
   BaseClass,
-  type OrganicLayoutConstraintFactory,
+  ConstraintOrientation,
   GenericLabeling,
+  GenericLabelingData,
   GenericLayoutData,
-  type IDataProvider,
-  type ILabel,
-  ILabelLayoutDpKey,
+  HashMap,
+  type IEnumerable,
   ILayoutAlgorithm,
   type INode,
   Insets,
-  LabelingData,
   type LayoutData,
+  type LayoutEdge,
   type LayoutGraph,
-  LayoutKeys,
-  NodeHalo,
+  type LayoutNode,
+  type OrganicConstraintData,
   OrganicLayout,
-  OrganicLayoutConstraintOrientation,
-  OrganicLayoutScope,
   OrganicLayoutStarSubstructureStyle,
-  Rect,
-  YBoolean,
-  type YNode,
-  YPoint
-} from 'yfiles'
-import { getMetabolicData, getType, NodeTypes } from './data-types'
+  Point,
+  Rect
+} from '@yfiles/yfiles'
+import { getAlignment, getType, isOnCircle, NodeTypes } from './data-types'
 
 /**
  * Creates a layout algorithm that uses the organic layout and adds additional constraints
  * to handle the nodes that have to be vertically aligned and the nodes that form a circle.
- * Also, it registers the necessary data providers to pass the information about the
+ * Also, it registers the necessary data maps to pass the information about the
  * vertical alignment and circle nodes and their types.
  */
 export function configureKrebsCycleLayout(): {
@@ -67,57 +63,27 @@ export function configureKrebsCycleLayout(): {
   const krebsCycleLayout = new KrebsCycleLayout()
   // creates the layout data to pass the information about the types of the nodes and their placement
   const layoutData: GenericLayoutData = new GenericLayoutData()
-  // passes the information about the types of the nodes
-  layoutData.addNodeItemMapping(KrebsCycleLayout.NODE_TYPES, (node) => getType(node))
-  // passes the information about the nodes that have to be vertically aligned
-  layoutData.addNodeItemMapping(
-    KrebsCycleLayout.ALIGNED_NODES_DP_KEY,
-    (node: INode): number => getMetabolicData(node).vAlign as number
-  )
-  // passes the information about the nodes that belong on the cycle
-  layoutData.addNodeItemMapping(
-    KrebsCycleLayout.CIRCLE_NODES_DP_KEY,
-    (node) => getMetabolicData(node).circle
-  )
 
   // applies a generic labeling for the labels of co-reactants, co-enzymes or nodes of type 'Other'
-  const affectedLabelsDpKey = new ILabelLayoutDpKey(YBoolean.$class, null, 'AffectedLabels')
-  const genericLabeling = new GenericLabeling({
+  const labeling = new GenericLabeling({
     coreLayout: krebsCycleLayout,
-    placeNodeLabels: true,
-    placeEdgeLabels: false,
-    reduceAmbiguity: true,
-    affectedLabelsDpKey: affectedLabelsDpKey
+    scope: 'node-labels'
   })
 
   // marks the labels that have to be arranged
-  const labelingData = new LabelingData()
-  labelingData.affectedLabels = (label: ILabel): boolean =>
-    getType(label.owner as INode) === NodeTypes.CO_REACTANT ||
-    getType(label.owner as INode) === NodeTypes.OTHER
-  labelingData.affectedLabels.dpKey = affectedLabelsDpKey
-
-  return { layout: genericLabeling, layoutData: layoutData.combineWith(labelingData) }
+  const labelingData = new GenericLabelingData({
+    scope: {
+      nodeLabels: (label) => isCoReactant(label.owner as INode) || isOther(label.owner as INode)
+    }
+  })
+  return { layout: labeling, layoutData: layoutData.combineWith(labelingData) }
 }
 
 /**
  * A layout algorithm that uses the organic layout and adds additional constraints
  * to handle the nodes that have to be vertically aligned and the nodes that form a cycle.
  */
-export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayoutAlgorithm) {
-  /**
-   * A data-provider to provide the information about the nodes that have to be aligned and their order
-   */
-  static readonly ALIGNED_NODES_DP_KEY: string = 'KrebsCycleLayout.ALIGNED_NODES_DP_KEY'
-  /**
-   * A data-provider to provide the information about the nodes that form a cycle
-   */
-  static readonly CIRCLE_NODES_DP_KEY: string = 'KrebsCycleLayout.CIRCLE_NODES_DP_KEY'
-  /**
-   * A data-provider to provide the information about the types of the nodes
-   */
-  static readonly NODE_TYPES: string = 'KrebsCycleLayout.NODE_TYPES_DP_KEY'
-
+class KrebsCycleLayout extends BaseClass(ILayoutAlgorithm) {
   /**
    * Creates and cnd configures the organic layout.
    * It runs in two phases. In the first phase, all nodes are arranged using constraints so that
@@ -141,31 +107,42 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
   /**
    * Returns the nodes that have to be vertically aligned.
    */
-  private getVerticallyAlignedNodes(graph: LayoutGraph): YNode[] | null {
-    const alignedNodesDp = graph.getDataProvider(KrebsCycleLayout.ALIGNED_NODES_DP_KEY)!
-    // get the nodes to be aligned from the data-provider and sort them based on their order
-    const alignedNodes = graph.nodes.filter((node) => alignedNodesDp.getNumber(node) > 0).toArray()
-    alignedNodes.sort(
-      (n1: YNode, n2: YNode) => alignedNodesDp.getNumber(n1) - alignedNodesDp.getNumber(n2)
-    )
-    return alignedNodes
+  private getVerticallyAlignedNodes(graph: LayoutGraph): LayoutNode[] | null {
+    const compareAlignment = (a: string | number, b: string | number): number => {
+      if (a === 'start' && b !== 'start') {
+        return -1
+      } else if (a === 'end' && b !== 'end') {
+        return 1
+      } else if (a !== 'start' && b === 'start') {
+        return 1
+      } else if (a !== 'end' && b === 'end') {
+        return -1
+      } else if (a === b) {
+        return 0
+      } else {
+        return Math.sign((a as number) - (b as number))
+      }
+    }
+
+    // get the nodes to be aligned from the data-map and sort them based on their order
+    const alignedNodes = graph.nodes
+      .filter((node) => typeof getAlignment(node) !== 'undefined')
+      .toSorted((a, b) => compareAlignment(getAlignment(a)!, getAlignment(b)!))
+    return alignedNodes.toArray()
   }
 
   /**
    * Returns the nodes that belong on the circle.
    * It includes the nodes that are marked in the data-set and their associated reactions.
    */
-  private getCircleNodes(graph: LayoutGraph): YNode[] {
-    const circleNodesDp = graph.getDataProvider(KrebsCycleLayout.CIRCLE_NODES_DP_KEY)!
-    const nodeTypesDp = graph.getDataProvider(KrebsCycleLayout.NODE_TYPES)!
-
-    const circleNodes: YNode[] = []
+  private getCircleNodes(graph: LayoutGraph): LayoutNode[] {
+    const circleNodes: LayoutNode[] = []
     graph.nodes.forEach((node) => {
-      if (circleNodesDp.getBoolean(node)) {
+      if (isOnCircle(node)) {
         circleNodes.push(node)
         // get the reaction nodes that are connected with these reactant nodes
-        node.neighbors.forEach((node) => {
-          if (isReaction(nodeTypesDp, node) && !circleNodes.includes(node)) {
+        this.getNeighbors(node).forEach((node) => {
+          if (isReaction(node) && !circleNodes.includes(node)) {
             circleNodes.push(node)
           }
         })
@@ -180,63 +157,47 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
    */
   applyFirstPhase(
     graph: LayoutGraph,
-    vAlignedNodes: YNode[] | null,
-    circleNodes: YNode[] | null
+    vAlignedNodes: LayoutNode[] | null,
+    circleNodes: LayoutNode[] | null
   ): void {
     // create a basic organic layout configuration - use some large preferred edge length to
     // make sure that the nodes can be placed on the circle
     const organicLayout = new OrganicLayout({
       deterministic: true,
-      preferredEdgeLength: 210,
-      minimumNodeDistance: 50,
-      nodeEdgeOverlapAvoided: true
+      defaultPreferredEdgeLength: 290,
+      defaultMinimumNodeDistance: 5
     })
 
-    // get the node ids for the nodes - must be used for the constraints!
-    const nodeIds = graph.getDataProvider(LayoutKeys.NODE_ID_DP_KEY)!
-
-    const constraintFactory = organicLayout.createConstraintFactory(graph)
+    const organicLayoutData = organicLayout.createLayoutData(graph)
+    const organicConstraintData = organicLayoutData.constraints
 
     if (circleNodes) {
-      // find the circle nodes and store their ids
-      const circleNodeIds = circleNodes.map((node) => nodeIds.get(node) as YNode)
       // create the ellipse constraint so that the nodes are placed on the boundary of a circle
-      constraintFactory.addEllipse(circleNodeIds, true, 1)
+      organicConstraintData.addEllipse(true, 1).items = circleNodes
     }
 
-    const preferredEdgeLength = graph.createEdgeMap()
     if (vAlignedNodes) {
-      const vAlignedNodeIds = vAlignedNodes.map((node) => nodeIds.get(node) as YNode)
+      const sortedNodesMap = new HashMap<LayoutNode, number>()
+      vAlignedNodes.forEach((node, index) => sortedNodesMap.set(node, index))
       // order the nodes based on the vAlign stored in the data
-      constraintFactory.addOrderConstraint(
-        vAlignedNodeIds,
-        OrganicLayoutConstraintOrientation.VERTICAL
-      )
+      organicConstraintData.addOrderConstraint(ConstraintOrientation.VERTICAL).mapper =
+        sortedNodesMap
+
       // align the nodes vertically
-      constraintFactory.addAlignmentConstraint(
-        vAlignedNodeIds,
-        OrganicLayoutConstraintOrientation.VERTICAL,
-        0
-      )
+      organicConstraintData.addAlignmentConstraint(ConstraintOrientation.VERTICAL).source =
+        vAlignedNodes
 
       // make the vertical edges of the aligned nodes a bit shorter
-      graph.edges.forEach((edge) => {
-        if (vAlignedNodes.includes(edge.source) && vAlignedNodes.includes(edge.target)) {
-          preferredEdgeLength.set(edge, 100)
+      organicLayoutData.preferredEdgeLengths = (edge): number | null => {
+        if (sortedNodesMap.has(edge.source) && sortedNodesMap.has(edge.target)) {
+          return 200
         }
-      })
-      graph.addDataProvider(OrganicLayout.PREFERRED_EDGE_LENGTH_DP_KEY, preferredEdgeLength)
+        return null // Use default edge length value
+      }
     }
 
     // apply the layout
-    organicLayout.applyLayout(graph)
-
-    // clean-up
-    if (graph.getDataProvider(OrganicLayout.PREFERRED_EDGE_LENGTH_DP_KEY)) {
-      graph.removeDataProvider(OrganicLayout.PREFERRED_EDGE_LENGTH_DP_KEY)
-    }
-    graph.disposeEdgeMap(preferredEdgeLength)
-    constraintFactory.dispose()
+    graph.applyLayout(organicLayout, organicLayoutData)
   }
 
   /**
@@ -244,35 +205,34 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
    * It defines additional constraints so that enzymes are placed in the circle and
    * constraints for the vertical/horizontal alignment and ordering of the co-reactants and co-enzymes.
    */
-  applySecondPhase(graph: LayoutGraph, vAlignedNodes: YNode[], circleNodes: YNode[]): void {
-    // get the node ids for the nodes - must be used for the constraints!
-    const nodeIds = graph.getDataProvider(LayoutKeys.NODE_ID_DP_KEY)!
-
-    // get the data-provider with the node type information from the data-set
-    const nodeTypesDp = graph.getDataProvider(KrebsCycleLayout.NODE_TYPES)!
-
+  applySecondPhase(
+    graph: LayoutGraph,
+    vAlignedNodes: LayoutNode[],
+    circleNodes: LayoutNode[]
+  ): void {
     // configure the layout algorithm with scope 'subset' so that only the nodes of type
     // enzyme, co-reactant or co-enzyme are arranged
     const organicLayout = new OrganicLayout({
-      scope: OrganicLayoutScope.SUBSET,
-      // handle specially the stars
+      // specially handle the stars
       starSubstructureStyle: OrganicLayoutStarSubstructureStyle.RADIAL,
       deterministic: true,
-      preferredEdgeLength: 210,
-      minimumNodeDistance: 30,
-      nodeEdgeOverlapAvoided: true
+      defaultPreferredEdgeLength: 200,
+      defaultMinimumNodeDistance: 12
     })
 
-    const constraintFactory = organicLayout.createConstraintFactory(graph)
+    const organicLayoutData = organicLayout.createLayoutData(graph)
+    const organicConstraintData = organicLayoutData.constraints
 
     // used to mark the nodes that connected to the vertically aligned nodes and have already constraints
-    const handledNodes = new Set<YNode>()
+    const handledNodes = new Set<LayoutNode>()
     const circleNodesSet = new Set(circleNodes)
+
     // calculate the bounds of the circle and create a constraint so that enzymes are placed
     // inside the circle
-    const bounds = calculateCircleBounds(graph, circleNodes)
-    const enzymes = this.getEnzymesOnCircle(graph, circleNodesSet, nodeIds, nodeTypesDp)
-    constraintFactory.addPinnedBoundingBox(enzymes, bounds.x, bounds.y, bounds.width, bounds.height)
+    const bounds = calculateCircleBounds(circleNodes)
+    organicConstraintData.addPinnedBounds(
+      new Rect(bounds.x, bounds.y, bounds.width, bounds.height)
+    ).source = this.getEnzymesOnCircle(graph, circleNodesSet)
 
     // add constraints to the nodes connected to the vertically aligned path on the top, and
     // mark them as already handled
@@ -280,67 +240,43 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
       vAlignedNodes,
       circleNodesSet,
       handledNodes,
-      nodeIds,
-      nodeTypesDp,
-      constraintFactory
+      organicConstraintData
     )
 
     // add constraints to all co-reactants, enzymes and co-enzymes connected to reaction nodes on circle
-    this.addConstraintsToCircle(
-      graph,
-      circleNodes,
-      handledNodes,
-      nodeIds,
-      nodeTypesDp,
-      constraintFactory
-    )
+    this.addConstraintsToCircle(graph, circleNodes, handledNodes, organicConstraintData)
 
     // mark the nodes that have to be arranged, namely all co-reactants, enzymes and co-enzymes
     // that are connected to reaction nodes on circle
-    const affectedNodesMap = graph.createNodeMap()
-    // and, also add some node halos to these nodes
-    const halos = graph.createNodeMap()
+    const affectedNodesMap = new Map<LayoutNode, boolean>()
+    // and, also add some node margins to these nodes
+    const margins = new Map<LayoutNode, Insets>()
     graph.nodes
-      .filter(
-        (node) =>
-          nodeTypesDp.get(node) === NodeTypes.ENZYME ||
-          nodeTypesDp.get(node) === NodeTypes.OTHER ||
-          nodeTypesDp.get(node) === NodeTypes.CO_REACTANT
-      )
+      .filter((node) => isEnzyme(node) || isOther(node) || isCoReactant(node))
       .forEach((node) => {
-        affectedNodesMap.setBoolean(node, true)
-        halos.set(node, NodeHalo.create(20))
+        affectedNodesMap.set(node, true)
+        margins.set(node, new Insets(10))
       })
-    graph.addDataProvider(OrganicLayout.AFFECTED_NODES_DP_KEY, affectedNodesMap)
-    graph.addDataProvider(NodeHalo.NODE_HALO_DP_KEY, halos)
+
+    organicLayoutData.scope.nodes = affectedNodesMap
+    organicLayoutData.nodeMargins = margins
 
     // assign some preferred edge lengths for the edges
-    const preferredEdgeLength = graph.createEdgeMap()
+    const preferredEdgeLength = new Map<LayoutEdge, number>()
     graph.edges.forEach((edge) => {
-      const sType = nodeTypesDp.getNumber(edge.source)
-      const tType = nodeTypesDp.getNumber(edge.target)
-
       if (handledNodes.has(edge.source) || handledNodes.has(edge.target)) {
         preferredEdgeLength.set(edge, 30)
-      } else if (sType === NodeTypes.ENZYME || tType === NodeTypes.ENZYME) {
+      } else if (isEnzyme(edge.source) || isEnzyme(edge.target)) {
         preferredEdgeLength.set(edge, 10)
       } else {
-        preferredEdgeLength.set(edge, 82)
+        preferredEdgeLength.set(edge, 80)
       }
     })
-    graph.addDataProvider(OrganicLayout.PREFERRED_EDGE_LENGTH_DP_KEY, preferredEdgeLength)
+
+    organicLayoutData.preferredEdgeLengths = preferredEdgeLength
 
     // apply the layout
-    organicLayout.applyLayout(graph)
-
-    // clean-up
-    graph.disposeNodeMap(affectedNodesMap)
-    graph.disposeNodeMap(halos)
-    graph.disposeEdgeMap(preferredEdgeLength)
-    constraintFactory.dispose()
-    graph.removeDataProvider(OrganicLayout.PREFERRED_EDGE_LENGTH_DP_KEY)
-    graph.removeDataProvider(OrganicLayout.AFFECTED_NODES_DP_KEY)
-    graph.removeDataProvider(NodeHalo.NODE_HALO_DP_KEY)
+    graph.applyLayout(organicLayout, organicLayoutData)
   }
 
   /**
@@ -348,40 +284,38 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
    */
   private addConstraintsToCircle(
     graph: LayoutGraph,
-    circleNodes: YNode[],
-    handledNodes: Set<YNode>,
-    nodeIds: IDataProvider,
-    nodeTypesDp: IDataProvider,
-    constraintFactory: OrganicLayoutConstraintFactory
+    circleNodes: LayoutNode[],
+    handledNodes: Set<LayoutNode>,
+    organicConstraintData: OrganicConstraintData<LayoutNode>
   ): void {
     // calculate the center of the circle
-    const circleCenter = calculateCircleCenter(graph, circleNodes)
-    const visited = new Set<YNode>()
+    const circleCenter = calculateCircleCenter(circleNodes)
+    const visited = new Set<LayoutNode>()
     graph.nodes
       // get all co-reactants that are not already handled
-      .filter((node) => isCoReactant(nodeTypesDp, node) && !handledNodes.has(node))
+      .filter((node) => isCoReactant(node) && !handledNodes.has(node))
       .forEach((coReactant) => {
         if (!visited.has(coReactant)) {
           // get the reaction node to which this coReactant is connected and find the other otherReactant
           const reaction = coReactant.edges.at(0)!.opposite(coReactant)
-          const otherReactant = reaction.neighbors.find(
-            (neighbor) => neighbor !== coReactant && isCoReactant(nodeTypesDp, neighbor)
+          const otherReactant = this.getNeighbors(reaction).find(
+            (neighbor) => neighbor !== coReactant && isCoReactant(neighbor)
           )!
-
-          // order the coReactant pair based on whether they have incoming/outgoing edges
-          const orderedNodes =
-            coReactant.inDegree > 0
-              ? [nodeIds.get(otherReactant), nodeIds.get(coReactant)]
-              : [nodeIds.get(coReactant), nodeIds.get(otherReactant)]
 
           // align and order the co-reactants either horizontally or vertically based on the reaction's position on the circle
           const orientation = getOrientation(
-            graph.getCenterX(reaction),
-            graph.getCenterY(reaction),
+            reaction.layout.center.x,
+            reaction.layout.center.y,
             circleCenter
           )
-          constraintFactory.addOrderConstraint(orderedNodes, orientation)
-          constraintFactory.addAlignmentConstraint(orderedNodes, orientation, 0)
+
+          // order the coReactant pair based on whether they have incoming/outgoing edges
+          const orderConstraint = organicConstraintData.addOrderConstraint(orientation)
+          orderConstraint.mapper.set(otherReactant, coReactant.inDegree > 0 ? 1 : 2)
+          orderConstraint.mapper.set(coReactant, coReactant.inDegree > 0 ? 2 : 1)
+
+          organicConstraintData.addAlignmentConstraint(orientation, 0).source =
+            coReactant.inDegree > 0 ? [otherReactant, coReactant] : [coReactant, otherReactant]
           visited.add(otherReactant)
         }
       })
@@ -389,105 +323,101 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
     // create some constraints between the reactions and the nodes of type 'other' to make sure
     // that they are separated and placed with some distance
     graph.nodes
-      .filter((node) => nodeTypesDp.get(node) === NodeTypes.OTHER)
+      .filter((node) => isOther(node))
       .forEach((node) => {
-        const reaction = node.neighbors.at(0)!
+        const reaction = this.getNeighbors(node).at(0)!
         // create a constraint to force the reaction and the 'other' node to have a minimum distance
-        constraintFactory.addSeparationConstraint(
-          [nodeIds.get(node)],
-          [nodeIds.get(reaction)],
-          getOrientation(graph.getCenterX(reaction), graph.getCenterY(reaction), circleCenter),
+        const organicLayoutSeparationConstraint = organicConstraintData.addSeparationConstraint(
+          getOrientation(reaction.layout.centerX, reaction.layout.centerY, circleCenter),
           0
         )
+        organicLayoutSeparationConstraint.firstSet.source = [node]
+        organicLayoutSeparationConstraint.secondSet.source = [reaction]
       })
   }
 
   /**
    * Returns the enzymes that are connected to the circle.
    */
-  private getEnzymesOnCircle(
-    graph: LayoutGraph,
-    circleNodes: Set<YNode>,
-    nodeIds: IDataProvider,
-    nodeTypesDp: IDataProvider
-  ): YNode[] {
+  private getEnzymesOnCircle(graph: LayoutGraph, circleNodes: Set<LayoutNode>): LayoutNode[] {
     return graph.nodes
-      .filter((node) => isEnzyme(nodeTypesDp, node) && connectsToCircle(node, circleNodes))
-      .map((node) => nodeIds.get(node) as YNode)
+      .filter((node) => isEnzyme(node) && connectsToCircle(node, circleNodes))
       .toArray()
+  }
+
+  /**
+   * Returns all the neighbor nodes of the given node.
+   */
+  private getNeighbors(node: LayoutNode): IEnumerable<LayoutNode> {
+    return node.inEdges.map((edge) => edge.source).concat(node.outEdges.map((edge) => edge.target))
   }
 
   /**
    * Creates the constraints to the nodes on the top that are connected to vertically aligned nodes.
    */
   private addConstraintsToVerticallyAlignedPath(
-    alignedNodes: YNode[],
-    circleNodes: Set<YNode>,
-    handledNodes: Set<YNode>,
-    nodeIds: IDataProvider,
-    nodeTypesDp: IDataProvider,
-    constraintFactory: OrganicLayoutConstraintFactory
+    alignedNodes: LayoutNode[],
+    circleNodes: Set<LayoutNode>,
+    handledNodes: Set<LayoutNode>,
+    organicConstraintData: OrganicConstraintData<LayoutNode>
   ): void {
     alignedNodes
-      .filter((node) => isReaction(nodeTypesDp, node) && !circleNodes.has(node))
+      .filter((node) => isReaction(node) && !circleNodes.has(node))
       .forEach((reaction) => {
-        const coReactantIds: YNode[] = []
-        // get the id of the reaction node
-        const reactionId = nodeIds.get(reaction) as YNode
+        const coReactants: LayoutNode[] = []
 
         // sort the co-reactants based on whether they have incoming/outgoing edges
-        reaction.neighbors
+        this.getNeighbors(reaction)
           .toArray()
           .sort((n1, n2) => {
-            const t1 = nodeTypesDp.get(n1) as NodeTypes
-            if (t1 === NodeTypes.CO_REACTANT && n1.inDegree > 1 && n2.inDegree === 0) {
+            if (isCoReactant(n1) && n1.inDegree > 1 && n2.inDegree === 0) {
               return 1
-            } else if (t1 === NodeTypes.CO_REACTANT && n1.outDegree > 1 && n2.outDegree === 0) {
+            } else if (isCoReactant(n1) && n1.outDegree > 1 && n2.outDegree === 0) {
               return -1
             }
             return 0
           })
           .forEach((neighbor) => {
-            const type = nodeTypesDp.get(neighbor) as NodeTypes
-            const neighborId = nodeIds.get(neighbor) as YNode
-            if (type === NodeTypes.ENZYME) {
+            if (isEnzyme(neighbor)) {
               // create a constraint to place the enzymes before their associated reaction
-              constraintFactory.addOrderConstraint(
-                [neighborId, reactionId],
-                OrganicLayoutConstraintOrientation.HORIZONTAL
+              const enzymeOrderConstraint = organicConstraintData.addOrderConstraint(
+                ConstraintOrientation.HORIZONTAL
               )
+              enzymeOrderConstraint.mapper.set(neighbor, 1)
+              enzymeOrderConstraint.mapper.set(reaction, 2)
 
-              // create a constraint to align horizontally the enzymes with their associated reaction
-              constraintFactory.addAlignmentConstraint(
-                [neighborId, reactionId],
-                OrganicLayoutConstraintOrientation.HORIZONTAL,
+              // create a constraint to align the enzymes horizontally with their associated reaction
+              organicConstraintData.addAlignmentConstraint(
+                ConstraintOrientation.HORIZONTAL,
                 0
-              )
+              ).source = [neighbor, reaction]
+
               handledNodes.add(neighbor)
-            } else if (type === NodeTypes.CO_REACTANT && !coReactantIds.includes(neighborId)) {
-              coReactantIds.push(neighborId)
+            } else if (isCoReactant(neighbor) && !coReactants.includes(neighbor)) {
+              coReactants.push(neighbor)
 
               // create a constraint to place the co-reactants after their associated reaction
-              constraintFactory.addOrderConstraint(
-                [reactionId, neighborId],
-                OrganicLayoutConstraintOrientation.HORIZONTAL
+              const coReactantOrderConstraint = organicConstraintData.addOrderConstraint(
+                ConstraintOrientation.HORIZONTAL
               )
+              coReactantOrderConstraint.mapper.set(reaction, 1)
+              coReactantOrderConstraint.mapper.set(neighbor, 2)
+
               handledNodes.add(neighbor)
             }
           })
 
         // create a constraint to vertically align the co-reactants
-        constraintFactory.addAlignmentConstraint(
-          coReactantIds,
-          OrganicLayoutConstraintOrientation.VERTICAL
-        )
+        organicConstraintData.addAlignmentConstraint(ConstraintOrientation.VERTICAL).source =
+          coReactants
+
         // create a constraint to order the co-reactants based on whether they have
         // incoming/outgoing edges
-        constraintFactory.addOrderConstraint(
-          [coReactantIds[0], coReactantIds[1]],
-          OrganicLayoutConstraintOrientation.VERTICAL
+        const orderConstraint = organicConstraintData.addOrderConstraint(
+          ConstraintOrientation.VERTICAL
         )
-
+        orderConstraint.mapper.set(coReactants[0], 1)
+        orderConstraint.mapper.set(coReactants[1], 2)
         handledNodes.add(reaction)
       })
   }
@@ -497,16 +427,16 @@ export default class KrebsCycleLayout extends BaseClass<ILayoutAlgorithm>(ILayou
  * Calculates the bounds of the cycle based on the nodes' layout and reduces it with some insets
  * to make sure that the enzymes are placed inside the circle.
  */
-function calculateCircleBounds(graph: LayoutGraph, circleNodes: YNode[]): Rect {
+function calculateCircleBounds(circleNodes: LayoutNode[]): Rect {
   return circleNodes
-    .reduce((bounds, node) => Rect.add(bounds, graph.getBoundingBox(node).toRect()), Rect.EMPTY)
-    .getReduced(new Insets(250))
+    .reduce((bounds, node) => Rect.add(bounds, node.layout.bounds), Rect.EMPTY)
+    .getReduced(200)
 }
 
 /**
  * Checks whether the given node is connected to a node on the circle.
  */
-function connectsToCircle(node: YNode, circleNodes: Set<YNode>): boolean {
+function connectsToCircle(node: LayoutNode, circleNodes: Set<LayoutNode>): boolean {
   return (
     node.edges.find((edge) => circleNodes.has(edge.source) || circleNodes.has(edge.target)) !== null
   )
@@ -526,50 +456,53 @@ function getAngle(x: number, y: number, cx: number, cy: number): number {
 /**
  * Returns the orientation for the alignment based on the position of the node on the circle.
  */
-function getOrientation(
-  x: number,
-  y: number,
-  circleCenter: YPoint
-): OrganicLayoutConstraintOrientation {
+function getOrientation(x: number, y: number, circleCenter: Point): ConstraintOrientation {
   const angle = getAngle(x, y, circleCenter.x, circleCenter.y)
-  return (angle > 30 && angle < 120) || (angle > 230 && angle < 250)
-    ? OrganicLayoutConstraintOrientation.HORIZONTAL
-    : OrganicLayoutConstraintOrientation.VERTICAL
+  return (angle > 40 && angle < 120) || (angle > 240 && angle < 250)
+    ? ConstraintOrientation.HORIZONTAL
+    : ConstraintOrientation.VERTICAL
 }
 
 /**
  * Calculates the circle's center based on the given three points.
  */
-function calculateCircleCenter(graph: LayoutGraph, circleNodes: YNode[]): YPoint {
-  const { x: p1x, y: p1y } = graph.getCenter(circleNodes[0])
-  const { x: p2x, y: p2y } = graph.getCenter(circleNodes[1])
-  const { x: p3x, y: p3y } = graph.getCenter(circleNodes[2])
+function calculateCircleCenter(circleNodes: LayoutNode[]): Point {
+  const { x: p1x, y: p1y } = circleNodes[0].layout.center
+  const { x: p2x, y: p2y } = circleNodes[1].layout.center
+  const { x: p3x, y: p3y } = circleNodes[2].layout.center
   const det = 2 * (p1x * p2y - p2x * p1y - p1x * p3y + p3x * p1y + p2x * p3y - p3x * p2y)
   const a = p1x * p1x + p1y * p1y
   const b = p2x * p2x + p2y * p2y
   const c = p3x * p3x + p3y * p3y
   const centerX = (a * (p2y - p3y) + b * (p3y - p1y) + c * (p1y - p2y)) / det
   const centerY = (a * (p3x - p2x) + b * (p1x - p3x) + c * (p2x - p1x)) / det
-  return new YPoint(centerX, centerY)
+  return new Point(centerX, centerY)
 }
 
 /**
  * Returns whether the given node represents a reaction.
  */
-function isReaction(dp: IDataProvider, node: YNode): boolean {
-  return dp.get(node) === NodeTypes.REACTION
+function isReaction(node: LayoutNode | INode): boolean {
+  return getType(node) === NodeTypes.REACTION
 }
 
 /**
  * Returns whether the given node represents an enzyme.
  */
-function isEnzyme(dp: IDataProvider, node: YNode): boolean {
-  return dp.get(node) === NodeTypes.ENZYME
+function isEnzyme(node: LayoutNode | INode): boolean {
+  return getType(node) === NodeTypes.ENZYME
 }
 
 /**
  * Returns whether the given node represents a co-reactant.
  */
-function isCoReactant(dp: IDataProvider, node: YNode): boolean {
-  return dp.get(node) === NodeTypes.CO_REACTANT
+function isCoReactant(node: LayoutNode | INode): boolean {
+  return getType(node) === NodeTypes.CO_REACTANT
+}
+
+/**
+ * Returns whether the given node has type 'OTHER'.
+ */
+function isOther(node: LayoutNode | INode): boolean {
+  return getType(node) === NodeTypes.OTHER
 }

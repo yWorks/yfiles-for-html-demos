@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,9 +29,12 @@
 import {
   ClickInputMode,
   CreateEdgeInputMode,
+  DelegatingNodeStyle,
+  ICloneable,
   IColumn,
   IInputModeContext,
   INode,
+  INodeStyle,
   Insets,
   IRenderContext,
   IRow,
@@ -40,119 +43,112 @@ import {
   MoveInputMode,
   NodeStyleBase,
   Point,
-  Rect,
   SvgVisual,
   Table,
   TableNodeStyle,
-  TableNodeStyleRenderer,
-  TableRenderingOrder,
-  Visual
-} from 'yfiles'
-
+  TableRenderingOrder
+} from '@yfiles/yfiles'
 /**
- * @typedef {Object} Cache
- * @property {number} x
- * @property {number} y
- * @property {number} w
- * @property {number} h
+ * Custom table node style which defines a clickable area on the table's headers and delegates
+ * to {@link TableNodeStyle}.
  */
-
-export class DemoTableStyle extends TableNodeStyle {
-  /**
-   * @param {!ITable} [table]
-   */
-  constructor(table) {
-    super(table ? table : new Table(), new DemoTableStyleRenderer())
-    this.tableRenderingOrder = TableRenderingOrder.ROWS_FIRST
-    this.backgroundStyle = new TableBackgroundStyle()
+export class DemoTableStyle extends DelegatingNodeStyle {
+  tableNodeStyle
+  constructor(table = new Table()) {
+    super()
+    this.tableNodeStyle = new TableNodeStyle({
+      table,
+      tableRenderingOrder: TableRenderingOrder.ROWS_FIRST,
+      backgroundStyle: new TableBackgroundStyle()
+    })
   }
-}
-
-/**
- * Custom TableNodeStyleRenderer which defines a clickable area on the table's headers.
- */
-class DemoTableStyleRenderer extends TableNodeStyleRenderer {
-  /**
-   * @param {!IInputModeContext} inputModeContext
-   * @param {!Rect} box
-   * @returns {boolean}
-   */
-  isInBox(inputModeContext, box) {
-    return box.contains(this.node.layout.topLeft) && box.contains(this.node.layout.bottomRight)
+  getStyle(node) {
+    return this.tableNodeStyle
   }
-
-  /**
-   * @returns {boolean} True if p is inside node.
-   * @param {!IInputModeContext} inputModeContext
-   * @param {!Point} p
-   */
-  isHit(inputModeContext, p) {
-    if (!super.isHit.call(this, inputModeContext, p)) {
+  get tableRenderingOrder() {
+    return this.tableNodeStyle.tableRenderingOrder
+  }
+  set tableRenderingOrder(value) {
+    this.tableNodeStyle.tableRenderingOrder = value
+  }
+  get backgroundStyle() {
+    return this.tableNodeStyle.backgroundStyle
+  }
+  set backgroundStyle(value) {
+    this.tableNodeStyle.backgroundStyle = value
+  }
+  get table() {
+    return this.tableNodeStyle.table
+  }
+  set table(value) {
+    this.tableNodeStyle.table = value
+  }
+  isHit(context, location, node) {
+    if (!super.isHit(context, location, node)) {
       return false
     }
-
-    const table = this.node.lookup(ITable.$class)
-    if (table == null) {
+    const table = ITable.getTable(node)
+    if (!table) {
       return true
     }
-
-    if (inputModeContext.parentInputMode instanceof CreateEdgeInputMode) {
-      const accInsets = table.accumulatedInsets
+    if (context.inputMode instanceof CreateEdgeInputMode) {
+      const accInsets = table.accumulatedPadding
       // during edge creation - the inside of the table is not considered a hit
-      const nodeLayout = this.node.layout.toRect()
+      const nodeLayout = node.layout.toRect()
       const innerRect = nodeLayout.getEnlarged(
-        new Insets(-accInsets.left, -accInsets.top, -accInsets.right, -accInsets.bottom)
+        new Insets(-accInsets.top, -accInsets.right, -accInsets.bottom, -accInsets.left)
       )
-      return !innerRect.contains(p)
+      return !innerRect.contains(location)
     }
-    if (
-      inputModeContext.parentInputMode instanceof MoveInputMode &&
-      inputModeContext.parentInputMode.isDragging
-    ) {
+    if (context.inputMode instanceof MoveInputMode && context.inputMode.isDragging) {
       // during movement of the node - the whole area is considered a hit
       return true
     }
-    if (inputModeContext.parentInputMode instanceof ClickInputMode) {
-      const accInsets = table.accumulatedInsets
+    if (context.inputMode instanceof ClickInputMode) {
+      const accInsets = table.accumulatedPadding
       // clicking will only work in the corners
-      const nodeLayout = this.node.layout.toRect()
+      const nodeLayout = node.layout.toRect()
       const tableBody = nodeLayout.getEnlarged(
-        new Insets(-accInsets.left, -accInsets.top, -accInsets.right, -accInsets.bottom)
+        new Insets(-accInsets.top, -accInsets.right, -accInsets.bottom, -accInsets.left)
       )
-      if (tableBody.contains(p)) {
+      if (tableBody.contains(location)) {
         return false
       }
     }
     return true
   }
+  clone() {
+    const clone = new DemoTableStyle()
+    clone.tableRenderingOrder = this.tableRenderingOrder
+    clone.backgroundStyle = this.backgroundStyle
+    clone.table = this.copyTable(this.table)
+    return clone
+  }
+  copyTable(table) {
+    // noinspection SuspiciousTypeOfGuard
+    return table instanceof ICloneable ? table.clone() : table
+  }
 }
-
 /**
  * Custom table background style that uses a flat style.
  */
 class TableBackgroundStyle extends NodeStyleBase {
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!INode} node
-   * @returns {?Visual}
-   */
   createVisual(renderContext, node) {
-    const table = node.lookup(ITable.$class)
-    if (table != null) {
-      const accInsets = table.accumulatedInsets
-
+    const table = ITable.getTable(node)
+    if (table) {
+      const accInsets = table.accumulatedPadding
       const layout = node.layout
       const cache = {
         x: layout.x,
         y: layout.y,
         w: layout.width,
-        h: layout.height
+        h: layout.height,
+        top: accInsets.top,
+        right: accInsets.right,
+        bottom: accInsets.bottom,
+        left: accInsets.left
       }
-
       const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-
-      const result = new SvgVisual(g)
-
       const rec = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
       rec.x.baseVal.value = 0
       rec.y.baseVal.value = 0
@@ -162,60 +158,31 @@ class TableBackgroundStyle extends NodeStyleBase {
       rec.height.baseVal.value = cache.h
       rec.setAttribute('class', 'table-background')
       g.appendChild(rec)
-
-      cache.accTop = accInsets.top
-      cache.accRight = accInsets.right
-      cache.accBottom = accInsets.bottom
-      cache.accLeft = accInsets.left
-
       if (accInsets.top > 2 && accInsets.left > 2) {
-        this.createInnerRect(g, 1, 1, cache.accLeft - 2, cache.accTop - 2)
+        this.createInnerRect(g, 1, 1, cache.left - 2, cache.top - 2)
       }
-
       if (accInsets.top > 2 && accInsets.right > 2) {
-        this.createInnerRect(
-          g,
-          cache.w - cache.accRight + 1,
-          1,
-          cache.accRight - 2,
-          cache.accTop - 2
-        )
+        this.createInnerRect(g, cache.w - cache.right + 1, 1, cache.right - 2, cache.top - 2)
       }
-
       if (accInsets.bottom > 2 && accInsets.left > 2) {
-        this.createInnerRect(
-          g,
-          1,
-          cache.h - cache.accBottom + 1,
-          cache.accLeft - 2,
-          cache.accBottom - 2
-        )
+        this.createInnerRect(g, 1, cache.h - cache.bottom + 1, cache.left - 2, cache.bottom - 2)
       }
-
       if (accInsets.bottom > 2 && accInsets.right > 2) {
         this.createInnerRect(
           g,
-          cache.w - cache.accRight + 1,
-          cache.h - cache.accBottom + 1,
-          cache.accRight - 2,
-          cache.accBottom - 2
+          cache.w - cache.right + 1,
+          cache.h - cache.bottom + 1,
+          cache.right - 2,
+          cache.bottom - 2
         )
       }
-
       g.setAttribute('transform', `translate(${layout.x} ${layout.y})`)
-      g.cache = cache
-      return result
+      return SvgVisual.from(g, cache)
     }
     return null
   }
-
   /**
    * Helper function to create the inner rectangles for the headings.
-   * @param {!SVGElement} g
-   * @param {number} x
-   * @param {number} y
-   * @param {number} w
-   * @param {number} h
    */
   createInnerRect(g, x, y, w, h) {
     const innerRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -232,16 +199,8 @@ class TableBackgroundStyle extends NodeStyleBase {
       h
     }
   }
-
   /**
    * Helper function to update the inner rectangles.
-   * @param {!SVGElement} g
-   * @param {number} childIndex
-   * @param {number} x
-   * @param {number} y
-   * @param {number} w
-   * @param {number} h
-   * @returns {number}
    */
   updateInnerRect(g, childIndex, x, y, w, h) {
     childIndex++
@@ -249,9 +208,11 @@ class TableBackgroundStyle extends NodeStyleBase {
       this.createInnerRect(g, x, y, w, h)
     } else {
       const rec = g.childNodes[childIndex]
-      const rectangleCache = rec.cache
+      let rectangleCache = rec.cache
+      if (!rectangleCache) {
+        rectangleCache = {}
+      }
       if (
-        !rectangleCache ||
         rectangleCache.x !== x ||
         rectangleCache.y !== y ||
         rectangleCache.w !== w ||
@@ -269,69 +230,48 @@ class TableBackgroundStyle extends NodeStyleBase {
     }
     return childIndex
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!SvgVisual} oldVisual
-   * @param {!INode} node
-   * @returns {?Visual}
-   */
   updateVisual(renderContext, oldVisual, node) {
     const g = oldVisual.svgElement
     if (g instanceof SVGElement && g.childElementCount > 0) {
-      const cache = g.cache
-      const table = node.lookup(ITable.$class)
-      if (table != null && cache) {
-        const accInsets = table.accumulatedInsets
-
+      const cache = oldVisual.tag
+      const table = ITable.getTable(node)
+      if (table && cache) {
+        const accInsets = table.accumulatedPadding
         const layout = node.layout
-
         let childIndex = 0
-
         if (accInsets.top > 2 && accInsets.left > 2) {
-          childIndex = this.updateInnerRect(
-            g,
-            childIndex,
-            1,
-            1,
-            cache.accLeft - 2,
-            cache.accTop - 2
-          )
+          childIndex = this.updateInnerRect(g, childIndex, 1, 1, cache.left - 2, cache.top - 2)
         }
-
         if (accInsets.top > 2 && accInsets.right > 2) {
           childIndex = this.updateInnerRect(
             g,
             childIndex,
-            cache.w - cache.accRight + 1,
+            cache.w - cache.right + 1,
             1,
-            cache.accRight - 2,
-            cache.accTop - 2
+            cache.right - 2,
+            cache.top - 2
           )
         }
-
         if (accInsets.bottom > 2 && accInsets.left > 2) {
           childIndex = this.updateInnerRect(
             g,
             childIndex,
             1,
-            cache.h - cache.accBottom + 1,
-            cache.accLeft - 2,
-            cache.accBottom - 2
+            cache.h - cache.bottom + 1,
+            cache.left - 2,
+            cache.bottom - 2
           )
         }
-
         if (accInsets.bottom > 2 && accInsets.right > 2) {
           childIndex = this.updateInnerRect(
             g,
             childIndex,
-            cache.w - cache.accRight + 1,
-            cache.h - cache.accBottom + 1,
-            cache.accRight - 2,
-            cache.accBottom - 2
+            cache.w - cache.right + 1,
+            cache.h - cache.bottom + 1,
+            cache.right - 2,
+            cache.bottom - 2
           )
         }
-
         if (cache.w !== layout.width || cache.h !== layout.height) {
           cache.w = layout.width
           cache.h = layout.height
@@ -339,16 +279,13 @@ class TableBackgroundStyle extends NodeStyleBase {
           rec.width.baseVal.value = cache.w
           rec.height.baseVal.value = cache.h
         }
-
-        cache.accLeft = accInsets.left
-        cache.accTop = accInsets.top
-        cache.accRigth = accInsets.right
-        cache.accBottom = accInsets.bottom
-
+        cache.left = accInsets.left
+        cache.top = accInsets.top
+        cache.right = accInsets.right
+        cache.bottom = accInsets.bottom
         while (g.childElementCount > childIndex + 1) {
           g.removeChild(g.lastElementChild)
         }
-
         if (cache.x !== layout.x || cache.y !== layout.y) {
           cache.x = layout.x
           cache.y = layout.y
@@ -359,89 +296,76 @@ class TableBackgroundStyle extends NodeStyleBase {
     }
     return this.createVisual(renderContext, node)
   }
-
   /**
    * Hit test which considers HitTestRadius specified in CanvasContext.
-   * @returns {boolean} True if p is inside node.
-   * @param {!IInputModeContext} inputModeContext
-   * @param {!Point} p
-   * @param {!INode} node
+   * @returns True if p is inside node.
    */
   isHit(inputModeContext, p, node) {
     if (!super.isHit.call(this, inputModeContext, p, node)) {
       return false
     }
-    const table = node.lookup(ITable.$class)
-    if (table == null) {
+    const table = ITable.getTable(node)
+    if (!table) {
       return true
     }
-
     if (
-      inputModeContext.parentInputMode instanceof CreateEdgeInputMode &&
-      inputModeContext.parentInputMode.isCreationInProgress
+      inputModeContext.inputMode instanceof CreateEdgeInputMode &&
+      inputModeContext.inputMode.isCreationInProgress
     ) {
       // during edge creation - the inside of the table is not considered a hit
-      const accInsets = table.accumulatedInsets
+      const accInsets = table.accumulatedPadding
       const nodeLayout = node.layout.toRect()
       const innerRect = nodeLayout.getEnlarged(
-        new Insets(-accInsets.left, -accInsets.top, -accInsets.right, -accInsets.bottom)
+        new Insets(-accInsets.top, -accInsets.right, -accInsets.bottom, -accInsets.left)
       )
       return !innerRect.contains(p)
     }
     if (
-      inputModeContext.parentInputMode instanceof MoveInputMode &&
-      inputModeContext.parentInputMode.isDragging
+      inputModeContext.inputMode instanceof MoveInputMode &&
+      inputModeContext.inputMode.isDragging
     ) {
       // during movement of the node - the whole area is considered a hit
       return true
     }
-    if (inputModeContext.parentInputMode instanceof ClickInputMode) {
+    if (inputModeContext.inputMode instanceof ClickInputMode) {
       // clicking will only work in the corners
       const nodeLayout = node.layout.toRect()
-      const accInsets = table.accumulatedInsets
+      const accInsets = table.accumulatedPadding
       const verticalRectangle = nodeLayout.getEnlarged(
-        new Insets(-accInsets.left, 0, -accInsets.right, 0)
+        new Insets(0, -accInsets.right, 0, -accInsets.left)
       )
       if (verticalRectangle.contains(p)) {
         return false
       }
       const horizontalRectangle = nodeLayout.getEnlarged(
-        new Insets(0, -accInsets.top, 0, -accInsets.bottom)
+        new Insets(-accInsets.top, 0, -accInsets.bottom, 0)
       )
       if (horizontalRectangle.contains(p)) {
         return false
       }
     }
-
     return true
   }
 }
-
 /**
  * Custom style for the Stripes in a table.
  */
 export class DemoStripeStyle extends NodeStyleBase {
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!INode} node
-   * @returns {?Visual}
-   */
   createVisual(renderContext, node) {
-    const stripe = node.lookup(IStripe.$class)
+    const stripe = node.lookup(IStripe)
     if (stripe == null) {
       return null
     }
-
     const isColumn = stripe instanceof IColumn
-    let stripeInsets
+    let stripePadding
     let isFirst
     if (stripe.childStripes.some()) {
-      stripeInsets = stripe.insets
+      stripePadding = stripe.padding
       isFirst = false
     } else {
-      const actualInsets = stripe.actualInsets
+      const actualInsets = stripe.totalPadding
       if (isColumn) {
-        stripeInsets = new Insets(0, actualInsets.top, 0, actualInsets.bottom)
+        stripePadding = new Insets(actualInsets.top, 0, actualInsets.bottom, 0)
         let walker = stripe.table && stripe.table.rootColumn
         while (walker !== null && walker !== stripe) {
           const enumerator = walker.childColumns.getEnumerator()
@@ -449,7 +373,7 @@ export class DemoStripeStyle extends NodeStyleBase {
         }
         isFirst = walker === stripe
       } else {
-        stripeInsets = new Insets(actualInsets.left, 0, actualInsets.right, 0)
+        stripePadding = new Insets(0, actualInsets.right, 0, actualInsets.left)
         let walker = stripe.table && stripe.table.rootRow
         while (walker !== null && walker !== stripe) {
           const enumerator = walker.childRows.getEnumerator()
@@ -458,83 +382,64 @@ export class DemoStripeStyle extends NodeStyleBase {
         isFirst = walker === stripe
       }
     }
-
     const layout = node.layout
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-
-    const result = new SvgVisual(g)
-
     let x = 1
     let y = 1
     let w = layout.width - 2
     let h = layout.height - 2
-
-    if (stripeInsets.top > 2) {
-      this.createInnerRect(g, x, y, w, stripeInsets.top - 2, 'stripe-inset')
+    if (stripePadding.top > 2) {
+      this.createInnerRect(g, x, y, w, stripePadding.top - 2, 'stripe-inset')
     }
-    y += stripeInsets.top
-    h -= stripeInsets.top
-    if (stripeInsets.bottom > 2) {
+    y += stripePadding.top
+    h -= stripePadding.top
+    if (stripePadding.bottom > 2) {
       this.createInnerRect(
         g,
         x,
-        layout.height - stripeInsets.bottom + 1,
+        layout.height - stripePadding.bottom + 1,
         w,
-        stripeInsets.bottom - 2,
+        stripePadding.bottom - 2,
         'stripe-inset'
       )
     }
-    h -= stripeInsets.bottom
-
-    if (stripeInsets.left > 2) {
-      this.createInnerRect(g, x, y, stripeInsets.left - 2, h, 'stripe-inset')
+    h -= stripePadding.bottom
+    if (stripePadding.left > 2) {
+      this.createInnerRect(g, x, y, stripePadding.left - 2, h, 'stripe-inset')
     }
-    x += stripeInsets.left
-    w -= stripeInsets.left
-
-    if (stripeInsets.right > 2) {
+    x += stripePadding.left
+    w -= stripePadding.left
+    if (stripePadding.right > 2) {
       this.createInnerRect(
         g,
-        layout.width - stripeInsets.right + 1,
+        layout.width - stripePadding.right + 1,
         y,
-        stripeInsets.right - 2,
+        stripePadding.right - 2,
         h,
         'stripe-inset'
       )
     }
-    w -= stripeInsets.right
-
+    w -= stripePadding.right
     if (isColumn && !isFirst && !stripe.childStripes.some()) {
       this.createInnerRect(g, -1, y, 2, h - 1, 'table-line')
     }
-
     if (!isColumn && !isFirst && !stripe.childStripes.some()) {
       this.createInnerRect(g, x, -1, w - 1, 2, 'table-line')
     }
-
     g.setAttribute('transform', `translate(${layout.x} ${layout.y})`)
-    result.cache = {
+    return SvgVisual.from(g, {
       x: layout.x,
       y: layout.y,
       w: layout.width,
       h: layout.height,
-      top: stripeInsets.top,
-      left: stripeInsets.left,
-      right: stripeInsets.right,
-      bottom: stripeInsets.bottom
-    }
-
-    return result
+      top: stripePadding.top,
+      left: stripePadding.left,
+      right: stripePadding.right,
+      bottom: stripePadding.bottom
+    })
   }
-
   /**
    * Helper function to create the inner rectangles for the headings.
-   * @param {!Element} g
-   * @param {number} x
-   * @param {number} y
-   * @param {number} w
-   * @param {number} h
-   * @param {!string} cssClass
    */
   createInnerRect(g, x, y, w, h, cssClass) {
     const rec = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -552,17 +457,8 @@ export class DemoStripeStyle extends NodeStyleBase {
       cl: cssClass
     }
   }
-
   /**
    * Helper function to update the inner rectangles.
-   * @param {!Element} g
-   * @param {number} childIndex
-   * @param {number} x
-   * @param {number} y
-   * @param {number} w
-   * @param {number} h
-   * @param {!string} cssClass
-   * @returns {number}
    */
   updateInnerRect(g, childIndex, x, y, w, h, cssClass) {
     childIndex++
@@ -570,13 +466,15 @@ export class DemoStripeStyle extends NodeStyleBase {
       this.createInnerRect(g, x, y, w, h, cssClass)
     } else {
       const rec = g.childNodes[childIndex]
-      const rectangleCache = rec.cache
-      if (!rectangleCache || rec.cl !== cssClass) {
+      let rectangleCache = rec.cache
+      if (!rectangleCache) {
+        rectangleCache = {}
+      }
+      if (rectangleCache.cl !== cssClass) {
         rec.setAttribute('class', cssClass)
-        rec.cl = cssClass
+        rectangleCache.cl = cssClass
       }
       if (
-        !rectangleCache ||
         rectangleCache.x !== x ||
         rectangleCache.y !== y ||
         rectangleCache.w !== w ||
@@ -594,30 +492,21 @@ export class DemoStripeStyle extends NodeStyleBase {
     }
     return childIndex
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!SvgVisual} oldVisual
-   * @param {!INode} node
-   * @returns {?Visual}
-   */
   updateVisual(renderContext, oldVisual, node) {
-    const stripe = node.lookup(IStripe.$class)
+    const stripe = node.lookup(IStripe)
     const layout = node.layout
     const g = oldVisual.svgElement
-    const cache = oldVisual.cache
-
+    const cache = oldVisual.tag
     if (!stripe || !(g instanceof SVGGElement) || !cache) {
       return this.createVisual(renderContext, node)
     }
     const isColumn = stripe instanceof IColumn
-
-    let stripeInsets
+    let stripePadding
     let isFirst
     if (!stripe.childStripes.some()) {
-      const actualInsets = stripe.actualInsets
+      const actualInsets = stripe.totalPadding
       if (isColumn) {
-        stripeInsets = new Insets(0, actualInsets.top, 0, actualInsets.bottom)
+        stripePadding = new Insets(actualInsets.top, 0, actualInsets.bottom, 0)
         let walker = stripe.table && stripe.table.rootColumn
         while (walker !== null && walker !== stripe) {
           const enumerator = walker.childColumns.getEnumerator()
@@ -625,7 +514,7 @@ export class DemoStripeStyle extends NodeStyleBase {
         }
         isFirst = walker === stripe
       } else {
-        stripeInsets = new Insets(actualInsets.left, 0, actualInsets.right, 0)
+        stripePadding = new Insets(0, actualInsets.right, 0, actualInsets.left)
         let walker = stripe.table && stripe.table.rootRow
         while (walker !== null && walker !== stripe) {
           const enumerator = walker.childRows.getEnumerator()
@@ -634,82 +523,73 @@ export class DemoStripeStyle extends NodeStyleBase {
         isFirst = walker === stripe
       }
     } else {
-      stripeInsets = stripe.insets
+      stripePadding = stripe.padding
       isFirst = false
     }
-
     let x = 1
     let y = 1
     let w = layout.width - 2
     let h = layout.height - 2
-
     let childIndex = -1
-
-    if (stripeInsets.top > 2) {
+    if (stripePadding.top > 2) {
       childIndex = this.updateInnerRect(
         g,
         childIndex,
         x,
         y,
         w,
-        stripeInsets.top - 2,
+        stripePadding.top - 2,
         'stripe-inset'
       )
     }
-    y += stripeInsets.top
-    h -= stripeInsets.top
-    if (stripeInsets.bottom > 2) {
+    y += stripePadding.top
+    h -= stripePadding.top
+    if (stripePadding.bottom > 2) {
       childIndex = this.updateInnerRect(
         g,
         childIndex,
         x,
-        layout.height - stripeInsets.bottom + 1,
+        layout.height - stripePadding.bottom + 1,
         w,
-        stripeInsets.bottom - 2,
+        stripePadding.bottom - 2,
         'stripe-inset'
       )
     }
-    h -= stripeInsets.bottom
-
-    if (stripeInsets.left > 2) {
+    h -= stripePadding.bottom
+    if (stripePadding.left > 2) {
       childIndex = this.updateInnerRect(
         g,
         childIndex,
         x,
         y,
-        stripeInsets.left - 2,
+        stripePadding.left - 2,
         h,
         'stripe-inset'
       )
     }
-    x += stripeInsets.left
-    w -= stripeInsets.left
-
-    if (stripeInsets.right > 2) {
+    x += stripePadding.left
+    w -= stripePadding.left
+    if (stripePadding.right > 2) {
       childIndex = this.updateInnerRect(
         g,
         childIndex,
-        layout.width - stripeInsets.right + 1,
+        layout.width - stripePadding.right + 1,
         y,
-        stripeInsets.right - 2,
+        stripePadding.right - 2,
         h,
         'stripe-inset'
       )
     }
-    w -= stripeInsets.right
-
+    w -= stripePadding.right
     if (isColumn && !isFirst && !stripe.childStripes.some()) {
       childIndex = this.updateInnerRect(g, childIndex, -1, y, 2, h - 1, 'table-line')
     }
-
     if (!isColumn && !isFirst && !stripe.childStripes.some()) {
       childIndex = this.updateInnerRect(g, childIndex, x, -1, w - 1, 2, 'table-line')
     }
-
     while (g.childElementCount > childIndex + 1) {
       g.removeChild(g.lastElementChild)
     }
-
     if (cache.x !== layout.x || cache.y !== layout.y) {
       cache.x = layout.x
       cache.y = layout.y
@@ -718,6 +598,5 @@ export class DemoStripeStyle extends NodeStyleBase {
     return oldVisual
   }
 }
-
 // export a default object to be able to map a namespace to this module for serialization
 export default { DemoTableStyle, TableBackgroundStyle, DemoStripeStyle }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,14 +28,14 @@
  ***************************************************************************/
 import {
   ArcEdgeStyle,
-  DefaultLabelStyle,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   FreeNodePortLocationModel,
   GeneralPath,
   type IEdge,
   type IGraph,
-  ImageNodeStyle
-} from 'yfiles'
+  ImageNodeStyle,
+  LabelStyle
+} from '@yfiles/yfiles'
 
 /**
  * Initializes styles and label positions for all graph elements.
@@ -44,8 +44,8 @@ export function initializeDefaultMapStyles(graph: IGraph): void {
   graph.nodeDefaults.style = createMapNodeStyle()
   graph.nodeDefaults.size = [40, 40]
   graph.nodeDefaults.labels.style = createLabelStyle()
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
-  graph.nodeDefaults.ports.locationParameter = FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED
+  graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.BOTTOM
+  graph.nodeDefaults.ports.locationParameter = FreeNodePortLocationModel.BOTTOM
 
   graph.edgeDefaults.style = createMapEdgeStyle()
   graph.edgeDefaults.shareStyleInstance = false
@@ -68,7 +68,7 @@ function createMapNodeStyle(): ImageNodeStyle {
   outline.close()
 
   return new ImageNodeStyle({
-    image: 'resources/airport-drop.svg',
+    href: 'resources/airport-drop.svg',
     normalizedOutline: outline
   })
 }
@@ -86,12 +86,12 @@ function createMapEdgeStyle(): ArcEdgeStyle {
 /**
  * Creates a default style for the labels at the airports.
  */
-function createLabelStyle(): DefaultLabelStyle {
-  return new DefaultLabelStyle({
+function createLabelStyle(): LabelStyle {
+  return new LabelStyle({
     shape: 'pill',
     backgroundFill: '#c5e4d1',
     textFill: '#2c4b38',
-    insets: [3, 6]
+    padding: [3, 6]
   })
 }
 
@@ -100,8 +100,8 @@ function createLabelStyle(): DefaultLabelStyle {
  * This ensures that long edges still have a visible arc.
  */
 export function getArcHeight(edge: IEdge): number {
-  const sourceCenter = edge.sourceNode!.layout.center
-  const targetCenter = edge.targetNode!.layout.center
+  const sourceCenter = edge.sourceNode.layout.center
+  const targetCenter = edge.targetNode.layout.center
   const distance = sourceCenter.distanceTo(targetCenter)
   if (distance < 500) {
     return distance / 10

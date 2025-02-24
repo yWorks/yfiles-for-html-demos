@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  Class,
   FreeNodePortLocationModel,
   ILookup,
   IMarkupExtensionConverter,
@@ -41,7 +40,7 @@ import {
   MarkupExtension,
   Matrix,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import { RotatableNodeStyleDecorator } from './RotatableNodes'
 
@@ -61,13 +60,6 @@ export class RotatablePortLocationModelDecorator extends BaseClass(
   static INSTANCE: RotatablePortLocationModelDecorator = new RotatablePortLocationModelDecorator()
 
   /**
-   * Delegates to the wrapped location model's lookup.
-   */
-  lookup<T>(type: Class<T>): T | null {
-    return this.wrapped.lookup(type)
-  }
-
-  /**
    * Recalculates the coordinates provided by parameter.
    * This has only an effect when parameter is created by this model and the owner of port has a
    * {@link RotatableNodeStyleDecorator}.
@@ -85,7 +77,7 @@ export class RotatablePortLocationModelDecorator extends BaseClass(
       return coreLocation
     }
     const matrix = new Matrix()
-    matrix.rotate(-toRadians(angle), ownerNode.layout.center)
+    matrix.rotate(toRadians(angle), ownerNode.layout.center)
     return matrix.transform(coreLocation)
   }
 
@@ -98,7 +90,7 @@ export class RotatablePortLocationModelDecorator extends BaseClass(
       const ownerNode = portOwner as INode
       // Undo the rotation by the ownerNode so that we can create a core parameter for the un-rotated layout.
       const matrix = new Matrix()
-      matrix.rotate(toRadians(angle), ownerNode.layout.center)
+      matrix.rotate(-toRadians(angle), ownerNode.layout.center)
       location = matrix.transform(location)
     }
     return new RotatablePortLocationModelDecoratorParameter(
@@ -118,8 +110,8 @@ export class RotatablePortLocationModelDecorator extends BaseClass(
   /**
    * Returns the lookup of the wrapped location model.
    */
-  getContext(port: IPort, parameter: IPortLocationModelParameter): ILookup {
-    return this.wrapped.getContext(port, parameter)
+  getContext(port: IPort): ILookup {
+    return this.wrapped.getContext(port)
   }
 
   /**
@@ -183,13 +175,6 @@ export class RotatablePortLocationModelDecoratorParameter extends BaseClass(
    */
   get wrapped(): IPortLocationModelParameter {
     return this._wrapped
-  }
-
-  /**
-   * Accepts all port owners that are supported by the wrapped parameter.
-   */
-  supports(portOwner: IPortOwner): boolean {
-    return this.wrapped.supports(portOwner)
   }
 
   /**

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,21 +26,19 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Device } from './Device.js'
-import { Connection } from './Connection.js'
-
+import { Device } from './Device'
+import { Connection } from './Connection'
 /**
  * Models the network of devices and connections.
  */
 export class Network {
+  devices
+  connections
   onDataUpdated
   onDeviceFailure
   onConnectionFailure
-
   /**
    * Deserializes the object model from some JSON data
-   * @param {!NetworkData} data
-   * @returns {!Network}
    */
   static loadFromJSON(data) {
     const idMap = new Map()
@@ -52,42 +50,33 @@ export class Network {
       device.kind = tag.type
       device.load = tag.load
       device.id = tag.id
-
       idMap.set(device.id, device)
       return device
     })
-
     const connections = data.edgeList.map(
       (edge) => new Connection(idMap.get(edge.source), idMap.get(edge.target))
     )
-
     return new Network(devices, connections)
   }
-
   /**
    * Initializes a new instance of the {@link Network} class with the given devices and connections.
-   * @param {!Array.<Device>} devices The devices in the network.
-   * @param {!Array.<Connection>} connections The connections in the network.
+   * @param devices The devices in the network.
+   * @param connections The connections in the network.
    */
   constructor(devices, connections) {
-    this.connections = connections
     this.devices = devices
+    this.connections = connections
   }
-
   /**
    * Returns the connections having the given device as either sender or receiver.
-   * @param {!Device} device The device to find connected connections of.
-   * @returns {!Array.<Connection>} The connections that are connected to the device.
+   * @param device The device to find connected connections of.
+   * @returns The connections that are connected to the device.
    */
   getAdjacentConnections(device) {
     return this.connections.filter((connection) => Network.isAdjacentConnection(connection, device))
   }
-
   /**
    * Checks whether the given connection is adjacent to the given device.
-   * @param {!Connection} connection
-   * @param {!Device} device
-   * @returns {boolean}
    */
   static isAdjacentConnection(connection, device) {
     return connection.sender === device || connection.receiver === device

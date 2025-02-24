@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,20 +29,17 @@
 // eslint-disable-next-line import/no-named-as-default
 import {
   CanvasComponent,
-  Class,
-  CollapsibleNodeStyleDecoratorRenderer,
+  Command,
+  type Constructor,
   CreateEdgeInputMode,
   DropInputMode,
   GeneralPath,
   GraphComponent,
-  GraphMLAttribute,
-  GraphMLIOHandler,
-  HandleSerializationEventArgs,
+  IGroupPaddingProvider,
   IInputModeContext,
   ILassoTestable,
   ILookup,
   INode,
-  INodeInsetsProvider,
   INodeSizeConstraintProvider,
   Insets,
   IRenderContext,
@@ -54,11 +51,8 @@ import {
   Rect,
   Size,
   SvgVisual,
-  type TaggedSvgVisual,
-  TypeAttribute,
-  YBoolean,
-  YString
-} from 'yfiles'
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
 import { SVGNS } from './Namespaces'
 
 const BORDER_THICKNESS = 4
@@ -196,11 +190,6 @@ export class Sample2GroupNodeStyle extends NodeStyleBase<Sample2GroupNodeStyleVi
     container.appendChild(folderPath)
 
     const expandButton = this.createButton(false)
-    CollapsibleNodeStyleDecoratorRenderer.addToggleExpansionStateCommand(
-      expandButton,
-      node,
-      context
-    )
     expandButton.svgElement.setAttribute('transform', `translate(${width - 17} 5)`)
     container.appendChild(expandButton.svgElement)
 
@@ -327,11 +316,14 @@ export class Sample2GroupNodeStyle extends NodeStyleBase<Sample2GroupNodeStyleVi
 
     if (this.isCollapsible) {
       const collapseButton = this.createButton(true)
-      CollapsibleNodeStyleDecoratorRenderer.addToggleExpansionStateCommand(
-        collapseButton,
-        node,
-        context
-      )
+      collapseButton.svgElement.addEventListener('click', (evt) => {
+        if (context.canvasComponent.canExecuteCommand(Command.TOGGLE_EXPANSION_STATE, node)) {
+          context.canvasComponent.executeCommand(Command.TOGGLE_EXPANSION_STATE, node)
+        }
+      })
+      // yfiles needs to capture all events after pointerdown, this interferes with
+      // the click listener, thus we disable pointerdown for the button
+      collapseButton.svgElement.addEventListener('pointerdown', (evt) => evt.preventDefault())
       collapseButton.svgElement.setAttribute('transform', `translate(${width - 17} 5)`)
       container.appendChild(collapseButton.svgElement)
     }
@@ -484,13 +476,13 @@ export class Sample2GroupNodeStyle extends NodeStyleBase<Sample2GroupNodeStyleVi
   /**
    * Performs a lookup operation.
    */
-  lookup(node: INode, type: Class): any {
-    if (type === ILassoTestable.$class) {
-      const insetsProvider = node.lookup(INodeInsetsProvider.$class)
-      if (insetsProvider != null) {
+  lookup(node: INode, type: Constructor<any>): any {
+    if (type === ILassoTestable) {
+      const paddingProvider = node.lookup(IGroupPaddingProvider)
+      if (paddingProvider != null) {
         return ILassoTestable.create((context, lassoPath) => {
           const path = new GeneralPath()
-          const insets = insetsProvider.getInsets(node)
+          const padding = paddingProvider.getPadding()
           const outerRect = node.layout.toRect()
           path.appendRectangle(outerRect, false)
           // check if its completely outside
@@ -498,12 +490,12 @@ export class Sample2GroupNodeStyle extends NodeStyleBase<Sample2GroupNodeStyleVi
             return false
           }
           path.clear()
-          const innerRect = outerRect.getReduced(insets)
+          const innerRect = outerRect.getReduced(padding)
           path.appendRectangle(innerRect, false)
           // now it's a hit if either the inner border is hit or one point of the border
           // itself is contained in the lasso
           return (
-            lassoPath.intersects(path, context.hitTestRadius) ||
+            lassoPath.pathIntersects(path, context.hitTestRadius) ||
             lassoPath.areaContains(node.layout.topLeft)
           )
         })
@@ -513,17 +505,17 @@ export class Sample2GroupNodeStyle extends NodeStyleBase<Sample2GroupNodeStyleVi
           lassoPath.areaContains(node.layout.center, context.hitTestRadius)
         )
       }
-    } else if (type === INodeInsetsProvider.$class) {
-      return INodeInsetsProvider.create((_) => {
+    } else if (type === IGroupPaddingProvider) {
+      return IGroupPaddingProvider.create(() => {
         const margin = 5
         return new Insets(
-          BORDER_THICKNESS + margin,
           HEADER_THICKNESS + margin,
+          BORDER_THICKNESS + margin,
           BORDER_THICKNESS + margin,
           BORDER_THICKNESS + margin
         )
       })
-    } else if (type === INodeSizeConstraintProvider.$class) {
+    } else if (type === INodeSizeConstraintProvider) {
       return new NodeSizeConstraintProvider(new Size(40, 30), Size.INFINITE, Rect.EMPTY)
     }
     return super.lookup(node, type)
@@ -536,18 +528,18 @@ export class Sample2GroupNodeStyle extends NodeStyleBase<Sample2GroupNodeStyleVi
   isHit(inputModeContext: IInputModeContext, p: Point, node: INode): boolean {
     const layout = node.layout.toRect()
     if (this.solidHitTest || this.isCollapsed(node, inputModeContext.canvasComponent)) {
-      return layout.containsWithEps(p, inputModeContext.hitTestRadius)
+      return layout.contains(p, inputModeContext.hitTestRadius)
     }
 
     if (
-      (inputModeContext.parentInputMode instanceof CreateEdgeInputMode &&
-        inputModeContext.parentInputMode.isCreationInProgress) ||
-      (inputModeContext.parentInputMode instanceof MoveInputMode &&
-        inputModeContext.parentInputMode.isDragging) ||
-      inputModeContext.parentInputMode instanceof DropInputMode
+      (inputModeContext.inputMode instanceof CreateEdgeInputMode &&
+        inputModeContext.inputMode.isCreationInProgress) ||
+      (inputModeContext.inputMode instanceof MoveInputMode &&
+        inputModeContext.inputMode.isDragging) ||
+      inputModeContext.inputMode instanceof DropInputMode
     ) {
       // during edge creation - the whole area is considered a hit
-      return layout.containsWithEps(p, inputModeContext.hitTestRadius)
+      return layout.contains(p, inputModeContext.hitTestRadius)
     }
     const innerWidth = layout.width - BORDER_THICKNESS2
     const innerHeight = layout.height - HEADER_THICKNESS - BORDER_THICKNESS
@@ -558,7 +550,7 @@ export class Sample2GroupNodeStyle extends NodeStyleBase<Sample2GroupNodeStyleVi
       innerHeight
     ).getEnlarged(-inputModeContext.hitTestRadius)
 
-    return layout.containsWithEps(p, inputModeContext.hitTestRadius) && !innerLayout.contains(p)
+    return layout.contains(p, inputModeContext.hitTestRadius) && !innerLayout.contains(p)
   }
 
   isInBox(inputModeContext: IInputModeContext, box: Rect, node: INode): boolean {
@@ -589,50 +581,38 @@ function clear(container: SVGElement): void {
 }
 
 export class Sample2GroupNodeStyleExtension extends MarkupExtension {
-  public cssClass = ''
-  public isCollapsible = false
-  public solidHitTest = false
-
-  static get $meta(): {
-    cssClass: (GraphMLAttribute | TypeAttribute)[]
-    isCollapsible: (GraphMLAttribute | TypeAttribute)[]
-    solidHitTest: (GraphMLAttribute | TypeAttribute)[]
-  } {
-    return {
-      cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)],
-      isCollapsible: [
-        GraphMLAttribute().init({ defaultValue: false }),
-        TypeAttribute(YBoolean.$class)
-      ],
-      solidHitTest: [
-        GraphMLAttribute().init({ defaultValue: false }),
-        TypeAttribute(YBoolean.$class)
-      ]
-    }
+  get solidHitTest(): boolean {
+    return this._solidHitTest
   }
+
+  set solidHitTest(value: boolean) {
+    this._solidHitTest = value
+  }
+
+  get isCollapsible(): boolean {
+    return this._isCollapsible
+  }
+
+  set isCollapsible(value: boolean) {
+    this._isCollapsible = value
+  }
+
+  get cssClass(): string {
+    return this._cssClass
+  }
+
+  set cssClass(value: string) {
+    this._cssClass = value
+  }
+
+  private _cssClass = ''
+  private _isCollapsible = false
+  private _solidHitTest = false
 
   provideValue(serviceProvider: ILookup): Sample2GroupNodeStyle {
-    const style = new Sample2GroupNodeStyle(this.cssClass)
-    style.isCollapsible = this.isCollapsible
-    style.solidHitTest = this.solidHitTest
+    const style = new Sample2GroupNodeStyle(this._cssClass)
+    style.isCollapsible = this._isCollapsible
+    style.solidHitTest = this._solidHitTest
     return style
   }
-}
-
-export const DemoGroupStyleSerializationListener = (
-  source: GraphMLIOHandler,
-  args: HandleSerializationEventArgs
-): void => {
-  const item = args.item
-  if (!(item instanceof Sample2GroupNodeStyle)) {
-    return
-  }
-
-  const markupExtension = new Sample2GroupNodeStyleExtension()
-  markupExtension.cssClass = item.cssClass!
-  markupExtension.isCollapsible = item.isCollapsible
-  markupExtension.solidHitTest = item.solidHitTest
-
-  args.context.serializeReplacement(Sample2GroupNodeStyleExtension.$class, item, markupExtension)
-  args.handled = true
 }

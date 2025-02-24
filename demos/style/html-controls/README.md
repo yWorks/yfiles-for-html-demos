@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # HTML Controls Demo
 
-# HTML Controls Demo
+<img src="../../../doc/demo-thumbnails/html-controls.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/style/html-controls/).
 
 This demo shows how a custom HTML-based node style can be used to create interactive nodes that use HTML input elements and benefit from CSS responsiveness.
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,109 +33,80 @@ import {
   GraphMLIOHandler,
   IGraph,
   IReshapeHandleProvider,
-  Key,
   KeyEventArgs,
   License,
-  NodeStylePortStyleAdapter,
-  OrthogonalEdgeEditingContext,
   PolylineEdgeStyle,
-  ShapeNodeStyle,
+  ShapePortStyle,
   Size
-} from 'yfiles'
-import { PortReshapeHandleProvider } from './PortReshapeHandlerProvider.js'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/** @type {GraphComponent} */
+} from '@yfiles/yfiles'
+import { PortReshapeHandleProvider } from './PortReshapeHandlerProvider'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 let graphComponent
-/** @type {GraphEditorInputMode} */
 let graphEditorInputMode
-
 /**
- * Indicates whether or not the Ctrl modifier key is pressed.
- * @type {boolean}
+ * Indicates whether the Shift modifier key is pressed.
  */
-let ctrlPressed = false
-
+let shiftPressed = false
 /**
  * Registers a callback function as a decorator that provides a customized
- * {@link IReshapeHandleProvider} for each port with a {@link NodeStylePortStyleAdapter}.
+ * {@link IReshapeHandleProvider} for each port with a {@link ShapePortStyle}.
  * This callback function is called whenever a node in the graph is queried
  * for its {@link IReshapeHandleProvider}. In this case, the 'port'
  * parameter will be set to that port.
- * @param {!IGraph} graph
  */
 function registerReshapeHandleProvider(graph) {
-  const portDecorator = graph.decorator.portDecorator
-  portDecorator.getDecoratorFor(IReshapeHandleProvider.$class).setFactory(
-    (port) => port.style instanceof NodeStylePortStyleAdapter,
+  const portDecorator = graph.decorator.ports
+  portDecorator.getDecoratorFor(IReshapeHandleProvider).addFactory(
+    (port) => port.style instanceof ShapePortStyle,
     (port) => {
       return new PortReshapeHandleProvider(port, port.style, new Size(5, 5))
     }
   )
 }
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
-
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize graph defaults
   initializeGraphDefaults(graphComponent.graph)
-
   // create a default editor input mode
   graphEditorInputMode = newEditorInputMode()
   // set the input mode to the graph control.
   graphComponent.inputMode = graphEditorInputMode
-
-  // PortReshapeHandlerProvider considers pressed Ctrl keys.
+  // PortReshapeHandlerProvider considers pressed Shift keys.
   // Whenever Ctrl is pressed or released, we force GraphEditorInputMode to requery the handles
   // of selected items
-  graphComponent.addKeyDownListener(onKeyDown)
-  graphComponent.addKeyUpListener(onKeyUp)
-  graphComponent.div.addEventListener('blur', onBlur)
-
+  graphComponent.addEventListener('key-down', (e) => onKeyDown(e))
+  graphComponent.addEventListener('key-up', (e) => onKeyUp(e))
+  graphComponent.htmlElement.addEventListener('blur', () => onBlur)
   // register the reshape handle provider for ports
   registerReshapeHandleProvider(graphComponent.graph)
-
   // create initial graph
   await new GraphMLIOHandler().readFromURL(graphComponent.graph, 'resources/sample.graphml')
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 }
-
 /**
  * Configures default behavior and visualizations for the elements of the given graph.
- * @param {!IGraph} graph The graph to be configured.
+ * @param graph The graph to be configured.
  */
 function initializeGraphDefaults(graph) {
-  const adaptedStyle = new ShapeNodeStyle({
+  graph.nodeDefaults.ports.style = new ShapePortStyle({
     fill: '#61A044',
-    stroke: 'transparent'
-  })
-  graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter({
-    nodeStyle: adaptedStyle,
+    stroke: 'transparent',
     renderSize: new Size(7, 7)
   })
   // each port needs its own style instance to have its own render size
   graph.nodeDefaults.ports.shareStyleInstance = false
   // disable removing ports when all attached edges have been removed
   graph.nodeDefaults.ports.autoCleanUp = false
-
   graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '3px solid #2E282A'
+    stroke: '3px solid #2E282A',
+    orthogonalEditing: true
   })
 }
-
 /**
  * Creates a new editor input mode to handle user interaction in this demo.
- * @returns {!GraphEditorInputMode}
  */
 function newEditorInputMode() {
   // create a default editor input mode
@@ -150,45 +121,38 @@ function newEditorInputMode() {
     GraphItemTypes.NODE,
     GraphItemTypes.NODE_LABEL
   ]
-  // enable orthogonal edge editing
-  mode.orthogonalEdgeEditingContext = new OrthogonalEdgeEditingContext()
-
   return mode
 }
-
 /**
- * Triggers {@link GraphEditorInputMode.requeryHandles} when the Ctrl modifier key is pressed.
- * @param {*} sender
- * @param {!KeyEventArgs} e
+ * Triggers {@link GraphEditorInputMode.requeryHandles} when the shift modifier key is pressed.
  */
-function onKeyDown(sender, e) {
-  if (e.key === Key.CTRL && !ctrlPressed) {
-    ctrlPressed = true
-    // update handles
-    graphEditorInputMode.requeryHandles()
+function onKeyDown(e) {
+  if (e.key === 'Shift' && !shiftPressed) {
+    shiftPressed = true
+    // update handles if no input gesture is performed
+    if (!graphEditorInputMode.mutexOwner) {
+      graphEditorInputMode.requeryHandles()
+    }
   }
 }
-
 /**
- * Triggers {@link GraphEditorInputMode.requeryHandles} when the Ctrl modifier key is released.
- * @param {*} sender
- * @param {!KeyEventArgs} e
+ * Triggers {@link GraphEditorInputMode.requeryHandles} when the shift modifier key is released.
  */
-function onKeyUp(sender, e) {
-  if (e.key === Key.CTRL) {
-    ctrlPressed = false
-    // update handles
-    graphEditorInputMode.requeryHandles()
+function onKeyUp(e) {
+  if (e.key === 'Shift') {
+    shiftPressed = false
+    // update handles if no input gesture is performed
+    if (!graphEditorInputMode.mutexOwner) {
+      graphEditorInputMode.requeryHandles()
+    }
   }
 }
-
 /**
  * Triggers {@link GraphEditorInputMode.requeryHandles} when the demo's graph component looses focus.
  */
 function onBlur() {
-  ctrlPressed = false
+  shiftPressed = false
   // update handles
   graphEditorInputMode.requeryHandles()
 }
-
 run().then(finishLoading)

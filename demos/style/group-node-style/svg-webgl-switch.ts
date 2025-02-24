@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,13 +30,13 @@ import {
   FocusIndicatorManager,
   type GraphComponent,
   SelectionIndicatorManager,
-  WebGL2FocusIndicatorManager,
-  WebGL2GraphModelManager,
-  WebGL2GraphModelManagerRenderMode,
-  WebGL2SelectionIndicatorManager
-} from 'yfiles'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
-import { addNavigationButtons } from 'demo-resources/demo-page'
+  WebGLFocusIndicatorManager,
+  WebGLGraphModelManager,
+  WebGLGraphModelManagerRenderMode,
+  WebGLSelectionIndicatorManager
+} from '@yfiles/yfiles'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
 
 let changeListener: EventListener
 
@@ -55,7 +55,7 @@ export function initializeSvgWebGlSwitchButton(
   } else {
     const optionElement = document.querySelector<HTMLOptionElement>('option[value="webgl"]')!
     optionElement.disabled = true
-    optionElement.title = 'This style is disabled since WebGL2 is not available.'
+    optionElement.title = 'This style is disabled since WebGL is not available.'
   }
 
   changeListener = (e: Event) => {
@@ -65,18 +65,18 @@ export function initializeSvgWebGlSwitchButton(
 }
 
 /**
- * Changes the style implementations in the given graph component from SVG to WebGL2 and vice versa.
+ * Changes the style implementations in the given graph component from SVG to WebGL and vice versa.
  * @param graphComponent The demo's main graph view
  * @param renderMode The new type of style implementation to use. Either 'svg' or 'webgl'
  */
 function changeRenderMode(graphComponent: GraphComponent, renderMode: string): void {
-  const graphModelManager = graphComponent.graphModelManager as WebGL2GraphModelManager
+  const graphModelManager = graphComponent.graphModelManager as WebGLGraphModelManager
   if ('webgl' === renderMode) {
-    graphModelManager.renderMode = WebGL2GraphModelManagerRenderMode.WEB_GL
-    graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
-    graphComponent.focusIndicatorManager = new WebGL2FocusIndicatorManager()
+    graphModelManager.renderMode = WebGLGraphModelManagerRenderMode.WEBGL
+    graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager()
+    graphComponent.focusIndicatorManager = new WebGLFocusIndicatorManager()
   } else {
-    graphModelManager.renderMode = WebGL2GraphModelManagerRenderMode.SVG
+    graphModelManager.renderMode = WebGLGraphModelManagerRenderMode.SVG
     graphComponent.selectionIndicatorManager = new SelectionIndicatorManager()
     graphComponent.focusIndicatorManager = new FocusIndicatorManager()
   }

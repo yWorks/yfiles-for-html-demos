@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,36 +29,32 @@
 import {
   Class,
   CurveConnectionStyle,
+  EdgePortCandidates,
   EdgeRouter,
   EdgeRouterBusDescriptor,
+  EdgeRouterCosts,
   EdgeRouterData,
-  EdgeRouterEdgeLayoutDescriptor,
-  EdgeRouterEdgeRoutingStyle,
+  EdgeRouterEdgeDescriptor,
+  EdgeRouterEdgeLabelPlacement,
+  EdgeRouterNodeLabelPlacement,
+  EdgeRouterRoutingStyle,
   EdgeRouterScope,
-  Enum,
-  GenericLabeling,
   GraphComponent,
-  Grid,
   ILayoutAlgorithm,
   LayoutData,
   List,
-  MonotonicPathRestriction,
-  PenaltySettings,
-  PortCandidate,
-  PortDirections,
-  RoutingPolicy,
+  MonotonicPathRestrictions,
+  Point,
+  PortSides,
   SequentialLayout,
-  YBoolean,
-  YNumber,
-  YPoint,
-  YString
-} from 'yfiles'
+  TimeSpan
+} from '@yfiles/yfiles'
 
 import LayoutConfiguration, {
-  EdgeLabeling,
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  Scope
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -69,15 +65,433 @@ import {
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from 'demo-resources/demo-option-editor'
+} from '@yfiles/demo-resources/demo-option-editor'
+
+export enum BusMembership {
+  NONE,
+  SINGLE,
+  LABEL,
+  TAG
+}
+
+export enum PortSide {
+  ANY,
+  LEFT_RIGHT,
+  TOP_BOTTOM
+}
 
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
+export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
   $extends: LayoutConfiguration,
 
-  $meta: [LabelAttribute('PolylineEdgeRouter')],
+  _meta: {
+    LayoutGroup: [
+      new LabelAttribute('General'),
+      new OptionGroupAttribute('RootGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    DistancesGroup: [
+      new LabelAttribute('Minimum Distances'),
+      new OptionGroupAttribute('RootGroup', 30),
+      new TypeAttribute(OptionGroup)
+    ],
+    GridGroup: [
+      new LabelAttribute('Grid'),
+      new OptionGroupAttribute('RootGroup', 40),
+      new TypeAttribute(OptionGroup)
+    ],
+    PolylineGroup: [
+      new LabelAttribute('Routing Style'),
+      new OptionGroupAttribute('RootGroup', 20),
+      new TypeAttribute(OptionGroup)
+    ],
+    LabelingGroup: [
+      new LabelAttribute('Labeling'),
+      new OptionGroupAttribute('RootGroup', 50),
+      new TypeAttribute(OptionGroup)
+    ],
+    BusGroup: [
+      new LabelAttribute('Bus Routing'),
+      new OptionGroupAttribute('PolylineGroup', 80),
+      new TypeAttribute(OptionGroup)
+    ],
+    NodePropertiesGroup: [
+      new LabelAttribute('Node Settings'),
+      new OptionGroupAttribute('LabelingGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    EdgePropertiesGroup: [
+      new LabelAttribute('Edge Settings'),
+      new OptionGroupAttribute('LabelingGroup', 20),
+      new TypeAttribute(OptionGroup)
+    ],
+    PreferredPlacementGroup: [
+      new LabelAttribute('Preferred Edge Label Placement'),
+      new OptionGroupAttribute('LabelingGroup', 30),
+      new TypeAttribute(OptionGroup)
+    ],
+    descriptionText: [
+      new OptionGroupAttribute('DescriptionGroup', 10),
+      new ComponentAttribute(Components.HTML_BLOCK),
+      new TypeAttribute(String)
+    ],
+    scopeItem: [
+      new LabelAttribute('Scope', '#/api/EdgeRouterData#EdgeRouterData-property-scope'),
+      new OptionGroupAttribute('LayoutGroup', 10),
+      new EnumValuesAttribute([
+        ['All Edges', Scope.ROUTE_ALL_EDGES],
+        ['Selected Edges', Scope.ROUTE_AFFECTED_EDGES],
+        ['Edges at Selected Nodes', Scope.ROUTE_EDGES_AT_AFFECTED_NODES]
+      ]),
+      new TypeAttribute(Number)
+    ],
+    optimizationStrategyItem: [
+      new LabelAttribute(
+        'Optimization Strategy',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeRouterEdgeDescriptor-property-edgeRouterCosts'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 20),
+      new EnumValuesAttribute([
+        ['Balanced', EdgeRouterCosts.BALANCED_OPTIMIZATION],
+        ['Fewer Bends', EdgeRouterCosts.EDGE_BENDS_OPTIMIZATION],
+        ['Fewer Crossings', EdgeRouterCosts.EDGE_CROSSINGS_OPTIMIZATION],
+        ['Shorter Edges', EdgeRouterCosts.EDGE_LENGTHS_OPTIMIZATION],
+        ['Low Quality', EdgeRouterCosts.LOW_QUALITY]
+      ]),
+      new TypeAttribute(EdgeRouterCosts)
+    ],
+    monotonicRestrictionItem: [
+      new LabelAttribute(
+        'Monotonic Restriction',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeLayoutDescriptor-property-monotonicPathRestriction'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 30),
+      new EnumValuesAttribute([
+        ['None', MonotonicPathRestrictions.NONE],
+        ['Horizontal', MonotonicPathRestrictions.HORIZONTAL],
+        ['Vertical', MonotonicPathRestrictions.VERTICAL],
+        ['Both', MonotonicPathRestrictions.BOTH]
+      ]),
+      new TypeAttribute(MonotonicPathRestrictions)
+    ],
+    enableReroutingItem: [
+      new LabelAttribute(
+        'Reroute Crossing Edges',
+        '#/api/EdgeRouter#EdgeRouter-property-rerouting'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 60),
+      new TypeAttribute(Boolean)
+    ],
+    useIntermediatePointsItem: [
+      new LabelAttribute(
+        'Keep Bends as Intermediate Points',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeLayoutDescriptor-property-intermediateRoutingPoints'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 65),
+      new TypeAttribute(Boolean)
+    ],
+    stopDurationItem: [
+      new LabelAttribute(
+        'Stop Duration (sec)',
+        '#/api/EdgeRouter#EdgeRouter-property-stopDuration'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 70),
+      new MinMaxAttribute(0, 150),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    routingPolicyItem: [
+      new LabelAttribute('Routing Policy', '#/api/EdgeRouterData#EdgeRouterData-property-scope'),
+      new OptionGroupAttribute('LayoutGroup', 80),
+      new EnumValuesAttribute([
+        ['Always', EdgeRouterScope.PATH],
+        ['Path As Needed', EdgeRouterScope.PATH_AS_NEEDED],
+        ['Segments As Needed', EdgeRouterScope.SEGMENTS_AS_NEEDED],
+        ['Never', EdgeRouterScope.IGNORE]
+      ]),
+      new TypeAttribute(EdgeRouterScope)
+    ],
+    portSidesItem: [
+      new LabelAttribute(
+        'Allowed Port Sides',
+        '#/api/EdgeRouterData#EdgeRouterData-property-ports'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 90),
+      new EnumValuesAttribute([
+        ['Any', PortSide.ANY],
+        ['Left or Right', PortSide.LEFT_RIGHT],
+        ['Top or Bottom', PortSide.TOP_BOTTOM]
+      ]),
+      new TypeAttribute(PortSide)
+    ],
+    minimumEdgeDistanceItem: [
+      new LabelAttribute(
+        'Edge to Edge',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeRouterEdgeDescriptor-property-minimumEdgeDistance'
+      ),
+      new OptionGroupAttribute('DistancesGroup', 10),
+      new MinMaxAttribute(0, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumNodeToEdgeDistanceItem: [
+      new LabelAttribute(
+        'Node to Edge',
+        '#/api/EdgeRouter#EdgeRouter-property-minimumNodeToEdgeDistance'
+      ),
+      new OptionGroupAttribute('DistancesGroup', 20),
+      new MinMaxAttribute(0, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumNodeCornerDistanceItem: [
+      new LabelAttribute(
+        'Port to Node Corner',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeRouterEdgeDescriptor-property-minimumNodeCornerDistance'
+      ),
+      new OptionGroupAttribute('DistancesGroup', 30),
+      new MinMaxAttribute(0, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumFirstSegmentLengthItem: [
+      new LabelAttribute(
+        'First Segment Length',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeRouterEdgeDescriptor-property-minimumFirstSegmentLength'
+      ),
+      new OptionGroupAttribute('DistancesGroup', 40),
+      new MinMaxAttribute(0, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumLastSegmentLengthItem: [
+      new LabelAttribute(
+        'Last Segment Length',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeLayoutDescriptor-property-minimumLastSegmentLength'
+      ),
+      new OptionGroupAttribute('DistancesGroup', 50),
+      new MinMaxAttribute(0, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    gridEnabledItem: [
+      new LabelAttribute('Route on Grid', '#/api/EdgeRouter#EdgeRouter-property-gridSpacing'),
+      new OptionGroupAttribute('GridGroup', 10),
+      new TypeAttribute(Boolean)
+    ],
+    gridSpacingItem: [
+      new LabelAttribute('Grid Spacing', '#/api/Grid#Grid-property-gridSpacing'),
+      new OptionGroupAttribute('GridGroup', 20),
+      new MinMaxAttribute(2, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    routingStyleItem: [
+      new LabelAttribute(
+        'Routing Style',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeLayoutDescriptor-property-routingStyle'
+      ),
+      new OptionGroupAttribute('PolylineGroup', 10),
+      new EnumValuesAttribute([
+        ['Orthogonal', EdgeRouterRoutingStyle.ORTHOGONAL],
+        ['Octilinear', EdgeRouterRoutingStyle.OCTILINEAR],
+        ['Curved', EdgeRouterRoutingStyle.CURVED]
+      ]),
+      new TypeAttribute(EdgeRouterRoutingStyle)
+    ],
+    preferredOctilinearSegmentLengthItem: [
+      new LabelAttribute(
+        'Preferred Octilinear Segment Length',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeRouterEdgeDescriptor-property-preferredOctilinearSegmentLength'
+      ),
+      new OptionGroupAttribute('PolylineGroup', 20),
+      new MinMaxAttribute(5, 500),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    maximumOctilinearSegmentRatioItem: [
+      new LabelAttribute(
+        'Maximum Octilinear Segment Ratio',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeRouterEdgeDescriptor-property-maximumOctilinearSegmentRatio'
+      ),
+      new OptionGroupAttribute('PolylineGroup', 30),
+      new MinMaxAttribute(0, 0.5, 0.01),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    sourceCurveConnectionStyleItem: [
+      new LabelAttribute(
+        'Curve Connection at Source',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeRouterEdgeDescriptor-property-sourceCurveConnectionStyle'
+      ),
+      new OptionGroupAttribute('PolylineGroup', 40),
+      new EnumValuesAttribute([
+        ['Straight', CurveConnectionStyle.KEEP_PORT],
+        ['Organic', CurveConnectionStyle.ORGANIC]
+      ]),
+      new TypeAttribute(CurveConnectionStyle)
+    ],
+    targetCurveConnectionStyleItem: [
+      new LabelAttribute(
+        'Curve Connection at Target',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeRouterEdgeDescriptor-property-targetCurveConnectionStyle'
+      ),
+      new OptionGroupAttribute('PolylineGroup', 50),
+      new EnumValuesAttribute([
+        ['Straight', CurveConnectionStyle.KEEP_PORT],
+        ['Organic', CurveConnectionStyle.ORGANIC]
+      ]),
+      new TypeAttribute(CurveConnectionStyle)
+    ],
+    curveUTurnSymmetryItem: [
+      new LabelAttribute(
+        'U-turn Symmetry',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeRouterEdgeDescriptor-property-curveUTurnSymmetry'
+      ),
+      new OptionGroupAttribute('PolylineGroup', 60),
+      new MinMaxAttribute(0, 1, 0.1),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    curveShortcutsItem: [
+      new LabelAttribute(
+        'Allow Shortcuts',
+        '#/api/EdgeRouterEdgeDescriptor#EdgeRouterEdgeDescriptor-property-curveShortcuts'
+      ),
+      new OptionGroupAttribute('PolylineGroup', 70),
+      new TypeAttribute(Boolean)
+    ],
+    busMembershipItem: [
+      new LabelAttribute('Membership', '#/api/EdgeRouterData#EdgeRouterData-property-buses'),
+      new OptionGroupAttribute('BusGroup', 10),
+      new EnumValuesAttribute([
+        ['No Buses', BusMembership.NONE],
+        ['Single Bus', BusMembership.SINGLE],
+        ['By First Label', BusMembership.LABEL],
+        ['By User Tag', BusMembership.TAG]
+      ]),
+      new TypeAttribute(BusMembership)
+    ],
+    automaticEdgeGroupingItem: [
+      new LabelAttribute(
+        'Automatic Edge Grouping',
+        '#/api/EdgeRouterBusDescriptor#EdgeRouterBusDescriptor-property-automaticEdgeGrouping'
+      ),
+      new OptionGroupAttribute('BusGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    minimumBackboneSegmentLengthItem: [
+      new LabelAttribute(
+        'Minimum Backbone Segment Length',
+        '#/api/EdgeRouterBusDescriptor#EdgeRouterBusDescriptor-property-minimumBackboneSegmentLength'
+      ),
+      new OptionGroupAttribute('BusGroup', 30),
+      new MinMaxAttribute(1, 1000),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    allowMultipleBackboneSegmentsItem: [
+      new LabelAttribute(
+        'Multiple Backbone Segments',
+        '#/api/EdgeRouterBusDescriptor#EdgeRouterBusDescriptor-property-multipleBackboneSegments'
+      ),
+      new OptionGroupAttribute('BusGroup', 40),
+      new TypeAttribute(Boolean)
+    ],
+    nodeLabelingItem: [
+      new LabelAttribute(
+        'Node Labeling',
+        '#/api/EdgeRouter#EdgeRouter-property-nodeLabelPlacement'
+      ),
+      new OptionGroupAttribute('NodePropertiesGroup', 10),
+      new EnumValuesAttribute([
+        ['Consider', EdgeRouterNodeLabelPlacement.CONSIDER],
+        ['Generic', EdgeRouterNodeLabelPlacement.GENERIC],
+        ['Ignore', EdgeRouterNodeLabelPlacement.IGNORE],
+        ['Ignore Group Labels', EdgeRouterNodeLabelPlacement.IGNORE_GROUP_LABELS]
+      ]),
+      new TypeAttribute(EdgeRouterNodeLabelPlacement)
+    ],
+    edgeLabelingItem: [
+      new LabelAttribute(
+        'Edge Labeling',
+        '#/api/EdgeRouter#EdgeRouter-property-edgeLabelPlacement'
+      ),
+      new OptionGroupAttribute('EdgePropertiesGroup', 20),
+      new EnumValuesAttribute([
+        ['Ignore', EdgeRouterEdgeLabelPlacement.IGNORE],
+        ['Integrated', EdgeRouterEdgeLabelPlacement.INTEGRATED],
+        ['Generic', EdgeRouterEdgeLabelPlacement.GENERIC],
+        ['Consider Fixed Edge Labels', EdgeRouterEdgeLabelPlacement.CONSIDER_UNAFFECTED_EDGE_LABELS]
+      ]),
+      new TypeAttribute(EdgeRouterEdgeLabelPlacement)
+    ],
+    reduceAmbiguityItem: [
+      new LabelAttribute(
+        'Reduce Ambiguity',
+        '#/api/LabelingCosts#LabelingCosts-property-ambiguousPlacementCost'
+      ),
+      new OptionGroupAttribute('EdgePropertiesGroup', 30),
+      new TypeAttribute(Boolean)
+    ],
+    labelPlacementOrientationItem: [
+      new LabelAttribute(
+        'Orientation',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-angle'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 10),
+      new EnumValuesAttribute([
+        ['Parallel', LabelPlacementOrientation.PARALLEL],
+        ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
+        ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
+        ['Vertical', LabelPlacementOrientation.VERTICAL]
+      ]),
+      new TypeAttribute(LabelPlacementOrientation)
+    ],
+    labelPlacementAlongEdgeItem: [
+      new LabelAttribute(
+        'Along Edge',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-placementAlongEdge'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 20),
+      new EnumValuesAttribute([
+        ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
+        ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
+        ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
+        ['At Target', LabelPlacementAlongEdge.AT_TARGET],
+        ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
+        ['Centered', LabelPlacementAlongEdge.CENTERED]
+      ]),
+      new TypeAttribute(LabelPlacementAlongEdge)
+    ],
+    labelPlacementSideOfEdgeItem: [
+      new LabelAttribute(
+        'Side of Edge',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-edgeSide'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 30),
+      new EnumValuesAttribute([
+        ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
+        ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
+        ['Left', LabelPlacementSideOfEdge.LEFT],
+        ['Right', LabelPlacementSideOfEdge.RIGHT],
+        ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+      ]),
+      new TypeAttribute(LabelPlacementSideOfEdge)
+    ],
+    labelPlacementDistanceItem: [
+      new LabelAttribute(
+        'Distance',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-distanceToEdge'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 40),
+      new MinMaxAttribute(0.0, 40.0),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ]
+  },
 
   /**
    * Setup default values for various configuration parameters.
@@ -87,40 +501,39 @@ const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
     LayoutConfiguration.call(this)
     const router = new EdgeRouter()
 
-    this.scopeItem = router.scope
-    this.optimizationStrategyItem = Strategies.BALANCED
-    this.monotonicRestrictionItem = MonotonyFlags.NONE
+    this.scopeItem = Scope.ROUTE_ALL_EDGES
+    this.optimizationStrategyItem = EdgeRouterCosts.BALANCED_OPTIMIZATION
+    this.monotonicRestrictionItem = MonotonicPathRestrictions.NONE
     this.enableReroutingItem = router.rerouting
-    this.maximumDurationItem = 30
+    this.stopDurationItem = 30
 
-    const descriptor = router.defaultEdgeLayoutDescriptor
-    this.minimumEdgeToEdgeDistanceItem = descriptor.minimumEdgeToEdgeDistance
+    const descriptor = router.defaultEdgeDescriptor
+    this.minimumEdgeDistanceItem = descriptor.minimumEdgeDistance
     this.minimumNodeToEdgeDistanceItem = router.minimumNodeToEdgeDistance
     this.minimumNodeCornerDistanceItem = descriptor.minimumNodeCornerDistance
     this.minimumFirstSegmentLengthItem = descriptor.minimumFirstSegmentLength
     this.minimumLastSegmentLengthItem = descriptor.minimumLastSegmentLength
-    this.routingPolicyItem = descriptor.routingPolicy
+    this.routingPolicyItem = EdgeRouterScope.PATH
 
     this.useIntermediatePointsItem = false
 
-    const grid = router.grid
-    this.gridEnabledItem = grid !== null
-    this.gridSpacingItem = grid !== null ? grid.spacing : 10
+    const gridSpacing = router.gridSpacing
+    this.gridEnabledItem = gridSpacing > 0
+    this.gridSpacingItem = gridSpacing !== null ? gridSpacing : 10
 
-    this.routingStyleItem = EdgeRouterEdgeRoutingStyle.ORTHOGONAL
-    this.preferredPolylineSegmentLengthItem = descriptor.preferredOctilinearSegmentLength
-    this.preferredPolylineSegmentRatioItem = descriptor.maximumOctilinearSegmentRatio
-    this.curveAtSourceItem = descriptor.sourceCurveConnectionStyle
-    this.curveAtTargetItem = descriptor.targetCurveConnectionStyle
+    this.routingStyleItem = EdgeRouterRoutingStyle.ORTHOGONAL
+    this.preferredOctilinearSegmentLengthItem = descriptor.preferredOctilinearSegmentLength
+    this.maximumOctilinearSegmentRatioItem = descriptor.maximumOctilinearSegmentRatio
+    this.sourceCurveConnectionStyleItem = descriptor.sourceCurveConnectionStyle
+    this.targetCurveConnectionStyleItem = descriptor.targetCurveConnectionStyle
     this.curveUTurnSymmetryItem = descriptor.curveUTurnSymmetry
     this.curveShortcutsItem = descriptor.curveShortcuts
-    this.portSidesItem = PortSides.ANY
+    this.portSidesItem = PortSide.ANY
 
     this.busMembershipItem = BusMembership.NONE
 
-    this.considerNodeLabelsItem = router.considerNodeLabels
-    this.considerEdgeLabelsItem = router.considerEdgeLabels
-    this.edgeLabelingItem = EdgeLabeling.NONE
+    this.nodeLabelingItem = router.nodeLabelPlacement
+    this.edgeLabelingItem = router.edgeLabelPlacement
     this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
     this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
     this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
@@ -129,7 +542,7 @@ const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @returns The configured layout.
@@ -137,33 +550,39 @@ const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
   createConfiguredLayout: function (graphComponent: GraphComponent): ILayoutAlgorithm {
     const router = new EdgeRouter()
 
-    router.scope = this.scopeItem
-
     router.minimumNodeToEdgeDistance = this.minimumNodeToEdgeDistanceItem
 
     if (this.gridEnabledItem) {
-      router.grid = new Grid(0, 0, this.gridSpacingItem)
+      router.gridSpacing = this.gridSpacingItem
     } else {
-      router.grid = null
+      router.gridSpacing = 0
     }
 
-    router.considerNodeLabels = this.considerNodeLabelsItem
-    router.considerEdgeLabels = this.considerEdgeLabelsItem
+    router.nodeLabelPlacement = this.nodeLabelingItem
     router.rerouting = this.enableReroutingItem
+    router.stopDuration = TimeSpan.fromSeconds(parseFloat(this.stopDurationItem))
 
-    router.maximumDuration = this.maximumDurationItem * 1000
+    // Note that CreateConfiguredLayoutData replaces the settings on the DefaultEdgeLayoutDescriptor
+    // by providing a custom one for each edge.
+    router.defaultEdgeDescriptor.routingStyle = this.routingStyleItem
+    router.defaultEdgeDescriptor.preferredOctilinearSegmentLength =
+      this.preferredOctilinearSegmentLengthItem
+    router.defaultEdgeDescriptor.maximumOctilinearSegmentRatio =
+      this.maximumOctilinearSegmentRatioItem
+    router.defaultEdgeDescriptor.sourceCurveConnectionStyle = this.sourceCurveConnectionStyleItem
+    router.defaultEdgeDescriptor.targetCurveConnectionStyle = this.targetCurveConnectionStyleItem
 
-    const layout = new SequentialLayout()
-    layout.appendLayout(router)
+    if (this.optimizationStrategyItem == EdgeRouterCosts.LOW_QUALITY) {
+      router.stopDuration = TimeSpan.ZERO
+    } else {
+      router.stopDuration = TimeSpan.fromSeconds(this.stopDurationItem)
+    }
 
-    if (this.edgeLabelingItem === EdgeLabeling.INTEGRATED) {
-      router.integratedEdgeLabeling = true
-    } else if (this.edgeLabelingItem === EdgeLabeling.GENERIC) {
-      const genericLabeling = new GenericLabeling()
-      genericLabeling.placeEdgeLabels = true
-      genericLabeling.placeNodeLabels = false
-      genericLabeling.reduceAmbiguity = this.reduceAmbiguityItem
-      layout.appendLayout(genericLabeling)
+    const layout = new SequentialLayout(router)
+
+    router.edgeLabelPlacement = this.edgeLabelingItem
+    if (this.edgeLabelingItem == EdgeRouterEdgeLabelPlacement.GENERIC && this.reduceAmbiguityItem) {
+      router.genericLabeling!.defaultEdgeLabelingCosts.ambiguousPlacementCost = 1.0
     }
 
     return layout
@@ -178,46 +597,27 @@ const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
     layout: EdgeRouter
   ): LayoutData {
     const layoutData = new EdgeRouterData({
-      edgeLayoutDescriptors: (edge) => {
-        const descriptor = new EdgeRouterEdgeLayoutDescriptor({
-          minimumEdgeToEdgeDistance: this.minimumEdgeToEdgeDistanceItem,
+      edgeDescriptors: (edge) => {
+        const descriptor = new EdgeRouterEdgeDescriptor({
+          minimumEdgeDistance: this.minimumEdgeDistanceItem,
           minimumNodeCornerDistance: this.minimumNodeCornerDistanceItem,
           minimumFirstSegmentLength: this.minimumFirstSegmentLengthItem,
           minimumLastSegmentLength: this.minimumLastSegmentLengthItem,
-          preferredOctilinearSegmentLength: this.$preferredPolylineSegmentLengthItem,
-          maximumOctilinearSegmentRatio: this.$preferredPolylineSegmentRatioItem,
-          sourceCurveConnectionStyle: this.curveAtSourceItem,
-          targetCurveConnectionStyle: this.curveAtTargetItem,
+          preferredOctilinearSegmentLength: this.preferredOctilinearSegmentLengthItem,
+          maximumOctilinearSegmentRatio: this.maximumOctilinearSegmentRatioItem,
+          sourceCurveConnectionStyle: this.sourceCurveConnectionStyleItem,
+          targetCurveConnectionStyle: this.targetCurveConnectionStyleItem,
           curveUTurnSymmetry: this.curveUTurnSymmetryItem,
           curveShortcuts: this.curveShortcutsItem,
           routingStyle: this.routingStyleItem,
-          routingPolicy: this.routingPolicyItem
+          edgeRouterCosts: this.optimizationStrategyItem,
+          monotonicPathRestriction: this.monotonicRestrictionItem
         })
 
-        if (this.optimizationStrategyItem === Strategies.BALANCED) {
-          descriptor.penaltySettings = PenaltySettings.OPTIMIZATION_BALANCED
-        } else if (this.optimizationStrategyItem === Strategies.MINIMIZE_BENDS) {
-          descriptor.penaltySettings = PenaltySettings.OPTIMIZATION_EDGE_BENDS
-        } else if (this.optimizationStrategyItem === Strategies.MINIMIZE_EDGE_LENGTH) {
-          descriptor.penaltySettings = PenaltySettings.OPTIMIZATION_EDGE_LENGTHS
-        } else {
-          descriptor.penaltySettings = PenaltySettings.OPTIMIZATION_EDGE_CROSSINGS
-        }
-
-        if (this.monotonicRestrictionItem === MonotonyFlags.HORIZONTAL) {
-          descriptor.monotonicPathRestriction = MonotonicPathRestriction.HORIZONTAL
-        } else if (this.monotonicRestrictionItem === MonotonyFlags.VERTICAL) {
-          descriptor.monotonicPathRestriction = MonotonicPathRestriction.VERTICAL
-        } else if (this.monotonicRestrictionItem === MonotonyFlags.BOTH) {
-          descriptor.monotonicPathRestriction = MonotonicPathRestriction.BOTH
-        } else {
-          descriptor.monotonicPathRestriction = MonotonicPathRestriction.NONE
-        }
-
         if (this.useIntermediatePointsItem) {
-          const intermediateRoutingPoints = new List()
+          const intermediateRoutingPoints = new List<Point>()
           edge.bends.forEach((bend) =>
-            intermediateRoutingPoints.add(new YPoint(bend.location.x, bend.location.y))
+            intermediateRoutingPoints.add(new Point(bend.location.x, bend.location.y))
           )
           descriptor.intermediateRoutingPoints = intermediateRoutingPoints
         }
@@ -227,30 +627,29 @@ const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
     })
 
     const selection = graphComponent.selection
-    if (this.scopeItem === EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES) {
-      layoutData.affectedNodes.delegate = (node) => selection.isSelected(node)
-    } else if (this.scopeItem === EdgeRouterScope.ROUTE_AFFECTED_EDGES) {
-      layoutData.affectedEdges.delegate = (edge) => selection.isSelected(edge)
+    if (this.scopeItem === Scope.ROUTE_EDGES_AT_AFFECTED_NODES) {
+      layoutData.scope.incidentNodeMapping = (node) =>
+        selection.includes(node) ? this.routingPolicyItem : EdgeRouterScope.IGNORE
+    } else if (this.scopeItem === Scope.ROUTE_AFFECTED_EDGES) {
+      layoutData.scope.edgeMapping = (edge) =>
+        selection.includes(edge) ? this.routingPolicyItem : EdgeRouterScope.IGNORE
     } else {
-      layoutData.affectedEdges.delegate = (edge) => true
-      layoutData.affectedNodes.delegate = (edge) => true
+      layoutData.scope.edgeMapping = this.routingPolicyItem
     }
 
-    if (this.portSidesItem !== PortSides.ANY) {
+    if (this.portSidesItem !== PortSide.ANY) {
       let candidates
-      if (this.portSidesItem === PortSides.LEFT_RIGHT) {
-        candidates = new List([
-          PortCandidate.createCandidate(PortDirections.EAST),
-          PortCandidate.createCandidate(PortDirections.WEST)
-        ])
+      if (this.portSidesItem === PortSide.LEFT_RIGHT) {
+        candidates = new EdgePortCandidates()
+          .addFreeCandidate(PortSides.RIGHT)
+          .addFreeCandidate(PortSides.LEFT)
       } else {
-        candidates = new List([
-          PortCandidate.createCandidate(PortDirections.NORTH),
-          PortCandidate.createCandidate(PortDirections.SOUTH)
-        ])
+        candidates = new EdgePortCandidates()
+          .addFreeCandidate(PortSides.TOP)
+          .addFreeCandidate(PortSides.BOTTOM)
       }
-      layoutData.sourcePortCandidates.constant = candidates
-      layoutData.targetPortCandidates.constant = candidates
+      layoutData.ports.sourcePortCandidates = candidates
+      layoutData.ports.targetPortCandidates = candidates
     }
 
     switch (this.busMembershipItem) {
@@ -265,8 +664,8 @@ const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
           if (!visitedLabels.has(label.text)) {
             visitedLabels.add(label.text)
             const busDescriptor = this.createBusDescriptor()
-            layoutData.buses.add(busDescriptor).delegate = (edge) =>
-              edge.labels.size > 0 && edge.labels.first().text === label.text
+            layoutData.buses.add(busDescriptor).predicate = (edge) =>
+              edge.labels.size > 0 && edge.labels.first()!.text === label.text
           }
         })
         break
@@ -282,7 +681,7 @@ const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
             visitedTags.add(tag)
 
             const busDescriptor = this.createBusDescriptor()
-            layoutData.buses.add(busDescriptor).delegate = (edge) => edge.tag === tag
+            layoutData.buses.add(busDescriptor).predicate = (edge) => edge.tag === tag
           }
         })
         break
@@ -311,975 +710,255 @@ const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig', {
   /**
    * Enables automatic bus routing.
    */
-  enableBusRouting: function (): void {
-    this.busMembershipItem = BusMembership.TAG
-  },
-
-  /**
-   * Enables automatic bus routing.
-   */
   enableCurvedRouting: function (): void {
-    this.routingStyleItem = EdgeRouterEdgeRoutingStyle.CURVED
+    this.routingStyleItem = EdgeRouterRoutingStyle.CURVED
   },
 
   /** @type {OptionGroup} */
-  LayoutGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('General'),
-        OptionGroupAttribute('RootGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  LayoutGroup: null,
 
   /** @type {OptionGroup} */
-  DistancesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Minimum Distances'),
-        OptionGroupAttribute('RootGroup', 30),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  DistancesGroup: null,
 
   /** @type {OptionGroup} */
-  GridGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Grid'),
-        OptionGroupAttribute('RootGroup', 40),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  GridGroup: null,
 
   /** @type {OptionGroup} */
-  PolylineGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Routing Style'),
-        OptionGroupAttribute('RootGroup', 20),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  PolylineGroup: null,
 
   /** @type {OptionGroup} */
-  LabelingGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Labeling'),
-        OptionGroupAttribute('RootGroup', 50),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  LabelingGroup: null,
 
   /** @type {OptionGroup} */
-  BusGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Bus Routing'),
-        OptionGroupAttribute('PolylineGroup', 80),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  BusGroup: null,
 
   /** @type {OptionGroup} */
-  NodePropertiesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Node Settings'),
-        OptionGroupAttribute('LabelingGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  NodePropertiesGroup: null,
 
   /** @type {OptionGroup} */
-  EdgePropertiesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Edge Settings'),
-        OptionGroupAttribute('LabelingGroup', 20),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  EdgePropertiesGroup: null,
 
   /** @type {OptionGroup} */
-  PreferredPlacementGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Preferred Edge Label Placement'),
-        OptionGroupAttribute('LabelingGroup', 30),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  PreferredPlacementGroup: null,
 
   /** @type {string} */
   descriptionText: {
-    $meta: function () {
-      return [
-        OptionGroupAttribute('DescriptionGroup', 10),
-        ComponentAttribute(Components.HTML_BLOCK),
-        TypeAttribute(YString.$class)
-      ]
-    },
     get: function (): string {
-      return "<p style='margin-top:0'>Polyline edge routing calculates polyline edge paths for a diagram's edges. The positions of the nodes are not changed by this algorithm.</p><p>Edges will be routed orthogonally, that is each edge path consists of horizontal and vertical segments, or octilinear. Octilinear means that the slope of each segment of an edge path is a multiple of 45 degrees.</p><p>This type of edge routing is especially well suited for technical diagrams.</p>"
+      return "<p style='margin-top:0'>Edge routing calculates orthogonal, octilinear or curved edge paths for a diagram's edges. The positions of the nodes are not changed by this algorithm.</p><p>By default, edges will be routed orthogonally, that is, each edge path consists of horizontal and vertical segments. The Octilinear style inserts additional sloped segments between horizontal and vertical segments, and the Curved style replaces those segments with smooth curves.</p><p>This type of edge routing is especially well suited for technical diagrams.</p>"
     }
   },
 
-  /** @type {EdgeRouterScope} */
-  scopeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Scope', '#/api/EdgeRouter#EdgeRouter-property-scope'),
-        OptionGroupAttribute('LayoutGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['All Edges', EdgeRouterScope.ROUTE_ALL_EDGES],
-            ['Selected Edges', EdgeRouterScope.ROUTE_AFFECTED_EDGES],
-            ['Edges at Selected Nodes', EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES]
-          ]
-        }),
-        TypeAttribute(EdgeRouterScope.$class)
-      ]
-    },
-    value: null
-  },
+  /** @type {Scope} */
+  scopeItem: null,
 
-  /** @type {Strategies} */
-  optimizationStrategyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Optimization Strategy',
-          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-penaltySettings'
-        ),
-        OptionGroupAttribute('LayoutGroup', 20),
-        EnumValuesAttribute().init({
-          values: [
-            ['Balanced', Strategies.BALANCED],
-            ['Fewer Bends', Strategies.MINIMIZE_BENDS],
-            ['Fewer Crossings', Strategies.MINIMIZE_CROSSINGS],
-            ['Shorter Edges', Strategies.MINIMIZE_EDGE_LENGTH]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  /** @type {EdgeRouterCosts} */
+  optimizationStrategyItem: null,
 
-  /** @type {MonotonyFlags} */
-  monotonicRestrictionItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Monotonic Restriction',
-          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-monotonicPathRestriction'
-        ),
-        OptionGroupAttribute('LayoutGroup', 30),
-        EnumValuesAttribute().init({
-          values: [
-            ['None', MonotonyFlags.NONE],
-            ['Horizontal', MonotonyFlags.HORIZONTAL],
-            ['Vertical', MonotonyFlags.VERTICAL],
-            ['Both', MonotonyFlags.BOTH]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  /** @type {MonotonicPathRestrictions} */
+  monotonicRestrictionItem: null,
 
   /** @type {boolean} */
-  enableReroutingItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Reroute Crossing Edges', '#/api/EdgeRouter#EdgeRouter-property-rerouting'),
-        OptionGroupAttribute('LayoutGroup', 60),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  enableReroutingItem: false,
 
   /** @type {boolean} */
-  useIntermediatePointsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Keep Bends as Intermediate Points',
-          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-intermediateRoutingPoints'
-        ),
-        OptionGroupAttribute('LayoutGroup', 65),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  useIntermediatePointsItem: false,
 
   /** @type {boolean} */
   shouldDisableUseIntermediatePointsItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return this.busMembershipItem !== BusMembership.NONE
     }
   },
 
   /** @type {number} */
-  maximumDurationItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Maximum Duration', '#/api/EdgeRouter#EdgeRouter-property-maximumDuration'),
-        OptionGroupAttribute('LayoutGroup', 70),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 150
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  stopDurationItem: 5,
 
   /** @type {number} */
-  routingPolicyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Routing Policy',
-          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-routingPolicy'
-        ),
-        OptionGroupAttribute('LayoutGroup', 80),
-        EnumValuesAttribute().init({
-          values: [
-            ['Always', RoutingPolicy.ALWAYS],
-            ['Path As Needed', RoutingPolicy.PATH_AS_NEEDED],
-            ['Segments As Needed', RoutingPolicy.SEGMENTS_AS_NEEDED]
-          ]
-        }),
-        TypeAttribute(RoutingPolicy.$class)
-      ]
-    },
-    value: RoutingPolicy.ALWAYS
-  },
+  routingPolicyItem: EdgeRouterScope.PATH,
 
   /** @type {PortSides} */
-  portSidesItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Allowed port sides',
-          '#/api/EdgeRouterData#EdgeRouterData-property-sourcePortCandidates'
-        ),
-        OptionGroupAttribute('LayoutGroup', 90),
-        EnumValuesAttribute().init({
-          values: [
-            ['Any', PortSides.ANY],
-            ['Left or Right', PortSides.LEFT_RIGHT],
-            ['Top or Bottom', PortSides.TOP_BOTTOM]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: false
-  },
+  portSidesItem: false,
 
   /** @type {number} */
-  minimumEdgeToEdgeDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Edge to Edge',
-          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-minimumEdgeToEdgeDistance'
-        ),
-        OptionGroupAttribute('DistancesGroup', 10),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumEdgeDistanceItem: 0,
 
   /** @type {number} */
-  minimumNodeToEdgeDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Node to Edge',
-          '#/api/EdgeRouter#EdgeRouter-property-minimumNodeToEdgeDistance'
-        ),
-        OptionGroupAttribute('DistancesGroup', 20),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumNodeToEdgeDistanceItem: 0,
 
   /** @type {number} */
-  minimumNodeCornerDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Port to Node Corner',
-          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-minimumNodeCornerDistance'
-        ),
-        OptionGroupAttribute('DistancesGroup', 30),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumNodeCornerDistanceItem: 0,
 
   /** @type {number} */
-  minimumFirstSegmentLengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'First Segment Length',
-          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-minimumFirstSegmentLength'
-        ),
-        OptionGroupAttribute('DistancesGroup', 40),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumFirstSegmentLengthItem: 0,
 
   /** @type {number} */
-  minimumLastSegmentLengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Last Segment Length',
-          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-minimumLastSegmentLength'
-        ),
-        OptionGroupAttribute('DistancesGroup', 50),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumLastSegmentLengthItem: 0,
 
   /** @type {boolean} */
-  gridEnabledItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Route on Grid', '#/api/EdgeRouter#EdgeRouter-property-grid'),
-        OptionGroupAttribute('GridGroup', 10),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  gridEnabledItem: false,
 
   /** @type {number} */
-  gridSpacingItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Grid Spacing', '#/api/Grid#Grid-property-spacing'),
-        OptionGroupAttribute('GridGroup', 20),
-        MinMaxAttribute().init({
-          min: 2,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 2
-  },
+  gridSpacingItem: 2,
 
   /** @type {boolean} */
   shouldDisableGridSpacingItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return this.gridEnabledItem === false
     }
   },
 
-  /** @type {EdgeRouterEdgeRoutingStyle} */
-  routingStyleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'RoutingStyle',
-          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-routingStyle'
-        ),
-        OptionGroupAttribute('PolylineGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Orthogonal', EdgeRouterEdgeRoutingStyle.ORTHOGONAL],
-            ['Octilinear', EdgeRouterEdgeRoutingStyle.OCTILINEAR],
-            ['Curved', EdgeRouterEdgeRoutingStyle.CURVED]
-          ]
-        }),
-        TypeAttribute(EdgeRouterEdgeRoutingStyle.$class)
-      ]
-    },
-    value: null
-  },
+  /** @type {EdgeRouterRoutingStyle} */
+  routingStyleItem: null,
 
   /** @type {number} */
-  preferredPolylineSegmentLengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Preferred Octilinear Segment Length',
-          '#/api/EdgeRouter#EdgeRouter-property-preferredPolylineSegmentLength'
-        ),
-        OptionGroupAttribute('PolylineGroup', 20),
-        MinMaxAttribute().init({
-          min: 5,
-          max: 500
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 5
-  },
+  preferredOctilinearSegmentLengthItem: 5,
 
   /** @type {boolean} */
-  shouldDisablePreferredPolylineSegmentLengthItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
+  shouldDisablePreferredOctilinearSegmentLengthItem: <any>{
     get: function (): boolean {
-      return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.OCTILINEAR
+      return this.routingStyleItem !== EdgeRouterRoutingStyle.OCTILINEAR
     }
   },
 
   /** @type {number} */
-  preferredPolylineSegmentRatioItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Preferred Octilinear Segment Ratio',
-          '#/api/EdgeRouter#EdgeRouter-property-maximumOctilinearSegmentRatio'
-        ),
-        OptionGroupAttribute('PolylineGroup', 30),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 0.5,
-          step: 0.01
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0.3
-  },
+  maximumOctilinearSegmentRatioItem: 0.3,
 
   /** @type {boolean} */
-  shouldDisablePreferredPolylineSegmentRatioItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
+  shouldDisableMaximumOctilinearSegmentRatioItem: <any>{
     get: function (): boolean {
-      return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.OCTILINEAR
+      return this.routingStyleItem !== EdgeRouterRoutingStyle.OCTILINEAR
     }
   },
 
   /** @type {CurveConnectionStyle} */
-  curveAtSourceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Curve Connection at Source',
-          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeRouterEdgeLayoutDescriptor-property-sourceCurveConnectionStyle'
-        ),
-        OptionGroupAttribute('PolylineGroup', 40),
-        EnumValuesAttribute().init({
-          values: [
-            ['Straight', CurveConnectionStyle.KEEP_PORT],
-            ['Organic', CurveConnectionStyle.ORGANIC]
-          ]
-        }),
-        TypeAttribute(CurveConnectionStyle.$class)
-      ]
-    },
-    value: null
-  },
+  sourceCurveConnectionStyleItem: null,
 
   /** @type {boolean} */
-  shouldDisableCurveAtSourceItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
+  shouldDisableSourceCurveConnectionStyleItem: <any>{
     get: function (): boolean {
-      return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.CURVED
+      return this.routingStyleItem !== EdgeRouterRoutingStyle.CURVED
     }
   },
 
   /** @type {CurveConnectionStyle} */
-  curveAtTargetItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Curve Connection at Target',
-          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeRouterEdgeLayoutDescriptor-property-targetCurveConnectionStyle'
-        ),
-        OptionGroupAttribute('PolylineGroup', 50),
-        EnumValuesAttribute().init({
-          values: [
-            ['Straight', CurveConnectionStyle.KEEP_PORT],
-            ['Organic', CurveConnectionStyle.ORGANIC]
-          ]
-        }),
-        TypeAttribute(CurveConnectionStyle.$class)
-      ]
-    },
-    value: null
-  },
+  targetCurveConnectionStyleItem: null,
 
   /** @type {boolean} */
-  shouldDisableCurveAtTargetItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
+  shouldDisableTargetCurveConnectionStyleItem: <any>{
     get: function (): boolean {
-      return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.CURVED
+      return this.routingStyleItem !== EdgeRouterRoutingStyle.CURVED
     }
   },
 
   /** @type {number} */
-  curveUTurnSymmetryItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'U-turn symmetry',
-          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-curveUTurnSymmetry'
-        ),
-        OptionGroupAttribute('PolylineGroup', 60),
-        MinMaxAttribute().init({ min: 0, max: 1, step: 0.1 }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  curveUTurnSymmetryItem: 0,
 
   /** @type {boolean} */
   shouldDisableCurveUTurnSymmetryItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
-      return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.CURVED
+      return this.routingStyleItem !== EdgeRouterRoutingStyle.CURVED
     }
   },
 
   /** @type {number} */
-  curveShortcutsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Allow shortcuts',
-          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-curveShortcuts'
-        ),
-        OptionGroupAttribute('PolylineGroup', 70),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: 0
-  },
+  curveShortcutsItem: 0,
 
   /** @type {boolean} */
   shouldDisableCurveShortcutsItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
-      return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.CURVED
+      return this.routingStyleItem !== EdgeRouterRoutingStyle.CURVED
     }
   },
 
-  /** @type {Strategies} */
-  busMembershipItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Membership', '#/api/EdgeRouterData#EdgeRouterData-property-buses'),
-        OptionGroupAttribute('BusGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['No Buses', BusMembership.NONE],
-            ['Single Bus', BusMembership.SINGLE],
-            ['By First Label', BusMembership.LABEL],
-            ['By User Tag', BusMembership.TAG]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  /** @type {BusMembership} */
+  busMembershipItem: null,
 
   /** @type {boolean} */
-  automaticEdgeGroupingItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Automatic Edge Grouping',
-          '#/api/EdgeRouterBusDescriptor#EdgeRouterBusDescriptor-property-automaticEdgeGrouping'
-        ),
-        OptionGroupAttribute('BusGroup', 20),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: true
-  },
+  automaticEdgeGroupingItem: true,
 
   /** @type {boolean} */
   shouldDisableAutomaticEdgeGroupingItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return this.busMembershipItem === BusMembership.NONE
     }
   },
 
   /** @type {number} */
-  minimumBackboneSegmentLengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Backbone Segment Length',
-          '#/api/EdgeRouterBusDescriptor#EdgeRouterBusDescriptor-property-minimumBackboneSegmentLength'
-        ),
-        OptionGroupAttribute('BusGroup', 30),
-        MinMaxAttribute().init({
-          min: 1,
-          max: 1000
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 100
-  },
+  minimumBackboneSegmentLengthItem: 100,
 
   /** @type {boolean} */
   shouldDisableMinimumBackboneSegmentLengthItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return this.busMembershipItem === BusMembership.NONE
     }
   },
 
   /** @type {boolean} */
-  allowMultipleBackboneSegmentsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Multiple Backbone Segments',
-          '#/api/EdgeRouterBusDescriptor#EdgeRouterBusDescriptor-property-multipleBackboneSegments'
-        ),
-        OptionGroupAttribute('BusGroup', 40),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: true
-  },
+  allowMultipleBackboneSegmentsItem: true,
 
   /** @type {boolean} */
   shouldDisableAllowMultipleBackboneSegmentsItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return this.busMembershipItem === BusMembership.NONE
     }
   },
 
-  /** @type {boolean} */
-  considerNodeLabelsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Consider Node Labels',
-          '#/api/EdgeRouter#EdgeRouter-property-considerNodeLabels'
-        ),
-        OptionGroupAttribute('NodePropertiesGroup', 10),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  /** @type {EdgeRouterNodeLabelPlacement} */
+  nodeLabelingItem: null,
+
+  /** @type {EdgeRouterEdgeLabelPlacement} */
+  edgeLabelingItem: null,
 
   /** @type {boolean} */
-  considerEdgeLabelsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Consider Fixed Edges Labels',
-          '#/api/EdgeRouter#EdgeRouter-property-considerEdgeLabels'
-        ),
-        OptionGroupAttribute('EdgePropertiesGroup', 10),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
-  /** @type {boolean} */
-  edgeLabelingItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Edge Labeling',
-          '#/api/EdgeRouter#EdgeRouter-property-integratedEdgeLabeling'
-        ),
-        OptionGroupAttribute('EdgePropertiesGroup', 20),
-        EnumValuesAttribute().init({
-          values: [
-            ['None', EdgeLabeling.NONE],
-            ['Integrated', EdgeLabeling.INTEGRATED],
-            ['Generic', EdgeLabeling.GENERIC]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
-
-  /** @type {boolean} */
-  reduceAmbiguityItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Reduce Ambiguity',
-          '#/api/GenericLabeling#MISLabelingBase-property-reduceAmbiguity'
-        ),
-        OptionGroupAttribute('EdgePropertiesGroup', 30),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  reduceAmbiguityItem: false,
 
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
-      return this.edgeLabelingItem !== EdgeLabeling.GENERIC
+      return this.edgeLabelingItem !== EdgeRouterEdgeLabelPlacement.GENERIC
     }
   },
 
   /** @type {LabelPlacementOrientation} */
-  labelPlacementOrientationItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Orientation',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-angle'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Parallel', LabelPlacementOrientation.PARALLEL],
-            ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
-            ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
-            ['Vertical', LabelPlacementOrientation.VERTICAL]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  labelPlacementOrientationItem: null,
 
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
-      return this.edgeLabelingItem === EdgeLabeling.NONE
+      return this.edgeLabelingItem === EdgeRouterEdgeLabelPlacement.IGNORE
     }
   },
 
   /** @type {LabelPlacementAlongEdge} */
-  labelPlacementAlongEdgeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Along Edge',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-placeAlongEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 20),
-        EnumValuesAttribute().init({
-          values: [
-            ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
-            ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
-            ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
-            ['At Target', LabelPlacementAlongEdge.AT_TARGET],
-            ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
-            ['Centered', LabelPlacementAlongEdge.CENTERED]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  labelPlacementAlongEdgeItem: null,
 
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
-      return this.edgeLabelingItem === EdgeLabeling.NONE
+      return this.edgeLabelingItem === EdgeRouterEdgeLabelPlacement.IGNORE
     }
   },
 
   /** @type {LabelPlacementSideOfEdge} */
-  labelPlacementSideOfEdgeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Side of Edge',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-sideOfEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 30),
-        EnumValuesAttribute().init({
-          values: [
-            ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
-            ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
-            ['Left', LabelPlacementSideOfEdge.LEFT],
-            ['Right', LabelPlacementSideOfEdge.RIGHT],
-            ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  labelPlacementSideOfEdgeItem: null,
 
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
-      return this.edgeLabelingItem === EdgeLabeling.NONE
+      return this.edgeLabelingItem === EdgeRouterEdgeLabelPlacement.IGNORE
     }
   },
 
   /** @type {number} */
-  labelPlacementDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Distance',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-distanceToEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 40),
-        MinMaxAttribute().init({
-          min: 0.0,
-          max: 40.0
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  labelPlacementDistanceItem: 0,
 
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return (
-        this.edgeLabelingItem === EdgeLabeling.NONE ||
+        this.edgeLabelingItem === EdgeRouterEdgeLabelPlacement.IGNORE ||
         this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
       )
     }
   }
 })
-export default PolylineEdgeRouterConfig
-
-enum Strategies {
-  BALANCED,
-  MINIMIZE_BENDS,
-  MINIMIZE_CROSSINGS,
-  MINIMIZE_EDGE_LENGTH
-}
-
-enum MonotonyFlags {
-  NONE,
-  HORIZONTAL,
-  VERTICAL,
-  BOTH
-}
-
-export enum BusMembership {
-  NONE,
-  SINGLE,
-  LABEL,
-  TAG
-}
-
-export enum PortSides {
-  ANY,
-  LEFT_RIGHT,
-  TOP_BOTTOM
-}

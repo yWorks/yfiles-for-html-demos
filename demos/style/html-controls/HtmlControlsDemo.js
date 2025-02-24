@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,56 +27,41 @@
  **
  ***************************************************************************/
 import {
-  Class,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   LayoutExecutor,
   License,
   NodeSizeConstraintProvider,
   PolylineEdgeStyle,
   Size,
   SvgExport
-} from 'yfiles'
-import { finishLoading } from 'demo-resources/demo-page'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { HtmlEditableNodeStyle } from './HtmlEditableNodeStyle.js'
-import { updateTagView } from './util.js'
-import { defaultData, people } from './data.js'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { downloadFile } from 'demo-utils/file-support'
-
-// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for 'applyLayout'.
-Class.ensure(LayoutExecutor)
-
-/**
- * @returns {!Promise}
- */
+} from '@yfiles/yfiles'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { HtmlEditableNodeStyle } from './HtmlEditableNodeStyle'
+import { updateTagView } from './util'
+import { defaultData, people } from './data'
+import { downloadFile } from '@yfiles/demo-utils/file-support'
+// Ensure that the LayoutExecutor class is not removed by build optimizers
+// It is needed for the 'applyLayoutAnimated' method in this demo.
+LayoutExecutor.ensure()
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
-
   // We use the custom HTML node style for all nodes
   graph.nodeDefaults.style = new HtmlEditableNodeStyle()
   graph.nodeDefaults.size = [280, 380]
-
   initGraphDefaults(graph)
-
   createGraphFromData(graph)
-
   initTagView(graphComponent)
   initLayout(graphComponent)
   await initExport(graphComponent)
   graphComponent.inputMode = createInputMode()
 }
-
 /**
  * Create the yFiles graph from the JSON data
- * @param {!IGraph} graph
  */
 function createGraphFromData(graph) {
   const id2node = new Map()
@@ -98,46 +83,34 @@ function createGraphFromData(graph) {
     }
   }
 }
-
-/**
- * @param {!IGraph} graph
- */
 function initGraphDefaults(graph) {
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     smoothingLength: 50,
     targetArrow: '#aaa triangle',
     stroke: '1.5px solid #aaa'
   })
-  graph.decorator.nodeDecorator.sizeConstraintProviderDecorator.setImplementation(
+  graph.decorator.nodes.sizeConstraintProvider.addConstant(
     new NodeSizeConstraintProvider([50, 50], Size.INFINITE)
   )
 }
-
 /**
  * When a node is selected or deselected, update the node data JSON in the left panel.
- * @param {!GraphComponent} graphComponent
  */
 function initTagView(graphComponent) {
-  graphComponent.selection.addItemSelectionChangedListener((graphComponent) => {
-    const firstSelectedNode = graphComponent.selectedNodes.at(0)
-    if (firstSelectedNode) {
-      updateTagView(firstSelectedNode)
-    } else {
-      updateTagView(null)
-    }
+  graphComponent.selection.addEventListener('item-added', (_, graphComponent) => {
+    const firstSelectedNode = graphComponent.nodes.at(0)
+    updateTagView(firstSelectedNode)
+  })
+  graphComponent.selection.addEventListener('item-removed', (_, graphComponent) => {
+    updateTagView(null)
   })
 }
-
-/**
- * @returns {!GraphEditorInputMode}
- */
 function createInputMode() {
   const inputMode = new GraphEditorInputMode({
     allowAddLabel: false
   })
-
   // When a node is created, we add default dummy data as the user tag.
-  inputMode.addNodeCreatedListener((inputMode, evt) => {
+  inputMode.addEventListener('node-created', (evt, inputMode) => {
     const graph = inputMode.graphComponent.graph
     evt.item.tag = {
       ...defaultData,
@@ -147,38 +120,29 @@ function createInputMode() {
   })
   return inputMode
 }
-
 /**
- * Run a plain hierarchic layout
- * @param {!GraphComponent} graphComponent
+ * Run a plain hierarchical layout
  */
 function initLayout(graphComponent) {
-  const layout = new HierarchicLayout()
+  const layout = new HierarchicalLayout()
   graphComponent.graph.applyLayout(layout)
-  graphComponent.fitGraphBounds(20)
+  void graphComponent.fitGraphBounds(20)
   document.querySelector('#layout-btn').addEventListener('click', async () => {
-    await graphComponent.morphLayout(layout)
+    await graphComponent.applyLayoutAnimated(layout)
   })
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- * @returns {!Promise}
- */
 async function initExport(graphComponent) {
   // Copy the CSS rules for our HTML node style to the generated SVG
   const styles = await fetch('./style.css', {
     headers: { Accept: 'text/css' }
   }).then((r) => r.text())
-
   const exportBtn = document.querySelector('#export-btn')
-
   exportBtn.addEventListener('click', async () => {
     const exporter = new SvgExport({
       cssStyleSheet: styles,
       inlineSvgImages: true,
       strictMode: true,
-      worldBounds: graphComponent.contentRect
+      worldBounds: graphComponent.contentBounds
     })
     const exportComponent = new GraphComponent()
     exportComponent.graph = graphComponent.graph
@@ -187,5 +151,4 @@ async function initExport(graphComponent) {
     downloadFile(exportString, 'export.svg')
   })
 }
-
 void run().then(finishLoading)

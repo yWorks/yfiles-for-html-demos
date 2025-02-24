@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,32 +26,19 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+// eslint-disable @typescript-eslint/explicit-function-return-type
 import {
   Arrow,
-  DefaultLabelStyle,
   EdgePathLabelModel,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
   GraphBuilder,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
+  LabelStyle,
   PolylineEdgeStyle,
   PortAdjustmentPolicy,
   ShapeNodeStyle
-} from 'yfiles'
-
-/**
- * @typedef {Object} SampleDataNode
- * @property {number} id
- * @property {object} layout
- * @property {object} tag
- */
-/**
- * @typedef {Object} SampleDataType
- * @property {Array.<SampleDataNode>} nodeList
- * @property {Array.<object>} edgeList
- */
-
+} from '@yfiles/yfiles'
 const SampleData = {
   nodeList: [
     { id: 0, layout: { x: 432.5, y: 0, width: 40, height: 40 }, tag: { type: 2 } },
@@ -131,10 +118,8 @@ const SampleData = {
     { source: 9, target: 34 }
   ]
 }
-
 /**
  * Creates an initial sample graph.
- * @param {!IGraph} graph
  */
 export function createSampleGraph(graph) {
   graph.clear()
@@ -152,18 +137,17 @@ export function createSampleGraph(graph) {
     }
   })
   const nodeLabelCreator = nodesSource.nodeCreator.createLabelBinding()
-  nodeLabelCreator.defaults.layoutParameter = new ExteriorLabelModel({
-    insets: { right: 7 }
-  }).createParameter(ExteriorLabelModelPosition.EAST)
-  const labelStyle = new DefaultLabelStyle({
+  nodeLabelCreator.defaults.layoutParameter = new ExteriorNodeLabelModel({
+    margins: { right: 7 }
+  }).createParameter('right')
+  const labelStyle = new LabelStyle({
     cssClass: 'label invisible', // fade-in labels on hover
-    insets: 5,
+    padding: 5,
     backgroundFill: 'rgba(255,255,255,0.7)',
     shape: 'round-rectangle'
   })
   nodeLabelCreator.styleProvider = () => labelStyle.clone()
   nodeLabelCreator.textProvider = (dataItem) => `.node\n.type-${dataItem.tag.type || '0'}`
-
   const edgesSource = builder.createEdgesSource({
     data: SampleData.edgeList,
     sourceId: 'source',
@@ -187,19 +171,16 @@ export function createSampleGraph(graph) {
     sideOfEdge: 'below-edge',
     autoRotation: false,
     distance: 7
-  }).createDefaultParameter()
+  }).createRatioParameter()
   edgeLabelCreator.styleProvider = () => labelStyle.clone()
   edgeLabelCreator.textProvider = () => '.edge'
-
   builder.buildGraph()
-
-  const layout = new HierarchicLayout({
-    nodeToNodeDistance: 50
+  const layout = new HierarchicalLayout({
+    nodeDistance: 50
   })
-  const layoutData = new HierarchicLayoutData({
+  const layoutData = new HierarchicalLayoutData({
     // consider the node types of the sample data
     nodeTypes: (node) => node.tag.type
   })
-
-  graph.applyLayout({ layout, layoutData, portAdjustmentPolicy: PortAdjustmentPolicy.ALWAYS })
+  graph.applyLayout({ layout, layoutData, portAdjustmentPolicies: PortAdjustmentPolicy.ALWAYS })
 }

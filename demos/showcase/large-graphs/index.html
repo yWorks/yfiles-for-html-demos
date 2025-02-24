@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Large Graphs Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -40,7 +40,6 @@
     <link rel="stylesheet" href="resources/demo-style.css" />
 
     <script src="https://unpkg.com/vue@2.6.11"></script>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -102,9 +101,9 @@
 
         <p>
           This demo shows how to display large graphs with both good performance and high quality.
-          For this, the demo uses <em><a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2" target="_blank">WebGL2</a></em> rendering on small
-          zoom levels and switches to high quality <em>SVG</em> rendering when the user zoomed-in
-          above a certain threshold.
+          For this, the demo uses <em><a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2" target="_blank">WebGL</a></em> rendering on small zoom
+          levels and switches to high quality <em>SVG</em> rendering when the user zoomed-in above a
+          certain threshold.
         </p>
         <p>
           Due to its vector graphics, SVG is very well suited for high-quality rendering with lots
@@ -113,20 +112,20 @@
           starts to lag.
         </p>
         <p>
-          Rendering a large number of elements which are not too detailed is where WebGL2 rendering
+          Rendering a large number of elements which are not too detailed is where WebGL rendering
           shines. Therefore, this demo relies on this rendering method when elements on the screen
           get smaller and details are less recognizable anyway.
         </p>
         <p>
-          Depending on the desired item visualization, using WebGL2 rendering for all zoom values is
+          Depending on the desired item visualization, using WebGL rendering for all zoom values is
           a valid option, too. You can disable SVG rendering completely in the toolbar.
         </p>
 
-        <h2><span id="sampleName">Hierarchic</span> sample</h2>
-        <div id="hierarchicOrganic">
+        <h2><span id="sampleName">Hierarchical</span> sample</h2>
+        <div id="hierarchicalOrganic">
           <p>
-            The node styles for both SVG and WebGL2 are instantiated with the same image data so
-            that the transition between the rendering methods is as smooth as possible.
+            The node styles for both SVG and WebGL are instantiated with the same image data so that
+            the transition between the rendering methods is as smooth as possible.
           </p>
           <h2>Things to try</h2>
           <ul>
@@ -147,7 +146,7 @@
 
         <div id="orgChart" style="display: none">
           <p>
-            In WebGL2 rendering, the node visualization only matches the color and shape of the SVG
+            In WebGL rendering, the node visualization only matches the color and shape of the SVG
             rendering but omits details like label text.
           </p>
           <p>
@@ -192,7 +191,7 @@
         <h2>Troubleshooting</h2>
         <p>
           When encountering rendering issues or low frame rates, please refer to the
-          <em><a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2_troubleshooting" target="_blank">WebGL2 Troubleshooting</a></em> section in the
+          <em><a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2_troubleshooting" target="_blank">WebGL Troubleshooting</a></em> section in the
           Developer's guide.
         </p>
       </div>

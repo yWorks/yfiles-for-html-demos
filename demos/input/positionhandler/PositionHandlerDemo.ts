@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,19 +35,15 @@ import {
   License,
   MutableRectangle,
   Rect
-} from 'yfiles'
-import LimitingRectangleDescriptor from './LimitedRectangleDescriptor'
+} from '@yfiles/yfiles'
+import { LimitingRectangleRenderer } from './LimitingRectangleRenderer'
 import GreenPositionHandler from './GreenPositionHandler'
 import RedPositionHandler from './RedPositionHandler'
 import OrangePositionHandler from './OrangePositionHandler'
-import type { ColorSetName } from 'demo-resources/demo-styles'
-import {
-  applyDemoTheme,
-  createDemoNodeLabelStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
+import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Registers a callback function as decorator that provides a custom
@@ -61,22 +57,17 @@ import { finishLoading } from 'demo-resources/demo-page'
  * @param boundaryRectangle The rectangle that limits the nodes position.
  */
 function registerPositionHandler(graph: IGraph, boundaryRectangle: MutableRectangle): void {
-  const positionHandlerDecorator = graph.decorator.nodeDecorator.positionHandlerDecorator
-  positionHandlerDecorator.setImplementationWrapper((node, delegateHandler) => {
-    if (!delegateHandler) {
-      return null
-    }
-
+  graph.decorator.nodes.positionHandler.addWrapperFactory((node, originalHandler) => {
     // Check if it is a known tag and choose the respective implementation.
     // Fallback to the default behavior otherwise.
-    if (node == null || typeof node.tag !== 'string') {
-      return delegateHandler
+    if (node == null || typeof node.tag !== 'string' || originalHandler == null) {
+      return originalHandler
     }
 
     switch (node.tag) {
       case 'orange':
         // This implementation delegates certain behavior to the default implementation
-        return new OrangePositionHandler(boundaryRectangle, node, delegateHandler)
+        return new OrangePositionHandler(boundaryRectangle, node, originalHandler)
       case 'red':
         // A simple implementation that prohibits moving
         return new RedPositionHandler()
@@ -85,13 +76,13 @@ function registerPositionHandler(graph: IGraph, boundaryRectangle: MutableRectan
         return new OrangePositionHandler(
           boundaryRectangle,
           node,
-          new GreenPositionHandler(delegateHandler)
+          new GreenPositionHandler(originalHandler)
         )
       case 'green':
         // Another implementation that delegates certain behavior to the default implementation
-        return new GreenPositionHandler(delegateHandler)
+        return new GreenPositionHandler(originalHandler)
       default:
-        return delegateHandler
+        return originalHandler
     }
   })
 }
@@ -100,14 +91,17 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   configureUserInteraction(graphComponent)
 
   // Create the rectangle that limits the movement of some nodes
   // and add it to the graphComponent.
   const boundaryRectangle = new MutableRectangle(20, 20, 480, 400)
-  graphComponent.backgroundGroup.addChild(boundaryRectangle, new LimitingRectangleDescriptor())
+  const renderTree = graphComponent.renderTree
+  renderTree.createElement(
+    renderTree.backgroundGroup,
+    boundaryRectangle,
+    new LimitingRectangleRenderer()
+  )
 
   registerPositionHandler(graphComponent.graph, boundaryRectangle)
 
@@ -115,7 +109,7 @@ async function run(): Promise<void> {
 }
 
 /**
- * Restricits interactive editing to selecting and moving nodes for the given graph component.
+ * Restricts interactive editing to selecting and moving nodes for the given graph component.
  * @param graphComponent The demo's graph component.
  */
 function configureUserInteraction(graphComponent: GraphComponent): void {

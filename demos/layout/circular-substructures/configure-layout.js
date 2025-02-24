@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,66 +30,47 @@ import {
   CircularLayout,
   CircularLayoutData,
   CircularLayoutStarSubstructureStyle,
-  NodeTypeAwareSequencer
-} from 'yfiles'
-import { getNodeType } from './types-popup.js'
-
-/**
- * The settings related to substructures for the layout algorithm
- * @typedef {Object} LayoutSettings
- * @property {string} starSubstructureStyle
- * @property {boolean} considerNodeTypes
- * @property {boolean} starSubstructureTypeSeparation
- */
-
+  LayoutExecutor
+} from '@yfiles/yfiles'
+import { getNodeType } from './types-popup'
 /**
  * Calculates a new graph layout and optionally applies the new layout in an animated fashion.
  * This method creates and configures a new circular layout algorithm for this purpose.
- * @param {!GraphComponent} graphComponent
- * @param {!LayoutSettings} settings
- * @param {boolean} animate
- * @returns {!Promise}
  */
 export async function runLayoutCore(graphComponent, settings, animate) {
   // configure the circular layout algorithm
-  const algorithm = new CircularLayout()
-
+  const layout = new CircularLayout()
   const starStyle = getStarStyle(settings.starSubstructureStyle)
   if (starStyle !== CircularLayoutStarSubstructureStyle.NONE) {
     // for more compact layout, do not place children on common radius for star style radial and separated-radial
-    algorithm.placeChildrenOnCommonRadius = false
+    layout.placeChildrenOnCommonRadius = false
   }
   // configure the star substructure style
-  algorithm.starSubstructureStyle = starStyle
-
+  layout.starSubstructureStyle = starStyle
   // configure type separation for star substructures
-  algorithm.starSubstructureTypeSeparation = settings.starSubstructureTypeSeparation
-
+  layout.starSubstructureTypeSeparation = settings.starSubstructureTypeSeparation
   // layout data is necessary to support data-driven features like node types
   const layoutData = new CircularLayoutData()
-
   if (settings.considerNodeTypes) {
     // if node types should be considered, define a delegate on the respective layout data property
     // that queries the type from the node's tag
-    layoutData.nodeTypes.delegate = getNodeType
-    algorithm.singleCycleLayout.nodeSequencer = new NodeTypeAwareSequencer()
+    layoutData.nodeTypes = getNodeType
   }
-
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
   // runs the layout algorithm and applies the result...
   if (animate) {
     //... with a morph animation
-    await graphComponent.morphLayout(algorithm, null, layoutData)
+    await graphComponent.applyLayoutAnimated({ layout, layoutData })
   } else {
     //... without an animation
-    graphComponent.graph.applyLayout(algorithm, layoutData)
-    graphComponent.fitGraphBounds()
+    graphComponent.graph.applyLayout(layout, layoutData)
+    await graphComponent.fitGraphBounds()
   }
 }
-
 /**
  * Determines the desired star substructure style for layout calculations from the settings UI.
- * @param {!string} starStyle
- * @returns {!CircularLayoutStarSubstructureStyle}
  */
 function getStarStyle(starStyle) {
   switch (starStyle) {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,30 +31,25 @@ import {
   CircularLayoutData,
   CircularLayoutEdgeRoutingPolicy,
   CircularLayoutOnCircleRoutingStyle,
+  CircularLayoutPartitioningPolicy,
+  CircularLayoutPartitionStyle,
   CircularLayoutRoutingStyle,
   CircularLayoutStarSubstructureStyle,
-  CircularLayoutStyle,
   Class,
   EdgeBundleDescriptor,
-  Enum,
-  FreeNodeLabelModel,
   GenericLabeling,
   GraphComponent,
   ILayoutAlgorithm,
   LayoutData,
-  NodeLabelingPolicy,
-  PartitionStyle,
-  YBoolean,
-  YNumber,
-  YString
-} from 'yfiles'
-
+  RadialEdgeLabelPlacement,
+  RadialNodeLabelPlacement,
+  SubgraphLayoutStage
+} from '@yfiles/yfiles'
 import LayoutConfiguration, {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge,
-  NodeLabelingPolicies
-} from './LayoutConfiguration.js'
+  LabelPlacementSideOfEdge
+} from './LayoutConfiguration'
 import {
   ComponentAttribute,
   Components,
@@ -64,183 +59,563 @@ import {
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from 'demo-resources/demo-option-editor'
-
+} from '@yfiles/demo-resources/demo-option-editor'
+export var CircularPartitioningPolicy
+;(function (CircularPartitioningPolicy) {
+  CircularPartitioningPolicy[(CircularPartitioningPolicy['BCC_COMPACT'] = 0)] = 'BCC_COMPACT'
+  CircularPartitioningPolicy[(CircularPartitioningPolicy['BCC_ISOLATED'] = 1)] = 'BCC_ISOLATED'
+  CircularPartitioningPolicy[(CircularPartitioningPolicy['SINGLE_CYCLE'] = 2)] = 'SINGLE_CYCLE'
+  CircularPartitioningPolicy[(CircularPartitioningPolicy['CUSTOM_PARTITIONS'] = 3)] =
+    'CUSTOM_PARTITIONS'
+})(CircularPartitioningPolicy || (CircularPartitioningPolicy = {}))
+var EdgeRoutingPolicy
+;(function (EdgeRoutingPolicy) {
+  EdgeRoutingPolicy[(EdgeRoutingPolicy['INTERIOR'] = 0)] = 'INTERIOR'
+  EdgeRoutingPolicy[(EdgeRoutingPolicy['AUTOMATIC'] = 1)] = 'AUTOMATIC'
+  EdgeRoutingPolicy[(EdgeRoutingPolicy['EXTERIOR'] = 2)] = 'EXTERIOR'
+  EdgeRoutingPolicy[(EdgeRoutingPolicy['MARKED_EXTERIOR'] = 3)] = 'MARKED_EXTERIOR'
+})(EdgeRoutingPolicy || (EdgeRoutingPolicy = {}))
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 const CircularLayoutConfig = Class('CircularLayoutConfig', {
   $extends: LayoutConfiguration,
-
-  $meta: [LabelAttribute('CircularLayout')],
-
+  _meta: {
+    GeneralGroup: [
+      new LabelAttribute('General'),
+      new OptionGroupAttribute('RootGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    CycleGroup: [
+      new LabelAttribute('Partition'),
+      new OptionGroupAttribute('RootGroup', 20),
+      new TypeAttribute(OptionGroup)
+    ],
+    EdgesGroup: [
+      new LabelAttribute('Edges'),
+      new OptionGroupAttribute('RootGroup', 30),
+      new TypeAttribute(OptionGroup)
+    ],
+    DefaultEdgesGroup: [
+      new LabelAttribute('Default Edges'),
+      new OptionGroupAttribute('EdgesGroup', 40),
+      new TypeAttribute(OptionGroup)
+    ],
+    ExteriorEdgesGroup: [
+      new LabelAttribute('Exterior Edges'),
+      new OptionGroupAttribute('EdgesGroup', 50),
+      new TypeAttribute(OptionGroup)
+    ],
+    TreeGroup: [
+      new LabelAttribute('Tree'),
+      new OptionGroupAttribute('RootGroup', 30),
+      new TypeAttribute(OptionGroup)
+    ],
+    SubstructureLayoutGroup: [
+      new LabelAttribute('Substructure Layout'),
+      new OptionGroupAttribute('RootGroup', 50),
+      new TypeAttribute(OptionGroup)
+    ],
+    LabelingGroup: [
+      new LabelAttribute('Labeling'),
+      new OptionGroupAttribute('RootGroup', 60),
+      new TypeAttribute(OptionGroup)
+    ],
+    NodePropertiesGroup: [
+      new LabelAttribute('Node Settings'),
+      new OptionGroupAttribute('LabelingGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    EdgePropertiesGroup: [
+      new LabelAttribute('Edge Settings'),
+      new OptionGroupAttribute('LabelingGroup', 20),
+      new TypeAttribute(OptionGroup)
+    ],
+    PreferredPlacementGroup: [
+      new LabelAttribute('Preferred Edge Label Placement'),
+      new OptionGroupAttribute('LabelingGroup', 30),
+      new TypeAttribute(OptionGroup)
+    ],
+    descriptionText: [
+      new OptionGroupAttribute('DescriptionGroup', 10),
+      new ComponentAttribute(Components.HTML_BLOCK),
+      new TypeAttribute(String)
+    ],
+    partitioningPolicyItem: [
+      new LabelAttribute(
+        'Partitioning Policy',
+        '#/api/CircularLayout#CircularLayout-property-partitioningPolicy'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 10),
+      new EnumValuesAttribute([
+        ['BCC Compact', CircularPartitioningPolicy.BCC_COMPACT],
+        ['BCC Isolated', CircularPartitioningPolicy.BCC_ISOLATED],
+        ['Custom Groups', CircularPartitioningPolicy.CUSTOM_PARTITIONS],
+        ['Single Cycle', CircularPartitioningPolicy.SINGLE_CYCLE]
+      ]),
+      new TypeAttribute(Number)
+    ],
+    actOnSelectionOnlyItem: [
+      new LabelAttribute(
+        'Act on Selection Only',
+        '#/api/SubgraphLayoutStage#LayoutStageBase-property-enabled'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    fromSketchItem: [
+      new LabelAttribute(
+        'Use Drawing as Sketch',
+        '#/api/CircularLayout#CircularLayout-property-fromSketchMode'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 30),
+      new TypeAttribute(Boolean)
+    ],
+    partitionStyleItem: [
+      new LabelAttribute(
+        'Partition Style',
+        '#/api/PartitionDescriptor#PartitionDescriptor-property-style'
+      ),
+      new OptionGroupAttribute('CycleGroup', 10),
+      new EnumValuesAttribute([
+        ['Circle', CircularLayoutPartitionStyle.CYCLE],
+        ['Disk', CircularLayoutPartitionStyle.DISK],
+        ['Compact Disk', CircularLayoutPartitionStyle.COMPACT_DISK],
+        ['Organic', CircularLayoutPartitionStyle.ORGANIC]
+      ]),
+      new TypeAttribute(CircularLayoutPartitionStyle)
+    ],
+    minimumNodeDistanceItem: [
+      new LabelAttribute(
+        'Minimum Node Distance',
+        '#/api/PartitionDescriptor#PartitionDescriptor-property-minimumNodeDistance'
+      ),
+      new OptionGroupAttribute('CycleGroup', 20),
+      new MinMaxAttribute(0, 999),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    chooseRadiusAutomaticallyItem: [
+      new LabelAttribute(
+        'Choose Radius Automatically',
+        '#/api/PartitionDescriptor#PartitionDescriptor-property-automaticRadius'
+      ),
+      new OptionGroupAttribute('CycleGroup', 30),
+      new TypeAttribute(Boolean)
+    ],
+    fixedRadiusItem: [
+      new LabelAttribute(
+        'Fixed Radius',
+        '#/api/PartitionDescriptor#PartitionDescriptor-property-fixedRadius'
+      ),
+      new OptionGroupAttribute('CycleGroup', 40),
+      new MinMaxAttribute(1, 800),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    edgeBundlingItem: [
+      new LabelAttribute(
+        'Enable Edge Bundling',
+        '#/api/EdgeBundling#EdgeBundling-property-defaultBundleDescriptor'
+      ),
+      new OptionGroupAttribute('EdgesGroup', 10),
+      new TypeAttribute(Boolean)
+    ],
+    edgeRoutingItem: [
+      new LabelAttribute(
+        'Edge Routing Style',
+        '#/api/CircularLayout#CircularLayout-property-edgeRoutingPolicy'
+      ),
+      new OptionGroupAttribute('EdgesGroup', 30),
+      new EnumValuesAttribute([
+        ['Inside', EdgeRoutingPolicy.INTERIOR],
+        ['Outside', EdgeRoutingPolicy.EXTERIOR],
+        ['Automatic', EdgeRoutingPolicy.AUTOMATIC],
+        ['Selected Edge Outside', EdgeRoutingPolicy.MARKED_EXTERIOR]
+      ]),
+      new TypeAttribute(CircularLayoutEdgeRoutingPolicy)
+    ],
+    defaultBetweenCirclesRoutingItem: [
+      new LabelAttribute(
+        'Routing Style Between Circles',
+        '#/api/CircularLayoutEdgeDescriptor#CircularLayoutEdgeDescriptor-property-betweenCirclesRoutingStyle'
+      ),
+      new OptionGroupAttribute('DefaultEdgesGroup', 10),
+      new EnumValuesAttribute([
+        ['Straight', CircularLayoutRoutingStyle.STRAIGHT_LINE],
+        ['Curved', CircularLayoutRoutingStyle.CURVED]
+      ]),
+      new TypeAttribute(CircularLayoutRoutingStyle)
+    ],
+    defaultInCircleRoutingStyleItem: [
+      new LabelAttribute(
+        'Routing Style Within Partitions',
+        '#/api/CircularLayoutEdgeDescriptor#CircularLayoutEdgeDescriptor-property-inCircleRoutingStyle'
+      ),
+      new OptionGroupAttribute('DefaultEdgesGroup', 20),
+      new EnumValuesAttribute([
+        ['Straight', CircularLayoutRoutingStyle.STRAIGHT_LINE],
+        ['Curved', CircularLayoutRoutingStyle.CURVED]
+      ]),
+      new TypeAttribute(CircularLayoutRoutingStyle)
+    ],
+    defaultOnCircleRoutingStyleItem: [
+      new LabelAttribute(
+        'Routing Style Between Neighbors',
+        '#/api/CircularLayoutEdgeDescriptor#CircularLayoutEdgeDescriptor-property-onCircleRoutingStyle'
+      ),
+      new OptionGroupAttribute('DefaultEdgesGroup', 30),
+      new EnumValuesAttribute([
+        ['Straight', CircularLayoutOnCircleRoutingStyle.STRAIGHT_LINE],
+        ['Curved', CircularLayoutOnCircleRoutingStyle.CURVED],
+        ['On Circle', CircularLayoutOnCircleRoutingStyle.ON_CIRCLE]
+      ]),
+      new TypeAttribute(CircularLayoutOnCircleRoutingStyle)
+    ],
+    exteriorEdgeToCircleDistanceItem: [
+      new LabelAttribute(
+        'Distance to Circle',
+        '#/api/CircularLayoutExteriorEdgeDescriptor#CircularLayoutExteriorEdgeDescriptor-property-circleDistance'
+      ),
+      new OptionGroupAttribute('ExteriorEdgesGroup', 10),
+      new MinMaxAttribute(10, 100, 1),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    exteriorEdgeToEdgeDistanceItem: [
+      new LabelAttribute(
+        'Edge to Edge Distance',
+        '#/api/CircularLayoutExteriorEdgeDescriptor#CircularLayoutExteriorEdgeDescriptor-property-edgeDistance'
+      ),
+      new OptionGroupAttribute('ExteriorEdgesGroup', 20),
+      new MinMaxAttribute(5, 50, 1),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    exteriorEdgeCornerRadiusItem: [
+      new LabelAttribute(
+        'Corner Radius',
+        '#/api/CircularLayoutExteriorEdgeDescriptor#CircularLayoutExteriorEdgeDescriptor-property-preferredCurveLength'
+      ),
+      new OptionGroupAttribute('ExteriorEdgesGroup', 30),
+      new MinMaxAttribute(0, 100, 1),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    exteriorEdgeAngleItem: [
+      new LabelAttribute(
+        'Angle',
+        '#/api/CircularLayoutExteriorEdgeDescriptor#CircularLayoutExteriorEdgeDescriptor-property-preferredAngle'
+      ),
+      new OptionGroupAttribute('ExteriorEdgesGroup', 40),
+      new MinMaxAttribute(0, 45, 1),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    exteriorEdgeSmoothnessItem: [
+      new LabelAttribute(
+        'Smoothness',
+        '#/api/CircularLayoutExteriorEdgeDescriptor#CircularLayoutExteriorEdgeDescriptor-property-smoothness'
+      ),
+      new OptionGroupAttribute('ExteriorEdgesGroup', 50),
+      new MinMaxAttribute(0, 1, 0.01),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    edgeBundlingStrengthItem: [
+      new LabelAttribute(
+        'Bundling Strength',
+        '#/api/EdgeBundling#EdgeBundling-property-bundlingStrength'
+      ),
+      new OptionGroupAttribute('EdgesGroup', 20),
+      new MinMaxAttribute(0, 1.0, 0.01),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    preferredChildSectorAngleItem: [
+      new LabelAttribute(
+        'Preferred Child Sector Angle',
+        '#/api/RadialTreeLayout#RadialTreeLayout-property-preferredChildSectorAngle'
+      ),
+      new OptionGroupAttribute('TreeGroup', 10),
+      new MinMaxAttribute(1, 359),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumEdgeLengthItem: [
+      new LabelAttribute(
+        'Minimum Edge Length',
+        '#/api/RadialTreeLayout#RadialTreeLayout-property-minimumEdgeLength'
+      ),
+      new OptionGroupAttribute('TreeGroup', 20),
+      new MinMaxAttribute(5, 400),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    maximumDeviationAngleItem: [
+      new LabelAttribute(
+        'Maximum Deviation Angle',
+        '#/api/CircularLayout#CircularLayout-property-maximumDeviationAngle'
+      ),
+      new OptionGroupAttribute('TreeGroup', 30),
+      new MinMaxAttribute(1, 360),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    compactnessFactorItem: [
+      new LabelAttribute(
+        'Compactness Factor',
+        '#/api/RadialTreeLayout#RadialTreeLayout-property-compactnessFactor'
+      ),
+      new OptionGroupAttribute('TreeGroup', 40),
+      new MinMaxAttribute(0.1, 0.9, 0.01),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumTreeNodeDistanceItem: [
+      new LabelAttribute(
+        'Minimum Node Distance',
+        '#/api/RadialTreeLayout#RadialTreeLayout-property-minimumNodeDistance'
+      ),
+      new OptionGroupAttribute('TreeGroup', 50),
+      new MinMaxAttribute(0, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    allowOverlapsItem: [
+      new LabelAttribute(
+        'Allow Overlaps',
+        '#/api/RadialTreeLayout#RadialTreeLayout-property-allowOverlaps'
+      ),
+      new OptionGroupAttribute('TreeGroup', 60),
+      new TypeAttribute(Boolean)
+    ],
+    placeChildrenOnCommonRadiusItem: [
+      new LabelAttribute(
+        'Place Children on Common Radius',
+        '#/api/CircularLayout#CircularLayout-property-placeChildrenOnCommonRadius'
+      ),
+      new OptionGroupAttribute('TreeGroup', 70),
+      new TypeAttribute(Boolean)
+    ],
+    starSubstructureItem: [
+      new LabelAttribute(
+        'Star',
+        '#/api/CircularLayout#CircularLayout-property-starSubstructureStyle'
+      ),
+      new OptionGroupAttribute('SubstructureLayoutGroup', 10),
+      new EnumValuesAttribute([
+        ['Ignore', CircularLayoutStarSubstructureStyle.NONE],
+        ['Radial', CircularLayoutStarSubstructureStyle.RADIAL],
+        ['Separated Radial', CircularLayoutStarSubstructureStyle.SEPARATED_RADIAL]
+      ]),
+      new TypeAttribute(CircularLayoutStarSubstructureStyle)
+    ],
+    starSubstructureSizeItem: [
+      new LabelAttribute(
+        'Minimum Star Size',
+        '#/api/CircularLayout#CircularLayout-property-starSubstructureSize'
+      ),
+      new OptionGroupAttribute('SubstructureLayoutGroup', 15),
+      new MinMaxAttribute(4, 20),
+      new TypeAttribute(Number)
+    ],
+    nodeLabelingStyleItem: [
+      new LabelAttribute(
+        'Node Labeling',
+        '#/api/CircularLayout#CircularLayout-property-nodeLabelPlacement'
+      ),
+      new OptionGroupAttribute('NodePropertiesGroup', 10),
+      new EnumValuesAttribute([
+        ['Ignore Labels', RadialNodeLabelPlacement.IGNORE],
+        ['Consider Labels', RadialNodeLabelPlacement.CONSIDER],
+        ['Horizontal', RadialNodeLabelPlacement.HORIZONTAL],
+        ['Generic', RadialNodeLabelPlacement.GENERIC],
+        ['Ray-like at Leaves', RadialNodeLabelPlacement.RAY_LIKE_LEAVES],
+        ['Ray-like', RadialNodeLabelPlacement.RAY_LIKE]
+      ]),
+      new TypeAttribute(RadialNodeLabelPlacement)
+    ],
+    edgeLabelingItem: [
+      new LabelAttribute(
+        'Edge Labeling',
+        '#/api/CircularLayout#CircularLayout-property-edgeLabelPlacement'
+      ),
+      new OptionGroupAttribute('EdgePropertiesGroup', 10),
+      new TypeAttribute(Boolean)
+    ],
+    reduceAmbiguityItem: [
+      new LabelAttribute(
+        'Reduce Ambiguity',
+        '#/api/LabelingCosts#LabelingCosts-property-ambiguousPlacementCost'
+      ),
+      new OptionGroupAttribute('EdgePropertiesGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    labelPlacementOrientationItem: [
+      new LabelAttribute(
+        'Orientation',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-angle'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 10),
+      new EnumValuesAttribute([
+        ['Parallel', LabelPlacementOrientation.PARALLEL],
+        ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
+        ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
+        ['Vertical', LabelPlacementOrientation.VERTICAL]
+      ]),
+      new TypeAttribute(LabelPlacementOrientation)
+    ],
+    labelPlacementAlongEdgeItem: [
+      new LabelAttribute(
+        'Along Edge',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-placementAlongEdge'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 20),
+      new EnumValuesAttribute([
+        ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
+        ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
+        ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
+        ['At Target', LabelPlacementAlongEdge.AT_TARGET],
+        ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
+        ['Centered', LabelPlacementAlongEdge.CENTERED]
+      ]),
+      new TypeAttribute(LabelPlacementAlongEdge)
+    ],
+    labelPlacementSideOfEdgeItem: [
+      new LabelAttribute(
+        'Side of Edge',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-edgeSide'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 30),
+      new EnumValuesAttribute([
+        ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
+        ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
+        ['Left', LabelPlacementSideOfEdge.LEFT],
+        ['Right', LabelPlacementSideOfEdge.RIGHT],
+        ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+      ]),
+      new TypeAttribute(LabelPlacementSideOfEdge)
+    ],
+    labelPlacementDistanceItem: [
+      new LabelAttribute(
+        'Distance',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-distanceToEdge'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 40),
+      new MinMaxAttribute(0.0, 40.0),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ]
+  },
   /**
    * Setup default values for various configuration parameters.
    */
   constructor: function () {
+    // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
     const layout = new CircularLayout()
-    const treeLayout = layout.balloonLayout
-
-    this.layoutStyleItem = CircularLayoutStyle.BCC_COMPACT
+    const treeLayout = layout.backboneLayout
+    this.partitioningPolicyItem = CircularPartitioningPolicy.BCC_COMPACT
     this.actOnSelectionOnlyItem = false
     this.fromSketchItem = false
-    this.handleNodeLabelsItem = false
-
-    this.partitionLayoutStyleItem = PartitionStyle.CYCLE
+    this.partitionStyleItem = CircularLayoutPartitionStyle.CYCLE
     this.minimumNodeDistanceItem = 30
     this.chooseRadiusAutomaticallyItem = true
     this.fixedRadiusItem = 200
-
-    this.defaultBetweenCirclesRoutingItem = CircularLayoutRoutingStyle.STRAIGHT
-    this.defaultInCircleRoutingStyleItem = CircularLayoutRoutingStyle.STRAIGHT
-    this.defaultOnCircleRoutingStyleItem = CircularLayoutOnCircleRoutingStyle.STRAIGHT
-
+    this.defaultBetweenCirclesRoutingItem = CircularLayoutRoutingStyle.STRAIGHT_LINE
+    this.defaultInCircleRoutingStyleItem = CircularLayoutRoutingStyle.STRAIGHT_LINE
+    this.defaultOnCircleRoutingStyleItem = CircularLayoutOnCircleRoutingStyle.STRAIGHT_LINE
     this.edgeRoutingItem = CircularLayoutEdgeRoutingPolicy.INTERIOR
     this.exteriorEdgeToCircleDistanceItem = 20
     this.exteriorEdgeToEdgeDistanceItem = 10
     this.exteriorEdgeCornerRadiusItem = 20
     this.exteriorEdgeAngleItem = 10
     this.exteriorEdgeSmoothnessItem = 0.7
-
     this.edgeBundlingItem = false
     this.edgeBundlingStrengthItem = 1.0
-
-    this.preferredChildWedgeItem = treeLayout.preferredChildWedge
+    this.preferredChildSectorAngleItem = treeLayout.preferredChildSectorAngle
     this.minimumEdgeLengthItem = treeLayout.minimumEdgeLength
     this.maximumDeviationAngleItem = layout.maximumDeviationAngle
     this.compactnessFactorItem = treeLayout.compactnessFactor
     this.minimumTreeNodeDistanceItem = treeLayout.minimumNodeDistance
     this.allowOverlapsItem = treeLayout.allowOverlaps
     this.placeChildrenOnCommonRadiusItem = true
-
     this.starSubstructureItem = CircularLayoutStarSubstructureStyle.NONE
     this.starSubstructureSizeItem = layout.starSubstructureSize
-
-    this.edgeLabelingItem = false
+    this.edgeLabelingItem = layout.edgeLabelPlacement !== RadialEdgeLabelPlacement.IGNORE
     this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
     this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
     this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
     this.labelPlacementDistanceItem = 10.0
     this.title = 'Circular Layout'
-
-    this.nodeLabelingStyleItem = NodeLabelingPolicies.CONSIDER_CURRENT_POSITION
+    this.nodeLabelingStyleItem = layout.nodeLabelPlacement
   },
-
   /**
-   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @returns The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent) {
     const layout = new CircularLayout()
-    const balloonLayout = layout.balloonLayout
-
-    layout.layoutStyle = this.layoutStyleItem
-    layout.subgraphLayoutEnabled = this.actOnSelectionOnlyItem
+    layout.partitioningPolicy = this.getPartitioningPolicy(this.partitioningPolicyItem)
     layout.maximumDeviationAngle = this.maximumDeviationAngleItem
     layout.fromSketchMode = this.fromSketchItem
-    layout.considerNodeLabels = this.handleNodeLabelsItem
-
-    layout.partitionStyle = this.partitionLayoutStyleItem
-
-    layout.singleCycleLayout.minimumNodeDistance = this.minimumNodeDistanceItem
-    layout.singleCycleLayout.automaticRadius = this.chooseRadiusAutomaticallyItem
-    layout.singleCycleLayout.fixedRadius = this.fixedRadiusItem
-
-    balloonLayout.preferredChildWedge = this.preferredChildWedgeItem
-    balloonLayout.minimumEdgeLength = this.minimumEdgeLengthItem
-    balloonLayout.compactnessFactor = this.compactnessFactorItem
-    balloonLayout.allowOverlaps = this.allowOverlapsItem
+    layout.partitionDescriptor.style = this.partitionStyleItem
     layout.placeChildrenOnCommonRadius = this.placeChildrenOnCommonRadiusItem
-    balloonLayout.minimumNodeDistance = this.minimumTreeNodeDistanceItem
-
+    layout.partitionDescriptor.minimumNodeDistance = this.minimumNodeDistanceItem
+    layout.partitionDescriptor.automaticRadius = this.chooseRadiusAutomaticallyItem
+    layout.partitionDescriptor.fixedRadius = this.fixedRadiusItem
     if (this.edgeLabelingItem) {
-      const genericLabeling = new GenericLabeling()
-      genericLabeling.placeEdgeLabels = true
-      genericLabeling.placeNodeLabels = false
-      genericLabeling.reduceAmbiguity = this.reduceAmbiguityItem
-      layout.labelingEnabled = true
-      layout.labeling = genericLabeling
+      layout.edgeLabelPlacement = 'generic'
+      if (this.reduceAmbiguityItem) {
+        layout.layoutStages.get(GenericLabeling).defaultEdgeLabelingCosts.ambiguousPlacementCost =
+          1.0
+      }
+    } else {
+      layout.edgeLabelPlacement = 'ignore'
     }
-
-    layout.defaultEdgeLayoutDescriptor.betweenCirclesRoutingStyle =
-      this.defaultBetweenCirclesRoutingItem
-    layout.defaultEdgeLayoutDescriptor.inCircleRoutingStyle = this.defaultInCircleRoutingStyleItem
-    layout.defaultEdgeLayoutDescriptor.onCircleRoutingStyle = this.defaultOnCircleRoutingStyleItem
-
-    layout.edgeRoutingPolicy = this.edgeRoutingItem
-    layout.exteriorEdgeLayoutDescriptor.circleDistance = this.exteriorEdgeToCircleDistanceItem
-    layout.exteriorEdgeLayoutDescriptor.edgeToEdgeDistance = this.exteriorEdgeToEdgeDistanceItem
-    layout.exteriorEdgeLayoutDescriptor.preferredCurveLength = this.exteriorEdgeCornerRadiusItem
-    layout.exteriorEdgeLayoutDescriptor.preferredAngle = this.exteriorEdgeAngleItem
-    layout.exteriorEdgeLayoutDescriptor.smoothness = this.exteriorEdgeSmoothnessItem
-
+    layout.edgeDescriptor.betweenCirclesRoutingStyle = this.defaultBetweenCirclesRoutingItem
+    layout.edgeDescriptor.inCircleRoutingStyle = this.defaultInCircleRoutingStyleItem
+    layout.edgeDescriptor.onCircleRoutingStyle = this.defaultOnCircleRoutingStyleItem
+    layout.edgeRoutingPolicy = this.getEdgeRoutingPolicy(this.edgeRoutingItem)
+    layout.exteriorEdgeDescriptor.circleDistance = this.exteriorEdgeToCircleDistanceItem
+    layout.exteriorEdgeDescriptor.edgeDistance = this.exteriorEdgeToEdgeDistanceItem
+    layout.exteriorEdgeDescriptor.preferredCurveLength = this.exteriorEdgeCornerRadiusItem
+    layout.exteriorEdgeDescriptor.preferredAngle = this.exteriorEdgeAngleItem
+    layout.exteriorEdgeDescriptor.smoothness = this.exteriorEdgeSmoothnessItem
+    const subgraphLayout = layout.layoutStages.get(SubgraphLayoutStage)
+    subgraphLayout.enabled = this.actOnSelectionOnlyItem
+    const backboneLayout = layout.backboneLayout
+    backboneLayout.preferredChildSectorAngle = this.preferredChildSectorAngleItem
+    backboneLayout.minimumEdgeLength = this.minimumEdgeLengthItem
+    backboneLayout.compactnessFactor = this.compactnessFactorItem
+    backboneLayout.allowOverlaps = this.allowOverlapsItem
+    backboneLayout.minimumNodeDistance = this.minimumTreeNodeDistanceItem
     const ebc = layout.edgeBundling
     ebc.bundlingStrength = this.edgeBundlingStrengthItem
     ebc.defaultBundleDescriptor = new EdgeBundleDescriptor({
       bundled: this.edgeBundlingItem
     })
-
-    switch (this.nodeLabelingStyleItem) {
-      case NodeLabelingPolicies.NONE:
-        layout.considerNodeLabels = false
-        break
-      case NodeLabelingPolicies.RAYLIKE_LEAVES:
-        layout.integratedNodeLabeling = true
-        layout.nodeLabelingPolicy = NodeLabelingPolicy.RAY_LIKE_LEAVES
-        break
-      case NodeLabelingPolicies.CONSIDER_CURRENT_POSITION:
-        layout.considerNodeLabels = true
-        break
-      case NodeLabelingPolicies.HORIZONTAL:
-        layout.integratedNodeLabeling = true
-        layout.nodeLabelingPolicy = NodeLabelingPolicy.HORIZONTAL
-        break
-      default:
-        layout.considerNodeLabels = false
-        break
-    }
-
-    if (
-      this.nodeLabelingStyleItem === NodeLabelingPolicies.RAYLIKE_LEAVES ||
-      this.nodeLabelingStyleItem === NodeLabelingPolicies.HORIZONTAL
-    ) {
-      graphComponent.graph.nodeLabels.forEach((label) => {
-        graphComponent.graph.setLabelLayoutParameter(
-          label,
-          FreeNodeLabelModel.INSTANCE.findBestParameter(
-            label,
-            FreeNodeLabelModel.INSTANCE,
-            label.layout
-          )
-        )
-      })
-    }
-
+    layout.nodeLabelPlacement = this.nodeLabelingStyleItem
     layout.starSubstructureStyle = this.starSubstructureItem
     layout.starSubstructureSize = this.starSubstructureSizeItem
-
     return layout
   },
-
   /**
    * Creates and configures the layout data.
    * @returns The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new CircularLayoutData()
-
-    if (this.layoutStyleItem === CircularLayoutStyle.CUSTOM_GROUPS) {
-      layoutData.customGroups.delegate = (node) => graphComponent.graph.getParent(node)
+    if (this.partitioningPolicyItem === CircularPartitioningPolicy.CUSTOM_PARTITIONS) {
+      layoutData.partitions = (node) => graphComponent.graph.getParent(node)
     }
-
-    if (this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.MARKED_EXTERIOR) {
-      layoutData.exteriorEdges.items = graphComponent.selection.selectedEdges.toList()
+    if (this.edgeRoutingItem === EdgeRoutingPolicy.MARKED_EXTERIOR) {
+      layoutData.exteriorEdges = graphComponent.selection.edges.toList()
     }
-
-    return layoutData.combineWith(
+    let resultData = layoutData.combineWith(
       this.createLabelingLayoutData(
         graphComponent.graph,
         this.labelPlacementAlongEdgeItem,
@@ -249,1017 +624,246 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         this.labelPlacementDistanceItem
       )
     )
+    if (this.actOnSelectionOnlyItem) {
+      resultData = resultData.combineWith(this.createSubgraphLayoutData(graphComponent))
+    }
+    return resultData
   },
-
+  getPartitioningPolicy(style) {
+    switch (style) {
+      default:
+      case CircularPartitioningPolicy.CUSTOM_PARTITIONS:
+      case CircularPartitioningPolicy.BCC_COMPACT:
+        return CircularLayoutPartitioningPolicy.BCC_COMPACT
+      case CircularPartitioningPolicy.BCC_ISOLATED:
+        return CircularLayoutPartitioningPolicy.BCC_ISOLATED
+      case CircularPartitioningPolicy.SINGLE_CYCLE:
+        return CircularLayoutPartitioningPolicy.SINGLE_CYCLE
+    }
+  },
+  getEdgeRoutingPolicy(policy) {
+    switch (policy) {
+      default:
+      case EdgeRoutingPolicy.MARKED_EXTERIOR:
+      case EdgeRoutingPolicy.INTERIOR:
+        return CircularLayoutEdgeRoutingPolicy.INTERIOR
+      case EdgeRoutingPolicy.AUTOMATIC:
+        return CircularLayoutEdgeRoutingPolicy.AUTOMATIC
+      case EdgeRoutingPolicy.EXTERIOR:
+        return CircularLayoutEdgeRoutingPolicy.EXTERIOR
+    }
+  },
   /** @type {OptionGroup} */
-  GeneralGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('General'),
-        OptionGroupAttribute('RootGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  GeneralGroup: null,
   /** @type {OptionGroup} */
-  CycleGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Partition'),
-        OptionGroupAttribute('RootGroup', 20),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  CycleGroup: null,
   /** @type {OptionGroup} */
-  EdgesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Edges'),
-        OptionGroupAttribute('RootGroup', 30),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  EdgesGroup: null,
   /** @type {OptionGroup} */
-  DefaultEdgesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Default Edges'),
-        OptionGroupAttribute('EdgesGroup', 40),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  DefaultEdgesGroup: null,
   /** @type {OptionGroup} */
-  ExteriorEdgesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Exterior Edges'),
-        OptionGroupAttribute('EdgesGroup', 50),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  ExteriorEdgesGroup: null,
   /** @type {OptionGroup} */
-  TreeGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Tree'),
-        OptionGroupAttribute('RootGroup', 30),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  TreeGroup: null,
   /** @type {OptionGroup} */
-  SubstructureLayoutGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Substructure Layout'),
-        OptionGroupAttribute('RootGroup', 50),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  SubstructureLayoutGroup: null,
   /** @type {OptionGroup} */
-  LabelingGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Labeling'),
-        OptionGroupAttribute('RootGroup', 60),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  LabelingGroup: null,
   /** @type {OptionGroup} */
-  NodePropertiesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Node Settings'),
-        OptionGroupAttribute('LabelingGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  NodePropertiesGroup: null,
   /** @type {OptionGroup} */
-  EdgePropertiesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Edge Settings'),
-        OptionGroupAttribute('LabelingGroup', 20),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  EdgePropertiesGroup: null,
   /** @type {OptionGroup} */
-  PreferredPlacementGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Preferred Edge Label Placement'),
-        OptionGroupAttribute('LabelingGroup', 30),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  PreferredPlacementGroup: null,
   /** @type {string} */
   descriptionText: {
-    $meta: function () {
-      return [
-        OptionGroupAttribute('DescriptionGroup', 10),
-        ComponentAttribute(Components.HTML_BLOCK),
-        TypeAttribute(YString.$class)
-      ]
-    },
     get: function () {
       return "<p style='margin-top:0'>The circular layout style emphasizes group and tree structures within a network. It creates node partitions by analyzing the connectivity structure of the network, and arranges the partitions as separate circles. The circles themselves are arranged in a radial tree layout fashion.</p><p>This layout style portraits interconnected ring and star topologies and is excellent for applications in:</p><ul><li>Social networking (criminology, economics, fraud detection, etc.)</li><li>Network management</li><li>WWW visualization</li><li>eCommerce</li></ul>"
     }
   },
-
-  /** @type {CircularLayoutStyle} */
-  layoutStyleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Layout Style', '#/api/CircularLayout#CircularLayout-property-layoutStyle'),
-        OptionGroupAttribute('GeneralGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['BCC Compact', CircularLayoutStyle.BCC_COMPACT],
-            ['BCC Isolated', CircularLayoutStyle.BCC_ISOLATED],
-            ['Custom Groups', CircularLayoutStyle.CUSTOM_GROUPS],
-            ['Single Cycle', CircularLayoutStyle.SINGLE_CYCLE]
-          ]
-        }),
-        TypeAttribute(CircularLayoutStyle.$class)
-      ]
-    },
-    value: null
-  },
-
+  /** @type {CircularPartitioningPolicy} */
+  partitioningPolicyItem: null,
   /** @type {boolean} */
-  actOnSelectionOnlyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Act on Selection Only',
-          '#/api/CircularLayout#MultiStageLayout-property-subgraphLayoutEnabled'
-        ),
-        OptionGroupAttribute('GeneralGroup', 20),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  actOnSelectionOnlyItem: false,
   /** @type {boolean} */
-  fromSketchItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Use Drawing as Sketch',
-          '#/api/CircularLayout#CircularLayout-property-fromSketchMode'
-        ),
-        OptionGroupAttribute('GeneralGroup', 30),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
-  /** @type {PartitionStyle} */
-  partitionLayoutStyleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Partition Layout Style',
-          '#/api/CircularLayout#CircularLayout-property-partitionStyle'
-        ),
-        OptionGroupAttribute('CycleGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Circle', PartitionStyle.CYCLE],
-            ['Disk', PartitionStyle.DISK],
-            ['Compact Disk', PartitionStyle.COMPACT_DISK],
-            ['Organic', PartitionStyle.ORGANIC]
-          ]
-        }),
-        TypeAttribute(PartitionStyle.$class)
-      ]
-    },
-    value: null
-  },
-
+  fromSketchItem: false,
+  /** @type {CircularLayoutPartitionStyle} */
+  partitionStyleItem: null,
   /** @type {number} */
-  minimumNodeDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Node Distance',
-          '#/api/SingleCycleLayout#SingleCycleLayout-property-minimumNodeDistance'
-        ),
-        OptionGroupAttribute('CycleGroup', 20),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 999
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
-
+  minimumNodeDistanceItem: 0,
   /** @type {boolean} */
   shouldDisableMinimumNodeDistanceItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.chooseRadiusAutomaticallyItem === false
     }
   },
-
   /** @type {boolean} */
-  chooseRadiusAutomaticallyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Choose Radius Automatically',
-          '#/api/SingleCycleLayout#SingleCycleLayout-property-automaticRadius'
-        ),
-        OptionGroupAttribute('CycleGroup', 30),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  chooseRadiusAutomaticallyItem: false,
   /** @type {number} */
-  fixedRadiusItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Fixed Radius',
-          '#/api/SingleCycleLayout#SingleCycleLayout-property-fixedRadius'
-        ),
-        OptionGroupAttribute('CycleGroup', 40),
-        MinMaxAttribute().init({
-          min: 1,
-          max: 800
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 1
-  },
-
+  fixedRadiusItem: 1,
   /** @type {boolean} */
   shouldDisableFixedRadiusItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.chooseRadiusAutomaticallyItem
     }
   },
-
   /** @type {boolean} */
-  edgeBundlingItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Enable Edge Bundling',
-          '#/api/EdgeBundling#EdgeBundling-property-defaultBundleDescriptor'
-        ),
-        OptionGroupAttribute('EdgesGroup', 10),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  edgeBundlingItem: false,
   /** @type {boolean} */
   shouldDisableEdgeBundlingItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return (
-        this.partitionLayoutStyleItem !== PartitionStyle.CYCLE ||
-        this.layoutStyleItem === CircularLayoutStyle.BCC_ISOLATED
+        this.partitionStyleItem !== CircularLayoutPartitionStyle.CYCLE ||
+        this.partitioningPolicyItem === CircularPartitioningPolicy.BCC_ISOLATED
       )
     }
   },
-
-  /** @type {CircularLayoutEdgeRoutingPolicy} */
-  edgeRoutingItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Edge Routing Style',
-          '#/api/CircularLayout#CircularLayout-property-edgeRoutingPolicy'
-        ),
-        OptionGroupAttribute('EdgesGroup', 30),
-        EnumValuesAttribute().init({
-          values: [
-            ['Inside', CircularLayoutEdgeRoutingPolicy.INTERIOR],
-            ['Outside', CircularLayoutEdgeRoutingPolicy.EXTERIOR],
-            ['Automatic', CircularLayoutEdgeRoutingPolicy.AUTOMATIC],
-            ['Selected Edge Outside', CircularLayoutEdgeRoutingPolicy.MARKED_EXTERIOR]
-          ]
-        }),
-        TypeAttribute(CircularLayoutEdgeRoutingPolicy.$class)
-      ]
-    },
-    value: CircularLayoutEdgeRoutingPolicy.INTERIOR
-  },
-
+  /** @type {EdgeRoutingPolicy} */
+  edgeRoutingItem: CircularLayoutEdgeRoutingPolicy.INTERIOR,
   /** @type {CircularLayoutRoutingStyle} */
-  defaultBetweenCirclesRoutingItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Routing Style Between Circles',
-          '#/api/CircularLayoutEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-betweenCirclesRoutingStyle'
-        ),
-        OptionGroupAttribute('DefaultEdgesGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Straight', CircularLayoutRoutingStyle.STRAIGHT],
-            ['Curved', CircularLayoutRoutingStyle.CURVED]
-          ]
-        }),
-        TypeAttribute(CircularLayoutRoutingStyle.$class)
-      ]
-    },
-    value: CircularLayoutRoutingStyle.STRAIGHT
-  },
-
+  defaultBetweenCirclesRoutingItem: CircularLayoutRoutingStyle.STRAIGHT_LINE,
   /** @type {boolean} */
   shouldDisableDefaultBetweenCirclesRoutingItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.EXTERIOR
     }
   },
-
   /** @type {CircularLayoutRoutingStyle} */
-  defaultInCircleRoutingStyleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Routing Style Within Partitions',
-          '#/api/CircularLayoutEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-inCircleRoutingStyle'
-        ),
-        OptionGroupAttribute('DefaultEdgesGroup', 20),
-        EnumValuesAttribute().init({
-          values: [
-            ['Straight', CircularLayoutRoutingStyle.STRAIGHT],
-            ['Curved', CircularLayoutRoutingStyle.CURVED]
-          ]
-        }),
-        TypeAttribute(CircularLayoutRoutingStyle.$class)
-      ]
-    },
-    value: CircularLayoutRoutingStyle.STRAIGHT
-  },
-
+  defaultInCircleRoutingStyleItem: CircularLayoutRoutingStyle.STRAIGHT_LINE,
   /** @type {boolean} */
   shouldDisableDefaultInCircleRoutingStyleItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.EXTERIOR
     }
   },
-
   /** @type {CircularLayoutOnCircleRoutingStyle} */
-  defaultOnCircleRoutingStyleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Routing Style Between Neighbors',
-          '#/api/CircularLayoutEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-onCircleRoutingStyle'
-        ),
-        OptionGroupAttribute('DefaultEdgesGroup', 30),
-        EnumValuesAttribute().init({
-          values: [
-            ['Straight', CircularLayoutOnCircleRoutingStyle.STRAIGHT],
-            ['Curved', CircularLayoutOnCircleRoutingStyle.CURVED],
-            ['On Circle', CircularLayoutOnCircleRoutingStyle.ON_CIRCLE]
-          ]
-        }),
-        TypeAttribute(CircularLayoutOnCircleRoutingStyle.$class)
-      ]
-    },
-    value: CircularLayoutOnCircleRoutingStyle.STRAIGHT
-  },
-
+  defaultOnCircleRoutingStyleItem: CircularLayoutOnCircleRoutingStyle.STRAIGHT_LINE,
   /** @type {boolean} */
   shouldDisableDefaultOnCircleRoutingStyleItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.EXTERIOR
     }
   },
-
   /** @type {number} */
-  exteriorEdgeToCircleDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Distance to Circle',
-          '#/api/ExteriorEdgeLayoutDescriptor#ExteriorEdgeLayoutDescriptor-property-circleDistance'
-        ),
-        OptionGroupAttribute('ExteriorEdgesGroup', 10),
-        MinMaxAttribute().init({
-          min: 10,
-          max: 100,
-          step: 1
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 20
-  },
-
+  exteriorEdgeToCircleDistanceItem: 20,
   /** @type {boolean} */
   shouldDisableExteriorEdgeToCircleDistanceItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
-
   /** @type {number} */
-  exteriorEdgeToEdgeDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Edge to Edge Distance',
-          '#/api/ExteriorEdgeLayoutDescriptor#ExteriorEdgeLayoutDescriptor-property-edgeToEdgeDistance'
-        ),
-        OptionGroupAttribute('ExteriorEdgesGroup', 20),
-        MinMaxAttribute().init({
-          min: 5,
-          max: 50,
-          step: 1
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 10
-  },
-
+  exteriorEdgeToEdgeDistanceItem: 10,
   /** @type {boolean} */
   shouldDisableExteriorEdgeToEdgeDistanceItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
-
   /** @type {number} */
-  exteriorEdgeCornerRadiusItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Corner Radius',
-          '#/api/ExteriorEdgeLayoutDescriptor#ExteriorEdgeLayoutDescriptor-property-preferredCurveLength'
-        ),
-        OptionGroupAttribute('ExteriorEdgesGroup', 30),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100,
-          step: 1
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 20
-  },
-
+  exteriorEdgeCornerRadiusItem: 20,
   /** @type {boolean} */
   shouldDisableExteriorEdgeCornerRadiusItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
-
   /** @type {number} */
-  exteriorEdgeAngleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Angle',
-          '#/api/ExteriorEdgeLayoutDescriptor#ExteriorEdgeLayoutDescriptor-property-preferredAngle'
-        ),
-        OptionGroupAttribute('ExteriorEdgesGroup', 40),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 45,
-          step: 1
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 10
-  },
-
+  exteriorEdgeAngleItem: 10,
   /** @type {boolean} */
   shouldDisableExteriorEdgeAngleItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
-
   /** @type {number} */
-  exteriorEdgeSmoothnessItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Smoothness',
-          '#/api/ExteriorEdgeLayoutDescriptor#ExteriorEdgeLayoutDescriptor-property-smoothness'
-        ),
-        OptionGroupAttribute('ExteriorEdgesGroup', 50),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 1,
-          step: 0.01
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0.7
-  },
-
+  exteriorEdgeSmoothnessItem: 0.7,
   /** @type {boolean} */
   shouldDisableExteriorEdgeSmoothnessItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
-
   /** @type {number} */
-  edgeBundlingStrengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Bundling Strength',
-          '#/api/EdgeBundling#EdgeBundling-property-bundlingStrength'
-        ),
-        OptionGroupAttribute('EdgesGroup', 20),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 1.0,
-          step: 0.01
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 1.0
-  },
-
+  edgeBundlingStrengthItem: 1.0,
   /** @type {boolean} */
   shouldDisableEdgeBundlingStrengthItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return (
-        this.partitionLayoutStyleItem !== PartitionStyle.CYCLE ||
-        this.layoutStyleItem === CircularLayoutStyle.BCC_ISOLATED
+        this.partitionStyleItem !== CircularLayoutPartitionStyle.CYCLE ||
+        this.partitioningPolicyItem === CircularLayoutPartitioningPolicy.BCC_ISOLATED
       )
     }
   },
-
   /** @type {number} */
-  preferredChildWedgeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Preferred Child Wedge',
-          '#/api/BalloonLayout#BalloonLayout-property-preferredChildWedge'
-        ),
-        OptionGroupAttribute('TreeGroup', 10),
-        MinMaxAttribute().init({
-          min: 1,
-          max: 359
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 1
-  },
-
+  preferredChildSectorAngleItem: 1,
   /** @type {number} */
-  minimumEdgeLengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Edge Length',
-          '#/api/BalloonLayout#BalloonLayout-property-minimumEdgeLength'
-        ),
-        OptionGroupAttribute('TreeGroup', 20),
-        MinMaxAttribute().init({
-          min: 5,
-          max: 400
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 5
-  },
-
+  minimumEdgeLengthItem: 5,
   /** @type {number} */
-  maximumDeviationAngleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Maximum Deviation Angle',
-          '#/api/CircularLayout#CircularLayout-property-maximumDeviationAngle'
-        ),
-        OptionGroupAttribute('TreeGroup', 30),
-        MinMaxAttribute().init({
-          min: 1,
-          max: 360
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 1
-  },
-
+  maximumDeviationAngleItem: 1,
   /** @type {number} */
-  compactnessFactorItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Compactness Factor',
-          '#/api/BalloonLayout#BalloonLayout-property-compactnessFactor'
-        ),
-        OptionGroupAttribute('TreeGroup', 40),
-        MinMaxAttribute().init({
-          min: 0.1,
-          max: 0.9,
-          step: 0.01
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0.1
-  },
-
+  compactnessFactorItem: 0.1,
   /** @type {number} */
-  minimumTreeNodeDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Node Distance',
-          '#/api/BalloonLayout#BalloonLayout-property-minimumNodeDistance'
-        ),
-        OptionGroupAttribute('TreeGroup', 50),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
-
+  minimumTreeNodeDistanceItem: 0,
   /** @type {boolean} */
-  allowOverlapsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Allow Overlaps',
-          '#/api/BalloonLayout#BalloonLayout-property-allowOverlaps'
-        ),
-        OptionGroupAttribute('TreeGroup', 60),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  allowOverlapsItem: false,
   /** @type {boolean} */
-  placeChildrenOnCommonRadiusItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Place Children on Common Radius',
-          '#/api/CircularLayout#CircularLayout-property-placeChildrenOnCommonRadius'
-        ),
-        OptionGroupAttribute('TreeGroup', 70),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  placeChildrenOnCommonRadiusItem: false,
   /** @type {boolean} */
   shouldDisableTreeGroupItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
-      return this.layoutStyleItem === CircularLayoutStyle.SINGLE_CYCLE
+      return this.partitioningPolicyItem === CircularLayoutPartitioningPolicy.SINGLE_CYCLE
     }
   },
-
   /** @type {CircularLayoutStarSubstructureStyle} */
-  starSubstructureItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Star',
-          '#/api/CircularLayout#CircularLayout-property-starSubstructureStyle'
-        ),
-        OptionGroupAttribute('SubstructureLayoutGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Ignore', CircularLayoutStarSubstructureStyle.NONE],
-            ['Radial', CircularLayoutStarSubstructureStyle.RADIAL],
-            ['Separated Radial', CircularLayoutStarSubstructureStyle.SEPARATED_RADIAL]
-          ]
-        }),
-        TypeAttribute(CircularLayoutStarSubstructureStyle.$class)
-      ]
-    },
-    value: null
-  },
-
+  starSubstructureItem: null,
   /** @type {number} */
-  starSubstructureSizeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Star Size',
-          '#/api/CircularLayout#CircularLayout-property-starSubstructureSize'
-        ),
-        OptionGroupAttribute('SubstructureLayoutGroup', 15),
-        MinMaxAttribute().init({
-          min: 4,
-          max: 20
-        }),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 4
-  },
-
+  starSubstructureSizeItem: 4,
   shouldDisableStarSubstructureSizeItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.starSubstructureItem === CircularLayoutStarSubstructureStyle.NONE
     }
   },
-
-  /** @type {NodeLabelingPolicies} */
-  nodeLabelingStyleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Node Labeling',
-          '#/api/CircularLayout#CircularLayout-property-nodeLabelingPolicy'
-        ),
-        OptionGroupAttribute('NodePropertiesGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Ignore Labels', NodeLabelingPolicies.NONE],
-            ['Consider Labels', NodeLabelingPolicies.CONSIDER_CURRENT_POSITION],
-            ['Horizontal', NodeLabelingPolicies.HORIZONTAL],
-            ['Ray-like at Leaves', NodeLabelingPolicies.RAYLIKE_LEAVES]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
-
+  /** @type {RadialNodeLabelPlacement} */
+  nodeLabelingStyleItem: null,
   /** @type {boolean} */
-  edgeLabelingItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Edge Labeling',
-          '#/api/CircularLayout#MultiStageLayout-property-labelingEnabled'
-        ),
-        OptionGroupAttribute('EdgePropertiesGroup', 10),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  edgeLabelingItem: false,
   /** @type {boolean} */
-  reduceAmbiguityItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Reduce Ambiguity',
-          '#/api/GenericLabeling#MISLabelingBase-property-reduceAmbiguity'
-        ),
-        OptionGroupAttribute('EdgePropertiesGroup', 20),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  reduceAmbiguityItem: false,
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return !this.edgeLabelingItem
     }
   },
-
   /** @type {LabelPlacementOrientation} */
-  labelPlacementOrientationItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Orientation',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-angle'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Parallel', LabelPlacementOrientation.PARALLEL],
-            ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
-            ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
-            ['Vertical', LabelPlacementOrientation.VERTICAL]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
-
+  labelPlacementOrientationItem: null,
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return !this.edgeLabelingItem
     }
   },
-
   /** @type {LabelPlacementAlongEdge} */
-  labelPlacementAlongEdgeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Along Edge',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-placeAlongEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 20),
-        EnumValuesAttribute().init({
-          values: [
-            ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
-            ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
-            ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
-            ['At Target', LabelPlacementAlongEdge.AT_TARGET],
-            ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
-            ['Centered', LabelPlacementAlongEdge.CENTERED]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
-
+  labelPlacementAlongEdgeItem: null,
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return !this.edgeLabelingItem
     }
   },
-
   /** @type {LabelPlacementSideOfEdge} */
-  labelPlacementSideOfEdgeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Side of Edge',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-sideOfEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 30),
-        EnumValuesAttribute().init({
-          values: [
-            ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
-            ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
-            ['Left', LabelPlacementSideOfEdge.LEFT],
-            ['Right', LabelPlacementSideOfEdge.RIGHT],
-            ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
-
+  labelPlacementSideOfEdgeItem: null,
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return !this.edgeLabelingItem
     }
   },
-
   /** @type {number} */
-  labelPlacementDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Distance',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-distanceToEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 40),
-        MinMaxAttribute().init({
-          min: 0.0,
-          max: 40.0
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
-
+  labelPlacementDistanceItem: 0,
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return (
         !this.edgeLabelingItem ||

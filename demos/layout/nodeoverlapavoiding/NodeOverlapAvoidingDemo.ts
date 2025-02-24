@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,56 +29,42 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CanvasComponent,
-  DefaultGraph,
+  Graph,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  GraphModelManager,
   GroupingNodePositionHandler,
   INode,
   INodeSizeConstraintProvider,
   IPositionHandler,
   IReshapeHandler,
-  ItemCopiedEventArgs,
-  ItemEventArgs,
   License,
   NodeSizeConstraintProvider,
   OrthogonalEdgeEditingContext,
   Point,
   Rect,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import SampleData from './resources/SampleData'
 import { NonOverlapPositionHandler } from './NonOverlapPositionHandler'
 import { NonOverlapReshapeHandler } from './NonOverlapReshapeHandler'
 import { LayoutHelper } from './LayoutHelper'
-import { HidingEdgeDescriptor } from './HidingEdgeDescriptor'
-import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { enableSingleSelection } from './SingleSelectionHelper'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
-  configureModelManager(graphComponent.graphModelManager)
   initializeInputModes()
   initializeGraph()
 
   // bind the buttons to their actions
   initializeUI()
-}
-
-/**
- * Modifies the {@link GraphModelManager} so that certain edges are hidden.
- */
-function configureModelManager(manager: GraphModelManager): void {
-  manager.edgeDescriptor = new HidingEdgeDescriptor(manager.edgeDescriptor)
 }
 
 /**
@@ -92,9 +78,6 @@ function initializeInputModes(): void {
   const editMode = new GraphEditorInputMode()
   graphComponent.inputMode = editMode
 
-  // enable interactive re-parenting
-  editMode.allowGroupingOperations = true
-
   // enable single selection
   enableSingleSelection(graphComponent)
 
@@ -103,32 +86,41 @@ function initializeInputModes(): void {
   editMode.orthogonalEdgeEditingContext = orthogonalEdgeEditingContext
 
   // disable orthogonal edge editing during node move or resize gestures
-  const disableOrthogonalEdgeEditing = (): void => {
-    if (graphComponent.selection.selectedNodes.size > 0) {
+  const disableOrthogonalEdgeEditing = async (): Promise<void> => {
+    if (editMode.moveUnselectedItemsInputMode.affectedItems.size > 0) {
       orthogonalEdgeEditingContext.enabled = false
     }
   }
-  const enableOrthogonalEdgeEditing = (): void => {
+  const enableOrthogonalEdgeEditing = async (): Promise<void> => {
     orthogonalEdgeEditingContext.enabled = true
   }
-  editMode.handleInputMode.addDragStartingListener(disableOrthogonalEdgeEditing)
-  editMode.handleInputMode.addDragFinishedListener(enableOrthogonalEdgeEditing)
-  editMode.handleInputMode.addDragCanceledListener(enableOrthogonalEdgeEditing)
-  editMode.moveInputMode.addDragStartingListener(disableOrthogonalEdgeEditing)
-  editMode.moveInputMode.addDragFinishedListener(enableOrthogonalEdgeEditing)
-  editMode.moveInputMode.addDragCanceledListener(enableOrthogonalEdgeEditing)
+  editMode.handleInputMode.addEventListener('drag-starting', disableOrthogonalEdgeEditing)
+  editMode.handleInputMode.addEventListener('drag-finished', enableOrthogonalEdgeEditing)
+  editMode.handleInputMode.addEventListener('drag-canceled', enableOrthogonalEdgeEditing)
+  editMode.moveUnselectedItemsInputMode.addEventListener(
+    'drag-starting',
+    disableOrthogonalEdgeEditing
+  )
+  editMode.moveUnselectedItemsInputMode.addEventListener(
+    'drag-finished',
+    enableOrthogonalEdgeEditing
+  )
+  editMode.moveUnselectedItemsInputMode.addEventListener(
+    'drag-canceled',
+    enableOrthogonalEdgeEditing
+  )
 
   // use a position handler that avoids overlapping,
   // but only apply it to the selected node and not to the children of groups
-  graph.decorator.nodeDecorator.positionHandlerDecorator.setFactory(
-    (node: INode) => {
-      return node === graphComponent.selection.selectedNodes.at(0)
+  graph.decorator.nodes.positionHandler.addFactory(
+    () => {
+      return !editMode.moveUnselectedItemsInputMode.isDragging
     },
     (node: INode) => {
       // Lookup the node position handler that only handles the location of the node itself
-      const defaultPositionHandler = DefaultGraph.DEFAULT_NODE_LOOKUP.contextLookup(
+      const defaultPositionHandler = Graph.DEFAULT_NODE_LOOKUP.contextLookup(
         node,
-        IPositionHandler.$class
+        IPositionHandler
       ) as IPositionHandler
       // wrap it in a GroupingNodePositionHandler that moves all child nodes but doesn't update the
       // parent group node bounds
@@ -140,11 +132,11 @@ function initializeInputModes(): void {
   )
 
   // use a reshape handler that avoids overlapping
-  graph.decorator.nodeDecorator.reshapeHandlerDecorator.setFactory((node: INode) => {
+  graph.decorator.nodes.reshapeHandler.addFactory((node: INode) => {
     // Lookup the node reshape handler that only reshapes the node itself (and not its parent group node)
-    const defaultReshapeHandler = DefaultGraph.DEFAULT_NODE_LOOKUP.contextLookup(
+    const defaultReshapeHandler = Graph.DEFAULT_NODE_LOOKUP.contextLookup(
       node,
-      IReshapeHandler.$class
+      IReshapeHandler
     ) as IReshapeHandler
     // wrap it in a NonOverlapReshapeHandler that removes overlaps during and after the resize gesture
     return new NonOverlapReshapeHandler(node, defaultReshapeHandler)
@@ -152,46 +144,44 @@ function initializeInputModes(): void {
 
   // set a size constraint provider for a minimum node size for all nodes not already providing their own one
   const minimumSize = new Size(5, 5)
-  const sizeConstraintProviderDecorator =
-    graph.decorator.nodeDecorator.sizeConstraintProviderDecorator
-  sizeConstraintProviderDecorator.decorateNulls = true
-  sizeConstraintProviderDecorator.setImplementationWrapper(
-    (node: INode | null, provider: INodeSizeConstraintProvider | null) => {
-      return provider || new NodeSizeConstraintProvider(minimumSize, Size.INFINITE, null)
+  const sizeConstraintProviderDecorator = graph.decorator.nodes.sizeConstraintProvider
+  sizeConstraintProviderDecorator.addWrapperFactory(
+    (_: INode | null, provider: INodeSizeConstraintProvider | null) => {
+      return provider || new NodeSizeConstraintProvider(minimumSize, Size.INFINITE)
     }
   )
 
   // avoid overlapping when creating, pasting or duplicating nodes
-  editMode.addNodeCreatedListener((_, evt) => {
-    makeSpace(evt.item)
+  editMode.addEventListener('node-created', async (evt) => {
+    await makeSpace(evt.item)
   })
-  graphComponent.clipboard.fromClipboardCopier.addNodeCopiedListener((_, evt) => {
+  graphComponent.clipboard.fromClipboardCopier.addEventListener('node-copied', async (evt) => {
     // clear the current selection before the layout starts because GraphEditorInputMode cannot
     // do this while the layout is running (the selection is usually cleared after this event)
     graphComponent.selection.clear()
-    makeSpace(evt.copy)
+    await makeSpace(evt.copy)
   })
-  graphComponent.clipboard.duplicateCopier.addNodeCopiedListener((_, evt) => {
+  graphComponent.clipboard.duplicateCopier.addEventListener('node-copied', async (evt) => {
     // clear the current selection before the layout starts because GraphEditorInputMode cannot
     // do this while the layout is running (the selection is usually cleared after this event)
     graphComponent.selection.clear()
-    makeSpace(evt.copy)
+    await makeSpace(evt.copy)
   })
 }
 
 /**
  * Makes space for a new node.
  */
-function makeSpace(node: INode): void {
-  new LayoutHelper(graphComponent, node).layoutImmediately()
+async function makeSpace(node: INode): Promise<void> {
+  await new LayoutHelper(graphComponent, node).layoutImmediately()
 }
 
 /**
  * Initializes styles and loads a sample graph.
  */
 function initializeGraph(): void {
-  initDemoStyles(graphComponent.graph)
-  loadGraph('hierarchic')
+  initDemoStyles(graphComponent.graph, { orthogonalEditing: true })
+  loadGraph('hierarchical')
 }
 
 /**
@@ -226,17 +216,17 @@ function loadGraph(sampleName: string): void {
 
   graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
-      graph.setPortLocation(edge.sourcePort!, Point.from(edge.tag.sourcePort))
+      graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
     }
     if (edge.tag.targetPort) {
-      graph.setPortLocation(edge.targetPort!, Point.from(edge.tag.targetPort))
+      graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
     }
     edge.tag.bends.forEach((bend: { x: number; y: number }) => {
       graph.addBend(edge, bend)
     })
   })
 
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
 
 /**

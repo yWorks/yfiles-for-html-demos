@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FreeNodePortLocationModel, GraphComponent, IGraph, INode, Point, SimpleNode } from 'yfiles'
-import { FlowNodePortStyle } from './FlowNodePortStyle.js'
-import { FlowNodeStyle } from './FlowNodeStyle.js'
-import { flowNodeProperties } from './flowNodeProperties.js'
-
+import {
+  FreeNodePortLocationModel,
+  GraphComponent,
+  IGraph,
+  INode,
+  Point,
+  SimpleNode
+} from '@yfiles/yfiles'
+import {} from './FlowNodePort'
+import { FlowNodePortStyle } from './FlowNodePortStyle'
+import { FlowNodeStyle } from './FlowNodeStyle'
+import { flowNodeProperties } from './flowNodeProperties'
 export const flowNodeVariants = [
   'storageWriteFile',
   'storageReadFile',
@@ -52,59 +59,23 @@ export const flowNodeVariants = [
   'commonStatus'
 ]
 /**
- * @typedef {*} FlowNodeVariant
- */
-/**
- * @typedef {Object} FlowNodeValidation
- * @property {Array.<string>} invalidProperties
- * @property {Array.<string>} validationMessages
- */
-/**
- * @typedef {function} FlowNodeValidationFn
- */
-
-/**
- * @typedef {Object} FlowNodeProperties
- * @property {FlowNodeVariant} variant
- * @property {string} label
- * @property {boolean} hasLeftPort
- * @property {boolean} hasRightPort
- * @property {FlowNodeValidationFn} [validate]
- */
-
-/**
- * @typedef {*} FlowNode
- */
-
-/**
- * @typedef {Object} FlowNodeInGraphOptions
- * @property {FlowNodeVariant} variant
- * @property {Point} position
- * @property {IGraph} graph
- */
-
-/**
  * Properties that should never appear in the tag editor
  */
 export let hiddenProperties = ['hasLeftPort', 'hasRightPort', 'validate']
 export let lockedProperties = ['variant']
-
 const portStyle = new FlowNodePortStyle()
-
 /**
  * Modifies node-related graph configuration.
- * @param {!GraphComponent} undefined
  */
 export function configureFlowNodes({ graph, selection }) {
-  graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
-  graph.decorator.nodeDecorator.highlightDecorator.hideImplementation()
-  graph.decorator.nodeDecorator.selectionDecorator.hideImplementation()
-
+  graph.decorator.nodes.focusRenderer.hide()
+  graph.decorator.nodes.highlightRenderer.hide()
+  graph.decorator.nodes.selectionRenderer.hide()
   // When a new node appears in the graph, its ports are added automatically. This is done
   // in reaction to `NodeCreated` event so that nodes added from the DnD palette, which doesn't
   // handle nodes with ports correctly, end up having their ports properly configured as soon as
   // they're dropped onto the main graph.
-  graph.addNodeCreatedListener((_sender, event) => {
+  graph.addEventListener('node-created', (event) => {
     const node = event.item
     if (!isFlowNode(node)) {
       return
@@ -115,7 +86,7 @@ export function configureFlowNodes({ graph, selection }) {
         graph.addPort({
           owner: node,
           style: portStyle,
-          locationParameter: FreeNodePortLocationModel.NODE_LEFT_ANCHORED,
+          locationParameter: FreeNodePortLocationModel.LEFT,
           tag: {
             side: 'left'
           }
@@ -124,7 +95,7 @@ export function configureFlowNodes({ graph, selection }) {
         graph.addPort({
           owner: node,
           style: portStyle,
-          locationParameter: FreeNodePortLocationModel.NODE_RIGHT_ANCHORED,
+          locationParameter: FreeNodePortLocationModel.RIGHT,
           tag: {
             side: 'right'
           }
@@ -140,17 +111,13 @@ export function configureFlowNodes({ graph, selection }) {
         .sort((a, b) => b - a)[0]
       node.tag = { ...node.tag, label: label + ` #${lastLabelNumber + 1}` }
     }
-
     selection.clear()
-    selection.setSelected(node, true)
+    selection.add(node)
   })
 }
-
 /**
  * Creates a FlowNode and adds it to the graph at the specified position.
  * Ports will be added automatically on node creation.
- * @param {!FlowNodeInGraphOptions} undefined
- * @returns {!FlowNode}
  */
 export function createInGraph({ variant, position, graph }) {
   const properties = { ...flowNodeProperties[variant] }
@@ -165,12 +132,9 @@ export function createInGraph({ variant, position, graph }) {
     tag: properties
   })
 }
-
 /**
  * Creates a graph-less FlowNode without ports (but dummy port visuals will still be rendered
  * as part of the node visual).
- * @param {!FlowNodeVariant} variant
- * @returns {!FlowNode}
  */
 export function createFlowNode(variant) {
   const properties = { ...flowNodeProperties[variant] }
@@ -185,32 +149,17 @@ export function createFlowNode(variant) {
     tag: properties
   })
 }
-
-/**
- * @param {!unknown} node
- * @returns {!FlowNode}
- */
 export function assertIsFlowNode(node) {
   if (!isFlowNode(node)) {
     throw new Error('Node not satisfy type FlowNode')
   }
 }
-
-/**
- * @param {!unknown} node
- * @returns {!FlowNode}
- */
 export function isFlowNode(node) {
   if (!(node instanceof INode)) {
     return false
   }
   return validateNodeTag(node.tag)
 }
-
-/**
- * @param {!unknown} tag
- * @returns {!FlowNodeProperties}
- */
 export function validateNodeTag(tag) {
   return typeof tag === 'object' && tag !== null && flowNodeVariants.includes(tag.variant)
 }

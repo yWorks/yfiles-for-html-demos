@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,63 +26,42 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Font, LabelStyleBase, Size, SvgVisual, TextRenderSupport } from 'yfiles'
-
+import { Font, LabelStyleBase, Size, SvgVisual, TextRenderSupport } from '@yfiles/yfiles'
 const font = new Font({
   fontFamily: 'Arial',
   fontSize: 12
 })
 const padding = 3
-
 export class CustomLabelStyle extends LabelStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @returns {?Visual}
-   */
   createVisual(context, label) {
     // create an SVG text element that displays the label text
     const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text')
-
     const labelSize = label.layout.toSize()
     // use a convenience method to place text content in the <text> element.
     TextRenderSupport.addText(textElement, label.text, font)
-
     // move the text right and down to leave a little padding space
     textElement.setAttribute('transform', `translate(${padding} ${padding})`)
-
     // add a background shape
     const backgroundPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     backgroundPathElement.setAttribute('d', this.createBackgroundShapeData(labelSize))
     backgroundPathElement.setAttribute('stroke', '#aaa')
     backgroundPathElement.setAttribute('fill', '#fffecd')
-
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     gElement.appendChild(backgroundPathElement)
     gElement.appendChild(textElement)
-
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(gElement)
-
     return new SvgVisual(gElement)
   }
-
-  /**
-   * @param {!ILabel} label
-   * @returns {!Size}
-   */
   getPreferredSize(label) {
     // measure the label text using the font
     const { width, height } = TextRenderSupport.measureText(label.text, font)
     // return the measured size plus a small padding
     return new Size(width + padding + padding, height + padding + padding)
   }
-
   /**
    * Creates a simple "speech balloon" shape.
-   * @param {!Size} labelSize
-   * @returns {!string}
    */
   createBackgroundShapeData(labelSize) {
     const { width: w, height: h } = labelSize

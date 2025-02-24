@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,12 +39,12 @@ import {
   IInputModeContext,
   IModelItem,
   INode,
+  InputModeContext,
   InputModeEventArgs,
   Point,
   PolylineEdgeStyle,
-  ShapeNodeStyle,
-  SolidColorFill
-} from 'yfiles'
+  ShapeNodeStyle
+} from '@yfiles/yfiles'
 
 /**
  * An {@link DropInputMode} specialized to drag and drop colors onto {@link INode}s and
@@ -80,14 +80,15 @@ export class ColorDropInputMode extends DropInputMode {
    */
   set dropTarget(value: INode | IEdge | null) {
     if (this._dropTarget !== value) {
-      const highlightManager = this.inputModeContext?.lookup(HighlightIndicatorManager.$class)
+      const highlightManager = this.parentInputModeContext?.lookup(HighlightIndicatorManager)
 
       if (highlightManager) {
+        const selectionModel = highlightManager.items
         if (this._dropTarget) {
-          highlightManager.removeHighlight(this._dropTarget)
+          selectionModel?.remove(this._dropTarget)
         }
         if (value) {
-          highlightManager.addHighlight(value)
+          selectionModel?.add(value)
         }
       }
       this._dropTarget = value
@@ -96,7 +97,7 @@ export class ColorDropInputMode extends DropInputMode {
 
   protected onDraggedOver(evt: InputModeEventArgs) {
     super.onDraggedOver(this.createInputModeEventArgs())
-    this.updateDropTarget(this.mousePosition.toPoint())
+    this.updateDropTarget(this.pointerPosition.toPoint())
   }
 
   protected onDragLeft(evt: InputModeEventArgs) {
@@ -126,7 +127,7 @@ export class ColorDropInputMode extends DropInputMode {
   private getDropTarget(dragLocation: Point): INode | IEdge | null {
     const validDrag =
       !this.lastDragEventArgs || this.lastDragEventArgs.dropEffect !== DragDropEffects.NONE
-    const context = this.inputModeContext
+    const context = this.parentInputModeContext
     const color = this.draggedColor
 
     if (validDrag && context && color) {
@@ -142,12 +143,12 @@ export class ColorDropInputMode extends DropInputMode {
    * Finds the first edge or node that contains the given location.
    */
   private findEdgeOrNode(context: IInputModeContext, location: Point): IEdge | INode | null {
-    const hitTester = context.lookup(IHitTester.$class)
+    const hitTester = context.lookup<IHitTester>(IHitTester)
     // hit testing needs to be done with a context whose parent input mode is this mode,
     // because hit-testables may behave differently depending on context
     // this is e.g. the case for GroupNodeStyle
     return hitTester
-      ?.enumerateHits(IInputModeContext.createInputModeContext(this, context), location)
+      ?.enumerateHits(new InputModeContext(context, this), location)
       .find(isEdgeOrNode) as IEdge | INode | null
   }
 
@@ -184,7 +185,7 @@ export class ColorDropInputMode extends DropInputMode {
    */
   private applyNodeColor(graph: IGraph | null, style: ShapeNodeStyle, color: string): void {
     const oldFill = style.fill
-    const newFill = new SolidColorFill(color)
+    const newFill = color
     if (graph) {
       graph.addUndoUnit(
         'Change Node Color',
@@ -202,7 +203,7 @@ export class ColorDropInputMode extends DropInputMode {
   private applyEdgeColor(graph: IGraph | null, style: PolylineEdgeStyle, color: string): void {
     const oldStroke = style.stroke
     const newStroke = style.stroke!.cloneCurrentValue()
-    newStroke.fill = new SolidColorFill(color)
+    newStroke.fill = color
     if (graph) {
       graph.addUndoUnit(
         'Change Edge Color',
@@ -224,7 +225,7 @@ export class ColorDropInputMode extends DropInputMode {
    */
   protected adjustEffect(evt: DragEventArgs): boolean {
     if (super.adjustEffect(evt)) {
-      const target = this.getDropTarget(this.mousePosition.toPoint())
+      const target = this.getDropTarget(this.pointerPosition.toPoint())
       evt.dropEffect = target ? DragDropEffects.COPY : DragDropEffects.NONE
       return true
     }

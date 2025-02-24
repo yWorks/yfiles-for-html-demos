@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,13 +31,10 @@ import {
   ILabelModel,
   ILabelModelParameter,
   ILookup,
-  INode,
   OrientedRectangle
-} from 'yfiles'
-import { ActivityNodeStyle } from './ActivityNodeStyle.js'
-import { getMainActivityWidth, getMainActivityX } from '../gantt-utils.js'
-import { getActivity } from '../resources/data-model.js'
-
+} from '@yfiles/yfiles'
+import { getMainActivityWidth, getMainActivityX } from '../gantt-utils'
+import { getActivity } from '../resources/data-model'
 /**
  * A label model that arranges the label centered in the "main" activity part, omitting the parts
  * for the lead time and follow-up time.
@@ -46,9 +43,6 @@ export class ActivityNodeLabelModel extends BaseClass(ILabelModel) {
   /**
    * Calculates the oriented rectangle for the node label based on the node's layout
    * without considering the lead/follow-up time i.e., only the 'solid' part is considered.
-   * @param {!ILabel} label
-   * @param {!ILabelModelParameter} layoutParameter
-   * @returns {!IOrientedRectangle}
    */
   getGeometry(label, layoutParameter) {
     const node = label.owner
@@ -63,67 +57,35 @@ export class ActivityNodeLabelModel extends BaseClass(ILabelModel) {
       height
     })
   }
-
   /**
    * Returns a custom label model parameter used for determining the position of the label.
-   * @returns {!ILabelModelParameter}
    */
   createDefaultParameter() {
     return new ActivityNodeStyleLabelModelParameter(this)
   }
-
-  /**
-   * @param {!ILabel} label
-   * @param {!ILabelModelParameter} layoutParameter
-   * @returns {!ILookup}
-   */
-  getContext(label, layoutParameter) {
+  getContext(label) {
     return ILookup.EMPTY
   }
-
-  /**
-   * @template T
-   * @param {!Class.<T>} type
-   * @returns {?T}
-   */
   lookup(type) {
     return null
   }
 }
-
 /**
  * A custom label model parameter used for placing the labels of the activity nodes.
  */
 class ActivityNodeStyleLabelModelParameter extends BaseClass(ILabelModelParameter) {
-  /**
-   * @param {!ILabelModel} _model
-   */
+  _model
   constructor(_model) {
     super()
     this._model = _model
   }
-
-  /**
-   * @returns {*}
-   */
   clone() {
     return this
   }
-
   /**
    * Returns the model used for placing the labels.
-   * @type {!ILabelModel}
    */
   get model() {
     return this._model
-  }
-
-  /**
-   * Returns true if the owner of the label is an activity node, false otherwise.
-   * @param {!ILabel} label
-   * @returns {boolean}
-   */
-  supports(label) {
-    return label.owner instanceof INode && label.owner.style instanceof ActivityNodeStyle
   }
 }

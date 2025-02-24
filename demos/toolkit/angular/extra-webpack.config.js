@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,7 +30,7 @@ const YWorksOptimizerPlugin = require('@yworks/optimizer/webpack-plugin')
 
 module.exports = function (config) {
   if (config.mode === 'production') {
-    // Obfuscate yFiles modules and usages for production build
+    // Obfuscate yFiles library files and usages for production build
     config.plugins.push(
       new YWorksOptimizerPlugin({
         logLevel: 'info',
@@ -38,7 +38,7 @@ module.exports = function (config) {
         shouldOptimize(module) {
           return (
             !/node_modules/.test(module.resource) ||
-            /node_modules[\\/](demo-resources)/.test(module.resource)
+            /node_modules[\\/]@yfiles[\\/](demo-resources)/.test(module.resource)
           )
         }
       })

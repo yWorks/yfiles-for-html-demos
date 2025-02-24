@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # BPMN Graph Editor
 
-# BPMN Graph Editor
+<img src="../../../doc/demo-thumbnails/bpmn-editor.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/showcase/bpmn/).
 
 An editor for Business Process Diagrams (BPMN).
 
@@ -25,5 +27,5 @@ You can interactively modify the diagram and automatically arrange it with the s
 - Auto-arrange the changed diagram with the BPMN layout algorithm.
 - Open a popup menu that allows you to customize the item by double-click a node, edge or boundary event. Double-clicking on an empty space closes any open popup.
 - Open a context menu by right-clicking a node or edge. The menu provides different actions depending on the clicked item.
-- Edit the label of a selected node or edge by pressing `F2`. Note that you can also select the label directly using the detail selection ( `SHIFT + Click`).
-- Add an additional label to a selected node or edge by pressing `SHIFT + F2`.
+- Edit the label of a selected node or edge by pressing F2. Note that you can also select the label directly using the detail selection (Shift + Click).
+- Add an additional label to a selected node or edge by pressing Shift + F2.

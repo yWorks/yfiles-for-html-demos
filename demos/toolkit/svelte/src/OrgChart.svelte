@@ -1,35 +1,33 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import type { LayoutDescriptor } from 'yfiles'
   import {
+    Command,
     EventRecognizers,
     GraphBuilder,
     GraphComponent,
     GraphViewerInputMode,
-    HierarchicLayout,
-    HierarchicLayoutEdgeLayoutDescriptor,
-    HierarchicLayoutRoutingStyle,
-    ICommand,
-    LayoutExecutor,
+    HierarchicalLayoutEdgeDescriptor,
+    type LayoutDescriptor,
     LayoutExecutorAsync,
     License,
     PolylineEdgeStyle,
     Rect
-  } from 'yfiles'
+  } from '@yfiles/yfiles'
   import licenseValue from '../../../../lib/license.json'
   import SvelteComponentNodeStyle from './SvelteComponentNodeStyle'
   import SvgNodeComponent from './SvgNodeComponent.svelte'
   import type { Person } from './types'
-  import { getLayoutExecutorAsyncMessageHandler } from './web-worker-client-message-handler'
-  import { BrowserDetection } from 'demo-utils/BrowserDetection'
 
   License.value = licenseValue
 
-  // Vite supports Web Worker out-of-the-box but relies on the browser's native Web Worker support when served in DEV mode.
-  // Thus, during development, fall back to client-sided layout calculation if module workers are not supported.
-  // In the production build, Web Workers are supported because the build creates cross-browser compatible workers.
-  const useWorkerLayout = BrowserDetection.modulesSupportedInWorker || import.meta.env.PROD
-  const messageHandlerPromise = useWorkerLayout ? getLayoutExecutorAsyncMessageHandler(licenseValue) : Promise.resolve(null)
+  // Create a new module web worker
+  const worker = new Worker(new URL('./layout-worker.ts', import.meta.url), {
+    type: 'module'
+  })
+  // The Web Worker is running yFiles in a different context, therefore, we need to register the
+  // yFiles license in the Web Worker as well.
+  worker.postMessage({ license: licenseValue })
+
 
   export let width = '100%'
   export let height = '100%'
@@ -38,10 +36,10 @@
   export let selectedEmployee: Person | null = null
 
   export const methods = {
-    zoomIn: () => ICommand.INCREASE_ZOOM.execute(null, graphComponent),
-    zoomOut: () => ICommand.DECREASE_ZOOM.execute(null, graphComponent),
-    setZoom: (zoom: number) => ICommand.ZOOM.execute(zoom, graphComponent),
-    fitContent: () => ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+    zoomIn: () => graphComponent.executeCommand(Command.INCREASE_ZOOM),
+    zoomOut: () => graphComponent.executeCommand(Command.DECREASE_ZOOM),
+    setZoom: (zoom: number) => graphComponent.executeCommand(Command.ZOOM, zoom),
+    fitContent: () => void graphComponent.fitGraphBounds()
   }
 
   let graphComponentDiv: HTMLDivElement
@@ -53,12 +51,11 @@
   }
 
   const layoutDescriptor: LayoutDescriptor = {
-    name: 'HierarchicLayout',
+    name: 'HierarchicalLayout',
     properties: {
       automaticEdgeGrouping: true,
       minimumLayerDistance: 50,
-      edgeLayoutDescriptor: new HierarchicLayoutEdgeLayoutDescriptor({
-        routingStyle: new HierarchicLayoutRoutingStyle({ defaultEdgeRoutingStyle: 'orthogonal' }),
+      defaultEdgeDescriptor: new HierarchicalLayoutEdgeDescriptor({
         minimumFirstSegmentLength: 25,
         minimumLastSegmentLength: 25
       })
@@ -69,12 +66,12 @@
     graphComponent = new GraphComponent(graphComponentDiv)
     const inputMode = new GraphViewerInputMode()
     // Disable multi-selection
-    inputMode.availableCommands.remove(ICommand.SELECT_ALL)
+    inputMode.availableCommands.remove(Command.SELECT_ALL)
     inputMode.multiSelectionRecognizer = EventRecognizers.NEVER
     // Expose the currently selected node to users of the component
-    inputMode.addMultiSelectionFinishedListener(() => {
+    inputMode.addEventListener('multi-selection-finished', () => {
       // Get the selected node's tag
-      let current = graphComponent.selection.selectedNodes.at(0)?.tag
+      let current = graphComponent.selection.nodes.at(0)?.tag
       if (current) {
         // Create a proxy that updates the view whenever something in the Person object changes
         current = new Proxy<Person>(current, {
@@ -131,27 +128,15 @@
     if (!layoutRunning) {
       layoutRunning = true
       try {
-        if (useWorkerLayout) {
-          // create an asynchronous layout executor that calculates a layout on the worker
-          const messageHandler = await messageHandlerPromise
-          await new LayoutExecutorAsync({
-            graphComponent,
-            messageHandler,
-            layoutDescriptor,
-            duration: '0.5s',
-            animateViewport: true,
-            easedAnimation: true
-          }).start()
-        } else {
-          // client-sided fallback
-          await new LayoutExecutor({
-            graphComponent,
-            layout: new HierarchicLayout(layoutDescriptor.properties),
-            duration: '0.5s',
-            animateViewport: true,
-            easedAnimation: true
-          }).start()
-        }
+        // create an asynchronous layout executor that calculates a layout on the worker
+        await new LayoutExecutorAsync({
+          graphComponent,
+          messageHandler: LayoutExecutorAsync.createWebWorkerMessageHandler(worker),
+          layoutDescriptor,
+          animationDuration: '0.5s',
+          animateViewport: true,
+          easedAnimation: true
+        }).start()
       } finally {
         layoutRunning = false
       }
@@ -159,13 +144,13 @@
   }
 
   function highlightNodes(filter: string) {
-    const highlightManager = graphComponent.highlightIndicatorManager
-    highlightManager.clearHighlights()
+    const highlights = graphComponent.highlights
+    highlights.clear()
     if (filter) {
       graphComponent.graph.nodes
         .filter(n => (n.tag as Person).name.toLowerCase().includes(filter.toLowerCase()))
         .forEach(n => {
-          highlightManager.addHighlight(n)
+          highlights.add(n)
         })
     }
     // invalidate to trigger an update of the node styles where the highlight state is bound to the node's fill

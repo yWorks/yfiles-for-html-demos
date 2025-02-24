@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
 	</key>
@@ -58,27 +58,24 @@
 			<yjs:NodeStyleStripeStyleAdapter x:Key="2">
 				<yjs:ShapeNodeStyle/>
 			</yjs:NodeStyleStripeStyleAdapter>
-			<yjs:DefaultLabelStyle x:Key="3" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER"/>
-			<yjs:DefaultLabelStyle x:Key="4"/>
+			<yjs:LabelStyle x:Key="3" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER"/>
+			<yjs:LabelStyle x:Key="4"/>
 			<yjs:ShapeNodeStyle x:Key="5" stroke="MEDIUM_BLUE" fill="GAINSBORO" shape="ROUND_RECTANGLE"/>
-			<yjs:PolylineEdgeStyle x:Key="6" targetArrow="SHORT"/>
+      <yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="6">
+        <yjs:PolylineEdgeStyle.targetArrow>
+          <yjs:Arrow type="TRIANGLE" lengthScale="0.5"/>
+        </yjs:PolylineEdgeStyle.targetArrow>
+      </yjs:PolylineEdgeStyle>
 		</y:SharedData>
 	</data>
 	<graph id="G" edgedefault="directed">
 		<node id="n0">
 			<data key="d1">
 				<x:List>
-					<y:Label>
-            <y:Label.LayoutParameter>
-              <y:InteriorLabelModelParameter Position="North">
-                <y:InteriorLabelModelParameter.Model>
-                  <y:InteriorLabelModel Insets="0,4,0,0"/>
-                </y:InteriorLabelModelParameter.Model>
-              </y:InteriorLabelModelParameter>
-            </y:Label.LayoutParameter>
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Top}">
 						<y:Label.Text><![CDATA[Order Fulfillment]]></y:Label.Text>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" textSize="18"/>
+              <yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" textSize="18"/>
             </y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -92,41 +89,41 @@
 						<yjs:ShapeNodeStyle fill="WHEAT"/>
 					</yjs:TableNodeStyle.backgroundStyle>
 					<yjs:TableNodeStyle.table>
-						<y:Table Insets="0,30,0,0">
-							<y:Table.Rows>
-								<y:Row MinimumSize="20" Size="60" Insets="0,5,0,5">
-									<y:Row.Style>
+						<yx:Table Padding="0,30,0,0">
+							<yx:Table.Rows>
+								<yx:Row MinimumSize="20" Size="60" Padding="0,5,0,5">
+									<yx:Row.Style>
 										<yjs:NodeStyleStripeStyleAdapter>
 											<yjs:ShapeNodeStyle fill="TRANSPARENT"/>
 										</yjs:NodeStyleStripeStyleAdapter>
-									</y:Row.Style>
-								</y:Row>
-							</y:Table.Rows>
-							<y:Table.Columns>
-								<y:Column Style="{y:GraphMLReference 2}" MinimumSize="20" Size="120" Insets="0,40,0,0">
-									<y:Column.Labels>
-										<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" Style="{y:GraphMLReference 3}">
+									</yx:Row.Style>
+								</yx:Row>
+							</yx:Table.Rows>
+							<yx:Table.Columns>
+								<yx:Column Style="{y:GraphMLReference 2}" MinimumSize="20" Size="120" Padding="0,40,0,0">
+									<yx:Column.Labels>
+										<y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Top}" Style="{y:GraphMLReference 3}">
 											<y:Label.Text><![CDATA[Sales Force]]></y:Label.Text>
 										</y:Label>
-									</y:Column.Labels>
-								</y:Column>
-								<y:Column Style="{y:GraphMLReference 2}" MinimumSize="20" Size="120" Insets="0,40,0,0">
-									<y:Column.Labels>
-										<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" Style="{y:GraphMLReference 3}">
+									</yx:Column.Labels>
+								</yx:Column>
+								<yx:Column Style="{y:GraphMLReference 2}" MinimumSize="20" Size="120" Padding="0,40,0,0">
+									<yx:Column.Labels>
+										<y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Top}" Style="{y:GraphMLReference 3}">
 											<y:Label.Text><![CDATA[Order
 Processing]]></y:Label.Text>
 										</y:Label>
-									</y:Column.Labels>
-								</y:Column>
-								<y:Column Style="{y:GraphMLReference 2}" MinimumSize="20" Size="120" Insets="0,40,0,0">
-									<y:Column.Labels>
-										<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" Style="{y:GraphMLReference 3}">
+									</yx:Column.Labels>
+								</yx:Column>
+								<yx:Column Style="{y:GraphMLReference 2}" MinimumSize="20" Size="120" Padding="0,40,0,0">
+									<yx:Column.Labels>
+										<y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Top}" Style="{y:GraphMLReference 3}">
 											<y:Label.Text><![CDATA[Ware House]]></y:Label.Text>
 										</y:Label>
-									</y:Column.Labels>
-								</y:Column>
-							</y:Table.Columns>
-						</y:Table>
+									</yx:Column.Labels>
+								</yx:Column>
+							</yx:Table.Columns>
+						</yx:Table>
 					</yjs:TableNodeStyle.table>
 				</yjs:TableNodeStyle>
 			</data>
@@ -143,7 +140,7 @@ Processing]]></y:Label.Text>
 				<node id="n0::n1">
 					<data key="d1">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 4}">
+							<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 4}">
 								<y:Label.Text><![CDATA[Win an
 Order]]></y:Label.Text>
 							</y:Label>
@@ -161,7 +158,7 @@ Order]]></y:Label.Text>
 				<node id="n0::n2">
 					<data key="d1">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 4}">
+							<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 4}">
 								<y:Label.Text><![CDATA[Register
 Order]]></y:Label.Text>
 							</y:Label>
@@ -179,7 +176,7 @@ Order]]></y:Label.Text>
 				<node id="n0::n3">
 					<data key="d1">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 4}">
+							<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 4}">
 								<y:Label.Text><![CDATA[Remove
 Goods from
 Stock]]></y:Label.Text>
@@ -198,7 +195,7 @@ Stock]]></y:Label.Text>
 				<node id="n0::n4">
 					<data key="d1">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 4}">
+							<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 4}">
 								<y:Label.Text><![CDATA[Ship Goods]]></y:Label.Text>
 							</y:Label>
 						</x:List>

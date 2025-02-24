@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,48 +27,25 @@
  **
  ***************************************************************************/
 /**
- * Describes a point of the trekking trail.
- * @typedef {Object} Waypoint
- * @property {number} x
- * @property {number} y
- * @property {number} [lon]
- * @property {number} [lat]
- * @property {string} [name]
- * @property {string} [category]
- * @property {number} [type]
- * @property {string} [icon]
- * @property {number} [id]
- */
-
-/**
  * Describes the type of nodes used in this demo.
  */
-export /**
- * @readonly
- * @enum {number}
- */
-const NodeType = {
-  WAYPOINT: 0,
-  LABEL: 1
-}
-
-/**
- * Describes the dataset used in this demo which consists of a set of waypoints and a set of points
- * that form the trail.
- * @typedef {Object} TrekkingData
- * @property {Array.<Waypoint>} waypoints
- * @property {Array.<Waypoint>} trail
- */
-
+export var MultiPageNodeType
+;(function (MultiPageNodeType) {
+  /**
+   * The nodes that represent the waypoints.
+   */
+  MultiPageNodeType[(MultiPageNodeType['WAYPOINT'] = 0)] = 'WAYPOINT'
+  /**
+   * The nodes that represent the label associated with the waypoints.
+   */
+  MultiPageNodeType[(MultiPageNodeType['LABEL'] = 1)] = 'LABEL'
+})(MultiPageNodeType || (MultiPageNodeType = {}))
 /**
  * Returns the data associated with each waypoint.
- * @param {!INode} node
- * @returns {?Waypoint}
  */
 export function getWayPoint(node) {
   return node.tag
 }
-
 /**
  * The dataset for this demo.
  */

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,19 +29,17 @@
 import {
   GraphComponent,
   IEdgeReconnectionPortCandidateProvider,
+  ILabelStyle,
   License,
   PolylineEdgeStyle,
   Rect,
   SimpleNode,
-  Size,
-  VoidLabelStyle
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 
-import { DragAndDropPanel } from 'demo-utils/DragAndDropPanel'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { NotNodeStyle } from './node-styles/NotNodeStyle'
 import { XOrNodeStyle } from './node-styles/XOrNodeStyle'
 import { AndGateNodeStyle } from './node-styles/AndGateNodeStyle'
@@ -63,8 +61,6 @@ let graphComponent: GraphComponent
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize the drag and drop panel
   initializeDragAndDropPanel()
 
@@ -127,21 +123,21 @@ function initializeGraph(): void {
   // don't delete ports if a connected edge gets removed
   graph.nodeDefaults.ports.autoCleanUp = false
   // hide port labels
-  graph.nodeDefaults.ports.labels.style = new VoidLabelStyle()
+  graph.nodeDefaults.ports.labels.style = ILabelStyle.VOID_LABEL_STYLE
   // set the port candidate provider
-  graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
+  graph.decorator.nodes.portCandidateProvider.addFactory(
     (node) => new DescriptorDependentPortCandidateProvider(node)
   )
-  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '2px black' })
-  graph.decorator.edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setImplementation(
-    IEdgeReconnectionPortCandidateProvider.ALL_NODE_CANDIDATES
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '2px black', orthogonalEditing: true })
+  graph.decorator.edges.reconnectionPortCandidateProvider.addFactory((edge) =>
+    IEdgeReconnectionPortCandidateProvider.fromAllNodeAndEdgeCandidates(edge)
   )
 
   // enable the undo engine
   graph.undoEngineEnabled = true
 
   // add a listener to add the tags related to the highlighting to the new nodes
-  graph.addNodeCreatedListener((_, evt) => {
+  graph.addEventListener('node-created', (evt) => {
     evt.item.tag = {
       sourceHighlight: false,
       targetHighlight: false
@@ -149,7 +145,7 @@ function initializeGraph(): void {
   })
 
   // disable edge cropping
-  graph.decorator.portDecorator.edgePathCropperDecorator.hideImplementation()
+  graph.decorator.ports.edgePathCropper.hide()
 }
 
 /**

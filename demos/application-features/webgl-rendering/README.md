@@ -1,19 +1,21 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# WebGL2 Rendering - Application Features
+# WebGL Rendering - Application Features
 
-# WebGL2 Rendering
+<img src="../../../doc/demo-thumbnails/webgl-rendering.webp" alt="demo-thumbnail" height="320"/>
 
-This demo shows how to enable the [WebGL2](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) rendering mode using [WebGL2GraphModelManager](https://docs.yworks.com/yfileshtml/#/api/WebGL2GraphModelManager).
+[You can also run this demo online](https://www.yworks.com/demos/application-features/webgl-rendering/).
+
+This demo shows how to enable the [WebGL](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) rendering mode using [WebGLGraphModelManager](https://docs.yworks.com/yfileshtml/#/api/WebGLGraphModelManager).
 
 In this mode, the graph component provides smooth animations and interactions even for diagrams with thousands of elements.
 

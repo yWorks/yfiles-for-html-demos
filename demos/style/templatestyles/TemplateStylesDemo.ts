@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,8 +28,9 @@
  ***************************************************************************/
 import {
   AdjacencyGraphBuilder,
-  BalloonLayout,
-  BfsAlgorithm,
+  Arrow,
+  ArrowType,
+  Bfs,
   DashStyle,
   EdgeCreator,
   EdgePathLabelModel,
@@ -37,41 +38,33 @@ import {
   FreeNodePortLocationModel,
   GeneralPath,
   GraphComponent,
-  GraphFocusIndicatorManager,
-  GraphSelectionIndicatorManager,
-  GraphViewerInputMode,
-  IArrow,
   IEnumerable,
   IGraph,
   INode,
-  Insets,
   IPort,
-  LayoutGraphAdapter,
   License,
   LineCap,
   Point,
   PolylineEdgeStyle,
+  RadialTreeLayout,
   Rect,
   Size,
-  StringTemplateLabelStyle,
-  StringTemplateNodeStyle,
-  StringTemplatePortStyle,
   Stroke,
-  TemplateNodeStyle,
-  VoidNodeStyle,
-  YNodeList
-} from 'yfiles'
+  ViewportLimitingPolicy
+} from '@yfiles/yfiles'
 
 import PropertiesView from './PropertiesView'
 import OrgChartData from './resources/OrgChartData'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   orgchartLabelTemplate,
   orgchartNodeTemplate,
   orgchartPortTemplate
 } from './style-templates'
+import { finishLoading } from '../../resources/demo-ui/finish-loading'
+import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/StringTemplateNodeStyle'
+import { StringTemplateLabelStyle } from '@yfiles/demo-utils/template-styles/StringTemplateLabelStyle'
+import { StringTemplatePortStyle } from '@yfiles/demo-utils/template-styles/StringTemplatePortStyle'
 
 /**
  * Specifies the properties of an employee, i.e. the business data associated to each node
@@ -93,12 +86,10 @@ export type Employee = {
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
-  // setup the binding converters for the TemplateNodeStyle used to visualize the demo's nodes
+  // set up the binding converters for the TemplateNodeStyle used to visualize the demo's nodes
   initConverters()
 
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize the default styles for nodes, edges, labels, and ports
   configureStyles(graphComponent.graph)
 
@@ -124,6 +115,23 @@ function configureStyles(graph: IGraph): void {
     normalizedOutline: outlinePath
   })
 
+  // use a PolylineEdgeStyle instance with a dotted stroke for edges
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: new Stroke({
+      fill: 'rgb(229,233,240)',
+      dashStyle: new DashStyle([0.125, 2], 10),
+      lineCap: LineCap.ROUND,
+      thickness: 8
+    }),
+    sourceArrow: new Arrow(ArrowType.NONE),
+    targetArrow: new Arrow(ArrowType.NONE)
+  })
+
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
+    sideOfEdge: EdgeSides.ABOVE_EDGE,
+    distance: 5
+  }).createRatioParameter(0.5)
+
   // create the edge label style
   graph.edgeDefaults.labels.style = new StringTemplateLabelStyle({
     svgContent: orgchartLabelTemplate,
@@ -136,23 +144,6 @@ function configureStyles(graph: IGraph): void {
     renderSize: [20, 20],
     normalizedOutline: outlinePath
   })
-
-  // use a PolylineEdgeStyle instance with a dotted stroke for edges
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: new Stroke({
-      fill: 'rgb(229,233,240)',
-      dashStyle: new DashStyle([0.125, 2], 10),
-      lineCap: LineCap.ROUND,
-      thickness: 8
-    }),
-    sourceArrow: IArrow.NONE,
-    targetArrow: IArrow.NONE
-  })
-
-  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
-    sideOfEdge: EdgeSides.ABOVE_EDGE,
-    distance: 5
-  }).createDefaultParameter()
 }
 
 /**
@@ -160,7 +151,7 @@ function configureStyles(graph: IGraph): void {
  */
 function initConverters(): void {
   // convert each business unit to its own color
-  TemplateNodeStyle.CONVERTERS.backgroundColor = (val: string): string => {
+  StringTemplateNodeStyle.CONVERTERS.backgroundColor = (val: string): string => {
     switch (val) {
       case 'Executive Unit':
         return 'rgb(185,96,105)'
@@ -180,7 +171,7 @@ function initConverters(): void {
   }
 
   // convert a status to a color
-  TemplateNodeStyle.CONVERTERS.statusColor = (val: string): string => {
+  StringTemplateNodeStyle.CONVERTERS.statusColor = (val: string): string => {
     switch (val) {
       case 'present':
         return 'rgb(110,165,106)'
@@ -193,24 +184,27 @@ function initConverters(): void {
   }
 
   // convert the icon identifier to the image path
-  TemplateNodeStyle.CONVERTERS.icon = (val: string): string => `./resources/${val}.svg`
+  StringTemplateNodeStyle.CONVERTERS.icon = (val: string): string => `./resources/${val}.svg`
 
   // convert a node size to a font size
-  TemplateNodeStyle.CONVERTERS.fontSize = (val: number): number => (val / 10) | 0
+  StringTemplateNodeStyle.CONVERTERS.fontSize = (val: number): number => (val / 10) | 0
 
   // convert a boolean to a visibility value
-  TemplateNodeStyle.CONVERTERS.visibility = (val: boolean): string => (val ? 'visible' : 'hidden')
+  StringTemplateNodeStyle.CONVERTERS.visibility = (val: boolean): string =>
+    val ? 'visible' : 'hidden'
 
   // A converter that does simple calculations, consisting of numbers, +, -, / and * as well as parentheses.
   // The parameter must contain the calculation expression. $v is replaced by the bound value.
   // This converter is used in the node template to calculate positions and sizes of elements based on the node size.
   // Please be careful where you use this code, since it contains an eval() call.
-  TemplateNodeStyle.CONVERTERS.calc = (val: string, parameter: string): number => {
-    const expression = parameter.replace('$v', val)
-    // for safety, check if the expression contains only allowed characters
-    if (expression.match(/^[\d+-/()*]+$/g) !== null) {
-      // eslint-disable-next-line no-eval
-      return eval(expression)
+  StringTemplateNodeStyle.CONVERTERS.calc = (val: any, parameter?: string): number => {
+    if (typeof parameter === 'string') {
+      const expression = parameter.replace('$v', val)
+      // for safety, check if the expression contains only allowed characters
+      if (expression.match(/^[\d+-/()*]+$/g) !== null) {
+        // eslint-disable-next-line no-eval
+        return eval(expression)
+      }
     }
     return -1
   }
@@ -222,10 +216,6 @@ function initialize(graphComponent: GraphComponent): void {
 
   // create the graph items
   createGraph(graphComponent.graph)
-
-  // support interactive panning and zooming, but no structural modifications like
-  // adding or deleting items
-  graphComponent.inputMode = new GraphViewerInputMode()
 
   createPropertiesPanel(graphComponent)
 
@@ -241,12 +231,8 @@ function initializeGraph(graphComponent: GraphComponent): void {
   graph.nodeDefaults.size = new Size(100, 100)
 
   // remove the default selection and focus decoration
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
-  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
+  graph.decorator.nodes.selectionRenderer.hide()
+  graph.decorator.nodes.focusRenderer.hide()
 }
 
 /**
@@ -254,7 +240,9 @@ function initializeGraph(graphComponent: GraphComponent): void {
  */
 function createGraph(graph: IGraph): void {
   // make each data item observable to be able to update the template style bindings
-  const dataSource = OrgChartData.map((data: object) => TemplateNodeStyle.makeObservable(data))
+  const dataSource = (OrgChartData as Partial<Employee>[]).map((data) =>
+    StringTemplateNodeStyle.makeObservable(data)
+  )
 
   // use AdjacencyGraphBuilder to automatically create a graph from the data
   const adjacencyGraphBuilder = new AdjacencyGraphBuilder(graph)
@@ -271,7 +259,7 @@ function createGraph(graph: IGraph): void {
     defaults: graph.edgeDefaults
   })
   // label edges that point to assistants
-  edgeCreator.addEdgeCreatedListener((_, evt) => {
+  edgeCreator.addEventListener('edge-created', (evt) => {
     const edge = evt.item
     const targetData = edge.targetNode!.tag
     if (targetData && targetData.assistant) {
@@ -293,22 +281,16 @@ function createGraph(graph: IGraph): void {
  */
 function adjustNodeSizes(graph: IGraph): void {
   // calculate the tree hierarchy levels using a BFS algorithm
-  const graphAdapter = new LayoutGraphAdapter(graph)
-  const layoutGraph = graphAdapter.createCopiedLayoutGraph()
-  const rootNodes = new YNodeList(
-    graph.nodes
-      .filter((node) => graph.inDegree(node) === 0)
-      .map((node) => layoutGraph.getCopiedNode(node)!)
-      .toArray()
-  )
-  const layerMap = layoutGraph.createNodeMap()
-  const layers = BfsAlgorithm.getLayers(layoutGraph, rootNodes, layerMap)
+  const rootNodes = graph.nodes.filter((node) => graph.inDegree(node) === 0)
+
+  const bfs = new Bfs({ coreNodes: rootNodes })
+  const result = bfs.run(graph)
 
   // adjust the size of each node
   const baseSize = graph.nodeDefaults.size
   const growthFactor = 0.3
   graph.nodes.forEach((node) => {
-    const treeLevel = layers.length - layerMap.get(layoutGraph.getCopiedNode(node)) - 1
+    const treeLevel = result.layers.size - result.nodeLayerIds.get(node)! - 1
     const size = new Size(
       baseSize.width + baseSize.width * treeLevel * growthFactor,
       baseSize.height + baseSize.height * treeLevel * growthFactor
@@ -328,7 +310,7 @@ function createPropertiesPanel(graphComponent: GraphComponent): void {
   const propertiesView = new PropertiesView(propertiesViewElement)
 
   // add a listener for the properties view
-  graphComponent.addCurrentItemChangedListener(() => {
+  graphComponent.addEventListener('current-item-changed', () => {
     propertiesView.showProperties(graphComponent.currentItem as INode)
   })
 }
@@ -337,10 +319,11 @@ function createPropertiesPanel(graphComponent: GraphComponent): void {
  * Arranges the graph of the given graph component.
  */
 function runLayout(graphComponent: GraphComponent): void {
-  const layout = new BalloonLayout()
-  layout.minimumNodeDistance = 10
-  layout.minimumEdgeLength = 100
-  layout.allowOverlaps = true
+  const layout = new RadialTreeLayout({
+    minimumNodeDistance: 10,
+    minimumEdgeLength: 100,
+    allowOverlaps: true
+  })
 
   // calculate the initial layout
   graphComponent.graph.applyLayout(layout)
@@ -348,7 +331,7 @@ function runLayout(graphComponent: GraphComponent): void {
   adjustPorts(graphComponent.graph)
   graphComponent.currentItem = graphComponent.graph.nodes.at(0) ?? null
   limitViewport(graphComponent)
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
 
 /**
@@ -375,7 +358,7 @@ function adjustPorts(graph: IGraph): void {
 }
 
 /**
- * Moves a port on the given vector outside of its owner node.
+ * Moves a port on the given vector outside its owner node.
  * @param graph The graph displayed in this demo.
  * @param port The port to adjust.
  * @param vector The vector on which the port should be moved.
@@ -398,10 +381,10 @@ function adjustPort(graph: IGraph, port: IPort, vector: Point): void {
  * Configures a ViewportLimiter that ensures the explorable region does not exceed the graph size.
  */
 function limitViewport(graphComponent: GraphComponent): void {
-  graphComponent.updateContentRect(new Insets(100))
+  graphComponent.updateContentBounds(100)
   const limiter = graphComponent.viewportLimiter
-  limiter.honorBothDimensions = false
-  limiter.bounds = graphComponent.contentRect
+  limiter.bounds = graphComponent.contentBounds
+  limiter.policy = ViewportLimitingPolicy.TOWARDS_LIMIT
 }
 
 run().then(finishLoading)

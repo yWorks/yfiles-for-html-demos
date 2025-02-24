@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,12 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FreeNodePortLocationModel } from 'yfiles'
-import { CustomPortStyle } from './CustomPortStyle.js'
-
-/**
- * @param {!IGraph} graph
- */
+import { FreeNodePortLocationModel } from '@yfiles/yfiles'
+import { CustomPortStyle } from './CustomPortStyle'
 export function createNodesAndPorts(graph) {
   const node1 = graph.createNode()
   const node2 = graph.createNodeAt([100, 150])
@@ -40,39 +36,33 @@ export function createNodesAndPorts(graph) {
   graph.createEdge(node1.ports.get(2), node2.ports.get(3))
   graph.createEdge(node2.ports.get(1), node1.ports.get(4))
 }
-
-/**
- * @param {!INode} owner
- * @param {!IGraph} graph
- */
 function createPorts(owner, graph) {
   const defaultPortStyle = new CustomPortStyle()
   const largePortStyle = new CustomPortStyle(10)
   const smallPortStyle = new CustomPortStyle(4)
-
   graph.addPort({
     owner: owner,
-    locationParameter: FreeNodePortLocationModel.NODE_CENTER_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.CENTER,
     style: smallPortStyle
   })
   graph.addPort({
     owner: owner,
-    locationParameter: FreeNodePortLocationModel.NODE_TOP_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.TOP,
     style: largePortStyle
   })
   graph.addPort({
     owner: owner,
-    locationParameter: FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.BOTTOM,
     style: largePortStyle
   })
   graph.addPort({
     owner: owner,
-    locationParameter: FreeNodePortLocationModel.NODE_LEFT_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.LEFT,
     style: defaultPortStyle
   })
   graph.addPort({
     owner: owner,
-    locationParameter: FreeNodePortLocationModel.NODE_RIGHT_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.RIGHT,
     style: defaultPortStyle
   })
 }

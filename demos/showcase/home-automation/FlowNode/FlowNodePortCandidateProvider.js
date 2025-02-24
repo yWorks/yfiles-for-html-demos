@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,44 +27,32 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
   IEnumerable,
   IInputModeContext,
   INode,
   IPortCandidate,
   List,
+  PortCandidate,
   PortCandidateProviderBase,
   PortCandidateValidity
-} from 'yfiles'
-import { assertPortTag } from './FlowNodePort.js'
-
+} from '@yfiles/yfiles'
+import { assertPortTag } from './FlowNodePort'
 export class FlowNodePortCandidateProvider extends PortCandidateProviderBase {
-  /**
-   * @param {!INode} owner
-   */
+  owner
   constructor(owner) {
     super()
     this.owner = owner
   }
-
-  /**
-   * @param {!IInputModeContext} _context
-   * @returns {!IEnumerable.<IPortCandidate>}
-   */
   getPortCandidates(_context) {
     const candidates = new List()
     this.addExistingPorts(this.owner, candidates)
     return candidates
   }
-
   /**
    * A valid target port candidate must:
    *   - have a different side than the source port;
    *   - be on a different node than the source port;
    *   - not already be connected to the source port (regardless of the direction).
-   * @param {!IInputModeContext} context
-   * @param {!IPortCandidate} source
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getTargetPortCandidates(context, source) {
     const graph = context.graph
@@ -73,9 +61,7 @@ export class FlowNodePortCandidateProvider extends PortCandidateProviderBase {
       return candidates
     }
     assertPortTag(source.port.tag)
-
     const sourceSide = source.port.tag.side
-
     graph.ports
       // Exclude same-sided ports:
       .filter((port) => port.tag.side !== sourceSide)
@@ -87,19 +73,18 @@ export class FlowNodePortCandidateProvider extends PortCandidateProviderBase {
           !graph.edges.some((edge) => {
             // Compare points by string representations instead of comparing just simple port instances.
             // This helps to avoid scenario where node is recreated with undo and port instances don't match on the recreated edge
-            const edgePortPoints = [edge.sourcePort?.toString(), edge.targetPort?.toString()]
+            const edgePortPoints = [edge.sourcePort.toString(), edge.targetPort.toString()]
             return (
               edgePortPoints.includes(port.toString()) &&
-              edgePortPoints.includes(source.port?.toString())
+              edgePortPoints.includes(source.port.toString())
             )
           })
       )
       .forEach((port) => {
-        const portCandidate = new DefaultPortCandidate(port)
+        const portCandidate = new PortCandidate(port)
         portCandidate.validity = PortCandidateValidity.VALID
         candidates.add(portCandidate)
       })
-
     return candidates
   }
 }

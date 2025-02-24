@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,43 +26,33 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, License } from 'yfiles'
-
+import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
 // Register the license
 const response = await fetch('./license.json')
 License.value = await response.json()
-
 // Initialize a graph component and enable interactive editing
 const graphComponent = new GraphComponent('#graphComponent')
 graphComponent.inputMode = new GraphEditorInputMode()
-
 createSampleGraph(graphComponent.graph)
-
 addUIElements(graphComponent)
-
 /**
  * Creates the sample graph for this demo.
- * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
   graph.nodeDefaults.size = [60, 40]
   graph.addLabel(graph.createNodeAt([200, 200]), 'Node 1')
   graph.addLabel(graph.createNodeAt([400, 200]), 'Node 2')
-
   const nodes = graph.nodes.toArray()
   graph.createEdge(nodes[0], nodes[1])
 }
-
 /**
  * Adds UI elements to the demo.
- * @param {!GraphComponent} graphComponent
  */
 function addUIElements(graphComponent) {
   const fitButton = document.createElement('button')
   fitButton.innerText = 'Fit content'
-  fitButton.addEventListener('click', () => {
-    graphComponent.fitGraphBounds()
+  fitButton.addEventListener('click', async () => {
+    await graphComponent.fitGraphBounds()
   })
-
   document.querySelector('#actionsArea').append(fitButton)
 }

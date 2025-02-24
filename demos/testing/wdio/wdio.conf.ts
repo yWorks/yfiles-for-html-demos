@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,24 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { Options } from '@wdio/types'
-
-export const config: Options.Testrunner = {
-  //
-  // ====================
-  // Runner Configuration
-  // ====================
-  // WebdriverIO supports running e2e tests as well as unit and component tests.
-  runner: 'local',
-  autoCompileOpts: {
-    autoCompile: true,
-    tsNodeOpts: {
-      project: './tsconfig.json',
-      transpileOnly: true
-    }
-  },
-
-  //
+export const config: WebdriverIO.Config = {
   // ==================
   // Specify Test Files
   // ==================
@@ -80,7 +63,7 @@ export const config: Options.Testrunner = {
   // and 30 processes will get spawned. The property handles how many capabilities
   // from the same test should run tests.
   //
-  maxInstances: 10,
+  maxInstancesPerCapability: 1,
   //
   // If you have trouble getting all important capabilities together, check out the
   // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -88,7 +71,6 @@ export const config: Options.Testrunner = {
   //
   capabilities: [
     {
-      maxInstances: 1,
       browserName: 'firefox',
       'moz:firefoxOptions': {
         // flag to activate Firefox headless mode (see
@@ -98,7 +80,6 @@ export const config: Options.Testrunner = {
       }
     },
     {
-      maxInstances: 1,
       browserName: 'chrome',
       'goog:chromeOptions': {
         args: ['--headless']
@@ -112,7 +93,7 @@ export const config: Options.Testrunner = {
   // Define all options that are relevant for the WebdriverIO instance here
   //
   // Level of logging verbosity: trace | debug | info | warn | error | silent
-  logLevel: 'info',
+  logLevel: 'warn',
   //
   // Set specific log levels per logger
   // loggers:
@@ -136,7 +117,7 @@ export const config: Options.Testrunner = {
   // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
   // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
   // gets prepended directly.
-  baseUrl: 'http://localhost:4242/',
+  baseUrl: process.env.TEST_SERVER_URL || 'http://localhost:4241/demos-ts/',
   //
   // Default timeout for all waitFor* commands.
   waitforTimeout: 10000,

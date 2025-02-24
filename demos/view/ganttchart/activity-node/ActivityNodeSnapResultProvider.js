@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,24 +26,19 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { NodeSnapResultProvider, Point } from 'yfiles'
-import { getLeadWidth } from '../gantt-utils.js'
-import { getActivity } from '../resources/data-model.js'
-
+import { NodeSnapResultProvider, Point } from '@yfiles/yfiles'
+import { getLeadWidth } from '../gantt-utils'
+import { getActivity } from '../resources/data-model'
 /**
  * Customizes the grid snapping behavior by providing a snap result for the left side of a node.
  */
 export class ActivityNodeSnapResultProvider extends NodeSnapResultProvider {
   /**
    * Collects snap results that snap the left side of a node to a grid.
-   * @param {!GraphSnapContext} context
-   * @param {!CollectSnapResultsEventArgs} args
-   * @param {!Rect} suggestedLayout
-   * @param {!INode} node
    */
-  collectGridSnapResults(context, args, suggestedLayout, node) {
+  collectGridSnapResults(context, args, snapGrid, suggestedLayout, node) {
     const activityStart = suggestedLayout.topLeft.add(new Point(getLeadWidth(getActivity(node)), 0))
     // snap to left side of node
-    this.addGridSnapResult(context, args, activityStart, node)
+    this.collectGridSnapResult(context, args, snapGrid, activityStart, node)
   }
 }

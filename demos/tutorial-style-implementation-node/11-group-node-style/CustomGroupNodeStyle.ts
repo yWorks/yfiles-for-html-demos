@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,15 +29,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
-  type Class,
+  type Constructor,
   Font,
   GeneralPath,
+  IGroupPaddingProvider,
   type IInputModeContext,
   type INode,
-  INodeInsetsProvider,
   Insets,
   type IRenderContext,
   NodeStyleBase,
@@ -47,7 +46,7 @@ import {
   type TaggedSvgVisual,
   TextRenderSupport,
   TextWrapping
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 const tabWidth = 50
 const tabHeight = 14
@@ -112,7 +111,7 @@ export class CustomGroupNodeStyle extends NodeStyleBase<CustomGroupNodeStyleVisu
         targetElement: text,
         text: node.tag.title,
         font: new Font('sans-serif', 10),
-        wrapping: TextWrapping.CHARACTER_ELLIPSIS,
+        wrapping: TextWrapping.WRAP_CHARACTER_ELLIPSIS,
         maximumSize: new Size(tabWidth - 12, 15)
       })
 
@@ -169,11 +168,11 @@ export class CustomGroupNodeStyle extends NodeStyleBase<CustomGroupNodeStyleVisu
     return oldVisual
   }
 
-  protected lookup(node: INode, type: Class): any {
-    if (type === INodeInsetsProvider.$class) {
-      // use a custom insets provider that reserves space for the tab
-      return INodeInsetsProvider.create(
-        (node) => new Insets(4, tabHeight + 4, 4, 4)
+  protected lookup(node: INode, type: Constructor<any>): any {
+    if (type === IGroupPaddingProvider) {
+      // use a custom padding provider that reserves space for the tab
+      return IGroupPaddingProvider.create(
+        () => new Insets(tabHeight + 4, 4, 4, 4)
       )
     }
     return super.lookup(node, type)
@@ -185,9 +184,7 @@ export class CustomGroupNodeStyle extends NodeStyleBase<CustomGroupNodeStyleVisu
     node: INode
   ): boolean {
     // Check for bounding box
-    if (
-      !node.layout.toRect().containsWithEps(location, context.hitTestRadius)
-    ) {
+    if (!node.layout.toRect().contains(location, context.hitTestRadius)) {
       return false
     }
     const { x, y } = location

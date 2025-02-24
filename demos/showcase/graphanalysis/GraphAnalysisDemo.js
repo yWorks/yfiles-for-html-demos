@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,108 +27,86 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   FreeEdgeLabelModel,
+  FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
-  GraphSelectionIndicatorManager,
-  IndicatorNodeStyleDecorator,
   INode,
+  LabelStyle,
   License,
-  PolylineEdgeStyle,
+  NodeStyleIndicatorRenderer,
   ShapeNodeStyle
-} from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { initializeToolbar, switchSample, useUniformEdgeWeights } from './ui/ui-utils.js'
-import { runLayout } from './layout/layout.js'
-import { TagColoredPolylineEdgeStyleRenderer, TagColoredShapeNodeStyleRenderer } from './styles.js'
-import { ComponentSwitchingInputMode } from './ui/ComponentSwitchingInputMode.js'
-import { applyAlgorithm } from './algorithms/algorithms.js'
-import { initializeGraphInformation } from './ui/graph-structure-information.js'
-import { initializeContextMenu } from './ui/context-menu.js'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
+} from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initializeToolbar, switchSample, useUniformEdgeWeights } from './ui/ui-utils'
+import { runLayout } from './layout/layout'
+import { TagColoredPolylineEdgeStyle, TagColoredShapeNodeStyle } from './styles'
+import { ComponentSwitchingInputMode } from './ui/ComponentSwitchingInputMode'
+import { applyAlgorithm } from './algorithms/algorithms'
+import { initializeGraphInformation } from './ui/graph-structure-information'
+import { initializeContextMenu } from './ui/context-menu'
 /**
  * Precompiled Regex matcher used to allow only weight labels with positive numbers as text.
  */
 const validationPattern = new RegExp('^(0*[1-9][0-9]*(\\.[0-9]+)?|0+\\.[0-9]*[1-9][0-9]*)$')
-
 /**
  * Main function for running the Graph Analysis demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // configure the interaction for this demo
   graphComponent.inputMode = createEditorMode(graphComponent)
-
   // enable undo support
   graphComponent.graph.undoEngineEnabled = true
-
   // initialize the styles for nodes and edges and for the selection.
   initializeStyles(graphComponent)
-
   // create the toolbar's elements and binds them to the appropriate commands
   initializeToolbar(graphComponent)
   // register the listeners for notifying graph structural changes to update the
   // graph information displayed in the right panel
   initializeGraphInformation(graphComponent)
-
-  await switchSample(graphComponent)
+  setTimeout(async () => {
+    await switchSample(graphComponent)
+  }, 100)
 }
-
 /**
  * Initializes the graph instance and set default styles.
- * @param {!GraphComponent} graphComponent
  */
 function initializeStyles(graphComponent) {
   const graph = graphComponent.graph
-
   // set the default style for the nodes
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    shape: 'ellipse',
-    renderer: new TagColoredShapeNodeStyleRenderer()
-  })
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.style = new TagColoredShapeNodeStyle()
+  graph.nodeDefaults.labels.style = new LabelStyle({
     font: '10px Tahoma',
     textFill: 'white'
   })
-
   // initialize the selection style for nodes
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    nodeStyle: new IndicatorNodeStyleDecorator({
-      wrapped: new ShapeNodeStyle({
+  graph.decorator.nodes.selectionRenderer.addConstant(
+    new NodeStyleIndicatorRenderer({
+      nodeStyle: new ShapeNodeStyle({
         shape: 'ellipse',
         stroke: '5px gray',
         fill: null
       }),
-      padding: 5
+      margins: 5
     })
-  })
-
+  )
   // disable focus decoration
   graphComponent.focusIndicatorManager.enabled = false
-
   // set the default style for the edges
-  graph.edgeDefaults.style = new PolylineEdgeStyle(new TagColoredPolylineEdgeStyleRenderer())
-
+  graph.edgeDefaults.style = new TagColoredPolylineEdgeStyle()
   // set the style and the label model for the edge labels
-  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
-  graph.edgeDefaults.labels.style = new DefaultLabelStyle({
+  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createParameter()
+  graph.edgeDefaults.labels.style = new LabelStyle({
     font: '10px Tahoma',
     textFill: 'gray'
   })
+  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
 }
-
 /**
  * Configures the interaction for this demo.
- * @param {!GraphComponent} graphComponent
- * @returns {!GraphEditorInputMode}
  */
 function createEditorMode(graphComponent) {
   // configure interaction
@@ -138,81 +116,69 @@ function createEditorMode(graphComponent) {
     deletableItems: ['edge', 'node'],
     showHandleItems: 'none'
   })
-
   // add an input mode that allows to interactively switch the displayed component
   inputMode.add(new ComponentSwitchingInputMode())
-
   // deletion
   const graph = graphComponent.graph
-  inputMode.addDeletingSelectionListener(async (_) => {
+  inputMode.addEventListener('deleting-selection', async () => {
     applyAlgorithm(graph)
     await runLayout(graphComponent, true, [])
   })
-
-  inputMode.addDeletedSelectionListener(async (_) => {
+  inputMode.addEventListener('deleted-selection', async () => {
     applyAlgorithm(graph)
     await runLayout(graphComponent, true, [])
   })
-
   // edge creation
-  inputMode.createEdgeInputMode.addEdgeCreatedListener(async (_, evt) => {
+  inputMode.createEdgeInputMode.addEventListener('edge-created', async (evt) => {
     const edge = evt.item
-
     // ensure that each created node and edge have a tag
     if (!useUniformEdgeWeights()) {
       graph.addLabel({
         owner: edge,
         text: '1',
-        layoutParameter: FreeEdgeLabelModel.INSTANCE.createEdgeAnchored(0.5, 10),
+        layoutParameter: FreeEdgeLabelModel.INSTANCE.createParameter(0.5, 10),
         tag: 'weight'
       })
     }
-
     applyAlgorithm(graph)
     const incrementalNodes = [edge.sourceNode, edge.targetNode]
     await runLayout(graphComponent, true, incrementalNodes)
   })
-
-  inputMode.moveInputMode.addDragFinishedListener(async (inputModeMove) => {
+  async function onDragFinished(_, inputModeMove) {
     const affectedNodes = inputModeMove.affectedItems
-      .filter((item) => item instanceof INode)
+      .filter((affectedItem) => affectedItem instanceof INode)
       .toArray()
     if (affectedNodes.length < graph.nodes.size) {
       applyAlgorithm(graph)
       await runLayout(graphComponent, true, affectedNodes)
     }
-  })
-
+  }
+  inputMode.moveSelectedItemsInputMode.addEventListener('drag-finished', onDragFinished)
+  inputMode.moveUnselectedItemsInputMode.addEventListener('drag-finished', onDragFinished)
   // run the algorithm on node creation, edge port changes or label text changes
-  inputMode.addEdgePortsChangedListener(async (_) => {
+  inputMode.addEventListener('edge-ports-changed', async () => {
     applyAlgorithm(graph)
   })
-
-  inputMode.addNodeCreatedListener((_) => {
+  inputMode.addEventListener('node-created', () => {
     applyAlgorithm(graph)
   })
-
-  inputMode.addLabelTextChangedListener(() => applyAlgorithm(graph))
-
-  inputMode.addValidateLabelTextListener((_, evt) => {
+  inputMode.editLabelInputMode.addEventListener('label-edited', () => applyAlgorithm(graph))
+  inputMode.editLabelInputMode.addEventListener('validate-label-text', (evt) => {
     // labels must contain only positive numbers
-    evt.cancel = !validationPattern.test(evt.newText)
+    evt.validatedText = validationPattern.test(evt.newText) ? evt.newText : null
   })
-
   // ensure that each created node has a tag
   inputMode.nodeCreator = (_, g, location) =>
     g.createNodeAt({
       location: location,
       tag: { components: [] }
     })
-
-  inputMode.createEdgeInputMode.addEdgeCreationStartedListener(
-    (_, evt) => (evt.item.tag = { components: [] })
+  inputMode.createEdgeInputMode.addEventListener(
+    'edge-creation-started',
+    (evt) => (evt.item.tag = { components: [] })
   )
-
-  // also we add a context menu
+  // add the context menu
   initializeContextMenu(inputMode, graphComponent)
   return inputMode
 }
-
 void run().then(finishLoading)

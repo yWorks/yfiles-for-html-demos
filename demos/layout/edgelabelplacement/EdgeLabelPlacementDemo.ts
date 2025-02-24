@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,57 +27,52 @@
  **
  ***************************************************************************/
 import {
-  Class,
+  EdgeLabelPreferredPlacement,
   EdgeRouter,
-  EdgeRouterScope,
-  FixNodeLayoutData,
-  FixNodeLayoutStage,
   FreeEdgeLabelModel,
   GenericLabeling,
-  GenericLayoutData,
-  Geom,
+  GenericLabelingData,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  HierarchicLayout,
+  HierarchicalLayout,
   type IEnumerable,
   type IGraph,
   type ILabel,
   type ILayoutAlgorithm,
-  LabelAngleOnRightSideOffsets,
+  LabelAlongEdgePlacements,
   LabelAngleOnRightSideRotations,
   LabelAngleReferences,
-  type LabelLayoutTranslator,
-  LabelPlacements,
+  LabelEdgeSides,
   LabelSideReferences,
+  type LabelStyle,
+  LayoutAnchoringPolicy,
+  LayoutAnchoringStage,
+  LayoutAnchoringStageData,
   LayoutExecutor,
-  LayoutGraphAdapter,
-  LayoutKeys,
   LayoutOrientation,
   License,
   Mapper,
-  MinimumNodeSizeStage,
-  type MultiStageLayout,
   OrganicLayout,
   OrthogonalLayout,
-  PreferredPlacementDescriptor,
   Size,
-  TreeLayout,
-  TreeReductionStage
-} from 'yfiles'
+  TreeLayout
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph, JSONLabel } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
+import { toDegrees, toRadians } from '../../utils/LegacyGeometryUtilities'
 
 type EdgeLabelPlacementOption = {
   text: string
   myValue:
     | ILayoutAlgorithm
-    | LabelPlacements
+    | LabelAlongEdgePlacements
+    | LabelEdgeSides
     | LabelSideReferences
     | LabelAngleReferences
     | LabelAngleOnRightSideRotations
@@ -97,7 +92,7 @@ let graph: IGraph
  * The mapper which provides a PreferredPlacementDescriptor for each edge label.
  * This mapper is used by the layout algorithms to consider the preferred placement for the edge labels.
  */
-let descriptorMapper: Mapper<ILabel, PreferredPlacementDescriptor>
+let descriptorMapper: Mapper<ILabel, EdgeLabelPreferredPlacement>
 
 // init UI elements
 const layoutComboBox = document.querySelector<HTMLSelectElement>('#algorithm-select-box')!
@@ -121,16 +116,15 @@ const angleRotationComboBox = document.querySelector<HTMLSelectElement>('#angle-
 const add180CheckBox = document.querySelector<HTMLInputElement>('#add-180-checkbox')!
 
 /**
- * This demo shows how to place edge labels using {@link PreferredPlacementDescriptor} together
+ * This demo shows how to place edge labels using {@link EdgeLabelPreferredPlacement} together
  * with a generic labeling algorithm or a layout algorithm that supports integrated edge labeling.
  */
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   graph = graphComponent.graph
 
-  descriptorMapper = new Mapper<ILabel, PreferredPlacementDescriptor>()
+  descriptorMapper = new Mapper<ILabel, EdgeLabelPreferredPlacement>()
 
   initializeUI()
 
@@ -145,9 +139,9 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(new HierarchicLayout({ integratedEdgeLabeling: true }))
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(createHierarchicalLayout(LayoutOrientation.TOP_TO_BOTTOM))
+  await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
@@ -196,21 +190,23 @@ async function doLayout(fitViewToContent: boolean): Promise<void> {
     .myValue as ILayoutAlgorithm
 
   // provide preferred placement data to the layout algorithm
-  const layoutData = new GenericLayoutData({
-    labelItemMappings: [
-      [LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY, descriptorMapper]
-    ]
+  const layoutData = new GenericLabelingData({
+    edgeLabelPreferredPlacements: (edge) => descriptorMapper.get(edge)!
   })
 
   // fix node port stage is used to keep the bounding box of the graph in the view port
-  layoutData.combineWith(new FixNodeLayoutData({ fixedNodes: () => true }))
+  layoutData.combineWith(
+    new LayoutAnchoringStageData({
+      nodeAnchoringPolicies: LayoutAnchoringPolicy.CENTER
+    })
+  )
 
   // initialize layout executor
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
-    layout: new MinimumNodeSizeStage(new FixNodeLayoutStage(layout)),
+    layout: new LayoutAnchoringStage(layout),
     layoutData,
-    duration: '0.5s',
+    animationDuration: '0.5s',
     animateViewport: fitViewToContent
   })
 
@@ -251,29 +247,27 @@ function onLabelPropertyChanged(source: HTMLElement): void {
 function updateLabelValues(labels: IEnumerable<ILabel>, source: HTMLElement): void {
   labels.forEach((edgeLabel) => {
     const oldDescriptor = descriptorMapper.get(edgeLabel)
-    const descriptor = oldDescriptor
-      ? new PreferredPlacementDescriptor(oldDescriptor)
-      : new PreferredPlacementDescriptor()
+    const descriptor = oldDescriptor ?? new EdgeLabelPreferredPlacement()
 
     if (source === labelTextArea) {
       graph.setLabelText(edgeLabel, labelTextArea.value)
     }
     if (source === placementAlongEdgeComboBox && placementAlongEdgeComboBox.selectedIndex !== -1) {
-      descriptor.placeAlongEdge = (
+      descriptor.placementAlongEdge = (
         placementAlongEdgeComboBox.options[
           placementAlongEdgeComboBox.selectedIndex
         ] as EdgeLabelPlacementOption
-      ).myValue as LabelPlacements
+      ).myValue as LabelAlongEdgePlacements
     }
     if (
       source === placementSideOfEdgeComboBox &&
       placementSideOfEdgeComboBox.selectedIndex !== -1
     ) {
-      descriptor.sideOfEdge = (
+      descriptor.edgeSide = (
         placementSideOfEdgeComboBox.options[
           placementSideOfEdgeComboBox.selectedIndex
         ] as EdgeLabelPlacementOption
-      ).myValue as LabelPlacements
+      ).myValue as LabelEdgeSides
     }
     if (source === sideReferenceComboBox && sideReferenceComboBox.selectedIndex !== -1) {
       descriptor.sideReference = (
@@ -297,14 +291,12 @@ function updateLabelValues(labels: IEnumerable<ILabel>, source: HTMLElement): vo
       ).myValue as LabelAngleOnRightSideRotations
     }
     if (source === add180CheckBox) {
-      descriptor.angleOffsetOnRightSide = add180CheckBox.checked
-        ? LabelAngleOnRightSideOffsets.SEMI
-        : LabelAngleOnRightSideOffsets.NONE
+      descriptor.addHalfRotationOnRightSide = add180CheckBox.checked
     }
     if (source === angleNumberField) {
       const v = parseFloat(angleNumberField.value)
       if (!Number.isNaN(v)) {
-        descriptor.angle = Geom.toRadians(v)
+        descriptor.angle = toRadians(v)
       }
     }
     if (source === distanceToEdgeNumberField) {
@@ -312,11 +304,6 @@ function updateLabelValues(labels: IEnumerable<ILabel>, source: HTMLElement): vo
       if (!Number.isNaN(v)) {
         descriptor.distanceToEdge = v
       }
-    }
-
-    // change descriptor if there was a change
-    if (!descriptor.equals(oldDescriptor)) {
-      descriptorMapper.set(edgeLabel, descriptor)
     }
   })
 }
@@ -329,8 +316,8 @@ function updateLabelValues(labels: IEnumerable<ILabel>, source: HTMLElement): vo
 function updateLabelProperties(labels: IEnumerable<ILabel>): void {
   let valuesUndefined = true
   let text: string | null = null
-  let placement: LabelPlacements | null = null
-  let side: LabelPlacements | null = null
+  let placement: LabelAlongEdgePlacements | null = null
+  let side: LabelEdgeSides | null = null
   let sideReference: LabelSideReferences | null = null
   let angle: number | null = null
   let angleReference: LabelAngleReferences | null = null
@@ -339,44 +326,44 @@ function updateLabelProperties(labels: IEnumerable<ILabel>): void {
   let distance: number | null = null
 
   for (const label of labels) {
-    const descriptor = descriptorMapper.get(label)! as PreferredPlacementDescriptor
+    const descriptor = descriptorMapper.get(label)! as EdgeLabelPreferredPlacement
     if (valuesUndefined) {
       text = label.text
-      placement = descriptor.placeAlongEdge
-      side = descriptor.sideOfEdge
+      placement = descriptor.placementAlongEdge
+      side = descriptor.edgeSide
       sideReference = descriptor.sideReference
       angle = descriptor.angle
       angleReference = descriptor.angleReference
       angleRotation = descriptor.angleRotationOnRightSide
-      hasAngleOffset = descriptor.isAngleOffsetOnRightSide180
+      hasAngleOffset = descriptor.addHalfRotationOnRightSide
       distance = descriptor.distanceToEdge
       valuesUndefined = false
     } else {
-      if (text !== null && text !== label.text) {
+      if (text && text !== label.text) {
         text = null
       }
-      if (placement !== null && placement !== descriptor.placeAlongEdge) {
+      if (placement && placement !== descriptor.placementAlongEdge) {
         placement = null
       }
-      if (side !== null && side !== descriptor.sideOfEdge) {
+      if (side && side !== descriptor.edgeSide) {
         side = null
       }
-      if (sideReference !== null && sideReference !== descriptor.sideReference) {
+      if (sideReference && sideReference !== descriptor.sideReference) {
         sideReference = null
       }
-      if (angle !== null && angle !== descriptor.angle) {
+      if (angle && angle !== descriptor.angle) {
         angle = null
       }
-      if (angleReference !== null && angleReference !== descriptor.angleReference) {
+      if (angleReference && angleReference !== descriptor.angleReference) {
         angleReference = null
       }
-      if (angleRotation !== null && angleRotation !== descriptor.angleRotationOnRightSide) {
+      if (angleRotation && angleRotation !== descriptor.angleRotationOnRightSide) {
         angleRotation = null
       }
-      if (hasAngleOffset !== null && hasAngleOffset !== descriptor.isAngleOffsetOnRightSide180) {
+      if (hasAngleOffset && hasAngleOffset !== descriptor.addHalfRotationOnRightSide) {
         hasAngleOffset = null
       }
-      if (distance !== null && distance !== descriptor.distanceToEdge) {
+      if (distance && distance !== descriptor.distanceToEdge) {
         distance = null
       }
 
@@ -397,28 +384,33 @@ function updateLabelProperties(labels: IEnumerable<ILabel>): void {
 
   // If, for a single property, there are multiple values present in the set of selected edge labels, the
   // respective option item is set to indicate an "undefined value" state.
-  labelTextArea.value = text !== null ? text : ''
+  labelTextArea.value = text ? text : ''
 
-  distanceToEdgeNumberField.value = distance !== null ? distance.toString() : ''
+  distanceToEdgeNumberField.value = distance ? distance.toString() : ''
 
-  angleNumberField.value = angle !== null ? Geom.toDegrees(angle).toString() : ''
+  angleNumberField.value = angle ? toDegrees(angle).toString() : ''
 
   add180CheckBox.checked = hasAngleOffset === null ? false : hasAngleOffset
 
-  placementAlongEdgeComboBox.selectedIndex =
-    placement !== null ? getIndex(placementAlongEdgeComboBox, placement) : -1
+  placementAlongEdgeComboBox.selectedIndex = placement
+    ? getIndex(placementAlongEdgeComboBox, placement)
+    : -1
 
-  placementSideOfEdgeComboBox.selectedIndex =
-    side !== null ? getIndex(placementSideOfEdgeComboBox, side) : -1
+  placementSideOfEdgeComboBox.selectedIndex = side
+    ? getIndex(placementSideOfEdgeComboBox, side)
+    : -1
 
-  sideReferenceComboBox.selectedIndex =
-    sideReference !== null ? getIndex(sideReferenceComboBox, sideReference) : -1
+  sideReferenceComboBox.selectedIndex = sideReference
+    ? getIndex(sideReferenceComboBox, sideReference)
+    : -1
 
-  angleReferenceComboBox.selectedIndex =
-    angleReference !== null ? getIndex(angleReferenceComboBox, angleReference) : -1
+  angleReferenceComboBox.selectedIndex = angleReference
+    ? getIndex(angleReferenceComboBox, angleReference)
+    : -1
 
-  angleRotationComboBox.selectedIndex =
-    angleRotation !== null ? getIndex(angleRotationComboBox, angleRotation) : -1
+  angleRotationComboBox.selectedIndex = angleRotation
+    ? getIndex(angleRotationComboBox, angleRotation)
+    : -1
 }
 
 /**
@@ -430,7 +422,8 @@ function getIndex(
   comboBox: HTMLSelectElement,
   value:
     | ILayoutAlgorithm
-    | LabelPlacements
+    | LabelAlongEdgePlacements
+    | LabelEdgeSides
     | LabelSideReferences
     | LabelAngleReferences
     | LabelAngleOnRightSideRotations
@@ -497,10 +490,10 @@ function initializeUI(): void {
  */
 function initializeGraph(): void {
   // add preferred placement information to each new label
-  graph.addLabelAddedListener((_, evt) => {
-    descriptorMapper.set(evt.item, new PreferredPlacementDescriptor())
+  graph.addEventListener('label-added', (evt) => {
+    descriptorMapper.set(evt.item, new EdgeLabelPreferredPlacement())
   })
-  graph.addLabelRemovedListener((_, evt) => {
+  graph.addEventListener('label-removed', (evt) => {
     descriptorMapper.delete(evt.item)
   })
 }
@@ -512,7 +505,10 @@ function initializeStyles(): void {
   initDemoStyles(graph)
   graph.nodeDefaults.size = new Size(50, 30)
 
-  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createParameter()
+
+  //allow full 360 degrees rotation for edge labels
+  ;(graph.edgeDefaults.labels.style as LabelStyle).autoFlip = false
 }
 
 /**
@@ -531,7 +527,9 @@ function initializeInputMode(): void {
   })
 
   // update the option handler settings when the selection changes
-  inputMode.addMultiSelectionFinishedListener(() => updateLabelProperties(getAffectedLabels()))
+  inputMode.addEventListener('multi-selection-finished', () =>
+    updateLabelProperties(getAffectedLabels())
+  )
 
   graphComponent.inputMode = inputMode
 }
@@ -540,21 +538,21 @@ function initializeInputMode(): void {
  * Initializes the properties in the option handler with options and default values.
  */
 function initializeOptions(): void {
-  addOption(placementAlongEdgeComboBox, 'AtCenter', LabelPlacements.AT_CENTER)
-  addOption(placementAlongEdgeComboBox, 'AtSource', LabelPlacements.AT_SOURCE)
-  addOption(placementAlongEdgeComboBox, 'AtTarget', LabelPlacements.AT_TARGET)
-  addOption(placementAlongEdgeComboBox, 'Anywhere', LabelPlacements.ANYWHERE)
-  addOption(placementAlongEdgeComboBox, 'AtSourcePort', LabelPlacements.AT_SOURCE_PORT)
-  addOption(placementAlongEdgeComboBox, 'AtTargetPort', LabelPlacements.AT_TARGET_PORT)
+  addOption(placementAlongEdgeComboBox, 'AtCenter', LabelAlongEdgePlacements.AT_CENTER)
+  addOption(placementAlongEdgeComboBox, 'AtSource', LabelAlongEdgePlacements.AT_SOURCE)
+  addOption(placementAlongEdgeComboBox, 'AtTarget', LabelAlongEdgePlacements.AT_TARGET)
+  addOption(placementAlongEdgeComboBox, 'Anywhere', LabelAlongEdgePlacements.ANYWHERE)
+  addOption(placementAlongEdgeComboBox, 'AtSourcePort', LabelAlongEdgePlacements.AT_SOURCE_PORT)
+  addOption(placementAlongEdgeComboBox, 'AtTargetPort', LabelAlongEdgePlacements.AT_TARGET_PORT)
   placementAlongEdgeComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(placementAlongEdgeComboBox)
   )
   placementAlongEdgeComboBox.selectedIndex = 0
 
-  addOption(placementSideOfEdgeComboBox, 'RightOfEdge', LabelPlacements.RIGHT_OF_EDGE)
-  addOption(placementSideOfEdgeComboBox, 'OnEdge', LabelPlacements.ON_EDGE)
-  addOption(placementSideOfEdgeComboBox, 'LeftOfEdge', LabelPlacements.LEFT_OF_EDGE)
-  addOption(placementSideOfEdgeComboBox, 'Anywhere', LabelPlacements.ANYWHERE)
+  addOption(placementSideOfEdgeComboBox, 'RightOfEdge', LabelEdgeSides.RIGHT_OF_EDGE)
+  addOption(placementSideOfEdgeComboBox, 'OnEdge', LabelEdgeSides.ON_EDGE)
+  addOption(placementSideOfEdgeComboBox, 'LeftOfEdge', LabelEdgeSides.LEFT_OF_EDGE)
+  addOption(placementSideOfEdgeComboBox, 'Anywhere', LabelAlongEdgePlacements.ANYWHERE)
   placementSideOfEdgeComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(placementSideOfEdgeComboBox)
   )
@@ -563,13 +561,13 @@ function initializeOptions(): void {
   addOption(sideReferenceComboBox, 'RelativeToEdgeFlow', LabelSideReferences.RELATIVE_TO_EDGE_FLOW)
   addOption(
     sideReferenceComboBox,
-    'AbsoluteWithLeftInNorth',
-    LabelSideReferences.ABSOLUTE_WITH_LEFT_IN_NORTH
+    'AbsoluteWithLeftAbove',
+    LabelSideReferences.ABSOLUTE_WITH_LEFT_ABOVE
   )
   addOption(
     sideReferenceComboBox,
-    'AbsoluteWithRightInNorth',
-    LabelSideReferences.ABSOLUTE_WITH_RIGHT_IN_NORTH
+    'AbsoluteWithRightAbove',
+    LabelSideReferences.ABSOLUTE_WITH_RIGHT_ABOVE
   )
   sideReferenceComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(sideReferenceComboBox)
@@ -617,87 +615,53 @@ function initializeOptions(): void {
  * Initializes the layout combo-box with a selection of layout algorithms.
  */
 function initializeLayoutComboBox(): void {
+  addOption(
+    layoutComboBox,
+    'Hierarchical, Top to Bottom',
+    createHierarchicalLayout(LayoutOrientation.TOP_TO_BOTTOM)
+  )
+  addOption(
+    layoutComboBox,
+    'Hierarchical, Left to Right',
+    createHierarchicalLayout(LayoutOrientation.LEFT_TO_RIGHT)
+  )
   addOption(layoutComboBox, 'Generic Edge Labeling', new GenericLabeling())
-  addOption(
-    layoutComboBox,
-    'Hierarchic, Top to Bottom',
-    createHierarchicLayout(LayoutOrientation.TOP_TO_BOTTOM)
-  )
-  addOption(
-    layoutComboBox,
-    'Hierarchic, Left to Right',
-    createHierarchicLayout(LayoutOrientation.LEFT_TO_RIGHT)
-  )
   addOption(layoutComboBox, 'Organic', createOrganicLayout())
-  addOption(layoutComboBox, 'Generic Tree', createGenericTreeLayout())
+  addOption(layoutComboBox, 'Generic Tree', createTreeLayout())
   addOption(layoutComboBox, 'Orthogonal', createOrthogonalLayout())
 
   layoutComboBox.selectedIndex = 0
 }
 
 /**
- * Creates a configured HierarchicLayout.
+ * Creates a configured HierarchicalLayout.
  */
-function createHierarchicLayout(layoutOrientation: LayoutOrientation): HierarchicLayout {
-  const layout = new HierarchicLayout()
-  layout.integratedEdgeLabeling = true
-  layout.layoutOrientation = layoutOrientation
-
-  disableAutoFlipping(layout)
-  return layout
+function createHierarchicalLayout(layoutOrientation: LayoutOrientation): HierarchicalLayout {
+  return new HierarchicalLayout({ layoutOrientation })
 }
 
-function createGenericTreeLayout(): ILayoutAlgorithm {
-  const reductionStage = new TreeReductionStage()
-
-  const affectedLabelsKey = 'AFFECTED_LABELS'
-  const labelingAlgorithm = new GenericLabeling()
-  labelingAlgorithm.affectedLabelsDpKey = affectedLabelsKey
-  reductionStage.nonTreeEdgeLabelingAlgorithm = labelingAlgorithm
-  reductionStage.nonTreeEdgeLabelSelectionKey = affectedLabelsKey
-
-  const affectedEdgesKey = LayoutKeys.AFFECTED_EDGES_DP_KEY
-  const edgeRouter = new EdgeRouter()
-  edgeRouter.affectedEdgesDpKey = affectedEdgesKey
-  edgeRouter.scope = EdgeRouterScope.ROUTE_AFFECTED_EDGES
-  reductionStage.nonTreeEdgeRouter = edgeRouter
-  reductionStage.nonTreeEdgeSelectionKey = affectedEdgesKey
-
+function createTreeLayout(): ILayoutAlgorithm {
   const layout = new TreeLayout()
-  layout.integratedEdgeLabeling = true
+  layout.parallelEdgeRouter.enabled = false
 
-  layout.prependStage(reductionStage)
-  disableAutoFlipping(layout)
+  const reductionStage = layout.treeReductionStage
+  reductionStage.nonTreeEdgeRouter = new EdgeRouter()
+  reductionStage.nonTreeEdgeLabeling = new GenericLabeling()
+
   return layout
 }
 
 function createOrthogonalLayout(): ILayoutAlgorithm {
-  const layout = new OrthogonalLayout()
-  layout.integratedEdgeLabeling = true
-
-  disableAutoFlipping(layout)
-  return layout
+  return new OrthogonalLayout()
 }
 
 function createOrganicLayout(): ILayoutAlgorithm {
-  const layout = new OrganicLayout()
-  layout.integratedEdgeLabeling = true
-  layout.deterministic = true
-  layout.preferredEdgeLength = 60
-  layout.minimumNodeDistance = 20
-
-  disableAutoFlipping(layout)
-  return layout
-}
-
-/**
- * Disables auto-flipping for labels on the layout algorithm since the result could differ from the values in the
- * PreferredPlacementDescriptor.
- * @param multiStageLayout The current layout algorithm.
- */
-function disableAutoFlipping(multiStageLayout: MultiStageLayout): void {
-  const labelLayoutTranslator = multiStageLayout.labeling as LabelLayoutTranslator
-  labelLayoutTranslator.autoFlipping = false
+  return new OrganicLayout({
+    edgeLabelPlacement: 'integrated',
+    deterministic: true,
+    defaultPreferredEdgeLength: 60,
+    defaultMinimumNodeDistance: 20
+  })
 }
 
 function addOption(
@@ -705,7 +669,8 @@ function addOption(
   text: string,
   value:
     | ILayoutAlgorithm
-    | LabelPlacements
+    | LabelAlongEdgePlacements
+    | LabelEdgeSides
     | LabelSideReferences
     | LabelAngleReferences
     | LabelAngleOnRightSideRotations
@@ -721,7 +686,7 @@ function addOption(
  * Affected labels are all selected labels or all labels in case no label is selected.
  */
 function getAffectedLabels(): IEnumerable<ILabel> {
-  const selectedLabels = graphComponent.selection.selectedLabels
+  const selectedLabels = graphComponent.selection.labels
   return selectedLabels.size > 0 ? selectedLabels : graph.edgeLabels
 }
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FoldingEdgeStateId, type FoldingManager, type IGraph } from 'yfiles'
+import { FoldingEdgeStateId, type FoldingManager, type IGraph, type INode } from '@yfiles/yfiles'
 
 /**
  * Applies the given graph's default styles to the graph's items.
@@ -70,8 +70,16 @@ function applyDefaultStylesAndUpdateFoldingStates(foldingManager: FoldingManager
     const source = edge.sourceNode
     const target = edge.targetNode
     if (graph.getParent(source!) != null || graph.getParent(target!) != null) {
-      for (let tmpSource = source; tmpSource; tmpSource = graph.getParent(tmpSource)) {
-        for (let tmpTarget = target; tmpTarget; tmpTarget = graph.getParent(tmpTarget)) {
+      for (
+        let tmpSource: INode | null = source;
+        tmpSource;
+        tmpSource = graph.getParent(tmpSource)
+      ) {
+        for (
+          let tmpTarget: INode | null = target;
+          tmpTarget;
+          tmpTarget = graph.getParent(tmpTarget)
+        ) {
           const stateId = new FoldingEdgeStateId(
             edge,
             tmpSource,
@@ -86,8 +94,8 @@ function applyDefaultStylesAndUpdateFoldingStates(foldingManager: FoldingManager
             for (const foldedLabel of state.labels) {
               foldedLabel.style = edgeLabelDefaults.getStyleInstance(edge)
             }
-            state.sourcePort.style = edge.sourcePort!.style
-            state.targetPort.style = edge.targetPort!.style
+            state.sourcePort.style = edge.sourcePort.style
+            state.targetPort.style = edge.targetPort.style
           }
         }
       }
@@ -108,16 +116,16 @@ function applyDefaultStylesImpl(graph: IGraph): void {
     )
   }
   for (const item of graph.nodeLabels) {
-    graph.setStyle(item, graph.nodeDefaults.labels.getStyleInstance(item.owner!))
+    graph.setStyle(item, graph.nodeDefaults.labels.getStyleInstance(item.owner))
   }
   for (const item of graph.edges) {
     graph.setStyle(item, graph.edgeDefaults.getStyleInstance())
   }
   for (const item of graph.edgeLabels) {
-    graph.setStyle(item, graph.edgeDefaults.labels.getStyleInstance(item.owner!))
+    graph.setStyle(item, graph.edgeDefaults.labels.getStyleInstance(item.owner))
   }
   for (const item of graph.ports) {
-    graph.setStyle(item, graph.nodeDefaults.ports.getStyleInstance(item.owner!))
+    graph.setStyle(item, graph.nodeDefaults.ports.getStyleInstance(item.owner))
   }
   // There are no ports at edges, and no labels at ports in this demo
 }

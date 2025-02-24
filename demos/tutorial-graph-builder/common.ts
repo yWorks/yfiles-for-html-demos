@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,18 +28,17 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  DefaultLabelStyle,
   type GraphComponent,
   GroupNodeStyle,
-  HierarchicLayout,
+  HierarchicalLayout,
   HorizontalTextAlignment,
-  LayoutMode,
+  LabelStyle,
+  LayoutExecutor,
   type NodesSource,
   PolylineEdgeStyle,
   PortAdjustmentPolicy,
   ShapeNodeStyle
-} from 'yfiles'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+} from '@yfiles/yfiles'
 
 /**
  * Retrieves sample ownership data.
@@ -70,11 +69,11 @@ export function configureStyles(nodesSources: NodesSource<any>[]): void {
       fill: nodeFills[index % nodeFills.length],
       stroke: nodeStrokes[index % nodeStrokes.length]
     })
-    nodesSource.nodeCreator.defaults.labels.style = new DefaultLabelStyle({
+    nodesSource.nodeCreator.defaults.labels.style = new LabelStyle({
       shape: 'round-rectangle',
       textFill: labelTextColors[index % labelTextColors.length],
       backgroundFill: labelFills[index % labelFills.length],
-      insets: 2
+      padding: 2
     })
   })
 }
@@ -87,16 +86,18 @@ export async function runLayout(
   animated = false
 ): Promise<void> {
   graphComponent.limitFitContentZoom = false
-  await graphComponent.morphLayout({
-    layout: new HierarchicLayout({
-      considerNodeLabels: true,
-      layoutMode: LayoutMode.FROM_SCRATCH,
-      componentLayoutEnabled: true
-    }),
-    portAdjustmentPolicy: PortAdjustmentPolicy.ALWAYS,
-    targetBoundsInsets: 250,
-    morphDuration: animated ? '700ms' : 0
+  const hierarchicalLayout = new HierarchicalLayout()
+  hierarchicalLayout.componentLayout.enabled = true
+
+  const layoutExecutor = new LayoutExecutor({
+    graphComponent,
+    layout: hierarchicalLayout,
+    portAdjustmentPolicies: PortAdjustmentPolicy.ALWAYS,
+    targetBoundsPadding: 250,
+    animationDuration: animated ? '700ms' : 0,
+    animateViewport: true
   })
+  await layoutExecutor.start()
 }
 
 /**
@@ -105,7 +106,6 @@ export async function runLayout(
 export function initializeTutorialDefaults(
   graphComponent: GraphComponent
 ): void {
-  applyDemoTheme(graphComponent)
   graphComponent.focusIndicatorManager.enabled = false
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -113,11 +113,11 @@ export function initializeTutorialDefaults(
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     shape: 'round-rectangle',
     textFill: '#042d37',
     backgroundFill: '#9dc6d0',
-    insets: 2,
+    padding: 2,
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
   })
   graph.edgeDefaults.style = new PolylineEdgeStyle({
@@ -127,7 +127,7 @@ export function initializeTutorialDefaults(
 
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#111d4a',
-    contentAreaInsets: 10
+    contentAreaPadding: 10
   })
 }
 
@@ -140,6 +140,6 @@ export function fitGraphBounds(
   minimumZoom = 3
 ): void {
   graphComponent.limitFitContentZoom = false
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
   graphComponent.zoom = Math.min(graphComponent.zoom, minimumZoom)
 }

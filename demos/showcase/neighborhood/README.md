@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Neighborhood View Demo
 
-# Neighborhood View Demo
+<img src="../../../doc/demo-thumbnails/neighborhood-view.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/showcase/neighborhood/).
 
 The Neighborhood demo shows the neighborhood of the currently selected node alongside the graph. The neighborhood view is a filtered copy of the original graph. There are different modes for the neighborhood computation. The currently selected node is highlighted inside the neighborhood view.
 
@@ -32,4 +34,4 @@ The following neighborhood types are available:
 
 ## Remarks
 
-- The neighborhood view is using a [HierarchicLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout) on the filtered graph.
+- The neighborhood view is using a [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) on the filtered graph.

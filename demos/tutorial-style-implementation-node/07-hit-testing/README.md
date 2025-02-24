@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 07 Hit-Testing - Tutorial: Node Style Implementation
 
-# Customizing hit-testing
+<img src="../../../doc/demo-thumbnails/tutorial-style-implementation-node-hit-testing.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-node/07-hit-testing/).
 
 Styles not only provide a visual representation for graph items. They also offer crucial parts for interacting with said items. Hit-testing determines whether a particular item is at a given point in the canvas. It happens all the time during interaction, e.g. when selecting items, moving nodes, or creating edges.
 
@@ -26,9 +28,7 @@ protected isHit(
   node: INode
 ): boolean {
   // Check for bounding box
-  if (
-    !node.layout.toRect().containsWithEps(location, context.hitTestRadius)
-  ) {
+  if (!node.layout.toRect().contains(location, context.hitTestRadius)) {
     return false
   }
   const { x, y } = location

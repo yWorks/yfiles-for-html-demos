@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,15 +28,15 @@
  ***************************************************************************/
 import {
   Cursor,
-  DefaultLabelStyle,
   HoveredItemChangedEventArgs,
   IEdge,
   ILabel,
   IModelItem,
   INode,
   ItemHoverInputMode,
+  LabelStyle,
   ModifierKeys
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * This {@link ItemHoverInputMode} will show a pointer cursor for external links and underline the link's
@@ -55,7 +55,10 @@ export default class LinkItemHoverInputMode extends ItemHoverInputMode {
    * @param item - The item to check.
    */
   isValidHoverItem(item: IModelItem): boolean {
-    if (this.inputModeContext!.canvasComponent!.lastMouseEvent.modifiers !== ModifierKeys.CONTROL) {
+    if (
+      this.parentInputModeContext!.canvasComponent!.lastInputEvent.modifiers !==
+      ModifierKeys.CONTROL
+    ) {
       return false
     }
     return !!this.getLabelLink(item)
@@ -71,17 +74,17 @@ export default class LinkItemHoverInputMode extends ItemHoverInputMode {
     const labelLink = this.getLabelLink(evt.item)
 
     // the toggle of underlined text should not be added to the undo queue
-    const graph = this.inputModeContext!.graph!
+    const graph = this.parentInputModeContext!.graph!
     const edit = graph.beginEdit('LinkDecoration', 'LinkDecoration')
 
     if (oldLabelLink) {
       // re-apply the original style
-      graph.setStyle(oldLabelLink, graph.nodeDefaults.labels.getStyleInstance(oldLabelLink.owner!))
+      graph.setStyle(oldLabelLink, graph.nodeDefaults.labels.getStyleInstance(oldLabelLink.owner))
     }
 
     if (labelLink) {
       // underline the text of the link
-      const clone = labelLink.style.clone() as DefaultLabelStyle
+      const clone = labelLink.style.clone() as LabelStyle
       clone.font = clone.font.createCopy({
         textDecoration: 'underline'
       })
@@ -100,9 +103,9 @@ export default class LinkItemHoverInputMode extends ItemHoverInputMode {
    */
   getLabelLink(item: IModelItem | null): ILabel | null {
     let labelLink: ILabel | null = null
-    if (ILabel.isInstance(item) && (item.text.startsWith('www.') || item.text.startsWith('http'))) {
+    if (item instanceof ILabel && (item.text.startsWith('www.') || item.text.startsWith('http'))) {
       labelLink = item
-    } else if (INode.isInstance(item) || IEdge.isInstance(item)) {
+    } else if (item instanceof INode || item instanceof IEdge) {
       item.labels.forEach((label: ILabel): void => {
         const text = label.text
         if (text.startsWith('www.') || text.startsWith('http')) {

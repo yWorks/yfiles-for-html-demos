@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,26 +28,25 @@
  ***************************************************************************/
 import {
   BendAnchoredPortLocationModel,
-  Class,
+  Color,
+  type Constructor,
   EdgeStyleBase,
-  Fill,
   ICanvasContext,
   IEdge,
   IInputModeContext,
   IPortStyle,
   IRenderContext,
-  NodeStylePortStyleAdapter,
+  ShapePortStyle,
   Point,
   PolylineEdgeStyle,
   Rect,
-  ShapeNodeStyle,
   SimplePort,
   Size,
   Stroke,
   SvgVisual,
   SvgVisualGroup,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * This edge style decorator shows how to decorate an edge style with bends that are rendered by a port style.
@@ -140,13 +139,10 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
 
     const bendStyle = this.bendStyle
     const stroke = this.baseStyle.stroke!
-    if (
-      bendStyle instanceof NodeStylePortStyleAdapter &&
-      bendStyle.nodeStyle instanceof ShapeNodeStyle
-    ) {
+    if (bendStyle instanceof ShapePortStyle) {
       const diameter = stroke.thickness * 2
       bendStyle.renderSize = new Size(diameter, diameter)
-      bendStyle.nodeStyle.fill = stroke.fill
+      bendStyle.fill = stroke.fill
     }
 
     // update existing bend visuals
@@ -154,7 +150,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
     const portLocationModel = BendAnchoredPortLocationModel.INSTANCE
     for (let i = 0; i < group.children.size; i++) {
       // place the dummy port at the bend's location
-      dummyPort.locationParameter = portLocationModel.createFromSource(i - 1)
+      dummyPort.locationParameter = portLocationModel.createParameterFromSource(i - 1)
 
       // update the dummy port visual
       const visual = bendStyle.renderer
@@ -168,7 +164,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
     // add missing visuals
     for (let i = group.children.size; i < bends.size; i++) {
       // place the dummy port at the bend's location
-      dummyPort.locationParameter = portLocationModel.createFromSource(i - 1)
+      dummyPort.locationParameter = portLocationModel.createParameterFromSource(i - 1)
 
       // render the dummy port visual
       const bendVisual = bendStyle.renderer
@@ -193,7 +189,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
         return new Stroke('#c1c1c1', 1.5)
       case 'TRAFFIC_NORMAL':
       default:
-        return new Stroke(Fill.BLACK, 1.5)
+        return new Stroke(Color.BLACK, 1.5)
     }
   }
 
@@ -259,7 +255,7 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
    * @returns An implementation of the `type` or `null`.
    * @see EdgeStyleBase#lookup
    */
-  lookup(edge: IEdge, type: Class<any>): object | null {
+  lookup(edge: IEdge, type: Constructor<any>): object | null {
     return this.baseStyle.renderer.getContext(edge, this.baseStyle).lookup(type)
   }
 }

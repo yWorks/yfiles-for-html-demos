@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,20 +26,25 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EditLabelHelper, IEdge, type LabelEditingEventArgs } from 'yfiles'
+import {
+  EditLabelHelper,
+  IEdge,
+  type IInputModeContext,
+  type LabelEditingEventArgs
+} from '@yfiles/yfiles'
 import { isCrossReference } from '../data-types'
 
 /**
  * An {@link EditLabelHelper} that only allows for adding a single label to nodes or cross-reference edges.
  */
 export class EditOneLabelHelper extends EditLabelHelper {
-  onLabelAdding(evt: LabelEditingEventArgs): void {
+  onLabelAdding(context: IInputModeContext, evt: LabelEditingEventArgs): void {
     const owner = evt.owner
     if (!owner || owner.labels.size >= 1 || (owner instanceof IEdge && !isCrossReference(owner))) {
       evt.cancel = true
       return
     }
 
-    super.onLabelAdding(evt)
+    super.onLabelAdding(context, evt)
   }
 }

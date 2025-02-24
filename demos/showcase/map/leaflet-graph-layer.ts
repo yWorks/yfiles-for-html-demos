@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -45,7 +45,7 @@ import {
   GraphViewerInputMode,
   type INode,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getArcHeight } from './map-styles'
 import 'leaflet/dist/leaflet.css'
 
@@ -97,6 +97,16 @@ export function createMap(
 }
 
 /**
+ * maybePreventPointerDefault prevents defaults which causes leaflet to not register the input
+ * by overriding the protected maybePreventPointerDefault method in a derived GraphComponent we can prevent this behaviour
+ */
+export class EventPassthroughGraphComponent extends GraphComponent {
+  protected maybePreventPointerDefault(evt: Event): void {
+    //do not prevent default on pointer events
+  }
+}
+
+/**
  * A Leaflet-layer that contains a {@link GraphComponent}.
  * The {@link GraphComponent} is placed above the map layer,
  * and won't adjust the viewport but calculates the node locations using the geolocations.
@@ -119,17 +129,13 @@ export class GraphLayer extends Layer {
     this.zoomChanged = options?.zoomChanged
 
     // initialize the GraphComponent and place it in the div with CSS selector #graphComponent
-    this.graphComponent = new GraphComponent({
+    this.graphComponent = new EventPassthroughGraphComponent({
       zoom: 1,
-      autoDrag: false,
-      horizontalScrollBarPolicy: 'never',
-      verticalScrollBarPolicy: 'never',
-      mouseWheelBehavior: 'none',
-      // Due to how Leaflet handles the different layers, we need to use the timer-based size-change detection.
-      // This is needed to display the graph when the demo is opened in a background tab
-      sizeChangedDetection: 'timer'
+      autoScrollOnBounds: false,
+      horizontalScrollBarPolicy: 'hidden',
+      verticalScrollBarPolicy: 'hidden',
+      mouseWheelBehavior: 'none'
     })
-
     // initialize the interaction with the GraphComponent
     const inputMode = new GraphViewerInputMode({
       clickableItems: GraphItemTypes.NODE,
@@ -145,11 +151,25 @@ export class GraphLayer extends Layer {
   }
 
   /**
+   * We want leaflet to consume the interaction events.
+   */
+  preventEventPropagation(element: HTMLElement): void {
+    element.addEventListener(
+      'pointerdown',
+      (evt) => {
+        //evt.stopPropagation()
+      },
+      true
+    )
+  }
+
+  /**
    * @yjs:keep = animate
    */
   onAdd(map: LeafletMap): this {
     this.pane = map.getPane('overlayPane')!
-    this.pane.appendChild(this.graphComponent.div)
+    this.preventEventPropagation(this.pane)
+    this.pane.appendChild(this.graphComponent.htmlElement)
     this.mapPane = map.getPane('mapPane')
 
     map.on(
@@ -166,7 +186,7 @@ export class GraphLayer extends Layer {
     const northEast = new LatLng(89.99346179538875, 180)
     const bounds = latLngBounds(southWest, northEast)
     map.setMaxBounds(bounds)
-    map.on('drag', () => {
+    map.on('drag', (ev) => {
       map.panInsideBounds(bounds, { animate: false })
     })
 
@@ -186,7 +206,7 @@ export class GraphLayer extends Layer {
     this.pane = undefined
     this.mapPane = undefined
     this.graphComponent.cleanUp()
-    this.graphComponent.div.remove()
+    this.graphComponent.htmlElement.remove()
     return this
   }
 
@@ -213,11 +233,8 @@ export class GraphLayer extends Layer {
     const newSize = bottomRight.subtract(topLeft)
 
     // resize the graphComponent's div
-    graphComponent.div.style.width = `${newSize.x}px`
-    graphComponent.div.style.height = `${newSize.y}px`
-
-    // anchor it at the top-left of the screen
-    DomUtil.setPosition(this.pane!, topLeft)
+    graphComponent.htmlElement.style.width = `${newSize.x}px`
+    graphComponent.htmlElement.style.height = `${newSize.y}px`
 
     // update the node locations and edge arcs
     this.mapLayout(graphComponent, map)
@@ -225,6 +242,9 @@ export class GraphLayer extends Layer {
     graphComponent.viewPoint = topLeft
 
     graphComponent.updateVisual()
+
+    // anchor it at the top-left of the screen
+    DomUtil.setPosition(graphComponent.htmlElement, topLeft)
 
     if (this.zoomChanged) {
       // execute the callback, when the zoom changed
@@ -267,13 +287,13 @@ export class GraphLayer extends Layer {
    * Hides the {@link GraphComponent} during zoom.
    */
   hideGraphComponent(): void {
-    this.graphComponent.div.style.visibility = 'hidden'
+    this.graphComponent.htmlElement.style.visibility = 'hidden'
   }
 
   /**
    * Shows the {@link GraphComponent} after zooming gesture.
    */
   showGraphComponent(): void {
-    this.graphComponent.div.style.visibility = 'visible'
+    this.graphComponent.htmlElement.style.visibility = 'visible'
   }
 }

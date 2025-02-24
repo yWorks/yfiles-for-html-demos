@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,19 +30,16 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   LayoutExecutor,
-  LayoutOrientation,
-  License
-} from 'yfiles'
-
-import { createPortAwareGraphBuilder, setBuilderData } from './GraphBuilder.js'
-import GraphBuilderData from './graph-builder-data.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider.js'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
+  License,
+  PortPlacementPolicy
+} from '@yfiles/yfiles'
+import { createPortAwareGraphBuilder, setBuilderData } from './GraphBuilder'
+import GraphBuilderData from './graph-builder-data'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * This demo shows how to automatically build a graph from business data using
  * a customized GraphBuilder which creates node ports based on the node type and
@@ -50,21 +47,15 @@ import { applyDemoTheme } from 'demo-resources/demo-styles'
  *
  * It also uses GraphBuilder's updateGraph method to modify the existing graph
  * to reflect changes in the business data.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   // Initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // We want to keep the unused ports
   graphComponent.graph.nodeDefaults.ports.autoCleanUp = false
-
   // Use the viewer input mode since this demo should not allow interactive graph editing
   graphComponent.inputMode = new GraphViewerInputMode()
-
   // Build the graph from data
   builder = createPortAwareGraphBuilder(
     graphComponent.graph,
@@ -72,90 +63,66 @@ async function run() {
     GraphBuilderData.connections
   )
   builder.buildGraph()
-
   // Center the graph in the visible area
-  graphComponent.fitGraphBounds()
-
+  void graphComponent.fitGraphBounds()
   // Arrange the graph using a tree layout algorithm
   await arrangeGraph(graphComponent)
-
   // Register toolbar actions
   initializeUI(graphComponent)
 }
-
-/** @type {GraphBuilder} */
 let builder
-
 /**
  * Updates the graph. This reflects changes in the business data while keeping the unchanged items.
  * This function uses GraphBuilder's updateGraph method to modify the existing graph
  * instead of building it anew.
- * @param {!GraphComponent} graphComponent
- * @param {!Array.<*>} nodesSource
- * @param {!Array.<*>} edgesSource
- * @returns {!Promise}
  */
 async function updateGraph(graphComponent, nodesSource, edgesSource) {
   const graph = graphComponent.graph
-
   // determine which nodes were added while updating the graph
   const newNodes = []
-  const nodeCreatedListener = (_, evt) => newNodes.push(evt.item)
-  builder.addNodeCreatedListener(nodeCreatedListener)
-
+  const nodeCreatedListener = (evt) => newNodes.push(evt.item)
+  builder.addEventListener('node-created', nodeCreatedListener)
   // update the graph according the new (but related) data
   // this will remove nodes whose IDs are not in the new data set
   // this will add nodes whose IDs are in the new data set, but not in the old one
   setBuilderData(nodesSource, edgesSource)
   builder.updateGraph()
-
-  builder.removeNodeCreatedListener(nodeCreatedListener)
-
+  builder.removeEventListener('node-created', nodeCreatedListener)
   // hide the new items (i.e. the new nodes, the edges connected to the new nodes, their labels
   // and their ports) during the animated layout calculation
   hideNodesAndRelatedItems(graph, newNodes)
-
   await arrangeGraph(graphComponent)
-
   // after the layout animation has finished, show the previously hidden items
   // this way new items do not seem to be affected by the layout calculation
   // otherwise, new items would appear at the default location (0,0) and then move to their
   // final location during the layout animation
   showNodesAndRelatedItems(graph, newNodes)
 }
-
 /**
  * Arranges the graph of the given graph component and applies the new layout in an animated
  * fashion.
- * @param {!GraphComponent} graphComponent
- * @returns {!Promise}
  */
 function arrangeGraph(graphComponent) {
   document.querySelector('#update-builder').disabled = true
-
-  const algorithm = new HierarchicLayout({
-    layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
-    orthogonalRouting: true
+  const algorithm = new HierarchicalLayout({
+    layoutOrientation: 'left-to-right'
   })
-
   // arrange the graph with the chosen layout algorithm
   return new LayoutExecutor({
     graphComponent: graphComponent,
     graph: graphComponent.graph,
     layout: algorithm,
-    fixPorts: true,
+    portPlacementPolicies: PortPlacementPolicy.KEEP_PARAMETER,
     animateViewport: true,
-    duration: '0.5s'
+    animationDuration: '0.5s'
   })
     .start()
     .finally(() => {
       document.querySelector('#update-builder').disabled = false
     })
 }
-
 /**
  * Registers the actions for the toolbar buttons during the creation of this application.
- * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
   let index = 0
@@ -167,5 +134,4 @@ function initializeUI(graphComponent) {
     await updateGraph(graphComponent, nodeData, edgeData)
   })
 }
-
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  type IDataProvider,
-  type ILayoutAlgorithm,
-  type LayoutGraph,
-  LayoutGraphAdapter,
-  LayoutStageBase,
-  type YNode
-} from 'yfiles'
+import { type LayoutGraph, LayoutStageBase, Size } from '@yfiles/yfiles'
 import type { Tag } from '../demo-types'
 
 /**
@@ -49,19 +42,20 @@ export class CentralityStage extends LayoutStageBase {
    * Applies the layout to the given graph.
    * @param graph the given graph
    */
-  applyLayout(graph: LayoutGraph): void {
-    const tags = graph.getDataProvider(LayoutGraphAdapter.ORIGINAL_TAG_DP_KEY)!
+  protected applyLayoutImpl(graph: LayoutGraph): void {
+    if (!this.coreLayout) {
+      return
+    }
 
     // change the node sizes if a centrality algorithm is applied
-    const isCentralityAlgorithm = graph.nodes.find(
-      (node) => this.getTag(tags, node).centrality !== undefined
+    const isCentralityAlgorithm = graph.nodes.some(
+      (node) => (node.tag as Tag).centrality !== undefined
     )
     if (isCentralityAlgorithm) {
       const mostCentralSize = 100
       const leastCentralSize = 30
       graph.nodes.forEach((node) => {
-        const nodeLayout = graph.getLayout(node)
-        let centralityId = this.getTag(tags, node).centrality!
+        let centralityId = (node.tag as Tag).centrality!
         // centrality values are already normalized in [0,1]
         if (Number.isNaN(centralityId)) {
           centralityId = 0
@@ -69,23 +63,15 @@ export class CentralityStage extends LayoutStageBase {
         const size = Math.floor(
           leastCentralSize + centralityId * (mostCentralSize - leastCentralSize)
         )
-        nodeLayout.setSize(size, size)
+        node.layout.size = new Size(size, size)
       })
     } else {
       graph.nodes.forEach((node) => {
-        const nodeLayout = graph.getLayout(node)
-        nodeLayout.setSize(30, 30)
+        node.layout.size = new Size(30, 30)
       })
     }
 
     // run the core layout
-    this.applyLayoutCore(graph)
-  }
-
-  /**
-   * Returns the tag for the given node.
-   */
-  private getTag(tags: IDataProvider, node: YNode): Tag {
-    return tags.get(node) as Tag
+    this.coreLayout.applyLayout(graph)
   }
 }

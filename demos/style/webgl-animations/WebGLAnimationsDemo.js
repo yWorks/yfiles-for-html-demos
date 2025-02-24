@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,120 +29,81 @@
 import {
   AdjacencyTypes,
   Color,
-  DefaultLabelStyle,
   GraphComponent,
   GraphItemTypes,
   GraphMLIOHandler,
   GraphViewerInputMode,
-  ICommand,
   IEdge,
   IGraph,
   ILabel,
   IModelItem,
   INode,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
+  LabelStyle,
   License,
-  WebGL2Animation,
-  WebGL2AnimationDirection,
-  WebGL2AnimationEasing,
-  WebGL2AnimationTiming,
-  WebGL2ArcEdgeStyle,
-  WebGL2BeaconAnimationType,
-  WebGL2DefaultLabelStyle,
-  WebGL2Effect,
-  WebGL2FadeAnimationType,
-  WebGL2GraphModelManager,
-  WebGL2LabelShape,
-  WebGL2NodeIndicatorStyle,
-  WebGL2PulseAnimationType,
-  WebGL2ScaleAnimationType,
-  WebGL2SelectionIndicatorManager,
-  WebGL2ShakeAnimationType,
-  WebGL2ShapeNodeStyle,
-  WebGL2Stroke
-} from 'yfiles'
-
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper.js'
-import { checkWebGL2Support, finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
-/**
- * @typedef {('pulse'|'pulse-effect'|'fade'|'fade-effect'|'shake'|'scale'|'scale-effect'|'beacon'|'halo')} BaseAnimation
- */
-/**
- * @typedef {('to color'|'to gray'|'to semi-transparent'|'to invisible'|'from color'|'from gray'|'from semi-transparent'|'from invisible')} FadeType
- */
-/**
- * @typedef {('grow'|'shrink'|'both'|'grow-relative'|'shrink-relative'|'both-relative')} PulseType
- */
-/**
- * @typedef {('horizontal'|'vertical')} ShakeType
- */
-/**
- * @typedef {('scale-grow'|'scale-shrink'|'scale-grow-relative'|'scale-shrink-relative')} ScaleType
- */
-/**
- * @typedef {('fade'|'reverse-fade'|'no-fade')} BeaconType
- */
-/**
- * @typedef {(FadeType|PulseType|ShakeType|ScaleType|BeaconType)} AnimationType
- */
-
-/** @type {Array.<Component>} */
+  WebGLAnimation,
+  WebGLAnimationDirection,
+  WebGLAnimationEasing,
+  WebGLAnimationTiming,
+  WebGLArcEdgeStyle,
+  WebGLBeaconAnimationType,
+  WebGLEdgeStyleDecorator,
+  WebGLEffect,
+  WebGLFadeAnimationType,
+  WebGLGraphModelManager,
+  WebGLLabelShape,
+  WebGLLabelStyle,
+  WebGLLabelStyleDecorator,
+  WebGLNodeIndicatorStyle,
+  WebGLNodeStyleDecorator,
+  WebGLPulseAnimationType,
+  WebGLScaleAnimationType,
+  WebGLSelectionIndicatorManager,
+  WebGLShakeAnimationType,
+  WebGLShapeNodeStyle,
+  WebGLStroke
+} from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { enableSingleSelection } from './SingleSelectionHelper'
+import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
 let connectedComponents
-/** @type {IModelItem} */
 let currentSelectedItem
-
 /**
  * Starts the demo.
- * @returns {!Promise}
  */
 async function run() {
   if (!checkWebGL2Support()) {
     return
   }
-
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
-
-  applyDemoTheme(graphComponent)
-
-  graphComponent.graphModelManager = new WebGL2GraphModelManager()
-  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager({
-    nodeStyle: new WebGL2NodeIndicatorStyle({
+  graphComponent.graphModelManager = new WebGLGraphModelManager()
+  graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager({
+    nodeStyle: new WebGLNodeIndicatorStyle({
       type: 'solid',
       primaryColor: '#666',
       thickness: 2
     })
   })
-
   // create an initial sample graph
   await loadGraph(graphComponent)
-  graphComponent.fitGraphBounds()
-
+  await graphComponent.fitGraphBounds()
   connectedComponents = calculateComponents(graphComponent.graph)
   setWebGLStyles(graphComponent, connectedComponents, 'ellipse')
-
   configureInteraction(graphComponent)
-
   configureUI(graphComponent)
 }
-
 /**
  * Configures the UI elements.
- * @param {!GraphComponent} graphComponent
  */
 function configureUI(graphComponent) {
   document.querySelector('#use-labels').addEventListener('change', (e) => {
     changeLabels(graphComponent, e.target.checked)
   })
-
   document.querySelector('#shape-select').addEventListener('change', (e) => {
     setWebGLStyles(graphComponent, connectedComponents, e.target.value)
     graphComponent.invalidate()
   })
-
   document
     .getElementById('animation-configuration')
     .querySelectorAll('select')
@@ -151,7 +112,6 @@ function configureUI(graphComponent) {
         changeAnimation(graphComponent, currentSelectedItem)
       })
     })
-
   const animationDurationSelect = document.querySelector('#animation-duration')
   const iterationCountSelect = document.querySelector('#iteration-count')
   const animationDirectionSelect = document.querySelector('#animation-direction')
@@ -159,7 +119,6 @@ function configureUI(graphComponent) {
   const beaconPulseCountSelect = document.querySelector('#pulse-count')
   const beaconPulseWidthSelect = document.querySelector('#pulse-width')
   const beaconSmoothCheckbox = document.querySelector('#beacon-smooth')
-
   const animations = ['fade', 'pulse', 'beacon', 'scale', 'shake']
   const options = new Map(
     animations.map((animation) => [animation, document.querySelector(`#${animation}-options`)])
@@ -167,30 +126,24 @@ function configureUI(graphComponent) {
   options.set('fade-effect', document.querySelector(`#fade-options`))
   options.set('pulse-effect', document.querySelector(`#pulse-options`))
   options.set('scale-effect', document.querySelector(`#scale-options`))
-
   const magnitudeOptions = document.querySelector('#magnitude-options')
   const animatedElementOptions = document.querySelector('#animated-elements-options')
-
   const useViewCoordinatesOptions = document.querySelector('#use-view-coordinates-options')
-
   const pulseTypeSelect = document.querySelector('#pulse-type')
   pulseTypeSelect.addEventListener('change', (e) => {
     const select = e.target
     updateMagnitudeOptions(select.value)
   })
-
   const scaleTypeSelect = document.querySelector('#scale-type')
   scaleTypeSelect.addEventListener('change', (e) => {
     const select = e.target
     updateMagnitudeOptions(select.value)
   })
-
   const baseAnimationSelect = document.querySelector('#base-animation')
   baseAnimationSelect.addEventListener('change', (e) => {
     const select = e.target
     const animationType = select.value
     const animationMagnitudeSelect = document.querySelector('#animation-magnitude')
-
     // hide all specific options
     for (const value of options.values()) {
       value.style.display = 'none'
@@ -201,9 +154,7 @@ function configureUI(graphComponent) {
         value.style.display = 'block'
       }
     }
-
     updateMagnitudeOptions(select.value)
-
     switch (animationType) {
       case 'pulse':
         magnitudeOptions.style.display = 'block'
@@ -298,11 +249,8 @@ function configureUI(graphComponent) {
     }
   })
 }
-
 /**
  * Sets appropriate values for the magnitude selection dropdown.
- * @param {!(PulseType|ScaleType)} type
- * @returns {*}
  */
 function updateMagnitudeOptions(type) {
   let values
@@ -327,9 +275,7 @@ function updateMagnitudeOptions(type) {
       values = [1, 2, 5, 10, 20, 30, 60]
       break
   }
-
   const animationMagnitudeSelect = document.querySelector('#animation-magnitude')
-
   for (let i = animationMagnitudeSelect.options.length - 1; i >= 0; i--) {
     animationMagnitudeSelect.options.remove(i)
   }
@@ -341,16 +287,11 @@ function updateMagnitudeOptions(type) {
     animationMagnitudeSelect.options.add(option)
   }
 }
-
 /**
- * Sets the WebGL2 node and edge styles with a distinct color per graph component.
- * @param {!GraphComponent} graphComponent
- * @param {!Array.<Component>} connectedComponents
- * @param {!WebGL2ShapeNodeShapeStringValues} nodeShape
+ * Sets the WebGL node and edge styles with a distinct color per graph component.
  */
 function setWebGLStyles(graphComponent, connectedComponents, nodeShape) {
-  const gmm = graphComponent.graphModelManager
-
+  const graph = graphComponent.graph
   const fillColors = [
     Color.GOLD,
     Color.ROYAL_BLUE,
@@ -365,57 +306,60 @@ function setWebGLStyles(graphComponent, connectedComponents, nodeShape) {
     Color.DARK_CYAN,
     Color.DARK_BLUE
   ]
-
   const nodeLabelParameter =
-    nodeShape === 'triangle' ? InteriorLabelModel.SOUTH : InteriorLabelModel.CENTER
-
+    nodeShape === 'triangle' ? InteriorNodeLabelModel.BOTTOM : InteriorNodeLabelModel.CENTER
   connectedComponents.forEach((component, idx) => {
     const fillColor = fillColors[idx % connectedComponents.length]
     const strokeColor = strokeColors[idx % connectedComponents.length]
     component.nodes.forEach((node) => {
-      gmm.setStyle(
+      graph.setStyle(
         node,
-        new WebGL2ShapeNodeStyle({
-          shape: nodeShape,
-          fill: fillColor,
-          stroke: new WebGL2Stroke(strokeColor),
-          effect: WebGL2Effect.AMBIENT_FILL_COLOR
-        })
-      )
-      node.labels.forEach((label) => {
-        gmm.setStyle(
-          label,
-          new WebGL2DefaultLabelStyle({
-            shape: WebGL2LabelShape.ROUND_RECTANGLE,
-            textColor: strokeColor,
-            backgroundColor: Color.WHITE,
-            backgroundStroke: new WebGL2Stroke(strokeColor),
-            insets: 3
+        new WebGLNodeStyleDecorator(
+          node.style,
+          new WebGLShapeNodeStyle({
+            shape: nodeShape,
+            fill: fillColor,
+            stroke: new WebGLStroke(strokeColor),
+            effect: WebGLEffect.AMBIENT_FILL_COLOR
           })
         )
-        graphComponent.graph.setLabelLayoutParameter(label, nodeLabelParameter)
+      )
+      node.labels.forEach((label) => {
+        graph.setStyle(
+          label,
+          new WebGLLabelStyleDecorator(
+            label.style,
+            new WebGLLabelStyle({
+              shape: WebGLLabelShape.ROUND_RECTANGLE,
+              textColor: strokeColor,
+              backgroundColor: Color.WHITE,
+              backgroundStroke: new WebGLStroke(strokeColor),
+              padding: 3
+            })
+          )
+        )
+        graph.setLabelLayoutParameter(label, nodeLabelParameter)
       })
     })
     component.edges.forEach((edge) => {
-      gmm.setStyle(
+      graph.setStyle(
         edge,
-        new WebGL2ArcEdgeStyle({
-          stroke: new WebGL2Stroke(fillColor, 5),
-          sourceArrow: 'none',
-          targetArrow: 'none',
-          height: 10
-        })
+        new WebGLEdgeStyleDecorator(
+          edge.style,
+          new WebGLArcEdgeStyle({
+            stroke: new WebGLStroke(fillColor, 5),
+            sourceArrow: 'none',
+            targetArrow: 'none',
+            height: 10
+          })
+        )
       )
     })
   })
 }
-
 const componentToAnimationMap = new Map()
-
 /**
  * Gets the component of the given item.
- * @param {?IModelItem} [item]
- * @returns {?Component}
  */
 function getComponentForItem(item) {
   if (item == null) {
@@ -432,11 +376,8 @@ function getComponentForItem(item) {
   }
   return null
 }
-
 /**
  * Starts a new animation.
- * @param {!GraphComponent} graphComponent
- * @param {!Component} component
  */
 function startNewAnimation(graphComponent, component) {
   const applyToComponentMembers =
@@ -447,12 +388,9 @@ function startNewAnimation(graphComponent, component) {
   if (!animateNodes && !animateEdges && !animateLabels) {
     return Promise.resolve(false)
   }
-
   const animation = getAnimation(graphComponent.graphModelManager)
   componentToAnimationMap.set(component, animation)
-
   const gmm = graphComponent.graphModelManager
-
   const animations = [animation]
   const nodesToAnimate = applyToComponentMembers
     ? component.nodes
@@ -460,7 +398,6 @@ function startNewAnimation(graphComponent, component) {
   const edgesToAnimate = applyToComponentMembers
     ? component.edges
     : graphComponent.graph.edges.filter((edge) => !component.edges.has(edge))
-
   nodesToAnimate.forEach((node) => {
     if (animateNodes) {
       gmm.setAnimations(node, animations)
@@ -481,13 +418,10 @@ function startNewAnimation(graphComponent, component) {
       })
     }
   })
-
   return animation.start()
 }
-
 /**
  * Configures the interaction behaviour.
- * @param {!GraphComponent} graphComponent
  */
 function configureInteraction(graphComponent) {
   // Allow only viewing of the graph
@@ -495,40 +429,32 @@ function configureInteraction(graphComponent) {
     selectableItems: 'node',
     focusableItems: 'none'
   })
-
   gvim.itemHoverInputMode.enabled = true
   gvim.itemHoverInputMode.hoverItems =
     GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
-
   // Add the configured animation either to the whole component the hovered item
   // is part of or to the rest of the graph.
-  gvim.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+  gvim.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     stopAnimation(graphComponent, evt.oldItem)
     startAnimation(graphComponent, evt.item)
   })
-
-  gvim.addMultiSelectionFinishedListener((_, evt) => {
+  gvim.addEventListener('multi-selection-finished', (evt) => {
     const item = evt.selection.at(0)
     stopAnimation(graphComponent, currentSelectedItem)
     startAnimation(graphComponent, item)
     currentSelectedItem = item
   })
-
   graphComponent.inputMode = gvim
   enableSingleSelection(graphComponent)
 }
-
 /**
  * Stops the animation of the given component, if existent.
- * @param {!GraphComponent} graphComponent
- * @param {?IModelItem} [item]
  */
 function stopAnimation(graphComponent, item) {
   const component = getComponentForItem(item)
   if (component == null) {
     return
   }
-
   const existingAnimation = componentToAnimationMap.get(component)
   existingAnimation?.stop().then((reachedFinalState) => {
     // If we haven't reached the final state, this is because we have been restarted in
@@ -540,39 +466,30 @@ function stopAnimation(graphComponent, item) {
     }
   })
 }
-
 /**
  * Starts a new animation for the given component, or re-starts the existing one.
- * @param {!GraphComponent} graphComponent
- * @param {?IModelItem} [item]
  */
 function startAnimation(graphComponent, item) {
   const component = getComponentForItem(item)
   if (component == null) {
     return
   }
-
   const existingAnimation = componentToAnimationMap.get(component)
   if (existingAnimation) {
     existingAnimation.start().catch(console.log)
     return
   }
-
   startNewAnimation(graphComponent, component)
 }
-
 /**
  * Starts a new animation for the given component with the current UI settings.
  * If there is an existing component, that is stopped, first.
- * @param {!GraphComponent} graphComponent
- * @param {?IModelItem} [item]
  */
 function changeAnimation(graphComponent, item) {
   const component = getComponentForItem(item)
   if (component == null) {
     return
   }
-
   const existingAnimation = componentToAnimationMap.get(component)
   return existingAnimation == null
     ? startNewAnimation(graphComponent, component)
@@ -584,11 +501,8 @@ function changeAnimation(graphComponent, item) {
         }
       })
 }
-
 /**
  * Removes all animations from all nodes and edges.
- * @param {!GraphComponent} graphComponent
- * @param {!WebGL2Animation} animation
  */
 function removeAnimation(graphComponent, animation) {
   const graph = graphComponent.graph
@@ -612,10 +526,8 @@ function removeAnimation(graphComponent, animation) {
     }
   })
 }
-
 /**
  * Returns whether to animate nodes.
- * @returns {boolean}
  */
 function getAnimateNodes() {
   const checkBox = document.querySelector('input[id="animate-nodes"]')
@@ -628,67 +540,64 @@ function getAnimateNodes() {
     config.baseAnimation == 'halo'
   return checkBox.checked || alwaysNode
 }
-
 /**
  * Returns an animation type depending on the inputs.
- * @param {!AnimationType} animationType The fade type
- * @returns {!(WebGL2FadeAnimationType|WebGL2PulseAnimationType|WebGL2BeaconAnimationType|WebGL2ShakeAnimationType|WebGL2ScaleAnimationType)}
+ * @param animationType The fade type
  */
 function getAnimationType(animationType) {
   switch (animationType) {
     case 'to color':
-      return WebGL2FadeAnimationType.FADE_TO_COLOR
+      return WebGLFadeAnimationType.FADE_TO_COLOR
     case 'to gray':
-      return WebGL2FadeAnimationType.FADE_TO_GRAY
+      return WebGLFadeAnimationType.FADE_TO_GRAY
     case 'to semi-transparent':
-      return WebGL2FadeAnimationType.FADE_OUT
+      return WebGLFadeAnimationType.FADE_OUT
     case 'to invisible':
-      return WebGL2FadeAnimationType.FADE_OUT
+      return WebGLFadeAnimationType.FADE_OUT
     case 'from color':
-      return WebGL2FadeAnimationType.FADE_FROM_COLOR
+      return WebGLFadeAnimationType.FADE_FROM_COLOR
     case 'from gray':
-      return WebGL2FadeAnimationType.FADE_FROM_GRAY
+      return WebGLFadeAnimationType.FADE_FROM_GRAY
     case 'from semi-transparent':
-      return WebGL2FadeAnimationType.FADE_IN
+      return WebGLFadeAnimationType.FADE_IN
     case 'from invisible':
-      return WebGL2FadeAnimationType.FADE_IN
+      return WebGLFadeAnimationType.FADE_IN
     case 'grow':
-      return WebGL2PulseAnimationType.GROW
+      return WebGLPulseAnimationType.GROW
     case 'shrink':
-      return WebGL2PulseAnimationType.SHRINK
+      return WebGLPulseAnimationType.SHRINK
     case 'both':
-      return WebGL2PulseAnimationType.BOTH
+      return WebGLPulseAnimationType.BOTH
     case 'grow-relative':
-      return WebGL2PulseAnimationType.GROW_RELATIVE
+      return WebGLPulseAnimationType.GROW_RELATIVE
     case 'shrink-relative':
-      return WebGL2PulseAnimationType.SHRINK_RELATIVE
+      return WebGLPulseAnimationType.SHRINK_RELATIVE
     case 'both-relative':
-      return WebGL2PulseAnimationType.BOTH_RELATIVE
+      return WebGLPulseAnimationType.BOTH_RELATIVE
     case 'fade':
-      return WebGL2BeaconAnimationType.FADE
+      return WebGLBeaconAnimationType.FADE
     case 'no-fade':
-      return WebGL2BeaconAnimationType.NO_FADE
+      return WebGLBeaconAnimationType.NO_FADE
     case 'reverse-fade':
-      return WebGL2BeaconAnimationType.REVERSE_FADE
+      return WebGLBeaconAnimationType.REVERSE_FADE
     case 'scale-grow':
-      return WebGL2ScaleAnimationType.GROW
+      return WebGLScaleAnimationType.GROW
     case 'scale-shrink':
-      return WebGL2ScaleAnimationType.SHRINK
+      return WebGLScaleAnimationType.SHRINK
     case 'scale-grow-relative':
-      return WebGL2ScaleAnimationType.GROW_RELATIVE
+      return WebGLScaleAnimationType.GROW_RELATIVE
     case 'scale-shrink-relative':
-      return WebGL2ScaleAnimationType.SHRINK_RELATIVE
+      return WebGLScaleAnimationType.SHRINK_RELATIVE
     case 'horizontal':
-      return WebGL2ShakeAnimationType.HORIZONTAL
+      return WebGLShakeAnimationType.HORIZONTAL
     case 'vertical':
-      return WebGL2ShakeAnimationType.VERTICAL
+      return WebGLShakeAnimationType.VERTICAL
+    default:
+      return WebGLFadeAnimationType.FADE_OUT
   }
-  return WebGL2FadeAnimationType.FADE_OUT
 }
-
 /**
  * Gets the colors from the fade to color pickers
- * @returns {!object}
  */
 function getConfiguredFadeColors() {
   const color1pickerValue = document.querySelector('#fade-color1').value
@@ -701,16 +610,12 @@ function getConfiguredFadeColors() {
     color2: Color.from(color2pickerValue)
   }
 }
-
 /**
  * Returns the configurations made in the UI in one object.
- * @returns {!object}
  */
 function getAnimationConfiguration() {
   const baseAnimation = document.querySelector('#base-animation').value
-
   const colors = getConfiguredFadeColors()
-
   let animationType
   switch (baseAnimation) {
     default:
@@ -737,55 +642,51 @@ function getAnimationConfiguration() {
   const animationDuration = document.querySelector('#animation-duration').value
   const count = document.querySelector('#iteration-count').value
   const iterationCount = count === 'infinity' ? 255 : parseInt(count)
-
   let animationDirection
   const direction = document.querySelector('#animation-direction').value
   switch (direction) {
     default:
     case 'normal':
-      animationDirection = WebGL2AnimationDirection.NORMAL
+      animationDirection = WebGLAnimationDirection.NORMAL
       break
     case 'reverse':
-      animationDirection = WebGL2AnimationDirection.REVERSE
+      animationDirection = WebGLAnimationDirection.REVERSE
       break
     case 'alternate':
-      animationDirection = WebGL2AnimationDirection.ALTERNATE
+      animationDirection = WebGLAnimationDirection.ALTERNATE
       break
     case 'alternate-reverse':
-      animationDirection = WebGL2AnimationDirection.ALTERNATE_REVERSE
+      animationDirection = WebGLAnimationDirection.ALTERNATE_REVERSE
       break
   }
-
   let easing
   const easingValue = document.querySelector('#animation-easing').value
   switch (easingValue) {
     default:
     case 'linear':
-      easing = WebGL2AnimationEasing.LINEAR
+      easing = WebGLAnimationEasing.LINEAR
       break
     case 'step':
-      easing = WebGL2AnimationEasing.STEP
+      easing = WebGLAnimationEasing.STEP
       break
     case 'ease':
-      easing = WebGL2AnimationEasing.EASE
+      easing = WebGLAnimationEasing.EASE
       break
     case 'ease-in-out':
-      easing = WebGL2AnimationEasing.EASE_IN_OUT
+      easing = WebGLAnimationEasing.EASE_IN_OUT
       break
     case 'ease-in':
-      easing = WebGL2AnimationEasing.EASE
+      easing = WebGLAnimationEasing.EASE
       break
     case 'ease-out':
-      easing = WebGL2AnimationEasing.EASE_OUT
+      easing = WebGLAnimationEasing.EASE_OUT
       break
   }
-
   const colorFade =
-    animationType === WebGL2FadeAnimationType.FADE_TO_COLOR ||
-    animationType === WebGL2FadeAnimationType.FADE_FROM_COLOR ||
-    animationType === WebGL2FadeAnimationType.FADE_OUT ||
-    animationType === WebGL2FadeAnimationType.FADE_IN
-
+    animationType === WebGLFadeAnimationType.FADE_TO_COLOR ||
+    animationType === WebGLFadeAnimationType.FADE_FROM_COLOR ||
+    animationType === WebGLFadeAnimationType.FADE_OUT ||
+    animationType === WebGLFadeAnimationType.FADE_IN
   return {
     baseAnimation,
     animationType,
@@ -798,8 +699,8 @@ function getAnimationConfiguration() {
       ? colors.color1
       : baseAnimation === 'beacon'
         ? Color.from(document.querySelector('#beacon-color').value)
-        : null,
-    color2: colorFade ? colors.color2 : null,
+        : undefined,
+    color2: colorFade ? colors.color2 : undefined,
     count: Number(document.querySelector('#pulse-count').value),
     pulseWidth: Number(document.querySelector('#pulse-width').value),
     pulseDistance: Number(document.querySelector('#pulse-distance').value),
@@ -807,21 +708,17 @@ function getAnimationConfiguration() {
     smooth: Boolean(document.querySelector('#beacon-smooth').checked)
   }
 }
-
 /**
- * Returns the {@link WebGL2Animation} according to the currently configured values.
- * @param {!WebGL2GraphModelManager} gmm
- * @returns {!WebGL2Animation}
+ * Returns the {@link WebGLAnimation} according to the currently configured values.
  */
 function getAnimation(gmm) {
   const config = getAnimationConfiguration()
-  const timing = new WebGL2AnimationTiming({
+  const timing = new WebGLAnimationTiming({
     duration: config.animationDuration,
     easing: config.easing,
     iterationCount: config.iterationCount,
     direction: config.animationDirection
   })
-
   switch (config.baseAnimation) {
     case 'shake':
       return gmm.createShakeAnimation({
@@ -891,24 +788,20 @@ function getAnimation(gmm) {
         useViewCoordinates: config.viewCoordinates,
         timing
       })
+    default:
+      return gmm.createFadeAnimation(WebGLFadeAnimationType.FADE_OUT)
   }
-  return gmm.createFadeAnimation(WebGL2FadeAnimationType.FADE_OUT)
 }
-
 /**
  * Loads the graph sample.
- * @param {!GraphComponent} graphComponent
  */
 async function loadGraph(graphComponent) {
   const graph = graphComponent.graph
   const graphMLIOHandler = new GraphMLIOHandler()
   await graphMLIOHandler.readFromURL(graph, 'resources/graph.graphml')
 }
-
 /**
  * Adds or removes labels from the graph
- * @param {!GraphComponent} graphComponent
- * @param {boolean} showLabels
  */
 function changeLabels(graphComponent, showLabels) {
   if (!showLabels) {
@@ -918,8 +811,8 @@ function changeLabels(graphComponent, showLabels) {
     connectedComponents.forEach((component) => {
       let idx = 0
       component.nodes.forEach((node) => {
-        const style = new DefaultLabelStyle({ insets: 3 })
-        graphComponent.graph.addLabel(node, `${idx}`, InteriorLabelModel.CENTER, style)
+        const style = new LabelStyle({ padding: 3 })
+        graphComponent.graph.addLabel(node, `${idx}`, InteriorNodeLabelModel.CENTER, style)
         idx++
       })
     })
@@ -927,14 +820,12 @@ function changeLabels(graphComponent, showLabels) {
     setWebGLStyles(graphComponent, connectedComponents, shape)
   }
 }
-
 /**
  * Calculate all connected components, i.e. all sub-graphs that only contain nodes that are pair-wise
  * connected by a path of edges.
  * Note that calculating these connected components is also provided by the algorithm class
  * ConnectedComponents.
- * @param {!IGraph} graph The graph to calculate the connected components for.
- * @returns {!Array.<Component>}
+ * @param graph The graph to calculate the connected components for.
  */
 function calculateComponents(graph) {
   const components = new Array()
@@ -945,17 +836,10 @@ function calculateComponents(graph) {
   })
   return components
 }
-
-/**
- * @param {!IGraph} graph
- * @param {!INode} node
- * @returns {!Component}
- */
 function collectComponent(graph, node) {
-  const component = new Component()
+  const component = new ConnectedComponent()
   node.tag = component
   component.nodes.add(node)
-
   const nodes = new Array(node)
   while (nodes.length > 0) {
     const currentNode = nodes.pop()
@@ -971,13 +855,11 @@ function collectComponent(graph, node) {
   }
   return component
 }
-
 run().then(finishLoading)
-
 /**
  * A data holder for the nodes and edges that belong to a connected component.
  */
-class Component {
+class ConnectedComponent {
   nodes = new Set()
   edges = new Set()
 }

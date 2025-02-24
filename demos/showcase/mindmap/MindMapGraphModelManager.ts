@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,24 +26,31 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { type GraphComponent, GraphModelManager, type ICanvasObjectGroup, type IEdge } from 'yfiles'
+import {
+  type CanvasComponent,
+  GraphModelManager,
+  type IEdge,
+  type IGraph,
+  type IRenderTreeGroup
+} from '@yfiles/yfiles'
 import { isCrossReference } from './data-types'
 
 /**
- * Provides a special {@link ICanvasObjectGroup} for cross-reference edges.
+ * Provides a special {@link IRenderTreeGroup} for cross-reference edges.
  */
 export class MindMapGraphModelManager extends GraphModelManager {
   /** The cross-reference canvas group */
-  crossReferenceEdgeGroup: ICanvasObjectGroup
+  crossReferenceEdgeGroup: IRenderTreeGroup | null = null
 
-  /**
-   * Constructs the GraphModelManager.
-   */
-  constructor(graphComponent: GraphComponent) {
-    super(graphComponent, graphComponent.contentGroup)
+  install(
+    canvasComponent: CanvasComponent,
+    graph: IGraph,
+    contentGroup?: IRenderTreeGroup | null
+  ): void {
+    super.install(canvasComponent, graph, contentGroup)
 
     // create a new canvas object group for reference edges
-    this.crossReferenceEdgeGroup = this.createContentGroup()
+    this.crossReferenceEdgeGroup = this.createEdgeGroup()
 
     // put this group above the node group
     this.crossReferenceEdgeGroup.above(this.nodeGroup)
@@ -52,10 +59,14 @@ export class MindMapGraphModelManager extends GraphModelManager {
     this.edgeLabelGroup.above(this.nodeLabelGroup)
   }
 
-  protected getEdgeCanvasObjectGroup(edge: IEdge): ICanvasObjectGroup {
-    if (isCrossReference(edge)) {
-      return this.crossReferenceEdgeGroup
-    }
-    return super.getEdgeCanvasObjectGroup(edge)
+  uninstall(canvasComponent: CanvasComponent): void {
+    super.uninstall(canvasComponent)
+    this.crossReferenceEdgeGroup = null
+  }
+
+  protected getEdgeRenderTreeGroup(edge: IEdge): IRenderTreeGroup {
+    return isCrossReference(edge)
+      ? this.crossReferenceEdgeGroup!
+      : super.getEdgeRenderTreeGroup(edge)
   }
 }

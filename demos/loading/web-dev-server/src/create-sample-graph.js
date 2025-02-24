@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,15 +27,15 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GroupNodeLabelModel,
   GroupNodeStyle,
+  LabelStyle,
   Point,
   PolylineEdgeStyle,
   ShapeNodeStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Initializes the defaults for the styles in this tutorial.
@@ -52,18 +52,18 @@ function initTutorialDefaults(graph) {
   shapeNodeStyle.renderer.roundRectArcRadius = 3.5
   graph.nodeDefaults.style = shapeNodeStyle
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word-ellipsis'
+    wrapping: 'wrap-word-ellipsis'
   })
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
+  graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.BOTTOM
 
   // configure defaults for group nodes and their labels
   graph.groupNodeDefaults.style = new GroupNodeStyle({ tabFill: '#0b7189' })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     verticalTextAlignment: 'center',
     horizontalTextAlignment: 'right',
-    wrapping: 'character-ellipsis',
+    wrapping: 'wrap-character-ellipsis',
     textFill: '#9dc6d0'
   })
   graph.groupNodeDefaults.labels.layoutParameter =

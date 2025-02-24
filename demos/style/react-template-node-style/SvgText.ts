@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,15 +31,13 @@ import {
   Font,
   FontStyle,
   type FontStyleStringValues,
-  FontWeight,
-  type FontWeightStringValues,
   Size,
-  TextDecoration,
-  type TextDecorationStringValues,
+  TextDecorations,
+  type TextDecorationsStringValues,
   TextRenderSupport,
   TextWrapping,
   type TextWrappingStringValues
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import { createElement, useEffect, useId, useRef } from 'react'
 
@@ -58,9 +56,9 @@ type SvgTextProps = {
   transform: string
   fontFamily: string
   fontSize: string | number
-  fontWeight: FontWeightStringValues
+  fontWeight: string
   fontStyle: FontStyleStringValues
-  textDecoration: TextDecorationStringValues
+  textDecoration: TextDecorationsStringValues
   lineSpacing: string | number
 }
 
@@ -181,9 +179,9 @@ function addText(
   h: number | undefined,
   fontFamily: string | undefined,
   fontSize: string | number | undefined,
-  fontWeight: FontWeightStringValues | undefined,
+  fontWeight: string | undefined,
   fontStyle: FontStyleStringValues | undefined,
-  textDecoration: TextDecorationStringValues | undefined,
+  textDecoration: TextDecorationsStringValues | undefined,
   lineSpacing: string | number | undefined,
   wrapping: TextWrappingStringValues | undefined,
   textElement: SVGTextElement | undefined
@@ -201,9 +199,9 @@ function addText(
   const fontSettings: {
     fontFamily?: string
     fontSize?: number
-    fontWeight?: FontWeight
+    fontWeight?: string
     fontStyle?: FontStyle
-    textDecoration?: TextDecoration
+    textDecoration?: TextDecorations
     lineSpacing?: number
   } = {}
   if (typeof fontFamily !== 'undefined') {
@@ -216,16 +214,16 @@ function addText(
     fontSettings.fontStyle = FontStyle.from(fontStyle)
   }
   if (typeof fontWeight !== 'undefined') {
-    fontSettings.fontWeight = FontWeight.from(fontWeight)
+    fontSettings.fontWeight = fontWeight
   }
   if (typeof textDecoration !== 'undefined') {
-    fontSettings.textDecoration = TextDecoration.from(textDecoration)
+    fontSettings.textDecoration = TextDecorations.from(textDecoration)
   }
   if (typeof lineSpacing !== 'undefined') {
     fontSettings.lineSpacing = Number(lineSpacing)
   }
   const font = new Font(fontSettings)
-  let textWrapping: TextWrapping = TextWrapping.CHARACTER_ELLIPSIS
+  let textWrapping: TextWrapping = TextWrapping.WRAP_CHARACTER_ELLIPSIS
 
   if (typeof wrapping !== 'undefined' && wrapping !== null) {
     textWrapping = TextWrapping.from(wrapping)
@@ -239,7 +237,7 @@ function addText(
   }
 
   // do the text wrapping
-  // This sample uses the strategy CHARACTER_ELLIPSIS. You can use any other setting.
+  // This sample uses the strategy WRAP_CHARACTER_ELLIPSIS. You can use any other setting.
   TextRenderSupport.addText(textElement, text, font, new Size(Number(w), Number(h)), textWrapping)
 
   return textElement

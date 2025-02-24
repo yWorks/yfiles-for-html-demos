@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   Font,
   FreeNodePortLocationModel,
   HorizontalTextAlignment,
@@ -37,6 +36,7 @@ import {
   ILabelStyle,
   INode,
   IRenderContext,
+  LabelStyle,
   LabelStyleBase,
   Rect,
   SimpleEdge,
@@ -47,30 +47,22 @@ import {
   SvgVisualGroup,
   TextRenderSupport,
   VerticalTextAlignment
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 const font = new Font({
   fontFamily: 'monospace',
   fontSize: 18
 })
-const factoryStyle = new DefaultLabelStyle({
+const factoryStyle = new LabelStyle({
   backgroundStroke: '#607D8B',
   backgroundFill: '#FFF',
   font: font,
   horizontalTextAlignment: HorizontalTextAlignment.CENTER,
   verticalTextAlignment: VerticalTextAlignment.CENTER
 })
-
 export class ExtensibilityButtonStyle extends LabelStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @returns {!SvgVisual}
-   */
   createVisual(context, label) {
     const model = label.tag
     const text = label.text
-
     const labelCreator = factoryStyle.renderer.getVisualCreator(label, factoryStyle)
     const labelVisual = labelCreator.createVisual(context)
     const labelGroup = labelVisual.svgElement
@@ -85,24 +77,14 @@ export class ExtensibilityButtonStyle extends LabelStyleBase {
         `abstract-toggle${model.constraint === 'abstract' ? ' toggled' : ''}`
       )
     }
-
     const buttonGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     buttonGroup.setAttribute('class', 'context-button')
     buttonGroup.appendChild(labelGroup)
     return new SvgVisual(buttonGroup)
   }
-
-  /**
-   * @param {!ILabel} label
-   * @returns {!Size}
-   */
   getPreferredSize(label) {
     return this.getButtonSize()
   }
-
-  /**
-   * @returns {!Size}
-   */
   getButtonSize() {
     const sizeInterface = this.measureText('I')
     const sizeAbstract = this.measureText('A')
@@ -114,25 +96,16 @@ export class ExtensibilityButtonStyle extends LabelStyleBase {
     )
     return new Size(size + 1, size + 1)
   }
-
-  /**
-   * @param {!string} text
-   * @returns {!Size}
-   */
   measureText(text) {
     return TextRenderSupport.measureText(text, font)
   }
 }
-
 export class RelationButtonStyle extends LabelStyleBase {
+  foregroundStyle
   backgroundStyle
   foregroundSrc
   foregroundTgt
   foregroundEdge
-
-  /**
-   * @param {!IEdgeStyle} foregroundStyle
-   */
   constructor(foregroundStyle) {
     super()
     this.foregroundStyle = foregroundStyle
@@ -141,16 +114,9 @@ export class RelationButtonStyle extends LabelStyleBase {
     this.foregroundTgt = new SimpleNode()
     this.foregroundEdge = createSimpleEdge(this.foregroundSrc, this.foregroundTgt)
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @returns {!SvgVisual}
-   */
   createVisual(context, label) {
     const backgroundFactory = this.backgroundStyle
     const backgroundCreator = backgroundFactory.renderer.getVisualCreator(label, backgroundFactory)
-
     const center = label.layout.bounds.center
     this.foregroundSrc.layout = new Rect(center.x - 10 - 0.5, center.y - 0.5, 1, 1)
     this.foregroundTgt.layout = new Rect(center.x + 10 - 0.5, center.y - 0.5, 1, 1)
@@ -164,41 +130,22 @@ export class RelationButtonStyle extends LabelStyleBase {
     container.add(foregroundCreator.createVisual(context))
     return container
   }
-
-  /**
-   * @param {!ILabel} label
-   * @returns {!Size}
-   */
   getPreferredSize(label) {
     return this.getButtonSize()
   }
-
-  /**
-   * @returns {!Size}
-   */
   getButtonSize() {
     return new Size(30, 30)
   }
 }
-
-/**
- * @returns {!ILabelStyle}
- */
 function createBackgroundStyle() {
-  return new DefaultLabelStyle({
+  return new LabelStyle({
     backgroundFill: 'white',
     backgroundStroke: '#607D8B',
     shape: 'pill'
   })
 }
-
-/**
- * @param {!INode} src
- * @param {!INode} tgt
- * @returns {!IEdge}
- */
 function createSimpleEdge(src, tgt) {
-  const sp = new SimplePort(src, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
-  const tp = new SimplePort(tgt, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
+  const sp = new SimplePort(src, FreeNodePortLocationModel.CENTER)
+  const tp = new SimplePort(tgt, FreeNodePortLocationModel.CENTER)
   return new SimpleEdge(sp, tp)
 }

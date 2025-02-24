@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,91 +26,109 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Font, MarkupLabelStyle, MarkupLabelStyleRenderer, Size, TextWrapping } from 'yfiles'
+import {
+  GeneralPath,
+  LabelStyleBase,
+  MarkupLabelStyle,
+  Rect,
+  SimpleLabel,
+  Size,
+  Visual
+} from '@yfiles/yfiles'
 import MarkdownIt from 'markdown-it'
-
 /**
- * A label style that renders markdown label text by converting it to HTML markup
- * and delegating the rendering to {@link MarkupLabelStyle}.
+ * A wrapper for {@link MarkupLabelStyle} that converts Markdown to markup on the fly.
  */
-export class MarkdownLabelStyle extends MarkupLabelStyle {
+export class MarkdownLabelStyle extends LabelStyleBase {
+  markupLabelStyle
+  // the Markdown parser/renderer
+  static markdownIt = new MarkdownIt()
+  simpleLabel = new SimpleLabel()
+  markupCache = new WeakMap()
+  constructor(markupLabelStyle) {
+    super()
+    this.markupLabelStyle = markupLabelStyle
+  }
+  createVisual(context, label) {
+    return this.markupLabelStyle.renderer
+      .getVisualCreator(this.getMarkupLabel(label), this.markupLabelStyle)
+      .createVisual(context)
+  }
+  updateVisual(context, oldVisual, label) {
+    return this.markupLabelStyle.renderer
+      .getVisualCreator(this.getMarkupLabel(label), this.markupLabelStyle)
+      .updateVisual(context, oldVisual)
+  }
+  getBounds(context, label) {
+    return this.markupLabelStyle.renderer
+      .getBoundsProvider(this.getMarkupLabel(label), this.markupLabelStyle)
+      .getBounds(context)
+  }
+  getPreferredSize(label) {
+    return this.markupLabelStyle.renderer.getPreferredSize(
+      this.getMarkupLabel(label),
+      this.markupLabelStyle
+    )
+  }
+  isHit(context, location, label) {
+    return this.markupLabelStyle.renderer
+      .getHitTestable(this.getMarkupLabel(label), this.markupLabelStyle)
+      .isHit(context, location)
+  }
+  isInBox(context, rectangle, label) {
+    return this.markupLabelStyle.renderer
+      .getMarqueeTestable(this.getMarkupLabel(label), this.markupLabelStyle)
+      .isInBox(context, rectangle)
+  }
+  isInPath(context, path, label) {
+    return this.markupLabelStyle.renderer
+      .getLassoTestable(this.getMarkupLabel(label), this.markupLabelStyle)
+      .isInPath(context, path)
+  }
+  isVisible(context, rectangle, label) {
+    return this.markupLabelStyle.renderer
+      .getVisibilityTestable(this.getMarkupLabel(label), this.markupLabelStyle)
+      .isVisible(context, rectangle)
+  }
+  lookup(label, type) {
+    return this.markupLabelStyle.renderer
+      .getContext(this.getMarkupLabel(label), this.markupLabelStyle)
+      .lookup(type)
+  }
   /**
-   * Creates a new instance using the provided optional options object.
-   * @param options The options available in {@link MarkupLabelStyle}
-   * @param {*} [options]
+   * Returns a new label with the Markdown text replaced with markup text.
    */
-  constructor(options) {
-    if (!options) {
-      super(new MarkdownLabelStyleRenderer())
-    } else {
-      options.renderer = options.renderer || new MarkdownLabelStyleRenderer()
-      super(options)
+  getMarkupLabel(label) {
+    this.simpleLabel.text = this.getMarkupText(label)
+    this.simpleLabel.owner = label.owner
+    this.simpleLabel.layoutParameter = label.layoutParameter
+    this.simpleLabel.style = label.style
+    this.simpleLabel.preferredSize = label.preferredSize
+    this.simpleLabel.tag = label.tag
+    return this.simpleLabel
+  }
+  /**
+   * Converts the Markdown text to markup and caches it for faster conversion
+   * in the future.
+   */
+  getMarkupText(label) {
+    let cacheEntry = this.markupCache.get(label)
+    if (!cacheEntry || cacheEntry.markdown !== label.text) {
+      cacheEntry = {
+        markdown: label.text,
+        markup: MarkdownLabelStyle.getMarkupText(label.text)
+      }
+      this.markupCache.set(label, cacheEntry)
     }
+    return cacheEntry.markup
   }
-}
-
-class MarkdownLabelStyleRenderer extends MarkupLabelStyleRenderer {
-  /** 
-    the Markdown parser/renderer
-  * @type {MarkdownIt}
-   */
-  static get markdownIt() {
-    if (typeof MarkdownLabelStyleRenderer.$markdownIt === 'undefined') {
-      MarkdownLabelStyleRenderer.$markdownIt = new MarkdownIt()
-    }
-
-    return MarkdownLabelStyleRenderer.$markdownIt
-  }
-
-  /** 
-    the Markdown parser/renderer
-  * @type {MarkdownIt}
-   */
-  static set markdownIt(markdownIt) {
-    MarkdownLabelStyleRenderer.$markdownIt = markdownIt
-  }
-
   /**
    * Converts the given Markdown text into HTML markup.
-   * @param {!string} markdownText The label Markdown text
+   * @param markdownText The label Markdown text
    * @yjs:keep = render
-   * @returns {*}
    */
   static getMarkupText(markdownText) {
     // return the Markdown text
-    return MarkdownLabelStyleRenderer.markdownIt.render(markdownText)
-  }
-
-  /**
-   * @param {!SVGTextElement} textElement
-   * @param {!Font} font
-   * @param {!string} text
-   * @param {!Size} maxSize
-   * @param {!TextWrapping} wrapping
-   * @param {boolean} rightToLeft
-   * @returns {!string}
-   */
-  addTextElements(textElement, font, text, maxSize, wrapping, rightToLeft) {
-    // call the super implementation with the converted Markdown text
-    super.addTextElements(
-      textElement,
-      font,
-      MarkdownLabelStyleRenderer.getMarkupText(text),
-      maxSize,
-      wrapping,
-      rightToLeft
-    )
-    return text
-  }
-
-  /**
-   * @param {!string} text
-   * @param {!Font} font
-   * @param {!Size} maximumSize
-   * @returns {!Size}
-   */
-  measureText(text, font, maximumSize) {
-    // call the super implementation with the converted Markdown text
-    return super.measureText(MarkdownLabelStyleRenderer.getMarkupText(text), font, maximumSize)
+    return MarkdownLabelStyle.markdownIt.render(markdownText)
   }
 }

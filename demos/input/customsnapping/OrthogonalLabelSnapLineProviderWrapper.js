@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,53 +28,51 @@
  ***************************************************************************/
 import {
   BaseClass,
-  CollectGraphSnapLinesEventArgs,
   GraphSnapContext,
   ILabelOwner,
   IModelItem,
-  ISnapLineProvider,
+  ISnapReferenceProvider,
   OrthogonalSnapLine,
   Point,
   SnapLineOrientation,
   SnapLineSnapTypes,
-  SnapLineVisualizationType
-} from 'yfiles'
-
+  SnapReferenceVisualizationType
+} from '@yfiles/yfiles'
 /**
- * Wraps a given {@link ISnapLineProvider} and adds additional {@link OrthogonalSnapLine}s
+ * Wraps a given {@link ISnapReferenceProvider} and adds additional {@link OrthogonalSnapLine}s
  * for orthogonal labels of an {@link IModelItem}. For each orthogonal label there are
  * {@link OrthogonalSnapLine}s added for its top, bottom, left, and right side.
  */
-export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapLineProvider) {
+export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapReferenceProvider) {
+  item
+  wrapped
   /**
    * Creates a new instance that wraps the given snap line provider.
-   * @param {!ISnapLineProvider} wrapped The snap line provider that will be wrapped.
+   * @param item The owner of the label
+   * @param wrapped The snap line provider that will be wrapped.
    */
-  constructor(wrapped) {
+  constructor(item, wrapped) {
     super()
+    this.item = item
     this.wrapped = wrapped
   }
-
   /**
-   * Calls {@link ISnapLineProvider.addSnapLines} of the wrapped provider and adds custom
+   * Calls {@link ISnapReferenceProvider.addSnapReferences} of the wrapped provider and adds custom
    * {@link OrthogonalSnapLine}s for the given `item`.
-   * @param {!GraphSnapContext} context The context which holds the settings for the snap lines.
-   * @param {!CollectGraphSnapLinesEventArgs} args The argument to use for adding snap lines.
-   * @param {!IModelItem} item The item to add snap lines for.
-   * @see Specified by {@link ISnapLineProvider.addSnapLines}.
+   * @param context The context which holds the settings for the snap lines.
+   * @param args The argument to use for adding snap lines.
+   * @see Specified by {@link ISnapReferenceProvider.addSnapReferences}.
    */
-  addSnapLines(context, args, item) {
-    this.wrapped.addSnapLines(context, args, item)
-
-    if (item instanceof ILabelOwner) {
-      this.addCustomSnapLines(args, item)
+  addSnapReferences(context, args) {
+    this.wrapped.addSnapReferences(context, args)
+    if (this.item instanceof ILabelOwner) {
+      this.addCustomSnapLines(args, this.item)
     }
   }
-
   /**
    * Adds custom snap lines for orthogonal labels
-   * @param {!CollectGraphSnapLinesEventArgs} args The argument to use for adding snap lines.
-   * @param {!ILabelOwner} labeledItem The item to add snap lines for.
+   * @param args The argument to use for adding snap lines.
+   * @param labeledItem The item to add snap lines for.
    */
   addCustomSnapLines(args, labeledItem) {
     labeledItem.labels.forEach((label) => {
@@ -84,7 +82,6 @@ export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapLineP
       if (upX === 0 || upX === 1 || upX === -1) {
         // label is orthogonal
         const bounds = label.layout.bounds
-
         // add snap lines to the top, bottom, left and right border of the label
         //
         // snap line for the label's top border
@@ -92,56 +89,53 @@ export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapLineP
         let snapLine = new OrthogonalSnapLine(
           SnapLineOrientation.HORIZONTAL,
           SnapLineSnapTypes.BOTTOM,
-          SnapLineVisualizationType.FIXED_LINE,
+          SnapReferenceVisualizationType.FIXED_LINE,
           topCenter,
-          bounds.minX - 10,
+          bounds.x - 10,
           bounds.maxX + 10,
-          label,
+          true,
           100
         )
-        args.addAdditionalSnapLine(snapLine)
-
+        args.addSnapReference(snapLine)
         // snap line for the label's bottom border
         const bottomCenter = bounds.bottomLeft.add(new Point(label.layout.width / 2, 0))
         snapLine = new OrthogonalSnapLine(
           SnapLineOrientation.HORIZONTAL,
           SnapLineSnapTypes.TOP,
-          SnapLineVisualizationType.FIXED_LINE,
+          SnapReferenceVisualizationType.FIXED_LINE,
           bottomCenter,
-          bounds.minX - 10,
+          bounds.x - 10,
           bounds.maxX + 10,
-          label,
+          true,
           100
         )
-        args.addAdditionalSnapLine(snapLine)
-
+        args.addSnapReference(snapLine)
         // snap line for the label's left border
         const leftCenter = bounds.topLeft.add(new Point(0, label.layout.height / 2))
         snapLine = new OrthogonalSnapLine(
           SnapLineOrientation.VERTICAL,
           SnapLineSnapTypes.RIGHT,
-          SnapLineVisualizationType.FIXED_LINE,
+          SnapReferenceVisualizationType.FIXED_LINE,
           leftCenter,
-          bounds.minY - 10,
+          bounds.y - 10,
           bounds.maxY + 10,
-          label,
+          true,
           100
         )
-        args.addAdditionalSnapLine(snapLine)
-
+        args.addSnapReference(snapLine)
         // snap line for the label's right border
         const rightCenter = bounds.topRight.add(new Point(0, label.layout.height / 2))
         snapLine = new OrthogonalSnapLine(
           SnapLineOrientation.VERTICAL,
           SnapLineSnapTypes.LEFT,
-          SnapLineVisualizationType.FIXED_LINE,
+          SnapReferenceVisualizationType.FIXED_LINE,
           rightCenter,
-          bounds.minY - 10,
+          bounds.y - 10,
           bounds.maxY + 10,
-          label,
+          true,
           100
         )
-        args.addAdditionalSnapLine(snapLine)
+        args.addSnapReference(snapLine)
       }
     })
   }

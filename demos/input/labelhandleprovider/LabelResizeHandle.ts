@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,24 +31,27 @@ import {
   CanvasComponent,
   ClickEventArgs,
   Cursor,
-  HandleTypes,
-  ICanvasObject,
+  HandleType,
   IHandle,
   IInputModeContext,
   ILabel,
   ILabelModelParameterFinder,
+  IOrientedRectangle,
   IPoint,
+  IRenderContext,
+  IRenderTreeElement,
+  ISize,
   OrientedRectangle,
-  OrientedRectangleIndicatorInstaller,
   Point,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
+import { OrientedRectangleRendererBase } from '../../utils/OrientedRectangleRendererBase'
 
 /**
  * A custom {@link IHandle} implementation that allows resizing a label.
  */
-export default class LabelResizeHandle extends BaseClass(IHandle) implements IHandle {
-  private sizeIndicator: ICanvasObject | null = null
+export default class LabelResizeHandle extends BaseClass(IHandle) {
+  private sizeIndicator: IRenderTreeElement | null = null
   private handleLocation: IPoint = new LabelResizeHandleLivePoint(this)
   emulate = false
   dummyPreferredSize: Size = null!
@@ -69,8 +72,12 @@ export default class LabelResizeHandle extends BaseClass(IHandle) implements IHa
   /**
    * Gets the type of the handle.
    */
-  get type(): HandleTypes {
-    return HandleTypes.RESIZE
+  get type(): HandleType {
+    return HandleType.RESIZE
+  }
+
+  get tag(): any {
+    return null
   }
 
   /**
@@ -95,10 +102,10 @@ export default class LabelResizeHandle extends BaseClass(IHandle) implements IHa
     // start using the calculated dummy bounds
     this.emulate = true
     this.dummyPreferredSize = this.label.preferredSize
-    this.dummyLocation = this.label.layout.anchorLocation
+    this.dummyLocation = this.label.layout.anchor
     const canvasComponent = context.canvasComponent
     if (canvasComponent !== null) {
-      this.sizeIndicator = this.createSizeIndicator(canvasComponent)
+      this.createSizeIndicator(canvasComponent)
     }
   }
 
@@ -106,17 +113,11 @@ export default class LabelResizeHandle extends BaseClass(IHandle) implements IHa
    * Creates the indicator that shows the size of the label during drag.
    */
   private createSizeIndicator(canvasComponent: CanvasComponent) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const handle = this
-    const indicatorInstaller = new (class extends OrientedRectangleIndicatorInstaller {
-      getRectangle(item: any | null): OrientedRectangle {
-        return handle.getCurrentLabelLayout()
-      }
-    })()
-    return indicatorInstaller.addCanvasObject(
-      canvasComponent.canvasContext,
-      canvasComponent.selectionGroup,
-      this
+    const renderer = new LabelResizeRectangleRenderer()
+    this.sizeIndicator = canvasComponent.renderTree.createElement(
+      canvasComponent.renderTree.selectionGroup,
+      this,
+      renderer
     )
   }
 
@@ -142,7 +143,7 @@ export default class LabelResizeHandle extends BaseClass(IHandle) implements IHa
     const newWidth = layout.width + delta * (this.symmetricResize ? 2 : 1)
     this.dummyPreferredSize = new Size(newWidth, this.dummyPreferredSize.height)
     // calculate the new location
-    this.dummyLocation = layout.anchorLocation.subtract(
+    this.dummyLocation = layout.anchor.subtract(
       this.symmetricResize ? new Point(upNormal.x * delta, upNormal.y * delta) : new Point(0, 0)
     )
   }
@@ -157,7 +158,9 @@ export default class LabelResizeHandle extends BaseClass(IHandle) implements IHa
     // use the normal label bounds if the drag gesture is over
     this.emulate = false
     // remove the visual size indicator
-    this.sizeIndicator?.remove()
+    if (this.sizeIndicator) {
+      context.canvasComponent?.renderTree.remove(this.sizeIndicator)
+    }
     this.sizeIndicator = null
   }
 
@@ -178,9 +181,9 @@ export default class LabelResizeHandle extends BaseClass(IHandle) implements IHa
       // that the resize rectangle which acts as user feedback is in sync with the actual
       // labelLayoutParameter that is assigned to the label.
       const model = this.label.layoutParameter.model
-      const finder = model.lookup(ILabelModelParameterFinder.$class)
+      const finder = model.getContext(this.label).lookup(ILabelModelParameterFinder)
       if (finder !== null) {
-        const param = finder.findBestParameter(this.label, model, this.getCurrentLabelLayout())
+        const param = finder.findBestParameter(this.getCurrentLabelLayout())
         graph.setLabelLayoutParameter(this.label, param)
       }
     }
@@ -221,7 +224,7 @@ export default class LabelResizeHandle extends BaseClass(IHandle) implements IHa
 /**
  * Represents the new resize point for the given handler.
  */
-class LabelResizeHandleLivePoint extends BaseClass(IPoint) implements IPoint {
+class LabelResizeHandleLivePoint extends BaseClass(IPoint) {
   /**
    * Creates a new point for the given handler.
    * @param handle The given handler
@@ -257,7 +260,48 @@ class LabelResizeHandleLivePoint extends BaseClass(IPoint) implements IPoint {
     const preferredSize = this.handle.emulate
       ? this.handle.dummyPreferredSize
       : this.handle.label.preferredSize
-    const anchor = this.handle.emulate ? this.handle.dummyLocation : layout.anchorLocation
+    const anchor = this.handle.emulate ? this.handle.dummyLocation : layout.anchor
     return { anchor, up, preferredSize }
+  }
+}
+
+class LabelResizeRectangleRenderer extends OrientedRectangleRendererBase<LabelResizeHandle> {
+  createIndicatorElement(
+    _context: IRenderContext,
+    size: ISize,
+    _renderTag: LabelResizeHandle
+  ): SVGElement {
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.setAttribute('width', size.width.toString())
+    rect.setAttribute('height', size.height.toString())
+    rect.setAttribute('stroke', 'rgb(56,67,79)')
+    rect.setAttribute('stroke-width', '2')
+    rect.setAttribute('fill', 'none')
+    return rect
+  }
+
+  updateIndicatorElement(
+    _context: IRenderContext,
+    size: ISize,
+    _renderTag: LabelResizeHandle,
+    oldSvgElement: SVGElement
+  ): SVGElement {
+    oldSvgElement.setAttribute('width', size.width.toString())
+    oldSvgElement.setAttribute('height', size.height.toString())
+    return oldSvgElement
+  }
+
+  getLayout(_renderTag: LabelResizeHandle): IOrientedRectangle {
+    const handleLocation = _renderTag.dummyLocation
+    const handleSize = _renderTag.dummyPreferredSize
+    const labelLayout = _renderTag.label.layout
+    return new OrientedRectangle(
+      handleLocation.x,
+      handleLocation.y,
+      handleSize.width,
+      handleSize.height,
+      labelLayout.upX,
+      labelLayout.upY
+    )
   }
 }

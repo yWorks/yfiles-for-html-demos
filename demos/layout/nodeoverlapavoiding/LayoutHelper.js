@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  ChannelEdgeRouter,
   ClearAreaLayout,
   ClearAreaLayoutData,
   ClearAreaStrategy,
@@ -35,12 +34,11 @@ import {
   CompositeLayoutData,
   EdgeRouter,
   EdgeRouterData,
-  EdgeRouterScope,
   FillAreaLayout,
   FillAreaLayoutData,
   FilteredGraphWrapper,
-  GivenCoordinatesStage,
-  GivenCoordinatesStageData,
+  GivenCoordinatesLayout,
+  GivenCoordinatesLayoutData,
   GraphComponent,
   IAnimation,
   IEdge,
@@ -49,14 +47,10 @@ import {
   INode,
   LayoutData,
   LayoutExecutor,
-  LayoutGraph,
-  LayoutStageBase,
   SequentialLayout,
   Size,
   TimeSpan
-} from 'yfiles'
-import { HidingEdgeDescriptor } from './HidingEdgeDescriptor.js'
-
+} from '@yfiles/yfiles'
 /**
  * Calculates a new layout so that there is space at the current position of the moved or resized node.
  */
@@ -66,54 +60,36 @@ export class LayoutHelper {
    */
   executor
   resolveFinishLayoutPromise
-
-  /**
-   * @type {!IGraph}
-   */
   get graph() {
     return this.graphComponent.graph
   }
-
   /**
    * The control that displays the graph.
    */
   graphComponent
-
   /**
    * The graph layout copy that stores the original layout before the node has been changed.
    * This copy is used to restore the graph when the drag is canceled.
    */
   resetToOriginalGraphStageData
-
   /**
    * The node that is moved or resized.
    */
   node
-
   /**
    * The node that is moved and its descendants if the node is a group.
    */
   nodes
-
   /**
    * The initial size of the node.
    */
   oldSize
-
   /**
    * The state of the current gesture.
    */
   resizeState
-
-  /**
-   * The edges which are hidden temporally during the gesture.
-   */
-  hiddenEdges
-
   /**
    * Initializes the helper.
-   * @param {!GraphComponent} graphComponent
-   * @param {!INode} node
    */
   constructor(graphComponent, node) {
     this.graphComponent = graphComponent
@@ -127,9 +103,6 @@ export class LayoutHelper {
         .getDescendants(node)
         .forEach((descendant) => this.nodes.add(descendant))
     }
-    const descriptor = graphComponent.graphModelManager.edgeDescriptor
-    this.hiddenEdges =
-      descriptor instanceof HidingEdgeDescriptor ? descriptor.hiddenEdges : new Set()
     this.executor = null
     this.resetToOriginalGraphStageData = null
     this.fillLayout = null
@@ -137,15 +110,11 @@ export class LayoutHelper {
     this.state = 'CANCELLED'
     this.resolveFinishLayoutPromise = null
   }
-
   /**
-   * Creates a {@link GivenCoordinatesStageData} that stores the layout of nodes and edges.
-   * @param {!function} nodePredicate
-   * @param {!function} edgePredicate
-   * @returns {!GivenCoordinatesStageData}
+   * Creates a {@link GivenCoordinatesLayoutData} that stores the layout of nodes and edges.
    */
-  createGivenCoordinatesStageData(nodePredicate, edgePredicate) {
-    const data = new GivenCoordinatesStageData()
+  createGivenCoordinatesLayoutData(nodePredicate, edgePredicate) {
+    const data = new GivenCoordinatesLayoutData()
     for (const node of this.graph.nodes.filter(nodePredicate)) {
       data.nodeLocations.mapper.set(node, node.layout.topLeft)
       data.nodeSizes.mapper.set(node, node.layout.toSize())
@@ -155,10 +124,8 @@ export class LayoutHelper {
     }
     return data
   }
-
   /**
    * A {@link LayoutExecutor} that is used while dragging the node.
-   * @returns {!LayoutExecutor}
    */
   getDragLayoutExecutor() {
     const oldResizeState = this.resizeState
@@ -175,22 +142,11 @@ export class LayoutHelper {
           TimeSpan.fromMilliseconds(150)
         )
   }
-
-  /**
-   * @param {!DragLayoutExecutor} instance
-   * @param {!LayoutData} p1
-   * @param {!TimeSpan} p2
-   * @returns {!DragLayoutExecutor}
-   */
   static initializer(instance, p1, p2) {
     instance.layoutData = p1
-    instance.duration = p2
+    instance.animationDuration = p2
     return instance
   }
-
-  /**
-   * @returns {!ResizeState}
-   */
   getResizeState() {
     const newSize = this.node.layout.toSize()
     const anySmaller = newSize.width < this.oldSize.width || newSize.height < this.oldSize.height
@@ -203,130 +159,115 @@ export class LayoutHelper {
           ? 'GROWING'
           : 'NONE'
   }
-
   /**
    * Creates a layout algorithm suiting the `resizeState`.
-   * @param {!ResizeState} resizeState
-   * @returns {!ILayoutAlgorithm}
    */
   createLayout(resizeState) {
     const sequentialLayout = new SequentialLayout()
     if (resizeState === 'SHRINKING') {
-      const fillAreaLayout = new FillAreaLayout()
-      fillAreaLayout.componentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
       // fill the free space of the shrunken node
-      this.fillLayout = fillAreaLayout
-      sequentialLayout.appendLayout(this.fillLayout)
+      this.fillLayout = new FillAreaLayout({
+        componentAssignmentStrategy: ComponentAssignmentStrategy.SINGLE
+      })
+      sequentialLayout.layouts.add(this.fillLayout)
       if (this.state === 'FINISHING') {
-        const edgeRouter = new EdgeRouter(null)
-        edgeRouter.scope = EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES
         // only route edges for the final layout
-        sequentialLayout.appendLayout(edgeRouter)
+        sequentialLayout.layouts.add(new EdgeRouter())
       }
     } else {
       if (resizeState === 'BOTH') {
-        const fillAreaLayout = new FillAreaLayout()
-        fillAreaLayout.componentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
         // fill the free space of the resized node
-        this.fillLayout = fillAreaLayout
-        sequentialLayout.appendLayout(this.fillLayout)
-      }
-      const clearAreaLayout = new ClearAreaLayout()
-      clearAreaLayout.componentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
-      clearAreaLayout.clearAreaStrategy = ClearAreaStrategy.LOCAL
-      clearAreaLayout.considerEdges = true
-      if (this.state !== 'FINISHING') {
-        // use fast ChannelRouter during drag
-        clearAreaLayout.edgeRouter = new AffectedEdgesChannelRouter()
+        this.fillLayout = new FillAreaLayout({
+          componentAssignmentStrategy: ComponentAssignmentStrategy.SINGLE
+        })
+        sequentialLayout.layouts.add(this.fillLayout)
       }
       // clear the space of the moved/enlarged node
-      sequentialLayout.appendLayout(clearAreaLayout)
+      sequentialLayout.layouts.add(
+        new ClearAreaLayout({
+          componentAssignmentStrategy: ComponentAssignmentStrategy.SINGLE,
+          clearAreaStrategy: ClearAreaStrategy.LOCAL,
+          considerEdges: true
+        })
+      )
     }
-    return new GivenCoordinatesStage(sequentialLayout)
+    return new GivenCoordinatesLayout(sequentialLayout)
   }
-
   /**
    * Creates a layout data suiting the `resizeState`.
-   * @param {!ResizeState} resizeState
-   * @returns {!LayoutData}
    */
   createLayoutData(resizeState) {
     const layoutData = new CompositeLayoutData(this.resetToOriginalGraphStageData)
     if (resizeState === 'SHRINKING') {
-      const fillAreaLayoutData = new FillAreaLayoutData()
-      fillAreaLayoutData.fixedNodes = this.nodes
+      const fillAreaLayoutData = new FillAreaLayoutData({
+        fixedNodes: this.nodes
+      })
       layoutData.items.add(fillAreaLayoutData)
       if (this.state === 'FINISHING') {
-        const polylineEdgeRouterData = new EdgeRouterData()
-        polylineEdgeRouterData.affectedNodes = this.nodes
+        const edgeRouterData = new EdgeRouterData({
+          scope: { incidentNodes: this.nodes }
+        })
         // only route edges for the final layout
-        layoutData.items.add(polylineEdgeRouterData)
+        layoutData.items.add(edgeRouterData)
       }
     } else {
       if (resizeState === 'BOTH') {
-        const fillAreaLayoutData = new FillAreaLayoutData()
-        fillAreaLayoutData.fixedNodes = this.nodes
+        const fillAreaLayoutData = new FillAreaLayoutData({
+          fixedNodes: this.nodes
+        })
         layoutData.items.add(fillAreaLayoutData)
       }
-      const clearAreaLayoutData = new ClearAreaLayoutData()
-      clearAreaLayoutData.areaNodes = this.nodes
+      const clearAreaLayoutData = new ClearAreaLayoutData({
+        areaNodes: this.nodes
+      })
       layoutData.items.add(clearAreaLayoutData)
     }
     return layoutData
   }
-
   /**
    * A {@link LayoutExecutor} that is used after the drag is canceled.
    *
    * All nodes and edges are pushed back into place before the drag started.
-   * @returns {!LayoutExecutor}
    */
   createCancelLayoutExecutor() {
-    const layoutExecutor = new LayoutExecutor(this.graphComponent, new GivenCoordinatesStage(null))
+    const layoutExecutor = new LayoutExecutor(this.graphComponent, new GivenCoordinatesLayout(null))
     layoutExecutor.layoutData = this.resetToOriginalGraphStageData
-    layoutExecutor.duration = TimeSpan.fromMilliseconds(150)
+    layoutExecutor.animationDuration = TimeSpan.fromMilliseconds(150)
     return layoutExecutor
   }
-
   /**
    * A {@link LayoutExecutor} that is used after the drag is finished.
    *
    * First, all nodes and edges are pushed back into place before the drag started, except the node
-   * and its descendants. Then space is made for the node and its descendants at its current position.
+   * and its descendants. Then space is made for the node and its descendants in its current position.
    * The animation morphs all elements to the calculated positions.
-   * @returns {!LayoutExecutor}
    */
   createFinishLayoutExecutor() {
     const state = this.getResizeState()
     const layoutExecutor = new LayoutExecutor(this.graphComponent, this.createLayout(state))
     layoutExecutor.layoutData = this.createLayoutData(state)
-    layoutExecutor.duration = TimeSpan.fromMilliseconds(150)
+    layoutExecutor.animationDuration = TimeSpan.fromMilliseconds(150)
     return layoutExecutor
   }
-
   /**
    * The current state of the gesture.
    */
   state
-
   /**
    * The {@link FillAreaLayout} used for "GROWING" and "BOTH".
    */
   fillLayout
-
   /**
    * Starts a layout calculation if none is already running.
-   * @returns {!Promise}
    */
   runLayout() {
     return LayoutRunner.INSTANCE.runLayout(this)
   }
-
   /**
    * Initializes the layout calculation.
    */
   initializeLayout() {
-    this.resetToOriginalGraphStageData = this.createGivenCoordinatesStageData(
+    this.resetToOriginalGraphStageData = this.createGivenCoordinatesLayoutData(
       (n) => {
         return !this.nodes.has(n)
       },
@@ -334,87 +275,44 @@ export class LayoutHelper {
         return !this.isSubgraphEdge(e)
       }
     )
-
-    // hide edge path for any edge between a node in 'nodes' and a node not in 'nodes'
-    this.hideInterEdges()
-
     this.executor = this.getDragLayoutExecutor()
     this.state = 'DRAGGING'
   }
-
-  /**
-   * Hides the inter-edges.
-   */
-  hideInterEdges() {
-    for (const edge of this.graph.edges) {
-      if (this.isInterEdge(edge)) {
-        this.hiddenEdges.add(edge)
-      }
-    }
-  }
-
-  /**
-   * Un-hides the inter-edges.
-   */
-  unhideInterEdges() {
-    this.hiddenEdges.clear()
-  }
-
-  /**
-   * Determines whether source or target node of the given edge is part of {@link LayoutHelper.nodes}.
-   * @param {!IEdge} edge
-   * @returns {boolean}
-   */
-  isInterEdge(edge) {
-    const sourceInNodes = this.nodes.has(edge.sourceNode)
-    const targetInNodes = this.nodes.has(edge.targetNode)
-    return (sourceInNodes && !targetInNodes) || (targetInNodes && !sourceInNodes)
-  }
-
   /**
    * Determines whether both source and target node of the given edge is part of {@link LayoutHelper.nodes}.
-   * @param {!IEdge} edge
-   * @returns {boolean}
    */
   isSubgraphEdge(edge) {
     return this.nodes.has(edge.sourceNode) && this.nodes.has(edge.targetNode)
   }
-
   /**
    * Cancels the current layout calculation.
-   * @returns {!Promise}
    */
-  cancelLayout() {
+  async cancelLayout() {
     this.state = 'CANCELLING'
-    this.runLayout()
+    await this.runLayout()
     return new Promise((resolve) => (this.resolveFinishLayoutPromise = resolve))
   }
-
   /**
    * Stops the current layout calculation.
-   * @returns {!Promise}
    */
-  finishLayout() {
+  async finishLayout() {
     this.state = 'FINISHING'
-    this.runLayout()
+    await this.runLayout()
     return new Promise((resolve) => (this.resolveFinishLayoutPromise = resolve))
   }
-
   /**
    * Run a layout immediately.
    */
-  layoutImmediately() {
-    this.resetToOriginalGraphStageData = this.createGivenCoordinatesStageData(
+  async layoutImmediately() {
+    this.resetToOriginalGraphStageData = this.createGivenCoordinatesLayoutData(
       () => false,
       () => false
     )
     this.state = 'FINISHING'
-    this.runLayout()
+    await this.runLayout()
   }
-
   /**
-   * Called before the a layout run starts.
-   * @returns {!LayoutExecutor}
+   * Called before a layout run starts.
    */
   onLayoutStarting() {
     switch (this.state) {
@@ -438,15 +336,13 @@ export class LayoutHelper {
     }
     return this.executor
   }
-
   /**
-   * Called after the a layout run finished.
+   * Called after a layout run finished.
    */
   onLayoutFinished() {
     switch (this.state) {
       case 'CANCELLED':
       case 'FINISHED':
-        this.unhideInterEdges()
         if (this.resolveFinishLayoutPromise) {
           this.resolveFinishLayoutPromise()
         }
@@ -454,9 +350,9 @@ export class LayoutHelper {
     }
   }
 }
-
 /**
- * Calculates the layout for the whole graph but only animates the part that does not belong to node and its descendants.
+ * Calculates the layout for the whole graph but only animates the part
+ * that does not belong to the node and its descendants.
  */
 class DragLayoutExecutor extends LayoutExecutor {
   /**
@@ -465,51 +361,23 @@ class DragLayoutExecutor extends LayoutExecutor {
    * This is the part of the graph that is morphed after a new layout has been calculated.
    */
   filteredGraph
-
-  /**
-   * @param {!GraphComponent} graphComponent
-   * @param {!ILayoutAlgorithm} layout
-   * @param {!Set.<INode>} nodes
-   */
   constructor(graphComponent, layout, nodes) {
-    super(graphComponent, layout)
-    this.filteredGraph = new FilteredGraphWrapper(
-      graphComponent.graph,
-      (n) => {
-        return !nodes.has(n)
-      },
-      null
-    )
+    super({ graphComponent: graphComponent, layout: layout, animateViewport: false })
+    this.filteredGraph = new FilteredGraphWrapper(graphComponent.graph, (n) => {
+      return !nodes.has(n)
+    })
   }
-
   /**
    * Creates an {@link IAnimation} that morphs all graph elements except the node and its descendants to the new layout.
-   * @returns {!IAnimation}
    */
-  createMorphAnimation() {
-    return IAnimation.createLayoutAnimation(this.filteredGraph, this.layoutGraph, this.duration)
+  createLayoutAnimation() {
+    return IAnimation.createLayoutAnimation(
+      this.filteredGraph,
+      this.adapter,
+      this.animationDuration
+    )
   }
 }
-
-class AffectedEdgesChannelRouter extends LayoutStageBase {
-  channelEdgeRouter
-
-  constructor() {
-    super()
-    this.channelEdgeRouter = new ChannelEdgeRouter()
-  }
-
-  /**
-   * @param {!LayoutGraph} graph
-   */
-  applyLayout(graph) {
-    const routedEdges = graph.getDataProvider(ClearAreaLayout.ROUTE_EDGE_DP_KEY)
-    graph.addDataProvider(ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY, routedEdges)
-    this.channelEdgeRouter.applyLayout(graph)
-    graph.removeDataProvider(ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY)
-  }
-}
-
 /**
  * Singleton class that ensures no two layouts are running at the same time.
  */
@@ -518,41 +386,25 @@ export class LayoutRunner {
    * A lock which prevents re-entrant layout execution.
    */
   layoutIsRunning
-
   /**
    * Stores the pending layout. Only one layout can be pending at a time.
    */
   pendingLayout
-
   constructor() {
     this.layoutIsRunning = false
     this.pendingLayout = null
   }
-
-  /** @type {LayoutRunner} */
-  static get instance() {
-    return LayoutRunner.$instance
-  }
-
-  /** @type {LayoutRunner} */
-  static set instance(instance) {
-    LayoutRunner.$instance = instance
-  }
-
+  static instance
   /**
    * Returns the singleton instance of this class.
-   * @type {!LayoutRunner}
    */
   static get INSTANCE() {
     return LayoutRunner.instance
       ? LayoutRunner.instance
       : (LayoutRunner.instance = new LayoutRunner())
   }
-
   /**
    * Starts a layout calculation if none is already running.
-   * @param {!PendingLayout} layout
-   * @returns {!Promise}
    */
   async runLayout(layout) {
     this.pendingLayout = layout
@@ -576,17 +428,3 @@ export class LayoutRunner {
     } while (this.pendingLayout)
   }
 }
-
-/**
- * @typedef {Object} PendingLayout
- * @property {Function} onLayoutStarting
- * @property {Function} onLayoutFinished
- */
-/**
- * The states of the gesture.
- * @typedef {('DRAGGING'|'CANCELLING'|'CANCELLED'|'FINISHING'|'FINISHED')} GestureState
- */
-/**
- * The states of the size change of the modified node.
- * @typedef {('NONE'|'GROWING'|'SHRINKING'|'BOTH')} ResizeState
- */

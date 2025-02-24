@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,13 +29,14 @@
 import {
   FocusIndicatorManager,
   type GraphComponent,
-  type ICanvasObjectGroup,
-  type ICanvasObjectInstaller,
   type INode,
-  NodeStyleDecorationInstaller,
+  type IObjectRenderer,
+  type IRenderTreeGroup,
+  NodeStyleIndicatorRenderer,
   RectangleNodeStyle,
-  ShapeNodeStyle
-} from 'yfiles'
+  ShapeNodeStyle,
+  ShowFocusPolicy
+} from '@yfiles/yfiles'
 import { getNodeData, isRoot } from './data-types'
 
 /**
@@ -43,16 +44,23 @@ import { getNodeData, isRoot } from './data-types'
  * and the focus indicator of the other nodes behind the content group.
  */
 export class MindMapFocusIndicatorManager extends FocusIndicatorManager<INode> {
-  protected getCanvasObjectGroup(node: INode): ICanvasObjectGroup | null {
-    const canvasComponent = this.canvasComponent as GraphComponent
-    // choose the highlight group for the root (front) and the background group for others (back)
-    return isRoot(node) ? canvasComponent.highlightGroup : canvasComponent.backgroundGroup
+  constructor() {
+    super()
+    this.showFocusPolicy = ShowFocusPolicy.ALWAYS
   }
 
-  protected getInstaller(node: INode): ICanvasObjectInstaller | null {
+  protected getRenderTreeGroup(node: INode): IRenderTreeGroup | null {
+    const canvasComponent = this.canvasComponent as GraphComponent
+    // choose the highlight group for the root (front) and the background group for others (back)
+    return isRoot(node)
+      ? canvasComponent.renderTree.highlightGroup
+      : canvasComponent.renderTree.backgroundGroup
+  }
+
+  protected getRenderer(node: INode): IObjectRenderer | null {
     const nodeData = getNodeData(node)
     return isRoot(node)
-      ? new NodeStyleDecorationInstaller({
+      ? new NodeStyleIndicatorRenderer({
           nodeStyle: new ShapeNodeStyle({
             shape: 'pill',
             stroke: `5px black`,
@@ -61,11 +69,11 @@ export class MindMapFocusIndicatorManager extends FocusIndicatorManager<INode> {
           zoomPolicy: 'world-coordinates',
           margins: 0
         })
-      : new NodeStyleDecorationInstaller({
+      : new NodeStyleIndicatorRenderer({
           nodeStyle: new RectangleNodeStyle({
             corners: 'top',
             stroke: 'none',
-            fill: `#99${nodeData.color.substring(1)}` // transparent color
+            fill: `#${nodeData.color.substring(1)}99` // transparent color
           }),
           zoomPolicy: 'world-coordinates',
           margins: 0

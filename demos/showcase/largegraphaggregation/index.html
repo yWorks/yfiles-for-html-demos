@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,13 +31,13 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Large Graph Aggregation Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="./resources/settings-panel.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -107,8 +105,8 @@
         <ul>
           <li>
             Switch between the <b>two layout styles</b> offered for visualizing the aggregated graph
-            (i.e. <a href="https://docs.yworks.com/yfileshtml/#/api/BalloonLayout" target="_blank">BalloonLayout</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/CactusGroupLayout" target="_blank">CactusGroupLayout</a>). This re-runs
-            the aggregation as well.
+            (i.e. <a href="https://docs.yworks.com/yfileshtml/#/api/RadialTreeLayout" target="_blank">RadialTreeLayout</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout" target="_blank">RadialGroupLayout</a>). This
+            re-runs the aggregation as well.
           </li>
           <li>
             Click on an aggregated node to <b>show</b> its children in the aggregation hierarchy.
@@ -149,8 +147,8 @@
             <h2 class="settings-legend1">Layout Properties</h2>
             <label for="layout-style-select" class="settings-label-row1">Layout Style</label>
             <select id="layout-style-select" class="settings-editor-row1">
-              <option value="balloon">Balloon</option>
-              <option value="cactus">Cactus</option>
+              <option value="radial-tree">Radial Tree</option>
+              <option value="radial-group">Radial Group</option>
             </select>
 
             <h2 class="settings-legend2">Aggregation Properties</h2>
@@ -168,10 +166,10 @@
               id="maximum-duration-range"
               type="range"
               min="0"
-              max="120"
-              value="0"
+              max="300"
+              value="240"
             />
-            <label class="settings-label-value3" id="maximum-duration-label">0</label>
+            <label class="settings-label-value3" id="stop-duration-label">240</label>
 
             <label for="minimum-cluster-size-range" class="settings-label-row4">
               Minimum Cluster Size

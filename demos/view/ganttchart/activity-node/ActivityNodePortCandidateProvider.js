@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,67 +28,44 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   IEnumerable,
-  IPortCandidateProvider
-} from 'yfiles'
-
+  IPortCandidateProvider,
+  PortCandidate
+} from '@yfiles/yfiles'
 /**
  * A port candidate provider for defining two ports on the left and right side of the activity nodes.
  */
 export class ActivityNodePortCandidateProvider extends BaseClass(IPortCandidateProvider) {
-  /**
-   * @param {!INode} node
-   */
+  node
   constructor(node) {
     super()
     this.node = node
   }
-
   /**
    * Returns a port candidate on the right side of the node where an edge can start.
-   * @param {!IInputModeContext} context
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
-  getAllSourcePortCandidates(context) {
-    const candidate = new DefaultPortCandidate(
-      this.node,
-      FreeNodePortLocationModel.NODE_RIGHT_ANCHORED
-    )
+  getAllSourcePortCandidates(_context) {
+    const candidate = new PortCandidate(this.node, FreeNodePortLocationModel.RIGHT)
     return IEnumerable.from([candidate])
   }
-
   /**
    * Returns a port candidate on the left side of the node where an edge can end.
-   * @param {!IInputModeContext} context
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
-  getAllTargetPortCandidates(context) {
-    const candidate = new DefaultPortCandidate(
-      this.node,
-      FreeNodePortLocationModel.NODE_LEFT_ANCHORED
-    )
+  getAllTargetPortCandidates(_context) {
+    const candidate = new PortCandidate(this.node, FreeNodePortLocationModel.LEFT)
     return IEnumerable.from([candidate])
   }
-
   /**
    * Returns all port candidates that apply for the provided opposite target port candidate.
-   * @param {!IInputModeContext} context
-   * @param {!IPortCandidate} target
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
-  getSourcePortCandidates(context, target) {
+  getSourcePortCandidates(context, _target) {
     return this.getAllSourcePortCandidates(context)
   }
-
   /**
    * Returns all port candidates that apply for the provided opposite source port candidate.
-   * @param {!IInputModeContext} context
-   * @param {!IPortCandidate} source
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
-  getTargetPortCandidates(context, source) {
+  getTargetPortCandidates(context, _source) {
     return this.getAllTargetPortCandidates(context)
   }
 }

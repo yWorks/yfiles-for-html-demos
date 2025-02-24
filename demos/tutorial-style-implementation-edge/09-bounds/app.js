@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,35 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { GraphComponent, License } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   BoundsVisual,
   createSampleGraphBounds,
   fitGraphBounds,
   initializeTutorialDefaults
-} from '../common.js'
-
-import { finishLoading } from 'demo-resources/demo-page'
-import { CustomEdgeStyle } from './CustomEdgeStyle.js'
-import { initializeInlineGraphComponent } from '../../tutorial-style-implementation-node/common.js'
-import { CustomEdgeStyle as OldCustomEdgeStyle } from '../08-visibility/CustomEdgeStyle.js'
-
+} from '../common'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { CustomEdgeStyle } from './CustomEdgeStyle'
+import { initializeInlineGraphComponent } from '../../tutorial-style-implementation-node/common'
+import { CustomEdgeStyle as OldCustomEdgeStyle } from '../08-visibility/CustomEdgeStyle'
 License.value = await fetchLicense()
-
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 createSampleGraphBounds(graphComponent.graph, new CustomEdgeStyle(2))
-
-graphComponent.inputModeGroup.addChild(new BoundsVisual())
-
+graphComponent.renderTree.createElement(
+  graphComponent.renderTree.inputModeGroup,
+  new BoundsVisual()
+)
 // Inline old state
 const oldState = initializeInlineGraphComponent('#old-state')
 createSampleGraphBounds(oldState.graph, new OldCustomEdgeStyle(2))
-
 fitGraphBounds(oldState)
-
-oldState.inputModeGroup.addChild(new BoundsVisual())
-
+oldState.renderTree.createElement(oldState.renderTree.inputModeGroup, new BoundsVisual())
 fitGraphBounds(graphComponent)
 finishLoading()

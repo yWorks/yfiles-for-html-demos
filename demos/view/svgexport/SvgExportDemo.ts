@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, License, SvgExport } from 'yfiles'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { initializeToggleWebGl2RenderingButton } from './webgl-support'
+import { GraphComponent, GraphEditorInputMode, License, SvgExport } from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initializeToggleWebGlRenderingButton } from './webgl-support'
 import { initializeExportRectangle } from './export-rectangle/export-rectangle'
 import { createSampleGraph } from './samples'
 import './option-panel/option-panel.css'
@@ -38,7 +38,7 @@ import { initializeOptionPanel } from './option-panel/option-panel'
 import { exportSvg } from './svg-export'
 import { initializeExportDialog, showExportDialog } from './export-dialog/export-dialog'
 import { retainAspectRatio } from './aspect-ratio'
-import { downloadFile } from 'demo-utils/file-support'
+import { downloadFile } from '@yfiles/demo-utils/file-support'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -54,7 +54,6 @@ async function run(): Promise<void> {
   // initialize the main graph component
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
-  applyDemoTheme(graphComponent)
   initDemoStyles(graphComponent.graph)
   retainAspectRatio(graphComponent.graph)
 
@@ -74,7 +73,7 @@ async function run(): Promise<void> {
     const fileContent = SvgExport.exportSvgString(svgElement)
     try {
       downloadFile(fileContent, 'graph.svg')
-    } catch (e) {
+    } catch {
       alert(
         'Saving directly to the filesystem is not supported by this browser.' +
           ' Please use the server-based export instead.'
@@ -83,11 +82,11 @@ async function run(): Promise<void> {
   })
 
   // wire up the export button
-  initializeToggleWebGl2RenderingButton(graphComponent)
+  initializeToggleWebGlRenderingButton(graphComponent)
 
   // create a sample graph
   await createSampleGraph(graphComponent)
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 }
 
 void run().then(finishLoading)

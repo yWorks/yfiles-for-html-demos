@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,53 +26,24 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, HtmlVisual, NodeStyleBase, Visual, VisualCachingPolicy } from 'yfiles'
+import {
+  GraphComponent,
+  HtmlVisual,
+  NodeStyleBase,
+  Visual,
+  VisualCachingPolicy
+} from '@yfiles/yfiles'
 import { createRoot } from 'react-dom/client'
 import { createElement } from 'react'
-
-/**
- * @typedef {(FunctionComponent.<TTag>|ComponentClass.<TTag>)} RenderType
- */
-
-/**
- * Helper for the ReactComponentHtmlNodeStyle to factor out the props retrieval per node
- * @typedef {function} TagProvider
- */
-
 /**
  * The default implementation just uses the props from the tag of the item to be rendered.
  * @param context
  * @param node
  */
 const defaultTagProvider = (context, node) => node.tag
-
-/**
- * The interface of the props passed to the HTML react component for rendering the node contents.
- * @typedef {Object} ReactComponentHtmlNodeStyleProps
- * @property {boolean} selected
- * @property {('low'|'high')} detail
- * @property {TTag} tag
- */
-
-/**
- * @typedef {Object} Cache
- * @property {ReactComponentHtmlNodeStyleProps.<TTag>} props
- * @property {Root} root
- */
-
-/**
- * Utility type for type-safe implementation of the Visual that stores the props
- * it has been created for along with the React Root.
- * @typedef {TaggedHtmlVisual.<HTMLDivElement,Cache.<TTag>>} ReactComponentHtmlNodeStyleVisual
- */
-
 /**
  * Helper method that will be used by the below style to release React resources when the
  * node gets removed from the yFiles scene graph.
- * @param {!IRenderContext} context
- * @param {!Visual} removedVisual
- * @param {boolean} dispose
- * @returns {?Visual}
  */
 function unmountReact(context, removedVisual, dispose) {
   const visual = removedVisual
@@ -90,7 +61,6 @@ function unmountReact(context, removedVisual, dispose) {
   }
   return null
 }
-
 /**
  * A simple INodeStyle implementation that uses React Components/render functions
  * for rendering the node visualizations as an HtmlVisual
@@ -111,68 +81,46 @@ function unmountReact(context, removedVisual, dispose) {
  * ```
  */
 export class ReactComponentHtmlNodeStyle extends NodeStyleBase {
+  reactComponent
+  tagProvider
   /**
    * Creates a new instance
-   * @param {!RenderType.<ReactComponentHtmlNodeStyleProps.<TTag>>} reactComponent the React component rendering the HTML content
-   * @param {!TagProvider.<TTag>} tagProvider the optional provider function that provides the "tag" in the props.
+   * @param reactComponent the React component rendering the HTML content
+   * @param tagProvider the optional provider function that provides the "tag" in the props.
    * By default, this will use the node's tag.
    */
   constructor(reactComponent, tagProvider = defaultTagProvider) {
     super()
-    this.tagProvider = tagProvider
     this.reactComponent = reactComponent
+    this.tagProvider = tagProvider
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {!ReactComponentHtmlNodeStyleProps.<TTag>}
-   */
   createProps(context, node) {
     return {
       selected:
         context.canvasComponent instanceof GraphComponent &&
-        context.canvasComponent.selection.selectedNodes.isSelected(node),
+        context.canvasComponent.selection.nodes.includes(node),
       detail: context.zoom < 0.5 ? 'low' : 'high',
       tag: this.tagProvider(context, node)
     }
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {!ReactComponentHtmlNodeStyleVisual.<TTag>}
-   */
   createVisual(context, node) {
     // obtain the properties from the node
     const props = this.createProps(context, node)
-
     // create a React root and render the component into
     const div = document.createElement('div')
     const root = createRoot(div)
     root.render(createElement(this.reactComponent, props))
-
     const cache = { props, root }
     // wrap the Dom element into a HtmlVisual, adding the "root" for later use in updateVisual
     const visual = HtmlVisual.from(div, cache)
-
     // set the CSS layout for the container
     HtmlVisual.setLayout(visual.element, node.layout)
-
     // register a callback that unmounts the React app when the visual is discarded
     context.setDisposeCallback(visual, unmountReact)
     return visual
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ReactComponentHtmlNodeStyleVisual.<TTag>} oldVisual
-   * @param {!INode} node
-   * @returns {!ReactComponentHtmlNodeStyleVisual.<TTag>}
-   */
   updateVisual(context, oldVisual, node) {
     const newProps = this.createProps(context, node)
-
     const cache = oldVisual.tag
     const oldProps = cache.props
     if (
@@ -184,7 +132,6 @@ export class ReactComponentHtmlNodeStyle extends NodeStyleBase {
       oldVisual.tag.root.render(element)
       cache.props = newProps
     }
-
     // update the CSS layout of the container element
     HtmlVisual.setLayout(oldVisual.element, node.layout)
     return oldVisual

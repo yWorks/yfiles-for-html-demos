@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,15 +27,15 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
   IEnumerable,
   IInputModeContext,
   INode,
   IPortCandidate,
   List,
+  PortCandidate,
   PortCandidateProviderBase,
   PortCandidateValidity
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { assertPortTag } from './FlowNodePort'
 
 export class FlowNodePortCandidateProvider extends PortCandidateProviderBase {
@@ -70,24 +70,24 @@ export class FlowNodePortCandidateProvider extends PortCandidateProviderBase {
 
     graph.ports
       // Exclude same-sided ports:
-      .filter(port => port.tag.side !== sourceSide)
+      .filter((port) => port.tag.side !== sourceSide)
       // Exclude ports on the source node:
-      .filter(port => port.owner !== source.owner)
+      .filter((port) => port.owner !== source.owner)
       // Exclude ports that the source port already connects to:
       .filter(
-        port =>
-          !graph.edges.some(edge => {
+        (port) =>
+          !graph.edges.some((edge) => {
             // Compare points by string representations instead of comparing just simple port instances.
             // This helps to avoid scenario where node is recreated with undo and port instances don't match on the recreated edge
-            const edgePortPoints = [edge.sourcePort?.toString(), edge.targetPort?.toString()]
+            const edgePortPoints = [edge.sourcePort.toString(), edge.targetPort.toString()]
             return (
               edgePortPoints.includes(port.toString()) &&
-              edgePortPoints.includes(source.port?.toString())
+              edgePortPoints.includes(source.port!.toString())
             )
           })
       )
-      .forEach(port => {
-        const portCandidate = new DefaultPortCandidate(port)
+      .forEach((port) => {
+        const portCandidate = new PortCandidate(port)
         portCandidate.validity = PortCandidateValidity.VALID
         candidates.add(portCandidate)
       })

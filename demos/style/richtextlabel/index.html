@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Rich Text Label Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -40,8 +40,6 @@
 
     <!--Add stylesheet for rich text labels-->
     <link rel="stylesheet" href="rich-text-label.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -99,7 +97,10 @@
 
         <h4>Creating and Editing Labels</h4>
 
-        <p>Press <kbd>F2</kbd> or double-click a label to open the text editor.</p>
+        <p>
+          Press <kbd>F2</kbd> or double-click a label to open the text editor. <kbd>Ctrl</kbd> +
+          <kbd>Enter</kbd> commits the changes while <kbd>Esc</kbd> cancels the edit.
+        </p>
 
         <p>
           Note how the editor is hooked up with yFiles such that users don't need to write HTML
@@ -157,7 +158,7 @@
         <h2>Related Demos</h2>
         <ul>
           <li>
-            <a href="../../style/default-label-style/" target="_blank">Default Label Style Demo</a>
+            <a href="../../style/label-style/" target="_blank">Label Style Demo</a>
           </li>
           <li>
             <a href="../../style/html-label-style/" target="_blank">HTML Label Style Demo</a>

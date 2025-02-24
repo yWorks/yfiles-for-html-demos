@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,49 +28,47 @@
  ***************************************************************************/
 import {
   Arrow,
+  Color,
+  DelegatingEdgeStyle,
+  DelegatingNodeStyle,
   Fill,
   IArrow,
-  PolylineEdgeStyleRenderer,
-  ShapeNodeStyleRenderer,
+  PolylineEdgeStyle,
+  ShapeNodeStyle,
   Stroke
-} from 'yfiles'
-import { getTag } from './demo-types.js'
-import { useDirectedEdges } from './ui/ui-utils.js'
-
+} from '@yfiles/yfiles'
+import { getTag } from './demo-types'
+import { useDirectedEdges } from './ui/ui-utils'
 /**
- * An extended {@link ShapeNodeStyleRenderer} which chooses the colors of the node's
+ * An extended node which chooses the colors of the node's
  * stroke and fill depending on the information in the tag.
  */
-export class TagColoredShapeNodeStyleRenderer extends ShapeNodeStyleRenderer {
-  /**
-   * @returns {?Fill}
-   */
-  getFill() {
-    const tag = getTag(this.node)
-    if (tag.type === 'start' || tag.type === 'end') {
-      return Fill.WHITE
-    }
-
-    const componentColor = getDisplayedComponentColor(this.node)
-    return componentColor != null ? Fill.from(componentColor) : Fill.LIGHT_GRAY
+export class TagColoredShapeNodeStyle extends DelegatingNodeStyle {
+  delegatingStyle = new ShapeNodeStyle({ shape: 'ellipse' })
+  getStyle(node) {
+    this.delegatingStyle.fill = this.getFill(node)
+    this.delegatingStyle.stroke = this.getStroke(node)
+    return this.delegatingStyle
   }
-
-  /**
-   * @returns {?Stroke}
-   */
-  getStroke() {
-    const tag = getTag(this.node)
-    const highlighted = isHighlighted(this.node)
-    const highlightedStrokeWidth = highlighted ? 10 : 5
-
+  getFill(node) {
+    const tag = getTag(node)
+    if (tag?.type === 'start' || tag?.type === 'end') {
+      return Color.WHITE
+    }
+    const componentColor = getDisplayedComponentColor(node)
+    return componentColor != null ? Fill.from(componentColor) : Color.LIGHT_GRAY
+  }
+  getStroke(node) {
+    const tag = getTag(node)
+    const highlighted = isHighlighted(node)
+    const highlightedStrokeWidth = highlighted ? 6 : 4
     // first check if the node is a start or end node for the algorithm
-    if (tag.type === 'start') {
+    if (tag?.type === 'start') {
       return Stroke.from(`${highlightedStrokeWidth}px #9acd32`)
-    } else if (tag.type === 'end') {
+    } else if (tag?.type === 'end') {
       return Stroke.from(`${highlightedStrokeWidth}px #cd5c5c`)
     }
-
-    const componentColor = getDisplayedComponentColor(this.node)
+    const componentColor = getDisplayedComponentColor(node)
     if (componentColor == null) {
       // if the edge doesn't belong to a component, render it grey
       return Stroke.from(`3px darkgrey`)
@@ -78,65 +76,74 @@ export class TagColoredShapeNodeStyleRenderer extends ShapeNodeStyleRenderer {
     return highlighted ? new Stroke(componentColor, highlightedStrokeWidth) : null
   }
 }
-
 /**
- * An extended {@link PolylineEdgeStyleRenderer} which chooses the color and width of the edge's
+ * An extended {@link PolylineEdgeStyle} which chooses the color and width of the edge's
  * stroke depending on the information in the tag.
  */
-export class TagColoredPolylineEdgeStyleRenderer extends PolylineEdgeStyleRenderer {
-  /**
-   * @returns {?Stroke}
-   */
-  getStroke() {
-    const componentColor = getDisplayedComponentColor(this.edge)
+export class TagColoredPolylineEdgeStyle extends DelegatingEdgeStyle {
+  static arrowCache = new Map().set('none', IArrow.NONE)
+  delegatingStyle = new PolylineEdgeStyle()
+  getStyle(edge) {
+    this.delegatingStyle.stroke = this.getStroke(edge)
+    this.delegatingStyle.targetArrow = this.getTargetArrow(edge)
+    return this.delegatingStyle
+  }
+  getStroke(edge) {
+    const componentColor = getDisplayedComponentColor(edge)
     if (componentColor == null) {
       // if the edge doesn't belong to a component, render it grey
       return Stroke.from('3px darkgrey')
     }
-    return new Stroke(componentColor, isHighlighted(this.edge) ? 8 : 5)
+    return new Stroke(componentColor, isHighlighted(edge) ? 8 : 5)
   }
-
-  /**
-   * @returns {?IArrow}
-   */
-  getTargetArrow() {
+  getTargetArrow(edge) {
     const directed = useDirectedEdges()
     if (!directed) {
       return IArrow.NONE
     }
-
-    const highlighted = isHighlighted(this.edge)
-    const componentColor = getDisplayedComponentColor(this.edge) ?? 'darkgrey'
+    const highlighted = isHighlighted(edge)
+    const componentColor = getDisplayedComponentColor(edge) ?? 'darkgrey'
     const strokeWidth = highlighted ? 5 : 1
-    return new Arrow({
-      fill: componentColor,
-      stroke: `${strokeWidth}px ${componentColor}`,
-      type: 'triangle'
-    })
+    return TagColoredPolylineEdgeStyle.getArrow(componentColor, strokeWidth)
+  }
+  /**
+   * Returns an arrow with the given color and stroke width. Either returns
+   * a cached version if such an arrow already exists or creates and caches
+   * a new instance.
+   */
+  static getArrow(color, strokeWidth) {
+    const arrowMapKey = `${color}-${strokeWidth}`
+    let arrow = this.arrowCache.get(arrowMapKey)
+    if (!arrow) {
+      arrow = new Arrow({
+        fill: color,
+        stroke: `${strokeWidth}px ${color}`,
+        type: 'triangle',
+        widthScale: 1.5
+      })
+      this.arrowCache.set(arrowMapKey, arrow)
+    }
+    return arrow
   }
 }
-
 /**
  * Checks whether the given item is part of a highlighted component.
- * @param {!IModelItem} item
- * @returns {boolean}
  */
 function isHighlighted(item) {
   const tag = getTag(item)
-  return tag.highlightedComponent !== undefined
+  return tag?.highlightedComponent !== undefined
 }
-
 /**
  * Returns the color for the displayed component of the given item.
- * @param {!IModelItem} item
- * @returns {!string}
  */
 function getDisplayedComponentColor(item) {
   const tag = getTag(item)
-  const displayedComponent = tag.highlightedComponent ?? tag.components.at(0)
-  return getColorForComponent(displayedComponent, tag.gradient)
+  if (tag) {
+    const displayedComponent = tag.highlightedComponent ?? tag.components.at(0)
+    return getColorForComponent(displayedComponent, tag.gradient)
+  }
+  return undefined
 }
-
 /**
  * A set of colors that can be applied to components of nodes and edges.
  */
@@ -157,32 +164,26 @@ const colors = [
   '#17bebb',
   '#76b041'
 ]
-
 /** The color at the end of the gradient (#242265, rgb(36,34,101)) */
 const gradientStart = [36, 34, 101]
 /** The color at the end of the gradient (#17bebb, rgb(23,190,187)) */
 const gradientEnd = [23, 190, 187]
-
 /**
  * Returns the color for the given component.
  * Colors are represented like this: "rbg(r,g,b)".
  * @param componentId The id of the component.
  * @param gradient A normalized value between 0 and 1 that describes the position in the gradient
- * @returns {!string} The color for the component.
- * @param {number} [componentId]
- * @param {number} [gradient]
+ * @returns The color for the component.
  */
 export function getColorForComponent(componentId, gradient) {
   if (componentId === undefined && gradient === undefined) {
     // there is neither a component nor a gradient
     return undefined
   }
-
   if (gradient === undefined) {
     // there is no gradient -> choose a color from the list
     return colors[componentId % colors.length]
   }
-
   // return the color from the gradient
   const [r1, g1, b1] = gradientStart
   const [r2, g2, b2] = gradientEnd

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,13 +30,13 @@ import {
   GraphComponent,
   IEnumerable,
   IGraph,
-  Insets,
   Matrix,
   Point,
   Rect,
   Size,
   SvgExport
-} from 'yfiles'
+} from '@yfiles/yfiles'
+import { openInWindow } from './open-in-window'
 
 /**
  * Helper class for printing the contents of a graph component.
@@ -46,21 +46,48 @@ import {
  * feature.
  */
 export default class PrintingSupport {
-  // The margins around the whole printed content in page coordinates.
+  /**
+   * The margins around the whole printed content in page coordinates.
+   */
   margin = 5
-  // The scale factor to apply to the printed content.
+  /**
+   * The scale factor to apply to the printed content.
+   */
   scale = 1.0
-  // Whether to print multiple pages if the content does not fit on a single page.
+  /**
+   * Whether to print multiple pages if the content does not fit on a single page.
+   */
   tiledPrinting = false
-  // The width of a single tile (page) in pt (1/72 inch).
-  tileWidth = 595
-  // The height of a single tile (page) in pt (1/72 inch).
-  tileHeight = 842
-  // The URL of the print document that's created and then opened.
-  targetUrl = './printdocument.html'
-  // The projection for the print content. When exporting a GraphComponent with a projection
-  // this should be set to the same value.
+  /**
+   * Whether to skip empty pages.
+   */
+  skipEmptyTiles = false
+  /**
+   * Whether to scale the content to fit the page size.
+   */
+  fitToTile = false
+  /**
+   * The width of a single tile (page) in px.
+   */
+  tileWidth = 794
+  /**
+   * The height of a single tile (page) in px.
+   */
+  tileHeight = 1123
+  /**
+   * The URL of the print document that's created and then opened.
+   */
+  targetUrl: string | null = null
+  /**
+   * The URL of the print document that's created and then opened.
+   * The projection for the print content. When exporting a GraphComponent with a projection,
+   * this should be set to the same value.
+   */
   projection = Matrix.IDENTITY
+  /**
+   * The styles set to the {@link SvgExport.cssStyleSheet} property.
+   * */
+  cssStyleSheet = ''
 
   /**
    * Prints the detail of the given graph that is specified by either a
@@ -68,12 +95,22 @@ export default class PrintingSupport {
    * define a bounding box in view coordinates.
    * If no `region` is specified, the complete graph is printed.
    */
-  printGraph(graph: IGraph, region?: Rect | Point[]): void {
+  async printGraph(
+    graph: IGraph,
+    region?: Rect | Point[],
+    renderCompletionCallback?: () => Promise<void | void[]>,
+    customHtmlUrl: string | null = null
+  ): Promise<void> {
+    this.targetUrl = customHtmlUrl
     // Create a new graph component for exporting the original SVG content
     const exportComponent = new GraphComponent()
     // ... and assign it the same graph.
     exportComponent.graph = graph
-    this.print(exportComponent, region)
+    return this.print(
+      exportComponent,
+      region,
+      renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
+    )
   }
 
   /**
@@ -82,7 +119,11 @@ export default class PrintingSupport {
    * define a bounding box in view coordinates.
    * If no `region` is specified, the complete graph is printed.
    */
-  async print(graphComponent: GraphComponent, region?: Rect | Point[]): Promise<void> {
+  async print(
+    graphComponent: GraphComponent,
+    region?: Rect | Point[],
+    renderCompletionCallback?: () => Promise<void | void[]>
+  ): Promise<void> {
     let targetRect: Rect
     if (Array.isArray(region)) {
       targetRect = this.getBoundsFromPoints(region)
@@ -91,10 +132,10 @@ export default class PrintingSupport {
       targetRect = this.getBoundsFromPoints([topLeft, topRight, bottomLeft, bottomRight])
     } else {
       targetRect = this.getBoundsFromPoints(
-        graphComponent
-          .getCanvasObjects(graphComponent.rootGroup)
+        graphComponent.renderTree
+          .getElements(graphComponent.renderTree.rootGroup)
           .map((co) =>
-            co.descriptor.getBoundsProvider(co.userObject).getBounds(graphComponent.canvasContext)
+            co.renderer.getBoundsProvider(co.tag).getBounds(graphComponent.canvasContext)
           )
           .filter((bounds) => bounds.isFinite)
           .flatMap((bounds) =>
@@ -114,7 +155,7 @@ export default class PrintingSupport {
     const invertedProjection = this.projection.clone()
     invertedProjection.invert()
 
-    if (!this.tiledPrinting) {
+    if ((this.tiledPrinting && this.fitToTile) || !this.tiledPrinting) {
       // no tiles - just one row and column
       rows = 1
       columns = 1
@@ -183,6 +224,9 @@ export default class PrintingSupport {
       )
     }
 
+    const pageBreakStyle = 'display: block; page-break-after: always;'
+    const fitToTileStyle =
+      'display: flex; justify-content: center; align-items: center; height: 100vh;'
     let resultingHTML = ''
     // loop through all rows and columns
     for (let i = 0; i < rows; i++) {
@@ -197,37 +241,72 @@ export default class PrintingSupport {
           copyDefsElements: true,
           encodeImagesBase64: true,
           inlineSvgImages: true,
-          projection: this.projection
+          projection: this.projection,
+          cssStyleSheet: this.cssStyleSheet
         })
         this.configureMargin(exporter, i === 0, lastRow, k === 0, lastColumn)
 
-        if (!lastRow || !lastColumn) {
-          resultingHTML += "<div class='pagebreak'>"
-        } else {
-          resultingHTML += '<div>'
+        // if fit to page option is selected, recalculate scale based on the tile size
+        if (this.tiledPrinting && this.fitToTile) {
+          const yScale = exporter.calculateScaleForHeight(this.tileHeight - 2 * this.margin)
+          const xScale = exporter.calculateScaleForWidth(this.tileWidth - 2 * this.margin)
+          exporter.scale = Math.min(xScale, yScale)
         }
+
         // export the svg to an XML string
-        const svgElement = await exporter.exportSvgAsync(graphComponent)
+        const svgElement = await exporter.exportSvgAsync(
+          graphComponent,
+          renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
+        )
+
+        // skip current iteration if skip empty tiles option
+        // is selected and current svg element is empty
+        if (this.skipEmptyTiles && this.isEmpty(svgElement)) {
+          continue
+        }
+
+        if (!lastRow || !lastColumn) {
+          resultingHTML += `<div style='${pageBreakStyle}'>`
+        } else {
+          // if fit to page option is selected, center the svg content
+          resultingHTML +=
+            this.tiledPrinting && this.fitToTile ? `<div style='${fitToTileStyle}'>` : '<div>'
+        }
         resultingHTML += SvgExport.exportSvgString(svgElement)
         resultingHTML += '</div>'
       }
     }
 
     // display exported svg in new window
-    const printWindow = window.open(this.targetUrl)
+    if (this.targetUrl) {
+      const printWindow = window.open(this.targetUrl)
 
-    if (printWindow) {
-      window.addEventListener(
-        'message',
-        (event) => {
-          if (event.data?.message === 'print document loaded') {
-            printWindow.postMessage({ message: 'print', content: resultingHTML })
-          }
-        },
-        false
-      )
+      if (printWindow) {
+        // automatically close window after print dialog is closed
+        printWindow.onafterprint = () => {
+          printWindow.close()
+        }
+        window.addEventListener(
+          'message',
+          (event) => {
+            if (event.data?.message === 'print document loaded') {
+              printWindow.postMessage({ message: 'print', content: resultingHTML })
+            }
+          },
+          false
+        )
+      } else {
+        alert('Could not open print preview window - maybe it was blocked?')
+      }
     } else {
-      alert('Could not open print preview window - maybe it was blocked?')
+      const newWindow = openInWindow(resultingHTML, 'Printing preview')
+      // automatically close window after print dialog is closed
+      newWindow.onafterprint = () => {
+        newWindow.close()
+      }
+      setTimeout(() => {
+        newWindow.print()
+      }, 0)
     }
   }
 
@@ -259,7 +338,7 @@ export default class PrintingSupport {
   ): void {
     if (!this.tiledPrinting) {
       // set margin if we don't print tiles
-      exporter.margins = new Insets(this.margin)
+      exporter.margins = this.margin
     } else {
       // for tile printing, set margin only for border tiles
       const top = firstRow ? this.margin : 0
@@ -267,7 +346,14 @@ export default class PrintingSupport {
       const right = lastColumn ? this.margin : 0
       const left = firstColumn ? this.margin : 0
 
-      exporter.margins = new Insets(left, top, right, bottom)
+      exporter.margins = [top, right, bottom, left]
     }
+  }
+
+  /**
+   * Checks whether the current svg element will produce an empty page
+   */
+  private isEmpty(svg: SVGSVGElement): boolean {
+    return !svg.children[1].children[0].children[0].hasChildNodes()
   }
 }

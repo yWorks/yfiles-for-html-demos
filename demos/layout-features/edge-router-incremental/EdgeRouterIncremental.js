@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,28 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  EdgeRouter,
-  EdgeRouterData,
-  EdgeRouterScope,
-  IGraph,
-  ILayoutAlgorithm,
-  LayoutData
-} from 'yfiles'
-
+import { EdgeRouter, EdgeRouterData, IGraph, ILayoutAlgorithm, LayoutData } from '@yfiles/yfiles'
 /**
  * Demonstrates how to configure {@link EdgeRouter} to route a predefined set of edges only.
- * @param {!IGraph} graph The graph whose edges are to be routed.
- * @returns {!object} {{EdgeRouter, EdgeRouterData}} the configured layout algorithm and the
+ * @param graph The graph whose edges are to be routed.
+ * @returns {{EdgeRouter, EdgeRouterData}} the configured layout algorithm and the
  * corresponding layout data.
  */
 export function createFeatureLayoutConfiguration(graph) {
   // whether an edge should be routed or not depends on the value stored in the edge's tag
-  const layoutData = new EdgeRouterData({
-    affectedEdges: (edge) => edge.tag && edge.tag.incremental
-  })
-
-  const layout = new EdgeRouter({ scope: EdgeRouterScope.ROUTE_AFFECTED_EDGES })
-
+  const layoutData = new EdgeRouterData()
+  layoutData.scope.edges = (edge) => edge.tag && edge.tag.incremental
+  const layout = new EdgeRouter()
   return { layout, layoutData }
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,7 @@ import {
   KCoreComponents,
   Reachability,
   StronglyConnectedComponents
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { type AlgorithmConfig, markItem } from './algorithms'
 
 /**
@@ -115,7 +115,7 @@ export function calculateReachableNodes(graph: IGraph, config: AlgorithmConfig):
     return
   }
 
-  const markedSource = config.startNodes?.[0] || graph.nodes.last()
+  const markedSource = config.startNodes?.[0] || graph.nodes.last()!
 
   const result = new Reachability({
     directed: config.directed,
@@ -127,7 +127,7 @@ export function calculateReachableNodes(graph: IGraph, config: AlgorithmConfig):
   })
 
   graph.edges
-    .filter((edge) => result.isReachable(edge.sourceNode!) && result.isReachable(edge.targetNode!))
+    .filter((edge) => result.isReachable(edge.sourceNode) && result.isReachable(edge.targetNode))
     .forEach((edge) => {
       markItem(edge, 0)
     })
@@ -164,7 +164,7 @@ export function calculateKCoreComponents(graph: IGraph): void {
     kCore.forEach((node) => markItem(node, k))
 
     graph.edges
-      .filter((edge) => kCore.contains(edge.sourceNode!) && kCore.contains(edge.targetNode!))
+      .filter((edge) => kCore.contains(edge.sourceNode) && kCore.contains(edge.targetNode))
       .forEach((edge) => markItem(edge, k))
   }
 

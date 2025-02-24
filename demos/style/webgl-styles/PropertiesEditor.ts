@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,29 +29,28 @@
 /* eslint-disable jsdoc/check-param-names */
 import {
   Color,
-  Enum,
   GroupNodeStyleIconBackgroundShape,
   GroupNodeStyleIconType,
   GroupNodeStyleTabPosition,
-  WebGL2ArcEdgeStyle,
-  WebGL2ArrowType,
-  WebGL2BridgeEdgeStyle,
-  WebGL2DashStyle,
-  WebGL2DefaultLabelStyle,
-  WebGL2Effect,
-  WebGL2GroupNodeStyle,
-  WebGL2IconLabelStyle,
-  WebGL2LabelShape,
-  WebGL2LineCap,
-  WebGL2PolylineEdgeStyle,
-  WebGL2ShapeNodeShape,
-  WebGL2ShapeNodeStyle,
-  WebGL2Stroke,
-  WebGL2TextureRendering
-} from 'yfiles'
+  WebGLArcEdgeStyle,
+  WebGLArrowType,
+  WebGLBridgeEdgeStyle,
+  WebGLDashStyle,
+  WebGLEffect,
+  WebGLGroupNodeStyle,
+  WebGLIconLabelStyle,
+  WebGLLabelShape,
+  WebGLLabelStyle,
+  WebGLLineCap,
+  WebGLPolylineEdgeStyle,
+  WebGLShapeNodeShape,
+  WebGLShapeNodeStyle,
+  WebGLStroke,
+  WebGLTextureRendering
+} from '@yfiles/yfiles'
 
-import plusIcon from 'demo-resources/icons/plus2-16.svg'
-import minusIcon from 'demo-resources/icons/minus2-16.svg'
+import plusIcon from '@yfiles/demo-resources/icons/plus2-16.svg'
+import minusIcon from '@yfiles/demo-resources/icons/minus2-16.svg'
 
 type ItemType = 'node' | 'edge' | 'label' | 'group'
 
@@ -69,10 +68,10 @@ type ItemType = 'node' | 'edge' | 'label' | 'group'
  * @param styles The style instances whose property values will be displayed in the editor UI.
  */
 export function updateEditor(styles: {
-  group?: WebGL2GroupNodeStyle
-  node?: WebGL2ShapeNodeStyle
-  edge?: WebGL2ArcEdgeStyle | WebGL2BridgeEdgeStyle | WebGL2PolylineEdgeStyle
-  label?: WebGL2DefaultLabelStyle | WebGL2IconLabelStyle
+  group?: WebGLGroupNodeStyle
+  node?: WebGLShapeNodeStyle
+  edge?: WebGLArcEdgeStyle | WebGLBridgeEdgeStyle | WebGLPolylineEdgeStyle
+  label?: WebGLLabelStyle
 }): void {
   if (styles.group) {
     openSection('group-nodes')
@@ -106,30 +105,25 @@ export function updateEditor(styles: {
  * ############################################################################
  */
 
-function updateGroupNodeSection(style: WebGL2GroupNodeStyle): void {
+function updateGroupNodeSection(style: WebGLGroupNodeStyle): void {
   getInput('groupNodeFill').value = colorToHexString(style.tabFill)
   getInput('groupNodeContentFill').value = colorToHexString(style.contentAreaFill)
-  getSelect('groupNodeEffect').value = Enum.getName(WebGL2Effect.$class, style.effect)
+  getSelect('groupNodeEffect').value = WebGLEffect[style.effect]
 
   setStroke(style.stroke, 'group')
 
-  getSelect('groupNodeTabPosition').value = Enum.getName(
-    GroupNodeStyleTabPosition.$class,
-    style.tabPosition
-  )
+  getSelect('groupNodeTabPosition').value = GroupNodeStyleTabPosition[style.tabPosition]
   getInput('groupNodeTabBackgroundFill').value = colorToHexString(style.tabBackgroundFill)
   getInput('groupNodeTabHeight').value = `${style.tabHeight}`
   getInput('groupNodeTabWidth').value = `${style.tabWidth}`
   getInput('groupNodeTabSlope').value = `${style.tabSlope}`
-  getInput('groupNodeTabInset').value = `${style.tabInset}`
+  getInput('groupNodeTabPadding').value = `${style.tabPadding}`
   getInput('groupNodeCornerRadius').value = `${style.cornerRadius}`
 
   getSelect('groupNodeIcon').value = getGroupIconPairName(style.groupIcon)
   getInput('groupNodeIconForegroundFill').value = colorToHexString(style.iconForegroundFill)
-  getSelect('groupNodeIconBackgroundShape').value = Enum.getName(
-    GroupNodeStyleIconBackgroundShape.$class,
-    style.iconBackgroundShape
-  )
+  getSelect('groupNodeIconBackgroundShape').value =
+    GroupNodeStyleIconBackgroundShape[style.iconBackgroundShape]
   getInput('groupNodeIconBackgroundFill').value = colorToHexString(style.iconBackgroundFill)
 }
 
@@ -161,10 +155,10 @@ function getGroupIconPairName(
  * ############################################################################
  */
 
-function updateNodeSection(style: WebGL2ShapeNodeStyle): void {
-  getSelect('nodeShape').value = Enum.getName(WebGL2ShapeNodeShape.$class, style.shape)
+function updateNodeSection(style: WebGLShapeNodeStyle): void {
+  getSelect('nodeShape').value = WebGLShapeNodeShape[style.shape]
   getInput('nodeFill').value = colorToHexString(style.fill)
-  getSelect('nodeEffect').value = Enum.getName(WebGL2Effect.$class, style.effect)
+  getSelect('nodeEffect').value = WebGLEffect[style.effect]
 
   setStroke(style.stroke, 'node')
 }
@@ -176,28 +170,28 @@ function updateNodeSection(style: WebGL2ShapeNodeStyle): void {
  */
 
 function updateEdgeSection(
-  style: WebGL2ArcEdgeStyle | WebGL2BridgeEdgeStyle | WebGL2PolylineEdgeStyle
+  style: WebGLArcEdgeStyle | WebGLBridgeEdgeStyle | WebGLPolylineEdgeStyle
 ): void {
-  if (style instanceof WebGL2ArcEdgeStyle) {
+  if (style instanceof WebGLArcEdgeStyle) {
     updateEdgeSectionImpl(style, 'Arc')
-  } else if (style instanceof WebGL2BridgeEdgeStyle) {
+  } else if (style instanceof WebGLBridgeEdgeStyle) {
     updateEdgeSectionImpl(style, 'Bridge')
-  } /* WebGL2PolylineEdgeStyle*/ else {
+  } /* WebGLPolylineEdgeStyle*/ else {
     updateEdgeSectionImpl(style, 'Default')
   }
 }
 
 function updateEdgeSectionImpl(
-  style: WebGL2ArcEdgeStyle | WebGL2BridgeEdgeStyle | WebGL2PolylineEdgeStyle,
+  style: WebGLArcEdgeStyle | WebGLBridgeEdgeStyle | WebGLPolylineEdgeStyle,
   type: 'Arc' | 'Bridge' | 'Default'
 ): void {
   getSelect('edgeStyle').value = type
 
-  getSelect('sourceArrow').value = Enum.getName(WebGL2ArrowType.$class, style.sourceArrow)
-  getSelect('targetArrow').value = Enum.getName(WebGL2ArrowType.$class, style.targetArrow)
-  getSelect('edgeEffect').value = Enum.getName(WebGL2Effect.$class, style.effect)
+  getSelect('sourceArrow').value = WebGLArrowType[style.sourceArrow]
+  getSelect('targetArrow').value = WebGLArrowType[style.targetArrow]
+  getSelect('edgeEffect').value = WebGLEffect[style.effect]
   getInput('bendSmoothing').value = `${getSmoothingLength(style, type)}`
-  if (style instanceof WebGL2ArcEdgeStyle || style instanceof WebGL2BridgeEdgeStyle) {
+  if (style instanceof WebGLArcEdgeStyle || style instanceof WebGLBridgeEdgeStyle) {
     getInput('height').value = `${style.height}`
   }
 
@@ -205,10 +199,10 @@ function updateEdgeSectionImpl(
 }
 
 function getSmoothingLength(
-  style: WebGL2ArcEdgeStyle | WebGL2BridgeEdgeStyle | WebGL2PolylineEdgeStyle,
+  style: WebGLArcEdgeStyle | WebGLBridgeEdgeStyle | WebGLPolylineEdgeStyle,
   type: 'Arc' | 'Bridge' | 'Default'
 ): number {
-  return 'Default' === type ? (style as WebGL2PolylineEdgeStyle).smoothingLength : 0
+  return 'Default' === type ? (style as WebGLPolylineEdgeStyle).smoothingLength : 0
 }
 
 /*
@@ -217,8 +211,8 @@ function getSmoothingLength(
  * ############################################################################
  */
 
-function updateLabelSection(style: WebGL2DefaultLabelStyle | WebGL2IconLabelStyle): void {
-  if (style instanceof WebGL2DefaultLabelStyle) {
+function updateLabelSection(style: WebGLLabelStyle | WebGLIconLabelStyle): void {
+  if (style instanceof WebGLLabelStyle) {
     updateLabelSectionImpl(style, 'Default')
   } else {
     updateLabelSectionImpl(style, 'Icon')
@@ -226,34 +220,35 @@ function updateLabelSection(style: WebGL2DefaultLabelStyle | WebGL2IconLabelStyl
 }
 
 function updateLabelSectionImpl(
-  style: WebGL2DefaultLabelStyle | WebGL2IconLabelStyle,
+  style: WebGLLabelStyle | WebGLIconLabelStyle,
   type: 'Default' | 'Icon'
 ): void {
-  getSelect('labelShape').value = Enum.getName(WebGL2LabelShape.$class, style.shape)
+  if (style instanceof WebGLLabelStyle) {
+    getSelect('labelShape').value = WebGLLabelShape[style.shape]
+  } else {
+    getSelect('labelShape').value = WebGLLabelShape[style.backgroundShape]
+  }
   getInput('labelTextColor').value = colorToHexString(getTextColor(style, type))
   getInput('labelBackgroundColor').value = colorToHexString(style.backgroundColor)
-  getSelect('labelEffect').value = Enum.getName(WebGL2Effect.$class, style.effect)
-  getSelect('labelRenderingType').value = Enum.getName(
-    WebGL2TextureRendering.$class,
-    style.textureRendering
-  )
+  getSelect('labelEffect').value = WebGLEffect[style.effect]
+  getSelect('labelRenderingType').value = WebGLTextureRendering[style.textureRendering]
   getInput('labelOversampling').value = `${getSamplingRate(style, type)}`
 
   setStroke(style.backgroundStroke, 'label')
 }
 
 function getSamplingRate(
-  style: WebGL2DefaultLabelStyle | WebGL2IconLabelStyle,
+  style: WebGLLabelStyle | WebGLIconLabelStyle,
   type: 'Default' | 'Icon'
 ): number {
-  return 'Default' === type ? (style as WebGL2DefaultLabelStyle).samplingRate : 0.0
+  return 'Default' === type ? (style as WebGLLabelStyle).samplingRate : 2.0
 }
 
 function getTextColor(
-  style: WebGL2DefaultLabelStyle | WebGL2IconLabelStyle,
+  style: WebGLLabelStyle | WebGLIconLabelStyle,
   type: 'Default' | 'Icon'
 ): Color {
-  return 'Default' === type ? (style as WebGL2DefaultLabelStyle).textColor : Color.BLACK
+  return 'Default' === type ? (style as WebGLLabelStyle).textColor : Color.GRAY
 }
 
 /*
@@ -263,22 +258,22 @@ function getTextColor(
  */
 
 /**
- * Returns a {@link WebGL2Stroke} instance that is created with the editor values from the
+ * Returns a {@link WebGLStroke} instance that is created with the editor values from the
  * editor section for the given item type.
  * @param type the item type for which the stroke is used.
  */
-export function getStroke(type: ItemType): WebGL2Stroke {
+export function getStroke(type: ItemType): WebGLStroke {
   const noStroke = getInput(`${type}StrokeButtonNone`).className.indexOf('active') != -1
   const simpleStroke = getInput(`${type}StrokeButtonSimple`).className.indexOf('active') != -1
   if (noStroke && type != 'edge') {
-    return WebGL2Stroke.NONE
+    return WebGLStroke.NONE
   } else if (simpleStroke) {
-    return new WebGL2Stroke(
+    return new WebGLStroke(
       getInput(`${type}StrokeColor`).value,
       getNumber(`${type}StrokeThickness`)
     )
   } else {
-    return new WebGL2Stroke(
+    return new WebGLStroke(
       getInput(`${type}StrokeColor`).value,
       getNumber(`${type}StrokeThickness`),
       getDashStyle(type),
@@ -287,24 +282,24 @@ export function getStroke(type: ItemType): WebGL2Stroke {
   }
 }
 
-function getDashStyle(type: string): WebGL2DashStyle {
+function getDashStyle(type: string): WebGLDashStyle {
   const value = getValue(`${type}StrokeDashStyle`)
-  return WebGL2DashStyle[value as keyof typeof WebGL2DashStyle] as WebGL2DashStyle
+  return WebGLDashStyle[value as keyof typeof WebGLDashStyle] as WebGLDashStyle
 }
 
-function getLineCapStyle(type: string): WebGL2LineCap {
+function getLineCapStyle(type: string): WebGLLineCap {
   const value = getValue(`${type}StrokeLineCaps`)
-  return WebGL2LineCap[value as keyof typeof WebGL2LineCap] as WebGL2LineCap
+  return WebGLLineCap[value as keyof typeof WebGLLineCap] as WebGLLineCap
 }
 
 /**
  * Updates the stroke editor values in the editor section for the given item type with the
  * property values of the given stroke instance.
  */
-export function setStroke(stroke: WebGL2Stroke, type: ItemType): void {
-  if (WebGL2Stroke.NONE == stroke) {
+export function setStroke(stroke: WebGLStroke, type: ItemType): void {
+  if (WebGLStroke.NONE == stroke) {
     setStrokeSectionActive(type, 'None')
-  } else if (stroke.dashStyle == WebGL2DashStyle.SOLID) {
+  } else if (stroke.dashStyle == WebGLDashStyle.SOLID) {
     setStrokeSectionActive(type, 'Simple')
     getInput(`${type}StrokeColor`).value = colorToHexString(stroke.color)
     getInput(`${type}StrokeThickness`).value = `${stroke.thickness}`
@@ -312,11 +307,8 @@ export function setStroke(stroke: WebGL2Stroke, type: ItemType): void {
     setStrokeSectionActive(type, 'More')
     getInput(`${type}StrokeColor`).value = colorToHexString(stroke.color)
     getInput(`${type}StrokeThickness`).value = `${stroke.thickness}`
-    getSelect(`${type}StrokeDashStyle`).value = Enum.getName(
-      WebGL2DashStyle.$class,
-      stroke.dashStyle
-    )
-    getSelect(`${type}StrokeLineCaps`).value = Enum.getName(WebGL2LineCap.$class, stroke.lineCap)
+    getSelect(`${type}StrokeDashStyle`).value = WebGLDashStyle[stroke.dashStyle]
+    getSelect(`${type}StrokeLineCaps`).value = WebGLLineCap[stroke.lineCap]
   }
 }
 

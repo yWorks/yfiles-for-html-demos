@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,51 +26,36 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphViewerInputMode, License } from 'yfiles'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+// eslint-disable @typescript-eslint/explicit-function-return-type
+import { GraphComponent, GraphViewerInputMode, License } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import {
-  createStylesheetView,
-  replaceStylesheet,
   addStylesheet,
-  removeStylesheet
-} from './stylesheet-view/stylesheet-view.js'
-import { createSampleGraph } from './create-sample-graph.js'
-import { configureSelectionHighlight } from './configure-selection-highlight.js'
-import { configureHoverHighlight } from './configure-hover-highlight.js'
-
-/**
- * @returns {!Promise}
- */
+  createStylesheetView,
+  removeStylesheet,
+  replaceStylesheet
+} from './stylesheet-view/stylesheet-view'
+import { createSampleGraph } from './create-sample-graph'
+import { configureSelectionHighlight } from './configure-selection-highlight'
+import { configureHoverHighlight } from './configure-hover-highlight'
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // do not allow structural changes in this demo
   const inputMode = new GraphViewerInputMode()
-
   // show the graph-item-styles stylesheet in the demo
   await createStylesheetView('#data-view')
-
   // highlight graph items by hovering over them
   configureHoverHighlight(graphComponent, inputMode)
-
   // on click, highlight the node and its direct connections
   configureSelectionHighlight(graphComponent, inputMode)
-
   graphComponent.inputMode = inputMode
   createSampleGraph(graphComponent.graph)
-  graphComponent.fitGraphBounds()
-
+  await graphComponent.fitGraphBounds()
   addStylesheet()
-
   initializeUI()
 }
-
 /**
  * Initializes the UI elements that are specific to this demo.
  */
@@ -88,5 +73,4 @@ function initializeUI() {
     document.addEventListener('mouseup', upListener)
   })
 }
-
 void run().then(finishLoading)

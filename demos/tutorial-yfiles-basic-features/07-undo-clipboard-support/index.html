@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>07 Undo Clipboard Support - Tutorial: Basic Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -312,7 +310,7 @@
                     <pre
                       class="highlight"
                     ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// programmatically copy the selected graph items</span>
-<span class="hljs-keyword">if</span> (graphComponent.<span class="hljs-property">selection</span>.<span class="hljs-property">selectedNodes</span>.<span class="hljs-property">size</span> &gt; <span class="hljs-number">0</span>) {
+<span class="hljs-keyword">if</span> (graphComponent.<span class="hljs-property">selection</span>.<span class="hljs-property">nodes</span>.<span class="hljs-property">size</span> &gt; <span class="hljs-number">0</span>) {
   graphEditorInputMode.<span class="hljs-title function_">copy</span>()
 }</code></pre>
                   </div>
@@ -322,7 +320,7 @@
                     <pre
                       class="highlight"
                     ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// programmatically paste and clear the clipboard content</span>
-<span class="hljs-keyword">if</span> (!graphComponent.<span class="hljs-property">clipboard</span>.<span class="hljs-property">empty</span>) {
+<span class="hljs-keyword">if</span> (!graphComponent.<span class="hljs-property">clipboard</span>.<span class="hljs-property">isEmpty</span>) {
   graphEditorInputMode.<span class="hljs-title function_">paste</span>()
   graphComponent.<span class="hljs-property">clipboard</span>.<span class="hljs-title function_">clear</span>()
 }</code></pre>

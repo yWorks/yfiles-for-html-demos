@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@ import {
   ILabelStyle,
   LabelEditingEventArgs,
   TextEditorInputMode
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Custom label edit helper.
@@ -67,14 +67,14 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
    *
    * This implementation prevents adding of more than two labels
    */
-  onLabelAdding(args: LabelEditingEventArgs): void {
+  onLabelAdding(context: IInputModeContext, args: LabelEditingEventArgs): void {
     args.textEditorInputModeConfigurator = this.configureTextEditorInputMode
     // Prevent adding more than two labels...
     if (!this.owner || this.owner.labels.size >= 2) {
       args.cancel = true
       return
     }
-    super.onLabelAdding(args)
+    super.onLabelAdding(context, args)
   }
 
   /**
@@ -111,7 +111,7 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
    *
    * If a label is edited directly, we either return it (if it is the second label) or prevent editing.
    */
-  onLabelEditing(args: LabelEditingEventArgs): void {
+  onLabelEditing(context: IInputModeContext, args: LabelEditingEventArgs): void {
     args.textEditorInputModeConfigurator = this.configureTextEditorInputMode
     if (this.label) {
       // We are directly editing the label
@@ -133,12 +133,12 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
     // Implicit editing - this is only reached if we are trying to edit labels for an owner which does not yet have
     // any labels
     if (!this.owner) {
-      super.onLabelEditing(args)
+      super.onLabelEditing(context, args)
       return
     }
     if (this.owner.labels.size <= 1) {
       // Add a second label instead (since we'll never edit the first one)
-      this.onLabelAdding(args)
+      this.onLabelAdding(context, args)
       return
     }
 
@@ -164,10 +164,10 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
     // Restore after editing
     const afterEditing = () => {
       textBox.classList.remove('custom-label-editor')
-      mode.removeTextEditedListener(afterEditing)
-      mode.removeEditingCanceledListener(afterEditing)
+      mode.removeEventListener('text-edited', afterEditing)
+      mode.removeEventListener('editing-canceled', afterEditing)
     }
-    mode.addTextEditedListener(afterEditing)
-    mode.addEditingCanceledListener(afterEditing)
+    mode.addEventListener('text-edited', afterEditing)
+    mode.addEventListener('editing-canceled', afterEditing)
   }
 }

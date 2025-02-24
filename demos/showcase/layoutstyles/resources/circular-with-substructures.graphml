@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,9 +31,9 @@
 <graphml
  xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd "
  xmlns="http://graphml.graphdrawing.org/xmlns"
- xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0"
+ xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0"
  xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0"
- xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml"
+ xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d1" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
 	<key id="d2" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
@@ -52,20 +52,20 @@
           <yjs:Stroke fill="#FF294958" thickness="2"/>
         </yjs:ShapeNodeStyle.stroke>
       </yjs:ShapeNodeStyle>
-      <yjs:PolylineEdgeStyle x:Key="3">
+      <yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="3">
         <yjs:PolylineEdgeStyle.stroke>
           <yjs:Stroke fill="#FF294958" miterLimit="1.45" thickness="1.5"/>
         </yjs:PolylineEdgeStyle.stroke>
         <yjs:PolylineEdgeStyle.targetArrow>
-          <yjs:Arrow type="SHORT" stroke="#FF294958" fill="#FF294958" cropLength="1"/>
+          <yjs:Arrow type="TRIANGLE" stroke="#FF294958" fill="#FF294958" cropLength="1"/>
         </yjs:PolylineEdgeStyle.targetArrow>
       </yjs:PolylineEdgeStyle>
-      <yjs:PolylineEdgeStyle x:Key="4">
+      <yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="4">
         <yjs:PolylineEdgeStyle.stroke>
           <yjs:Stroke fill="#FF412958" miterLimit="1.45" thickness="1.5"/>
         </yjs:PolylineEdgeStyle.stroke>
         <yjs:PolylineEdgeStyle.targetArrow>
-          <yjs:Arrow type="SHORT" stroke="#FF412958" fill="#FF412958" cropLength="1"/>
+          <yjs:Arrow type="TRIANGLE" stroke="#FF412958" fill="#FF412958" cropLength="1"/>
         </yjs:PolylineEdgeStyle.targetArrow>
       </yjs:PolylineEdgeStyle>
 		</y:SharedData>

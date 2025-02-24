@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
+import {
+  INode,
+  IRenderContext,
+  NodeStyleBase,
+  SvgVisual,
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
 import type { NumberValue } from 'd3'
-
 import * as d3 from 'd3'
 
 const margin = {
@@ -47,16 +52,18 @@ const color = d3
   .range(['#1dccc2', '#2f5b88'])
   .interpolate(d3.interpolateHcl)
 
+type D3ChartNodeStyleVisual = TaggedSvgVisual<SVGGElement, RenderDataCache>
+
 /**
  * A node style that triggers the sparkline rendering and includes the result in
  * the node visualization.
  */
-export default class D3ChartNodeStyle extends NodeStyleBase {
+export default class D3ChartNodeStyle extends NodeStyleBase<D3ChartNodeStyleVisual> {
   /**
    * Creates the visual for a node.
    * @see Overrides {@link NodeStyleBase.createVisual}
    */
-  createVisual(renderContext: IRenderContext, node: INode): SvgVisual {
+  createVisual(renderContext: IRenderContext, node: INode): D3ChartNodeStyleVisual {
     // create a g element and use it as a container for the sparkline visualization
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
@@ -96,17 +103,18 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
       .attr('fill', (d) => color(d as NumberValue))
       .attr('stroke', 'none')
 
-    const svgVisual = new SvgVisual(g)
-    ;(svgVisual as any)['render-data-cache'] = new RenderDataCache(width, height, data)
-
-    return svgVisual
+    return SvgVisual.from(g, new RenderDataCache(width, height, data))
   }
 
   /**
    * Re-renders the node using the old visual for performance reasons.
    * @see Overrides {@link NodeStyleBase.updateVisual}
    */
-  updateVisual(renderContext: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
+  updateVisual(
+    renderContext: IRenderContext,
+    oldVisual: D3ChartNodeStyleVisual,
+    node: INode
+  ): D3ChartNodeStyleVisual {
     const g = oldVisual.svgElement
 
     const {
@@ -127,11 +135,11 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
       .attr('width', width)
       .attr('height', height)
 
-    const oldCache = (oldVisual as any)['render-data-cache'] as RenderDataCache
+    const oldCache = oldVisual.tag
     const newCache = new RenderDataCache(width, height, data)
 
     if (!newCache.equals(oldCache)) {
-      ;(oldVisual as any)['render-data-cache'] = newCache
+      oldVisual.tag = newCache
 
       const dataSelection = group.select('g').selectAll('rect').data(data)
 

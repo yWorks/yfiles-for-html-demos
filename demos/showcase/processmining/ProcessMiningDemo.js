@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,35 +27,32 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   GraphComponent,
   GraphViewerInputMode,
   INode,
-  InteriorStretchLabelModel,
+  LabelStyle,
   License,
   PolylineEdgeStyle,
   ShapeNodeStyle,
   Size,
+  StretchNodeLabelModel,
   TimeSpan
-} from 'yfiles'
-import { AnimationController } from './AnimationController.js'
-import { ProcessingStepNodeStyleDecorator } from './ProcessingStepNodeStyleDecorator.js'
-import { addHeatmap } from './process-visualization/heatmap.js'
+} from '@yfiles/yfiles'
+import { AnimationController } from './AnimationController'
+import { ProcessingStepNodeStyleDecorator } from './ProcessingStepNodeStyleDecorator'
+import { addHeatmap } from './process-visualization/heatmap'
 import {
   extractGraph,
   getProcessStepData,
   getProcessTransitionData
-} from './process-graph-extraction.js'
-import { installProcessItemVisual, updateTime } from './process-visualization/ProcessItemVisual.js'
-import { createSimulatedEventLog } from './simulation/simulator.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { checkWebGLSupport, finishLoading } from 'demo-resources/demo-page'
-import { prepareProcessVisualization } from './process-visualization/process-visualization.js'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
+} from './process-graph-extraction'
+import { installProcessItemVisual, updateTime } from './process-visualization/ProcessItemVisual'
+import { createSimulatedEventLog } from './simulation/simulator'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { checkWebGLSupport, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { prepareProcessVisualization } from './process-visualization/process-visualization'
 /**
  * Initializes the graph and wires up the UI
- * @returns {!Promise}
  */
 async function run() {
   if (!checkWebGLSupport()) {
@@ -63,10 +60,8 @@ async function run() {
     return
   }
   License.value = await fetchLicense()
-
   // stores the current time value in the animation
   let time = 0
-
   // this function provides the heat for a node or edge at a specific time
   // it is used to update the heat map or the node decoration
   const getHeat = (item) => {
@@ -75,38 +70,27 @@ async function run() {
     const data = item instanceof INode ? getProcessStepData(item) : getProcessTransitionData(item)
     return Math.min(1, data.heat.getValue(time) / data.capacity)
   }
-
   // create a GraphComponent
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // create an input mode
   graphComponent.inputMode = new GraphViewerInputMode()
-
   // create and configure a default node and edge styles style
   const graph = graphComponent.graph
   initializeDemoStyles(graph, getHeat)
-
   // add the item visual to be able to render dots for the traversing events
   installProcessItemVisual(graphComponent)
-
   // run the simulation to create a random event log
   // this line can be replaced with the import of a custom event log
   const eventLog = createSimulatedEventLog()
-
   // extract a graph from the event log
   extractGraph(eventLog, graphComponent)
-
   // augment the graph with information about heat and traversing events
   const maxTime = prepareProcessVisualization(graph, eventLog)
-
   // add a heatmap visualization
   addHeatmap(graphComponent, getHeat)
-
   // wire up the controls
   const progressInput = document.querySelector('#progress')
   const restartAnimationButton = document.querySelector('#restart-animation')
-
   /**
    * Callback function to transfer the progress to the visuals and the toolbar slider
    */
@@ -115,14 +99,12 @@ async function run() {
     updateTime(progress * maxTime)
     progressInput.value = String(progress * 100)
   }
-
   // initialize the animation and controls
   const animationController = new AnimationController(
     graphComponent,
     TimeSpan.fromSeconds(maxTime),
     setProgress
   )
-
   // set up the remainder of the UI
   progressInput.addEventListener('change', () => {
     if (!animationController.running) {
@@ -131,39 +113,34 @@ async function run() {
     }
   })
   restartAnimationButton.addEventListener('click', () => animationController.restartAnimation())
-
   // and start the playback of the simulation
   void animationController.runAnimation()
 }
-
 /**
  * Sets default styles for nodes and edges.
- * @param {!IGraph} graph the current graph
- * @param {!function} getHeat a head function that is used in the node visualization
+ * @param graph the current graph
+ * @param getHeat a head function that is used in the node visualization
  */
 function initializeDemoStyles(graph, getHeat) {
   // Helper function to quantize a value to multiples of 1/30th.
   function quantize(value) {
     return Math.floor(value * 30) / 30
   }
-
   graph.nodeDefaults.style = new ProcessingStepNodeStyleDecorator(
     new ShapeNodeStyle({ fill: '#494949', stroke: 'none' }),
     (node) => quantize(getHeat(node))
   )
   graph.nodeDefaults.size = new Size(150, 30)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     textFill: '#d0d0d0',
     verticalTextAlignment: 'center',
-    insets: { top: 0, right: 0, bottom: 0, left: 35 }
+    padding: { top: 0, right: 0, bottom: 0, left: 35 }
   })
-  graph.nodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.CENTER
-
+  graph.nodeDefaults.labels.layoutParameter = new StretchNodeLabelModel().createParameter('center')
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '2px solid #33a',
     targetArrow: '#33a triangle',
     smoothingLength: 10
   })
 }
-
 void run().then(finishLoading)

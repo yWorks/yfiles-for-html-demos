@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,87 +37,69 @@ import {
   NodeSizeConstraintProvider,
   Rect,
   Size
-} from 'yfiles'
-
-import LimitedRectangleDescriptor from './LimitedRectangleDescriptor.js'
-import GreenSizeConstraintProvider from './GreenSizeConstraintProvider.js'
-import BlueSizeConstraintProvider from './BlueSizeConstraintProvider.js'
-import {
-  applyDemoTheme,
-  createDemoNodeLabelStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from '@yfiles/yfiles'
+import { LimitingRectangleRenderer } from './LimitingRectangleRenderer'
+import GreenSizeConstraintProvider from './GreenSizeConstraintProvider'
+import BlueSizeConstraintProvider from './BlueSizeConstraintProvider'
+import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link INodeSizeConstraintProvider} for each node.
  * This callback function is called whenever a node in the graph is queried
- * for its {@link ISizeConstraintProvider}. In this case, the 'node' parameter will be set
+ * for its {@link INodeSizeConstraintProvider}. In this case, the 'node' parameter will be set
  * to that node.
- * @param {!IGraph} graph The given graph
- * @param {!MutableRectangle} boundaryRectangle The rectangle that limits the node's size.
+ * @param graph The given graph
+ * @param boundaryRectangle The rectangle that limits the node's size.
  */
 function registerSizeConstraintProvider(graph, boundaryRectangle) {
-  // one shared instance that will be used by all blue nodes
-  const blueSizeConstraintProvider = new BlueSizeConstraintProvider()
-
-  const nodeDecorator = graph.decorator.nodeDecorator
-  nodeDecorator.sizeConstraintProviderDecorator.setFactory((node) => {
+  const nodeDecorator = graph.decorator.nodes
+  nodeDecorator.sizeConstraintProvider.addFactory((node) => {
     // obtain the tag from the node
     const nodeTag = node.tag
-
     // Check if it is a known tag and choose the respective implementation.
     // Fallback to the default behavior otherwise.
     if (nodeTag === 'blue') {
-      return blueSizeConstraintProvider
+      return new BlueSizeConstraintProvider(node)
     } else if (nodeTag === 'green') {
-      return new GreenSizeConstraintProvider()
+      return new GreenSizeConstraintProvider(node)
     } else if (nodeTag === 'orange') {
       return new NodeSizeConstraintProvider(new Size(50, 50), new Size(300, 300), boundaryRectangle)
     }
     return null
   })
 }
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // create a default editor input mode
   graphComponent.inputMode = new GraphEditorInputMode({
     // just for user convenience: disable node, edge creation and clipboard operations,
     allowCreateEdge: false,
     allowCreateNode: false,
     allowClipboardOperations: false,
-    movableItems: GraphItemTypes.NONE
+    movableSelectedItems: GraphItemTypes.NONE
   })
-
   // Create the rectangle that limits the movement of some nodes
   // and add it to the graphComponent.
   const boundaryRectangle = new MutableRectangle(210, 350, 30, 30)
-  graphComponent.highlightGroup.addChild(boundaryRectangle, new LimitedRectangleDescriptor())
-
+  graphComponent.renderTree.createElement(
+    graphComponent.renderTree.highlightGroup,
+    boundaryRectangle,
+    new LimitingRectangleRenderer()
+  )
   const graph = graphComponent.graph
-
   // register size constraint providers that are the main subject of this demo
   registerSizeConstraintProvider(graph, boundaryRectangle)
-
   createSampleGraph(graph)
-
   // enable undo and redo
   graph.undoEngineEnabled = true
 }
-
 /**
  * Creates the demo's sample graph.
- * @param {!IGraph} graph The graph to populate
+ * @param graph The graph to populate
  */
 function createSampleGraph(graph) {
   createNode(graph, 100, 100, 100, 60, 'demo-lightblue', 'blue', 'Never Shrink\n(Max 3x)')
@@ -135,17 +117,16 @@ function createSampleGraph(graph) {
     'Encompass Rectangle,\nMin and Max Size'
   )
 }
-
 /**
  * Creates a sample node for this demo.
- * @param {!IGraph} graph The given graph
- * @param {number} x The node's x-coordinate
- * @param {number} y The node's y-coordinate
- * @param {number} w The node's width
- * @param {number} h The node's height
- * @param {!ColorSetName} colorSet The color set to use for the new node and its label
- * @param {!string} tag The tag to identify the size constraint provider
- * @param {!string} labelText The nodes label's text
+ * @param graph The given graph
+ * @param x The node's x-coordinate
+ * @param y The node's y-coordinate
+ * @param w The node's width
+ * @param h The node's height
+ * @param colorSet The color set to use for the new node and its label
+ * @param tag The tag to identify the size constraint provider
+ * @param labelText The nodes label's text
  */
 function createNode(graph, x, y, w, h, colorSet, tag, labelText) {
   const node = graph.createNode({
@@ -153,12 +134,10 @@ function createNode(graph, x, y, w, h, colorSet, tag, labelText) {
     style: createDemoNodeStyle(colorSet),
     tag: tag
   })
-
   graph.addLabel({
     owner: node,
     text: labelText,
     style: createDemoNodeLabelStyle(colorSet)
   })
 }
-
 run().then(finishLoading)

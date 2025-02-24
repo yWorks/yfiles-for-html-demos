@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,68 +35,57 @@ import {
   NodeStyleBase,
   Point,
   Rect,
-  SvgVisual,
-  Visual
-} from 'yfiles'
-
+  SvgVisual
+} from '@yfiles/yfiles'
 /**
  * A simple SVG node style consisting of one filled rect element.
  */
 export default class SimpleSvgNodeStyle extends NodeStyleBase {
+  color
   /**
    * Constructs a node style with the given color or a magenta node style if no color is defined.
    * @param color The fill color for the node.
-   * @param {!Color} [color]
    */
   constructor(color) {
     super()
     this.color = color
     this.color = color || Color.from('#AB2346')
   }
-
   /**
    * Creates the visual representation for the given node.
-   * @param {!IRenderContext} context The render context.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param context The render context.
+   * @param node The node to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SimpleSvgNodeStyle.updateVisual}
    */
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
     const color = this.color
-
     // create a rect element
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.setAttribute('width', `${width}`)
     rect.setAttribute('height', `${height}`)
     rect.setAttribute('fill', `rgba(${color.r},${color.g},${color.b},${color.a / 255})`)
-
     // set the translation using a utility method for improved performance
     SvgVisual.setTranslate(rect, x, y)
-
     // store the data with which we created the rect so we can efficiently update it later
-    rect['data-cache'] = { x, y, width, height }
-
-    return new SvgVisual(rect)
+    return SvgVisual.from(rect, { x, y, width, height })
   }
-
   /**
    * Updates the visual representation for the given node.
-   * @param {!IRenderContext} context The render context.
-   * @param {!SvgVisual} oldVisual The visual that has been created in the call to
+   * @param context The render context.
+   * @param oldVisual The visual that has been created in the call to
    * {@link SimpleSvgNodeStyle.createVisual}.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param node The node to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SimpleSvgNodeStyle.createVisual}
    */
   updateVisual(context, oldVisual, node) {
     const { x, y, width, height } = node.layout
     // get the rect element
     const rect = oldVisual.svgElement
-
     // get the cache we stored in CreateVisual
-    const cache = rect['data-cache']
-
+    const cache = oldVisual.tag
     // update width and height only if necessary
     if (cache.width !== width || cache.height !== height) {
       rect.setAttribute('width', `${width}`)
@@ -104,65 +93,55 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
       cache.width = width
       cache.height = height
     }
-
     // update the location only if necessary
     if (cache.x !== x || cache.y !== y) {
       SvgVisual.setTranslate(rect, x, y)
       cache.x = x
       cache.y = y
     }
-
     return oldVisual
   }
-
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
    * Optimized implementation for a rectangular shape.
    * @see Overrides {@link NodeStyleBase.isHit}
-   * @param {!IInputModeContext} context The input mode context.
-   * @param {!Point} p The location to be checked.
-   * @param {!INode} node The node that may be hit.
-   * @returns {boolean}
+   * @param context The input mode context.
+   * @param p The location to be checked.
+   * @param node The node that may be hit.
    */
   isHit(context, p, node) {
-    return node.layout.toRect().containsWithEps(p, context.hitTestRadius)
+    return node.layout.toRect().contains(p, context.hitTestRadius)
   }
-
   /**
    * Gets the intersection of a line with the visual representation of the node.
    * Optimized implementation for a rectangular shape.
    * @see Overrides {@link NodeStyleBase.getIntersection}
-   * @param {!INode} node The node.
-   * @param {!Point} inner The inner point of the line.
-   * @param {!Point} outer The outer point of the line.
-   * @returns {?Point}
+   * @param node The node.
+   * @param inner The inner point of the line.
+   * @param outer The outer point of the line.
    */
   getIntersection(node, inner, outer) {
     return node.layout.toRect().findLineIntersection(inner, outer)
   }
-
   /**
    * Determines whether the provided point is geometrically inside the visual bounds of the node.
    * Optimized implementation for a rectangular shape.
    * @see Overrides {@link NodeStyleBase.isInside}
-   * @param {!INode} node The node.
-   * @param {!Point} point The point to be checked.
-   * @returns {boolean}
+   * @param node The node.
+   * @param point The point to be checked.
    */
   isInside(node, point) {
     return node.layout.toRect().contains(point)
   }
-
   /**
    * Determines whether the visualization for the specified node is included in the marquee selection.
    * Optimized implementation for a rectangular shape.
    * @see Overrides {@link NodeStyleBase.isInBox}
-   * @param {!IInputModeContext} context The input mode context.
-   * @param {!Rect} rectangle the rectangle to be checked.
-   * @param {!INode} node The node that may be in the rectangle.
-   * @returns {boolean}
+   * @param context The input mode context.
+   * @param rectangle the rectangle to be checked.
+   * @param node The node that may be in the rectangle.
    */
   isInBox(context, rectangle, node) {
-    return rectangle.contains(node.layout)
+    return rectangle.containsRectangle(node.layout)
   }
 }

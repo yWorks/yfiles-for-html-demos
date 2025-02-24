@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,7 +30,7 @@
  * This file re-exports all individual demo UI components and features to simplify the
  * import statement.
  */
-import './demo-ui/demo-ui-init.js'
-export * from './demo-ui/element-utils.js'
-export * from './demo-ui/finish-loading.js'
-export * from './demo-ui/toolbar.js'
+import './demo-ui/demo-ui-init'
+export * from './demo-ui/element-utils'
+export * from './demo-ui/finish-loading'
+export * from './demo-ui/toolbar'

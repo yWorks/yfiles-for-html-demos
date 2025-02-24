@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
-  Class,
+  type Constructor,
   FreeLabelModel,
   ILabel,
   ILabelModel,
@@ -39,7 +39,7 @@ import {
   Point,
   SimpleLabel,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * An {@see ILabelModel} that moves the layout of a label provided by a wrapped label model
@@ -59,7 +59,7 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
   createDefaultParameter(): ILabelModelParameter {
     return new OffsetLabelModelWrapperParameter(
       this,
-      FreeLabelModel.INSTANCE.createDefaultParameter(),
+      FreeLabelModel.INSTANCE.createAbsolute(Point.ORIGIN),
       Point.ORIGIN,
       Size.EMPTY,
       new Point(0, 1),
@@ -97,12 +97,9 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
     )
   }
 
-  getContext(label: ILabel, layoutParameter: ILabelModelParameter): ILookup {
-    const offsetParameter = layoutParameter as OffsetLabelModelWrapperParameter
-    return offsetParameter.wrappedParameter.model.getContext(
-      label,
-      offsetParameter.wrappedParameter
-    )
+  getContext(label: ILabel): ILookup {
+    const offsetParameter = label.layoutParameter as OffsetLabelModelWrapperParameter
+    return offsetParameter.wrappedParameter.model.getContext(label)
   }
 
   getGeometry(label: ILabel, layoutParameter: ILabelModelParameter): IOrientedRectangle {
@@ -145,7 +142,7 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T>(type: Class<T>): T | null {
+  lookup<T>(type: Constructor<T>): T | null {
     return null
   }
 }
@@ -181,9 +178,5 @@ class OffsetLabelModelWrapperParameter extends BaseClass(ILabelModelParameter) {
 
   get model(): ILabelModel {
     return this._model
-  }
-
-  supports(label: ILabel): boolean {
-    return this.wrappedParameter.supports(label)
   }
 }

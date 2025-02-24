@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,24 +31,24 @@ import {
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   IEdge,
   INode,
-  LayeredNodePlacer,
+  LayoutExecutor,
+  LevelAlignedSubtreePlacer,
   License,
   PolylineEdgeStyle,
-  SimplexNodePlacer,
   Stroke,
   TreeLayout,
   TreeLayoutData
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import PriorityPanel from './PriorityPanel'
 import * as SampleData from './resources/SampleData'
-import { applyDemoTheme, createDemoNodeStyle } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * The graph component in which the graph is displayed.
@@ -68,13 +68,11 @@ let layoutRunning = false
 /**
  * The current layout algorithm.
  */
-let layoutStyle: 'hierarchic' | 'tree' = 'hierarchic'
+let layoutStyle: 'hierarchical' | 'tree' = 'hierarchical'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeInputMode()
   initializePriorityPanel()
   loadGraph(layoutStyle)
@@ -84,7 +82,7 @@ async function run(): Promise<void> {
 /**
  * Loads the sample graph which initially provides some priorities.
  */
-function loadGraph(sample: 'hierarchic' | 'tree'): void {
+function loadGraph(sample: 'hierarchical' | 'tree'): void {
   const graph = graphComponent.graph
   graph.clear()
   graph.nodeDefaults.style = createDemoNodeStyle('demo-palette-44')
@@ -101,9 +99,9 @@ function loadGraph(sample: 'hierarchic' | 'tree'): void {
 
   graph.edges.forEach((edge) => setPriority(edge, edge.tag.priority || 0))
 
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
-  runLayout()
+  void runLayout()
 }
 
 /**
@@ -139,7 +137,7 @@ function getStroke(priority: number): Stroke {
 }
 
 /**
- * Applies a hierarchic layout considering the edge priorities.
+ * Applies a hierarchical layout considering the edge priorities.
  */
 async function runLayout(): Promise<void> {
   if (layoutRunning) {
@@ -147,27 +145,32 @@ async function runLayout(): Promise<void> {
   }
   layoutRunning = true
 
-  const { layout, layoutData } =
-    layoutStyle === 'hierarchic' ? configureHierarchicLayout() : configureTreeLayout()
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
 
-  await graphComponent.morphLayout(layout, '700ms', layoutData)
+  const { layout, layoutData } =
+    layoutStyle === 'hierarchical' ? configureHierarchicalLayout() : configureTreeLayout()
+
+  await graphComponent.applyLayoutAnimated(layout, '700ms', layoutData)
   layoutRunning = false
 }
 
 /**
- * Returns a configured hierarchic layout considering the edge priorities.
+ * Returns a configured hierarchical layout considering the edge priorities.
  */
-function configureHierarchicLayout(): {
-  layout: HierarchicLayout
-  layoutData: HierarchicLayoutData
+function configureHierarchicalLayout(): {
+  layout: HierarchicalLayout
+  layoutData: HierarchicalLayoutData
 } {
-  const layout = new HierarchicLayout()
-  layout.orthogonalRouting = true
-  layout.edgeLayoutDescriptor.minimumFirstSegmentLength = 30
-  layout.edgeLayoutDescriptor.minimumLastSegmentLength = 30
-  ;(layout.nodePlacer as SimplexNodePlacer).barycenterMode = true
+  const layout = new HierarchicalLayout({
+    defaultEdgeDescriptor: {
+      minimumFirstSegmentLength: 30,
+      minimumLastSegmentLength: 30
+    }
+  })
 
-  const layoutData = new HierarchicLayoutData({
+  const layoutData = new HierarchicalLayoutData({
     // Define priorities for edges on critical paths
     criticalEdgePriorities: (edge) => (edge.tag ? edge.tag.priority || 0 : 0),
 
@@ -187,10 +190,10 @@ function configureHierarchicLayout(): {
  */
 function configureTreeLayout(): { layout: TreeLayout; layoutData: TreeLayoutData } {
   const layout = new TreeLayout()
-  layout.defaultNodePlacer = new LayeredNodePlacer({
-    layerSpacing: 60,
-    spacing: 30
-  })
+  const levelAlignedSubtreePlacer = new LevelAlignedSubtreePlacer()
+  levelAlignedSubtreePlacer.layerSpacing = 60
+  levelAlignedSubtreePlacer.spacing = 30
+  layout.defaultSubtreePlacer = levelAlignedSubtreePlacer
 
   const layoutData = new TreeLayoutData({
     // Define priorities for edges on critical paths
@@ -206,7 +209,7 @@ function configureTreeLayout(): { layout: TreeLayout; layoutData: TreeLayoutData
 /**
  * Marks random upstream paths from leaf nodes to generate random long paths.
  */
-function markRandomPredecessorsPaths(): void {
+async function markRandomPredecessorsPaths(): Promise<void> {
   if (layoutRunning) {
     return
   }
@@ -229,7 +232,7 @@ function markRandomPredecessorsPaths(): void {
     markPredecessorsPath(leaves.at(rndNodeIdx)!, rndPriority)
   }
 
-  runLayout()
+  await runLayout()
 }
 
 /**
@@ -238,25 +241,25 @@ function markRandomPredecessorsPaths(): void {
 function markPredecessorsPath(node: INode, priority: number): void {
   let incomingEdges = graphComponent.graph.inEdgesAt(node)
   while (incomingEdges.size > 0) {
-    const edge = incomingEdges.first()
+    const edge = incomingEdges.first()!
     if (edge.tag.priority > priority) {
       // stop upstream path when a higher priority is found
       break
     }
     setPriority(edge, priority)
-    incomingEdges = graphComponent.graph.inEdgesAt(edge.sourceNode!)
+    incomingEdges = graphComponent.graph.inEdgesAt(edge.sourceNode)
   }
 }
 
 /**
  * Clears all edge priorities and reapplies the layout.
  */
-function clearPriorities(): void {
+async function clearPriorities(): Promise<void> {
   graphComponent.graph.edges.forEach((edge) => {
     setPriority(edge, 0)
   })
 
-  runLayout()
+  await runLayout()
 }
 
 /**
@@ -267,7 +270,7 @@ function initializeInputMode(): void {
     selectableItems: GraphItemTypes.EDGE | GraphItemTypes.NODE,
     toolTipItems: GraphItemTypes.EDGE
   })
-  gvim.addQueryItemToolTipListener((_, evt) => {
+  gvim.addEventListener('query-item-tool-tip', (evt) => {
     if (!evt.handled) {
       const node = evt.item
       if (node) {
@@ -295,11 +298,11 @@ function initializePriorityPanel(): void {
 
   priorityPanel.priorityChanged = () => runLayout()
 
-  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+  graphComponent.selection.addEventListener('item-added', (evt) => {
     if (evt.item instanceof INode) {
-      priorityPanel.currentItems = graphComponent.selection.selectedNodes.toArray()
+      priorityPanel.currentItems = graphComponent.selection.nodes.toArray()
     } else {
-      priorityPanel.currentItems = graphComponent.selection.selectedEdges.toArray()
+      priorityPanel.currentItems = graphComponent.selection.edges.toArray()
     }
   })
 }
@@ -316,7 +319,7 @@ function initializeUI(): void {
     document.querySelector<HTMLSelectElement>('#change-sample')!
   ).addEventListener('change', async (evt) => {
     const value = (evt.target as HTMLSelectElement).value
-    layoutStyle = value === 'Hierarchic Layout' ? 'hierarchic' : 'tree'
+    layoutStyle = value === 'Hierarchical Layout' ? 'hierarchical' : 'tree'
     loadGraph(layoutStyle)
     await runLayout()
   })

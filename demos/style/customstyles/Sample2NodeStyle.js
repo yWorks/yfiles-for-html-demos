@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,53 +27,30 @@
  **
  ***************************************************************************/
 import {
-  GraphMLAttribute,
   ILookup,
   INode,
   IRenderContext,
   MarkupExtension,
   NodeStyleBase,
-  SvgVisual,
-  TypeAttribute,
-  YString
-} from 'yfiles'
-import { isColorSetName } from 'demo-resources/demo-styles'
-
-/**
- * @typedef {Object} Sample2NodeStyleCache
- * @property {number} width
- * @property {number} height
- * @property {string} [cssClass]
- */
-
-/**
- * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
- * @typedef {TaggedSvgVisual.<SVGRectElement,Sample2NodeStyleCache>} Sample2NodeStyleVisual
- */
-
+  SvgVisual
+} from '@yfiles/yfiles'
+import { isColorSetName } from '@yfiles/demo-resources/demo-styles'
 /**
  * A custom demo node style whose colors match the given well-known CSS rule.
  */
 export class Sample2NodeStyle extends NodeStyleBase {
-  /**
-   * @param {!(string|ColorSetName)} [cssClass]
-   */
+  cssClass
   constructor(cssClass) {
     super()
     this.cssClass = cssClass
   }
-
   /**
    * Creates the visual for a node.
-   * @param {!IRenderContext} renderContext
-   * @param {!INode} node
-   * @returns {?Sample2NodeStyleVisual}
    */
   createVisual(renderContext, node) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     const { x, y, width, height } = node.layout
     const nodeRounding = '3.5'
-
     rect.width.baseVal.value = width
     rect.height.baseVal.value = height
     rect.setAttribute('rx', nodeRounding)
@@ -81,27 +58,19 @@ export class Sample2NodeStyle extends NodeStyleBase {
     rect.setAttribute('fill', '#FF6C00')
     rect.setAttribute('stroke', '#662b00')
     rect.setAttribute('stroke-width', '1.5px')
-
     if (this.cssClass) {
       const attribute = isColorSetName(this.cssClass) ? this.cssClass + '-node' : this.cssClass
       rect.setAttribute('class', attribute)
     }
-
     SvgVisual.setTranslate(rect, x, y)
-
     return SvgVisual.from(rect, {
       width,
       height,
       cssClass: this.cssClass
     })
   }
-
   /**
    * Re-renders the node by updating the old visual for improved performance.
-   * @param {!IRenderContext} renderContext
-   * @param {!Sample2NodeStyleVisual} oldVisual
-   * @param {!INode} node
-   * @returns {?Sample2NodeStyleVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const rect = oldVisual.svgElement
@@ -109,10 +78,8 @@ export class Sample2NodeStyle extends NodeStyleBase {
     if (!cache) {
       return this.createVisual(renderContext, node)
     }
-
     const layout = node.layout
     const { x, y, width, height } = layout
-
     if (cache.width !== width) {
       rect.width.baseVal.value = width
       cache.width = width
@@ -121,7 +88,6 @@ export class Sample2NodeStyle extends NodeStyleBase {
       rect.height.baseVal.value = height
       cache.height = height
     }
-
     if (cache.cssClass !== this.cssClass) {
       if (this.cssClass) {
         const attribute = isColorSetName(this.cssClass) ? this.cssClass + '-node' : this.cssClass
@@ -131,43 +97,18 @@ export class Sample2NodeStyle extends NodeStyleBase {
       }
       cache.cssClass = this.cssClass
     }
-
     SvgVisual.setTranslate(rect, x, y)
-
     return oldVisual
   }
 }
-
 export class Sample2NodeStyleExtension extends MarkupExtension {
   _cssClass = ''
-
-  /**
-   * @type {!string}
-   */
   get cssClass() {
     return this._cssClass
   }
-
-  /**
-   * @type {!string}
-   */
   set cssClass(value) {
     this._cssClass = value
   }
-
-  /**
-   * @type {!object}
-   */
-  static get $meta() {
-    return {
-      cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)]
-    }
-  }
-
-  /**
-   * @param {!ILookup} serviceProvider
-   * @returns {!Sample2NodeStyle}
-   */
   provideValue(serviceProvider) {
     const style = new Sample2NodeStyle()
     style.cssClass = this.cssClass

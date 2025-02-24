@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,13 +31,19 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title id="title">Overview Styling Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="resources/orgchartstyle.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
+    <script src="https://unpkg.com/vue@2.6.11"></script>
+    <style>
+      .hide-component {
+        display: none !important;
+      }
+    </style>
   </head>
   <body>
     <header class="demo-header">
@@ -69,10 +73,8 @@
       <button data-command="FIT_GRAPH_BOUNDS"></button>
       <div class="demo-separator"></div>
       <select id="graph-chooser-box" title="Select a overview style">
-        <option value="GraphOverviewCanvasVisualCreator">HTML5 Canvas Rendering</option>
-        <option value="GraphOverviewSvgVisualCreator">SVG Rendering</option>
-        <option value="GraphOverviewWebGLVisualCreator">WebGL Rendering</option>
-        <option value="WebGL2GraphOverviewVisualCreator">WebGL2 Rendering</option>
+        <option value="CanvasOverviewRenderer">HTML5 Canvas Rendering</option>
+        <option value="SvgOverviewRenderer">SVG Rendering</option>
         <option value="OverviewInputMode">GraphComponent and OverviewInputMode</option>
       </select>
     </div>
@@ -94,22 +96,10 @@
         <div>
           <p>This demo shows different ways to render and style the overview:</p>
           <ul>
-            <li>With HTML Canvas using a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphOverviewCanvasVisualCreator" target="_blank">GraphOverviewCanvasVisualCreator</a>.</li>
-            <li>With SVG using a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphOverviewSvgVisualCreator" target="_blank">GraphOverviewSvgVisualCreator</a>.</li>
+            <li>With HTML Canvas by extending <a href="https://docs.yworks.com/yfileshtml/#/api/GraphOverviewRenderer" target="_blank">GraphOverviewRenderer</a>.</li>
+            <li>With SVG using a custom <a href="https://docs.yworks.com/yfileshtml/#/api/IObjectRenderer" target="_blank">IObjectRenderer</a>.</li>
             <li>
-              With WebGL using a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphOverviewWebGLVisualCreator" target="_blank">GraphOverviewWebGLVisualCreator</a>.
-              <span class="no-webgl-support">
-                This options is disabled because your browser does not support WebGL.</span
-              >
-            </li>
-            <li>
-              With WebGL2 using a <a href="https://docs.yworks.com/yfileshtml/#/api/WebGL2GraphOverviewVisualCreator" target="_blank">WebGL2GraphOverviewVisualCreator</a>.
-              <span class="no-webgl-support" data-webgl2>
-                This options is disabled because your browser does not support WebGL2.</span
-              >
-            </li>
-            <li>
-              With a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> that uses <a href="https://docs.yworks.com/yfileshtml/#/api/OverviewInputMode" target="_blank">OverviewInputMode</a>.
+              With a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> that uses the <a href="https://docs.yworks.com/yfileshtml/#/api/OverviewInputMode" target="_blank">OverviewInputMode</a>.
             </li>
           </ul>
 
@@ -120,9 +110,9 @@
           <h2>Details</h2>
 
           <p>
-            Of the supported rendering modes, Canvas and WebGL offer the best performance. Using SVG
-            can make sense if you need high fidelity or high detail rendering, especially for
-            smaller graphs. For such use cases, using a
+            Of the supported rendering modes, Canvas offers the best performance. Using SVG can make
+            sense if you need high fidelity or high detail rendering, especially for smaller graphs.
+            For such use cases, using a
             <code>GraphComponent</code> with <code>OverviewInputMode</code> is an option, too.
           </p>
 
@@ -149,7 +139,6 @@
   <svg
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
     style="visibility: hidden; display: block"
     width="0px"
     height="0px"

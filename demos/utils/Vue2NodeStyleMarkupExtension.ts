@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphMLAttribute,
-  ILookup,
-  MarkupExtension,
-  TypeAttribute,
-  XamlAttributeWritePolicy,
-  YString
-} from 'yfiles'
+import { GraphMLIOHandler, ILookup, MarkupExtension } from '@yfiles/yfiles'
 
 import Vue2NodeStyle from './Vue2NodeStyle'
 
@@ -48,23 +41,22 @@ export default class Vue2NodeStyleMarkupExtension extends MarkupExtension {
     this._template = value
   }
 
-  static get $meta(): {
-    $self: GraphMLAttribute[]
-    template: (GraphMLAttribute | TypeAttribute)[]
-  } {
-    return {
-      $self: [GraphMLAttribute().init({ contentProperty: 'template' })],
-      template: [
-        GraphMLAttribute().init({
-          defaultValue: '',
-          writeAsAttribute: XamlAttributeWritePolicy.NEVER
-        }),
-        TypeAttribute(YString.$class)
-      ]
-    }
-  }
-
   provideValue(serviceProvider: ILookup) {
     return new Vue2NodeStyle(this.template)
   }
+}
+
+export function enableVue2NodeStyleMarkupSerialization(graphMLIOHandler: GraphMLIOHandler) {
+  graphMLIOHandler.addTypeInformation(Vue2NodeStyle, {
+    extension: (item: Vue2NodeStyle) => {
+      const markupExtension = new Vue2NodeStyleMarkupExtension()
+      markupExtension.template = item.template
+      return markupExtension
+    }
+  })
+  graphMLIOHandler.addTypeInformation(Vue2NodeStyleMarkupExtension, {
+    properties: {
+      template: { default: '', type: String }
+    }
+  })
 }

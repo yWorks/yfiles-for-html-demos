@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle2="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle2="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="int" attr.name="zOrder" y:attr.uri="http://www.yworks.com/xml/yfiles-z-order/1.0/zOrder"/>
 	<key id="d1" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
@@ -1187,7 +1187,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1204,7 +1204,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1221,7 +1221,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1238,7 +1238,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1255,7 +1255,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1272,7 +1272,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1289,7 +1289,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1306,7 +1306,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1323,7 +1323,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1340,7 +1340,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1357,7 +1357,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1374,7 +1374,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1391,7 +1391,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1408,7 +1408,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1425,7 +1425,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1442,7 +1442,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1459,7 +1459,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1476,7 +1476,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1493,7 +1493,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1510,7 +1510,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1527,7 +1527,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1544,7 +1544,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1561,7 +1561,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1578,7 +1578,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1595,7 +1595,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1612,7 +1612,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1629,7 +1629,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1646,7 +1646,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1663,7 +1663,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1680,7 +1680,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1697,7 +1697,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1714,7 +1714,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1731,7 +1731,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1748,7 +1748,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1765,7 +1765,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1782,7 +1782,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1799,7 +1799,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1816,7 +1816,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1833,7 +1833,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1850,7 +1850,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1867,7 +1867,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1884,7 +1884,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1901,7 +1901,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1918,7 +1918,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1935,7 +1935,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1952,7 +1952,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1969,7 +1969,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -1986,7 +1986,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2003,7 +2003,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2020,7 +2020,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2037,7 +2037,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2054,7 +2054,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2071,7 +2071,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2088,7 +2088,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2105,7 +2105,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2122,7 +2122,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2139,7 +2139,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2156,7 +2156,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2173,7 +2173,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2190,7 +2190,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2207,7 +2207,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2224,7 +2224,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2241,7 +2241,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2258,7 +2258,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2275,7 +2275,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2292,7 +2292,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2309,7 +2309,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2326,7 +2326,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2343,7 +2343,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2360,7 +2360,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2377,7 +2377,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2394,7 +2394,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2411,7 +2411,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2428,7 +2428,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2445,7 +2445,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2462,7 +2462,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2479,7 +2479,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2496,7 +2496,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2513,7 +2513,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2530,7 +2530,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2547,7 +2547,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2564,7 +2564,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2581,7 +2581,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2598,7 +2598,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2615,7 +2615,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2632,7 +2632,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2649,7 +2649,7 @@
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d10"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF294958" miterLimit="1.45"/>
 					</yjs:PolylineEdgeStyle.stroke>

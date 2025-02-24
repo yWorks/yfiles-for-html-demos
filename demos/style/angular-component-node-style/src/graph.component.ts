@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@ import {
   NgZone,
   ViewChild
 } from '@angular/core'
-import { GraphComponent, GraphEditorInputMode, Size } from 'yfiles'
+import { GraphComponent, GraphEditorInputMode, Size } from '@yfiles/yfiles'
 import graphData from './assets/graph-data.json'
 import { AngularNodeComponentStyle } from './AngularComponentNodeStyle'
 import { NodeComponent } from './node.component'
@@ -65,7 +65,7 @@ export class GraphComponentComponent implements AfterViewInit {
     this.zone.runOutsideAngular(() => {
       this.graphComponent = new GraphComponent()
       this.graphComponent.inputMode = new GraphEditorInputMode()
-      const div = this.graphComponent.div
+      const div = this.graphComponent.htmlElement
       div.style.height = '100%'
       this.graphComponentRef.nativeElement.appendChild(div)
 

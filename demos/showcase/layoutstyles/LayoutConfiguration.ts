@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,20 +28,23 @@
  ***************************************************************************/
 import {
   Class,
+  EdgeLabelPreferredPlacement,
   FreeEdgeLabelModel,
+  FreeNodeLabelModel,
   GenericLayoutData,
   GraphComponent,
+  IEdge,
   IGraph,
   ILabel,
   ILayoutAlgorithm,
+  INode,
+  LabelAlongEdgePlacements,
   LabelAngleReferences,
-  LabelPlacements,
+  LabelEdgeSides,
   LayoutData,
   LayoutExecutor,
-  LayoutGraphAdapter,
-  MinimumNodeSizeStage,
-  PreferredPlacementDescriptor
-} from 'yfiles'
+  SubgraphLayoutStageData
+} from '@yfiles/yfiles'
 
 export type LayoutConfigurationType = {
   collapsedInitialization: boolean
@@ -63,7 +66,7 @@ type LayoutConfigurationImpl = {
     sideOfEdge: LabelPlacementSideOfEdge,
     orientation: LabelPlacementOrientation,
     distanceToEdge: number
-  ) => PreferredPlacementDescriptor
+  ) => EdgeLabelPreferredPlacement
 }
 
 /**
@@ -82,8 +85,8 @@ const LayoutConfiguration = (Class as any)('LayoutConfiguration', {
    * Applies this configuration to the given {@link GraphComponent}.
    *
    * This is the main method of this class. Typically, it calls
-   * {@link LayoutConfiguration.createConfiguredLayout} to create and configure a layout and the graph's
-   * {@link IGraph.mapperRegistry} if necessary. Then, it  calculate a layout and applies it to
+   * {@link LayoutConfiguration.createConfiguredLayout} to create and configure a layout.
+   * Then, it calculates a layout and applies it to
    * the given `graphComponent`. Finally, this method invokes
    * {@link LayoutConfiguration.postProcess} after the calculation.
    * @param graphComponent The {@link GraphComponent} to apply the
@@ -106,14 +109,13 @@ const LayoutConfiguration = (Class as any)('LayoutConfiguration', {
     // configure the LayoutExecutor
     const layoutExecutor = new LayoutExecutor({
       graphComponent,
-      layout: new MinimumNodeSizeStage(layout),
-      duration: '0.75s',
+      layout,
+      // set the cancel duration for the layout computation to 20s
+      cancelDuration: '20s',
+      animationDuration: '0.75s',
       animateViewport: true,
-      easedAnimation: true,
-      portAdjustmentPolicy: 'lengthen'
+      easedAnimation: true
     })
-    // set the cancel duration for the layout computation to 20s
-    layoutExecutor.abortHandler.cancelDuration = '20s'
 
     // set the layout data to the LayoutExecutor
     if (layoutData) {
@@ -133,16 +135,12 @@ const LayoutConfiguration = (Class as any)('LayoutConfiguration', {
     } finally {
       this.$layoutRunning = false
       this.postProcess(graphComponent)
-      // clean up mapperRegistry
-      graphComponent.graph.mapperRegistry.removeMapper(
-        LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY
-      )
     }
     doneHandler()
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @returns {ILayoutAlgorithm} The configured layout algorithm.
@@ -175,11 +173,10 @@ const LayoutConfiguration = (Class as any)('LayoutConfiguration', {
 
   collapsedInitialization: false,
 
-  // $static: {
   /**
-   * Adds a mapper with a {@link PreferredPlacementDescriptor} that matches the given settings
-   * to the mapper registry of the given graph. In addition, sets the label model of all edge labels to free
-   * since that model can realizes any label placement calculated by a layout algorithm.
+   * Adds a mapper with a {@link EdgeLabelPreferredPlacement} that matches the given settings
+   * to the mapper registry of the given graph. In addition, sets the label model of all node and edge
+   * labels to free since that model can realizes any label placement calculated by a layout algorithm.
    */
   createLabelingLayoutData: function (
     graph: IGraph,
@@ -195,77 +192,107 @@ const LayoutConfiguration = (Class as any)('LayoutConfiguration', {
       distanceToEdge
     )
 
-    // change to a free edge label model to support integrated edge labeling
-    const model = new FreeEdgeLabelModel()
+    //change to a free edge label model to support integrated edge labeling
+    const freeEdgeLabelModel = new FreeEdgeLabelModel()
     graph.edgeLabels.forEach((label) => {
       if (!(label.layoutParameter.model instanceof FreeEdgeLabelModel)) {
-        graph.setLabelLayoutParameter(label, model.findBestParameter(label, model, label.layout))
+        graph.setLabelLayoutParameter(
+          label,
+          freeEdgeLabelModel.findBestParameter(label, label.layout)
+        )
       }
     })
 
-    return new GenericLayoutData({
-      labelItemMappings: [
-        [
-          LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
-          (label: ILabel) => descriptor
-        ]
-      ]
+    //change to a free node label model to support generic node labeling
+    const freeNodeLabelModel = new FreeNodeLabelModel()
+    graph.nodeLabels.forEach((label) => {
+      if (!(label.layoutParameter.model instanceof FreeNodeLabelModel)) {
+        graph.setLabelLayoutParameter(
+          label,
+          freeNodeLabelModel.findBestParameter(label, label.layout)
+        )
+      }
+    })
+
+    const layoutData = new GenericLayoutData()
+    layoutData.addItemMapping(
+      EdgeLabelPreferredPlacement.EDGE_LABEL_PREFERRED_PLACEMENT_DATA_KEY
+    ).constant = descriptor
+    return layoutData
+  },
+
+  /**
+   * Creates a layout data for {@link SubgraphLayoutStage} that is based on the selection model of
+   * the given graph component.
+   * If a node, edge or label is selected in the given graph component model, then it will be
+   * part of the subgraph items in the respective property of
+   * {@link SubgraphLayoutStageData{TNode,TEdge,TNodeLabel,TEdgeLabel}.
+   * @param graphComponent tThe graphComponent to create the data for
+   * @return A layout data instance for {@link SubgraphLayoutStage} were items that are actually
+   * selected in the given graph control are part of the subgraph
+   */
+  createSubgraphLayoutData(graphComponent: GraphComponent) {
+    return new SubgraphLayoutStageData<INode, IEdge, ILabel, ILabel>({
+      subgraphNodes: graphComponent.selection.nodes,
+      subgraphEdges: graphComponent.selection.edges,
+      subgraphNodeLabels: graphComponent.selection.labels.filter((l) => l.owner instanceof INode),
+      subgraphEdgeLabels: graphComponent.selection.labels.filter((l) => l.owner instanceof IEdge)
     })
   },
 
   /**
-   * Creates a new {@link PreferredPlacementDescriptor} that matches the given settings.
+   * Creates a new {@link EdgeLabelPreferredPlacement} that matches the given settings.
    */
   createPreferredPlacementDescriptor: function (
     placeAlongEdge: LabelPlacementAlongEdge,
     sideOfEdge: LabelPlacementSideOfEdge,
     orientation: LabelPlacementOrientation,
     distanceToEdge: number
-  ): PreferredPlacementDescriptor {
-    const descriptor = new PreferredPlacementDescriptor()
+  ): EdgeLabelPreferredPlacement {
+    const descriptor = new EdgeLabelPreferredPlacement()
 
     switch (sideOfEdge) {
       case LabelPlacementSideOfEdge.ANYWHERE:
-        descriptor.sideOfEdge = LabelPlacements.ANYWHERE
+        descriptor.edgeSide = LabelEdgeSides.ANYWHERE
         break
       case LabelPlacementSideOfEdge.ON_EDGE:
-        descriptor.sideOfEdge = LabelPlacements.ON_EDGE
+        descriptor.edgeSide = LabelEdgeSides.ON_EDGE
         break
       case LabelPlacementSideOfEdge.LEFT:
-        descriptor.sideOfEdge = LabelPlacements.LEFT_OF_EDGE
+        descriptor.edgeSide = LabelEdgeSides.LEFT_OF_EDGE
         break
       case LabelPlacementSideOfEdge.RIGHT:
-        descriptor.sideOfEdge = LabelPlacements.RIGHT_OF_EDGE
+        descriptor.edgeSide = LabelEdgeSides.RIGHT_OF_EDGE
         break
       case LabelPlacementSideOfEdge.LEFT_OR_RIGHT:
-        descriptor.sideOfEdge = LabelPlacements.LEFT_OF_EDGE | LabelPlacements.RIGHT_OF_EDGE
+        descriptor.edgeSide = LabelEdgeSides.LEFT_OF_EDGE | LabelEdgeSides.RIGHT_OF_EDGE
         break
       default:
-        descriptor.sideOfEdge = LabelPlacements.ANYWHERE
+        descriptor.edgeSide = LabelEdgeSides.ANYWHERE
         break
     }
 
     switch (placeAlongEdge) {
       case LabelPlacementAlongEdge.ANYWHERE:
-        descriptor.placeAlongEdge = LabelPlacements.ANYWHERE
+        descriptor.placementAlongEdge = LabelAlongEdgePlacements.ANYWHERE
         break
       case LabelPlacementAlongEdge.AT_SOURCE:
-        descriptor.placeAlongEdge = LabelPlacements.AT_SOURCE
+        descriptor.placementAlongEdge = LabelAlongEdgePlacements.AT_SOURCE
         break
       case LabelPlacementAlongEdge.AT_SOURCE_PORT:
-        descriptor.placeAlongEdge = LabelPlacements.AT_SOURCE_PORT
+        descriptor.placementAlongEdge = LabelAlongEdgePlacements.AT_SOURCE_PORT
         break
       case LabelPlacementAlongEdge.AT_TARGET:
-        descriptor.placeAlongEdge = LabelPlacements.AT_TARGET
+        descriptor.placementAlongEdge = LabelAlongEdgePlacements.AT_TARGET
         break
       case LabelPlacementAlongEdge.AT_TARGET_PORT:
-        descriptor.placeAlongEdge = LabelPlacements.AT_TARGET_PORT
+        descriptor.placementAlongEdge = LabelAlongEdgePlacements.AT_TARGET_PORT
         break
       case LabelPlacementAlongEdge.CENTERED:
-        descriptor.placeAlongEdge = LabelPlacements.AT_CENTER
+        descriptor.placementAlongEdge = LabelAlongEdgePlacements.AT_CENTER
         break
       default:
-        descriptor.placeAlongEdge = LabelPlacements.ANYWHERE
+        descriptor.placementAlongEdge = LabelAlongEdgePlacements.ANYWHERE
         break
     }
 
@@ -297,12 +324,6 @@ const LayoutConfiguration = (Class as any)('LayoutConfiguration', {
   }
 } as LayoutConfigurationType & LayoutConfigurationImpl) as LayoutConfigurationType
 export default LayoutConfiguration
-
-export enum EdgeLabeling {
-  NONE,
-  INTEGRATED,
-  GENERIC
-}
 
 /**
  * Specifies constants for the preferred placement along an edge used by layout configurations.
@@ -337,10 +358,16 @@ export enum LabelPlacementOrientation {
   VERTICAL
 }
 
-export enum NodeLabelingPolicies {
-  NONE,
-  HORIZONTAL,
-  RAYLIKE_LEAVES,
-  CONSIDER_CURRENT_POSITION,
-  RAYLIKE
+export enum Scope {
+  ROUTE_ALL_EDGES,
+  ROUTE_AFFECTED_EDGES,
+  ROUTE_EDGES_AT_AFFECTED_NODES
+}
+
+export enum OperationType {
+  MIRROR_X_AXIS = 0,
+  MIRROR_Y_AXIS = 1,
+  ROTATE = 2,
+  SCALE = 3,
+  TRANSLATE = 4
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,60 +32,40 @@ import {
   GraphEditorInputMode,
   GraphMLIOHandler,
   License
-} from 'yfiles'
-
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { downloadFile, getFileExtension, openFile } from 'demo-utils/file-support'
-import { openInWindow } from 'demo-utils/open-in-window'
-import { openStorageItem, saveStorageItem } from './storage-support.js'
-import { readGraphML, writeGraphML } from './graphml-support.js'
-import { readJSON, writeJSON } from './json-support.js'
+} from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { downloadFile, getFileExtension, openFile } from '@yfiles/demo-utils/file-support'
+import { openInWindow } from '@yfiles/demo-utils/open-in-window'
+import { openStorageItem, saveStorageItem } from './storage-support'
+import { readGraphML, writeGraphML } from '@yfiles/demo-utils/graphml-support'
+import { readJSON, writeJSON } from './json-support'
 import sampleData from './file-operations-sample.json?raw'
-
 const storageKey = 'graph-file-operations-demo.graphml'
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   /// Enable folding since users might load GraphML files with folder nodes
   const foldingManager = new FoldingManager()
   graphComponent.graph = foldingManager.createFoldingView().graph
-
   initDemoStyles(graphComponent.graph, { foldingEnabled: true })
-
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
-
+  graphComponent.inputMode = new GraphEditorInputMode()
   createSampleGraph(graphComponent)
-
   initializeUI(graphComponent)
 }
-
 /**
  * Creates the sample graph.
- * @param {!GraphComponent} graphComponent
  */
 function createSampleGraph(graphComponent) {
   readJSON(graphComponent, sampleData)
-
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
-
 /**
  * Adds event listeners to the demo's input elements.
- * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
-  document.querySelector('#open-file').addEventListener('click', async () => {
+  document.querySelector('#open-file-button').addEventListener('click', async () => {
     try {
       const { content, filename } = await openFile()
       const fileExtension = getFileExtension(filename) ?? ''
@@ -103,11 +83,9 @@ function initializeUI(graphComponent) {
       alert(err)
     }
   })
-
   const getSaveFormat = () =>
     document.querySelector('#file-format-select').selectedOptions.item(0)?.value ?? 'json'
-
-  document.querySelector('#download-button').addEventListener('click', async () => {
+  document.querySelector('#save-button').addEventListener('click', async () => {
     const saveFormat = getSaveFormat()
     const text =
       saveFormat === 'graphml' ? await writeGraphML(graphComponent) : writeJSON(graphComponent)
@@ -117,14 +95,12 @@ function initializeUI(graphComponent) {
       alert(err)
     }
   })
-
   document.querySelector('#show-in-window-button').addEventListener('click', async () => {
     const saveFormat = getSaveFormat()
     const text =
       saveFormat === 'graphml' ? await writeGraphML(graphComponent) : writeJSON(graphComponent)
     openInWindow(`<pre>${text.replaceAll('<', '&lt;')}</pre>`, `File content (${saveFormat})`)
   })
-
   document.querySelector('#open-storage-button').addEventListener('click', async () => {
     try {
       const graphMLText = openStorageItem(storageKey)
@@ -133,7 +109,6 @@ function initializeUI(graphComponent) {
       alert(err)
     }
   })
-
   document.querySelector('#save-storage-button').addEventListener('click', async () => {
     try {
       const result = await new GraphMLIOHandler().write(graphComponent.graph)
@@ -144,5 +119,4 @@ function initializeUI(graphComponent) {
     }
   })
 }
-
 void run().then(finishLoading)

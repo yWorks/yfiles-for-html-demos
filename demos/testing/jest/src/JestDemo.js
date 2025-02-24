@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphViewerInputMode, License } from 'yfiles'
+import { GraphComponent, GraphViewerInputMode, License } from '@yfiles/yfiles'
 import { createEdge, createNode } from './ItemFactory.js'
 import licenseValue from '../../../../lib/license.json'
 
@@ -42,9 +42,13 @@ function run() {
     const y = viewport.y + Math.random() * viewport.height
     createNode(graphComponent.graph, x, y)
   })
-  document
-    .querySelector('#create-edge')
-    .addEventListener('click', () => createEdge(graphComponent.graph, graphComponent.selection))
+  document.querySelector('#create-edge').addEventListener('click', () => {
+    createEdge(
+      graphComponent.graph,
+      graphComponent.selection.nodes.at(0),
+      graphComponent.selection.nodes.at(1)
+    )
+  })
 }
 
 run()

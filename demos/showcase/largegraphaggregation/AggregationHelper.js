@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,16 +28,14 @@
  ***************************************************************************/
 import {
   AdjacencyTypes,
-  DefaultLabelStyle,
   FreeNodeLabelModel,
-  HashMap,
   IEdge,
   IEdgeStyle,
   ILabelStyle,
   IListEnumerable,
-  IMap,
   INode,
   INodeStyle,
+  LabelStyle,
   List,
   ListEnumerable,
   NodeAggregate,
@@ -47,8 +45,7 @@ import {
   Rect,
   ShapeNodeStyle,
   Size
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * A helper class that provides methods to aggregate and separate nodes according to a {@link NodeAggregationResult}.
  *
@@ -66,91 +63,59 @@ export class AggregationHelper {
    * The {@link AggregationGraphWrapper} this instance uses.
    */
   aggregateGraph
-
   /**
    * The edge style to be used for the artificial hierarchy edges.
    */
   hierarchyEdgeStyle
-
   /**
    * The style for labels that are created for aggregation nodes that don't directly represent an original node. Such
    * labels show the text of the most important descendant node.
    */
   descendantLabelStyle
-
   /**
    * The style used for aggregation nodes (no matter which state). Should adapt to the {@link AggregationNodeInfo} in the node's tag.
    */
   aggregationNodeStyle
-
   /**
    * The aggregation result.
    */
   $aggregationResult
-
   /**
    * Maps {@link NodeAggregate}s to aggregation nodes.
    */
   $aggregateToNode
-
   /**
    * A map for placeholder nodes that maps original nodes to their aggregation placeholder node.
    */
   $placeholderMap
-
-  /**
-   * @type {number}
-   */
   get visibleNodes() {
     return this.aggregateGraph
       ? this.aggregateGraph.nodes.filter((node) => this.isOriginalNodeOrPlaceHolder(node)).size
       : 0
   }
-
-  /**
-   * @param {!INode} node
-   * @returns {boolean}
-   */
   isOriginalNodeOrPlaceHolder(node) {
     return !this.aggregateGraph.isAggregationItem(node) || (!!node.tag && !!node.tag.aggregate.node)
   }
-
-  /**
-   * @param {!IEdge} edge
-   * @returns {boolean}
-   */
   isHierarchyEdge(edge) {
     return edge.tag === 'aggregation-edge'
   }
-
-  /**
-   * @type {number}
-   */
   get visibleEdges() {
     return this.aggregateGraph ? this.aggregateGraph.edges.filter((e) => !e.tag).size : 0
   }
-
   /**
    * Creates a new instance of this class.
-   * @param {!NodeAggregationResult} aggregationResult
-   * @param {!AggregationGraphWrapper} aggregateGraph
    */
   constructor(aggregationResult, aggregateGraph) {
     this.aggregateGraph = aggregateGraph
     this.$aggregationResult = aggregationResult
-
-    this.$aggregateToNode = new HashMap()
-    this.$placeholderMap = new HashMap()
-
+    this.$aggregateToNode = new Map()
+    this.$placeholderMap = new Map()
     this.aggregationNodeStyle = new ShapeNodeStyle({ shape: 'ellipse' })
     this.hierarchyEdgeStyle = new PolylineEdgeStyle()
-    this.descendantLabelStyle = new DefaultLabelStyle()
+    this.descendantLabelStyle = new LabelStyle()
   }
-
   /**
    * Returns the {@link NodeAggregate} for a node.
-   * @param {!INode} node
-   * @returns {!NodeAggregate}
    */
   getAggregateForNode(node) {
     if (this.aggregateGraph.isAggregationItem(node)) {
@@ -159,41 +124,34 @@ export class AggregationHelper {
       return this.$aggregationResult.aggregateMap.get(node)
     }
   }
-
   /**
    * Returns the placeholder node for an original node or the original node itself if there is no placeholder.
-   * @param {!INode} originalNode
-   * @returns {!INode}
    */
   getPlaceholder(originalNode) {
     const placeHolder = this.$placeholderMap.get(originalNode)
     return placeHolder || originalNode
   }
-
   /**
    * If a node is aggregated, calls {@link AggregationHelper.separate}, if not calls {@link AggregationHelper.aggregate}.
-   * @param {!INode} node The node.
-   * @returns {!IListEnumerable.<INode>} The nodes affected by this operation. The created aggregation node is always the first item.
+   * @param node The node.
+   * @returns The nodes affected by this operation. The created aggregation node is always the first item.
    */
   toggleAggregation(node) {
     const aggregationNodeInfo = node.tag
     return aggregationNodeInfo.isAggregated ? this.separate(node) : this.aggregate(node)
   }
-
   /**
    * Replaces a separated node and its hierarchy children with a new aggregation node.
-   * @param {!INode} node The node.
-   * @returns {!IListEnumerable.<INode>} The nodes affected by this operation. The created aggregation node is always the first item.
+   * @param node The node.
+   * @returns The nodes affected by this operation. The created aggregation node is always the first item.
    */
   aggregate(node) {
     const aggregationInfo = node.tag
     const aggregate = aggregationInfo.aggregate
     const aggregationNode = this.aggregateRecursively(aggregate)
-
     const affectedNodes = new List()
     if (aggregationNode) {
       affectedNodes.add(aggregationNode)
-
       const parentNode = this.$aggregateToNode.get(aggregate.parent)
       if (parentNode) {
         this.aggregateGraph.createEdge(
@@ -204,28 +162,24 @@ export class AggregationHelper {
         )
         affectedNodes.add(parentNode)
       }
-
       if (aggregate.node) {
         this.$replaceEdges(aggregationNode)
       }
     }
-
     return new ListEnumerable(affectedNodes)
   }
-
   /**
    * Aggregates the `aggregate` as well as all its children recursively.
    *
    * Can be used to apply the initial aggregation. If this is not the initial aggregation run, it will reuse existing aggregation nodes.
    *
-   * @param {!NodeAggregate} aggregate The "root" aggregate.
-   * @returns {!INode} The aggregation node representing the passed `aggregate`
+   * @param aggregate The "root" aggregate.
+   * @returns The aggregation node representing the passed `aggregate`
    */
   aggregateRecursively(aggregate) {
     if (aggregate.children.size === 0) {
       return aggregate.node
     }
-
     let originalCenter
     const node = this.$aggregateToNode.get(aggregate)
     if (node) {
@@ -239,12 +193,10 @@ export class AggregationHelper {
     } else {
       originalCenter = Point.ORIGIN
     }
-
     const nodesToAggregate = aggregate.children.map(this.aggregateRecursively.bind(this)).toList()
     if (aggregate.node) {
       nodesToAggregate.add(aggregate.node)
     }
-
     const size = 30 + Math.sqrt(aggregate.descendantWeightSum) * 4
     const layout = Rect.fromCenter(originalCenter, new Size(size, size))
     const aggregationNode = this.aggregateGraph.aggregate(
@@ -252,10 +204,8 @@ export class AggregationHelper {
       layout,
       this.aggregationNodeStyle
     )
-
     this.$aggregateToNode.set(aggregate, aggregationNode)
     aggregationNode.tag = new AggregationNodeInfo(aggregate, true)
-
     if (aggregate.node) {
       this.$placeholderMap.set(aggregate.node, aggregationNode)
       this.$copyLabels(aggregate.node, aggregationNode)
@@ -265,19 +215,15 @@ export class AggregationHelper {
         this.aggregateGraph.addLabel(
           aggregationNode,
           `(${maxChild.node.labels.get(0).text}, …)`,
-          FreeNodeLabelModel.INSTANCE.createDefaultParameter(),
+          FreeNodeLabelModel.CENTER,
           this.descendantLabelStyle
         )
       }
     }
-
     return aggregationNode
   }
-
   /**
    * Gets the descendant {@link NodeAggregate} with the highest {@link NodeAggregate.descendantWeightSum}.
-   * @param {!NodeAggregate} aggregate
-   * @returns {!NodeAggregate}
    */
   static getMostImportantDescendant(aggregate) {
     // eslint-disable-next-line no-constant-condition
@@ -291,30 +237,21 @@ export class AggregationHelper {
       aggregate = maxChild
     }
   }
-
   /**
    * Copies the labels from `source` to `target`.
-   * @param {!INode} source
-   * @param {!INode} target
    */
   $copyLabels(source, target) {
     for (const label of source.labels) {
-      this.aggregateGraph.addLabel(
-        target,
-        label.text,
-        FreeNodeLabelModel.INSTANCE.createDefaultParameter(),
-        label.style
-      )
+      this.aggregateGraph.addLabel(target, label.text, FreeNodeLabelModel.CENTER, label.style)
     }
   }
-
   /**
    * Separates an aggregated aggregation node and replaces it by a new aggregation node.
    *
    * Creates hierarchy edges between the new aggregation node and its children.
    *
-   * @param {!INode} node The node.
-   * @returns {!IListEnumerable.<INode>} The nodes affected by this operation. The created aggregation node is always the first item.
+   * @param node The node.
+   * @returns The nodes affected by this operation. The created aggregation node is always the first item.
    */
   separate(node) {
     const aggregationInfo = node.tag
@@ -324,7 +261,6 @@ export class AggregationHelper {
       .filter((n) => n !== aggregate.node)
       .toList()
     this.aggregateGraph.separate(node)
-
     const nodesToAggregate = aggregate.node
       ? new ListEnumerable(AggregationHelper.initializer(new List(), aggregate.node))
       : IListEnumerable.EMPTY
@@ -334,7 +270,6 @@ export class AggregationHelper {
       this.aggregationNodeStyle,
       null
     )
-
     for (const child of aggregatedItems) {
       this.aggregateGraph.createEdge(
         aggregationNode,
@@ -348,57 +283,44 @@ export class AggregationHelper {
       )
       this.$replaceEdges(child)
     }
-
     aggregationInfo.isAggregated = false
     this.$aggregateToNode.set(aggregate, aggregationNode)
     aggregationNode.tag = aggregationInfo
-
     const affectedNodes = new List()
     affectedNodes.add(aggregationNode)
     affectedNodes.addRange(aggregatedItems)
-
-    const parentNode = this.$aggregateToNode.get(aggregate.parent)
-    if (aggregate.parent && parentNode) {
-      this.aggregateGraph.createEdge(
-        parentNode,
-        aggregationNode,
-        this.hierarchyEdgeStyle,
-        'aggregation-edge'
-      )
-      affectedNodes.add(parentNode)
+    if (aggregate.parent) {
+      const parentNode = this.$aggregateToNode.get(aggregate.parent)
+      if (parentNode) {
+        this.aggregateGraph.createEdge(
+          parentNode,
+          aggregationNode,
+          this.hierarchyEdgeStyle,
+          'aggregation-edge'
+        )
+        affectedNodes.add(parentNode)
+      }
     }
-
     if (aggregate.node) {
       this.$placeholderMap.set(aggregate.node, aggregationNode)
       this.$copyLabels(aggregate.node, aggregationNode)
       this.$replaceEdges(aggregationNode)
     }
-
     return new ListEnumerable(affectedNodes)
   }
-
-  /**
-   * @param {!List.<INode>} instance
-   * @param {!INode} p1
-   * @returns {!List.<INode>}
-   */
   static initializer(instance, p1) {
     instance.add(p1)
     return instance
   }
-
   /**
    * Replaces original edges adjacent to a placeholder node with aggregation edges when source and target are currently visible.
-   * @param {!INode} node
    */
   $replaceEdges(node) {
     const aggregationInfo = node.tag instanceof AggregationNodeInfo ? node.tag : null
     const originalNode = aggregationInfo ? aggregationInfo.aggregate.node : node
-
     if (!originalNode) {
       return
     }
-
     this.aggregateGraph.wrappedGraph
       .edgesAt(originalNode, AdjacencyTypes.ALL)
       .toList()
@@ -410,13 +332,6 @@ export class AggregationHelper {
         }
       })
   }
-
-  /**
-   * @param {!INode} sourceNode
-   * @param {!INode} targetNode
-   * @param {!IEdge} edge
-   * @param {boolean} newSource
-   */
   $createReplacementEdge(sourceNode, targetNode, edge, newSource) {
     if (
       (newSource && this.aggregateGraph.contains(sourceNode)) ||
@@ -437,12 +352,6 @@ export class AggregationHelper {
       }
     }
   }
-
-  /**
-   * @param {!INode} sourceNode
-   * @param {!INode} targetNode
-   * @param {!IEdge} edge
-   */
   $createReplacementEdgeCore(sourceNode, targetNode, edge) {
     if (
       (this.aggregateGraph.isAggregationItem(sourceNode) ||
@@ -454,26 +363,15 @@ export class AggregationHelper {
     }
   }
 }
-
 /**
  * The class for the tag of aggregation nodes.
  */
 export class AggregationNodeInfo {
   $aggregate
-
-  /**
-   * @type {!NodeAggregate}
-   */
   get aggregate() {
     return this.$aggregate
   }
-
   isAggregated = false
-
-  /**
-   * @param {!NodeAggregate} aggregate
-   * @param {boolean} isAggregated
-   */
   constructor(aggregate, isAggregated) {
     this.$aggregate = aggregate
     this.isAggregated = isAggregated

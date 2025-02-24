@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,16 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { IEdgeStyle, ILabelStyle, IModelItem, INodeStyle, IPortStyle } from 'yfiles'
 import {
+  IEdgeStyle,
   IGraph,
+  ILabelStyle,
+  type IModelItem,
   INode,
-  Mapper,
-  VoidEdgeStyle,
-  VoidLabelStyle,
-  VoidNodeStyle,
-  VoidPortStyle
-} from 'yfiles'
+  INodeStyle,
+  IPortStyle,
+  Mapper
+} from '@yfiles/yfiles'
 
 const itemToStyle = new Mapper<IModelItem, INodeStyle | IEdgeStyle | ILabelStyle | IPortStyle>()
 
@@ -56,28 +56,28 @@ export function hideNodesAndRelatedItems(graph: IGraph, nodes: INode[]): void {
 
   for (const node of nodes) {
     itemToStyle.set(node, node.style)
-    graph.setStyle(node, VoidNodeStyle.INSTANCE)
+    graph.setStyle(node, INodeStyle.VOID_NODE_STYLE)
 
     for (const edge of graph.edgesAt(node)) {
       const style = edge.style
-      if (style != VoidEdgeStyle.INSTANCE) {
+      if (style != IEdgeStyle.VOID_EDGE_STYLE) {
         itemToStyle.set(edge, style)
-        graph.setStyle(edge, VoidEdgeStyle.INSTANCE)
+        graph.setStyle(edge, IEdgeStyle.VOID_EDGE_STYLE)
       }
     }
 
     for (const label of node.labels) {
       itemToStyle.set(label, label.style)
-      graph.setStyle(label, VoidLabelStyle.INSTANCE)
+      graph.setStyle(label, ILabelStyle.VOID_LABEL_STYLE)
     }
 
     for (const port of node.ports) {
       itemToStyle.set(port, port.style)
-      graph.setStyle(port, VoidPortStyle.INSTANCE)
+      graph.setStyle(port, IPortStyle.VOID_PORT_STYLE)
 
       for (const label of port.labels) {
         itemToStyle.set(label, label.style)
-        graph.setStyle(label, VoidLabelStyle.INSTANCE)
+        graph.setStyle(label, ILabelStyle.VOID_LABEL_STYLE)
       }
     }
   }

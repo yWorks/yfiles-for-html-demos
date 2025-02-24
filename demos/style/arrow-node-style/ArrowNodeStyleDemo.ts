@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,15 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { ArrowNodeDirectionStringValues, ArrowStyleShapeStringValues } from 'yfiles'
 import {
   ArrowNodeDirection,
+  type ArrowNodeDirectionStringValues,
   ArrowNodeStyle,
   ArrowStyleShape,
-  DefaultLabelStyle,
-  Enum,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  type ArrowStyleShapeStringValues,
+  ExteriorNodeLabelModel,
   FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
@@ -42,15 +40,15 @@ import {
   HorizontalTextAlignment,
   IGraph,
   INode,
-  Insets,
+  LabelStyle,
   License,
   Point,
   Rect,
   Size
-} from 'yfiles'
-import { applyDemoTheme, colorSets, createDemoNodeLabelStyle } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/yfiles'
+import { colorSets, createDemoNodeLabelStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 const basicShape = document.querySelector<HTMLSelectElement>('#basic-shape')!
 const shapeDirection = document.querySelector<HTMLSelectElement>('#shape-direction')!
@@ -65,15 +63,13 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeGraph(graphComponent.graph)
 
   initializeInteraction(graphComponent)
 
   initializeUI(graphComponent)
 
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
 
 /**
@@ -111,14 +107,15 @@ function initializeGraph(graph: IGraph): void {
  */
 function createLabelStyle(
   colorSetName: 'demo-orange' | 'demo-blue' | 'demo-red' | 'demo-green' | 'demo-purple'
-): DefaultLabelStyle {
+): LabelStyle {
   const style = createDemoNodeLabelStyle(colorSetName)
   style.horizontalTextAlignment = HorizontalTextAlignment.LEFT
-  style.insets = new Insets(8, 4, 8, 4)
+  style.padding = [4, 8, 4, 8]
   style.textSize = 14
   // style.backgroundFill = null
   return style
 }
+
 /**
  * Creates several nodes with the given shape and different angles as well as shaft ratios.
  * @param graph The graph in which to create nodes.
@@ -198,7 +195,7 @@ function createNodes(
     graph.addLabel(
       graph.createNode(new Rect(x, y, width, height), style),
       styleToText(style),
-      new ExteriorLabelModel({ insets: 30 }).createParameter(ExteriorLabelModelPosition.SOUTH),
+      new ExteriorNodeLabelModel({ margins: 30 }).createParameter('bottom'),
       createLabelStyle(colorSetName)
     )
 
@@ -213,7 +210,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
   const inputMode = new GraphEditorInputMode({ selectableItems: GraphItemTypes.NODE })
 
   // add a label to newly created node that shows the current style settings
-  inputMode.addNodeCreatedListener((_, evt) => {
+  inputMode.addEventListener('node-created', (evt) => {
     const node = evt.item
     graphComponent.graph.addLabel(node, styleToText(node.style as ArrowNodeStyle))
   })
@@ -251,7 +248,7 @@ function initializeUI(graphComponent: GraphComponent): void {
   })
 
   // adjust option panel when the selection has been changed
-  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+  graphComponent.selection.addEventListener('item-added', (evt) => {
     if (evt.item instanceof INode && evt.item.style instanceof ArrowNodeStyle) {
       adjustOptionPanel(graphComponent, evt.item)
     }
@@ -269,14 +266,14 @@ function applyStyleSetting(
 ): void {
   const graph = graphComponent.graph
 
-  graphComponent.selection.selectedNodes.forEach((node) => {
+  graphComponent.selection.nodes.forEach((node) => {
     const style = node.style
     if (style instanceof ArrowNodeStyle) {
       adjustStyle(style)
       if (node.labels.size === 0) {
         graph.addLabel(node, styleToText(style))
       } else {
-        graph.setLabelText(node.labels.first(), styleToText(style))
+        graph.setLabelText(node.labels.first()!, styleToText(style))
       }
     }
   })
@@ -313,7 +310,7 @@ function styleToText(style: ArrowNodeStyle): string {
  */
 function adjustOptionPanel(graphComponent: GraphComponent, node: INode): void {
   const style = node.style as ArrowNodeStyle
-  const disabled = !graphComponent.selection.isSelected(node)
+  const disabled = !graphComponent.selection.includes(node)
   const { shape, direction, angle, shaftRatio } = getStyleValues(style)
   const graph = graphComponent.graph
   updatePanelState(shape, direction, angle, shaftRatio, disabled)
@@ -368,8 +365,8 @@ function getStyleValues(style: ArrowNodeStyle): {
   shaftRatio: string
 } {
   return {
-    shape: Enum.getName(ArrowStyleShape.$class, style.shape),
-    direction: Enum.getName(ArrowNodeDirection.$class, style.direction),
+    shape: ArrowStyleShape[style.shape],
+    direction: ArrowNodeDirection[style.direction],
     angle: String(toDegrees(style.angle).toFixed(0)),
     shaftRatio: String(style.shaftRatio.toFixed(1))
   }

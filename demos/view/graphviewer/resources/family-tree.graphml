@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml">
 	<key id="d0" for="node" attr.type="string" attr.name="Url"/>
 	<key id="d1" for="node" attr.type="string" attr.name="ToolTip"/>
 	<key id="d2" for="node" attr.type="string" attr.name="Description"/>
@@ -59,7 +59,7 @@
 	<key id="d17" for="edge" attr.name="EdgeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState"/>
 	<data key="d12">
 		<y:SharedData>
-			<yjs:DefaultLabelStyle x:Key="1" textFill="#ff323232" clipText="false"/>
+			<yjs:LabelStyle x:Key="1" textFill="#ff323232" wrapping="NONE"/>
       <yjs:ShapeNodeStyle x:Key="2" fill="#68b0e3" shape="ROUND_RECTANGLE">
         <yjs:ShapeNodeStyle.stroke>
           <yjs:Stroke fill="#662b00" thickness="1.5"/>
@@ -87,7 +87,7 @@
 		<node id="n0">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[John Fitzgerald Kennedy]]></y:Label.Text>
 						</y:Label>
 				</x:List>
@@ -108,7 +108,7 @@
 		<node id="n1">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[Joseph Patrick Kennedy]]></y:Label.Text>
 						</y:Label>
 				</x:List>
@@ -124,7 +124,7 @@
 		<node id="n2">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[Rose Elizabeth Fitzgerald]]></y:Label.Text>
 						</y:Label>
 				</x:List>
@@ -140,7 +140,7 @@
 		<node id="n3">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[Joseph Patrick Kennedy Jr]]></y:Label.Text>
 						</y:Label>
 				</x:List>
@@ -160,7 +160,7 @@
 		<node id="n4">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[Rosemary Kennedy]]></y:Label.Text>
 						</y:Label>
 				</x:List>
@@ -180,7 +180,7 @@
 		<node id="n5">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[Kathleen Kennedy]]></y:Label.Text>
 						</y:Label>
 				</x:List>
@@ -200,7 +200,7 @@
 		<node id="n6">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[Eunice Mary Kennedy]]></y:Label.Text>
 						</y:Label>
 				</x:List>
@@ -280,7 +280,7 @@
 		<node id="n9">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[Jaqueline Lee Bouvier]]></y:Label.Text>
 						</y:Label>
 				</x:List>
@@ -302,7 +302,7 @@
 		<node id="n10">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[Caroline Bouvier Kennedy]]></y:Label.Text>
 						</y:Label>
 				</x:List>
@@ -322,7 +322,7 @@
 		<node id="n11">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[John Fitzgerald Kennedy]]></y:Label.Text>
 						</y:Label>
 				</x:List>
@@ -342,7 +342,7 @@
 		<node id="n12">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[Patrick Bouvier Kennedy]]></y:Label.Text>
 						</y:Label>
 				</x:List>
@@ -387,7 +387,7 @@
 		<node id="n15">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[John Vernou Bouvier III]]></y:Label.Text>
 						</y:Label>
 				</x:List>
@@ -403,7 +403,7 @@
 		<node id="n16">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[Janet Norton Lee]]></y:Label.Text>
 						</y:Label>
 				</x:List>
@@ -419,7 +419,7 @@
 		<node id="n17">
 			<data key="d3">
 				<x:List>
-						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+						<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}"  Style="{y:GraphMLReference 1}">
 							<y:Label.Text><![CDATA[Aristotle Onassis]]></y:Label.Text>
 						</y:Label>
 				</x:List>

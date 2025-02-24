@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,63 +26,47 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { getLayoutExecutorAsyncMessageHandler } from './message-handler-main-thread'
 import licenseValue from './license.json'
-import type { LayoutDescriptor } from 'yfiles'
-import { GraphComponent, HierarchicLayout, LayoutExecutor, LayoutExecutorAsync } from 'yfiles'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
+import { GraphComponent, type LayoutDescriptor, LayoutExecutorAsync } from '@yfiles/yfiles'
 
 let onLayoutClicked: () => void
 let layoutButton: HTMLButtonElement
-
-// Vite supports Web Worker out-of-the-box but relies on the browser's native Web Worker support when served in DEV mode.
-// Thus, during development, fall back to client-sided layout calculation if module workers are not supported.
-// In the production build, Web Workers are supported because the build creates cross-browser compatible workers.
-const useWorkerLayout = BrowserDetection.modulesSupportedInWorker || import.meta.env.PROD
 
 export function addLayoutButton(button: HTMLButtonElement, graphComponent: GraphComponent) {
   onLayoutClicked = runLayout
   layoutButton = button
   button.addEventListener('click', onLayoutClicked)
 
-  if (useWorkerLayout) {
-    // wait for the worker to be ready before enabling the button
-    getLayoutExecutorAsyncMessageHandler(licenseValue).then(() =>
+  // Create a new module web worker. See https://vitejs.dev/guide/features.html#web-workers for details
+  // on how to load workers with Vite
+  const worker = new Worker(new URL('./layout-worker.ts', import.meta.url), { type: 'module' })
+  // The Web Worker is running yFiles in a different context, therefore, we need to register the
+  // yFiles license in the Web Worker as well.
+  worker.postMessage({ license: licenseValue })
+  // wait for the worker to be ready before enabling the button
+  worker.addEventListener('message', (e) => {
+    if (e.data === 'ready') {
       button.removeAttribute('disabled')
-    )
-  } else {
-    // client-sided layout calculation, activate the button immediately
-    button.removeAttribute('disabled')
-  }
+    }
+  })
 
   async function runLayout() {
     button.setAttribute('disabled', 'disabled')
     // configure layout algorithm options ...
     const layoutDescriptor: LayoutDescriptor = {
-      name: 'HierarchicLayout',
-      properties: { nodeToNodeDistance: 20, orthogonalRouting: true }
+      name: 'HierarchicalLayout',
+      properties: { nodeDistance: 20 }
     }
 
-    if (useWorkerLayout) {
-      // create an asynchronous layout executor that calculates a layout on the worker
-      await new LayoutExecutorAsync({
-        messageHandler: await getLayoutExecutorAsyncMessageHandler(licenseValue),
-        graphComponent: graphComponent,
-        layoutDescriptor: layoutDescriptor,
-        animateViewport: true,
-        easedAnimation: true,
-        duration: '1s'
-      }).start()
-    } else {
-      // client-sided fallback
-      await new LayoutExecutor({
-        graphComponent,
-        layout: new HierarchicLayout(layoutDescriptor.properties),
-        duration: '1s',
-        animateViewport: true,
-        easedAnimation: true
-      }).start()
-    }
+    // create an asynchronous layout executor that calculates a layout on the worker
+    await new LayoutExecutorAsync({
+      messageHandler: LayoutExecutorAsync.createWebWorkerMessageHandler(worker),
+      graphComponent: graphComponent,
+      layoutDescriptor: layoutDescriptor,
+      animateViewport: true,
+      easedAnimation: true,
+      animationDuration: '1s'
+    }).start()
 
     button.removeAttribute('disabled')
   }

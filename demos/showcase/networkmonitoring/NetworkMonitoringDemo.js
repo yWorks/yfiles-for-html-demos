@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,9 +28,6 @@
  ***************************************************************************/
 import {
   Animator,
-  Class,
-  CycleSubstructureStyle,
-  DefaultLabelStyle,
   FreeNodeLabelModel,
   GraphBuilder,
   GraphComponent,
@@ -39,95 +36,73 @@ import {
   IEdge,
   INode,
   Insets,
+  LabelStyle,
   LayoutExecutor,
   License,
   OrganicLayout,
+  OrganicLayoutCycleSubstructureStyle,
   OrganicLayoutStarSubstructureStyle,
   Rect,
-  Size
-} from 'yfiles'
-
-import { Simulator } from './model/Simulator.js'
-import { DeviceKind } from './model/Device.js'
-import { ConnectionEdgeStyle } from './ConnectionEdgeStyle.js'
-import { DeviceNodeStyle } from './DeviceNodeStyle.js'
-import { networkData } from './model/network-sample.js'
-import { Network } from './model/Network.js'
-import { initializeDeviceDetailsPopup, updateBarChart } from './device-popup.js'
-import { initializeToolTips } from './tooltips.js'
-
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
+  Size,
+  ViewportLimitingPolicy
+} from '@yfiles/yfiles'
+import { Simulator } from './model/Simulator'
+import { DeviceKind } from './model/Device'
+import { ConnectionEdgeStyle } from './ConnectionEdgeStyle'
+import { DeviceNodeStyle } from './DeviceNodeStyle'
+import { networkData } from './model/network-sample'
+import { Network } from './model/Network'
+import { initializeDeviceDetailsPopup, updateBarChart } from './device-popup'
+import { initializeToolTips } from './tooltips'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import {
   addFailureHighlight,
   installFailureHighlight,
   removeFailureHighlight
-} from './failure-highlight.js'
-
-Class.ensure(LayoutExecutor)
-
+} from './failure-highlight'
+LayoutExecutor.ensure()
 // This demo creates a network monitoring tool for dynamic data.
 // The mock-up model is created and updated by class Simulator.
-
 /**
  * Manages the animation of packets that travel along the edges.
- * @type {Animator}
  */
 let edgeAnimator
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // we don't want to show the labels for the nodes, initially,
   // so we hide the whole group
   graphComponent.graphModelManager.nodeLabelGroup.visible = false
-
   const graphInputMode = createInputMode()
-
   initializeToolTips(graphInputMode, (item) =>
     item instanceof INode
       ? getDeviceTooltip(getDevice(item))
       : getConnectionTooltip(getConnection(item))
   )
-
   initializeDeviceDetailsPopup(graphComponent, graphInputMode, getDevice)
-
   enableRepairOnItemClick(graphInputMode)
-
   graphComponent.inputMode = graphInputMode
   installFailureHighlight(graphComponent)
-
   const network = Network.loadFromJSON(networkData)
-
   // Build the graph and calculate a nice initial layout
   const graphBuilder = createGraphBuilder(network, graphComponent)
   graphComponent.graph = graphBuilder.buildGraph()
   graphComponent.graph.applyLayout(
     new OrganicLayout({
-      preferredEdgeLength: 20,
+      defaultPreferredEdgeLength: 20,
       deterministic: true,
       starSubstructureStyle: OrganicLayoutStarSubstructureStyle.RADIAL,
-      cycleSubstructureStyle: CycleSubstructureStyle.CIRCULAR,
-      nodeEdgeOverlapAvoided: true,
-      considerNodeSizes: true,
+      cycleSubstructureStyle: OrganicLayoutCycleSubstructureStyle.CIRCULAR,
+      avoidNodeEdgeOverlap: true,
       compactnessFactor: 0.9
     })
   )
-
   network.onDeviceFailure = async (device) => {
     const node = graphBuilder.getNodeById(device.id)
     addFailureHighlight(node)
     await zoomToBounds(graphComponent, node.layout.toRect())
   }
-
   network.onConnectionFailure = async (connection) => {
     const sourceNode = graphBuilder.getNodeById(connection.sender.id)
     const targetNode = graphBuilder.getNodeById(connection.receiver.id)
@@ -137,21 +112,16 @@ async function run() {
       Rect.add(sourceNode.layout.toRect(), targetNode.layout.toRect())
     )
   }
-
   network.onDataUpdated = () => {
     updateBarChart()
     graphComponent.invalidate()
   }
-
   const simulator = new Simulator(network)
-
   enableViewportLimiter(graphComponent)
   initializeUI(graphComponent, simulator)
 }
-
 /**
  * Creates and configures a viewer input mode for the graphComponent of this demo.
- * @returns {!GraphInputMode}
  */
 function createInputMode() {
   return new GraphViewerInputMode({
@@ -160,14 +130,9 @@ function createInputMode() {
     marqueeSelectableItems: GraphItemTypes.NONE
   })
 }
-
-/**
- * @param {!GraphInputMode} graphInputMode
- */
 function enableRepairOnItemClick(graphInputMode) {
   graphInputMode.clickableItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
-
-  graphInputMode.addItemClickedListener((_, evt) => {
+  graphInputMode.addEventListener('item-clicked', (evt) => {
     if (evt.item instanceof INode) {
       const device = getDevice(evt.item)
       if (device.failed) {
@@ -177,7 +142,6 @@ function enableRepairOnItemClick(graphInputMode) {
       }
       return
     }
-
     if (evt.item instanceof IEdge) {
       const connection = getConnection(evt.item)
       if (connection.failed) {
@@ -190,39 +154,25 @@ function enableRepairOnItemClick(graphInputMode) {
     }
   })
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- */
 function enableViewportLimiter(graphComponent) {
-  graphComponent.contentMargins = new Insets(50)
-  graphComponent.fitGraphBounds()
-
-  // limit scrolling to the area containing the graph
-  graphComponent.viewportLimiter.honorBothDimensions = false
-  graphComponent.viewportLimiter.bounds = graphComponent.contentRect
+  void graphComponent.fitGraphBounds(200)
+  graphComponent.viewportLimiter.policy = ViewportLimitingPolicy.TOWARDS_LIMIT
+  graphComponent.viewportLimiter.viewportContentMargins = new Insets(100)
   graphComponent.maximumZoom = 3
+  graphComponent.minimumZoom = 0.2
 }
-
-/**
- * @param {!Network} data
- * @param {!GraphComponent} graphComponent
- * @returns {!GraphBuilder}
- */
 function createGraphBuilder(data, graphComponent) {
   const graphBuilder = new GraphBuilder()
-
   const nodeCreator = graphBuilder.createNodesSource({
     data: data.devices,
     id: (item) => item.id
   }).nodeCreator
   nodeCreator.defaults.style = new DeviceNodeStyle(getDevice, getImage)
   nodeCreator.defaults.size = new Size(64, 64)
-
   const nodeLabelCreator = nodeCreator.createLabelBinding(
     (device) => `${device.name}\n${device.ip}`
   )
-  nodeLabelCreator.defaults.style = new DefaultLabelStyle({
+  nodeLabelCreator.defaults.style = new LabelStyle({
     backgroundStroke: null,
     backgroundFill: 'rgba(255,255,255,0.5)'
   })
@@ -231,96 +181,53 @@ function createGraphBuilder(data, graphComponent) {
     [0, -15],
     [0.5, 0]
   )
-
   const edgeCreator = graphBuilder.createEdgesSource({
     data: data.connections,
     sourceId: (item) => item.sender.id,
     targetId: (item) => item.receiver.id
   }).edgeCreator
-
   // create an animator instance that can be used by the edge style
   edgeAnimator = new Animator(graphComponent)
   edgeAnimator.allowUserInteraction = true
   edgeAnimator.autoInvalidation = false
-
   edgeCreator.defaults.style = new ConnectionEdgeStyle(edgeAnimator)
-
   return graphBuilder
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- * @param {!Rect} bounds
- * @returns {!Promise}
- */
 async function zoomToBounds(graphComponent, bounds) {
   // Don't do anything if the failing element is visible already
-  if (graphComponent.viewport.contains(bounds) && graphComponent.zoom > 0.8) {
+  if (graphComponent.viewport.containsRectangle(bounds) && graphComponent.zoom > 0.8) {
     return
   }
-
   // Zoom to enlarged bounds, so we get an overview of the neighborhood as well
-  await graphComponent.zoomToAnimated(bounds.getEnlarged(new Insets(350)))
+  await graphComponent.zoomToAnimated(bounds.getEnlarged(350))
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- * @param {!Simulator} simulator
- */
 function initializeUI(graphComponent, simulator) {
   document.querySelector('#toggleLabels').addEventListener('click', (event) => {
     const button = event.target
     graphComponent.graphModelManager.nodeLabelGroup.visible = button.checked
   })
-
   document.querySelector('#toggleFailures').addEventListener('click', (evt) => {
     const button = evt.target
     simulator.failuresEnabled = button.checked
   })
-
   document.querySelector('#pauseSimulation').addEventListener('click', (evt) => {
     const button = evt.target
     edgeAnimator.paused = button.checked
     simulator.paused = button.checked
   })
 }
-
-/**
- * @param {!INode} node
- * @returns {!Device}
- */
 function getDevice(node) {
   return node.tag
 }
-
-/**
- * @param {!IEdge} edge
- * @returns {!Connection}
- */
 function getConnection(edge) {
   return edge.tag
 }
-
-/**
- * @param {!Device} device
- * @returns {?(HTMLElement|string)}
- */
 function getDeviceTooltip(device) {
   return device.failed ? `Repair ${device.name}` : `Load: ${(device.load * 100).toFixed(1)}%`
 }
-
-/**
- * @param {!Connection} connection
- * @returns {?(HTMLElement|string)}
- */
 function getConnectionTooltip(connection) {
   return connection.failed ? 'Repair connection.' : `Load: ${(connection.load * 100).toFixed(1)}%`
 }
-
-/**
- * @param {!Device} device
- * @returns {!string}
- */
 function getImage(device) {
   switch (device.kind) {
     case DeviceKind.WORKSTATION:
@@ -341,5 +248,4 @@ function getImage(device) {
       return './resources/workstation.svg'
   }
 }
-
 void run().then(finishLoading)

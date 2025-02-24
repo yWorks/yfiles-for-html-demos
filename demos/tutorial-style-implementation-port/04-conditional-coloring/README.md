@@ -1,10 +1,10 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,9 @@
 
       04 Conditional Port Coloring - Tutorial: Port Style Implementation
 
-# Conditional port coloring
+<img src="../../../doc/demo-thumbnails/tutorial-style-implementation-port-conditional-coloring.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-port/04-conditional-coloring/).
 
 In this example, we will fill the port shape with a color that is determined by the number of connected edges. Ports with no connections will be filled green, ports with 10 or more connections will be filled red. Values between 0 and 10 will result in the hue blended between green and red. Alternatively, the color from the port’s tag is used, if defined.
 

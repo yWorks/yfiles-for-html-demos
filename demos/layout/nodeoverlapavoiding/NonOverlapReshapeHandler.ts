@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,7 +38,7 @@ import {
   IReshapeHandler,
   Rect,
   WaitInputMode
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { LayoutHelper } from './LayoutHelper'
 
 export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
@@ -86,8 +86,8 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
   public handleReshape(context: IInputModeContext, originalBounds: Rect, newBounds: Rect): void {
     this.clearTimeout()
     this.handler.handleReshape(context, originalBounds, newBounds)
-    this.timeoutHandle = setTimeout(() => {
-      this.layoutHelper!.runLayout()
+    this.timeoutHandle = setTimeout(async () => {
+      await this.layoutHelper!.runLayout()
     }, 50)
   }
 
@@ -98,7 +98,7 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
     this.clearTimeout()
     this.handler.cancelReshape(context, originalBounds)
 
-    const waitInputMode = context.lookup(WaitInputMode.$class)
+    const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
       // disable user interaction while the finish cancel is running
       waitInputMode.waiting = true
@@ -122,7 +122,7 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
     this.clearTimeout()
     this.handler.reshapeFinished(context, originalBounds, newBounds)
 
-    const waitInputMode = context.lookup(WaitInputMode.$class)
+    const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
       // disable user interaction while the finish layout is running
       waitInputMode.waiting = true

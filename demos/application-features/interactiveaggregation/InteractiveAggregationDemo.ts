@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,11 +27,8 @@
  **
  ***************************************************************************/
 import {
-  Class,
   Color,
-  DefaultLabelStyle,
-  Fill,
-  GenericLabeling,
+  type CssFill,
   GraphBuilder,
   GraphComponent,
   GraphItemTypes,
@@ -42,7 +39,8 @@ import {
   IModelItem,
   INode,
   INodeStyle,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
+  LabelStyle,
   LayoutExecutor,
   License,
   ListEnumerable,
@@ -55,20 +53,20 @@ import {
   ShapeNodeShape,
   ShapeNodeStyle,
   Size,
-  SolidColorFill,
-  Stroke,
-  YObject
-} from 'yfiles'
+  Stroke
+} from '@yfiles/yfiles'
 
-import { AggregationGraphWrapper, EdgeReplacementPolicy } from 'demo-utils/AggregationGraphWrapper'
-import { ContextMenu } from 'demo-utils/ContextMenu'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import {
+  AggregationGraphWrapper,
+  EdgeReplacementPolicy
+} from '@yfiles/demo-utils/AggregationGraphWrapper'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import type { JSONGraph } from '../../utils/json-model'
 import graphData from './graph-data.json'
 
-Class.ensure(LayoutExecutor)
+LayoutExecutor.ensure()
 
 let graphComponent: GraphComponent = null!
 
@@ -77,9 +75,9 @@ let aggregateGraph: AggregationGraphWrapper = null!
 // selectors for shape and/or color
 const shapeSelector = (n: INode): ShapeNodeShape => (n.style as ShapeNodeStyle).shape
 
-const fillColorSelector = (n: INode): Color => {
-  const fill = (n.style as ShapeNodeStyle).fill! as SolidColorFill
-  return fill.color
+const fillColorSelector = (n: INode): string => {
+  const fill = (n.style as ShapeNodeStyle).fill! as CssFill
+  return fill.value
 }
 const shapeAndFillSelector = (n: INode): ShapeAndFill =>
   new ShapeAndFill(shapeSelector(n), fillColorSelector(n))
@@ -94,16 +92,16 @@ const shapeStyle = (shape: ShapeNodeShape): ShapeNodeStyle =>
     stroke: grayBorder
   })
 
-const fillStyle = (fillColor: Color): ShapeNodeStyle =>
+const fillStyle = (fillColor: string): ShapeNodeStyle =>
   new ShapeNodeStyle({
-    fill: new SolidColorFill(fillColor),
+    fill: fillColor,
     shape: ShapeNodeShape.ELLIPSE,
     stroke: grayBorder
   })
 
 const shapeAndFillStyle = (shapeAndFill: ShapeAndFill): ShapeNodeStyle =>
   new ShapeNodeStyle({
-    fill: new SolidColorFill(shapeAndFill.fillColor),
+    fill: shapeAndFill.fillColor,
     shape: shapeAndFill.shape,
     stroke: grayBorder
   })
@@ -112,8 +110,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize the demo styles
   initDemoStyles(graphComponent.graph)
   graphComponent.graph.nodeDefaults.size = new Size(40, 40)
@@ -130,14 +126,14 @@ async function run(): Promise<void> {
   aggregateGraph = new AggregationGraphWrapper(graphComponent.graph)
 
   // set default label text sizes for aggregation labels
-  aggregateGraph.aggregationNodeDefaults.labels.style = new DefaultLabelStyle({ textSize: 32 })
-  aggregateGraph.aggregationEdgeDefaults.labels.style = new DefaultLabelStyle({ textSize: 24 })
+  aggregateGraph.aggregationNodeDefaults.labels.style = new LabelStyle({ textSize: 32 })
+  aggregateGraph.aggregationEdgeDefaults.labels.style = new LabelStyle({ textSize: 24 })
 
   // assign it to the graphComponent
   graphComponent.graph = aggregateGraph
 
   // disable edge cropping, so thick aggregation edges run smoothly into nodes
-  graphComponent.graph.decorator.portDecorator.edgePathCropperDecorator.hideImplementation()
+  graphComponent.graph.decorator.ports.edgePathCropper.hide()
 
   // don't create edges in both directions when replacing edges by aggregation edges
   aggregateGraph.edgeReplacementPolicy = EdgeReplacementPolicy.UNDIRECTED
@@ -148,7 +144,7 @@ async function run(): Promise<void> {
 
   registerAggregationCallbacks()
 
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
 
 /**
@@ -159,110 +155,89 @@ function configureContextMenu(graphComponent: GraphComponent): void {
   const inputMode = graphComponent.inputMode as GraphViewerInputMode
   inputMode.contextMenuItems = GraphItemTypes.NODE
 
-  // Create a context menu. In this demo, we use our sample context menu implementation but you can use any other
-  // context menu widget as well. See the Context Menu demo for more details about working with context menus.
-  const contextMenu = new ContextMenu(graphComponent)
-
-  // Add event listeners to the various events that open the context menu. These listeners then
-  // call the provided callback function which in turn asks the current ContextMenuInputMode if a
-  // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
-    if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
-      contextMenu.show(location)
-    }
-  })
-
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
-  // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  inputMode.addPopulateItemContextMenuListener((_, evt) =>
-    populateContextMenu(contextMenu, graphComponent, evt)
-  )
-
-  // Add a listener that closes the menu when the input mode requests this
-  inputMode.contextMenuInputMode.addCloseMenuListener(() => contextMenu.close())
-
-  // If the context menu closes itself, for example because a menu item was clicked, we must inform the input mode
-  contextMenu.onClosedCallback = (): void => inputMode.contextMenuInputMode.menuClosed()
+  inputMode.addEventListener('populate-item-context-menu', (evt) => {
+    populateContextMenu(graphComponent, evt)
+  })
 }
 
 /**
  * Fills the context menu with menu items based on the clicked node.
  */
 function populateContextMenu(
-  contextMenu: ContextMenu,
   _sender: object,
-  e: PopulateItemContextMenuEventArgs<IModelItem>
+  evt: PopulateItemContextMenuEventArgs<IModelItem>
 ): void {
-  e.showMenu = true
-
   // first update the selection
-  const node = e.item as INode
+  const node = evt.item as INode
   // if the cursor is over a node select it, else clear selection
   updateSelection(node)
 
-  contextMenu.clearItems()
-
   // Create the context menu items
-  const selectedNodes = graphComponent.selection.selectedNodes
+  const menuItems = []
+  const selectedNodes = graphComponent.selection.nodes
   if (selectedNodes.size > 0) {
     // only allow aggregation operations on nodes that are not aggregation nodes already
     const aggregateAllowed = selectedNodes.some((n: INode) => !aggregateGraph.isAggregationItem(n))
 
     if (aggregateAllowed) {
       // add aggregation menu items
-
-      contextMenu.addMenuItem('Aggregate Nodes with Same Shape', () =>
-        aggregateSame(selectedNodes.toList(), shapeSelector, shapeStyle)
-      )
-
-      contextMenu.addMenuItem('Aggregate Nodes with Same Color', () =>
-        aggregateSame(selectedNodes.toList(), fillColorSelector, fillStyle)
-      )
-
-      contextMenu.addMenuItem('Aggregate Nodes with Same Shape & Color', () =>
-        aggregateSame(selectedNodes.toList(), shapeAndFillSelector, shapeAndFillStyle)
-      )
+      menuItems.push({
+        label: 'Aggregate Nodes with Same Shape',
+        action: () => aggregateSame(selectedNodes.toList(), shapeSelector, shapeStyle)
+      })
+      menuItems.push({
+        label: 'Aggregate Nodes with Same Color',
+        action: () => aggregateSame(selectedNodes.toList(), fillColorSelector, fillStyle)
+      })
+      menuItems.push({
+        label: 'Aggregate Nodes with Same Shape & Color',
+        action: () => aggregateSame(selectedNodes.toList(), shapeAndFillSelector, shapeAndFillStyle)
+      })
     }
 
     const separateAllowed = selectedNodes.some((n: INode) => aggregateGraph.isAggregationItem(n))
-
     if (separateAllowed) {
-      contextMenu.addMenuItem('Separate', () => separate(selectedNodes.toList()))
+      menuItems.push({ label: 'Separate', action: () => separate(selectedNodes.toList()) })
     }
   } else {
     // add generic aggregate / separate menu items
-
-    contextMenu.addMenuItem('Aggregate All Nodes by Shape', () =>
-      aggregateAll(shapeSelector, shapeStyle)
-    )
-
-    contextMenu.addMenuItem('Aggregate All Nodes by Color', () =>
-      aggregateAll(fillColorSelector, fillStyle)
-    )
-
-    contextMenu.addMenuItem('Aggregate All Nodes by Shape & Color', () =>
-      aggregateAll(shapeAndFillSelector, shapeAndFillStyle)
-    )
+    menuItems.push({
+      label: 'Aggregate All Nodes by Shape',
+      action: () => aggregateAll(shapeSelector, shapeStyle)
+    })
+    menuItems.push({
+      label: 'Aggregate All Nodes by Color',
+      action: () => aggregateAll(fillColorSelector, fillStyle)
+    })
+    menuItems.push({
+      label: 'Aggregate All Nodes by Shape & Color',
+      action: () => aggregateAll(shapeAndFillSelector, shapeAndFillStyle)
+    })
 
     const separateAllowed = graphComponent.graph.nodes.some((node) =>
       aggregateGraph.isAggregationItem(node)
     )
-
     if (separateAllowed) {
-      contextMenu.addMenuItem('Separate All', () => {
-        aggregateGraph.separateAll()
-        // noinspection JSIgnoredPromiseFromCall
-        runLayout()
+      menuItems.push({
+        label: 'Separate All',
+        action: () => {
+          aggregateGraph.separateAll()
+          void runLayout()
+        }
       })
     }
+  }
+
+  if (menuItems.length > 0) {
+    evt.contextMenu = menuItems
   }
 }
 
 /**
  * Updates the node selection state when the context menu is opened on the node
  * If the node is null, the selection is cleared.
- * If the node is already selected, the selection keeps unchanged, otherwise the selection
- * is cleared and the node is selected.
+ * If the node is already selected, the selection for all other nodes is cleared.
  * @param node The node to consider for the selection state
  */
 function updateSelection(node: INode | null): void {
@@ -272,11 +247,11 @@ function updateSelection(node: INode | null): void {
     graphComponent.selection.clear()
   } else {
     // see if the node was selected, already and keep the selection in this case
-    if (!graphComponent.selection.selectedNodes.isSelected(node)) {
+    if (!graphComponent.selection.nodes.includes(node)) {
       // no - clear the remaining selection
       graphComponent.selection.clear()
       // select the node
-      graphComponent.selection.selectedNodes.setSelected(node, true)
+      graphComponent.selection.nodes.add(node)
       // also update the current item
       graphComponent.currentItem = node
     }
@@ -286,18 +261,18 @@ function updateSelection(node: INode | null): void {
 function registerAggregationCallbacks(): void {
   const graph = graphComponent.graph
 
-  graph.addNodeCreatedListener((_, evt) => {
+  graph.addEventListener('node-created', (evt) => {
     if (aggregateGraph.isAggregationItem(evt.item)) {
       // add a label with the number of aggregated items to the new aggregation node
       graph.addLabel(
         evt.item,
         String(aggregateGraph.getAggregatedItems(evt.item).size),
-        InteriorLabelModel.CENTER
+        InteriorNodeLabelModel.CENTER
       )
     }
   })
 
-  graph.addEdgeCreatedListener((_, evt) => {
+  graph.addEventListener('edge-created', (evt) => {
     const edge = evt.item
     if (!aggregateGraph.isAggregationItem(edge)) {
       return
@@ -310,7 +285,7 @@ function registerAggregationCallbacks(): void {
     graph.setStyle(
       edge,
       new PolylineEdgeStyle({
-        stroke: new Stroke(Fill.GRAY, 1 + aggregatedEdgesCount)
+        stroke: new Stroke(Color.GRAY, 1 + aggregatedEdgesCount)
       })
     )
 
@@ -401,11 +376,8 @@ function aggregateSame<TKey>(
   // get one representative of each kind of node (determined by the selector) ignoring aggregation nodes
   const distinctNodes: IList<INode> = nodes
     .filter((n) => !aggregateGraph.isAggregationItem(n))
-    .groupBy({
-      keySelector: selector,
-      resultCreator: (key, enumerable) => ({ key: key, enumerable: enumerable })
-    })
-    .map((grouping) => grouping.enumerable.first())
+    .groupBy(selector, (key, enumerable) => ({ key: key, enumerable: enumerable }))
+    .map((grouping) => grouping.enumerable.first()!)
     .toList()
 
   distinctNodes.forEach((node) => {
@@ -413,8 +385,8 @@ function aggregateSame<TKey>(
     const nodesOfSameKind = collectNodesOfSameKind(node, selector)
     aggregate(nodesOfSameKind, selector(node), styleFactory)
   })
-  // noinspection JSIgnoredPromiseFromCall
-  runLayout()
+
+  void runLayout()
 }
 
 /**
@@ -426,8 +398,24 @@ function collectNodesOfSameKind<TKey>(node: INode, selector: (arg: INode) => TKe
   const nodeKind = selector(node)
   return graphComponent.graph.nodes
     .filter((n) => !aggregateGraph.isAggregationItem(n))
-    .filter((n) => YObject.equals(selector(n), nodeKind))
+    .filter((n) => equals(selector(n), nodeKind))
     .toList()
+}
+
+function equals(o1: unknown, o2: unknown) {
+  if (o1 == o2) {
+    return true
+  }
+  type HasEquals = { equals: (other: unknown) => boolean } | undefined | null
+  const o1Equals = o1 as HasEquals
+  if (o1Equals && typeof o1Equals.equals === 'function') {
+    return o1Equals.equals(o2)
+  }
+  const o2Equals = o2 as HasEquals
+  if (o2Equals && typeof o2Equals.equals === 'function') {
+    return o2Equals.equals(o1)
+  }
+  return false
 }
 
 /**
@@ -442,17 +430,13 @@ function aggregateAll<TKey>(
   aggregateGraph.separateAll()
 
   graphComponent.graph.nodes
-    .groupBy({
-      keySelector: selector,
-      resultCreator: (key, enumerable) => ({ key: key, enumerable: enumerable })
-    })
+    .groupBy(selector, (key, enumerable) => ({ key: key, enumerable: enumerable }))
     .toList()
     .forEach((arg) => {
       aggregate(arg.enumerable.toList(), arg.key, styleFactory)
     })
 
-  // noinspection JSIgnoredPromiseFromCall
-  runLayout()
+  void runLayout()
 }
 
 /**
@@ -483,28 +467,21 @@ function separate(nodes: IEnumerable<INode>): void {
       aggregateGraph.separate(node)
     }
   })
-  // noinspection JSIgnoredPromiseFromCall
-  runLayout()
+
+  void runLayout()
 }
 
 /**
  * Runs an organic layout with edge labeling.
  */
 async function runLayout(): Promise<void> {
-  const genericLabeling = new GenericLabeling({
-    placeEdgeLabels: true,
-    placeNodeLabels: false,
-    reduceAmbiguity: true
-  })
-
   const layout = new OrganicLayout({
-    minimumNodeDistance: 60,
-    nodeEdgeOverlapAvoided: true,
-    labelingEnabled: true,
-    labeling: genericLabeling
+    defaultMinimumNodeDistance: 60,
+    avoidNodeEdgeOverlap: true,
+    edgeLabelPlacement: 'integrated'
   })
 
-  await graphComponent.morphLayout(layout, '1s')
+  await graphComponent.applyLayoutAnimated(layout, '1s')
 }
 
 /**
@@ -512,15 +489,15 @@ async function runLayout(): Promise<void> {
  */
 class ShapeAndFill {
   public shape: ShapeNodeShape
-  public fillColor: Color
+  public fillColor: string
 
-  constructor(shape: ShapeNodeShape, fillColor: Color) {
+  constructor(shape: ShapeNodeShape, fillColor: string) {
     this.shape = shape
     this.fillColor = fillColor
   }
 
   public equals(obj: ShapeAndFill): boolean {
-    return obj.shape === this.shape && obj.fillColor.equals(this.fillColor)
+    return obj.shape === this.shape && obj.fillColor === this.fillColor
   }
 }
 

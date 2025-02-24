@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,82 +27,60 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   Font,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GroupNodeLabelModel,
   GroupNodeStyle,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
-  InteriorStretchLabelModel,
+  LabelStyle,
   LayoutExecutor,
   License,
   MarkupLabelStyle,
-  OrthogonalEdgeEditingContext,
   Rect,
   Size,
+  StretchNodeLabelModel,
   TextWrapping
-} from 'yfiles'
-
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-
-/** @type {GraphComponent} */
 let graphComponent
-
 /**
  * Bootstraps the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext()
-  })
-
+  graphComponent.inputMode = new GraphEditorInputMode()
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
-
   // configures the MarkupLabelStyle to be used as default label style in this demo
   configureMarkupLabelStyle(graphComponent.graph)
-
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
-
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
-    new HierarchicLayout({
-      orthogonalRouting: true,
+    new HierarchicalLayout({
       minimumLayerDistance: 35
     })
   )
-  graphComponent.fitGraphBounds()
-
+  await graphComponent.fitGraphBounds()
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
-
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
- * @param {!IGraph} graph
- * @param {!JSONGraph} graphData
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList.filter((item) => !item.isGroup),
     id: (item) => item.id,
@@ -111,71 +89,60 @@ function buildGraph(graph, graphData) {
   nodesSource.nodeCreator.createLabelBinding((item) => item.label)
   nodesSource.nodeCreator.layoutProvider = (item) =>
     item.label ? new Rect(0, 0, 400, 250) : undefined
-
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
-
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
-
   graphBuilder.buildGraph()
 }
-
 /**
  * Sets the {@link MarkupLabelStyle} as default label style for nodes and edges.
- * @param {!IGraph} graph
  */
 function configureMarkupLabelStyle(graph) {
-  graph.nodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.CENTER
+  graph.nodeDefaults.labels.layoutParameter = StretchNodeLabelModel.CENTER
   const font = new Font('"Segoe UI", Arial', 11)
   graph.nodeDefaults.labels.style = new MarkupLabelStyle({
     font: font,
-    wrapping: TextWrapping.WORD_ELLIPSIS,
-    insets: [5, 10]
+    wrapping: TextWrapping.WRAP_WORD_ELLIPSIS,
+    padding: [5, 10]
   })
   graph.edgeDefaults.labels.style = new MarkupLabelStyle({ font: font })
 }
-
 /**
  * Initializes the defaults for the styling in this demo.
  *
- * @param {!IGraph} graph The graph.
+ * @param graph The graph.
  */
 function initializeGraph(graph) {
   // set styles for this demo
-  initDemoStyles(graph)
-
+  initDemoStyles(graph, { orthogonalEditing: true })
   // set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#46a8d5',
     tabPosition: 'top-leading',
     contentAreaFill: '#b5dcee'
   })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'left',
     textFill: '#b5dcee'
   })
-  graph.groupNodeDefaults.labels.layoutParameter =
-    new GroupNodeLabelModel().createDefaultParameter()
-
+  graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.shareStyleInstance = false
-
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
-
 run().then(finishLoading)

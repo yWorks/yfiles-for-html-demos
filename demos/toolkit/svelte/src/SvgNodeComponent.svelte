@@ -64,7 +64,7 @@
       y={zoom > zoomDetail ? 35 : 60}
       maxWidth={zoom > zoomDetail ? width - 150 : width - 95}
       maxHeight={35}
-      textWrapping="word-ellipsis"
+      textWrapping="wrap-word-ellipsis"
       text={item.position.toUpperCase()}
       fontFamily="Roboto"
       fontSize={10}

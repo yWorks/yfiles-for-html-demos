@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,24 +26,24 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Simulator } from './Simulator.js'
-
+import { Simulator } from './Simulator'
 /**
  * Represents a connection in the network.
  */
 export class Connection {
+  sender
+  receiver
   /**
    * Creates a new instance.
-   * @param {!Device} sender The sending device.
-   * @param {!Device} receiver The receiving device.
+   * @param sender The sending device.
+   * @param receiver The receiving device.
    */
   constructor(sender, receiver) {
-    this.receiver = receiver
     this.sender = sender
+    this.receiver = receiver
     this.sender = sender
     this.receiver = receiver
   }
-
   /**
    * The load of this connection.
    * Load is a value between 0 and 1 that indicates how utilized the connection is (with 0 being
@@ -51,41 +51,32 @@ export class Connection {
    * in the {@link Simulator}.
    */
   load = 0
-
   /**
    * Gets a value indicating whether this connection is enabled.
    * A connection is enabled if and only if its attached devices are enabled and have not failed.
-   * @type {boolean}
    */
   get enabled() {
     const isSenderWorking = this.sender.enabled && !this.sender.failed
     const isReceiverWorking = this.receiver.enabled && !this.receiver.failed
     return isSenderWorking && isReceiverWorking
   }
-
   #failed = false
-
   /**
    * Gets a value indicating whether this connection has failed.
-   * @type {boolean}
    */
   get failed() {
     return this.#failed
   }
-
   fail() {
     this.#failed = true
   }
-
   repair() {
     this.#failed = false
   }
-
   /**
    * Value indicating whether this connection is delivering a packet in forward direction.
    */
   hasForwardPacket = false
-
   /**
    * Value indicating whether this connection is delivering a packet in backwards direction.
    */

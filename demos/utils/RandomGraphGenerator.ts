@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HashMap, IGraph, INode } from 'yfiles'
+import { HashMap, IGraph, INode } from '@yfiles/yfiles'
 
 /**
  * A class that creates random graphs. The size of the graph and other options  may be specified.
@@ -131,8 +131,8 @@ export default class RandomGraphGenerator {
 
     if (!this.allowCycles) {
       graph.edges.forEach((edge) => {
-        const sourcePort = edge.sourcePort!
-        const targetPort = edge.targetPort!
+        const sourcePort = edge.sourcePort
+        const targetPort = edge.targetPort
         if (index.get(sourcePort.owner as INode)! > index.get(targetPort.owner as INode)!) {
           graph.reverse(edge)
         }
@@ -207,8 +207,8 @@ export default class RandomGraphGenerator {
 
     if (!this.allowCycles) {
       graph.edges.forEach((edge) => {
-        const sourcePort = edge.sourcePort!
-        const targetPort = edge.targetPort!
+        const sourcePort = edge.sourcePort
+        const targetPort = edge.targetPort
         if (index.get(sourcePort.owner as INode)! > index.get(targetPort.owner as INode)!) {
           graph.reverse(edge)
         }

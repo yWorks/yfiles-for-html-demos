@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Move Unselected Nodes Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -43,7 +43,6 @@
         word-wrap: break-word;
       }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -129,7 +128,8 @@
           first.
         </p>
         <p>
-          This is done by enabling the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode#moveUnselectedInputMode" target="_blank">GraphEditorInputMode#moveUnselectedInputMode</a>.
+          This is done by enabling the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode#moveUnselectedItemsInputMode" target="_blank">GraphEditorInputMode#moveUnselectedItemsInputMode</a>.
         </p>
 
         <h2>Things to Try</h2>
@@ -168,8 +168,9 @@
           </dd>
           <dt>Shift Not Pressed</dt>
           <dd>
-            Nodes cannot be moved if the Shift key is held down while dragging. Instead, this
-            gesture may start edge creation if the <em>Edge Creation Mode</em> is set to default.
+            Nodes cannot be moved if the <kbd>Shift</kbd> key is held down while dragging. Instead,
+            this gesture may start edge creation if the <em>Edge Creation Mode</em> is set to
+            default.
           </dd>
           <dt>Top of Node</dt>
           <dd>

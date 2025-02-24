@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,57 +27,49 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
+  Arrow,
+  ArrowType,
+  Color,
+  CompositeLabelModel,
   EdgeDirectionPolicy,
-  Fill,
-  GenericLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  IArrow,
   IGraph,
   IHitTestable,
   INode,
-  Insets,
   InsideOutsidePortLabelModel,
-  InteriorStretchLabelModel,
   IPort,
   LabelEventArgs,
+  LabelStyle,
   License,
-  NodeStylePortStyleAdapter,
-  OrthogonalEdgeEditingContext,
   Point,
   PolylineEdgeStyle,
   Rect,
-  ShapeNodeStyle,
+  ShapePortStyle,
   Size,
-  SolidColorFill
-} from 'yfiles'
+  StretchNodeLabelModel
+} from '@yfiles/yfiles'
 import { ListNodeStyle } from './ListNodeStyle'
-import { ContextMenu } from 'demo-utils/ContextMenu'
 import {
   createPortLocationParameter,
   getPortForData,
   RowPositionHandler
 } from './RowPositionHandler'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   configureGraph(graphComponent.graph)
 
   // create some graph elements
   createSampleGraph(graphComponent.graph)
 
   // center the sample graph in the visible area
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   // configure user interaction
   initializeInteraction(graphComponent)
@@ -97,9 +89,8 @@ function initializeInteraction(graphComponent: GraphComponent): void {
     allowEditLabel: true,
     allowAddLabel: false,
     deletableItems: GraphItemTypes.NODE | GraphItemTypes.BEND | GraphItemTypes.EDGE,
-    nodeCreator: (context, graph, location) =>
+    nodeCreator: (_context, graph, location) =>
       createNode(graph, location, `Node ${graph.nodes.size + 1}`),
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext(),
     clickHitTestOrder: [
       GraphItemTypes.LABEL,
       GraphItemTypes.EDGE,
@@ -109,22 +100,23 @@ function initializeInteraction(graphComponent: GraphComponent): void {
   })
 
   // prefer edge creation over moving elements but only if the creation starts over a candidate
-  geim.createEdgeInputMode.priority = geim.moveUnselectedInputMode.priority - 1
+  geim.createEdgeInputMode.priority = geim.moveUnselectedItemsInputMode.priority - 1
   geim.createEdgeInputMode.startOverCandidateOnly = true
   geim.createEdgeInputMode.edgeDirectionPolicy = EdgeDirectionPolicy.DETERMINE_FROM_PORT_CANDIDATES
 
   // register label changes in the model
-  geim.addLabelTextChangedListener((_, evt) => {
-    if (evt.owner instanceof INode || evt.owner instanceof IPort) {
-      if ('name' in evt.owner.tag) {
-        evt.owner.tag.name = evt.item.text
+  geim.editLabelInputMode.addEventListener('label-edited', (evt) => {
+    const owner = evt.item.owner
+    if (owner instanceof INode || owner instanceof IPort) {
+      if ('name' in owner.tag) {
+        owner.tag.name = evt.item.text
       }
     }
   })
 
-  geim.addDeletedItemListener((_, evt) => {
-    if (evt instanceof LabelEventArgs && evt.owner instanceof IPort) {
-      const port = evt.owner
+  geim.addEventListener('deleted-item', (evt) => {
+    if (evt.details instanceof LabelEventArgs && evt.details.owner instanceof IPort) {
+      const port = evt.details.owner
       const node = port.owner as INode
       const nodeInfo = node.tag as NodeInfo
       const index = nodeInfo.rows.indexOf(port.tag)
@@ -135,11 +127,10 @@ function initializeInteraction(graphComponent: GraphComponent): void {
   })
 
   // disable normal move mode, enable unselected
-  geim.moveInputMode.enabled = false
-  geim.moveUnselectedInputMode.enabled = true
-  const oldHitTestable = geim.moveUnselectedInputMode.hitTestable
+  geim.moveSelectedItemsInputMode.enabled = false
+  const oldHitTestable = geim.moveUnselectedItemsInputMode.hitTestable
   // only start move gestures if the mouse is over the node header or over a row with content
-  geim.moveUnselectedInputMode.hitTestable = IHitTestable.create((context, location) => {
+  geim.moveUnselectedItemsInputMode.hitTestable = IHitTestable.create((context, location) => {
     const node = findNodeAt(geim, location)
     if (node && node.style instanceof ListNodeStyle) {
       return node.style.isHeaderHit(node, location) || node.style.getRowIndex(node, location) > -1
@@ -147,7 +138,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
     return oldHitTestable.isHit(context, location)
   })
   // the move gesture has been started
-  geim.moveUnselectedInputMode.addQueryPositionHandlerListener((_, evt) => {
+  geim.moveUnselectedItemsInputMode.addEventListener('query-position-handler', (evt) => {
     const location = evt.queryLocation
     const node = findNodeAt(geim, location)
     if (node && node.style instanceof ListNodeStyle) {
@@ -162,7 +153,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
   })
 
   // do not let the user drag at ports
-  graphComponent.graph.decorator.edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.hideImplementation()
+  graphComponent.graph.decorator.edges.reconnectionPortCandidateProvider.hide()
 
   registerContextMenu(graphComponent, geim)
 
@@ -196,8 +187,8 @@ function createNode(
     labels: [
       {
         text: label,
-        style: new DefaultLabelStyle({
-          textFill: Fill.WHITE,
+        style: new LabelStyle({
+          textFill: Color.WHITE,
           horizontalTextAlignment: 'center',
           verticalTextAlignment: 'center',
           minimumSize: new Size(0, 20)
@@ -222,13 +213,11 @@ function createNode(
  * @param rowInfo The info which describes the row to create.
  */
 function addRow(graph: IGraph, node: INode, rowInfo: RowInfo): void {
-  const labelStyle = new DefaultLabelStyle({
-    insets: new Insets(3, 1, 3, 1),
+  const labelStyle = new LabelStyle({
+    padding: [1, 3, 1, 3],
     textFill: '#0C313A'
   })
-  const portStyle = new NodeStylePortStyleAdapter(
-    new ShapeNodeStyle({ fill: new SolidColorFill(0x30, 0x40, 0x48), shape: 'ellipse' })
-  )
+  const portStyle = new ShapePortStyle({ fill: '#304048', shape: 'ellipse' })
 
   const nodeInfo = node.tag as NodeInfo
   if (rowInfo.in) {
@@ -315,8 +304,8 @@ function removeRow(graph: IGraph, node: INode, rowIndex: number): void {
         if (bend) {
           graph.setBendLocation(bend, new Point(bend.location.x, port.location.y))
         } else {
-          const sourceLocation = edge.sourcePort!.location
-          const targetLocation = edge.targetPort!.location
+          const sourceLocation = edge.sourcePort.location
+          const targetLocation = edge.targetPort.location
           const x = sourceLocation.x + (targetLocation.x - sourceLocation.x) / 2
           graph.addBend(edge, new Point(x, sourceLocation.y))
           graph.addBend(edge, new Point(x, targetLocation.y))
@@ -333,22 +322,24 @@ function configureGraph(graph: IGraph): void {
   // sets some default styles
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '3px #2C4B52',
-    targetArrow: IArrow.DEFAULT,
-    smoothingLength: 50
+    targetArrow: new Arrow(ArrowType.STEALTH),
+    smoothingLength: 50,
+    orthogonalEditing: true
   })
-  graph.edgeDefaults.labels.style = new DefaultLabelStyle({
+  graph.edgeDefaults.labels.style = new LabelStyle({
     textFill: 'black',
     backgroundStroke: 'black',
     backgroundFill: 'white',
-    insets: 5
+    padding: 5
   })
 
   // do not remove ports when their adjacent edges are removed
   graph.nodeDefaults.ports.autoCleanUp = false
 
   // disallow moving main node label
-  const labelModel = new GenericLabelModel(InteriorStretchLabelModel.NORTH)
-  graph.nodeDefaults.labels.layoutParameter = labelModel.createDefaultParameter()
+  const compositeLabelModel = new CompositeLabelModel()
+  compositeLabelModel.addParameter(StretchNodeLabelModel.TOP)
+  graph.nodeDefaults.labels.layoutParameter = compositeLabelModel.parameters.first()!
 }
 
 /**
@@ -394,42 +385,33 @@ function createSampleGraph(graph: IGraph): void {
  * - Remove: removes the row under the cursor
  */
 function registerContextMenu(graphComponent: GraphComponent, geim: GraphEditorInputMode): void {
-  const contextMenu = new ContextMenu(graphComponent)
-  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
-    if (geim.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
-      contextMenu.show(location)
+  geim.addEventListener('populate-item-context-menu', (evt) => {
+    if (evt.handled) {
+      return
     }
-  })
-  contextMenu.onClosedCallback = () => {
-    geim.contextMenuInputMode.menuClosed()
-  }
-  geim.contextMenuInputMode.addCloseMenuListener(() => {
-    contextMenu.close()
-  })
-
-  geim.addPopulateItemContextMenuListener((_, evt) => {
-    contextMenu.clearItems()
 
     const node = evt.item
     if (node instanceof INode && node.style instanceof ListNodeStyle) {
-      evt.showMenu = true
-
       // we have a row containing node at cursor location
       const style = node.style
 
       const graph = graphComponent.graph
 
+      const menuItems: { label: string; action: () => void }[] = []
       // add menu entries for adding input and output rows
-      contextMenu.addMenuItem('Add input', () =>
-        addRow(graph, node, { in: `in ${node.ports.size}` })
-      )
-      contextMenu.addMenuItem('Add output', () =>
-        addRow(graph, node, { out: `out ${node.ports.size}` })
-      )
-
-      contextMenu.addMenuItem('Add input/output', () =>
-        addRow(graph, node, { in: `in ${node.ports.size}`, out: `out ${node.ports.size}` })
-      )
+      menuItems.push({
+        label: 'Add input',
+        action: () => addRow(graph, node, { in: `in ${node.ports.size}` })
+      })
+      menuItems.push({
+        label: 'Add output',
+        action: () => addRow(graph, node, { out: `out ${node.ports.size}` })
+      })
+      menuItems.push({
+        label: 'Add input/output',
+        action: () =>
+          addRow(graph, node, { in: `in ${node.ports.size}`, out: `out ${node.ports.size}` })
+      })
 
       // if we are over a row add an entry for removing that row
       const portInfoIndex = style.getRowIndex(node, evt.queryLocation)
@@ -444,9 +426,14 @@ function registerContextMenu(graphComponent: GraphComponent, geim: GraphEditorIn
           text = rowInfo.out
         }
         if (rowInfo.in || rowInfo.out) {
-          contextMenu.addMenuItem(`Remove  ${text}`, () => removeRow(graph, node, portInfoIndex))
+          menuItems.push({
+            label: `Remove  ${text}`,
+            action: () => removeRow(graph, node, portInfoIndex)
+          })
         }
       }
+
+      evt.contextMenu = menuItems
     }
   })
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,82 +26,78 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  Cursors,
-  LayoutGraph,
-  LayoutStageBase,
-  LineSegment,
-  YList,
-  YPoint,
-  YPointPath,
-  YVector
-} from 'yfiles'
-
+import { LayoutGraph, LayoutStageBase, Point } from '@yfiles/yfiles'
 const ZIG_SIZE = 5
-
 /**
  * A layout stage that post-processes edge paths produced by the core layout
  * and changes all edges into a zig-zag shape, while following the original path.
  */
 export default class ZigZagEdgesStage extends LayoutStageBase {
-  /**
-   * @param {!LayoutGraph} graph
-   */
-  applyLayout(graph) {
+  applyLayoutImpl(graph) {
+    if (!this.coreLayout) {
+      return
+    }
     // Apply the core layout ...
-    super.applyLayoutCore(graph)
+    this.coreLayout.applyLayout(graph)
     // ... after which we can then change the edge paths
     this.postProcessEdgePaths(graph)
   }
-
   /**
    * Changes the path of each edge into a zig-zag shape.
-   * @param {!LayoutGraph} graph
    */
   postProcessEdgePaths(graph) {
     for (const edge of graph.edges) {
-      graph.setPoints(edge, getZigZagPointsForEdge(graph.getPath(edge)))
+      const path = []
+      path.push(edge.sourcePortLocation)
+      path.push(...edge.bends.map((bend) => bend.location))
+      path.push(edge.targetPortLocation)
+      edge.resetPath()
+      const zigZagPath = getZigZagPointsForEdge(path)
+      edge.sourcePortLocation = zigZagPath[0]
+      for (let i = 1; i < zigZagPath.length - 1; i++) {
+        graph.addBend(edge, zigZagPath[i].x, zigZagPath[i].y)
+      }
+      edge.targetPortLocation = zigZagPath[zigZagPath.length - 1]
     }
   }
 }
-
 /**
  * Calculates the necessary bend locations to change the edge's path into a zig-zag.
- * @param {!YPointPath} path The edge path.
- * @returns {!YList}
+ * @param path The edge path.
  */
 function getZigZagPointsForEdge(path) {
-  const list = new YList()
-  for (let i = 0; i < path.lineSegmentCount; i++) {
-    list.addAll(Cursors.createCursor(getZigZagPointsForSegment(path.getLineSegment(i))))
+  const list = []
+  for (let i = 0; i < path.length - 1; i++) {
+    const points = getZigZagPointsForSegment(path[i], path[i + 1])
+    list.push(...points)
   }
   return list
 }
-
 /**
  * Calculates the necessary bend locations to change an edge segment into a zig-zag.
- * @param {!LineSegment} segment
- * @returns {!Array.<YPoint>}
  */
-function getZigZagPointsForSegment(segment) {
-  const length = segment.length()
+function getZigZagPointsForSegment(p1, p2) {
+  const length = p1.distanceTo(p2)
   // The number of whole v^ we can fit into the segment
   const zigzags = (length / (2 * ZIG_SIZE)) | 0
   // The length of each v^
   const zigLength = length / zigzags
   // Create a unit vector along the segment
-  const v = segment.toYVector()
-  v.norm()
+  const v = new Point(p2.x - p1.x, p2.y - p1.y).normalized
   // Create the zig-sized vector perpendicular to the segment
-  const zigV = new YVector(v.y * ZIG_SIZE, -v.x * ZIG_SIZE)
+  const zigV = new Point(v.y * ZIG_SIZE, -v.x * ZIG_SIZE)
   const result = []
-  let p = segment.firstEndPoint
-  for (let i = 0; i < zigzags; i++) {
+  let p = p1
+  const vxLength = v.x * zigLength
+  const vyLength = v.y * zigLength
+  for (let i = 0; i < zigzags; i++, p = translatePoint(p, vxLength, vyLength)) {
     result.push(p)
-    result.push(p.moveBy((v.x * zigLength) / 4 + zigV.x, (v.y * zigLength) / 4 + zigV.y))
-    result.push(p.moveBy((v.x * zigLength) / 2, (v.y * zigLength) / 2))
-    result.push(p.moveBy((v.x * zigLength * 3) / 4 + zigV.x, (v.y * zigLength * 3) / 4 + zigV.y))
-    p = p.moveBy(v.x * zigLength, v.y * zigLength)
+    result.push(translatePoint(p, vxLength / 4 + zigV.x, vyLength / 4 + zigV.y))
+    result.push(translatePoint(p, vxLength / 2, vyLength / 2))
+    result.push(translatePoint(p, (vxLength * 3) / 4 + zigV.x, (vyLength * 3) / 4 + zigV.y))
   }
   return result
+}
+function translatePoint(p, dx, dy) {
+  return new Point(p.x + dx, p.y + dy)
 }

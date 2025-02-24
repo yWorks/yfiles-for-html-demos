@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Color, IEnumerable, IRenderContext, Point, WebGLVisual } from 'yfiles'
-
+import { WebGLVisual, Color, IEnumerable, IRenderContext, Point } from '@yfiles/yfiles'
 export default class WebglBlobVisual extends WebGLVisual {
   locations
   color
@@ -37,13 +36,6 @@ export default class WebglBlobVisual extends WebGLVisual {
   fragmentShader = ''
   buffer = null
   vertexBuffer = null
-
-  /**
-   * @param {!IEnumerable.<Point>} locations
-   * @param {!Color} color
-   * @param {number} [size]
-   * @param {number} [maxBlobCount]
-   */
   constructor(locations, color, size, maxBlobCount) {
     super()
     this.locations = locations
@@ -51,18 +43,14 @@ export default class WebglBlobVisual extends WebGLVisual {
     this.size = size || 100
     this.maxBlobCount = maxBlobCount || 128
   }
-
   /**
    * @yjs:keep = enable
-   * @param {!IRenderContext} renderContext
-   * @param {!WebGLRenderingContext} gl
    */
   render(renderContext, gl) {
     if (!this.buffer || !gl.isBuffer(this.buffer)) {
       // initialize and cache all the data that we need for the first time
       const maxUniformVectors = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS)
       const blobCount = (this.maxBlobCount = Math.min(this.maxBlobCount, maxUniformVectors - 10))
-
       this.dataToSend = new Float32Array(blobCount * 2)
       this.fragmentShader = `
         precision lowp float;
@@ -94,7 +82,6 @@ export default class WebglBlobVisual extends WebGLVisual {
           gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
         }
       `
-
       this.buffer = gl.createBuffer()
       this.vertexBuffer = new Float32Array(8)
       this.vertexBuffer[0] = -1
@@ -106,7 +93,6 @@ export default class WebglBlobVisual extends WebGLVisual {
       this.vertexBuffer[6] = 1
       this.vertexBuffer[7] = 1
     }
-
     const program = renderContext.webGLSupport.useProgram(
       `
         attribute vec2 position;
@@ -116,18 +102,13 @@ export default class WebglBlobVisual extends WebGLVisual {
         `,
       this.fragmentShader
     )
-
     const ballSize = this.size
-    const centers = this.locations.map((p) => renderContext.toViewCoordinates(p))
-
+    const centers = this.locations.map((p) => renderContext.worldToViewCoordinates(p))
     const dataToSend = this.dataToSend
     const maxDist = ballSize * 2 * renderContext.zoom
-
     const height = gl.canvas.height
     const width = gl.canvas.width
-
     const pixelRatio = renderContext.canvasComponent.devicePixelRatio
-
     let count = 0
     centers.forEach((center) => {
       if (
@@ -140,27 +121,20 @@ export default class WebglBlobVisual extends WebGLVisual {
         dataToSend[count++] = height - center.y * pixelRatio
       }
     })
-
     if (count > 0) {
       gl.enable(gl.BLEND)
       gl.blendFunc(gl.SRC_ALPHA, gl.DST_ALPHA)
-
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
       gl.bufferData(gl.ARRAY_BUFFER, this.vertexBuffer, gl.STATIC_DRAW)
-
       const positionLocation = gl.getAttribLocation(program, 'position')
       gl.enableVertexAttribArray(positionLocation)
       gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0)
-
       const centersLoc = gl.getUniformLocation(program, 'centers')
       const colorLoc = gl.getUniformLocation(program, 'color')
       const countLoc = gl.getUniformLocation(program, 'count')
       const scaleLoc = gl.getUniformLocation(program, 'scale')
-
       const factor = 1 / (ballSize * renderContext.zoom * pixelRatio)
-
       gl.uniform1f(scaleLoc, factor)
-
       gl.uniform1i(countLoc, Math.min(this.maxBlobCount, count / 2))
       gl.uniform2fv(centersLoc, dataToSend)
       gl.uniform4f(
@@ -170,7 +144,6 @@ export default class WebglBlobVisual extends WebGLVisual {
         this.color.b / 255,
         this.color.a / 255
       )
-
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
     }
   }

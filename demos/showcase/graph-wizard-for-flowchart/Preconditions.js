@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,90 +26,68 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CreateEdgeInputMode, IEdge, INode } from 'yfiles'
-
-/**
- * @typedef {function} PreCondition
- */
-
+import { IEdge, INode } from '@yfiles/yfiles'
 /**
  * Combines several {@link PreCondition} with a logic AND.
- * @param {!Array.<PreCondition>} conditions The conditions to combine.
- * @returns {!PreCondition}
+ * @param conditions The conditions to combine.
  */
 export function checkAnd(conditions) {
   return (mode) => conditions.every((condition) => condition(mode))
 }
-
 /**
  * Combines several {@link PreCondition} with a logic OR.
- * @param {!Array.<PreCondition>} conditions The conditions to combine.
- * @returns {!PreCondition}
+ * @param conditions The conditions to combine.
  */
 export function checkOr(conditions) {
   return (mode) => conditions.some((condition) => condition(mode))
 }
-
 /**
  * Negates a {@link PreCondition}.
- * @param {!PreCondition} condition The condition to negate.
- * @returns {!PreCondition}
+ * @param condition The condition to negate.
  */
 export function checkNot(condition) {
   return (mode) => !condition(mode)
 }
-
 /**
  * Checks if the {@link GraphWizardInputMode.currentItem currentItem} is an {@link INode}.
- * @param {!GraphWizardInputMode} mode The current {@link GraphWizardInputMode}.
- * @returns {boolean}
+ * @param mode The current {@link GraphWizardInputMode}.
  */
 export function checkForNode(mode) {
   return mode.currentItem instanceof INode
 }
-
 /**
  * Checks if the {@link GraphWizardInputMode.currentItem currentItem} is an {@link IEdge}.
- * @param {!GraphWizardInputMode} mode The current {@link GraphWizardInputMode}.
- * @returns {boolean}
+ * @param mode The current {@link GraphWizardInputMode}.
  */
 export function checkForEdge(mode) {
   return mode.currentItem instanceof IEdge
 }
-
 /**
  * Checks if the {@link GraphWizardInputMode.currentItem currentItem} is an {@link INode} and
  * has the specified {@link INode.style style}.
- * @param {*} styleClass The style class the current node is checked for.
- * @returns {!PreCondition}
+ * @param styleClass The style class the current node is checked for.
  */
 export function checkForNodeStyle(styleClass) {
   return (mode) => mode.currentItem instanceof INode && mode.currentItem.style instanceof styleClass
 }
-
 /**
  * Checks if the {@link GraphWizardInputMode.currentItem currentItem} is an {@link IEdge} and
  * has the specified {@link IEdge.style style}.
- * @param {*} styleClass The style class the current edge is checked for.
- * @returns {!PreCondition}
+ * @param styleClass The style class the current edge is checked for.
  */
 export function checkForEdgeStyle(styleClass) {
   return (mode) => mode.currentItem instanceof IEdge && mode.currentItem.style instanceof styleClass
 }
-
 /**
  * Checks if no edge creation is currently {@link CreateEdgeInputMode.isCreationInProgress in progress}.
- * @param {!GraphWizardInputMode} mode The current {@link GraphWizardInputMode}.
- * @returns {boolean}
+ * @param mode The current {@link GraphWizardInputMode}.
  */
 export function checkNotCreatingEdge(mode) {
   return !mode.createEdgeMode.isCreationInProgress
 }
-
 /**
  * Checks if an edge creation is currently {@link CreateEdgeInputMode.isCreationInProgress in progress}.
- * @param {!GraphWizardInputMode} mode The current {@link GraphWizardInputMode}.
- * @returns {boolean}
+ * @param mode The current {@link GraphWizardInputMode}.
  */
 export function checkCreatingEdge(mode) {
   return mode.createEdgeMode.isCreationInProgress

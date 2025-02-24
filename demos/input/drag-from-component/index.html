@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Drag From Component [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -55,7 +55,6 @@
         width: fit-content;
       }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -118,10 +117,13 @@
             <ul>
               <li>Dragging a node will let you drag it from the component.</li>
               <li>
-                Dragging a selected node while pressing the SHIFT key will move the node on the
-                component.
+                Dragging a selected node while pressing <kbd>Shift</kbd> key will move the node on
+                the component.
               </li>
-              <li>Dragging an unselected node with SHIFT held down will start edge creation.</li>
+              <li>
+                Dragging from a green port candidate with <kbd>Shift</kbd> held down will start edge
+                creation.
+              </li>
             </ul>
           </li>
         </ul>
@@ -138,7 +140,7 @@
             <a href="../../input/custom-drag-and-drop/" target="_blank">Custom Drag and Drop Demo</a>
           </li>
           <li>
-            <a href="../../application-features/drag-and-drop/" target="_blank">Simple Drag And Drop Demo</a>
+            <a href="" target="_blank">application-features-drag-and-drop</a>
           </li>
         </ul>
       </div>

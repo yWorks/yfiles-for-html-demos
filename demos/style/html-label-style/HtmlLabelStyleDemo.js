@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,91 +27,77 @@
  **
  ***************************************************************************/
 import {
-  Class,
   Font,
-  FreeEdgeLabelModel,
+  SmartEdgeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicLayout,
-  InteriorStretchLabelModel,
+  HierarchicalLayout,
   LayoutExecutor,
   License,
   ShapeNodeStyle,
-  Size
-} from 'yfiles'
-
-import HtmlLabelStyle from './HtmlLabelStyle.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+  Size,
+  StretchNodeLabelModel
+} from '@yfiles/yfiles'
+import { HtmlLabelStyle } from './HtmlLabelStyle'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-
 /**
  * Simple demo that shows how to create a custom style that uses HTML for rendering the labels.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // Disable node creation since they wouldn't have an HTML label anyway
   graphComponent.inputMode = new GraphEditorInputMode({
     allowCreateNode: false
   })
-
   // Apply default styling
   const graph = graphComponent.graph
   initDemoStyles(graph)
-  graph.nodeDefaults.size = new Size(250, 200)
+  graph.nodeDefaults.size = new Size(300, 230)
   graph.nodeDefaults.style = new ShapeNodeStyle({ stroke: null, fill: null })
-  graph.nodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.CENTER
-  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+  graph.nodeDefaults.labels.layoutParameter = StretchNodeLabelModel.CENTER
+  graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
   graphComponent.focusIndicatorManager.enabled = false
-
   // Labels get the HTML label style
   const font = new Font('Montserrat,sans-serif', 14)
   graph.nodeDefaults.labels.style = new HtmlLabelStyle(font)
   graph.edgeDefaults.labels.style = new HtmlLabelStyle(font)
-
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
-
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 100 })
+    new HierarchicalLayout({
+      defaultEdgeDescriptor: {
+        minimumFirstSegmentLength: 30,
+        minimumLastSegmentLength: 30
+      }
+    })
   )
-  graphComponent.fitGraphBounds()
-
+  await graphComponent.fitGraphBounds()
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
-
 /**
  * Creates nodes and edges according to the given data.
- * @param {!IGraph} graph
- * @param {!JSONGraph} graphData
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-
   graphBuilder
     .createNodesSource({
       data: graphData.nodeList,
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
-
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
-
   graphBuilder.buildGraph()
 }
-
 void run().then(finishLoading)

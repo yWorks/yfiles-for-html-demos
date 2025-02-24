@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,33 +35,28 @@ import {
   GraphSnapContext,
   GridConstraintProvider,
   GridInfo,
+  IBend,
   IEdge,
   IEdgePortHandleProvider,
   IEdgeReconnectionPortCandidateProvider,
   IHitTestable,
   IPortCandidateProvider,
   IPortLocationModel,
-  KeyEventRecognizers,
+  KeyEventArgs,
   License,
-  MouseEventRecognizers,
-  NodeStylePortStyleAdapter,
+  ShapePortStyle,
   OrthogonalEdgeEditingContext,
   Point,
   PolylineEdgeStyle,
   PortRelocationHandleProvider,
-  ShapeNodeStyle,
   Stroke,
   Visualization
-} from 'yfiles'
-
-import { EdgePathPortCandidateProvider } from './EdgePathPortCandidateProvider.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/** @type {GraphComponent} */
+} from '@yfiles/yfiles'
+import { EdgePathPortCandidateProvider } from './EdgePathPortCandidateProvider'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 let graphComponent
-
 /**
  * This application demonstrates the use of edge-to-edge connections. Edges can be created interactively
  * between nodes, nodes and edges and between two edges. Also, this application enables moving the source or
@@ -76,64 +71,50 @@ let graphComponent
  * {@link IEdgePortHandleProvider} and {@link IPortLocationModel}
  * to enable custom behavior like reconnecting an existing edge to another edge, starting edge creation from an edge
  * etc.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeInputMode()
-
   initializeGraph()
-
   createSampleGraph()
-
   initializeUI()
 }
-
 /**
  * Initializes the graph instance setting default styles and customizing behavior.
  */
 function initializeGraph() {
   const graph = graphComponent.graph
-
   graph.undoEngineEnabled = true
-
   initDemoStyles(graph)
-  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '1.5px #662b00' })
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: '1.5px #662b00',
+    orthogonalEditing: true
+  })
   graph.edgeDefaults.shareStyleInstance = false
-
   // assign a port style for the ports at the edges
-  graph.edgeDefaults.ports.style = new NodeStylePortStyleAdapter({
-    nodeStyle: new ShapeNodeStyle({
-      shape: 'ellipse',
-      fill: 'black',
-      stroke: null
-    }),
+  graph.edgeDefaults.ports.style = new ShapePortStyle({
+    shape: 'ellipse',
+    fill: 'black',
+    stroke: null,
     renderSize: [3, 3]
   })
-
   // enable edge port candidates
-  graph.decorator.edgeDecorator.portCandidateProviderDecorator.setFactory(
+  graph.decorator.edges.portCandidateProvider.addFactory(
     (edge) => new EdgePathPortCandidateProvider(edge)
   )
-
   // set IEdgeReconnectionPortCandidateProvider to allow re-connecting edges to other edges
-  graph.decorator.edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setImplementation(
-    IEdgeReconnectionPortCandidateProvider.ALL_NODE_AND_EDGE_CANDIDATES
+  graph.decorator.edges.reconnectionPortCandidateProvider.addFactory((edge) =>
+    IEdgeReconnectionPortCandidateProvider.fromAllNodeAndEdgeCandidates(edge)
   )
-  graph.decorator.edgeDecorator.handleProviderDecorator.setFactory((edge) => {
+  graph.decorator.edges.handleProvider.addFactory((edge) => {
     const portRelocationHandleProvider = new PortRelocationHandleProvider(null, edge)
     portRelocationHandleProvider.visualization = Visualization.LIVE
     return portRelocationHandleProvider
   })
 }
-
 /**
  * Creates the {@link GraphSnapContext}.
- * @returns {!GraphSnapContext}
  */
 function createSnapContext() {
   const snapContext = new GraphSnapContext({
@@ -142,13 +123,12 @@ function createSnapContext() {
     gridSnapType: 'none'
   })
   // add constraint provider for nodes, bends, and ports
-  const gridInfo = new GridInfo(50)
+  const gridInfo = new GridInfo(50, 50)
   snapContext.nodeGridConstraintProvider = new GridConstraintProvider(gridInfo)
   snapContext.bendGridConstraintProvider = new GridConstraintProvider(gridInfo)
   snapContext.portGridConstraintProvider = new GridConstraintProvider(gridInfo)
   return snapContext
 }
-
 /**
  * Initializes the input mode and enables edge-to-edge connections on the input mode.
  */
@@ -159,42 +139,39 @@ function initializeInputMode() {
       enabled: false
     })
   })
-
   mode.createEdgeInputMode.allowEdgeToEdgeConnections = true
-
   // create bends only when shift is pressed
-  mode.createBendInputMode.pressedRecognizer = EventRecognizers.createAndRecognizer(
-    MouseEventRecognizers.LEFT_DOWN,
-    KeyEventRecognizers.SHIFT_IS_DOWN
+  mode.createBendInputMode.beginRecognizer = (eventSource, evt) =>
+    EventRecognizers.MOUSE_DOWN(eventSource, evt) &&
+    EventRecognizers.SHIFT_IS_DOWN(eventSource, evt)
+  mode.createEdgeInputMode.addEventListener('edge-creation-started', (evt) =>
+    setRandomEdgeColor(evt.item)
   )
-
-  mode.createEdgeInputMode.addEdgeCreationStartedListener((_, evt) => setRandomEdgeColor(evt.item))
-
+  // disable directional constraint recognizer because Shift is used for bend creation
+  mode.handleInputMode.directionalConstraintRecognizer = (evt, eventSource) => {
+    console.log(mode.handleInputMode.affectedItems.some((i) => i instanceof IBend))
+    return evt.key == 'Shift' && !mode.handleInputMode.affectedItems.some((i) => i instanceof IBend)
+  }
   graphComponent.inputMode = mode
 }
-
 /**
  * Creates a small sample graph containing edge to edge connections.
  */
 function createSampleGraph() {
   const graph = graphComponent.graph
-
   const n1 = graph.createNodeAt(new Point(0, 0))
   const n2 = graph.createNodeAt(new Point(500, 0))
   const n3 = graph.createNodeAt(new Point(0, 300))
   const n4 = graph.createNodeAt(new Point(500, 300))
-
   const e1 = graph.createEdge(n1, n3)
   const e2 = graph.createEdge(n2, n4)
   const e3 = graph.createEdge(n3, n4)
-
   graph.addBends(e3, [
     new Point(100, 300),
     new Point(100, 450),
     new Point(400, 450),
     new Point(400, 300)
   ])
-
   const p1 = graph.addPort(e1, EdgePathPortLocationModel.INSTANCE.createRatioParameter(0.4))
   const p2 = graph.addPort(e2, EdgePathPortLocationModel.INSTANCE.createRatioParameter(0.4))
   const e4 = graph.createEdge(p1, p2)
@@ -202,12 +179,9 @@ function createSampleGraph() {
   const p4 = graph.addPort(e3, EdgePathPortLocationModel.INSTANCE.createRatioParameter(0.8))
   const e5 = graph.createEdge(p3, p4)
   graph.addBend(e5, new Point(250, 360))
-
   graphComponent.fitGraphBounds()
-
   graph.undoEngine.clear()
 }
-
 /**
  * Wires up the UI.
  */
@@ -217,17 +191,14 @@ function initializeUI() {
     const inputMode = graphComponent.inputMode
     inputMode.snapContext.enabled = snappingButton.checked
   })
-
   const orthogonalEditingButton = document.querySelector('#demo-orthogonal-editing-button')
   orthogonalEditingButton.addEventListener('click', () => {
     const inputMode = graphComponent.inputMode
     inputMode.orthogonalEdgeEditingContext.enabled = orthogonalEditingButton.checked
   })
 }
-
 /**
  * Creates a random colored pen and uses that one for the style.
- * @param {!IEdge} edge
  */
 function setRandomEdgeColor(edge) {
   if (edge.style instanceof PolylineEdgeStyle) {
@@ -240,5 +211,4 @@ function setRandomEdgeColor(edge) {
     )
   }
 }
-
 run().then(finishLoading)

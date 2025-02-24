@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { GraphComponent } from 'yfiles'
-import { GraphBuilder, Point, Rect, Size } from 'yfiles'
+import type { GraphComponent } from '@yfiles/yfiles'
+import { GraphBuilder, Point, Rect, Size } from '@yfiles/yfiles'
 import { FlowchartNodeStyle, type FlowchartNodeType } from '../style/FlowchartStyle'
 import { flowchartSamples } from './flowchart-samples'
 
@@ -43,6 +43,7 @@ export function loadFlowchart(graphComponent: GraphComponent, sample: Sample): v
   // initialize the graph builder
   const data = flowchartSamples[sample]
   const builder = new GraphBuilder({
+    graph: graphComponent.graph,
     nodes: [
       {
         data: data.nodes,
@@ -66,5 +67,5 @@ export function loadFlowchart(graphComponent: GraphComponent, sample: Sample): v
   })
 
   // create the graph
-  graphComponent.graph = builder.buildGraph()
+  builder.buildGraph()
 }

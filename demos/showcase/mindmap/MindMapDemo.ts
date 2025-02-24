@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
+  EventRecognizers,
   FilteredGraphWrapper,
   GraphBuilder,
   GraphComponent,
@@ -36,32 +36,29 @@ import {
   GraphOverviewComponent,
   IEdge,
   type IGraph,
-  type IModelItem,
   INode,
+  LabelStyle,
   License,
-  MouseEventRecognizers,
   TreeAnalysis
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import { initializeNodePopups } from './node-popup-toolbar'
 import { MindMapEdgeStyle } from './styles/MindMapEdgeStyle'
-import { MindMapOverviewGraphVisualCreator } from './styles/MindMapOverviewGraphVisualCreator'
 import { layoutTree } from './mind-map-layout'
 import { initializeCommands } from './interaction/commands'
 
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 import { hobbies } from './resources/hobbies'
 import { getNodeData, isCollapsed, isCrossReference } from './data-types'
 import { initializeStyles, updateStyles } from './styles/styles-support'
-import { adjustNodeBounds, getInEdge, initializeSubtrees } from './subtrees'
+import { adjustNodeBounds, getInEdge, getRoot, initializeSubtrees } from './subtrees'
 import { initializeCrossReferences } from './cross-references'
 import { useSingleSelection } from './interaction/single-selection'
-import { ContentRectViewportLimiter } from './interaction/ContentRectViewportLimiter'
 import { EditOneLabelHelper } from './interaction/EditOneLabelHelper'
 import { MindMapFocusIndicatorManager } from './MindMapFocusIndicatorManager'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { MindMapOverviewRenderer } from './styles/MindMapOverviewRenderer'
 
 // This demo shows how to implement a mind map viewer and editor.
 //
@@ -89,9 +86,8 @@ async function run(): Promise<void> {
 
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   const overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
+  overviewComponent.graphOverviewRenderer = new MindMapOverviewRenderer()
 
   initializeGraphComponent()
   initializeStyles()
@@ -101,15 +97,13 @@ async function run(): Promise<void> {
   initializeCrossReferences(graphComponent)
   initializeNodePopups(graphComponent)
 
-  const graph = graphComponent.graph
-
-  await buildGraph(graph)
-
-  // configure overview panel
-  overviewComponent.graphVisualCreator = new MindMapOverviewGraphVisualCreator(graph)
+  await buildGraph(graphComponent.graph)
 
   // add custom commands to interact with the mind map
   initializeCommands(graphComponent)
+
+  // limit the viewport so that the graph cannot be panned too far out of view
+  graphComponent.viewportLimiter.policy = 'within-margins'
 }
 
 /**
@@ -118,7 +112,6 @@ async function run(): Promise<void> {
  * a custom focusIndicatorManager and configures the label editing.
  */
 function initializeGraphComponent(): void {
-  graphComponent.viewportLimiter = new ContentRectViewportLimiter()
   // enables undo
   graphComponent.graph.undoEngineEnabled = true
 
@@ -128,16 +121,14 @@ function initializeGraphComponent(): void {
   // render the focus for the root in front of the node and for the other nodes behind
   graphComponent.focusIndicatorManager = new MindMapFocusIndicatorManager()
 
-  const nodeDecorator = graphComponent.graph.decorator.nodeDecorator
+  const nodeDecorator = graphComponent.graph.decorator.nodes
 
   // prevent adding more than one label to a cross-reference edge or a node
-  graphComponent.graph.decorator.edgeDecorator.editLabelHelperDecorator.setImplementation(
-    new EditOneLabelHelper()
-  )
-  nodeDecorator.editLabelHelperDecorator.setImplementation(new EditOneLabelHelper())
+  graphComponent.graph.decorator.edges.editLabelHelper.addConstant(new EditOneLabelHelper())
+  nodeDecorator.editLabelHelper.addConstant(new EditOneLabelHelper())
 
   // hide selection
-  nodeDecorator.selectionDecorator.hideImplementation()
+  nodeDecorator.selectionRenderer.hide()
 }
 
 /**
@@ -151,19 +142,35 @@ function initializeInputModes(): void {
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     clickableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL,
     clickSelectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
-    movableItems: GraphItemTypes.NODE,
     showHandleItems: GraphItemTypes.EDGE,
     labelEditableItems:
       GraphItemTypes.LABEL_OWNER | GraphItemTypes.NODE_LABEL | GraphItemTypes.EDGE_LABEL,
     deletableItems: GraphItemTypes.NONE,
     allowClipboardOperations: false,
-    autoRemoveEmptyLabels: false,
     contextMenuItems: GraphItemTypes.NODE,
-    focusableItems: GraphItemTypes.NODE
+    focusableItems: GraphItemTypes.NODE,
+    editLabelInputMode: {
+      autoRemoveEmptyLabels: false
+    },
+    // enable panning without ctrl-key pressed
+    moveViewportInputMode: { beginRecognizer: EventRecognizers.MOUSE_DOWN },
+    movableSelectedItemsPredicate: (item) =>
+      item instanceof INode && item !== getRoot(graphComponent.graph),
+    // disable the moveUnselectedItemsInputMode so that only selected nodes can be moved
+    moveUnselectedItemsInputMode: {
+      enabled: false
+    },
+    // make only the nodes and the cross-reference edges selectable
+    selectablePredicate: (item) => {
+      if (item instanceof IEdge) {
+        return isCrossReference(item)
+      }
+      return item instanceof INode
+    }
   })
   // when the label text is updated, the node bounds have to be recalculated so that the label fits in
   // the corresponding 'branch', also a new layout is needed
-  graphEditorInputMode.addLabelTextChangedListener(async (_, evt) => {
+  graphEditorInputMode.editLabelInputMode.addEventListener('label-edited', async (evt) => {
     const label = evt.item
     if (label.owner instanceof INode) {
       adjustNodeBounds(label.owner, filteredGraph.wrappedGraph!)
@@ -171,18 +178,8 @@ function initializeInputModes(): void {
     }
   })
 
-  // enable panning without ctrl-key pressed
-  graphEditorInputMode.moveViewportInputMode.pressedRecognizer = MouseEventRecognizers.LEFT_DOWN
-  graphEditorInputMode.moveInputMode.priority =
+  graphEditorInputMode.moveSelectedItemsInputMode.priority =
     graphEditorInputMode.moveViewportInputMode.priority - 1
-
-  // make only the nodes and the cross-reference edges selectable
-  graphEditorInputMode.selectablePredicate = (item: IModelItem): boolean => {
-    if (item instanceof IEdge) {
-      return isCrossReference(item)
-    }
-    return item instanceof INode
-  }
 
   graphComponent.inputMode = graphEditorInputMode
 
@@ -202,7 +199,7 @@ function initializeGraphFiltering(): void {
   function nodePredicate(node: INode): boolean {
     const edge = getInEdge(node, filteredGraph.wrappedGraph!)
     if (edge) {
-      const parent = edge.sourceNode!
+      const parent = edge.sourceNode
       return !isCollapsed(parent) && nodePredicate(parent)
     }
     return true
@@ -223,7 +220,7 @@ async function buildGraph(graph: IGraph): Promise<void> {
   const graphBuilder = new GraphBuilder(graph)
   const nodesSource = graphBuilder.createNodesSource(hobbies.concepts, 'id')
   const labelCreator = nodesSource.nodeCreator.createLabelBinding('text')
-  labelCreator.defaults.style = new DefaultLabelStyle()
+  labelCreator.defaults.style = new LabelStyle()
   const edgesSource = graphBuilder.createEdgesSource(hobbies.connections, 'from', 'to')
   edgesSource.edgeCreator.defaults.style = new MindMapEdgeStyle(1, 1)
   graphBuilder.buildGraph()
@@ -235,10 +232,11 @@ async function buildGraph(graph: IGraph): Promise<void> {
   updateStyles(graph.nodes.find((node) => graph.inDegree(node) === 0)!, graph)
   // calculate the bounds for each node based on its label's size
   graph.nodes.forEach((node) => adjustNodeBounds(node, graph))
-  graphComponent.fitGraphBounds()
 
   // arrange the graph using a tree layout
   await layoutTree(graphComponent)
+
+  await graphComponent.fitGraphBounds()
 
   graphComponent.graph.undoEngine!.clear()
 }

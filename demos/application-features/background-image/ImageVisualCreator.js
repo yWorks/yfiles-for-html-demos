@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IRenderContext, IVisualCreator, SvgVisual, Visual } from 'yfiles'
-
+import { BaseClass, IRenderContext, IVisualCreator, SvgVisual, Visual } from '@yfiles/yfiles'
 export default class ImageVisualCreator extends BaseClass(IVisualCreator) {
   /**
    * Creates the visual for the background.
-   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @param context The context that describes where the visual will be used
    * return {Visual} The visual for the background
-   * @returns {!SvgVisual}
    */
   createVisual(context) {
     const image = window.document.createElementNS('http://www.w3.org/2000/svg', 'image')
@@ -42,16 +40,13 @@ export default class ImageVisualCreator extends BaseClass(IVisualCreator) {
     image.setAttribute('x', '-150')
     image.setAttribute('y', '-160')
     image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'ylogo.svg')
-
     return new SvgVisual(image)
   }
-
   /**
    * Updates the visual for the background.
-   * @param {!IRenderContext} context The context that describes where the visual will be used
-   * @param {!Visual} oldVisual The old visual
+   * @param context The context that describes where the visual will be used
+   * @param oldVisual The old visual
    * return {Visual} The visual for the background
-   * @returns {!Visual}
    */
   updateVisual(context, oldVisual) {
     return oldVisual

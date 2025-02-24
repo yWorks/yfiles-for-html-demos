@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,25 +26,22 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IVisualCreator, SvgVisual } from 'yfiles'
-
+import { BaseClass, IVisualCreator, SvgVisual } from '@yfiles/yfiles'
 /**
  * Creates a visual for the demo's background image.
  */
 export default class ImageVisualCreator extends BaseClass(IVisualCreator) {
+  imageRect
   /**
    * Initializes a new instance of <code>ImageVisualCreator</code>.
-   * @param {!Rect} imageRect The rectangle that defines the location and the size of the image.
+   * @param imageRect The rectangle that defines the location and the size of the image.
    */
   constructor(imageRect) {
     super()
     this.imageRect = imageRect
   }
-
   /**
    * Creates a visual for the demo's background image.
-   * @param {!IRenderContext} context
-   * @returns {!SvgVisual}
    */
   createVisual(context) {
     const image = document.createElementNS('http://www.w3.org/2000/svg', 'image')
@@ -55,12 +52,8 @@ export default class ImageVisualCreator extends BaseClass(IVisualCreator) {
     image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'resources/earth-layers.svg')
     return new SvgVisual(image)
   }
-
   /**
    * Delegates the call to the {@link createVisual} method.
-   * @param {!IRenderContext} context
-   * @param {!Visual} oldVisual
-   * @returns {!Visual}
    */
   updateVisual(context, oldVisual) {
     return oldVisual

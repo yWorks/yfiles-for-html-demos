@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,19 +28,15 @@
  ***************************************************************************/
 import {
   CircularLayout,
-  CompactNodePlacer,
-  CompactOrthogonalLayout,
+  CompactSubtreePlacer,
   GraphComponent,
   GraphItemTypes,
   GraphMLIOHandler,
   GraphViewerInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   HoveredItemChangedEventArgs,
-  ICanvasObjectDescriptor,
-  IEdge,
   IGraph,
   ILabel,
-  ILayoutCallback,
   INode,
   LayoutGraphAdapter,
   License,
@@ -50,22 +46,20 @@ import {
   OrganicLayout,
   OrthogonalLayout,
   Point,
-  TreeLayout,
-  TreeReductionStage,
-  YDimension
-} from 'yfiles'
+  Size,
+  TreeLayout
+} from '@yfiles/yfiles'
 
 import {
-  applyDemoTheme,
   createDemoEdgeStyle,
   createDemoNodeLabelStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from 'demo-resources/demo-styles'
+} from '@yfiles/demo-resources/demo-styles'
 import MultiPageIGraphBuilder from './MultiPageIGraphBuilder'
 import PageBoundsVisualCreator from './PageBoundsVisualCreator'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo-page'
 
 /**
  * This demo demonstrates how the result of a multi-page layout calculation
@@ -78,14 +72,12 @@ async function run(): Promise<void> {
   // initialize both graph components
   graphComponent = new GraphComponent('graphComponent')
   modelGraphComponent = new GraphComponent('modelGraphComponent')
-  applyDemoTheme(graphComponent)
-  applyDemoTheme(modelGraphComponent)
   initDemoStyles(modelGraphComponent.graph, { theme: 'demo-palette-21' })
 
   initializeUI()
   initializeCoreLayouts()
   initializeInputModes()
-  loadModelGraph('Pop Artists')
+  await loadModelGraph('Pop Artists')
 }
 
 /**
@@ -145,8 +137,8 @@ function runMultiPageLayout(): void {
   const layoutIndex = coreLayoutComboBox.selectedIndex
   const coreLayout = (coreLayoutComboBox.options[layoutIndex > -1 ? layoutIndex : 0] as any).myValue
   if (coreLayoutComboBox.value === 'Tree') {
-    // configure CompactNodePlacer to respect the aspect ratio of the page
-    coreLayout.defaultNodePlacer.aspectRatio = pageWidth / pageHeight
+    // configure CompactSubtreePlacer to respect the aspect ratio of the page
+    coreLayout.defaultSubtreePlacer.aspectRatio = pageWidth / pageHeight
   }
 
   const createProxyReferenceNodes = document.querySelector<HTMLInputElement>(
@@ -160,23 +152,18 @@ function runMultiPageLayout(): void {
 
   const multiPageLayout = new MultiPageLayout({
     coreLayout,
-    maximumPageSize: new YDimension(pageWidth, pageHeight),
-    createProxyReferenceNodes: createProxyNodes,
+    maximumPageSize: new Size(pageWidth, pageHeight),
+    useProxyReferenceNodes: createProxyNodes,
     multipleComponentsOnSinglePage: placeComponentsOnSinglePage,
     additionalParentCount: Number.parseInt(
       document.querySelector<HTMLInputElement>('#additionalParentCount')!.value
     ),
-    layoutCallback: ILayoutCallback.create(async (result: MultiPageLayoutResult) => {
+    layoutCallback: async (result: MultiPageLayoutResult) => {
       await applyLayoutResult(result, pageWidth, pageHeight)
-    })
+    }
   })
 
-  const multiPageLayoutData = new MultiPageLayoutData({
-    nodeIds: (key: INode) => key,
-    edgeIds: (key: IEdge) => key,
-    nodeLabelIds: (key: ILabel) => key,
-    edgeLabelIds: (key: ILabel) => key
-  })
+  const multiPageLayoutData = new MultiPageLayoutData()
 
   setTimeout(() => {
     const adapter = new LayoutGraphAdapter(modelGraphComponent.graph)
@@ -237,7 +224,7 @@ async function applyLayoutResult(
 }
 
 function setPageNumber(newPageNumber: number, targetNode: INode | null = null): void {
-  graphComponent.highlightIndicatorManager.clearHighlights()
+  graphComponent.highlights.clear()
   graphComponent.focusIndicatorManager.focusedItem = null
 
   if (viewGraphs.length <= 0) {
@@ -259,31 +246,31 @@ function setPageNumber(newPageNumber: number, targetNode: INode | null = null): 
   pageNumberTextBox.setAttribute('max', `${viewGraphs.length}`)
 
   graphComponent.graph = viewGraphs[pageNumber]
-  graphComponent.updateContentRect()
+  graphComponent.updateContentBounds()
 
   if (pageBoundsVisualCreator == null) {
     pageBoundsVisualCreator = new PageBoundsVisualCreator()
-    graphComponent.backgroundGroup.addChild(
-      pageBoundsVisualCreator,
-      ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    graphComponent.renderTree.createElement(
+      graphComponent.renderTree.backgroundGroup,
+      pageBoundsVisualCreator
     )
   }
-  pageBoundsVisualCreator.center = graphComponent.contentRect.center
+  pageBoundsVisualCreator.center = graphComponent.contentBounds.center
 
   // place target node under mouse cursor
   if (targetNode !== null && graphComponent.graph.contains(targetNode)) {
     const targetCenter = targetNode.layout.center
-    const mousePosition = graphComponent.lastMouseEvent.location
-    const controlCenter = graphComponent.toWorldCoordinates(
+    const mousePosition = graphComponent.lastInputEvent.location
+    const controlCenter = graphComponent.viewToWorldCoordinates(
       new Point(graphComponent.size.width * 0.5, graphComponent.size.height * 0.5)
     )
     graphComponent.zoomTo(
-      targetCenter.subtract(mousePosition.subtract(controlCenter)),
-      graphComponent.zoom
+      graphComponent.zoom,
+      targetCenter.subtract(mousePosition.subtract(controlCenter))
     )
-    graphComponent.highlightIndicatorManager.addHighlight(targetNode)
+    graphComponent.highlights.add(targetNode)
   } else {
-    graphComponent.fitGraphBounds()
+    void graphComponent.fitGraphBounds()
   }
 
   document.querySelector<HTMLButtonElement>('#previous-page')!.disabled = !checkPageNumber(
@@ -365,27 +352,21 @@ function initializeUI(): void {
  * Creates the core layout algorithms and populates the layouts box.
  */
 function initializeCoreLayouts(): void {
-  const hierarchicLayout = new HierarchicLayout({
-    considerNodeLabels: true,
-    integratedEdgeLabeling: true,
-    orthogonalRouting: true
-  })
+  const hierarchicalLayout = new HierarchicalLayout()
 
   const organicLayout = new OrganicLayout({
-    minimumNodeDistance: 10,
+    defaultMinimumNodeDistance: 10,
     deterministic: true
   })
 
   const treeLayout = new TreeLayout({
-    defaultNodePlacer: new CompactNodePlacer()
+    defaultSubtreePlacer: new CompactSubtreePlacer()
   })
-  treeLayout.prependStage(new TreeReductionStage())
 
   const additionalParentCount = document.querySelector<HTMLInputElement>('#additionalParentCount')!
   const coreLayoutComboBox = document.querySelector<HTMLSelectElement>('#coreLayoutComboBox')!
-  addOption(coreLayoutComboBox, 'Hierarchic', hierarchicLayout)
+  addOption(coreLayoutComboBox, 'Hierarchical', hierarchicalLayout)
   addOption(coreLayoutComboBox, 'Circular', new CircularLayout())
-  addOption(coreLayoutComboBox, 'Compact Orthogonal', new CompactOrthogonalLayout())
   addOption(coreLayoutComboBox, 'Organic', organicLayout)
   addOption(coreLayoutComboBox, 'Orthogonal', new OrthogonalLayout())
   addOption(coreLayoutComboBox, 'Tree', treeLayout)
@@ -425,10 +406,10 @@ function initializeInputModes(): void {
 
   // highlight nodes on hover
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.LABEL
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener(onHoveredItemChanged)
+  inputMode.itemHoverInputMode.addEventListener('hovered-item-changed', onHoveredItemChanged)
 
   // handle clicks on nodes
-  inputMode.addItemClickedListener((_, evt) => {
+  inputMode.addEventListener('item-clicked', (evt) => {
     goToReferencingNode(evt.item as INode)
   })
   graphComponent.inputMode = inputMode
@@ -440,8 +421,10 @@ function initializeInputModes(): void {
     focusableItems: GraphItemTypes.NONE
   })
   // fit bounds on double-click
-  modelInputMode.clickInputMode.addDoubleClickedListener(() => {
-    modelGraphComponent.fitGraphBounds()
+  modelInputMode.clickInputMode.addEventListener('clicked', (evt) => {
+    if (evt.clickCount == 2) {
+      void modelGraphComponent.fitGraphBounds()
+    }
   })
   modelGraphComponent.inputMode = modelInputMode
 }
@@ -449,19 +432,19 @@ function initializeInputModes(): void {
 /**
  * Add/Remove the hovered item to the highlight manager.
  */
-function onHoveredItemChanged(sender: object, args: HoveredItemChangedEventArgs): void {
+function onHoveredItemChanged(evt: HoveredItemChangedEventArgs): void {
   // we use the highlight manager to highlight hovered items
-  const manager = graphComponent.highlightIndicatorManager
-  if (args.oldItem instanceof INode) {
-    manager.removeHighlight(args.oldItem)
-  } else if (args.oldItem instanceof ILabel) {
-    manager.removeHighlight(args.oldItem.owner as INode)
+  const highlights = graphComponent.highlights
+  if (evt.oldItem instanceof INode) {
+    highlights.remove(evt.oldItem)
+  } else if (evt.oldItem instanceof ILabel) {
+    highlights.remove(evt.oldItem.owner as INode)
   }
 
-  if (args.item instanceof INode) {
-    manager.addHighlight(args.item)
-  } else if (args.item instanceof ILabel) {
-    manager.addHighlight(args.item.owner as INode)
+  if (evt.item instanceof INode) {
+    highlights.add(evt.item)
+  } else if (evt.item instanceof ILabel) {
+    highlights.add(evt.item.owner as INode)
   }
 }
 
@@ -479,10 +462,10 @@ async function loadModelGraph(graphId: any) {
 
   await new GraphMLIOHandler().readFromURL(modelGraphComponent.graph, filename)
   // fit model graph to the component
-  modelGraphComponent.fitGraphBounds()
+  void modelGraphComponent.fitGraphBounds()
 
   // fit the graph to the component
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   // calculate the multi-page layout
   runMultiPageLayout()

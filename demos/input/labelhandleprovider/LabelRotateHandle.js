@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,19 +31,21 @@ import {
   CanvasComponent,
   ClickEventArgs,
   Cursor,
-  HandleTypes,
-  ICanvasObject,
+  HandleType,
   IHandle,
   IInputModeContext,
   ILabel,
   ILabelModelParameterFinder,
+  IOrientedRectangle,
   IPoint,
+  IRenderContext,
+  IRenderTreeElement,
+  ISize,
   OrientedRectangle,
-  OrientedRectangleIndicatorInstaller,
   Point,
   Size
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
+import { OrientedRectangleRendererBase } from '../../utils/OrientedRectangleRendererBase'
 /**
  * A custom {@link IHandle} implementation that implements the functionality needed for rotating a label.
  */
@@ -56,141 +58,117 @@ export default class LabelRotateHandle extends BaseClass(IHandle) {
   up = null
   rotationCenter = null
   rotationIndicator = null
-
   /**
    * Creates a rotate handler for the given label.
-   * @param {!ILabel} label The given label
-   * @param {!IInputModeContext} context The context to retrieve information
+   * @param label The given label
+   * @param context The context to retrieve information
    */
   constructor(label, context) {
     super()
     this.label = label
     this.inputModeContext = context
   }
-
   /**
    * Gets the type of the handler.
-   * @type {!HandleTypes}
    */
   get type() {
-    return HandleTypes.ROTATE
+    return HandleType.CUSTOM3
   }
-
   /**
    * Returns the cursor object.
-   * @type {!Cursor}
    */
   get cursor() {
     return Cursor.CROSSHAIR
   }
-
+  get tag() {
+    return null
+  }
   /**
    * Returns the handler's location.
-   * @type {!IPoint}
    */
   get location() {
     return this.handleLocation
   }
-
   /**
    * Invoked when dragging is about to start.
-   * @param {!IInputModeContext} context The context to retrieve information
+   * @param context The context to retrieve information
    */
   initializeDrag(context) {
     this.inputModeContext = context
     // start using the calculated dummy bounds
     this.emulate = true
     const labelLayout = this.label.layout
-    this.dummyLocation = labelLayout.anchorLocation
+    this.dummyLocation = labelLayout.anchor
     this.up = labelLayout.upVector
-
-    this.rotationCenter = labelLayout.orientedRectangleCenter
+    this.rotationCenter = labelLayout.center
     const canvasComponent = context.canvasComponent
     if (canvasComponent !== null) {
-      this.rotationIndicator = this.createAngleIndicator(canvasComponent)
+      this.createAngleIndicator(canvasComponent)
     }
   }
-
   /**
    * Creates the indicator that shows the rotation angle of the label during drag.
-   * @param {!CanvasComponent} canvasComponent
    */
   createAngleIndicator(canvasComponent) {
-    const handle = this
-    const indicatorInstaller = new (class extends OrientedRectangleIndicatorInstaller {
-      /**
-       * @param {*} item
-       * @returns {!OrientedRectangle}
-       */
-      getRectangle(item) {
-        return handle.getCurrentLabelLayout()
-      }
-    })()
-    return indicatorInstaller.addCanvasObject(
-      canvasComponent.canvasContext,
-      canvasComponent.selectionGroup,
-      this
+    const renderer = new RotatedRectangleRenderer()
+    this.rotationIndicator = canvasComponent.renderTree.createElement(
+      canvasComponent.renderTree.selectionGroup,
+      this,
+      renderer
     )
   }
-
   /**
    * Invoked when an element has been dragged and its position should be updated.
-   * @param {!IInputModeContext} context The context to retrieve information
-   * @param {!Point} originalLocation The value of the location property at the time of initializeDrag
-   * @param {!Point} newLocation The new location in the world coordinate system
+   * @param context The context to retrieve information
+   * @param originalLocation The value of the location property at the time of initializeDrag
+   * @param newLocation The new location in the world coordinate system
    */
   handleMove(context, originalLocation, newLocation) {
     // calculate the up vector
     this.up = newLocation.subtract(this.rotationCenter).normalized
-
     // and the anchor point
     const preferredSize = this.label.preferredSize
-
     const p2X = -preferredSize.width * 0.5
     const p2Y = preferredSize.height * 0.5
-
     const anchorX = this.rotationCenter.x - p2X * this.up.y - p2Y * this.up.x
     const anchorY = this.rotationCenter.y - (p2Y * this.up.y - p2X * this.up.x)
-
     // calculate the new location
     this.dummyLocation = new Point(anchorX, anchorY)
   }
-
   /**
    * Invoked when dragging has canceled.
-   * @param {!IInputModeContext} context The context to retrieve information
-   * @param {!Point} originalLocation The value of the location property at the time of initializeDrag
+   * @param context The context to retrieve information
+   * @param originalLocation The value of the location property at the time of initializeDrag
    */
   cancelDrag(context, originalLocation) {
     // use the normal label bounds if the drag gesture is over
     this.emulate = false
     // remove the visual size indicator
-    this.rotationIndicator?.remove()
+    if (this.rotationIndicator) {
+      context.canvasComponent?.renderTree.remove(this.rotationIndicator)
+    }
     this.rotationIndicator = null
   }
-
   /**
    * Invoked when dragging has finished.
-   * @param {!IInputModeContext} context The context to retrieve information
-   * @param {!Point} originalLocation The value of the location property at the time of initializeDrag
-   * @param {!Point} newLocation The new location in the world coordinate system
+   * @param context The context to retrieve information
+   * @param originalLocation The value of the location property at the time of initializeDrag
+   * @param newLocation The new location in the world coordinate system
    */
   dragFinished(context, originalLocation, newLocation) {
     const graph = context.graph
     if (graph !== null) {
       const model = this.label.layoutParameter.model
-      const finder = model.lookup(ILabelModelParameterFinder.$class)
+      const finder = model.getContext(this.label).lookup(ILabelModelParameterFinder)
       if (finder !== null) {
-        const param = finder.findBestParameter(this.label, model, this.getCurrentLabelLayout())
+        const param = finder.findBestParameter(this.getCurrentLabelLayout())
         graph.setLabelLayoutParameter(this.label, param)
       }
     }
     this.cancelDrag(context, originalLocation)
   }
-
   /**
    * Returns the current label layout.
-   * @returns {!OrientedRectangle}
    */
   getCurrentLabelLayout() {
     const preferredSize = this.label.preferredSize
@@ -204,59 +182,74 @@ export default class LabelRotateHandle extends BaseClass(IHandle) {
       this.up.y
     )
   }
-
   /**
    * This implementation does nothing special when clicked.
-   * @param {!ClickEventArgs} evt
    */
   handleClick(evt) {}
 }
-
 /**
  * Represents the new resize point for the given handler.
  */
 class LabelRotateHandleLivePoint extends BaseClass(IPoint) {
+  handle
   /**
    * Creates a new point for the given handle.
-   * @param {!LabelRotateHandle} handle The given handle
+   * @param handle The given handle
    */
   constructor(handle) {
     super()
     this.handle = handle
   }
-
   /**
    * Returns the x-coordinate of the location of the handle from the anchor, the size and the orientation.
-   * @type {number}
    */
   get x() {
     const { anchor, up, preferredSize, offset } = this.getPositionInfo()
     return anchor.x + up.x * (preferredSize.height + offset) + -up.y * (preferredSize.width * 0.5)
   }
-
   /**
    * Returns the y-coordinate of the location of the handle from the anchor, the size and the orientation.
-   * @type {number}
    */
   get y() {
     const { anchor, up, preferredSize, offset } = this.getPositionInfo()
     return anchor.y + up.y * (preferredSize.height + offset) + up.x * (preferredSize.width * 0.5)
   }
-
   /**
    * Prepares all relevant information needed to calculate the position of the handle.
-   * @returns {!object}
    */
   getPositionInfo() {
     const preferredSize = this.handle.label.preferredSize
     const labelLayout = this.handle.label.layout
-    const anchor = this.handle.emulate ? this.handle.dummyLocation : labelLayout.anchorLocation
+    const anchor = this.handle.emulate ? this.handle.dummyLocation : labelLayout.anchor
     const up = this.handle.emulate ? this.handle.up : labelLayout.upVector
-    // calculate the location of the handle from the anchor, the size and the orientation
-    const offset =
-      this.handle.inputModeContext !== null
-        ? 20 / this.handle.inputModeContext.canvasComponent.zoom
-        : 20
-    return { anchor, up, preferredSize, offset }
+    return { anchor, up, preferredSize, offset: 20 }
+  }
+}
+class RotatedRectangleRenderer extends OrientedRectangleRendererBase {
+  createIndicatorElement(_context, size, _renderTag) {
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.setAttribute('width', size.width.toString())
+    rect.setAttribute('height', size.height.toString())
+    rect.setAttribute('stroke', 'rgb(56,67,79)')
+    rect.setAttribute('stroke-width', '2')
+    rect.setAttribute('fill', 'none')
+    return rect
+  }
+  updateIndicatorElement(_context, size, _renderTag, oldSvgElement) {
+    oldSvgElement.setAttribute('width', size.width.toString())
+    oldSvgElement.setAttribute('height', size.height.toString())
+    return oldSvgElement
+  }
+  getLayout(renderTag) {
+    const handleLocation = renderTag.dummyLocation
+    const handleSize = renderTag.label.preferredSize
+    return new OrientedRectangle(
+      handleLocation.x,
+      handleLocation.y,
+      handleSize.width,
+      handleSize.height,
+      renderTag.up.x,
+      renderTag.up.y
+    )
   }
 }

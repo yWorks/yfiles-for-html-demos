@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  BezierEdgeStyle,
   IEdge,
   IGraph,
   IHandle,
@@ -37,22 +38,15 @@ import {
   PortRelocationHandle,
   PortRelocationHandleProvider,
   Visualization
-} from 'yfiles'
-import { FlowEdgeStyle } from './FlowEdgeStyle.js'
-import { validatePortTag } from '../FlowNode/FlowNodePort.js'
-import { getSmoothEdgeControlPoints } from './FlowEdge.js'
-
+} from '@yfiles/yfiles'
+import { validatePortTag } from '../FlowNode/FlowNodePort'
+import { getSmoothEdgeControlPoints } from './FlowEdge'
+import { FlowEdgeStyle } from './FlowEdgeStyle'
 /**
  * A handle provider that provides port relocation handles that look the same as the handles
  * as during new edge creation.
  */
 export class FlowPortRelocationHandleProvider extends PortRelocationHandleProvider {
-  /**
-   * @param {?IGraph} graph
-   * @param {!IEdge} edge
-   * @param {boolean} sourcePort
-   * @returns {?IHandle}
-   */
   createPortRelocationHandle(graph, edge, sourcePort) {
     if (!graph) {
       return null
@@ -60,94 +54,75 @@ export class FlowPortRelocationHandleProvider extends PortRelocationHandleProvid
     const portRelocationHandle = new FlowPortRelocationHandle(graph, edge, sourcePort)
     portRelocationHandle.showHitPortOwnerCandidatesOnly = false
     portRelocationHandle.addExistingPort = false
-    portRelocationHandle.visualization = Visualization.DUMMY
+    portRelocationHandle.visualization = Visualization.PLACEHOLDER
     return portRelocationHandle
   }
 }
-
 class FlowPortRelocationHandle extends PortRelocationHandle {
   originalBendLocations = null
   fixedPort = null
   lastClosestPortCandidate = null
-
   /**
    * Store the port candidate so that the edge can visually snap to it.
-   * @param {?IPortCandidate} portCandidate
    */
   setClosestCandidate(portCandidate) {
     super.setClosestCandidate(portCandidate)
     this.lastClosestPortCandidate = portCandidate
   }
-
   /**
    * To perform edge curve calculations later on, we need to identify which port
    * is the one that's not going to change as a result of the reconnection process.
    *
    * We also store the original bends of the edge, so they can be restored
    * if reconnection is canceled.
-   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
     super.initializeDrag(context)
     this.fixedPort = this.sourceEnd ? this.edge.targetPort : this.edge.sourcePort
     this.originalBendLocations = this.edge.bends.map((bend) => bend.location.toPoint()).toArray()
-    this.getGraph(context)?.setStyle(this.edge, new FlowEdgeStyle('edgeReconnection'))
-    if (this.dummyEdge) {
-      this.dummyEdge.style = new FlowEdgeStyle('edgeReconnection')
+    this.getGraph(context)?.setStyle(
+      this.edge,
+      new FlowEdgeStyle(new BezierEdgeStyle(), 'edgeReconnection')
+    )
+    if (this.previewEdge) {
+      this.previewEdge.style = new FlowEdgeStyle(new BezierEdgeStyle(), 'edgeReconnection')
     }
   }
-
   /**
    * On each position change, apply new edge bends. The visual result should be exactly the same
    * as during creating a new edge.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   handleMove(context, originalLocation, newLocation) {
     super.handleMove(context, originalLocation, newLocation)
-
     const { fixedPort, sourceEnd } = this
     const fromSide = validatePortTag(fixedPort?.tag) ? fixedPort?.tag.side : null
-
     const newVisualLocation = this.lastClosestPortCandidate?.port?.location ?? newLocation
     const fixedPortLocation = fixedPort?.location
-
     if (!fromSide || !fixedPortLocation) {
       return
     }
-
     const oppositeSide = { left: 'right', right: 'left' }
-
     const bends = getSmoothEdgeControlPoints({
       start: sourceEnd ? newVisualLocation : fixedPortLocation,
       end: sourceEnd ? fixedPortLocation : newVisualLocation,
       fromSide: sourceEnd ? oppositeSide[fromSide] : fromSide
     })
-
     this.getGraph(context)?.clearBends(this.edge)
     this.getGraph(context)?.addBends(this.edge, bends)
   }
-
   /**
    * Restore the original edge bends that were saved earlier.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     super.cancelDrag(context, originalLocation)
     this.getGraph(context)?.clearBends(this.edge)
     this.getGraph(context)?.addBends(this.edge, this.originalBendLocations)
   }
-
   /**
    * Restore the standard, unmodified edge style.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     super.dragFinished(context, originalLocation, newLocation)
-    this.getGraph(context)?.setStyle(this.edge, new FlowEdgeStyle())
+    this.getGraph(context)?.setStyle(this.edge, new FlowEdgeStyle(new BezierEdgeStyle()))
   }
 }

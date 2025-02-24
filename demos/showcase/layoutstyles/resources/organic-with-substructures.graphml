@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,7 @@
      ////////////////////////////////////////////////////////////////////////-->
 
 <!--Created by yFiles for HTML 2.5-alpha-->
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle2="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle2="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="int" attr.name="zOrder" y:attr.uri="http://www.yworks.com/xml/yfiles-z-order/1.0/zOrder"/>
 	<key id="d1" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
@@ -62,7 +62,7 @@
 	<key id="d19" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
 	<data key="d19">
 		<y:SharedData>
-			<yjs:DefaultLabelStyle x:Key="1" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+			<yjs:LabelStyle x:Key="1" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
 			<yjs:SolidColorFill x:Key="2" color="LimeGreen"/>
 			<yjs:SolidColorFill x:Key="3" color="DeepSkyBlue"/>
 			<yjs:SolidColorFill x:Key="4" color="PaleVioletRed"/>
@@ -74,47 +74,47 @@
 			<yjs:SolidColorFill x:Key="6" color="DarkOrange"/>
 			<yjs:SolidColorFill x:Key="7" color="White"/>
 			<yjs:Font x:Key="8" fontSize="12" fontFamily="'Arial'"/>
-			<yjs:DefaultLabelStyle x:Key="9" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+			<yjs:LabelStyle x:Key="9" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
 			<yjs:Stroke x:Key="10" fill="#FF107910" thickness="1.5"/>
-			<yjs:DefaultLabelStyle x:Key="11" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+			<yjs:LabelStyle x:Key="11" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
 			<yjs:Stroke x:Key="12" fill="#FF107910" thickness="1.5"/>
-			<yjs:DefaultLabelStyle x:Key="13" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
-			<yjs:DefaultLabelStyle x:Key="14" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
-			<yjs:DefaultLabelStyle x:Key="15" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
-			<yjs:PolylineEdgeStyle x:Key="16">
+			<yjs:LabelStyle x:Key="13" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+			<yjs:LabelStyle x:Key="14" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+			<yjs:LabelStyle x:Key="15" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="16">
 				<yjs:PolylineEdgeStyle.stroke>
 					<yjs:Stroke fill="#FF046D90" thickness="1.5"/>
 				</yjs:PolylineEdgeStyle.stroke>
 				<yjs:PolylineEdgeStyle.targetArrow>
-					<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF046D90" fill="#FF046D90" cropLength="1"/>
+					<yjs:Arrow type="TRIANGLE" lengthScale="0.75" widthScale="0.75" stroke="#FF046D90" fill="#FF046D90" cropLength="1"/>
 				</yjs:PolylineEdgeStyle.targetArrow>
 			</yjs:PolylineEdgeStyle>
-			<yjs:PolylineEdgeStyle x:Key="17" stroke="{y:GraphMLReference 27}" targetArrow="{y:GraphMLReference 28}"/>
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="17" stroke="{y:GraphMLReference 27}" targetArrow="{y:GraphMLReference 28}"/>
 			<yjs:Stroke x:Key="18" fill="#FF8C3954" thickness="1.5"/>
-			<yjs:Arrow x:Key="19" type="TRIANGLE" scale="0.75" stroke="#FF8C3954" fill="#FF8C3954" cropLength="1"/>
-			<yjs:PolylineEdgeStyle x:Key="20">
+			<yjs:Arrow x:Key="19" type="TRIANGLE" lengthScale="0.75" widthScale="0.75" stroke="#FF8C3954" fill="#FF8C3954" cropLength="1"/>
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="20">
 				<yjs:PolylineEdgeStyle.stroke>
 					<yjs:Stroke fill="#FF833396" thickness="1.5"/>
 				</yjs:PolylineEdgeStyle.stroke>
 				<yjs:PolylineEdgeStyle.targetArrow>
-					<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF833396" fill="#FF833396" cropLength="1"/>
+					<yjs:Arrow type="TRIANGLE" lengthScale="0.75" widthScale="0.75" stroke="#FF833396" fill="#FF833396" cropLength="1"/>
 				</yjs:PolylineEdgeStyle.targetArrow>
 			</yjs:PolylineEdgeStyle>
-			<yjs:PolylineEdgeStyle x:Key="21">
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="21">
 				<yjs:PolylineEdgeStyle.stroke>
 					<yjs:Stroke fill="#FFA55E07" thickness="1.5"/>
 				</yjs:PolylineEdgeStyle.stroke>
 				<yjs:PolylineEdgeStyle.targetArrow>
-					<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FFA55E07" fill="#FFA55E07" cropLength="1"/>
+					<yjs:Arrow type="TRIANGLE" lengthScale="0.75" widthScale="0.75" stroke="#FFA55E07" fill="#FFA55E07" cropLength="1"/>
 				</yjs:PolylineEdgeStyle.targetArrow>
 			</yjs:PolylineEdgeStyle>
-			<yjs:PolylineEdgeStyle x:Key="22" stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
-			<yjs:PolylineEdgeStyle x:Key="23" stroke="{y:GraphMLReference 18}" targetArrow="{y:GraphMLReference 19}"/>
-			<yjs:PolylineEdgeStyle x:Key="24" stroke="{y:GraphMLReference 18}" targetArrow="{y:GraphMLReference 19}"/>
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="22" stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="23" stroke="{y:GraphMLReference 18}" targetArrow="{y:GraphMLReference 19}"/>
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="24" stroke="{y:GraphMLReference 18}" targetArrow="{y:GraphMLReference 19}"/>
 			<yjs:Stroke x:Key="25" fill="#FF107910" thickness="1.5"/>
-			<yjs:Arrow x:Key="26" type="TRIANGLE" scale="0.75" stroke="#FF107910" fill="#FF107910" cropLength="1"/>
+			<yjs:Arrow x:Key="26" type="TRIANGLE" lengthScale="0.75" widthScale="0.75" stroke="#FF107910" fill="#FF107910" cropLength="1"/>
 			<yjs:Stroke x:Key="27" fill="#FF242265" thickness="1.5"/>
-			<yjs:Arrow x:Key="28" type="TRIANGLE" scale="0.75" stroke="#FF242265" fill="#FF242265" cropLength="1"/>
+			<yjs:Arrow x:Key="28" type="TRIANGLE" lengthScale="0.75" widthScale="0.75" stroke="#FF242265" fill="#FF242265" cropLength="1"/>
 		</y:SharedData>
 	</data>
 	<graph id="G" edgedefault="directed">
@@ -125,7 +125,7 @@
 			<data key="d0">0</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -146,7 +146,7 @@
 			<data key="d0">1</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Ch</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -164,7 +164,7 @@
 			<data key="d0">2</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Ch</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -214,7 +214,7 @@
 			<data key="d0">5</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -242,7 +242,7 @@
 			<data key="d0">6</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -263,7 +263,7 @@
 			<data key="d0">7</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -284,7 +284,7 @@
 			<data key="d0">8</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -305,7 +305,7 @@
 			<data key="d0">9</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -326,7 +326,7 @@
 			<data key="d0">10</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -347,7 +347,7 @@
 			<data key="d0">11</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>P</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -373,7 +373,7 @@
 			<data key="d0">12</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>P</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -395,7 +395,7 @@
 			<data key="d0">13</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>P</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -420,7 +420,7 @@
 			<data key="d0">14</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -439,7 +439,7 @@
 			<data key="d0">15</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -457,7 +457,7 @@
 			<data key="d0">16</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -475,7 +475,7 @@
 			<data key="d0">17</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -493,7 +493,7 @@
 			<data key="d0">18</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -511,7 +511,7 @@
 			<data key="d0">19</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -548,7 +548,7 @@
 			<data key="d0">21</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -578,7 +578,7 @@
 			<data key="d0">22</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -599,7 +599,7 @@
 			<data key="d0">23</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -620,7 +620,7 @@
 			<data key="d0">24</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -641,7 +641,7 @@
 			<data key="d0">25</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -662,7 +662,7 @@
 			<data key="d0">26</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -699,7 +699,7 @@
 			<data key="d0">28</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -720,7 +720,7 @@
 			<data key="d0">29</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -741,7 +741,7 @@
 			<data key="d0">30</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -762,7 +762,7 @@
 			<data key="d0">31</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -783,7 +783,7 @@
 			<data key="d0">32</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -804,7 +804,7 @@
 			<data key="d0">33</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -836,7 +836,7 @@
 			<data key="d0">34</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -857,7 +857,7 @@
 			<data key="d0">35</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -878,7 +878,7 @@
 			<data key="d0">36</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -899,7 +899,7 @@
 			<data key="d0">37</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -920,7 +920,7 @@
 			<data key="d0">38</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -941,7 +941,7 @@
 			<data key="d0">39</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -962,7 +962,7 @@
 			<data key="d0">40</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -983,7 +983,7 @@
 			<data key="d0">41</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1004,7 +1004,7 @@
 			<data key="d0">42</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1025,7 +1025,7 @@
 			<data key="d0">43</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1063,7 +1063,7 @@
 			<data key="d0">45</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>S</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1084,7 +1084,7 @@
 			<data key="d0">46</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Ch</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1106,7 +1106,7 @@
 			<data key="d0">47</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>P</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1128,7 +1128,7 @@
 			<data key="d0">48</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>P</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1150,7 +1150,7 @@
 			<data key="d0">49</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>P</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1172,7 +1172,7 @@
 			<data key="d0">50</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1190,7 +1190,7 @@
 			<data key="d0">51</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1208,7 +1208,7 @@
 			<data key="d0">52</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1226,7 +1226,7 @@
 			<data key="d0">53</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1245,7 +1245,7 @@
 			<data key="d0">54</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1264,7 +1264,7 @@
 			<data key="d0">55</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1282,7 +1282,7 @@
 			<data key="d0">56</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1300,7 +1300,7 @@
 			<data key="d0">57</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1318,7 +1318,7 @@
 			<data key="d0">58</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1336,7 +1336,7 @@
 			<data key="d0">59</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1354,7 +1354,7 @@
 			<data key="d0">60</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1373,7 +1373,7 @@
 			<data key="d0">61</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1391,7 +1391,7 @@
 			<data key="d0">62</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1410,7 +1410,7 @@
 			<data key="d0">63</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1428,7 +1428,7 @@
 			<data key="d0">64</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1446,7 +1446,7 @@
 			<data key="d0">65</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1464,7 +1464,7 @@
 			<data key="d0">66</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1482,7 +1482,7 @@
 			<data key="d0">67</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1500,7 +1500,7 @@
 			<data key="d0">68</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1518,7 +1518,7 @@
 			<data key="d0">69</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 1}">
 						<y:Label.Text>Ch</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1554,7 +1554,7 @@
 			<data key="d0">71</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 9}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 9}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1573,7 +1573,7 @@
 			<data key="d0">72</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 9}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 9}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1591,7 +1591,7 @@
 			<data key="d0">73</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 9}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 9}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1609,7 +1609,7 @@
 			<data key="d0">74</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 9}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 9}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1628,7 +1628,7 @@
 			<data key="d0">75</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 9}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 9}">
 						<y:Label.Text>Cy</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1662,7 +1662,7 @@
 			<data key="d0">77</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 11}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 11}">
 						<y:Label.Text>Ch</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1680,7 +1680,7 @@
 			<data key="d0">78</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 11}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 11}">
 						<y:Label.Text>Ch</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1698,10 +1698,10 @@
 			<data key="d0">79</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
 						<y:Label.Text>T</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+							<yjs:LabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1725,10 +1725,10 @@
 			<data key="d0">80</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
 						<y:Label.Text>T</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+							<yjs:LabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1749,10 +1749,10 @@
 			<data key="d0">81</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
 						<y:Label.Text>T</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+							<yjs:LabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1775,10 +1775,10 @@
 			<data key="d0">82</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
 						<y:Label.Text>T</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+							<yjs:LabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1800,10 +1800,10 @@
 			<data key="d0">83</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
 						<y:Label.Text>T</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+							<yjs:LabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1824,10 +1824,10 @@
 			<data key="d0">84</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
 						<y:Label.Text>T</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+							<yjs:LabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1848,10 +1848,10 @@
 			<data key="d0">85</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
 						<y:Label.Text>T</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+							<yjs:LabelStyle font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1872,7 +1872,7 @@
 			<data key="d0">86</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 13}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 13}">
 						<y:Label.Text>Ch</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1890,7 +1890,7 @@
 			<data key="d0">87</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 13}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 13}">
 						<y:Label.Text>Ch</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1908,7 +1908,7 @@
 			<data key="d0">88</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 14}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 14}">
 						<y:Label.Text>Ch</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1926,7 +1926,7 @@
 			<data key="d0">89</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 14}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 14}">
 						<y:Label.Text>Ch</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1944,7 +1944,7 @@
 			<data key="d0">90</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 15}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 15}">
 						<y:Label.Text>Ch</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1961,7 +1961,7 @@
 			<data key="d0">91</data>
 			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 15}">
+					<y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}" Style="{y:GraphMLReference 15}">
 						<y:Label.Text>Ch</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -2407,22 +2407,22 @@
 		</edge>
 		<edge id="e86" source="n78" target="n77" sourceport="p0" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
 			</data>
 		</edge>
 		<edge id="e87" source="n71" target="n78" sourceport="p2" targetport="p1">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 27}" targetArrow="{y:GraphMLReference 28}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 27}" targetArrow="{y:GraphMLReference 28}"/>
 			</data>
 		</edge>
 		<edge id="e88" source="n79" target="n80" sourceport="p0" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF16162C" thickness="1.5"/>
 					</yjs:PolylineEdgeStyle.stroke>
 					<yjs:PolylineEdgeStyle.targetArrow>
-						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF16162C" fill="#FF16162C" cropLength="1"/>
+						<yjs:Arrow type="TRIANGLE" lengthScale="0.75" widthScale="0.75" stroke="#FF16162C" fill="#FF16162C" cropLength="1"/>
 					</yjs:PolylineEdgeStyle.targetArrow>
 					<yjs:PolylineEdgeStyle.sourceArrow>
 						<yjs:Arrow type="NONE" stroke="#FF16162C" fill="#FF16162C"/>
@@ -2432,12 +2432,12 @@
 		</edge>
 		<edge id="e89" source="n79" target="n81" sourceport="p1" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF16162C" thickness="1.5"/>
 					</yjs:PolylineEdgeStyle.stroke>
 					<yjs:PolylineEdgeStyle.targetArrow>
-						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF16162C" fill="#FF16162C" cropLength="1"/>
+						<yjs:Arrow type="TRIANGLE" lengthScale="0.75" widthScale="0.75" stroke="#FF16162C" fill="#FF16162C" cropLength="1"/>
 					</yjs:PolylineEdgeStyle.targetArrow>
 					<yjs:PolylineEdgeStyle.sourceArrow>
 						<yjs:Arrow type="NONE" stroke="#FF16162C" fill="#FF16162C"/>
@@ -2447,12 +2447,12 @@
 		</edge>
 		<edge id="e90" source="n79" target="n82" sourceport="p2" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF16162C" thickness="1.5"/>
 					</yjs:PolylineEdgeStyle.stroke>
 					<yjs:PolylineEdgeStyle.targetArrow>
-						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF16162C" fill="#FF16162C" cropLength="1"/>
+						<yjs:Arrow type="TRIANGLE" lengthScale="0.75" widthScale="0.75" stroke="#FF16162C" fill="#FF16162C" cropLength="1"/>
 					</yjs:PolylineEdgeStyle.targetArrow>
 					<yjs:PolylineEdgeStyle.sourceArrow>
 						<yjs:Arrow type="NONE" stroke="#FF16162C" fill="#FF16162C"/>
@@ -2462,12 +2462,12 @@
 		</edge>
 		<edge id="e91" source="n81" target="n83" sourceport="p1" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF16162C" thickness="1.5"/>
 					</yjs:PolylineEdgeStyle.stroke>
 					<yjs:PolylineEdgeStyle.targetArrow>
-						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF16162C" fill="#FF16162C" cropLength="1"/>
+						<yjs:Arrow type="TRIANGLE" lengthScale="0.75" widthScale="0.75" stroke="#FF16162C" fill="#FF16162C" cropLength="1"/>
 					</yjs:PolylineEdgeStyle.targetArrow>
 					<yjs:PolylineEdgeStyle.sourceArrow>
 						<yjs:Arrow type="NONE" stroke="#FF16162C" fill="#FF16162C"/>
@@ -2477,12 +2477,12 @@
 		</edge>
 		<edge id="e92" source="n81" target="n84" sourceport="p2" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF16162C" thickness="1.5"/>
 					</yjs:PolylineEdgeStyle.stroke>
 					<yjs:PolylineEdgeStyle.targetArrow>
-						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF16162C" fill="#FF16162C" cropLength="1"/>
+						<yjs:Arrow type="TRIANGLE" lengthScale="0.75" widthScale="0.75" stroke="#FF16162C" fill="#FF16162C" cropLength="1"/>
 					</yjs:PolylineEdgeStyle.targetArrow>
 					<yjs:PolylineEdgeStyle.sourceArrow>
 						<yjs:Arrow type="NONE" stroke="#FF16162C" fill="#FF16162C"/>
@@ -2492,12 +2492,12 @@
 		</edge>
 		<edge id="e93" source="n82" target="n85" sourceport="p1" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF16162C" thickness="1.5"/>
 					</yjs:PolylineEdgeStyle.stroke>
 					<yjs:PolylineEdgeStyle.targetArrow>
-						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF16162C" fill="#FF16162C" cropLength="1"/>
+						<yjs:Arrow type="TRIANGLE" lengthScale="0.75" widthScale="0.75" stroke="#FF16162C" fill="#FF16162C" cropLength="1"/>
 					</yjs:PolylineEdgeStyle.targetArrow>
 					<yjs:PolylineEdgeStyle.sourceArrow>
 						<yjs:Arrow type="NONE" stroke="#FF16162C" fill="#FF16162C"/>
@@ -2507,37 +2507,37 @@
 		</edge>
 		<edge id="e94" source="n62" target="n79" sourceport="p2" targetport="p3">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 27}" targetArrow="{y:GraphMLReference 28}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 27}" targetArrow="{y:GraphMLReference 28}"/>
 			</data>
 		</edge>
 		<edge id="e95" source="n87" target="n86" sourceport="p0" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
 			</data>
 		</edge>
 		<edge id="e96" source="n77" target="n87" sourceport="p1" targetport="p1">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
 			</data>
 		</edge>
 		<edge id="e97" source="n89" target="n88" sourceport="p0" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
 			</data>
 		</edge>
 		<edge id="e98" source="n91" target="n90" sourceport="p0" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
 			</data>
 		</edge>
 		<edge id="e99" source="n88" target="n91" sourceport="p1" targetport="p1">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
 			</data>
 		</edge>
 		<edge id="e100" source="n86" target="n89" sourceport="p1" targetport="p1">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 25}" targetArrow="{y:GraphMLReference 26}"/>
 			</data>
 		</edge>
 	</graph>

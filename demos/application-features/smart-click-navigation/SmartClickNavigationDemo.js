@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,67 +26,52 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  EdgeStyleIndicatorRenderer,
   GraphBuilder,
   GraphComponent,
-  GraphHighlightIndicatorManager,
   GraphItemTypes,
   GraphViewerInputMode,
   IEdge,
   IGraph,
   IModelItem,
-  IndicatorEdgeStyleDecorator,
-  IndicatorNodeStyleDecorator,
   INode,
-  ItemClickedEventArgs,
   License,
+  NodeStyleIndicatorRenderer,
   Point,
   PolylineEdgeStyle,
   ShapeNodeStyle
-} from 'yfiles'
-
-import GraphBuilderData from './resources/graph.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from '@yfiles/yfiles'
+import GraphBuilderData from './resources/graph'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 const graphChooserBox = document.querySelector('#graph-chooser-box')
-
-/** @type {GraphComponent} */
 let graphComponent
-
 /**
  * Bootstraps the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   // Conveniently store a reference to the graph that is displayed
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
-
   // Initializes the input mode
   initializeInputMode()
-
   // Initializes the highlight style
   initHighlightingStyle(graphComponent)
-
   // Configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
-
   // Create an initial sample graph
   createSampleGraph()
-  graphComponent.fitGraphBounds()
-
+  void graphComponent.fitGraphBounds()
   // Enable the undo engine. This prevents undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
-
   // Zoom to a node that has "Sport" label
-  graphComponent.zoomToAnimated(new Point(1637.468, 1828), 1)
+  await graphComponent.zoomToAnimated(1, new Point(1637.468, 1828))
 }
-
 /**
  * Creates the sample graph.
  */
@@ -110,38 +95,32 @@ function createSampleGraph() {
       }
     ]
   })
-
   builder.buildGraph()
 }
-
 /**
  * Configures the highlight style that will be used for the nodes that match the searched query.
- * @param {!GraphComponent} graphComponent The graph component.
+ * @param graphComponent The graph component.
  */
 function initHighlightingStyle(graphComponent) {
-  const nodeHighlightStyle = new IndicatorNodeStyleDecorator({
+  const nodeHighlightStyle = new NodeStyleIndicatorRenderer({
     // We choose a shape node style
-    wrapped: new ShapeNodeStyle({
+    nodeStyle: new ShapeNodeStyle({
       shape: 'rectangle',
       stroke: '3px #621B00',
       fill: 'transparent'
     }),
     // With a padding for the decoration
-    padding: 7
+    margins: 7
   })
-
-  const edgeHighlightStyle = new IndicatorEdgeStyleDecorator({
+  const edgeHighlightStyle = new EdgeStyleIndicatorRenderer({
     // We choose a shape node style
-    wrapped: new PolylineEdgeStyle({
+    edgeStyle: new PolylineEdgeStyle({
       stroke: '3px #621B00'
     })
   })
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    nodeStyle: nodeHighlightStyle,
-    edgeStyle: edgeHighlightStyle
-  })
+  graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(nodeHighlightStyle)
+  graphComponent.graph.decorator.edges.highlightRenderer.addConstant(edgeHighlightStyle)
 }
-
 /**
  * Initializes the input mode for this component.
  */
@@ -149,21 +128,20 @@ function initializeInputMode() {
   const inputMode = new GraphViewerInputMode()
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE || GraphItemTypes.EDGE
   // Implements the smart click navigation
-  inputMode.addItemLeftClickedListener((_, evt) => {
+  inputMode.addEventListener('item-left-clicked', async (evt) => {
     // Zooms to the suitable point
-    zoomToLocation(evt.item, evt.location)
+    await zoomToLocation(evt.item, evt.location)
     // Highlights the concerned objects(node or edge with target and source node)
     updateHighlight(evt.item)
   })
   graphComponent.inputMode = inputMode
 }
-
 /**
  * Zooms to the suitable point.
- * @param {!IModelItem} item The element that we clicked.
- * @param {!Point} currentMouseClickLocation The arguments that is used by the event.
+ * @param item The element that we clicked.
+ * @param currentMouseClickLocation The argument that is used by the event.
  */
-function zoomToLocation(item, currentMouseClickLocation) {
+async function zoomToLocation(item, currentMouseClickLocation) {
   // Get the point where we should zoom in
   const location = getFocusPoint(item)
   // Check the type of zooming
@@ -172,19 +150,18 @@ function zoomToLocation(item, currentMouseClickLocation) {
     // The distance between where we clicked and the viewport center
     const offset = currentMouseClickLocation.subtract(graphComponent.viewport.center)
     // Zooms to the new location of the mouse
-    graphComponent.zoomToAnimated(location.subtract(offset), graphComponent.zoom)
+    await graphComponent.zoomToAnimated(graphComponent.zoom, location.subtract(offset))
   } else {
-    graphComponent.zoomToAnimated(location, graphComponent.zoom)
+    await graphComponent.zoomToAnimated(graphComponent.zoom, location)
   }
 }
-
 /**
  * Gets the focus point.
- * @param {!IModelItem} item The element that we clicked.
- * @returns {?Point} The point that we should zoom to.
+ * @param item The element that we clicked.
+ * @returns The point that we should zoom to.
  */
 function getFocusPoint(item) {
-  if (IEdge.isInstance(item)) {
+  if (item instanceof IEdge) {
     // If the source and the target node are in the view port, then zoom to the middle point of the edge
     const targetNodeCenter = item.targetNode.layout.center
     const sourceNodeCenter = item.sourceNode.layout.center
@@ -206,40 +183,35 @@ function getFocusPoint(item) {
         return targetNodeCenter
       }
     }
-  } else if (INode.isInstance(item)) {
+  } else if (item instanceof INode) {
     return item.layout.center
   }
   return null
 }
-
 /**
  * Initializes the input mode for this component.
- * @param {!IModelItem} item
  */
 function updateHighlight(item) {
-  const manager = graphComponent.highlightIndicatorManager
-  if (IEdge.isInstance(item)) {
-    manager.addHighlight(item)
-    manager.addHighlight(item.sourceNode)
-    manager.addHighlight(item.targetNode)
-  } else if (INode.isInstance(item)) {
-    manager.addHighlight(item)
+  const highlights = graphComponent.highlights
+  if (item instanceof IEdge) {
+    highlights.add(item)
+    highlights.add(item.sourceNode)
+    highlights.add(item.targetNode)
+  } else if (item instanceof INode) {
+    highlights.add(item)
   }
-
   // clear highlights after one second
   setTimeout(() => {
-    manager.clearHighlights()
+    highlights.clear()
   }, 1000)
 }
-
 /**
  * Initializes the defaults for the styling in this demo.
  *
- * @param {!IGraph} graph The graph.
+ * @param graph The graph.
  */
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
 }
-
 run().then(finishLoading)

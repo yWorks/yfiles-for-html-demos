@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,7 +38,7 @@ import {
   IRenderContext,
   IVisualCreator,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * A simple edge style that draws a line from source to target node following the
@@ -67,8 +67,8 @@ export default class CanvasEdgeStyle extends EdgeStyleBase {
   createVisual(context: IRenderContext, edge: IEdge): Visual {
     return new EdgeRenderVisual(
       edge.bends,
-      edge.sourcePort!.dynamicLocation,
-      edge.targetPort!.dynamicLocation,
+      edge.sourcePort.dynamicLocation,
+      edge.targetPort.dynamicLocation,
       this.color,
       this.thickness
     )
@@ -119,7 +119,7 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
    * @param context The render context of the {@link CanvasComponent}
    * @param htmlCanvasContext The HTML5 Canvas context to use for rendering.
    */
-  paint(context: IRenderContext, htmlCanvasContext: CanvasRenderingContext2D): void {
+  render(context: IRenderContext, htmlCanvasContext: CanvasRenderingContext2D): void {
     // simply draw a black line from the source port location via all bends to the target port location
     htmlCanvasContext.strokeStyle = this.color
     htmlCanvasContext.lineWidth = this.thickness

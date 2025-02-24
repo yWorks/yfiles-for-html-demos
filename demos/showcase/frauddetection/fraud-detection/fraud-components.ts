@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,15 +36,14 @@ import {
   IEdge,
   type IModelItem,
   INode,
-  Insets,
   Mapper,
   Rect,
   ViewportAnimation
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getEntityData, isFraud } from '../entity-data'
 import { FraudHighlightManager } from './FraudHighlightManager'
 import { openFraudDetectionView } from './inspection-view'
-import { forceToolbarOverflowUpdate } from 'demo-resources/demo-page'
+import { forceToolbarOverflowUpdate } from '@yfiles/demo-resources/demo-page'
 
 /**
  * The main graph component that displays the graph.
@@ -69,17 +68,17 @@ export function initializeFraudHighlights(gc: GraphComponent): void {
   fraudHighlightManager.install(graphComponent)
 
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener((itemHoverInputMode, event) => {
+  inputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (event) => {
     updateFraudHighlights(event.item, event.oldItem)
   })
 
   // clear the highlights when a node or an edge is removed
   const graph = graphComponent.graph
-  graph.addNodeRemovedListener(() => {
+  graph.addEventListener('node-removed', () => {
     clearFraudHighlights()
   })
 
-  graph.addEdgeRemovedListener(() => {
+  graph.addEventListener('edge-removed', () => {
     clearFraudHighlights()
   })
 }
@@ -106,7 +105,7 @@ export function updateFraudWarnings(fraudsters: INode[]): void {
       const componentNodes = getComponentNodes(componentIdx)
       // remove highlight from the component related to the removed warning sign
       componentNodes.forEach((node) => {
-        fraudHighlightManager.removeHighlight(node)
+        fraudHighlightManager.items.remove(node)
       })
       removeFraudWarning(componentIdx)
     }
@@ -117,7 +116,7 @@ export function updateFraudWarnings(fraudsters: INode[]): void {
  * Clears all fraud highlights.
  */
 export function clearFraudHighlights(): void {
-  fraudHighlightManager.clearHighlights()
+  fraudHighlightManager.items.clear()
 }
 
 /**
@@ -155,7 +154,7 @@ function removeFraudWarning(componentIdx: number): void {
  * Invoked when the mouse is over a warning button to highlight the associated component.
  */
 async function addFraudComponentHighlight(componentIdx: number): Promise<void> {
-  fraudHighlightManager.clearHighlights()
+  fraudHighlightManager.items.clear()
   highlightFraudComponent(componentIdx)
   // animate the view port to the current component index
   await focusFraudComponent(componentIdx)
@@ -165,7 +164,7 @@ async function addFraudComponentHighlight(componentIdx: number): Promise<void> {
  * Invoked when the mouse leaves a warning button.
  */
 function removeFraudComponentHighlight(): void {
-  fraudHighlightManager.clearHighlights()
+  fraudHighlightManager.items.clear()
 }
 
 /**
@@ -197,13 +196,18 @@ async function animateViewPort(componentIdx: number): Promise<void> {
       maxY = Math.max(maxY, y + height)
     }
   })
-  if (Number.isFinite(minX) && Number.isFinite(maxX) && Number.isFinite(minY) && Number.isFinite(maxY)) {
+  if (
+    Number.isFinite(minX) &&
+    Number.isFinite(maxX) &&
+    Number.isFinite(minY) &&
+    Number.isFinite(maxY)
+  ) {
     let rect: Rect = new Rect(minX, minY, maxX - minX, maxY - minY)
-    if (graphComponent.viewport.contains(rect) && graphComponent.zoom > 0.8) {
+    if (graphComponent.viewport.containsRectangle(rect) && graphComponent.zoom > 0.8) {
       return
     }
     // Enlarge the viewport so that we get an overview of the neighborhood as well
-    rect = rect.getEnlarged(new Insets(200))
+    rect = rect.getEnlarged(200)
 
     // Animate the transition to the failed element
     const animator = new Animator(graphComponent)
@@ -214,33 +218,33 @@ async function animateViewPort(componentIdx: number): Promise<void> {
 }
 
 function updateFraudHighlights(item: IModelItem | null, oldItem: IModelItem | null): void {
-  fraudHighlightManager.clearHighlights()
+  fraudHighlightManager.items.clear()
   if (item) {
     if (item instanceof INode) {
-      // also hover the warning button
+      // also highlight the warning button
       const componentIdx = getComponentIdx(item)
       const warningButton = document.getElementById(componentIdx!.toString())
       if (warningButton) {
-        warningButton.classList.add('hover')
+        warningButton.classList.add('highlight')
       }
       if (isFraud(item)) {
         const componentIndex = getComponentIdx(item)
         highlightFraudComponent(componentIndex!)
       }
     } else if (item instanceof IEdge && isFraud(item)) {
-      const componentIndex = getComponentIdx(item.sourceNode!)
+      const componentIndex = getComponentIdx(item.sourceNode)
       highlightFraudComponent(componentIndex!)
     }
   }
 
   if (oldItem) {
     if (oldItem instanceof INode) {
-      // remove hover class from the warning button
+      // remove highlight class from the warning button
       const componentIdx = getComponentIdx(oldItem)
       const warningButton = document.getElementById(componentIdx.toString())
       // add hover class to button
       if (warningButton) {
-        warningButton.classList.remove('hover')
+        warningButton.classList.remove('highlight')
       }
     }
   }
@@ -251,15 +255,21 @@ function updateFraudHighlights(item: IModelItem | null, oldItem: IModelItem | nu
  */
 function highlightFraudComponent(componentIndex: number): void {
   const componentNodes = getComponentNodes(componentIndex)
-  const componentNodesSet = new Set(componentNodes)
+  const highlights = fraudHighlightManager.items
   graphComponent.graph.edges.forEach((edge) => {
-    if (componentNodesSet.has(edge.sourceNode!) && isFraud(edge)) {
-      fraudHighlightManager.addHighlight(edge)
+    if (
+      isFraud(edge) &&
+      isFraud(edge.sourceNode) &&
+      isFraud(edge.targetNode) &&
+      graphComponent.graph.contains(edge)
+    ) {
+      highlights.add(edge)
     }
   })
+
   componentNodes.forEach((node) => {
-    if (isFraud(node)) {
-      fraudHighlightManager.addHighlight(node)
+    if (isFraud(node) && graphComponent.graph.contains(node)) {
+      highlights.add(node)
     }
   })
 }
@@ -292,7 +302,7 @@ export function calculateComponents(): void {
 
   const nodeComponentIds = result.nodeComponentIds
   fullGraph.nodes.forEach((node) => {
-    const componentIdx = nodeComponentIds.get(node)
+    const componentIdx = nodeComponentIds.get(node)!
     node2Component.set(node, componentIdx)
     if (!component2Nodes.get(componentIdx)) {
       component2Nodes.set(componentIdx, [])
@@ -306,8 +316,8 @@ export function calculateComponents(): void {
     fullGraph.nodes.forEach((node) => {
       if (getEntityData(node).type === 'Bank Branch') {
         fullGraph.edgesAt(node).forEach((edge) => {
-          const sourceNode = edge.sourceNode!
-          const targetNode = edge.targetNode!
+          const sourceNode = edge.sourceNode
+          const targetNode = edge.targetNode
           const componentIdx =
             sourceNode === node ? getComponentIdx(targetNode) : getComponentIdx(sourceNode)
           const componentNodes = getComponentNodes(componentIdx)

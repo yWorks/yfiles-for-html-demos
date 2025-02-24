@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,16 +28,15 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   IEdgeReconnectionPortCandidateProvider,
   IEnumerable,
   IInputModeContext,
   IListEnumerable,
   IPortCandidate,
-  List
-} from 'yfiles'
-
+  List,
+  PortCandidate
+} from '@yfiles/yfiles'
 /**
  * An {@link IEdgeReconnectionPortCandidateProvider} that uses candidates with a
  * dynamic NodeScaled port location model. It allows moving ports to any
@@ -48,9 +47,8 @@ export default class GreenEdgePortCandidateProvider extends BaseClass(
 ) {
   /**
    * Returns all source port candidates that may be used for all nodes.
-   * @param {!IInputModeContext} context The context for which the candidates should be provided
+   * @param context The context for which the candidates should be provided
    * @see Specified by {@link IEdgeReconnectionPortCandidateProvider.getTargetPortCandidates}.
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getSourcePortCandidates(context) {
     const graph = context.graph
@@ -60,17 +58,15 @@ export default class GreenEdgePortCandidateProvider extends BaseClass(
     const candidates = new List()
     graph.nodes.forEach((node) => {
       if (node.tag === 'green') {
-        candidates.add(new DefaultPortCandidate(node, FreeNodePortLocationModel.INSTANCE))
+        candidates.add(new PortCandidate(node, FreeNodePortLocationModel.INSTANCE))
       }
     })
     return candidates
   }
-
   /**
    * Returns all target port candidates that may be used for all nodes.
-   * @param {!IInputModeContext} context The context for which the candidates should be provided
+   * @param context The context for which the candidates should be provided
    * @see Specified by {@link IEdgeReconnectionPortCandidateProvider.getTargetPortCandidates}.
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getTargetPortCandidates(context) {
     return this.getSourcePortCandidates(context)

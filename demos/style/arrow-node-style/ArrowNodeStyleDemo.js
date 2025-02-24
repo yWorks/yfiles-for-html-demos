@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,10 +30,7 @@ import {
   ArrowNodeDirection,
   ArrowNodeStyle,
   ArrowStyleShape,
-  DefaultLabelStyle,
-  Enum,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
   FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
@@ -41,16 +38,15 @@ import {
   HorizontalTextAlignment,
   IGraph,
   INode,
-  Insets,
+  LabelStyle,
   License,
   Point,
   Rect,
   Size
-} from 'yfiles'
-import { applyDemoTheme, colorSets, createDemoNodeLabelStyle } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from '@yfiles/yfiles'
+import { colorSets, createDemoNodeLabelStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 const basicShape = document.querySelector('#basic-shape')
 const shapeDirection = document.querySelector('#shape-direction')
 const angleRange = document.querySelector('#angle-range')
@@ -59,29 +55,18 @@ const shaftRatioRange = document.querySelector('#shaft-ratio')
 const shaftRatioLabel = document.querySelector('#shaft-ratio-label')
 const propertiesPanel = document.querySelector('.demo-form-block')
 const infoMessage = document.querySelector('.info-message')
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeGraph(graphComponent.graph)
-
   initializeInteraction(graphComponent)
-
   initializeUI(graphComponent)
-
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
-
 /**
  * Initializes defaults for the given graph and creates a small sample with different node style
  * settings.
- * @param {!IGraph} graph The graph to set the defaults and in which to create the sample.
+ * @param graph The graph to set the defaults and in which to create the sample.
  */
 function initializeGraph(graph) {
   // initialize the graph defaults
@@ -91,14 +76,12 @@ function initializeGraph(graph) {
     labelRatio: new Point(0.5, 1),
     labelOffset: new Point(0, 0)
   })
-
   const colorSet = colorSets['demo-orange']
   graph.nodeDefaults.style = new ArrowNodeStyle({ fill: colorSet.fill, stroke: colorSet.stroke })
   graph.nodeDefaults.size = new Size(200, 100)
   graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.labels.style = createLabelStyle('demo-orange')
   graph.nodeDefaults.labels.layoutParameter = defaultLabelParameter
-
   // create nodes with different shapes, angles and shaft ratios
   createNodes(graph, 0, ArrowStyleShape.ARROW, 'demo-orange')
   createNodes(graph, 300, ArrowStyleShape.DOUBLE_ARROW, 'demo-blue')
@@ -106,36 +89,31 @@ function initializeGraph(graph) {
   createNodes(graph, 900, ArrowStyleShape.PARALLELOGRAM, 'demo-green')
   createNodes(graph, 1200, ArrowStyleShape.TRAPEZOID, 'demo-purple')
 }
-
 /**
  * Creates a new node label style with colors from the given color set.
- * @param {!('demo-orange'|'demo-blue'|'demo-red'|'demo-green'|'demo-purple')} colorSetName The name of the color set to use for background and text color.
- * @returns {!DefaultLabelStyle}
+ * @param colorSetName The name of the color set to use for background and text color.
  */
 function createLabelStyle(colorSetName) {
   const style = createDemoNodeLabelStyle(colorSetName)
   style.horizontalTextAlignment = HorizontalTextAlignment.LEFT
-  style.insets = new Insets(8, 4, 8, 4)
+  style.padding = [4, 8, 4, 8]
   style.textSize = 14
   // style.backgroundFill = null
   return style
 }
 /**
  * Creates several nodes with the given shape and different angles as well as shaft ratios.
- * @param {!IGraph} graph The graph in which to create nodes.
- * @param {number} xOffset The x-location where to place the nodes.
- * @param {!ArrowStyleShape} shape The shape to use for the arrow.
- * @param {!('demo-orange'|'demo-blue'|'demo-red'|'demo-green'|'demo-purple')} colorSetName The name of the color set to use for nodes and labels.
+ * @param graph The graph in which to create nodes.
+ * @param xOffset The x-location where to place the nodes.
+ * @param shape The shape to use for the arrow.
+ * @param colorSetName The name of the color set to use for nodes and labels.
  */
 function createNodes(graph, xOffset, shape, colorSetName) {
   const angleFactor =
     shape === ArrowStyleShape.PARALLELOGRAM || shape === ArrowStyleShape.TRAPEZOID ? 0.5 : 1
-
   const colorSet = colorSets[colorSetName]
-
   // create a couple of ArrowNodeStyle instances that demonstrate various configuration options
   const styles = []
-
   // small angle and shaft ratio pointing left
   styles.push(
     new ArrowNodeStyle({
@@ -147,7 +125,6 @@ function createNodes(graph, xOffset, shape, colorSetName) {
       stroke: colorSet.stroke
     })
   )
-
   // default angle and shaft ratio pointing up
   styles.push(
     new ArrowNodeStyle({
@@ -159,7 +136,6 @@ function createNodes(graph, xOffset, shape, colorSetName) {
       stroke: colorSet.stroke
     })
   )
-
   // bigger angle and shaft ratio pointing right
   styles.push(
     new ArrowNodeStyle({
@@ -171,7 +147,6 @@ function createNodes(graph, xOffset, shape, colorSetName) {
       stroke: colorSet.stroke
     })
   )
-
   // negative angle and max shaft ratio pointing right
   styles.push(
     new ArrowNodeStyle({
@@ -183,7 +158,6 @@ function createNodes(graph, xOffset, shape, colorSetName) {
       stroke: colorSet.stroke
     })
   )
-
   // create a sample node for each sample style instance
   let y = 0
   for (let i = 0; i < styles.length; ++i) {
@@ -194,75 +168,62 @@ function createNodes(graph, xOffset, shape, colorSetName) {
     graph.addLabel(
       graph.createNode(new Rect(x, y, width, height), style),
       styleToText(style),
-      new ExteriorLabelModel({ insets: 30 }).createParameter(ExteriorLabelModelPosition.SOUTH),
+      new ExteriorNodeLabelModel({ margins: 30 }).createParameter('bottom'),
       createLabelStyle(colorSetName)
     )
-
     y += height + 250
   }
 }
-
 /**
  * Sets up an input mode for the GraphComponent.
- * @param {!GraphComponent} graphComponent
  */
 function initializeInteraction(graphComponent) {
   const inputMode = new GraphEditorInputMode({ selectableItems: GraphItemTypes.NODE })
-
   // add a label to newly created node that shows the current style settings
-  inputMode.addNodeCreatedListener((_, evt) => {
+  inputMode.addEventListener('node-created', (evt) => {
     const node = evt.item
     graphComponent.graph.addLabel(node, styleToText(node.style))
   })
-
   graphComponent.inputMode = inputMode
 }
-
 /**
  * Binds actions to the toolbar and style property editor.
- * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
   basicShape.addEventListener('change', () => {
     const shape = ArrowStyleShape.from(basicShape.value)
     applyStyleSetting(graphComponent, (style) => (style.shape = shape))
   })
-
   shapeDirection.addEventListener('change', () => {
     const direction = ArrowNodeDirection.from(shapeDirection.value)
     applyStyleSetting(graphComponent, (style) => (style.direction = direction))
   })
-
   angleRange.addEventListener('change', () => {
     const value = angleRange.value
     const angle = parseFloat(value)
     applyStyleSetting(graphComponent, (style) => (style.angle = toRadians(angle)))
     angleLabel.innerText = value
   })
-
   shaftRatioRange.addEventListener('change', () => {
     const shaftRatio = parseFloat(shaftRatioRange.value)
     applyStyleSetting(graphComponent, (style) => (style.shaftRatio = shaftRatio))
     shaftRatioLabel.innerText = shaftRatioRange.value
   })
-
   // adjust option panel when the selection has been changed
-  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+  graphComponent.selection.addEventListener('item-added', (evt) => {
     if (evt.item instanceof INode && evt.item.style instanceof ArrowNodeStyle) {
       adjustOptionPanel(graphComponent, evt.item)
     }
   })
 }
-
 /**
  * Applies changes in the option panel to the selected nodes and the default style.
- * @param {!GraphComponent} graphComponent The component that displays the graph.
- * @param {!function} adjustStyle A callback that gets each style to change.
+ * @param graphComponent The component that displays the graph.
+ * @param adjustStyle A callback that gets each style to change.
  */
 function applyStyleSetting(graphComponent, adjustStyle) {
   const graph = graphComponent.graph
-
-  graphComponent.selection.selectedNodes.forEach((node) => {
+  graphComponent.selection.nodes.forEach((node) => {
     const style = node.style
     if (style instanceof ArrowNodeStyle) {
       adjustStyle(style)
@@ -273,24 +234,17 @@ function applyStyleSetting(graphComponent, adjustStyle) {
       }
     }
   })
-
   // adjust also the default style applied to newly created nodes
   adjustStyle(graph.nodeDefaults.style)
-
   graphComponent.invalidate()
 }
-
 /**
  * Returns a text description of the style configuration.
- * @param {!ArrowNodeStyle} style
- * @returns {!string}
  */
 function styleToText(style) {
   const { shape, direction, angle, shaftRatio } = getStyleValues(style)
-
   const shapeName = basicShape.querySelector(`option[value=${shape}]`).text
   const directionName = shapeDirection.querySelector(`option[value=${direction}]`).text
-
   return (
     `Shape: ${shapeName}\n` +
     `Direction: ${directionName}\n` +
@@ -298,19 +252,17 @@ function styleToText(style) {
     `Shaft Ratio: ${shaftRatio}`
   )
 }
-
 /**
  * Adjusts the option panel to show the style settings of a newly selected node.
- * @param {!GraphComponent} graphComponent The graphComponent where the node lives.
- * @param {!INode} node The node whose style setting should be shown.
+ * @param graphComponent The graphComponent where the node lives.
+ * @param node The node whose style setting should be shown.
  */
 function adjustOptionPanel(graphComponent, node) {
   const style = node.style
-  const disabled = !graphComponent.selection.isSelected(node)
+  const disabled = !graphComponent.selection.includes(node)
   const { shape, direction, angle, shaftRatio } = getStyleValues(style)
   const graph = graphComponent.graph
   updatePanelState(shape, direction, angle, shaftRatio, disabled)
-
   if (!disabled) {
     // update defaultArrowNodeStyle to correspond to the option panel
     const defaultArrowNodeStyle = graph.nodeDefaults.style
@@ -321,14 +273,13 @@ function adjustOptionPanel(graphComponent, node) {
     graph.nodeDefaults.size = node.layout.toSize()
   }
 }
-
 /**
  * Updates the current state of the options panel with the given values
- * @param {!string} shape The shape to be applied.
- * @param {!string} direction The direction to be applied.
- * @param {!string} angle The angle to be applied.
- * @param {!string} shaftRatio The shaft ration to be applied.
- * @param {boolean} disabled True if the panel should be disabled, false otherwise
+ * @param shape The shape to be applied.
+ * @param direction The direction to be applied.
+ * @param angle The angle to be applied.
+ * @param shaftRatio The shaft ration to be applied.
+ * @param disabled True if the panel should be disabled, false otherwise
  */
 function updatePanelState(shape, direction, angle, shaftRatio, disabled) {
   basicShape.value = shape
@@ -344,37 +295,27 @@ function updatePanelState(shape, direction, angle, shaftRatio, disabled) {
   propertiesPanel.style.display = disabled ? 'none' : 'inline-block'
   infoMessage.style.display = disabled ? 'inline-block' : 'none'
 }
-
 /**
  * Returns the style values.
- * @param {!ArrowNodeStyle} style
- * @returns {!object}
  */
 function getStyleValues(style) {
   return {
-    shape: Enum.getName(ArrowStyleShape.$class, style.shape),
-    direction: Enum.getName(ArrowNodeDirection.$class, style.direction),
+    shape: ArrowStyleShape[style.shape],
+    direction: ArrowNodeDirection[style.direction],
     angle: String(toDegrees(style.angle).toFixed(0)),
     shaftRatio: String(style.shaftRatio.toFixed(1))
   }
 }
-
 /**
  * Returns the given angle in degrees.
- * @param {number} radians
- * @returns {number}
  */
 function toDegrees(radians) {
   return (radians * 180) / Math.PI
 }
-
 /**
  * Returns the given angle in radians.
- * @param {number} degrees
- * @returns {number}
  */
 function toRadians(degrees) {
   return (degrees / 180) * Math.PI
 }
-
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { defineConfig, devices } from '@playwright/test'
 
-declare let process: { env: { CI: boolean | undefined } }
+declare let process: { env: { CI: boolean | undefined; TEST_SERVER_URL: string | undefined } }
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -47,7 +47,7 @@ export default defineConfig({
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    baseURL: 'http://localhost:4242',
+    baseURL: process.env.TEST_SERVER_URL || 'http://localhost:4241/demos-ts/',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry'

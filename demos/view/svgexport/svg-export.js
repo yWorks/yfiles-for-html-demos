@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,22 +26,19 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, SvgExport, WebGL2GraphModelManager } from 'yfiles'
-import { useWebGL2Rendering } from './webgl-support.js'
-
+import { GraphComponent, SvgExport, WebGLGraphModelManager } from '@yfiles/yfiles'
+import { useWebGLRendering } from './webgl-support'
+import { DelayedNodeStyle } from './delayed-node-style'
 /**
  * Exports a certain area of the graph to an SVG element.
- * @param {!GraphComponent} graphComponent the demo's main graph view.
+ * @param graphComponent the demo's main graph view.
  * @param scale the scale factor for the export operation.
  * E.g. a scale factor of 2 will result in an exported graphic that is twice as large as the
  * original area.
  * @param background the color of the background for the exported SVG
  * otherwise it will have an opaque white background element
  * @param rectangle the area to export
- * @returns {!Promise.<Element>} the exported SVG element
- * @param {number} [scale=1]
- * @param {!'transparent'} [background=transparent]
- * @param {?Rect} [rectangle=null]
+ * @returns the exported SVG element
  */
 export async function exportSvg(
   graphComponent,
@@ -53,24 +50,23 @@ export async function exportSvg(
   const exportComponent = new GraphComponent()
   // ... and assign it the same graph.
   exportComponent.graph = graphComponent.graph
-  exportComponent.updateContentRect()
-
-  if (graphComponent.graphModelManager instanceof WebGL2GraphModelManager) {
-    useWebGL2Rendering(exportComponent)
+  exportComponent.updateContentBounds()
+  if (graphComponent.graphModelManager instanceof WebGLGraphModelManager) {
+    useWebGLRendering(exportComponent)
   }
-
   // create the exporter class
   const exporter = new SvgExport({
     // determine the bounds of the exported area
-    worldBounds: rectangle || exportComponent.contentRect,
+    worldBounds: rectangle || exportComponent.contentBounds,
     scale,
     encodeImagesBase64: true,
     inlineSvgImages: true,
     background: background
   })
-
   // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
   exporter.cssStyleSheet = null
-
-  return exporter.exportSvgAsync(exportComponent)
+  return exporter.exportSvgAsync(exportComponent, () =>
+    // wait for styles to finish rendering
+    Promise.all(DelayedNodeStyle.pendingPromises)
+  )
 }

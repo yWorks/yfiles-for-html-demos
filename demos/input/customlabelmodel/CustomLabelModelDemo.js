@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,55 +29,48 @@
 import {
   GraphComponent,
   GraphEditorInputMode,
-  GraphMLSupport,
+  GraphMLIOHandler,
   License,
-  Rect,
-  StorageLocation
-} from 'yfiles'
-
-import CustomNodeLabelModel, { CustomNodeLabelModelParameter } from './CustomNodeLabelModel.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/** @type {GraphComponent} */
+  Rect
+} from '@yfiles/yfiles'
+import CustomNodeLabelModel, { CustomNodeLabelModelParameter } from './CustomNodeLabelModel'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 let graphComponent = null
-
 /**
  * This demo shows how to create and use a custom label model.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode()
-
   initializeGraph()
-
   enableGraphML()
 }
-
 /**
  * Enables loading and saving the graph to GraphML.
  */
 function enableGraphML() {
-  // create a new GraphMLSupport instance that handles save and load operations
-  const gs = new GraphMLSupport({
-    graphComponent,
-    // configure to load and save to the file system
-    storageLocation: StorageLocation.FILE_SYSTEM
-  })
-
-  gs.graphMLIOHandler.addHandleSerializationListener(
+  // create a new graphMLIOHandler instance that handles save and load operations
+  const graphMLIOHandler = new GraphMLIOHandler()
+  graphMLIOHandler.addEventListener(
+    'handle-serialization',
     CustomNodeLabelModelParameter.serializationHandler
   )
-  gs.graphMLIOHandler.addHandleDeserializationListener(
+  graphMLIOHandler.addEventListener(
+    'handle-deserialization',
     CustomNodeLabelModelParameter.deserializationHandler
   )
+  document.querySelector('#open-file-button').addEventListener('click', async () => {
+    await openGraphML(graphComponent, graphMLIOHandler)
+  })
+  document.querySelector('#save-button').addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'customLabelModel.graphml', graphMLIOHandler)
+  })
 }
-
 /**
  * Sets a custom node label model parameter instance for newly created
  * node labels in the graph, creates an example node with a label using
@@ -88,19 +81,15 @@ function initializeGraph() {
   const graph = graphComponent.graph
   // set the defaults for nodes
   initDemoStyles(graph)
-  graph.nodeDefaults.labels.layoutParameter = new CustomNodeLabelModel().createDefaultParameter()
-
+  graph.nodeDefaults.labels.layoutParameter = new CustomNodeLabelModel().createParameter(0.25)
   // create graph
   const node1 = graph.createNode(new Rect(90, 90, 100, 100))
   const node2 = graph.createNode(new Rect(250, 90, 100, 100))
-
   const customNodeLabelModel = new CustomNodeLabelModel()
   customNodeLabelModel.candidateCount = 0
   customNodeLabelModel.offset = 20
-  graph.addLabel(node1, 'Click and Drag', customNodeLabelModel.createDefaultParameter())
+  graph.addLabel(node1, 'Click and Drag', customNodeLabelModel.createParameter(0.25))
   graph.addLabel(node2, 'Click and Drag To Snap')
-
   graphComponent.fitGraphBounds()
 }
-
 run().then(finishLoading)

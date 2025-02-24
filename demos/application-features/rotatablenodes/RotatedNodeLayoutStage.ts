@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,31 +27,28 @@
  **
  ***************************************************************************/
 import {
-  Edge,
+  EdgePortCandidates,
   GeneralPath,
-  GroupingKeys,
-  IDataMap,
-  IDataProvider,
-  ILayoutAlgorithm,
+  IMapper,
   IOrientedRectangle,
+  LayoutEdge,
   LayoutGraph,
+  LayoutNode,
   LayoutStageBase,
-  Maps,
+  Mapper,
   Matrix,
-  MinimumNodeSizeStage,
+  NodeDataKey,
   Point,
-  PortConstraint,
-  PortConstraintKeys,
-  PortSide,
-  Size,
-  YPoint
-} from 'yfiles'
+  PortCandidateType,
+  PortSides,
+  Size
+} from '@yfiles/yfiles'
 
 type Dimensions = {
   offset: Point
   size: Size
   outline: GeneralPath
-  location: YPoint | null
+  location: Point | null
 }
 
 /**
@@ -66,65 +63,71 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
     'shortest-straight-path-to-border'
 
   /**
-   * The {@link IDataProvider} key to register a data provider that provides the outline and
+   * The {@link NodeDataKey} key to register a data provider that provides the outline and
    * oriented layout to this stage.
    */
-  static get ROTATED_NODE_LAYOUT_DP_KEY(): string {
-    return 'RotatedNodeLayoutStage.RotatedNodeLayoutDpKey'
+  static get ROTATED_NODE_LAYOUT_DATA_KEY(): NodeDataKey<{
+    outline: GeneralPath
+    orientedLayout: IOrientedRectangle
+  }> {
+    return new NodeDataKey('RotatedNodeLayoutStage.RotatedNodeLayoutDataKey')
   }
 
   /**
    * Executes the layout algorithm.
    * Enlarges the node layout to fully encompass the rotated layout (the rotated layout's bounding box). If the
-   * {@link edgeRoutingMode} is set to 'fixed-port', port constraints are created to keep the ports at their current
-   * location. Existing port constraints are adjusted to the rotation.
+   * {@link edgeRoutingMode} is set to 'fixed-port', port candidates are created to keep the ports at their current
+   * location. Existing port candidates are adjusted to the rotation.
    * Then, the {@link LayoutStageBase.coreLayout} is executed.
    * After the core layout the original node sizes are restored. If the {@link edgeRoutingMode} is set to
    * 'shortest-straight-path-to-border', the last edge segment is extended from the bounding box to the rotated
    * layout.
    */
-  applyLayout(graph: LayoutGraph): void {
+  protected applyLayoutImpl(graph: LayoutGraph): void {
     if (!this.coreLayout) {
       return
     }
 
-    const boundsProvider = graph.getDataProvider(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY)
+    const boundsProvider = graph.context.getItemData(
+      RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DATA_KEY
+    )
     if (!boundsProvider) {
       // no provider: this stage adds nothing to the core layout
       this.coreLayout.applyLayout(graph)
       return
     }
-
-    let addedSourcePortConstraints = false
-    let addedTargetPortConstraints = false
-    let sourcePortConstraints = graph.getDataProvider(
-      PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY
-    ) as IDataMap | null
-    let targetPortConstraints = graph.getDataProvider(
-      PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY
-    ) as IDataMap | null
+    const graphContext = graph.context!
+    let addedSourcePortCandidates = false
+    let addedTargetPortCandidates = false
+    let sourcePortCandidates = graphContext.getItemData(
+      EdgePortCandidates.SOURCE_PORT_CANDIDATES_DATA_KEY
+    )
+    let targetPortCandidates = graphContext.getItemData(
+      EdgePortCandidates.TARGET_PORT_CANDIDATES_DATA_KEY
+    )
     if (this.edgeRoutingMode === 'fixed-port') {
-      // Fixed port: create port constraints to keep the ports at position
+      // Fixed port: create port candidates to keep the ports at position
       // in this case: create data providers if there are none
-      if (!sourcePortConstraints) {
-        sourcePortConstraints = graph.createEdgeMap()
-        graph.addDataProvider(
-          PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY,
-          sourcePortConstraints
+      if (!sourcePortCandidates) {
+        sourcePortCandidates = graph.createEdgeDataMap<EdgePortCandidates>()
+        graphContext.addItemData(
+          EdgePortCandidates.SOURCE_PORT_CANDIDATES_DATA_KEY,
+          sourcePortCandidates
         )
-        addedSourcePortConstraints = true
+        addedSourcePortCandidates = true
       }
-      if (!targetPortConstraints) {
-        targetPortConstraints = graph.createEdgeMap()
-        graph.addDataProvider(
-          PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY,
-          targetPortConstraints
+      if (!targetPortCandidates) {
+        targetPortCandidates = graph.createEdgeDataMap<EdgePortCandidates>()
+        graphContext.addItemData(
+          EdgePortCandidates.TARGET_PORT_CANDIDATES_DATA_KEY,
+          targetPortCandidates
         )
-        addedTargetPortConstraints = true
+        addedTargetPortCandidates = true
       }
     }
+
     try {
-      const originalDimensions = Maps.createHashedNodeMap()
+      const originalDimensions = new Mapper<LayoutNode, Dimensions>()
       graph.nodes.forEach((node) => {
         const { outline, orientedLayout } = boundsProvider.get(node) as {
           outline: GeneralPath
@@ -133,8 +136,8 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
         if (orientedLayout) {
           // if the current node is rotated: apply fixes
           // remember old layout and size
-          const oldLayout = graph.getLayout(node)
-          const newLayout = orientedLayout.bounds.toYRectangle()
+          const oldLayout = node.layout
+          const newLayout = orientedLayout.bounds
           const offset = new Point(newLayout.x - oldLayout.x, newLayout.y - oldLayout.y)
           const originalSize = new Size(oldLayout.width, oldLayout.height)
           const oldDimensions: Dimensions = {
@@ -167,113 +170,114 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
 
             // for each out edge
             node.outEdges.forEach((edge) => {
-              // create a strong port constraint for the side which is closest to the port location (without rotation)
-              const constraint = sourcePortConstraints!.get(edge)
+              // create a strong port candidate for the side which is closest to the port location (without rotation)
+              const constraint = sourcePortCandidates!.get(edge)
               if (!constraint) {
-                const point = graph.getSourcePointAbs(edge).toPoint()
+                const point = edge.sourcePortLocation
                 const side = this.findBestSide(point, bl, br, tl, tr)
-                sourcePortConstraints!.set(edge, PortConstraint.create(side, true))
+                sourcePortCandidates!.set(edge, new EdgePortCandidates().addFixedCandidate(side))
               }
             })
             node.inEdges.forEach((edge) => {
-              // create a strong port constraint for the side which is closest to the port location (without rotation)
-              const constraint = targetPortConstraints!.get(edge)
+              // create a strong port candidate for the side which is closest to the port location (without rotation)
+              const constraint = targetPortCandidates!.get(edge)
               if (!constraint) {
-                const point = graph.getTargetPointAbs(edge).toPoint()
+                const point = edge.targetPortLocation
                 const side = this.findBestSide(point, bl, br, tl, tr)
-                targetPortConstraints!.set(edge, PortConstraint.create(side, true))
+                targetPortCandidates!.set(edge, new EdgePortCandidates().addFixedCandidate(side))
               }
             })
           }
 
-          // For source and target port constraints: fix the PortSide according to the rotation
+          // For source and target port candidates: fix the PortSide according to the rotation
           const angle = Math.atan2(orientedLayout.upY, orientedLayout.upX)
-          if (sourcePortConstraints) {
+          if (sourcePortCandidates) {
             node.outEdges.forEach((edge) => {
-              this.fixPortConstraintSide(sourcePortConstraints!, edge, angle)
+              this.fixPortCandidateSide(sourcePortCandidates!, edge, angle)
             })
           }
-          if (targetPortConstraints) {
+          if (targetPortCandidates) {
             node.inEdges.forEach((edge) => {
-              this.fixPortConstraintSide(targetPortConstraints!, edge, angle)
+              this.fixPortCandidateSide(targetPortCandidates!, edge, angle)
             })
           }
 
           // enlarge the node layout
-          const position = new YPoint(newLayout.x, newLayout.y)
+          const position = new Point(newLayout.x, newLayout.y)
           oldDimensions.location = position
           originalDimensions.set(node, oldDimensions)
-          graph.setLocation(node, position)
-          graph.setSize(node, newLayout)
+          node.layout.x = position.x
+          node.layout.y = position.y
+          node.layout.width = newLayout.width
+          node.layout.height = newLayout.height
         }
       })
-      const layout = new MinimumNodeSizeStage(this.coreLayout)
-      layout.applyLayout(graph)
+      this.coreLayout.applyLayout(graph)
 
-      const groups = graph.getDataProvider(GroupingKeys.GROUP_DP_KEY)
-      graph.nodes.forEach((node) => {
-        if (groups && groups.getBoolean(node)) {
-          // groups don't need to be adjusted to their former size and location because their bounds are entirely
-          // calculated by the layout algorithm and they are not rotated
-          return
-        }
+      graph.nodes
+        .filter((node) => !graph.isGroupNode(node))
+        .forEach((node) => {
+          // for each node which has been corrected: undo the correction
+          const oldDimensions = originalDimensions.get(node)!
+          const offset = oldDimensions.offset
+          const originalSize = oldDimensions.size
+          const newLayout = node.layout
 
-        // for each node which has been corrected: undo the correction
-        const oldDimensions = originalDimensions.get(node)
-        const offset = oldDimensions.offset
-        const originalSize = oldDimensions.size
-        const newLayout = graph.getLayout(node)
+          // create a general path representing the new rotated layout
+          const path = oldDimensions.outline
+          const transform = new Matrix()
+          transform.translate(node.layout.topLeft.subtract(oldDimensions.location!))
+          path.transform(transform)
 
-        // create a general path representing the new rotated layout
-        const path = oldDimensions.outline
-        const transform = new Matrix()
-        transform.translate(
-          new Point(newLayout.x - oldDimensions.location.x, newLayout.y - oldDimensions.location.y)
-        )
-        path.transform(transform)
+          // restore the original size
+          node.layout.x = newLayout.x - offset.x
+          node.layout.y = newLayout.y - offset.y
+          node.layout.width = originalSize.width
+          node.layout.height = originalSize.height
 
-        // restore the original size
-        graph.setLocation(node, new YPoint(newLayout.x - offset.x, newLayout.y - offset.y))
-        graph.setSize(node, originalSize.toYDimension())
+          // graph.setLocation(node, new Point(newLayout.x - offset.x, newLayout.y - offset.y))
+          // graph.setSize(node, originalSize.toYDimension())
 
-        if (this.edgeRoutingMode === 'no-routing') {
-          // NoRouting still needs fix for self-loops
-          node.edges.forEach((edge) => {
-            if (edge.selfLoop) {
-              this.fixPorts(graph, edge, path, false)
-              this.fixPorts(graph, edge, path, true)
-            }
+          if (this.edgeRoutingMode === 'no-routing') {
+            // NoRouting still needs fix for self-loops
+            node.edges.forEach((edge) => {
+              if (edge.selfLoop) {
+                this.fixPorts(graph, edge, path, false)
+                this.fixPorts(graph, edge, path, true)
+              }
+            })
+            return
+          }
+
+          if (this.edgeRoutingMode !== 'shortest-straight-path-to-border') {
+            return
+          }
+
+          // enlarge the adjacent segment to the oriented rectangle (represented by the path)
+          // handling in and out edges separately will automatically cause self-loops to be handled correctly
+          node.inEdges.forEach((edge) => {
+            this.fixPorts(graph, edge, path, false)
           })
-          return
-        }
-
-        if (this.edgeRoutingMode !== 'shortest-straight-path-to-border') {
-          return
-        }
-
-        // enlarge the adjacent segment to the oriented rectangle (represented by the path)
-        // handling in and out edges separately will automatically cause self-loops to be handled correctly
-        node.inEdges.forEach((edge) => {
-          this.fixPorts(graph, edge, path, false)
+          node.outEdges.forEach((edge) => {
+            this.fixPorts(graph, edge, path, true)
+          })
         })
-        node.outEdges.forEach((edge) => {
-          this.fixPorts(graph, edge, path, true)
-        })
-      })
     } finally {
-      // if data provider for the port constraints have been added
+      // if data provider for the port candidates have been added
       // remove and dispose them
-      if (addedSourcePortConstraints) {
-        graph.removeDataProvider(PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY)
+      if (addedSourcePortCandidates) {
+        graphContext.remove(EdgePortCandidates.SOURCE_PORT_CANDIDATES_DATA_KEY)
+        graph.disposeEdgeDataMap(sourcePortCandidates)
       }
-      if (addedTargetPortConstraints) {
-        graph.removeDataProvider(PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY)
+      if (addedTargetPortCandidates) {
+        graphContext.remove(EdgePortCandidates.TARGET_PORT_CANDIDATES_DATA_KEY)
+        graph.disposeEdgeDataMap(targetPortCandidates)
       }
     }
   }
 
   /**
-   * Find the best {@link PortSide} according to the position of the port.
+   * Find the best {@link PortSides} according to the position of the port.
    * The orientation is not rotated, i.e. bottomLeft is always the anchor of the oriented rectangle.
    */
   findBestSide(
@@ -282,112 +286,121 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
     bottomRight: Point,
     topLeft: Point,
     topRight: Point
-  ): PortSide {
+  ): PortSides {
     // determine the distances to the sides of the oriented rectangle
     // with a small penalty to the left and right side.
     const distToBottom = point.distanceToSegment(bottomLeft, bottomRight)
     const distToTop = point.distanceToSegment(topLeft, topRight)
     const distToLeft = point.distanceToSegment(topLeft, bottomLeft) * 1.05
     const distToRight = point.distanceToSegment(topRight, bottomRight) * 1.05
-    let side: PortSide
+    let side: PortSides
     if (distToTop <= distToBottom) {
       if (distToTop <= distToLeft) {
-        side = distToTop <= distToRight ? PortSide.NORTH : PortSide.EAST
+        side = distToTop <= distToRight ? PortSides.TOP : PortSides.RIGHT
       } else {
-        side = distToLeft < distToRight ? PortSide.WEST : PortSide.EAST
+        side = distToLeft < distToRight ? PortSides.LEFT : PortSides.RIGHT
       }
     } else if (distToBottom <= distToLeft) {
-      side = distToBottom <= distToRight ? PortSide.SOUTH : PortSide.EAST
+      side = distToBottom <= distToRight ? PortSides.BOTTOM : PortSides.RIGHT
     } else {
-      side = distToLeft < distToRight ? PortSide.WEST : PortSide.EAST
+      side = distToLeft < distToRight ? PortSides.LEFT : PortSides.RIGHT
     }
     return side
   }
 
   /**
-   * Fix the {@link PortSide} of the given edge's port constraints for the oriented rectangles
+   * Fix the {@link PortSides} of the given edge's port candidates for the oriented rectangles
    * rotation.
-   * If the oriented rectangle is rotated 180° the port sides will be flipped, e.g. the port constraints will be
+   * If the oriented rectangle is rotated 180° the port sides will be flipped, e.g. the port candidates will be
    * replaced.
    */
-  fixPortConstraintSide(portConstraints: IDataMap, edge: Edge, angle: number): void {
-    const constraint = portConstraints.get(edge)
-    if (constraint && !constraint.atAnySide) {
-      let side = constraint.side
+  fixPortCandidateSide(
+    portCandidates: IMapper<LayoutEdge, EdgePortCandidates>,
+    edge: LayoutEdge,
+    angle: number
+  ): void {
+    const candidate = portCandidates.get(edge)?.candidates?.at(0)
+    if (candidate && !candidate.isOnAnySide()) {
+      let direction = candidate.side
       if (angle < Math.PI / 4 && angle > -Math.PI / 4) {
         // top is rotated 90 deg left
-        switch (side) {
+        switch (direction) {
           default:
-          case PortSide.WEST:
-            side = PortSide.NORTH
+          case PortSides.LEFT:
+            direction = PortSides.TOP
             break
-          case PortSide.SOUTH:
-            side = PortSide.WEST
+          case PortSides.BOTTOM:
+            direction = PortSides.LEFT
             break
-          case PortSide.EAST:
-            side = PortSide.SOUTH
+          case PortSides.RIGHT:
+            direction = PortSides.BOTTOM
             break
-          case PortSide.NORTH:
-            side = PortSide.EAST
+          case PortSides.TOP:
+            direction = PortSides.RIGHT
             break
         }
       } else if (angle > Math.PI / 4 && angle < Math.PI * 0.75 && angle > 0) {
         // 180 deg
-        switch (side) {
+        switch (direction) {
           default:
-          case PortSide.WEST:
-            side = PortSide.EAST
+          case PortSides.LEFT:
+            direction = PortSides.RIGHT
             break
-          case PortSide.SOUTH:
-            side = PortSide.NORTH
+          case PortSides.BOTTOM:
+            direction = PortSides.TOP
             break
-          case PortSide.EAST:
-            side = PortSide.WEST
+          case PortSides.RIGHT:
+            direction = PortSides.LEFT
             break
-          case PortSide.NORTH:
-            side = PortSide.SOUTH
+          case PortSides.TOP:
+            direction = PortSides.BOTTOM
             break
         }
       } else if (angle > Math.PI * 0.75 || angle < -Math.PI * 0.75) {
         // top is rotated 90 deg right
-        switch (side) {
+        switch (direction) {
           default:
-          case PortSide.WEST:
-            side = PortSide.SOUTH
+          case PortSides.LEFT:
+            direction = PortSides.BOTTOM
             break
-          case PortSide.SOUTH:
-            side = PortSide.EAST
+          case PortSides.BOTTOM:
+            direction = PortSides.RIGHT
             break
-          case PortSide.EAST:
-            side = PortSide.NORTH
+          case PortSides.RIGHT:
+            direction = PortSides.TOP
             break
-          case PortSide.NORTH:
-            side = PortSide.WEST
+          case PortSides.TOP:
+            direction = PortSides.LEFT
             break
         }
       } else {
         // no rotation
         return
       }
-      // Side is not writable, so set new constraint
-      portConstraints.set(edge, PortConstraint.create(side, constraint.strong))
+      // Side is not writable, so set new candidate
+      portCandidates.set(
+        edge,
+        candidate.type === PortCandidateType.FREE
+          ? new EdgePortCandidates().addFreeCandidate(direction)
+          : new EdgePortCandidates().addFixedCandidate(direction)
+      )
     }
   }
 
   /**
    * Fix the ports for 'shortest-straight-path-to-border' by enlarging the adjacent segment to the rotated layout.
    */
-  fixPorts(graph: LayoutGraph, edge: Edge, path: GeneralPath, atSource: boolean): void {
-    const el = graph.getLayout(edge)
-    const pointCount = el.pointCount()
+  fixPorts(graph: LayoutGraph, edge: LayoutEdge, path: GeneralPath, atSource: boolean): void {
     // find the opposite point of the port at the adjacent segment
     const firstBend = atSource
-      ? (pointCount > 0 ? el.getPoint(0) : graph.getTargetPointAbs(edge)).toPoint()
-      : (pointCount > 0 ? el.getPoint(pointCount - 1) : graph.getSourcePointAbs(edge)).toPoint()
+      ? edge.bends.size > 0
+        ? edge.bends.first()!.location
+        : edge.targetPortLocation
+      : edge.bends.size > 0
+        ? edge.bends.last()!.location
+        : edge.sourcePortLocation
     // The port itself
-    const port = (
-      atSource ? graph.getSourcePointAbs(edge) : graph.getTargetPointAbs(edge)
-    ).toPoint()
+    const port = atSource ? edge.sourcePortLocation : edge.targetPortLocation
     // The adjacent segment as vector pointing from the opposite point to the port
     const direction = port.subtract(firstBend)
     // find the intersection (there is always one)
@@ -410,9 +423,9 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
     }
     // set the port position
     if (atSource) {
-      graph.setSourcePointAbs(edge, point.toYPoint())
+      edge.sourcePortLocation = point
     } else {
-      graph.setTargetPointAbs(edge, point.toYPoint())
+      edge.targetPortLocation = point
     }
   }
 }

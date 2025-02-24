@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,30 +26,19 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HtmlVisual, ICommand, NodeStyleBase } from 'yfiles'
-import { avatars, statusValues } from './data.js'
-
+import { HtmlVisual, NodeStyleBase } from '@yfiles/yfiles'
+import { avatars, statusValues } from './data'
 const avatarImages = avatars
   .map((path) => `<img class='editable-node-style__avatar-select-image' src="${path}">`)
   .join('')
-
-/**
- * @typedef {TypedHtmlVisual.<HTMLDivElement>} HtmlEditableNodeStyleVisual
- */
-
 /**
  * A custom HTML-based node style that uses both native HTML input elements and a custom
  * image selection grid to enable interactive editing of the node data.
  * The elements are styled using the CSS rules in styles.css
  */
 export class HtmlEditableNodeStyle extends NodeStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {!HtmlEditableNodeStyleVisual}
-   */
   createVisual(context, node) {
-    const doc = context.canvasComponent.div.ownerDocument
+    const doc = context.canvasComponent.htmlElement.ownerDocument
     const div = doc.createElement('div')
     div.classList.add('html-style')
     const visual = HtmlVisual.from(div)
@@ -57,32 +46,19 @@ export class HtmlEditableNodeStyle extends NodeStyleBase {
     this.createContent(context, div, node)
     return visual
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!HtmlEditableNodeStyleVisual} oldVisual
-   * @param {!INode} node
-   * @returns {!HtmlEditableNodeStyleVisual}
-   */
   updateVisual(context, oldVisual, node) {
     HtmlVisual.setLayout(oldVisual.element, node.layout)
     return oldVisual
   }
-
   /**
    * We only have to implement createContent() for this use case.
    * The base style takes care of updating the position of the container element in updateVisual().
-   * @param {!IRenderContext} context
-   * @param {!HTMLDivElement} element
-   * @param {!INode} node
    */
   createContent(context, element, node) {
     const data = node.tag
-
     const statusOptions = statusValues.map(
       (status) => `<option${status === data.status ? ' selected' : ''}>${status}</option>`
     )
-
     element.innerHTML = `
       <div class='editable-node-style'>
         <form class='editable-node-style__form'>
@@ -111,9 +87,7 @@ export class HtmlEditableNodeStyle extends NodeStyleBase {
        </form>
       </div>
     `
-
     setStatusClass(element.firstElementChild, data)
-
     const inputs = element.querySelectorAll('.editable-node-style__input')
     const submit = element.querySelector('.editable-node-style__submit')
     const form = element.querySelector('.editable-node-style__form')
@@ -121,11 +95,9 @@ export class HtmlEditableNodeStyle extends NodeStyleBase {
     const name = element.querySelector('.editable-node-style__name')
     const avatarImage = element.querySelector('.editable-node-style__avatar-image')
     const avatarSelectImages = element.querySelectorAll('.editable-node-style__avatar-select-image')
-
     function toggleAvatarSelecting() {
       avatar.classList.toggle('editable-node-style__avatar-selecting')
     }
-
     avatarImage.addEventListener('click', toggleAvatarSelecting, { capture: true })
     for (const selectImg of avatarSelectImages) {
       selectImg.addEventListener(
@@ -138,7 +110,6 @@ export class HtmlEditableNodeStyle extends NodeStyleBase {
         { capture: true }
       )
     }
-
     for (const input of [...inputs, avatarImage, ...avatarSelectImages]) {
       // Show the submit-button as soon as the content was edited
       input.addEventListener('input', function () {
@@ -156,24 +127,16 @@ export class HtmlEditableNodeStyle extends NodeStyleBase {
       data.since = since
       data.status = status
       data.description = description
-
       submit.disabled = true
-
       // Select the node (re-selecting it if necessary) to cause the node data view to update
       const graphComponent = context.canvasComponent
-      ICommand.DESELECT_ALL.execute(null, graphComponent)
-      ICommand.SELECT_ITEM.execute(node, graphComponent)
-
+      graphComponent.selection.clear()
+      graphComponent.selection.add(node)
       setStatusClass(element.firstElementChild, data)
       evt.preventDefault()
     })
   }
 }
-
-/**
- * @param {!Element} element
- * @param {!UserData} data
- */
 function setStatusClass(element, data) {
   for (const status of statusValues) {
     const className = `editable-node-style--${status}`
@@ -184,17 +147,9 @@ function setStatusClass(element, data) {
     }
   }
 }
-
-/**
- * @param {!Event} e
- */
 function stopPropagation(e) {
   e.stopPropagation()
 }
-
-/**
- * @param {!HTMLElement} element
- */
 function preventPropagation(element) {
   for (const eventName of [
     'click',
@@ -211,11 +166,6 @@ function preventPropagation(element) {
     element.addEventListener(eventName, stopPropagation)
   }
 }
-
-/**
- * @param {!string} path
- * @returns {!string}
- */
 function extractName(path) {
   return path.substring(path.lastIndexOf('_') + 1, path.lastIndexOf('.'))
 }

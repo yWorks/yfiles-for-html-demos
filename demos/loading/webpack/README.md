@@ -1,15 +1,15 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Webpack ES Modules Demo
+<img src="../../../doc/demo-thumbnails/webpack.webp" alt="demo-thumbnail" height="320"/>
 
 This demo shows how to integrate the yFiles library in a [webpack](https://webpack.js.org/) project.
 

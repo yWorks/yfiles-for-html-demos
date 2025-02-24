@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,17 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { html } from '../../preact-loader.js'
-import Item from './Item.js'
-
-/**
- * @typedef {Object} Props
- * @property {Array.<DataItem>} itemData
- * @property {function} toggleState
- * @property {function} removeDataItem
- * @property {function} addDataItem
- */
-
+// @ts-ignore - We have no proper types for preact, here
+import { html } from '../../preact-loader'
+import Item from './Item'
 export default (props) => {
   const itemElements = props.itemData.map(
     (dataItem, index) => html`
@@ -46,6 +38,7 @@ export default (props) => {
         index="${index}"
         toggleState="${props.toggleState}"
         removeDataItem="${props.removeDataItem}"
+        disabled=${props.disabled}
       />
     `
   )
@@ -53,7 +46,9 @@ export default (props) => {
     <div class="item-list">
       <h2>Data Items</h2>
       <div>
-        <button class="add-button" onClick="${props.addDataItem}">Add Item</button>
+        <button class="add-button" onClick="${props.addDataItem}" disabled=${props.disabled}>
+          Add Item
+        </button>
       </div>
       ${itemElements}
     </div>

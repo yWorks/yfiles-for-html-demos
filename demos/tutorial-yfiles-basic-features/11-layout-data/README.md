@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 11 Layout Data - Tutorial: Basic Features
 
-# Layout Data
+<img src="../../../doc/demo-thumbnails/tutorial-basic-features-layout-data.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/11-layout-data/).
 
 ## How to consider graph data in automatic layout
 
@@ -32,11 +34,9 @@ We create a [LayoutData](https://docs.yworks.com/yfileshtml/#/api/LayoutData) in
 
 ```
 // Configure the layout data using the information from the node labels
-const hierarchicLayoutData = new HierarchicLayoutData({
-  nodeLayoutDescriptors: (
-    node: INode
-  ): HierarchicLayoutNodeLayoutDescriptor =>
-    new HierarchicLayoutNodeLayoutDescriptor({
+const hierarchicalLayoutData = new HierarchicalLayoutData({
+  nodeDescriptors: (node: INode): HierarchicalLayoutNodeDescriptor =>
+    new HierarchicalLayoutNodeDescriptor({
       // Set the alignment of the node based on the label
       layerAlignment: getAlignment(node)
     })
@@ -60,14 +60,13 @@ function getAlignment(node: INode): number {
 }
 ```
 
-The layout data is used as a parameter for [morphLayout](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-morphLayout) to pass the information to the layout algorithm.
+The layout data is used as a parameter for [applyLayoutAnimated](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-applyLayoutAnimated) to pass the information to the layout algorithm.
 
 ```
-await graphComponent.morphLayout({
-  layout: new MinimumNodeSizeStage(hierarchicLayout),
-  layoutData: hierarchicLayoutData,
-  morphDuration: '1s',
-  easedAnimation: true
+await graphComponent.applyLayoutAnimated({
+  layout: hierarchicalLayout,
+  layoutData: hierarchicalLayoutData,
+  animationDuration: '1s'
 })
 ```
 

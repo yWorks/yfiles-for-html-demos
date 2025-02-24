@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,63 +27,44 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   EdgePathLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   IEdge,
   IGraph,
+  LabelStyle,
   License,
-  OrthogonalEdgeEditingContext,
   Point,
   Size
-} from 'yfiles'
-import { DirectedEdgeLabelStyle } from './DirectedEdgeLabelStyle.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/**
- * @returns {!Promise}
- */
+} from '@yfiles/yfiles'
+import { DirectedEdgeLabelStyle } from './DirectedEdgeLabelStyle'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
-  initDemoStyles(graphComponent.graph, { theme: 'demo-palette-31' })
+  initDemoStyles(graphComponent.graph, { theme: 'demo-palette-31', orthogonalEditing: true })
   const labelStyle = graphComponent.graph.edgeDefaults.labels.style
   labelStyle.minimumSize = new Size(0, 22)
-
   // Initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode({
     allowEditLabel: true,
     allowAddLabel: false,
-    deletableItems: GraphItemTypes.ALL - GraphItemTypes.LABEL,
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext()
+    deletableItems: GraphItemTypes.ALL - GraphItemTypes.LABEL
   })
-
-  graphComponent.graph.addEdgeCreatedListener((graphComponent, evt) =>
+  graphComponent.graph.addEventListener('edge-created', (evt, graphComponent) =>
     addLabels(graphComponent, evt.item)
   )
-
   // Create some graph elements
   createSampleGraph(graphComponent.graph)
   graphComponent.fitGraphBounds()
 }
-
 const toSourceStyle = new DirectedEdgeLabelStyle(true)
 toSourceStyle.arrowFill = 'red'
-
 const toTargetStyle = new DirectedEdgeLabelStyle(false)
 toTargetStyle.arrowFill = 'green'
-
-/**
- * @param {!IGraph} graph
- * @param {!IEdge} edge
- */
 function addLabels(graph, edge) {
   graph.addLabel(
     edge,
@@ -91,13 +72,11 @@ function addLabels(graph, edge) {
     new EdgePathLabelModel(0, 0, 0, false, 'on-edge').createRatioParameter(0, 'on-edge'),
     toSourceStyle
   )
-
   graph.addLabel(
     edge,
     'Center',
     new EdgePathLabelModel(0, 0, 0, false, 'on-edge').createRatioParameter(0.5, 'on-edge')
   )
-
   graph.addLabel(
     edge,
     'To Target',
@@ -105,10 +84,8 @@ function addLabels(graph, edge) {
     toTargetStyle
   )
 }
-
 /**
  * Creates the initial sample graph.
- * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
   graph.createEdge({
@@ -116,18 +93,15 @@ function createSampleGraph(graph) {
     target: graph.createNodeAt([-200, 100]),
     bends: [new Point(-100, 0), new Point(-200, 0)]
   })
-
   graph.createEdge({
     source: graph.createNodeAt([100, -100]),
     target: graph.createNodeAt([200, 100]),
     bends: [new Point(100, 0), new Point(200, 0)]
   })
-
   graph.createEdge({
     source: graph.createNodeAt([-200, 150]),
     target: graph.createNodeAt([200, 150]),
     bends: []
   })
 }
-
 run().then(finishLoading)

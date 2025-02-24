@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 09 Hit-Testing - Tutorial: Label Style Implementation
 
-# Customizing hit-testing
+<img src="../../../doc/demo-thumbnails/tutorial-style-implementation-label-hit-testing.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-label/09-hit-testing/).
 
 Styles not only provide a visual representation for graph items. They also offer crucial parts for interacting with said items. Hit-testing determines whether a particular item is at a given point in the canvas. It happens all the time during interaction, e.g. when selecting items, moving nodes, or creating edges.
 
@@ -31,7 +33,7 @@ protected isHit(
 ): boolean {
   const labelLayout = label.layout
   // first check if the label layout is hit
-  if (labelLayout.hits(location, context.hitTestRadius)) {
+  if (labelLayout.contains(location, context.hitTestRadius)) {
     return true
   }
   // if the layout is not hit, we have to check the tail triangle.
@@ -52,9 +54,7 @@ protected isHit(
 
   // check the rectangular tail bounds
   const tailBounds = new Rect(0, 0, tailWidth, tailHeight)
-  if (
-    !tailBounds.containsWithEps(transformedLocation, context.hitTestRadius)
-  ) {
+  if (!tailBounds.contains(transformedLocation, context.hitTestRadius)) {
     return false
   }
 

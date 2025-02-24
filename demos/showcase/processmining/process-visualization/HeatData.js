@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,22 +33,13 @@ export class HeatData {
   values
   minTime
   maxTime
-
-  /**
-   * @param {number} [elements=64]
-   * @param {number} [minTime=0]
-   * @param {number} [maxTime=1]
-   */
   constructor(elements = 64, minTime = 0, maxTime = 1) {
     this.values = new Float32Array(elements)
     this.minTime = minTime
     this.maxTime = maxTime
   }
-
   /**
    * Returns the heat value at a specific time.
-   * @param {number} time
-   * @returns {number}
    */
   getValue(time) {
     if (time < this.minTime || time >= this.maxTime) {
@@ -64,12 +55,8 @@ export class HeatData {
       }
     }
   }
-
   /**
    * Adds the given value for a given time span.
-   * @param {number} from
-   * @param {number} to
-   * @param {number} value
    */
   addValues(from, to, value) {
     const fromRatio = this.calculateRatio(from)
@@ -78,27 +65,21 @@ export class HeatData {
     const toRatio = this.calculateRatio(to)
     const toIndex = Math.floor(toRatio)
     const toFraction = toRatio - toIndex
-
     this.values[fromIndex] += (1 - fromFraction) * value
     for (let i = fromIndex + 1; i < toIndex; i++) {
       this.values[i] += value
     }
     this.values[toIndex] += value * toFraction
   }
-
   /**
    * Calculates the ratio of the given time in relation to the time span
    * covered by this {@link HeatData}.
-   * @param {number} time
-   * @returns {number}
    */
   calculateRatio(time) {
     return ((time - this.minTime) / (this.maxTime - this.minTime)) * this.values.length
   }
-
   /**
    * Returns the maximum heat value over the whole time span that is covered by this {@link HeatData}.
-   * @returns {number}
    */
   getMaxValue() {
     return this.values.reduce((maxValue, value) => Math.max(maxValue, value), 0)

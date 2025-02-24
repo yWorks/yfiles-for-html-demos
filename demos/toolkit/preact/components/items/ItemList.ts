@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,6 +36,7 @@ interface Props {
   toggleState: (index: number) => void
   removeDataItem: (index: number) => void
   addDataItem: () => void
+  disabled: boolean
 }
 
 export default (props: Props) => {
@@ -47,6 +48,7 @@ export default (props: Props) => {
         index="${index}"
         toggleState="${props.toggleState}"
         removeDataItem="${props.removeDataItem}"
+        disabled=${props.disabled}
       />
     `
   )
@@ -54,7 +56,9 @@ export default (props: Props) => {
     <div class="item-list">
       <h2>Data Items</h2>
       <div>
-        <button class="add-button" onClick="${props.addDataItem}">Add Item</button>
+        <button class="add-button" onClick="${props.addDataItem}" disabled=${props.disabled}>
+          Add Item
+        </button>
       </div>
       ${itemElements}
     </div>

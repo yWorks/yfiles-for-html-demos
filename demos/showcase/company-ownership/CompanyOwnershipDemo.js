@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,67 +26,46 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphOverviewComponent, License } from 'yfiles'
-import { CompanyStructureView } from './CompanyStructureView.js'
-
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { CompanyOwnershipSearch } from './CompanyOwnershipSearch.js'
-import { PropertiesView } from './PropertiesView.js'
-import { initializeConverters } from './styles/TableNodeStyle.js'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
+import { GraphOverviewComponent, License } from '@yfiles/yfiles'
+import { CompanyStructureView } from './CompanyStructureView'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { CompanyOwnershipSearch } from './CompanyOwnershipSearch'
+import { PropertiesView } from './PropertiesView'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * The component for the search in the graph
- * @type {CompanyOwnershipSearch}
  */
 let graphSearch
 /**
  * The component on the right that displays the node properties on click.
- * @type {PropertiesView}
  */
 let propertiesView
 /**
  * The class that manages the graph component and the handling of the data
- * @type {CompanyStructureView}
  */
 let companyStructureView
-
 /**
  * Runs this demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   companyStructureView = new CompanyStructureView('#graphComponent')
   const graphComponent = companyStructureView.graphComponent
-  applyDemoTheme(graphComponent)
-
   // add the listeners for the companyStructureView
-  companyStructureView.addNodeClickedListener((node) => propertiesView.showNodeProperties(node))
-  companyStructureView.addEdgeClickedListener((edge) => propertiesView.showEdgeProperties(edge))
-
+  companyStructureView.setNodeClickedListener((node) => propertiesView.showNodeProperties(node))
+  companyStructureView.setEdgeClickedListener((edge) => propertiesView.showEdgeProperties(edge))
   // initialize graph search
   graphSearch = new CompanyOwnershipSearch(graphComponent)
   CompanyOwnershipSearch.registerEventListener(document.querySelector('#searchBox'), graphSearch)
-
-  // initialize the converters needed for the template node style
-  initializeConverters()
-
   // create the properties view
   createPropertiesView()
-
   // load the graph
   await loadGraph(graphComponent)
-
   // bind the buttons to their functionality
   initializeUI(graphComponent)
-
   // initialize the overview component
   new GraphOverviewComponent('#overviewComponent', graphComponent)
 }
-
 /**
  * Creates the properties view that displays the information about the current employee.
  */
@@ -94,10 +73,8 @@ function createPropertiesView() {
   const propertiesViewElement = document.getElementById('propertiesView')
   propertiesView = new PropertiesView(propertiesViewElement)
 }
-
 /**
  * Binds actions to the buttons in the toolbar.
- * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
   document.querySelector('#styles').addEventListener('change', async (event) => {
@@ -105,15 +82,14 @@ function initializeUI(graphComponent) {
     companyStructureView.useShapeNodeStyle = select.value === 'shapes'
     await loadGraph(graphComponent)
   })
-
-  document.querySelectorAll('[data-command="Shapes"]').forEach((element) => {
+  document.querySelectorAll('button[data-command="Shapes"]').forEach((element) => {
     element.addEventListener('click', async () => {
       document.querySelector('#styles').value = 'shapes'
       companyStructureView.useShapeNodeStyle = true
       await loadGraph(graphComponent)
     })
   })
-  document.querySelectorAll('[data-command="Tables"]').forEach((element) => {
+  document.querySelectorAll('button[data-command="Tables"]').forEach((element) => {
     element.addEventListener('click', async () => {
       document.querySelector('#styles').value = 'tables'
       companyStructureView.useShapeNodeStyle = false
@@ -121,13 +97,10 @@ function initializeUI(graphComponent) {
     })
   })
 }
-
 /**
  * Resets the application and loads the new graph.
- * @param {!GraphComponent} graphComponent The given graphComponent
+ * @param graphComponent The given graphComponent
  * @param animate True if the layout should be animated, false otherwise
- * @param {boolean} [animate=true]
- * @returns {!Promise}
  */
 async function loadGraph(graphComponent, animate = true) {
   setUIDisabled(true)
@@ -135,15 +108,13 @@ async function loadGraph(graphComponent, animate = true) {
   // update the search string
   document.querySelector('#searchBox').value = ''
   graphSearch.updateSearch('')
-
   await companyStructureView.loadGraph('./resources/company-data.json')
   await companyStructureView.layout(animate)
   setUIDisabled(false)
 }
-
 /**
  * Updates the elements of the UI's state and checks whether the buttons should be enabled or not.
- * @param {boolean} disabled True if the elements should be disabled, false otherwise
+ * @param disabled True if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
   document.querySelector('#styles').disabled = disabled
@@ -154,5 +125,4 @@ function setUIDisabled(disabled) {
     element.disabled = disabled
   })
 }
-
 void run().then(finishLoading)

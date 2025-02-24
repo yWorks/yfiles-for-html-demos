@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { IRenderContext, Visual } from 'yfiles'
-import { BaseClass, HtmlCanvasVisual, IVisualCreator } from 'yfiles'
+import type { IRenderContext, Visual } from '@yfiles/yfiles'
+import { BaseClass, HtmlCanvasVisual, IVisualCreator } from '@yfiles/yfiles'
 import type { GanttTimestamp } from './gantt-utils'
 import { daysInMonth, ganttDayWidth, getVisualRange } from './gantt-utils'
 import type { ChartData, Task } from './resources/data-model'
@@ -36,10 +36,7 @@ import { ganttTaskSpacing, getCompleteTaskHeight, getTaskY } from './sweepline-l
 /**
  * Manages and renders the background grid of the main component.
  */
-export class GridVisual extends BaseClass<HtmlCanvasVisual, IVisualCreator>(
-  HtmlCanvasVisual,
-  IVisualCreator
-) {
+export class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
   /**
    * Creates a new grid for the given data model.
    */
@@ -50,7 +47,7 @@ export class GridVisual extends BaseClass<HtmlCanvasVisual, IVisualCreator>(
   /**
    * Paints the grid visualization.
    */
-  paint(renderContext: IRenderContext, renderingContext2D: CanvasRenderingContext2D): void {
+  render(renderContext: IRenderContext, renderingContext2D: CanvasRenderingContext2D): void {
     const { x, width } = renderContext.canvasComponent!.viewport
     const { startDate, startX, endX } = getVisualRange(x - 100, x + width + 100)
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
 	</key>
@@ -55,7 +55,7 @@
 	<key id="d13" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
 	<data key="d13">
 		<y:SharedData>
-			<yjs:DefaultLabelStyle x:Key="1" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 3}" textFill="BLACK"/>
+			<yjs:LabelStyle x:Key="1" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 3}" textFill="BLACK"/>
 			<bpmn:AlternatingLeafStripeStyle x:Key="2">
 				<bpmn:AlternatingLeafStripeStyle.evenLeafDescriptor>
 					<bpmn:StripeDescriptor backgroundFill="#FFC4D7ED" insetFill="#FFE0E0E0"/>
@@ -69,12 +69,12 @@
 			</bpmn:AlternatingLeafStripeStyle>
 			<yjs:Font x:Key="3" fontSize="12"/>
 			<yjs:ShapeNodeStyle x:Key="4" fill="#00FFFFFF"/>
-			<y:InteriorLabelModel x:Key="5"/>
-			<yjs:DefaultLabelStyle x:Key="6" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" textFill="BLACK">
-				<yjs:DefaultLabelStyle.font>
+			<yx:InteriorNodeLabelModel x:Key="5"/>
+			<yjs:LabelStyle x:Key="6" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" textFill="BLACK">
+				<yjs:LabelStyle.font>
 					<yjs:Font fontSize="12"/>
-				</yjs:DefaultLabelStyle.font>
-			</yjs:DefaultLabelStyle>
+				</yjs:LabelStyle.font>
+			</yjs:LabelStyle>
 			<bpmn:BpmnEdgeStyle x:Key="7"/>
 			<bpmn:BpmnEdgeStyle x:Key="8" type="DIRECTED_ASSOCIATION"/>
 		</y:SharedData>
@@ -86,11 +86,11 @@
 					<y:Label LayoutParameter="{x:Static bpmn:PoolHeaderLabelModel.WEST}">
 						<y:Label.Text><![CDATA[Workflow Details Table]]></y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle textFill="BLACK">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle textFill="BLACK">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -105,59 +105,59 @@
 							<yjs:ShapeNodeStyle fill="#FFE0E0E0"/>
 						</yjs:TableNodeStyle.backgroundStyle>
 						<yjs:TableNodeStyle.table>
-							<y:Table Insets="20,0,0,0">
-								<y:Table.Rows>
-									<y:Row MinimumSize="10" Size="101" Insets="20,0,0,0" Style="{y:GraphMLReference 2}">
-										<y:Row.Labels>
-											<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 1}">
+							<yx:Table Padding="20,0,0,0">
+								<yx:Table.Rows>
+									<yx:Row MinimumSize="10" Size="101" Padding="20,0,0,0" Style="{y:GraphMLReference 2}">
+										<yx:Row.Labels>
+											<y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 1}">
 												<y:Label.Text>Administration</y:Label.Text>
 											</y:Label>
-										</y:Row.Labels>
-									</y:Row>
-									<y:Row MinimumSize="10" Size="121" Insets="20,0,0,0" Style="{y:GraphMLReference 2}">
-										<y:Row.Labels>
-											<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 1}">
+										</yx:Row.Labels>
+									</yx:Row>
+									<yx:Row MinimumSize="10" Size="121" Padding="20,0,0,0" Style="{y:GraphMLReference 2}">
+										<yx:Row.Labels>
+											<y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 1}">
 												<y:Label.Text>Management</y:Label.Text>
 											</y:Label>
-										</y:Row.Labels>
-									</y:Row>
-									<y:Row MinimumSize="10" Size="90" Insets="20,0,0,0" Style="{y:GraphMLReference 2}">
-										<y:Row.Labels>
-											<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 1}">
+										</yx:Row.Labels>
+									</yx:Row>
+									<yx:Row MinimumSize="10" Size="90" Padding="20,0,0,0" Style="{y:GraphMLReference 2}">
+										<yx:Row.Labels>
+											<y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 1}">
 												<y:Label.Text>Webserver</y:Label.Text>
 											</y:Label>
-										</y:Row.Labels>
-									</y:Row>
-								</y:Table.Rows>
-								<y:Table.Columns>
-									<y:Column MinimumSize="10" Size="470">
-										<y:Column.Style>
+										</yx:Row.Labels>
+									</yx:Row>
+								</yx:Table.Rows>
+								<yx:Table.Columns>
+									<yx:Column MinimumSize="10" Size="470">
+										<yx:Column.Style>
 											<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 4}"/>
-										</y:Column.Style>
-									</y:Column>
-								</y:Table.Columns>
-								<y:Table.RowDefaults>
-									<y:StripeDefaults Insets="20,0,0,0" Style="{y:GraphMLReference 2}">
-										<y:StripeDefaults.Labels>
-											<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 1}" ShareStyleInstance="true"/>
-										</y:StripeDefaults.Labels>
-									</y:StripeDefaults>
-								</y:Table.RowDefaults>
-								<y:Table.ColumnDefaults>
-									<y:StripeDefaults Insets="0,30,0,0">
-										<y:StripeDefaults.Labels>
-											<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" ShareStyleInstance="true">
+										</yx:Column.Style>
+									</yx:Column>
+								</yx:Table.Columns>
+								<yx:Table.RowDefaults>
+									<yx:StripeDefaults Padding="20,0,0,0" Style="{y:GraphMLReference 2}">
+										<yx:StripeDefaults.Labels>
+											<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 1}" ShareStyleInstance="true"/>
+										</yx:StripeDefaults.Labels>
+									</yx:StripeDefaults>
+								</yx:Table.RowDefaults>
+								<yx:Table.ColumnDefaults>
+									<yx:StripeDefaults Padding="0,30,0,0">
+										<yx:StripeDefaults.Labels>
+											<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static yx:StretchStripeLabelModel.Top}" ShareStyleInstance="true">
 												<y:LabelDefaults.Style>
-													<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 3}" textFill="BLACK"/>
+													<yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 3}" textFill="BLACK"/>
 												</y:LabelDefaults.Style>
 											</y:LabelDefaults>
-										</y:StripeDefaults.Labels>
-										<y:StripeDefaults.Style>
+										</yx:StripeDefaults.Labels>
+										<yx:StripeDefaults.Style>
 											<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 4}"/>
-										</y:StripeDefaults.Style>
-									</y:StripeDefaults>
-								</y:Table.ColumnDefaults>
-							</y:Table>
+										</yx:StripeDefaults.Style>
+									</yx:StripeDefaults>
+								</yx:Table.ColumnDefaults>
+							</yx:Table>
 						</yjs:TableNodeStyle.table>
 					</yjs:TableNodeStyle>
 				</bpmn:PoolNodeStyle>
@@ -183,7 +183,7 @@
 								<y:Label.Text><![CDATA[Dispatch to
 Approver]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -229,11 +229,11 @@ activities can
 be started at
 the same time]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:RatioAnchoredLabelModelParameter LayoutOffset="12.305559397878085,206">
-										<y:RatioAnchoredLabelModelParameter.Model>
-											<y:FreeNodeLabelModel/>
-										</y:RatioAnchoredLabelModelParameter.Model>
-									</y:RatioAnchoredLabelModelParameter>
+									<yx:FreeNodeLabelModelParameter LayoutOffset="12.305559397878085,206">
+										<yx:FreeNodeLabelModelParameter.Model>
+											<yx:FreeNodeLabelModel/>
+										</yx:FreeNodeLabelModelParameter.Model>
+									</yx:FreeNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 								<y:Label.Style>
 									<bpmn:AnnotationLabelStyle/>
@@ -254,7 +254,7 @@ the same time]]></y:Label.Text>
 									<y:Label Style="{y:GraphMLReference 6}">
 										<y:Label.Text><![CDATA[Prepare PO]]></y:Label.Text>
 										<y:Label.LayoutParameter>
-											<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+											<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 										</y:Label.LayoutParameter>
 									</y:Label>
 								</x:List>
@@ -288,7 +288,7 @@ the same time]]></y:Label.Text>
 										<y:Label.Text><![CDATA[Apporove
 Request]]></y:Label.Text>
 										<y:Label.LayoutParameter>
-											<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+											<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 										</y:Label.LayoutParameter>
 									</y:Label>
 								</x:List>
@@ -323,11 +323,11 @@ Request]]></y:Label.Text>
 							<y:Label Style="{y:GraphMLReference 6}">
 								<y:Label.Text><![CDATA[Purchase Info]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="North">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Top">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -357,11 +357,11 @@ Request]]></y:Label.Text>
 Request
 Email]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="West">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Left">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>

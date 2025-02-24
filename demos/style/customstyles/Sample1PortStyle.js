@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,28 +26,24 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ICanvasContext, IPort, IRenderContext, PortStyleBase, Rect, Size, SvgVisual } from 'yfiles'
-import { SVGNS } from './Namespaces.js'
-
+import {
+  ICanvasContext,
+  IPort,
+  IRenderContext,
+  PortStyleBase,
+  Rect,
+  Size,
+  SvgVisual
+} from '@yfiles/yfiles'
+import { SVGNS } from './Namespaces'
 /** the size of the port rendering */
 const WIDTH = 4
 const HEIGHT = 4
-
-/**
- * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
- * @typedef {TypedSvgVisual.<SVGEllipseElement>} Sample1PortStyleVisual
- */
-
 /**
  * A custom port style based on the {@link PortStyleBase} class.
  * The port is rendered as a circle.
  */
 export default class Sample1PortStyle extends PortStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!IPort} port
-   * @returns {!Sample1PortStyleVisual}
-   */
   createVisual(context, port) {
     // create the ellipse
     const ellipse = window.document.createElementNS(SVGNS, 'ellipse')
@@ -65,13 +61,6 @@ export default class Sample1PortStyle extends PortStyleBase {
     SvgVisual.setTranslate(ellipse, locationX, locationY)
     return SvgVisual.from(ellipse)
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!Sample1PortStyleVisual} oldVisual
-   * @param {!IPort} port
-   * @returns {!Sample1PortStyleVisual}
-   */
   updateVisual(context, oldVisual, port) {
     const ellipse = oldVisual.svgElement
     const portLocation = port.locationParameter.model.getLocation(port, port.locationParameter)
@@ -81,14 +70,10 @@ export default class Sample1PortStyle extends PortStyleBase {
     SvgVisual.setTranslate(ellipse, locationX, locationY)
     return oldVisual
   }
-
   /**
    * Calculates the bounds of this port.
    * These are also used for arranging the visual, hit testing, visibility testing, and marquee box tests.
    * @see Overrides {@link PortStyleBase.getBounds}
-   * @param {!ICanvasContext} context
-   * @param {!IPort} port
-   * @returns {!Rect}
    */
   getBounds(context, port) {
     const portLocation = port.locationParameter.model.getLocation(port, port.locationParameter)

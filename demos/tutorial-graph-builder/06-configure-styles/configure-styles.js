@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,31 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { PolylineEdgeStyle, ShapeNodeStyle, Size, Stroke } from 'yfiles'
-
-/**
- * @typedef {Object} EntityData
- * @property {string} id
- * @property {('Trust'|'Corporation'|'Branch'|'PE_Risk')} type
- * @property {('USD'|'EUR')} currency
- */
-
-/**
- * @typedef {Object} ConnectionData
- * @property {string} sourceId
- * @property {string} targetId
- * @property {number} ownership
- */
-
-/**
- * @typedef {Object} Data
- * @property {Array.<EntityData>} nodesSource
- * @property {Array.<ConnectionData>} edgesSource
- */
-
-/**
- * @param {!NodesSource.<EntityData>} nodesSource
- */
+import { PolylineEdgeStyle, ShapeNodeStyle, Size, Stroke } from '@yfiles/yfiles'
 export function configureStylesWithDefaults(nodesSource) {
   const blue = '#4281A4'
   nodesSource.nodeCreator.defaults.size = new Size(150, 90)
@@ -59,16 +35,11 @@ export function configureStylesWithDefaults(nodesSource) {
     fill: blue
   })
 }
-
-/**
- * @param {!NodesSource.<EntityData>} nodesSource
- */
 export function configureStylesWithBinding(nodesSource) {
   const red = '#DB3A34'
   const darkBlue = '#1a3442'
   // disable sharing of styles
   nodesSource.nodeCreator.defaults.shareStyleInstance = false
-
   nodesSource.nodeCreator.styleBindings.addBinding('stroke', (entityData) => {
     return new Stroke({
       fill: entityData.currency === 'EUR' ? darkBlue : red,
@@ -76,10 +47,6 @@ export function configureStylesWithBinding(nodesSource) {
     })
   })
 }
-
-/**
- * @param {!NodesSource.<EntityData>} nodesSource
- */
 export function configureStylesWithProvider(nodesSource) {
   const gold = '#F0C808'
   const green = '#56926E'
@@ -97,10 +64,6 @@ export function configureStylesWithProvider(nodesSource) {
     }
   }
 }
-
-/**
- * @param {!EdgesSource.<ConnectionData>} edgesSource
- */
 export function configureEdgeStylesWithProvider(edgesSource) {
   const red = '#DB3A34'
   const gray = '#C1C1C1'

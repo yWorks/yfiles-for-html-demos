@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,8 +27,6 @@
  **
  ***************************************************************************/
 import {
-  ComponentArrangementStyles,
-  type ComponentLayout,
   FilteredGraphWrapper,
   GraphBuilder,
   GraphComponent,
@@ -39,18 +37,18 @@ import {
   License,
   OrganicLayout,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import {
   closeFraudDetectionView,
   openInspectionViewForItem
 } from './fraud-detection/inspection-view'
-import { initializeLayout, startLayout, stopLayout } from './interactive-layout'
+import { initializeLayout } from './interactive-layout'
 import { ConnectionEdgeStyle } from './styles/ConnectionEdgeStyle'
 import { bankFraudData } from './resources/bank-fraud-data'
 import { insuranceFraudData } from './resources/insurance-fraud-data'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo-page'
 import {
   calculateComponents,
   clearFraudHighlights,
@@ -61,11 +59,10 @@ import {
 import { EntityNodeStyle } from './styles/EntityNodeStyle'
 import type { BusinessData, Entity, ImportEntity } from './entity-data'
 import { getEntityData, getTimeEntry } from './entity-data'
-import Timeline from './timeline/Timeline'
+import { Timeline } from './timeline/Timeline'
 import { detectBankFraud, detectInsuranceFraud } from './fraud-detection/fraud-detection'
 import './resources/fraud-detection-demo.css'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { enableWebGLRendering, setWebGL2Styles } from './styles/initialize-webgl-styles'
+import { enableWebGLRendering, setWebGLStyles } from './styles/initialize-webgl-styles'
 import { initializeHighlights } from './initialize-highlights'
 import { clearPropertiesView, initializePropertiesView } from './properties-view'
 import { enableTooltips } from './entity-tooltip'
@@ -75,6 +72,12 @@ import { useSingleSelection } from '../mindmap/interaction/single-selection'
  * The main graph component that displays the graph.
  */
 let graphComponent: GraphComponent
+
+/**
+ * The methods that control the layout
+ */
+let startLayout: () => void
+let stopLayout: () => void
 
 /**
  * The graph component that displays the timeline.
@@ -90,8 +93,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeGraphComponent()
   initializeHighlights(graphComponent)
   initializeGraph()
@@ -101,7 +102,11 @@ async function run(): Promise<void> {
   enableTooltips(graphComponent)
 
   initializeTimelineComponent('timeline-component', graphComponent)
-  initializeLayout(graphComponent)
+  const layout = initializeLayout(graphComponent)
+
+  startLayout = layout.startLayout
+  stopLayout = layout.stopLayout
+
   initializeFraudHighlights(graphComponent)
 
   initializePropertiesView(graphComponent)
@@ -120,7 +125,7 @@ function initializeUI(): void {
     '#insurance-fraud-detection'
   )!
   const samples = document.querySelector<HTMLSelectElement>('#samples')!
-  samples.addEventListener('change', async (event) => {
+  samples.addEventListener('change', async () => {
     clearPropertiesView()
     // if an inspection view is open, close it
     closeFraudDetectionView()
@@ -154,14 +159,13 @@ function initializeGraphComponent(): void {
     focusableItems: GraphItemTypes.NONE,
     showHandleItems: GraphItemTypes.NONE,
     deletableItems: GraphItemTypes.NONE,
-    movableItems: GraphItemTypes.NODE,
+    movableSelectedItems: GraphItemTypes.NODE,
     clickHitTestOrder: [GraphItemTypes.NODE, GraphItemTypes.EDGE]
   })
-  inputMode.moveInputMode.enabled = false
-  inputMode.moveUnselectedInputMode.enabled = true
+  inputMode.moveSelectedItemsInputMode.enabled = false
   inputMode.marqueeSelectionInputMode.enabled = false
 
-  inputMode.addItemDoubleClickedListener((_, evt) => {
+  inputMode.addEventListener('item-double-clicked', (evt) => {
     openInspectionViewForItem(evt.item, graphComponent)
   })
 
@@ -186,7 +190,7 @@ function initializeGraph(): void {
   // default edge style
   graph.edgeDefaults.style = new ConnectionEdgeStyle()
 
-  graphComponent.graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
+  graphComponent.graph.decorator.nodes.focusRenderer.hide()
 }
 
 /**
@@ -215,17 +219,18 @@ async function buildGraph(graph: IGraph, data: BusinessData): Promise<void> {
 /**
  * Runs an organic layout on the complete initial graph.
  */
-function runInitialLayout(graph: IGraph): void {
+async function runInitialLayout(graph: IGraph): Promise<void> {
   // run an initial layout
   const organicLayout = new OrganicLayout({
     deterministic: true,
-    nodeOverlapsAllowed: false,
-    preferredEdgeLength: 50
+    allowNodeOverlaps: false,
+    defaultPreferredEdgeLength: 50,
+    componentLayout: {
+      style: 'packed-compact-circle'
+    }
   })
-  ;(organicLayout.componentLayout as ComponentLayout).style =
-    ComponentArrangementStyles.PACKED_COMPACT_CIRCLE
   graph.applyLayout(organicLayout)
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 }
 
 /**
@@ -257,13 +262,12 @@ async function loadSampleGraph(data: BusinessData): Promise<void> {
 
   // run a layout on the complete graph
   // to have nice initial locations even for the currently hidden nodes
-  runInitialLayout(wrappedGraph)
+  await runInitialLayout(wrappedGraph)
 
-  // initializes the element styles using WebGL2 rendering, if this is supported by the browser
-  await setWebGL2Styles(graphComponent)
+  // initializes the element styles using WebGL rendering if this is supported by the browser
+  setWebGLStyles(graphComponent)
 
-  // start the interactive layout
-  startLayout()
+  void startLayout()
 
   // re-activate UI
   await setBusy(false)
@@ -283,7 +287,7 @@ function initializeTimelineComponent(
     timeline!.filter(getEntityData(node))
   )
   graphComponent.graph = filteredGraph
-  timeline.addFilterChangedListener(() => {
+  timeline.setFilterChangedListener(() => {
     filteredGraph.nodePredicateChanged()
 
     const bankFraud = document.querySelector<HTMLSelectElement>('#samples')!.value === 'bank-fraud'
@@ -293,28 +297,28 @@ function initializeTimelineComponent(
 
     updateFraudWarnings(fraudsters)
   })
-  timeline.addBarSelectListener((items) => {
+  timeline.setBarSelectListener((items) => {
     const selection = graphComponent.selection
     selection.clear()
 
     const selectedItems = new Set(items.map((item) => item.id))
-    graphComponent.graph.nodes.forEach((node) => {
+    graphComponent.graph.nodes.forEach((node: INode) => {
       const entity = getEntityData(node)
       if (selectedItems.has(entity.id)) {
-        selection.setSelected(node, true)
+        selection.add(node)
       }
     })
   })
-  timeline.addBarHoverListener((items) => {
-    const highlightManager = graphComponent.highlightIndicatorManager
-    highlightManager.clearHighlights()
+  timeline.setBarHoverListener((items) => {
+    const highlights = graphComponent.highlights
+    highlights.clear()
 
     const selected = new Set(items.map((item) => item.id))
 
     graphComponent.graph.nodes.forEach((node) => {
       const entity = getEntityData(node)
       if (selected.has(entity.id)) {
-        highlightManager.addHighlight(node)
+        highlights.add(node)
       }
     })
   })

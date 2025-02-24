@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,7 +38,7 @@ import {
   List,
   Point,
   Rect
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getNodeData, isLeft, isRoot } from '../data-types'
 
 import { adjustPortLocations, layoutSubtree, layoutTree } from '../mind-map-layout'
@@ -56,15 +56,9 @@ import { getFullGraph, getInEdge, getRoot, getSubtree } from '../subtrees'
  * parent is removed and an edge is inserted from the new parent candidate
  * to the moved node.
  */
-export class SubtreePositionHandler
-  extends BaseClass(IPositionHandler)
-  implements IPositionHandler
-{
-  private handler: IPositionHandler
+export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
   private lastLocation: Point = Point.ORIGIN
   private rootNodeCenter: Point = Point.ORIGIN
-  // get the selected node
-  private movedNode: INode = null!
   // get the mind map root node
   private globalRoot: INode = null!
   private subtreeNodes: INode[] = []
@@ -76,9 +70,11 @@ export class SubtreePositionHandler
   /**
    * Creates the SubtreePositionHandler that wraps the given position handler.
    */
-  constructor(handler: IPositionHandler) {
+  constructor(
+    private movedNode: INode,
+    private handler: IPositionHandler
+  ) {
     super()
-    this.handler = handler
   }
 
   /**
@@ -105,8 +101,6 @@ export class SubtreePositionHandler
     this.handler.initializeDrag(inputModeContext)
     this.lastLocation = new Point(this.location.x, this.location.y)
 
-    // get the selected node
-    this.movedNode = graphComponent.selection.selectedNodes.first()
     // get the mind map root node
     this.globalRoot = getRoot(fullGraph)
     this.rootNodeCenter = this.globalRoot.layout.center
@@ -205,7 +199,7 @@ export class SubtreePositionHandler
       // set isLeft state
       this.subtreeNodes.forEach((n) => (getNodeData(n).left = !isLeft(n)))
       // calculate an automatic layout
-      layoutSubtree(graph, this.movedNode, this.subtreeNodes, this.subtreeEdges)
+      layoutSubtree(graph, this.subtreeNodes, this.subtreeEdges)
     }
   }
 
@@ -298,7 +292,7 @@ export class SubtreePositionHandler
     })
     // EsLint doesn't detect the possible assignment of newParent
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    return dMin < SubtreePositionHandler.MAX_DISTANCE ? newParent ?? this.globalRoot : null
+    return dMin < SubtreePositionHandler.MAX_DISTANCE ? (newParent ?? this.globalRoot) : null
   }
 
   /**

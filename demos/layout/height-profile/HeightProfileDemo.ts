@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,25 +26,28 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphItemTypes, GraphViewerInputMode, Insets, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import {
+  GraphComponent,
+  GraphItemTypes,
+  GraphViewerInputMode,
+  LayoutExecutor,
+  License
+} from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { configureLayout } from './configure-layout'
 import { initializeStyles } from './styles'
-import { SCALED_MAX_Y, scaleData } from './scale-data'
+import { scaleData } from './scale-data'
 import { drawTrekkingTrail } from './draw-trekking-trail'
 import { drawAxis } from './draw-axis'
 import { initializeGraph } from './create-graph'
 import { configureHighlight } from './configure-highlight'
 import { nodeData } from './resources/TrekkingData'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // configure user interaction, disable selection and focus
   graphComponent.inputMode = new GraphViewerInputMode({
     selectableItems: GraphItemTypes.NONE,
@@ -75,11 +78,14 @@ async function run(): Promise<void> {
  * Runs the {@link OrganicLayout} with the necessary constraints to obtain a height profile visualization.
  */
 async function runLayout(graphComponent: GraphComponent): Promise<void> {
-  const graph = graphComponent.graph
-  const { layout, layoutData } = configureLayout(graph)
-  graph.applyLayout(layout, layoutData)
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
 
-  graphComponent.fitGraphBounds()
+  const { layout, layoutData } = configureLayout(graphComponent.graph)
+  graphComponent.graph.applyLayout(layout, layoutData)
+
+  await graphComponent.fitGraphBounds()
 }
 
 void run().then(finishLoading)

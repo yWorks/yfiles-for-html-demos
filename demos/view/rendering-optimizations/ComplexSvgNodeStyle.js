@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,7 @@
 import {
   BaseClass,
   GeneralPath,
-  GeomUtilities,
+  GeometryUtilities,
   ICanvasContext,
   IInputModeContext,
   INode,
@@ -40,27 +40,25 @@ import {
   Point,
   Rect,
   SvgVisual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * This class manages an SVG element in the <defs> element.
  */
 class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
+  svgElement
   /**
    * Creates an instance of the defs support class. Each node type
    * is managed by its own defs support.
-   * @param {!SVGElement} svgElement The SVG element of this defs support
+   * @param svgElement The SVG element of this defs support
    */
   constructor(svgElement) {
     super()
     this.svgElement = svgElement
   }
-
   /**
    * Creates the actual defs element.
-   * @param {!ICanvasContext} context The canvas context.
+   * @param context The canvas context.
    * @see Specified by {@link ISvgDefsCreator.createDefsElement}.
-   * @returns {!SVGElement}
    */
   createDefsElement(context) {
     // the element needs to be cloned otherwise it will be removed during canvas export
@@ -69,29 +67,25 @@ class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
     visualElement.removeAttribute('id')
     return visualElement
   }
-
   /**
    * Updates the defs element. This implementation does nothing.
-   * @param {!ICanvasContext} context The canvas context.
-   * @param {!SVGElement} oldElement The old defs element.
+   * @param context The canvas context.
+   * @param oldElement The old defs element.
    * @see Specified by {@link ISvgDefsCreator.updateDefsElement}.
    */
   updateDefsElement(context, oldElement) {}
-
   /**
    * Checks if this defs element is still referenced by this node.
    * In this simple implementation, the element should never be removed from the DOM.
-   * @param {!ICanvasContext} context The canvas context.
-   * @param {!Node} node The node.
-   * @param {!string} id The defs id.
+   * @param context The canvas context.
+   * @param node The node.
+   * @param id The defs id.
    * @see Specified by {@link ISvgDefsCreator.accept}.
-   * @returns {boolean}
    */
   accept(context, node, id) {
     return true
   }
 }
-
 /**
  * An node style for complex SVG visualizations with an elliptical shape.
  *
@@ -106,86 +100,63 @@ class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
  * In the current implementation, the type is given by the node's tag.
  */
 export default class ComplexSvgNodeStyle extends NodeStyleBase {
-  /** @type {Array.<SimpleSvgDefsCreator>} */
-  static get IMAGES() {
-    if (typeof ComplexSvgNodeStyle.$IMAGES === 'undefined') {
-      ComplexSvgNodeStyle.$IMAGES = [
-        new SimpleSvgDefsCreator(document.querySelector('#usericon_female1')),
-        new SimpleSvgDefsCreator(document.querySelector('#usericon_female2')),
-        new SimpleSvgDefsCreator(document.querySelector('#usericon_female3')),
-        new SimpleSvgDefsCreator(document.querySelector('#usericon_female4')),
-        new SimpleSvgDefsCreator(document.querySelector('#usericon_female5')),
-        new SimpleSvgDefsCreator(document.querySelector('#usericon_male1')),
-        new SimpleSvgDefsCreator(document.querySelector('#usericon_male2')),
-        new SimpleSvgDefsCreator(document.querySelector('#usericon_male3')),
-        new SimpleSvgDefsCreator(document.querySelector('#usericon_male4')),
-        new SimpleSvgDefsCreator(document.querySelector('#usericon_male5'))
-      ]
-    }
-
-    return ComplexSvgNodeStyle.$IMAGES
-  }
-
+  static IMAGES = [
+    new SimpleSvgDefsCreator(document.querySelector('#usericon_female1')),
+    new SimpleSvgDefsCreator(document.querySelector('#usericon_female2')),
+    new SimpleSvgDefsCreator(document.querySelector('#usericon_female3')),
+    new SimpleSvgDefsCreator(document.querySelector('#usericon_female4')),
+    new SimpleSvgDefsCreator(document.querySelector('#usericon_female5')),
+    new SimpleSvgDefsCreator(document.querySelector('#usericon_male1')),
+    new SimpleSvgDefsCreator(document.querySelector('#usericon_male2')),
+    new SimpleSvgDefsCreator(document.querySelector('#usericon_male3')),
+    new SimpleSvgDefsCreator(document.querySelector('#usericon_male4')),
+    new SimpleSvgDefsCreator(document.querySelector('#usericon_male5'))
+  ]
   /**
    * Returns the defs creator for the given node based on its tag.
-   * @param {!INode} node The node.
-   * @returns {!ISvgDefsCreator}
+   * @param node The node.
    */
   static getDefsCreator(node) {
     const type = typeof node.tag === 'number' ? node.tag : 0
     const index = Math.max(0, Math.min(type, ComplexSvgNodeStyle.IMAGES.length - 1))
     return ComplexSvgNodeStyle.IMAGES[index]
   }
-
   /**
    * Creates the visual representation for the given node.
-   * @param {!IRenderContext} context The render context.
-   * @param {!INode} node The node to create the visual for.
-   * @returns {!SvgVisual} The visual for the given node.
+   * @param context The render context.
+   * @param node The node to create the visual for.
+   * @returns The visual for the given node.
    * @see {@link updateVisual}
    * @see {@link ComplexSvgNodeStyle.updateVisual}
    */
   createVisual(context, node) {
     const useElement = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-
     // get the defs creator
     const defsCreator = ComplexSvgNodeStyle.getDefsCreator(node)
     // get the defs id of the element that belongs to the creator ...
     const id = context.getDefsId(defsCreator)
     // ... and assign it to the <use> element
     useElement.href.baseVal = `#${id}`
-
     // set the proper location and size of the <use>
     const { x, y, width, height } = node.layout
     const matrix = new Matrix(width, 0, 0, height, x, y)
     matrix.applyTo(useElement)
-
     // store the information about current node layout so we can efficiently update the element later
-    useElement['data-cache'] = {
-      x,
-      y,
-      width,
-      height
-    }
-
-    return new SvgVisual(useElement)
+    return SvgVisual.from(useElement, { x, y, width, height })
   }
-
   /**
    * Updates the visual representation for the given node.
-   * @param {!IRenderContext} context The render context.
-   * @param {!SvgVisual} oldVisual The visual that has been created in the call to
+   * @param context The render context.
+   * @param oldVisual The visual that has been created in the call to
    * {@link ComplexSvgNodeStyle.createVisual}.
-   * @param {!INode} node The node to create the visual for.
-   * @returns {!SvgVisual} The new or updated visual for the given node.
+   * @param node The node to create the visual for.
+   * @returns The new or updated visual for the given node.
    * @see {@link ComplexSvgNodeStyle.createVisual}
    */
   updateVisual(context, oldVisual, node) {
     const { x, y, width, height } = node.layout
-
     // get the cache we stored in the createVisual method
-    const cache = oldVisual.svgElement['data-cache']
-
+    const cache = oldVisual.tag
     // update width and height only if necessary
     if (cache.x !== x || cache.y !== y || cache.width !== width || cache.height !== height) {
       // set the proper location and size of the use
@@ -196,56 +167,49 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
       cache.width = width
       cache.height = height
     }
-
     return oldVisual
   }
-
   /**
    * Gets the outline of the node's visual, an ellipse in this case.
    * This allows correct edge path intersection calculation, among others.
-   * @param {!INode} node The node.
+   * @param node The node.
    * @see Overrides {@link NodeStyleBase.getOutline}
-   * @returns {!GeneralPath}
    */
   getOutline(node) {
     const outline = new GeneralPath()
     outline.appendEllipse(node.layout, false)
     return outline
   }
-
   /**
    * Gets the bounding box of the node's visual.
-   * @param {!ICanvasContext} context The canvas context.
-   * @param {!INode} node The node.
+   * @param context The canvas context.
+   * @param node The node.
    * @see Overrides {@link NodeStyleBase.getBounds}
-   * @returns {!Rect}
    */
   getBounds(context, node) {
     return node.layout.toRect()
   }
-
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
-   * @param {!IInputModeContext} context The input mode context.
-   * @param {!Point} location The location to be checked.
-   * @param {!INode} node The node that may be hit.
-   * @returns {boolean} Whether the visual representation of the node has been hit at the given location.
+   * @param context The input mode context.
+   * @param location The location to be checked.
+   * @param node The node that may be hit.
+   * @returns Whether the visual representation of the node has been hit at the given location.
    * @see Overrides {@link NodeStyleBase.isHit}
    */
   isHit(context, location, node) {
     const nodeLayout = node.layout.toRect()
     return (
       nodeLayout.contains(location) &&
-      GeomUtilities.ellipseContains(nodeLayout, location, context.hitTestRadius)
+      GeometryUtilities.ellipseContains(nodeLayout, location, context.hitTestRadius)
     )
   }
-
   /**
    * Determines whether the visualization for the specified node is included in the marquee selection.
-   * @param {!IInputModeContext} context The input mode context.
-   * @param {!Rect} rectangle The rectangle to be checked.
-   * @param {!INode} node The node that may be in the rectangle.
-   * @returns {boolean} true if the specified node is selected by the marquee rectangle; false otherwise.
+   * @param context The input mode context.
+   * @param rectangle The rectangle to be checked.
+   * @param node The node that may be in the rectangle.
+   * @returns true if the specified node is selected by the marquee rectangle; false otherwise.
    * @see Overrides {@link NodeStyleBase.isInBox}
    */
   isInBox(context, rectangle, node) {
@@ -253,11 +217,9 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
     if (!super.isInBox(context, rectangle, node)) {
       return false
     }
-
     const eps = context.hitTestRadius
-
     const outline = this.getOutline(node)
-    if (outline.intersects(rectangle, eps)) {
+    if (outline.pathIntersects(rectangle, eps)) {
       return true
     }
     if (
@@ -268,30 +230,27 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
     }
     return rectangle.contains(node.layout.topLeft) && rectangle.contains(node.layout.bottomRight)
   }
-
   /**
    * Determines whether the provided point is geometrically inside the visual bounds of the node.
-   * @param {!INode} node The node.
-   * @param {!Point} location The point to check.
-   * @returns {boolean} Whether the point is considered to lie inside the shape.
+   * @param node The node.
+   * @param location The point to check.
+   * @returns Whether the point is considered to lie inside the shape.
    * @see Overrides {@link NodeStyleBase.isInside}
    */
   isInside(node, location) {
     if (!super.isInside(node, location)) {
       return false
     }
-    return GeomUtilities.ellipseContains(node.layout.toRect(), location, 0)
+    return GeometryUtilities.ellipseContains(node.layout.toRect(), location, 0)
   }
-
   /**
    * Gets the intersection of a line with the visual representation of the node.
-   * @param {!INode} node The node.
-   * @param {!Point} inner The coordinates of a point lying inside the shape.
-   * @param {!Point} outer The coordinates of a point lying outside the shape.
+   * @param node The node.
+   * @param inner The coordinates of a point lying inside the shape.
+   * @param outer The coordinates of a point lying outside the shape.
    * @see Overrides {@link NodeStyleBase.getIntersection}
-   * @returns {?Point}
    */
   getIntersection(node, inner, outer) {
-    return GeomUtilities.findEllipseLineIntersection(node.layout.toRect(), inner, outer)
+    return GeometryUtilities.getEllipseLineIntersection(node.layout.toRect(), inner, outer)
   }
 }

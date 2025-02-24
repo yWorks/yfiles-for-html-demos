@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,25 +31,22 @@ import {
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
   SimplePort
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * Prepares the graph for running a smooth animation so that the new nodes that are added
  * in the visualization appear near their neighbors.
- * @param {!function} modification The actions to be taken
- * @param {!IGraph} graph The given graph
+ * @param modification The actions to be taken
+ * @param graph The given graph
  */
 export function modifyGraph(modification, graph) {
   const newNodes = []
   const newEdges = []
-  const newNodeCollector = (sender, evt) => {
+  const newNodeCollector = (evt) => {
     newNodes.push(evt.item)
   }
-
-  const newEdgeCollector = (sender, evt) => {
+  const newEdgeCollector = (evt) => {
     newEdges.push(evt.item)
   }
-
   function getSimulatedParameter(port, simulatedOwner) {
     const dummyPort = new SimplePort({
       owner: simulatedOwner,
@@ -57,8 +54,7 @@ export function modifyGraph(modification, graph) {
     })
     return FreeNodePortLocationModel.INSTANCE.createParameter(port.owner, dummyPort.location)
   }
-
-  const edgeChangedCollector = (sender, evt) => {
+  const edgeChangedCollector = (evt) => {
     graph.setPortLocationParameter(
       evt.item.sourcePort,
       getSimulatedParameter(evt.item.sourcePort, evt.sourcePortOwner)
@@ -68,15 +64,13 @@ export function modifyGraph(modification, graph) {
       getSimulatedParameter(evt.item.targetPort, evt.targetPortOwner)
     )
   }
-
-  graph.addNodeCreatedListener(newNodeCollector)
-  graph.addEdgeCreatedListener(newEdgeCollector)
-  graph.addEdgePortsChangedListener(edgeChangedCollector)
+  graph.addEventListener('node-created', newNodeCollector)
+  graph.addEventListener('edge-created', newEdgeCollector)
+  graph.addEventListener('edge-ports-changed', edgeChangedCollector)
   modification(graph)
-  graph.removeNodeCreatedListener(newNodeCollector)
-  graph.removeEdgeCreatedListener(newEdgeCollector)
-  graph.removeEdgePortsChangedListener(edgeChangedCollector)
-
+  graph.removeEventListener('node-created', newNodeCollector)
+  graph.removeEventListener('edge-created', newEdgeCollector)
+  graph.removeEventListener('edge-ports-changed', edgeChangedCollector)
   // first, we place the new nodes at the barycenter of their neighbors
   graph.applyLayout({
     layout: new PlaceNodesAtBarycenterStage({
@@ -86,7 +80,6 @@ export function modifyGraph(modification, graph) {
     }),
     layoutData: new PlaceNodesAtBarycenterStageData({ affectedNodes: newNodes })
   })
-
   // then we reset the new edges so that they grow out of their source nodes by placing the target port at
   // the source port's location
   newEdges.forEach((e) => {

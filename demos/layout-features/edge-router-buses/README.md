@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # EdgeRouter with Bus-style Routing - Layout Features
 
-# EdgeRouter with Bus-style Routing
+<img src="../../../doc/demo-thumbnails/layout-edge-router-buses.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/layout-features/edge-router-buses/).
 
 This demo shows how to configure the EdgeRouter to generate orthogonal bus-style routes. A bus is a segment shared by multiple edges. The actual nodes are attached to the bus with shorter segments.
 
@@ -35,7 +37,7 @@ You can copy the code snippet to configure the layout from [GitHub](https://gith
 
 ### Demos
 
-The [Bus Routing Demo](../../layout/busrouting/) is a more complex demo that shows the bus-style routing feature. More features offered by the EdgeRouter algorithm are shown by the [Layout Styles Demo](../../showcase/layoutstyles/).
+The busrouting is a more complex demo that shows the bus-style routing feature. More features offered by the EdgeRouter algorithm are shown by the [Layout Styles Demo](../../showcase/layoutstyles/).
 
 ### Documentation
 

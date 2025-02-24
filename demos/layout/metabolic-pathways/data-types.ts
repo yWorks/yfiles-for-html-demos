@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { INode } from 'yfiles'
+import type { INode, LayoutNode } from '@yfiles/yfiles'
 
 /**
  * Represents the type of nodes in the demo's pathway samples.
@@ -93,15 +93,29 @@ export type MetabolicNodeData = {
 /**
  * Returns the type of the given node.
  */
-export function getType(node: INode): NodeTypes {
+export function getType(node: INode | LayoutNode): NodeTypes {
   return getMetabolicData(node).type
 }
 
 /**
  * Returns the data associated with the given node.
  */
-export function getMetabolicData(node: INode): MetabolicNodeData {
+export function getMetabolicData(node: INode | LayoutNode): MetabolicNodeData {
   return node.tag as MetabolicNodeData
+}
+
+/**
+ * Returns the alignment of the given node.
+ */
+export function getAlignment(node: INode | LayoutNode): string | number | undefined {
+  return getMetabolicData(node).vAlign
+}
+
+/**
+ * Returns whether the node belongs to a circle.
+ */
+export function isOnCircle(node: INode | LayoutNode): boolean {
+  return getMetabolicData(node).circle ?? false
 }
 
 /**

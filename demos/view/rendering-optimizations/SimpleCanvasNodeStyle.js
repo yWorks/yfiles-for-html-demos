@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,120 +38,105 @@ import {
   Point,
   Rect,
   Visual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * A simple HTML5 Canvas node style that draws a rectangle with a solid fill.
  */
 export default class SimpleCanvasNodeStyle extends NodeStyleBase {
-  /**
-   * @param {!Color} color
-   */
+  color
   constructor(color) {
     super()
     this.color = color
   }
-
   /**
    * Creates the visual representation for the given node.
-   * @param {!IRenderContext} renderContext The render context.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param renderContext The render context.
+   * @param node The node to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SimpleCanvasNodeStyle.updateVisual}
    */
   createVisual(renderContext, node) {
     return new NodeRenderVisual(node.layout, this.color)
   }
-
   /**
    * Updates the visual representation for the given node.
-   * @param {!IRenderContext} renderContext The render context.
-   * @param {!Visual} oldVisual The visual that has been created in the call to
+   * @param renderContext The render context.
+   * @param oldVisual The visual that has been created in the call to
    * {@link SimpleCanvasNodeStyle.createVisual}.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param node The node to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SimpleCanvasNodeStyle.createVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     return oldVisual
   }
-
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
    * Optimized implementation for a rectangular shape.
    * @see Overrides {@link NodeStyleBase.isHit}
-   * @param {!IInputModeContext} context The input mode context.
-   * @param {!Point} p The location to be checked.
-   * @param {!INode} node The node that may be hit.
-   * @returns {boolean}
+   * @param context The input mode context.
+   * @param p The location to be checked.
+   * @param node The node that may be hit.
    */
   isHit(context, p, node) {
-    return node.layout.toRect().containsWithEps(p, context.hitTestRadius)
+    return node.layout.toRect().contains(p, context.hitTestRadius)
   }
-
   /**
    * Gets the intersection of a line with the visual representation of the node.
    * Optimized implementation for a rectangular shape.
    * @see Overrides {@link NodeStyleBase.getIntersection}
-   * @param {!INode} node The node.
-   * @param {!Point} inner The inner point of the line.
-   * @param {!Point} outer The outer point of the line.
-   * @returns {?Point}
+   * @param node The node.
+   * @param inner The inner point of the line.
+   * @param outer The outer point of the line.
    */
   getIntersection(node, inner, outer) {
     return node.layout.toRect().findLineIntersection(inner, outer)
   }
-
   /**
    * Determines whether the provided point is geometrically inside the visual bounds of the node.
    * Optimized implementation for a rectangular shape.
    * @see Overrides {@link NodeStyleBase.isInside}
-   * @param {!INode} node The node.
-   * @param {!Point} point The point to be checked.
-   * @returns {boolean}
+   * @param node The node.
+   * @param point The point to be checked.
    */
   isInside(node, point) {
     return node.layout.toRect().contains(point)
   }
-
   /**
    * Determines whether the visualization for the specified node is included in the marquee selection.
    * Optimized implementation for a rectangular shape.
    * @see Overrides {@link NodeStyleBase.isInBox}
-   * @param {!IInputModeContext} context The input mode context.
-   * @param {!Rect} box the rectangle to be checked.
-   * @param {!INode} node The node that may be in the rectangle.
-   * @returns {boolean}
+   * @param context The input mode context.
+   * @param box the rectangle to be checked.
+   * @param node The node that may be in the rectangle.
    */
   isInBox(context, box, node) {
-    return box.contains(node.layout)
+    return box.containsRectangle(node.layout)
   }
 }
-
 /**
  * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeRenderVisual extends HtmlCanvasVisual {
+  layout
   color
-
   /**
    * Creates an instance of the render visual.
-   * @param {!IRectangle} layout A live view of the layout of a node.
-   * @param {!Color} color The color for the node.
+   * @param layout A live view of the layout of a node.
+   * @param color The color for the node.
    */
   constructor(layout, color) {
     super()
     this.layout = layout
     this.color = `rgba(${color.r},${color.g},${color.b},${color.a})`
   }
-
   /**
    * Draw a simple rectangle with a solid orange fill.
-   * @param {!IRenderContext} context The render context.
-   * @param {!CanvasRenderingContext2D} htmlCanvasContext The html canvas context.
+   * @param context The render context.
+   * @param htmlCanvasContext The html canvas context.
    * @see Overrides {@link HtmlCanvasVisual.paint}
    */
-  paint(context, htmlCanvasContext) {
+  render(context, htmlCanvasContext) {
     htmlCanvasContext.fillStyle = this.color
     htmlCanvasContext.fillRect(this.layout.x, this.layout.y, this.layout.width, this.layout.height)
   }

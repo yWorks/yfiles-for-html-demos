@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,38 +26,29 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ExteriorLabelModel, GraphComponent, ICommand, Point, ViewportChanges } from 'yfiles'
-
+import { GraphComponent, Point } from '@yfiles/yfiles'
 /**
  * Updates the content rectangle to encompass all existing graph elements.
- * @param {!GraphComponent} graphComponent
  */
 export function fitGraphBounds(graphComponent) {
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
-
 /**
  * Updates the content rectangle to encompass all existing graph elements.
- * @param {!GraphComponent} graphComponent
  */
 export function updateViewport(graphComponent) {
-  graphComponent.updateContentRect()
+  graphComponent.updateContentBounds()
   graphComponent.fitContent()
 }
-
 /**
  * Resets the viewport to the original values.
- * @param {!GraphComponent} graphComponent
  */
 export function resetViewport(graphComponent) {
   graphComponent.zoom = 1
   graphComponent.viewPoint = Point.ORIGIN
 }
-
 /**
  * Fits the graph into the view port using an animation.
- * @param {!GraphComponent} graphComponent
- * @returns {!Promise}
  */
 export async function fitGraphAnimated(graphComponent) {
   await graphComponent.fitGraphBounds({ animated: true })

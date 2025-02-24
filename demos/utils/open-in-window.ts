@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,8 +31,8 @@
  * @param content - The content of the document.
  * @param title - An optional title of the new document.
  */
-export function openInWindow(content: string, title = 'File content'): void {
-  const newWindow = window.open()
+export function openInWindow(content: string, title = 'File content'): Window {
+  const newWindow = window.open('', '_blank')
   if (!newWindow) {
     throw new Error('Could not open a new window. Maybe it was blocked by the browser.')
   }
@@ -43,12 +43,15 @@ export function openInWindow(content: string, title = 'File content'): void {
     `
       <!DOCTYPE html>
       <html lang="en">
-        <head>
-          <title>${title}</title>
-        </head>
-        <body>
-          ${content}
-        </body>
+      <head>
+        <title>${title}</title>
+      </head>
+      <body style="display:block;margin:0;">
+      ${content}
+      </body>
       </html>`
   )
+
+  newDocument.close()
+  return newWindow
 }

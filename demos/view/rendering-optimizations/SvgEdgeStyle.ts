@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,14 +38,20 @@ import {
   Point,
   PolylineEdgeStyle,
   Rect,
-  SvgVisual
-} from 'yfiles'
+  SvgVisual,
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
+
+/**
+ * Augment the SvgVisual type with the data used to cache the rendering information
+ */
+type SvgEdgeStyleVisual = TaggedSvgVisual<SVGPathElement, RenderDataCache>
 
 /**
  * A fast edge style. Compared to the default {@link PolylineEdgeStyle}, the edge is not cropped
  * at the node boundaries and does not support arrows.
  */
-export default class SvgEdgeStyle extends EdgeStyleBase {
+export default class SvgEdgeStyle extends EdgeStyleBase<SvgEdgeStyleVisual> {
   /**
    * Creates a new instance of this class.
    * @param [color] The edge color.
@@ -67,9 +73,9 @@ export default class SvgEdgeStyle extends EdgeStyleBase {
    * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SvgEdgeStyle.updateVisual}
    */
-  createVisual(context: IRenderContext, edge: IEdge): SvgVisual {
-    const source = edge.sourcePort!.location
-    const target = edge.targetPort!.location
+  createVisual(context: IRenderContext, edge: IEdge): SvgEdgeStyleVisual {
+    const source = edge.sourcePort.location
+    const target = edge.targetPort.location
 
     // create the path
     const pathVisual = document.createElementNS('http://www.w3.org/2000/svg', 'path')
@@ -80,10 +86,9 @@ export default class SvgEdgeStyle extends EdgeStyleBase {
     pathVisual.setAttribute('stroke-width', `${this.thickness}`)
 
     // cache its values
-    const cacheOwner = pathVisual as SVGElement & { 'data-cache'?: RenderDataCache }
-    cacheOwner['data-cache'] = new RenderDataCache(edge, source, target)
+    const cache = new RenderDataCache(edge, source, target)
 
-    return new SvgVisual(pathVisual)
+    return SvgVisual.from(pathVisual, cache)
   }
 
   /**
@@ -95,13 +100,17 @@ export default class SvgEdgeStyle extends EdgeStyleBase {
    * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SvgEdgeStyle.createVisual}
    */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, edge: IEdge): SvgVisual {
-    const source = edge.sourcePort!.location
-    const target = edge.targetPort!.location
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: SvgEdgeStyleVisual,
+    edge: IEdge
+  ): SvgEdgeStyleVisual {
+    const source = edge.sourcePort.location
+    const target = edge.targetPort.location
 
     // get the old path
-    const pathVisual = oldVisual.svgElement as SVGElement & { 'data-cache': RenderDataCache }
-    const cache = pathVisual['data-cache']
+    const pathVisual = oldVisual.svgElement
+    const cache = oldVisual.tag
     const oldSource = cache.source
     const oldTarget = cache.target
 
@@ -118,7 +127,7 @@ export default class SvgEdgeStyle extends EdgeStyleBase {
 
     // ... otherwise we need to re-create the geometry and update the cache.
     pathVisual.setAttribute('d', createSvgPath(source, target, edge))
-    pathVisual['data-cache'] = new RenderDataCache(edge, source, target)
+    oldVisual.tag = new RenderDataCache(edge, source, target)
     return oldVisual
   }
 
@@ -140,7 +149,7 @@ const helperEdgeStyle = new PolylineEdgeStyle({
 })
 
 /**
- * Stores the data that is necessary to determine whether or not the visual representation of
+ * Stores the data that is necessary to determine whether the visual representation of
  * an edge has to be changed in {@link SvgEdgeStyle.updateVisual}.
  */
 class RenderDataCache {

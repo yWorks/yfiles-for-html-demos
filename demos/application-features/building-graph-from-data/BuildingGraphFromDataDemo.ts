@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
   GraphComponent,
@@ -38,15 +37,16 @@ import {
   IEdge,
   IGraph,
   INode,
+  LabelStyle,
   License,
   Point,
   RectangleNodeStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
@@ -57,11 +57,7 @@ let graphComponent: GraphComponent
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode()
 
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
@@ -71,10 +67,8 @@ async function run(): Promise<void> {
 
   graphComponent.fitGraphBounds()
 
-  // Often, the input data has no layout information at all. In this case you can apply any of the automatic layout
-  // algorithms, to automatically layout your input data, e.g. with HierarchicLayout. Make sure to require the
-  // relevant modules for example yfiles/view-layout-bridge and yfiles/layout-hierarchic
-  // graphComponent.morphLayout(new HierarchicLayout(), '500ms');
+  // Often, the input data has no layout information at all. In this case, you can apply any of the automatic layout
+  // algorithms to automatically lay out your input data, e.g., with HierarchicalLayout.
 
   // Finally, enable the undo engine. This prevents undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
@@ -149,10 +143,10 @@ function buildGraph(graph: IGraph, graphData: any): void {
   graph.edges.forEach((edge: IEdge): void => {
     const edgeData = edge.tag
     if (edgeData.sourcePort) {
-      graph.setPortLocation(edge.sourcePort!, Point.from(edgeData.sourcePort))
+      graph.setPortLocation(edge.sourcePort, Point.from(edgeData.sourcePort))
     }
     if (edgeData.targetPort) {
-      graph.setPortLocation(edge.targetPort!, Point.from(edgeData.targetPort))
+      graph.setPortLocation(edge.targetPort, Point.from(edgeData.targetPort))
     }
     if (edgeData.bends) {
       edgeData.bends.forEach((bendLocation: Point): void => {
@@ -178,12 +172,11 @@ function initializeGraph(graph: IGraph): void {
     drawShadow: true,
     tabWidth: 70
   })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'left',
     textFill: '#eee'
   })
-  graph.groupNodeDefaults.labels.layoutParameter =
-    new GroupNodeLabelModel().createDefaultParameter()
+  graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
 
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,11 +31,12 @@ import {
   AdjacencyTypes,
   BaseClass,
   BendEventArgs,
-  Class,
-  DefaultGraph,
+  type Constructor,
+  ContextLookup,
   EdgeDefaults,
   EdgeEventArgs,
   FilteredGraphWrapper,
+  Graph,
   GraphWrapperBase,
   HashMap,
   IBend,
@@ -74,7 +75,6 @@ import {
   LabelEventArgs,
   List,
   ListEnumerable,
-  LookupChain,
   MutablePoint,
   MutableRectangle,
   NodeDefaults,
@@ -85,7 +85,7 @@ import {
   Rect,
   Size,
   type SizeConvertible
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Determines what kind of edges should be created when replacing original edges with aggregation
@@ -358,10 +358,10 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     // - cannot use EdgesAt() here, since hidden edges are not considered there
     const adjacentEdges = this.$edges.filter(
       (edge) =>
-        portOwner.ports.includes(edge.sourcePort!) || portOwner.ports.includes(edge.targetPort!)
+        portOwner.ports.includes(edge.sourcePort) || portOwner.ports.includes(edge.targetPort)
     )
     for (const edge of adjacentEdges) {
-      if (this.ports.includes(edge.sourcePort!) && this.ports.includes(edge.targetPort!)) {
+      if (this.ports.includes(edge.sourcePort) && this.ports.includes(edge.targetPort)) {
         this.$show(edge)
       }
     }
@@ -901,7 +901,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       | AggregationEdge
       | AggregationPort)!.$labels.remove(aggregationLabel)
     aggregationLabel.graph = null
-    this.onLabelRemoved(new LabelEventArgs(aggregationLabel, aggregationLabel.owner!))
+    this.onLabelRemoved(new LabelEventArgs(aggregationLabel, aggregationLabel.owner))
   }
 
   public edgesAt<T extends IPortOwner | IPort>(
@@ -918,18 +918,18 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
           return IListEnumerable.EMPTY
         case AdjacencyTypes.INCOMING:
           return new ListEnumerable<IEdge>(
-            this.edges.filter((edge) => owner.ports.includes(edge.targetPort!))
+            this.edges.filter((edge) => owner.ports.includes(edge.targetPort))
           )
         case AdjacencyTypes.OUTGOING:
           return new ListEnumerable<IEdge>(
-            this.edges.filter((edge) => owner.ports.includes(edge.sourcePort!))
+            this.edges.filter((edge) => owner.ports.includes(edge.sourcePort))
           )
         default:
         case AdjacencyTypes.ALL:
           return new ListEnumerable<IEdge>(
             this.edges.filter(
               (edge) =>
-                owner.ports.includes(edge.sourcePort!) || owner.ports.includes(edge.targetPort!)
+                owner.ports.includes(edge.sourcePort) || owner.ports.includes(edge.targetPort)
             )
           )
       }
@@ -1001,7 +1001,12 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (!this.contains(node)) {
       throw new Error('ArgumentError: Affected parameter node: Node is not in this graph.')
     }
-    if (Number.isNaN(layout.x) || Number.isNaN(layout.y) || Number.isNaN(layout.width) || Number.isNaN(layout.height)) {
+    if (
+      Number.isNaN(layout.x) ||
+      Number.isNaN(layout.y) ||
+      Number.isNaN(layout.width) ||
+      Number.isNaN(layout.height)
+    ) {
       throw new Error(
         `ArgumentError: Affected parameter layout: The layout must not contain a NaN value. ${layout}`
       )
@@ -1010,7 +1015,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     const aggregationNode = node instanceof AggregationNode ? node : null
     if (aggregationNode) {
       const oldLayout = aggregationNode.layout.toRect()
-      aggregationNode.layout.reshape(layout)
+      aggregationNode.layout.setShape(layout)
       this.onNodeLayoutChanged(aggregationNode, oldLayout)
     } else {
       super.setNodeLayout(node, layout)
@@ -1023,11 +1028,11 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       | {
           owner: IPortOwner
           locationParameter?: IPortLocationModelParameter | null
-          style?: IPortStyle | null
+          style?: IPortStyle | undefined
           tag?: any
         },
     locationParameter?: IPortLocationModelParameter | null,
-    style?: IPortStyle | null,
+    style?: IPortStyle | undefined,
     tag?: any
   ): IPort {
     if (!(owner instanceof IPortOwner)) {
@@ -1086,11 +1091,6 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (!locationParameter) {
       throw new Error('ArgumentError: Argument for parameter locationParameter is null')
     }
-    if (!locationParameter.supports(port.owner!)) {
-      throw new Error(
-        'ArgumentError: Affected parameter locationParameter: The parameter does not support this port'
-      )
-    }
 
     const aggregationPort = port instanceof AggregationPort ? port : null
     if (aggregationPort) {
@@ -1145,7 +1145,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     const aggregationBend = bend instanceof AggregationBend ? bend : null
     if (aggregationBend) {
       const oldLocation = aggregationBend.location.toPoint()
-      aggregationBend.location.relocate(location)
+      aggregationBend.location.setLocation(location)
       this.onBendLocationChanged(bend, oldLocation)
     } else {
       super.setBendLocation(bend, location)
@@ -1158,14 +1158,14 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       | {
           owner: ILabelOwner
           text: string
-          layoutParameter?: ILabelModelParameter | null
-          style?: ILabelStyle | null
+          layoutParameter?: ILabelModelParameter | undefined
+          style?: ILabelStyle | undefined
           preferredSize?: Size | SizeConvertible | null
           tag?: any
         },
     text?: string,
-    layoutParameter?: ILabelModelParameter | null,
-    style?: ILabelStyle | null,
+    layoutParameter?: ILabelModelParameter | undefined,
+    style?: ILabelStyle | undefined,
     preferredSize?: Size | SizeConvertible | null,
     tag?: any
   ): ILabel {
@@ -1179,7 +1179,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       tag = options.tag
     }
 
-    if (preferredSize && !(preferredSize instanceof Size)) {
+    if (preferredSize != null && !(preferredSize instanceof Size)) {
       preferredSize = Size.from(preferredSize)
     }
 
@@ -1193,7 +1193,10 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       if (!this.contains(owner)) {
         throw new Error('ArgumentError: Affected parameter owner: Owner is not in this graph.')
       }
-      if (!!preferredSize && (Number.isNaN(preferredSize.width) || Number.isNaN(preferredSize.height))) {
+      if (
+        !!preferredSize &&
+        (Number.isNaN(preferredSize.width) || Number.isNaN(preferredSize.height))
+      ) {
         throw new Error(
           'ArgumentError: Affected parameter preferredSize: The size must not contain a NaN value.'
         )
@@ -1224,7 +1227,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
 
   private $getLabelModelParameter(
     owner: AggregationNode | AggregationEdge | AggregationPort
-  ): ILabelModelParameter | null {
+  ): ILabelModelParameter {
     if (owner instanceof AggregationNode) {
       return this.aggregationNodeDefaults.labels.getLayoutParameterInstance(owner)
     } else if (owner instanceof AggregationEdge) {
@@ -1308,11 +1311,6 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
     if (!layoutParameter) {
       throw new Error('Argument Error: Argument for parameter layoutParameter is null.')
-    }
-    if (!layoutParameter.supports(label)) {
-      throw new Error(
-        'ArgumentError: Affected parameter layoutParameter: The parameter does not support the label.'
-      )
     }
 
     const aggregationLabel = label instanceof AggregationLabel ? label : null
@@ -1512,7 +1510,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   public createEdge<T extends INode | IPort>(
     source: T | { source: T; target: T; style?: IEdgeStyle | null; tag?: any },
     target?: T,
-    style?: IEdgeStyle | null,
+    style?: IEdgeStyle | undefined,
     tag?: any
   ): IEdge {
     if (!(source instanceof INode || source instanceof IPort)) {
@@ -1570,19 +1568,19 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public lookup<T>(type: Class<T>): T | null {
+  public lookup<T>(type: Constructor<T>): T | null {
     return this.$lookupDecorator.lookup(type)
   }
 
   public addLookup(lookup: IContextLookupChainLink): void {
-    this.$lookupDecorator.addLookup(IGraph.$class, lookup)
+    this.$lookupDecorator.addLookup(IGraph, lookup)
   }
 
   public removeLookup(lookup: IContextLookupChainLink): void {
-    this.$lookupDecorator.removeLookup(IGraph.$class, lookup)
+    this.$lookupDecorator.removeLookup(IGraph, lookup)
   }
 
-  baseLookup<T>(type: Class<T>): T | null {
+  baseLookup<T>(type: Constructor<T>): T | null {
     return super.lookup(type)
   }
 
@@ -1593,7 +1591,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       | AggregationLabel
       | AggregationPort
       | AggregationBend,
-    type: Class
+    type: Constructor<any>
   ): object | null {
     return this.$lookupDecorator.delegateLookup(aggregationItem, type)
   }
@@ -1622,12 +1620,12 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
 
   private readonly $graph: AggregationGraphWrapper
 
-  private readonly $graphLookupChain: LookupChain
-  private readonly $nodeLookupChain: LookupChain
-  private readonly $edgeLookupChain: LookupChain
-  private readonly $bendLookupChain: LookupChain
-  private readonly $portLookupChain: LookupChain
-  private readonly $labelLookupChain: LookupChain
+  private readonly $graphLookup: ContextLookup<IGraph> = new ContextLookup(IGraph)
+  private readonly $nodeLookup: ContextLookup<INode> = new ContextLookup(INode)
+  private readonly $edgeLookup: ContextLookup<IEdge> = new ContextLookup(IEdge)
+  private readonly $bendLookup: ContextLookup<IBend> = new ContextLookup(IBend)
+  private readonly $portLookup: ContextLookup<IPort> = new ContextLookup(IPort)
+  private readonly $labelLookup: ContextLookup<ILabel> = new ContextLookup(ILabel)
 
   constructor(graph: AggregationGraphWrapper) {
     super()
@@ -1635,59 +1633,37 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
 
     this.$wrappedDecorator = null
 
-    this.$graphLookupChain = new LookupChain()
-    this.$graphLookupChain.add(new GraphFallBackLookup())
+    this.$graphLookup.addLookup(new GraphFallBackLookup())
+    this.$nodeLookup.addLookup(new ItemFallBackLookup())
+    this.$nodeLookup.addLookup(new ItemDefaultLookup(Graph.DEFAULT_NODE_LOOKUP))
+    this.$nodeLookup.addLookup(new BlockReshapeAndPositionHandlerLookup())
 
-    this.$nodeLookupChain = new LookupChain()
-    this.$nodeLookupChain.add(new ItemFallBackLookup())
-    this.$nodeLookupChain.add(new ItemDefaultLookup(DefaultGraph.DEFAULT_NODE_LOOKUP))
-    this.$nodeLookupChain.add(new BlockReshapeAndPositionHandlerLookup())
+    this.$edgeLookup.addLookup(new ItemFallBackLookup())
+    this.$edgeLookup.addLookup(new ItemDefaultLookup(Graph.DEFAULT_EDGE_LOOKUP))
 
-    this.$edgeLookupChain = new LookupChain()
-    this.$edgeLookupChain.add(new ItemFallBackLookup())
-    this.$edgeLookupChain.add(new ItemDefaultLookup(DefaultGraph.DEFAULT_EDGE_LOOKUP))
+    this.$bendLookup.addLookup(new ItemFallBackLookup())
+    this.$bendLookup.addLookup(new ItemDefaultLookup(Graph.DEFAULT_BEND_LOOKUP))
 
-    this.$bendLookupChain = new LookupChain()
-    this.$bendLookupChain.add(new ItemFallBackLookup())
-    this.$bendLookupChain.add(new ItemDefaultLookup(DefaultGraph.DEFAULT_BEND_LOOKUP))
+    this.$portLookup.addLookup(new ItemFallBackLookup())
+    this.$portLookup.addLookup(new ItemDefaultLookup(Graph.DEFAULT_PORT_LOOKUP))
 
-    this.$portLookupChain = new LookupChain()
-    this.$portLookupChain.add(new ItemFallBackLookup())
-    this.$portLookupChain.add(new ItemDefaultLookup(DefaultGraph.DEFAULT_PORT_LOOKUP))
-
-    this.$labelLookupChain = new LookupChain()
-    this.$labelLookupChain.add(new ItemFallBackLookup())
-    this.$labelLookupChain.add(new ItemDefaultLookup(DefaultGraph.DEFAULT_LABEL_LOOKUP))
+    this.$labelLookup.addLookup(new ItemFallBackLookup())
+    this.$labelLookup.addLookup(new ItemDefaultLookup(Graph.DEFAULT_LABEL_LOOKUP))
   }
 
-  public canDecorate(t: Class): boolean {
-    if (
-      t === INode.$class ||
-      t === IEdge.$class ||
-      t === IBend.$class ||
-      t === IPort.$class ||
-      t === ILabel.$class ||
-      t === IModelItem.$class ||
-      t === IGraph.$class
-    ) {
-      return !this.$wrappedDecorator || this.$wrappedDecorator.canDecorate(t)
-    }
-    return false
-  }
-
-  public addLookup(t: Class, lookup: IContextLookupChainLink): void {
-    if (t === INode.$class) {
-      this.$nodeLookupChain.add(lookup)
-    } else if (t === IEdge.$class) {
-      this.$edgeLookupChain.add(lookup)
-    } else if (t === IBend.$class) {
-      this.$bendLookupChain.add(lookup)
-    } else if (t === IPort.$class) {
-      this.$portLookupChain.add(lookup)
-    } else if (t === ILabel.$class) {
-      this.$labelLookupChain.add(lookup)
-    } else if (t === IGraph.$class) {
-      this.$graphLookupChain.add(lookup)
+  public addLookup(t: Constructor<any>, lookup: IContextLookupChainLink): void {
+    if (t === INode) {
+      this.$nodeLookup.addLookup(lookup)
+    } else if (t === IEdge) {
+      this.$edgeLookup.addLookup(lookup)
+    } else if (t === IBend) {
+      this.$bendLookup.addLookup(lookup)
+    } else if (t === IPort) {
+      this.$portLookup.addLookup(lookup)
+    } else if (t === ILabel) {
+      this.$labelLookup.addLookup(lookup)
+    } else if (t === IGraph) {
+      this.$graphLookup.addLookup(lookup)
     } else {
       throw new Error(`ArgumentError: Cannot decorate type ${t}`)
     }
@@ -1697,19 +1673,19 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
     }
   }
 
-  public removeLookup(t: Class, lookup: IContextLookupChainLink): void {
-    if (t === INode.$class) {
-      this.$nodeLookupChain.remove(lookup)
-    } else if (t === IEdge.$class) {
-      this.$edgeLookupChain.remove(lookup)
-    } else if (t === IBend.$class) {
-      this.$bendLookupChain.remove(lookup)
-    } else if (t === IPort.$class) {
-      this.$portLookupChain.remove(lookup)
-    } else if (t === ILabel.$class) {
-      this.$labelLookupChain.remove(lookup)
-    } else if (t === IGraph.$class) {
-      this.$graphLookupChain.remove(lookup)
+  public removeLookup(t: Constructor<any>, lookup: IContextLookupChainLink): void {
+    if (t === INode) {
+      this.$nodeLookup.removeLookup(lookup)
+    } else if (t === IEdge) {
+      this.$edgeLookup.removeLookup(lookup)
+    } else if (t === IBend) {
+      this.$bendLookup.removeLookup(lookup)
+    } else if (t === IPort) {
+      this.$portLookup.removeLookup(lookup)
+    } else if (t === ILabel) {
+      this.$labelLookup.removeLookup(lookup)
+    } else if (t === IGraph) {
+      this.$graphLookup.removeLookup(lookup)
     }
 
     if (this.$wrappedDecorator) {
@@ -1718,34 +1694,26 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public lookup<T>(type: Class<T>): T | null {
-    if (type === ILookupDecorator.$class) {
+  public lookup<T>(type: Constructor<any>): T | null {
+    if (type === ILookupDecorator) {
       this.$wrappedDecorator = this.$graph.baseLookup(type) as ILookupDecorator
       return this as unknown as T
     }
-    if (type === LookupChain.$class) {
-      return this.$graphLookupChain as T
-    }
 
-    const lookup = this.$graph.getLookup()
-    if (lookup) {
-      return lookup.lookup(type)
-    }
-
-    return this.$graphLookupChain.contextLookup(this.$graph, type) as T
+    return this.$graphLookup.lookup(this.$graph, type) as T
   }
 
-  public delegateLookup(item: IModelItem, type: Class): object | null {
+  public delegateLookup(item: IModelItem, type: Constructor<any>): object | null {
     if (item instanceof INode) {
-      return this.$nodeLookupChain.contextLookup(item, type)
+      return this.$nodeLookup.contextLookup(item, type)
     } else if (item instanceof IEdge) {
-      return this.$edgeLookupChain.contextLookup(item, type)
+      return this.$edgeLookup.contextLookup(item, type)
     } else if (item instanceof ILabel) {
-      return this.$labelLookupChain.contextLookup(item, type)
+      return this.$labelLookup.contextLookup(item, type)
     } else if (item instanceof IBend) {
-      return this.$bendLookupChain.contextLookup(item, type)
+      return this.$bendLookup.contextLookup(item, type)
     } else if (item instanceof IPort) {
-      return this.$portLookupChain.contextLookup(item, type)
+      return this.$portLookup.contextLookup(item, type)
     } else {
       return null
     }
@@ -1755,7 +1723,7 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
 abstract class ContextLookupChainLinkBase extends BaseClass(IContextLookupChainLink) {
   private $nextLink: IContextLookup | null = null
 
-  public contextLookup(item: object, type: Class): object | null {
+  public contextLookup(item: object, type: Constructor<any>): object | null {
     return this.$nextLink ? this.$nextLink.contextLookup(item, type) : null
   }
 
@@ -1765,13 +1733,13 @@ abstract class ContextLookupChainLinkBase extends BaseClass(IContextLookupChainL
 }
 
 class GraphFallBackLookup extends ContextLookupChainLinkBase {
-  public contextLookup(item: object, type: Class): object | null {
+  public contextLookup(item: object, type: Constructor<any>): object | null {
     return (item as AggregationGraphWrapper).baseLookup(type) || super.contextLookup(item, type)
   }
 }
 
 class ItemFallBackLookup extends ContextLookupChainLinkBase {
-  public contextLookup(item: object, type: Class): object | null {
+  public contextLookup<T>(item: object, type: Constructor<T>): object | null {
     return (
       (item as AggregationNode | AggregationEdge | AggregationLabel | AggregationPort).innerLookup(
         type
@@ -1781,10 +1749,10 @@ class ItemFallBackLookup extends ContextLookupChainLinkBase {
 }
 
 class BlockReshapeAndPositionHandlerLookup extends ContextLookupChainLinkBase {
-  public contextLookup(item: object, type: Class): object | null {
+  public contextLookup(item: object, type: Constructor<any>): object | null {
     // The default implementations of IPositionHandler and IReshapeHandler don't support AggregationNode, which is
     // why moving and reshaping such nodes is not supported by default.
-    if (type === IPositionHandler.$class || type === IReshapeHandler.$class) {
+    if (type === IPositionHandler || type === IReshapeHandler) {
       return null
     }
     return super.contextLookup(item, type)
@@ -1799,7 +1767,7 @@ class ItemDefaultLookup extends ContextLookupChainLinkBase {
     this.$defaultLookup = defaultLookup
   }
 
-  public contextLookup(item: object, type: Class): object | null {
+  public contextLookup(item: object, type: Constructor<any>): object | null {
     return this.$defaultLookup.contextLookup(item, type) || super.contextLookup(item, type)
   }
 }
@@ -1905,21 +1873,21 @@ class AggregationNode extends BaseClass(INode) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public innerLookup<T>(type: Class<T>): T | null {
-    if (type === INodeStyle.$class) {
+  public innerLookup<T>(type: Constructor<any>): T | null {
+    if (type === INodeStyle) {
       return this.style as T
     }
-    if (type.isInstance(this.layout)) {
-      return this.layout
+    if (type === IMutableRectangle) {
+      return this.layout as T
     }
-    if (type.isInstance(this)) {
-      return this
+    if (type === AggregationNode) {
+      return this as unknown as T
     }
     return null
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T>(type: Class<T>): T | null {
+  lookup<T>(type: Constructor<T>): T | null {
     return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
@@ -1949,7 +1917,7 @@ class AggregationEdge extends BaseClass(IEdge) {
   private $portsEnumerable: IListEnumerable<AggregationPort> | null = null
   private $bendsEnumerable: IListEnumerable<AggregationBend> | null = null
 
-  get isSelfloop(): boolean {
+  get isSelfLoop(): boolean {
     return this.sourcePort.owner === this.targetPort.owner
   }
 
@@ -2049,20 +2017,20 @@ class AggregationEdge extends BaseClass(IEdge) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T>(type: Class<T>): T | null {
+  lookup<T>(type: Constructor<T>): T | null {
     return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public innerLookup<T>(type: Class<T>): T | null {
-    if (type === IEdgeStyle.$class) {
+  public innerLookup<T>(type: Constructor<any>): T | null {
+    if (type === IEdgeStyle) {
       return this.style as T
     }
-    if (type.isInstance(this.bends)) {
-      return this.bends
+    if (type === IListEnumerable<IBend>) {
+      return this.bends as T
     }
-    if (type.isInstance(this)) {
-      return this
+    if (type === AggregationEdge) {
+      return this as unknown as T
     }
     return null
   }
@@ -2128,17 +2096,17 @@ class AggregationBend extends BaseClass(IBend) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T>(type: Class<T>): T | null {
+  lookup<T>(type: Constructor<T>): T | null {
     return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public innerLookup<T>(type: Class<T>): T | null {
-    if (type.isInstance(this.location)) {
-      return this.location
+  public innerLookup<T>(type: Constructor<any>): T | null {
+    if (type === IMutablePoint) {
+      return this.location as T
     }
-    if (type.isInstance(this)) {
-      return this
+    if (type === AggregationBend) {
+      return this as unknown as T
     }
     return null
   }
@@ -2222,23 +2190,23 @@ class AggregationPort extends BaseClass(IPort) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T>(type: Class<T>): T | null {
+  lookup<T>(type: Constructor<T>): T | null {
     return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public innerLookup<T>(type: Class<T>): T | null {
-    if (type === IPortStyle.$class) {
+  public innerLookup<T>(type: Constructor<any>): T | null {
+    if (type === IPortStyle) {
       return this.style as T
     }
-    if (type === IPortLocationModelParameter.$class) {
+    if (type === IPortLocationModelParameter) {
       return this.locationParameter as T
     }
-    if (type === IPoint.$class) {
+    if (type === IPoint) {
       return this.dynamicLocation as T
     }
-    if (type.isInstance(this)) {
-      return this
+    if (type === AggregationPort) {
+      return this as unknown as T
     }
     return null
   }
@@ -2268,7 +2236,7 @@ class AggregationLabel extends BaseClass(ILabel) {
   private $tag: any
   private $layout: IOrientedRectangle
 
-  public get owner(): ILabelOwner | null {
+  public get owner(): ILabelOwner {
     return this.$owner as ILabelOwner
   }
 
@@ -2351,20 +2319,20 @@ class AggregationLabel extends BaseClass(ILabel) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T>(type: Class<T>): T | null {
+  lookup<T>(type: Constructor<T>): T | null {
     return this.graph ? (this.graph.delegateLookup(this, type) as T) : null
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  public innerLookup<T>(type: Class<T>): T | null {
-    if (type === ILabelStyle.$class) {
+  public innerLookup<T>(type: Constructor<any>): T | null {
+    if (type === ILabelStyle) {
       return this.style as T
     }
-    if (type === ILabelModelParameter.$class) {
+    if (type === ILabelModelParameter) {
       return this.layoutParameter as T
     }
-    if (type.isInstance(this)) {
-      return this
+    if (type === AggregationLabel) {
+      return this as unknown as T
     }
     return null
   }

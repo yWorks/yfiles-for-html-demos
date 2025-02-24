@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Recursive Group Layout Demo
 
-# Recursive Group Layout
+<img src="../../../doc/demo-thumbnails/layout-recursive-group-layout.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/layout-features/recursive-group-layout/).
 
 This demo shows how to use the [Recursive Group Layout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout).
 
@@ -19,7 +21,7 @@ The [Recursive Group Layout](https://docs.yworks.com/yfileshtml/#/api/RecursiveG
 
 In this demo for every group node a different layout algorithm is used:
 
-- [Hierarchic Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout) for group node 1
+- [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) for group node 1
 - [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) for group node 2
 - [Radial Layout](https://docs.yworks.com/yfileshtml/#/api/RadialLayout) for group node 3
 - [RecursiveGroupLayout#NULL_LAYOUT](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout#NULL_LAYOUT) for group node 4

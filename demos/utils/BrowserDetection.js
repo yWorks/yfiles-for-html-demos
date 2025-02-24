@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,21 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/** @type {number} */
+/* eslint-disable @typescript-eslint/prefer-regexp-exec */
 let iosVersion = null
-/** @type {number} */
 let safariVersion = null
-/** @type {boolean} */
 let supportsModulesInWorker = null
-/** @type {boolean} */
 let supportsWebGL = null
-/** @type {boolean} */
 let supportsWebGL2 = null
-/** @type {number} */
 let androidVersion = null
-/** @type {number} */
 let chromeVersion = null
-
 /**
  * Provides basic feature detection for HTML5 and JavaScript API that is used in the demos.
  *
@@ -118,7 +111,6 @@ export const BrowserDetection = {
     return chromeVersion
   }
 }
-
 /**
  * Returns the iOS version, or 0 if it is another OS.
  *
@@ -127,14 +119,12 @@ export const BrowserDetection = {
  * NOTE: Since Safari for iPadOS 13, the user agent changed such that iOS and Mac OS X cannot be
  * distinguished anymore. The check still works on other browsers on iPadOS, e.g. Chrome.
  * Therefore, there is a separate check for iPad Safari 13+.
- * @returns {number}
  */
 function detectIosVersion() {
   // environments without window object
   if (typeof window === 'undefined' || window.navigator?.userAgent == null) {
     return 0
   }
-
   const ua = window.navigator.userAgent
   // iPhones, iPad Safari < v13, and non-Safari browsers on iPad identify as the correct device
   if (/iPad|iPhone|iPod/.test(ua)) {
@@ -146,7 +136,6 @@ function detectIosVersion() {
     if (matches != null && matches.length > 1) {
       return parseInt(matches[1])
     }
-
     // As fallback, report v10, that's good enough for yFiles demo purposes
     return 10
   }
@@ -166,17 +155,14 @@ function detectIosVersion() {
   }
   return 0
 }
-
 /**
  * Returns the version of Safari, or 0 for other browsers.
- * @returns {number}
  */
 function detectSafariVersion() {
   // environments without window object
   if (typeof window === 'undefined' || window.navigator?.userAgent == null) {
     return 0
   }
-
   const ua = window.navigator.userAgent
   const isSafari = ua.indexOf('Safari') !== -1 && ua.indexOf('Chrome') === -1
   if (isSafari) {
@@ -187,19 +173,16 @@ function detectSafariVersion() {
   }
   return 0
 }
-
 /**
  * Returns the Android version, or 0 if it is another OS.
  *
  * At the time of writing, Android 13 was the current version. Newer versions might use a different ua. *
- * @returns {number}
  */
 function detectAndroidVersion() {
   // environments without window object
   if (typeof window === 'undefined' || window.navigator?.userAgent == null) {
     return 0
   }
-
   const ua = window.navigator.userAgent
   if (/Android/.test(ua)) {
     // Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36
@@ -207,23 +190,19 @@ function detectAndroidVersion() {
     if (matches != null && matches.length > 1) {
       return parseInt(matches[1])
     }
-
     // As fallback, report v10, that's good enough for yFiles demo purposes
     return 10
   }
   return 0
 }
-
 /**
  * Returns the version of Chrome, or 0 for other browsers.
- * @returns {number}
  */
 function detectChromeVersion() {
   // environments without window object
   if (typeof window === 'undefined' || window.navigator?.userAgent == null) {
     return 0
   }
-
   const ua = window.navigator.userAgent
   const isChrome = ua.indexOf('Chrome') !== -1 && ua.indexOf('Edg') === -1
   if (isChrome) {
@@ -235,23 +214,17 @@ function detectChromeVersion() {
   }
   return 0
 }
-
-/**
- * @param {!string} name
- */
 function hasDrawingContext(name) {
   return (
     typeof window !== 'undefined' &&
     window.document.createElement('canvas').getContext(name) != null
   )
 }
-
 /**
  * Returns whether the browser supports modules for Web Workers.
  *
  * Note that this check creates an actual (but empty) Worker and thus is a bit more costly than
  * other checks.
- * @returns {boolean}
  */
 function detectModulesSupportedInWorker() {
   if (typeof window === 'undefined' || window.Worker == null) {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,98 +28,75 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   IPortCandidateProvider,
   List,
   ListEnumerable,
   Point,
+  PortCandidate,
   PortCandidateValidity,
   SimpleNode,
   SimplePort
-} from 'yfiles'
-import { LogicGateType } from './LogicGateType.js'
-
-/**
- * @readonly
- * @enum {number}
- */
-const EdgeDirection = {
-  IN: 0,
-  OUT: 1
-}
-
-/**
- * @typedef {Object} PortDescriptor
- * @property {number} x
- * @property {number} y
- * @property {number} direction
- */
-
+} from '@yfiles/yfiles'
+import { LogicGateType } from './LogicGateType'
+var EdgeDirection
+;(function (EdgeDirection) {
+  EdgeDirection[(EdgeDirection['IN'] = 0)] = 'IN'
+  EdgeDirection[(EdgeDirection['OUT'] = 1)] = 'OUT'
+})(EdgeDirection || (EdgeDirection = {}))
 /**
  * Provides all available ports of the given graph with the specified edge direction.
  */
 export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCandidateProvider) {
+  node
   /**
    * Creates a new instance of DescriptorDependentPortCandidateProvider.
-   * @param {!INode} node
    */
   constructor(node) {
     super()
     this.node = node
   }
-
   /**
    * Returns all port candidates that apply for the provided opposite port candidate.
-   * @param {!IInputModeContext} context The context for which the candidates should be provided
-   * @param {!IPortCandidate} target The opposite port candidate
-   * @returns {!IEnumerable.<IPortCandidate>}
+   * @param context The context for which the candidates should be provided
+   * @param target The opposite port candidate
    */
   getSourcePortCandidates(context, target) {
     return this.getPortCandidatesForDirection(EdgeDirection.OUT)
   }
-
   /**
    * Returns all port candidates that apply for the provided opposite port candidate.
-   * @param {!IInputModeContext} context The context for which the candidates should be provided
-   * @param {!IPortCandidate} source The opposite port candidate
-   * @returns {!IEnumerable.<IPortCandidate>}
+   * @param context The context for which the candidates should be provided
+   * @param source The opposite port candidate
    */
   getTargetPortCandidates(context, source) {
     return this.getPortCandidatesForDirection(EdgeDirection.IN)
   }
-
   /**
    * Returns all source port candidates that belong to the context of this provider.
-   * @param {!IInputModeContext} context The context for which the candidates should be provided
-   * @returns {!IEnumerable.<IPortCandidate>}
+   * @param context The context for which the candidates should be provided
    */
   getAllSourcePortCandidates(context) {
     return this.getPortCandidatesForDirection(EdgeDirection.OUT)
   }
-
   /**
    * Returns all target port candidates that belong to the context of this provider.
-   * @param {!IInputModeContext} context The context for which the candidates should be provided
-   * @returns {!IEnumerable.<IPortCandidate>}
+   * @param context The context for which the candidates should be provided
    */
   getAllTargetPortCandidates(context) {
     return this.getPortCandidatesForDirection(EdgeDirection.IN)
   }
-
   /**
    * Returns the suitable candidates based on the specified edge direction.
-   * @param {number} direction The direction of the edge
-   * @returns {!List.<IPortCandidate>}
+   * @param direction The direction of the edge
    */
   getPortCandidatesForDirection(direction) {
     const candidates = new List()
     // iterate over all available ports
     for (const port of this.node.ports) {
       // create a port candidate, invalidate it (so it is visible but not usable)
-      const candidate = new DefaultPortCandidate(port)
+      const candidate = new PortCandidate(port)
       candidate.validity = PortCandidateValidity.INVALID
-
       // get the port descriptor which is stored in the port's tag
       const portDescriptor = port.tag
       // make the candidate valid if the direction is the same as the one supplied
@@ -133,20 +110,17 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
     return candidates
   }
 }
-
 /**
  * Creates the port descriptors for the given nodes. If a graph is provided, the ports are directly added
  * to the graph. Otherwise they are added as SimplePorts to the node's port list.
- * @param {!Iterable.<INode>} nodes The nodes for which the port descriptors should be created
+ * @param nodes The nodes for which the port descriptors should be created
  * @param graph The graph which contains the nodes. If no graph is provided, the ports are added to the nodes port list.
- * @param {!IGraph} [graph]
  */
 export function createPortDescriptors(nodes, graph) {
   for (const node of nodes) {
     const portDescriptors = createPortDescriptorsForNode(node)
     const model = new FreeNodePortLocationModel()
     const ports = []
-
     // iterate through all descriptors and add their ports, using the descriptor as the tag for the port
     for (const descriptor of portDescriptors) {
       // use the descriptor's location as offset
@@ -162,17 +136,14 @@ export function createPortDescriptors(nodes, graph) {
         ports.push(port)
       }
     }
-
     if (!graph && node instanceof SimpleNode) {
       node.ports = new ListEnumerable(ports)
     }
   }
 }
-
 /**
  * Creates a list of all edges belonging to the type of the node as specified by its logic gate type.
- * @param {!INode} node The given node
- * @returns {!List.<PortDescriptor>}
+ * @param node The given node
  */
 function createPortDescriptorsForNode(node) {
   const layout = node.layout

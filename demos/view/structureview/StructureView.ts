@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,40 +27,28 @@
  **
  ***************************************************************************/
 import {
-  DefaultGraph,
   delegate,
+  Graph,
   HashMap,
   type IFoldingView,
   type IGraph,
   type ILabel,
   type ILabelOwner,
+  type IModelItem,
   INode,
   type ItemChangedEventArgs,
   type ItemEventArgs,
   type LabelEventArgs,
   type NodeEventArgs
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Specifies the folding view features required for the structure view.
  */
-type FoldingViewType = {
-  getViewItem: (node: INode) => INode | null
-  collapse: (node: INode) => void
-  expand: (node: INode) => void
-  addGroupCollapsedListener: (
-    listener: (src: IFoldingView, args: ItemEventArgs<INode>) => void
-  ) => void
-  removeGroupCollapsedListener: (
-    listener: (src: IFoldingView, args: ItemEventArgs<INode>) => void
-  ) => void
-  addGroupExpandedListener: (
-    listener: (src: IFoldingView, args: ItemEventArgs<INode>) => void
-  ) => void
-  removeGroupExpandedListener: (
-    listener: (src: IFoldingView, args: ItemEventArgs<INode>) => void
-  ) => void
-}
+type FoldingViewType = Pick<
+  IFoldingView,
+  'getViewItem' | 'collapse' | 'expand' | 'addEventListener' | 'removeEventListener'
+>
 
 /**
  * Stub implementation of the above-specified folding view type for flat graphs (or graphs without
@@ -68,21 +56,17 @@ type FoldingViewType = {
  * if the associated graph does not support folding.
  */
 const DummyFoldingView: FoldingViewType = {
-  getViewItem(node: INode): INode | null {
-    return node
+  getViewItem<T extends IModelItem>(item: T): T | null {
+    return item
   },
 
   collapse(): void {},
 
   expand(): void {},
 
-  addGroupCollapsedListener(): void {},
+  addEventListener(_name: string, _listener: unknown): void {},
 
-  removeGroupCollapsedListener(): void {},
-
-  addGroupExpandedListener(): void {},
-
-  removeGroupExpandedListener(): void {}
+  removeEventListener(_name: string, _listener: unknown): void {}
 }
 
 /**
@@ -102,7 +86,7 @@ export class StructureView {
   syncFoldingState = false
 
   private foldingView: FoldingViewType = DummyFoldingView
-  private masterGraph: IGraph = new DefaultGraph()
+  private masterGraph: IGraph = new Graph()
   private readonly rootListElement: HTMLElement
   private groupElementCounter = 0
 
@@ -166,55 +150,65 @@ export class StructureView {
    */
   private installEventListeners(): void {
     const graph = this.masterGraph
-    graph.addLabelAddedListener(delegate(this.onLabelAdded, this))
-    graph.addLabelTextChangedListener(delegate(this.onLabelTextChanged, this))
-    graph.addLabelRemovedListener(delegate(this.onLabelRemoved, this))
-    graph.addNodeCreatedListener(delegate(this.onNodeCreated, this))
-    graph.addNodeRemovedListener(delegate(this.onNodeRemoved, this))
-    graph.addParentChangedListener(delegate(this.onParentChanged, this))
+    graph.addEventListener('label-added', delegate(this.onLabelAdded, this))
+    graph.addEventListener('label-text-changed', delegate(this.onLabelTextChanged, this))
+    graph.addEventListener('label-removed', delegate(this.onLabelRemoved, this))
+    graph.addEventListener('node-created', delegate(this.onNodeCreated, this))
+    graph.addEventListener('node-removed', delegate(this.onNodeRemoved, this))
+    graph.addEventListener('parent-changed', delegate(this.onParentChanged, this))
 
-    this.foldingView.addGroupCollapsedListener(delegate(this.syncGroupElementStateWithNode, this))
-    this.foldingView.addGroupExpandedListener(delegate(this.syncGroupElementStateWithNode, this))
+    this.foldingView.addEventListener(
+      'group-collapsed',
+      delegate(this.syncGroupElementStateWithNode, this)
+    )
+    this.foldingView.addEventListener(
+      'group-expanded',
+      delegate(this.syncGroupElementStateWithNode, this)
+    )
   }
 
   /**
    * Uninstalls listeners added in {@link installEventListeners}.
    */
   private uninstallEventListeners(): void {
-    this.foldingView.removeGroupCollapsedListener(
+    this.foldingView.removeEventListener(
+      'group-collapsed',
       delegate(this.syncGroupElementStateWithNode, this)
     )
-    this.foldingView.removeGroupExpandedListener(delegate(this.syncGroupElementStateWithNode, this))
+    this.foldingView.removeEventListener(
+      'group-expanded',
+      delegate(this.syncGroupElementStateWithNode, this)
+    )
 
     const graph = this.masterGraph
-    graph.removeLabelAddedListener(delegate(this.onLabelAdded, this))
-    graph.removeLabelTextChangedListener(delegate(this.onLabelTextChanged, this))
-    graph.removeLabelRemovedListener(delegate(this.onLabelRemoved, this))
-    graph.removeNodeCreatedListener(delegate(this.onNodeCreated, this))
-    graph.removeNodeRemovedListener(delegate(this.onNodeRemoved, this))
-    graph.removeParentChangedListener(delegate(this.onParentChanged, this))
+    graph.removeEventListener('label-added', delegate(this.onLabelAdded, this))
+    graph.removeEventListener('label-text-changed', delegate(this.onLabelTextChanged, this))
+    graph.removeEventListener('label-removed', delegate(this.onLabelRemoved, this))
+    graph.removeEventListener('node-created', delegate(this.onNodeCreated, this))
+    graph.removeEventListener('node-removed', delegate(this.onNodeRemoved, this))
+    graph.removeEventListener('parent-changed', delegate(this.onParentChanged, this))
   }
 
   // ========
   // Definition of event listener methods since we need to be able to remove them from the
   // old graph if the graph is updated.
   // ========
-  private onLabelAdded(_: IGraph, args: ItemEventArgs<ILabel>): void {
+  private onLabelAdded(args: ItemEventArgs<ILabel>): void {
     this.updateLabel(args.item.owner)
   }
-  private onLabelTextChanged(_: IGraph, args: ItemChangedEventArgs<ILabel, string>): void {
+  private onLabelTextChanged(args: ItemChangedEventArgs<ILabel, string>): void {
     this.updateLabel(args.item.owner)
   }
-  private onLabelRemoved(_: IGraph, args: LabelEventArgs): void {
+  private onLabelRemoved(args: LabelEventArgs): void {
     this.updateLabel(args.owner)
   }
-  private onNodeCreated(_: IGraph, args: ItemEventArgs<INode>): void {
+  private onNodeCreated(args: ItemEventArgs<INode>): void {
     this.addNode(args.item)
   }
-  private onNodeRemoved(_: IGraph, args: NodeEventArgs): void {
+  private onNodeRemoved(args: NodeEventArgs): void {
     this.removeNode(args.item)
   }
-  private onParentChanged(_: IGraph, args: NodeEventArgs): void {
+  private onParentChanged(args: NodeEventArgs): void {
     this.reParentNode(args.item)
   }
 
@@ -499,12 +493,12 @@ export class StructureView {
   /**
    * Sets the structured view group element state to the given collapsed state of the graph's group nodes.
    */
-  private syncGroupElementStateWithNode(src: IFoldingView, args: ItemEventArgs<INode>): void {
+  private syncGroupElementStateWithNode(evt: ItemEventArgs<INode>, src: IFoldingView): void {
     if (!this.syncFoldingState) {
       return
     }
 
-    const groupNode = args.item
+    const groupNode = evt.item
     const masterGroupNode = src.getMasterItem(groupNode)
     const groupLi = this.getElement(masterGroupNode ? masterGroupNode : groupNode)
     if (!groupLi) {

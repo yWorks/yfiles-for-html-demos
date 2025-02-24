@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,50 +26,34 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { InteriorLabelModel } from 'yfiles'
-
-/**
- * @param {!GraphBuilder} graphBuilder
- */
+import { InteriorNodeLabelModel } from '@yfiles/yfiles'
 export function createNodeLabelsWithBinding(graphBuilder) {
   const nodeData = [
     { id: '0', name: 'Investment Capital' },
     { id: '1', name: 'Melissa Barner' }
   ]
   const nodesSource = graphBuilder.createNodesSource(nodeData, 'id')
-
   // create the label binding to the name property
   nodesSource.nodeCreator.createLabelBinding((data) => data.name)
 }
-/**
- * @param {!GraphBuilder} graphBuilder
- */
 export function createNodeLabelsWithProvider(graphBuilder) {
   const nodeData = [{ id: '2', name: 'Monster Inc' }]
   const nodesSource = graphBuilder.createNodesSource(nodeData, 'id')
-
   // create the text provider that will return the name of each node
   const labelCreator = nodesSource.nodeCreator.createLabelBinding()
   labelCreator.textProvider = (data) => data.name.toUpperCase()
 }
-/**
- * @param {!GraphBuilder} graphBuilder
- */
 export function createNodeLabelsWithSources(graphBuilder) {
   const nodeData = [
     { id: '3', owners: ['Local Group', 'Germany'] },
     { id: '4', owners: ['International Group'] }
   ]
   const nodesSource = graphBuilder.createNodesSource(nodeData, 'id')
-
   // create the label sources based on the `owners` property
   const labelsSource = nodesSource.nodeCreator.createLabelsSource((data) => data.owners)
   labelsSource.labelCreator.layoutParameterProvider = (data) =>
-    data.endsWith('Group') ? InteriorLabelModel.CENTER : InteriorLabelModel.SOUTH
+    data.endsWith('Group') ? InteriorNodeLabelModel.CENTER : InteriorNodeLabelModel.BOTTOM
 }
-/**
- * @param {!GraphBuilder} graphBuilder
- */
 export function createEdgeLabelsWithProvider(graphBuilder) {
   const edgeData = [
     {
@@ -88,7 +72,6 @@ export function createEdgeLabelsWithProvider(graphBuilder) {
     { id: '3', sourceId: '3', targetId: '0', ownership: 5 }
   ]
   const edgesSource = graphBuilder.createEdgesSource(edgeData, 'sourceId', 'targetId', 'id')
-
   // bind the label text data and add some more text information
   edgesSource.edgeCreator.createLabelBinding((data) => `Owns ${data.ownership}%`)
 }

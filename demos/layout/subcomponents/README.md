@@ -1,21 +1,23 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Hierarchic Subcomponents Demo
+# Hierarchical Subcomponents Demo
 
-# Hierarchic Subcomponents Demo
+<img src="../../../doc/demo-thumbnails/hierarchical-subcomponents.webp" alt="demo-thumbnail" height="320"/>
 
-This demo shows how hierarchic layout can arrange selected subcomponents of a graph with different layout styles.
+[You can also run this demo online](https://www.yworks.com/demos/layout/subcomponents/).
 
-Available styles are tree, organic, or orthogonal style, or a hierarchic style with different settings than the main layout.
+This demo shows how hierarchical layout can arrange selected subcomponents of a graph with different layout styles.
+
+Available styles are tree, organic, or orthogonal style, or a hierarchical style with different settings than the main layout.
 
 The subcomponent placement policy defines how subcomponents are placed within the layout context of the remaining graph. If subcomponents are connected with a single node (light blue and green subcomponents) then the layout is able to place them to the left or right of this node.
 

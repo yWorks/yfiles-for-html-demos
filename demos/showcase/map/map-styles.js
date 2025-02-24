@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,31 +28,26 @@
  ***************************************************************************/
 import {
   ArcEdgeStyle,
-  DefaultLabelStyle,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   FreeNodePortLocationModel,
   GeneralPath,
-  ImageNodeStyle
-} from 'yfiles'
-
+  ImageNodeStyle,
+  LabelStyle
+} from '@yfiles/yfiles'
 /**
  * Initializes styles and label positions for all graph elements.
- * @param {!IGraph} graph
  */
 export function initializeDefaultMapStyles(graph) {
   graph.nodeDefaults.style = createMapNodeStyle()
   graph.nodeDefaults.size = [40, 40]
   graph.nodeDefaults.labels.style = createLabelStyle()
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
-  graph.nodeDefaults.ports.locationParameter = FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED
-
+  graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.BOTTOM
+  graph.nodeDefaults.ports.locationParameter = FreeNodePortLocationModel.BOTTOM
   graph.edgeDefaults.style = createMapEdgeStyle()
   graph.edgeDefaults.shareStyleInstance = false
 }
-
 /**
  * Creates a default style for airports.
- * @returns {!ImageNodeStyle}
  */
 function createMapNodeStyle() {
   // create a normalized outline to have a drop-shaped hit-test
@@ -66,16 +61,13 @@ function createMapNodeStyle() {
   outline.cubicTo(0.82, 0.614, 0.882, 0.502, 0.882, 0.375)
   outline.cubicTo(0.882, 0.164, 0.711, 0, 0.5, 0)
   outline.close()
-
   return new ImageNodeStyle({
-    image: 'resources/airport-drop.svg',
+    href: 'resources/airport-drop.svg',
     normalizedOutline: outline
   })
 }
-
 /**
  * Creates a default style for connections between airports.
- * @returns {!ArcEdgeStyle}
  */
 function createMapEdgeStyle() {
   return new ArcEdgeStyle({
@@ -83,25 +75,20 @@ function createMapEdgeStyle() {
     height: 100
   })
 }
-
 /**
  * Creates a default style for the labels at the airports.
- * @returns {!DefaultLabelStyle}
  */
 function createLabelStyle() {
-  return new DefaultLabelStyle({
+  return new LabelStyle({
     shape: 'pill',
     backgroundFill: '#c5e4d1',
     textFill: '#2c4b38',
-    insets: [3, 6]
+    padding: [3, 6]
   })
 }
-
 /**
  * Returns the height of the edge arc considering the length of the edge.
  * This ensures that long edges still have a visible arc.
- * @param {!IEdge} edge
- * @returns {number}
  */
 export function getArcHeight(edge) {
   const sourceCenter = edge.sourceNode.layout.center

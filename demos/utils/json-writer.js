@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,35 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ILabelModelParameter } from 'yfiles'
-
-/**
- * @typedef {function} NodeDataWriter
- */
-/**
- * @typedef {function} EdgeDataWriter
- */
-/**
- * @typedef {function} NodeIdProvider
- */
-
-/**
- * The type of the configuration options of the {@link toJSON} function.
- * @typedef {Object} WriterOptions
- * @property {NodeDataWriter} [nodeTag]
- * @property {NodeDataWriter} [nodeLabels]
- * @property {NodeDataWriter} [nodeLayout]
- * @property {EdgeDataWriter} [edgeTag]
- * @property {EdgeDataWriter} [edgeLabels]
- * @property {EdgeDataWriter} [edgePortLocations]
- * @property {EdgeDataWriter} [edgeBends]
- * @property {NodeDataWriter} [nodeDataCreated]
- * @property {EdgeDataWriter} [edgeDataCreated]
- */
-
 /**
  * A configuration options object that writes layout information for nodes, edges, and labels.
- * @returns {!WriterOptions}
  */
 export function getDefaultWriterOptions() {
   return {
@@ -65,7 +38,6 @@ export function getDefaultWriterOptions() {
     nodeLabels: (data, node) => {
       data.labels = node.labels.toArray().map((label) => createLabelData(label, 'parameter'))
     },
-
     edgeBends: (data, edge) => {
       data.bends = edge.bends.toArray().map((bend) => toPoint(bend.location))
     },
@@ -78,14 +50,10 @@ export function getDefaultWriterOptions() {
     }
   }
 }
-
 /**
  * Stores the {@link graph} as JSON object with the provided {@link options configuration object}.
  * This implementation always writes the structure of the graph, i.e., its nodes, groups, and edges.
  * @yjs:keep=nodeList,edgeList
- * @param {!IGraph} graph
- * @param {!WriterOptions} [options]
- * @returns {!JSONGraph}
  */
 export function toJSON(graph, options) {
   const nodeIdProvider = createNodeIdProvider()
@@ -99,14 +67,6 @@ export function toJSON(graph, options) {
       .map((edge) => createEdgeData(edge, graph, nodeIdProvider, actualOptions))
   }
 }
-
-/**
- * @param {!INode} node
- * @param {!IGraph} graph
- * @param {!NodeIdProvider} nodeIdProvider
- * @param {!WriterOptions} options
- * @returns {!JSONNode}
- */
 function createNodeData(node, graph, nodeIdProvider, options) {
   const nodeData = {
     id: nodeIdProvider(node)
@@ -117,7 +77,6 @@ function createNodeData(node, graph, nodeIdProvider, options) {
   if (graph.getParent(node) !== null) {
     nodeData.parentId = nodeIdProvider(graph.getParent(node))
   }
-
   if (options.nodeLayout) {
     options.nodeLayout(nodeData, node, graph)
   }
@@ -127,25 +86,15 @@ function createNodeData(node, graph, nodeIdProvider, options) {
   if (options.nodeTag && node.tag != null) {
     options.nodeTag(nodeData, node, graph)
   }
-
   options.nodeDataCreated?.(nodeData, node, graph)
-
   return nodeData
 }
-
-/**
- * @param {!IEdge} edge
- * @param {!IGraph} graph
- * @param {!NodeIdProvider} nodeIdProvider
- * @param {!WriterOptions} options
- */
 function createEdgeData(edge, graph, nodeIdProvider, options) {
   /* @yjs:keep = source,target */
   const edgeData = {
     source: nodeIdProvider(edge.sourceNode),
     target: nodeIdProvider(edge.targetNode)
   }
-
   if (options.edgePortLocations) {
     options.edgePortLocations(edgeData, edge, graph)
   }
@@ -158,53 +107,38 @@ function createEdgeData(edge, graph, nodeIdProvider, options) {
   if (options.edgeTag && edge.tag != null) {
     options.edgeTag(edgeData, edge, graph)
   }
-
   options.edgeDataCreated?.(edgeData, edge, graph)
-
   return edgeData
 }
-
 /**
  * Creates the JSON label data for the given {@link label}.
- * @param {!ILabel} label - The label to convert to data.
+ * @param label - The label to convert to data.
  * @param details - A value that specifies how to store the label's layout information.
- * @param {!('none'|'layout'|'parameter')} [details=none]
- * @returns {!JSONLabel}
  */
 export function createLabelData(label, details = 'none') {
-  const { text, layout, layoutParameter } = label
+  const { text, layout } = label
   return details === 'none'
     ? { text }
-    : details === 'parameter'
-      ? {
-          text,
-          layoutParameter: ILabelModelParameter.serializeParameter(layoutParameter)
+    : {
+        text,
+        layout: {
+          anchorX: layout.anchorX,
+          anchorY: layout.anchorY,
+          upX: layout.upX,
+          upY: layout.upY,
+          width: layout.width,
+          height: layout.height
         }
-      : {
-          text,
-          layout: {
-            anchorX: layout.anchorX,
-            anchorY: layout.anchorY,
-            upX: layout.upX,
-            upY: layout.upY,
-            width: layout.width,
-            height: layout.height
-          }
-        }
+      }
 }
-
 /**
  * Converts the given {@link pointLike} to {@link JSONPoint}.
- * @param {!object} pointLike
- * @returns {!JSONPoint}
  */
 function toPoint(pointLike) {
   return [pointLike.x, pointLike.y]
 }
-
 /**
  * Creates an ID provider for nodes that simply enumerates the nodes.
- * @returns {!NodeIdProvider}
  */
 function createNodeIdProvider() {
   const nodeToIdMap = new Map()

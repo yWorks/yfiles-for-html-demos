@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>06 Edge Cropping - Tutorial: Port Style Implementation [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -52,7 +50,7 @@
         <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
         <a href="../../README.html">Demos</a>
 
-        <a href="../../README.html#tutorial-port-style-implementation">
+        <a href="../../README.html#tutorial-style-implementation-port">
           Tutorial: Port Style Implementation
         </a>
 
@@ -133,21 +131,25 @@
               We override the <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_concepts_lookup" target="_blank">lookup</a> method to
               return the <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" target="_blank">IShapeGeometry</a> to the port style. The
               <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" target="_blank">IShapeGeometry</a> gets the port&#8217;s bounds and uses the convenience
-              class <a href="https://docs.yworks.com/yfileshtml/#/api/GeomUtilities" target="_blank">GeomUtilities</a> to consider the elliptic port shape.
+              class <a href="https://docs.yworks.com/yfileshtml/#/api/GeometryUtilities" target="_blank">GeometryUtilities</a> to consider the elliptic port shape.
             </p>
           </div>
           <div class="listingblock">
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">lookup</span>(<span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>, <span class="hljs-attr">type</span>: <span class="hljs-title class_">Class</span>): <span class="hljs-built_in">any</span> {
-  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">IShapeGeometry</span>.<span class="hljs-property">$class</span>) {
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">lookup</span>(<span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>, <span class="hljs-attr">type</span>: <span class="hljs-title class_">Constructor</span>&lt;<span class="hljs-built_in">any</span>&gt;): <span class="hljs-built_in">any</span> {
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">IShapeGeometry</span>) {
     <span class="hljs-comment">// calculate the port bounds for edge cropping</span>
     <span class="hljs-keyword">const</span> bounds = <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">getPortBounds</span>(port)
     <span class="hljs-comment">// the IShapeGeometry implementation for this style</span>
     <span class="hljs-keyword">const</span> <span class="hljs-title class_">PortShapeGeometry</span> = <span class="hljs-keyword">class</span> <span class="hljs-title class_">extends</span> <span class="hljs-title class_">BaseClass</span>(<span class="hljs-title class_">IShapeGeometry</span>) {
       <span class="hljs-title function_">getIntersection</span>(<span class="hljs-attr">inner</span>: <span class="hljs-title class_">Point</span>, <span class="hljs-attr">outer</span>: <span class="hljs-title class_">Point</span>): <span class="hljs-title class_">Point</span> | <span class="hljs-literal">null</span> {
-        <span class="hljs-keyword">return</span> <span class="hljs-title class_">GeomUtilities</span>.<span class="hljs-title function_">findEllipseLineIntersection</span>(bounds, inner, outer)
+        <span class="hljs-keyword">return</span> <span class="hljs-title class_">GeometryUtilities</span>.<span class="hljs-title function_">getEllipseLineIntersection</span>(
+          bounds,
+          inner,
+          outer
+        )
       }
 
       <span class="hljs-title function_">getOutline</span>(): <span class="hljs-title class_">GeneralPath</span> | <span class="hljs-literal">null</span> {
@@ -157,7 +159,7 @@
       }
 
       <span class="hljs-title function_">isInside</span>(<span class="hljs-attr">location</span>: <span class="hljs-title class_">Point</span>): <span class="hljs-built_in">boolean</span> {
-        <span class="hljs-keyword">return</span> <span class="hljs-title class_">GeomUtilities</span>.<span class="hljs-title function_">ellipseContains</span>(bounds, location, <span class="hljs-number">0</span>)
+        <span class="hljs-keyword">return</span> <span class="hljs-title class_">GeometryUtilities</span>.<span class="hljs-title function_">ellipseContains</span>(bounds, location, <span class="hljs-number">0</span>)
       }
     }
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PortShapeGeometry</span>()
@@ -179,11 +181,11 @@
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">IEdgePathCropper</span>.<span class="hljs-property">$class</span>) {
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">IEdgePathCropper</span>) {
   <span class="hljs-comment">// a custom IEdgePathCropped implementation that uses the IShapeGeometry defined above</span>
-  <span class="hljs-keyword">const</span> <span class="hljs-title class_">CustomEdgePathCropper</span> = <span class="hljs-keyword">class</span> <span class="hljs-title class_">extends</span> <span class="hljs-title class_">DefaultEdgePathCropper</span> {
+  <span class="hljs-keyword">const</span> <span class="hljs-title class_">CustomEdgePathCropper</span> = <span class="hljs-keyword">class</span> <span class="hljs-title class_">extends</span> <span class="hljs-title class_">EdgePathCropper</span> {
     <span class="hljs-keyword">protected</span> <span class="hljs-title function_">getPortGeometry</span>(<span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>): <span class="hljs-title class_">IShapeGeometry</span> | <span class="hljs-literal">null</span> {
-      <span class="hljs-keyword">return</span> port.<span class="hljs-title function_">lookup</span>(<span class="hljs-title class_">IShapeGeometry</span>.<span class="hljs-property">$class</span>)
+      <span class="hljs-keyword">return</span> port.<span class="hljs-title function_">lookup</span>(<span class="hljs-title class_">IShapeGeometry</span>)
     }
   }
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CustomEdgePathCropper</span>({ <span class="hljs-attr">cropAtPort</span>: <span class="hljs-literal">true</span> })

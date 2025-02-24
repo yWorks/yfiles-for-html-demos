@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { defineComponent, inject, onMounted } from 'vue'
-import { GraphComponent, GraphOverviewComponent } from 'yfiles'
+import { GraphComponent, GraphOverviewComponent } from '@yfiles/yfiles'
 
 export default defineComponent({
   name: 'DiagramOverviewComponent',

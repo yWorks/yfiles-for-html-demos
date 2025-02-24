@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { IGraph } from 'yfiles'
+import type { IGraph } from '@yfiles/yfiles'
 import {
   GraphBuilder,
   GraphComponent,
@@ -34,14 +34,10 @@ import {
   GraphItemTypes,
   License,
   Size
-} from 'yfiles'
-import {
-  applyDemoTheme,
-  createDemoEdgeStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, addOptions, finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/yfiles'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
 import type { LayoutSettings } from './configure-layout'
 import { runLayoutCore } from './configure-layout'
 import { initializeTypePanel, nodeTypeColors } from './types-popup'
@@ -53,8 +49,6 @@ let graphComponent: GraphComponent
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // enable interactive editing
   graphComponent.inputMode = new GraphEditorInputMode({
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,71 +29,53 @@
 import {
   GraphComponent,
   IEdgeReconnectionPortCandidateProvider,
+  ILabelStyle,
   License,
   PolylineEdgeStyle,
   Rect,
   SimpleNode,
-  Size,
-  VoidLabelStyle
-} from 'yfiles'
-
-import { DragAndDropPanel } from 'demo-utils/DragAndDropPanel'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { NotNodeStyle } from './node-styles/NotNodeStyle.js'
-import { XOrNodeStyle } from './node-styles/XOrNodeStyle.js'
-import { AndGateNodeStyle } from './node-styles/AndGateNodeStyle.js'
-import { OrNodeStyle } from './node-styles/OrNodeStyle.js'
+  Size
+} from '@yfiles/yfiles'
+import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { NotNodeStyle } from './node-styles/NotNodeStyle'
+import { XOrNodeStyle } from './node-styles/XOrNodeStyle'
+import { AndGateNodeStyle } from './node-styles/AndGateNodeStyle'
+import { OrNodeStyle } from './node-styles/OrNodeStyle'
 import {
   createPortDescriptors,
   DescriptorDependentPortCandidateProvider
-} from './DescriptorDependentPortCandidateProvider.js'
-import { createPortAwareGraphBuilder } from '../../databinding/port-aware-graph-builder/GraphBuilder.js'
-import { sampleData } from './resources/sample-data.js'
-import { createInputMode } from './input.js'
-import { runLayout } from './logicgates-layout.js'
-
+} from './DescriptorDependentPortCandidateProvider'
+import { createPortAwareGraphBuilder } from '../../databinding/port-aware-graph-builder/GraphBuilder'
+import { sampleData } from './resources/sample-data'
+import { createInputMode } from './input'
+import { runLayout } from './logicgates-layout'
 /**
  * The main graph component
- * @type {GraphComponent}
  */
 let graphComponent
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize the drag and drop panel
   initializeDragAndDropPanel()
-
   // initialize the default styles
   initializeGraph()
-
   // create the input mode for this demo
   createInputMode(graphComponent)
-
   // create the sample graph
   await createSampleGraph()
-
   // wire up the UI
   initializeUI()
 }
-
 function initializeDragAndDropPanel() {
   const dndPanel = new DragAndDropPanel(document.getElementById('dnd-panel'))
   dndPanel.maxItemWidth = 160
   dndPanel.populatePanel(createDragAndDropPanelNodes())
 }
-
 /**
  * Creates the nodes that provide the visualizations for the style panel.
- * @returns {!Array.<SimpleNode>}
  */
 function createDragAndDropPanelNodes() {
   // Create some nodes with different styles
@@ -106,7 +88,6 @@ function createDragAndDropPanelNodes() {
     new XOrNodeStyle(false, '#A4778B', '#62555B', '#FFFFFF'),
     new XOrNodeStyle(true, '#AA4586', '#66485B', '#FFFFFF')
   ]
-
   const nodeContainer = nodeStyles.map(
     (style) =>
       new SimpleNode({
@@ -114,13 +95,10 @@ function createDragAndDropPanelNodes() {
         style: style
       })
   )
-
   // create the port descriptor for the nodes
   createPortDescriptors(nodeContainer)
-
   return nodeContainer
 }
-
 /**
  * Initialize the graph's default styles and settings.
  */
@@ -128,35 +106,30 @@ function initializeGraph() {
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new AndGateNodeStyle(false, '#605C4E', '#201F1A', '#FFFFFF')
   graph.nodeDefaults.size = new Size(100, 50)
-
   // don't delete ports if a connected edge gets removed
   graph.nodeDefaults.ports.autoCleanUp = false
   // hide port labels
-  graph.nodeDefaults.ports.labels.style = new VoidLabelStyle()
+  graph.nodeDefaults.ports.labels.style = ILabelStyle.VOID_LABEL_STYLE
   // set the port candidate provider
-  graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
+  graph.decorator.nodes.portCandidateProvider.addFactory(
     (node) => new DescriptorDependentPortCandidateProvider(node)
   )
-  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '2px black' })
-  graph.decorator.edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setImplementation(
-    IEdgeReconnectionPortCandidateProvider.ALL_NODE_CANDIDATES
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '2px black', orthogonalEditing: true })
+  graph.decorator.edges.reconnectionPortCandidateProvider.addFactory((edge) =>
+    IEdgeReconnectionPortCandidateProvider.fromAllNodeAndEdgeCandidates(edge)
   )
-
   // enable the undo engine
   graph.undoEngineEnabled = true
-
   // add a listener to add the tags related to the highlighting to the new nodes
-  graph.addNodeCreatedListener((_, evt) => {
+  graph.addEventListener('node-created', (evt) => {
     evt.item.tag = {
       sourceHighlight: false,
       targetHighlight: false
     }
   })
-
   // disable edge cropping
-  graph.decorator.portDecorator.edgePathCropperDecorator.hideImplementation()
+  graph.decorator.ports.edgePathCropper.hide()
 }
-
 /**
  * Wires up the UI.
  */
@@ -168,21 +141,15 @@ function initializeUI() {
     .getElementById('layout-button')
     .addEventListener('click', () => runLayout(graphComponent, false))
 }
-
 /**
  * Creates the sample graph for this demo.
- * @returns {!Promise}
  */
 async function createSampleGraph() {
   const graph = graphComponent.graph
-
   const graphBuilder = createPortAwareGraphBuilder(graph, sampleData.gates, sampleData.connections)
   graphBuilder.buildGraph()
-
   createPortDescriptors(graph.nodes, graph)
-
   // run the layout
   await runLayout(graphComponent, true)
 }
-
 void run().then(finishLoading)

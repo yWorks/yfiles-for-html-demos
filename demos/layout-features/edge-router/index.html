@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Edge Router - Layout Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -91,7 +89,7 @@
           <li>
             Basic distance settings like the
             <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#inimumNodeToEdgeDistance" target="_blank">minimum node-edge distance</a> and the
-            <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeLayoutDescriptor#minimumEdgeToEdgeDistance" target="_blank">minimum edge-edge distance</a>.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeDescriptor#minimumEdgeDistance" target="_blank">minimum edge-edge distance</a>.
           </li>
           <li>
             <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#scope" target="_blank">Scope</a>: the
@@ -100,8 +98,8 @@
             edges are routed, thus, called <em>affected</em> edges.
           </li>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeLayoutDescriptor#routingStyle" target="_blank">Routing Style</a>: the default
-            style in this example is orthogonal, but the
+            <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeDescriptor#routingStyle" target="_blank">Routing Style</a>: the default style
+            in this example is orthogonal, but the
             <span style="color: #01baff; font-weight: bold">blue edges</span> are routed using the
             octilinear style.
           </li>
@@ -112,8 +110,8 @@
           </li>
           <li>
             Restricting ports via <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" target="_blank">Port Candidates</a>: at node '5' and
-            node '7', ports are restricted to be on the left or right side (west/east). For other
-            nodes the port sides are not restricted.
+            node '7', ports are restricted to be on the left or right side. For other nodes the port
+            sides are not restricted.
           </li>
           <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#grid" target="_blank">Grid routing</a>. Edges are routed on a 10x10 grid.</li>
         </ul>

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,29 +38,29 @@ import {
   IRenderContext,
   IVisualCreator,
   Visual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * A simple edge style that draws a line from source to target node following the
  * given bends into the HTML5 Canvas.
  */
 export default class CanvasEdgeStyle extends EdgeStyleBase {
+  color
+  thickness
   /**
    * Creates a new instance of this class.
-   * @param {!Color} color The edge color.
-   * @param {number} thickness The edge thickness
+   * @param color The edge color.
+   * @param thickness The edge thickness
    */
   constructor(color, thickness) {
     super()
-    this.thickness = thickness
     this.color = color
+    this.thickness = thickness
   }
-
   /**
    * Creates the visual representation for the given edge.
-   * @param {!IRenderContext} context The render context.
-   * @param {!IEdge} edge The edge to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param context The render context.
+   * @param edge The edge to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link CanvasEdgeStyle.updateVisual}
    */
   createVisual(context, edge) {
@@ -72,60 +72,54 @@ export default class CanvasEdgeStyle extends EdgeStyleBase {
       this.thickness
     )
   }
-
   /**
    * Updates the visual representation for the given edge.
-   * @param {!IRenderContext} context The render context.
-   * @param {!Visual} oldVisual The visual that has been created in the call to
+   * @param context The render context.
+   * @param oldVisual The visual that has been created in the call to
    * {@link CanvasEdgeStyle.createVisual}.
-   * @param {!IEdge} edge The edge to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param edge The edge to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link CanvasEdgeStyle.createVisual}
    */
   updateVisual(context, oldVisual, edge) {
     return oldVisual
   }
 }
-
 /**
  * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeRenderVisual extends HtmlCanvasVisual {
+  bends
+  sourcePortLocation
+  targetPortLocation
+  thickness
   color
-
   /**
    * Creates an edge render visual instance for an edge.
-   * @param {!IListEnumerable.<IBend>} bends
-   * @param {!IPoint} sourcePortLocation
-   * @param {!IPoint} targetPortLocation
-   * @param {!Color} color
-   * @param {number} thickness
    */
   constructor(bends, sourcePortLocation, targetPortLocation, color, thickness) {
     super()
-    this.thickness = thickness
-    this.targetPortLocation = targetPortLocation
-    this.sourcePortLocation = sourcePortLocation
     this.bends = bends
+    this.sourcePortLocation = sourcePortLocation
+    this.targetPortLocation = targetPortLocation
+    this.thickness = thickness
     this.bends = bends
     this.sourcePortLocation = sourcePortLocation
     this.targetPortLocation = targetPortLocation
     this.thickness = thickness
     this.color = `rgba(${color.r},${color.g},${color.b},${color.a})`
   }
-
   /**
    * Paints onto the context using HTML5 Canvas operations.
    * Implementations should not destroy the context's state, but should make sure to restore the
    * state to the previously active state. This is especially true for the transformation and clip.
-   * @param {!IRenderContext} context The render context of the {@link CanvasComponent}
-   * @param {!CanvasRenderingContext2D} htmlCanvasContext The HTML5 Canvas context to use for rendering.
+   * @param context The render context of the {@link CanvasComponent}
+   * @param htmlCanvasContext The HTML5 Canvas context to use for rendering.
    */
-  paint(context, htmlCanvasContext) {
+  render(context, htmlCanvasContext) {
     // simply draw a black line from the source port location via all bends to the target port location
     htmlCanvasContext.strokeStyle = this.color
     htmlCanvasContext.lineWidth = this.thickness
-
     htmlCanvasContext.beginPath()
     let location = this.sourcePortLocation
     htmlCanvasContext.moveTo(location.x, location.y)

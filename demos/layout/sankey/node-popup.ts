@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,15 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ExteriorLabelModel, type GraphComponent, type GraphEditorInputMode, INode } from 'yfiles'
-import HTMLPopupSupport from '../../view/htmlpopup/HTMLPopupSupport'
+import {
+  ExteriorNodeLabelModel,
+  type GraphComponent,
+  type GraphEditorInputMode,
+  INode,
+  Point
+} from '@yfiles/yfiles'
+import { HTMLPopupSupport } from './HTMLPopupSupport'
 import { colors, updateNodeColor } from './styles-support'
 import { TagChangeUndoUnit } from './interaction/TagChangeUndoUnit'
 import { getPoliticalParty } from './data-types'
-import {
-  hideAllPickerContainer,
-  showPickerContainer
-} from '../../showcase/mindmap/node-popup-toolbar'
 
 // we use font-awesome icons for the contextual toolbar in this demo
 import '@fortawesome/fontawesome-free/js/all.min.js'
@@ -52,12 +54,12 @@ export function initializeNodePopup(graphComponent: GraphComponent): void {
   nodePopup = new HTMLPopupSupport(
     graphComponent,
     document.getElementById('contextualToolbar')!,
-    ExteriorLabelModel.EAST
+    ExteriorNodeLabelModel.RIGHT
   )
 
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
   // configures the input mode to show the popup when a node is clicked
-  inputMode.addItemClickedListener((_, evt) => {
+  inputMode.addEventListener('item-clicked', (evt) => {
     if (evt.item instanceof INode) {
       document.getElementById('color-picker-label')!.style.display = 'inline-block'
       nodePopup.currentItem = evt.item
@@ -65,12 +67,12 @@ export function initializeNodePopup(graphComponent: GraphComponent): void {
   })
 
   // when a node drag operation starts, hide the popup
-  inputMode.moveUnselectedInputMode.addDragStartedListener(() => {
+  inputMode.moveUnselectedItemsInputMode.addEventListener('drag-started', () => {
     hidePopup(graphComponent)
   })
 
   // when a click on empty space occurs, hide the popup
-  inputMode.addCanvasClickedListener(() => {
+  inputMode.addEventListener('canvas-clicked', () => {
     hidePopup(graphComponent)
   })
 }
@@ -150,4 +152,81 @@ export function hidePopup(graphComponent: GraphComponent): void {
   hideAllPickerContainer()
   nodePopup.currentItem = null
   graphComponent.focus()
+}
+
+/**
+ * Shows the color picker associated with the pressed button.
+ * Before showing the color-picker, hides any previously opened picker and calculates the position
+ * of the new one.
+ */
+export function showPickerContainer(
+  graphComponent: GraphComponent,
+  toggleButton: HTMLInputElement
+): void {
+  const pickerContainer = document.getElementById(
+    (toggleButton as HTMLElement).getAttribute('data-container-id')!
+  )!
+  const show = toggleButton.checked
+
+  if (!show) {
+    hideAllPickerContainer()
+    return
+  }
+
+  // hide all picker containers except for the one that should be toggled
+  hideAllPickerContainer(toggleButton, pickerContainer)
+
+  // position the container above/below the toggle button
+  pickerContainer.style.display = 'block'
+  const labelElement = document.querySelector(`label[for="${toggleButton.id}"]`)!
+  const labelBoundingRect = labelElement.getBoundingClientRect()
+  const toolbarClientRect = document.getElementById('contextualToolbar')!.getBoundingClientRect()
+  const pickerClientRect = pickerContainer.getBoundingClientRect()
+  pickerContainer.style.left = `${
+    labelBoundingRect.left +
+    labelBoundingRect.width / 2 -
+    pickerContainer.clientWidth / 2 -
+    toolbarClientRect.left
+  }px`
+  const gcAnchor = graphComponent.viewToPageCoordinates(new Point(0, 0))
+  if (toolbarClientRect.top - gcAnchor.y < pickerClientRect.height + 20) {
+    pickerContainer.style.top = '55px'
+    pickerContainer.classList.add('bottom')
+  } else {
+    pickerContainer.style.top = `-${pickerClientRect.height + 12}px`
+    pickerContainer.classList.remove('bottom')
+  }
+
+  // timeout the fading animation to make sure that the element is visible
+  setTimeout(() => {
+    pickerContainer.style.opacity = '1'
+  }, 0)
+}
+
+/**
+ * Resets the picker container.
+ * Hides all pickers except the given one, if exists and unchecks all buttons.
+ */
+export function hideAllPickerContainer(
+  exceptToggleButton?: HTMLInputElement,
+  exceptContainer?: HTMLElement
+): void {
+  const toggleButtons = document.querySelectorAll('input[data-container-id]')
+  for (let i = 0; i < toggleButtons.length; i++) {
+    const btn = toggleButtons[i] as HTMLInputElement
+    if (btn !== exceptToggleButton) {
+      btn.checked = false
+    }
+  }
+
+  const pickerContainers = document.querySelectorAll('.picker-container')
+  for (let i = 0; i < pickerContainers.length; i++) {
+    const container = pickerContainers[i] as HTMLElement
+    if (container.style.opacity !== '0' && container !== exceptContainer) {
+      container.style.opacity = '0'
+      setTimeout(() => {
+        container.style.display = 'none'
+      }, 300)
+    }
+  }
 }

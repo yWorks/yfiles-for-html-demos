@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { runLayout } from '../layout/runLayout'
-import { GraphComponent, GraphEditorInputMode, GridVisualCreator } from 'yfiles'
+import { GraphComponent, GraphEditorInputMode, type GridRenderer } from '@yfiles/yfiles'
 
 export async function runAutoLayout(graphComponent: GraphComponent) {
   const layoutButton = document.querySelector<HTMLButtonElement>('#layoutButton')!
@@ -42,7 +42,7 @@ export async function runAutoLayout(graphComponent: GraphComponent) {
   }
 }
 
-export function triggerGridDisplay(graphComponent: GraphComponent, grid: GridVisualCreator) {
+export function triggerGridDisplay(graphComponent: GraphComponent, grid: GridRenderer) {
   const gridButton = document.querySelector<HTMLInputElement>('#grid-button')!
   const gcInputModeSnapContext = (graphComponent.inputMode as GraphEditorInputMode).snapContext
   grid.visible = gridButton.checked

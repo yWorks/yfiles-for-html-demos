@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,41 +31,18 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Maze Routing Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-    <link rel="stylesheet" href="../../resources/style/demo-option-editor.css" />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.9/angular.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.7.9/angular-sanitize.min.js"></script>
     <style>
-      .option-ui-content-container {
-        overflow-y: visible;
-      }
-
-      #data-editor {
-        -webkit-overflow-scrolling: touch;
-        user-select: none;
-      }
-
-      #data-editor-button-container {
-        position: absolute;
-        bottom: 0;
-        width: calc(100% - 10px);
-        min-width: 235px;
-        display: flex;
-        align-items: center;
-        justify-content: space-evenly;
-        height: 65px;
-      }
-
-      .flat-button {
-        width: 80%;
-        margin: 0 4px;
+      label {
+        margin-right: 2px;
+        margin-left: 5px;
       }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -107,6 +82,42 @@
 
       <button data-command="UNDO"></button>
       <button data-command="REDO"></button>
+
+      <span class="demo-separator"></span>
+
+      <label for="router-scope">Scope:</label>
+      <select title="Scope" id="router-scope">
+        <option value="route-all-edges">Route All Edges</option>
+        <option value="route-selected-edges">Route Selected Edges</option>
+        <option value="route-edges-at-selected-nodes">Route Edges At Selected Nodes</option>
+      </select>
+
+      <label for="router-style">Style:</label>
+      <select title="Scope" id="router-style">
+        <option value="orthogonal">Orthogonal</option>
+        <option value="octilinear">Octilinear</option>
+      </select>
+
+      <label for="router-style">Allowed Port Sides:</label>
+      <select title="Allowed Port Sides" id="router-ports">
+        <option value="any">Any</option>
+        <option value="left-right">Left or Right</option>
+        <option value="top-bottom">Top or Bottom</option>
+      </select>
+
+      <label for="router-edge-distance">Edge Distance:</label>
+      <input type="number" min="1" max="50" value="6" id="router-edge-distance" />
+
+      <span class="demo-separator"></span>
+
+      <button
+        id="route-edges"
+        title="Route Edges"
+        class="demo-icon-yIconLayout labeled"
+        disabled=""
+      >
+        Route Edges
+      </button>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -124,24 +135,26 @@
         <h1>Maze Routing Demo</h1>
 
         <p>
-          This demo shows how the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a>
+          This demo shows how the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a>
           can be used for finding routes through a maze. This algorithm tries to find the way with
           the fewest possible changes in direction trying to avoid possible obstacles.
         </p>
         <p>
           The graph consists of the nodes that form the maze and the normal ones. The maze nodes are
           visible only during the layout and serve as obstacles for the algorithm. Also, a
-          non-editable background visual is created from these maze nodes and is displayed inside
-          the graph component.
+          non-editable background visual is created by these maze nodes and is displayed inside the
+          graph component.
         </p>
 
         <h2>Things to Try</h2>
         <ul>
           <li>
-            Change the settings of the
-            <code>EdgeRouter</code>
-            from the configuration panel on the right to see how the routing of the edges changes.
+            Change the settings of the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a> from the toolbar and press the
+            "Route Edges" button to see how the routing of the edges changes.
+          </li>
+          <li>
+            Change the scope to 'Route Edges at Selected Nodes'. Select and move a node and observe
+            that, only its incident edges have been rerouted.
           </li>
           <li>
             Modify the graph with one of the following operations to see how the affected edges are
@@ -159,232 +172,6 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <aside class="demo-main__sidebar">
-        <div class="demo-sidebar__content" style="padding: 10px 10px 70px 10px">
-          <h2>Routing Settings</h2>
-
-          <div id="data-editor">
-            <!-- Begin Templates -->
-            <script type="text/ng-template" id="./templates/option-ui.html">
-              <div class="option-ui-content-container">
-                <div class="option-ui-content">
-                  <div data-option-ui-form data-accordeon data-members="config.membersArray"></div>
-                </div>
-              </div>
-            </script>
-            <script type="text/ng-template" id="./templates/option-ui-form.html">
-              <form name="form" class="option-ui-form" novalidate>
-                <div data-ng-repeat-start="member in members" data-ng-if="member.type==='group'">
-                  <div class="option-ui-form-group"
-                    data-ng-class="{hidden: member._member._isHidden, 'aria-disabled': member._recIsDisabled, collapsed: member._isCollapsed}">
-                    <div data-option-ui-button data-click-callback="toggleCollapsed(member, members)"
-                      data-label="::member._member.label"
-                      data-icon="member._isCollapsed ? 'chevronDown' : 'chevronRight'"></div>
-                    <br>
-                    <div option-ui-collapse class="option-ui-form-section" data-collapsed="member._isCollapsed">
-                      <div data-option-ui-form data-members="member.members"></div>
-                    </div>
-                  </div>
-                </div>
-                <div data-ng-repeat-end data-ng-if="member.type==='option'">
-                  <div data-option-ui-item data-option="member._member" data-disabled="member._recIsDisabled"
-                    data-ng-class="{disabled: member._recIsDisabled}"></div>
-                </div>
-              </form>
-            </script>
-            <script type="text/ng-template" id="./templates/option-ui-item.html">
-              <div class="item" data-ng-switch data-on="::option.component" data-ng-class="{hidden: option._isHidden}">
-                <div data-ng-switch-when="checkbox" data-option-ui-checkbox data-option="::option"
-                  data-disabled="disabled"></div>
-                <div data-ng-switch-when="spinner" data-option-ui-spinner data-option="::option"
-                  data-disabled="disabled"></div>
-                <div data-ng-switch-when="slider" data-option-ui-slider data-option="::option" data-disabled="disabled"></div>
-                <div data-ng-switch-when="text" data-option-ui-text data-option="::option" data-disabled="disabled"></div>
-                <div data-ng-switch-when="combobox" data-option-ui-combobox data-option="::option"
-                  data-options="::option.options" data-disabled="disabled"></div>
-                <div data-ng-switch-when="htmlblock" data-option-ui-htmlblock data-option="::option"></div>
-                <div ng-switch-default>{{::option.component}}</div>
-              </div>
-            </script>
-            <script type="text/ng-template" id="./templates/option-ui-revert.html">
-              <!--div data-option-ui-button data-click-callback="clickCallback()" data-icon="'undo'"></div-->
-            </script>
-            <script
-              type="text/ng-template"
-              id="./components/option-ui-button/option-ui-button.html"
-            >
-              <div class="option-ui-button" data-ng-click="!disabled && clickCallback()" data-ng-disabled="disabled">
-                <span class="icon" data-ng-show="!!icon"></span> <span class="label" data-ng-show="!!label">{{::label}}</span>
-              </div>
-            </script>
-            <script
-              type="text/ng-template"
-              id="./components/option-ui-checkbox/option-ui-checkbox.html"
-            >
-              <form class="option-ui-checkbox">
-                <div class="checkbox-container">
-                  <label  class="option-ui-checkbox" title="{{::option.label}}">{{::option.label}}
-                    <div style="display: inline">
-                      <a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API<span style="font-size: 12px;">&#8594;</span></a>
-                    </div></label>
-                  <div class="vcenter-container">
-                    <input type="checkbox" data-ng-model="option.value" data-ng-disabled="disabled"/>
-                  </div>
-                </div>
-              </form>
-            </script>
-            <script
-              type="text/ng-template"
-              id="./components/option-ui-collapse/option-ui-collapse.html"
-            >
-              <div class="option-ui-collapse demo-collapsible-pane-content" data-ng-transclude data-ng-if="!collapsed"></div>
-            </script>
-            <script
-              type="text/ng-template"
-              id="./components/option-ui-combobox/option-ui-combobox.html"
-            >
-              <form class="option-ui-combobox">
-                <div class="combobox-container">
-                  <label class="option-ui-combobox" title="{{::option.label}}">{{::option.label}}
-                    <div style="display: inline">
-                      <a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API<span style="font-size: 12px;">&#8594;</span></a>
-                    </div>
-                  </label>
-                  <div class="vcenter-container">
-                    <select size="1" data-ng-model="option.value" data-ng-disabled="disabled"
-                      ng-options="option.value as option.name for option in options"></select>
-                  </div>
-                </div>
-              </form>
-            </script>
-            <script
-              type="text/ng-template"
-              id="./components/option-ui-dropdown/option-ui-dropdown.html"
-            >
-              <div class="option-ui-dropdown">
-                <div class="option-ui-selectionlist">
-                  <select size="1" data-ng-model="currentSelected">
-                    <option data-ng-repeat="option in options" value="{{::$index}}">{{::option.label}}</option>
-                  </select>
-                  <div class="selectionBar" data-ng-style="slide"></div>
-                </div>
-              </div>
-            </script>
-            <script
-              type="text/ng-template"
-              id="./components/option-ui-slider/option-ui-slider.html"
-            >
-              <form class="option-ui-slider" name="ctrlForm">
-                <div>
-                  <label class="option-ui-slider" title="{{::option.label}}">
-                    {{::option.label}}
-                    <div style="display: inline">
-                      <a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API<span style="font-size: 12px;">&#8594;</span></a>
-                    </div>
-                  </label>
-                </div>
-
-                <div class="slider-container">
-                  <div class="range-container">
-                    <input class="noselect" type="range" data-option-ui-number-parser min="{{::option.min}}"
-                      max="{{::option.max}}" step="{{::option.step}}" data-ng-model="option.value"
-                      data-ng-disabled="disabled" option-ui-validate/>
-                  </div>
-                  <div class="number-container">
-                    <input type="number" min="{{::option.min}}" max="{{::option.max}}" step="{{::option.step}}"
-                      data-ng-model="option.value" data-ng-disabled="disabled" name="input" option-ui-validate required/>
-                  </div>
-                </div>
-                <div class="form-error-container">
-                  <div class="form-error-tip" ng-show="ctrlForm.input.$error.min">
-                    <div class="arrow-top"></div>
-                    <div class="label"> &lt; {{option.min}}</div>
-                  </div>
-                  <div class="form-error-tip" ng-show="ctrlForm.input.$error.max">
-                    <div class="arrow-top"></div>
-                    <div class="label"> &gt; {{option.max}}</div>
-                  </div>
-                  <div class="form-error-tip" ng-show="ctrlForm.input.$error.number || ctrlForm.input.$error.required">
-                    <div class="arrow-top"></div>
-                    <div class="label">Invalid number</div>
-                  </div>
-                </div>
-              </form>
-            </script>
-            <script
-              type="text/ng-template"
-              id="./components/option-ui-spinner/option-ui-spinner.html"
-            >
-              <form class="option-ui-spinner" name="ctrlForm">
-                <div class="spinner-container">
-                  <label class="option-ui-spinner" title="{{::option.label}}">{{::option.label}}
-                    <div style="display: inline">
-                      <a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API<span style="font-size: 12px;">&#8594;</span></a>
-                    </div>
-                  </label>
-                  <div class="vcenter-container">
-                    <input class="spinner" type="number" min="{{::option.min}}" max="{{::option.max}}"
-                      step="{{::option.step}}" name="input" data-ng-model="option.value" data-ng-disabled="disabled"
-                      required option-ui-validate/>
-                  </div>
-                </div>
-                <div class="form-error-container">
-                  <div class="form-error-tip" ng-show="ctrlForm.input.$error.min">
-                    <div class="arrow-top"></div>
-                    <div class="label"> &lt; {{option.min}}</div>
-                  </div>
-                  <div class="form-error-tip" ng-show="ctrlForm.input.$error.max">
-                    <div class="arrow-top"></div>
-                    <div class="label"> &gt; {{option.max}}</div>
-                  </div>
-                  <div class="form-error-tip" ng-show="ctrlForm.input.$error.number || ctrlForm.input.$error.required">
-                    <div class="arrow-top"></div>
-                    <div class="label">Invalid number</div>
-                  </div>
-                </div>
-              </form>
-            </script>
-            <script
-              type="text/ng-template"
-              id="./components/option-ui-tabbar/option-ui-tabbar.html"
-            >
-              <div>
-                <div role="tablist" class="option-ui-tablist">
-                  <div class="tabsContainer" data-ng-mousedown="moveSlider()">
-                    <div class="option-ui-tab relative" role="tab" data-ng-mousedown="setCurrentTab($index)"
-                      data-ng-class="{active: isCurrentTab($index)}" data-ng-repeat="tab in tabs"
-                      data-ng-style="{'width': 100/tabs.length+'%'}" title="{{::tab.label}}">
-                      <div class="tabContainer fit">
-                        <div class="tab-content" data-ng-bind="::tab.label|camelcase"></div>
-                      </div>
-                    </div>
-                    <div class="selectionBar" data-ng-style="slide"></div>
-                  </div>
-                </div>
-              </div>
-            </script>
-            <script type="text/ng-template" id="./components/option-ui-text/option-ui-text.html">
-              <label> {{::option.label}}<br/> <input type="text" minlength="{{::option.minLength}}"
-                maxlength="{{::option.maxLength}}" data-ng-model="option.value" data-ng-disabled="disabled"/> </label>
-            </script>
-            <script
-              type="text/ng-template"
-              id="./components/option-ui-htmlblock/option-ui-htmlblock.html"
-            >
-              <div class="option-ui-htmlblock"></div>
-            </script>
-            <!-- End Templates -->
-          </div>
-          <div id="data-editor-button-container" class="demo-form-block">
-            <button id="route-edges-button" class="flat-button primary" title="Route the Edges">
-              <span>Apply</span>
-            </button>
-            <button id="reset-button" class="flat-button secondary" title="Reset Configuration">
-              <span>Reset</span>
-            </button>
-          </div>
-        </div>
-      </aside>
     </div>
 
     <script type="module" crossorigin="anonymous" src="MazeRoutingDemo.ts" async></script>

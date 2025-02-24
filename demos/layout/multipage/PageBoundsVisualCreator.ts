@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IRenderContext, IVisualCreator, Point, SvgVisual, Visual } from 'yfiles'
+import { BaseClass, IRenderContext, IVisualCreator, Point, SvgVisual, Visual } from '@yfiles/yfiles'
 
 /**
  * A constant margin for the page so the graph does not touch the frame.
@@ -36,10 +36,7 @@ const MARGIN = 15
 /**
  * This class renders a rectangle that represents the page.
  */
-export default class PageBoundsVisualCreator
-  extends BaseClass<IVisualCreator>(IVisualCreator)
-  implements IVisualCreator
-{
+export default class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
   pageWidth = 0
   pageHeight = 0
   center: Point

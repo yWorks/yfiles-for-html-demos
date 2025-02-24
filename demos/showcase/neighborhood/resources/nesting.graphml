@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,7 +30,7 @@
 
 <graphml
   xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd "
-  xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0"
+  xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0"
   xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <key id="d0" for="node" attr.type="boolean" attr.name="Expanded"
        y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
@@ -59,11 +59,11 @@
   <key id="d11" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
   <data key="d11">
     <y:SharedData>
-      <y:GroupNodeLabelModelParameter x:Key="1" PlaceOnTab="false">
-        <y:GroupNodeLabelModelParameter.Model>
-          <y:GroupNodeLabelModel/>
-        </y:GroupNodeLabelModelParameter.Model>
-      </y:GroupNodeLabelModelParameter>
+      <yx:GroupNodeLabelModelParameter x:Key="1" PlaceOnTab="false">
+        <yx:GroupNodeLabelModelParameter.Model>
+          <yx:GroupNodeLabelModel/>
+        </yx:GroupNodeLabelModelParameter.Model>
+      </yx:GroupNodeLabelModelParameter>
     </y:SharedData>
   </data>
   <graph id="G" edgedefault="directed">
@@ -82,7 +82,7 @@
         <node id="n0::n0">
           <data key="d1">
             <x:List>
-              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+              <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
                 <y:Label.Text>4</y:Label.Text>
               </y:Label>
             </x:List>
@@ -96,7 +96,7 @@
         <node id="n0::n1">
           <data key="d1">
             <x:List>
-              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+              <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
                 <y:Label.Text>5</y:Label.Text>
               </y:Label>
             </x:List>
@@ -110,7 +110,7 @@
         <node id="n0::n2">
           <data key="d1">
             <x:List>
-              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+              <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
                 <y:Label.Text>6</y:Label.Text>
               </y:Label>
             </x:List>
@@ -134,11 +134,11 @@
           <y:Label>
             <y:Label.Text>Group</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:InteriorStretchLabelModelParameter>
-                <y:InteriorStretchLabelModelParameter.Model>
-                  <y:InteriorStretchLabelModel Insets="4,4,18,4"/>
-                </y:InteriorStretchLabelModelParameter.Model>
-              </y:InteriorStretchLabelModelParameter>
+              <yx:StretchNodeLabelModelParameter>
+                <yx:StretchNodeLabelModelParameter.Model>
+                  <yx:StretchNodeLabelModel Padding="4,4,18,4"/>
+                </yx:StretchNodeLabelModelParameter.Model>
+              </yx:StretchNodeLabelModelParameter>
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -150,7 +150,7 @@
         <node id="n1::n0">
           <data key="d1">
             <x:List>
-              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+              <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
                 <y:Label.Text>8</y:Label.Text>
               </y:Label>
             </x:List>
@@ -165,7 +165,7 @@
         <node id="n1::n1">
           <data key="d1">
             <x:List>
-              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+              <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
                 <y:Label.Text>9</y:Label.Text>
               </y:Label>
             </x:List>
@@ -179,7 +179,7 @@
         <node id="n1::n2">
           <data key="d1">
             <x:List>
-              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+              <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
                 <y:Label.Text>10</y:Label.Text>
               </y:Label>
             </x:List>
@@ -211,7 +211,7 @@
         <node id="n2::n0">
           <data key="d1">
             <x:List>
-              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+              <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
                 <y:Label.Text>7</y:Label.Text>
               </y:Label>
             </x:List>
@@ -237,7 +237,7 @@
             <node id="n2::n1::n0">
               <data key="d1">
                 <x:List>
-                  <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+                  <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
                     <y:Label.Text>1</y:Label.Text>
                   </y:Label>
                 </x:List>
@@ -251,7 +251,7 @@
             <node id="n2::n1::n1">
               <data key="d1">
                 <x:List>
-                  <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+                  <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
                     <y:Label.Text>2</y:Label.Text>
                   </y:Label>
                 </x:List>
@@ -265,7 +265,7 @@
             <node id="n2::n1::n2">
               <data key="d1">
                 <x:List>
-                  <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+                  <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
                     <y:Label.Text>3</y:Label.Text>
                   </y:Label>
                 </x:List>

@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>10 Bridge Support - Tutorial: Edge Style Implementation [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -52,7 +50,7 @@
         <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
         <a href="../../README.html">Demos</a>
 
-        <a href="../../README.html#tutorial-edge-style-implementation">
+        <a href="../../README.html#tutorial-style-implementation-edge">
           Tutorial: Edge Style Implementation
         </a>
 
@@ -184,8 +182,8 @@ bridgeManager.<span class="hljs-title function_">addObstacleProvider</span>(<spa
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">lookup</span>(<span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>, <span class="hljs-attr">type</span>: <span class="hljs-title class_">Class</span>): <span class="hljs-built_in">any</span> {
-  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">IObstacleProvider</span>.<span class="hljs-property">$class</span>) {
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">lookup</span>(<span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>, <span class="hljs-attr">type</span>: <span class="hljs-title class_">Constructor</span>&lt;<span class="hljs-built_in">any</span>&gt;): <span class="hljs-built_in">any</span> {
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">IObstacleProvider</span>) {
     <span class="hljs-keyword">const</span> getPath = <span class="hljs-variable language_">this</span>.<span class="hljs-property">getPath</span>.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>)
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> (<span class="hljs-keyword">class</span> <span class="hljs-title class_">extends</span> <span class="hljs-title class_">BaseClass</span>(<span class="hljs-title class_">IObstacleProvider</span>) {
       <span class="hljs-title function_">getObstacles</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>): <span class="hljs-title class_">GeneralPath</span> | <span class="hljs-literal">null</span> {
@@ -212,7 +210,7 @@ bridgeManager.<span class="hljs-title function_">addObstacleProvider</span>(<spa
   <span class="hljs-attr">path</span>: <span class="hljs-title class_">GeneralPath</span>,
   <span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>
 ): <span class="hljs-title class_">GeneralPath</span> {
-  <span class="hljs-keyword">const</span> manager = context.<span class="hljs-title function_">lookup</span>(<span class="hljs-title class_">BridgeManager</span>.<span class="hljs-property">$class</span>)
+  <span class="hljs-keyword">const</span> manager = context.<span class="hljs-title function_">lookup</span>(<span class="hljs-title class_">BridgeManager</span>)
   <span class="hljs-keyword">return</span> manager ? manager.<span class="hljs-title function_">addBridges</span>(context, path) : path
 }</code></pre>
             </div>
@@ -229,7 +227,7 @@ bridgeManager.<span class="hljs-title function_">addObstacleProvider</span>(<spa
               <pre
                 class="highlight"
               ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">private</span> <span class="hljs-title function_">getObstacleHash</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>): <span class="hljs-built_in">number</span> {
-  <span class="hljs-keyword">const</span> manager = context.<span class="hljs-title function_">lookup</span>(<span class="hljs-title class_">BridgeManager</span>.<span class="hljs-property">$class</span>)
+  <span class="hljs-keyword">const</span> manager = context.<span class="hljs-title function_">lookup</span>(<span class="hljs-title class_">BridgeManager</span>)
   <span class="hljs-keyword">return</span> manager ? manager.<span class="hljs-title function_">getObstacleHash</span>(context) : <span class="hljs-number">42</span>
 }</code></pre>
             </div>

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { INode, IRenderContext, TaggedHtmlVisual } from 'yfiles'
-import { GraphComponent, HtmlVisual, NodeStyleBase, Visual, VisualCachingPolicy } from 'yfiles'
+import type { INode, IRenderContext, TaggedHtmlVisual } from '@yfiles/yfiles'
+import {
+  GraphComponent,
+  HtmlVisual,
+  NodeStyleBase,
+  Visual,
+  VisualCachingPolicy
+} from '@yfiles/yfiles'
 import { createRoot, type Root } from 'react-dom/client'
 import { type ComponentClass, createElement, type FunctionComponent } from 'react'
 
@@ -129,7 +135,7 @@ export class ReactComponentHtmlNodeStyle<TTag> extends NodeStyleBase<
     return {
       selected:
         context.canvasComponent instanceof GraphComponent &&
-        context.canvasComponent.selection.selectedNodes.isSelected(node),
+        context.canvasComponent.selection.nodes.includes(node),
       detail: context.zoom < 0.5 ? 'low' : 'high',
       tag: this.tagProvider(context, node)
     }

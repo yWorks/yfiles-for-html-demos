@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,7 +35,7 @@ import {
   GeneralPath,
   GeneralPathNodeStyle,
   HandleInputMode,
-  HandleTypes,
+  HandleType,
   ICanvasContext,
   ICompoundEdit,
   IEnumerable,
@@ -55,11 +55,9 @@ import {
   Rect,
   Stroke,
   Visual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * Creates a {@link GeneralPath} that describes a octagonal shape.
- * @returns {!GeneralPath}
  */
 function createDefaultPath() {
   const generalPath = new GeneralPath()
@@ -74,12 +72,7 @@ function createDefaultPath() {
   generalPath.close()
   return generalPath
 }
-
 class EditablePathNodeStyleMementoSupport extends BaseClass(IMementoSupport) {
-  /**
-   * @param {*} subject
-   * @param {*} state
-   */
   applyState(subject, state) {
     const style = subject
     style.path.clear()
@@ -87,21 +80,10 @@ class EditablePathNodeStyleMementoSupport extends BaseClass(IMementoSupport) {
     style.fill = state.fill
     style.stroke = state.stroke
   }
-
-  /**
-   * @param {*} subject
-   * @returns {*}
-   */
   getState(subject) {
     const style = subject
     return { path: style.path.clone(), fill: style.fill, stroke: style.stroke }
   }
-
-  /**
-   * @param {*} state1
-   * @param {*} state2
-   * @returns {boolean}
-   */
   stateEquals(state1, state2) {
     return (
       state1.path.hasSameValue(state2.path) &&
@@ -110,9 +92,7 @@ class EditablePathNodeStyleMementoSupport extends BaseClass(IMementoSupport) {
     )
   }
 }
-
 export const EDITABLE_PATH_MEMENTO_SUPPORT = new EditablePathNodeStyleMementoSupport()
-
 /**
  * A custom implementation of an {@link INodeStyle} that wraps a {@link GeneralPathNodeStyle} and
  * adds the option to change the {@link GeneralPath}.
@@ -120,10 +100,6 @@ export const EDITABLE_PATH_MEMENTO_SUPPORT = new EditablePathNodeStyleMementoSup
 export default class EditablePathNodeStyle extends NodeStyleBase {
   $path
   $pathStyle
-
-  /**
-   * @param {!object} [options]
-   */
   constructor(options) {
     super()
     if (options) {
@@ -140,56 +116,30 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
       })
     }
   }
-
-  /**
-   * @type {?Fill}
-   */
   get fill() {
     return this.$pathStyle.fill
   }
-
-  /**
-   * @type {?Fill}
-   */
   set fill(value) {
     this.$pathStyle.fill = value
   }
-
-  /**
-   * @type {?Stroke}
-   */
   get stroke() {
     return this.$pathStyle.stroke
   }
-
-  /**
-   * @type {?Stroke}
-   */
   set stroke(value) {
     this.$pathStyle.stroke = value
   }
-
   /**
    * Returns the path that describes the outline rendered in this {@link INodeStyle}.
-   * @type {!GeneralPath}
    */
   get path() {
     return this.$path
   }
-
   /**
    * Specifies the path that describes the outline rendered in this {@link INodeStyle}.
-   * @type {!GeneralPath}
    */
   set path(value) {
     this.$path = value
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!INode} node
-   * @returns {?Visual}
-   */
   createVisual(renderContext, node) {
     if (!this.$path.hasSameValue(this.$pathStyle.path)) {
       // the current path differs from the path in the wrapped style
@@ -201,13 +151,6 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
       .getVisualCreator(node, this.$pathStyle)
       .createVisual(renderContext)
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!Visual} oldVisual
-   * @param {!INode} node
-   * @returns {?Visual}
-   */
   updateVisual(renderContext, oldVisual, node) {
     if (this.$path.hasSameValue(this.$pathStyle.path)) {
       // the path didn't change -> update the old visual
@@ -219,109 +162,72 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
       return this.createVisual(renderContext, node)
     }
   }
-
   /**
    * Gets the outline of the node that is the current path provided by the wrapped {@link GeneralPathNodeStyle}.
    * This allows for correct edge path intersection calculation, among others.
-   * @param {!INode} node
-   * @returns {?GeneralPath}
    */
   getOutline(node) {
     return this.$pathStyle.renderer.getShapeGeometry(node, this.$pathStyle).getOutline()
   }
-
   /**
    * Get the bounding box of the node which is the smallest box that contains the complete current path.
-   * @param {!ICanvasContext} canvasContext
-   * @param {!INode} node
-   * @returns {!Rect}
    */
   getBounds(canvasContext, node) {
     return this.$pathStyle.renderer
       .getBoundsProvider(node, this.$pathStyle)
       .getBounds(canvasContext)
   }
-
   /**
    * Returns whether or not the rendered node is currently visible. Nodes outside of the viewport
    * do not need to be rendered.
-   * @param {!ICanvasContext} canvasContext
-   * @param {!Rect} clip
-   * @param {!INode} node
-   * @returns {boolean}
    */
   isVisible(canvasContext, clip, node) {
     return this.$pathStyle.renderer
       .getVisibilityTestable(node, this.$pathStyle)
       .isVisible(canvasContext, clip)
   }
-
   /**
    * Returns whether or not the given point is inside of the current path considering the
    * {@link ICanvasContext.hitTestRadius}.
-   * @param {!IInputModeContext} canvasContext
-   * @param {!Point} point
-   * @param {!INode} node
-   * @returns {boolean}
    */
   isHit(canvasContext, point, node) {
     return this.$pathStyle.renderer
       .getHitTestable(node, this.$pathStyle)
       .isHit(canvasContext, point)
   }
-
   /**
    * Checks if a node is inside a certain box. Considers HitTestRadius.
-   * @param {!IInputModeContext} canvasContext
-   * @param {!Rect} box
-   * @param {!INode} node
-   * @returns {boolean}
    */
   isInBox(canvasContext, box, node) {
     return this.$pathStyle.renderer
       .getMarqueeTestable(node, this.$pathStyle)
       .isInBox(canvasContext, box)
   }
-
   /**
    * Returns whether or not the given point lies inside the node. This is important for
    * intersection calculation, among others.
-   * @param {!INode} node
-   * @param {!Point} point
-   * @returns {boolean}
    */
   isInside(node, point) {
     return this.$pathStyle.renderer.getShapeGeometry(node, this.$pathStyle).isInside(point)
   }
-
   /**
    * Returns the intersection point of the line from inner to outer point with the nodes shape or
    * `null` if there is no intersection.
-   * @param {!INode} node
-   * @param {!Point} inner
-   * @param {!Point} outer
-   * @returns {?Point}
    */
   getIntersection(node, inner, outer) {
     return this.$pathStyle.renderer
       .getShapeGeometry(node, this.$pathStyle)
       .getIntersection(inner, outer)
   }
-
   /**
    * Splits the outline path at the given point and inserts a segment and bend point.
-   * @param {!INode} node
-   * @param {!Point} point
-   * @returns {boolean}
    */
   splitPath(node, point) {
     const { x, y } = normalize(point, node)
     const splitPoint = new Point(x, y)
-
     const stylePath = this.$path
     const newPath = new GeneralPath(stylePath.size + 2)
     const cursor = stylePath.createCursor()
-
     // checks if the split point lies on a path segment and then splits this segment
     function check(from, to) {
       const intersection = splitPoint.getProjectionOnSegment(from, to)
@@ -336,14 +242,12 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
         return false
       }
     }
-
     if (stylePath.pathContains(splitPoint, 0.1)) {
       const coords = [0, 0, 0, 0, 0, 0]
       let lastMove = Point.ORIGIN
       let lastLocation = Point.ORIGIN
       while (cursor.moveNext()) {
         const type = cursor.getCurrent(coords)
-
         switch (type) {
           case PathType.CLOSE:
             if (check(lastLocation, lastMove)) {
@@ -374,32 +278,24 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
     }
     return false
   }
-
-  /**
-   * @returns {*}
-   */
   clone() {
-    const style = super.memberwiseClone()
+    const style = super.clone()
     style.$path = this.$path.clone()
     style.$pathStyle = this.$pathStyle.clone()
     return style
   }
-
   /**
    * Returns a set of handles consisting of a handle for each control point in the {@link GeneralPath}.
-   * @param {!IInputModeContext} context
-   * @param {!INode} node
-   * @returns {!IEnumerable.<IHandle>}
    */
-  getHandles(context, node) {
+  getHandles(node) {
     const cursor = this.$path.createCursor()
     const handles = []
     const coords = [0, 0, 0, 0, 0, 0]
     let index = 0
     while (cursor.moveNext()) {
       const type = cursor.getCurrent(coords)
-      const handleType = HandleTypes.VARIANT1 | HandleTypes.MOVE
-      const innerHandleType = HandleTypes.VARIANT2 | HandleTypes.MOVE
+      const handleType = HandleType.CUSTOM1 | HandleType.MOVE
+      const innerHandleType = HandleType.CUSTOM2 | HandleType.MOVE
       switch (type) {
         case PathType.CLOSE:
           break
@@ -421,13 +317,12 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
     }
     return IEnumerable.from(handles)
   }
-
   /**
    * Normalizes the path and adjusts the size of the given node so that when the resulting path
    * extends beyond the node's layout it will be fully contained, again without changing the path
    * visibly.
-   * @param {!INode} node the node to adjust its size
-   * @param {!IGraph} graph the graph to use for setting the layout of the node
+   * @param node the node to adjust its size
+   * @param graph the graph to use for setting the layout of the node
    */
   normalizePath(node, graph) {
     const nodeBounds = this.renderer
@@ -454,7 +349,6 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
     }
   }
 }
-
 /**
  * A {@link IHandle} that allows for changing the path of a {@link EditablePathNodeStyle}.
  */
@@ -469,15 +363,6 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
   $origY = 0
   $copy = null
   edit = null
-
-  /**
-   * @param {!EditablePathNodeStyle} style
-   * @param {!INode} node
-   * @param {number} index
-   * @param {number} x
-   * @param {number} y
-   * @param {!HandleTypes} type
-   */
   constructor(style, node, index, x, y, type) {
     super()
     this.$x = x
@@ -487,7 +372,6 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
     this.$style = style
     this.$index = index
   }
-
   /**
    * Removes the control point associated with this handle from the {@link EditablePathNodeStyle}s path.
    */
@@ -496,7 +380,6 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
     const copy = path.clone()
     path.clear()
     const cursor = copy.createCursor()
-
     const coords = [0, 0, 0, 0, 0, 0]
     let index = 0
     let hadMoveTo = false
@@ -561,7 +444,6 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
       }
     }
   }
-
   /**
    * Updates the coordinates of the control point in the {@link EditablePathNodeStyle}s path associated
    * with this handle.
@@ -619,76 +501,46 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
       }
     }
   }
-
-  /**
-   * @type {number}
-   */
   get x() {
     const { x, width } = this.$node.layout
     return this.$x * width + x
   }
-
-  /**
-   * @type {number}
-   */
   get y() {
     const { y, height } = this.$node.layout
     return this.$y * height + y
   }
-
-  /**
-   * @type {!HandleTypes}
-   */
   get type() {
     return this.$type
   }
-
-  /**
-   * @type {!Cursor}
-   */
   get cursor() {
     return Cursor.GRAB
   }
-
-  /**
-   * @type {!IPoint}
-   */
   get location() {
     return this
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   */
+  get tag() {
+    return null
+  }
   initializeDrag(context) {
     this.$copy = this.$style.$path.clone()
     this.$origX = this.$x
     this.$origY = this.$y
-
     // this might resize the node and change the paths so make sure that this gets recorded by the undo engine
     this.edit = context.graph.beginEdit(
       'Change Path',
       'Change Path',
       [this.$node.style, this.$node],
       (item) =>
-        item instanceof INode ? item.lookup(IMementoSupport.$class) : EDITABLE_PATH_MEMENTO_SUPPORT
+        item instanceof INode ? item.lookup(IMementoSupport) : EDITABLE_PATH_MEMENTO_SUPPORT
     )
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
-   */
   handleMove(context, originalLocation, newLocation) {
     const { x: newX, y: newY } = normalize(newLocation, this.$node)
-
     // create a copy of the path to be able to reset the path when the drag is canceled
     const path = this.$style.$path
     const copy = path.clone()
     path.clear()
     const cursor = copy.createCursor()
-
     // update the handle position and adjust the path
     const coords = [0, 0, 0, 0, 0, 0]
     let index = 0
@@ -755,54 +607,35 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
       }
     }
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   cancelDrag(context, originalLocation) {
     this.$style.$path.clear()
     this.$x = this.$origX
     this.$y = this.$origY
     this.$style.$path.append(this.$copy, false)
-
     this.edit.cancel()
     this.edit = null
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
-   */
   dragFinished(context, originalLocation, newLocation) {
     this.handleMove(context, originalLocation, newLocation)
-    const finishHandler = (inputMode, evt) => {
-      inputMode.removeDragFinishedListener(finishHandler)
-
+    const finishHandler = (_evt, inputMode) => {
+      inputMode.removeEventListener('drag-finished', finishHandler)
       // adjust node layout and update the path with the final handle coordinates
       this.$style.normalizePath(this.$node, context.graph)
       this.updateXY()
       updateHandles(this.$node, inputMode)
-
       this.edit.commit()
       this.edit = null
     }
-    context.parentInputMode.addDragFinishedListener(finishHandler)
+    context.inputMode.addEventListener('drag-finished', finishHandler)
   }
-
   /**
    * This implementation does nothing special when clicked.
-   * @param {!ClickEventArgs} evt
    */
   handleClick(evt) {}
 }
-
 /**
  * Normalizes the location to the node layout.
- * @param {!Point} location
- * @param {!INode} node
- * @returns {!object}
  */
 function normalize(location, node) {
   const { x, y, width, height } = node.layout
@@ -810,17 +643,12 @@ function normalize(location, node) {
   const newY = (location.y - y) / height
   return { x: newX, y: newY }
 }
-
 /**
  * Updates the handle positions to the current path.
- * @param {?INode} node
- * @param {!HandleInputMode} handleInputMode
  */
 export function updateHandles(node, handleInputMode) {
   handleInputMode.handles.clear()
   if (node) {
-    node.style
-      .getHandles(handleInputMode.inputModeContext, node)
-      .forEach((handle) => handleInputMode.handles.add(handle))
+    node.style.getHandles(node).forEach((handle) => handleInputMode.handles.add(handle))
   }
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,6 +30,7 @@
  * Properties Panel.
  */
 export default class PropertiesPanelUI {
+  div
   graphPropertiesDiv
   itemPropertiesDiv
   itemPropertiesPanel
@@ -39,10 +40,6 @@ export default class PropertiesPanelUI {
   graphPropertyAddedCallback = () => {}
   itemValueChangedCallback = () => {}
   graphValueChangedCallback = () => {}
-
-  /**
-   * @param {!HTMLElement} div
-   */
   constructor(div) {
     this.div = div
     this.graphPropertiesDiv = getDiv(div, '#graphPropertiesDiv')
@@ -51,27 +48,20 @@ export default class PropertiesPanelUI {
     this.itemPropertiesPanel.style.display = 'none'
     this.initializeNewPropertyListeners()
   }
-
   /**
    * Adds a graph property to the panel.
-   * @param {!GraphMLProperty} property
-   * @param {!string} value
    */
   addGraphProperty(property, value) {
     const container = this.createChildElement(property, value, this.graphValueChangedCallback)
     this.graphPropertiesDiv.appendChild(container)
   }
-
   /**
    * Adds an item property to the panel.
-   * @param {!GraphMLProperty} property
-   * @param {!string} value
    */
   addItemProperty(property, value) {
     const container = this.createChildElement(property, value, this.itemValueChangedCallback)
     this.itemPropertiesDiv.appendChild(container)
   }
-
   /**
    * Clears all item properties from the panel.
    */
@@ -80,7 +70,6 @@ export default class PropertiesPanelUI {
       this.itemPropertiesDiv.removeChild(this.itemPropertiesDiv.lastChild)
     }
   }
-
   /**
    * Clears all properties from the panel.
    */
@@ -88,38 +77,28 @@ export default class PropertiesPanelUI {
     while (this.graphPropertiesDiv.lastChild) {
       this.graphPropertiesDiv.removeChild(this.graphPropertiesDiv.lastChild)
     }
-
     this.clearItemProperties()
   }
-
   /**
    * Sets whether or not the items properties are visible. They may be hidden when no graph element is selected.
-   * @param {boolean} visible
    */
   setCurrentItemVisibility(visible) {
     this.itemPropertiesPanel.style.display = visible ? 'block' : 'none'
   }
-
   /**
    * Creates a child element that represents an item/graph property.
-   * @returns {!Element} the UI element
-   * @param {!GraphMLProperty} property
-   * @param {!string} value
-   * @param {!function} callback
+   * @returns the UI element
    */
   createChildElement(property, value, callback) {
     const container = document.createElement('div')
     container.setAttribute('class', 'property')
-
     const label = document.createElement('span')
     label.textContent = property.name
     label.setAttribute('class', 'property-label')
-
     const textField = document.createElement('input')
     textField.type = 'text'
     textField.setAttribute('class', 'property-value')
     textField.value = value
-
     textField.addEventListener(
       'change',
       () => {
@@ -131,13 +110,10 @@ export default class PropertiesPanelUI {
       },
       false
     )
-
     container.appendChild(label)
     container.appendChild(textField)
-
     return container
   }
-
   /**
    * Initialize listeners that are called when new properties are entered in the panel.
    */
@@ -146,7 +122,6 @@ export default class PropertiesPanelUI {
     const inputsGraph = elGraph.querySelectorAll('input')
     const nameInputGraph = inputsGraph[0]
     const valueInputGraph = inputsGraph[1]
-
     const graphDataListener = (event) => {
       if (event.key === 'Enter') {
         if (this.graphPropertyAddedCallback && nameInputGraph.value) {
@@ -157,15 +132,12 @@ export default class PropertiesPanelUI {
         event.preventDefault()
       }
     }
-    nameInputGraph.addEventListener('keypress', graphDataListener)
-    valueInputGraph.addEventListener('keypress', graphDataListener)
-
+    nameInputGraph.addEventListener('keydown', graphDataListener)
+    valueInputGraph.addEventListener('keydown', graphDataListener)
     const elItem = getDiv(this.div, '.new-property-div.item-data')
-
     const inputsItem = elItem.querySelectorAll('input')
     const nameInputItem = inputsItem[0]
     const valueInputItem = inputsItem[1]
-
     const itemDataListener = (event) => {
       if (event.key === 'Enter') {
         if (this.itemPropertyAddedCallback) {
@@ -176,16 +148,10 @@ export default class PropertiesPanelUI {
         event.preventDefault()
       }
     }
-    nameInputItem.addEventListener('keypress', itemDataListener)
-    valueInputItem.addEventListener('keypress', itemDataListener)
+    nameInputItem.addEventListener('keydown', itemDataListener)
+    valueInputItem.addEventListener('keydown', itemDataListener)
   }
 }
-
-/**
- * @param {!HTMLElement} parent
- * @param {!string} selector
- * @returns {!HTMLDivElement}
- */
 function getDiv(parent, selector) {
   return parent.querySelector(selector)
 }

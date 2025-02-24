@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph, IModelItem, InputHandlerBase, IParseContext, KeyType, YObject } from 'yfiles'
-
+import { IGraph, IModelItem, InputHandlerBase, IParseContext, KeyType } from '@yfiles/yfiles'
 /**
  * An input handler that reads arbitrary data.
  * In the case of complex types, the text content of the XML node is stored.
@@ -35,17 +34,11 @@ import { IGraph, IModelItem, InputHandlerBase, IParseContext, KeyType, YObject }
 export class SimpleInputHandler extends InputHandlerBase {
   property
   panel
-
-  /**
-   * @param {!GraphMLProperty} property
-   * @param {!PropertiesPanel} panel
-   */
   constructor(property, panel) {
-    super(YObject.$class, YObject.$class)
+    super(Object, Object)
     this.property = property
     this.panel = panel
   }
-
   /**
    * Parses the given xml node.
    *
@@ -54,9 +47,6 @@ export class SimpleInputHandler extends InputHandlerBase {
    * plain string representation of the xml data is returned.
    *
    * @see Overrides {@link InputHandlerBase.parseDataCore}
-   * @param {!IParseContext} context
-   * @param {!Node} xmlNode
-   * @returns {*}
    */
   parseDataCore(context, xmlNode) {
     const node = xmlNode
@@ -79,29 +69,22 @@ export class SimpleInputHandler extends InputHandlerBase {
         return textValue
     }
   }
-
   /**
    * Sets the parsed value.
    * @see Overrides {@link InputHandlerBase.setValue}
-   * @param {!IParseContext} context
-   * @param {*} key
-   * @param {*} data
    */
   setValue(context, key, data) {
-    if (context.getCurrent(IModelItem.$class)) {
-      const item = context.getCurrent(IModelItem.$class)
+    if (context.getCurrent(IModelItem)) {
+      const item = context.getCurrent(IModelItem)
       this.panel.setItemProperty(item, this.property, data)
-    } else if (context.getCurrent(IGraph.$class) && context.objectStack.size === 2) {
+    } else if (context.getCurrent(IGraph) && context.objectStack.size === 2) {
       // parse graph data only for the top-level graph, not for nested graphs
       this.panel.setGraphProperty(this.property, data)
     }
   }
-
   /**
    * Initializes this instance from the GraphML key definition.
    * @see overrides {@link InputHandlerBase.initializeFromKeyDefinition}
-   * @param {!IParseContext} context
-   * @param {!Element} definition
    */
   initializeFromKeyDefinition(context, definition) {
     super.initializeFromKeyDefinition(context, definition)

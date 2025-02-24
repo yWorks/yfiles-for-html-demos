@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 13 Tree Builder - Tutorial: Graph Builder
 
-# Building a graph with TreeBuilder
+<img src="../../../doc/demo-thumbnails/tutorial-graph-builder-tree-builder.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/13-tree-builder/).
 
 In this tutorial step we show how to use [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) to build a graph from data, where nodes and their children are already available in a tree-like format.
 
@@ -69,7 +71,7 @@ In the first step, we instantiate [TreeBuilder](https://docs.yworks.com/yfilesht
 ```
 const treeBuilder = new TreeBuilder(graph)
 
-const rootNodesSource = treeBuilder.createRootNodesSource(nodesData)
+const rootNodesSource = treeBuilder.createRootNodesSource(nodesData, null)
 ```
 
 In the second step, we configure a child [NodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource) on the [TreeNodesSource](https://docs.yworks.com/yfileshtml/#/api/TreeNodesSource):

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,11 +35,10 @@ import {
   ILayoutAlgorithm,
   INode,
   LayoutData,
+  Point,
   Rect,
-  YList,
-  YPoint,
-  YPointPath
-} from 'yfiles'
+  YList
+} from '@yfiles/yfiles'
 
 /**
  * Demonstrates how to configure the {@link EdgeRouter} to create bus-like orthogonal routes.
@@ -71,7 +70,7 @@ function configureFirstBus(layoutData: EdgeRouterData) {
   const descriptorFirstBus = new EdgeRouterBusDescriptor()
   const firstBus = layoutData.buses.add(descriptorFirstBus)
   // specify the edges that belong to the first bus via a delegate
-  firstBus.delegate = (e) => e.tag.bus === 1
+  firstBus.predicate = (e) => e.tag.bus === 1
 }
 
 /**
@@ -84,8 +83,7 @@ function configureSecondBus(layoutData: EdgeRouterData, graph: IGraph) {
 
   // specify the edges that belong to the second bus via a list of items (just for the
   // purpose of the example, could be defined using a delegate as for the first bus as well)
-  const secondBusEdges = graph.edges.filter((e) => e.tag.bus === 2).toList()
-  secondBus.items = secondBusEdges
+  secondBus.items = graph.edges.filter((e) => e.tag.bus === 2).toList()
 
   // now define the custom backbone that this bus should use: in this example we assume a node
   // arrangement in a row-like fashion and we define the backbone to be left and in between
@@ -96,7 +94,7 @@ function configureSecondBus(layoutData: EdgeRouterData, graph: IGraph) {
   const bounds = getBoundingBox(secondBusNodes)
 
   // the backbone is defined as a list of YPoint objects and it must be an orthogonal path
-  const backbone = new YList()
+  const backbone = new YList<Point>()
 
   // some constants assumed for this example with nodes arranged in rows
   const inset = 100
@@ -105,23 +103,23 @@ function configureSecondBus(layoutData: EdgeRouterData, graph: IGraph) {
   const backboneLeftX = bounds.topLeft.x - inset
 
   // start left, go down to where the first "backbone row" should start
-  backbone.add(new YPoint(backboneLeftX, bounds.topLeft.y - inset))
+  backbone.add(new Point(backboneLeftX, bounds.topLeft.y - inset))
   const backboneFirstRowY = bounds.topLeft.y + rowHeight + nodeRowDistance * 0.5
-  backbone.add(new YPoint(backboneLeftX, backboneFirstRowY))
+  backbone.add(new Point(backboneLeftX, backboneFirstRowY))
   // go right and back again, creating the first backbone row
-  backbone.add(new YPoint(bounds.topRight.x + inset, backboneFirstRowY))
-  backbone.add(new YPoint(backboneLeftX, backboneFirstRowY))
+  backbone.add(new Point(bounds.topRight.x + inset, backboneFirstRowY))
+  backbone.add(new Point(backboneLeftX, backboneFirstRowY))
   // go down to the second row
   const backboneSecondRowY = backboneFirstRowY + nodeRowDistance + rowHeight
-  backbone.add(new YPoint(backboneLeftX, backboneSecondRowY))
+  backbone.add(new Point(backboneLeftX, backboneSecondRowY))
   // go right and back again, creating the second backbone row
-  backbone.add(new YPoint(bounds.topRight.x + inset, backboneSecondRowY))
-  backbone.add(new YPoint(backboneLeftX, backboneSecondRowY))
+  backbone.add(new Point(bounds.topRight.x + inset, backboneSecondRowY))
+  backbone.add(new Point(backboneLeftX, backboneSecondRowY))
   // go down, prolonging the left vertical backbone a bit
-  backbone.add(new YPoint(backboneLeftX, bounds.bottomLeft.y + inset))
+  backbone.add(new Point(backboneLeftX, bounds.bottomLeft.y + inset))
 
   // finally, set the created backbone as the given bus points on the descriptor instance
-  descriptorSecondBus.busPoints = new YPointPath(backbone)
+  descriptorSecondBus.busPoints = backbone.toArray()
 }
 
 /**

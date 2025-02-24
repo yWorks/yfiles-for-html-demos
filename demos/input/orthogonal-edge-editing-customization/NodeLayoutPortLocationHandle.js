@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,36 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ConstrainedHandle, IHandle, IInputModeContext, INode, Point } from 'yfiles'
-
+import { ConstrainedHandle, IHandle, IInputModeContext, INode, Point } from '@yfiles/yfiles'
 /**
  * A port location handle that is constrained to the layout rectangle of
  * the port's owner node.
  */
 export default class NodeLayoutPortLocationHandle extends ConstrainedHandle {
   node
-
   /**
    * Creates a new instance of {@link NodeLayoutPortLocationHandle}.
-   * @param {!INode} node
-   * @param {!IHandle} wrappedHandle
    */
   constructor(node, wrappedHandle) {
     super(wrappedHandle)
     this.node = node
   }
-
   /**
    * Returns the constraints for the new location.
-   * @param {!IInputModeContext} context The context in which the drag will be performed
-   * @param {!Point} originalLocation The value of the
+   * @param context The context in which the drag will be performed
+   * @param originalLocation The value of the
    * {@link ConstrainedHandle.location} property at the time of
    * {@link ConstrainedHandle.initializeDrag}
-   * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants
+   * @param newLocation The coordinates in the world coordinate system that the client wants
    * the handle to be at. Depending on the implementation the
    * {@link ConstrainedHandle.location} may or may not be modified to reflect the new
    *   value
-   * @returns {!Point}
    */
   constrainNewLocation(context, originalLocation, newLocation) {
     return newLocation.getConstrained(this.node.layout.toRect())

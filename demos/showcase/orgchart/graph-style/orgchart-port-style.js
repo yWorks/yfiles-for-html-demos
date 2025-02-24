@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,89 +26,27 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FreeNodePortLocationModel, Size, StringTemplatePortStyle } from 'yfiles'
-
-// Elements stored in the 'global' defs section are copied to the main SVG's defs section
-// and can be referenced in the templates. In this case, this happens via converters.
-const portStyleTemplate = `<g id="PortStyleTemplate">
-  <g class="port">
-    <ellipse rx="8" ry="8"/>
-    <line x1="-6" y1="0" x2="6" y2="0" class="port-icon"/>
-    <line x1="0" y1="-1" x2="0" y2="1"
-      class="{TemplateBinding styleTag, Converter=orgChartConverters.portIconStateConverter}"/>
-  </g>
-</g>
-`
-
+import { FreeNodePortLocationModel, Size } from '@yfiles/yfiles'
+import { CollapseExpandPortStyle } from './CollapseExpandPortStyle'
 /**
  * Sets the expand/collapse style for each edge's source port.
  *
  * For multiple outgoing edges with different ports, only one of the ports is styled.
- * @param {!CollapsibleTree} orgChartGraph
  */
 export function setOrgChartPortStyle(orgChartGraph) {
-  initializeStringTemplatePortStyle()
-  setPortStylesToFirstOutgoingPorts(orgChartGraph)
-  orgChartGraph.addCollapsedStateUpdatedListener(setCollapsedState)
-}
-
-/**
- * Determines the first port with an out-edge and adds the port style indicating the option to
- * collapse expand the subtree.
- * @param {!CollapsibleTree} orgChartGraph
- */
-function setPortStylesToFirstOutgoingPorts(orgChartGraph) {
   const filteredGraph = orgChartGraph.filteredGraph
   for (const node of filteredGraph.nodes) {
     const outEdges = filteredGraph.outEdgesAt(node)
     if (outEdges.size > 0) {
       const firstOutgoingPort = outEdges.first().sourcePort
-      const portStyle = createStringTemplatePortStyle()
-      filteredGraph.setStyle(firstOutgoingPort, portStyle)
-      filteredGraph.setPortLocationParameter(
-        firstOutgoingPort,
-        FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED
+      const portStyle = new CollapseExpandPortStyle(
+        new Size(20, 20),
+        (port) =>
+          orgChartGraph.completeGraph.edgesAt(port).size !==
+          orgChartGraph.filteredGraph.edgesAt(port).size
       )
+      filteredGraph.setStyle(firstOutgoingPort, portStyle)
+      filteredGraph.setPortLocationParameter(firstOutgoingPort, FreeNodePortLocationModel.BOTTOM)
     }
-  }
-}
-
-/**
- * @typedef {Object} OrgChartConverters
- * @property {object} orgChartConverters
- */
-
-/**
- * Initializes the converters for the string template node style.
- */
-function initializeStringTemplatePortStyle() {
-  StringTemplatePortStyle.CONVERTERS.orgChartConverters = {
-    portIconStateConverter: (val) =>
-      'port-icon ' + (val.collapsed ?? false ? 'port-icon-expand' : 'port-icon-collapse')
-  }
-}
-
-/**
- * Creates a template port style showing a '+' for expand and a '-' for collapse.
- * @returns {!StringTemplatePortStyle}
- */
-function createStringTemplatePortStyle() {
-  const portStyle = new StringTemplatePortStyle({
-    svgContent: portStyleTemplate,
-    renderSize: new Size(20, 20)
-  })
-  portStyle.styleTag = { collapsed: false }
-  return portStyle
-}
-
-/**
- * Sets the collapsed state on the {@link StringTemplatePortStyle.styleTag}.
- * @param {!IPort} port
- * @param {boolean} collapsed
- */
-function setCollapsedState(port, collapsed) {
-  const style = port.style
-  if (style instanceof StringTemplatePortStyle) {
-    style.styleTag = { collapsed }
   }
 }

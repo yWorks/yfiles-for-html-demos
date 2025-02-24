@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,62 +26,47 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, GeneralPath, ICanvasObjectDescriptor, IVisualCreator, SvgVisual } from 'yfiles'
-
+import { BaseClass, GeneralPath, IVisualCreator, SvgVisual } from '@yfiles/yfiles'
 /**
  * Adds a trekking tour visual to the background group of the given graph component.
- * @param {!GraphComponent} graphComponent
- * @param {!Array.<Point>} scaledTrail
  */
 export function drawTrekkingTrail(graphComponent, scaledTrail) {
-  graphComponent.backgroundGroup.addChild(
-    new TrailVisual(scaledTrail),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+  graphComponent.renderTree.createElement(
+    graphComponent.renderTree.backgroundGroup,
+    new TrailVisual(scaledTrail)
   )
 }
-
 /**
  * Creates the trail based on a given set of points.
  */
 class TrailVisual extends BaseClass(IVisualCreator) {
-  /**
-   * @param {!Array.<Point>} trailPoints
-   */
+  trailPoints
   constructor(trailPoints) {
     super()
     this.trailPoints = trailPoints
   }
-
   /**
    * Creates a path that represents the trail based on the given set of points.
-   * @param {!IRenderContext} context
-   * @returns {!SvgVisual}
    */
   createVisual(context) {
     const path = this.getTrailPath()
-
     // creates a background path that will be used to color the background of the trail
     const backgroundPath = this.getTrailBackgroundPath(path).createSvgPath()
     backgroundPath.setAttribute('stroke', 'none')
     backgroundPath.setAttribute('fill', '#c0e1e9')
-
     // creates the actual trail path
     const svgPath = path.createSvgPath()
     svgPath.setAttribute('stroke', '#0b7189')
     svgPath.setAttribute('stroke-width', '1.5')
     svgPath.setAttribute('fill', 'none')
-
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     container.appendChild(backgroundPath)
     container.appendChild(svgPath)
     return new SvgVisual(container)
   }
-
   /**
    * Creates a background path that enlarges the given path with some points that define
    * the area formed by the trail and the horizontal and vertical axes.
-   * @param {!GeneralPath} path
-   * @returns {!GeneralPath}
    */
   getTrailBackgroundPath(path) {
     const backgroundPath = new GeneralPath()
@@ -91,10 +76,8 @@ class TrailVisual extends BaseClass(IVisualCreator) {
     backgroundPath.close()
     return backgroundPath
   }
-
   /**
    * Returns a general path formed by the trail points.
-   * @returns {!GeneralPath}
    */
   getTrailPath() {
     const generalPath = new GeneralPath()
@@ -104,12 +87,8 @@ class TrailVisual extends BaseClass(IVisualCreator) {
     }
     return generalPath.createSmoothedPath(100)
   }
-
   /**
    * Delegates the call to the {@link createVisual} method.
-   * @param {!IRenderContext} context
-   * @param {!Visual} oldVisual
-   * @returns {!Visual}
    */
   updateVisual(context, oldVisual) {
     return this.createVisual(context)

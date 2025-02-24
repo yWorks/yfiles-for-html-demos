@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,80 +26,59 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IPositionHandler } from 'yfiles'
-import { hideInfo, showInfo } from '../info-panel.js'
-import { getDate, syncActivityWithNodeLayout, updateNodeColor } from '../gantt-utils.js'
-
+import { BaseClass, IPositionHandler } from '@yfiles/yfiles'
+import { hideInfo, showInfo } from '../info-panel'
+import { getDate, syncActivityWithNodeLayout, updateNodeColor } from '../gantt-utils'
 /**
  * Controls the move of an activity node.
  */
 export class ActivityNodePositionHandler extends BaseClass(IPositionHandler) {
-  /**
-   * @param {!INode} node
-   * @param {?IPositionHandler} wrappedHandler
-   */
+  node
+  wrappedHandler
   constructor(node, wrappedHandler) {
     super()
-    this.wrappedHandler = wrappedHandler
     this.node = node
+    this.wrappedHandler = wrappedHandler
   }
-
   /**
    * Called when the grad gesture starts.
-   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
     this.wrappedHandler?.initializeDrag(context)
   }
-
   /**
    * Shows the date at the current mouse location and updates the node color based on the color
    * of the task at the current mouse location.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   handleMove(context, originalLocation, newLocation) {
     this.wrappedHandler?.handleMove(context, originalLocation, newLocation)
-
     // get the location of the node and calculate the date to which it belongs
     const location = this.node.layout.topLeft
     const text = getDate(location.x).format()
-
     // show the info panel
     showInfo(text, location, context.canvasComponent)
-
     // update the color of the node based on the task that exists at the current grid location
     updateNodeColor(this.node)
   }
-
   /**
    * Hides the info popup and writes back the current date/time information to the data associated with
    * the current activity node.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     this.wrappedHandler?.dragFinished(context, originalLocation, newLocation)
     hideInfo()
     syncActivityWithNodeLayout(this.node)
   }
-
   /**
    * Hides the info popup and resets the node color to its original one.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     this.wrappedHandler?.cancelDrag(context, originalLocation)
     hideInfo()
     updateNodeColor(this.node)
   }
-
   /**
    * Returns the top-left location of the node.
-   * @type {!IPoint}
    */
   get location() {
     return this.node.layout.topLeft

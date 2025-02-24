@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,32 +28,33 @@
  ***************************************************************************/
 /* eslint-disable jsdoc/check-param-names */
 import {
-  DefaultEdgePathCropper,
-  DefaultLabelStyle,
-  EdgeSelectionIndicatorInstaller,
+  BaseClass,
+  EdgePathCropper,
   GraphComponent,
-  GraphOverviewCanvasVisualCreator,
   GroupNodeLabelModel,
   GroupNodeStyle,
   HorizontalTextAlignment,
+  HtmlCanvasVisual,
+  IBoundsProvider,
+  type IEdge,
   IGraph,
+  IHitTestable,
   ILabelStyle,
   INode,
-  Insets,
+  IObjectRenderer,
   IRenderContext,
+  IVisibilityTestable,
+  IVisualCreator,
   LabelShape,
-  OrientedRectangleIndicatorInstaller,
+  LabelStyle,
   PolylineEdgeStyle,
-  RectangleIndicatorInstaller,
   RectangleNodeStyle,
-  ScrollBarVisibility,
   ShapeNodeShape,
   type ShapeNodeShapeStringValues,
   ShapeNodeStyle,
-  Theme,
-  ThemeVariant,
-  VerticalTextAlignment
-} from 'yfiles'
+  VerticalTextAlignment,
+  Visual
+} from '@yfiles/yfiles'
 import type { ColorSet as CS, ColorSetName as CSN } from './demo-colors'
 import { colorSets as cs } from './demo-colors'
 
@@ -82,6 +83,7 @@ export function isColorSetName(arg: string): arg is ColorSetName {
  * @param foldingEnabled whether to use collapsable group node style
  * @param extraCropLength the extra crop length for the DefaultEdgePathCropper.
  * @param shape the optional shape of the node style, if undefined a RectangularNodeStyle is used.
+ * @param orthogonalEditing whether to enable orthogonal edge editing on the default edge style.
  */
 export function initDemoStyles(
   graph: IGraph,
@@ -89,12 +91,14 @@ export function initDemoStyles(
     theme = {},
     foldingEnabled = false,
     extraCropLength = 2.0,
-    shape = undefined
+    shape = undefined,
+    orthogonalEditing = false
   }: {
     theme?: CssClassNames | ColorSetName
     foldingEnabled?: boolean
     extraCropLength?: number
     shape?: ShapeNodeShape
+    orthogonalEditing?: boolean
   } = {}
 ): void {
   if (typeof theme === 'string') {
@@ -121,9 +125,9 @@ export function initDemoStyles(
   graph.groupNodeDefaults.labels.layoutParameter =
     new GroupNodeLabelModel().createTabBackgroundParameter()
 
-  graph.edgeDefaults.style = createDemoEdgeStyle({ colorSetName: theme.edge })
-  graph.decorator.portDecorator.edgePathCropperDecorator.setImplementation(
-    new DefaultEdgePathCropper({ cropAtPort: false, extraCropLength })
+  graph.edgeDefaults.style = createDemoEdgeStyle({ colorSetName: theme.edge, orthogonalEditing })
+  graph.decorator.ports.edgePathCropper.addConstant(
+    new EdgePathCropper({ cropAtPort: false, extraCropLength })
   )
   graph.edgeDefaults.labels.style = createDemoEdgeLabelStyle(theme.edgeLabel)
 }
@@ -161,47 +165,46 @@ export function createDemoShapeNodeStyle(
  */
 export function createDemoEdgeStyle({
   colorSetName = 'demo-orange',
-  showTargetArrow = true
+  showTargetArrow = true,
+  orthogonalEditing = false
 }: {
   colorSetName?: ColorSetName
   showTargetArrow?: boolean
+  orthogonalEditing?: boolean
 } = {}): PolylineEdgeStyle {
   const edgeColor = colorSets[colorSetName].stroke
   return new PolylineEdgeStyle({
     stroke: `1.5px ${edgeColor}`,
-    targetArrow: showTargetArrow ? `${edgeColor} small triangle` : 'none'
+    targetArrow: showTargetArrow ? `${edgeColor} small triangle` : 'none',
+    orthogonalEditing
   })
 }
 
 /**
  * Creates a new node label style whose colors match the given well-known CSS style.
  */
-export function createDemoNodeLabelStyle(
-  colorSetName: ColorSetName = 'demo-orange'
-): DefaultLabelStyle {
-  const labelStyle = new DefaultLabelStyle()
+export function createDemoNodeLabelStyle(colorSetName: ColorSetName = 'demo-orange'): LabelStyle {
+  const labelStyle = new LabelStyle()
   labelStyle.shape = LabelShape.ROUND_RECTANGLE
   labelStyle.backgroundFill = colorSets[colorSetName].nodeLabelFill
   labelStyle.textFill = colorSets[colorSetName].text
   labelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
   labelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
-  labelStyle.insets = new Insets(4, 2, 4, 1)
+  labelStyle.padding = [2, 4, 1, 4]
   return labelStyle
 }
 
 /**
  * Creates a new edge label style whose colors match the given well-known CSS style.
  */
-export function createDemoEdgeLabelStyle(
-  colorSetName: ColorSetName = 'demo-orange'
-): DefaultLabelStyle {
-  const labelStyle = new DefaultLabelStyle()
+export function createDemoEdgeLabelStyle(colorSetName: ColorSetName = 'demo-orange'): LabelStyle {
+  const labelStyle = new LabelStyle()
   labelStyle.shape = LabelShape.ROUND_RECTANGLE
   labelStyle.backgroundFill = colorSets[colorSetName].edgeLabelFill
   labelStyle.textFill = colorSets[colorSetName].text
   labelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
   labelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
-  labelStyle.insets = new Insets(4, 2, 4, 1)
+  labelStyle.padding = [2, 4, 1, 4]
   return labelStyle
 }
 
@@ -211,11 +214,10 @@ export function createDemoEdgeLabelStyle(
 export function createDemoGroupLabelStyle(
   colorSetName: ColorSetName = 'demo-palette-12'
 ): ILabelStyle {
-  return new DefaultLabelStyle({
+  return new LabelStyle({
     verticalTextAlignment: 'center',
     horizontalTextAlignment: 'left',
-    clipText: false,
-    wrapping: 'character-ellipsis',
+    wrapping: 'wrap-character-ellipsis',
     textFill: colorSets[colorSetName].nodeLabelFill
   })
 }
@@ -240,7 +242,7 @@ export function createDemoGroupStyle({
     tabPosition: foldingEnabled ? 'top-trailing' : 'top',
     tabWidth: 30,
     tabHeight: 20,
-    tabInset: 3,
+    tabPadding: 3,
     iconOffset: 2,
     iconSize: 14,
     iconForegroundFill: colorSets[colorSetName].fill,
@@ -251,7 +253,43 @@ export function createDemoGroupStyle({
 /**
  * The class provides functionality for custom style of overview control.
  */
-export class DemoStyleOverviewPaintable extends GraphOverviewCanvasVisualCreator {
+export class DemoStyleOverviewRenderer extends BaseClass(IObjectRenderer) {
+  getBoundsProvider(renderTag: any): IBoundsProvider {
+    return IBoundsProvider.UNBOUNDED
+  }
+  getHitTestable(renderTag: any): IHitTestable {
+    return IHitTestable.NEVER
+  }
+  getVisibilityTestable(renderTag: any): IVisibilityTestable {
+    return IVisibilityTestable.ALWAYS
+  }
+  getVisualCreator(renderTag: any): IVisualCreator {
+    return IVisualCreator.create({
+      createVisual(context: IRenderContext): Visual | null {
+        return new CanvasVisual()
+      },
+      updateVisual(context: IRenderContext, oldVisual: Visual | null): Visual | null {
+        return oldVisual instanceof CanvasVisual ? oldVisual : this.createVisual(context)
+      }
+    })
+  }
+}
+
+class CanvasVisual extends HtmlCanvasVisual {
+  render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
+    const graph = (renderContext.canvasComponent as GraphComponent).graph
+    graph.nodes.forEach((node) => {
+      if (graph.isGroupNode(node)) {
+        this.paintGroupNode(renderContext, ctx, node)
+      } else {
+        this.paintNode(renderContext, ctx, node)
+      }
+    })
+    graph.edges.forEach((edge) => {
+      this.paintEdge(renderContext, ctx, edge)
+    })
+  }
+
   paintNode(renderContext: IRenderContext, ctx: CanvasRenderingContext2D, node: INode): void {
     ctx.fillStyle = 'rgb(128, 128, 128)'
     const layout = node.layout
@@ -267,39 +305,19 @@ export class DemoStyleOverviewPaintable extends GraphOverviewCanvasVisualCreator
     ctx.fillRect(x, y, width, 22)
     ctx.lineWidth = 1
   }
-}
 
-/**
- * Applies the default demo theme to the {@link GraphComponent}.
- */
-export function applyDemoTheme(
-  graphComponent: GraphComponent,
-  themeOptions: {
-    variant?: ThemeVariant
-    scale?: number
-    primaryColor?: string
-    backgroundColor?: string
-  } = {}
-): void {
-  const theme = new Theme({
-    variant: 'simple-round',
-    scale: 1.4,
-    primaryColor: '#38434f',
-    backgroundColor: '#FFF',
-    ...themeOptions
-  })
-  graphComponent.theme = theme
-  // use hatch selection for better compatibility with arbitrary item colors
-  graphComponent.resources.set(
-    RectangleIndicatorInstaller.SELECTION_TEMPLATE_KEY,
-    theme.hatchRectangle
-  )
-  graphComponent.resources.set(
-    OrientedRectangleIndicatorInstaller.SELECTION_TEMPLATE_KEY,
-    theme.hatchRectangle
-  )
-  graphComponent.resources.set(EdgeSelectionIndicatorInstaller.STROKE_KEY, theme.hatchStroke)
+  paintEdge(renderContext: IRenderContext, ctx: CanvasRenderingContext2D, edge: IEdge): void {
+    ctx.strokeStyle = 'rgb(0,0,0)'
 
-  graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
-  graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
+    ctx.beginPath()
+    let location = edge.sourcePort.location
+    ctx.moveTo(location.x, location.y)
+    edge.bends.forEach((bend) => {
+      location = bend.location.toPoint()
+      ctx.lineTo(location.x, location.y)
+    })
+    location = edge.targetPort.location
+    ctx.lineTo(location.x, location.y)
+    ctx.stroke()
+  }
 }

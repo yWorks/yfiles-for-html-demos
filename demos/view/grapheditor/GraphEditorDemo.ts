@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,45 +27,37 @@
  **
  ***************************************************************************/
 import {
-  Class,
   FoldingManager,
   FreeNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  GraphMLSupport,
   GraphOverviewComponent,
   GraphSnapContext,
-  HierarchicLayout,
-  ICommand,
+  HandlesRenderer,
+  HierarchicalLayout,
   IEdge,
   IGraph,
   IModelItem,
   INode,
-  LabelSnapContext,
   LayoutExecutor,
   License,
   NodeAlignmentPolicy,
   OrthogonalEdgeEditingContext,
   PopulateItemContextMenuEventArgs,
-  RenderModes,
+  RenderMode,
   SmartEdgeLabelModel,
-  StorageLocation,
-  WebGL2GraphModelManager
-} from 'yfiles'
+  TextBoxPlacementPolicy
+} from '@yfiles/yfiles'
 
-import { ContextMenu } from 'demo-utils/ContextMenu'
-import {
-  applyDemoTheme,
-  DemoStyleOverviewPaintable,
-  initDemoStyles
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
-import { configureTwoPointerPanning } from 'demo-utils/configure-two-pointer-panning'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { DemoStyleOverviewRenderer, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
+import { openGraphML, saveGraphML } from '../../utils/graphml-support'
 
 let graphComponent: GraphComponent
 
@@ -79,8 +71,6 @@ async function run(): Promise<void> {
 
   // Initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent, { scale: 1 })
-
   overviewComponent = new GraphOverviewComponent('overviewComponent')
   overviewComponent.graphComponent = graphComponent
 
@@ -92,13 +82,10 @@ async function run(): Promise<void> {
   graphComponent.graph = graph
 
   // Styling for the overviewComponent
-  overviewComponent.graphVisualCreator = new DemoStyleOverviewPaintable(graph)
+  overviewComponent.graphOverviewRenderer = new DemoStyleOverviewRenderer()
 
   // Set up the default styles for the graph
   setDefaultStyles(graph)
-
-  // Enable GraphML support
-  enableGraphML(graphComponent)
 
   // Specify a configured input mode that enables graph editing
   graphComponent.inputMode = createEditorMode()
@@ -110,9 +97,9 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(new HierarchicLayout())
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout())
+  void graphComponent.fitGraphBounds()
 
   // Enable the undo engine on the master graph
   foldingManager.masterGraph.undoEngineEnabled = true
@@ -156,13 +143,12 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 function createEditorMode(): GraphEditorInputMode {
   const mode = new GraphEditorInputMode({
     snapContext: createGraphSnapContext(),
-    labelSnapContext: createLabelSnapContext(),
     orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext({
       enabled: false
-    }),
-    allowGroupingOperations: true
+    })
   })
-
+  mode.editLabelInputMode.textEditorInputMode.textBoxPlacementPolicy =
+    TextBoxPlacementPolicy.MOVE_TEXT_BOX
   // Fix the top left location of a group node when toggling collapse/expand
   mode.navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.TOP_RIGHT
 
@@ -170,40 +156,15 @@ function createEditorMode(): GraphEditorInputMode {
   // As a result, dragging a selected edge (not its bends) will create a new bend instead of moving all bends.
   // This is especially nicer in conjunction with orthogonal edge editing because this would create additional bends
   // every time the edge is moved otherwise
-  mode.createBendInputMode.priority = mode.moveInputMode.priority - 1
+  mode.createBendInputMode.priority = mode.moveSelectedItemsInputMode.priority - 1
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
   if (BrowserDetection.webGL2) {
-    Class.ensure(WebGL2GraphModelManager)
-    mode.handleInputMode.renderMode = RenderModes.WEB_GL2
+    mode.handleInputMode.handlesRenderer = new HandlesRenderer(RenderMode.WEBGL)
   }
-
-  // Create a context menu. In this demo, we use our sample context menu implementation, but you can use any other
-  // context menu widget as well. See the Context Menu demo for more details about working with context menus.
-  const contextMenu = new ContextMenu(graphComponent)
-
-  // Add event listeners to the various events that open the context menu. These listeners then
-  // call the provided callback function, which in turn asks the current ContextMenuInputMode if a
-  // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
-    if (mode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
-      contextMenu.show(location)
-    }
-  })
 
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
-  // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  mode.addPopulateItemContextMenuListener((_, evt) => populateContextMenu(contextMenu, evt))
-
-  // Add a listener that closes the menu when the input mode requests this
-  mode.contextMenuInputMode.addCloseMenuListener(() => {
-    contextMenu.close()
-  })
-
-  // If the context menu closes itself, for example, because a menu item was clicked, we must inform the input mode
-  contextMenu.onClosedCallback = (): void => {
-    mode.contextMenuInputMode.menuClosed()
-  }
+  mode.addEventListener('populate-item-context-menu', (evt) => populateContextMenu(evt))
 
   return mode
 }
@@ -218,33 +179,12 @@ function createGraphSnapContext(): GraphSnapContext {
 }
 
 /**
- * Creates a configured {@link LabelSnapContext} for this demo.
- */
-function createLabelSnapContext(): LabelSnapContext {
-  return new LabelSnapContext({
-    enabled: false,
-    snapDistance: 15,
-    snapLineExtension: 100
-  })
-}
-
-/**
- * Enables loading and saving the graph to GraphML.
- */
-function enableGraphML(graphComponent: GraphComponent): void {
-  new GraphMLSupport({
-    graphComponent,
-    storageLocation: StorageLocation.FILE_SYSTEM
-  })
-}
-
-/**
  * Sets default styles to the graph.
  * @param graph The graph
  */
 function setDefaultStyles(graph: IGraph): void {
   // Assign the default demo styles
-  initDemoStyles(graph, { foldingEnabled: true })
+  initDemoStyles(graph, { foldingEnabled: true, orthogonalEditing: true })
 
   // Set the default node label position to centered below the node with the FreeNodeLabelModel that supports label
   // snapping
@@ -268,12 +208,19 @@ function setDefaultStyles(graph: IGraph): void {
  * Binds various actions to buttons in the demo's toolbar.
  */
 function initializeUI(graphComponent: GraphComponent): void {
+  document
+    .querySelector<HTMLInputElement>('#open-file-button')!
+    .addEventListener('click', async () => {
+      await openGraphML(graphComponent)
+    })
+  document.querySelector<HTMLInputElement>('#save-button')!.addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'graphEditor.graphml')
+  })
   const geim = graphComponent.inputMode as GraphEditorInputMode
 
   const snappingButton = document.querySelector<HTMLInputElement>('#demo-snapping-button')!
   snappingButton.addEventListener('click', () => {
     geim.snapContext!.enabled = snappingButton.checked
-    geim.labelSnapContext!.enabled = snappingButton.checked
   })
 
   const orthogonalEditingButton = document.querySelector<HTMLInputElement>(
@@ -286,72 +233,83 @@ function initializeUI(graphComponent: GraphComponent): void {
 
 function selectAllEdges(): void {
   graphComponent.selection.clear()
-  graphComponent.graph.edges.forEach((edge) => graphComponent.selection.setSelected(edge, true))
+  graphComponent.graph.edges.forEach((edge) => graphComponent.selection.add(edge))
 }
 
 function selectAllNodes(): void {
   graphComponent.selection.clear()
-  graphComponent.graph.nodes.forEach((node) => graphComponent.selection.setSelected(node, true))
+  graphComponent.graph.nodes.forEach((node) => graphComponent.selection.add(node))
 }
 
 /**
  * Populates the context menu based on the item the mouse hovers over
- * @param contextMenu The context menu.
- * @param args The event args.
  */
-function populateContextMenu(
-  contextMenu: ContextMenu,
-  args: PopulateItemContextMenuEventArgs<IModelItem>
-): void {
-  // The 'showMenu' property is set to true to inform the input mode that we actually want to show a context menu
-  // for this item (or more generally, the location provided by the event args).
-  // If you don't want to show a context menu for some locations, set 'false' in these cases.
-  args.showMenu = true
-
-  contextMenu.clearItems()
+function populateContextMenu(args: PopulateItemContextMenuEventArgs<IModelItem>): void {
+  if (args.handled) {
+    return
+  }
 
   // In this demo, we use the following custom hit testing to prefer nodes.
   const hits = graphComponent.graphModelManager.hitElementsAt(args.queryLocation)
 
   // Check whether a node was it. If it was, we prefer it over edges
-  const hit = hits.find((item) => INode.isInstance(item)) || hits.at(0)
+  const hit = hits.find((item) => item instanceof INode) || hits.at(0)
 
+  const menuItems: { label: string; action: () => void }[] = []
   const graphSelection = graphComponent.selection
-  if (INode.isInstance(hit)) {
+  if (hit instanceof INode) {
     // if a node or an edge is hit: provide 'Select All Nodes' or 'Select All Edges', respectively
     // and select the hit item
-    contextMenu.addMenuItem('Select All Nodes', selectAllNodes)
-    if (!graphSelection.isSelected(hit)) {
+    menuItems.push({ label: 'Select All Nodes', action: selectAllNodes })
+    if (!graphSelection.includes(hit)) {
       graphSelection.clear()
     }
-    graphSelection.setSelected(hit, true)
-  } else if (IEdge.isInstance(hit)) {
-    contextMenu.addMenuItem('Select All Edges', selectAllEdges)
-    if (!graphSelection.isSelected(hit)) {
+    graphSelection.add(hit)
+  } else if (hit instanceof IEdge) {
+    menuItems.push({ label: 'Select All Edges', action: selectAllEdges })
+    if (!graphSelection.includes(hit)) {
       graphSelection.clear()
     }
-    graphSelection.setSelected(hit, true)
+    graphSelection.add(hit)
   } else {
     // if another type of item or the empty canvas is hit: provide 'Select All'
-    contextMenu.addMenuItem('Select All', () => {
-      ICommand.SELECT_ALL.execute(null, graphComponent)
+    menuItems.push({
+      label: 'Select All',
+      action: () => {
+        graphComponent.graph.nodes.forEach((node) => graphSelection.add(node))
+        graphComponent.graph.edges.forEach((edge) => graphSelection.add(edge))
+      }
     })
   }
 
+  const inputMode = graphComponent.inputMode as GraphEditorInputMode
   // if one or more nodes are selected: add options to cut and copy
-  if (graphSelection.selectedNodes.size > 0) {
-    contextMenu.addMenuItem('Cut', () => {
-      ICommand.CUT.execute(null, graphComponent)
+  if (graphSelection.nodes.size > 0) {
+    menuItems.push({
+      label: 'Cut',
+      action: () => {
+        inputMode.cut()
+      }
     })
-    contextMenu.addMenuItem('Copy', () => {
-      ICommand.COPY.execute(null, graphComponent)
+    menuItems.push({
+      label: 'Copy',
+      action: () => {
+        inputMode.copy()
+      }
     })
   }
-  if (!graphComponent.clipboard.empty) {
+  if (!graphComponent.clipboard.isEmpty) {
     // clipboard is not empty: add option to paste
-    contextMenu.addMenuItem('Paste', () => {
-      ICommand.PASTE.execute(args.queryLocation, graphComponent)
+    menuItems.push({
+      label: 'Paste',
+      action: () => {
+        inputMode.pasteAtLocation(args.queryLocation)
+      }
     })
+  }
+
+  if (menuItems.length > 0) {
+    args.contextMenu = menuItems
   }
 }
 

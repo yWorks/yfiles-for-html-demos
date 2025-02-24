@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Edge Grouping Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -42,30 +42,29 @@
       .demo-context-menu *:focus {
         outline: none;
       }
-      .demo-context-menu .demo-context-menu__item {
+      .yfiles-context-menu__item {
         text-align: start;
         border-left: 7px solid #bbbbbb;
       }
-      .demo-context-menu .demo-context-menu__item.source-edge-group {
+      .yfiles-context-menu__item.source-edge-group {
         border-left-color: #4169e1;
       }
-      .demo-context-menu .demo-context-menu__item.target-edge-group {
+      .yfiles-context-menu__item.target-edge-group {
         border-left-color: #483d8b;
       }
-      .demo-context-menu .demo-context-menu__item.source-and-target-edge-group {
+      .yfiles-context-menu__item.source-and-target-edge-group {
         border-left-color: #6495ed;
       }
-      .demo-context-menu .demo-context-menu__item.source-port-group {
+      .yfiles-context-menu__item.source-port-group {
         border-left-color: #dc143c;
       }
-      .demo-context-menu .demo-context-menu__item.target-port-group {
+      .yfiles-context-menu__item.target-port-group {
         border-left-color: #d2691e;
       }
-      .demo-context-menu .demo-context-menu__item.source-and-target-port-group {
+      .yfiles-context-menu__item.source-and-target-port-group {
         border-left-color: #ffa500;
       }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -104,7 +103,7 @@
         </select>
       </label>
       <span class="demo-separator"></span>
-      <button id="layout" title="Run Hierarchic Layout" class="demo-icon-yIconLayout labeled">
+      <button id="layout" title="Run Hierarchical Layout" class="demo-icon-yIconLayout labeled">
         Layout
       </button>
     </div>
@@ -125,7 +124,7 @@
 
         <p>
           This demo shows the possibilities of edge and port grouping using the example of
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>. Edge groups lead to edges sharing some segments while
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a>. Edge groups lead to edges sharing some segments while
           port groups will combine the edges only in their first segment.
         </p>
 

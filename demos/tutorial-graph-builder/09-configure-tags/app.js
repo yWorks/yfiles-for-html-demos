@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,36 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, GraphComponent, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { getData, initializeTutorialDefaults, runLayout } from '../common.js'
-import { createNodeTags } from './configure-tags.js'
-
-/**
- * @typedef {*} EntityData
- */
-
+import { GraphBuilder, GraphComponent, License } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { getData, initializeTutorialDefaults, runLayout } from '../common'
+import { createNodeTags } from './configure-tags'
 License.value = await fetchLicense()
-
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
-
 const data = await getData()
-
 const graph = graphComponent.graph
-
 const graphBuilder = new GraphBuilder(graph)
-
 const nodesSource = graphBuilder.createNodesSource(data.nodesSource, 'id')
 createNodeTags(nodesSource)
-
 graphBuilder.createEdgesSource(data.edgesSource, 'sourceId', 'targetId', 'id')
-
 nodesSource.nodeCreator.createLabelsSource((data) => [data.name])
-
 graphBuilder.buildGraph()
-
 void runLayout(graphComponent)
-
 finishLoading()

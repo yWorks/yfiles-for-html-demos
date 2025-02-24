@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,20 +28,19 @@
  ***************************************************************************/
 // eslint-disable @typescript-eslint/explicit-function-return-type
 
-import type { IGraph, ILabelStyle, INode } from 'yfiles'
+import type { IGraph, ILabelStyle, INode } from '@yfiles/yfiles'
 import {
   Arrow,
-  DefaultLabelStyle,
   EdgePathLabelModel,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
   GraphBuilder,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
+  LabelStyle,
   PolylineEdgeStyle,
   PortAdjustmentPolicy,
   ShapeNodeStyle
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 type SampleDataNode = {
   id: number
@@ -152,12 +151,12 @@ export function createSampleGraph(graph: IGraph): void {
     }
   })
   const nodeLabelCreator = nodesSource.nodeCreator.createLabelBinding()
-  nodeLabelCreator.defaults.layoutParameter = new ExteriorLabelModel({
-    insets: { right: 7 }
-  }).createParameter(ExteriorLabelModelPosition.EAST)
-  const labelStyle = new DefaultLabelStyle({
+  nodeLabelCreator.defaults.layoutParameter = new ExteriorNodeLabelModel({
+    margins: { right: 7 }
+  }).createParameter('right')
+  const labelStyle = new LabelStyle({
     cssClass: 'label invisible', // fade-in labels on hover
-    insets: 5,
+    padding: 5,
     backgroundFill: 'rgba(255,255,255,0.7)',
     shape: 'round-rectangle'
   })
@@ -187,19 +186,19 @@ export function createSampleGraph(graph: IGraph): void {
     sideOfEdge: 'below-edge',
     autoRotation: false,
     distance: 7
-  }).createDefaultParameter()
+  }).createRatioParameter()
   edgeLabelCreator.styleProvider = (): ILabelStyle => labelStyle.clone()
   edgeLabelCreator.textProvider = (): string => '.edge'
 
   builder.buildGraph()
 
-  const layout = new HierarchicLayout({
-    nodeToNodeDistance: 50
+  const layout = new HierarchicalLayout({
+    nodeDistance: 50
   })
-  const layoutData = new HierarchicLayoutData({
+  const layoutData = new HierarchicalLayoutData({
     // consider the node types of the sample data
     nodeTypes: (node: INode) => (node.tag as SampleDataNode['tag']).type
   })
 
-  graph.applyLayout({ layout, layoutData, portAdjustmentPolicy: PortAdjustmentPolicy.ALWAYS })
+  graph.applyLayout({ layout, layoutData, portAdjustmentPolicies: PortAdjustmentPolicy.ALWAYS })
 }

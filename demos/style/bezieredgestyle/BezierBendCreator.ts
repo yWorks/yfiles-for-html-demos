@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DefaultBendCreator,
   GeneralPath,
   IBend,
   IBendCreator,
@@ -37,9 +36,9 @@ import {
   IInputModeContext,
   IListEnumerable,
   IPoint,
-  Point,
-  UndoUnitBase
-} from 'yfiles'
+  IUndoUnit,
+  Point
+} from '@yfiles/yfiles'
 
 /**
  * Custom bend creator for bezier edges
@@ -47,11 +46,11 @@ import {
  * In addition, the new bends and the neighboring bends are positioned so that the curve shape stays constant.
  */
 export class BezierBendCreator extends BaseClass(IBendCreator) {
-  /**
-   * Fallback for bend creation if the existing model is not consistent
-   */
-  private static get fallBackCreator(): IBendCreator {
-    return new DefaultBendCreator()
+  constructor(
+    private readonly edge: IEdge,
+    private readonly originalBendCreator: IBendCreator
+  ) {
+    super()
   }
 
   /**
@@ -63,36 +62,30 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
    * Otherwise, the fallback bend creator is used to create a bend with its default strategy.
    * @param context the input mode context
    * @param graph the graph
-   * @param edge the edge
    * @param location the bend location
    * @returns The index of middle bend of a control point triple if such a triple was created,
    * or the index of the newly created single bend.
    */
-  public createBend(
-    context: IInputModeContext,
-    graph: IGraph,
-    edge: IEdge,
-    location: Point
-  ): number {
-    switch (edge.bends.size) {
+  public createBend(context: IInputModeContext, graph: IGraph, location: Point): number {
+    switch (this.edge.bends.size) {
       case 0: {
-        const spl = edge.sourcePort!.location
-        const tpl = edge.targetPort!.location
+        const spl = this.edge.sourcePort.location
+        const tpl = this.edge.targetPort.location
 
         // a single linear segment... we just insert 5 collinear bends adjusted to the angle of the linear segment,
         // approximately evenly spaced
         graph.addBend(
-          edge,
+          this.edge,
           location
             .subtract(spl)
             .multiply(1 / 4)
             .add(spl),
           0
         )
-        graph.addBend(edge, location.subtract(location.subtract(spl).multiply(1 / 4)), 1)
-        graph.addBend(edge, location, 2)
+        graph.addBend(this.edge, location.subtract(location.subtract(spl).multiply(1 / 4)), 1)
+        graph.addBend(this.edge, location, 2)
         graph.addBend(
-          edge,
+          this.edge,
           location
             .subtract(spl)
             .multiply(1 / 4)
@@ -100,7 +93,7 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
           3
         )
         graph.addBend(
-          edge,
+          this.edge,
           location.add(
             tpl
               .subtract(location)
@@ -113,9 +106,9 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
       }
       case 1:
         // Use the default strategy to insert a single bend at the correct index
-        return BezierBendCreator.fallBackCreator.createBend(context, graph, edge, location)
+        return this.originalBendCreator.createBend(context, graph, location)
       default: {
-        const pathPoints = IEdge.getPathPoints(edge)
+        const pathPoints = IEdge.getPathPoints(this.edge)
         if (pathPoints.size % 3 === 1) {
           // Consistent number of existing points
           // Try to insert a smooth bend
@@ -172,8 +165,7 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
           if (bestIndex !== -1) {
             // Actually found a segment
             // For the drag, we want to move the middle bend
-            return BezierBendCreator.createBends(graph, edge, bestIndex, bestRatio, pathPoints)
-              .index
+            return this.createBends(graph, bestIndex, bestRatio, pathPoints).index
           }
           // No best segment found (for whatever reason) - we don't want to create a bend so that we don't mess up anything
           return -1
@@ -181,7 +173,7 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
           // No consistent number of bends - just insert a single bend
           // We could also see whether we actually would have a cubic segment on the path, and treat that differently
           // However, why bother - just create the edge with a correct number of points instead
-          return BezierBendCreator.fallBackCreator.createBend(context, graph, edge, location)
+          return this.originalBendCreator.createBend(context, graph, location)
         }
       }
     }
@@ -190,15 +182,13 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
   /**
    * Create a triple of control bends and adjust the neighboring bends
    * @param graph The graph where the bends are created
-   * @param edge The edge where the bends are created
    * @param segmentIndex The segment index
    * @param ratio The ratio on the segment
    * @param pathPoints The existing control points
    * @returns The middle bend of a control point triple
    */
-  private static createBends(
+  private createBends(
     graph: IGraph,
-    edge: IEdge,
     segmentIndex: number,
     ratio: number,
     pathPoints: IListEnumerable<IPoint>
@@ -226,9 +216,9 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
     )
 
     // Previous control point - does always exist as a bend, given our precondition
-    const previousBend = edge.bends.get(startIndex)
+    const previousBend = this.edge.bends.get(startIndex)
     // Next control point - also always exists given the precondition for bend counts (i.e. there have to be at least two)
-    const nextBend = edge.bends.get(startIndex + 1)
+    const nextBend = this.edge.bends.get(startIndex + 1)
 
     // We create the three new bends between previous bend and next bend and adjust these two.
     // We don't have to adjust more bends, since we just have a cubic curve.
@@ -248,10 +238,10 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
       }
 
       // Insert the new triple, using the values from left and right in order
-      graph.addBend(edge, left[2], startIndex + 1)
-      bendToMove = graph.addBend(edge, left[3], startIndex + 2)
+      graph.addBend(this.edge, left[2], startIndex + 1)
+      bendToMove = graph.addBend(this.edge, left[3], startIndex + 2)
       // right[0] == left[3], so right[1] is the next new control point
-      graph.addBend(edge, right[1], startIndex + 3)
+      graph.addBend(this.edge, right[1], startIndex + 3)
 
       // Adjust the next bend
       oldLocation = nextBend.location.toPoint()
@@ -301,18 +291,26 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
 /**
  * Custom undo unit for bend location changes
  */
-class BendLocationUndoUnit extends UndoUnitBase {
+class BendLocationUndoUnit extends BaseClass(IUndoUnit) {
   private readonly oldValue: Point
   private readonly graph: IGraph
   private readonly bend: IBend
   private readonly newValue: Point
 
   constructor(graph: IGraph, bend: IBend, oldValue: Point) {
-    super('Set bend location')
+    super()
     this.graph = graph
     this.bend = bend
     this.oldValue = oldValue
     this.newValue = bend.location.toPoint()
+  }
+
+  get undoName(): string {
+    return 'Set bend location'
+  }
+
+  get redoName(): string {
+    return 'Set bend location'
   }
 
   public undo(): void {
@@ -322,4 +320,14 @@ class BendLocationUndoUnit extends UndoUnitBase {
   public redo(): void {
     this.graph.setBendLocation(this.bend, this.newValue)
   }
+
+  tryMergeUnit(unit: IUndoUnit): boolean {
+    return false
+  }
+
+  tryReplaceUnit(unit: IUndoUnit): boolean {
+    return false
+  }
+
+  dispose(): void {}
 }

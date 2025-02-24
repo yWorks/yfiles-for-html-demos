@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 01 Create A Rectangle - Tutorial: Node Style Implementation
 
-# Custom node visualizations
+<img src="../../../doc/demo-thumbnails/tutorial-style-implementation-node.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-node/01-create-a-rectangle/).
 
 yFiles for HTML comes with a lot of predefined item visualizations and lots of different shapes for nodes. However, in some cases, it is required to create fully custom visualizations based on SVG. This might be the case if you need shapes that are not available out-of-the-box or domain-specific node visualizations. Also, the rendering of custom visualizations can be optimized for performance-critical applications.
 
@@ -43,7 +45,7 @@ protected createVisual(context: IRenderContext, node: INode): Visual | null {
   rect.setAttribute('y', String(y))
   rect.setAttribute('width', String(width))
   rect.setAttribute('height', String(height))
-  rect.setAttribute('fill', 'red')
+  rect.setAttribute('fill', '#0b7189')
   rect.setAttribute('stroke', '#042d37')
   return new SvgVisual(rect)
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,301 +26,97 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import { GraphMLIOHandler, ILookup, MarkupExtension } from '@yfiles/yfiles'
 import {
-  Attribute,
-  Class,
-  GraphMLAttribute,
-  GraphMLIOHandler,
-  ILookup,
-  MarkupExtension,
-  TypeAttribute,
-  XamlAttributeWritePolicy,
-  YNumber,
-  YString
-} from 'yfiles'
-import {
-  createReactComponentSvgNodeStyleFromJSX,
-  createReactComponentSvgLabelStyleFromJSX,
-  isReactComponentSvgLabelStyleEx,
-  isReactComponentSvgNodeStyleEx,
-  isReactComponentHtmlNodeStyleEx,
-  isReactComponentHtmlLabelStyleEx,
   createReactComponentHtmlLabelStyleFromJSX,
   createReactComponentHtmlNodeStyleFromJSX,
-  isReactComponentStyleEx
-} from './jsx-compiler.js'
-
-/**
- * @typedef {(Attribute|Array.<Attribute>)} OneOrMoreAttributes
- */
-/**
- * @typedef {*} MarkupExtensionMetaAttributes
- */
-
+  createReactComponentSvgLabelStyleFromJSX,
+  createReactComponentSvgNodeStyleFromJSX,
+  isReactComponentHtmlLabelStyleEx,
+  isReactComponentHtmlNodeStyleEx,
+  isReactComponentStyleEx,
+  isReactComponentSvgLabelStyleEx,
+  isReactComponentSvgNodeStyleEx
+} from './jsx-compiler'
 export class ReactComponentSvgNodeStyleMarkupExtension extends MarkupExtension {
   _jsx = ''
-
-  /**
-   * @type {!string}
-   */
   get jsx() {
     return this._jsx
   }
-
-  /**
-   * @type {!string}
-   */
   set jsx(value) {
     this._jsx = value
   }
-
-  /**
-   * @type {!MarkupExtensionMetaAttributes.<ReactComponentSvgNodeStyleMarkupExtension>}
-   */
-  static get $meta() {
-    return {
-      $self: [GraphMLAttribute().init({ contentProperty: 'jsx' })],
-      jsx: [
-        GraphMLAttribute().init({
-          defaultValue: '',
-          writeAsAttribute: XamlAttributeWritePolicy.NEVER
-        }),
-        TypeAttribute(YString.$class)
-      ]
-    }
-  }
-
-  /**
-   * @param {!ILookup} serviceProvider
-   */
   provideValue(serviceProvider) {
     return createReactComponentSvgNodeStyleFromJSX(this.jsx)
   }
 }
-
 export class ReactComponentHtmlNodeStyleMarkupExtension extends MarkupExtension {
   _jsx = ''
-
-  /**
-   * @type {!string}
-   */
   get jsx() {
     return this._jsx
   }
-
-  /**
-   * @type {!string}
-   */
   set jsx(value) {
     this._jsx = value
   }
-
-  /**
-   * @type {!MarkupExtensionMetaAttributes.<ReactComponentHtmlNodeStyleMarkupExtension>}
-   */
-  static get $meta() {
-    return {
-      $self: [GraphMLAttribute().init({ contentProperty: 'jsx' })],
-      jsx: [
-        GraphMLAttribute().init({
-          defaultValue: '',
-          writeAsAttribute: XamlAttributeWritePolicy.NEVER
-        }),
-        TypeAttribute(YString.$class)
-      ]
-    }
-  }
-
-  /**
-   * @param {!ILookup} serviceProvider
-   */
   provideValue(serviceProvider) {
     return createReactComponentHtmlNodeStyleFromJSX(this.jsx)
   }
 }
-
 export class ReactComponentSvgLabelStyleMarkupExtension extends MarkupExtension {
   _jsx = ''
   _width = 0
   _height = 0
-
-  /**
-   * @type {!string}
-   */
   get jsx() {
     return this._jsx
   }
-
-  /**
-   * @type {!string}
-   */
   set jsx(value) {
     this._jsx = value
   }
-
-  /**
-   * @type {number}
-   */
   get width() {
     return this._width
   }
-
-  /**
-   * @type {number}
-   */
   set width(value) {
     this._width = value
   }
-
-  /**
-   * @type {number}
-   */
   get height() {
     return this._height
   }
-
-  /**
-   * @type {number}
-   */
   set height(value) {
     this._height = value
   }
-
-  /**
-   * @type {!MarkupExtensionMetaAttributes.<ReactComponentSvgLabelStyleMarkupExtension>}
-   */
-  static get $meta() {
-    return {
-      $self: [GraphMLAttribute().init({ contentProperty: 'jsx' })],
-      jsx: [
-        GraphMLAttribute().init({
-          defaultValue: '',
-          writeAsAttribute: XamlAttributeWritePolicy.NEVER
-        }),
-        TypeAttribute(YString.$class)
-      ],
-      width: [
-        GraphMLAttribute().init({
-          defaultValue: 0,
-          writeAsAttribute: XamlAttributeWritePolicy.NEVER
-        }),
-        TypeAttribute(YNumber.$class)
-      ],
-      height: [
-        GraphMLAttribute().init({
-          defaultValue: 0,
-          writeAsAttribute: XamlAttributeWritePolicy.NEVER
-        }),
-        TypeAttribute(YNumber.$class)
-      ]
-    }
-  }
-
-  /**
-   * @param {!ILookup} serviceProvider
-   */
   provideValue(serviceProvider) {
     return createReactComponentSvgLabelStyleFromJSX(this.jsx, [this.width, this.height])
   }
 }
-
 export class ReactComponentHtmlLabelStyleMarkupExtension extends MarkupExtension {
   _jsx = ''
   _width = 0
   _height = 0
-
-  /**
-   * @type {!string}
-   */
   get jsx() {
     return this._jsx
   }
-
-  /**
-   * @type {!string}
-   */
   set jsx(value) {
     this._jsx = value
   }
-
-  /**
-   * @type {number}
-   */
   get width() {
     return this._width
   }
-
-  /**
-   * @type {number}
-   */
   set width(value) {
     this._width = value
   }
-
-  /**
-   * @type {number}
-   */
   get height() {
     return this._height
   }
-
-  /**
-   * @type {number}
-   */
   set height(value) {
     this._height = value
   }
-
-  /**
-   * @type {!MarkupExtensionMetaAttributes.<ReactComponentHtmlLabelStyleMarkupExtension>}
-   */
-  static get $meta() {
-    return {
-      $self: [GraphMLAttribute().init({ contentProperty: 'jsx' })],
-      jsx: [
-        GraphMLAttribute().init({
-          defaultValue: '',
-          writeAsAttribute: XamlAttributeWritePolicy.NEVER
-        }),
-        TypeAttribute(YString.$class)
-      ],
-      width: [
-        GraphMLAttribute().init({
-          defaultValue: 0,
-          writeAsAttribute: XamlAttributeWritePolicy.NEVER
-        }),
-        TypeAttribute(YNumber.$class)
-      ],
-      height: [
-        GraphMLAttribute().init({
-          defaultValue: 0,
-          writeAsAttribute: XamlAttributeWritePolicy.NEVER
-        }),
-        TypeAttribute(YNumber.$class)
-      ]
-    }
-  }
-
-  /**
-   * @param {!ILookup} serviceProvider
-   */
   provideValue(serviceProvider) {
     return createReactComponentHtmlLabelStyleFromJSX(this.jsx, [this.width, this.height])
   }
 }
-
-/**
- * @param {!GraphMLIOHandler} graphmlHandler
- */
 export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
-  // We need to instantiate ReactComponentNodeStyleMarkupExtension once for GraphML IO to work properly
-  // class ensure keeps minifiers from removing the instantiation
-  Class.ensure(Object.getPrototypeOf(new ReactComponentSvgNodeStyleMarkupExtension()))
-  Class.ensure(Object.getPrototypeOf(new ReactComponentSvgLabelStyleMarkupExtension()))
-  Class.ensure(Object.getPrototypeOf(new ReactComponentHtmlNodeStyleMarkupExtension()))
-  Class.ensure(Object.getPrototypeOf(new ReactComponentHtmlLabelStyleMarkupExtension()))
-
-  // enable serialization of the React node style - without a namespace mapping, serialization will fail
+  initMarkupExtensions()
+  // enable deserialization of old React node styles
   graphmlHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/demos/yfiles-react-jsx-node-style/1.0',
     {
@@ -328,6 +124,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
       ReactComponentLabelStyle: ReactComponentSvgLabelStyleMarkupExtension
     }
   )
+  // enable serialization and deserialization of new React node styles
   graphmlHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/demos/yfiles-react-jsx-node-style/2.0',
     {
@@ -345,7 +142,32 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
     'http://www.yworks.com/demos/yfiles-react-jsx-node-style/2.0',
     'react'
   )
-  graphmlHandler.addHandleSerializationListener((_, evt) => {
+  //Add property information for the extensions
+  graphmlHandler.addTypeInformation(ReactComponentSvgNodeStyleMarkupExtension, {
+    properties: {
+      jsx: { default: null, type: String }
+    }
+  })
+  graphmlHandler.addTypeInformation(ReactComponentSvgLabelStyleMarkupExtension, {
+    properties: {
+      jsx: { default: null, type: String },
+      width: { default: 0, type: Number },
+      height: { default: 0, type: Number }
+    }
+  })
+  graphmlHandler.addTypeInformation(ReactComponentHtmlNodeStyleMarkupExtension, {
+    properties: {
+      jsx: { default: null, type: String }
+    }
+  })
+  graphmlHandler.addTypeInformation(ReactComponentHtmlLabelStyleMarkupExtension, {
+    properties: {
+      jsx: { default: null, type: String },
+      width: { default: 0, type: Number },
+      height: { default: 0, type: Number }
+    }
+  })
+  graphmlHandler.addEventListener('handle-serialization', (evt) => {
     const item = evt.item
     if (isReactComponentStyleEx(item)) {
       const context = evt.context
@@ -353,7 +175,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
         const reactExtension = new ReactComponentSvgNodeStyleMarkupExtension()
         reactExtension.jsx = item.jsx
         context.serializeReplacement(
-          ReactComponentSvgNodeStyleMarkupExtension.$class,
+          ReactComponentSvgNodeStyleMarkupExtension,
           item,
           reactExtension
         )
@@ -364,7 +186,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
         reactExtension.width = item.size.width
         reactExtension.height = item.size.height
         context.serializeReplacement(
-          ReactComponentSvgLabelStyleMarkupExtension.$class,
+          ReactComponentSvgLabelStyleMarkupExtension,
           item,
           reactExtension
         )
@@ -373,7 +195,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
         const reactExtension = new ReactComponentHtmlNodeStyleMarkupExtension()
         reactExtension.jsx = item.jsx
         context.serializeReplacement(
-          ReactComponentHtmlNodeStyleMarkupExtension.$class,
+          ReactComponentHtmlNodeStyleMarkupExtension,
           item,
           reactExtension
         )
@@ -384,7 +206,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
         reactExtension.width = item.size.width
         reactExtension.height = item.size.height
         context.serializeReplacement(
-          ReactComponentHtmlLabelStyleMarkupExtension.$class,
+          ReactComponentHtmlLabelStyleMarkupExtension,
           item,
           reactExtension
         )
@@ -392,4 +214,13 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
       }
     }
   })
+}
+function initMarkupExtensions() {
+  // We need to instantiate ReactComponentNodeStyleMarkupExtension once for GraphML IO to work properly
+  return [
+    new ReactComponentSvgNodeStyleMarkupExtension(),
+    new ReactComponentSvgLabelStyleMarkupExtension(),
+    new ReactComponentHtmlNodeStyleMarkupExtension(),
+    new ReactComponentHtmlLabelStyleMarkupExtension()
+  ]
 }

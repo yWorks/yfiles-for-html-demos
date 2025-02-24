@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,19 +27,19 @@
  **
  ***************************************************************************/
 import {
-  DefaultEdgePathCropper,
+  EdgePathCropper,
   GeneralPath,
   IEdge,
   INode,
   IShapeGeometry,
   Matrix,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Crops adjacent edges at the nodes rotated bounds for internal ports.
  */
-export default class AdjustOutlinePortInsidenessEdgePathCropper extends DefaultEdgePathCropper {
+export default class AdjustOutlinePortInsidenessEdgePathCropper extends EdgePathCropper {
   /**
    * Checks whether or not the given location is inside the nodes rotated shape.
    */

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,64 +26,43 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { getNodeHighlightInfo } from '../NodeHighlightInfo.js'
-import { Font, FontWeight, GeneralPath, Point, TextRenderSupport } from 'yfiles'
-import {
-  appendEllipse,
-  createPath,
-  createText,
-  GateNodeStyle,
-  setAttribute
-} from './GateNodeStyle.js'
-import { LogicGateType } from '../LogicGateType.js'
-
+import { getNodeHighlightInfo } from '../NodeHighlightInfo'
+import { Font, GeneralPath, Point, TextRenderSupport } from '@yfiles/yfiles'
+import { appendEllipse, createPath, createText, GateNodeStyle, setAttribute } from './GateNodeStyle'
+import { LogicGateType } from '../LogicGateType'
 /**
  * Node style implementation which renders a NOT gate.
  */
 export class NotNodeStyle extends GateNodeStyle {
-  /**
-   * @param {!string} fillColor
-   * @param {!string} strokeColor
-   * @param {!string} labelColor
-   */
+  fillColor
+  strokeColor
+  labelColor
   constructor(fillColor, strokeColor, labelColor) {
     super(LogicGateType.NOT)
-    this.labelColor = labelColor
-    this.strokeColor = strokeColor
     this.fillColor = fillColor
+    this.strokeColor = strokeColor
+    this.labelColor = labelColor
   }
-
   /**
    * Creates the Svg elements and adds them to the container.
-   * @param {!CacheOwnerElement} container The svg element
-   * @param {!Cache} cache The render-data cache object
-   * @param {!INode} node The given node
+   * @param container The svg element
+   * @param cache The render-data cache object
+   * @param node The given node
    */
   render(container, cache, node) {
     // store information with the visual on how we created it
     container['data-cache'] = cache
-
     // the size of node
     const size = cache.size
     const width = size.width
     const height = size.height
-
     const x1 = width * 0.2
     const x2 = width * 0.7
-
     this.renderMainPart(x1, x2, height, container, width)
     this.renderOutputPort(x2, width, height, node, container)
     this.renderInputPort(height, x1, node, container)
     this.renderLabel(node, container)
   }
-
-  /**
-   * @param {number} x1
-   * @param {number} x2
-   * @param {number} height
-   * @param {!Element} container
-   * @param {number} width
-   */
   renderMainPart(x1, x2, height, container, width) {
     const generalPath = new GeneralPath()
     generalPath.moveTo(new Point(x1, 0))
@@ -93,14 +72,6 @@ export class NotNodeStyle extends GateNodeStyle {
     createPath(container, generalPath, this.fillColor, this.strokeColor)
     appendEllipse(container, x2 + width * 0.03, height * 0.5, width * 0.03, width * 0.03)
   }
-
-  /**
-   * @param {number} x2
-   * @param {number} width
-   * @param {number} height
-   * @param {!INode} node
-   * @param {!Element} container
-   */
   renderOutputPort(x2, width, height, node, container) {
     const outputPortPath = new GeneralPath()
     outputPortPath.moveTo(new Point(x2 + 2 * width * 0.03, height * 0.5))
@@ -110,13 +81,6 @@ export class NotNodeStyle extends GateNodeStyle {
       : 'black'
     createPath(container, outputPortPath, 'none', outputStroke)
   }
-
-  /**
-   * @param {number} height
-   * @param {number} x1
-   * @param {!INode} node
-   * @param {!Element} container
-   */
   renderInputPort(height, x1, node, container) {
     const inputPortPath = new GeneralPath()
     inputPortPath.moveTo(new Point(0, height * 0.5))
@@ -124,11 +88,6 @@ export class NotNodeStyle extends GateNodeStyle {
     const inputStroke = getNodeHighlightInfo(node).sourceHighlight ? NotNodeStyle.IN_COLOR : 'black'
     createPath(container, inputPortPath, 'none', inputStroke)
   }
-
-  /**
-   * @param {!INode} node
-   * @param {!Element} container
-   */
   renderLabel(node, container) {
     const fontSize = Math.floor(node.layout.height * 0.25)
     const text = createText('NOT', fontSize, this.labelColor)
@@ -137,7 +96,7 @@ export class NotNodeStyle extends GateNodeStyle {
       new Font({
         fontFamily: 'Arial',
         fontSize,
-        fontWeight: FontWeight.BOLD
+        fontWeight: 'bold'
       })
     )
     setAttribute(text, 'x', (node.layout.width - textSize.width) * 0.33)

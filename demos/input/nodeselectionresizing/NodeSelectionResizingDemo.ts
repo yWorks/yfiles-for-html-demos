@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,16 +35,15 @@ import {
   Insets,
   License,
   NodeSizeConstraintProvider,
-  OrthogonalEdgeEditingContext,
   Point,
   Rect,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { NodeSelectionResizingInputMode } from './NodeSelectionResizingInputMode'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import SampleData from './resources/SampleData'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent = null!
 
@@ -54,8 +53,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // enable undo engine
   graphComponent.graph.undoEngineEnabled = true
 
@@ -67,7 +64,7 @@ async function run(): Promise<void> {
     new Size(10, 10),
     new Size(100, 100)
   )
-  graphComponent.graph.decorator.nodeDecorator.sizeConstraintProviderDecorator.setFactory(
+  graphComponent.graph.decorator.nodes.sizeConstraintProvider.addFactory(
     (node) => !graphComponent.graph.isGroupNode(node),
     () => sizeConstraintProvider
   )
@@ -80,10 +77,6 @@ async function run(): Promise<void> {
 
 function initializeInputMode(): void {
   const graphEditorInputMode = new GraphEditorInputMode({
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext({ enabled: true }),
-
-    allowGroupingOperations: true,
-
     snapContext: new GraphSnapContext({ enabled: false })
   })
 
@@ -95,7 +88,7 @@ function initializeInputMode(): void {
 }
 
 function loadSampleGraph(): void {
-  initDemoStyles(graphComponent.graph)
+  initDemoStyles(graphComponent.graph, { orthogonalEditing: true })
 
   const defaultNodeSize = graphComponent.graph.nodeDefaults.size
   const builder = new GraphBuilder(graphComponent.graph)

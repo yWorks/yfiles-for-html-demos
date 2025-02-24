@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,8 +33,7 @@ import {
   BaseClass,
   ClickEventArgs,
   Cursor,
-  HandleTypes,
-  ICanvasObjectDescriptor,
+  HandleType,
   IHandle,
   IInputModeContext,
   INode,
@@ -45,16 +44,16 @@ import {
   Point,
   SvgVisual,
   SvgVisualGroup
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * An {@link IHandle} for nodes with a {@link ArrowNodeStyle} to change the
  * {@link ArrowNodeStyle.angle} interactively.
  */
 export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
+  node
+  angleChanged
   handleOffset = 15.0
   style
-
   // x and y factors that are used to translate the mouse delta to the relative handle movement
   xFactor = 0
   yFactor = 0
@@ -63,74 +62,61 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
   initialHandleOffset = 0
   handleOffsetToHeadLengthForPositiveAngles = 0
   handleOffsetToHeadLengthForNegativeAngles = 0
-
   // minimum and maximum handle offsets that result in the minimum and maximum allowed angles
   handleOffsetForMinAngle = 0
   handleOffsetForMaxAngle = 0
-
-  angleLineCanvasObject
-
+  angleLineRenderTreeElement
   /**
    * Creates a new instance for the given node.
-   * @param {!INode} node The node whose style shall be changed.
-   * @param {!function} angleChanged An action that is called when the handle has been moved.
+   * @param node The node whose style shall be changed.
+   * @param angleChanged An action that is called when the handle has been moved.
    */
   constructor(node, angleChanged) {
     super()
-    this.angleChanged = angleChanged
     this.node = node
+    this.angleChanged = angleChanged
     this.style = node.style
   }
-
   /**
    * Gets a live view of the handle location.
    *
    * The handle is placed with an offset to the node bounds on the line from the arrow head tip
    * along the arrow blade.
-   * @type {!IPoint}
    */
   get location() {
     return this
   }
-
   /**
    * Initializes the drag gesture and adds a line from the arrow head tip along the arrow blade to
    * the handle to the view.
-   * @param {!IInputModeContext} context The current input mode context.
+   * @param context The current input mode context.
    */
   initializeDrag(context) {
     const nodeLayout = this.node.layout
     const isParallelogram = this.style.shape === ArrowStyleShape.PARALLELOGRAM
     const isTrapezoid = this.style.shape === ArrowStyleShape.TRAPEZOID
-
     // negative angles are only allowed for trapezoids, parallelograms or arrows with shaft ratio = 1
     const negativeAngleAllowed = this.style.shaftRatio >= 1 || isTrapezoid || isParallelogram
-
     this.arrowSideWidth = ArrowNodeStyleAngleHandle.getArrowSideWidth(this.node.layout, this.style)
-
     // calculate the factors to convert the handle offset to the new length of the arrowhead note
     // that for positive angles the angle rotates around the arrow tip while for negative ones it
     // rotates around a node corner
     this.handleOffsetToHeadLengthForPositiveAngles =
       this.arrowSideWidth / (this.handleOffset + this.arrowSideWidth)
     this.handleOffsetToHeadLengthForNegativeAngles = this.arrowSideWidth / this.handleOffset
-
     this.initialAngle = ArrowNodeStyleAngleHandle.getClampedAngle(this.style)
     this.initialHandleOffset =
       ArrowNodeStyleAngleHandle.getArrowHeadLength(this.node.layout, this.style) /
       (this.initialAngle < 0
         ? -this.handleOffsetToHeadLengthForNegativeAngles
         : this.handleOffsetToHeadLengthForPositiveAngles)
-
     // the maximum length of the arrow head depends on the direction and shape
     const maxHeadLength = ArrowNodeStyleAngleHandle.getMaxArrowHeadLength(nodeLayout, this.style)
-
     // calculate handle offsets for the current node size that correspond to the minimum and maximum allowed angle
     this.handleOffsetForMaxAngle = maxHeadLength / this.handleOffsetToHeadLengthForPositiveAngles
     this.handleOffsetForMinAngle = negativeAngleAllowed
       ? -maxHeadLength / this.handleOffsetToHeadLengthForNegativeAngles
       : 0
-
     // xFactor and yFactor are used later to translate the mouse delta to the relative handle movement
     const direction = this.style.direction
     this.xFactor =
@@ -142,28 +128,25 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
       this.xFactor *= -1
       this.yFactor *= -1
     }
-
     // add a line from the arrow tip along the arrow blade to the handle location to the view
     // this line is created and updated in the CreateVisual and UpdateVisual methods
-    this.angleLineCanvasObject = context.canvasComponent?.inputModeGroup.addChild(
-      this,
-      ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    this.angleLineRenderTreeElement = context.canvasComponent?.renderTree.createElement(
+      context.canvasComponent?.renderTree.inputModeGroup,
+      this
     )
   }
-
   /**
    * Calculates the new angle depending on the new mouse location and updates the node style and
    * angle visualization.
-   * @param {!IInputModeContext} context The current input mode context.
-   * @param {!Point} originalLocation The original handle location.
-   * @param {!Point} newLocation The new mouse location.
+   * @param context The current input mode context.
+   * @param originalLocation The original handle location.
+   * @param newLocation The new mouse location.
    */
   handleMove(context, originalLocation, newLocation) {
     // determine delta of the handle
     const handleDelta =
       this.xFactor * (newLocation.x - originalLocation.x) +
       this.yFactor * (newLocation.y - originalLocation.y)
-
     // determine handle offset from the location that corresponds to angle = 0
     let handleOffset = this.initialHandleOffset + handleDelta
     // ... and clamp to valid values
@@ -171,54 +154,55 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
       this.handleOffsetForMinAngle,
       Math.min(handleOffset, this.handleOffsetForMaxAngle)
     )
-
     // calculate the new arrow head length based on the offset of the handle
     const newHeadLength =
       handleOffset < 0
         ? handleOffset * this.handleOffsetToHeadLengthForNegativeAngles
         : handleOffset * this.handleOffsetToHeadLengthForPositiveAngles
-
     this.style.angle = Math.atan(newHeadLength / this.arrowSideWidth)
-
     if (this.angleChanged) {
       this.angleChanged()
     }
   }
-
   /**
    * Resets the initial angle and removes the angle visualization.
-   * @param {!IInputModeContext} context The current input mode context.
-   * @param {!Point} originalLocation The original handle location.
+   * @param context The current input mode context.
+   * @param originalLocation The original handle location.
    */
   cancelDrag(context, originalLocation) {
     this.style.angle = this.initialAngle
-    this.angleLineCanvasObject?.remove()
+    if (this.angleLineRenderTreeElement) {
+      context.canvasComponent?.renderTree.remove(this.angleLineRenderTreeElement)
+    }
   }
-
   /**
    * Sets the angle for the new location, removes the angle visualization and triggers the
    * angleChanged callback.
-   * @param {!IInputModeContext} context The current input mode context.
-   * @param {!Point} originalLocation The original handle location.
-   * @param {!Point} newLocation The new mouse location.
+   * @param context The current input mode context.
+   * @param originalLocation The original handle location.
+   * @param newLocation The new mouse location.
    */
   dragFinished(context, originalLocation, newLocation) {
     this.handleMove(context, originalLocation, newLocation)
-    this.angleLineCanvasObject?.remove()
+    if (this.angleLineRenderTreeElement) {
+      context.canvasComponent?.renderTree.remove(this.angleLineRenderTreeElement)
+    }
   }
-
   /**
-   * Returns {@link HandleTypes.ROTATE} as handle type that determines the visualization of the
+   * Returns {@link HandleType.CUSTOM3} as handle type that determines the visualization of the
    * handle.
-   * @type {!HandleTypes}
    */
   get type() {
-    return HandleTypes.ROTATE
+    return HandleType.CUSTOM3
   }
-
+  /**
+   * Returns an optional tag object associated with the handle.
+   */
+  get tag() {
+    return null
+  }
   /**
    * Returns {@link Cursor.CROSSHAIR} as cursor that shall be used during the drag gesture.
-   * @type {!Cursor}
    */
   get cursor() {
     const horizontal =
@@ -226,16 +210,12 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
       this.style.direction === ArrowNodeDirection.LEFT
     return horizontal ? Cursor.EW_RESIZE : Cursor.NS_RESIZE
   }
-
   /**
    * This implementation does nothing special when clicked.
-   * @param {!ClickEventArgs} evt
    */
   handleClick(evt) {}
-
   /**
    * The handle's x coordinate.
-   * @type {number}
    */
   get x() {
     switch (this.style.direction) {
@@ -260,10 +240,8 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
     }
     return 0
   }
-
   /**
    * The handle's y coordinate.
-   * @type {number}
    */
   get y() {
     switch (this.style.direction) {
@@ -288,7 +266,6 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
     }
     return 0
   }
-
   /**
    * Clamps the {@link ArrowNodeStyle.angle} of the given style to a valid value.
    *
@@ -297,8 +274,8 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
    * shape or having {@link ArrowNodeStyle.shaftRatio} 1, the angle also has to be bigger than
    * -π / 2, otherwise it has to be >= 0.
    *
-   * @param {!ArrowNodeStyle} style The style to return the clamped angle for.
-   * @returns {number} The angle of the style clamped to a valid value.
+   * @param style The style to return the clamped angle for.
+   * @returns The angle of the style clamped to a valid value.
    */
   static getClampedAngle(style) {
     // clamp angle to be <= Math.PI/2
@@ -318,12 +295,11 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
     }
     return angle
   }
-
   /**
    * Returns the width of one arrow side for the given node layout and style.
-   * @param {!IRectangle} nodeLayout The node layout whose size shall be used.
-   * @param {!ArrowNodeStyle} style The style whose shape and direction shall be used.
-   * @returns {number} The width of one arrow side for the given node layout and style.
+   * @param nodeLayout The node layout whose size shall be used.
+   * @param style The style whose shape and direction shall be used.
+   * @returns The width of one arrow side for the given node layout and style.
    */
   static getArrowSideWidth(nodeLayout, style) {
     const shape = style.shape
@@ -336,12 +312,11 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
     // for parallelogram and trapezoid, one side of the arrow fills the full againstDirectionSize
     return againstDirectionSize * (isParallelogram || isTrapezoid ? 1 : 0.5)
   }
-
   /**
    * Returns the maximum possible arrow head length for the given node layout and style.
-   * @param {!IRectangle} nodeLayout The node layout whose size shall be used.
-   * @param {!ArrowNodeStyle} style The style whose shape and direction shall be used.
-   * @returns {number} The maximum possible arrow head length for the given node layout and style.
+   * @param nodeLayout The node layout whose size shall be used.
+   * @param style The style whose shape and direction shall be used.
+   * @returns The maximum possible arrow head length for the given node layout and style.
    */
   static getMaxArrowHeadLength(nodeLayout, style) {
     const shape = style.shape
@@ -354,12 +329,11 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
     // for double arrow and trapezoid the arrow may only fill half the inDirectionSize
     return inDirectionSize * (isDoubleArrow || isTrapezoid ? 0.5 : 1)
   }
-
   /**
    * Calculates the length of the arrow head for the given node layout and style.
-   * @param {!IRectangle} nodeLayout The layout of the node.
-   * @param {!ArrowNodeStyle} style The style whose shape and angle shall be considered.
-   * @returns {number} The length of the arrow head for the given style and node layout.
+   * @param nodeLayout The layout of the node.
+   * @param style The style whose shape and angle shall be considered.
+   * @returns The length of the arrow head for the given style and node layout.
    */
   static getArrowHeadLength(nodeLayout, style) {
     const maxArrowLength = ArrowNodeStyleAngleHandle.getMaxArrowHeadLength(nodeLayout, style)
@@ -368,11 +342,10 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
     const maxHeadLength = arrowSideWidth * Math.tan(Math.abs(angle))
     return Math.min(maxHeadLength, maxArrowLength)
   }
-
   /**
    * Calculates the offset of the current handle location to the location corresponding to an angle
    * of 0.
-   * @returns {number} The offset of the current handle location to the location corresponding to an angle of
+   * @returns The offset of the current handle location to the location corresponding to an angle of
    * 0.
    */
   calculateHandleInDirectionOffset() {
@@ -382,48 +355,35 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
     const angle = ArrowNodeStyleAngleHandle.getClampedAngle(this.style)
     return angle >= 0 ? scaledHeadLength : headLength - scaledHeadLength
   }
-
   /**
    * Creates the line that visualizes the angle during the drag.
-   * @param {!IRenderContext} context
-   * @returns {!SvgVisualGroup}
    */
   createVisual(context) {
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
     line.setAttribute('stroke', 'goldenrod')
     line.setAttribute('stroke-width', '2')
-
     const group = new SvgVisualGroup()
     group.add(new SvgVisual(line))
-
     return this.updateVisual(context, group)
   }
-
   /**
    * Updates the line that visualizes the angle during the drag.
-   * @param {!IRenderContext} context
-   * @param {!SvgVisualGroup} group
-   * @returns {!SvgVisualGroup}
    */
   updateVisual(context, group) {
     group.transform = context.viewTransform
-
     // line shall point from handle to arrow tip
     const lineVisual = group.children.first()
     const line = lineVisual.svgElement
-
     // synchronize first line point with handle location
     const fromWorld = this.location.toPoint()
-    const fromView = context.toViewCoordinates(fromWorld)
+    const fromView = context.worldToViewCoordinates(fromWorld)
     line.x1.baseVal.value = fromView.x
     line.y1.baseVal.value = fromView.y
-
     // synchronize second line point with arrow tip
     const nodeLayout = this.node.layout
     const isParallelogram = this.style.shape === ArrowStyleShape.PARALLELOGRAM
     const isTrapezoid = this.style.shape === ArrowStyleShape.TRAPEZOID
     const againstDirectionRatio = isParallelogram || isTrapezoid ? 1 : 0.5
-
     let toWorldX = 0
     let toWorldY = 0
     // for negative angles, the arrow tip is moved
@@ -431,7 +391,6 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
       this.style.angle < 0
         ? ArrowNodeStyleAngleHandle.getArrowHeadLength(this.node.layout, this.style)
         : 0
-
     switch (this.style.direction) {
       case ArrowNodeDirection.RIGHT: {
         toWorldX = isParallelogram
@@ -466,11 +425,9 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
         break
       }
     }
-
-    const toView = context.toViewCoordinates(new Point(toWorldX, toWorldY))
+    const toView = context.worldToViewCoordinates(new Point(toWorldX, toWorldY))
     line.x2.baseVal.value = toView.x
     line.y2.baseVal.value = toView.y
-
     return group
   }
 }

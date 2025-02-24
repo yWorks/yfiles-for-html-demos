@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,27 +33,25 @@ import {
   IInputModeContext,
   IPort,
   IReshapeHandleProvider,
-  KeyEventRecognizers,
-  NodeStylePortStyleAdapter,
+  ShapePortStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { PortReshapeHandle } from './PortReshapeHandle'
 
 /**
- * An {@link IReshapeHandleProvider} implementation for {@link IPort}s using a {@link NodeStylePortStyleAdapter}.
- * The provided {@link PortReshapeHandle} modifies the {@link NodeStylePortStyleAdapter.renderSize render size}
- * of the port style.
+ * An {@link IReshapeHandleProvider} implementation for {@link IPort}s using {@link ShapePortStyle}.
+ * The provided {@link PortReshapeHandle} modifies the {@link ShapePortStyle.renderSize render size}.
  */
 export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
   /**
    * Creates a new instance for port and its adapter.
    * @param port The port whose visualization shall be resized.
-   * @param adapter The adapter whose render size shall be changed.
-   * @param minimumSize The minimum size the {@link NodeStylePortStyleAdapter.renderSize} may have.
+   * @param portStyle The adapter whose render size shall be changed.
+   * @param minimumSize The minimum size the {@link ShapePortStyle.renderSize} may have.
    */
   constructor(
     private readonly port: IPort,
-    private readonly adapter: NodeStylePortStyleAdapter,
+    private readonly portStyle: ShapePortStyle,
     private readonly minimumSize: Size
   ) {
     super()
@@ -61,15 +59,15 @@ export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
 
   /**
    * Returns {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER} as available handle
-   * positions depending on the modifier state of `Ctrl`.
+   * positions depending on the modifier state of `Shift`.
    * @param context The context the handles are created in.
    * @returns Either {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER}
    */
   getAvailableHandles(context: IInputModeContext): HandlePositions {
     const canvasComponent = context.canvasComponent!
-    const ctrlPressed = KeyEventRecognizers.CTRL_IS_DOWN(this, canvasComponent.lastInputEvent)
-    // when Ctrl is pressed, all border positions are returned, otherwise only the corner positions
-    return canvasComponent.focused && ctrlPressed ? HandlePositions.BORDER : HandlePositions.CORNERS
+    return canvasComponent.focused && canvasComponent.lastInputEvent.shiftKey
+      ? HandlePositions.BORDER
+      : HandlePositions.CORNERS
   }
 
   /**
@@ -80,6 +78,6 @@ export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
    * @returns A {@link PortReshapeHandle} for the port at the given position.
    */
   getHandle(context: IInputModeContext, position: HandlePositions): IHandle {
-    return new PortReshapeHandle(context, this.port, this.adapter, position, this.minimumSize)
+    return new PortReshapeHandle(context, this.port, this.portStyle, position, this.minimumSize)
   }
 }

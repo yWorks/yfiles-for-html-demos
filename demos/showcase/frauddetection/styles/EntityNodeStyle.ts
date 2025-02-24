@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
  ***************************************************************************/
 import {
   GeneralPath,
-  GeomUtilities,
+  GeometryUtilities,
   type ICanvasContext,
   type IInputModeContext,
   type INode,
@@ -36,21 +36,28 @@ import {
   NodeStyleBase,
   type Point,
   type Rect,
-  SvgVisual
-} from 'yfiles'
-import { type Entity, getEntityData } from '../entity-data'
+  SvgVisual,
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
+import { type Entity, getEntityData, isFraud } from '../entity-data'
 import { nodeStyleMapping } from './graph-styles'
 
-type CachingSvgVisual = SvgVisual & { cache?: { fraud: boolean } }
+/**
+ * Augment the SvgVisual type with the data used to cache the rendering information
+ */
+type Cache = {
+  fraud: boolean
+}
+type EntityNodeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 /**
  * A simple node style that visualizes a circular node with an icon.
  */
-export class EntityNodeStyle extends NodeStyleBase {
+export class EntityNodeStyle extends NodeStyleBase<EntityNodeStyleVisual> {
   /**
    * Creates the visual for a circular node with an icon.
    */
-  createVisual(context: IRenderContext, node: INode): SvgVisual {
+  createVisual(_context: IRenderContext, node: INode): EntityNodeStyleVisual {
     const { x, y, width, height } = node.layout
     const halfWidth = width * 0.5
     const halfHeight = height * 0.5
@@ -65,7 +72,7 @@ export class EntityNodeStyle extends NodeStyleBase {
     ellipse.setAttribute('cy', String(halfHeight))
     ellipse.setAttribute('rx', String(halfWidth))
     ellipse.setAttribute('ry', String(halfHeight))
-    ellipse.setAttribute('stroke-width', '2')
+    ellipse.setAttribute('stroke-width', isFraud(node) ? '3' : '2')
     this.updateStrokeAndFill(ellipse, entity)
     g.appendChild(ellipse)
 
@@ -87,32 +94,33 @@ export class EntityNodeStyle extends NodeStyleBase {
     // set the location
     SvgVisual.setTranslate(g, x, y)
 
-    const svgVisual: CachingSvgVisual = new SvgVisual(g)
     // store information with the visual on how we created it
-    svgVisual.cache = { fraud: entity.fraud ?? false }
-    return svgVisual
+    return SvgVisual.from(g, { fraud: entity.fraud ?? false })
   }
 
   /**
    * Re-renders the node using the old visual for performance reasons.
    */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
-    const oldSvgVisual = oldVisual as CachingSvgVisual
+  updateVisual(
+    _context: IRenderContext,
+    oldVisual: EntityNodeStyleVisual,
+    node: INode
+  ): EntityNodeStyleVisual {
     // get relevant data that might have changed
-    const oldCache = oldSvgVisual.cache
+    const oldCache = oldVisual.tag
 
-    const g = oldSvgVisual.svgElement
+    const g = oldVisual.svgElement
     const entity = getEntityData(node)
     // update node color depending on the fraud state
-    if (entity.fraud !== oldCache?.fraud) {
+    if (entity.fraud !== oldCache.fraud) {
       this.updateStrokeAndFill(g.firstElementChild as SVGEllipseElement, entity)
     }
 
     // update location
     const { x, y } = node.layout
     SvgVisual.setTranslate(g, x, y)
-    oldSvgVisual.cache = { fraud: entity.fraud ?? false }
-    return oldSvgVisual
+    oldVisual.tag = { fraud: entity.fraud ?? false }
+    return oldVisual
   }
 
   /**
@@ -129,7 +137,11 @@ export class EntityNodeStyle extends NodeStyleBase {
    * Checks if a point hits the node's bounds. Considers HitTestRadius.
    */
   isHit(canvasContext: ICanvasContext, point: Point, node: INode): boolean {
-    return GeomUtilities.ellipseContains(node.layout.toRect(), point, canvasContext.hitTestRadius)
+    return GeometryUtilities.ellipseContains(
+      node.layout.toRect(),
+      point,
+      canvasContext.hitTestRadius
+    )
   }
 
   /**
@@ -143,7 +155,7 @@ export class EntityNodeStyle extends NodeStyleBase {
     const eps = context.hitTestRadius
     const outline = this.getOutline(node)
     if (
-      outline.intersects(box, eps) ||
+      outline.pathIntersects(box, eps) ||
       (outline.pathContains(box.topLeft, eps) && outline.pathContains(box.bottomRight, eps))
     ) {
       return true
@@ -157,7 +169,7 @@ export class EntityNodeStyle extends NodeStyleBase {
    * Exact geometric check whether a point lies inside the circular node.
    */
   isInside(node: INode, point: Point): boolean {
-    return GeomUtilities.ellipseContains(node.layout.toRect(), point, 0)
+    return GeometryUtilities.ellipseContains(node.layout.toRect(), point, 0)
   }
 
   /**
@@ -166,7 +178,7 @@ export class EntityNodeStyle extends NodeStyleBase {
   private updateStrokeAndFill(ellipse: SVGEllipseElement, entity: Entity): void {
     const type = entity.type
     const style = nodeStyleMapping[type]
-    ellipse.setAttribute('fill', entity.fraud ?? false ? '#ff6c00' : style.fill)
-    ellipse.setAttribute('stroke', entity.fraud ?? false ? '#ff6c00' : style.stroke)
+    ellipse.setAttribute('fill', (entity.fraud ?? false) ? '#ff6c00' : style.fill)
+    ellipse.setAttribute('stroke', (entity.fraud ?? false) ? 'slateblue' : style.stroke)
   }
 }

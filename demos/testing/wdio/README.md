@@ -1,22 +1,22 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# WebdriverIO Demo
+<img src="../../../doc/demo-thumbnails/webdriverio.webp" alt="demo-thumbnail" height="320"/>
 
 The WebdriverIO demo shows how to use [WebdriverIO](https://webdriver.io/) for integration testing a yFiles for HTML web application.
 
 To run the integration tests:
 
 1.  Ensure that the demo server is running, see The Demo Server.
-2.  Go to the demo's directory `demos-js/testing/wdio`.
+2.  Go to the demo's directory `demos-ts/testing/wdio`.
 3.  Run `npm install`.
 4.  Run the integration tests with `npm run test`.
 

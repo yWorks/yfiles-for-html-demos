@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,18 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, IGraph, INode, License, Rect } from 'yfiles'
+import { GraphComponent, GraphEditorInputMode, IGraph, INode, License, Rect } from '@yfiles/yfiles'
 import DemoReparentNodeHandler from './DemoReparentNodeHandler'
-import type { ColorSetName } from 'demo-resources/demo-styles'
+import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
 import {
-  applyDemoTheme,
   createDemoGroupLabelStyle,
   createDemoGroupStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Runs the demo.
@@ -47,14 +46,12 @@ async function run(): Promise<void> {
 
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // create a default editor input mode and configure it
   const graphEditorInputMode = new GraphEditorInputMode({
     // assign the custom reparent handler of this demo
     reparentNodeHandler: new DemoReparentNodeHandler(),
-    allowGroupingOperations: true,
     // Just for user convenience: disable edge creation, ...
     allowCreateEdge: false,
     // ... node creation, and ...

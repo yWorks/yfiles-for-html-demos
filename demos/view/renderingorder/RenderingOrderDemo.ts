@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,18 +28,17 @@
  ***************************************************************************/
 import {
   BaseClass,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   Font,
   FreeNodePortLocationModel,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicNestingPolicy,
-  ICanvasObjectDescriptor,
+  HierarchicalNestingPolicy,
   IRenderContext,
   IVisualCreator,
   LabelLayerPolicy,
   License,
-  NodeStylePortStyleAdapter,
+  ShapePortStyle,
   Point,
   PortLayerPolicy,
   ShapeNodeStyle,
@@ -47,11 +46,11 @@ import {
   SmartEdgeLabelModel,
   SvgVisual,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -63,10 +62,7 @@ async function run(): Promise<void> {
 
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode()
   graphComponent.graph.undoEngineEnabled = true
 
   // configures default styles for newly created graph elements
@@ -87,27 +83,30 @@ function selectRenderingOrder(order: string): void {
   const graphModelManager = graphComponent.graphModelManager
 
   // set to default first
-  graphModelManager.labelLayerPolicy = LabelLayerPolicy.SEPARATE_LAYER
+  graphModelManager.nodeLabelLayerPolicy = LabelLayerPolicy.SEPARATE_LAYER
+  graphModelManager.edgeLabelLayerPolicy = LabelLayerPolicy.SEPARATE_LAYER
   graphModelManager.portLayerPolicy = PortLayerPolicy.SEPARATE_LAYER
-  graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES_AND_EDGES
+  graphModelManager.hierarchicalNestingPolicy = HierarchicalNestingPolicy.NODES_AND_EDGES
   graphModelManager.edgeGroup.below(graphModelManager.nodeGroup)
 
   switch (order) {
     case 'at-owner':
-      graphModelManager.labelLayerPolicy = LabelLayerPolicy.AT_OWNER
+      graphModelManager.nodeLabelLayerPolicy = LabelLayerPolicy.AT_OWNER
+      graphModelManager.edgeLabelLayerPolicy = LabelLayerPolicy.AT_OWNER
       graphModelManager.portLayerPolicy = PortLayerPolicy.AT_OWNER
       break
     case 'edges-on-top':
-      graphModelManager.labelLayerPolicy = LabelLayerPolicy.AT_OWNER
+      graphModelManager.nodeLabelLayerPolicy = LabelLayerPolicy.AT_OWNER
+      graphModelManager.edgeLabelLayerPolicy = LabelLayerPolicy.AT_OWNER
       graphModelManager.portLayerPolicy = PortLayerPolicy.AT_OWNER
-      graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES
+      graphModelManager.hierarchicalNestingPolicy = HierarchicalNestingPolicy.NODES
       graphModelManager.edgeGroup.above(graphModelManager.nodeGroup)
       break
     case 'group-nodes':
-      graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.GROUP_NODES
+      graphModelManager.hierarchicalNestingPolicy = HierarchicalNestingPolicy.GROUP_NODES
       break
     case 'none':
-      graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NONE
+      graphModelManager.hierarchicalNestingPolicy = HierarchicalNestingPolicy.NONE
       break
   }
 }
@@ -118,23 +117,21 @@ function selectRenderingOrder(order: string): void {
 function initDemoDefaults(): void {
   const graph = graphComponent.graph
   initDemoStyles(graph)
-  graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter(
-    new ShapeNodeStyle({
-      fill: '#111D4A',
-      shape: 'ellipse'
-    })
-  )
+  graph.nodeDefaults.ports.style = new ShapePortStyle({
+    fill: '#111D4A',
+    shape: 'ellipse'
+  })
 }
 
 /**
- * Creates a the sample graph.
+ * Creates the sample graph.
  */
 function createGraph(): void {
   createOverlappingLabelSample(new Point(-290, 0))
   createOverlappingNodeSample(new Point(10, 0))
   createOverlappingEdgeSample(new Point(370, 0))
   createNestedGroupSample(new Point(800, 0))
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
   graphComponent.graph.undoEngine!.clear()
 }
 
@@ -145,21 +142,31 @@ function createOverlappingLabelSample(origin: Point): void {
   const graph = graphComponent.graph
   graph.createNode({
     layout: [origin.x, origin.y + 50, 50, 50],
-    labels: [{ text: 'External Node Label 1', layoutParameter: ExteriorLabelModel.SOUTH }]
+    labels: [
+      {
+        text: 'External Node Label 1',
+        layoutParameter: ExteriorNodeLabelModel.BOTTOM
+      }
+    ]
   })
   graph.createNode({
     layout: [origin.x + 60, origin.y + 80, 50, 50],
-    labels: [{ text: 'External Node Label 2', layoutParameter: ExteriorLabelModel.SOUTH }]
+    labels: [
+      {
+        text: 'External Node Label 2',
+        layoutParameter: ExteriorNodeLabelModel.BOTTOM
+      }
+    ]
   })
 
-  graphComponent.backgroundGroup.addChild(
+  graphComponent.renderTree.createElement(
+    graphComponent.renderTree.backgroundGroup,
     new RectangleBorder(
       new Point(origin.x - 50, origin.y - 20),
       new Size(210, 250),
       new Point(origin.x + 5, origin.y - 30),
       "Try 'Default'"
-    ),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    )
   )
 }
 
@@ -195,10 +202,10 @@ function createOverlappingNodeSample(origin: Point): void {
   })
   const nodes = [back2, middle2, front2]
   nodes.forEach((node) => {
-    graph.addPort(node, FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED)
-    graph.addPort(node, FreeNodePortLocationModel.NODE_TOP_ANCHORED)
-    graph.addPort(node, FreeNodePortLocationModel.NODE_LEFT_ANCHORED)
-    graph.addPort(node, FreeNodePortLocationModel.NODE_RIGHT_ANCHORED)
+    graph.addPort(node, FreeNodePortLocationModel.BOTTOM)
+    graph.addPort(node, FreeNodePortLocationModel.TOP)
+    graph.addPort(node, FreeNodePortLocationModel.LEFT)
+    graph.addPort(node, FreeNodePortLocationModel.RIGHT)
   })
 
   const edge1 = graph.createEdge({
@@ -211,22 +218,22 @@ function createOverlappingNodeSample(origin: Point): void {
     text: 'Edge Label',
     layoutParameter: new SmartEdgeLabelModel().createParameterFromSource(1)
   })
-  graph.setRelativePortLocation(edge1.sourcePort!, new Point(0, 25))
+  graph.setRelativePortLocation(edge1.sourcePort, new Point(0, 25))
   const edge2 = graph.createEdge({
     source: front1,
     target: front2,
     bends: [new Point(origin.x + 65, origin.y + 190), new Point(origin.x + 185, origin.y + 190)]
   })
-  graph.setRelativePortLocation(edge2.sourcePort!, new Point(0, 25))
+  graph.setRelativePortLocation(edge2.sourcePort, new Point(0, 25))
 
-  graphComponent.backgroundGroup.addChild(
+  graphComponent.renderTree.createElement(
+    graphComponent.renderTree.backgroundGroup,
     new RectangleBorder(
       new Point(origin.x - 50, origin.y - 20),
       new Size(310, 250),
       new Point(origin.x - 15, origin.y - 30),
       "Try 'Labels/Ports At Owner'"
-    ),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    )
   )
 }
 
@@ -265,14 +272,14 @@ function createOverlappingEdgeSample(origin: Point): void {
     bends: [new Point(origin.x + 25, origin.y + 155)]
   })
 
-  graphComponent.backgroundGroup.addChild(
+  graphComponent.renderTree.createElement(
+    graphComponent.renderTree.backgroundGroup,
     new RectangleBorder(
       new Point(origin.x - 20, origin.y - 20),
       new Size(340, 250),
       new Point(origin.x - 5, origin.y - 30),
       "'Edges on top' or 'Group Nodes'"
-    ),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    )
   )
 }
 
@@ -324,14 +331,14 @@ function createNestedGroupSample(origin: Point): void {
     bends: [new Point(origin.x + 125, origin.y + 105)]
   })
 
-  graphComponent.backgroundGroup.addChild(
+  graphComponent.renderTree.createElement(
+    graphComponent.renderTree.backgroundGroup,
     new RectangleBorder(
       new Point(origin.x - 20, origin.y - 20),
       new Size(280, 250),
       new Point(origin.x + 20, origin.y - 30),
       'Try different settings'
-    ),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    )
   )
 }
 
@@ -385,7 +392,10 @@ class RectangleBorder extends BaseClass(IVisualCreator) {
     text.setAttribute('fill', 'gray')
     text.setAttribute('x', `${this.titleOrigin.x}`)
     text.setAttribute('y', `${this.titleOrigin.y}`)
-    new Font({ fontSize: 18, fontWeight: 'bold' }).applyTo(text)
+    new Font({
+      fontSize: 18,
+      fontWeight: 'bold'
+    }).applyTo(text)
     container.appendChild(text)
 
     return new SvgVisual(container)

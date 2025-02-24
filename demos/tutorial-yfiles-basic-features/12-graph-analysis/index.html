@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>12 Analysis Algorithms - Tutorial: Basic Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -184,7 +182,7 @@
                   <pre
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// use the selected nodes as start nodes</span>
-<span class="hljs-keyword">const</span> startNodes = graphComponent.<span class="hljs-property">selection</span>.<span class="hljs-property">selectedNodes</span>
+<span class="hljs-keyword">const</span> startNodes = graphComponent.<span class="hljs-property">selection</span>.<span class="hljs-property">nodes</span>
 
 <span class="hljs-keyword">const</span> reachability = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Reachability</span>({
   <span class="hljs-attr">startNodes</span>: startNodes,
@@ -194,7 +192,7 @@
 
 <span class="hljs-comment">// highlight the reachable nodes</span>
 reachabilityResult.<span class="hljs-property">reachableNodes</span>.<span class="hljs-title function_">forEach</span>((<span class="hljs-attr">n</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
-  graphComponent.<span class="hljs-property">highlightIndicatorManager</span>.<span class="hljs-title function_">addHighlight</span>(n)
+  graphComponent.<span class="hljs-property">highlights</span>.<span class="hljs-title function_">add</span>(n)
 })</code></pre>
                 </div>
               </div>
@@ -202,10 +200,11 @@ reachabilityResult.<span class="hljs-property">reachableNodes</span>.<span class
                 <ul>
                   <li>
                     <p>
-                      Select two nodes with <code>Ctrl+Click</code> and click 'Run Shortest Path' to
-                      calculate the shortest path. If a path is found, the nodes on the path and the
-                      edges will be highlighted. The distance to the target node will be shown as a
-                      tooltip on the target node.
+                      Select two nodes with
+                      <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>Click</kbd></span> and click 'Run
+                      Shortest Path' to calculate the shortest path. If a path is found, the nodes
+                      on the path and the edges will be highlighted. The distance to the target node
+                      will be shown as a tooltip on the target node.
                     </p>
                   </li>
                 </ul>
@@ -227,7 +226,7 @@ reachabilityResult.<span class="hljs-property">reachableNodes</span>.<span class
   <span class="hljs-attr">directed</span>: <span class="hljs-literal">false</span>, <span class="hljs-comment">// don&#x27;t consider edge direction</span>
   <span class="hljs-comment">// calculate the cost per edge as the distance between source and target node</span>
   <span class="hljs-attr">costs</span>: (<span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>): <span class="hljs-function"><span class="hljs-params">number</span> =&gt;</span>
-    edge.<span class="hljs-property">sourceNode</span>!.<span class="hljs-property">layout</span>.<span class="hljs-property">center</span>.<span class="hljs-title function_">subtract</span>(edge.<span class="hljs-property">targetNode</span>!.<span class="hljs-property">layout</span>.<span class="hljs-property">center</span>)
+    edge.<span class="hljs-property">sourceNode</span>.<span class="hljs-property">layout</span>.<span class="hljs-property">center</span>.<span class="hljs-title function_">subtract</span>(edge.<span class="hljs-property">targetNode</span>.<span class="hljs-property">layout</span>.<span class="hljs-property">center</span>)
       .<span class="hljs-property">vectorLength</span>
 })
 <span class="hljs-keyword">const</span> shortestPathResult = shortestPath.<span class="hljs-title function_">run</span>(graph)</code></pre>

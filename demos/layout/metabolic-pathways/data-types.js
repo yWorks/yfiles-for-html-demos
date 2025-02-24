@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,60 +29,39 @@
 /**
  * Represents the type of nodes in the demo's pathway samples.
  */
-export /**
- * @readonly
- * @enum {number}
- */
-const NodeTypes = {
-  ENZYME: 0,
-  REACTION: 1,
-  REACTANT: 2,
-  CO_REACTANT: 3,
-  PRODUCT: 4,
-  OTHER: 5
-}
-
-/**
- * Represents the data-set for this demo for creating the nodes and the edges.
- * @typedef {Object} MetabolicPathwayData
- * @property {Array.<InputNodeData>} nodes
- * @property {Array.<object>} edges
- */
-
-/**
- * Represents a node of a metabolic path in the input data-set.
- * @typedef {Object} InputNodeData
- * @property {number} id
- * @property {string} [label]
- * @property {object} tag
- */
-
-/**
- * Represents the data associated with a node of a metabolic path after building the graph.
- * @typedef {Object} MetabolicNodeData
- * @property {NodeTypes} type
- * @property {(string|number)} [vAlign]
- * @property {boolean} [circle]
- */
-
+export var NodeTypes
+;(function (NodeTypes) {
+  NodeTypes[(NodeTypes['ENZYME'] = 0)] = 'ENZYME'
+  NodeTypes[(NodeTypes['REACTION'] = 1)] = 'REACTION'
+  NodeTypes[(NodeTypes['REACTANT'] = 2)] = 'REACTANT'
+  NodeTypes[(NodeTypes['CO_REACTANT'] = 3)] = 'CO_REACTANT'
+  NodeTypes[(NodeTypes['PRODUCT'] = 4)] = 'PRODUCT'
+  NodeTypes[(NodeTypes['OTHER'] = 5)] = 'OTHER'
+})(NodeTypes || (NodeTypes = {}))
 /**
  * Returns the type of the given node.
- * @param {!INode} node
- * @returns {!NodeTypes}
  */
 export function getType(node) {
   return getMetabolicData(node).type
 }
-
 /**
  * Returns the data associated with the given node.
- * @param {!INode} node
- * @returns {!MetabolicNodeData}
  */
 export function getMetabolicData(node) {
   return node.tag
 }
-
+/**
+ * Returns the alignment of the given node.
+ */
+export function getAlignment(node) {
+  return getMetabolicData(node).vAlign
+}
+/**
+ * Returns whether the node belongs to a circle.
+ */
+export function isOnCircle(node) {
+  return getMetabolicData(node).circle ?? false
+}
 /**
  * A mapping between the string values of the node types in the data-set and the NodeTypes enum.
  */

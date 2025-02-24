@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,59 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Font, LabelStyleBase, Size, SvgVisual, TextRenderSupport } from 'yfiles'
-
+import { Font, LabelStyleBase, Size, SvgVisual, TextRenderSupport } from '@yfiles/yfiles'
 const font = new Font({
   fontFamily: 'Arial',
   fontSize: 12
 })
 const padding = 3
-
-/**
- * Augment the SvgVisual type with the data used to cache the rendering information
- */
-// the values we use to render the graphics
-/**
- * @typedef {Object} Cache
- * @property {number} width
- * @property {number} height
- * @property {string} text
- */
-
-// the type of visual we create and update in CustomLabelStyle
-/**
- * @typedef {TaggedSvgVisual.<SVGGElement,Cache>} CustomLabelStyleVisual
- */
-
 export class CustomLabelStyle extends LabelStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @returns {!CustomLabelStyleVisual}
-   */
   createVisual(context, label) {
     // create an SVG text element that displays the label text
     const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text')
-
     const labelSize = label.layout.toSize()
     TextRenderSupport.addText(textElement, label.text, font)
-
     textElement.setAttribute('transform', `translate(${padding} ${padding})`)
-
     // add a background shape
     const backgroundPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     backgroundPathElement.setAttribute('d', this.createBackgroundShapeData(labelSize))
     backgroundPathElement.setAttribute('stroke', '#aaa')
     backgroundPathElement.setAttribute('fill', '#fffecd')
-
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     gElement.appendChild(backgroundPathElement)
     gElement.appendChild(textElement)
-
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(gElement)
-
     const cache = {
       width: labelSize.width,
       height: labelSize.height,
@@ -86,19 +57,11 @@ export class CustomLabelStyle extends LabelStyleBase {
     }
     return SvgVisual.from(gElement, cache)
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!CustomLabelStyleVisual} oldVisual
-   * @param {!ILabel} label
-   * @returns {!CustomLabelStyleVisual}
-   */
   updateVisual(context, oldVisual, label) {
     const gElement = oldVisual.svgElement
     const labelSize = label.layout.toSize()
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
-
     // check if the label size or text has changed
     if (
       labelSize.width !== cache.width ||
@@ -114,35 +77,24 @@ export class CustomLabelStyle extends LabelStyleBase {
       if (textElement instanceof SVGTextElement) {
         TextRenderSupport.addText(textElement, label.text, font)
       }
-
       // update the cache with the new values
       cache.width = labelSize.width
       cache.height = labelSize.height
       cache.text = label.text
     }
-
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(gElement)
-
     return oldVisual
   }
-
-  /**
-   * @param {!ILabel} label
-   * @returns {!Size}
-   */
   getPreferredSize(label) {
     // measure the label text using the font
     const { width, height } = TextRenderSupport.measureText(label.text, font)
     // return the measured size plus a small padding
     return new Size(width + padding + padding, height + padding + padding)
   }
-
   /**
    * Creates a simple "speech balloon" shape.
-   * @param {!Size} labelSize
-   * @returns {!string}
    */
   createBackgroundShapeData(labelSize) {
     const { width: w, height: h } = labelSize

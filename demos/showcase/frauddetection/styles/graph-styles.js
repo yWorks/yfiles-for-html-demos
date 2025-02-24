@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,8 +27,7 @@
  **
  ***************************************************************************/
 // maps each node type with an object containing information about its style
-import { getConnectionData, isFraud } from '../entity-data.js'
-
+import { getConnectionData, isFraud } from '../entity-data'
 export const nodeStyleMapping = {
   'Account Holder': { image: 'resources/icons/person.svg', fill: '#242265', stroke: '#242265' },
   Address: { image: 'resources/icons/address.svg', fill: '#4281a4', stroke: '#4281a4' },
@@ -44,7 +43,6 @@ export const nodeStyleMapping = {
   Car: { image: 'resources/icons/car.svg', fill: '#c1c1c1', stroke: '#f0c808' },
   Accident: { image: 'resources/icons/accident.svg', fill: '#c1c1c1', stroke: '#db3a34' }
 }
-
 export const edgeStyleMapping = {
   witnesses: '#56926e',
   involves: '#db3a34',
@@ -54,11 +52,8 @@ export const edgeStyleMapping = {
   heals: '#4281a4',
   untyped: '#c1c1c1'
 }
-
 /**
  * Returns the color of the edge according to its type.
- * @param {!IEdge} edge
- * @returns {!string}
  */
 export function getStroke(edge) {
   const connectionData = getConnectionData(edge)

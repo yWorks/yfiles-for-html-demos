@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,29 +26,23 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, License, Size, TextWrapping } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { GraphComponent, License, Size, TextWrapping } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   enableGraphEditing,
   fitGraphBounds,
   initializeLabelModel,
   initializeTutorialDefaults
-} from '../common.js'
-import { CustomLabelStyle } from './CustomLabelStyle.js'
-
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from '../common'
+import { CustomLabelStyle } from './CustomLabelStyle'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 License.value = await fetchLicense()
-
 const graphComponent = new GraphComponent('#graphComponent')
-
 initializeTutorialDefaults(graphComponent)
 initializeLabelModel(graphComponent)
-
 const graph = graphComponent.graph
 graph.nodeDefaults.labels.style = new CustomLabelStyle()
 graph.edgeDefaults.labels.style = new CustomLabelStyle()
-
 graph.createNode({
   layout: [60, -125, 30, 30],
   labels: [
@@ -63,7 +57,7 @@ graph.createNode({
   labels: [
     {
       text: 'This label wraps at characters',
-      style: new CustomLabelStyle(TextWrapping.CHARACTER, new Size(80, 60))
+      style: new CustomLabelStyle(TextWrapping.WRAP_CHARACTER, new Size(80, 60))
     }
   ]
 })
@@ -72,7 +66,7 @@ graph.createNode({
   labels: [
     {
       text: 'This label wraps at words',
-      style: new CustomLabelStyle(TextWrapping.WORD, new Size(80, 60))
+      style: new CustomLabelStyle(TextWrapping.WRAP_WORD, new Size(80, 60))
     }
   ]
 })
@@ -81,7 +75,7 @@ graph.createNode({
   labels: [
     {
       text: 'Character wrapping with ellipsis. More text is cropped at some point.',
-      style: new CustomLabelStyle(TextWrapping.CHARACTER_ELLIPSIS, new Size(100, 60))
+      style: new CustomLabelStyle(TextWrapping.WRAP_CHARACTER_ELLIPSIS, new Size(100, 60))
     }
   ]
 })
@@ -90,13 +84,10 @@ graph.createNode({
   labels: [
     {
       text: 'Word wrapping with ellipsis. More text is cropped at some point.',
-      style: new CustomLabelStyle(TextWrapping.WORD_ELLIPSIS, new Size(100, 60))
+      style: new CustomLabelStyle(TextWrapping.WRAP_WORD_ELLIPSIS, new Size(100, 60))
     }
   ]
 })
-
 enableGraphEditing(graphComponent)
-
-fitGraphBounds(graphComponent)
-
+await fitGraphBounds(graphComponent)
 finishLoading()

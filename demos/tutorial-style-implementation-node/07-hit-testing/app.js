@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphItemTypes, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { GraphComponent, GraphItemTypes, License } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import {
   addHoverEffect,
   configureMinimumSize,
@@ -36,22 +36,16 @@ import {
   enableGraphEditing,
   fitGraphBounds,
   initializeTutorialDefaults
-} from '../common.js'
-import { CustomNodeStyle } from './CustomNodeStyle.js'
-import { CustomNodeStyle as OldCustomNodeStyle } from '../05-data-from-tag/CustomNodeStyle.js'
-
+} from '../common'
+import { CustomNodeStyle } from './CustomNodeStyle'
+import { CustomNodeStyle as OldCustomNodeStyle } from '../05-data-from-tag/CustomNodeStyle'
 License.value = await fetchLicense()
-
 const graphComponent = new GraphComponent('#graphComponent')
-
 initializeTutorialDefaults(graphComponent)
-
 createSampleGraphHitTesting(graphComponent.graph, new CustomNodeStyle(), new OldCustomNodeStyle())
-
 const graphEditorInputMode = enableGraphEditing(graphComponent)
 graphEditorInputMode.selectableItems = GraphItemTypes.NONE
 addHoverEffect(graphComponent, graphEditorInputMode)
 configureMinimumSize(graphComponent)
-
 fitGraphBounds(graphComponent)
 finishLoading()

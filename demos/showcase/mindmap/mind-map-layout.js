@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,141 +27,113 @@
  **
  ***************************************************************************/
 import {
-  DefaultTreeLayoutPortAssignment,
-  DelegatingNodePlacer,
-  FixNodeLayoutData,
-  FixNodeLayoutStage,
-  LayeredNodePlacer,
+  EdgePortCandidates,
+  LabelPlacementPolicy,
+  LayoutAnchoringPolicy,
+  LayoutAnchoringStage,
+  LayoutAnchoringStageData,
   LayoutExecutor,
+  LevelAlignedSubtreePlacer,
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
   Point,
-  PortConstraint,
-  PortSide,
-  RotatableNodePlacerMatrix,
-  SubgraphLayout,
-  SubgraphLayoutData,
+  PortSides,
+  SingleSplitSubtreePlacer,
+  SubgraphLayoutStage,
+  SubgraphLayoutStageData,
+  SubtreeTransform,
   TreeLayout,
   TreeLayoutData,
+  TreeLayoutPortAssigner,
   TreeLayoutPortAssignmentMode,
-  TreeReductionStage,
   TreeReductionStageData
-} from 'yfiles'
-import { isCrossReference, isLeft, isRoot } from './data-types.js'
-
-/**
- * A flag indicating whether a layout animation is currently in progress.
- * @type {boolean}
- */
+} from '@yfiles/yfiles'
+import { isCrossReference, isLeft, isRoot } from './data-types'
+/** A flag indicating whether a layout animation is currently in progress. */
 let inLayout = false
-
 /**
  * Returns a configured tree layout.
- * @returns {!TreeLayout}
  */
 function createLayout() {
   const treeLayout = new TreeLayout({
-    // use port constraints to keep the locations at the bottom of the node
-    defaultPortAssignment: new DefaultTreeLayoutPortAssignment(
-      TreeLayoutPortAssignmentMode.PORT_CONSTRAINT
-    )
+    // use port candidates to keep the locations at the bottom of the node
+    defaultPortAssigner: new TreeLayoutPortAssigner(TreeLayoutPortAssignmentMode.DISTRIBUTED)
   })
-
-  treeLayout.prependStage(new PlaceNodesAtBarycenterStage())
+  treeLayout.layoutStages.prepend(new PlaceNodesAtBarycenterStage())
   // a layout stage that keeps a certain node in place during layout
-  treeLayout.prependStage(new FixNodeLayoutStage())
-  treeLayout.prependStage(new TreeReductionStage())
-
+  treeLayout.layoutStages.prepend(new LayoutAnchoringStage())
   return treeLayout
 }
-
 /**
- * Returns a layout data which specifies the different node placers,
- * port constraints, and edge comparators.
- * @returns {!LayoutData}
+ * Returns a layout data which specifies the different subtree placers,
+ * port candidates, and edge comparators.
  */
 function createLayoutData() {
-  // create a node placer for a tree layout rotated to the left
-  const placerLeft = new LayeredNodePlacer({
-    modificationMatrix: RotatableNodePlacerMatrix.ROT270,
-    id: RotatableNodePlacerMatrix.ROT270,
-    routingStyle: 'orthogonal',
-    verticalAlignment: 0,
-    spacing: 10,
-    layerSpacing: 45
-  })
-
-  // create a node placer for a tree layout rotated to the right
-  const placerRight = new LayeredNodePlacer({
-    modificationMatrix: RotatableNodePlacerMatrix.ROT90,
-    id: RotatableNodePlacerMatrix.ROT90,
-    routingStyle: 'orthogonal',
-    verticalAlignment: 0,
-    spacing: 10,
-    layerSpacing: 45
-  })
-
-  // create a node placer that delegates some subtrees to the left and others to the right
-  const placerRoot = new DelegatingNodePlacer(
-    RotatableNodePlacerMatrix.DEFAULT,
-    placerLeft,
-    placerRight
-  )
-
-  return new TreeLayoutData({
-    // tells the DelegatingNodePlacer which side a node is on
-    delegatingNodePlacerPrimaryNodes: isLeft,
-    // tells the layout which node placer to use for a node
-    nodePlacers: (node) => {
-      if (isRoot(node)) {
-        return placerRoot
-      }
-      if (isLeft(node)) {
-        return placerLeft
-      }
-      return placerRight
+  // create a subtree placer for a tree layout rotated to the left
+  const placerLeft = new LevelAlignedSubtreePlacer(SubtreeTransform.ROTATE_RIGHT)
+  placerLeft.transformation = SubtreeTransform.ROTATE_RIGHT
+  placerLeft.edgeRoutingStyle = 'orthogonal'
+  placerLeft.verticalAlignment = 0
+  placerLeft.spacing = 10
+  placerLeft.layerSpacing = 45
+  // create a subtree placer for a tree layout rotated to the right
+  const placerRight = new LevelAlignedSubtreePlacer(SubtreeTransform.ROTATE_LEFT)
+  placerRight.transformation = SubtreeTransform.ROTATE_LEFT
+  placerRight.edgeRoutingStyle = 'orthogonal'
+  placerRight.verticalAlignment = 0
+  placerRight.spacing = 10
+  placerRight.layerSpacing = 45
+  // create a subtree placer that delegates some subtrees to the left and others to the right
+  const placerRoot = new SingleSplitSubtreePlacer(placerLeft, placerRight)
+  const treeLayoutData = new TreeLayoutData({
+    // tells the SingleSplitSubtreePlacer which side a node is on
+    singleSplitSubtreePlacerPrimaryNodes: isLeft,
+    // tells the layout which subtree placer to use for a node
+    subtreePlacers: (node) => (isRoot(node) ? placerRoot : isLeft(node) ? placerLeft : placerRight),
+    ports: {
+      // tells the layout which side to place a source port on
+      sourcePortCandidates: (edge) =>
+        new EdgePortCandidates().addFixedCandidate(
+          isLeft(edge.targetNode) ? PortSides.LEFT : PortSides.RIGHT
+        ),
+      // tells the layout which side to place a target port on
+      targetPortCandidates: (edge) =>
+        new EdgePortCandidates().addFixedCandidate(
+          isLeft(edge.targetNode) ? PortSides.RIGHT : PortSides.LEFT
+        )
     },
-    // tells the layout how to sort the children of specific nodes
-    outEdgeComparers: (_) => {
-      return (edge1, edge2) => {
-        if (edge1 === edge2) {
-          return 0
+    childOrder: {
+      // tells the layout how to sort the children of specific nodes
+      outEdgeComparators: (_) => {
+        return (edge1, edge2) => {
+          if (edge1 === edge2) {
+            return 0
+          }
+          const y1 = edge1.targetNode.layout.y
+          const y2 = edge2.targetNode.layout.y
+          if (isLeft(edge1.targetNode)) {
+            return y1 - y2
+          }
+          return y2 - y1
         }
-        const y1 = edge1.targetNode.layout.y
-        const y2 = edge2.targetNode.layout.y
-
-        if (isLeft(edge1.targetNode)) {
-          return y1 - y2
-        }
-        return y2 - y1
       }
-    },
-    // tells the layout which side to place a source port on
-    sourcePortConstraints: (edge) =>
-      PortConstraint.create(isLeft(edge.targetNode) ? PortSide.WEST : PortSide.EAST, true),
-    // tells the layout which side to place a target port on
-    targetPortConstraints: (edge) =>
-      PortConstraint.create(isLeft(edge.targetNode) ? PortSide.EAST : PortSide.WEST, true)
-    // a layout stage that hides cross-reference edges from the layout
-  }).combineWith(
+    }
+  })
+  return treeLayoutData.combineWith(
     new TreeReductionStageData({
       nonTreeEdges: isCrossReference
     })
   )
 }
-
 /**
  * Moves the source and target ports of the given edges to the bottom-left or
  * bottom-right corner of the node.
- * @param {!IGraph} graph
- * @param {!Array.<IEdge>} edges
  */
 export function adjustPortLocations(graph, edges) {
   for (const edge of edges) {
     if (!isCrossReference(edge)) {
       const sourceNode = edge.sourceNode
       const targetNode = edge.targetNode
-
       if (!isRoot(sourceNode)) {
         const sourceLayout = sourceNode.layout
         const sourceBottomLeft = new Point(-sourceLayout.width * 0.5, sourceLayout.height * 0.5)
@@ -174,7 +146,6 @@ export function adjustPortLocations(graph, edges) {
         // source is root node - set port to center
         graph.setRelativePortLocation(edge.sourcePort, Point.ORIGIN)
       }
-
       if (!isRoot(targetNode)) {
         const targetLayout = targetNode.layout
         const targetBottomLeft = new Point(-targetLayout.width * 0.5, targetLayout.height * 0.5)
@@ -187,41 +158,32 @@ export function adjustPortLocations(graph, edges) {
     }
   }
 }
-
 /**
  * Calculates a layout on a subtree that is specified by a given
  * root node.
- * @param {!IGraph} graph The input graph.
- * @param {!INode} subtreeRoot The root node of the subtree.
- * @param {!Array.<INode>} subtreeNodes Pre-calculated nodes belonging to the subtree
- * @param {!Array.<IEdge>} subtreeEdges Pre-calculated edges belonging to the subtree
+ * @param graph The input graph.
+ * @param subtreeNodes Pre-calculated nodes belonging to the subtree
+ * @param subtreeEdges Pre-calculated edges belonging to the subtree
  */
-export function layoutSubtree(graph, subtreeRoot, subtreeNodes, subtreeEdges) {
+export function layoutSubtree(graph, subtreeNodes, subtreeEdges) {
   const layout = createLayout()
   // fix node layout stage - mark subtree root node as fixed
+  const subtreeNodesSet = new Set(subtreeNodes)
+  const fixNodeLayoutData = new LayoutAnchoringStageData({
+    nodeAnchoringPolicies: (node) =>
+      subtreeNodesSet.has(node) ? LayoutAnchoringPolicy.CENTER : LayoutAnchoringPolicy.NONE
+  })
   const layoutData = createLayoutData()
-    .combineWith(
-      new FixNodeLayoutData({
-        fixedNodes: subtreeRoot
-      })
-    )
-    .combineWith(
-      new SubgraphLayoutData({
-        subgraphNodes: subtreeNodes
-      })
-    )
-
+    .combineWith(fixNodeLayoutData)
+    .combineWith(new SubgraphLayoutStageData({ subgraphNodes: subtreeNodes }))
   adjustPortLocations(graph, subtreeEdges)
-  graph.applyLayout(new SubgraphLayout(layout), layoutData)
+  graph.applyLayout(new SubgraphLayoutStage(layout), layoutData)
 }
-
 /**
  * Calculates an animated layout on the graph.
- * @param {!GraphComponent} graphComponent The given graphComponent.
- * @param {!Array.<INode>} incrementalNodes Nodes to add incrementally or null if the layout should be calculated from scratch
+ * @param graphComponent The given graphComponent.
+ * @param incrementalNodes Nodes to add incrementally or null if the layout should be calculated from scratch
  * @param collapse Whether nodes are hidden (true) or added
- * @param {boolean} [collapse=false]
- * @returns {!Promise}
  */
 export async function layoutTree(graphComponent, incrementalNodes = [], collapse = false) {
   // check a layout is currently in progress
@@ -231,10 +193,12 @@ export async function layoutTree(graphComponent, incrementalNodes = [], collapse
   const graph = graphComponent.graph
   adjustPortLocations(graph, graph.edges.toArray())
   inLayout = true
-
   const layout = createLayout()
-
-  let layoutData = createLayoutData().combineWith(new FixNodeLayoutData({ fixedNodes: isRoot }))
+  const fixNodeLayoutData = new LayoutAnchoringStageData({
+    nodeAnchoringPolicies: (node) =>
+      isRoot(node) ? LayoutAnchoringPolicy.CENTER : LayoutAnchoringPolicy.NONE
+  })
+  let layoutData = createLayoutData().combineWith(fixNodeLayoutData)
   if (incrementalNodes.length > 0) {
     if (!collapse) {
       // move the incremental nodes to the barycenter of their neighbors before layout to get a
@@ -250,14 +214,14 @@ export async function layoutTree(graphComponent, incrementalNodes = [], collapse
       )
     }
   }
-
   // execute an animated layout
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
     layout: layout,
     layoutData,
-    duration: '0.2s',
-    allowUserInteraction: false
+    animationDuration: '0.2s',
+    allowUserInteraction: false,
+    labelPlacementPolicies: LabelPlacementPolicy.KEEP_PARAMETER
   })
   try {
     await layoutExecutor.start()
@@ -265,11 +229,8 @@ export async function layoutTree(graphComponent, incrementalNodes = [], collapse
     inLayout = false
   }
 }
-
 /**
  * Moves incremental nodes between their neighbors before expanding for a smooth animation.
- * @param {!IGraph} graph
- * @param {!Array.<INode>} incrementalNodes
  */
 function prepareSmoothExpandLayoutAnimation(graph, incrementalNodes) {
   // mark the new nodes and place them between their neighbors
@@ -279,10 +240,8 @@ function prepareSmoothExpandLayoutAnimation(graph, incrementalNodes) {
   const layout = new PlaceNodesAtBarycenterStage()
   graph.applyLayout(layout, layoutData)
 }
-
 /**
  * Determines whether a layout is currently running.
- * @returns {boolean}
  */
 export function isInLayout() {
   return inLayout

@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Height Profile Demo
 
-# Height Profile Demo
+<img src="../../../doc/demo-thumbnails/height-profile.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/layout/height-profile/).
 
 This demo shows how to configure the [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) algorithm to create a height profile visualization.
 

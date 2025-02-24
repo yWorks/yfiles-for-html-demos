@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,7 +37,7 @@ export type SampleData = {
   edgeList: { source: number; target: number }[]
 }
 
-export const HierarchicSampleData: SampleData = {
+export const HierarchicalSampleData: SampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: { type: 2 } },
     { id: 1, layout: { width: 40, height: 40 }, tag: { type: 2 } },
@@ -779,7 +779,7 @@ export const CompactDiskSampleData: SampleData = {
   edgeList: []
 }
 
-export const BalloonSampleData: SampleData = {
+export const RadialTreeSampleData: SampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: null },
     { id: 1, layout: { width: 40, height: 40 }, tag: null },

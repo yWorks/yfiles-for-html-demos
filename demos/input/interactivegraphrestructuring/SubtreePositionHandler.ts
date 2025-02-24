@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,9 +38,10 @@ import {
   IPositionHandler,
   List,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import Subtree from './Subtree'
 import RelocateSubtreeLayoutHelper from './RelocateSubtreeLayoutHelper'
+import { EdgePositionHandler } from './EdgePositionHandler'
 
 /**
  * An {@link IPositionHandler} that moves a node and its subtree.
@@ -150,12 +151,13 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
    * @returns An {@link IPositionHandler} that moves the whole subtree
    */
   static createCompositeHandler(subtree: Subtree): IPositionHandler {
-    const positionHandlers = new List<IPositionHandler>()
+    const positionHandlers: IPositionHandler[] = []
     subtree.nodes.forEach((node: INode) => {
-      const positionHandler = node.lookup(IPositionHandler.$class)
+      const positionHandler = node.lookup(IPositionHandler)
       if (positionHandler) {
-        const subtreeHandler = positionHandler as SubtreePositionHandler
-        positionHandlers.add(
+        const subtreeHandler =
+          positionHandler instanceof SubtreePositionHandler ? positionHandler : null
+        positionHandlers.push(
           (subtreeHandler
             ? subtreeHandler.nodePositionHandler
             : positionHandler) as IPositionHandler
@@ -164,9 +166,9 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
     })
 
     subtree.edges.forEach((edge: IEdge) => {
-      const positionHandler = edge.lookup(IPositionHandler.$class)
+      const positionHandler = new EdgePositionHandler(edge)
       if (positionHandler) {
-        positionHandlers.add(positionHandler)
+        positionHandlers.push(positionHandler)
       }
     })
     return IPositionHandler.combine(positionHandlers)

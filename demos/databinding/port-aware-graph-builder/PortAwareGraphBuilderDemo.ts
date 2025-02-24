@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,23 +26,23 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { GraphBuilderItemEventArgs, INode } from 'yfiles'
 import {
   GraphBuilder,
+  type GraphBuilderItemEventArgs,
   GraphComponent,
   GraphViewerInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
+  type INode,
   LayoutExecutor,
-  LayoutOrientation,
-  License
-} from 'yfiles'
+  License,
+  PortPlacementPolicy
+} from '@yfiles/yfiles'
 
 import { createPortAwareGraphBuilder, setBuilderData } from './GraphBuilder'
 import GraphBuilderData from './graph-builder-data'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * This demo shows how to automatically build a graph from business data using
@@ -57,8 +57,6 @@ async function run(): Promise<void> {
 
   // Initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // We want to keep the unused ports
   graphComponent.graph.nodeDefaults.ports.autoCleanUp = false
 
@@ -74,7 +72,7 @@ async function run(): Promise<void> {
   builder.buildGraph()
 
   // Center the graph in the visible area
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   // Arrange the graph using a tree layout algorithm
   await arrangeGraph(graphComponent)
@@ -99,9 +97,9 @@ async function updateGraph(
 
   // determine which nodes were added while updating the graph
   const newNodes: INode[] = []
-  const nodeCreatedListener = (_: GraphBuilder, evt: GraphBuilderItemEventArgs<INode, any>) =>
+  const nodeCreatedListener = (evt: GraphBuilderItemEventArgs<INode, any>) =>
     newNodes.push(evt.item)
-  builder.addNodeCreatedListener(nodeCreatedListener)
+  builder.addEventListener('node-created', nodeCreatedListener)
 
   // update the graph according the new (but related) data
   // this will remove nodes whose IDs are not in the new data set
@@ -109,7 +107,7 @@ async function updateGraph(
   setBuilderData(nodesSource, edgesSource)
   builder.updateGraph()
 
-  builder.removeNodeCreatedListener(nodeCreatedListener)
+  builder.removeEventListener('node-created', nodeCreatedListener)
 
   // hide the new items (i.e. the new nodes, the edges connected to the new nodes, their labels
   // and their ports) during the animated layout calculation
@@ -131,9 +129,8 @@ async function updateGraph(
 function arrangeGraph(graphComponent: GraphComponent): Promise<void> {
   document.querySelector<HTMLButtonElement>('#update-builder')!.disabled = true
 
-  const algorithm = new HierarchicLayout({
-    layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
-    orthogonalRouting: true
+  const algorithm = new HierarchicalLayout({
+    layoutOrientation: 'left-to-right'
   })
 
   // arrange the graph with the chosen layout algorithm
@@ -141,9 +138,9 @@ function arrangeGraph(graphComponent: GraphComponent): Promise<void> {
     graphComponent: graphComponent,
     graph: graphComponent.graph,
     layout: algorithm,
-    fixPorts: true,
+    portPlacementPolicies: PortPlacementPolicy.KEEP_PARAMETER,
     animateViewport: true,
-    duration: '0.5s'
+    animationDuration: '0.5s'
   })
     .start()
     .finally(() => {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,17 +30,16 @@
 import React, { Component } from 'react'
 import {
   Arrow,
-  DefaultLabelStyle,
+  Command,
   Font,
   GraphComponent,
   GraphEditorInputMode,
-  ICommand,
+  LabelStyle,
   License,
   PolylineEdgeStyle,
-  ScrollBarVisibility,
   ShapeNodeStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import './ReactGraphComponent.css'
 import DemoToolbar from './DemoToolbar.jsx'
 import yFilesLicense from '../license.json'
@@ -53,15 +52,13 @@ export default class ReactGraphComponent extends Component {
 
     // Initialize the GraphComponent
     this.graphComponent = new GraphComponent()
-    this.graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
-    this.graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
     this.graphComponent.inputMode = new GraphEditorInputMode()
     this.initializeDefaultStyles()
   }
 
   async componentDidMount() {
     // Append the GraphComponent to the DOM
-    this.div.appendChild(this.graphComponent.div)
+    this.div.appendChild(this.graphComponent.htmlElement)
   }
 
   /**
@@ -74,7 +71,7 @@ export default class ReactGraphComponent extends Component {
       fill: '#FF6C00',
       stroke: `1.5px #662b00`
     })
-    this.graphComponent.graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+    this.graphComponent.graph.nodeDefaults.labels.style = new LabelStyle({
       textFill: '#fff',
       font: new Font('Robot, sans-serif', 14)
     })
@@ -83,8 +80,9 @@ export default class ReactGraphComponent extends Component {
       stroke: '4px #662b00',
       targetArrow: new Arrow({
         fill: '#662b00',
-        scale: 2,
-        type: 'circle'
+        lengthScale: 2,
+        widthScale: 2,
+        type: 'ellipse'
       })
     })
   }
@@ -95,10 +93,10 @@ export default class ReactGraphComponent extends Component {
         <div className="demo-main__toolbar">
           <DemoToolbar
             resetData={this.props.onResetData}
-            zoomIn={() => ICommand.INCREASE_ZOOM.execute(null, this.graphComponent)}
-            zoomOut={() => ICommand.DECREASE_ZOOM.execute(null, this.graphComponent)}
-            resetZoom={() => ICommand.ZOOM.execute(1.0, this.graphComponent)}
-            fitContent={() => ICommand.FIT_GRAPH_BOUNDS.execute(null, this.graphComponent)}
+            zoomIn={() => this.graphComponent.executeCommand(Command.INCREASE_ZOOM)}
+            zoomOut={() => this.graphComponent.executeCommand(Command.DECREASE_ZOOM)}
+            resetZoom={() => this.graphComponent.executeCommand(Command.ZOOM, 1)}
+            fitContent={() => this.graphComponent.fitGraphBounds()}
           />
         </div>
         <div

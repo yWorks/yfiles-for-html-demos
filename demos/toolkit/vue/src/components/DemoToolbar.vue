@@ -12,6 +12,8 @@
     <span class="demo-separator"></span>
     <button class="demo-icon-yIconLayout labeled" @click="$emit('layout')">Layout</button>
     <span class="demo-separator"></span>
+    <button class="labeled" @click="$emit('export-svg')">Export SVG</button>
+    <span class="demo-separator"></span>
     <input
       v-model.trim="searchString"
       class="search"
@@ -26,7 +28,7 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'DemoToolbar',
-  emits: ['reload-graph', 'toggle-editable', 'layout', 'search-query-change'],
+  emits: ['reload-graph', 'toggle-editable', 'layout', 'search-query-change', 'export-svg'],
   setup() {
     const searchString = ''
 

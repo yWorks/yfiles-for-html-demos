@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,9 +27,8 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  EdgePathLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
@@ -38,21 +37,17 @@ import {
   ILabel,
   INode,
   LayoutExecutor,
-  LayoutOrientation,
   License,
   OrganicLayout,
   PolylineEdgeStyle,
   ShapeNodeStyle,
-  Size,
-  SmartEdgeLabelModel
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 
 import ContextualToolbar from './ContextualToolbar'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
@@ -61,8 +56,9 @@ let contextualToolbar: ContextualToolbar
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   graphComponent.graph.undoEngineEnabled = true
+
+  initializeInputMode()
 
   // initialize the contextual toolbar
   contextualToolbar = new ContextualToolbar(
@@ -70,25 +66,24 @@ async function run(): Promise<void> {
     document.getElementById('contextualToolbar')!
   )
 
-  initializeInputMode()
   initializeDefaultStyles(graphComponent.graph)
 
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
     new OrganicLayout({
-      minimumNodeDistance: 50,
+      defaultMinimumNodeDistance: 50,
       automaticGroupNodeCompaction: true,
-      layoutOrientation: LayoutOrientation.BOTTOM_TO_TOP
+      layoutOrientation: 'bottom-to-top'
     })
   )
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
-  graphComponent.graph.undoEngineEnabled = true
+  graphComponent.graph.undoEngine?.clear()
 }
 
 /**
@@ -121,6 +116,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   graphBuilder.buildGraph()
 }
+
 /**
  * Initializes the default styles.
  */
@@ -131,18 +127,17 @@ function initializeDefaultStyles(graph: IGraph): void {
   })
   graph.nodeDefaults.size = new Size(45, 45)
   graph.nodeDefaults.shareStyleInstance = false
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter(ExteriorLabelModelPosition.NORTH)
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('top')
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: 'thick #333',
     targetArrow: '#333 large triangle'
   })
-  graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(
-    0,
-    5
-  )
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
+    distance: 5
+  }).createRatioParameter()
 }
 
 /**
@@ -152,31 +147,29 @@ function initializeInputMode(): void {
   const mode = new GraphEditorInputMode()
 
   // update the contextual toolbar when the selection changes ...
-  mode.addMultiSelectionFinishedListener((_, evt) => {
+  mode.addEventListener('multi-selection-finished', (evt) => {
     // this implementation of the contextual toolbar only supports nodes, edges and labels
     contextualToolbar.selectedItems = evt.selection
       .filter((item) => item instanceof INode || item instanceof ILabel || item instanceof IEdge)
       .toArray()
   })
-  // ... or when an item is right clicked
-  mode.addItemRightClickedListener((_, evt) => {
+  // ... or when an item is right-clicked
+  mode.addEventListener('item-right-clicked', (evt) => {
     // this implementation of the contextual toolbar only supports nodes, edges and labels
     graphComponent.selection.clear()
-    graphComponent.selection.setSelected(evt.item, true)
+    graphComponent.selection.add(evt.item)
     contextualToolbar.selectedItems = [evt.item]
   })
 
   graphComponent.inputMode = mode
 
   // if an item is deselected or deleted, we remove that element from the selectedItems
-  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
-    if (!evt.itemSelected) {
-      // remove the element from the selectedItems of the contextual toolbar
-      const idx = contextualToolbar.selectedItems.findIndex((item) => item === evt.item)
-      const newSelection = contextualToolbar.selectedItems.slice()
-      newSelection.splice(idx, 1)
-      contextualToolbar.selectedItems = newSelection
-    }
+  graphComponent.selection.addEventListener('item-removed', (evt) => {
+    // remove the element from the selectedItems of the contextual toolbar
+    const idx = contextualToolbar.selectedItems.findIndex((item) => item === evt.item)
+    const newSelection = contextualToolbar.selectedItems.slice()
+    newSelection.splice(idx, 1)
+    contextualToolbar.selectedItems = newSelection
   })
 }
 

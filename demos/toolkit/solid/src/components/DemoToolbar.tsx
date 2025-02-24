@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, ICommand } from 'yfiles'
+import { Command, GraphComponent } from '@yfiles/yfiles'
 import { onMount } from 'solid-js'
 
 type DemoToolbarProps = {
@@ -46,10 +46,10 @@ export const DemoToolbar = (props: DemoToolbarProps) => {
   onMount(() => {
     const graphComponent = props.graphComponent()
     commandCallbacks.resetData = () => props.resetGraph()
-    commandCallbacks.zoomIn = () => ICommand.INCREASE_ZOOM.execute(null, graphComponent)
-    commandCallbacks.zoomOut = () => ICommand.DECREASE_ZOOM.execute(null, graphComponent)
-    commandCallbacks.resetZoom = () => ICommand.ZOOM.execute(1.0, graphComponent)
-    commandCallbacks.fitContent = () => ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+    commandCallbacks.zoomIn = () => graphComponent.executeCommand(Command.INCREASE_ZOOM)
+    commandCallbacks.zoomOut = () => graphComponent.executeCommand(Command.DECREASE_ZOOM)
+    commandCallbacks.resetZoom = () => graphComponent.executeCommand(Command.ZOOM, 1.0)
+    commandCallbacks.fitContent = () => void graphComponent.fitGraphBounds()
   })
 
   return (

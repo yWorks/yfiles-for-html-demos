@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,68 +40,46 @@ import {
   NodeStyleBase,
   Point,
   Visual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * A very basic high-performance node style implementation that uses HTML5 Canvas rendering.
  */
 export class InteractiveOrganicFastNodeStyle extends NodeStyleBase {
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!INode} node
-   * @returns {!NodeRenderVisual}
-   */
   createVisual(renderContext, node) {
     return new NodeRenderVisual(node.layout)
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!Visual} oldVisual
-   * @param {!INode} node
-   * @returns {!Visual}
-   */
   updateVisual(renderContext, oldVisual, node) {
     return oldVisual
   }
 }
-
 /**
  * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeRenderVisual extends HtmlCanvasVisual {
+  layout
   /**
    * Creates a new instance of NodeRenderVisual.
-   * @param {!IRectangle} layout A live view of the layout of a node.
+   * @param layout A live view of the layout of a node.
    */
   constructor(layout) {
     super()
     this.layout = layout
   }
-
   /**
-   * Draw a rectangle with a solid orange fill.
+   * Draws a rectangle with a solid orange fill.
    * @see Overrides {@link HtmlCanvasVisual.paint}
-   * @param {!IRenderContext} renderContext
-   * @param {!CanvasRenderingContext2D} ctx
    */
-  paint(renderContext, ctx) {
+  render(renderContext, ctx) {
     ctx.fillStyle = '#FF6C00'
     const l = this.layout
     ctx.fillRect(l.x, l.y, l.width, l.height)
   }
 }
-
 /**
  * A very basic high-performance edge style that uses HTML 5 canvas rendering.
  * Arrows are not supported by this implementation.
  */
 export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!IEdge} edge
-   * @returns {!EdgeRenderVisual}
-   */
   createVisual(renderContext, edge) {
     return new EdgeRenderVisual(
       edge.bends,
@@ -109,19 +87,11 @@ export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
       edge.targetPort.dynamicLocation
     )
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} location
-   * @param {!IEdge} edge
-   * @returns {boolean}
-   */
   isHit(context, location, edge) {
     // we use a very simple hit logic here (the base implementation)
     if (!super.isHit(context, location, edge)) {
       return false
     }
-
     // but we exclude hits on the source and target node
     const s = edge.sourceNode
     const t = edge.targetNode
@@ -130,43 +100,27 @@ export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
       !t.style.renderer.getHitTestable(t, t.style).isHit(context, location)
     )
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!Visual} oldVisual
-   * @param {!IEdge} edge
-   * @returns {!Visual}
-   */
   updateVisual(renderContext, oldVisual, edge) {
     return oldVisual
   }
 }
-
 /**
  * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeRenderVisual extends HtmlCanvasVisual {
-  /**
-   * @param {!IListEnumerable.<IBend>} bends
-   * @param {!IPoint} sourcePortLocation
-   * @param {!IPoint} targetPortLocation
-   */
+  bends
+  sourcePortLocation
+  targetPortLocation
   constructor(bends, sourcePortLocation, targetPortLocation) {
     super()
-    this.targetPortLocation = targetPortLocation
-    this.sourcePortLocation = sourcePortLocation
     this.bends = bends
+    this.sourcePortLocation = sourcePortLocation
+    this.targetPortLocation = targetPortLocation
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!CanvasRenderingContext2D} ctx
-   */
-  paint(renderContext, ctx) {
+  render(renderContext, ctx) {
     // simply draw a blue line from the source port location via all bends to the target port location
     ctx.strokeStyle = '#662b00'
     ctx.lineWidth = 1.5
-
     ctx.beginPath()
     let location = this.sourcePortLocation
     ctx.moveTo(location.x, location.y)

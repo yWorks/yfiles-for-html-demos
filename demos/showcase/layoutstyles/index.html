@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Layout Styles Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -43,7 +43,6 @@
     <!-- load Angular for the settings panel of the layouts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.9/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.7.9/angular-sanitize.min.js"></script>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -82,8 +81,8 @@
         <h1>Layout Styles Demo</h1>
 
         <p>
-          This demo showcases the most used layout algorithms of yFiles, including hierarchic,
-          organic, orthogonal, tree, circular, balloon, and several edge routing styles.
+          This demo showcases the most used layout algorithms of yFiles, including hierarchical,
+          organic, orthogonal, tree, circular, radial tree, and several edge routing styles.
         </p>
 
         <p>
@@ -118,8 +117,16 @@
 
     <div class="demo-page__toolbar">
       <button data-command="NEW"></button>
-      <button data-command="OPEN"></button>
-      <button data-command="SAVE"></button>
+      <button
+        id="open-file-button"
+        title="Open a GraphML file"
+        class="demo-icon-yIconOpen labeled"
+      ></button>
+      <button
+        id="save-button"
+        title="Save a GraphML file"
+        class="demo-icon-yIconSave labeled"
+      ></button>
 
       <span class="demo-separator"></span>
 
@@ -284,7 +291,7 @@
             </script>
 
             <script type="text/ng-template" id="./templates/option-ui-revert.html">
-              <!--div data-option-ui-button data-click-callback="clickCallback()" data-icon="'undo'"></div-->
+              <div data-option-ui-button data-click-callback="clickCallback()" data-icon="'undo'"></div>
             </script>
 
             <script
@@ -457,7 +464,7 @@
               id="apply-layout-button"
               class="flat-button"
               title="Apply the Layout
-(CTRL + Enter)"
+(Ctrl + Enter)"
             >
               <span>Apply Layout</span>
             </button>

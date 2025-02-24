@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,27 +26,28 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { GraphBuilderItemEventArgs, INode } from 'yfiles'
 import {
-  DefaultNodePlacer,
+  type GraphBuilderItemEventArgs,
   GraphComponent,
   GraphViewerInputMode,
   IGraph,
+  type INode,
   InsideOutsidePortLabelModel,
   LayoutExecutor,
   License,
   PolylineEdgeStyle,
+  PortPlacementPolicy,
+  SingleLayerSubtreePlacer,
   Size,
   TreeBuilder,
   TreeLayout
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import { createPortAwareTreeBuilder, setBuilderData } from './TreeBuilder'
 import TreeData from './tree-builder-data'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * This demo shows how to automatically build a graph from business data using
@@ -61,7 +62,6 @@ async function run(): Promise<void> {
 
   // Initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   setGraphDefaults(graphComponent.graph)
 
   // Use the viewer input mode since this demo should not allow interactive graph editing
@@ -72,7 +72,7 @@ async function run(): Promise<void> {
   builder.buildGraph()
 
   // center graph in the visible area
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   // Arrange the graph using a tree layout algorithm
   await arrangeGraph(graphComponent)
@@ -93,9 +93,9 @@ async function updateGraph(graphComponent: GraphComponent, nodesSource: any[]): 
 
   // determine which nodes were added while updating the graph
   const newNodes: INode[] = []
-  const nodeCreatedListener = (_: TreeBuilder, evt: GraphBuilderItemEventArgs<INode, any>) =>
+  const nodeCreatedListener = (evt: GraphBuilderItemEventArgs<INode, any>) =>
     newNodes.push(evt.item)
-  builder.addNodeCreatedListener(nodeCreatedListener)
+  builder.addEventListener('node-created', nodeCreatedListener)
 
   // update the graph according the new (but related) data
   // this will remove nodes whose IDs are not in the new data set
@@ -103,7 +103,7 @@ async function updateGraph(graphComponent: GraphComponent, nodesSource: any[]): 
   setBuilderData(nodesSource)
   builder.updateGraph()
 
-  builder.removeNodeCreatedListener(nodeCreatedListener)
+  builder.removeEventListener('node-created', nodeCreatedListener)
 
   // hide the new items (i.e. the new nodes, the edges connected to the new nodes, their labels
   // and their ports) during the animated layout calculation
@@ -126,7 +126,7 @@ function arrangeGraph(graphComponent: GraphComponent): Promise<void> {
   document.querySelector<HTMLButtonElement>('#update-builder')!.disabled = true
 
   const algorithm = new TreeLayout({
-    defaultNodePlacer: new DefaultNodePlacer({
+    defaultSubtreePlacer: new SingleLayerSubtreePlacer({
       minimumFirstSegmentLength: 20,
       minimumLastSegmentLength: 20
     })
@@ -137,9 +137,9 @@ function arrangeGraph(graphComponent: GraphComponent): Promise<void> {
     graphComponent: graphComponent,
     graph: graphComponent.graph,
     layout: algorithm,
-    fixPorts: true,
+    portPlacementPolicies: PortPlacementPolicy.KEEP_PARAMETER,
     animateViewport: true,
-    duration: '0.5s'
+    animationDuration: '0.5s'
   })
     .start()
     .finally(() => {

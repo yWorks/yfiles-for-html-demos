@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HashMap, IEdge, IModelItem, INode, IPort, KeyScope, KeyType, List } from 'yfiles'
+import { HashMap, IEdge, IModelItem, INode, IPort, KeyScope, KeyType, List } from '@yfiles/yfiles'
 import { GraphMLProperty } from './GraphMLProperty'
 import PropertiesPanelUI from './PropertiesPanelUI'
 
@@ -248,7 +248,7 @@ export class PropertiesPanel {
    * Called when data has changed.
    * @param listener the listener which gets notified when something changed.
    */
-  addSomethingChangedListener(listener: () => void): void {
+  setSomethingChangedListener(listener: () => void): void {
     this.somethingChangedListener = listener
   }
 

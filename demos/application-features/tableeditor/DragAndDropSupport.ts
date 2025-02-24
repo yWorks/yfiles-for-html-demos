@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,14 +28,11 @@
  ***************************************************************************/
 import {
   DashStyle,
-  DefaultLabelStyle,
-  DragSource,
-  Fill,
   IGraph,
   INodeStyle,
   Insets,
-  IStripe,
   ITable,
+  LabelStyle,
   LineCap,
   NodeDropInputMode,
   NodeStyleStripeStyleAdapter,
@@ -43,15 +40,14 @@ import {
   ShapeNodeShape,
   ShapeNodeStyle,
   SimpleNode,
-  StripeDropInputMode,
+  StretchStripeLabelModel,
   Stroke,
-  Table,
-  VoidNodeStyle
-} from 'yfiles'
+  Table
+} from '@yfiles/yfiles'
 import { DemoStripeStyle, DemoTableStyle } from './TableStyles'
 
-import { DragAndDropPanel } from 'demo-utils/DragAndDropPanel'
-import { createDemoNodeStyle } from 'demo-resources/demo-styles'
+import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
+import { createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 
 /**
  * Configures drag and drop interaction that considers dropping nodes on table nodes.
@@ -62,12 +58,12 @@ export function configureDndInputMode(graph: IGraph): NodeDropInputMode {
     enabled: true,
     isGroupNodePredicate: (draggedNode) =>
       // tables and tagged nodes should be created as group nodes
-      draggedNode.lookup(ITable.$class) !== null || draggedNode.tag === 'GroupNode'
+      !!ITable.getTable(draggedNode) || draggedNode.tag === 'GroupNode'
   })
 
   nodeDropInputMode.isValidParentPredicate = (node) => {
     const draggedNode = nodeDropInputMode.lastDragEventArgs!.item.getData('yfiles.graph.INode')
-    if (draggedNode.lookup(ITable.$class) !== null && node !== null && graph.isGroupNode(node)) {
+    if (ITable.getTable(draggedNode) && node !== null && graph.isGroupNode(node)) {
       // this node has a table associated - disallow dragging into a group node.
       return false
     }
@@ -98,43 +94,42 @@ function createDndPanelNodes(): SimpleNode[] {
   const columnSampleTable = new Table()
 
   // configure the defaults for the row sample table
-  // we use a node control style and pass the style specific instance b a custom messenger object (e.g.
-  // stripeDescriptor)
   rowSampleTable.rowDefaults.style = new NodeStyleStripeStyleAdapter(new DemoStripeStyle())
 
   // create the sample row
   const rowSampleRow = rowSampleTable.createRow()
   // create an invisible sample column in this table so that we will see something.
-  const rowSampleColumn = rowSampleTable.createColumn(
-    160,
-    null,
-    null,
-    new NodeStyleStripeStyleAdapter(VoidNodeStyle.INSTANCE)
-  )
-  // the sample row uses empty insets
-  rowSampleTable.setStripeInsets(rowSampleColumn, Insets.EMPTY)
-  const rowLabel = rowSampleTable.addLabel(rowSampleRow, 'Row')
-  ;(rowLabel.style as DefaultLabelStyle).textFill = Fill.WHITE
+  const rowSampleColumn = rowSampleTable.createColumn({
+    width: 160,
+    style: new NodeStyleStripeStyleAdapter(INodeStyle.VOID_NODE_STYLE)
+  })
+  // the sample row uses empty padding
+  rowSampleTable.setStripePadding(rowSampleColumn, Insets.EMPTY)
+  const labelStyle = new LabelStyle({
+    textFill: 'white',
+    horizontalTextAlignment: 'center',
+    verticalTextAlignment: 'center'
+  })
+  rowSampleTable.addLabel({
+    owner: rowSampleRow,
+    text: 'Row',
+    style: labelStyle
+  })
 
-  const columnSampleRow = columnSampleTable.createRow(
-    160,
-    null,
-    null,
-    new NodeStyleStripeStyleAdapter(VoidNodeStyle.INSTANCE)
-  )
-  const columnSampleColumn = columnSampleTable.createColumn(
-    160,
-    null,
-    null,
-    new NodeStyleStripeStyleAdapter(new DemoStripeStyle())
-  )
-  columnSampleTable.setStripeInsets(columnSampleRow, Insets.EMPTY)
-  const columnLabel = columnSampleTable.addLabel(columnSampleColumn, 'Column')
-  ;(columnLabel.style as DefaultLabelStyle).textFill = Fill.WHITE
+  const columnSampleRow = columnSampleTable.createRow({
+    height: 160,
+    style: new NodeStyleStripeStyleAdapter(INodeStyle.VOID_NODE_STYLE)
+  })
+  const columnSampleColumn = columnSampleTable.createColumn({
+    width: 160,
+    style: new NodeStyleStripeStyleAdapter(new DemoStripeStyle())
+  })
+  columnSampleTable.setStripePadding(columnSampleRow, Insets.EMPTY)
+  columnSampleTable.addLabel(columnSampleColumn, 'Column', StretchStripeLabelModel.TOP, labelStyle)
 
   // table for a complete sample table node
   const sampleTable = new Table()
-  sampleTable.insets = Insets.EMPTY
+  sampleTable.padding = Insets.EMPTY
 
   // configure the defaults for the row sample table
   sampleTable.columnDefaults.minimumSize = sampleTable.rowDefaults.minimumSize = 50
@@ -142,17 +137,17 @@ function createDndPanelNodes(): SimpleNode[] {
   // setup defaults for the complete sample table
   // we use a custom style that alternates the stripe colors and uses a special style for all parent stripes.
   sampleTable.rowDefaults.style = new NodeStyleStripeStyleAdapter(new DemoStripeStyle())
-  ;(sampleTable.rowDefaults.labels.style as DefaultLabelStyle).textFill = Fill.WHITE
+  sampleTable.rowDefaults.labels.style = labelStyle
 
-  // the style for the columns is simpler, we use a node control style that only points the header insets.
+  // the style for the columns is simpler, we use a node control style that only points the header padding.
   sampleTable.columnDefaults.style = columnSampleTable.columnDefaults.style =
     new NodeStyleStripeStyleAdapter(new DemoStripeStyle())
-  ;(sampleTable.columnDefaults.labels.style as DefaultLabelStyle).textFill = Fill.WHITE
+  sampleTable.columnDefaults.labels.style = labelStyle
 
   // create a row and a column in the sample table
   sampleTable.createGrid(1, 1)
   // use twice the default width for this sample column (looks nicer in the preview...)
-  sampleTable.setSize(sampleTable.columns.first(), sampleTable.columns.first().actualSize * 2)
+  sampleTable.setSize(sampleTable.columns.first()!, sampleTable.columns.first()!.actualSize * 2)
   // bind the table to a dummy node which is used for drag & drop
   // binding the table is performed through a TableNodeStyle instance.
   // among other things, this also makes the table instance available in the node's lookup

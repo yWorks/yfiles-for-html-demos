@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,171 +27,131 @@
  **
  ***************************************************************************/
 /* eslint-disable */
-import {
-  Attribute,
-  Class,
-  Enum,
-  HashMap,
-  IComparer,
-  List,
-  PropertyInfo,
-  YBoolean,
-  yfiles,
-  YNumber,
-  YString
-} from 'yfiles'
+import { Class, Enum, HashMap, List, yfiles } from '@yfiles/yfiles'
 
 /**
  * An attribute that determines the OptionGroup the ui component belongs to.
  */
-export const OptionGroupAttribute = Attribute('OptionGroupAttribute', {
-  $extends: Attribute,
-
+export class OptionGroupAttribute {
   /**
    * Initialize the new OptionGroupAttribute.
    * @param {string} name Name of OptionGroup the ui component belongs to.
    * @param {number} position The ui component's display position in the OptionGroup.
    */
-  constructor: function (name, position) {
-    Attribute.call(this)
+  constructor(name, position) {
     this.name = name
     this.position = position
-  },
+  }
 
   /**
    * Name of OptionGroup the ui component belongs to.
    * @type {string}
    */
-  name: null,
+  name = null
 
   /**
    * The ui component's display position in the OptionGroup.
    * @type {number}
    */
-  position: 0
-})
+  position = 0
+}
 
-export const OptionGroup = Class('OptionGroup', {})
+export class OptionGroup {}
 
 /**
  * An attribute that determines the ui component's text label.
  */
-export const LabelAttribute = Attribute('LabelAttribute', {
-  $extends: Attribute,
-
+export class LabelAttribute {
   /**
    * Initialize the LabelAttribute.
    * @param {string} label The text of the generated label.
    * @param {string?} link The api link that is associated with this label.
    */
-  constructor: function (label, link) {
-    Attribute.call(this)
+  constructor(label, link = null) {
     this.label = label
     if (typeof link === 'string') {
       this.link = link
     }
-  },
+  }
 
   /**
    * The text of the generated label.
    * @type {string}
    */
-  label: null,
+  label = null
 
   /**
    * The external link of the generated label.
    */
-  link: null
-})
-
-/**
- * An attribute that determines the ui component's label link.
- */
-export const LinkAttribute = Attribute('LinkAttribute', {
-  $extends: Attribute,
-
-  /**
-   * Initialize the LinkAttribute.
-   * @param {string} link The link of the generated label.
-   */
-  constructor: function (link) {
-    Attribute.call(this)
-    this.link = link
-  },
-
-  /**
-   * The link of the generated label.
-   * @type {string}
-   */
-  link: null
-})
+  link = null
+}
 
 /**
  * An attribute that limits the ui component's value to the given range.
  */
-export const MinMaxAttribute = Attribute('MinMaxAttribute', {
-  $extends: Attribute,
-
+export class MinMaxAttribute {
   /**
    * Initialize the MinMaxAttribute.
+   *
+   * @param {Number} min
+   * @param {Number} max
+   * @param {Number} step
    */
-  constructor: function () {
-    Attribute.call(this)
-    this.min = Number.MIN_VALUE
-    this.max = Number.MAX_VALUE
-    this.step = 1
-  },
+  constructor(min, max, step = 1) {
+    this.min = min
+    this.max = max
+    this.step = step
+  }
 
   /**
    * The ui component's minimum valid value.
    * @type {number}
    */
-  min: 0,
+  min = Number.MIN_VALUE
 
   /**
    * The ui component's maximum valid value.
    * @type {number}
    */
-  max: 0,
+  max = Number.MAX_VALUE
 
   /**
    * The ui component's increment/decrement step (if supported).
    * @type {number}
    */
-  step: 0
-})
+  step = 1
+}
 
 /**
  * An attribute that determines fixed named values for the ui component.
  */
-export const EnumValuesAttribute = Attribute('EnumValuesAttribute', {
-  $extends: Attribute,
+export class EnumValuesAttribute {
+  constructor(values) {
+    this.values = values
+  }
 
   /** @type {Object[]} */
-  values: null
-})
+  values = null
+}
 
 /**
  * An attribute that determines the ui component's type.
  */
-export const TypeAttribute = Attribute('TypeAttribute', {
-  $extends: Attribute,
-
+export class TypeAttribute {
   /**
    * Initialize the TypeAttribute.
    * @param {Class} type The type of the attribute.
    */
-  constructor: function (type) {
-    Attribute.call(this)
+  constructor(type) {
     this.type = type
-  },
+  }
 
   /**
    * The text of the generated label.
    * @type {Class}
    */
-  type: null
-})
+  type = null
+}
 
 /**
  * ConfigConverter is used to convert an input configuration into a configuration object usable by
@@ -298,9 +258,9 @@ export const ConfigConverter = Class('ConfigConverter', {
     const config1 = new Object()
     this.writeLabel(type, config1)
 
-    this.toplevelItems.sort(new ConfigConverter.MemberComparer())
+    this.toplevelItems.sort(ConfigConverter.memberComparer)
     this.groupMapping.forEach(function (entry) {
-      entry.value.sort(new ConfigConverter.MemberComparer())
+      entry.value.sort(ConfigConverter.memberComparer)
     })
 
     this.writeMembers(config1, config)
@@ -370,11 +330,19 @@ export const ConfigConverter = Class('ConfigConverter', {
 
   getMemberInfos: function (type, isPublic) {
     const members = []
-    const allNames = Object.getOwnPropertyNames(type.Object.prototype)
+    const allNames = Object.getOwnPropertyNames(type.prototype)
     const scopedNames = allNames.filter(function (name) {
-      return isPublic ? name.indexOf('$') < 0 : name.indexOf('$') === 0
+      return (
+        name !== '_meta' &&
+        !name.startsWith('$$') &&
+        (isPublic ? name.indexOf('$') < 0 : name.indexOf('$') === 0)
+      )
     })
-
+    var newClassMeta = {}
+    const newClassMetaProperty = Object.getOwnPropertyDescriptor(type.prototype, '_meta')
+    if (newClassMetaProperty && newClassMetaProperty.value) {
+      newClassMeta = newClassMetaProperty.value
+    }
     scopedNames.forEach(function (name) {
       if (name === 'constructor') {
         return
@@ -383,22 +351,25 @@ export const ConfigConverter = Class('ConfigConverter', {
       let typeAttribute = null
 
       // get meta data attributes
-      const attributeContainer = type.$meta[name]
+      const attributeContainer = newClassMeta[name]
+      let attributeGetters = null
       if (typeOf(attributeContainer) === 'function') {
-        const attributeGetters = type.$meta[name]()
-        if (typeOf(attributeGetters) === 'array') {
-          attributeGetters.forEach(function (attributeGetter) {
-            const attr = attributeGetter()
-            if (attr instanceof TypeAttribute) {
-              typeAttribute = attr.type
-            }
-            attributes.push(attr)
-          })
-        }
+        attributeGetters = newClassMeta[name]()
+      } else if (typeOf(attributeContainer) === 'array') {
+        attributeGetters = attributeContainer
+      }
+      if (attributeGetters) {
+        attributeGetters.forEach(function (attributeGetter) {
+          const attr = attributeGetter
+          if (attr instanceof TypeAttribute) {
+            typeAttribute = attr.type
+          }
+          attributes.push(attr)
+        })
       }
 
       // determine type
-      const objectDescriptor = Object.getOwnPropertyDescriptor(type.Object.prototype, name)
+      const objectDescriptor = Object.getOwnPropertyDescriptor(type.prototype, name)
       let propertyMask = 0
       if (objectDescriptor.hasOwnProperty('get')) {
         // readable property
@@ -430,12 +401,10 @@ export const ConfigConverter = Class('ConfigConverter', {
       }
 
       // assign the type attribute if there is any
-      if (type !== null) {
-        if (propertyMask) {
-          member.propertyType = typeAttribute
-        } else if (isField) {
-          member.fieldType = typeAttribute
-        }
+      if (propertyMask) {
+        member.propertyType = typeAttribute
+      } else if (isField) {
+        member.fieldType = typeAttribute
       }
 
       members.push(member)
@@ -451,7 +420,7 @@ export const ConfigConverter = Class('ConfigConverter', {
     const allAttributes = member._attributes
     const typedAttributes = []
     allAttributes.forEach(function (attr) {
-      if (type.isInstance(attr)) {
+      if (attr instanceof type) {
         typedAttributes.push(attr)
       }
     })
@@ -541,7 +510,7 @@ export const ConfigConverter = Class('ConfigConverter', {
       }
     } else {
       this.toplevelItems.add(field)
-      if (field.fieldType === OptionGroup.$class) {
+      if (field.fieldType === OptionGroup) {
         this.groups.add(field)
       } else {
         this.toplevelMembers.add(field)
@@ -556,7 +525,6 @@ export const ConfigConverter = Class('ConfigConverter', {
    * {@link ConfigConverter#toplevelMembers}. If the property is a group (it is of type
    * OptionGroup), add it to the {@link ConfigConverter#groups}, otherwise add it to
    * {@link ConfigConverter#groupMembers}.
-   * @param {PropertyInfo} property The property to process.
    */
   collectProperty: function (property) {
     const group = this.getGroup(property)
@@ -574,7 +542,7 @@ export const ConfigConverter = Class('ConfigConverter', {
       }
     } else {
       this.toplevelItems.add(property)
-      if (property.propertyType === OptionGroup.$class) {
+      if (property.propertyType === OptionGroup) {
         this.groups.add(property)
       } else {
         this.toplevelMembers.add(property)
@@ -638,8 +606,10 @@ export const ConfigConverter = Class('ConfigConverter', {
     this.writeDefault(field, f, yFilesObj)
     this.writeComponent(field, field.fieldType, f)
     this.writeUtilityProperties(field, f, yFilesObj)
-    /* Object[] */ let arr
-    /* number */ let i
+    /* Object[] */
+    let arr
+    /* number */
+    let i
     for (i = 0, arr = field._attributes; i < arr.length; i++) {
       const attribute = arr[i]
       this.visitAttribute(attribute, f)
@@ -657,9 +627,6 @@ export const ConfigConverter = Class('ConfigConverter', {
    * - the component type
    * - the utility properties (condition to disable/hide the component)
    * - all custom attributes
-   * @param {PropertyInfo} property The property to visit.
-   * @param {Object} yFilesObj
-   * @returns {Object} a new JSObject containing all information collected for the property
    */
   visitProperty: function (property, yFilesObj) {
     const p = new Object()
@@ -753,11 +720,11 @@ export const ConfigConverter = Class('ConfigConverter', {
    */
   writeComponent: function (member, type, obj) {
     let /** string */ component
-    if (this.getCustomAttributesOfType(member, ComponentAttribute.$class).length > 0) {
-      const attr = this.getCustomAttributesOfType(member, ComponentAttribute.$class)[0]
+    if (this.getCustomAttributesOfType(member, ComponentAttribute).length > 0) {
+      const attr = this.getCustomAttributesOfType(member, ComponentAttribute)[0]
       component = this.getComponent(attr.value)
     } else {
-      if (this.getCustomAttributesOfType(member, EnumValuesAttribute.$class).length > 0) {
+      if (this.getCustomAttributesOfType(member, EnumValuesAttribute).length > 0) {
         // use combobox for members with EnumValues attribute
         component = 'combobox'
       } else {
@@ -773,7 +740,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {Object} obj The JSObject containing the extracted information.
    */
   writeLabel: function (member, obj) {
-    const attributes = this.getCustomAttributesOfType(member, LabelAttribute.$class)
+    const attributes = this.getCustomAttributesOfType(member, LabelAttribute)
     let /** string */ label
     let /** string */ link
     if (attributes.length > 0) {
@@ -800,10 +767,11 @@ export const ConfigConverter = Class('ConfigConverter', {
    */
   writeOptions: function (member, type, obj) {
     const options = new Array()
-    const attributes = this.getCustomAttributesOfType(member, EnumValuesAttribute.$class)
+    const attributes = this.getCustomAttributesOfType(member, EnumValuesAttribute)
     if (attributes.length > 0) {
       var values = attributes[0].values
-      /* number */ let i1
+      /* number */
+      let i1
       for (i1 = 0; i1 < values.length; i1++) {
         const value = values[i1]
         options.push(this.createOption(value[0], value[1]))
@@ -917,9 +885,9 @@ export const ConfigConverter = Class('ConfigConverter', {
    */
   isOptionGroup: function (groupMember) {
     if (isProperty(groupMember)) {
-      return groupMember.propertyType === OptionGroup.$class
+      return groupMember.propertyType === OptionGroup
     } else if (groupMember.isField) {
-      return groupMember.fieldType === OptionGroup.$class
+      return groupMember.fieldType === OptionGroup
     }
     return false
   },
@@ -928,11 +896,11 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @returns {string}
    */
   getTypeString: function (type) {
-    if (type === YNumber.$class) {
+    if (type === Number) {
       return 'number'
-    } else if (type === YString.$class) {
+    } else if (type === String) {
       return 'string'
-    } else if (type === YBoolean.$class) {
+    } else if (type === Boolean) {
       return 'bool'
     }
     return type.fullName
@@ -989,9 +957,9 @@ export const ConfigConverter = Class('ConfigConverter', {
   getDefaultComponent: function (type) {
     if (type.isEnum) {
       return 'combobox'
-    } else if (type === YBoolean.$class) {
+    } else if (type === Boolean) {
       return 'checkbox'
-    } else if (type === YNumber.$class) {
+    } else if (type === Number) {
       return 'spinner'
     }
     return 'text'
@@ -1010,12 +978,10 @@ export const ConfigConverter = Class('ConfigConverter', {
 
   $static: {
     /**
-     * IComparer that compares members position information contained in OptionGroupAttribute.
+     * Comparer that compares members position information contained in OptionGroupAttribute.
      */
-    MemberComparer: Class('MemberComparer', {
-      $with: [IComparer],
-
-      getCustomAttributesOfType: function (member, type) {
+    memberComparer: function (x, y) {
+      function getCustomAttributesOfType(member, type) {
         if (!member._attributes) {
           return []
         }
@@ -1023,33 +989,29 @@ export const ConfigConverter = Class('ConfigConverter', {
         const allAttributes = member._attributes
         const typedAttributes = []
         allAttributes.forEach(function (attr) {
-          if (type.isInstance(attr)) {
+          if (attr instanceof type) {
             typedAttributes.push(attr)
           }
         })
         return typedAttributes
-      },
-
-      /** @returns {number} */
-      compare: function (x, y) {
-        let posX = 0,
-          posY = 0
-        const attributesX = this.getCustomAttributesOfType(x, OptionGroupAttribute.$class)
-        if (attributesX.length > 0) {
-          posX = attributesX[0].position
-        }
-        const attributesY = this.getCustomAttributesOfType(y, OptionGroupAttribute.$class)
-        if (attributesY.length > 0) {
-          posY = attributesY[0].position
-        }
-        if (posX > posY) {
-          return 1
-        } else if (posX < posY) {
-          return -1
-        }
-        return 0
       }
-    })
+      let posX = 0,
+        posY = 0
+      const attributesX = getCustomAttributesOfType(x, OptionGroupAttribute)
+      if (attributesX.length > 0) {
+        posX = attributesX[0].position
+      }
+      const attributesY = getCustomAttributesOfType(y, OptionGroupAttribute)
+      if (attributesY.length > 0) {
+        posY = attributesY[0].position
+      }
+      if (posX > posY) {
+        return 1
+      } else if (posX < posY) {
+        return -1
+      }
+      return 0
+    }
   }
 })
 
@@ -1239,39 +1201,34 @@ export const OptionEditor = Class('OptionEditor', {
  * An attribute that determines the type of ui component that will be generated for the attributed
  * member.
  */
-export const ComponentAttribute = Attribute('ComponentAttribute', {
-  $extends: Attribute,
+export class ComponentAttribute {
+  get value() {
+    return this.$value
+  }
+
+  set value(value) {
+    this.$value = value
+  }
 
   /**
    * Initialize the ComponentAttribute.
    * @param {Components} value The type of ui component to be generated.
    */
-  constructor: function (value) {
-    Attribute.call(this)
+  constructor(value) {
     this.$initComponentAttribute()
     this.value = value
-  },
+  }
 
   /**
    * Backing field for below property
    * @type {Components}
    */
-  $value: null,
+  $value = null
 
-  /** @type {Components} */
-  value: {
-    get: function () {
-      return this.$value
-    },
-    set: function (value) {
-      this.$value = value
-    }
-  },
-
-  $initComponentAttribute: function () {
+  $initComponentAttribute() {
     this.$value = Components.SLIDER
   }
-})
+}
 
 /**
  * The ui components available in the generated UI.

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,35 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @typedef {Object} NodeData
- * @property {string} name
- * @property {string} ip
- * @property {('workstation'|'notebook'|'smartphone'|'switch'|'wlan'|'server'|'database')} type
- * @property {number} id
- */
-
-/**
- * @typedef {Object} NodeObject
- * @property {NodeData} data
- * @property {object} layout
- */
-
-/**
- * @typedef {Object} EdgeObject
- * @property {number} source
- * @property {number} target
- * @property {object} sourcePort
- * @property {object} targetPort
- */
-
-/**
- * @typedef {Object} NetworkSample
- * @property {Array.<NodeObject>} nodeList
- * @property {Array.<EdgeObject>} edgeList
- * @property {object} graphBounds
- */
-
 export const networkData = {
   nodeList: [
     {
@@ -3055,7 +3026,6 @@ export const networkData = {
     height: 2055.5790934536635
   }
 }
-
 export const deviceIcons = {
   database: `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MHB4IiBoZWlnaHQ9IjcwcHgiIHZpZXdCb3g9IjAgMCA3MCA3MCI+DQogIDxnIGlkPSJkaXNrXzMiPg0KICAgIDxwYXRoIGZpbGw9IiM2MWFjZTAiIGQ9Ik0zNSA0Ni4yYy0xMC44IDAtMTkuNi0xLjktMTkuNi00LjJ2MTBjMCAyLjMgOC44IDQuMiAxOS42IDQuMnMxOS42LTEuOSAxOS42LTQuMlY0MmMwIDIuMy04LjggNC4yLTE5LjYgNC4yeiIvPg0KICAgIDxwYXRoIGZpbGw9IiM5NmNkZWEiIGQ9Ik0zNSA0Ni4yYzEwLjggMCAxOS42LTEuOSAxOS42LTQuMmwtMS4yLTJjMCAyLjItOC4yIDMuOS0xOC40IDMuOS05LjUgMC0xNy40LTItMTguNC0zLjlsLTEuMiAyYzAgMi4zIDguOCA0LjIgMTkuNiA0LjJ6Ii8+DQogICAgPHBhdGggZmlsbD0iIzNjODljOSIgZD0iTTM1IDM1LjljMTAuMiAwIDE5LjYgMi44IDE5LjYgMi44LS40IDIuNy01LjQgNS40LTE5LjYgNS40LTEyLjEgMC0xOC41LTIuNS0xOS41LTQuOS0uMy0uNyA5LjMtMy4zIDE5LjUtMy4zeiIvPg0KICA8L2c+DQogIDxnIGlkPSJkaXNrXzIiPg0KICAgIDxwYXRoIGZpbGw9IiM2MWFjZTAiIGQ9Ik0zNSAzMi43Yy0xMC44IDAtMTkuNi0xLjktMTkuNi00LjJ2MTBjMCAyLjMgOC44IDQuMiAxOS42IDQuMnMxOS42LTEuOSAxOS42LTQuMnYtMTBjMCAyLjMtOC44IDQuMi0xOS42IDQuMnoiLz4NCiAgICA8cGF0aCBmaWxsPSIjOTZjZGVhIiBkPSJNMzUgMzIuN2MxMC44IDAgMTkuNi0xLjkgMTkuNi00LjJsLTEuMi0yYzAgMi4yLTguMiAzLjktMTguNCAzLjktOS41IDAtMTcuNC0yLTE4LjQtMy45bC0xLjIgMmMwIDIuMyA4LjggNC4yIDE5LjYgNC4yeiIvPg0KICAgIDxwYXRoIGZpbGw9IiMzYzg5YzkiIGQ9Ik0zNC45IDIyLjRjMTAuMiAwIDE5LjYgMi44IDE5LjYgMi44LS40IDIuNy01LjQgNS40LTE5LjYgNS40LTEyLjEgMC0xOC41LTIuNS0xOS41LTQuOS0uMy0uNiA5LjMtMy4zIDE5LjUtMy4zeiIvPg0KICA8L2c+DQogIDxnIGlkPSJkaXNrXzEiPg0KICAgIDxwYXRoIGZpbGw9IiM2MWFjZTAiIGQ9Ik0zNSAxOS41Yy0xMC44IDAtMTkuNi0xLjktMTkuNi00LjJ2MTBjMCAyLjMgOC44IDQuMiAxOS42IDQuMnMxOS42LTEuOSAxOS42LTQuMnYtMTBjMCAyLjMtOC44IDQuMi0xOS42IDQuMnoiLz4NCiAgICA8cGF0aCBmaWxsPSIjOTZjZGVhIiBkPSJNMzUgMTkuNWMxMC44IDAgMTkuNi0xLjkgMTkuNi00LjJsLTEuMi0yYzAgMi4yLTguMiAzLjktMTguNCAzLjktOS41IDAtMTcuNC0yLTE4LjQtMy45bC0xLjIgMmMwIDIuMyA4LjggNC4yIDE5LjYgNC4yeiIvPg0KICAgIDxlbGxpcHNlIGZpbGw9IiM2MWFjZTAiIGN4PSIzNSIgY3k9IjEzLjMiIHJ4PSIxOC40IiByeT0iMy45Ii8+DQogIDwvZz4NCjwvc3ZnPg0K`,
   notebook: `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MHB4IiBoZWlnaHQ9IjcwcHgiIHZpZXdCb3g9IjAgMCA3MCA3MCI+DQogIDxwYXRoIGQ9Ik0xMS44IDkuNWMwLTEgLjgtMS44IDEuOC0xLjhoNDMuM2MxIDAgMS44LjggMS44IDEuOHYyN2MwIDEtLjggMS44LTEuOCAxLjhIMTMuNmMtMSAwLTEuOC0uOC0xLjgtMS44di0yN3oiIGZpbGw9IiNhZmFmYWYiLz4NCiAgPHBhdGggZmlsbD0iIzZlNmU2ZSIgZD0iTTEyLjcgMTAuNGMwLTEgLjgtMS44IDEuOC0xLjhoNDEuNmMxIDAgMS44LjggMS44IDEuOHYyNC45YzAgMS0uOCAxLjgtMS44IDEuOEgxNC41Yy0xIDAtMS44LS44LTEuOC0xLjhWMTAuNHoiLz4NCiAgPHBhdGggZD0iTTEzLjMgMTAuOGMwLTEgLjgtMS44IDEuOC0xLjhoNDAuNmMxIDAgMS44LjggMS44IDEuOHYyNC4xYzAgMS0uOCAxLjgtMS44IDEuOEgxNWMtMSAwLTEuOC0uOC0xLjgtMS44VjEwLjh6IiBmaWxsPSIjNWRhY2UyIi8+DQogIDxwYXRoIGQ9Ik01OS45IDM5LjhjLS43LS45LTIuMi0xLjYtMy4zLTEuNmgtNDNjLTEuMSAwLTIuNi43LTMuMiAxLjZsLTcuNSA5LjdjLTEuMiAxLjYtMS4yIDEuOC0xLjIgMi42di4xYy4xLjQuMyAxIDEuMiAxaDY0LjhjLjggMCAxLjUtLjMgMS41LTF2LS4xYzAtLjggMC0uOC0xLjMtMi42bC04LTkuN3oiIGZpbGw9IiNjNmM2YzYiLz4NCiAgPHBhdGggZmlsbD0iIzZlNmU2ZSIgZD0iTTYxLjMgNDQuOGMuMy40LjIuOC0uNC44SDkuOGMtLjYgMC0uNy0uNC0uNC0uOGwyLjgtNGMuMy0uNSAxLS44IDEuNi0uOGg0Mi43Yy42IDAgMS4zLjQgMS42LjhsMy4yIDR6TTQyIDQ5LjVjLjEuMi0uMS40LS4zLjRIMjguM2MtLjIgMC0uNC0uMi0uMy0uNGwuOC0yLjhjLjEtLjIuMy0uNC41LS40aDExLjJjLjIgMCAuNS4yLjUuNGwxIDIuOHoiLz4NCjwvc3ZnPg0K`,

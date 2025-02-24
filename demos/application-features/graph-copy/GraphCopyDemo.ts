@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,35 +27,33 @@
  **
  ***************************************************************************/
 import {
-  Class,
+  Command,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphCopier,
   GraphEditorInputMode,
   GraphViewerInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   IBend,
-  ICommand,
   IEdge,
   type IGraph,
   ILabel,
   type IModelItem,
   INode,
   IPort,
-  Key,
   LayoutExecutor,
   License,
   ModifierKeys,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { bindYFilesCommand, finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { bindYFilesCommand, finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let originalGraphComponent: GraphComponent
@@ -70,12 +68,7 @@ async function run(): Promise<void> {
 
   originalGraphComponent = new GraphComponent('#graphComponent')
   copyGraphComponent = new GraphComponent('#copyGraphComponent')
-  applyDemoTheme(originalGraphComponent)
-  applyDemoTheme(copyGraphComponent)
-
-  originalGraphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  originalGraphComponent.inputMode = new GraphEditorInputMode()
   copyGraphComponent.inputMode = new GraphViewerInputMode()
 
   // configures default styles for newly created original graph and the copy graph elements
@@ -85,12 +78,10 @@ async function run(): Promise<void> {
   // then build the graph from the given data set
   buildGraph(originalGraphComponent.graph, graphData)
 
-  Class.ensure(LayoutExecutor)
-  originalGraphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
+  LayoutExecutor.ensure()
+  originalGraphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
 
-  originalGraphComponent.fitGraphBounds()
+  await originalGraphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   originalGraphComponent.graph.undoEngineEnabled = true
@@ -140,31 +131,26 @@ function canCopyGraph(): boolean {
 function copyGraph(): boolean {
   const graphCopier = new GraphCopier()
   copyGraphComponent.graph.clear()
+
   graphCopier.copy(
     originalGraphComponent.graph,
+    copyGraphComponent.graph,
     (item: IModelItem): boolean => {
       const selection = originalGraphComponent.selection
-      if (INode.isInstance(item)) {
-        // copy selected node
-        return selection.isSelected(item)
-      } else if (IEdge.isInstance(item)) {
-        // copy selected edge when its source and target is also selected
-        // because an edge cannot exist without its incident nodes
-        return (
-          selection.isSelected(item) &&
-          selection.isSelected(item.sourceNode!) &&
-          selection.isSelected(item.targetNode!)
-        )
-      } else if (IPort.isInstance(item) || IBend.isInstance(item) || ILabel.isInstance(item)) {
+      if (item instanceof INode || item instanceof IEdge) {
+        // copy selected node or edge
+        // note that only edges for which both source and edge are actually in the graph
+        // are ultimately copied by the copier
+        return selection.includes(item)
+      } else if (item instanceof IPort || item instanceof IBend || item instanceof ILabel) {
         // ports, bends, and labels are copied if they belong to a selected item
         // note that edges are not copied if their ports are not copied also
-        return selection.isSelected(item.owner!)
+        return selection.includes(item.owner!)
       }
       return false
-    },
-    copyGraphComponent.graph
+    }
   )
-  copyGraphComponent.fitGraphBounds()
+  void copyGraphComponent.fitGraphBounds()
   return true
 }
 
@@ -180,9 +166,9 @@ function initializeGraph(graph: IGraph): void {
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
 
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
@@ -194,7 +180,7 @@ function initializeGraph(graph: IGraph): void {
  */
 function clearGraph(graphComponent: GraphComponent): void {
   graphComponent.graph.clear()
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
 
 /**
@@ -204,12 +190,14 @@ function initializeUI(): void {
   document
     .querySelector('#new-in-original')!
     .addEventListener('click', () => clearGraph(originalGraphComponent))
+  const geim = originalGraphComponent.inputMode as GraphEditorInputMode
+  // disable edit on typing not to interfere with our key-binding
+  geim.allowEditLabelOnTyping = false
 
-  const copy = ICommand.createCommand()
-  const kim = (originalGraphComponent.inputMode as GraphEditorInputMode).keyboardInputMode
-  kim.addCommandBinding(copy, copyGraph, canCopyGraph)
-  kim.addKeyBinding(Key.C, ModifierKeys.NONE, copy)
-  bindYFilesCommand('#copy', copy, originalGraphComponent, null, 'Copy')
+  const kim = geim.keyboardInputMode
+  kim.addCommandBinding(Command.COPY, copyGraph, canCopyGraph)
+  kim.addKeyBinding('c', ModifierKeys.NONE, copyGraph)
+  document.querySelector('#copy')!.addEventListener('click', () => copyGraph())
 
   document
     .querySelector('#new-in-copy')!
@@ -217,18 +205,15 @@ function initializeUI(): void {
 
   bindYFilesCommand(
     '#reset-zoom-in-copy',
-    ICommand.ZOOM,
+    Command.ZOOM,
     copyGraphComponent,
     1.0,
     'Zoom to original size'
   )
-  bindYFilesCommand(
-    '#fit-graph-bounds-in-copy',
-    ICommand.FIT_GRAPH_BOUNDS,
-    copyGraphComponent,
-    null,
-    'Fit content'
-  )
+
+  document
+    .querySelector('#fit-graph-bounds-in-copy')!
+    .addEventListener('click', () => copyGraphComponent.fitGraphBounds())
 }
 
 void run().then(finishLoading)

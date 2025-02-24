@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,9 +29,11 @@
 /**
  * Non-UI model classes for the tree builder demo
  */
-
-import { StringTemplateNodeStyle, TreeBuilder, TreeNodesSource } from 'yfiles'
-
+import { TreeBuilder, TreeNodesSource } from '@yfiles/yfiles'
+import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
+// @ts-ignore Import via URL
+// eslint-disable-next-line import/no-unresolved
+import { nothing, svg } from 'https://unpkg.com/lit-html@2.8.0?module'
 /**
  * Defines a tree node source consisting of data and bindings
  */
@@ -40,7 +42,6 @@ export class TreeNodesSourceDefinition {
   data
   idBinding
   template
-
   constructor() {
     this.name = ''
     this.data = ''
@@ -48,7 +49,6 @@ export class TreeNodesSourceDefinition {
     this.template = ''
   }
 }
-
 /**
  * Connector for {@link TreeNodesSource}s, {@link TreeNodesSourceDefinition}s and {@link TreeBuilder}
  */
@@ -56,18 +56,16 @@ export class TreeNodesSourceDefinitionBuilderConnector {
   sourceDefinition
   nodesSource
   graphBuilder
-
   /**
-   * @param {!TreeNodesSourceDefinition} nodesSourceDefinition the {@link TreeNodesSourceDefinition} to connect
-   * @param {!TreeNodesSource} nodesSource the {@link TreeNodesSource} to connect
-   * @param {!TreeBuilder} graphBuilder the {@link TreeBuilder} to set the updated data to
+   * @param nodesSourceDefinition the {@link TreeNodesSourceDefinition} to connect
+   * @param nodesSource the {@link TreeNodesSource} to connect
+   * @param graphBuilder the {@link TreeBuilder} to set the updated data to
    */
   constructor(nodesSourceDefinition, nodesSource, graphBuilder) {
     this.sourceDefinition = nodesSourceDefinition
     this.nodesSource = nodesSource
     this.graphBuilder = graphBuilder
   }
-
   /**
    * Updates/sets the sources' bindings and new data content
    */
@@ -78,34 +76,38 @@ export class TreeNodesSourceDefinitionBuilderConnector {
       this.nodesSource.idProvider = null
     }
     try {
-      this.nodesSource.nodeCreator.defaults.style = new StringTemplateNodeStyle(
-        this.sourceDefinition.template
+      this.nodesSource.nodeCreator.defaults.style = new LitNodeStyle(
+        this.createRenderFunction(this.sourceDefinition.template)
       )
     } catch (e) {
       throw new Error(`Evaluating the template failed: ${e}`)
     }
     this.graphBuilder.setData(this.nodesSource, parseData(this.sourceDefinition.data))
   }
-
+  createRenderFunction(template) {
+    return new Function(
+      'const svg = arguments[0]; const nothing = arguments[1]; const renderFunction = ' +
+        '({layout, tag}) => svg`\n' +
+        template +
+        '`' +
+        '\n return renderFunction'
+    )(svg, nothing)
+  }
   reset() {
     this.sourceDefinition.data = ''
     this.applyDefinition()
   }
 }
-
 /**
  * flag to prevent error messages from being repeatedly displayed for each graph item
- * @type {boolean}
  */
 let bindingErrorCaught = false
-
 /**
  * Returns a binding for the given string.
  * If the parameter is a function definition, a function object is
  * returned. Otherwise, a binding is created using the parameter as the
  * property path.
- * @returns {!function} The source or target binding
- * @param {!string} bindingString
+ * @returns The source or target binding
  */
 export function createBinding(bindingString) {
   if (bindingString.indexOf('function') >= 0 || bindingString.indexOf('=>') >= 0) {
@@ -115,6 +117,7 @@ export function createBinding(bindingString) {
       const func = new Function(`return (${bindingString})`)()
       // wrap the binding function with a function that catches and reports errors
       // that occur in the binding functions
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (dataItem) => {
         try {
           // eslint-disable-next-line no-useless-call
@@ -129,17 +132,17 @@ export function createBinding(bindingString) {
         }
       }
     } catch (ignored) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (dataItem) => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
     }
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (dataItem) => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
 }
-
 /**
  * Parses the string entered by the user and returns the parsed object
  * @param data the data entered by the user
- * @returns {!Array.<*>} the parsed data
- * @param {!string} [data]
+ * @returns the parsed data
  */
 export function parseData(data) {
   try {

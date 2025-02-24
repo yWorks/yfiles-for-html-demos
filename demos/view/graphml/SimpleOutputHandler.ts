@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph, IModelItem, IWriteContext, KeyType, OutputHandlerBase, YObject } from 'yfiles'
+import { IGraph, IModelItem, IWriteContext, KeyType, OutputHandlerBase } from '@yfiles/yfiles'
 import type { GraphMLProperty } from './GraphMLProperty'
 import type { PropertiesPanel } from './PropertiesPanel'
 
@@ -38,7 +38,7 @@ export class SimpleOutputHandler extends OutputHandlerBase<any, any> {
     private property: GraphMLProperty,
     private propertiesPanel: PropertiesPanel
   ) {
-    super(YObject.$class, YObject.$class, property.keyScope, property.name, property.type)
+    super(Object, Object, property.keyScope, property.name, property.type)
     this.defaultExists = property.defaultExists
     if (property.defaultExists) {
       this.defaultValue = property.defaultValue

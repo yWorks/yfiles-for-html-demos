@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 09 Data Binding - Tutorial: Basic Features
 
-# Binding Data to Graph Elements
+<img src="../../../doc/demo-thumbnails/tutorial-basic-features-data-binding.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/09-data-binding/).
 
 ## How to bind arbitrary data to elements.
 
@@ -30,7 +32,7 @@ graph.createNode({ layout: new Rect(0, 80, 30, 30), tag: new Date() })
 To dynamically update/store the creation date in the tag, we add a node creation listener to the graph. The listener adds the tag if no tag has been specified at creation time.
 
 ```
-graph.addNodeCreatedListener((_, evt): void => {
+graph.addEventListener('node-created', (evt): void => {
   // Store the current time as node creation time
   const node = evt.item
   // if there is no tag associated with the node, already, add one
@@ -45,7 +47,7 @@ It is rather uncommon to modify data whenever an item gets created in response t
 Instead, likely you want to store the tag with the element when the user creates the item. If we only want to handle events caused by interactive node creation, we could register to the node creation event of the input mode.
 
 ```
-graphEditorInputMode.addNodeCreatedListener((_, evt): void => {
+graphEditorInputMode.addEventListener('node-created', (evt): void => {
   // Store the current time as node creation time
   const node = evt.item
   node.tag = new Date()
@@ -58,11 +60,18 @@ E.g., now we can get the data from the tag to display in the tooltip. In the eve
 
 ```
 // Set the tooltip content
-evt.toolTip = node.tag ? node.tag.toLocaleString() : 'Not set'
+evt.toolTip =
+  'Created: ' +
+  (node.tag instanceof Date
+    ? new Intl.RelativeTimeFormat().format(
+        node.tag.getTime() - new Date().getTime(),
+        'seconds'
+      )
+    : 'Who knows?')
 ```
 
 Note
 
-Since this demo focuses on storing the data, the tooltip and context menu code is not explained in detail. See the [Tooltips Demo](../../application-features/tooltips/) and the [Context Menu Demo](../../input/contextmenu/) for more information.
+Since this demo focuses on storing the data, the tooltip and context menu code is not explained in detail. See the application-features-tooltips and the [Context Menu Demo](../../input/contextmenu/) for more information.
 
 [10 Layout](../../tutorial-yfiles-basic-features/10-layout/)

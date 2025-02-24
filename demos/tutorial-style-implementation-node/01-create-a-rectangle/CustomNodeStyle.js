@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,17 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { NodeStyleBase, SvgVisual } from 'yfiles'
-
+import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 /**
  * A basic node style that renders a rectangle.
  */
 export class CustomNodeStyle extends NodeStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {?Visual}
-   */
   createVisual(context, node) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     const { x, y, width, height } = node.layout
@@ -44,21 +38,15 @@ export class CustomNodeStyle extends NodeStyleBase {
     rect.setAttribute('y', String(y))
     rect.setAttribute('width', String(width))
     rect.setAttribute('height', String(height))
-    rect.setAttribute('fill', 'red')
+    rect.setAttribute('fill', '#0b7189')
     rect.setAttribute('stroke', '#042d37')
     return new SvgVisual(rect)
   }
 }
-
 /**
  * A second basic node style that uses the baseVal attribute instead of setAttribute.
  */
 class CustomNodeStyle2 extends NodeStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {?Visual}
-   */
   createVisual(context, node) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     const { x, y, width, height } = node.layout

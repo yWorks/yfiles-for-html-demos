@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,24 +27,25 @@
  **
  ***************************************************************************/
 import {
+  EdgeLabelPreferredPlacement,
   GraphComponent,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   IEdge,
   IGraph,
   INode,
-  LabelPlacements,
-  PortCalculator,
-  PreferredPlacementDescriptor,
+  LabelAlongEdgePlacements,
+  LabelEdgeSides,
+  PortAdjustmentPolicy,
   RankAssignment,
   ShortestPath
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Calculates the critical path in this graph network. We run first the rank assignment algorithm and we
  * assign to each node a number that represents its rank and to each edge a number that represents its slack.
  * The slack is the amount of time by which a task can be delayed without delaying the completion time of the project.
- * Afterwards, we find the nodes with the smallest/highest ranking and we calculate the shortest path between
+ * Afterward, we find the nodes with the smallest/highest ranking and we calculate the shortest path between
  * them for which we take into consideration the slack values of each edge.
  * @param graphComponent The input graphComponent
  */
@@ -86,13 +87,11 @@ export function calculateCriticalPathEdges(graphComponent: GraphComponent) {
  * Returns the nodes with the lowest and highest ranking
  * @param graph The input graph
  */
-export function findHighestLowestNodes(graph: IGraph) {
-  const order = graph.nodes.orderBy(
-    (node) => node.tag.layerId || 0,
-    (a, b) => Math.sign(Number(a) - Number(b))
-  )
-  const lowestNode = order.first()
-  const highestNode = order.last()
+export function findHighestLowestNodes(graph: IGraph): { highestNode: INode; lowestNode: INode } {
+  const getLayerId = (node: INode) => Number(node.tag.layerId ?? 0)
+  const order = graph.nodes.toSorted((a, b) => Math.sign(getLayerId(a) - getLayerId(b)))
+  const lowestNode = order.first()!
+  const highestNode = order.last()!
   lowestNode.tag.lowestNode = true
   highestNode.tag.highestNode = true
   return { lowestNode, highestNode }
@@ -112,12 +111,12 @@ function calculateRanksAndSlacks(
   // for each edge the min distance is the time needed for the task of each source node to be completed
   // plus the time needed to move from the source task to the target task
   const minDistance = (edge: IEdge) => {
-    return transitionDuration(edge) + taskDuration(edge.sourceNode!)
+    return transitionDuration(edge) + taskDuration(edge.sourceNode)
   }
 
   // run the rank assignment algorithm
   const rankAssignmentResult = new RankAssignment({
-    minimumEdgeLengths: (edge) => transitionDuration(edge) + taskDuration(edge.sourceNode!)
+    minimumEdgeLengths: (edge) => transitionDuration(edge) + taskDuration(edge.sourceNode)
   }).run(graph)
 
   // store the ranking of each node at its tag
@@ -133,37 +132,38 @@ function calculateRanksAndSlacks(
 }
 
 /**
- * Configures the HierarchicLayout algorithm. Nodes will be placed in layers based on their ranks,
+ * Configures the HierarchicalLayout algorithm. Nodes will be placed in layers based on their ranks,
  * while edges that belong to the critical path will gain priority so that the corresponding nodes
  * incident to them are aligned.
  * @param graphComponent The given graphComponent
  */
 export async function runLayout(graphComponent: GraphComponent): Promise<void> {
   // the layering is calculated based on the result of the rank assignment
-  const layout = new HierarchicLayout({
+  const layout = new HierarchicalLayout({
     fromScratchLayeringStrategy: 'user-defined',
-    layoutOrientation: 'left-to-right',
-    integratedEdgeLabeling: true,
-    considerNodeLabels: true,
-    orthogonalRouting: true
+    layoutOrientation: 'left-to-right'
   })
 
-  const layoutData = new HierarchicLayoutData({
+  const layoutData = new HierarchicalLayoutData({
     // the information about the layering is stored in the node tags
-    givenLayersLayererIds: (node) => node.tag.layerId,
+    givenLayersIndices: (node) => node.tag.layerId,
     // edges that belong to the critical path have priority
     criticalEdgePriorities: (edge) => (edge.tag.critical ? 1 : 0),
     // configure the edge placement
-    edgeLabelPreferredPlacement: () => {
-      const preferredPlacementDescriptor = new PreferredPlacementDescriptor()
-      preferredPlacementDescriptor.sideOfEdge = LabelPlacements.LEFT_OF_EDGE
-      preferredPlacementDescriptor.placeAlongEdge = LabelPlacements.AT_TARGET
-      preferredPlacementDescriptor.distanceToEdge = 5
-      return preferredPlacementDescriptor
-    }
+    edgeLabelPreferredPlacements: () =>
+      new EdgeLabelPreferredPlacement({
+        edgeSide: LabelEdgeSides.LEFT_OF_EDGE,
+        placementAlongEdge: LabelAlongEdgePlacements.AT_TARGET,
+        distanceToEdge: 5
+      })
   })
 
   // run the layout
-  await graphComponent.morphLayout(new PortCalculator(layout), '0.5s', layoutData)
-  graphComponent.fitGraphBounds()
+  await graphComponent.applyLayoutAnimated({
+    layout,
+    layoutData,
+    animationDuration: '0.5s',
+    portAdjustmentPolicies: PortAdjustmentPolicy.ALWAYS
+  })
+  await graphComponent.fitGraphBounds()
 }

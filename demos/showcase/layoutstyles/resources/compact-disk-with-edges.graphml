@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle2="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle2="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="int" attr.name="zOrder" y:attr.uri="http://www.yworks.com/xml/yfiles-z-order/1.0/zOrder"/>
 	<key id="d1" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
@@ -70,14 +70,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -98,14 +98,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -126,14 +126,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -154,14 +154,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -182,14 +182,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -209,14 +209,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -238,14 +238,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -266,14 +266,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -293,14 +293,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -322,14 +322,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -349,14 +349,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -376,14 +376,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -404,14 +404,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -433,14 +433,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -460,14 +460,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -487,14 +487,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -515,14 +515,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -543,14 +543,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -571,14 +571,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -599,14 +599,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -627,14 +627,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -655,14 +655,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -683,14 +683,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -711,14 +711,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -738,14 +738,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -766,14 +766,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -794,14 +794,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -822,14 +822,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -849,14 +849,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -876,14 +876,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -904,14 +904,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -931,14 +931,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -959,14 +959,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -986,14 +986,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1013,14 +1013,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1041,14 +1041,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1069,14 +1069,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1097,14 +1097,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1125,14 +1125,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1153,14 +1153,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1183,14 +1183,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1211,14 +1211,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1239,14 +1239,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1267,14 +1267,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1295,14 +1295,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1323,14 +1323,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1351,14 +1351,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1378,14 +1378,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1405,14 +1405,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1434,14 +1434,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1461,14 +1461,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1489,14 +1489,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1517,14 +1517,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1545,14 +1545,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1573,14 +1573,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1601,14 +1601,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1630,14 +1630,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1660,14 +1660,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1688,14 +1688,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1717,14 +1717,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1745,14 +1745,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1774,14 +1774,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1802,14 +1802,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1832,14 +1832,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1860,14 +1860,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1888,14 +1888,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1916,14 +1916,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1943,14 +1943,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1971,14 +1971,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1998,14 +1998,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2025,14 +2025,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2053,14 +2053,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2081,14 +2081,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2110,14 +2110,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2138,14 +2138,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2168,14 +2168,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2196,14 +2196,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2224,14 +2224,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2251,14 +2251,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2280,14 +2280,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2307,14 +2307,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2335,14 +2335,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2363,14 +2363,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2391,14 +2391,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2419,14 +2419,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2447,14 +2447,14 @@
 				<x:List>
 					<y:Label>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="13,13"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="13" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2470,7 +2470,7 @@
 		<edge id="e0" source="n69" target="n70" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2486,7 +2486,7 @@
 		<edge id="e1" source="n70" target="n71" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2502,7 +2502,7 @@
 		<edge id="e2" source="n71" target="n72" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2518,7 +2518,7 @@
 		<edge id="e3" source="n72" target="n73" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2534,7 +2534,7 @@
 		<edge id="e4" source="n73" target="n74" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2550,7 +2550,7 @@
 		<edge id="e5" source="n74" target="n75" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2566,7 +2566,7 @@
 		<edge id="e6" source="n75" target="n76" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2582,7 +2582,7 @@
 		<edge id="e7" source="n7" target="n19" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2598,7 +2598,7 @@
 		<edge id="e8" source="n19" target="n18" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2614,7 +2614,7 @@
 		<edge id="e9" source="n18" target="n35" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2630,7 +2630,7 @@
 		<edge id="e10" source="n35" target="n34" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2646,7 +2646,7 @@
 		<edge id="e11" source="n34" target="n33" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2662,7 +2662,7 @@
 		<edge id="e12" source="n13" target="n12" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2678,7 +2678,7 @@
 		<edge id="e13" source="n12" target="n11" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2694,7 +2694,7 @@
 		<edge id="e14" source="n11" target="n10" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2710,7 +2710,7 @@
 		<edge id="e15" source="n9" target="n8" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2726,7 +2726,7 @@
 		<edge id="e16" source="n8" target="n6" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2742,7 +2742,7 @@
 		<edge id="e17" source="n6" target="n20" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2758,7 +2758,7 @@
 		<edge id="e18" source="n20" target="n17" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2774,7 +2774,7 @@
 		<edge id="e19" source="n17" target="n16" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2790,7 +2790,7 @@
 		<edge id="e20" source="n16" target="n15" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2806,7 +2806,7 @@
 		<edge id="e21" source="n15" target="n14" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2822,7 +2822,7 @@
 		<edge id="e22" source="n42" target="n41" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2838,7 +2838,7 @@
 		<edge id="e23" source="n41" target="n40" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2854,7 +2854,7 @@
 		<edge id="e24" source="n40" target="n39" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2870,7 +2870,7 @@
 		<edge id="e25" source="n39" target="n38" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2886,7 +2886,7 @@
 		<edge id="e26" source="n38" target="n37" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2902,7 +2902,7 @@
 		<edge id="e27" source="n36" target="n53" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2918,7 +2918,7 @@
 		<edge id="e28" source="n53" target="n52" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2934,7 +2934,7 @@
 		<edge id="e29" source="n52" target="n51" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2950,7 +2950,7 @@
 		<edge id="e30" source="n27" target="n26" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2966,7 +2966,7 @@
 		<edge id="e31" source="n26" target="n25" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2982,7 +2982,7 @@
 		<edge id="e32" source="n25" target="n24" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -2998,7 +2998,7 @@
 		<edge id="e33" source="n24" target="n23" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3014,7 +3014,7 @@
 		<edge id="e34" source="n4" target="n3" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3030,7 +3030,7 @@
 		<edge id="e35" source="n3" target="n2" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3046,7 +3046,7 @@
 		<edge id="e36" source="n2" target="n1" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3062,7 +3062,7 @@
 		<edge id="e37" source="n1" target="n5" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3078,7 +3078,7 @@
 		<edge id="e38" source="n5" target="n64" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3094,7 +3094,7 @@
 		<edge id="e39" source="n64" target="n63" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3110,7 +3110,7 @@
 		<edge id="e40" source="n63" target="n62" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3126,7 +3126,7 @@
 		<edge id="e41" source="n62" target="n61" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3142,7 +3142,7 @@
 		<edge id="e42" source="n61" target="n60" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3158,7 +3158,7 @@
 		<edge id="e43" source="n60" target="n59" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3174,7 +3174,7 @@
 		<edge id="e44" source="n59" target="n58" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3190,7 +3190,7 @@
 		<edge id="e45" source="n58" target="n57" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3206,7 +3206,7 @@
 		<edge id="e46" source="n57" target="n56" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3222,7 +3222,7 @@
 		<edge id="e47" source="n56" target="n55" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3238,7 +3238,7 @@
 		<edge id="e48" source="n55" target="n54" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3254,7 +3254,7 @@
 		<edge id="e49" source="n54" target="n50" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3270,7 +3270,7 @@
 		<edge id="e50" source="n49" target="n48" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3286,7 +3286,7 @@
 		<edge id="e51" source="n68" target="n67" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3302,7 +3302,7 @@
 		<edge id="e52" source="n85" target="n84" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3318,7 +3318,7 @@
 		<edge id="e53" source="n84" target="n83" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3334,7 +3334,7 @@
 		<edge id="e54" source="n83" target="n82" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3350,7 +3350,7 @@
 		<edge id="e55" source="n82" target="n81" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3366,7 +3366,7 @@
 		<edge id="e56" source="n81" target="n80" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3382,7 +3382,7 @@
 		<edge id="e57" source="n80" target="n31" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3398,7 +3398,7 @@
 		<edge id="e58" source="n79" target="n78" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3414,7 +3414,7 @@
 		<edge id="e59" source="n77" target="n66" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3430,7 +3430,7 @@
 		<edge id="e60" source="n65" target="n47" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3446,7 +3446,7 @@
 		<edge id="e61" source="n46" target="n45" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3462,7 +3462,7 @@
 		<edge id="e62" source="n45" target="n44" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3478,7 +3478,7 @@
 		<edge id="e63" source="n44" target="n43" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3494,7 +3494,7 @@
 		<edge id="e64" source="n43" target="n32" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3510,7 +3510,7 @@
 		<edge id="e65" source="n28" target="n22" sourceport="p0" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3526,7 +3526,7 @@
 		<edge id="e66" source="n22" target="n21" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3542,7 +3542,7 @@
 		<edge id="e67" source="n21" target="n0" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3558,7 +3558,7 @@
 		<edge id="e68" source="n0" target="n29" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3574,7 +3574,7 @@
 		<edge id="e69" source="n29" target="n30" sourceport="p1" targetport="p0">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3590,7 +3590,7 @@
 		<edge id="e70" source="n72" target="n74" sourceport="p2" targetport="p2">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3606,7 +3606,7 @@
 		<edge id="e71" source="n74" target="n76" sourceport="p3" targetport="p1">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3622,7 +3622,7 @@
 		<edge id="e72" source="n65" target="n78" sourceport="p1" targetport="p1">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3638,7 +3638,7 @@
 		<edge id="e73" source="n78" target="n31" sourceport="p2" targetport="p1">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3654,7 +3654,7 @@
 		<edge id="e74" source="n5" target="n62" sourceport="p2" targetport="p2">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3670,7 +3670,7 @@
 		<edge id="e75" source="n62" target="n60" sourceport="p3" targetport="p2">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3686,7 +3686,7 @@
 		<edge id="e76" source="n58" target="n56" sourceport="p2" targetport="p2">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3702,7 +3702,7 @@
 		<edge id="e77" source="n56" target="n50" sourceport="p3" targetport="p1">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3718,7 +3718,7 @@
 		<edge id="e78" source="n55" target="n48" sourceport="p2" targetport="p1">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3734,7 +3734,7 @@
 		<edge id="e79" source="n48" target="n67" sourceport="p2" targetport="p1">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3750,7 +3750,7 @@
 		<edge id="e80" source="n42" target="n39" sourceport="p1" targetport="p2">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3766,7 +3766,7 @@
 		<edge id="e81" source="n39" target="n37" sourceport="p3" targetport="p1">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3782,7 +3782,7 @@
 		<edge id="e82" source="n8" target="n12" sourceport="p2" targetport="p2">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>
@@ -3798,7 +3798,7 @@
 		<edge id="e83" source="n51" target="n36" sourceport="p1" targetport="p1">
 			<data key="d9"><![CDATA[]]></data>
 			<data key="d13">
-				<yjs:PolylineEdgeStyle>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF1C4355" miterLimit="1.45" thickness="3"/>
 					</yjs:PolylineEdgeStyle.stroke>

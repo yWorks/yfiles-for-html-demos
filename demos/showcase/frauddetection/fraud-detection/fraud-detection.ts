@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,7 @@ import {
   type IEdge,
   type INode,
   Mapper
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getConnectionData, getEntityData, setConnectionData, setEntityData } from '../entity-data'
 
 /**
@@ -54,8 +54,8 @@ export function detectBankFraud(graphComponent: GraphComponent): INode[] {
   }).run(graph)
 
   for (const edge of result.edges) {
-    const source = edge.sourceNode!
-    const target = edge.targetNode!
+    const source = edge.sourceNode
+    const target = edge.targetNode
     const sourceEntityData = getEntityData(source)
     const targetEntityData = getEntityData(target)
     const sourceType = sourceEntityData.type
@@ -114,7 +114,7 @@ export function detectInsuranceFraud(graphComponent: GraphComponent): INode[] {
 
           // determine if the person is involved in more than one accident
           for (const edge of graph.outEdgesAt(node)) {
-            const targetNode = edge.targetNode!
+            const targetNode = edge.targetNode
 
             const targetEntityData = getEntityData(targetNode)
             if (targetEntityData.type === 'Car') {
@@ -133,7 +133,7 @@ export function detectInsuranceFraud(graphComponent: GraphComponent): INode[] {
             suspiciousPersons.push(node)
 
             for (const edge of graph.inEdgesAt(node)) {
-              const oppositeNode = edge.sourceNode!
+              const oppositeNode = edge.sourceNode
 
               const oppositeEntityData = getEntityData(oppositeNode)
               if (oppositeEntityData.type === 'Lawyer') {

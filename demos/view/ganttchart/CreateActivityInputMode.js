@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,13 +39,11 @@ import {
   Rect,
   SimpleLabel,
   SimpleNode
-} from 'yfiles'
-
-import { ActivityNodeStyle } from './activity-node/ActivityNodeStyle.js'
-import { getDate, getTaskColor, syncActivityWithNodeLayout } from './gantt-utils.js'
-import { hideInfo, showInfo } from './info-panel.js'
-import { ganttActivityHeight, ganttActivitySpacing, getTask, getTaskY } from './sweepline-layout.js'
-
+} from '@yfiles/yfiles'
+import { ActivityNodeStyle } from './activity-node/ActivityNodeStyle'
+import { getDate, getTaskColor, syncActivityWithNodeLayout } from './gantt-utils'
+import { hideInfo, showInfo } from './info-panel'
+import { ganttActivityHeight, ganttActivitySpacing, getTask, getTaskY } from './sweepline-layout'
 /**
  * An input mode that allows creating activities by dragging in the viewport.
  */
@@ -58,7 +56,6 @@ export class CreateActivityInputMode extends MoveInputMode {
     this.moveCursor = Cursor.EW_RESIZE
   }
 }
-
 /**
  * A handler that allows for creating a node with a drag gesture.
  * The drag gesture determines the duration of the activity.
@@ -67,21 +64,13 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
   locationPoint = new MutablePoint()
   temporaryNode = null
   /** Canvas object for the node visualization during the gesture */
-  nodeCanvasObject = null
+  nodeRenderTreeElement = null
   /** Canvas object for the label visualization during the gesture */
-  labelCanvasObject = null
-
-  /**
-   * @param {!IInputModeContext} context
-   */
+  labelRenderTreeElement = null
   initializeDrag(context) {}
-
   /**
    * Creates a temporary dummy node that will be converted to a normal node when the drag gesture will
    * be finished and shows an info popup with the date that corresponds to the mouse location.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   handleMove(context, originalLocation, newLocation) {
     if (!this.temporaryNode) {
@@ -91,63 +80,47 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
       this.showTemporaryNode(context)
     }
     // update the location of the node
-    this.locationPoint.relocate(newLocation)
+    this.locationPoint.setLocation(newLocation)
     this.updateTemporaryNode(originalLocation, newLocation)
-
     // Show info text
     const text = getDate(this.temporaryNode.layout.maxX).format()
     showInfo(text, this.temporaryNode.layout.topRight, context.canvasComponent)
   }
-
   /**
    * Creates an actual node in the graph based on the layout, style, label, and tag of the temporary
    * node.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     // update the location of the dummy node
     this.updateTemporaryNode(originalLocation, newLocation)
-
     // update the activity with the actual timestamps
     syncActivityWithNodeLayout(this.temporaryNode)
-
     // remove the dummy node from the graphComponent's content group and hide the popup info
-    this.hideTemporaryNode()
+    this.hideTemporaryNode(context)
     hideInfo()
-
     // create the new node as part of the actual graph
     this.createNode(context.graph)
     this.temporaryNode = null
   }
-
   /**
    * Removes the dummy node from the graph component and hides the popup info.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
-    this.hideTemporaryNode()
+    this.hideTemporaryNode(context)
     this.temporaryNode = null
     hideInfo()
   }
-
-  /**
-   * @type {!IPoint}
-   */
   get location() {
     return this.locationPoint
   }
-
   /**
    * Creates the node in the graph at the end of the gesture.
    * The created node reuses the same layout, style, tag, and label
    * of the temporary node during the gesture.
-   * @param {?IGraph} [graph]
    */
   createNode(graph) {
     if (graph && this.temporaryNode) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const { layout, style, tag } = this.temporaryNode
       const node = graph.createNode(layout, style, tag)
       for (const label of this.temporaryNode.labels) {
@@ -162,19 +135,13 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
       }
     }
   }
-
   /**
    * Creates the temporary node with an appropriate layout, style, and tag, so that it looks
    * just like a normal node.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
-   * @returns {!SimpleNode}
    */
   createTemporaryNode(context, originalLocation, newLocation) {
     const layout = this.getTemporaryNodeLayout(originalLocation, newLocation)
     const task = getTask(layout.y)
-
     // add some initial activity data
     const activity = {
       name: 'New Activity',
@@ -184,9 +151,7 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
       followUpTime: 0,
       taskId: task.id
     }
-
     const graph = context.graph
-
     // create a dummy node which is not actually part of the graph
     const node = new SimpleNode({
       layout,
@@ -201,26 +166,18 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
     })
     label.adoptPreferredSizeFromStyle()
     node.labels = IListEnumerable.from([label])
-
     return node
   }
-
   /**
    * Updates the temporary node layout in response to a drag.
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   updateTemporaryNode(originalLocation, newLocation) {
     if (this.temporaryNode) {
       this.temporaryNode.layout = this.getTemporaryNodeLayout(originalLocation, newLocation)
     }
   }
-
   /**
    * Calculates the temporary node layout based on the current pointer location during a drag.
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
-   * @returns {!Rect}
    */
   getTemporaryNodeLayout(originalLocation, newLocation) {
     const y = getTaskY(getTask(originalLocation.y)) + ganttActivitySpacing
@@ -229,40 +186,43 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
       new Point(newLocation.x, y + ganttActivityHeight)
     )
   }
-
   /**
    * Shows the temporary node visualization.
    * Basically, add the node and its label directly to the graphComponent with
    * the default descriptor for nodes and labels since the dummy node is not actually part of the
    * graphComponent's graph.
-   * @param {!IInputModeContext} context
    */
   showTemporaryNode(context) {
     // Add the node and its label with the default descriptor for nodes and labels.
     // Those know how to render graph items with their style.
     const canvasComponent = context.canvasComponent
-    if (this.temporaryNode && canvasComponent) {
-      this.nodeCanvasObject = canvasComponent.contentGroup.addChild(
+    if (this.temporaryNode) {
+      this.nodeRenderTreeElement = canvasComponent.renderTree.createElement(
+        canvasComponent.renderTree.contentGroup,
         this.temporaryNode,
-        GraphModelManager.DEFAULT_NODE_DESCRIPTOR
+        GraphModelManager.DEFAULT_NODE_RENDERER
       )
       const label = this.temporaryNode.labels.at(0)
       if (label) {
-        this.labelCanvasObject = canvasComponent.contentGroup.addChild(
+        this.labelRenderTreeElement = canvasComponent.renderTree.createElement(
+          canvasComponent.renderTree.contentGroup,
           label,
-          GraphModelManager.DEFAULT_LABEL_DESCRIPTOR
+          GraphModelManager.DEFAULT_LABEL_RENDERER
         )
       }
     }
   }
-
   /**
    * Hides the temporary node visualization.
    */
-  hideTemporaryNode() {
-    this.nodeCanvasObject?.remove()
-    this.nodeCanvasObject = null
-    this.labelCanvasObject?.remove()
-    this.labelCanvasObject = null
+  hideTemporaryNode(context) {
+    if (this.nodeRenderTreeElement) {
+      context.canvasComponent.renderTree.remove(this.nodeRenderTreeElement)
+    }
+    this.nodeRenderTreeElement = null
+    if (this.labelRenderTreeElement) {
+      context.canvasComponent.renderTree.remove(this.labelRenderTreeElement)
+    }
+    this.labelRenderTreeElement = null
   }
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,54 +26,43 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, License } from 'yfiles'
-import { finishLoading } from 'demo-resources/demo-page'
-import { initializeSnapping } from './layout/initializeSnapping.js'
-import { initializeGrid } from './layout/initilaizeGrid.js'
-import { initializeToolbar } from './UI/initializeToolbar.js'
-import { initializeDragAndDropPanel } from './UI/initializeDragAndDropPanel.js'
-import { configureDragAndDrop } from './utils/configureDragAndDrop.js'
-import { configureInputMode } from './inputMode/configureInputMode.js'
-import { initializeTagExplorer } from './UI/initializeTagExplorer.js'
-import { configureGraphEvents } from './utils/configureGraphEvents.js'
-import { initializeTooltips } from './UI/initializeTooltips.js'
-import { initializeContextMenu } from './UI/initializeContextMenu.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { configureFlowNodes } from './FlowNode/FlowNode.js'
-import { configureFlowNodePorts } from './FlowNode/FlowNodePort.js'
-import { configureFlowEdges } from './FlowEdge/FlowEdge.js'
-import { importGraphData, initializeJsonIo } from './ImportExportManager/ImportExportManager.js'
-import { SampleData } from './resources/weather-data.js'
-
-/**
- * @returns {!Promise}
- */
+import { GraphComponent, License } from '@yfiles/yfiles'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initializeSnapping } from './layout/initializeSnapping'
+import { initializeGrid } from './layout/initializeGrid'
+import { initializeToolbar } from './UI/initializeToolbar'
+import { initializeDragAndDropPanel } from './UI/initializeDragAndDropPanel'
+import { configureDragAndDrop } from './utils/configureDragAndDrop'
+import { configureInputMode } from './inputMode/configureInputMode'
+import { initializeTagExplorer } from './UI/initializeTagExplorer'
+import { configureGraphEvents } from './utils/configureGraphEvents'
+import { initializeTooltips } from './UI/initializeTooltips'
+import { initializeContextMenu } from './UI/initializeContextMenu'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { configureFlowNodes } from './FlowNode/FlowNode'
+import { configureFlowNodePorts } from './FlowNode/FlowNodePort'
+import { configureFlowEdges } from './FlowEdge/FlowEdge'
+import { importGraphData, initializeJsonIo } from './ImportExportManager/ImportExportManager'
+import { SampleData } from './resources/weather-data'
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('graphComponent')
   configureInputMode(graphComponent)
   configureFlowNodePorts(graphComponent)
   initializeSnapping(graphComponent)
-
   configureDragAndDrop(graphComponent)
   initializeDragAndDropPanel()
   configureGraphEvents(graphComponent)
   initializeTagExplorer(graphComponent)
-
   initializeJsonIo(graphComponent)
+  graphComponent.graph.undoEngineEnabled = true
   initializeToolbar(graphComponent, initializeGrid(graphComponent))
   initializeTooltips(graphComponent)
   initializeContextMenu(graphComponent)
-
   configureFlowNodes(graphComponent)
   configureFlowEdges(graphComponent)
-
   await importGraphData(graphComponent, SampleData)
-
-  graphComponent.fitGraphBounds()
-
-  graphComponent.graph.undoEngineEnabled = true
+  void graphComponent.fitGraphBounds()
+  graphComponent.graph.undoEngine.clear()
 }
-
 void run().then(finishLoading)

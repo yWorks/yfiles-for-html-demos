@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,16 +33,15 @@ import {
   type IEdge,
   type IInputModeContext,
   type IRenderContext,
-  type Point,
-  type Visual
-} from 'yfiles'
+  type Point
+} from '@yfiles/yfiles'
 import { getNodeData } from '../data-types'
 
 /**
  * An edge style that draws a smooth Bézier curve with color and thickness interpolation
  * between the source and the target nodes.
  */
-export class MindMapEdgeStyle extends EdgeStyleBase {
+export class MindMapEdgeStyle extends EdgeStyleBase<MindMapCanvasVisual> {
   /**
    * Creates the edge style as a Bézier curve using the given thicknesses.
    * @param thicknessStart The thickness of the edge at its start.
@@ -58,7 +57,7 @@ export class MindMapEdgeStyle extends EdgeStyleBase {
   /**
    * Creates the visual for the edge using an HTML5 canvas visual.
    */
-  createVisual(context: IRenderContext, edge: IEdge): Visual {
+  createVisual(context: IRenderContext, edge: IEdge): MindMapCanvasVisual {
     return new MindMapCanvasVisual(edge, this.thicknessStart, this.thicknessEnd)
   }
 
@@ -67,10 +66,14 @@ export class MindMapEdgeStyle extends EdgeStyleBase {
    * If the edge thickness has changed, the edge visual has to be re-created.
    * Otherwise, the old visual will be used instead.
    */
-  updateVisual(context: IRenderContext, oldVisual: Visual, edge: IEdge): Visual {
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: MindMapCanvasVisual,
+    edge: IEdge
+  ): MindMapCanvasVisual {
     // old state of edge
-    const thicknessStart = (oldVisual as MindMapCanvasVisual).cachedThicknessStart
-    const thicknessEnd = (oldVisual as MindMapCanvasVisual).cachedThicknessEnd
+    const thicknessStart = oldVisual.cachedThicknessStart
+    const thicknessEnd = oldVisual.cachedThicknessEnd
     if (thicknessStart !== this.thicknessStart || thicknessEnd !== this.thicknessEnd) {
       // if something changed, re-create the visual from scratch
       oldVisual = this.createVisual(context, edge)
@@ -125,7 +128,7 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
   /**
    * Renders the edge as a flattened Bézier path.
    */
-  paint(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
+  render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
     ctx.save()
     ctx.beginPath()
     // create the new path for the edge
@@ -139,8 +142,8 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
     }
 
     // draw the edge path based on the color of the source/target node
-    const startColor = MindMapCanvasVisual.hexToRgb(getNodeData(this.edge.sourceNode!).color)
-    const endColor = MindMapCanvasVisual.hexToRgb(getNodeData(this.edge.targetNode!).color)
+    const startColor = MindMapCanvasVisual.hexToRgb(getNodeData(this.edge.sourceNode).color)
+    const endColor = MindMapCanvasVisual.hexToRgb(getNodeData(this.edge.targetNode).color)
     this.drawEdgePath(startColor, endColor, ctx)
 
     ctx.restore()
@@ -227,15 +230,15 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
     const edge = this.edge
     const p = new GeneralPath()
     if (edge.bends.size >= 2) {
-      p.moveTo(edge.sourcePort!.location.toPoint())
+      p.moveTo(edge.sourcePort.location.toPoint())
       p.cubicTo(
         edge.bends.get(0).location.toPoint(),
         edge.bends.get(1).location.toPoint(),
-        edge.targetPort!.location.toPoint()
+        edge.targetPort.location.toPoint()
       )
     } else {
-      p.moveTo(edge.sourcePort!.location.toPoint())
-      p.lineTo(edge.targetPort!.location.toPoint())
+      p.moveTo(edge.sourcePort.location.toPoint())
+      p.lineTo(edge.targetPort.location.toPoint())
     }
     return p
   }

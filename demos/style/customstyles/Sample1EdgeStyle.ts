@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,10 +27,9 @@
  **
  ***************************************************************************/
 import {
-  CanvasComponent,
-  Class,
-  EdgeSelectionIndicatorInstaller,
+  type Constructor,
   EdgeStyleBase,
+  EdgeStyleIndicatorRenderer,
   GeneralPath,
   GraphComponent,
   IArrow,
@@ -40,14 +39,13 @@ import {
   INode,
   INodeStyle,
   IRenderContext,
-  ISelectionIndicatorInstaller,
+  ISelectionRenderer,
   Point,
   PolylineEdgeStyle,
   Rect,
-  Stroke,
   SvgVisual,
   type TaggedSvgVisual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import AnimatedLinearGradient from './AnimatedLinearGradient'
 import Sample1Arrow from './Sample1Arrow'
@@ -116,7 +114,7 @@ export default class Sample1EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisu
    * Creates an object containing all necessary data to create an edge visual.
    */
   private createRenderDataCache(context: IRenderContext, edge: IEdge): EdgeRenderDataCache {
-    const node = edge.sourceNode!
+    const node = edge.sourceNode
     return new EdgeRenderDataCache(
       this.pathThickness,
       Sample1EdgeStyle.isSelected(context, edge),
@@ -196,11 +194,11 @@ export default class Sample1EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisu
   getPath(edge: IEdge): GeneralPath | null {
     // Create a general path from the locations of the ports and the bends of the edge.
     const path = new GeneralPath()
-    path.moveTo(edge.sourcePort!.location)
+    path.moveTo(edge.sourcePort.location)
     edge.bends.forEach((bend) => {
       path.lineTo(bend.location)
     })
-    path.lineTo(edge.targetPort!.location)
+    path.lineTo(edge.targetPort.location)
 
     // shorten the path in order to provide room for drawing the arrows.
     return super.cropPath(edge, this.arrows, this.arrows, path)
@@ -234,12 +232,14 @@ export default class Sample1EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisu
 
   /**
    * This implementation of the look-up provides a custom implementation of the
-   * {@link ISelectionIndicatorInstaller} interface that better suits to this style.
+   * {@link ISelectionRenderer} interface that better suits to this style.
    * @see Overrides {@link EdgeStyleBase.lookup}
    */
-  lookup(edge: IEdge, type: Class): object | null {
-    if (type === ISelectionIndicatorInstaller.$class) {
-      return new CustomSelectionInstaller()
+  lookup(edge: IEdge, type: Constructor<any>): any | null {
+    if (type === ISelectionRenderer) {
+      return new EdgeStyleIndicatorRenderer({
+        edgeStyle: new PolylineEdgeStyle({ stroke: null })
+      })
     }
 
     return super.lookup(edge, type)
@@ -266,7 +266,7 @@ export default class Sample1EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisu
 
   private static isSelected(context: IRenderContext, edge: IEdge): boolean {
     const component = context.canvasComponent
-    return component instanceof GraphComponent && component.selection.isSelected(edge)
+    return component instanceof GraphComponent && component.selection.includes(edge)
   }
 }
 
@@ -296,13 +296,3 @@ const helperEdgeStyle = new PolylineEdgeStyle({
   sourceArrow: IArrow.NONE,
   targetArrow: IArrow.NONE
 })
-
-/**
- * This customized {@link EdgeSelectionIndicatorInstaller} overrides the
- * getStroke method to return `null`, so that no edge path is rendered if the edge is selected.
- */
-class CustomSelectionInstaller extends EdgeSelectionIndicatorInstaller {
-  getStroke(canvas: CanvasComponent, edge: IEdge): Stroke | null {
-    return null
-  }
-}

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,35 +35,31 @@ import {
   Point,
   Rect,
   Stroke
-} from 'yfiles'
-import { NodeTypeEnum } from '../data-types.js'
-
+} from '@yfiles/yfiles'
+import { NodeTypeEnum } from '../data-types'
 /**
  * A node style implementation that creates shapes based on the type of a given node by delegating to GeneralPathNodeStyle.
  */
 export class CustomShapeNodeStyle extends NodeStyleBase {
+  type
+  stroke
+  fill
   gpNodeStyle
-
   /**
    * Creates the custom style for the given type of node.
-   * @param {!NodeTypeEnum} [type]
-   * @param {!Stroke} [stroke]
-   * @param {!Fill} [fill]
    */
   constructor(type, stroke, fill) {
     super()
-    this.fill = fill
-    this.stroke = stroke
     this.type = type
+    this.stroke = stroke
+    this.fill = fill
     this.type = type ?? NodeTypeEnum.CORPORATION
     this.stroke = Stroke.from(stroke ?? 'black')
     this.fill = Fill.from(fill ?? 'white')
-
     let gp
     this.gpNodeStyle = new GeneralPathNodeStyle()
     this.gpNodeStyle.stroke = this.stroke
     this.gpNodeStyle.fill = this.fill
-
     switch (type) {
       case NodeTypeEnum.CORPORATION:
         gp = createCorporationPath()
@@ -101,7 +97,7 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
         break
       case NodeTypeEnum.PE_RISK:
         this.gpNodeStyle.stroke = new Stroke({
-          fill: this.stroke.fill,
+          fill: this.stroke.fill ?? 'black',
           dashStyle: DashStyle.DASH,
           lineCap: 'square',
           thickness: 2
@@ -112,40 +108,33 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
       default:
         throw new Error('Unknown Type')
     }
-
     this.gpNodeStyle.path = gp
   }
-
   /**
    * Creates the visual for the given node.
-   * @param {!IRenderContext} renderContext The render context
-   * @param {!INode} node The node to which this style is assigned
+   * @param renderContext The render context
+   * @param node The node to which this style is assigned
    * @see Overrides {@link NodeStyleBase.createVisual}
-   * @returns {?Visual}
    */
   createVisual(renderContext, node) {
     return this.gpNodeStyle.renderer
       .getVisualCreator(node, this.gpNodeStyle)
       .createVisual(renderContext)
   }
-
   /**
    * Updates the visual for the given node.
-   * @param {!IRenderContext} renderContext The render context
-   * @param {!Visual} oldVisual The visual that has been created in the call to createVisual
-   * @param {!INode} node The node to which this style is assigned
-   * @returns {?Visual}
+   * @param renderContext The render context
+   * @param oldVisual The visual that has been created in the call to createVisual
+   * @param node The node to which this style is assigned
    */
   updateVisual(renderContext, oldVisual, node) {
     return this.gpNodeStyle.renderer
       .getVisualCreator(node, this.gpNodeStyle)
       .updateVisual(renderContext, oldVisual)
   }
-
   /**
    * Gets the outline of the visual style.
-   * @param {!INode} node The node to which this style is assigned
-   * @returns {?GeneralPath}
+   * @param node The node to which this style is assigned
    */
   getOutline(node) {
     switch (this.type) {
@@ -162,10 +151,9 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
     }
   }
 }
-
 /**
  * Creates the path for nodes of type "partnership".
- * @returns {!GeneralPath} The general path that describes this style
+ * @returns The general path that describes this style
  */
 function createPartnershipPath() {
   const gp = new GeneralPath()
@@ -175,10 +163,9 @@ function createPartnershipPath() {
   gp.close()
   return gp
 }
-
 /**
  * Creates the path for nodes of type "RCTB".
- * @returns {!GeneralPath} The general path that describes this style
+ * @returns The general path that describes this style
  */
 function createRctbPath() {
   const gp = new GeneralPath()
@@ -192,10 +179,9 @@ function createRctbPath() {
   gp.lineTo(0, 0)
   return gp
 }
-
 /**
  * Creates the path for nodes of type "Trapezoid".
- * @returns {!GeneralPath} The general path that describes this style
+ * @returns The general path that describes this style
  */
 function createTrapezoidPath() {
   const gp = new GeneralPath()
@@ -211,20 +197,18 @@ function createTrapezoidPath() {
   gp.lineTo(0.2, 0)
   return gp
 }
-
 /**
  * Creates the path for nodes of type "Branch".
- * @returns {!GeneralPath} The general path that describes this style
+ * @returns The general path that describes this style
  */
 function createBranchPath() {
   const gp = new GeneralPath()
   gp.appendEllipse(new Rect(0, 0, 1, 1), false)
   return gp
 }
-
 /**
  * Creates the path for nodes of type "Disregarded".
- * @returns {!GeneralPath} The general path that describes this style
+ * @returns The general path that describes this style
  */
 function createDisregardedPath() {
   const gp = new GeneralPath()
@@ -236,10 +220,9 @@ function createDisregardedPath() {
   gp.appendEllipse(new Rect(0, 0, 1, 1), false)
   return gp
 }
-
 /**
  * Creates the path for nodes of type "Dual_Resident".
- * @returns {!GeneralPath} The general path that describes this style
+ * @returns The general path that describes this style
  */
 function createDualResidentPath() {
   const gp = new GeneralPath()
@@ -252,10 +235,9 @@ function createDualResidentPath() {
   gp.lineTo(1, 0)
   return gp
 }
-
 /**
  * Creates the path for nodes of type "Multiple_Path".
- * @returns {!GeneralPath} The general path that describes this style
+ * @returns The general path that describes this style
  */
 function createMultiplePath() {
   const gp = new GeneralPath()
@@ -273,10 +255,9 @@ function createMultiplePath() {
   gp.close()
   return gp
 }
-
 /**
  * Creates the path for nodes of type "Trust".
- * @returns {!GeneralPath} The general path that describes this style
+ * @returns The general path that describes this style
  */
 function createTrustPath() {
   const gp = new GeneralPath()
@@ -287,20 +268,18 @@ function createTrustPath() {
   gp.close()
   return gp
 }
-
 /**
  * Creates the path for nodes of type "PE_Risk".
- * @returns {!GeneralPath} The general path that describes this style
+ * @returns The general path that describes this style
  */
 function createPeRiskPath() {
   const gp = new GeneralPath()
   gp.appendEllipse(new Rect(0, 0, 1, 1), false)
   return gp
 }
-
 /**
  * Creates the path for nodes of type "Third_Party".
- * @returns {!GeneralPath} The general path that describes this style
+ * @returns The general path that describes this style
  */
 function createThirdPartyPath() {
   const gp = new GeneralPath()
@@ -333,10 +312,9 @@ function createThirdPartyPath() {
   gp.close()
   return gp
 }
-
 /**
  * Creates the path for nodes of type "Corporation".
- * @returns {!GeneralPath} The general path that describes this style
+ * @returns The general path that describes this style
  */
 function createCorporationPath() {
   const gp = new GeneralPath()
@@ -347,10 +325,9 @@ function createCorporationPath() {
   gp.close()
   return gp
 }
-
 /**
  * Creates the path for nodes of type "CTB".
- * @returns {!GeneralPath} The general path that describes this style
+ * @returns The general path that describes this style
  */
 function createCtbPath() {
   const gp = new GeneralPath()

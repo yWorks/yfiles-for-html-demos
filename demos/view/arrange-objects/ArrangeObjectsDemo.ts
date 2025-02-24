@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, GraphComponent, GraphEditorInputMode, IGraph, License } from 'yfiles'
+import { GraphBuilder, GraphComponent, GraphEditorInputMode, IGraph, License } from '@yfiles/yfiles'
 import {
   alignBottom,
   alignHorizontally,
@@ -38,9 +38,9 @@ import {
   distributeVertically
 } from './AlignmentUtils'
 import SampleData from './resources/SampleData'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Bootstraps this demo.
@@ -50,7 +50,6 @@ async function run(): Promise<void> {
 
   // create the demo's graph component
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   // enable interactive editing
   graphComponent.inputMode = new GraphEditorInputMode()
 
@@ -91,44 +90,42 @@ function initializeUI(graphComponent: GraphComponent): void {
   document
     .querySelector<HTMLButtonElement>('#align-bottom')!
     .addEventListener('click', () =>
-      alignBottom(graphComponent.graph, graphComponent.selection.selectedNodes)
+      alignBottom(graphComponent.graph, graphComponent.selection.nodes)
     )
   document
     .querySelector<HTMLButtonElement>('#align-horizontally')!
     .addEventListener('click', () =>
-      alignHorizontally(graphComponent.graph, graphComponent.selection.selectedNodes)
+      alignHorizontally(graphComponent.graph, graphComponent.selection.nodes)
     )
   document
     .querySelector<HTMLButtonElement>('#align-left')!
     .addEventListener('click', () =>
-      alignLeft(graphComponent.graph, graphComponent.selection.selectedNodes)
+      alignLeft(graphComponent.graph, graphComponent.selection.nodes)
     )
   document
     .querySelector<HTMLButtonElement>('#align-right')!
     .addEventListener('click', () =>
-      alignRight(graphComponent.graph, graphComponent.selection.selectedNodes)
+      alignRight(graphComponent.graph, graphComponent.selection.nodes)
     )
   document
     .querySelector<HTMLButtonElement>('#align-top')!
-    .addEventListener('click', () =>
-      alignTop(graphComponent.graph, graphComponent.selection.selectedNodes)
-    )
+    .addEventListener('click', () => alignTop(graphComponent.graph, graphComponent.selection.nodes))
   document
     .querySelector<HTMLButtonElement>('#align-vertically')!
     .addEventListener('click', () =>
-      alignVertically(graphComponent.graph, graphComponent.selection.selectedNodes)
+      alignVertically(graphComponent.graph, graphComponent.selection.nodes)
     )
 
   // bind the demo's new node distribution operations to toolbar controls
   document
     .querySelector<HTMLButtonElement>('#distribute-horizontally')!
     .addEventListener('click', () =>
-      distributeHorizontally(graphComponent.graph, graphComponent.selection.selectedNodes)
+      distributeHorizontally(graphComponent.graph, graphComponent.selection.nodes)
     )
   document
     .querySelector<HTMLButtonElement>('#distribute-vertically')!
     .addEventListener('click', () =>
-      distributeVertically(graphComponent.graph, graphComponent.selection.selectedNodes)
+      distributeVertically(graphComponent.graph, graphComponent.selection.nodes)
     )
 }
 

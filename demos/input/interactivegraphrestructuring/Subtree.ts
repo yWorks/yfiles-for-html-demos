@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, IGraph, INode, Rect } from 'yfiles'
+import { IEdge, IGraph, INode, Rect } from '@yfiles/yfiles'
 
 /**
  * This class holds the nodes and edges of a subtree rooted at a specific node.
@@ -55,7 +55,7 @@ export default class Subtree {
   /**
    * Returns the edge connecting the parent and the root.
    */
-  get parentToRootEdge(): IEdge | undefined {
+  get parentToRootEdge(): IEdge | null {
     return this.graph.inEdgesAt(this.root).at(0)
   }
 
@@ -74,8 +74,8 @@ export default class Subtree {
     if (parent && this.parentToRootEdge) {
       this.graph.setEdgePorts(
         this.parentToRootEdge,
-        parent.ports.first(),
-        this.parentToRootEdge.targetPort!
+        parent.ports.first()!,
+        this.parentToRootEdge.targetPort
       )
       this.graph.clearBends(this.parentToRootEdge)
     }
@@ -113,7 +113,7 @@ export default class Subtree {
   private initializeSubtree(root: INode): void {
     this.graph.outEdgesAt(root).forEach((outEdge: IEdge) => {
       this.edges.add(outEdge)
-      this.initializeSubtree(outEdge.targetNode!)
+      this.initializeSubtree(outEdge.targetNode)
     })
     this.nodes.add(root)
   }

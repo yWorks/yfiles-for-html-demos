@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,30 +26,25 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  DefaultLabelStyle,
   GroupNodeStyle,
-  HierarchicLayout,
+  HierarchicalLayout,
   HorizontalTextAlignment,
-  LayoutMode,
+  LabelStyle,
+  LayoutExecutor,
   PolylineEdgeStyle,
   PortAdjustmentPolicy,
   ShapeNodeStyle
-} from 'yfiles'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
+} from '@yfiles/yfiles'
 /**
  * Retrieves sample ownership data.
- * @template TData
- * @returns {!Promise.<TData>}
  */
 export async function getData() {
   return fetch('../ownership-data.json').then((response) => response.json())
 }
-
 /**
  * Configures colors for styling the nodes retrieved from the given data sources.
- * @param {!Array.<NodesSource>} nodesSources
  */
 export function configureStyles(nodesSources) {
   const nodeFills = ['#0b7189', '#111d4a', '#ff6c00', '#ab2346', '#621b00']
@@ -62,41 +57,35 @@ export function configureStyles(nodesSources) {
       fill: nodeFills[index % nodeFills.length],
       stroke: nodeStrokes[index % nodeStrokes.length]
     })
-    nodesSource.nodeCreator.defaults.labels.style = new DefaultLabelStyle({
+    nodesSource.nodeCreator.defaults.labels.style = new LabelStyle({
       shape: 'round-rectangle',
       textFill: labelTextColors[index % labelTextColors.length],
       backgroundFill: labelFills[index % labelFills.length],
-      insets: 2
+      padding: 2
     })
   })
 }
-
 /**
  * Applies a preconfigured layout.
- * @param {!GraphComponent} graphComponent
- * @param {boolean} [animated=false]
- * @returns {!Promise}
  */
 export async function runLayout(graphComponent, animated = false) {
   graphComponent.limitFitContentZoom = false
-  await graphComponent.morphLayout({
-    layout: new HierarchicLayout({
-      considerNodeLabels: true,
-      layoutMode: LayoutMode.FROM_SCRATCH,
-      componentLayoutEnabled: true
-    }),
-    portAdjustmentPolicy: PortAdjustmentPolicy.ALWAYS,
-    targetBoundsInsets: 250,
-    morphDuration: animated ? '700ms' : 0
+  const hierarchicalLayout = new HierarchicalLayout()
+  hierarchicalLayout.componentLayout.enabled = true
+  const layoutExecutor = new LayoutExecutor({
+    graphComponent,
+    layout: hierarchicalLayout,
+    portAdjustmentPolicies: PortAdjustmentPolicy.ALWAYS,
+    targetBoundsPadding: 250,
+    animationDuration: animated ? '700ms' : 0,
+    animateViewport: true
   })
+  await layoutExecutor.start()
 }
-
 /**
  * Initializes the default styles for nodes, edges, and labels.
- * @param {!GraphComponent} graphComponent
  */
 export function initializeTutorialDefaults(graphComponent) {
-  applyDemoTheme(graphComponent)
   graphComponent.focusIndicatorManager.enabled = false
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -104,32 +93,28 @@ export function initializeTutorialDefaults(graphComponent) {
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     shape: 'round-rectangle',
     textFill: '#042d37',
     backgroundFill: '#9dc6d0',
-    insets: 2,
+    padding: 2,
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
   })
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '1.5px #0b7189',
     targetArrow: '#0b7189 medium triangle'
   })
-
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#111d4a',
-    contentAreaInsets: 10
+    contentAreaPadding: 10
   })
 }
-
 /**
  * Fits the graph into the graph component with a minimum zoom value.
  * The graph will be slightly zoomed in to avoid that small graphs are displayed too small.
- * @param {!GraphComponent} graphComponent
- * @param {number} [minimumZoom=3]
  */
 export function fitGraphBounds(graphComponent, minimumZoom = 3) {
   graphComponent.limitFitContentZoom = false
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
   graphComponent.zoom = Math.min(graphComponent.zoom, minimumZoom)
 }

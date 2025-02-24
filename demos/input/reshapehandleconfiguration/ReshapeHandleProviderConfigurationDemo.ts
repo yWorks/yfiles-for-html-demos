@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,21 +39,17 @@ import {
   MutableRectangle,
   NodeReshapeHandleProvider,
   Rect
-} from 'yfiles'
-import LimitingRectangleDescriptor from './LimitingRectangleDescriptor'
+} from '@yfiles/yfiles'
+import { LimitingRectangleRenderer } from './LimitingRectangleRenderer'
 import PurpleNodeReshapeHandleProvider from './PurpleNodeReshapeHandleProvider'
 import {
   ApplicationState,
   ClickableNodeReshapeHandleProvider
 } from './ClickableNodeReshapeHandleProvider'
-import type { ColorSetName } from 'demo-resources/demo-styles'
-import {
-  applyDemoTheme,
-  createDemoNodeLabelStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
+import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Registers a callback function as a decorator that provides a customized
@@ -65,15 +61,13 @@ import { finishLoading } from 'demo-resources/demo-page'
  * @param boundaryRectangle The rectangle that limits the node's size.
  */
 function registerReshapeHandleProvider(graph: IGraph, boundaryRectangle: Rect): void {
-  const nodeDecorator = graph.decorator.nodeDecorator
+  const nodeDecorator = graph.decorator.nodes
 
   // deactivate reshape handling for the red node
-  nodeDecorator.reshapeHandleProviderDecorator.hideImplementation(
-    (node: any): boolean => node.tag === 'red'
-  )
+  nodeDecorator.reshapeHandleProvider.hide((node: any): boolean => node.tag === 'red')
 
   // return customized reshape handle provider for the orange, blue and green node
-  nodeDecorator.reshapeHandleProviderDecorator.setFactory(
+  nodeDecorator.reshapeHandleProvider.addFactory(
     (node: any): boolean =>
       node.tag === 'orange' ||
       node.tag === 'blue' ||
@@ -86,7 +80,7 @@ function registerReshapeHandleProvider(graph: IGraph, boundaryRectangle: Rect): 
       const nodeTag = node.tag
 
       // Create a default reshape handle provider for nodes
-      const reshapeHandler = node.lookup(IReshapeHandler.$class)
+      const reshapeHandler = node.lookup(IReshapeHandler)
       let provider = new NodeReshapeHandleProvider(node, reshapeHandler, HandlePositions.BORDER)
 
       // Customize the handle provider depending on the node's color
@@ -106,7 +100,7 @@ function registerReshapeHandleProvider(graph: IGraph, boundaryRectangle: Rect): 
       } else if (nodeTag === 'purple') {
         provider = new PurpleNodeReshapeHandleProvider(node, reshapeHandler)
       } else if (nodeTag === 'darkblue') {
-        provider.handlePositions = HandlePositions.SOUTH_EAST
+        provider.handlePositions = HandlePositions.BOTTOM_RIGHT
         provider.centerReshapeRecognizer = EventRecognizers.ALWAYS
       } else if (nodeTag === 'gold') {
         provider = new ClickableNodeReshapeHandleProvider(node, reshapeHandler, applicationState)
@@ -122,7 +116,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // Create a default editor input mode
@@ -131,7 +124,7 @@ async function run(): Promise<void> {
     allowCreateEdge: false,
     allowCreateNode: false,
     allowClipboardOperations: false,
-    movableItems: GraphItemTypes.NONE
+    movableSelectedItems: GraphItemTypes.NONE
   })
 
   applicationState = new ApplicationState(graphEditorInputMode, true)
@@ -145,7 +138,12 @@ async function run(): Promise<void> {
   // Create the rectangle that limits the movement of some nodes
   // and add it to the graphComponent.
   const boundaryRectangle = new MutableRectangle(20, 20, 480, 550)
-  graphComponent.backgroundGroup.addChild(boundaryRectangle, new LimitingRectangleDescriptor())
+  const renderTree = graphComponent.renderTree
+  renderTree.createElement(
+    renderTree.backgroundGroup,
+    boundaryRectangle,
+    new LimitingRectangleRenderer()
+  )
 
   registerReshapeHandleProvider(graph, boundaryRectangle.toRect())
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,13 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { GraphComponent } from 'yfiles'
 import {
   CircularLayout,
   CircularLayoutData,
   CircularLayoutStarSubstructureStyle,
-  NodeTypeAwareSequencer
-} from 'yfiles'
+  type GraphComponent,
+  LayoutExecutor
+} from '@yfiles/yfiles'
 import { getNodeType } from './types-popup'
 
 /**
@@ -54,18 +54,18 @@ export async function runLayoutCore(
   animate: boolean
 ): Promise<void> {
   // configure the circular layout algorithm
-  const algorithm = new CircularLayout()
+  const layout = new CircularLayout()
 
   const starStyle = getStarStyle(settings.starSubstructureStyle)
   if (starStyle !== CircularLayoutStarSubstructureStyle.NONE) {
     // for more compact layout, do not place children on common radius for star style radial and separated-radial
-    algorithm.placeChildrenOnCommonRadius = false
+    layout.placeChildrenOnCommonRadius = false
   }
   // configure the star substructure style
-  algorithm.starSubstructureStyle = starStyle
+  layout.starSubstructureStyle = starStyle
 
   // configure type separation for star substructures
-  algorithm.starSubstructureTypeSeparation = settings.starSubstructureTypeSeparation
+  layout.starSubstructureTypeSeparation = settings.starSubstructureTypeSeparation
 
   // layout data is necessary to support data-driven features like node types
   const layoutData = new CircularLayoutData()
@@ -73,18 +73,21 @@ export async function runLayoutCore(
   if (settings.considerNodeTypes) {
     // if node types should be considered, define a delegate on the respective layout data property
     // that queries the type from the node's tag
-    layoutData.nodeTypes.delegate = getNodeType
-    algorithm.singleCycleLayout.nodeSequencer = new NodeTypeAwareSequencer()
+    layoutData.nodeTypes = getNodeType
   }
+
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
 
   // runs the layout algorithm and applies the result...
   if (animate) {
     //... with a morph animation
-    await graphComponent.morphLayout(algorithm, null, layoutData)
+    await graphComponent.applyLayoutAnimated({ layout, layoutData })
   } else {
     //... without an animation
-    graphComponent.graph.applyLayout(algorithm, layoutData)
-    graphComponent.fitGraphBounds()
+    graphComponent.graph.applyLayout(layout, layoutData)
+    await graphComponent.fitGraphBounds()
   }
 }
 

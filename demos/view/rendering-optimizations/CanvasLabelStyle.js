@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,7 +30,6 @@ import {
   CanvasComponent,
   Font,
   FontStyle,
-  FontWeight,
   HtmlCanvasVisual,
   ILabel,
   IOrientedRectangle,
@@ -42,8 +41,7 @@ import {
   TextRenderSupport,
   TextWrapping,
   Visual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * A simple label style that draws the text into the HTML5 Canvas. This
  * implementation auto-flips the drawing of the labels, if they're upside
@@ -51,73 +49,67 @@ import {
  */
 export default class CanvasLabelStyle extends LabelStyleBase {
   font = new Font('Arial', 14)
-
   /**
    * Creates the visual representation for the given label.
-   * @param {!IRenderContext} context The render context.
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param context The render context.
+   * @param label The label to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link CanvasLabelStyle.updateVisual}
    */
   createVisual(context, label) {
     return new LabelRenderVisual(label.text, label.layout, this.font)
   }
-
   /**
    * Updates the visual representation for the given label.
-   * @param {!IRenderContext} context The render context.
-   * @param {!Visual} oldVisual The visual that has been created in the call to
+   * @param context The render context.
+   * @param oldVisual The visual that has been created in the call to
    * {@link CanvasLabelStyle.createVisual}.
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param label The label to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link CanvasLabelStyle.createVisual}
    */
   updateVisual(context, oldVisual, label) {
     oldVisual.layout = label.layout
     return oldVisual
   }
-
   /**
    * Calculates the preferred {@link Size size} for the given label.
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {!Size} The preferred size.
+   * @param label The label to which this style instance is assigned.
+   * @returns The preferred size.
    */
   getPreferredSize(label) {
-    return TextRenderSupport.measureText(
-      label.text,
-      this.font,
-      null,
-      TextWrapping.NONE,
-      TextMeasurePolicy.CANVAS
-    )
+    return TextRenderSupport.measureText({
+      text: label.text,
+      font: this.font,
+      wrapping: TextWrapping.NONE,
+      measurePolicy: TextMeasurePolicy.CANVAS
+    })
   }
 }
-
 /**
  * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class LabelRenderVisual extends HtmlCanvasVisual {
+  text
+  layout
+  font
   /**
    * Create an instance of the actual label render visual.
-   * @param {!string} text
-   * @param {!IOrientedRectangle} layout
-   * @param {!Font} font
    */
   constructor(text, layout, font) {
     super()
-    this.font = font
-    this.layout = layout
     this.text = text
+    this.layout = layout
+    this.font = font
   }
-
   /**
    * Paints onto the context using HTML5 Canvas operations.
    * Implementations should not destroy the context's state, but should make sure to restore the state to the
    * previously active state. This is especially true for the transformation and clip.
-   * @param {!IRenderContext} context The render context of the {@link CanvasComponent}
-   * @param {!CanvasRenderingContext2D} htmlCanvasContext The HTML5 Canvas context to use for rendering.
+   * @param context The render context of the {@link CanvasComponent}
+   * @param htmlCanvasContext The HTML5 Canvas context to use for rendering.
    */
-  paint(context, htmlCanvasContext) {
+  render(context, htmlCanvasContext) {
     htmlCanvasContext.save()
     setFont(htmlCanvasContext, this.font)
     htmlCanvasContext.fillStyle = 'rgba(0,0,0,1)'
@@ -161,22 +153,15 @@ class LabelRenderVisual extends HtmlCanvasVisual {
     htmlCanvasContext.restore()
   }
 }
-
 /**
  * Sets the font on the context using HTML5 Canvas.
- * @param {!CanvasRenderingContext2D} htmlCanvasContext
- * @param {!Font} font
  */
 function setFont(htmlCanvasContext, font) {
-  htmlCanvasContext.font = `${fontStyleToString(font.fontStyle)} ${fontWeightToString(
-    font.fontWeight
-  )} ${font.fontSize}px ${font.fontFamily}`
+  htmlCanvasContext.font = `${fontStyleToString(font.fontStyle)} ${font.fontWeight} ${font.fontSize}px ${font.fontFamily}`
 }
-
 /**
  * Converts the font style into a string.
- * @param {!FontStyle} fontStyle The font style to convert.
- * @returns {!string}
+ * @param fontStyle The font style to convert.
  */
 function fontStyleToString(fontStyle) {
   switch (fontStyle) {
@@ -190,45 +175,5 @@ function fontStyleToString(fontStyle) {
       return 'inherit'
     default:
       throw new Error(`${fontStyle} is not a valid FontStyle`)
-  }
-}
-
-/**
- * Converts the font weight into a string.
- * @param {!FontWeight} fontWeight The font weight to convert.
- * @returns {!string}
- */
-function fontWeightToString(fontWeight) {
-  switch (fontWeight) {
-    case FontWeight.NORMAL:
-      return 'normal'
-    case FontWeight.BOLD:
-      return 'bold'
-    case FontWeight.BOLDER:
-      return 'bolder'
-    case FontWeight.LIGHTER:
-      return 'lighter'
-    case FontWeight.INHERIT:
-      return 'inherit'
-    case FontWeight.ITEM100:
-      return '100'
-    case FontWeight.ITEM200:
-      return '200'
-    case FontWeight.ITEM300:
-      return '300'
-    case FontWeight.ITEM400:
-      return '400'
-    case FontWeight.ITEM500:
-      return '500'
-    case FontWeight.ITEM600:
-      return '600'
-    case FontWeight.ITEM700:
-      return '700'
-    case FontWeight.ITEM800:
-      return '800'
-    case FontWeight.ITEM900:
-      return '900'
-    default:
-      throw new Error(`${fontWeight} is not a valid FontWeight`)
   }
 }

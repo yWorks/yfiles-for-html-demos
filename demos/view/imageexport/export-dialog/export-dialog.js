@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,11 +27,10 @@
  **
  ***************************************************************************/
 import './export-dialog.css'
-
 /**
  * Initializes the export dialog.
- * @param {!string} heading The heading of the dialog.
- * @param {!function} saveCallback A callback that is called after the save button is pressed.
+ * @param heading The heading of the dialog.
+ * @param saveCallback A callback that is called after the save button is pressed.
  */
 export function initializeExportDialog(heading, saveCallback) {
   const dialog = document.querySelector('#export-dialog')
@@ -46,17 +45,14 @@ export function initializeExportDialog(heading, saveCallback) {
   </div>
 </div>`
   dialog.style.display = 'none'
-
   const saveButton = document.querySelector('#save-button')
   const closeButton = document.querySelector('#close-button')
   const exportButton = document.querySelector('#export-button')
   const previewContainer = document.querySelector('#preview-container')
-
   saveButton.addEventListener('click', () => {
     const previewElement = previewContainer.children.item(0)
     saveCallback(previewElement)
   })
-
   closeButton.addEventListener('click', (_) => {
     // Hide the popup
     dialog.style.display = 'none'
@@ -66,19 +62,15 @@ export function initializeExportDialog(heading, saveCallback) {
     exportButton.disabled = false
   })
 }
-
 /**
  * Shows the export dialog.
- * @param {!Element} previewElement
  */
 export function showExportDialog(previewElement) {
   const previewContainer = document.querySelector('#preview-container')
   previewContainer.appendChild(previewElement)
-
   const dialog = document.querySelector('#export-dialog')
   dialog.style.display = 'block'
 }
-
 /**
  * Hides the export dialog.
  */

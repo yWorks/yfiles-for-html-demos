@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,7 +35,7 @@ import {
   type IRenderContext,
   type Point,
   type Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getStroke } from './graph-styles'
 
 /**
@@ -67,8 +67,8 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
     }
 
     // but we exclude hits on the source and target node
-    const s = edge.sourceNode!
-    const t = edge.targetNode!
+    const s = edge.sourceNode
+    const t = edge.targetNode
     return (
       !s.style.renderer.getHitTestable(s, s.style).isHit(canvasContext, p) &&
       !t.style.renderer.getHitTestable(t, t.style).isHit(canvasContext, p)
@@ -91,16 +91,16 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
   /**
    * Paints onto the context using HTML5 Canvas operations.
    */
-  paint(context: IRenderContext, ctx: CanvasRenderingContext2D): void {
+  render(context: IRenderContext, ctx: CanvasRenderingContext2D): void {
     ctx.save()
     ctx.beginPath()
-    let location: IPoint = this.edge.sourcePort!.location
+    let location: IPoint = this.edge.sourcePort.location
     ctx.moveTo(location.x, location.y)
     this.edge.bends.forEach((bend) => {
       location = bend.location
       ctx.lineTo(location.x, location.y)
     })
-    location = this.edge.targetPort!.location
+    location = this.edge.targetPort.location
     ctx.lineTo(location.x, location.y)
     ctx.lineWidth = 5
     ctx.strokeStyle = getStroke(this.edge)

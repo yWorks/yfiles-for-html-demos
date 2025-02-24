@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,28 +27,25 @@
  **
  ***************************************************************************/
 import {
-  Class,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GroupNodeStyle,
   GroupNodeStyleTabPosition,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   LayoutExecutor,
   License,
-  OrthogonalEdgeEditingContext,
-  OrthogonalEdgeEditingPolicy,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { createDemoEdgeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
@@ -61,29 +58,24 @@ async function run(): Promise<void> {
 
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode()
 
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
+  // enables orthogonal edge editing on the edge style
+  graphComponent.graph.edgeDefaults.style = createDemoEdgeStyle({ orthogonalEditing: true })
 
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
-
-  // enables orthogonal edge editing
-  enableOrthogonalEdges()
 }
 
 /**
@@ -115,16 +107,6 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 }
 
 /**
- * Enables the orthogonal edge editing feature on the {@link GraphEditorInputMode}.
- */
-function enableOrthogonalEdges(): void {
-  const geim = graphComponent.inputMode as GraphEditorInputMode
-  geim.orthogonalEdgeEditingContext = new OrthogonalEdgeEditingContext()
-  geim.createEdgeInputMode.orthogonalEdgeCreation = OrthogonalEdgeEditingPolicy.ALWAYS
-  geim.orthogonalBendRemoval = OrthogonalEdgeEditingPolicy.ALWAYS
-}
-
-/**
  * Initializes the defaults for the styling in this demo.
  *
  * @param graph The graph.
@@ -138,9 +120,9 @@ function initializeGraph(graph: IGraph): void {
 
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+// @ts-ignore Import via URL
+import { svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
 //language =HTML
-export const constraintNodeStyle = `
-  <g visibility="{Binding constraints, Converter=constraintsdemos.constraintsvisibilityconverter}">
-    <rect stroke="none" fill="{Binding value, Converter=constraintsdemos.backgroundconverter}" rx="4" ry="4"
-        width="{TemplateBinding width}" height="{TemplateBinding height}"/>
-    <text data-content="{Binding value, Converter=constraintsdemos.constraintconverter}" x="30" y="22"
-        text-anchor="middle" font-size="22"
-        fill="{Binding value, Converter=constraintsdemos.textcolorconverter}"/>
+export const constraintNodeStyle = new LitNodeStyle(
+  ({ layout, tag }) => svg`
+  <g visibility=${tag.constraints ? 'visible' : 'hidden'}>
+    <rect stroke="none" fill=${getBackgroundColor(tag.value)} rx="4" ry="4"
+        width=${layout.width} height=${layout.height}/>
+    <text x="30" y="22" text-anchor="middle" font-size="22" fill=${getTextColor(tag.value)}>
+      ${tag.value === 0 ? 'First' : tag.value === 7 ? 'Last' : tag.value}
+    </text>
     <g transform="translate(0 50)" class="button-container">
       <ellipse cx="12" cy="-12" rx="8" ry="8" stroke="none" fill="white" class="button"/>
       <path d="M 7 -12 L 17 -12" stroke="grey" stroke-width="2"/>
@@ -50,9 +54,9 @@ export const constraintNodeStyle = `
       <path d="M 48 -17 L 48 -7 M 43 -12 L 53 -12" stroke="grey" stroke-width="2"/>
     </g>
   </g>
-  <g visibility="{Binding constraints, Converter=constraintsdemos.noconstraintsvisibilityconverter}">
-    <rect stroke="none" fill="lightgrey" rx="4" ry="4" width="{TemplateBinding width}"
-        height="{TemplateBinding height}"/>
+  <g visibility=${tag.constraints ? 'hidden' : 'visible'}>
+    <rect stroke="none" fill="lightgrey" rx="4" ry="4" width=${layout.width}
+        height=${layout.height}/>
     <g class="button-container">
       <ellipse cx="30" cy="25" rx="15" ry="15" stroke="none" fill="white" class="button"/>
       <ellipse cx="30" cy="21" rx="4" ry="6" stroke="grey" stroke-width="2" fill="none"/>
@@ -63,3 +67,21 @@ export const constraintNodeStyle = `
     </g>
   </g>
 `
+)
+function getBackgroundColor(value) {
+  if (Number.isInteger(value)) {
+    switch (value) {
+      case 0:
+        return 'yellowgreen'
+      case 7:
+        return 'indianred'
+      default: {
+        return `rgb(${Math.round((value * 255) / 7)}, ${Math.round((value * 255) / 7)}, 255)`
+      }
+    }
+  }
+  return '#FFF'
+}
+function getTextColor(value) {
+  return Number.isInteger(value) && (value === 0 || value === 3) ? 'black' : 'white'
+}

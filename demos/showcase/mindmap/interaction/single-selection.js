@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,64 +26,50 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EventRecognizers, GraphItemTypes, ICommand, IModelItem } from 'yfiles'
-
+import { Command, EventRecognizers, GraphItemTypes, IModelItem } from '@yfiles/yfiles'
 /**
  * Disables the selection of multiple graph items using mouse/keyboard gestures.
  * Only one item may be selected at a time.
- * @param {!GraphComponent} graphComponent
  */
 export function useSingleSelection(graphComponent) {
   const mode = graphComponent.inputMode
-
   // disable marquee selection
   mode.marqueeSelectionInputMode.enabled = false
-
   // disable multi selection with Ctrl-Click
   mode.multiSelectionRecognizer = EventRecognizers.NEVER
-
   // deactivate commands that can lead to multi selection
-  mode.availableCommands.remove(ICommand.TOGGLE_ITEM_SELECTION)
-  mode.availableCommands.remove(ICommand.SELECT_ALL)
-
+  mode.availableCommands.remove(Command.TOGGLE_ITEM_SELECTION)
+  mode.availableCommands.remove(Command.SELECT_ALL)
   // deactivate commands that can extend the selection
-  mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_LEFT)
-  mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_UP)
-  mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_DOWN)
-  mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_RIGHT)
-
+  mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_LEFT)
+  mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_UP)
+  mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_DOWN)
+  mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_RIGHT)
   // add custom binding for toggle item selection
   mode.keyboardInputMode.addCommandBinding(
-    ICommand.TOGGLE_ITEM_SELECTION,
-    (command, parameter) => toggleItemSelectionExecuted(graphComponent, parameter),
-    (command, parameter) => toggleItemSelectionCanExecute(graphComponent, parameter)
+    Command.TOGGLE_ITEM_SELECTION,
+    (parameter) => toggleItemSelectionExecuted(graphComponent, parameter),
+    (parameter) => toggleItemSelectionCanExecute(graphComponent, parameter)
   )
 }
-
 /**
  * Determines whether toggling the selection state of an item,
  * respecting the single selection policy, is allowed.
- * @param {!GraphComponent} graphComponent
- * @param {*} parameter
- * @returns {boolean}
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toggleItemSelectionCanExecute(graphComponent, parameter) {
   const modelItem = parameter instanceof IModelItem ? parameter : graphComponent.currentItem
   return !!modelItem
 }
-
 /**
  * Custom command handler that allows toggling the selection state of an item
  * respecting the single selection policy.
- * @param {!GraphComponent} graphComponent
- * @param {*} parameter
- * @returns {boolean}
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toggleItemSelectionExecuted(graphComponent, parameter) {
   // get the item
   const modelItem = parameter instanceof IModelItem ? parameter : graphComponent.currentItem
   const inputMode = graphComponent.inputMode
-
   // check if it allowed to be selected
   if (
     !modelItem ||
@@ -93,8 +79,7 @@ function toggleItemSelectionExecuted(graphComponent, parameter) {
   ) {
     return false
   }
-
-  const isSelected = inputMode.graphSelection.isSelected(modelItem)
+  const isSelected = inputMode.graphSelection.includes(modelItem)
   if (isSelected) {
     // the item is selected and needs to be unselected - just clear the selection
     inputMode.graphSelection.clear()

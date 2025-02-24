@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,8 +32,8 @@ import {
   LayoutData,
   OrganicLayout,
   OrganicLayoutData,
-  OrganicLayoutScope
-} from 'yfiles'
+  OrganicScope
+} from '@yfiles/yfiles'
 
 /**
  * Demonstrates how to create and configure {@link OrganicLayout} so that it run only on a predefined
@@ -45,11 +45,11 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
   layout: ILayoutAlgorithm
   layoutData: LayoutData
 } {
-  const layoutData = new OrganicLayoutData({
-    affectedNodes: (node) => node.tag && node.tag.includeInLayout
-  })
+  const layoutData = new OrganicLayoutData()
+  layoutData.scope.nodes = (node) => node.tag && node.tag.includeInLayout
+  layoutData.scope.scopeModes = OrganicScope.INCLUDE_CLOSE_NODES
 
-  const layout = new OrganicLayout({ scope: OrganicLayoutScope.SUBSET })
+  const layout = new OrganicLayout()
 
   return { layout, layoutData }
 }

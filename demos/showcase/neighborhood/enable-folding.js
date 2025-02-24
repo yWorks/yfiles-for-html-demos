@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,20 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FoldingManager, GraphComponent, GraphInputMode } from 'yfiles'
-
+import { FoldingManager, GraphComponent, GraphInputMode } from '@yfiles/yfiles'
 /**
  * Enable folding - change the GraphComponent's graph to a managed view
  * that provides the actual collapse/expand state.
- * @param {!GraphComponent} graphComponent
- * @param {!GraphInputMode} inputMode
  */
 export function enableFolding(graphComponent, inputMode) {
   // create the manager
   const foldingManager = new FoldingManager()
   // replace the displayed graph with a managed view
   graphComponent.graph = foldingManager.createFoldingView().graph
-
   // allow collapse/expand of folder nodes
   const navigationInputMode = inputMode.navigationInputMode
   navigationInputMode.allowCollapseGroup = true

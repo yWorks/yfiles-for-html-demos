@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,28 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @typedef {Object} DeepZoomNode
- * @property {number} id
- * @property {number} [parentId]
- * @property {string} fill
- * @property {string} stroke
- */
-
-/**
- * @typedef {Object} DeepZoomEdge
- * @property {number} from
- * @property {number} to
- * @property {string} color
- */
-
-/**
- * @typedef {Object} DeepZoomData
- * @property {Array.<DeepZoomNode>} nodes
- * @property {Array.<DeepZoomNode>} groupNodes
- * @property {Array.<DeepZoomEdge>} edges
- */
-
 export const sampleData = {
   nodes: [
     {

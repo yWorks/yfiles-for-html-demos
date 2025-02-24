@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,38 +27,7 @@
  **
  ***************************************************************************/
 /**
- *  Type describing an activity in business data.
- *  The activity is associated with a task and must have start/end dates.
- * @typedef {Object} Activity
- * @property {number} [id]
- * @property {string} [name]
- * @property {number} taskId
- * @property {string} startDate
- * @property {string} endDate
- * @property {Array.<number>} [dependencies]
- * @property {number} [leadTime]
- * @property {number} [followUpTime]
- */
-
-/**
- * Type describing a task in business data.
- * @typedef {Object} Task
- * @property {number} id
- * @property {string} name
- */
-
-/**
- * Type describing the data of this Gantt chart containing of tasks and activities.
- * @typedef {Object} ChartData
- * @property {string} originDate
- * @property {Array.<Task>} tasks
- * @property {Array.<Activity>} activities
- */
-
-/**
  * Type-safe getter for activity data stored in the node tag.
- * @param {!INode} node
- * @returns {!Activity}
  */
 export function getActivity(node) {
   return node.tag

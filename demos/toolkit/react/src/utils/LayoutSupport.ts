@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,10 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import LayoutWorker from './LayoutWorker?worker'
-import { GraphComponent, LayoutExecutorAsync } from 'yfiles'
+import { GraphComponent, LayoutExecutorAsync } from '@yfiles/yfiles'
 
-const layoutWorker = new LayoutWorker()
+const layoutWorker = new Worker(new URL('./LayoutWorker', import.meta.url), { type: 'module' })
 
 /**
  * Keeps track of layout requests on the graph and makes sure that there is always a clean layout
@@ -40,18 +39,10 @@ export class LayoutSupport {
   private needsLayout = false
   private isLayoutRunning = false
   constructor(graphComponent: GraphComponent) {
-    // helper function that performs the actual message passing to the web worker
-    const webWorkerMessageHandler = (data: unknown): Promise<any> => {
-      return new Promise((resolve) => {
-        layoutWorker.onmessage = (e: any) => resolve(e.data)
-        layoutWorker.postMessage(data)
-      })
-    }
-
     this.executor = new LayoutExecutorAsync({
-      messageHandler: webWorkerMessageHandler,
+      messageHandler: LayoutExecutorAsync.createWebWorkerMessageHandler(layoutWorker),
       graphComponent: graphComponent,
-      duration: '1s',
+      animationDuration: '1s',
       animateViewport: true,
       easedAnimation: true
     })

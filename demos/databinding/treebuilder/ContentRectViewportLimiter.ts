@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CanvasComponent, Rect, ViewportLimiter } from 'yfiles'
+import { CanvasComponent, Rect, ViewportLimiter } from '@yfiles/yfiles'
 
 /**
  * A viewport limiter implementation that limits panning to the client area if the whole
  * graph content rectangle fits and limits the panning to the content rectangle if any of it's
  * dimensions is larger than the suggested viewport
  */
-export class ContentRectViewportLimiter extends ViewportLimiter {
+export class ContentRectViewportLimiter {
   /**
    * Limits the viewport to the area which contains nodes.
    * @param canvas - The canvas control on which the viewport should be applied.
@@ -41,8 +41,8 @@ export class ContentRectViewportLimiter extends ViewportLimiter {
    * @returns The actual limited viewport to use
    */
   limitViewport(canvas: CanvasComponent, suggestedViewport: Rect): Rect {
-    const leftX = canvas.contentRect.x
-    const rightX = canvas.contentRect.bottomRight.x
+    const leftX = canvas.contentBounds.x
+    const rightX = canvas.contentBounds.bottomRight.x
     const contentWidth = rightX - leftX
     const suggestedX = suggestedViewport.x
 
@@ -59,8 +59,8 @@ export class ContentRectViewportLimiter extends ViewportLimiter {
       }
     }
 
-    const topY = canvas.contentRect.y
-    const bottomY = canvas.contentRect.bottomLeft.y
+    const topY = canvas.contentBounds.y
+    const bottomY = canvas.contentBounds.bottomLeft.y
     const contentHeight = bottomY - topY
     const suggestedY = suggestedViewport.y
 

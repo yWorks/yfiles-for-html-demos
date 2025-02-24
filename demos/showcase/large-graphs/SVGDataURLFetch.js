@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,24 +34,19 @@ export default async function getSVGDataURL(url) {
   const svgXml = await (await fetch(url)).text()
   return encodeSvgDataUrl(svgXml)
 }
-
 /**
  * Encodes a string into an SVG Data URL
- * @param {!string} data the string to encode
- * @returns {!string}
+ * @param data the string to encode
  */
 function encodeSvgDataUrl(data) {
   data = escapeUnicodeSurrogatePair(data)
   data = escapeNonLatin1(data)
-
   const base64 = window.btoa(data)
   return 'data:image/svg+xml;base64,' + base64
 }
-
 /**
  * Escapes Unicode surrogate pairs
- * @param {!string} text the text to escape
- * @returns {!string}
+ * @param text the text to escape
  */
 function escapeUnicodeSurrogatePair(text) {
   return text.replace(new RegExp('[\uD800-\uDBFF][\uDC00-\uDFFF]', 'g'), (txt) => {
@@ -61,11 +56,9 @@ function escapeUnicodeSurrogatePair(text) {
     return `&#${codepoint};`
   })
 }
-
 /**
  * Escapes non-Latin-1-characters
- * @param {!string} text the text to escape
- * @returns {!string}
+ * @param text the text to escape
  */
 function escapeNonLatin1(text) {
   // eslint-disable-next-line no-control-regex

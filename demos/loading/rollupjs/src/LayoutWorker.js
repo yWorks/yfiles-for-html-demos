@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,19 +27,10 @@
  **
  ***************************************************************************/
 import license from '../../../../lib/license.json'
-import { HierarchicLayout, LayoutExecutorAsyncWorker, License } from 'yfiles'
-
-function applyLayout(graph) {
-  return new HierarchicLayout().applyLayout(graph)
-}
+import { HierarchicalLayout, LayoutExecutorAsyncWorker, License } from '@yfiles/yfiles'
 
 License.value = license
 
-self.addEventListener(
-  'message',
-  (e) => {
-    const executor = new LayoutExecutorAsyncWorker(applyLayout)
-    executor.process(e.data).then(postMessage).catch(postMessage)
-  },
-  false
+LayoutExecutorAsyncWorker.initializeWebWorker((graph) =>
+  new HierarchicalLayout().applyLayout(graph)
 )

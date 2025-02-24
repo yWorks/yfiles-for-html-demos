@@ -1,5 +1,5 @@
 {
-  "name": "svelte-demo-for-yfiles-for-html",
+  "name": "@yfiles/svelte-demo-for-yfiles-for-html",
   "version": "1.0.0",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
@@ -7,21 +7,21 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node --max_old_space_size=8192 node_modules/vite/bin/vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "demo-resources": "../../resources",
-    "demo-utils": "../../utils",
-    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz"
+    "@yfiles/demo-resources": "../../resources",
+    "@yfiles/demo-utils": "../../utils",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^3.0.1",
-    "@tsconfig/svelte": "^5.0.2",
+    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "@tsconfig/svelte": "^5.0.4",
     "@yworks/optimizer": "^1.8.2",
-    "svelte": "^4.2.7",
-    "svelte-preprocess": "^5.1.1",
-    "typescript": "~5.3.2",
-    "vite": "^5.0.4"
+    "svelte": "4.2.19",
+    "svelte-preprocess": "^6.0.3",
+    "typescript": "~5.7.3",
+    "vite": "^5.4.14"
   }
 }

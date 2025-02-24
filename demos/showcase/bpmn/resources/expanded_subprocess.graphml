@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
 	</key>
@@ -55,11 +55,11 @@
 	<key id="d13" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
 	<data key="d13">
 		<y:SharedData>
-			<yjs:DefaultLabelStyle x:Key="1" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" textFill="BLACK">
-				<yjs:DefaultLabelStyle.font>
+			<yjs:LabelStyle x:Key="1" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" textFill="BLACK">
+				<yjs:LabelStyle.font>
 					<yjs:Font fontSize="12"/>
-				</yjs:DefaultLabelStyle.font>
-			</yjs:DefaultLabelStyle>
+				</yjs:LabelStyle.font>
+			</yjs:LabelStyle>
 			<bpmn:BpmnEdgeStyle x:Key="2"/>
 		</y:SharedData>
 	</data>
@@ -85,11 +85,11 @@
 						<y:Label.Text><![CDATA[Identify
 Demand]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:InteriorLabelModelParameter Position="Center">
-								<y:InteriorLabelModelParameter.Model>
-									<y:InteriorLabelModel/>
-								</y:InteriorLabelModelParameter.Model>
-							</y:InteriorLabelModelParameter>
+							<yx:InteriorNodeLabelModelParameter Position="Center">
+								<yx:InteriorNodeLabelModelParameter.Model>
+									<yx:InteriorNodeLabelModel/>
+								</yx:InteriorNodeLabelModelParameter.Model>
+							</yx:InteriorNodeLabelModelParameter>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -119,18 +119,18 @@ Demand]]></y:Label.Text>
 					<y:Label>
 						<y:Label.Text><![CDATA[Obtain Offer]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:InteriorLabelModelParameter Position="NorthWest">
-								<y:InteriorLabelModelParameter.Model>
-									<y:InteriorLabelModel Insets="10"/>
-								</y:InteriorLabelModelParameter.Model>
-							</y:InteriorLabelModelParameter>
+							<yx:InteriorNodeLabelModelParameter Position="TopLeft">
+								<yx:InteriorNodeLabelModelParameter.Model>
+									<yx:InteriorNodeLabelModel Padding="10"/>
+								</yx:InteriorNodeLabelModelParameter.Model>
+							</yx:InteriorNodeLabelModelParameter>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="RIGHT" textFill="BLACK">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle horizontalTextAlignment="RIGHT" textFill="BLACK">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -162,11 +162,11 @@ Demand]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Select
 Supplier]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center">
-										<y:InteriorLabelModelParameter.Model>
-											<y:InteriorLabelModel/>
-										</y:InteriorLabelModelParameter.Model>
-									</y:InteriorLabelModelParameter>
+									<yx:InteriorNodeLabelModelParameter Position="Center">
+										<yx:InteriorNodeLabelModelParameter.Model>
+											<yx:InteriorNodeLabelModel/>
+										</yx:InteriorNodeLabelModelParameter.Model>
+									</yx:InteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -196,11 +196,11 @@ Supplier]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Request
 Offer]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center">
-										<y:InteriorLabelModelParameter.Model>
-											<y:InteriorLabelModel/>
-										</y:InteriorLabelModelParameter.Model>
-									</y:InteriorLabelModelParameter>
+									<yx:InteriorNodeLabelModelParameter Position="Center">
+										<yx:InteriorNodeLabelModelParameter.Model>
+											<yx:InteriorNodeLabelModel/>
+										</yx:InteriorNodeLabelModelParameter.Model>
+									</yx:InteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -230,11 +230,11 @@ Offer]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Offer
 received]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="North">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Top">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -280,11 +280,11 @@ received]]></y:Label.Text>
 							<y:Label Style="{y:GraphMLReference 1}">
 								<y:Label.Text><![CDATA[Check Offer]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center">
-										<y:InteriorLabelModelParameter.Model>
-											<y:InteriorLabelModel/>
-										</y:InteriorLabelModelParameter.Model>
-									</y:InteriorLabelModelParameter>
+									<yx:InteriorNodeLabelModelParameter Position="Center">
+										<yx:InteriorNodeLabelModelParameter.Model>
+											<yx:InteriorNodeLabelModel/>
+										</yx:InteriorNodeLabelModelParameter.Model>
+									</yx:InteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -371,11 +371,11 @@ received]]></y:Label.Text>
 						<y:Label.Text><![CDATA[Place
 Order]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:InteriorLabelModelParameter Position="Center">
-								<y:InteriorLabelModelParameter.Model>
-									<y:InteriorLabelModel/>
-								</y:InteriorLabelModelParameter.Model>
-							</y:InteriorLabelModelParameter>
+							<yx:InteriorNodeLabelModelParameter Position="Center">
+								<yx:InteriorNodeLabelModelParameter.Model>
+									<yx:InteriorNodeLabelModel/>
+								</yx:InteriorNodeLabelModelParameter.Model>
+							</yx:InteriorNodeLabelModelParameter>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>

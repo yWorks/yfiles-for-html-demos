@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="int" attr.name="zOrder" y:attr.uri="http://www.yworks.com/xml/yfiles-z-order/1.0/zOrder"/>
 	<key id="d1" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
@@ -65,15 +65,15 @@
 			<yjs:Stroke x:Key="2" fill="#FF3B4542" thickness="1.5"/>
 			<yjs:Stroke x:Key="3" fill="#FF3B4542" thickness="1.5"/>
 			<yjs:Stroke x:Key="4" fill="#FF51736B" miterLimit="1.45" thickness="1.5"/>
-			<yjs:Arrow x:Key="5" type="NONE" scale="0.75" stroke="#FF51736B" fill="#FF51736B"/>
-			<yjs:Arrow x:Key="6" type="NONE" scale="1.5" stroke="#FF51736B" fill="#FF51736B"/>
+			<yjs:Arrow x:Key="5" type="NONE" lengthScale="0.75" widthScale="0.75" stroke="#FF51736B" fill="#FF51736B"/>
+			<yjs:Arrow x:Key="6" type="NONE" lengthScale="1.5" widthScale="1.5" stroke="#FF51736B" fill="#FF51736B"/>
 			<yjs:Stroke x:Key="7" fill="#FF51736B" miterLimit="1.45" thickness="1.5"/>
-			<yjs:Arrow x:Key="8" type="NONE" scale="0.75" stroke="#FF51736B" fill="#FF51736B"/>
-			<yjs:Arrow x:Key="9" type="NONE" scale="1.5" stroke="#FF51736B" fill="#FF51736B"/>
+			<yjs:Arrow x:Key="8" type="NONE" lengthScale="0.75" widthScale="0.75" stroke="#FF51736B" fill="#FF51736B"/>
+			<yjs:Arrow x:Key="9" type="NONE" lengthScale="1.5" widthScale="1.5" stroke="#FF51736B" fill="#FF51736B"/>
 			<yjs:Stroke x:Key="10" fill="#FF51736B" miterLimit="1.45" thickness="1.5"/>
-			<yjs:Arrow x:Key="11" type="NONE" scale="0.75" stroke="#FF51736B" fill="#FF51736B"/>
-			<yjs:Arrow x:Key="12" type="NONE" scale="1.5" stroke="#FF51736B" fill="#FF51736B"/>
-      <yjs:PolylineEdgeStyle x:Key="13">
+			<yjs:Arrow x:Key="11" type="NONE" lengthScale="0.75" widthScale="0.75" stroke="#FF51736B" fill="#FF51736B"/>
+			<yjs:Arrow x:Key="12" type="NONE" lengthScale="1.5" widthScale="1.5"  stroke="#FF51736B" fill="#FF51736B"/>
+      <yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="13">
         <yjs:PolylineEdgeStyle.stroke>
           <yjs:Stroke fill="#FF51736B" miterLimit="1.45" thickness="1.5"/>
         </yjs:PolylineEdgeStyle.stroke>
@@ -1908,7 +1908,7 @@
 		</node>
 		<edge id="e0" source="n0" target="n7" sourceport="p0" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 7}" targetArrow="{y:GraphMLReference 8}" sourceArrow="{y:GraphMLReference 9}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 7}" targetArrow="{y:GraphMLReference 8}" sourceArrow="{y:GraphMLReference 9}"/>
 			</data>
 		</edge>
 		<edge id="e1" source="n7" target="n14" sourceport="p1" targetport="p0">
@@ -1973,7 +1973,7 @@
 		</edge>
 		<edge id="e13" source="n9" target="n10" sourceport="p2" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 10}" targetArrow="{y:GraphMLReference 11}" sourceArrow="{y:GraphMLReference 12}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 10}" targetArrow="{y:GraphMLReference 11}" sourceArrow="{y:GraphMLReference 12}"/>
 			</data>
 		</edge>
 		<edge id="e14" source="n6" target="n36" sourceport="p1" targetport="p0">
@@ -2098,7 +2098,7 @@
 		</edge>
 		<edge id="e38" source="n4" target="n28" sourceport="p3" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 4}" targetArrow="{y:GraphMLReference 5}" sourceArrow="{y:GraphMLReference 6}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 4}" targetArrow="{y:GraphMLReference 5}" sourceArrow="{y:GraphMLReference 6}"/>
 			</data>
 		</edge>
 		<edge id="e39" source="n22" target="n44" sourceport="p2" targetport="p1">
@@ -2343,62 +2343,62 @@
 		</edge>
 		<edge id="e87" source="n4" target="n60" sourceport="p7" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 4}" targetArrow="{y:GraphMLReference 5}" sourceArrow="{y:GraphMLReference 6}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 4}" targetArrow="{y:GraphMLReference 5}" sourceArrow="{y:GraphMLReference 6}"/>
 			</data>
 		</edge>
 		<edge id="e88" source="n4" target="n61" sourceport="p8" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 4}" targetArrow="{y:GraphMLReference 5}" sourceArrow="{y:GraphMLReference 6}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 4}" targetArrow="{y:GraphMLReference 5}" sourceArrow="{y:GraphMLReference 6}"/>
 			</data>
 		</edge>
 		<edge id="e89" source="n4" target="n62" sourceport="p9" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 4}" targetArrow="{y:GraphMLReference 5}" sourceArrow="{y:GraphMLReference 6}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 4}" targetArrow="{y:GraphMLReference 5}" sourceArrow="{y:GraphMLReference 6}"/>
 			</data>
 		</edge>
 		<edge id="e90" source="n10" target="n29" sourceport="p1" targetport="p1">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 7}" targetArrow="{y:GraphMLReference 8}" sourceArrow="{y:GraphMLReference 9}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 7}" targetArrow="{y:GraphMLReference 8}" sourceArrow="{y:GraphMLReference 9}"/>
 			</data>
 		</edge>
 		<edge id="e91" source="n9" target="n63" sourceport="p6" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 10}" targetArrow="{y:GraphMLReference 11}" sourceArrow="{y:GraphMLReference 12}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 10}" targetArrow="{y:GraphMLReference 11}" sourceArrow="{y:GraphMLReference 12}"/>
 			</data>
 		</edge>
 		<edge id="e92" source="n63" target="n29" sourceport="p1" targetport="p2">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 7}" targetArrow="{y:GraphMLReference 8}" sourceArrow="{y:GraphMLReference 9}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 7}" targetArrow="{y:GraphMLReference 8}" sourceArrow="{y:GraphMLReference 9}"/>
 			</data>
 		</edge>
 		<edge id="e93" source="n9" target="n64" sourceport="p7" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 10}" targetArrow="{y:GraphMLReference 11}" sourceArrow="{y:GraphMLReference 12}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 10}" targetArrow="{y:GraphMLReference 11}" sourceArrow="{y:GraphMLReference 12}"/>
 			</data>
 		</edge>
 		<edge id="e94" source="n64" target="n29" sourceport="p1" targetport="p3">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 7}" targetArrow="{y:GraphMLReference 8}" sourceArrow="{y:GraphMLReference 9}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 7}" targetArrow="{y:GraphMLReference 8}" sourceArrow="{y:GraphMLReference 9}"/>
 			</data>
 		</edge>
 		<edge id="e95" source="n9" target="n65" sourceport="p8" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 10}" targetArrow="{y:GraphMLReference 11}" sourceArrow="{y:GraphMLReference 12}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 10}" targetArrow="{y:GraphMLReference 11}" sourceArrow="{y:GraphMLReference 12}"/>
 			</data>
 		</edge>
 		<edge id="e96" source="n65" target="n29" sourceport="p1" targetport="p4">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 7}" targetArrow="{y:GraphMLReference 8}" sourceArrow="{y:GraphMLReference 9}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 7}" targetArrow="{y:GraphMLReference 8}" sourceArrow="{y:GraphMLReference 9}"/>
 			</data>
 		</edge>
 		<edge id="e97" source="n9" target="n66" sourceport="p9" targetport="p0">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 10}" targetArrow="{y:GraphMLReference 11}" sourceArrow="{y:GraphMLReference 12}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 10}" targetArrow="{y:GraphMLReference 11}" sourceArrow="{y:GraphMLReference 12}"/>
 			</data>
 		</edge>
 		<edge id="e98" source="n66" target="n29" sourceport="p1" targetport="p5">
 			<data key="d13">
-				<yjs:PolylineEdgeStyle stroke="{y:GraphMLReference 7}" targetArrow="{y:GraphMLReference 8}" sourceArrow="{y:GraphMLReference 9}"/>
+				<yjs:PolylineEdgeStyle orthogonalEditing="true" stroke="{y:GraphMLReference 7}" targetArrow="{y:GraphMLReference 8}" sourceArrow="{y:GraphMLReference 9}"/>
 			</data>
 		</edge>
 	</graph>

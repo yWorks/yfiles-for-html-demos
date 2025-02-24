@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Isometric Drawing Demo
 
-# Isometric Drawing Demo
+<img src="../../../doc/demo-thumbnails/isometric-drawing.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/showcase/isometricdrawing/).
 
 This demo displays graphs isometrically, adding an additional dimension to the visualization. This can be used to represent characteristics of the business data as height, or just because of the beautiful looks.
 
@@ -32,7 +34,7 @@ This demo features the full range of interactions [supported by yFiles](https://
 
 There are two suitable layout algorithms to apply to the graph.
 
-- Hierarchic layout
+- Hierarchical layout
 - Orthogonal layout
 
 ## Loading Graphs

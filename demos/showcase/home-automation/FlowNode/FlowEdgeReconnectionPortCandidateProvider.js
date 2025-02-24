@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,41 +27,30 @@
  **
  ***************************************************************************/
 import {
-  List,
   BaseClass,
-  IEnumerable,
-  IPortCandidate,
-  IInputModeContext,
-  IEdgeReconnectionPortCandidateProvider,
   IEdge,
-  DefaultPortCandidate,
+  IEdgeReconnectionPortCandidateProvider,
+  IEnumerable,
+  IInputModeContext,
+  IPortCandidate,
+  List,
+  PortCandidate,
   PortCandidateValidity
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 export class FlowEdgeReconnectionPortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider
 ) {
   edge
-
-  /**
-   * @param {!IEdge} edge
-   */
   constructor(edge) {
     super()
     this.edge = edge
   }
-
-  /**
-   * @param {!IInputModeContext} undefined
-   * @returns {!IEnumerable.<IPortCandidate>}
-   */
   getSourcePortCandidates({ graph }) {
     const { edge } = this
     const candidates = new List()
     if (!graph) {
       return candidates
     }
-
     graph.ports
       // Exclude right-side port on the edge's source node:
       .filter((port) => port.owner !== edge.targetNode)
@@ -78,25 +67,18 @@ export class FlowEdgeReconnectionPortCandidateProvider extends BaseClass(
           )
       )
       .forEach((port) => {
-        const portCandidate = new DefaultPortCandidate(port)
+        const portCandidate = new PortCandidate(port)
         portCandidate.validity = PortCandidateValidity.VALID
         candidates.add(portCandidate)
       })
-
     return candidates
   }
-
-  /**
-   * @param {!IInputModeContext} undefined
-   * @returns {!IEnumerable.<IPortCandidate>}
-   */
   getTargetPortCandidates({ graph }) {
     const { edge } = this
     const candidates = new List()
     if (!graph) {
       return candidates
     }
-
     graph.ports
       // Exclude left-side port on the edge's source node:
       .filter((port) => port.owner !== edge.sourceNode)
@@ -113,11 +95,10 @@ export class FlowEdgeReconnectionPortCandidateProvider extends BaseClass(
           )
       )
       .forEach((port) => {
-        const portCandidate = new DefaultPortCandidate(port)
+        const portCandidate = new PortCandidate(port)
         portCandidate.validity = PortCandidateValidity.VALID
         candidates.add(portCandidate)
       })
-
     return candidates
   }
 }

@@ -4,8 +4,8 @@
     <meta charset="utf-8" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,7 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <title>NodeJS Demo [yFiles for HTML]</title>
-    <link rel="stylesheet" href="../../../doc/readme-style.css" />
+    <link rel="stylesheet" href="../../../doc/resources/readme-style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   </head>
   <body>
@@ -48,13 +48,13 @@
           </div>
 
           <div>
-            <h1>NodeJS Demo</h1>
+            <h1>Node.js Demo</h1>
 
             <p>
               This demo shows how to run a yFiles layout algorithm in a
-              <em><a href="https://nodejs.org/" target="_blank">Node.js&reg;</a></em> environment.
-              This makes it possible to run the layout calculation asynchronously, preventing it
-              from blocking the UI.
+              <em><a href="https://nodejs.org/" target="_blank">Node.js</a></em> environment. This
+              makes it possible to run the layout calculation asynchronously, preventing it from
+              blocking the UI.
             </p>
           </div>
           <div style="padding-bottom: 20px">
@@ -66,7 +66,7 @@
             </p>
             <p>
               On the server-side, the <a data-api>LayoutExecutorAsyncWorker</a> parses this data
-              object and provides a callback which allows to apply a layout on the parsed graph.
+              object and provides a callback which allows applying a layout on the parsed graph.
               This callback is executed by calling <code>process(data)</code> on the worker which
               resolves with a serializable result data object that is supposed to be sent back to
               the <a data-api>LayoutExecutorAsync</a>.
@@ -89,8 +89,20 @@
               <p>Then start the <em>layout</em> server with:</p>
               <code>> npm start</code>
               <p>
-                Afterwards, open the <code>index.html</code> file via the standard demo server in a
+                Afterward, open the <code>index.html</code> file via the standard demo server in a
                 browser to start the demo.
+              </p>
+            </div>
+          </div>
+
+          <div style="padding: 40px 0 20px 0">
+            <div>
+              <h2>Note on licensing</h2>
+
+              <p>
+                Running yFiles for HTML on a Node.js server requires a license that explicitly
+                allows this. Please contact the <a href="mailto:sales@yworks.com">sales team</a> for
+                more information.
               </p>
             </div>
           </div>
@@ -99,6 +111,6 @@
         <div id="footer-detailed"></div>
       </div>
     </main>
-    <script src="../../../doc/readme-style.js"></script>
+    <script src="../../../doc/resources/readme-style.js"></script>
   </body>
 </html>

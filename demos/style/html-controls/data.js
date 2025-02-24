@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,20 +38,7 @@ export const avatars = [
   './resources/usericon_male4.svg',
   './resources/usericon_male5.svg'
 ]
-
 export const statusValues = ['busy', 'available', 'offline']
-
-/**
- * @typedef {Object} UserData
- * @property {number} id
- * @property {number} [superior]
- * @property {string} name
- * @property {string} since
- * @property {*} avatar
- * @property {*} status
- * @property {string} description
- */
-
 export const defaultData = {
   id: -1,
   name: 'Jane Doe',
@@ -60,7 +47,6 @@ export const defaultData = {
   status: 'available',
   description: 'Enter a job description.'
 }
-
 export const people = [
   {
     name: 'Jane Smith',

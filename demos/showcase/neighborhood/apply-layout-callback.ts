@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ComponentLayout, HierarchicLayout, INode } from 'yfiles'
+import { ComponentLayout, HierarchicalLayout, INode } from '@yfiles/yfiles'
 import { NeighborhoodType } from './NeighborhoodType'
 import type { ApplyLayoutCallback, NeighborhoodView } from './NeighborhoodView'
 
@@ -37,7 +37,7 @@ import type { ApplyLayoutCallback, NeighborhoodView } from './NeighborhoodView'
 export function getApplyLayoutCallback(neighborhoodType: NeighborhoodType): ApplyLayoutCallback {
   return neighborhoodType === NeighborhoodType.FOLDER_CONTENTS
     ? (view, nodes) => applyComponentLayout(view, nodes)
-    : (view) => applyHierarchicLayout(view)
+    : (view) => applyHierarchicalLayout(view)
 }
 
 function applyComponentLayout(view: NeighborhoodView, selectedViewNodes: INode[]): void {
@@ -46,6 +46,6 @@ function applyComponentLayout(view: NeighborhoodView, selectedViewNodes: INode[]
   }
 }
 
-function applyHierarchicLayout(view: NeighborhoodView): void {
-  view.neighborhoodGraph.applyLayout(new HierarchicLayout())
+function applyHierarchicalLayout(view: NeighborhoodView): void {
+  view.neighborhoodGraph.applyLayout(new HierarchicalLayout())
 }

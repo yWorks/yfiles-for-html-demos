@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,17 +27,17 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   GraphBuilder,
   GraphComponent,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
+  LabelStyle,
   License,
   PolylineEdgeStyle,
   ShapeNodeStyle,
   Size
-} from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { runLayout } from '../common'
 import {
   createEdgeLabelsWithProvider,
@@ -45,13 +45,10 @@ import {
   createNodeLabelsWithProvider,
   createNodeLabelsWithSources
 } from './create-labels-sources'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 License.value = await fetchLicense()
 
 const graphComponent = new GraphComponent('#graphComponent')
-applyDemoTheme(graphComponent)
-
 const graph = graphComponent.graph
 graph.nodeDefaults.style = new ShapeNodeStyle({
   shape: 'rectangle',
@@ -59,10 +56,10 @@ graph.nodeDefaults.style = new ShapeNodeStyle({
   stroke: '#eeeeee'
 })
 graph.nodeDefaults.size = new Size(135, 60)
-graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+graph.nodeDefaults.labels.style = new LabelStyle({
   horizontalTextAlignment: 'center'
 })
-graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
 graph.edgeDefaults.style = new PolylineEdgeStyle({
   stroke: '#aaaaaa',
   targetArrow: '#aaaaaa small triangle'

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,15 +26,34 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HierarchicLayout, LayoutDescriptor, LayoutGraph } from 'yfiles'
-import { createLayoutExecutorAsyncWorker } from './message-handler-worker-thread'
+import {
+  HierarchicalLayout,
+  LayoutDescriptor,
+  LayoutExecutorAsyncWorker,
+  LayoutGraph,
+  License
+} from '@yfiles/yfiles'
 
-createLayoutExecutorAsyncWorker((graph: LayoutGraph, layoutDescriptor: LayoutDescriptor) => {
-  // create and configure the layout algorithm
-  if (layoutDescriptor.name === 'HierarchicLayout') {
-    const layout = new HierarchicLayout(layoutDescriptor.properties)
+// Initialize a new remote layout executor that parses the serialized graph and layout configuration
+// sent from the client and calculates the configured layout.
+LayoutExecutorAsyncWorker.initializeWebWorker(
+  (graph: LayoutGraph, layoutDescriptor: LayoutDescriptor) => {
+    // create and configure the layout algorithm
+    if (layoutDescriptor.name === 'HierarchicalLayout') {
+      const layout = new HierarchicalLayout(layoutDescriptor.properties)
 
-    // run the layout on the Web Worker
-    layout.applyLayout(graph)
+      // run the layout on the Web Worker
+      layout.applyLayout(graph)
+    }
+  }
+)
+
+self.addEventListener('message', (e) => {
+  // The Web Worker is running in a different context, so before calling any yFiles API
+  // we need to set the license. In this case, we send the license from the client as the
+  // initial message.
+  if (e.data?.license) {
+    License.value = e.data.license
+    self.postMessage('ready')
   }
 })

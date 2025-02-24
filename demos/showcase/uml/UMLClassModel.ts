@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  HandleSerializationEventArgs,
-  ILookup,
-  MarkupExtension,
-  TypeAttribute,
-  YBoolean,
-  YObject,
-  YString
-} from 'yfiles'
+import { HandleSerializationEventArgs, ILookup, MarkupExtension } from '@yfiles/yfiles'
 
 /**
  * The data model of the UML node style.
@@ -170,26 +162,6 @@ export class UMLClassModelExtension extends MarkupExtension {
     this.$operationsOpen = value
   }
 
-  static get $meta(): {
-    stereotype: TypeAttribute
-    constraint: TypeAttribute
-    className: TypeAttribute
-    attributes: TypeAttribute
-    operations: TypeAttribute
-    attributesOpen: TypeAttribute
-    operationsOpen: TypeAttribute
-  } {
-    return {
-      stereotype: TypeAttribute(YString.$class),
-      constraint: TypeAttribute(YString.$class),
-      className: TypeAttribute(YString.$class),
-      attributes: TypeAttribute(YObject.$class),
-      operations: TypeAttribute(YObject.$class),
-      attributesOpen: TypeAttribute(YBoolean.$class),
-      operationsOpen: TypeAttribute(YBoolean.$class)
-    }
-  }
-
   provideValue(serviceProvider: ILookup): UMLClassModel {
     const umlClassModel = new UMLClassModel()
     umlClassModel.stereotype = this.stereotype
@@ -206,10 +178,7 @@ export class UMLClassModelExtension extends MarkupExtension {
 /**
  * Listener that handles the serialization of the UML model.
  */
-export const UMLClassModelSerializationListener = (
-  sender: object,
-  args: HandleSerializationEventArgs
-) => {
+export const UMLClassModelSerializationListener = (args: HandleSerializationEventArgs) => {
   const item = args.item
   if (item instanceof UMLClassModel) {
     const umlClassModelExtension = new UMLClassModelExtension()
@@ -221,7 +190,7 @@ export const UMLClassModelSerializationListener = (
     umlClassModelExtension.attributesOpen = item.attributesOpen
     umlClassModelExtension.operationsOpen = item.operationsOpen
     const context = args.context
-    context.serializeReplacement(UMLClassModelExtension.$class, item, umlClassModelExtension)
+    context.serializeReplacement(UMLClassModelExtension, item, umlClassModelExtension)
     args.handled = true
   }
 }

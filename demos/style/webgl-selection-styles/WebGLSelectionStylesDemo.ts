@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,16 +30,15 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   License,
-  WebGL2GraphModelManager,
-  WebGL2SelectionIndicatorManager
-} from 'yfiles'
+  WebGLGraphModelManager,
+  WebGLSelectionIndicatorManager
+} from '@yfiles/yfiles'
 
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { checkWebGL2Support, finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
 import { initStyleDefaults, type SelectionStyle, updateSelectionStyles } from './graph-styles'
 import { createGraph } from './load-sample-graph'
 import { createTransition, selectNodes, wireUpUI } from './ui-interaction'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 let graphComponent: GraphComponent = null!
 
@@ -54,7 +53,7 @@ const style: SelectionStyle = {
   zoomPolicy: 'mixed',
   easing: 'linear',
   transition: createTransition('linear'),
-  animationTiming: null
+  animationTiming: undefined
 }
 
 /**
@@ -69,21 +68,19 @@ async function run(): Promise<void> {
 
   graphComponent = new GraphComponent('#graphComponent')
 
-  applyDemoTheme(graphComponent)
-
   graphComponent.focusIndicatorManager.enabled = false
   graphComponent.inputMode = new GraphEditorInputMode()
 
-  graphComponent.graphModelManager = new WebGL2GraphModelManager()
-  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
+  graphComponent.graphModelManager = new WebGLGraphModelManager()
+  graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager()
   updateSelectionStyles(style, graphComponent)
 
   // configures default styles for newly created graph elements
   initStyleDefaults(graphComponent.graph)
 
   // create an initial sample graph
-  createGraph(graphComponent)
-  graphComponent.fitGraphBounds()
+  createGraph(graphComponent.graph)
+  await graphComponent.fitGraphBounds()
   selectNodes(graphComponent)
 
   // bind the buttons to their commands

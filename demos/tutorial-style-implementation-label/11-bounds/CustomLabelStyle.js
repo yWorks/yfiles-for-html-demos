@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,6 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   Font,
   LabelStyleBase,
@@ -35,8 +37,7 @@ import {
   Size,
   SvgVisual,
   TextRenderSupport
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 const font = new Font({
   fontFamily: 'Arial',
   fontSize: 12
@@ -44,69 +45,36 @@ const font = new Font({
 const padding = 3
 const tailWidth = 10
 const tailHeight = 20
-
-/**
- * Augment the SvgVisual type with the data used to cache the rendering information
- * @typedef {Object} Cache
- * @property {number} width
- * @property {number} height
- * @property {string} text
- */
-
-/**
- * @typedef {TaggedSvgVisual.<SVGGElement,Cache>} CustomLabelStyleVisual
- */
-
 export class CustomLabelStyle extends LabelStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @returns {!CustomLabelStyleVisual}
-   */
   createVisual(context, label) {
     // create an SVG text element that displays the label text
     const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text')
-
     const labelSize = label.layout.toSize()
     TextRenderSupport.addText(textElement, label.text, font)
-
     textElement.setAttribute('transform', `translate(${padding} ${padding})`)
-
     // add a background shape
     const backgroundPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     backgroundPathElement.setAttribute('d', this.createBackgroundShapeData(labelSize))
     backgroundPathElement.setAttribute('stroke', '#aaa')
     backgroundPathElement.setAttribute('fill', label.tag?.color || '#fffecd')
-
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     gElement.appendChild(backgroundPathElement)
     gElement.appendChild(textElement)
-
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(gElement)
-
     const cache = {
       width: labelSize.width,
       height: labelSize.height,
       text: label.text
     }
-
     return SvgVisual.from(gElement, cache)
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!CustomLabelStyleVisual} oldVisual
-   * @param {!ILabel} label
-   * @returns {!CustomLabelStyleVisual}
-   */
   updateVisual(context, oldVisual, label) {
     const gElement = oldVisual.svgElement
     const labelSize = label.layout.toSize()
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
-
     // check if the label size or text has changed
     if (
       labelSize.width !== cache.width ||
@@ -122,47 +90,31 @@ export class CustomLabelStyle extends LabelStyleBase {
       if (textElement instanceof SVGTextElement) {
         TextRenderSupport.addText(textElement, label.text, font)
       }
-
       // update the cache with the new values
       cache.width = labelSize.width
       cache.height = labelSize.height
       cache.text = label.text
     }
-
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(gElement)
-
     return oldVisual
   }
-
-  /**
-   * @param {!ILabel} label
-   * @returns {!Size}
-   */
   getPreferredSize(label) {
     // measure the label text using the font
     const { width, height } = TextRenderSupport.measureText(label.text, font)
     // return the measured size plus a small padding
     return new Size(width + padding + padding, height + padding + padding)
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} location
-   * @param {!ILabel} label
-   * @returns {boolean}
-   */
   isHit(context, location, label) {
     const labelLayout = label.layout
     // first check if the label layout is hit
-    if (labelLayout.hits(location, context.hitTestRadius)) {
+    if (labelLayout.contains(location, context.hitTestRadius)) {
       return true
     }
     // if the layout is not hit, we have to check the tail triangle.
     // instead of checking the real label layout, we pretend the tail triangle is placed
     // non-rotated at 0/0 and transform the hit-test location accordingly.
-
     // create the inverted layout transform
     const layoutTransform = LabelStyleBase.createLayoutTransform(
       context.canvasComponent.createRenderContext(),
@@ -174,24 +126,15 @@ export class CustomLabelStyle extends LabelStyleBase {
     const transformedLocation = layoutTransform
       .transform(location)
       .subtract(new Point(labelLayout.width * 0.5, labelLayout.height))
-
     // check the rectangular tail bounds
     const tailBounds = new Rect(0, 0, tailWidth, tailHeight)
-    if (!tailBounds.containsWithEps(transformedLocation, context.hitTestRadius)) {
+    if (!tailBounds.contains(transformedLocation, context.hitTestRadius)) {
       return false
     }
-
     // the location is inside the tail bounds - check if it's inside the triangle
     const tailHeightAtLocationX = tailHeight * ((tailWidth - transformedLocation.x) / tailWidth)
     return transformedLocation.y <= tailHeightAtLocationX + context.hitTestRadius
   }
-
-  /**
-   * @param {!ICanvasContext} context
-   * @param {!Rect} rectangle
-   * @param {!ILabel} label
-   * @returns {boolean}
-   */
   isVisible(context, rectangle, label) {
     // check the label layout first
     const labelLayout = label.layout
@@ -202,12 +145,6 @@ export class CustomLabelStyle extends LabelStyleBase {
     const tailArea = this.getTailArea(labelLayout)
     return rectangle.intersects(tailArea)
   }
-
-  /**
-   * @param {!ICanvasContext} context
-   * @param {!ILabel} label
-   * @returns {!Rect}
-   */
   getBounds(context, label) {
     const labelLayout = label.layout
     // calculate the tail area
@@ -215,11 +152,8 @@ export class CustomLabelStyle extends LabelStyleBase {
     // return the union of the label layout and tail bounds
     return Rect.add(labelLayout.bounds, tailArea.bounds)
   }
-
   /**
    * Creates an oriented rectangle that includes the tail triangle
-   * @param {!IOrientedRectangle} labelLayout
-   * @returns {!IOrientedRectangle}
    */
   getTailArea(labelLayout) {
     const w = labelLayout.width * 0.5
@@ -235,16 +169,11 @@ export class CustomLabelStyle extends LabelStyleBase {
       upY: labelLayout.upY
     })
   }
-
   /**
    * Creates a simple "speech balloon" shape.
-   * @param {!Size} labelSize
-   * @returns {!string}
    */
   createBackgroundShapeData(labelSize) {
     const { width: w, height: h } = labelSize
-    return `M 0 0 h ${w} v ${h} h -${
-      w * 0.5 - tailWidth
-    } l -${tailWidth} ${tailHeight} v -${tailHeight} h -${w * 0.5} z`
+    return `M 0 0 h ${w} v ${h} h -${w * 0.5 - tailWidth} l -${tailWidth} ${tailHeight} v -${tailHeight} h -${w * 0.5} z`
   }
 }

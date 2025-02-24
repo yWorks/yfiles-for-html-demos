@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,7 @@ import {
   EventRecognizers,
   GraphEditorInputMode,
   HandlePositions,
-  HandleTypes,
+  HandleType,
   IHandle,
   IInputModeContext,
   INode,
@@ -42,29 +42,16 @@ import {
   NodeReshapeHandleProvider,
   NodeReshapeHandlerHandle,
   Point
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * A NodeReshapeHandleProvider for cyan nodes that toggles aspect ratio resizing on and of when clicking on its handles.
  */
 export class ClickableNodeReshapeHandleProvider extends NodeReshapeHandleProvider {
   state
-
-  /**
-   * @param {!INode} node
-   * @param {!IReshapeHandler} reshapeHandler
-   * @param {!ApplicationState} state
-   */
   constructor(node, reshapeHandler, state) {
     super(node, reshapeHandler, HandlePositions.BORDER)
     this.state = state
   }
-
-  /**
-   * @param {!IInputModeContext} inputModeContext
-   * @param {!HandlePositions} position
-   * @returns {!IHandle}
-   */
   getHandle(inputModeContext, position) {
     const wrapped = super.getHandle(inputModeContext, position)
     wrapped.ratioReshapeRecognizer = this.state.keepAspectRatio
@@ -73,108 +60,58 @@ export class ClickableNodeReshapeHandleProvider extends NodeReshapeHandleProvide
     return new ClickableNodeReshapeHandlerHandle(this.state, wrapped)
   }
 }
-
 class ClickableNodeReshapeHandlerHandle extends BaseClass(IHandle) {
   state
   wrapped
-
-  /**
-   * @param {!ApplicationState} state
-   * @param {!NodeReshapeHandlerHandle} wrapped
-   */
   constructor(state, wrapped) {
     super()
     this.state = state
     this.wrapped = wrapped
   }
-
-  /**
-   * @type {!Cursor}
-   */
   get cursor() {
     return this.wrapped.cursor
   }
-
-  /**
-   * @type {!IPoint}
-   */
   get location() {
     return this.wrapped.location
   }
-
   /**
-   * Modifies the wrapped {@link IHandle.type} by combining it with {@link HandleTypes.VARIANT2}.
-   * @type {!HandleTypes}
+   * Modifies the wrapped {@link IHandle.type} by combining it with {@link HandleType.MOVE3}.
    */
   get type() {
-    return this.state.keepAspectRatio
-      ? (this.wrapped.type |= HandleTypes.VARIANT2)
-      : this.wrapped.type
+    return this.state.keepAspectRatio ? (this.wrapped.type |= HandleType.MOVE3) : this.wrapped.type
   }
-
+  get tag() {
+    return this.wrapped.tag
+  }
   /**
    * Toggles the aspect ratio state of the application.
-   * @param {!ClickEventArgs} eventArgs
    */
   handleClick(eventArgs) {
     this.state.toggleAspectRatio()
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
-   */
   handleMove(context, originalLocation, newLocation) {
     this.wrapped.handleMove(context, originalLocation, newLocation)
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   */
   initializeDrag(context) {
     this.wrapped.initializeDrag(context)
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
-   */
   dragFinished(context, originalLocation, newLocation) {
     this.wrapped.dragFinished(context, originalLocation, newLocation)
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   */
   cancelDrag(context, originalLocation) {
     this.wrapped.cancelDrag(context, originalLocation)
   }
 }
-
 export class ApplicationState {
-  /**
-   * @type {boolean}
-   */
   get keepAspectRatio() {
     return this._keepAspectRatio
   }
-
   graphEditorInputMode
-
   _keepAspectRatio = false
-
-  /**
-   * @param {!GraphEditorInputMode} graphEditorInputMode
-   * @param {boolean} keepAspectRatio
-   */
   constructor(graphEditorInputMode, keepAspectRatio) {
     this.graphEditorInputMode = graphEditorInputMode
     this._keepAspectRatio = keepAspectRatio
   }
-
   toggleAspectRatio() {
     this._keepAspectRatio = !this._keepAspectRatio
     this.graphEditorInputMode.requeryHandles()

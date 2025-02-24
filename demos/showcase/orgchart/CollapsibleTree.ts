@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,17 +28,13 @@
  ***************************************************************************/
 import {
   BaseClass,
-  CompactNodePlacer,
+  Command,
+  CompactSubtreePlacer,
   CompositeLayoutData,
-  DefaultGraph,
   delegate,
-  type Edge,
   FilteredGraphWrapper,
-  FixNodeLayoutData,
-  FixNodeLayoutStage,
+  Graph,
   type GraphComponent,
-  ICommand,
-  IComparer,
   type IEdge,
   type IEnumerable,
   type IGraph,
@@ -46,22 +42,26 @@ import {
   type IMapper,
   type IModelItem,
   INode,
-  Insets,
   type IPort,
   type ItemMapping,
   type ItemMappingConvertible,
-  ITreeLayoutPortAssignment,
+  ITreeLayoutPortAssigner,
+  LayoutAnchoringPolicy,
+  LayoutAnchoringStage,
+  LayoutAnchoringStageData,
   LayoutExecutor,
   type LayoutGraph,
+  type LayoutNode,
   Mapper,
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
+  Point,
+  PortPlacementPolicy,
   TreeLayout,
   TreeLayoutData,
   TreeReductionStage,
-  type YNode,
-  YPoint
-} from 'yfiles'
+  ViewportLimitingPolicy
+} from '@yfiles/yfiles'
 
 /**
  * A graph wrapper that can hide and show parts of a tree and keeps the layout up to date.
@@ -83,7 +83,7 @@ export class CollapsibleTree {
 
   private doingLayout = false
   // once the nodes have been arranged, remember their arrangement strategy for a more stable layout upon changes
-  private readonly compactNodePlacerStrategyMementos: IMapper<INode, unknown> = new Mapper()
+  private readonly compactSubtreePlacerStrategyMementos: IMapper<INode, unknown> = new Mapper()
 
   private graphUpdatedListener: (() => void) | null = null
   private collapsedStateUpdatedListener: ((port: IPort, collapsed: boolean) => void) | null = null
@@ -102,25 +102,26 @@ export class CollapsibleTree {
 
   /**
    * Optional comparer to determine the order of subtrees in the layout.
-   * See also {@link TreeLayoutData.outEdgeComparers}.
+   * See also {@link TreeLayoutData.childOrder.outEdgeComparison}.
    */
-  outEdgeComparers:
+  outEdgeComparison:
     | ItemMapping<INode, (edge1: IEdge, edge2: IEdge) => number>
     | ItemMappingConvertible<INode, (edge1: IEdge, edge2: IEdge) => number> = () => (): number => 0
 
   constructor(
     private readonly graphComponent: GraphComponent,
-    readonly completeGraph: IGraph = new DefaultGraph()
+    readonly completeGraph: IGraph = new Graph()
   ) {
     const nodeFilter = (node: INode): boolean => !this.hiddenNodesSet.has(node)
     this.filteredGraph = new FilteredGraphWrapper(completeGraph, nodeFilter)
+    this.graphComponent.viewportLimiter.policy = ViewportLimitingPolicy.TOWARDS_LIMIT
   }
 
   /**
    * Adds an event listener to the graphUpdated event that is fired after the filtered graph
    * has changed and the layout was updated.
    */
-  addGraphUpdatedListener(listener: () => void): void {
+  setGraphUpdatedListener(listener: () => void): void {
     this.graphUpdatedListener = delegate.combine(this.graphUpdatedListener, listener)
   }
 
@@ -132,7 +133,7 @@ export class CollapsibleTree {
    * Adds an event listener to the collapsedStateUpdated event that is fired when the collapsed
    * state of a port has changed.
    */
-  addCollapsedStateUpdatedListener(listener: (port: IPort, collapsed: boolean) => void): void {
+  setCollapsedStateUpdatedListener(listener: (port: IPort, collapsed: boolean) => void): void {
     this.collapsedStateUpdatedListener = delegate.combine(
       this.collapsedStateUpdatedListener,
       listener
@@ -175,46 +176,48 @@ export class CollapsibleTree {
   /**
    * @returns Whether the children of the given node can be hidden.
    */
-  canExecuteHideChildren(item: INode): boolean {
-    return !this.doingLayout && this.filteredGraph.outDegree(item) > 0
+  canExecuteHideChildren(node: INode | null): boolean {
+    return !!node && !this.doingLayout && this.filteredGraph.outDegree(node) > 0
   }
 
   /**
    * Shows the children of the given node and updates the layout.
    */
-  async executeShowChildren(item: INode): Promise<void> {
-    if (!this.canExecuteShowChildren(item)) {
+  async executeShowChildren(node: INode): Promise<void> {
+    if (!this.canExecuteShowChildren(node)) {
       return Promise.resolve()
     }
 
-    this.showChildren(item)
+    this.showChildren(node)
 
     // inform the filter that the predicate changed, and thus the graph needs to be updated
     this.filteredGraph.nodePredicateChanged()
 
-    const incrementalNodes = CollapsibleTree.collectDescendants(this.completeGraph, item)
-    await this.refreshLayout(item, incrementalNodes, false)
+    const incrementalNodes = CollapsibleTree.collectDescendants(this.completeGraph, node)
+    await this.refreshLayout(node, incrementalNodes, false)
 
-    this.updateCollapsedState(item, false)
+    this.updateCollapsedState(node, false)
 
     this.onGraphUpdated()
   }
 
   private showChildren(node: INode): void {
     for (const childEdge of this.completeGraph.outEdgesAt(node)) {
-      const child = childEdge.targetNode!
+      const child = childEdge.targetNode
       this.hiddenNodesSet.delete(child)
       CollapsibleTree.restoreGroup(this.completeGraph, this.hiddenNodesSet, child)
-      this.onCollapsedStateUpdated(childEdge.sourcePort!, false)
+      this.onCollapsedStateUpdated(childEdge.sourcePort, false)
     }
   }
 
   /**
    * @returns Whether the children of the given node can be shown.
    */
-  canExecuteShowChildren(item: INode): boolean {
+  canExecuteShowChildren(node: INode | null): boolean {
     return (
-      !this.doingLayout && this.filteredGraph.outDegree(item) !== this.completeGraph.outDegree(item)
+      !!node &&
+      !this.doingLayout &&
+      this.filteredGraph.outDegree(node) !== this.completeGraph.outDegree(node)
     )
   }
 
@@ -225,7 +228,7 @@ export class CollapsibleTree {
    * direct parent and not any of its children.
    */
   async executeShowParent(node: INode): Promise<void> {
-    if (this.doingLayout) {
+    if (!this.canExecuteShowParent(node)) {
       return Promise.resolve()
     }
 
@@ -240,7 +243,7 @@ export class CollapsibleTree {
 
   private showParents(node: INode, incrementalNodes: Set<INode>): void {
     for (const parentEdge of this.completeGraph.inEdgesAt(node)) {
-      const parent = parentEdge.sourceNode!
+      const parent = parentEdge.sourceNode
       this.hiddenNodesSet.delete(parent)
       CollapsibleTree.restoreGroup(this.completeGraph, this.hiddenNodesSet, parent)
       incrementalNodes.add(parent)
@@ -250,8 +253,9 @@ export class CollapsibleTree {
   /**
    * @returns Whether the parent of the given node can be shown.
    */
-  canExecuteShowParent(node: INode): boolean {
+  canExecuteShowParent(node: INode | null): boolean {
     return (
+      !!node &&
       !this.doingLayout &&
       this.filteredGraph.inDegree(node) === 0 &&
       this.completeGraph.inDegree(node) > 0
@@ -266,7 +270,7 @@ export class CollapsibleTree {
    * in the graph.
    */
   async executeHideParent(node: INode): Promise<void> {
-    if (this.doingLayout) {
+    if (!this.canExecuteHideParent(node)) {
       return Promise.resolve()
     }
     const nodes = CollapsibleTree.collectAllNodesExceptSubtree(this.completeGraph, node)
@@ -285,22 +289,22 @@ export class CollapsibleTree {
   /**
    * @returns Whether the parent of the given node can be hidden.
    */
-  canExecuteHideParent(node: INode): boolean {
-    return !this.doingLayout && this.filteredGraph.inDegree(node) > 0
+  canExecuteHideParent(node: INode | null): boolean {
+    return !!node && !this.doingLayout && this.filteredGraph.inDegree(node) > 0
   }
 
   /**
    * Shows all nodes and updates the layout.
    */
   async executeShowAll(): Promise<void> {
-    if (this.doingLayout) {
+    if (!this.canExecuteShowAll()) {
       return Promise.resolve()
     }
     const incrementalNodes = new Set(this.hiddenNodesSet)
     this.hiddenNodesSet.clear()
 
     for (const edge of this.completeGraph.edges) {
-      this.onCollapsedStateUpdated(edge.sourcePort!, false)
+      this.onCollapsedStateUpdated(edge.sourcePort, false)
     }
 
     // inform the filter that the predicate changed, and thus the graph needs to be updated
@@ -334,11 +338,11 @@ export class CollapsibleTree {
     this.filteredGraph.nodePredicateChanged()
 
     this.filteredGraph.applyLayout(
-      this.createConfiguredLayout(false),
+      this.createConfiguredLayout(),
       this.createConfiguredLayoutData(this.filteredGraph)
     )
-    this.graphComponent.fitGraphBounds()
-    this.limitViewport()
+    void this.graphComponent.fitGraphBounds()
+    this.graphComponent.updateContentBounds(100)
   }
 
   /**
@@ -357,7 +361,7 @@ export class CollapsibleTree {
     }
 
     this.graphComponent.currentItem = item
-    ICommand.ZOOM_TO_CURRENT_ITEM.execute(null, this.graphComponent)
+    this.graphComponent.executeCommand(Command.ZOOM_TO_CURRENT_ITEM)
     this.graphComponent.focus()
   }
 
@@ -370,10 +374,10 @@ export class CollapsibleTree {
     this.filteredGraph.nodePredicateChanged()
 
     this.filteredGraph.applyLayout(
-      this.createConfiguredLayout(false),
+      this.createConfiguredLayout(),
       this.createConfiguredLayoutData(this.filteredGraph)
     )
-    this.limitViewport()
+    this.graphComponent.updateContentBounds(100)
 
     this.onGraphUpdated()
   }
@@ -398,15 +402,14 @@ export class CollapsibleTree {
     }
 
     // configure the tree layout
-    const treeLayout = this.createConfiguredLayout(true)
-
-    // create the layout (with a stage that fixes the center node in the coordinate system)
-    const layout = new FixNodeLayoutStage(new TreeReductionStage(treeLayout))
+    const layout = new LayoutAnchoringStage(this.createConfiguredLayout())
 
     const layoutData = new CompositeLayoutData()
     if (centerNode) {
-      // we mark a node as the center node
-      layoutData.items.add(new FixNodeLayoutData({ fixedNodes: centerNode }))
+      // we mark a node as the center node to fix it in the coordinate system
+      const fixNodeLayoutData = new LayoutAnchoringStageData()
+      fixNodeLayoutData.nodeAnchoringPolicies.mapper.set(centerNode, LayoutAnchoringPolicy.CENTER)
+      layoutData.items.add(fixNodeLayoutData)
     }
     if (collapse) {
       // configure PlaceNodesAtBarycenterStage for a smooth animation
@@ -418,7 +421,11 @@ export class CollapsibleTree {
     }
 
     layoutData.items.add(
-      this.createConfiguredLayoutData(this.filteredGraph, collapse ? incrementalNodes : undefined)
+      this.createConfiguredLayoutData(
+        this.filteredGraph,
+        incrementalNodes.size > 0,
+        collapse ? incrementalNodes : undefined
+      )
     )
 
     // configure a LayoutExecutor
@@ -428,14 +435,12 @@ export class CollapsibleTree {
       layoutData,
       animateViewport: centerNode === null,
       easedAnimation: true,
-      duration: '0.5s',
-      fixPorts: true
+      animationDuration: '0.5s',
+      portPlacementPolicies: PortPlacementPolicy.KEEP_PARAMETER
     })
 
     await executor.start()
-    this.limitViewport()
-    // the commands CanExecute state might have changed - trigger a requery
-    ICommand.invalidateRequerySuggested()
+    this.graphComponent.updateContentBounds(100)
     this.doingLayout = false
   }
 
@@ -459,17 +464,36 @@ export class CollapsibleTree {
    */
   private createConfiguredLayoutData(
     graph: IGraph = null!,
+    fromSketch = false,
     incrementalNodes: Set<INode> = new Set()
   ): TreeLayoutData {
     const hasIncrementalParent = (node: INode): boolean =>
-      graph.inDegree(node) > 0 && incrementalNodes.has(graph.predecessors(node).first())
+      graph.inDegree(node) > 0 && incrementalNodes.has(graph.predecessors(node).at(0)!)
+
+    const incrementalEdgesComparison = (): ((edge1: IEdge, edge2: IEdge) => number) => {
+      return (edge1: IEdge, edge2: IEdge): number => {
+        const y1 = edge1.targetNode.layout.center.y
+        const y2 = edge2.targetNode.layout.center.y
+        if (y1 === y2) {
+          const x1 = edge1.targetNode.layout.center.x
+          const x2 = edge2.targetNode.layout.center.x
+          if (x1 === x2) {
+            return 0
+          }
+          return x1 < x2 ? -1 : 1
+        }
+        return y1 < y2 ? -1 : 1
+      }
+    }
 
     return new TreeLayoutData({
       assistantNodes: (node: INode): boolean =>
         this.isAssistantNode(node) && graph.inDegree(node) > 0 && !hasIncrementalParent(node),
-      outEdgeComparers: this.outEdgeComparers,
       nodeTypes: this.nodeTypesMapping,
-      compactNodePlacerStrategyMementos: this.compactNodePlacerStrategyMementos
+      compactSubtreePlacerStrategyMementos: this.compactSubtreePlacerStrategyMementos,
+      childOrder: {
+        outEdgeComparators: fromSketch ? incrementalEdgesComparison : this.outEdgeComparison
+      }
     })
   }
 
@@ -477,56 +501,27 @@ export class CollapsibleTree {
    * Creates a tree layout that handles assistant nodes and stack leaf nodes.
    * @returns A configured TreeLayout.
    */
-  private createConfiguredLayout(incremental: boolean): ILayoutAlgorithm {
+  private createConfiguredLayout(): ILayoutAlgorithm {
     const treeLayout = new TreeLayout()
-    treeLayout.defaultPortAssignment = new (class extends BaseClass(ITreeLayoutPortAssignment) {
-      assignPorts(graph: LayoutGraph, node: YNode): void {
-        const inEdge = node.firstInEdge
+    treeLayout.defaultPortAssigner = new (class extends BaseClass(ITreeLayoutPortAssigner) {
+      assignPorts(graph: LayoutGraph, node: LayoutNode): void {
+        const inEdge = node.inEdges.at(0)
         if (inEdge) {
-          graph.setTargetPointRel(inEdge, YPoint.ORIGIN)
+          inEdge.targetPortOffset = Point.ORIGIN
         }
-        const halfHeight = graph.getSize(node).height / 2
+        const halfHeight = node.layout.height / 2
         for (const outEdge of node.outEdges) {
-          graph.setSourcePointRel(outEdge, new YPoint(0, halfHeight))
+          outEdge.sourcePortOffset = new Point(0, halfHeight)
         }
       }
     })()
 
-    if (incremental) {
-      treeLayout.defaultOutEdgeComparer = IComparer.create<Edge>(
-        (edge1: Edge, edge2: Edge): number => {
-          const y1 = (edge1.graph as LayoutGraph).getCenterY(edge1.target)
-          const y2 = (edge2.graph as LayoutGraph).getCenterY(edge2.target)
-          if (y1 === y2) {
-            const x1 = (edge1.graph as LayoutGraph).getCenterX(edge1.target)
-            const x2 = (edge2.graph as LayoutGraph).getCenterX(edge2.target)
-            if (x1 === x2) {
-              return 0
-            }
-            return x1 < x2 ? -1 : 1
-          }
-          return y1 < y2 ? -1 : 1
-        }
-      )
-    }
-
-    // we let the CompactNodePlacer arrange the nodes
-    treeLayout.defaultNodePlacer = new CompactNodePlacer()
-
+    // we let the CompactSubtreePlacer arrange the nodes
+    treeLayout.defaultSubtreePlacer = new CompactSubtreePlacer()
     // layout stages used to place nodes at barycenter for smoother layout animations
-    treeLayout.appendStage(new PlaceNodesAtBarycenterStage())
+    treeLayout.layoutStages.append(new PlaceNodesAtBarycenterStage())
 
     return new TreeReductionStage(treeLayout)
-  }
-
-  /**
-   * Set up a ViewportLimiter that makes sure that the explorable region doesn't exceed the graph size.
-   */
-  private limitViewport(): void {
-    this.graphComponent.updateContentRect(new Insets(100))
-    const limiter = this.graphComponent.viewportLimiter
-    limiter.honorBothDimensions = false
-    limiter.bounds = this.graphComponent.contentRect
   }
 
   private addToHiddenNodes(nodes: Iterable<INode>): void {
@@ -540,7 +535,7 @@ export class CollapsibleTree {
    */
   private updateCollapsedState(node: INode, collapsed: boolean): void {
     for (const outEdge of this.completeGraph.outEdgesAt(node)) {
-      this.onCollapsedStateUpdated(outEdge.sourcePort!, collapsed)
+      this.onCollapsedStateUpdated(outEdge.sourcePort, collapsed)
     }
   }
 
@@ -582,8 +577,8 @@ export class CollapsibleTree {
     while (queue.length > 0) {
       const node = queue.pop()!
       for (const outEdge of graph.outEdgesAt(node)) {
-        queue.unshift(outEdge.targetNode!)
-        nodes.add(outEdge.targetNode!)
+        queue.unshift(outEdge.targetNode)
+        nodes.add(outEdge.targetNode)
       }
     }
     return nodes

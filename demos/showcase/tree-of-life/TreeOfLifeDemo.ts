@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,59 +26,53 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { RadialLayoutNodeInfo } from 'yfiles'
 import {
   Bfs,
-  CenterNodesPolicy,
   Cursor,
-  DefaultLabelStyle,
+  EdgeStyleIndicatorRenderer,
   FilteredGraphWrapper,
   FreeNodeLabelModel,
-  GivenCoordinatesStage,
-  GivenCoordinatesStageData,
+  GivenCoordinatesLayout,
+  GivenCoordinatesLayoutData,
   GraphBuilder,
   GraphComponent,
-  GraphHighlightIndicatorManager,
   GraphItemTypes,
   GraphViewerInputMode,
   IArrow,
-  ICanvasObjectDescriptor,
   IEdge,
   IEdgeStyle,
   IGraph,
   ILabel,
   ILabelStyle,
   IListEnumerable,
-  IndicatorEdgeStyleDecorator,
-  IndicatorLabelStyleDecorator,
-  IndicatorNodeStyleDecorator,
   INode,
   INodeStyle,
-  Insets,
   LabelShape,
+  LabelStyle,
+  LabelStyleIndicatorRenderer,
   License,
-  Mapper,
-  NodeLabelingPolicy,
+  NodeStyleIndicatorRenderer,
   Point,
   PolylineEdgeStyle,
   RadialLayout,
   RadialLayoutData,
-  RadialLayoutEdgeRoutingStrategy,
-  RadialLayoutLayeringStrategy,
   ShapeNodeShape,
   ShapeNodeStyle,
   Size,
-  StyleDecorationZoomPolicy,
-  WebGL2GraphModelManager
-} from 'yfiles'
+  StyleIndicatorZoomPolicy,
+  WebGLGraphModelManager
+} from '@yfiles/yfiles'
 
 import SectorVisual from './SectorVisual'
 import { getGlobalRoot, getSubtree, highlightSubtree } from './SubtreeSupport'
 import { initializeGraphSearch, resetGraphSearch } from './TreeOfLifeSearch'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
-import { addNavigationButtons, finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+import {
+  addNavigationButtons,
+  finishLoading,
+  showLoadingIndicator
+} from '@yfiles/demo-resources/demo-page'
 
 type Palette = {
   primary: string
@@ -134,10 +128,8 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   if (BrowserDetection.webGL2) {
-    graphComponent.graphModelManager = new WebGL2GraphModelManager()
+    graphComponent.graphModelManager = new WebGLGraphModelManager()
   }
 
   initializeStyleDefaults(graphComponent.graph)
@@ -169,13 +161,13 @@ function initializeStyleDefaults(graph: IGraph): void {
     stroke: '2px #1C1A1A'
   })
   graph.nodeDefaults.shareStyleInstance = false
-  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createDefaultParameter()
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
+  graph.nodeDefaults.labels.style = new LabelStyle({
     shape: LabelShape.PILL,
     backgroundFill: '#AAA8A9',
     backgroundStroke: 'none',
     textFill: '#191718',
-    insets: new Insets(5, 2, 5, 2),
+    padding: [2, 5, 2, 5],
     verticalTextAlignment: 'center'
   })
   graph.nodeDefaults.labels.shareStyleInstance = false
@@ -189,19 +181,23 @@ function initializeStyleDefaults(graph: IGraph): void {
 
   // configures the styles that are used for highlighting the graph items
   // install custom highlight
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    nodeStyle: new IndicatorNodeStyleDecorator({
-      padding: 5,
-      zoomPolicy: StyleDecorationZoomPolicy.MIXED
-    }),
-    edgeStyle: new IndicatorEdgeStyleDecorator({
-      zoomPolicy: StyleDecorationZoomPolicy.MIXED
-    }),
-    labelStyle: new IndicatorLabelStyleDecorator({
-      padding: 5,
-      zoomPolicy: StyleDecorationZoomPolicy.NO_DOWNSCALING
+  graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(
+    new NodeStyleIndicatorRenderer({
+      margins: 5,
+      zoomPolicy: StyleIndicatorZoomPolicy.NO_DOWNSCALING
     })
-  })
+  )
+  graphComponent.graph.decorator.edges.highlightRenderer.addConstant(
+    new EdgeStyleIndicatorRenderer({
+      zoomPolicy: StyleIndicatorZoomPolicy.NO_DOWNSCALING
+    })
+  )
+  graphComponent.graph.decorator.labels.highlightRenderer.addConstant(
+    new LabelStyleIndicatorRenderer({
+      margins: 5,
+      zoomPolicy: StyleIndicatorZoomPolicy.NO_DOWNSCALING
+    })
+  )
 }
 
 /**
@@ -217,7 +213,7 @@ function initializeInteraction(): void {
   })
 
   // show subtree of the clicked node
-  inputMode.addItemClickedListener(async (_, evt) => {
+  inputMode.addEventListener('item-clicked', async (evt) => {
     let clickedNode: INode
     if (evt.item instanceof INode) {
       clickedNode = evt.item
@@ -234,7 +230,7 @@ function initializeInteraction(): void {
         mainGraph().inDegree(clickedNode) > 0
       ) {
         // use hidden parent of the given node if there is one
-        newSubtreeRoot = mainGraph().inEdgesAt(clickedNode).first().sourceNode!
+        newSubtreeRoot = mainGraph().inEdgesAt(clickedNode).first()!.sourceNode
       } else {
         newSubtreeRoot = clickedNode
       }
@@ -244,7 +240,7 @@ function initializeInteraction(): void {
   })
 
   // navigate to the clicked edge
-  inputMode.addItemLeftClickedListener(async (_, evt) => {
+  inputMode.addEventListener('item-left-clicked', async (evt) => {
     if (evt.item instanceof IEdge) {
       await navigateToEdge(evt.item, evt.location, evt.context.canvasComponent as GraphComponent)
     }
@@ -255,15 +251,15 @@ function initializeInteraction(): void {
   itemHoverInputMode.hoverItems = GraphItemTypes.ALL
   itemHoverInputMode.hoverCursor = Cursor.POINTER
 
-  itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
-    const highlightManager = graphComponent.highlightIndicatorManager
-    highlightManager.clearHighlights()
+  itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
+    const highlights = graphComponent.highlights
+    highlights.clear()
 
     if (evt.item instanceof ILabel) {
       // when a label is hovered, only highlight this label
-      highlightManager.addHighlight(evt.item)
+      highlights.add(evt.item)
       if (evt.oldItem) {
-        highlightManager.removeHighlight(evt.oldItem)
+        highlights.remove(evt.oldItem)
       }
     } else if (evt.item instanceof INode || evt.item instanceof IEdge) {
       // when a node or edge is hovered, highlight the whole subtree
@@ -272,14 +268,14 @@ function initializeInteraction(): void {
   })
 
   // highlight sector when hovered
-  graphComponent.addMouseMoveListener((_, evt) => {
+  graphComponent.addEventListener('pointer-move', (evt) => {
     if (sectorVisual.updateHighlight(evt.location)) {
       graphComponent.invalidate()
     }
   })
 
   // if a sector is clicked show its subtree
-  inputMode.addCanvasClickedListener(async (_, evt) => {
+  inputMode.addEventListener('canvas-clicked', async (evt) => {
     if (!subtreeUpdateRunning) {
       subtreeUpdateRunning = true
       const subtreeRoot = sectorVisual.getSubtreeRoot(evt.location)
@@ -297,10 +293,7 @@ function initializeInteraction(): void {
  * Visualizes the sectors in the background of the GraphComponent.
  */
 function initializeSectorVisualization() {
-  graphComponent.backgroundGroup.addChild(
-    sectorVisual,
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
-  )
+  graphComponent.renderTree.createElement(graphComponent.renderTree.backgroundGroup, sectorVisual)
 }
 
 /**
@@ -317,7 +310,7 @@ async function loadAndFilterGraph() {
   graphComponent.graph = new FilteredGraphWrapper(graph, (node) => isVisible(node))
 
   // center the graph
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   // show and layout the first subtree
   subtreeUpdateRunning = true
@@ -387,7 +380,7 @@ function colorizeSubtrees(graph: IGraph) {
     })
 
     subtree.edges.forEach((edge) => {
-      const extinct = edge.targetNode!.tag.EXTINCT !== '0'
+      const extinct = edge.targetNode.tag.EXTINCT !== '0'
       graph.setStyle(edge, getEdgeStyle(extinct, palette))
     })
   })
@@ -408,12 +401,12 @@ function getNodeStyle(extinct: boolean, palette: Palette): INodeStyle {
  * Returns a label style that uses the given palette.
  */
 function getLabelStyle(extinct: boolean, palette: Palette): ILabelStyle {
-  return new DefaultLabelStyle({
+  return new LabelStyle({
     shape: LabelShape.PILL,
     backgroundStroke: extinct ? `2px ${palette.textBackground}` : 'none',
     backgroundFill: extinct ? '#FFFFFF' : palette.textBackground,
     textFill: palette.text,
-    insets: new Insets(5, 2, 5, 2),
+    padding: [2, 5, 2, 5],
     verticalTextAlignment: 'center'
   })
 }
@@ -441,9 +434,8 @@ async function showSubtree(subtreeRoot: INode, prepareAnimation?: boolean) {
     coreNodes: [subtreeRoot]
   })
   const bfsResult = bfs.run(mainGraph())
-  const subtreeNodes = subtree.nodes.orderBy(
-    (node) => bfsResult.nodeLayerIds.get(node),
-    (layer1, layer2) => layer1! - layer2!
+  const subtreeNodes = subtree.nodes.toSorted(
+    (node1, node2) => bfsResult.nodeLayerIds.get(node1)! - bfsResult.nodeLayerIds.get(node2)!
   )
 
   // only show the layers up until the graph has 500 nodes + the remaining nodes of the last layer
@@ -461,7 +453,9 @@ async function showSubtree(subtreeRoot: INode, prepareAnimation?: boolean) {
   resetGraphSearch()
 
   // highlight the label of the subtree root as a visual orientation
-  graphComponent.highlightIndicatorManager.addHighlight(subtreeRoot.labels.first())
+  if (subtreeRoot.labels.size > 0) {
+    graphComponent.highlights.add(subtreeRoot.labels.first()!)
+  }
 
   // update sector highlight
   if (sectorVisual.updateHighlight(graphComponent.lastEventLocation)) {
@@ -504,12 +498,12 @@ async function applyNewLayout(
 
     // highlight the newly inserted extinct nodes
     if (newSize > oldSize && highlightChanges) {
-      const highlightManager = graphComponent.highlightIndicatorManager
-      highlightManager.clearHighlights()
+      const highlights = graphComponent.highlights
+      highlights.clear()
 
       graph.nodes.forEach((node) => {
         if (node.tag.EXTINCT !== '0') {
-          highlightManager.addHighlight(node.labels.get(0))
+          highlights.add(node.labels.get(0))
         }
       })
     }
@@ -524,8 +518,8 @@ async function applyNewLayout(
  */
 function prepareSmoothLayoutAnimation(graphComponent: GraphComponent) {
   mainGraph().applyLayout(
-    new GivenCoordinatesStage(),
-    new GivenCoordinatesStageData({
+    new GivenCoordinatesLayout(),
+    new GivenCoordinatesLayoutData({
       nodeLocations: graphComponent.center,
       edgePaths: IListEnumerable.EMPTY
     })
@@ -537,24 +531,23 @@ function prepareSmoothLayoutAnimation(graphComponent: GraphComponent) {
  * Layouts the current graph as a radial dendrogram.
  */
 async function layoutGraph(graphComponent: GraphComponent) {
-  const sectorMapper = new Mapper<INode, RadialLayoutNodeInfo>()
-  await graphComponent.morphLayout(
+  const radialLayoutData = new RadialLayoutData()
+  await graphComponent.applyLayoutAnimated(
     new RadialLayout({
-      centerNodesPolicy: CenterNodesPolicy.DIRECTED,
-      layeringStrategy: RadialLayoutLayeringStrategy.DENDROGRAM,
-      edgeRoutingStrategy: RadialLayoutEdgeRoutingStrategy.RADIAL_POLYLINE,
-      integratedNodeLabeling: true,
-      nodeLabelingPolicy: NodeLabelingPolicy.RAY_LIKE,
+      centerNodesPolicy: 'directed',
+      layeringStrategy: 'dendrogram',
+      edgeRoutingStyle: 'radial-polyline',
+      nodeLabelPlacement: 'ray-like',
       maximumChildSectorAngle: 360,
       layerSpacing: 1,
-      minimumNodeToNodeDistance: 2,
-      minimumEdgeToEdgeDistance: 5
+      minimumNodeDistance: 2,
+      minimumEdgeDistance: 5
     }),
     '200ms',
-    new RadialLayoutData({ nodeInfos: sectorMapper })
+    radialLayoutData
   )
 
-  sectorVisual.updateSectors(graphComponent.graph, sectorMapper)
+  sectorVisual.updateSectors(graphComponent.graph, radialLayoutData.nodePlacementsResult)
 }
 
 /**
@@ -568,7 +561,7 @@ async function navigateToEdge(
 ): Promise<void> {
   const position = getFocusPosition(item, graphComponent)
   const offset = clickLocation.subtract(graphComponent.viewport.center)
-  await graphComponent.zoomToAnimated(position.subtract(offset), graphComponent.zoom)
+  await graphComponent.zoomToAnimated(graphComponent.zoom, position.subtract(offset))
 }
 
 /**
@@ -577,8 +570,8 @@ async function navigateToEdge(
  */
 function getFocusPosition(edge: IEdge, graphComponent: GraphComponent): Point {
   const viewport = graphComponent.viewport
-  const targetNodeCenter = edge.targetNode!.layout.center
-  const sourceNodeCenter = edge.sourceNode!.layout.center
+  const targetNodeCenter = edge.targetNode.layout.center
+  const sourceNodeCenter = edge.sourceNode.layout.center
 
   if (viewport.contains(targetNodeCenter) && viewport.contains(sourceNodeCenter)) {
     // if the source and the target node are in the view port, return to the middle point of the edge
@@ -616,7 +609,7 @@ function getAncestors(node: INode): INode[] {
   let ancestor = node
   const ancestors: INode[] = [ancestor]
   while (mainGraph().inDegree(ancestor) !== 0) {
-    ancestor = mainGraph().inEdgesAt(ancestor).first().sourceNode!
+    ancestor = mainGraph().inEdgesAt(ancestor).first()!.sourceNode
     ancestors.push(ancestor)
   }
   return ancestors

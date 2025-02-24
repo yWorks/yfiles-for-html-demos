@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,7 +34,7 @@ import {
   INode,
   Point,
   TimeSpan
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getConnectionData, getEntityInfo } from './entity-data'
 
 /**
@@ -46,12 +46,12 @@ export function enableTooltips(graphComponent: GraphComponent): void {
   // enable tooltips for nodes and edges
   inputMode.toolTipItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
 
-  const mouseHoverInputMode = inputMode.mouseHoverInputMode
-  mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)
-  mouseHoverInputMode.delay = TimeSpan.fromMilliseconds(100)
-  mouseHoverInputMode.duration = TimeSpan.fromSeconds(3)
+  const toolTipInputMode = inputMode.toolTipInputMode
+  toolTipInputMode.toolTipLocationOffset = new Point(15, 15)
+  toolTipInputMode.delay = TimeSpan.fromMilliseconds(100)
+  toolTipInputMode.duration = TimeSpan.fromSeconds(3)
 
-  inputMode.addQueryItemToolTipListener((_, evt) => {
+  inputMode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.handled) {
       // Tooltip content has already been assigned -> nothing to do.
       return

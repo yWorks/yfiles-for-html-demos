@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,27 +31,22 @@ import {
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  HierarchicLayout,
-  HierarchicLayoutData,
-  HierarchicLayoutEdgeLayoutDescriptor,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   type IEdge,
   type IGraph,
   INode,
   LayoutExecutor,
-  MinimumNodeSizeStage,
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
-  PolylineEdgeStyle,
-  Rect,
-  type SimplexNodePlacer
-} from 'yfiles'
+  PolylineEdgeStyle
+} from '@yfiles/yfiles'
 
 import {
-  applyDemoTheme,
   colorSets,
   createDemoGroupStyle,
   createDemoNodeStyle
-} from 'demo-resources/demo-styles'
+} from '@yfiles/demo-resources/demo-styles'
 
 const pathNodeStyle = createDemoNodeStyle('demo-palette-403')
 const sideNodeStyle = createDemoNodeStyle('demo-palette-44')
@@ -97,23 +92,23 @@ export default class DecisionTree {
   /**
    * Creates a new instance of the decision tree component using the given graph, root node, and container element.
    * @param originalGraph the decision graph
-   * @param containerElement the element to display the decision tree in
+   * @param _containerElement the element to display the decision tree in
    * @param rootNode the root node that the decision tree starts with
    * @param beforeLayoutCallback a callback when layout starts
    * @param afterLayoutCallback a callback when layout ends
    */
   constructor(
     public originalGraph: IGraph,
-    containerElement: HTMLDivElement | string,
+    _containerElement: HTMLDivElement | string,
     rootNode?: INode,
     public beforeLayoutCallback?: (running: boolean, graphComponent: GraphComponent) => void,
     public afterLayoutCallback?: (running: boolean, graphComponent: GraphComponent) => void
   ) {
     // initialize the GraphComponent
     const graphComponent = new GraphComponent('#decision-tree')
-    applyDemoTheme(graphComponent)
     this.graph = graphComponent.graph
     this.graphComponent = graphComponent
+    this.graphComponent.minimumZoom = 1.2
 
     // load the input module and initialize the input mode
     this.initializeInputModes()
@@ -145,8 +140,8 @@ export default class DecisionTree {
       this.updateNodeStyles()
 
       // center the root node in the visible area
-      this.graphComponent.updateContentRect()
-      this.graphComponent.zoomTo(copiedRootNode.layout.center, targetZoom)
+      this.graphComponent.updateContentBounds()
+      this.graphComponent.zoomTo(targetZoom, copiedRootNode.layout.center)
     }
   }
 
@@ -177,7 +172,7 @@ export default class DecisionTree {
       selectableItems: GraphItemTypes.NONE,
       clickableItems: GraphItemTypes.NODE
     })
-    graphViewerInputMode.addItemClickedListener(async (_, evt) => {
+    graphViewerInputMode.addEventListener('item-clicked', async (evt) => {
       if (evt.item instanceof INode) {
         // toggle the collapsed state of the clicked node
         await this.showSuccessors(evt.item, true)
@@ -219,26 +214,6 @@ export default class DecisionTree {
 
     await this.runLayout(newNodes, animateScroll)
 
-    // calculate the bounding box of all new nodes
-    let nodeArea = Rect.EMPTY
-    for (const node of newNodes) {
-      nodeArea = Rect.add(nodeArea, node.layout.toRect())
-    }
-
-    // if there are new nodes, ensure all of them are visible
-    if (!nodeArea.isEmpty) {
-      nodeArea = nodeArea.getEnlarged(10)
-
-      let zoom = targetZoom
-      if (nodeArea.width * targetZoom > this.graphComponent.size.width) {
-        zoom = this.graphComponent.size.width / nodeArea.width
-      }
-      if (animateScroll) {
-        await this.graphComponent.zoomToAnimated(nodeArea.center, zoom)
-      } else {
-        this.graphComponent.zoomTo(nodeArea.center, zoom)
-      }
-    }
     this.afterLayoutCallback?.(false, this.graphComponent)
   }
 
@@ -258,7 +233,7 @@ export default class DecisionTree {
     const copiedParentNodes = new Map<INode, INode>()
     // copy the successors from the original graph
     this.originalGraph.outEdgesAt(originalNode).forEach((originalEdge) => {
-      const originalTargetNode = originalEdge.targetNode!
+      const originalTargetNode = originalEdge.targetNode
       if (!this.originalGraph.isGroupNode(originalTargetNode)) {
         // target is not a group, thus copy it
         const copiedTargetNode = this.copyNode(originalTargetNode)
@@ -425,8 +400,8 @@ export default class DecisionTree {
    * @returns The copied edge
    */
   private copyEdge(originalEdge: IEdge, copiedSourceNode: INode, copiedTargetNode: INode): IEdge {
-    const originalSourcePort = originalEdge.sourcePort!
-    const originalTargetPort = originalEdge.targetPort!
+    const originalSourcePort = originalEdge.sourcePort
+    const originalTargetPort = originalEdge.targetPort
     const copiedSourcePort = this.graph.addPort(
       copiedSourceNode,
       originalSourcePort.locationParameter,
@@ -477,13 +452,14 @@ export default class DecisionTree {
    */
   private async runLayout(incrementalNodes: INode[], animated: boolean): Promise<void> {
     if (!this.runningLayout) {
-      const layout = new HierarchicLayout({
-        layoutMode: 'incremental',
-        edgeLayoutDescriptor: new HierarchicLayoutEdgeLayoutDescriptor({ minimumSlope: 0 })
+      const layout = new HierarchicalLayout({
+        fromSketchMode: true,
+        defaultEdgeDescriptor: {
+          minimumSlope: 0
+        }
       })
-      ;(layout.nodePlacer as SimplexNodePlacer).barycenterMode = false
 
-      const layoutData = new HierarchicLayoutData()
+      const layoutData = new HierarchicalLayoutData()
       // move the incremental nodes between their neighbors before expanding for a smooth animation
       this.prepareSmoothExpandLayoutAnimation(incrementalNodes)
 
@@ -500,21 +476,24 @@ export default class DecisionTree {
         }
       })
       for (let i = 0; i < incrementalNodes.length - 1; i++) {
-        layoutData.sequenceConstraints.placeBefore(incrementalNodes[i], incrementalNodes[i + 1])
+        layoutData.sequenceConstraints.placeNodeBeforeNode(
+          incrementalNodes[i],
+          incrementalNodes[i + 1]
+        )
       }
       // configure the incremental hints
-      layoutData.incrementalHints.incrementalLayeringNodes = incrementalNodes
+      layoutData.incrementalNodes = incrementalNodes
 
       // configure critical edges so the path edges are aligned
       layoutData.criticalEdgePriorities = (edge: IEdge): number =>
-        this.pathNodes.has(edge.sourceNode!) && this.pathNodes.has(edge.targetNode!) ? 1 : 0
+        this.pathNodes.has(edge.sourceNode) && this.pathNodes.has(edge.targetNode) ? 1 : 0
 
       this.runningLayout = true
       const layoutExecutor = new LayoutExecutor({
         graphComponent: this.graphComponent,
-        layout: new MinimumNodeSizeStage(layout),
+        layout,
         layoutData,
-        duration: animated ? '0.2s' : '0s'
+        animationDuration: animated ? '0.2s' : '0s'
       })
       try {
         await layoutExecutor.start()

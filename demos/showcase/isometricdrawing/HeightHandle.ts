@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,12 +30,12 @@ import {
   BaseClass,
   ClickEventArgs,
   Cursor,
-  HandleTypes,
+  HandleType,
   IHandle,
   IInputModeContext,
   INode,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * An {@link IHandle} implementation that changes the height in a node's tag.
@@ -55,8 +55,12 @@ export default class HeightHandle extends BaseClass(IHandle) {
     this.dragging = false
   }
 
-  get type(): HandleTypes {
-    return HandleTypes.RESIZE
+  get type(): HandleType {
+    return HandleType.RESIZE
+  }
+
+  get tag() {
+    return null
   }
 
   get cursor(): Cursor {
@@ -66,9 +70,9 @@ export default class HeightHandle extends BaseClass(IHandle) {
   get location(): Point {
     const height = this.node.tag.height
     const cc = this.inputModeContext.canvasComponent!
-    const vp = cc.toViewCoordinates(this.node.layout.center)
+    const vp = cc.worldToViewCoordinates(this.node.layout.center)
     const up = vp.add(new Point(0, -height * this.inputModeContext.zoom))
-    return cc.toWorldCoordinates(up)
+    return cc.viewToWorldCoordinates(up)
   }
 
   /**
@@ -110,8 +114,8 @@ export default class HeightHandle extends BaseClass(IHandle) {
    * Adjusts the node height according to how much the handle was moved.
    */
   adjustNodeHeight(context: IInputModeContext, oldLocation: Point, newLocation: Point): void {
-    const newY = context.canvasComponent!.toViewCoordinates(newLocation).y
-    const oldY = context.canvasComponent!.toViewCoordinates(oldLocation).y
+    const newY = context.canvasComponent!.worldToViewCoordinates(newLocation).y
+    const oldY = context.canvasComponent!.worldToViewCoordinates(oldLocation).y
     const delta = (newY - oldY) / context.zoom
     const newHeight = this.originalHeight - delta
     this.node.tag.height = Math.max(this.minimumHeight, newHeight)

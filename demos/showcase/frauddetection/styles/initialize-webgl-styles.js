@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,117 +27,96 @@
  **
  ***************************************************************************/
 import {
-  StyleDecorationZoomPolicy,
-  WebGL2GraphModelManager,
-  WebGL2HighlightIndicatorManager,
-  WebGL2IconNodeStyle,
-  WebGL2IndicatorType,
-  WebGL2NodeIndicatorStyle,
-  WebGL2PolylineEdgeStyle,
-  WebGL2SelectionIndicatorManager
-} from 'yfiles'
-import { getEdgeType, getEntityData, isFraud } from '../entity-data.js'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
-import { edgeStyleMapping, nodeStyleMapping } from './graph-styles.js'
-import { createCanvasContext } from 'demo-utils/IconCreation'
-
-/** @type {Record.<string,WebGL2IconNodeStyle>} */
+  StyleIndicatorZoomPolicy,
+  WebGLGraphModelManager,
+  WebGLHighlightIndicatorManager,
+  WebGLImageNodeStyle,
+  WebGLIndicatorType,
+  WebGLNodeIndicatorStyle,
+  WebGLPolylineEdgeStyle,
+  WebGLSelectionIndicatorManager
+} from '@yfiles/yfiles'
+import { getEdgeType, getEntityData, isFraud } from '../entity-data'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+import { edgeStyleMapping, nodeStyleMapping } from './graph-styles'
+import { createCanvasContext } from '@yfiles/demo-utils/IconCreation'
 let nodeStyles
-/** @type {Record.<string,WebGL2PolylineEdgeStyle>} */
 let edgeStyles
-
 /**
  * Creates the WebGL styles used for nodes and edges.
- * @returns {!Promise}
  */
 async function initializeWebGLStyles() {
   // create the WebGL styles for nodes and edges
   nodeStyles = await createWebGLNodeStyles()
   edgeStyles = createWebGLEdgeStyles()
 }
-
 /**
- * Enables WebGL2 as the rendering technique if this supported by the browser.
- * @param {!GraphComponent} graphComponent
- * @returns {!Promise}
+ * Enables WebGL as the rendering technique if this supported by the browser.
  */
 export async function enableWebGLRendering(graphComponent) {
   if (BrowserDetection.webGL2) {
-    // install the WebGL2GraphModelManager responsible for the WebGL rendering
-    const webGL2GraphModelManager = new WebGL2GraphModelManager()
-    graphComponent.graphModelManager = webGL2GraphModelManager
-    webGL2GraphModelManager.nodeLabelGroup.above(webGL2GraphModelManager.nodeGroup)
-
+    // install the WebGLGraphModelManager responsible for the WebGL rendering
+    const webGLGraphModelManager = new WebGLGraphModelManager()
+    graphComponent.graphModelManager = webGLGraphModelManager
+    webGLGraphModelManager.nodeLabelGroup.above(webGLGraphModelManager.nodeGroup)
     await initializeWebGLStyles()
-
     // update the node/edge style, every time that the tag of the node/edge changes
     // this will make sure that the node/edge colors are correctly updated when a node/edge is marked
-    // as fraud and vice-versa
+    // as fraud and vice versa
     const graph = graphComponent.graph
-    graph.addNodeTagChangedListener((_, evt) => {
+    graph.addEventListener('node-tag-changed', (evt) => {
       updateNodeStyle(graphComponent, evt.item)
     })
-
-    graph.addEdgeTagChangedListener((_, evt) => {
+    graph.addEventListener('edge-tag-changed', (evt) => {
       updateEdgeStyle(graphComponent, evt.item)
     })
-
-    // initialize the selection and the highlight style so that they also use WebGL2 as a
+    // initialize the selection and the highlight style so that they also use WebGL as a
     // rendering technique
-    graphComponent.highlightIndicatorManager = new WebGL2HighlightIndicatorManager({
-      nodeStyle: new WebGL2NodeIndicatorStyle({
-        type: WebGL2IndicatorType.SOLID,
+    graphComponent.highlightIndicatorManager = new WebGLHighlightIndicatorManager({
+      nodeStyle: new WebGLNodeIndicatorStyle({
+        type: WebGLIndicatorType.SOLID,
         thickness: 3,
-        zoomPolicy: StyleDecorationZoomPolicy.MIXED,
+        zoomPolicy: StyleIndicatorZoomPolicy.MIXED,
         primaryColor: 'slateblue'
       })
     })
-
-    graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager({
-      nodeStyle: new WebGL2NodeIndicatorStyle({
-        type: WebGL2IndicatorType.SOLID,
+    graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager({
+      nodeStyle: new WebGLNodeIndicatorStyle({
+        type: WebGLIndicatorType.SOLID,
         thickness: 3,
-        zoomPolicy: StyleDecorationZoomPolicy.MIXED,
+        zoomPolicy: StyleIndicatorZoomPolicy.MIXED,
         primaryColor: 'darkblue'
       })
     })
   }
 }
-
 /**
- * Updates the WebGL2 style of the given node, if needed.
- * @param {!GraphComponent} graphComponent
- * @param {!INode} node
+ * Updates the WebGL style of the given node, if needed.
  */
 export function updateNodeStyle(graphComponent, node) {
-  const gmm = graphComponent.graphModelManager
+  const graph = graphComponent.graph
   const entity = getEntityData(node)
-  const oldStyle = gmm.getStyle(node)
+  const oldStyle = node.style
   if (needsUpdate(node, entity.type, oldStyle, nodeStyles)) {
     const type = getEntityData(node).type
-    gmm.setStyle(node, nodeStyles[isFraud(node) ? type + ' Fraud' : type])
+    graph.setStyle(node, nodeStyles[isFraud(node) ? type + ' Fraud' : type])
   }
 }
-
 /**
- * Updates the WebGL2 style of the given edge, if needed.
- * @param {!GraphComponent} graphComponent
- * @param {!IEdge} edge
+ * Updates the WebGL style of the given edge, if needed.
  */
 export function updateEdgeStyle(graphComponent, edge) {
-  const gmm = graphComponent.graphModelManager
-  const oldStyle = gmm.getStyle(edge)
+  const graph = graphComponent.graph
+  const oldStyle = edge.style
   if (needsUpdate(edge, getEdgeType(edge), oldStyle, edgeStyles)) {
     const type = getEdgeType(edge)
-    gmm.setStyle(edge, edgeStyles[isFraud(edge) && type === 'untyped' ? type + ' Fraud' : type])
+    graph.setStyle(edge, edgeStyles[isFraud(edge) && type === 'untyped' ? type + ' Fraud' : type])
   }
 }
-
 /**
- * Sets the new WebGL2 styles to the nodes and the edges of the given graphComponent.
- * @param {!GraphComponent} graphComponent
+ * Sets the new WebGL styles to the nodes and the edges of the given graphComponent.
  */
-export function setWebGL2Styles(graphComponent) {
+export function setWebGLStyles(graphComponent) {
   if (!BrowserDetection.webGL2) {
     return
   }
@@ -145,91 +124,69 @@ export function setWebGL2Styles(graphComponent) {
   graph.nodes.forEach((node) => {
     updateNodeStyle(graphComponent, node)
   })
-
   graph.edges.forEach((edge) => {
     updateEdgeStyle(graphComponent, edge)
   })
 }
-
 /**
  * Checks whether the given style needs an update.
  * The style will be updated only if the 'fraud' property of an item has been changed,
  * and the old style does not match with the new value of this property.
- * @param {!(INode|IEdge)} item
- * @param {!string} type
- * @param {!(WebGL2IconNodeStyle|WebGL2PolylineEdgeStyle)} oldStyle
- * @param {!(Record.<string,WebGL2IconNodeStyle>|Record.<string,WebGL2PolylineEdgeStyle>)} styles
- * @returns {boolean}
  */
 function needsUpdate(item, type, oldStyle, styles) {
   const fraud = isFraud(item)
-  return (
-    (fraud && !oldStyle.equals(styles[type + ' Fraud'])) ||
-    (!fraud && !oldStyle.equals(styles[type]))
-  )
+  return (fraud && oldStyle !== styles[type + ' Fraud']) || (!fraud && oldStyle !== styles[type])
 }
-
 /**
  * Creates two WebGL node styles for each of the node types stored in `nodeStyleMapping`.
  * One will be used for nodes that are not involved in fraud rings while the other will be used for
  * `fraud` nodes.
- * @returns {!Promise.<Record.<string,WebGL2IconNodeStyle>>}
  */
 async function createWebGLNodeStyles() {
   const webglNodeStyles = {}
-
   const canvasSize = 90 // square canvas
   const ctx = createCanvasContext(canvasSize, canvasSize)
-
   // create two WebGL Styles for each record
   for (const record of Object.keys(nodeStyleMapping)) {
     const style = nodeStyleMapping[record]
-
     const imageData = await getImageData(ctx, style.image, canvasSize)
     // one with normal nodes
-    webglNodeStyles[record] = new WebGL2IconNodeStyle({
-      icon: imageData,
-      fill: style.fill,
-      stroke: `4px ${style.stroke}`
+    webglNodeStyles[record] = new WebGLImageNodeStyle({
+      image: imageData,
+      backgroundFill: style.fill,
+      backgroundStroke: `4px ${style.stroke}`
     })
-
     // one for fraud nodes
-    webglNodeStyles[record + ' Fraud'] = new WebGL2IconNodeStyle({
-      icon: imageData,
-      fill: '#ff6c00',
-      stroke: '3px #ff6c00'
+    webglNodeStyles[record + ' Fraud'] = new WebGLImageNodeStyle({
+      image: imageData,
+      backgroundFill: '#ff6c00',
+      backgroundStroke: '3px #ff6c00'
     })
   }
   return webglNodeStyles
 }
-
 /**
  * Creates two WebGL edge styles for each of the edge types stored in `edgeStyleMapping`.
  * One will be used for edges that are not marked as `fraud` connections while the other will be used for
  * `fraud` edges.
- * @returns {!Record.<string,WebGL2PolylineEdgeStyle>}
  */
 function createWebGLEdgeStyles() {
   const webglEdgeStyles = {}
-
   for (const record of Object.keys(edgeStyleMapping)) {
-    webglEdgeStyles[record] = new WebGL2PolylineEdgeStyle({
+    webglEdgeStyles[record] = new WebGLPolylineEdgeStyle({
       stroke: `5px ${edgeStyleMapping[record]}`
     })
-
-    webglEdgeStyles[record + ' Fraud'] = new WebGL2PolylineEdgeStyle({
+    webglEdgeStyles[record + ' Fraud'] = new WebGLPolylineEdgeStyle({
       stroke: `5px #ff6c00`
     })
   }
   return webglEdgeStyles
 }
-
 /**
  * Creates an {@link ImageData} icon from a given url.
- * @param {!CanvasRenderingContext2D} ctx The canvas context in which to render the icon
- * @param {!string} url The image url
- * @param {number} canvasSize The render size of the source image
- * @returns {!Promise.<ImageData>}
+ * @param ctx The canvas context in which to render the icon
+ * @param url The image url
+ * @param canvasSize The render size of the source image
  */
 function getImageData(ctx, url, canvasSize) {
   return new Promise((resolve, reject) => {

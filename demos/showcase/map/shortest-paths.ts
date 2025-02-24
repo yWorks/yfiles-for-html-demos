@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,17 +28,17 @@
  ***************************************************************************/
 import {
   ArcEdgeStyle,
-  DefaultLabelStyle,
-  EdgeStyleDecorationInstaller,
+  EdgeStyleIndicatorRenderer,
   type GraphComponent,
-  GraphHighlightIndicatorManager,
   type GraphViewerInputMode,
   type IEdge,
   ImageNodeStyle,
-  IndicatorNodeStyleDecorator,
   type INode,
+  LabelStyle,
+  LabelStyleIndicatorRenderer,
+  NodeStyleIndicatorRenderer,
   ShortestPath
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getArcHeight } from './map-styles'
 import type { Map as LeafletMap } from 'leaflet'
 import { LatLng } from 'leaflet'
@@ -51,15 +51,23 @@ let lastClickedNode: INode | undefined
  */
 export function initializeShortestPaths(graphComponent: GraphComponent, map: LeafletMap): void {
   const inputMode = graphComponent.inputMode as GraphViewerInputMode
-  inputMode.addItemClickedListener((_, evt) => {
+  inputMode.addEventListener('item-clicked', (evt) => {
     updateShortestPathHighlight(evt.item as INode, graphComponent, map)
   })
 
-  graphComponent.graph.addNodeRemovedListener(() => {
-    clearHighlights(graphComponent)
+  graphComponent.graph.addEventListener('node-removed', (evt) => {
+    const removed = graphComponent.highlights.remove(evt.item)
+    if (removed) {
+      // If the node was highlighted before, it was possibly part of a shortest path, in which
+      // case the path cannot be visualized completely anymore. We therefore clear the whole path.
+      graphComponent.highlights.clear()
+    }
   })
-  graphComponent.graph.addEdgeRemovedListener(() => {
-    clearHighlights(graphComponent)
+  graphComponent.graph.addEventListener('edge-removed', (evt) => {
+    graphComponent.highlights.remove(evt.item)
+  })
+  graphComponent.graph.addEventListener('label-removed', (evt) => {
+    graphComponent.highlights.remove(evt.item)
   })
 
   initializeHighlights(graphComponent)
@@ -70,24 +78,29 @@ export function initializeShortestPaths(graphComponent: GraphComponent, map: Lea
  * associated labels along with the shortest path itself.
  */
 function initializeHighlights(graphComponent: GraphComponent): void {
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    nodeStyle: new IndicatorNodeStyleDecorator({
-      wrapped: new ImageNodeStyle('resources/airport-drop-highlight.svg'),
-      padding: 1.5
-    }),
-    labelStyle: new DefaultLabelStyle({
-      shape: 'pill',
-      backgroundFill: '#f1b0ae',
-      backgroundStroke: 'none',
-      textFill: '#581715',
-      insets: [3, 5]
+  graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(
+    new NodeStyleIndicatorRenderer({
+      nodeStyle: new ImageNodeStyle('resources/airport-drop-highlight.svg'),
+      margins: 1.5
     })
-  })
+  )
+  graphComponent.graph.decorator.labels.highlightRenderer.addConstant(
+    new LabelStyleIndicatorRenderer({
+      labelStyle: new LabelStyle({
+        shape: 'pill',
+        backgroundFill: '#f1b0ae',
+        backgroundStroke: 'none',
+        textFill: '#581715',
+        padding: [3, 5]
+      }),
+      margins: 0
+    })
+  )
 
   // use highlightDecorator for edges as we want to use different arc heights for individual edges
-  graphComponent.graph.decorator.edgeDecorator.highlightDecorator.setFactory(
+  graphComponent.graph.decorator.edges.highlightRenderer.addFactory(
     (edge) =>
-      new EdgeStyleDecorationInstaller({
+      new EdgeStyleIndicatorRenderer({
         edgeStyle: new ArcEdgeStyle({
           stroke: '5px dashed #db3a34',
           height: getArcHeight(edge)
@@ -104,9 +117,9 @@ function updateShortestPathHighlight(
   graphComponent: GraphComponent,
   map: LeafletMap
 ): void {
-  const highlightManager = graphComponent.highlightIndicatorManager
   const graph = graphComponent.graph
 
+  const highlights = graphComponent.highlights
   if (lastClickedNode && graph.contains(lastClickedNode)) {
     const start = lastClickedNode
     // determine the shortest path using the distances between airports to weigh the edges
@@ -115,54 +128,34 @@ function updateShortestPathHighlight(
       sink: clickedNode,
       costs: (edge: IEdge): number => {
         // use the actual distance between the two airports as costs
-        const { lat: sourceLat, lng: sourceLng } = getAirportData(edge.sourceNode!)
-        const { lat: targetLat, lng: targetLng } = getAirportData(edge.targetNode!)
+        const { lat: sourceLat, lng: sourceLng } = getAirportData(edge.sourceNode)
+        const { lat: targetLat, lng: targetLng } = getAirportData(edge.targetNode)
         return map.distance(new LatLng(sourceLat, sourceLng), new LatLng(targetLat, targetLng))
       },
       directed: false
     })
 
     // highlight the shortest path
-    highlightManager.clearHighlights()
+    highlights.clear()
 
     const result = algorithm.run(graph)
     result.edges.forEach((edge) => {
       // highlight the edge, its source/target nodes and their associated labels
-      highlightManager.addHighlight(edge)
-      const sourceNode = edge.sourceNode!
-      const targetNode = edge.targetNode!
-      highlightManager.addHighlight(sourceNode)
-      highlightManager.addHighlight(targetNode)
-      highlightManager.addHighlight(sourceNode.labels.at(0)!)
-      highlightManager.addHighlight(targetNode.labels.at(0)!)
+      highlights.add(edge)
+      const sourceNode = edge.sourceNode
+      const targetNode = edge.targetNode
+      highlights.add(sourceNode)
+      highlights.add(targetNode)
+      highlights.add(sourceNode.labels.at(0)!)
+      highlights.add(targetNode.labels.at(0)!)
     })
     lastClickedNode = undefined
   } else {
-    highlightManager.clearHighlights()
+    highlights.clear()
     // highlight the node and its associated label
-    highlightManager.addHighlight(clickedNode)
-    highlightManager.addHighlight(clickedNode.labels.at(0)!)
+    highlights.add(clickedNode)
+    highlights.add(clickedNode.labels.at(0)!)
     lastClickedNode = clickedNode
   }
   graphComponent.invalidate()
-}
-
-/**
- * Updates the path highlights.
- * This needs to be called when the viewport changes.
- */
-export function updateHighlights(graphComponent: GraphComponent): void {
-  const highlightManager = graphComponent.highlightIndicatorManager
-  const highlightedItems = highlightManager.selectionModel!.toArray()
-  highlightManager.clearHighlights()
-  highlightedItems.forEach((item) => {
-    graphComponent.highlightIndicatorManager.addHighlight(item)
-  })
-}
-
-/**
- * Removes all highlights from the {@link graphComponent}.
- */
-function clearHighlights(graphComponent: GraphComponent): void {
-  graphComponent.highlightIndicatorManager.clearHighlights()
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,19 +27,19 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   Font,
   GenericLayoutData,
   IGraph,
   INode,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
+  LabelStyle,
   LayoutGraph,
   LayoutStageBase,
+  NodeDataKey,
   Size,
-  SolidColorFill,
   TextMeasurePolicy,
   TextRenderSupport
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 // The maximum desired font size for the Tag Cloud
 const MAX_FONT = 500
@@ -87,7 +87,7 @@ export function buildTagCloud(
     // for each word, create a node and add its text as label
     const word = pair.keyword
     const node = graph.createNode({ tag: pair })
-    graph.addLabel(node, word, InteriorLabelModel.CENTER)
+    graph.addLabel(node, word, InteriorNodeLabelModel.CENTER)
     if (frequency >= minFrequency) {
       updateNodeLabel(graph, node, fontSize, fontColor)
     }
@@ -128,9 +128,9 @@ function updateNodeLabel(graph: IGraph, node: INode, fontSize: number, fontColor
   // set the desired font size and font color to the label of the node
   graph.setStyle(
     node.labels.get(0),
-    new DefaultLabelStyle({
+    new LabelStyle({
       font: new Font({ fontSize: fontSize }),
-      textFill: new SolidColorFill(fontColor)
+      textFill: fontColor
     })
   )
 }
@@ -278,11 +278,13 @@ function findMinMaxFrequency(
  * in order to animate the result of the layout algorithm when different threshold values are selected.
  */
 export class AssignNodeSizesStage extends LayoutStageBase {
-  static readonly NODE_SIZE_DP_KEY: string = 'AssignNodeSizesStage.NODE_SIZE_DP_KEY'
+  static readonly NODE_SIZE_DATA_KEY = new NodeDataKey<Size>(
+    'AssignNodeSizesStage.NODE_SIZE_DATA_KEY'
+  )
 
-  applyLayout(graph: LayoutGraph): void {
-    const dp = graph.getDataProvider(AssignNodeSizesStage.NODE_SIZE_DP_KEY)
-    if (dp === null) {
+  protected applyLayoutImpl(graph: LayoutGraph): void {
+    const dp = graph.context!.getItemData(AssignNodeSizesStage.NODE_SIZE_DATA_KEY)
+    if (dp == null) {
       // If no provider is registered, there is nothing to do
       return
     }
@@ -291,7 +293,7 @@ export class AssignNodeSizesStage extends LayoutStageBase {
     graph.nodes.forEach((node) => {
       const size = dp.get(node)
       if (size) {
-        graph.setSize(node, size.width, size.height)
+        node.layout!.size = size
       }
     })
   }
@@ -305,9 +307,11 @@ export class AssignNodeSizesStage extends LayoutStageBase {
 export function createAssignNodeSizeStageLayoutData() {
   // use the GenericLayoutData to pass the information about the node sizes to the AssignNodeSizesStage
   const layoutData = new GenericLayoutData()
-  layoutData.addNodeItemMapping(AssignNodeSizesStage.NODE_SIZE_DP_KEY, (node) => {
+  layoutData.addItemMapping(AssignNodeSizesStage.NODE_SIZE_DATA_KEY).mapperFunction = (
+    node: INode
+  ) => {
     const label = node.labels.get(0)
-    const style = label.style as DefaultLabelStyle
+    const style = label.style as LabelStyle
 
     // calculate the desired render size for the label and...
     const labelRenderSize = TextRenderSupport.measureText({
@@ -319,6 +323,6 @@ export function createAssignNodeSizeStageLayoutData() {
     // since words in a tag cloud are usually very close to each other or even overlap, the node
     // is assigned a height that is slightly smaller than its associated label's height
     return new Size(labelRenderSize.width, labelRenderSize.height * 0.79)
-  })
+  }
   return layoutData
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,31 +32,24 @@ import {
   CompositeLayoutData,
   EdgeRouter,
   EdgeRouterData,
-  EdgeRouterScope,
   FillAreaLayout,
   FillAreaLayoutData,
-  HierarchicLayout,
-  HierarchicLayoutEdgeLayoutDescriptor,
-  HierarchicLayoutEdgeRoutingStyle,
-  HierarchicLayoutRoutingStyle,
+  HierarchicalLayout,
   IEdge,
   IEnumerable,
   IFoldingView,
+  IGroupPaddingProvider,
   ILayoutAlgorithm,
   INode,
-  INodeInsetsProvider,
-  ItemEventArgs,
+  InputModeItemEventArgs,
   LayoutData,
   LayoutExecutor,
-  Maps,
   NavigationInputMode,
   NodeAlignmentPolicy,
-  PartialLayoutEdgeRoutingStrategy,
   Point,
   Rect,
-  SequentialLayout,
-  YRectangle
-} from 'yfiles'
+  SequentialLayout
+} from '@yfiles/yfiles'
 
 /**
  * A helper class that customizes the {@link NavigationInputMode.ExpandGroup.expand}
@@ -70,7 +63,7 @@ export class ExpandCollapseNavigationHelper {
 
   /**
    * The layout algorithm applied to the subgraph of a folder node before it is expanded.
-   * By default, the {@link HierarchicLayout} is used.
+   * By default, the {@link HierarchicalLayout} is used.
    * If no layout is set, no new layout for the subgraph is calculated.
    */
   private readonly subgraphLayout: ILayoutAlgorithm
@@ -85,31 +78,24 @@ export class ExpandCollapseNavigationHelper {
     navigationInputMode.fitContentAfterGroupActions = false
 
     // register handler that moves overlapping elements after expanding a group node
-    navigationInputMode.addGroupExpandingListener(this.onGroupExpanding.bind(this))
-    navigationInputMode.addGroupExpandedListener(this.onGroupExpanded.bind(this))
+    navigationInputMode.addEventListener('group-expanding', this.onGroupExpanding.bind(this))
+    navigationInputMode.addEventListener('group-expanded', this.onGroupExpanded.bind(this))
 
     // register handler that fills up free space after collapsing a group node
-    navigationInputMode.addGroupCollapsingListener(this.onGroupCollapsing.bind(this))
-    navigationInputMode.addGroupCollapsedListener(this.onGroupCollapsed.bind(this))
+    navigationInputMode.addEventListener('group-collapsing', this.onGroupCollapsing.bind(this))
+    navigationInputMode.addEventListener('group-collapsed', this.onGroupCollapsed.bind(this))
 
-    this.subgraphLayout = new HierarchicLayout({
-      recursiveGroupLayering: false,
-      edgeLayoutDescriptor: new HierarchicLayoutEdgeLayoutDescriptor({
-        routingStyle: new HierarchicLayoutRoutingStyle({
-          defaultEdgeRoutingStyle: HierarchicLayoutEdgeRoutingStyle.ORTHOGONAL
-        })
-      })
+    this.subgraphLayout = new HierarchicalLayout({
+      groupLayeringPolicy: 'ignore-groups'
     })
 
-    this.interEdgeRouter = new EdgeRouter({
-      scope: EdgeRouterScope.ROUTE_AFFECTED_EDGES
-    })
+    this.interEdgeRouter = new EdgeRouter()
   }
 
   /**
    * Prepares the layout of the content of the folded group node which is about to expand.
    */
-  private onGroupExpanding(sender: object, e: ItemEventArgs<INode>): void {
+  private onGroupExpanding(e: InputModeItemEventArgs<INode>): void {
     const groupNode = e.item
     const foldingView = this.navigationInputMode.graph!.foldingView
     const masterGroupNode = foldingView!.getMasterItem(groupNode)
@@ -121,7 +107,7 @@ export class ExpandCollapseNavigationHelper {
   /**
    * Clears the area covered by the expanded groupNode to avoid overlaps.
    */
-  private onGroupExpanded(sender: object, e: ItemEventArgs<INode>): void {
+  private onGroupExpanded(e: InputModeItemEventArgs<INode>): void {
     const groupNode = e.item
     // clear the area of the expanded group node from other graph items
     this.clearArea(groupNode)
@@ -185,11 +171,11 @@ export class ExpandCollapseNavigationHelper {
 
     // calculate the bounds of the expanded group node
     let groupNodeBounds = bounds.getTranslated(diffVector)
-    const insetsProvider = node.lookup(INodeInsetsProvider.$class)
-    if (insetsProvider != null) {
-      // respect the insets of the group node
-      const insets = insetsProvider.getInsets(node)
-      groupNodeBounds = groupNodeBounds.getEnlarged(insets)
+    const groupPaddingProvider = node.lookup(IGroupPaddingProvider)
+    if (groupPaddingProvider != null) {
+      // respect the padding of the group node
+      const padding = groupPaddingProvider.getPadding()
+      groupNodeBounds = groupNodeBounds.getEnlarged(padding)
     }
     // set the layout of the expanded state
     tempView.graph.setNodeLayout(tempViewGroupNode!, groupNodeBounds)
@@ -199,7 +185,7 @@ export class ExpandCollapseNavigationHelper {
    * Calculates the bounds of the subgraph determined by the subGraphNodes
    * living in the tempView.
    * @param tempView the folding view containing the subGraphNodes
-   * @param subGraphNodes the sub graph nodes to use for bounds calculation
+   * @param subGraphNodes the subgraph nodes to use for bounds calculation
    */
   private calculateSubgraphBounds(tempView: IFoldingView, subGraphNodes: IEnumerable<INode>): Rect {
     // calculate the bounds of all descendents
@@ -237,7 +223,7 @@ export class ExpandCollapseNavigationHelper {
     subGraphNodes: IEnumerable<INode>,
     vectorToMove: Point
   ): void {
-    const movedEdges = Maps.createHashSet<IEdge>()!
+    const movedEdges = new Set<IEdge>()
 
     subGraphNodes.forEach((tempViewDescendent) => {
       tempView.graph.setNodeLayout(
@@ -246,7 +232,7 @@ export class ExpandCollapseNavigationHelper {
       )
 
       tempView.graph.edgesAt(tempViewDescendent).forEach((edge) => {
-        if (!movedEdges.includes(edge)) {
+        if (!movedEdges.has(edge)) {
           movedEdges.add(edge)
           edge.bends.forEach((bend) => {
             tempView.graph.setBendLocation(bend, bend.location.toPoint().add(vectorToMove))
@@ -260,7 +246,7 @@ export class ExpandCollapseNavigationHelper {
    * Adjusts the folded node state and the paths of the attached edges to those of the
    * expanded group node which is about to collapse.
    */
-  private onGroupCollapsing(sender: object, e: ItemEventArgs<INode>): void {
+  private onGroupCollapsing(e: InputModeItemEventArgs<INode>): void {
     const groupNode = e.item
     const foldingView = this.navigationInputMode.graph!.foldingView
 
@@ -272,7 +258,7 @@ export class ExpandCollapseNavigationHelper {
    * Reduces the amount of free space after the group node has been collapsed and is probably
    * smaller.
    */
-  private onGroupCollapsed(sender: object, e: ItemEventArgs<INode>): void {
+  private onGroupCollapsed(e: InputModeItemEventArgs<INode>): void {
     const groupNode = e.item
     const foldingView = this.navigationInputMode.graph!.foldingView
 
@@ -280,7 +266,7 @@ export class ExpandCollapseNavigationHelper {
     const groupLayout = masterGroupNode!.layout.toRect()
     const folderLayout = foldingView!.manager.getFolderNodeState(masterGroupNode!).layout
 
-    if (groupLayout.contains(folderLayout)) {
+    if (groupLayout.containsRectangle(folderLayout)) {
       this.fillArea(groupNode, groupLayout, foldingView!)
     } else {
       // the folder node exceeds the area of the group node
@@ -347,17 +333,16 @@ export class ExpandCollapseNavigationHelper {
    * descendents and reduces empty space afterwards.
    */
   protected clearAndFillArea(groupNode: INode, area: Rect, foldingView: IFoldingView): void {
-    const layout = new SequentialLayout()
-    layout.appendLayout(ExpandCollapseNavigationHelper.createClearAreaLayout())
-    layout.appendLayout(this.createFillAreaLayout(area))
-
-    const layoutData = new CompositeLayoutData(
-      ExpandCollapseNavigationHelper.createClearAreaLayoutData(groupNode),
-      ExpandCollapseNavigationHelper.createFillAreaLayoutData(groupNode, foldingView)
+    void this.runLayout(
+      new SequentialLayout(
+        ExpandCollapseNavigationHelper.createClearAreaLayout(),
+        this.createFillAreaLayout(area)
+      ),
+      new CompositeLayoutData(
+        ExpandCollapseNavigationHelper.createClearAreaLayoutData(groupNode),
+        ExpandCollapseNavigationHelper.createFillAreaLayoutData(groupNode, foldingView)
+      )
     )
-
-    // noinspection JSIgnoredPromiseFromCall
-    this.runLayout(layout, layoutData)
   }
 
   /**
@@ -368,9 +353,8 @@ export class ExpandCollapseNavigationHelper {
   private static createClearAreaLayout(): ILayoutAlgorithm {
     return new ClearAreaLayout({
       spacing: 20,
-      considerNodeLabels: false,
-      edgeRoutingStrategy: PartialLayoutEdgeRoutingStrategy.ORTHOGONAL,
-      fixPorts: false
+      nodeLabelPlacement: 'ignore',
+      edgeRoutingStyle: 'orthogonal'
     })
   }
 
@@ -392,13 +376,10 @@ export class ExpandCollapseNavigationHelper {
    */
   private createFillAreaLayout(area: Rect): ILayoutAlgorithm {
     const fillAreaLayout = new FillAreaLayout({
-      area: new YRectangle(area.x, area.y, area.width, area.height),
+      area: new Rect(area.x, area.y, area.width, area.height),
       spacing: 20
     })
-    const layout = new SequentialLayout()
-    layout.appendLayout(this.interEdgeRouter)
-    layout.appendLayout(fillAreaLayout)
-    return layout
+    return new SequentialLayout(this.interEdgeRouter, fillAreaLayout)
   }
 
   /**
@@ -407,9 +388,12 @@ export class ExpandCollapseNavigationHelper {
    *group should be re-routed.
    */
   private static createFillAreaLayoutData(groupNode: INode, foldingView: IFoldingView): LayoutData {
+    const edgeRouterData = new EdgeRouterData({
+      scope: { edges: foldingView.graph.edgesAt(groupNode) }
+    })
     return new CompositeLayoutData(
       new FillAreaLayoutData({ fixedNodes: groupNode }),
-      new EdgeRouterData({ affectedEdges: foldingView.graph.edgesAt(groupNode) })
+      edgeRouterData
     )
   }
 
@@ -418,7 +402,7 @@ export class ExpandCollapseNavigationHelper {
       graphComponent: this.navigationInputMode.graphComponent!,
       layout: layout,
       layoutData: layoutData,
-      duration: '150ms'
+      animationDuration: '150ms'
     })
     await layoutExecutor.start()
   }

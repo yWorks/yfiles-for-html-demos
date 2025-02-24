@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,19 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph, INode, Point } from 'yfiles'
-import { createInGraph, validateNodeTag } from '../FlowNode/FlowNode.js'
-
-/**
- * @typedef {Object} SerializableNodeData
- * @property {Array.<number>} position
- * @property {Omit.<FlowNodeProperties,('validate'|'hasLeftPort'|'hasRightPort')>} properties
- */
-
-/**
- * @typedef {SerializableNodeData} NodeDataOptions
- */
-
+import { IGraph, INode, Point } from '@yfiles/yfiles'
+import { createInGraph, validateNodeTag } from '../FlowNode/FlowNode'
 /**
  * A simple, minimal data structure that can be used for storing a FlowNode in JSON
  * and then re-create it in the graph.
@@ -46,13 +35,10 @@ import { createInGraph, validateNodeTag } from '../FlowNode/FlowNode.js'
 export class NodeData {
   position
   properties
-
   /**
    * Creates NodeData from an actual node. We exclude the validator function,
    * if present as it cannot be serialized, and it will be automatically set
    * on node re-creation anyway.
-   * @param {!INode} undefined
-   * @returns {!NodeData}
    */
   static fromGraphItem({ tag, layout }) {
     const keysToFilter = ['validate', 'hasLeftPort', 'hasRightPort']
@@ -67,22 +53,16 @@ export class NodeData {
       position: [layout.x, layout.y]
     })
   }
-
   /**
    * Converts an arbitrary piece of data to NodeData after validation.
-   * @param {!unknown} data
-   * @returns {!NodeData}
    */
   static fromJSONData(data) {
     NodeData.validate(data)
     return new NodeData(data)
   }
-
   /**
    * Checks if an arbitrary piece of data (as it comes from a JSON source)
    * conforms to the format required by NodeData.
-   * @param {!unknown} data
-   * @returns {!SerializableNodeData}
    */
   static validate(data) {
     if (
@@ -97,19 +77,12 @@ export class NodeData {
     }
     throw new Error('Malformed node data')
   }
-
-  /**
-   * @param {!NodeDataOptions} undefined
-   */
   constructor({ properties, position }) {
     this.position = position
     this.properties = properties
   }
-
   /**
    * Converts node data to an actual graph node.
-   * @param {!IGraph} graph
-   * @returns {!INode}
    */
   createGraphItem(graph) {
     const node = createInGraph({
@@ -123,10 +96,8 @@ export class NodeData {
     }
     return node
   }
-
   /**
    * Converts node data to a serializable format.
-   * @returns {!SerializableNodeData}
    */
   toJSONData() {
     return {

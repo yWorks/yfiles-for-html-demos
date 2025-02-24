@@ -1,25 +1,27 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Rendering Order Demo
 
-# Rendering Order Demo
+<img src="../../../doc/demo-thumbnails/rendering-order.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/view/renderingorder/).
 
 ## Rendering Order
 
 Sometimes it is necessary to change the render order of graph, e.g. when labels should be rendered in front of their owner but behind another item. This demo shows how to use [GraphModelManager](https://docs.yworks.com/yfileshtml/#/api/GraphModelManager) to configure the rendering order for grouped graphs as well as layer policies for labels and ports.
 
-### Hierarchic Nesting
+### Hierarchical Nesting
 
-Each item type is assigned to a specific canvas object group. These groups have a default rendering order from back to front. See [The Z-order of Graph Elements](https://docs.yworks.com/yfileshtml/#/dguide/customizing_view-z_order) for more information about the different [ICanvasObjectGroup](https://docs.yworks.com/yfileshtml/#/api/ICanvasObjectGroup)s and their default rendering order.
+Each item type is assigned to a specific canvas object group. These groups have a default rendering order from back to front. See [The Z-order of Graph Elements](https://docs.yworks.com/yfileshtml/#/dguide/customizing_view-z_order) for more information about the different [IRenderTreeGroup](https://docs.yworks.com/yfileshtml/#/api/IRenderTreeGroup)s and their default rendering order.
 
 For grouped graphs, we provide some nesting policies to structure nodes and edges in more complex hierarchies. In these cases, some of the canvas object groups may not be used.
 

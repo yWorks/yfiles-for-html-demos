@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,25 +28,17 @@
  ***************************************************************************/
 import {
   type GraphComponent,
-  GraphFocusIndicatorManager,
   GraphItemTypes,
   GraphViewerInputMode,
-  type HoveredItemChangedEventArgs,
-  ICommand,
   INode,
   IPort,
-  Key,
   type KeyboardInputMode,
-  ModifierKeys,
-  ShowFocusPolicy,
-  VoidNodeStyle
-} from 'yfiles'
+  ModifierKeys
+} from '@yfiles/yfiles'
 import type { CollapsibleTree } from './CollapsibleTree'
 import { showNodeProperties } from './ui/orgchart-properties-view'
 import { setOrgChartPortStyle } from './graph-style/orgchart-port-style'
 import { configureContextMenu } from './ui/orgchart-context-menu'
-
-export const showAllCommand = ICommand.createCommand()
 
 /**
  * Set up the graph viewer input mode to and enables interactivity to expand and collapse subtrees.
@@ -66,25 +58,23 @@ export function initializeInputMode(
   })
   graphViewerInputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
 
-  graphViewerInputMode.addItemDoubleClickedListener(() => {
+  graphViewerInputMode.addEventListener('item-double-clicked', () => {
     orgChartGraph.zoomToItem(graphComponent.currentItem as INode)
   })
 
-  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt): void => {
+  graphViewerInputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt): void => {
     // we use the highlight manager to highlight hovered items
-    const manager = graphComponent.highlightIndicatorManager
     if (evt.oldItem) {
-      manager.removeHighlight(evt.oldItem)
+      graphComponent.highlights.remove(evt.oldItem)
     }
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition,@typescript-eslint/strict-boolean-expressions
     if (evt.item) {
-      manager.addHighlight(evt.item)
+      graphComponent.highlights.add(evt.item)
     }
   })
   graphViewerInputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
 
   // display information about the current employee
-  graphComponent.addCurrentItemChangedListener(() => {
+  graphComponent.addEventListener('current-item-changed', () => {
     if (graphComponent.currentItem instanceof INode) {
       showNodeProperties(graphComponent.currentItem, orgChartGraph)
     }
@@ -118,10 +108,8 @@ function initializeHighlights(graphComponent: GraphComponent): void {
   graphComponent.selectionIndicatorManager.enabled = false
 
   // Hide the default focus highlight in favor of the CSS highlighting from the template styles
-  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
-    showFocusPolicy: ShowFocusPolicy.ALWAYS,
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
+  graphComponent.focusIndicatorManager.showFocusPolicy = 'always'
+  graphComponent.graph.decorator.nodes.focusRenderer.hide()
 }
 
 /**
@@ -136,7 +124,7 @@ function initializeClickablePorts(
   graphViewerInputMode.clickHitTestOrder = [GraphItemTypes.PORT, GraphItemTypes.NODE]
 
   // listen to clicks on items
-  graphViewerInputMode.addItemClickedListener((_, evt) => {
+  graphViewerInputMode.addEventListener('item-clicked', (evt) => {
     const port = evt.item
     if (port instanceof IPort && orgChartGraph.completeGraph.inEdgesAt(port).size === 0) {
       // if the item is a port, and it has not incoming edges expand or collapse the subtree
@@ -161,46 +149,23 @@ function initializeKeyboardInputMode(
   graphComponent: GraphComponent,
   orgChartGraph: CollapsibleTree
 ): void {
-  keyboardInputMode.addCommandBinding(
-    showAllCommand,
-    () => {
-      void orgChartGraph.executeShowAll()
-      return true
-    },
-    () => orgChartGraph.canExecuteShowAll()
-  )
-  keyboardInputMode.addKeyBinding(Key.MULTIPLY, ModifierKeys.NONE, showAllCommand)
+  keyboardInputMode.addKeyBinding('*', ModifierKeys.NONE, () => {
+    void orgChartGraph.executeShowAll()
+  })
 
-  keyboardInputMode.addKeyBinding({
-    key: Key.SUBTRACT,
-    execute: () => {
-      void orgChartGraph.executeHideChildren(graphComponent.currentItem as INode)
-      return true
-    },
-    canExecute: () => orgChartGraph.canExecuteHideChildren(graphComponent.currentItem as INode)
+  keyboardInputMode.addKeyBinding('-', ModifierKeys.NONE, () => {
+    void orgChartGraph.executeHideChildren(graphComponent.currentItem as INode)
   })
-  keyboardInputMode.addKeyBinding({
-    key: Key.ADD,
-    execute: () => {
-      void orgChartGraph.executeShowChildren(graphComponent.currentItem as INode)
-      return true
-    },
-    canExecute: () => orgChartGraph.canExecuteShowChildren(graphComponent.currentItem as INode)
+
+  keyboardInputMode.addKeyBinding('+', ModifierKeys.NONE, () => {
+    void orgChartGraph.executeShowChildren(graphComponent.currentItem as INode)
   })
-  keyboardInputMode.addKeyBinding({
-    key: Key.PAGE_DOWN,
-    execute: () => {
-      void orgChartGraph.executeHideParent(graphComponent.currentItem as INode)
-      return true
-    },
-    canExecute: () => orgChartGraph.canExecuteHideParent(graphComponent.currentItem as INode)
+
+  keyboardInputMode.addKeyBinding('PageDown', ModifierKeys.NONE, () => {
+    void orgChartGraph.executeHideParent(graphComponent.currentItem as INode)
   })
-  keyboardInputMode.addKeyBinding({
-    key: Key.PAGE_UP,
-    execute: () => {
-      void orgChartGraph.executeShowParent(graphComponent.currentItem as INode)
-      return true
-    },
-    canExecute: () => orgChartGraph.canExecuteShowParent(graphComponent.currentItem as INode)
+
+  keyboardInputMode.addKeyBinding('PageUp', ModifierKeys.NONE, () => {
+    void orgChartGraph.executeShowParent(graphComponent.currentItem as INode)
   })
 }

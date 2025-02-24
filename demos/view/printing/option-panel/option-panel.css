@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,6 +38,9 @@
     'label4 editor4'
     'label5 editor5'
     'label6 editor6'
+    'label7 editor7'
+    'label8 editor8'
+    'label9 editor9'
     'button button';
 }
 
@@ -79,6 +82,14 @@
   grid-area: label6;
 }
 
+.settings-label-row7 {
+  grid-area: label7;
+}
+
+.settings-label-row8 {
+  grid-area: label8;
+}
+
 .settings-editor-row1 {
   grid-area: editor1;
   justify-self: stretch;
@@ -93,7 +104,8 @@
 .settings-editor-row2 {
   grid-area: editor2;
   justify-self: stretch;
-  margin: 4px 0;
+  margin: 2px 0;
+  width: initial !important;
 }
 
 .settings-editor-row2[type='checkbox'] {
@@ -145,6 +157,39 @@
 }
 
 .settings-editor-row7 {
+  grid-area: editor7;
+  justify-self: stretch;
+  margin: 2px 0;
+  width: initial !important;
+}
+
+.settings-editor-row7[type='checkbox'] {
+  justify-self: end;
+}
+
+.settings-editor-row8 {
+  grid-area: editor8;
+  justify-self: stretch;
+  margin: 2px 0;
+  width: initial !important;
+}
+
+.settings-editor-row8[type='checkbox'] {
+  justify-self: end;
+}
+
+.settings-editor-row9 {
+  grid-area: editor9;
+  justify-self: stretch;
+  margin: 2px 0;
+  width: initial !important;
+}
+
+.settings-editor-row9[type='checkbox'] {
+  justify-self: end;
+}
+
+.settings-editor-row10 {
   grid-area: button;
   justify-self: stretch;
   margin-top: 12px !important;

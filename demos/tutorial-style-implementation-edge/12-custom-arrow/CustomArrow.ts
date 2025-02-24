@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,7 +40,7 @@ import {
   type Rect,
   SvgVisual,
   type Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 type Cache = SvgVisual & {
   cache?: {
@@ -161,17 +161,20 @@ export class CustomArrow extends BaseClass(
   }
 
   getBounds(context: ICanvasContext): Rect {
-    return this.createArrowPath(this.distance)
-      .getBounds()
-      .getTransformed(
-        new Matrix(
-          -this.direction.x,
-          -this.direction.y,
-          this.direction.y,
-          -this.direction.x,
-          this.anchor.x,
-          this.anchor.y
-        )
-      )
+    const bounds = this.createArrowPath(this.distance).getBounds()
+    const matrix = new Matrix(
+      -this.direction.x,
+      -this.direction.y,
+      this.direction.y,
+      -this.direction.x,
+      this.anchor.x,
+      this.anchor.y
+    )
+    matrix.scale(this.length, this.length)
+    return matrix.calculateTransformedBounds(bounds)
+  }
+
+  get cropAtPort(): boolean {
+    return false
   }
 }

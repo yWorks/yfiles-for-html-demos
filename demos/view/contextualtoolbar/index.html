@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Contextual Toolbar [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -40,8 +40,6 @@
 
     <!-- the stylesheet for the contextual toolbar -->
     <link rel="stylesheet" href="./resources/contextual-toolbar.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -380,6 +378,11 @@
                 style="background-image: url('resources/shapes/rectangle.svg')"
               ></button>
               <button
+                title="Pill"
+                data-shape="ROUND_RECTANGLE"
+                style="background-image: url('resources/shapes/round-rectangle.svg')"
+              ></button>
+              <button
                 title="Ellipse"
                 data-shape="ELLIPSE"
                 style="background-image: url('resources/shapes/ellipse.svg')"
@@ -399,23 +402,18 @@
                 data-shape="TRIANGLE"
                 style="background-image: url('resources/shapes/triangle.svg')"
               ></button>
-              <button
-                title="Trapez"
-                data-shape="TRAPEZ"
-                style="background-image: url('resources/shapes/trapez.svg')"
-              ></button>
             </div>
 
             <div id="arrow-picker-types" class="picker-container">
               <button
                 title="Circle"
-                data-type="CIRCLE"
+                data-type="ELLIPSE"
                 style="background-image: url('resources/arrows/circle.svg')"
               ></button>
               <button
-                title="Default"
-                data-type="DEFAULT"
-                style="background-image: url('resources/arrows/default.svg')"
+                title="Kite"
+                data-type="KITE"
+                style="background-image: url('resources/arrows/kite.svg')"
               ></button>
               <button
                 title="Diamond"
@@ -428,9 +426,9 @@
                 style="background-image: url('resources/arrows/none.svg')"
               ></button>
               <button
-                title="Short"
-                data-type="SHORT"
-                style="background-image: url('resources/arrows/short.svg')"
+                title="Chevron"
+                data-type="CHEVRON"
+                style="background-image: url('resources/arrows/chevron.svg')"
               ></button>
               <button
                 title="Triangle"
@@ -448,7 +446,7 @@
                 <i class="fas fa-fw fa-lg fa-copy"></i>
                 <span>Copy</span>
               </div>
-              <div id="paste-button">
+              <div id="paste-button" disabled>
                 <i class="fas fa-fw fa-lg fa-paste"></i>
                 <span>Paste</span>
               </div>

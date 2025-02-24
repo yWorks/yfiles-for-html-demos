@@ -2,13 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <link rel="shortcut icon" href="../../resources/icons/favicon.ico" type="image/x-icon" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,9 +31,11 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <link rel="shortcut icon" href="../../resources/icons/favicon.ico" type="image/x-icon" />
+
     <title>Vue Template Node Style Demo [yFiles for HTML]</title>
 
-    <link rel="stylesheet" href="./node_modules/demo-resources/style/demo.css" />
     <script src="https://unpkg.com/jsonlint@1.6.3"></script>
 
     <style>
@@ -124,8 +123,17 @@
       </div>
     </header>
     <div class="demo-page__toolbar">
-      <button data-command="OPEN"></button>
-      <button data-command="SAVE"></button>
+      <button
+        id="open-file-button"
+        title="Open a GraphML file"
+        class="demo-icon-yIconOpen labeled"
+      ></button>
+      <button
+        id="save-button"
+        title="Save a GraphML file"
+        class="demo-icon-yIconSave labeled"
+      ></button>
+
       <div class="demo-separator"></div>
       <button data-command="INCREASE_ZOOM"></button>
       <button data-command="ZOOM_ORIGINAL"></button>
@@ -202,7 +210,7 @@
           </li>
           <li>
             <a href="https://www.yworks.com/demos/style/string-template-node-style/" target="_blank"
-              >String Template Node Style</a
+              >Template Node Style</a
             >
           </li>
           <li>

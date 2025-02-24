@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,32 +27,28 @@
  **
  ***************************************************************************/
 import {
+  EdgeLabelPreferredPlacement,
+  EdgePortCandidates,
+  GenericLabelingData,
   GenericLayoutData,
-  HierarchicLayoutData,
-  HierarchicLayoutEdgeLayoutDescriptor,
-  HierarchicLayoutEdgeRoutingStyle,
-  HierarchicLayoutRoutingStyle,
+  HierarchicalLayoutData,
+  HierarchicalLayoutEdgeDescriptor,
   IEdge,
   IGraph,
   IGraphSelection,
-  IIncrementalHintsFactory,
   ILabel,
   IMapper,
-  IModelItem,
   INode,
+  Insets,
+  LabelAlongEdgePlacements,
   LabelAngleReferences,
-  LabelPlacements,
+  LabelEdgeSides,
   LayerConstraintData,
   LayoutData,
-  LayoutGraphAdapter,
   LayoutKeys,
   Mapper,
-  NodeHalo,
-  PortConstraint,
-  PortConstraintKeys,
-  PortSide,
-  PreferredPlacementDescriptor
-} from 'yfiles'
+  PortSides
+} from '@yfiles/yfiles'
 
 import {
   ActivityNodeStyle,
@@ -60,14 +56,14 @@ import {
   BpmnEdgeStyle,
   ChoreographyNodeStyle,
   ConversationNodeStyle,
-  EdgeType,
   EventCharacteristic,
   EventNodeStyle,
   EventPortStyle,
   GatewayNodeStyle,
+  BpmnEdgeType,
   PoolNodeStyle
 } from './bpmn-view'
-import BpmnLayout from './BpmnLayout'
+import { BpmnLabelProfitModel, BpmnLayout } from './BpmnLayout'
 
 export default class BpmnLayoutData {
   private _minimumEdgeLength = 20
@@ -75,7 +71,7 @@ export default class BpmnLayoutData {
   private _compactMessageFlowLayering = false
 
   /**
-   * Gets whether or not start node are pulled to the leftmost or topmost layer.
+   * Gets whether start nodes are pulled to the leftmost or topmost layer.
    * Defaults to false.
    */
   get startNodesFirst(): boolean {
@@ -83,7 +79,7 @@ export default class BpmnLayoutData {
   }
 
   /**
-   * Sets whether or not start node are pulled to the leftmost or topmost layer.
+   * Sets whether start nodes are pulled to the leftmost or topmost layer.
    * Defaults to false.
    */
   set startNodesFirst(first: boolean) {
@@ -91,7 +87,7 @@ export default class BpmnLayoutData {
   }
 
   /**
-   * Gets whether or not message flows have only weak impact on the layering.
+   * Gets whether message flows have only weak impact on the layering.
    * Having weak impact, message flows are more likely to be back edges. This often results in more compact layouts.
    * Defaults to false.
    */
@@ -100,7 +96,7 @@ export default class BpmnLayoutData {
   }
 
   /**
-   * Sets whether or not message flows have only weak impact on the layering.
+   * Sets whether message flows have only weak impact on the layering.
    * Having weak impact, message flows are more likely to be back edges. This often results in more compact layouts.
    * Defaults to false.
    */
@@ -126,77 +122,84 @@ export default class BpmnLayoutData {
 
   create(graph: IGraph, selection: IGraphSelection, layoutScope: string): LayoutData {
     const data = new GenericLayoutData()
-    const hierarchicLayoutData = new HierarchicLayoutData()
+    const hierarchicalLayoutData = new HierarchicalLayoutData()
+    const labelingData = new GenericLabelingData()
 
     // check if only selected elements should be laid out
     const layoutOnlySelection = layoutScope === 'SELECTED_ELEMENTS'
 
     // mark 'flow' edges, i.e. sequence flows, default flows and conditional flows
-    data.addEdgeItemCollection(BpmnLayout.SEQUENCE_FLOW_EDGES_DP_KEY).delegate = isSequenceFlow
+    data.addItemCollection(BpmnLayout.SEQUENCE_FLOW_EDGES_DATA_KEY).predicate = isSequenceFlow
 
     // mark boundary interrupting edges for the BalancingPortOptimizer
-    data.addEdgeItemCollection(BpmnLayout.BOUNDARY_INTERRUPTING_EDGES_DP_KEY).delegate = (
-      edge: IEdge
-    ): boolean => edge.sourcePort!.style instanceof EventPortStyle
+    data.addItemCollection(BpmnLayout.BOUNDARY_INTERRUPTING_EDGES_DATA_KEY).predicate = (edge) =>
+      edge.sourcePort.style instanceof EventPortStyle
 
     // mark conversations, events and gateways so their port locations are adjusted
-    data.addNodeItemCollection(BpmnLayout.ADJUST_PORT_LOCATION_NODES_DP_KEY).delegate = (
-      node: INode
-    ): boolean =>
+    data.addItemCollection(BpmnLayout.ADJUST_PORT_LOCATION_NODES_DATA_KEY).predicate = (node) =>
       node.style instanceof ConversationNodeStyle ||
       node.style instanceof EventNodeStyle ||
       node.style instanceof GatewayNodeStyle
 
-    // add NodeHalos around nodes with event ports or specific exterior labels so the layout keeps space for the
+    // add Insets around nodes with event ports or specific exterior labels, so the layout keeps space for the
     // event ports and labels as well
-    addNodeHalos(data, graph, selection, layoutOnlySelection)
+    addNodeMargins(hierarchicalLayoutData, graph, selection, layoutOnlySelection)
 
     // add PreferredPlacementDescriptors for labels on sequence, default or conditional flows to place them at source
     // side
-    addEdgeLabelPlacementDescriptors(data)
+    addEdgeLabelPlacementDescriptors(labelingData)
 
-    // mark nodes, edges and labels as either fixed or affected by the layout and configure port constraints and
-    // incremental hints
-    markFixedAndAffectedItems(data, hierarchicLayoutData, selection, layoutOnlySelection)
+    // add a custom profits for BPMN labels
+    labelingData.nodeLabelCandidateProcessors.mapperFunction = (_) =>
+      BpmnLabelProfitModel.nodeLabelProfitDelegate
+
+    // mark nodes, edges and labels as either fixed or affected by the layout and configure port candidates
+    markFixedAndAffectedItems(
+      data,
+      hierarchicalLayoutData,
+      labelingData,
+      selection,
+      layoutOnlySelection
+    )
 
     // mark associations and message flows as undirected so they have less impact on layering
-    hierarchicLayoutData.edgeDirectedness.delegate = (edge: IEdge): 0 | 1 =>
+    hierarchicalLayoutData.edgeDirectedness = (edge: IEdge): 0 | 1 =>
       isMessageFlow(edge) || isAssociation(edge) ? 0 : 1
 
     // add layer constraints for start events, sub processes and message flows
     addLayerConstraints(
       graph,
-      hierarchicLayoutData,
+      hierarchicalLayoutData,
       this.startNodesFirst,
       this.compactMessageFlowLayering
     )
 
     // add EdgeLayoutDescriptor to specify minimum edge length for edges
-    addMinimumEdgeLength(hierarchicLayoutData, this.minimumEdgeLength)
+    addMinimumEdgeLength(hierarchicalLayoutData, this.minimumEdgeLength)
 
-    // applies hierarchic layout configurations
-    return data.combineWith(hierarchicLayoutData)
+    // applies hierarchical layout configurations
+    return data.combineWith(hierarchicalLayoutData).combineWith(labelingData)
   }
 }
 
 const addLayerConstraints = (
   graph: IGraph,
-  hierarchicLayoutData: HierarchicLayoutData,
+  hierarchicalLayoutData: HierarchicalLayoutData,
   startNodesFirst: boolean,
   compactMessageFlowLayering: boolean
 ): void => {
-  // use layer constraints via HierarchicLayoutData
-  const layerConstraints = hierarchicLayoutData.layerConstraints
+  // use layer constraints via HierarchicalLayoutData
+  const layerConstraints = hierarchicalLayoutData.layerConstraints
 
   graph.edges.forEach((edge) => {
     if (isMessageFlow(edge) && !compactMessageFlowLayering) {
       // message flow layering compaction is disabled, we add a 'weak' same layer constraint, i.e. source node shall
       // be placed at least 0 layers above target node
-      layerConstraints.placeAbove(edge.targetNode!, edge.sourceNode!, 0, 1)
+      layerConstraints.placeInOrder(edge.sourceNode, edge.targetNode, 0, 1)
     } else if (isSequenceFlow(edge)) {
       if (
-        (isSubprocess(edge.sourceNode!) && !(edge.sourcePort!.style instanceof EventPortStyle)) ||
-        isSubprocess(edge.targetNode!)
+        (isSubprocess(edge.sourceNode) && !(edge.sourcePort.style instanceof EventPortStyle)) ||
+        isSubprocess(edge.targetNode)
       ) {
         // For edges to or from a subprocess that are not attached to an (interrupting) event port, the flow should
         // be considered. If the subprocess is a group node, any constraints to it are ignored so we have to add the
@@ -225,12 +228,12 @@ const addLayerConstraints = (
  * Adds a layer constraint which keeps the source node of the edge above the target node.
  */
 function addAboveLayerConstraint(
-  layerConstraints: LayerConstraintData,
+  layerConstraints: LayerConstraintData<INode>,
   edge: IEdge,
   graph: IGraph
 ): void {
-  const sourceNode = edge.sourceNode!
-  const targetNode = edge.targetNode!
+  const sourceNode = edge.sourceNode
+  const targetNode = edge.targetNode
 
   const sourceNodes: INode[] = []
   const targetNodes: INode[] = []
@@ -238,7 +241,7 @@ function addAboveLayerConstraint(
   collectLeafNodes(graph, targetNode, targetNodes)
   sourceNodes.forEach((source) => {
     targetNodes.forEach((target) => {
-      layerConstraints.placeAbove(target, source)
+      layerConstraints.placeInOrder(source, target)
     })
   })
 }
@@ -261,13 +264,13 @@ function collectLeafNodes(graph: IGraph, node: INode, leafNodes: INode[]): void 
  * Adds a minimum length for each edge to make enough room for their labels.
  */
 function addMinimumEdgeLength(
-  hierarchicLayoutData: HierarchicLayoutData,
+  hierarchicalLayoutData: HierarchicalLayoutData,
   minimumEdgeLength: number
 ): void {
   // each edge should have a minimum length so that all its labels can be placed on it one
   // after another with a minimum label-to-label distance
   const minLabelToLabelDistance = 5
-  hierarchicLayoutData.edgeLayoutDescriptors.delegate = (edge: IEdge) => {
+  hierarchicalLayoutData.edgeDescriptors = (edge: IEdge) => {
     let minLength = 0
     edge.labels.forEach((label) => {
       const labelSize = label.layout.bounds
@@ -277,8 +280,7 @@ function addMinimumEdgeLength(
       minLength += (edge.labels.size - 1) * minLabelToLabelDistance
     }
 
-    return new HierarchicLayoutEdgeLayoutDescriptor({
-      routingStyle: new HierarchicLayoutRoutingStyle(HierarchicLayoutEdgeRoutingStyle.ORTHOGONAL),
+    return new HierarchicalLayoutEdgeDescriptor({
       minimumLength: Math.max(minLength, minimumEdgeLength),
       minimumFirstSegmentLength: 20,
       minimumLastSegmentLength: 20
@@ -287,7 +289,7 @@ function addMinimumEdgeLength(
 }
 
 /**
- * Determines whether or not the given node represents a sub-process.
+ * Determines whether the given node represents a sub-process.
  */
 function isSubprocess(node: INode): boolean {
   return (
@@ -298,14 +300,14 @@ function isSubprocess(node: INode): boolean {
 }
 
 /**
- * Determines whether or not the given edge represents a message flow.
+ * Determines whether the given edge represents a message flow.
  */
 function isMessageFlow(edge: IEdge): boolean {
-  return edge.style instanceof BpmnEdgeStyle && edge.style.type === EdgeType.MESSAGE_FLOW
+  return edge.style instanceof BpmnEdgeStyle && edge.style.type === BpmnEdgeType.MESSAGE_FLOW
 }
 
 /**
- * Determines whether or not the given edge represents a sequence flow.
+ * Determines whether the given edge represents a sequence flow.
  */
 function isSequenceFlow(edge: IEdge): boolean {
   if (!(edge.style instanceof BpmnEdgeStyle)) {
@@ -313,14 +315,14 @@ function isSequenceFlow(edge: IEdge): boolean {
   }
   const bpmnEdgeStyle = edge.style
   return (
-    bpmnEdgeStyle.type === EdgeType.SEQUENCE_FLOW ||
-    bpmnEdgeStyle.type === EdgeType.DEFAULT_FLOW ||
-    bpmnEdgeStyle.type === EdgeType.CONDITIONAL_FLOW
+    bpmnEdgeStyle.type === BpmnEdgeType.SEQUENCE_FLOW ||
+    bpmnEdgeStyle.type === BpmnEdgeType.DEFAULT_FLOW ||
+    bpmnEdgeStyle.type === BpmnEdgeType.CONDITIONAL_FLOW
   )
 }
 
 /**
- * Determines whether or not the given edge represents an association.
+ * Determines whether the given edge represents an association.
  */
 function isAssociation(edge: IEdge): boolean {
   if (!(edge.style instanceof BpmnEdgeStyle)) {
@@ -328,22 +330,22 @@ function isAssociation(edge: IEdge): boolean {
   }
   const bpmnEdgeStyle = edge.style
   return (
-    bpmnEdgeStyle.type === EdgeType.ASSOCIATION ||
-    bpmnEdgeStyle.type === EdgeType.BIDIRECTED_ASSOCIATION ||
-    bpmnEdgeStyle.type === EdgeType.DIRECTED_ASSOCIATION
+    bpmnEdgeStyle.type === BpmnEdgeType.ASSOCIATION ||
+    bpmnEdgeStyle.type === BpmnEdgeType.BIDIRECTED_ASSOCIATION ||
+    bpmnEdgeStyle.type === BpmnEdgeType.DIRECTED_ASSOCIATION
   )
 }
 
 /**
  * Adds node halos to reserve some space for labels.
  */
-function addNodeHalos(
-  data: GenericLayoutData,
+function addNodeMargins(
+  data: HierarchicalLayoutData,
   graph: IGraph,
   selection: IGraphSelection,
   layoutOnlySelection: boolean
 ): void {
-  const nodeHalos: Mapper<INode, NodeHalo> = new Mapper()
+  const nodeMargins: Mapper<INode, Insets> = new Mapper()
   graph.nodes.forEach((node) => {
     let top = 0.0
     let left = 0.0
@@ -381,13 +383,13 @@ function addNodeHalos(
       })
     }
 
-    nodeHalos.set(node, NodeHalo.create(top, left, bottom, right))
+    nodeMargins.set(node, new Insets(top, right, bottom, left))
   })
-  data.addNodeItemMapping(NodeHalo.NODE_HALO_DP_KEY).mapper = nodeHalos
+  data.nodeMargins = nodeMargins
 }
 
 /**
- * Checks whether or not the given label is considered for the layout.
+ * Checks whether the given label is considered for the layout.
  */
 function isNodeLabelAffected(
   graph: IGraph,
@@ -397,7 +399,7 @@ function isNodeLabelAffected(
 ): boolean {
   if (label.owner instanceof INode) {
     const node = label.owner
-    const isInnerLabel = node.layout.contains(label.layout.orientedRectangleCenter)
+    const isInnerLabel = node.layout.contains(label.layout.center)
     const isPool = node.style instanceof PoolNodeStyle
     const isChoreography = node.style instanceof ChoreographyNodeStyle
     const isGroupNode = graph.isGroupNode(node)
@@ -406,7 +408,7 @@ function isNodeLabelAffected(
       !isPool &&
       !isChoreography &&
       !isGroupNode &&
-      (!layoutOnlySelection || selection.isSelected(node))
+      (!layoutOnlySelection || selection.includes(node))
     )
   }
   return false
@@ -415,24 +417,22 @@ function isNodeLabelAffected(
 /**
  * Adds preferred placement for each edge.
  */
-function addEdgeLabelPlacementDescriptors(data: GenericLayoutData): void {
-  const atSourceDescriptor = new PreferredPlacementDescriptor({
-    placeAlongEdge: LabelPlacements.AT_SOURCE_PORT,
-    sideOfEdge: LabelPlacements.LEFT_OF_EDGE,
+function addEdgeLabelPlacementDescriptors(labelingData: GenericLabelingData): void {
+  const atSourceDescriptor = new EdgeLabelPreferredPlacement({
+    placementAlongEdge: LabelAlongEdgePlacements.AT_SOURCE_PORT,
+    edgeSide: LabelEdgeSides.LEFT_OF_EDGE,
     angleReference: LabelAngleReferences.RELATIVE_TO_EDGE_FLOW
   })
-  const defaultDescriptor = new PreferredPlacementDescriptor({
+  const defaultDescriptor = new EdgeLabelPreferredPlacement({
     angleReference: LabelAngleReferences.RELATIVE_TO_EDGE_FLOW
   })
-  data.addLabelItemMapping(
-    LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY
-  ).delegate = (label: ILabel): PreferredPlacementDescriptor => {
-    const labelOwner = label.owner! as IEdge
+  labelingData.edgeLabelPreferredPlacements = (label: ILabel): EdgeLabelPreferredPlacement => {
+    const labelOwner = label.owner as IEdge
     const edgeType = (labelOwner.style as BpmnEdgeStyle).type
     if (
-      edgeType === EdgeType.SEQUENCE_FLOW ||
-      edgeType === EdgeType.DEFAULT_FLOW ||
-      edgeType === EdgeType.CONDITIONAL_FLOW
+      edgeType === BpmnEdgeType.SEQUENCE_FLOW ||
+      edgeType === BpmnEdgeType.DEFAULT_FLOW ||
+      edgeType === BpmnEdgeType.CONDITIONAL_FLOW
     ) {
       // labels on sequence, default and conditional flow edges should be placed at the source side.
       return atSourceDescriptor
@@ -446,101 +446,72 @@ function addEdgeLabelPlacementDescriptors(data: GenericLayoutData): void {
  */
 function markFixedAndAffectedItems(
   data: GenericLayoutData,
-  hierarchicLayoutData: HierarchicLayoutData,
+  hierarchicalLayoutData: HierarchicalLayoutData,
+  labelingData: GenericLabelingData,
   selection: IGraphSelection,
   layoutOnlySelection: boolean
 ): void {
   if (layoutOnlySelection) {
-    const affectedEdges = IMapper.fromDelegate(
+    const affectedEdges = IMapper.fromHandler(
       (edge: IEdge) =>
-        selection.isSelected(edge) ||
-        selection.isSelected(edge.sourceNode!) ||
-        selection.isSelected(edge.targetNode!)
+        selection.includes(edge) ||
+        selection.includes(edge.sourceNode) ||
+        selection.includes(edge.targetNode)
     )
 
-    data.addEdgeItemCollection(LayoutKeys.AFFECTED_EDGES_DP_KEY).mapper = affectedEdges
+    data.addItemMapping(LayoutKeys.ROUTE_EDGES_DATA_KEY).mapper = affectedEdges
 
     // fix ports of unselected edges and edges at event ports
-    data.addEdgeItemMapping(PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY).delegate = (
-      edge: IEdge
-    ): any => {
-      if (!affectedEdges.get(edge) || edge.sourcePort!.style instanceof EventPortStyle) {
-        return PortConstraint.create(getSide(edge, true))
-      }
-      return null
-    }
-    data.addEdgeItemMapping(PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY).delegate = (
-      edge: IEdge
-    ): any => {
-      if (!affectedEdges.get(edge)) {
-        return PortConstraint.create(getSide(edge, false))
-      }
-      return null
-    }
+    hierarchicalLayoutData.ports.sourcePortCandidates = (edge) =>
+      !affectedEdges.get(edge) || edge.sourcePort.style instanceof EventPortStyle
+        ? new EdgePortCandidates().addFreeCandidate(getSide(edge, true))
+        : null
+
+    hierarchicalLayoutData.ports.targetPortCandidates = (edge) =>
+      !affectedEdges.get(edge)
+        ? new EdgePortCandidates().addFreeCandidate(getSide(edge, false))
+        : null
 
     // give core layout hints that selected nodes and edges should be incremental
-    hierarchicLayoutData.incrementalHints.contextDelegate = (
-      item: IModelItem,
-      factory: IIncrementalHintsFactory
-    ): object | null => {
-      if (item instanceof INode && selection.isSelected(item)) {
-        return factory.createLayerIncrementallyHint(item)
-      } else if (item instanceof IEdge && affectedEdges.get(item)) {
-        return factory.createSequenceIncrementallyHint(item)
-      }
-      return null
-    }
-    data.addLabelItemCollection(BpmnLayout.AFFECTED_LABELS_DP_KEY).delegate = (
-      label: ILabel
-    ): boolean => {
-      if (label.owner instanceof IEdge) {
-        return affectedEdges.get(label.owner)!
-      }
-      if (label.owner instanceof INode) {
-        const node = label.owner
-        const isInnerLabel = node.layout.contains(label.layout.orientedRectangleCenter)
-        const isPool = node.style instanceof PoolNodeStyle
-        const isChoreography = node.style instanceof ChoreographyNodeStyle
-        return !isInnerLabel && !isPool && !isChoreography && selection.isSelected(node)
-      }
-      return false
-    }
-  } else {
-    // fix source port of edges at event ports
-    data.addEdgeItemMapping(PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY).delegate = (
-      edge: IEdge
-    ): any => {
-      if (edge.sourcePort!.style instanceof EventPortStyle) {
-        return PortConstraint.create(getSide(edge, true))
-      }
-      return null
+    hierarchicalLayoutData.incrementalNodes = (item) => selection.includes(item)
+    hierarchicalLayoutData.incrementalEdges = (edge) => affectedEdges.get(edge) ?? false
+
+    labelingData.scope.nodeLabels = (label: ILabel): boolean => {
+      const node = label.owner as INode
+      const isInnerLabel = node.layout.contains(label.layout.center)
+      const isPool = node.style instanceof PoolNodeStyle
+      const isChoreography = node.style instanceof ChoreographyNodeStyle
+      return !isInnerLabel && !isPool && !isChoreography && selection.includes(node)
     }
 
-    data.addLabelItemCollection(BpmnLayout.AFFECTED_LABELS_DP_KEY).delegate = (
-      label: ILabel
-    ): boolean => {
-      if (label.owner instanceof IEdge) {
-        return true
-      }
-      if (label.owner instanceof INode) {
-        const node = label.owner
-        const isInnerLabel = node.layout.contains(label.layout.orientedRectangleCenter)
-        const isPool = node.style instanceof PoolNodeStyle
-        const isChoreography = node.style instanceof ChoreographyNodeStyle
-        return !isInnerLabel && !isPool && !isChoreography
-      }
-      return false
+    labelingData.scope.edgeLabels = (label: ILabel): boolean =>
+      affectedEdges.get(label.owner as IEdge) ?? false
+  } else {
+    // fix source port of edges at event ports
+    hierarchicalLayoutData.ports.sourcePortCandidates = (edge) =>
+      edge.sourcePort.style instanceof EventPortStyle
+        ? new EdgePortCandidates().addFreeCandidate(getSide(edge, true))
+        : null
+
+    labelingData.scope.nodeLabels = (label: ILabel): boolean => {
+      const node = label.owner as INode
+      const isInnerLabel = node.layout.contains(label.layout.center)
+      const isPool = node.style instanceof PoolNodeStyle
+      const isChoreography = node.style instanceof ChoreographyNodeStyle
+      return !isInnerLabel && !isPool && !isChoreography
     }
+
+    labelingData.scope.edgeLabels = () => true
   }
 }
 
 /**
  * Returns at which side of its source/target an edge should connect.
  */
-function getSide(edge: IEdge, atSource: boolean): PortSide {
+function getSide(edge: IEdge, atSource: boolean): PortSides {
   const port = (atSource ? edge.sourcePort : edge.targetPort)!
   if (!(port.owner instanceof INode)) {
-    return PortSide.ANY
+    return PortSides.ANY
   }
   const node = port.owner
   const relPortLocation = port.location.subtract(node.layout.center)
@@ -550,10 +521,10 @@ function getSide(edge: IEdge, atSource: boolean): PortSide {
   const sdy = relPortLocation.y / (node.layout.height / 2)
 
   if (Math.abs(sdx) > Math.abs(sdy)) {
-    // east or west
-    return sdx < 0 ? PortSide.WEST : PortSide.EAST
+    // left or right
+    return sdx < 0 ? PortSides.LEFT : PortSides.RIGHT
   } else if (Math.abs(sdx) < Math.abs(sdy)) {
-    return sdy < 0 ? PortSide.NORTH : PortSide.SOUTH
+    return sdy < 0 ? PortSides.TOP : PortSides.BOTTOM
   }
 
   // port is somewhere at the diagonals of the node bounds
@@ -563,9 +534,9 @@ function getSide(edge: IEdge, atSource: boolean): PortSide {
 }
 
 /**
- * Returns at which side of its source an edge should connect considering the first/last segment..
+ * Returns at which side of its source an edge should connect considering the first/last segment.
  */
-function getSideFromSegment(edge: IEdge, atSource: boolean): PortSide {
+function getSideFromSegment(edge: IEdge, atSource: boolean): PortSides {
   const port = (atSource ? edge.sourcePort : edge.targetPort)!
   const opposite = (atSource ? edge.targetPort : edge.sourcePort)!
   const from = port.location
@@ -576,9 +547,9 @@ function getSideFromSegment(edge: IEdge, atSource: boolean): PortSide {
   const dx = to.x - from.x
   const dy = to.y - from.y
   if (Math.abs(dx) > Math.abs(dy)) {
-    // east or west
-    return dx < 0 ? PortSide.WEST : PortSide.EAST
+    // right or left
+    return dx < 0 ? PortSides.LEFT : PortSides.RIGHT
   }
 
-  return dy < 0 ? PortSide.NORTH : PortSide.SOUTH
+  return dy < 0 ? PortSides.TOP : PortSides.BOTTOM
 }

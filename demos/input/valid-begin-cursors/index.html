@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Valid Begin Cursors Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -100,13 +98,19 @@
             <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#GRAB" target="_blank">Cursor.GRAB</a>
           </li>
           <li>
-            <b>Start lasso selection</b> by pressing <kbd>Shift</kbd> while hovering on an empty
+            <b>Start lasso selection</b> by pressing <kbd>Alt</kbd> while hovering on an empty
             location on the canvas. Its valid beginning is indicated by a custom lasso cursor.
+            Pressing <kbd>Shift</kbd> or <kbd>Ctrl</kbd> during the lasso gesture will switch
+            between subtract- and extend-selection mode respectively, indicated by a '-' or '+'
+            symbol on the cursor.
           </li>
           <li>
             <b>Start marquee selection</b> when neither <kbd>Shift</kbd> nor <kbd>Ctrl</kbd> is
             pressed while hovering on an empty location on the canvas. Its valid beginning is
-            indicated by <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#CROSSHAIR" target="_blank">Cursor.CROSSHAIR</a>.
+            indicated by <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#CROSSHAIR" target="_blank">Cursor.CROSSHAIR</a>. Pressing
+            <kbd>Shift</kbd> or <kbd>Ctrl</kbd> during the marquee gesture will switch between
+            subtract- and extend-selection mode respectively, indicated by a '-' or '+' symbol on
+            the cursor.
           </li>
           <li>
             <b>Create a new edge</b> by pressing <kbd>Ctrl</kbd> while hovering on an unselected

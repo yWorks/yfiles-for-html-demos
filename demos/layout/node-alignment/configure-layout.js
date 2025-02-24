@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,22 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { AlignmentStage } from 'yfiles'
-
-/**
- * Represents the set of configuration settings available for the {@link AlignmentStage}
- * layout algorithm.
- * @typedef {Object} LayoutSettings
- * @property {AlignmentStageAlignmentPolicy} alignmentPolicy
- * @property {number} minimumNodeDistance
- * @property {number} snapDistance
- * @property {boolean} separateStripes
- */
-
+import { AlignmentStage } from '@yfiles/yfiles'
 /**
  * Creates a new instance of the {@link AlignmentStage} layout algorithm with the given settings.
- * @param {!LayoutSettings} settings
- * @returns {!ILayoutAlgorithm}
  */
 export function createConfiguredLayoutAlgorithm(settings) {
   return new AlignmentStage({
@@ -51,11 +38,9 @@ export function createConfiguredLayoutAlgorithm(settings) {
     separateStripes: settings.separateStripes
   })
 }
-
 /**
  * Creates a new instance of {@link LayoutSettings} with the default values of the
  * {@link AlignmentStage} layout algorithm.
- * @returns {!LayoutSettings}
  */
 export function createDefaultSettings() {
   const algorithm = new AlignmentStage()

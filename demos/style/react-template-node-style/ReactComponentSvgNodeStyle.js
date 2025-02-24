@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,55 +26,24 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, NodeStyleBase, SvgVisual, Visual, VisualCachingPolicy } from 'yfiles'
-
+import {
+  GraphComponent,
+  NodeStyleBase,
+  SvgVisual,
+  Visual,
+  VisualCachingPolicy
+} from '@yfiles/yfiles'
 import { createRoot } from 'react-dom/client'
 import { createElement } from 'react'
-/**
- * @typedef {(FunctionComponent.<TTag>|ComponentClass.<TTag>)} RenderType
- */
-
-/**
- * Helper for the ReactComponentHtmlNodeStyle to factor out the props retrieval per node
- * @typedef {function} TagProvider
- */
-
 /**
  * The default implementation just uses the props from the tag of the item to be rendered.
  * @param context
  * @param node
  */
 const defaultTagProvider = (context, node) => node.tag
-
-/**
- * The interface of the props passed to the SVG react component for rendering the node contents.
- * @typedef {Object} ReactComponentSvgNodeStyleProps
- * @property {number} width
- * @property {number} height
- * @property {boolean} selected
- * @property {('low'|'high')} detail
- * @property {TTag} tag
- */
-
-/**
- * @typedef {Object} Cache
- * @property {ReactComponentSvgNodeStyleProps.<TTag>} props
- * @property {Root} root
- */
-
-/**
- * Utility type for type-safe implementation of the Visual that stores the props
- * it has been created for along with the React Root.
- * @typedef {TaggedSvgVisual.<SVGGElement,Cache.<TTag>>} ReactStyleSvgVisual
- */
-
 /**
  * Helper method that will be used by the below style to release React resources when the
  * node gets removed from the yFiles scene graph.
- * @param {!IRenderContext} context
- * @param {!Visual} removedVisual
- * @param {boolean} dispose
- * @returns {?Visual}
  */
 function unmountReact(context, removedVisual, dispose) {
   const visual = removedVisual
@@ -92,7 +61,6 @@ function unmountReact(context, removedVisual, dispose) {
   }
   return null
 }
-
 /**
  * A simple INodeStyle implementation that uses React Components/render functions
  * for rendering the node visualizations with SVG
@@ -114,40 +82,30 @@ function unmountReact(context, removedVisual, dispose) {
  * ```
  */
 export class ReactComponentSvgNodeStyle extends NodeStyleBase {
+  type
+  tagProvider
   /**
    * Creates a new instance
-   * @param {!RenderType.<ReactComponentSvgNodeStyleProps.<TTag>>} type the React component rendering the SVG content
-   * @param {!TagProvider.<TTag>} tagProvider the optional provider function that provides the "tag" in the props.
+   * @param type the React component rendering the SVG content
+   * @param tagProvider the optional provider function that provides the "tag" in the props.
    * By default, this will use the node's tag.
    */
   constructor(type, tagProvider = defaultTagProvider) {
     super()
-    this.tagProvider = tagProvider
     this.type = type
+    this.tagProvider = tagProvider
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {!ReactComponentSvgNodeStyleProps.<TTag>}
-   */
   createProps(context, node) {
     return {
       width: node.layout.width,
       height: node.layout.height,
       selected:
         context.canvasComponent instanceof GraphComponent &&
-        context.canvasComponent.selection.selectedNodes.isSelected(node),
+        context.canvasComponent.selection.nodes.includes(node),
       detail: context.zoom < 0.5 ? 'low' : 'high',
       tag: this.tagProvider(context, node)
     }
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {!ReactStyleSvgVisual.<TTag>}
-   */
   createVisual(context, node) {
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const props = this.createProps(context, node)
@@ -160,16 +118,8 @@ export class ReactComponentSvgNodeStyle extends NodeStyleBase {
     SvgVisual.setTranslate(gElement, node.layout.x, node.layout.y)
     return svgVisual
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ReactStyleSvgVisual.<TTag>} oldVisual
-   * @param {!INode} node
-   * @returns {!ReactStyleSvgVisual.<TTag>}
-   */
   updateVisual(context, oldVisual, node) {
     const newProps = this.createProps(context, node)
-
     const cache = oldVisual.tag
     const oldProps = cache.props
     if (

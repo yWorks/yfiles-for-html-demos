@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,30 +28,23 @@
  ***************************************************************************/
 import {
   BezierEdgeStyle,
-  Class,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   IGraph,
+  LabelStyle,
   LayoutExecutor,
   License,
-  ShapeNodeShape,
   ShapeNodeStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { ArcDiagramLayout, NodeOrder } from './ArcDiagramLayout'
 import SampleData from './resources/SampleData'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 const chooser = document.querySelector<HTMLSelectElement>('#node-order')!
-
-// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools from removing this dependency which is needed for 'applyLayout'.
-Class.ensure(LayoutExecutor)
 
 /**
  * Bootstraps this demo.
@@ -61,8 +54,6 @@ async function run(): Promise<void> {
 
   // create the demo's graph component
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initially disable interactive editing
   configureUserInteraction(graphComponent)
 
@@ -73,7 +64,7 @@ async function run(): Promise<void> {
   createSampleGraph(graphComponent.graph)
 
   // center the demo's graph in the demo's visible area
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   // bind the demo's new node alignment and node distribution operations to the demo's UI controls
   initializeUI(graphComponent)
@@ -81,8 +72,12 @@ async function run(): Promise<void> {
   // initialize the application's CSS and JavaScript for the description
   finishLoading()
 
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
+
   // calculate and animate an initial layout for the demo's sample graph
-  await graphComponent.morphLayout(new ArcDiagramLayout())
+  await graphComponent.applyLayoutAnimated(new ArcDiagramLayout())
 
   // enable undo and redo
   graphComponent.graph.undoEngineEnabled = true
@@ -93,15 +88,22 @@ async function run(): Promise<void> {
  * @param graph the graph whose default styles are set.
  */
 function configureGraph(graph: IGraph): void {
-  graph.nodeDefaults.size = new Size(20, 20)
+  graph.nodeDefaults.size = new Size(30, 30)
   graph.nodeDefaults.style = new ShapeNodeStyle({
     fill: '#FF6C00',
-    shape: ShapeNodeShape.ELLIPSE,
+    shape: 'ellipse',
     stroke: '1.5px #662b00'
   })
 
   graph.edgeDefaults.style = new BezierEdgeStyle({
     stroke: '4px #662b00'
+  })
+
+  graph.nodeDefaults.labels.style = new LabelStyle({
+    backgroundFill: '#ffc499',
+    textFill: '#662b00',
+    shape: 'pill',
+    padding: [2, 4, 2, 4]
   })
 }
 
@@ -112,7 +114,8 @@ function createSampleGraph(graph: IGraph): void {
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
     data: SampleData.nodes,
-    id: 'id'
+    id: 'id',
+    labels: ['id']
   })
   builder.createEdgesSource({
     data: SampleData.edges,
@@ -130,7 +133,7 @@ function createSampleGraph(graph: IGraph): void {
 function configureUserInteraction(graphComponent: GraphComponent): void {
   const geim = new GraphEditorInputMode()
   // do not show handles for edge reconnection or port movement,
-  // because e.g. active port handles make it difficult to move the small default nodes of this demo
+  // because e.g., active port handles make it difficult to move the small default nodes of this demo
   geim.showHandleItems =
     GraphItemTypes.BEND |
     GraphItemTypes.EDGE_LABEL |
@@ -147,7 +150,7 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
 async function arrange(graphComponent: GraphComponent): Promise<void> {
   const algorithm = new ArcDiagramLayout()
   algorithm.nodeOrder = getNodeOrder()
-  await graphComponent.morphLayout(algorithm)
+  await graphComponent.applyLayoutAnimated(algorithm)
 }
 
 /**

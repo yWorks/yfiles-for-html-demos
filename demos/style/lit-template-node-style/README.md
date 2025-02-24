@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Lit Template Node Style Demo
 
-# Lit Template Node Style Demo
+<img src="../../../doc/demo-thumbnails/lit-template-node-style.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/style/lit-template-node-style/).
 
 This demo presents the LitNodeStyle that leverages the powerful data binding and conditional rendering features of the [Lit templating framework](https://lit.dev/).
 
@@ -25,5 +27,5 @@ Change the render function of one or more nodes. Bind colors or text to properti
 
 - [Template Styles Demo](../../style/templatestyles/)
 - [Vue Template Node Style Demo](../../../demos-ts/style/vue-template-node-style/)
-- [String Template Node Style Demo](../../style/string-template-node-style/)
+- [Template Node Style Demo](../../style/template-node-style/)
 - [React JSX Component Style Demo](../../style/react-template-node-style/)

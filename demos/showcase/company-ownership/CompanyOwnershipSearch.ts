@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphSearch } from 'demo-utils/GraphSearch'
-import type { INode } from 'yfiles'
-import { getEntityData } from '../frauddetection/entity-data'
+import { GraphSearch } from '@yfiles/demo-utils/GraphSearch'
+import type { INode } from '@yfiles/yfiles'
+import { getCompany } from './data-types'
 
 /**
  * Implements the custom graph search for this demo.
@@ -44,9 +44,9 @@ export class CompanyOwnershipSearch extends GraphSearch {
    */
   matches(node: INode, text: string): boolean {
     const lowercaseText = text.toLowerCase()
-    const entity = getEntityData(node)
+    const company = getCompany(node)
     if (
-      Object.entries(entity).some(
+      Object.entries(company).some(
         ([prop, value]) => value.toString().toLowerCase().indexOf(lowercaseText) !== -1
       )
     ) {

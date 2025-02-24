@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 06 Rendering Text - Tutorial: Node Style Implementation
 
-# Rendering text
+<img src="../../../doc/demo-thumbnails/tutorial-style-implementation-node-render-text.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-node/06-render-text/).
 
 Not all visualisations consist of shapes and colors. Frequently, the business data stored in the `tag` property also contains textual content that should be rendered. Although yFiles for HTML offers labels for that purpose, text can also be rendered as part of the node visualization. This can be useful when users don’t need to interact with the text, or when the text should be integrated into the node visualization.
 
@@ -48,7 +50,7 @@ if (title) {
     targetElement: text,
     text: node.tag.title,
     font: new Font('sans-serif', 10),
-    wrapping: TextWrapping.CHARACTER_ELLIPSIS,
+    wrapping: TextWrapping.WRAP_CHARACTER_ELLIPSIS,
     maximumSize: new Size(tabWidth - 12, 15)
   })
 

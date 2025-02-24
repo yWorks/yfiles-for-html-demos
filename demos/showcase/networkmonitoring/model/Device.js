@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,53 +29,36 @@
 /**
  * The type of network device.
  */
-export /**
- * @readonly
- * @enum {number}
- */
-const DeviceKind = {
-  WORKSTATION: 1,
-  LAPTOP: 2,
-  SMARTPHONE: 3,
-  SWITCH: 4,
-  WLAN: 5,
-  SERVER: 6,
-  DATABASE: 7
-}
-
+export var DeviceKind
+;(function (DeviceKind) {
+  DeviceKind[(DeviceKind['WORKSTATION'] = 1)] = 'WORKSTATION'
+  DeviceKind[(DeviceKind['LAPTOP'] = 2)] = 'LAPTOP'
+  DeviceKind[(DeviceKind['SMARTPHONE'] = 3)] = 'SMARTPHONE'
+  DeviceKind[(DeviceKind['SWITCH'] = 4)] = 'SWITCH'
+  DeviceKind[(DeviceKind['WLAN'] = 5)] = 'WLAN'
+  DeviceKind[(DeviceKind['SERVER'] = 6)] = 'SERVER'
+  DeviceKind[(DeviceKind['DATABASE'] = 7)] = 'DATABASE'
+})(DeviceKind || (DeviceKind = {}))
 /**
  * Class representing a device in the network.
  */
 export class Device {
-  /** 
-    Size of the workload history.
-  * @type {number}
-   */
-  static get LOAD_HISTORY_SIZE() {
-    if (typeof Device.$LOAD_HISTORY_SIZE === 'undefined') {
-      Device.$LOAD_HISTORY_SIZE = 15
-    }
-
-    return Device.$LOAD_HISTORY_SIZE
-  }
-
+  // Size of the workload history.
+  static LOAD_HISTORY_SIZE = 15
   /**
    * Builds a new device for the network model.
    */
   constructor() {
     this.loadHistory = Array(Device.LOAD_HISTORY_SIZE).fill(0)
   }
-
   /**
    * The unique id of the device - used for wiring up connections
    */
   id = 0
-
   /**
    * The previous load values for this device. Consider this to be read-only.
    */
   loadHistory
-
   /**
    * The name of this device.
    */
@@ -84,69 +67,57 @@ export class Device {
    * The IP address of this device.
    */
   ip = null
-
   /**
    * The kind of the device.
    */
   kind = DeviceKind.WORKSTATION
-
   /**
    * Value indicating whether this device is enabled. Disabled devices are turned off and
    * can't send or receive packets.
    */
   enabled = false
-
   #failed = false
-
   /**
    * Value indicating whether this device failed. A failed device has to be repaired before
    * it can send or receive packets again.
    * The actual result for {@link enabled} and {@link failed} is essentially the
    * same, just the interaction and graphical appearance in the demo changes.
-   * @type {boolean}
    */
   get failed() {
     return this.#failed
   }
-
   fail() {
     this.#failed = true
     this.enabled = false
   }
-
   repair() {
     this.#failed = false
     this.enabled = true
   }
-
   /**
    * Gets the load of this device.
    * Load is a value between 0 and 1 that indicates how utilized the device is (with 0 being not
    * at all and 1 being fully). Load also factors into the failure probability of devices in the
    * {@link Simulator}.
-   * @type {number}
    */
   get load() {
     return this.loadHistory.at(-1)
   }
-
   /**
    * Sets the load of this device.
    * Load is a value between 0 and 1 that indicates how utilized the device is (with 0 being not
    * at all and 1 being fully). Load also factors into the failure probability of devices in the
    * {@link Simulator}.
-   * @type {number}
    */
   set load(value) {
     this.loadHistory.push(value)
     this.loadHistory.shift()
   }
-
   /**
    * Determines whether this device can send packets.
    * By definition in our model, neither switches nor Wi-Fi access points can send packets; they
    * just relay them. Servers and databases won't send packets without receiving one first.
-   * @returns {boolean} `true` if the device is not a switch or access point, `false` otherwise.
+   * @returns `true` if the device is not a switch or access point, `false` otherwise.
    */
   canSendPackets() {
     switch (this.kind) {
@@ -159,12 +130,11 @@ export class Device {
         return true
     }
   }
-
   /**
    * Determines whether this device can receive packets.
    * By definition in our model, switches and Wi-Fi access points only relay packets. Everything
    * else can receive them.
-   * @returns {boolean} `true` if the device is not a switch or access point, `false` otherwise.
+   * @returns `true` if the device is not a switch or access point, `false` otherwise.
    */
   canReceivePackets() {
     switch (this.kind) {
@@ -178,7 +148,6 @@ export class Device {
         return false
     }
   }
-
   /**
    * Determines whether a packet may take a certain connection to a given device type, coming
    * from a certain type of device.
@@ -194,27 +163,23 @@ export class Device {
    * - Laptop &rarr; WiFi &rarr; Workstation
    * - Workstation &rarr; Switch &rarr; Smartphone
    *
-   * @param {!Device} targetNode The candidate target device's type.
-   * @returns {boolean} `true` if the packet could travel to the target device according to the
+   * @param targetNode The candidate target device's type.
+   * @returns `true` if the packet could travel to the target device according to the
    *   described rules, `false` otherwise.
    */
   canConnectTo(targetNode) {
     if (this.kind === DeviceKind.SWITCH || targetNode.kind === DeviceKind.SWITCH) {
       return true
     }
-
     const clientTypes = [DeviceKind.LAPTOP, DeviceKind.SMARTPHONE, DeviceKind.WORKSTATION]
     return clientTypes.includes(this.kind)
       ? !clientTypes.includes(targetNode.kind)
       : this !== targetNode
   }
 }
-
 /**
  * Converts the given load to a color.
- * @returns {!string} A hex encoded color in the form 'hsla(h,s,l,a)'.
- * @param {number} load
- * @param {number} alpha
+ * @returns A hex encoded color in the form 'hsla(h,s,l,a)'.
  */
 export function convertLoadToColor(load, alpha) {
   return `hsla(${(1 - load) * 120},80%,50%,${alpha})`

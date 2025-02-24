@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,29 +33,17 @@ import {
   GraphItemTypes,
   License,
   Size
-} from 'yfiles'
-import {
-  applyDemoTheme,
-  createDemoEdgeStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, addOptions, finishLoading } from 'demo-resources/demo-page'
-import { runLayoutCore } from './configure-layout.js'
-import { initializeTypePanel, nodeTypeColors } from './types-popup.js'
-import { multipleStars, singleStar } from './resources/SampleData.js'
-
-/** @type {GraphComponent} */
+} from '@yfiles/yfiles'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { runLayoutCore } from './configure-layout'
+import { initializeTypePanel, nodeTypeColors } from './types-popup'
+import { multipleStars, singleStar } from './resources/SampleData'
 let graphComponent
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // enable interactive editing
   graphComponent.inputMode = new GraphEditorInputMode({
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
@@ -64,36 +52,27 @@ async function run() {
     // disable interactive label editing - labels are simply not in the focus of this demo
     allowEditLabel: false
   })
-
   // set some default styles for the nodes/edges
   initializeStyles(graphComponent.graph)
-
   // enable undo/redo
   graphComponent.graph.undoEngineEnabled = true
-
   // initialize the context menu for changing a node's type
   const typePanel = initializeTypePanel(graphComponent)
   typePanel.typeChanged = () => runLayout(true)
-
   // bind the buttons to their commands
   initializeUI()
 }
-
 /**
  * Calculates a new graph layout and optionally applies the new layout in an animated fashion.
  * This method also takes care of disabling the UI during layout calculations.
- * @param {boolean} animate
- * @returns {!Promise}
  */
 async function runLayout(animate) {
   const waitInputMode = graphComponent.inputMode.waitInputMode
   if (waitInputMode.waiting) {
     return
   }
-
   waitInputMode.waiting = true
   disableUI(true)
-
   try {
     const settings = {
       starSubstructureStyle: getSelectedValue('starStyle'),
@@ -107,30 +86,23 @@ async function runLayout(animate) {
     disableUI(false)
   }
 }
-
 /**
  * Configures default visualizations for the given graph.
- * @param {!IGraph} graph
  */
 function initializeStyles(graph) {
   // use first type color for all interactively created nodes
   graph.nodeDefaults.style = createDemoNodeStyle(nodeTypeColors[0])
   graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.size = new Size(40, 40)
-
   graph.edgeDefaults.style = createDemoEdgeStyle({ showTargetArrow: false })
 }
-
 /**
  * Loads a sample graph for testing the star substructure and node types support of the circular
  * layout algorithm.
- * @param {!string} sample
- * @returns {!Promise}
  */
 async function loadSample(sample) {
   disableUI(true)
   graphComponent.graph.clear()
-
   // load sample data
   const sampleData = 'singleStar' === sample ? singleStar : multipleStars
   const builder = new GraphBuilder({
@@ -145,74 +117,61 @@ async function loadSample(sample) {
     ],
     edges: [{ data: sampleData.edges, sourceId: 'source', targetId: 'target' }]
   })
-
   builder.buildGraph()
-
   // update the settings UI to match the sample's default layout settings
   const settings = await loadSampleSettings(`resources/${sample}-settings.json`)
   updateLayoutSettings(settings)
-
   // calculate an initial arrangement for the new sample
   await runLayout(false)
-
   // clear the undo engine when a new sample is loaded
   graphComponent.graph.undoEngine.clear()
   disableUI(false)
 }
-
 /**
  * Loads sample settings from the file identified by the given sample path.
- * @param {!string} samplePath the path to the sample data file.
- * @returns {!Promise.<LayoutSettings>}
+ * @param samplePath the path to the sample data file.
  */
 async function loadSampleSettings(samplePath) {
   const response = await fetch(samplePath)
   return await response.json()
 }
-
 /**
  * Updates the settings UI to match the given sample's default layout settings
  * @yjs:keep = starSubstructureStyle,starSubstructureTypeSeparation
- * @param {!LayoutSettings} settings the sample settings representing the desired graph structure.
+ * @param settings the sample settings representing the desired graph structure.
  */
 function updateLayoutSettings(settings) {
   updateSelectedIndex('starStyle', settings.starSubstructureStyle)
   updateState('consider-node-types', settings.considerNodeTypes, true)
   updateState('separate-star', settings.starSubstructureTypeSeparation, false)
 }
-
 /**
  * Sets the checked state for the HTMLInputElement identified by the given ID.
- * @param {!string} id the ID for the HTMLInputElement whose checked state will be set.
+ * @param id the ID for the HTMLInputElement whose checked state will be set.
  * @param value the new checked state.
- * @param {boolean} defaultValue the fallback checked state to be used if the given value is undefined.
- * @param {boolean} [value]
+ * @param defaultValue the fallback checked state to be used if the given value is undefined.
  */
 function updateState(id, value, defaultValue) {
   document.querySelector(`#${id}`).checked = 'undefined' === typeof value ? defaultValue : value
 }
-
 /**
  * Sets the selected index for HTMLSelectElement identified by the given ID to the index of the
  * given value. If the given value is undefined or not a value of the HTMLSelectElement's options,
  * selectedIndex will be set to 0.
- * @param {!string} id the ID for the HTMLSelectElement whose selectedIndex will be set.
+ * @param id the ID for the HTMLSelectElement whose selectedIndex will be set.
  * @param value the value whose index will be the new selectedIndex.
- * @param {!string} [value]
  */
 function updateSelectedIndex(id, value) {
   const select = document.querySelector(`#${id}`)
   const idx = indexOf(select, value)
   select.selectedIndex = idx > -1 ? idx : 0
 }
-
 /**
  * Determines the index of the given value in the given HTMLSelectElement's options.
- * @param {!HTMLSelectElement} select the HTMLSelectElement whose options are searched for the given value.
+ * @param select the HTMLSelectElement whose options are searched for the given value.
  * @param value the value to search for.
- * @returns {number} the index of the given value or -1 if the given value is undefined or not a value
+ * @returns the index of the given value or -1 if the given value is undefined or not a value
  * of the given HTMLSelectElement's options.
- * @param {!string} [value]
  */
 function indexOf(select, value) {
   if (value != null) {
@@ -226,21 +185,18 @@ function indexOf(select, value) {
   }
   return -1
 }
-
 /**
  * Sets the disabled state for certain UI controls to the given state.
- * @param {boolean} disabled the disabled state to set.
+ * @param disabled the disabled state to set.
  */
 function disableUI(disabled) {
   for (const element of document.querySelectorAll('.toolbar-component')) {
     element.disabled = disabled
   }
-
   for (const element of document.querySelectorAll('.settings-editor')) {
     element.disabled = disabled
   }
 }
-
 /**
  * Binds actions and commands to the demo's UI controls.
  */
@@ -257,25 +213,21 @@ function initializeUI() {
     { text: 'Multiple Stars', value: 'multipleStars' }
   )
   addNavigationButtons(sampleSelect, true, false, 'sidebar-button')
-
   // changing a value automatically runs a layout
   for (const editor of document.querySelectorAll('.settings-editor')) {
     editor.addEventListener('change', async () => await runLayout(true))
   }
-
   document
     .querySelector('#apply-layout-button')
     .addEventListener('click', async () => await runLayout(true))
 }
-
 /**
  * Determines the currently selected value of the HTMLSelectElement identified by the given ID.
- * @param {!string} id the ID for the HTMLSelectElement whose selected value is returned.
- * @returns {!string} the selected value of the HTMLSelectElement identified by the given ID.
+ * @param id the ID for the HTMLSelectElement whose selected value is returned.
+ * @returns the selected value of the HTMLSelectElement identified by the given ID.
  */
 function getSelectedValue(id) {
   const select = document.querySelector(`#${id}`)
   return select.options[select.selectedIndex].value
 }
-
 void run().then(finishLoading)

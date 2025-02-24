@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,32 +32,34 @@ import {
   IOrthogonalEdgeHelper,
   OrthogonalEdgeHelper,
   SegmentOrientation
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * The {@link OrthogonalEdgeHelper} for blue edges. Orthogonal edge
- * editing is enabled for the inner segments of this edges but not for the
+ * editing is enabled for the inner segments of this edge but not for the
  * first and last one.
  */
 export default class BlueOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
+  constructor(edge: IEdge) {
+    super(edge)
+  }
+
   /**
    * Returns the NonOrthogonal segment orientation for the first and last
    * segment, and the default for all other segments.
    * @param inputModeContext The input mode context in which the orientation is
    *   needed
-   * @param edge The edge to inspect.
    * @param segmentIndex The index of the segment
    * @see Overrides {@link OrthogonalEdgeHelper.getSegmentOrientation}
    * @see Specified by {@link IOrthogonalEdgeHelper.getSegmentOrientation}.
    */
   getSegmentOrientation(
     inputModeContext: IInputModeContext,
-    edge: IEdge,
     segmentIndex: number
   ): SegmentOrientation {
-    const isFirstOrLastSegment = segmentIndex === 0 || segmentIndex === edge.bends.size
+    const isFirstOrLastSegment = segmentIndex === 0 || segmentIndex === this.edge.bends.size
     return isFirstOrLastSegment
       ? SegmentOrientation.NON_ORTHOGONAL
-      : super.getSegmentOrientation(inputModeContext, edge, segmentIndex)
+      : super.getSegmentOrientation(inputModeContext, segmentIndex)
   }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
 	</key>
@@ -56,65 +56,19 @@
 	<key id="d14" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
 	<data key="d14">
 		<y:SharedData>
-			<yjs:DefaultLabelStyle x:Key="1" clipText="false" textFill="BLACK">
-				<yjs:DefaultLabelStyle.font>
+			<yjs:LabelStyle x:Key="1" wrapping="NONE" textFill="BLACK">
+				<yjs:LabelStyle.font>
 					<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-				</yjs:DefaultLabelStyle.font>
-			</yjs:DefaultLabelStyle>
-			<yjs:StringTemplateNodeStyle x:Key="2"><![CDATA[
-		<use xlink:href="#movie" width="{TemplateBinding width}" height="{TemplateBinding height}"></use>
-		<defs>
-<svg version="1.1" id="movie" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	  viewBox="0 0 48 48" enable-background="new 0 0 48 48" xml:space="preserve" data-referencesafe="true">
-<defs>
-	<linearGradient id="MOVIE_ID_01" gradientUnits="userSpaceOnUse" x1="225.8613" y1="590.7773" x2="225.8613" y2="566.9873" gradientTransform="matrix(1 0 0 1 -201.9199 -546.3203)">
-	<stop  offset="0" style="stop-color:#000000"/>
-	<stop  offset="0.8788" style="stop-color:#8A8A8A"/>
-	<stop  offset="1" style="stop-color:#424242"/>
-</linearGradient>
-<linearGradient id="MOVIE_ID_02" gradientUnits="userSpaceOnUse" x1="428" y1="1109.5508" x2="428" y2="1114.6267" gradientTransform="matrix(1 0 0 1 -404.0879 -1091.709)">
-	<stop  offset="0" style="stop-color:#FFFFFF"/>
-	<stop  offset="1" style="stop-color:#C4C4C9"/>
-</linearGradient>
-<linearGradient id="MOVIE_ID_03" gradientUnits="userSpaceOnUse" x1="-1767.9546" y1="1318.5508" x2="-1767.9546" y2="1323.4955" gradientTransform="matrix(-0.9808 0.1952 0.1952 0.9808 -1968.6603 -937.5378)">
-	<stop  offset="0" style="stop-color:#FFFFFF"/>
-	<stop  offset="0.238" style="stop-color:#F8F8F8"/>
-	<stop  offset="0.5934" style="stop-color:#E3E3E6"/>
-	<stop  offset="1" style="stop-color:#C4C4C9"/>
-</linearGradient>
-</defs>
-<path fill="url(#MOVIE_ID_01)" stroke="#000000" stroke-width="0.5" d="M41.134,41.25c0,1.1-0.899,2-2,2H8.75c-1.1,0-2-0.9-2-2V22.498
-	c0-1.1,0.9-2,2-2h30.384c1.101,0,2,0.9,2,2V41.25z"/>
-<rect x="4.606" y="18.667" fill="url(#MOVIE_ID_02)" stroke="#000000" stroke-width="0.5" width="38.613" height="3.661"/>
-<polygon points="21.549,18.667 23.56,22.328 26.335,22.328 24.324,18.667 "/>
-<polygon points="15.875,18.667 17.886,22.328 20.66,22.328 18.648,18.667 "/>
-<polygon points="27.225,18.667 29.234,22.328 32.008,22.328 29.999,18.667 "/>
-<polygon points="4.527,18.667 6.538,22.328 9.312,22.328 7.301,18.667 "/>
-<polygon points="10.2,18.667 12.211,22.328 14.985,22.328 12.975,18.667 "/>
-<polygon points="32.84,18.667 34.85,22.328 37.624,22.328 35.613,18.667 "/>
-<polygon points="38.514,18.667 40.521,22.328 43.298,22.328 41.288,18.667 "/>
-<polygon fill="url(#MOVIE_ID_03)" stroke="#000000" stroke-width="0.5" points="42.48,10.927 4.611,18.464 3.897,14.873 41.768,7.336
-	"/>
-<polygon points="25.15,10.643 23.892,14.626 21.17,15.168 22.428,11.185 "/>
-<polygon points="30.714,9.536 29.457,13.519 26.736,14.061 27.994,10.077 "/>
-<polygon points="19.584,11.751 18.327,15.734 15.607,16.275 16.862,12.292 "/>
-<polygon points="41.844,7.32 40.587,11.304 37.866,11.845 39.124,7.862 "/>
-<polygon points="36.279,8.428 35.021,12.411 32.302,12.953 33.561,8.969 "/>
-<polygon points="14.076,12.847 12.82,16.83 10.099,17.372 11.355,13.389 "/>
-<polygon points="8.512,13.955 7.256,17.938 4.534,18.479 5.791,14.496 "/>
-<line fill="none" stroke="#DBDBDB" stroke-width="2.5" x1="10.637" y1="26.594" x2="22.734" y2="26.594"/>
-<line fill="none" stroke="#DBDBDB" stroke-width="2.5" x1="10.637" y1="32.402" x2="37.305" y2="32.402"/>
-<line fill="none" stroke="#DBDBDB" stroke-width="2.5" x1="10.637" y1="38.213" x2="37.363" y2="38.213"/>
-</svg>
-</defs>
-		]]></yjs:StringTemplateNodeStyle>
+				</yjs:LabelStyle.font>
+			</yjs:LabelStyle>
+			<yjs:ImageNodeStyle x:Key="2" href="./resources/movie.svg"/>
 		</y:SharedData>
 	</data>
 	<graph id="G" edgedefault="directed">
 		<node id="n0">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="69,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="69,14">
 						<y:Label.Text><![CDATA[The Prestige]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -144,7 +98,7 @@
 		<node id="n1">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="74,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="74,14">
 						<y:Label.Text><![CDATA[The Illusionist]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -174,7 +128,7 @@
 		<node id="n2">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="63,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="63,14">
 						<y:Label.Text><![CDATA[High Speed]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -204,7 +158,7 @@
 		<node id="n3">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="111,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="111,14">
 						<y:Label.Text><![CDATA[Memoirs of a Geisha]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -234,7 +188,7 @@
 		<node id="n4">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="95,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="95,14">
 						<y:Label.Text><![CDATA[Starship Troopers]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -269,7 +223,7 @@
 		<node id="n5">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="45,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="45,14">
 						<y:Label.Text>Serenity</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -299,7 +253,7 @@
 		<node id="n6">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="66,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="66,14">
 						<y:Label.Text><![CDATA[Future Wars]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -334,7 +288,7 @@
 		<node id="n7">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="89,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="89,14">
 						<y:Label.Text><![CDATA[The Sixth Sense]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -364,7 +318,7 @@
 		<node id="n8">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="74,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="74,14">
 						<y:Label.Text><![CDATA[The Departed]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -404,7 +358,7 @@
 		<node id="n9">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="42,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="42,14">
 						<y:Label.Text><![CDATA[Sin City]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -434,7 +388,7 @@
 		<node id="n10">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="70,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="70,14">
 						<y:Label.Text><![CDATA[Carlito's Way]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -464,7 +418,7 @@
 		<node id="n11">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="87,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="87,14">
 						<y:Label.Text><![CDATA[Cidade de Deus]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -504,7 +458,7 @@
 		<node id="n12">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="73,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="73,14">
 						<y:Label.Text><![CDATA[Kill Bill: Vol. 1]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -534,7 +488,7 @@
 		<node id="n13">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="63,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="63,14">
 						<y:Label.Text><![CDATA[Pulp Fiction]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -574,7 +528,7 @@
 		<node id="n14">
 			<data key="d1">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:SandwichLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="108,14">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="108,14">
 						<y:Label.Text><![CDATA[The Usual Suspects]]></y:Label.Text>
 					</y:Label>
 				</x:List>

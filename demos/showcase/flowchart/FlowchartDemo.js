@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,116 +27,100 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
-  FreeEdgeLabelModel,
+  Arrow,
+  ArrowType,
+  SmartEdgeLabelModel,
   FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GroupNodeLabelModel,
   GroupNodeStyle,
   HorizontalTextAlignment,
-  IArrow,
+  LabelStyle,
   License,
   PolylineEdgeStyle,
   Size
-} from 'yfiles'
-import { FlowchartNodeStyle, FlowchartNodeType } from './style/FlowchartStyle.js'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { configureTwoPointerPanning } from 'demo-utils/configure-two-pointer-panning'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/yfiles'
+import { FlowchartNodeStyle, FlowchartNodeType } from './style/FlowchartStyle'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import {
   enableUI,
   getLayoutOptions,
   getSample,
   initializeOptionPanel
-} from './option-panel/option-panel.js'
-import { layoutFlowchart } from './layout/layout-flowchart.js'
-import { loadFlowchart } from './model/load-flowchart.js'
-import { enableGraphmlSupport } from './style/enable-graphml-support.js'
-import { initializeSnapping } from './interaction/snapping.js'
-import { initializeDnd } from './interaction/drag-and-drop.js'
-
-/** @type {GraphComponent} */
+} from './option-panel/option-panel'
+import { layoutFlowchart } from './layout/layout-flowchart'
+import { loadFlowchart } from './model/load-flowchart'
+import { generateGraphMLIOHandler } from './style/generate-graphMLIO-handler'
+import { initializeSnapping } from './interaction/snapping'
+import { initializeDnd } from './interaction/drag-and-drop'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 let graphComponent = null
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeOptionPanel(loadSample, runLayout)
   configureUserInteraction()
   initializeGraphDefaults()
-  enableGraphmlSupport(graphComponent)
-
+  initializeUI(graphComponent)
   await loadSample()
 }
-
-/**
- * @returns {!Promise}
- */
+function initializeUI(graphComponent) {
+  const graphMLIOHandler = generateGraphMLIOHandler()
+  document.querySelector('#open-file-button').addEventListener('click', async () => {
+    await openGraphML(graphComponent, graphMLIOHandler)
+  })
+  document.querySelector('#save-button').addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'flowchart.graphml', graphMLIOHandler)
+  })
+}
 async function loadSample() {
   const sample = getSample()
   loadFlowchart(graphComponent, sample)
   await runLayout()
 }
-
-/**
- * @returns {!Promise}
- */
 async function runLayout() {
   enableUI(false)
   const layoutOptions = getLayoutOptions()
   await layoutFlowchart(graphComponent, layoutOptions)
   enableUI(true)
 }
-
 /**
  * Configures the input mode for the given graphComponent.
  */
 function configureUserInteraction() {
-  const graphEditorInputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
-
+  const graphEditorInputMode = new GraphEditorInputMode()
   initializeSnapping(graphEditorInputMode)
   initializeDnd(graphEditorInputMode)
-
   graphComponent.inputMode = graphEditorInputMode
-
   // use two-finger panning to allow easier editing with touch gestures
   configureTwoPointerPanning(graphComponent)
 }
-
 /**
  * Initializes defaults for the graph.
  */
 function initializeGraphDefaults() {
   const graph = graphComponent.graph
-
   const nodeDefaults = graph.nodeDefaults
   nodeDefaults.style = new FlowchartNodeStyle(FlowchartNodeType.Start1)
   nodeDefaults.size = new Size(80, 40)
-  nodeDefaults.labels.style = new DefaultLabelStyle({
+  nodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
   })
-  nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createDefaultParameter()
-
+  nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
   const edgeDefaults = graph.edgeDefaults
   edgeDefaults.style = new PolylineEdgeStyle({
-    targetArrow: IArrow.DEFAULT,
-    smoothingLength: 20
+    targetArrow: new Arrow(ArrowType.STEALTH),
+    orthogonalEditing: true
   })
-  edgeDefaults.labels.style = new DefaultLabelStyle({
+  edgeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
   })
-  edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
-
+  edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel({
+    autoRotation: false
+  }).createParameterFromSource(0)
   const groupNodeDefaults = graph.groupNodeDefaults
   groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: 'rgb(214, 229, 248)'
@@ -144,5 +128,4 @@ function initializeGraphDefaults() {
   groupNodeDefaults.labels.layoutParameter =
     new GroupNodeLabelModel().createTabBackgroundParameter()
 }
-
 void run().then(finishLoading)

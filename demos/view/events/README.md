@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Events Demo
 
-# Events Demo
+<img src="../../../doc/demo-thumbnails/events-viewer.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/view/events/).
 
 This demo shows the multitude of events provided by the classes [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) and [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) and the _Input Modes_.
 
@@ -24,7 +26,7 @@ When looking for an event that fits your needs, you should generally start looki
 - Toggle the various event log options to see different kinds of events.
 - Create, delete, move, resize and edit graph items.
 - Drag and drop nodes, labels or ports from the palette.
-- Move the whole graph within the viewport by dragging the mouse (Ctrl-Drag in Edit Mode).
+- Move the whole graph within the viewport by dragging the mouse (Ctrl\-Drag in Edit Mode).
 - Select and deselect graph items.
 - Expand, collapse, enter and exit group nodes.
 - Toggle the input mode using the "Edit Mode" checkbox.

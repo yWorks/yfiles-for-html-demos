@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,7 @@ import {
   MutablePoint,
   MutableRectangle,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * A position handler that moves a given rectangle.
@@ -56,22 +56,22 @@ export default class PositionHandler extends BaseClass(IPositionHandler) {
     const canvasComponent = context.canvasComponent!
     const x = this.rectangle.x - canvasComponent.lastEventLocation.x
     const y = this.rectangle.y - canvasComponent.lastEventLocation.y
-    this.offset.relocate(x, y)
+    this.offset.setLocation(x, y)
   }
 
   handleMove(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
     const newX = newLocation.x + this.offset.x
     const newY = newLocation.y + this.offset.y
-    this.rectangle.relocate(new Point(newX, newY))
+    this.rectangle.setLocation(new Point(newX, newY))
   }
 
   cancelDrag(context: IInputModeContext, originalLocation: Point): void {
-    this.rectangle.relocate(originalLocation)
+    this.rectangle.setLocation(originalLocation)
   }
 
   dragFinished(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
     const newX = newLocation.x + this.offset.x
     const newY = newLocation.y + this.offset.y
-    this.rectangle.relocate(new Point(newX, newY))
+    this.rectangle.setLocation(new Point(newX, newY))
   }
 }

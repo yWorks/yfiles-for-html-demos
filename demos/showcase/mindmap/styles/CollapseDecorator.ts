@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,9 +27,8 @@
  **
  ***************************************************************************/
 import {
-  type Class,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  type Constructor,
+  ExteriorNodeLabelModel,
   FilteredGraphWrapper,
   type GeneralPath,
   GraphComponent,
@@ -41,7 +40,7 @@ import {
   type INode,
   type INodeStyle,
   Insets,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   type IRenderContext,
   NodeStyleBase,
   type Point,
@@ -49,8 +48,8 @@ import {
   SimpleLabel,
   Size,
   SvgVisual,
-  type Visual
-} from 'yfiles'
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
 import type { NodeData } from '../data-types'
 import { getNodeData } from '../data-types'
 
@@ -58,9 +57,12 @@ import { canExecuteToggleCollapseState, executeToggleCollapseState } from '../in
 import { hasChildNodes } from '../subtrees'
 
 /**
- * Augment the SVGElement type with the wrappedVisual used to cache the rendering information.
+ * Augment the SvgVisual type with the wrappedVisual used to cache the rendering information.
  */
-declare type CachedNodeVisual = SVGElement & { wrappedVisual?: SvgVisual }
+type Cache = {
+  wrappedVisual?: SvgVisual
+}
+type CollapseDecoratorVisual = TaggedSvgVisual<SVGGElement, Cache>
 /**
  * Augment the SVGElement type with the label and the icon used to cache the rendering information.
  */
@@ -79,7 +81,7 @@ declare type CachedButton = SVGElement & { label?: SimpleLabel; iconVisual?: Svg
  * bottom-right and bottom-left corner of the node. This way the button placement
  * is determined automatically by the dummy label's style.
  */
-export class CollapseDecorator extends NodeStyleBase {
+export class CollapseDecorator extends NodeStyleBase<CollapseDecoratorVisual> {
   /**
    * The size of the collapse/expand icon.
    */
@@ -97,9 +99,9 @@ export class CollapseDecorator extends NodeStyleBase {
    * Creates the visual of the node based on the given node style,
    * and adds the expand/collapse button, if necessary.
    */
-  createVisual(context: IRenderContext, node: INode): SvgVisual {
+  createVisual(context: IRenderContext, node: INode): CollapseDecoratorVisual {
     // create the complete g element
-    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g') as CachedNodeVisual
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     // creates the node's visual
     const nodeVisual = this.wrappedNodeStyle.renderer
@@ -118,8 +120,7 @@ export class CollapseDecorator extends NodeStyleBase {
     g.appendChild(iconVisual)
 
     // stores the complete visual to be used during updateVisual
-    g.wrappedVisual = nodeVisual
-    return new SvgVisual(g)
+    return SvgVisual.from(g, { wrappedVisual: nodeVisual })
   }
 
   /**
@@ -127,31 +128,32 @@ export class CollapseDecorator extends NodeStyleBase {
    * The method checks whether the complete visual has to be created from scratch or whether only
    * the icon visual has to be updated.
    */
-  updateVisual(context: IRenderContext, oldVisual: Visual, node: INode): Visual {
-    // if the old visual is not an SvgVisual or if this does not contain a wrappedNodeVisual,
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: CollapseDecoratorVisual,
+    node: INode
+  ): CollapseDecoratorVisual {
+    // if the old visual does not contain a wrappedNodeVisual,
     // re-create the style
-    if (
-      !(oldVisual instanceof SvgVisual) ||
-      !(oldVisual.svgElement as CachedNodeVisual).wrappedVisual
-    ) {
+    if (!oldVisual.tag.wrappedVisual) {
       return this.createVisual(context, node)
     }
 
     // get the complete old visual and compare it with the current wrapped visual
-    const container = oldVisual.svgElement as CachedNodeVisual
-    const oldWrappedVisual = container.wrappedVisual!
+    const container = oldVisual.svgElement
+    const oldWrappedVisual = oldVisual.tag.wrappedVisual
     // update the wrappedNodeStyle visual
     const newWrappedVisual = this.wrappedNodeStyle.renderer
       .getVisualCreator(node, this.wrappedNodeStyle)
       .updateVisual(context, oldWrappedVisual) as SvgVisual
 
-    if (!oldWrappedVisual.equals(newWrappedVisual)) {
+    if (oldWrappedVisual !== newWrappedVisual) {
       container.childNodes[0] = newWrappedVisual.svgElement
-      container.wrappedVisual = newWrappedVisual
+      oldVisual.tag.wrappedVisual = newWrappedVisual
     }
 
     // retrieve the icon visual from the container
-    const iconElement = container.childNodes[1] as Element
+    const iconElement = container.childNodes[1]
     // update the icon visual
     CollapseDecorator.updateIconVisual(
       node,
@@ -204,6 +206,11 @@ export class CollapseDecorator extends NodeStyleBase {
       },
       true
     )
+    // pointerdown causes the capturing of subsequent pointer events, thus we need to disable
+    // pointerdown on the current element such that the native click event is triggered furthermore
+    // this causes the input mode should to not handle any event on the button where we registered
+    // a native click listener
+    g.addEventListener('pointerdown', (e) => e.preventDefault())
     g.addEventListener(
       'touchstart',
       (evt) => {
@@ -220,6 +227,7 @@ export class CollapseDecorator extends NodeStyleBase {
     )
     return g
   }
+
   /**
    * Updates the icon visualization based on the current node data.
    * @param node The node to update the visual for.
@@ -247,7 +255,7 @@ export class CollapseDecorator extends NodeStyleBase {
       const oldStyle = oldLabel.style as IconLabelStyle
       if (
         oldButtonVisual &&
-        oldStyle.icon === newStyle.icon &&
+        oldStyle.href === newStyle.href &&
         oldStyle.iconPlacement === newStyle.iconPlacement &&
         oldStyle.iconSize === newStyle.iconSize &&
         oldLabel.layoutParameter === newModelParameter
@@ -289,7 +297,7 @@ export class CollapseDecorator extends NodeStyleBase {
     const iconWidth = CollapseDecorator.ICON_SIZE.width
     const iconHeight = CollapseDecorator.ICON_SIZE.height
     const isIconVisible = clip.intersects(
-      node.layout.toRect().getEnlarged(new Insets(iconWidth, iconHeight, iconWidth, iconHeight))
+      node.layout.toRect().getEnlarged(new Insets(iconHeight, iconWidth, iconHeight, iconWidth))
     )
     return (
       isIconVisible ||
@@ -337,8 +345,7 @@ export class CollapseDecorator extends NodeStyleBase {
   /**
    * Performs the lookup operation by delegating the call to the wrapped node style.
    */
-  lookup(node: INode, type: Class): object | null {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  lookup<T>(node: INode, type: Constructor<T>): T | null {
     return this.wrappedNodeStyle.renderer.getContext(node, this.wrappedNodeStyle).lookup(type)
   }
 
@@ -372,25 +379,25 @@ function getLabelStyle(data: NodeData): IconLabelStyle {
       ? 'resources/icons/arrow-left.svg'
       : 'resources/icons/arrow-right.svg'
   return new IconLabelStyle({
-    icon,
+    href: icon,
     iconSize: CollapseDecorator.ICON_SIZE,
-    iconPlacement: InteriorLabelModel.CENTER
+    iconPlacement: InteriorNodeLabelModel.CENTER
   })
 }
 
 /**
  * Precalculated models and parameters for the below function
  */
-const labelModel = new ExteriorLabelModel({ insets: new Insets(0, 0, 0, -9) })
-const leftParameter = labelModel.createParameter(ExteriorLabelModelPosition.SOUTH_WEST)
-const rightParameter = labelModel.createParameter(ExteriorLabelModelPosition.SOUTH_EAST)
+const labelModel = new ExteriorNodeLabelModel({ margins: [0, 0, -9, 0] })
+const leftParameter = labelModel.createParameter('bottom-left')
+const rightParameter = labelModel.createParameter('bottom-right')
 
 /**
  * Returns the label model parameter used to render the dummy label.
  */
 function getLabelModelParameter(data: NodeData): ILabelModelParameter {
   if (data.depth === 0) {
-    return ExteriorLabelModel.SOUTH
+    return ExteriorNodeLabelModel.BOTTOM
   }
   return data.left ? leftParameter : rightParameter
 }

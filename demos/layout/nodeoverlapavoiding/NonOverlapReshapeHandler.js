@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,31 +38,22 @@ import {
   IReshapeHandler,
   Rect,
   WaitInputMode
-} from 'yfiles'
-import { LayoutHelper } from './LayoutHelper.js'
-
+} from '@yfiles/yfiles'
+import { LayoutHelper } from './LayoutHelper'
 export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
   /**
    * The node we are currently resizing.
    */
   node
-
   /**
    * The original {@link IReshapeHandler}.
    */
   handler
-
   /**
    * Creates space if the node grows.
    */
   layoutHelper
-
   timeoutHandle
-
-  /**
-   * @param {!INode} node
-   * @param {!IReshapeHandler} handler
-   */
   constructor(node, handler) {
     super()
     this.node = node
@@ -70,85 +61,59 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
     this.layoutHelper = null
     this.timeoutHandle = null
   }
-
-  /**
-   * @type {!IRectangle}
-   */
   get bounds() {
     return this.handler.bounds
   }
-
   /**
    * The node is upon to be resized.
-   * @param {!IInputModeContext} context
    */
   initializeReshape(context) {
     this.layoutHelper = new LayoutHelper(context.canvasComponent, this.node)
     this.layoutHelper.initializeLayout()
     this.handler.initializeReshape(context)
   }
-
   /**
    * The node is resized.
-   * @param {!IInputModeContext} context
-   * @param {!Rect} originalBounds
-   * @param {!Rect} newBounds
    */
   handleReshape(context, originalBounds, newBounds) {
     this.clearTimeout()
     this.handler.handleReshape(context, originalBounds, newBounds)
-    this.timeoutHandle = setTimeout(() => {
-      this.layoutHelper.runLayout()
+    this.timeoutHandle = setTimeout(async () => {
+      await this.layoutHelper.runLayout()
     }, 50)
   }
-
   /**
    * The resize gesture is canceled.
-   * @param {!IInputModeContext} context
-   * @param {!Rect} originalBounds
-   * @returns {!Promise}
    */
   async cancelReshape(context, originalBounds) {
     this.clearTimeout()
     this.handler.cancelReshape(context, originalBounds)
-
-    const waitInputMode = context.lookup(WaitInputMode.$class)
+    const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
       // disable user interaction while the finish cancel is running
       waitInputMode.waiting = true
     }
-
     await this.layoutHelper.cancelLayout()
-
     if (waitInputMode) {
       waitInputMode.waiting = false
     }
   }
-
   /**
    * The resize gesture is finished.
-   * @param {!IInputModeContext} context
-   * @param {!Rect} originalBounds
-   * @param {!Rect} newBounds
-   * @returns {!Promise}
    */
   async reshapeFinished(context, originalBounds, newBounds) {
     this.clearTimeout()
     this.handler.reshapeFinished(context, originalBounds, newBounds)
-
-    const waitInputMode = context.lookup(WaitInputMode.$class)
+    const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
       // disable user interaction while the finish layout is running
       waitInputMode.waiting = true
     }
-
     await this.layoutHelper.finishLayout()
-
     if (waitInputMode) {
       waitInputMode.waiting = false
     }
   }
-
   clearTimeout() {
     if (this.timeoutHandle !== null) {
       clearTimeout(this.timeoutHandle)

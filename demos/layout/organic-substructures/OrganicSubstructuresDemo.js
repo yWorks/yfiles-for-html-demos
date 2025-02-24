@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,51 +27,38 @@
  **
  ***************************************************************************/
 import {
-  ChainSubstructureStyle,
-  Class,
-  CycleSubstructureStyle,
-  DefaultGraph,
+  Graph,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
-  ICommand,
   IGraph,
-  ImageNodeStyle,
+  IGroupPaddingProvider,
   INode,
-  INodeInsetsProvider,
   Insets,
+  LayoutExecutor,
   License,
   OrganicLayout,
+  OrganicLayoutChainSubstructureStyle,
+  OrganicLayoutCycleSubstructureStyle,
   OrganicLayoutData,
   OrganicLayoutGroupSubstructureScope,
+  OrganicLayoutParallelSubstructureStyle,
   OrganicLayoutStarSubstructureStyle,
   OrganicLayoutTreeSubstructureStyle,
-  ParallelSubstructureStyle,
-  RadialLayout,
   ShapeNodeStyle,
-  Size,
-  TreeLayout
-} from 'yfiles'
-import NodeTypePanel from 'demo-utils/NodeTypePanel'
+  Size
+} from '@yfiles/yfiles'
+import NodeTypePanel from '@yfiles/demo-utils/NodeTypePanel'
 import {
-  applyDemoTheme,
   colorSets,
   createDemoEdgeStyle,
   createDemoNodeStyle,
   createDemoShapeNodeStyle,
   initDemoStyles
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, addOptions, finishLoading } from 'demo-resources/demo-page'
-
-// We need to load the 'styles-other' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for loading all library styles.
-Class.ensure(ImageNodeStyle)
-// For the tree substructures we also need modules 'layout-tree' and 'layout-radial'
-Class.ensure(TreeLayout)
-Class.ensure(RadialLayout)
-
+} from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * The color sets for the eight different node types.
  */
@@ -85,25 +72,15 @@ const nodeTypeColors = [
   'demo-palette-12',
   'demo-palette-14'
 ]
-
-/** @type {GraphComponent} */
 let graphComponent
-
-/** @type {boolean} */
 let layoutRunning = false
-
-/** @type {boolean} */
 let allowNodeTypeChange = true
-
 /**
  * Bootstraps the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // enable interactive editing
   graphComponent.inputMode = new GraphEditorInputMode({
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
@@ -112,31 +89,23 @@ async function run() {
     // disable interactive label editing - labels are simply not in the focus of this demo
     allowEditLabel: false
   })
-
   // enable undo/redo
   graphComponent.graph.undoEngineEnabled = true
-
   // initializes the context menu for changing a node's type
   initializeTypePanel(graphComponent)
-
   // bind the buttons to their commands
   initializeUI()
 }
-
 /**
  * Calculates a new graph layout and optionally applies the new layout in an animated fashion.
  * This method also takes care of disabling the UI during layout calculations.
- * @param {boolean} animate
- * @returns {!Promise}
  */
 async function runLayout(animate) {
   if (layoutRunning) {
     return
   }
-
   layoutRunning = true
   disableUI(true)
-
   try {
     // the actual layout calculation
     await runLayoutCore(animate)
@@ -145,122 +114,104 @@ async function runLayout(animate) {
     disableUI(false)
   }
 }
-
 /**
  * Calculates a new graph layout and optionally applies the new layout in an animated fashion.
  * This method creates and configures a new organic layout algorithm for this purpose.
- * @param {boolean} animate
- * @returns {!Promise}
  */
 async function runLayoutCore(animate) {
   // configure the organic layout algorithm
-  const algorithm = new OrganicLayout()
-
+  const layout = new OrganicLayout()
   const currentSample = document.querySelector(`#sample-combo-box`).value
-
   //configure some basic settings
-  algorithm.deterministic = true
-  algorithm.minimumNodeDistance = currentSample === 'groups' ? 0 : 20
-  algorithm.preferredEdgeLength = 60
-
+  layout.deterministic = true
+  layout.defaultMinimumNodeDistance = currentSample === 'groups' ? 0 : 70
+  layout.defaultPreferredEdgeLength = 60
   // configure substructure styles (cycles, chains, parallel structures, star, tree)
-  algorithm.cycleSubstructureStyle = getCycleStyle()
-  algorithm.chainSubstructureStyle = getChainStyle()
-  algorithm.parallelSubstructureStyle = getParallelStyle()
-  algorithm.starSubstructureStyle = getStarStyle()
-  algorithm.treeSubstructureStyle = getTreeStyle()
-  algorithm.groupSubstructureScope = getGroupSubstructureScope()
-
+  layout.cycleSubstructureStyle = getCycleStyle()
+  layout.chainSubstructureStyle = getChainStyle()
+  layout.parallelSubstructureStyle = getParallelStyle()
+  layout.starSubstructureStyle = getStarStyle()
+  layout.treeSubstructureStyle = getTreeStyle()
+  layout.groupSubstructureScope = getGroupSubstructureScope()
   //configure type separation for parallel and star substructures
   const separateParallel = document.querySelector(`#separate-parallel`)
-  algorithm.parallelSubstructureTypeSeparation = separateParallel.checked
+  layout.parallelSubstructureTypeSeparation = separateParallel.checked
   const separateStar = document.querySelector(`#separate-star`)
-  algorithm.starSubstructureTypeSeparation = separateStar.checked
-
+  layout.starSubstructureTypeSeparation = separateStar.checked
   // configure data-driven features for the organic layout algorithm by using OrganicLayoutData
   const layoutData = new OrganicLayoutData()
-
   if (document.querySelector(`#use-edge-grouping`).checked) {
     // if desired, define edge grouping on the organic layout data
-    layoutData.sourceGroupIds.constant = 'groupAll'
-    layoutData.targetGroupIds.constant = 'groupAll'
+    layoutData.substructureSourceGroupIds = 'groupAll'
+    layoutData.substructureTargetGroupIds = 'groupAll'
   }
-
   if (document.querySelector(`#consider-node-types`).checked) {
     // if types should be considered define a delegate on the respective layout data property
     // that queries the type from the node's tag
-    layoutData.nodeTypes.delegate = getNodeType
+    layoutData.nodeTypes = getNodeType
   }
-
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
   // runs the layout algorithm and applies the result...
   if (animate) {
     //... with a morph animation
-    await graphComponent.morphLayout(algorithm, null, layoutData)
+    await graphComponent.applyLayoutAnimated({ layout, layoutData })
   } else {
     //... without an animation
-    graphComponent.graph.applyLayout(algorithm, layoutData)
-    graphComponent.fitGraphBounds()
+    graphComponent.graph.applyLayout(layout, layoutData)
+    await graphComponent.fitGraphBounds()
   }
 }
-
 /**
  * Gets the type of the given node by querying it from the node's tag.
- * @param {!INode} node
- * @returns {number}
  */
 function getNodeType(node) {
   return (node.tag && node.tag.type) || 0
 }
-
 /**
  * Determines the desired cycle substructure style for layout calculations from the settings UI.
- * @returns {!CycleSubstructureStyle}
  */
 function getCycleStyle() {
   switch (getSelectedValue('cycleStyle')) {
     case 'CIRCULAR':
-      return CycleSubstructureStyle.CIRCULAR
+      return OrganicLayoutCycleSubstructureStyle.CIRCULAR
     default:
-      return CycleSubstructureStyle.NONE
+      return OrganicLayoutCycleSubstructureStyle.NONE
   }
 }
-
 /**
  * Determines the desired chain substructure style for layout calculations from the settings UI.
- * @returns {!ChainSubstructureStyle}
  */
 function getChainStyle() {
   switch (getSelectedValue('chainStyle')) {
     case 'RECTANGULAR':
-      return ChainSubstructureStyle.RECTANGULAR
+      return OrganicLayoutChainSubstructureStyle.RECTANGULAR
     case 'STRAIGHT_LINE':
-      return ChainSubstructureStyle.STRAIGHT_LINE
+      return OrganicLayoutChainSubstructureStyle.STRAIGHT_LINE
     case 'DISK':
-      return ChainSubstructureStyle.DISK
+      return OrganicLayoutChainSubstructureStyle.DISK
     default:
-      return ChainSubstructureStyle.NONE
+      return OrganicLayoutChainSubstructureStyle.NONE
   }
 }
-
 /**
  * Determines the desired parallel substructure style for layout calculations from the settings UI.
  */
 function getParallelStyle() {
   switch (getSelectedValue('parallelStyle')) {
     case 'RADIAL':
-      return ParallelSubstructureStyle.RADIAL
+      return OrganicLayoutParallelSubstructureStyle.RADIAL
     case 'RECTANGULAR':
-      return ParallelSubstructureStyle.RECTANGULAR
+      return OrganicLayoutParallelSubstructureStyle.RECTANGULAR
     case 'STRAIGHT_LINE':
-      return ParallelSubstructureStyle.STRAIGHT_LINE
+      return OrganicLayoutParallelSubstructureStyle.STRAIGHT_LINE
     default:
-      return ParallelSubstructureStyle.NONE
+      return OrganicLayoutParallelSubstructureStyle.NONE
   }
 }
-
 /**
  * Determines the desired star substructure style for layout calculations from the settings UI.
- * @returns {!OrganicLayoutStarSubstructureStyle}
  */
 function getStarStyle() {
   switch (getSelectedValue('starStyle')) {
@@ -274,15 +225,13 @@ function getStarStyle() {
       return OrganicLayoutStarSubstructureStyle.NONE
   }
 }
-
 /**
  * Determines the desired tree substructure style for layout calculations from the settings UI.
- * @returns {!OrganicLayoutTreeSubstructureStyle}
  */
 function getTreeStyle() {
   switch (getSelectedValue('treeStyle')) {
-    case 'BALLOON':
-      return OrganicLayoutTreeSubstructureStyle.BALLOON
+    case 'RADIAL_TREE':
+      return OrganicLayoutTreeSubstructureStyle.RADIAL_TREE
     case 'RADIAL':
       return OrganicLayoutTreeSubstructureStyle.RADIAL
     case 'ORIENTED':
@@ -291,10 +240,8 @@ function getTreeStyle() {
       return OrganicLayoutTreeSubstructureStyle.NONE
   }
 }
-
 /**
  * Determines the desired group substructure scope for layout calculations from the settings UI.
- * @returns {!OrganicLayoutGroupSubstructureScope}
  */
 function getGroupSubstructureScope() {
   switch (getSelectedValue('groupScope')) {
@@ -308,52 +255,43 @@ function getGroupSubstructureScope() {
       return OrganicLayoutGroupSubstructureScope.NO_GROUPS
   }
 }
-
 /**
  * Configures default visualizations for the given graph.
- * @param {!IGraph} graph The demo's graph.
+ * @param graph The demo's graph.
  */
 function configureGraph(graph) {
   initDemoStyles(graph)
-
   // use first type color for all interactively created nodes
   graph.nodeDefaults.style = createDemoNodeStyle(nodeTypeColors[0])
   graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementation(
+  graph.decorator.nodes.groupPaddingProvider.addConstant(
     (node) => graph.isGroupNode(node),
-    INodeInsetsProvider.create(() => new Insets(40))
+    IGroupPaddingProvider.create(() => new Insets(40))
   )
-
   graph.edgeDefaults.style = createDemoEdgeStyle({ showTargetArrow: false })
 }
-
 /**
  * Initializes the context menu for changing a node's type.
- * @param {!GraphComponent} graphComponent
  */
 function initializeTypePanel(graphComponent) {
   const typePanel = new NodeTypePanel(graphComponent, nodeTypeColors, colorSets)
   typePanel.nodeTypeChanged = (item, newType) => setNodeType(item, newType)
-
   typePanel.typeChanged = () => runLayout(true)
-
   // update the nodes whose types will be changed on selection change events
-  graphComponent.selection.addItemSelectionChangedListener(
+  graphComponent.selection.addEventListener(
+    'item-added',
     () =>
       (typePanel.currentItems = allowNodeTypeChange
-        ? graphComponent.selection.selectedNodes
+        ? graphComponent.selection.nodes
             .filter((n) => !graphComponent.graph.isGroupNode(n))
             .toArray()
         : null)
   )
 }
-
 /**
  * Sets the type for the given node by updating the node's tag and the according style.
  * This function is invoked when the type of node is changed via the type panel.
- * @param {!INode} node
- * @param {number} type
  */
 function setNodeType(node, type) {
   // set a new tag and style so that this change is easily undo-able
@@ -365,76 +303,58 @@ function setNodeType(node, type) {
     graph.setStyle(node, createDemoNodeStyle(nodeTypeColors[type]))
   }
 }
-
 /**
  * Loads a sample graph for testing the substructure and node types support of the organic layout
  * algorithm.
- * @param {!string} sample
- * @returns {!Promise}
  */
 async function loadSample(sample) {
   disableUI(true)
   try {
-    const newGraph = new DefaultGraph()
+    const newGraph = new Graph()
     // configures default styles for newly created graph elements
     configureGraph(newGraph)
-
     // load sample data
     await new GraphMLIOHandler().readFromURL(newGraph, `resources/${sample}.graphml`)
-
     // update the settings UI to match the sample's default layout settings
     const data = await loadSampleData(`resources/${sample}.json`)
     updateLayoutSettings(data)
-
     const { overrideStyles, allowItemCreation, allowItemModification, allowTypeChanges } =
       data.settings
-
     // enable/disable node type changes depending on the sample
     allowNodeTypeChange = allowTypeChanges
-
     // if required for the sample, override and set the node styles
     if (overrideStyles) {
       updateNodeStyles(newGraph)
     }
-
     // update input mode setting depending on whether we are allowed to change the graph structure
     const inputMode = graphComponent.inputMode
     inputMode.allowCreateNode = allowItemCreation
     inputMode.allowCreateEdge = allowItemCreation
     inputMode.allowDuplicate = allowItemCreation
     inputMode.allowClipboardOperations = allowItemCreation
-    inputMode.moveInputMode.enabled = allowItemModification
+    inputMode.moveSelectedItemsInputMode.enabled = allowItemModification
     inputMode.deletableItems = allowItemCreation ? GraphItemTypes.ALL : GraphItemTypes.NONE
     inputMode.showHandleItems = allowItemModification ? GraphItemTypes.ALL : GraphItemTypes.NONE
-
     if (allowItemCreation) {
       // update the default node style depending on the style of the first node
-      const refStyle = newGraph.nodes.first().style
+      const refStyle = newGraph.nodes.first()?.style
       if (refStyle instanceof ShapeNodeStyle) {
         newGraph.nodeDefaults.style = createDemoShapeNodeStyle(refStyle.shape, nodeTypeColors[0])
       }
     }
-
     // replace the old graph with the new sample
     graphComponent.graph = newGraph
-
     // calculate an initial arrangement for the new sample
     await runLayout(false)
-
     // enable undo/redo
     newGraph.undoEngineEnabled = true
-
-    // tell the demo's commands to update their state, i.e.
-    // this ensures that the undo/redo toolbar controls get the correct enabled/disabled state
-    ICommand.invalidateRequerySuggested()
   } finally {
     disableUI(false)
   }
 }
-
 /**
  * Updates the node styles in the given graph depending on the type of each node.
- * @param {!IGraph} graph the graph to update.
+ * @param graph the graph to update.
  */
 function updateNodeStyles(graph) {
   for (const node of graph.nodes) {
@@ -443,21 +363,18 @@ function updateNodeStyles(graph) {
     }
   }
 }
-
 /**
  * Loads sample data from the file identified by the given sample path.
- * @param {!string} samplePath the path to the sample data file.
- * @returns {!Promise}
+ * @param samplePath the path to the sample data file.
  */
 async function loadSampleData(samplePath) {
   const response = await fetch(samplePath)
   return await response.json()
 }
-
 /**
  * Updates the settings UI to match the given sample's default layout settings
  * @yjs:keep = cycleSubstructureStyle,chainSubstructureStyle,starSubstructureStyle,parallelSubstructureStyle,parallelSubstructureTypeSeparation,starSubstructureTypeSeparation
- * @param {*} data the sample data representing the desired graph structure.
+ * @param data the sample data representing the desired graph structure.
  */
 function updateLayoutSettings(data) {
   const settings = data.settings
@@ -485,39 +402,33 @@ function updateLayoutSettings(data) {
     document.querySelector(`#separate-star`).checked = false
   }
 }
-
 /**
  * Sets the checked state for the HTMLInputElement identified by the given ID.
- * @param {!string} id the ID for the HTMLInputElement whose checked state will be set.
+ * @param id the ID for the HTMLInputElement whose checked state will be set.
  * @param value the new checked state.
- * @param {boolean} defaultValue the fallback checked state to be used if the given value is undefined.
- * @param {boolean} [value]
+ * @param defaultValue the fallback checked state to be used if the given value is undefined.
  */
 function updateState(id, value, defaultValue) {
   document.querySelector(`#${id}`).checked = 'undefined' === typeof value ? defaultValue : value
 }
-
 /**
  * Sets the selected index for HTMLSelectElement identified by the given ID to the index of the
  * given value. If the given value is undefined or not a value of the HTMLSelectElement's options,
  * selectedIndex will be set to 0.
- * @param {!string} id the ID for the HTMLSelectElement whose selectedIndex will be set.
+ * @param id the ID for the HTMLSelectElement whose selectedIndex will be set.
  * @param value the value whose index will be the new selectedIndex.
- * @param {!string} [value]
  */
 function updateSelectedIndex(id, value) {
   const select = document.querySelector(`#${id}`)
   const idx = indexOf(select, value)
   select.selectedIndex = idx > -1 ? idx : 0
 }
-
 /**
  * Determines the index of the given value in the given HTMLSelectElement's options.
- * @param {!HTMLSelectElement} select the HTMLSelectElement whose options are searched for the given value.
+ * @param select the HTMLSelectElement whose options are searched for the given value.
  * @param value the value to search for.
- * @returns {number} the index of the given value or -1 if the given value is undefined or not a value
+ * @returns the index of the given value or -1 if the given value is undefined or not a value
  * of the given HTMLSelectElement's options.
- * @param {!string} [value]
  */
 function indexOf(select, value) {
   if (value) {
@@ -531,21 +442,18 @@ function indexOf(select, value) {
   }
   return -1
 }
-
 /**
  * Sets the disabled state for certain UI controls to the given state.
- * @param {boolean} disabled the disabled state to set.
+ * @param disabled the disabled state to set.
  */
 function disableUI(disabled) {
   for (const element of document.querySelectorAll('.toolbar-component')) {
     element.disabled = disabled
   }
-
   for (const element of document.querySelectorAll('.settings-editor')) {
     element.disabled = disabled
   }
 }
-
 /**
  * Binds actions and commands to the demo's UI controls.
  */
@@ -566,25 +474,21 @@ function initializeUI() {
     { text: 'Computer Network', value: 'computer_network' }
   )
   addNavigationButtons(sampleSelect, true, false, 'sidebar-button')
-
   // changing a value automatically runs a layout
   for (const editor of document.querySelectorAll('.settings-editor')) {
     editor.addEventListener('change', async () => await runLayout(true))
   }
-
   document
     .querySelector('#apply-layout-button')
     .addEventListener('click', async () => await runLayout(true))
 }
-
 /**
  * Determines the currently selected value of the HTMLSelectElement identified by the given ID.
- * @param {!string} id the ID for the HTMLSelectElement whose selected value is returned.
- * @returns {!string} the selected value of the HTMLSelectElement identified by the given ID.
+ * @param id the ID for the HTMLSelectElement whose selected value is returned.
+ * @returns the selected value of the HTMLSelectElement identified by the given ID.
  */
 function getSelectedValue(id) {
   const select = document.querySelector(`#${id}`)
   return select.options[select.selectedIndex].value
 }
-
 run().then(finishLoading)

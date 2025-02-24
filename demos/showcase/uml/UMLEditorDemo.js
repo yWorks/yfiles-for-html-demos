@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,93 +27,73 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
+  Color,
   EdgeRouter,
-  Fill,
+  EdgeRouterData,
+  EdgeRouterScope,
   FreeNodePortLocationModel,
   GraphComponent,
   GraphEditorInputMode,
-  GraphMLSupport,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  GraphMLIOHandler,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   IEdge,
   IGraph,
   IHitTestable,
   IInputModeContext,
   INode,
+  INodeStyle,
   IPortCandidate,
   LayoutExecutor,
   License,
-  OrthogonalEdgeEditingContext,
   Point,
   PolylineEdgeStyle,
+  PortCandidate,
   Rect,
-  RoutingPolicy,
-  Size,
-  StorageLocation,
-  VoidNodeStyle
-} from 'yfiles'
-
+  Size
+} from '@yfiles/yfiles'
 import {
   createAggregationStyle,
   createGeneralizationStyle,
   createRealizationStyle,
   isInheritance
-} from './UMLEdgeStyleFactory.js'
-import * as umlModel from './UMLClassModel.js'
-import UMLStyle, { UMLNodeStyle, UMLNodeStyleSerializationListener } from './UMLNodeStyle.js'
-import { ButtonInputMode, ButtonTrigger } from '../../input/button-input-mode/ButtonInputMode.js'
-import { createEdgeCreationButtons, createExtensibilityButtons } from './UMLContextButtonFactory.js'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { configureTwoPointerPanning } from 'demo-utils/configure-two-pointer-panning'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/** @type {GraphComponent} */
+} from './UMLEdgeStyleFactory'
+import * as umlModel from './UMLClassModel'
+import { UMLClassModelExtension } from './UMLClassModel'
+import UMLStyle, { UMLNodeStyle, UMLNodeStyleSerializationListener } from './UMLNodeStyle'
+import { ButtonInputMode, ButtonTrigger } from '../../input/button-input-mode/ButtonInputMode'
+import { createEdgeCreationButtons, createExtensibilityButtons } from './UMLContextButtonFactory'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 let graphComponent
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // configure the input mode
   graphComponent.inputMode = createInputMode()
-
   // use two finger panning to allow easier editing with touch gestures
   configureTwoPointerPanning(graphComponent)
-
   // configures default styles for newly created graph elements
   graphComponent.graph.nodeDefaults.style = new UMLNodeStyle(new umlModel.UMLClassModel())
   graphComponent.graph.nodeDefaults.shareStyleInstance = false
   graphComponent.graph.nodeDefaults.size = new Size(125, 100)
-
   // bootstrap the sample graph
   generateSampleGraph()
   await executeLayout()
-
   graphComponent.graph.undoEngineEnabled = true
-
-  enableGraphML()
-
   // bind the demo buttons to their functionality
   initializeUI()
 }
-
 function executeLayout() {
-  // configures the hierarchic layout
-  const layout = new HierarchicLayout({
-    orthogonalRouting: true
-  })
-  layout.edgeLayoutDescriptor.minimumFirstSegmentLength = 25
-  layout.edgeLayoutDescriptor.minimumLastSegmentLength = 25
-  layout.edgeLayoutDescriptor.minimumDistance = 25
-
-  const layoutData = new HierarchicLayoutData({
+  // configures the hierarchical layout
+  const layout = new HierarchicalLayout()
+  const eld = layout.defaultEdgeDescriptor
+  eld.minimumFirstSegmentLength = 25
+  eld.minimumLastSegmentLength = 25
+  eld.minimumDistance = 25
+  const layoutData = new HierarchicalLayoutData({
     // mark all inheritance edges (generalization, realization) as directed so their target nodes
     // will be placed above their source nodes
     // all other edges are treated as undirected
@@ -124,15 +104,10 @@ function executeLayout() {
     sourceGroupIds: (edge) => getGroupId(edge, `src-${edge.sourceNode}`),
     targetGroupIds: (edge) => getGroupId(edge, `tgt-${edge.targetNode}`)
   })
-
-  return graphComponent.morphLayout(layout, '500ms', layoutData)
+  return graphComponent.applyLayoutAnimated(layout, '500ms', layoutData)
 }
-
 /**
  * Returns an edge group id according to the edge style.
- * @param {!IEdge} edge
- * @param {!string} marker
- * @returns {?string}
  */
 function getGroupId(edge, marker) {
   if (edge.style instanceof PolylineEdgeStyle) {
@@ -146,16 +121,13 @@ function getGroupId(edge, marker) {
   }
   return null
 }
-
 /**
  * Configure interaction.
- * @returns {!GraphEditorInputMode}
  */
 function createInputMode() {
   const mode = new GraphEditorInputMode({
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext(),
     // we want to adjust the size of new nodes before rendering them
-    nodeCreator: (context, graph, location, parent) => {
+    nodeCreator: (_context, graph, location, parent) => {
       const layout = Rect.fromCenter(location, graph.nodeDefaults.size)
       const styleInstance = graph.nodeDefaults.getStyleInstance()
       const node = graph.createNode(parent, layout, styleInstance)
@@ -164,22 +136,18 @@ function createInputMode() {
     },
     allowAddLabel: false
   })
-
   // configure createEdgeInputMode to also create a node if edge creation ends on an empty canvas
   const createEdgeInputMode = mode.createEdgeInputMode
-  createEdgeInputMode.dummyEdgeGraph.nodeDefaults.style = new UMLNodeStyle(
+  createEdgeInputMode.previewGraph.nodeDefaults.style = new UMLNodeStyle(
     new umlModel.UMLClassModel()
   )
-  createEdgeInputMode.dummyEdgeGraph.nodeDefaults.size = new Size(125, 100)
-  createEdgeInputMode.addTargetPortCandidateChangedListener((_, evt) => {
-    const dummyEdgeGraph = createEdgeInputMode.dummyEdgeGraph
-    if (evt.item && INode.isInstance(evt.item.owner)) {
-      dummyEdgeGraph.setStyle(createEdgeInputMode.dummyTargetNode, VoidNodeStyle.INSTANCE)
+  createEdgeInputMode.previewGraph.nodeDefaults.size = new Size(125, 100)
+  createEdgeInputMode.addEventListener('end-port-candidate-changed', (evt) => {
+    const previewGraph = createEdgeInputMode.previewGraph
+    if (evt.item && evt.item.owner instanceof INode) {
+      previewGraph.setStyle(createEdgeInputMode.previewEndNode, INodeStyle.VOID_NODE_STYLE)
     } else {
-      dummyEdgeGraph.setStyle(
-        createEdgeInputMode.dummyTargetNode,
-        dummyEdgeGraph.nodeDefaults.style
-      )
+      previewGraph.setStyle(createEdgeInputMode.previewEndNode, previewGraph.nodeDefaults.style)
     }
   })
   createEdgeInputMode.prematureEndHitTestable = IHitTestable.ALWAYS
@@ -197,7 +165,7 @@ function createInputMode() {
       return edgeCreator(context, graph, sourcePortCandidate, targetPortCandidate, templateEdge)
     }
     // we use the artificial target node to create a new node at the current location
-    const dummyTargetNode = createEdgeInputMode.dummyTargetNode
+    const dummyTargetNode = createEdgeInputMode.previewEndNode
     const node = graph.createNode(
       dummyTargetNode.layout.toRect(),
       dummyTargetNode.style.clone(),
@@ -207,18 +175,17 @@ function createInputMode() {
       context,
       graph,
       sourcePortCandidate,
-      new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED),
+      new PortCandidate(node, FreeNodePortLocationModel.CENTER),
       templateEdge
     )
   }
-
   // add input mode that handles the edge creations buttons
   // const umlContextButtonsInputMode = new UMLContextButtonsInputMode()
   // umlContextButtonsInputMode.priority = mode.clickInputMode.priority - 1
   // mode.add(umlContextButtonsInputMode)
   const bim = new ButtonInputMode()
   bim.buttonTrigger = ButtonTrigger.CURRENT_ITEM
-  bim.addQueryButtonsListener((buttonInput, queryEvent) => {
+  bim.setQueryButtonsListener((queryEvent, buttonInput) => {
     if (queryEvent.owner instanceof INode) {
       const node = queryEvent.owner
       const style = node.style
@@ -229,51 +196,44 @@ function createInputMode() {
     }
   })
   mode.add(bim)
-
   // execute a layout after certain gestures
-  mode.moveInputMode.addDragFinishedListener((_, evt) => routeEdges())
-  mode.handleInputMode.addDragFinishedListener((_, evt) => routeEdges())
-  createEdgeInputMode.addEdgeCreatedListener((_, evt) => routeEdges())
-
+  mode.moveSelectedItemsInputMode.addEventListener('drag-finished', () => routeEdges())
+  mode.moveUnselectedItemsInputMode.addEventListener('drag-finished', () => routeEdges())
+  mode.handleInputMode.addEventListener('drag-finished', () => routeEdges())
+  createEdgeInputMode.addEventListener('edge-created', () => routeEdges())
   // hide the edge creation buttons when the empty canvas was clicked
-  mode.addCanvasClickedListener((_, evt) => {
+  mode.addEventListener('canvas-clicked', () => {
     graphComponent.currentItem = null
   })
-
   // the UMLNodeStyle should handle clicks itself
-  mode.addItemClickedListener((inputMode, evt) => {
-    if (INode.isInstance(evt.item) && evt.item.style instanceof UMLNodeStyle) {
+  mode.addEventListener('item-clicked', (evt, inputMode) => {
+    if (evt.item instanceof INode && evt.item.style instanceof UMLNodeStyle) {
       evt.item.style.nodeClicked(inputMode, evt)
     }
   })
-
   return mode
 }
-
 /**
  * Routes edges which need to be re-routed. This is called after an input gesture.
  */
-function routeEdges() {
+async function routeEdges() {
   const edgeRouter = new EdgeRouter()
-  // route all edge segments which need to be re-routed.
-  edgeRouter.defaultEdgeLayoutDescriptor.routingPolicy = RoutingPolicy.SEGMENTS_AS_NEEDED
-
+  const edgeRouterData = new EdgeRouterData()
+  edgeRouterData.scope.edgeMapping = EdgeRouterScope.SEGMENTS_AS_NEEDED
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
     layout: edgeRouter,
-    duration: '0.5s',
+    animationDuration: '0.5s',
     animateViewport: false,
-    updateContentRect: false
+    updateContentBounds: false
   })
-  layoutExecutor.start()
+  await layoutExecutor.start()
 }
-
 /**
  * Creates a sample graph.
  */
 function generateSampleGraph() {
   const graph = graphComponent.graph
-
   const iAddressable = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -282,10 +242,9 @@ function generateSampleGraph() {
         attributes: ['name', 'address', 'email'],
         operations: []
       }),
-      Fill.SEA_GREEN
+      Color.SEA_GREEN
     )
   })
-
   const user = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -295,7 +254,6 @@ function generateSampleGraph() {
       })
     )
   })
-
   const sessionManager = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -305,7 +263,6 @@ function generateSampleGraph() {
       })
     )
   })
-
   const product = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -315,7 +272,6 @@ function generateSampleGraph() {
       })
     )
   })
-
   const category = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -325,7 +281,6 @@ function generateSampleGraph() {
       })
     )
   })
-
   const department = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -335,7 +290,6 @@ function generateSampleGraph() {
       })
     )
   })
-
   const customer = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -345,7 +299,6 @@ function generateSampleGraph() {
       })
     )
   })
-
   const administrator = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -355,7 +308,6 @@ function generateSampleGraph() {
       })
     )
   })
-
   graph.createEdge(sessionManager, user, createAggregationStyle())
   graph.createEdge(department, sessionManager, createAggregationStyle())
   graph.createEdge(department, category, createAggregationStyle())
@@ -363,35 +315,48 @@ function generateSampleGraph() {
   graph.createEdge(user, customer, createGeneralizationStyle())
   graph.createEdge(user, administrator, createGeneralizationStyle())
   graph.createEdge(iAddressable, user, createRealizationStyle())
-
   graph.nodes.forEach((node) => {
     if (node.style instanceof UMLNodeStyle) {
       node.style.adjustSize(node, graphComponent.inputMode)
     }
   })
 }
-
 /**
  * Enables loading and saving the demo's model graph from and to GraphML.
  */
 function enableGraphML() {
-  const gs = new GraphMLSupport({
-    graphComponent,
-    storageLocation: StorageLocation.FILE_SYSTEM
-  })
-
+  const graphMLIOHandler = new GraphMLIOHandler()
   const namespaceUri = 'http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0'
-
   // enable serialization of the UML styles - without a namespace mapping, serialization will fail
-  gs.graphMLIOHandler.addXamlNamespaceMapping(namespaceUri, UMLStyle)
-  gs.graphMLIOHandler.addXamlNamespaceMapping(namespaceUri, umlModel)
-  gs.graphMLIOHandler.addNamespace(namespaceUri, 'uml')
-  gs.graphMLIOHandler.addHandleSerializationListener(UMLNodeStyleSerializationListener)
-  gs.graphMLIOHandler.addHandleSerializationListener(umlModel.UMLClassModelSerializationListener)
+  graphMLIOHandler.addXamlNamespaceMapping(namespaceUri, UMLStyle)
+  graphMLIOHandler.addXamlNamespaceMapping(namespaceUri, umlModel)
+  graphMLIOHandler.addNamespace(namespaceUri, 'uml')
+  graphMLIOHandler.addEventListener('handle-serialization', UMLNodeStyleSerializationListener)
+  graphMLIOHandler.addEventListener(
+    'handle-serialization',
+    umlModel.UMLClassModelSerializationListener
+  )
+  graphMLIOHandler.addTypeInformation(UMLClassModelExtension, {
+    properties: {
+      stereotype: { type: String },
+      constraint: { type: String },
+      className: { type: String },
+      attributes: { type: Array },
+      operations: { type: Array },
+      attributesOpen: { type: Boolean },
+      operationsOpen: { type: Boolean }
+    }
+  })
+  return graphMLIOHandler
 }
-
 function initializeUI() {
+  const graphMLIOHandler = enableGraphML()
   document.querySelector('#layout').addEventListener('click', executeLayout)
+  document.querySelector('#open-file-button').addEventListener('click', async () => {
+    await openGraphML(graphComponent, graphMLIOHandler)
+  })
+  document.querySelector('#save-button').addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'umlEditor.graphml', graphMLIOHandler)
+  })
 }
-
 run().then(finishLoading)

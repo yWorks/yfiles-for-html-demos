@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,18 +29,18 @@
 import type { Company } from '../data-types'
 import { NodeTypeEnum } from '../data-types'
 import {
-  DefaultLabelStyle,
   Fill,
   type INodeStyle,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   LabelDefaults,
+  LabelStyle,
   Rect,
   Size,
   Stroke
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { CustomShapeNodeStyle } from './CustomShapeNodeStyle'
-import type { ColorSetName } from 'demo-resources/demo-colors'
-import { colorSets } from 'demo-resources/demo-colors'
+import type { ColorSetName } from '@yfiles/demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-resources/demo-colors'
 import { tableNodeStyle } from './TableNodeStyle'
 
 // maps each node type with an enum value
@@ -103,14 +103,14 @@ export function getNodeLayout(useShapeNodeStyle: boolean): Rect {
 }
 
 // configures the style of the node labels
-export const nodeLabelStyle = new DefaultLabelStyle({
-  wrapping: 'word-ellipsis',
+export const nodeLabelStyle = new LabelStyle({
+  wrapping: 'wrap-word-ellipsis',
   horizontalTextAlignment: 'center',
   verticalTextAlignment: 'center'
 })
 
 // configures the node label parameter
-export const nodeLabelParameter = InteriorLabelModel.CENTER
+export const nodeLabelParameter = InteriorNodeLabelModel.CENTER
 
 // configures the node label size (used for wrapping)
 export const labelSizeDefaults = new Size(80, 60)

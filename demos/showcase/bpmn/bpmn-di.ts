@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,23 +27,25 @@
  **
  ***************************************************************************/
 import {
-  DefaultFolderNodeConverter,
-  DefaultFoldingEdgeConverter,
-  DefaultLabelStyle,
+  CompositeLabelModel,
+  EdgeLabelPreferredPlacement,
   EdgePathLabelModel,
   EdgeSegmentLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
+  ExteriorNodeLabelModelPosition,
+  FolderNodeConverter,
+  FolderNodeDefaults,
   FolderNodeState,
+  FoldingEdgeConverter,
+  FoldingLabelDefaults,
   FoldingManager,
+  FoldingSynchronizationOptions,
   Font,
-  FontStyle,
-  FontWeight,
   FreeEdgeLabelModel,
   FreeNodeLabelModel,
   GenericLabeling,
-  GenericLabelModel,
+  GenericLabelingData,
   HashMap,
   HorizontalTextAlignment,
   ICollection,
@@ -58,34 +60,33 @@ import {
   INode,
   Insets,
   InsideOutsidePortLabelModel,
-  InteriorStretchLabelModel,
-  InteriorStretchLabelModelPosition,
   IPort,
   IPortStyle,
   IRow,
   IStripe,
   ITable,
   ITagOwner,
-  LabelingData,
-  LabelPlacements,
+  LabelAlongEdgePlacements,
+  LabelEdgeSides,
+  LabelStyle,
   List,
-  OptimizationStrategy,
   OrientedRectangle,
   Point,
-  PreferredPlacementDescriptor,
   Rect,
   SimpleLabel,
   SimpleNode,
   Size,
-  TextDecoration,
+  StretchNodeLabelModel,
+  TextDecorations,
   TextWrapping,
   VerticalTextAlignment
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import {
   ActivityNodeStyle,
   ActivityType,
   AnnotationNodeStyle,
   BpmnEdgeStyle,
+  BpmnEdgeType,
   ChoreographyLabelModel,
   ChoreographyNodeStyle,
   ConversationNodeStyle,
@@ -93,7 +94,6 @@ import {
   DataObjectNodeStyle,
   DataObjectType,
   DataStoreNodeStyle,
-  EdgeType,
   EventCharacteristic,
   EventNodeStyle,
   EventPortStyle,
@@ -135,7 +135,7 @@ export class BpmnDiParser {
   currentDiagram: BpmnDiagram = null!
   private view: IFoldingView | null = null
   // LabelModel for Nodes with Exterior Label. Provides 32 possible Positions.
-  genericLabelModel: GenericLabelModel = null!
+  compositeLabelModel: CompositeLabelModel = null!
   // Can't use BPMN-Constants here, so we have to add the standard size of message envelopes.
   private bpmnMessageSize: Size = new Size(20, 14)
   // Maps a process BpmnElement to the BpmnElement that referenced this process in a 'processRef'
@@ -247,23 +247,20 @@ export class BpmnDiParser {
       throw new Error('Folding must be enabled.')
     }
     const multiLabelFolderNodeConverter = new MultiLabelFolderNodeConverter()
-    multiLabelFolderNodeConverter.copyFirstLabel = true
-    multiLabelFolderNodeConverter.copyLabels = true
-    multiLabelFolderNodeConverter.cloneNodeStyle = true
-    multiLabelFolderNodeConverter.cloneLabelLayoutParameter = true
-    multiLabelFolderNodeConverter.labelStyle = BpmnLabelStyle.newDefaultInstance()
+    multiLabelFolderNodeConverter.labelDefaults.style = BpmnLabelStyle.newDefaultInstance()
+    multiLabelFolderNodeConverter.labelDefaults.shareStyleInstance = false
     // Initialize the default Layout for folded Group Nodes
     this.manager.folderNodeConverter = multiLabelFolderNodeConverter
-    const defaultFoldingEdgeConverter = new DefaultFoldingEdgeConverter()
-    defaultFoldingEdgeConverter.cloneEdgeStyle = true
-    defaultFoldingEdgeConverter.copyFirstLabel = true
-    defaultFoldingEdgeConverter.cloneLabelStyle = true
-    defaultFoldingEdgeConverter.cloneLabelLayoutParameter = true
-    defaultFoldingEdgeConverter.reuseMasterPorts = true
-    defaultFoldingEdgeConverter.reuseFolderNodePorts = true
-    defaultFoldingEdgeConverter.resetBends = false
     // Initialize the Layout for Edges alongside folded Group Nodes
-    this.manager.foldingEdgeConverter = defaultFoldingEdgeConverter
+    this.manager.foldingEdgeConverter = new FoldingEdgeConverter({
+      foldingEdgeDefaults: {
+        copyLabels: true,
+        shareStyleInstance: false,
+        initializeOptions: FoldingSynchronizationOptions.LAYOUT
+      },
+      reuseMasterPorts: true,
+      reuseFolderNodePorts: true
+    })
 
     // Clear previous Graph
     this.masterGraph.clear()
@@ -304,242 +301,213 @@ export class BpmnDiParser {
   }
 
   /**
-   * Initialize the genericLabelModel Using a model with 32 positions (better than ExteriorLabelModel which only has 8) to enable more options for customization in the user interface.
+   * Initialize the genericLabelModel Using a model with 32 positions (better than ExteriorNodeLabelModel which only has 8) to enable more options for customization in the user interface.
    */
   private initGenericLabelModel(): void {
-    let exteriorLabelModel: ExteriorLabelModel = new ExteriorLabelModel()
-    exteriorLabelModel.insets = new Insets(3, 3, 3, 3)
-    this.genericLabelModel = new GenericLabelModel(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.SOUTH),
-      null
+    let exteriorNodeLabelModel = new ExteriorNodeLabelModel({
+      margins: 3
+    })
+    this.compositeLabelModel = new CompositeLabelModel()
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.BOTTOM)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.SOUTH_EAST),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.BOTTOM_RIGHT)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.SOUTH_WEST),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.BOTTOM_LEFT)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.NORTH),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.TOP)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.NORTH_EAST),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.TOP_RIGHT)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.NORTH_WEST),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.TOP_LEFT)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.WEST),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.LEFT)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.EAST),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.RIGHT)
     )
     // Big Insets
-    exteriorLabelModel = new ExteriorLabelModel()
-    exteriorLabelModel.insets = new Insets(18, 18, 18, 18)
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.SOUTH),
-      null
+    exteriorNodeLabelModel = new ExteriorNodeLabelModel({
+      margins: 18
+    })
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.BOTTOM)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.SOUTH_EAST),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.BOTTOM_RIGHT)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.SOUTH_WEST),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.BOTTOM_LEFT)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.NORTH),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.TOP)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.NORTH_EAST),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.TOP_RIGHT)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.NORTH_WEST),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.TOP_LEFT)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.WEST),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.LEFT)
     )
-    this.genericLabelModel.addParameter(
-      exteriorLabelModel.createParameter(ExteriorLabelModelPosition.EAST),
-      null
+    this.compositeLabelModel.addParameter(
+      exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.RIGHT)
     )
 
     // Label Positions between existing exterior positions
     const freeNodeLabelModel = new FreeNodeLabelModel()
     // Small Insets
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(0.25, 0),
         new Point(-1.5, -3),
         new Point(0.75, 1),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(0.75, 0),
         new Point(1.5, -3),
         new Point(0.25, 1),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(1, 0.25),
         new Point(3, -1.5),
         new Point(0, 0.75),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(1, 0.75),
         new Point(3, 1.5),
         new Point(0, 0.25),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(0.75, 1),
         new Point(1.5, 3),
         new Point(0.25, 0),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(0.25, 1),
         new Point(-1.5, 3),
         new Point(0.75, 0),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(0, 0.75),
         new Point(-3, 1.5),
         new Point(1, 0.25),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(0, 0.25),
         new Point(-3, -1.5),
         new Point(1, 0.75),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
     // Big Insets
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(0.25, 0),
         new Point(-9, -18),
         new Point(0.75, 1),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(0.75, 0),
         new Point(9, -18),
         new Point(0.25, 1),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(1, 0.25),
         new Point(18, -9),
         new Point(0, 0.75),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(1, 0.75),
         new Point(18, 9),
         new Point(0, 0.25),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(0.75, 1),
         new Point(9, 18),
         new Point(0.25, 0),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(0.25, 1),
         new Point(-9, 18),
         new Point(0.75, 0),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(0, 0.75),
         new Point(-18, 9),
         new Point(1, 0.25),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
-    this.genericLabelModel.addParameter(
+    this.compositeLabelModel.addParameter(
       freeNodeLabelModel.createParameter(
         new Point(0, 0.25),
         new Point(-18, -9),
         new Point(1, 0.75),
         new Point(0, 0),
         0
-      ),
-      null
+      )
     )
   }
 
@@ -613,7 +581,7 @@ export class BpmnDiParser {
    */
   private getShape(element: BpmnElement, plane: BpmnPlane): BpmnShape | null {
     const referencedElement =
-      element.name === 'participantRef' ? this.document.elements.get(element.value) : null
+      element.name === 'participantRef' ? this.document.elements.get(element.value!) : null
 
     // check if there is a valid shape for this element or the referenced one
     for (const shape of plane.listOfShapes) {
@@ -704,7 +672,7 @@ export class BpmnDiParser {
         // The element references another Process so build it as well
         const process = { value: null }
         if (this.tryGetElementForId(element.process, process)) {
-          this.processRefSource.set(process.value, element)
+          this.processRefSource.set(process.value!, element)
           this.buildElement(process.value!, plane, localRoot, bpmnEdges)
         }
       }
@@ -765,37 +733,31 @@ export class BpmnDiParser {
     if (!BpmnDiParser.REARRANGE_LABELS) {
       return
     }
-    const labelingData = new LabelingData()
-    labelingData.edgeLabelPreferredPlacement.delegate = (
-      label: ILabel
-    ): PreferredPlacementDescriptor => {
+    const labelingData = new GenericLabelingData()
+    labelingData.edgeLabelPreferredPlacements = (label: ILabel): EdgeLabelPreferredPlacement => {
       if (/yes|no/i.test(label.text)) {
-        const preferredPlacementDescriptor = new PreferredPlacementDescriptor()
-        preferredPlacementDescriptor.placeAlongEdge = LabelPlacements.AT_SOURCE
+        const preferredPlacementDescriptor = new EdgeLabelPreferredPlacement()
+        preferredPlacementDescriptor.placementAlongEdge = LabelAlongEdgePlacements.AT_SOURCE
         preferredPlacementDescriptor.distanceToEdge = 5
-        preferredPlacementDescriptor.sideOfEdge =
-          LabelPlacements.LEFT_OF_EDGE | LabelPlacements.RIGHT_OF_EDGE
+        preferredPlacementDescriptor.edgeSide =
+          LabelEdgeSides.LEFT_OF_EDGE | LabelEdgeSides.RIGHT_OF_EDGE
         return preferredPlacementDescriptor
       }
-      const preferredPlacementDescriptor2 = new PreferredPlacementDescriptor()
-      preferredPlacementDescriptor2.placeAlongEdge = LabelPlacements.AT_CENTER
+      const preferredPlacementDescriptor2 = new EdgeLabelPreferredPlacement()
+      preferredPlacementDescriptor2.placementAlongEdge = LabelAlongEdgePlacements.AT_CENTER
       preferredPlacementDescriptor2.distanceToEdge = 5
-      preferredPlacementDescriptor2.sideOfEdge =
-        LabelPlacements.LEFT_OF_EDGE | LabelPlacements.RIGHT_OF_EDGE
+      preferredPlacementDescriptor2.edgeSide =
+        LabelEdgeSides.LEFT_OF_EDGE | LabelEdgeSides.RIGHT_OF_EDGE
       return preferredPlacementDescriptor2
     }
-    const genericLabeling = new GenericLabeling()
-    genericLabeling.placeEdgeLabels = true
-    genericLabeling.placeNodeLabels = false
-    genericLabeling.moveInternalNodeLabels = false
-    genericLabeling.optimizationStrategy = OptimizationStrategy.PREFERRED_PLACEMENT
-    genericLabeling.reduceAmbiguity = true
-    genericLabeling.autoFlipping = false
-    genericLabeling.edgeGroupOverlapAllowed = false
-    genericLabeling.reduceLabelOverlaps = true
-    genericLabeling.removeNodeOverlaps = true
-    genericLabeling.removeEdgeOverlaps = true
-    this.masterGraph.applyLayout(genericLabeling, labelingData)
+    const labeling = new GenericLabeling({
+      scope: 'edge-labels',
+      moveInternalNodeLabels: false,
+      reduceLabelOverlaps: true
+    })
+    labeling.defaultNodeLabelingCosts.ambiguousPlacementCost = 1.0
+    labeling.defaultEdgeLabelingCosts.ambiguousPlacementCost = 1.0
+    this.masterGraph.applyLayout(labeling, labelingData)
   }
 
   /**
@@ -1029,44 +991,44 @@ export class BpmnDiParser {
     switch (element.name) {
       case 'sequenceFlow':
         if (element.getChild('conditionExpression') && !source.name.endsWith('Gateway')) {
-          iEdge = this.buildDefaultEdge(edge, EdgeType.CONDITIONAL_FLOW)
+          iEdge = this.buildDefaultEdge(edge, BpmnEdgeType.CONDITIONAL_FLOW)
         } else if (source && source.getValue('default') === element.id) {
-          iEdge = this.buildDefaultEdge(edge, EdgeType.DEFAULT_FLOW)
+          iEdge = this.buildDefaultEdge(edge, BpmnEdgeType.DEFAULT_FLOW)
         } else {
-          iEdge = this.buildDefaultEdge(edge, EdgeType.SEQUENCE_FLOW)
+          iEdge = this.buildDefaultEdge(edge, BpmnEdgeType.SEQUENCE_FLOW)
         }
         break
       case 'association':
         switch (edge.getAttribute('associationDirection')) {
           case 'None':
-            iEdge = this.buildDefaultEdge(edge, EdgeType.ASSOCIATION)
+            iEdge = this.buildDefaultEdge(edge, BpmnEdgeType.ASSOCIATION)
             break
           case 'One':
-            iEdge = this.buildDefaultEdge(edge, EdgeType.DIRECTED_ASSOCIATION)
+            iEdge = this.buildDefaultEdge(edge, BpmnEdgeType.DIRECTED_ASSOCIATION)
             break
           case 'Both':
-            iEdge = this.buildDefaultEdge(edge, EdgeType.BIDIRECTED_ASSOCIATION)
+            iEdge = this.buildDefaultEdge(edge, BpmnEdgeType.BIDIRECTED_ASSOCIATION)
             break
           default:
             // This shouldn't happen under strict conformance
-            iEdge = this.buildDefaultEdge(edge, EdgeType.ASSOCIATION)
+            iEdge = this.buildDefaultEdge(edge, BpmnEdgeType.ASSOCIATION)
             break
         }
         break
       case 'dataAssociation':
-        iEdge = this.buildDefaultEdge(edge, EdgeType.ASSOCIATION)
+        iEdge = this.buildDefaultEdge(edge, BpmnEdgeType.ASSOCIATION)
         break
       case 'conversationLink':
-        iEdge = this.buildDefaultEdge(edge, EdgeType.CONVERSATION)
+        iEdge = this.buildDefaultEdge(edge, BpmnEdgeType.CONVERSATION)
         break
       case 'messageFlow':
         iEdge = this.buildMessageFlow(edge)
         break
       case 'dataInputAssociation':
-        iEdge = this.buildDefaultEdge(edge, EdgeType.DIRECTED_ASSOCIATION)
+        iEdge = this.buildDefaultEdge(edge, BpmnEdgeType.DIRECTED_ASSOCIATION)
         break
       case 'dataOutputAssociation':
-        iEdge = this.buildDefaultEdge(edge, EdgeType.DIRECTED_ASSOCIATION)
+        iEdge = this.buildDefaultEdge(edge, BpmnEdgeType.DIRECTED_ASSOCIATION)
         break
     }
     if (iEdge) {
@@ -1103,7 +1065,7 @@ export class BpmnDiParser {
    * Builds a Gateway node
    */
   private buildGatewayNode(shape: BpmnShape, bounds: Rect, type: number): void {
-    const node = this.masterGraph.createNode(bounds, null, null)
+    const node = this.masterGraph.createNode(bounds)
     const element = shape.element!
     this.setParent(node, (element.parent as BpmnElement).node!)
     element.node = node
@@ -1132,7 +1094,7 @@ export class BpmnDiParser {
    * Builds a Task node
    */
   private buildTaskNode(shape: BpmnShape, bounds: Rect, type: number): void {
-    const node = this.masterGraph.createNode(bounds, null, null)
+    const node = this.masterGraph.createNode(bounds)
     const element = shape.element!
     this.setParent(node, (element.parent as BpmnElement).node!)
     element.node = node
@@ -1157,7 +1119,7 @@ export class BpmnDiParser {
    * Builds a SubProcess node
    */
   private buildSubProcessNode(shape: BpmnShape, bounds: Rect, type: number): void {
-    const node = this.masterGraph.createNode(bounds, null, null)
+    const node = this.masterGraph.createNode(bounds)
     const element = shape.element!
 
     // All SubProcess have to be GroupNodes, so they can be collapsed/expanded
@@ -1200,7 +1162,7 @@ export class BpmnDiParser {
    * Builds an Event node
    */
   private buildEventNode(shape: BpmnShape, bounds: Rect, characteristic: number): void {
-    const node = this.masterGraph.createNode(bounds, null, null)
+    const node = this.masterGraph.createNode(bounds)
     const element = shape.element!
     this.setParent(node, (element.parent as BpmnElement).node!)
     element.node = node
@@ -1270,7 +1232,7 @@ export class BpmnDiParser {
     if (shape.hasLabelPosition()) {
       this.setFixedBoundsLabelStyle(label, shape.labelBounds)
     } else {
-      this.masterGraph.setStyle(label, new DefaultLabelStyle())
+      this.masterGraph.setStyle(label, new LabelStyle())
       if (shape.hasLabelSize()) {
         this.masterGraph.setLabelPreferredSize(label, shape.labelBounds.size)
       } else {
@@ -1290,7 +1252,7 @@ export class BpmnDiParser {
     type: number,
     refElement: BpmnElement | null
   ): void {
-    const node = this.masterGraph.createNode(bounds, null, null)
+    const node = this.masterGraph.createNode(bounds)
     const element = shape.element!
     this.setParent(node, (element.parent as BpmnElement).node!)
 
@@ -1320,7 +1282,7 @@ export class BpmnDiParser {
    * Builds a Choreography node
    */
   private buildChoreographyNode(shape: BpmnShape, bounds: Rect): void {
-    const node = this.masterGraph.createGroupNode(this.view!.localRoot, bounds, null, null)
+    const node = this.masterGraph.createGroupNode(this.view!.localRoot, bounds)
     const element = shape.element!
     this.setParent(node, (element.parent as BpmnElement).node!)
     element.node = node
@@ -1358,7 +1320,7 @@ export class BpmnDiParser {
     type: number,
     isCollection: boolean
   ): void {
-    const node = this.masterGraph.createNode(bounds, null, null)
+    const node = this.masterGraph.createNode(bounds)
     const element = shape.element!
     this.setParent(node, (element.parent as BpmnElement).node!)
     element.node = node
@@ -1397,7 +1359,7 @@ export class BpmnDiParser {
     ) {
       // not connected to a process so we need our own node
 
-      const node = this.masterGraph.createNode(bounds, null, null)
+      const node = this.masterGraph.createNode(bounds)
       this.setParent(node, (element.parent as BpmnElement).node!)
       element.node = node
       if (processElement.value) {
@@ -1418,10 +1380,10 @@ export class BpmnDiParser {
 
       const table = partStyle.tableNodeStyle.table
       if (shape.isHorizontal ?? false) {
-        const row = table.rootRow.childRows.first()
+        const row = table.rootRow.childRows.first()!
         BpmnDiParser.addTableLabel(table, row, shape)
       } else {
-        const column = table.rootColumn.childColumns.first()
+        const column = table.rootColumn.childColumns.first()!
         BpmnDiParser.addTableLabel(table, column, shape)
       }
     }
@@ -1431,8 +1393,9 @@ export class BpmnDiParser {
    * Builds a participant label inside a choreography node
    */
   private buildParticipantLabel(shape: BpmnShape): void {
-    const choreography = this.currentDiagram.plane!.getShape(shape.choreographyActivityShape)!
-      .element!
+    const choreography = this.currentDiagram.plane!.getShape(
+      shape.choreographyActivityShape
+    )!.element!
     const node = choreography.node!
     let top = false
     let index = 0
@@ -1516,7 +1479,7 @@ export class BpmnDiParser {
     // Sets the label Style of the new participant
     let parameter = ChoreographyLabelModel.INSTANCE.createParticipantParameter(top, index)
     this.masterGraph.setLabelLayoutParameter(label, parameter)
-    let defaultLabelStyle: DefaultLabelStyle = this.setCustomLabelStyle(label)
+    let defaultLabelStyle: LabelStyle = this.setCustomLabelStyle(label)
     this.masterGraph.setStyle(label, defaultLabelStyle)
 
     // checks, if there is a message, if yes, tries to set text label
@@ -1552,7 +1515,7 @@ export class BpmnDiParser {
    * Builds a TextAnnotationNode
    */
   private buildTextAnnotationNode(shape: BpmnShape, bounds: Rect): void {
-    const node = this.masterGraph.createNode(bounds, null, null)
+    const node = this.masterGraph.createNode(bounds)
     const element = shape.element!
     this.setParent(node, (element.parent as BpmnElement).node!)
     element.node = node
@@ -1597,7 +1560,7 @@ export class BpmnDiParser {
    * Builds a DataStoreReference Node
    */
   private buildDataStoreReferenceNode(shape: BpmnShape, bounds: Rect): void {
-    const node = this.masterGraph.createNode(bounds, null, null)
+    const node = this.masterGraph.createNode(bounds)
     const element = shape.element!
     this.setParent(node, (element.parent as BpmnElement).node!)
     element.node = node
@@ -1745,7 +1708,7 @@ export class BpmnDiParser {
    */
   private setFixedBoundsLabelStyle(label: ILabel, bounds: Rect): void {
     const model = label.owner instanceof INode ? new FreeNodeLabelModel() : new FreeEdgeLabelModel()
-    const parameter = model.findBestParameter(label, model, new OrientedRectangle(bounds))
+    const parameter = model.findBestParameter(label, new OrientedRectangle(bounds))
     this.masterGraph.setLabelLayoutParameter(label, parameter)
     const defaultLabelStyle = this.setCustomLabelStyle(label)
     this.masterGraph.setStyle(label, defaultLabelStyle)
@@ -1756,24 +1719,22 @@ export class BpmnDiParser {
    * Sets label style for tasks (Centered)
    */
   private setInternalLabelStyle(label: ILabel): void {
-    const model = new InteriorStretchLabelModel()
-    model.insets = new Insets(3, 3, 3, 3)
-    this.masterGraph.setLabelLayoutParameter(
-      label,
-      model.createParameter(InteriorStretchLabelModelPosition.CENTER)
-    )
+    const model = new StretchNodeLabelModel({
+      padding: 3
+    })
+    this.masterGraph.setLabelLayoutParameter(label, model.createParameter('center'))
     const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
-    defaultLabelStyle.wrapping = TextWrapping.WORD
+    defaultLabelStyle.wrapping = TextWrapping.WRAP_WORD
     this.masterGraph.setStyle(label, defaultLabelStyle)
   }
 
   /**
-   * Sets label style nodes that have an external label (South of the node)
+   * Sets label style nodes that have an external label (bottom of the node).
    */
   private setExternalLabelStyle(label: ILabel): void {
-    this.masterGraph.setLabelLayoutParameter(label, this.genericLabelModel.createDefaultParameter())
+    this.masterGraph.setLabelLayoutParameter(label, this.compositeLabelModel.parameters.first()!)
     const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
@@ -1781,7 +1742,7 @@ export class BpmnDiParser {
 
     if (BpmnDiParser.MULTI_LINE_EXTERIOR_NODE_LABELS) {
       // Set some bounds to make labels multi - row
-      const maxWidth = Math.max((label.owner! as INode).layout.width * 1.5, 100)
+      const maxWidth = Math.max((label.owner as INode).layout.width * 1.5, 100)
       let maxHeight = label.preferredSize.height
       let width = maxWidth
       const height = maxHeight
@@ -1799,7 +1760,7 @@ export class BpmnDiParser {
   private setChoreographyLabelStyle(label: ILabel): void {
     this.masterGraph.setLabelLayoutParameter(label, ChoreographyLabelModel.TASK_NAME_BAND)
     const defaultLabelStyle = this.setCustomLabelStyle(label)
-    defaultLabelStyle.wrapping = TextWrapping.WORD
+    defaultLabelStyle.wrapping = TextWrapping.WRAP_WORD
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
     this.masterGraph.setStyle(label, defaultLabelStyle)
@@ -1809,12 +1770,10 @@ export class BpmnDiParser {
    * Sets label style for SubProcesses (Upper left corner)
    */
   private setSubProcessLabelStyle(label: ILabel): void {
-    const model = new InteriorStretchLabelModel()
-    model.insets = new Insets(3, 3, 3, 3)
-    this.masterGraph.setLabelLayoutParameter(
-      label,
-      model.createParameter(InteriorStretchLabelModelPosition.NORTH)
-    )
+    const model = new StretchNodeLabelModel({
+      padding: 3
+    })
+    this.masterGraph.setLabelLayoutParameter(label, model.createParameter('top'))
     const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.LEFT
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.TOP
@@ -1825,12 +1784,10 @@ export class BpmnDiParser {
    * Sets label style for Groups (Upper boundary)
    */
   private setGroupLabelStyle(label: ILabel): void {
-    const model = new InteriorStretchLabelModel()
-    model.insets = new Insets(3, 3, 3, 3)
-    this.masterGraph.setLabelLayoutParameter(
-      label,
-      model.createParameter(InteriorStretchLabelModelPosition.NORTH)
-    )
+    const model = new StretchNodeLabelModel({
+      padding: 3
+    })
+    this.masterGraph.setLabelLayoutParameter(label, model.createParameter('top'))
     const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
     this.masterGraph.setStyle(label, defaultLabelStyle)
@@ -1851,7 +1808,7 @@ export class BpmnDiParser {
       model.offset = 7
       model.sideOfEdge = EdgeSides.ABOVE_EDGE
       model.autoRotation = false
-      this.masterGraph.setLabelLayoutParameter(label, model.createDefaultParameter())
+      this.masterGraph.setLabelLayoutParameter(label, model.createRatioParameter())
       const defaultLabelStyle = this.setCustomLabelStyle(label)
       defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
       this.masterGraph.setStyle(label, defaultLabelStyle)
@@ -1861,7 +1818,7 @@ export class BpmnDiParser {
   /**
    * Sets custom style elements
    */
-  private setCustomLabelStyle(label: ILabel): DefaultLabelStyle {
+  private setCustomLabelStyle(label: ILabel): LabelStyle {
     const styleName = label.tag
     return this.currentDiagram.getStyle(styleName)
   }
@@ -1913,7 +1870,7 @@ export class BpmnDiParser {
     if (sourceVar.name === 'boundaryEvent') {
       sourcePort = sourceVar.port
       if (sourcePort) {
-        sourceNode = sourcePort.owner! as INode
+        sourceNode = sourcePort.owner as INode
       } else {
         this.document.messages.add(
           'The source boundary event for edge ' + id + ' was not (yet) created.'
@@ -1921,14 +1878,14 @@ export class BpmnDiParser {
         return null
       }
     } else if (sourceNode) {
-      sourcePort = this.masterGraph.addPortAt(sourceNode, source, null, null)
+      sourcePort = this.masterGraph.addPortAt(sourceNode, source)
     }
 
     // Use boundary event port, if target is a boundary event
     if (targetVar.name === 'boundaryEvent') {
       targetPort = targetVar.port
       if (targetPort) {
-        targetNode = targetPort.owner! as INode
+        targetNode = targetPort.owner as INode
       } else {
         this.document.messages.add(
           'The target boundary event for edge ' + id + ' was not (yet) created.'
@@ -1936,17 +1893,17 @@ export class BpmnDiParser {
         return null
       }
     } else if (targetNode) {
-      targetPort = this.masterGraph.addPortAt(targetNode, target, null, null)
+      targetPort = this.masterGraph.addPortAt(targetNode, target)
     }
 
     // Test for textAnnotation, workaround fix for textAnnotations
-    if (type === EdgeType.ASSOCIATION) {
+    if (type === BpmnEdgeType.ASSOCIATION) {
       if (!targetNode) {
-        targetPort = this.masterGraph.addPortAt(sourceNode, target, null, null)
+        targetPort = this.masterGraph.addPortAt(sourceNode, target)
       }
 
       if (!sourceNode) {
-        sourcePort = this.masterGraph.addPortAt(targetNode, source, null, null)
+        sourcePort = this.masterGraph.addPortAt(targetNode, source)
       }
     }
 
@@ -1961,7 +1918,7 @@ export class BpmnDiParser {
     }
 
     // Create edge on graph
-    const iEdge = this.masterGraph.createEdge(sourcePort, targetPort, null, null)
+    const iEdge = this.masterGraph.createEdge(sourcePort, targetPort)
     for (const point of waypoints) {
       this.masterGraph.addBend(iEdge, point, -1)
     }
@@ -2016,11 +1973,11 @@ export class BpmnDiParser {
     const sourcePort =
       sourceVar.name === 'boundaryEvent'
         ? sourceVar.port
-        : this.masterGraph.addPortAt(sourceNode, source, null, null)!
+        : this.masterGraph.addPortAt(sourceNode, source)!
     const targetPort =
       targetVar.name === 'boundaryEvent'
         ? targetVar.port
-        : this.masterGraph.addPortAt(targetNode, target, null, null)!
+        : this.masterGraph.addPortAt(targetNode, target)!
 
     const iEdge = this.masterGraph.createEdge(sourcePort!, targetPort!)
     for (const point of waypoints) {
@@ -2078,7 +2035,7 @@ export class BpmnDiParser {
 
     // Set edge style
     const edgeStyle = new BpmnEdgeStyle()
-    edgeStyle.type = EdgeType.MESSAGE_FLOW
+    edgeStyle.type = BpmnEdgeType.MESSAGE_FLOW
     this.masterGraph.setStyle(iEdge, edgeStyle)
 
     return iEdge
@@ -2147,7 +2104,7 @@ export class BpmnDiParser {
         node = parent.node!
       } else {
         // table was already initialized for the Process due to a Participant element
-        node = this.masterGraph.createNode(localRoot, layout, null, null)
+        node = this.masterGraph.createNode(localRoot, layout)
         const poolStyle = BpmnDiParser.createPoolNodeStyle(isHorizontal)
         poolStyle.multipleInstance = multipleInstance
         this.masterGraph.setStyle(node, poolStyle)
@@ -2155,31 +2112,17 @@ export class BpmnDiParser {
 
         // create dummy stripe for the direction where no lanes are defined
         if (isHorizontal) {
-          const col = table.createColumn(
-            layout.width - table.rowDefaults.insets.left,
-            null,
-            null,
-            null,
-            null,
-            null
-          )
+          const col = table.createColumn(layout.width - table.rowDefaults.padding.left)
           col.tag = new Point(layout.x, layout.y)
         } else {
-          const row = table.createRow(
-            layout.height - table.columnDefaults.insets.top,
-            null,
-            null,
-            null,
-            null,
-            null
-          )
+          const row = table.createRow(layout.height - table.columnDefaults.padding.top)
           row.tag = new Point(layout.x, layout.y)
         }
       }
 
       let parentStripe: IStripe = isHorizontal
-        ? table.rootRow.childRows.at(0) ?? table.rootRow
-        : table.rootColumn.childColumns.at(0) ?? table.rootColumn
+        ? (table.rootRow.childRows.at(0) ?? table.rootRow)
+        : (table.rootColumn.childColumns.at(0) ?? table.rootColumn)
       if (tableShape) {
         parentStripe = this.addToTable(tableShape, table, node, parentStripe, isHorizontal)
       }
@@ -2194,14 +2137,14 @@ export class BpmnDiParser {
       // Resize the root row/column after adding a column/row with insets
       if (isHorizontal) {
         const max = table.rootRow.leaves
-          .map((s: IStripe) => s.layout.x - table.layout.x + s.insets.left)
+          .map((s: IStripe) => s.layout.x - table.layout.x + s.totalPadding.left)
           .reduce((acc: number, val: number) => Math.max(acc, val), Number.MIN_VALUE)
-        table.setSize(table.rootColumn.childColumns.first(), node.layout.width - max)
+        table.setSize(table.rootColumn.childColumns.first()!, node.layout.width - max)
       } else {
         const max = table.rootColumn.leaves
-          .map((s: IStripe) => s.layout.y - table.layout.y + s.insets.top)
+          .map((s: IStripe) => s.layout.y - table.layout.y + s.totalPadding.top)
           .reduce((acc: number, val: number) => Math.max(acc, val), Number.MIN_VALUE)
-        table.setSize(table.rootRow.childRows.first(), node.layout.height - max)
+        table.setSize(table.rootRow.childRows.first()!, node.layout.height - max)
       }
 
       /*
@@ -2273,20 +2216,29 @@ export class BpmnDiParser {
         ? parentRow.childRows.filter((siblingRow) => siblingRow.tag.y < shape.y).size
         : -1
 
-      const row = table.createChildRow(parentRow, shape.height, null, null, null, null, index)
-      row.tag = new Point(shape.x, shape.y)
+      const row = table.createChildRow({
+        parent: parentRow,
+        height: shape.height,
+        index: index,
+        tag: new Point(shape.x, shape.y)
+      })
 
       BpmnDiParser.addTableLabel(table, row, shape)
       return row
     } else {
-      const parentCol = IColumn.isInstance(parentStripe) ? parentStripe : null
+      const parentCol = parentStripe instanceof IColumn ? parentStripe : null
       // getIndex
       const index = parentCol
         ? parentCol.childColumns.filter((siblingCol) => siblingCol.tag.x < shape.x).size
         : -1
 
-      const col = table.createChildColumn(parentCol, shape.width, null, null, null, null, index)
-      col.tag = new Point(shape.x, shape.y)
+      const col = table.createChildColumn({
+        parent: parentCol,
+        width: shape.width,
+        index: index,
+        tag: new Point(shape.x, shape.y)
+      })
+
       BpmnDiParser.addTableLabel(table, col, shape)
       return col
     }
@@ -2300,22 +2252,8 @@ export class BpmnDiParser {
     const table = poolNodeStyle.tableNodeStyle.table
 
     // Create first row & column
-    const col = table.createColumn(
-      shape.width - table.rowDefaults.insets.left,
-      null,
-      null,
-      null,
-      null,
-      null
-    )
-    const row = table.createRow(
-      shape.height - table.columnDefaults.insets.top,
-      null,
-      null,
-      null,
-      null,
-      null
-    )
+    const col = table.createColumn(shape.width - table.rowDefaults.padding.left)
+    const row = table.createRow(shape.height - table.columnDefaults.padding.top)
 
     const location = new Point(shape.x, shape.y)
     row.tag = location
@@ -2328,13 +2266,13 @@ export class BpmnDiParser {
     const table = partStyle.tableNodeStyle.table
 
     if (isHorizontal) {
-      table.columnDefaults.insets = Insets.EMPTY
+      table.columnDefaults.padding = Insets.EMPTY
     } else {
-      table.rowDefaults.insets = Insets.EMPTY
+      table.rowDefaults.padding = Insets.EMPTY
     }
 
-    // Set table insets to 0
-    table.insets = Insets.EMPTY
+    // Set table padding to 0
+    table.padding = Insets.EMPTY
 
     return partStyle
   }
@@ -2347,7 +2285,7 @@ export class BpmnDiagram {
   // BPMNPlane of this diagram
   plane: BpmnPlane | null = null
   // The default label style for this diagram instance
-  defaultStyle: DefaultLabelStyle = null!
+  defaultStyle: LabelStyle = null!
   // List of all child diagrams this diagram contains
   children: HashMap<BpmnDiagram, BpmnElement> = new HashMap()
   // All BPMNLabelStyle instances of this diagram
@@ -2403,7 +2341,7 @@ export class BpmnDiagram {
    * Returns the given Style, or the default style, in case it does nor exist
    * @param style The id (name) of the style to get
    */
-  getStyle(style: string): DefaultLabelStyle {
+  getStyle(style: string): LabelStyle {
     if (!style) {
       return this.defaultStyle.clone()
     }
@@ -2457,7 +2395,7 @@ export class BpmnDocument {
     // collect all elements that are linked to from a plane
     for (const diagram of this.diagrams) {
       try {
-        const planeElement = diagram.plane!.element
+        const planeElement = diagram.plane!.element!
         this.elementToDiagram.set(planeElement, diagram)
       } catch {
         this.messages.add(`Tried to add a diagram with the already existing id: ${diagram.id}`)
@@ -2714,7 +2652,7 @@ export class BpmnDocument {
  * Class for BPMNEdge objects
  */
 export class BpmnEdge {
-  private static _CALCULATE_SIZE_LABEL_STYLE: DefaultLabelStyle
+  private static _CALCULATE_SIZE_LABEL_STYLE: LabelStyle
   private static _CALCULATE_SIZE_LABEL: SimpleLabel
 
   // The custom style of this label
@@ -2742,23 +2680,23 @@ export class BpmnEdge {
       BpmnEdge._CALCULATE_SIZE_LABEL = new SimpleLabel(
         new SimpleNode(),
         '',
-        FreeNodeLabelModel.INSTANCE.createDefaultParameter()
+        FreeNodeLabelModel.CENTER
       )
     }
 
     return BpmnEdge._CALCULATE_SIZE_LABEL
   }
 
-  static get CALCULATE_SIZE_LABEL_STYLE(): DefaultLabelStyle {
+  static get CALCULATE_SIZE_LABEL_STYLE(): LabelStyle {
     if (typeof BpmnEdge._CALCULATE_SIZE_LABEL_STYLE === 'undefined') {
-      BpmnEdge._CALCULATE_SIZE_LABEL_STYLE = new DefaultLabelStyle()
+      BpmnEdge._CALCULATE_SIZE_LABEL_STYLE = new LabelStyle()
     }
 
     return BpmnEdge._CALCULATE_SIZE_LABEL_STYLE
   }
 
   /**
-   * Calculate the preferred size for `text` using a {@link DefaultLabelStyle}.
+   * Calculate the preferred size for `text` using a {@link LabelStyle}.
    * @param text The text to measure.
    * @returns The preferred Size of the given text.
    */
@@ -3231,8 +3169,8 @@ export class BpmnLabelStyle {
   isUnderline = false
   // True, if this style depicts style with a StrikeThrough
   isStrikeThrough = false
-  // {@link DefaultLabelStyle} that represents this BpmnLabelStyle
-  labelStyle: DefaultLabelStyle
+  // {@link LabelStyle} that represents this BpmnLabelStyle
+  labelStyle: LabelStyle
 
   /**
    * Constant that sets the standard Text size of Labels. yFiles Standard is 12 pt, but the Bpmn Demo files look better with 11pt
@@ -3248,8 +3186,8 @@ export class BpmnLabelStyle {
   /**
    * The default label Style
    */
-  static newDefaultInstance(): DefaultLabelStyle {
-    const defaultLabelStyle = new DefaultLabelStyle()
+  static newDefaultInstance(): LabelStyle {
+    const defaultLabelStyle = new LabelStyle()
 
     // Set font
     const font = 'Arial'
@@ -3257,29 +3195,16 @@ export class BpmnLabelStyle {
     // Set text size
     defaultLabelStyle.textSize = BpmnLabelStyle.LABEL_TEXT_SIZE
 
-    // Set font style
-    const fontStyle = FontStyle.NORMAL
-
-    // Set font weight
-    const fontWeight = FontWeight.NORMAL
-
     // Set Typeface
-    defaultLabelStyle.font = new Font(
-      font,
-      BpmnLabelStyle.LABEL_TEXT_SIZE,
-      fontStyle,
-      fontWeight,
-      0.5,
-      null
-    )
-    defaultLabelStyle.wrapping = TextWrapping.WORD
+    defaultLabelStyle.font = new Font(font, BpmnLabelStyle.LABEL_TEXT_SIZE)
+    defaultLabelStyle.wrapping = TextWrapping.WRAP_WORD
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
     return defaultLabelStyle
   }
 
   /**
-   * Constructs an instance of {@link DefaultLabelStyle} representing this Style
+   * Constructs an instance of {@link LabelStyle} representing this Style
    * @param xStyle The XML Element to be converted into this style
    */
   constructor(xStyle: Element) {
@@ -3322,13 +3247,10 @@ export class BpmnLabelStyle {
         this.isStrikeThrough = convertToBoolean(attr)
       }
     }
-    const defaultLabelStyle = new DefaultLabelStyle()
+    const defaultLabelStyle = new LabelStyle()
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
     this.labelStyle = defaultLabelStyle
-
-    let fontStyle: FontStyle = FontStyle.NORMAL
-    let fontWeight: FontWeight = FontWeight.NORMAL
 
     // Set text size
     if (this.size > 0) {
@@ -3337,43 +3259,32 @@ export class BpmnLabelStyle {
       this.labelStyle.textSize = BpmnLabelStyle.LABEL_TEXT_SIZE
     }
 
-    // Set Boldness
-    if (this.isBold) {
-      fontWeight = FontWeight.BOLD
-    }
-
-    // Set Italic
-    if (this.isItalic) {
-      fontStyle = FontStyle.ITALIC
-    }
-
-    let textDecoration: TextDecoration = TextDecoration.NONE
+    let textDecoration: TextDecorations = TextDecorations.NONE
     // Set Underline
     if (this.isUnderline) {
-      textDecoration |= TextDecoration.UNDERLINE
+      textDecoration |= TextDecorations.UNDERLINE
     }
 
     // Set StrikeThrough
     if (this.isStrikeThrough) {
-      textDecoration |= TextDecoration.LINE_THROUGH
+      textDecoration |= TextDecorations.LINE_THROUGH
     }
 
     this.labelStyle.font = new Font(
       this.font,
       BpmnLabelStyle.LABEL_TEXT_SIZE,
-      fontStyle,
-      fontWeight,
-      textDecoration,
-      null
+      this.isItalic ? 'italic' : 'normal',
+      this.isBold ? 'bold' : 'normal',
+      textDecoration
     )
 
-    this.labelStyle.wrapping = TextWrapping.WORD
+    this.labelStyle.wrapping = TextWrapping.WRAP_WORD
   }
 
   /**
-   * Returns the {@link DefaultLabelStyle} that represents this BpmnLabelStyle instance
+   * Returns the {@link LabelStyle} that represents this BpmnLabelStyle instance
    */
-  getStyle(): DefaultLabelStyle {
+  getStyle(): LabelStyle {
     return this.labelStyle
   }
 }
@@ -3769,18 +3680,38 @@ export class BpmnShape {
   }
 }
 
-export class MultiLabelFolderNodeConverter extends DefaultFolderNodeConverter {
-  /**
-   * Gets or sets a value indicating whether all labels of the
-   * {@link IFoldingView.getMasterItem master group node} should be recreated for the
-   * collapsed group node instance. This setting can be used to initially create a copy of
-   * all the labels of the master group node (if any) and subsequently synchronize the
-   * {@link ILabel.text} property with the master's node label text.
-   * Set it to `true` if all labels should be copied; `false` otherwise. The default is `false`.
-   * @see DefaultFolderNodeConverter.labelStyle
-   * @see DefaultFolderNodeConverter.labelLayoutParameter
-   */
-  copyLabels = false
+export class MultiLabelFolderNodeConverter extends FolderNodeConverter {
+  private choreographyFolderNodeDefaults: FolderNodeDefaults
+
+  constructor() {
+    super()
+    this.folderNodeDefaults = this.createFolderNodeDefaults()
+    this.choreographyFolderNodeDefaults = this.createChoreographFolderNodeDefaults()
+  }
+
+  get labelDefaults(): FoldingLabelDefaults {
+    return this.folderNodeDefaults.labels
+  }
+
+  private createFolderNodeDefaults() {
+    const folderNodeDefaults = new FolderNodeDefaults()
+    folderNodeDefaults.copyLabels = true
+    folderNodeDefaults.ports.copyLabels = true
+    folderNodeDefaults.labels.layoutParameter = new StretchNodeLabelModel({
+      padding: 3
+    }).createParameter('center')
+    return folderNodeDefaults
+  }
+
+  private createChoreographFolderNodeDefaults() {
+    const folderNodeDefaults = new FolderNodeDefaults()
+    folderNodeDefaults.copyLabels = true
+    folderNodeDefaults.ports.copyLabels = true
+    folderNodeDefaults.labels.shareStyleInstance = true // we want to keep the instances
+    folderNodeDefaults.labels.style = null
+    folderNodeDefaults.labels.layoutParameter = null
+    return folderNodeDefaults
+  }
 
   updateFolderNodeState(
     state: FolderNodeState,
@@ -3788,130 +3719,36 @@ export class MultiLabelFolderNodeConverter extends DefaultFolderNodeConverter {
     viewNode: INode,
     masterNode: INode
   ): void {
-    this.synchronizeLabels(state, foldingView, viewNode, masterNode)
-
-    // Copies the changed master Style to the state
-    state.style = masterNode.style
-  }
-
-  /**
-   * Called by {@link updateFolderNodeState} to synchronize all labels,
-   * if {@link copyLabels} is enabled.
-   * Also synchronizes all port labels of ports connected to the node.
-   * This will adjust the label text property.
-   * @param state The node view state whose labels should be synchronized.
-   * @param foldingView The folding view.
-   * @param viewNode The local node instance.
-   * @param masterNode The master node.
-   */
-  protected synchronizeLabels(
-    state: FolderNodeState,
-    foldingView: IFoldingView,
-    viewNode: INode,
-    masterNode: INode
-  ): void {
-    if (this.copyLabels) {
-      if (masterNode.labels.size > 0 && state.labels.size > 0) {
-        for (let i = 0; i < masterNode.labels.size; i++) {
-          const masterLabel = masterNode.labels.get(i)
-          const labelViewState = state.labels.get(i)
-          labelViewState.text = masterLabel.text
-          labelViewState.preferredSize = masterLabel.preferredSize
-          labelViewState.tag = masterLabel.tag
-        }
-      }
-
-      if (masterNode.ports.size > 0) {
-        for (let j = 0; j < masterNode.ports.size; j++) {
-          const port = masterNode.ports.get(j)
-          if (port.labels.size > 0) {
-            for (let i = 0; i < port.labels.size; i++) {
-              const masterLabel = port.labels.get(i)
-              const labelViewState = state.ports.get(j).labels.get(i)
-              labelViewState.text = masterLabel.text
-              labelViewState.preferredSize = masterLabel.preferredSize
-              labelViewState.tag = masterLabel.tag
-            }
-          }
-        }
-      }
+    if (viewNode.style instanceof ChoreographyNodeStyle) {
+      this.choreographyFolderNodeDefaults.updateState(state, masterNode)
+    } else {
+      this.folderNodeDefaults.updateState(state, masterNode)
     }
   }
 
-  protected initializeFolderNodePorts(
+  initializeFolderNodeState(
     state: FolderNodeState,
     foldingView: IFoldingView,
     viewNode: INode,
     masterNode: INode
   ): void {
-    for (const port of viewNode.ports) {
-      const masterPort = foldingView.getMasterItem(port)!
-      const newStyle = this.createPortStyle(foldingView, port, masterPort)
-      const portState = state.getFoldingPortState(masterPort)
-      if (newStyle) {
-        portState.style = newStyle
-      }
-      const newLocationParameter = this.createPortLocationParameter(foldingView, port, masterPort)
-      if (newLocationParameter) {
-        portState.locationParameter = newLocationParameter
-      }
-
-      if (masterPort.labels.size > 0) {
-        for (let i = 0; i < masterPort.labels.size; i++) {
-          const label = masterPort.labels.get(i)
-          const labelStyle = this.createLabelStyle(foldingView, null, label)
-          const labelLayoutParameter = this.createLabelLayoutParameter(foldingView, null, label)
-
-          portState.addLabel(
-            label.text,
-            labelLayoutParameter || label.layoutParameter,
-            labelStyle || label.style,
-            label.preferredSize,
-            label.tag
-          )
-        }
-      }
+    if (viewNode.style instanceof ChoreographyNodeStyle) {
+      this.choreographyFolderNodeDefaults.initializeState(state, masterNode)
+    } else {
+      this.folderNodeDefaults.initializeState(state, masterNode)
     }
   }
 
-  protected initializeFolderNodeLabels(
+  updateGroupNodeState(
     state: FolderNodeState,
     foldingView: IFoldingView,
     viewNode: INode,
     masterNode: INode
   ): void {
-    state.clearLabels()
-    if (this.copyLabels) {
-      const labels = masterNode.labels
-      if (labels.size > 0) {
-        for (let i = 0; i < labels.size; i++) {
-          const label = labels.get(i)
-          // If the node is a choreographyNode, just copy all Labels
-          if (masterNode.style instanceof ChoreographyNodeStyle) {
-            state.addLabel(
-              label.text,
-              label.layoutParameter,
-              label.style,
-              label.preferredSize,
-              label.tag
-            )
-          } else {
-            // if subProcessNode, create new Layout & Style
-            const labelStyle = this.createLabelStyle(foldingView, null, label)
-            const labelModel = new InteriorStretchLabelModel()
-            labelModel.insets = new Insets(3, 3, 3, 3)
-            const labelLayoutParameter = labelModel.createParameter(
-              InteriorStretchLabelModelPosition.CENTER
-            )
-            state.addLabel(
-              label.text,
-              labelLayoutParameter || label.layoutParameter,
-              labelStyle || label.style,
-              label.preferredSize,
-              label.tag
-            )
-          }
-        }
+    // TODO - implement and write back labels!
+    if (state.labels.size === viewNode.labels.size) {
+      for (let i = 0; i < state.labels.size; i++) {
+        foldingView.graph.setLabelText(viewNode.labels.at(i)!, state.labels.at(i)!.text)
       }
     }
   }

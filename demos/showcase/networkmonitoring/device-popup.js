@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,39 +26,29 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ExteriorLabelModel, ExteriorLabelModelPosition, INode } from 'yfiles'
-import HTMLPopupSupport from '../../view/htmlpopup/HTMLPopupSupport.js'
-import { D3BarChart } from './ui/D3BarChart.js'
-
-/** @type {HTMLPopupSupport.<INode>} */
+import { ExteriorNodeLabelModel, INode } from '@yfiles/yfiles'
+import { HTMLPopupSupport } from './HTMLPopupSupport'
+import { D3BarChart } from './ui/D3BarChart'
 let devicePopup
-
 /**
  * Enables an HTML panel on top of the GraphComponent's content that displays detailed information
  * about a node (device).
- * @param {!GraphComponent} graphComponent
- * @param {!GraphInputMode} graphInputMode
- * @param {!function} getDevice
  */
 export function initializeDeviceDetailsPopup(graphComponent, graphInputMode, getDevice) {
   createDeviceDetailsPopup(graphComponent)
-
   // On item click, update the popup with the device's data
-  graphInputMode.addItemClickedListener((_, evt) => {
+  graphInputMode.addEventListener('item-clicked', (evt) => {
     if (!(evt.item instanceof INode)) {
       return
     }
-
     const device = getDevice(evt.item)
     updateDeviceInfoElement(device)
     updatePowerButtonState(device.enabled)
     barChart?.barChart(device)
     devicePopup.currentItem = evt.item
   })
-
   // On canvas click, hide the popup
-  graphInputMode.addCanvasClickedListener(() => (devicePopup.currentItem = null))
-
+  graphInputMode.addEventListener('canvas-clicked', () => (devicePopup.currentItem = null))
   // On click of the power button, toggle a device enabled/disabled
   devicePopup.div.querySelector('#powerButton').addEventListener(
     'click',
@@ -71,29 +61,19 @@ export function initializeDeviceDetailsPopup(graphComponent, graphInputMode, get
     true
   )
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- */
 function createDeviceDetailsPopup(graphComponent) {
   // create a label model parameter that is used to position the node pop-up
-  const nodeLabelModel = new ExteriorLabelModel({ insets: 10 })
-  const popupPositionParameter = nodeLabelModel.createParameter(ExteriorLabelModelPosition.NORTH)
-
+  const nodeLabelModel = new ExteriorNodeLabelModel({ margins: 10 })
+  const popupPositionParameter = nodeLabelModel.createParameter('top')
   devicePopup = new HTMLPopupSupport(
     graphComponent,
     document.getElementById('nodePopupContent'),
     popupPositionParameter
   )
-
   devicePopup.div
     .querySelector('#closeButton')
     .addEventListener('click', () => (devicePopup.currentItem = null), true)
 }
-
-/**
- * @param {boolean} enabled
- */
 function updatePowerButtonState(enabled) {
   const powerButtonPath = devicePopup.div.querySelector('.power-button-path')
   if (enabled) {
@@ -102,10 +82,6 @@ function updatePowerButtonState(enabled) {
     powerButtonPath.classList.add('switched-off')
   }
 }
-
-/**
- * @param {!Device} device
- */
 function updateDeviceInfoElement(device) {
   // Find and update elements according to their data-id attribute
   devicePopup.div.querySelectorAll('div[data-id]').forEach((element) => {
@@ -113,25 +89,21 @@ function updateDeviceInfoElement(device) {
     element.textContent = String(device[key] ?? '')
   })
 }
-
 export function updateBarChart() {
   barChart?.animate()
 }
-
 /**
  * The bar chart which is displayed in the node popup.
  */
 const barChart = initializeD3BarChart()
-
 /**
  * Tries to load d3 for rendering the bar charts in the popup.
  * If this fails for any reason, we disable the bar chart display.
- * @returns {!D3BarChart}
  */
 function initializeD3BarChart() {
   try {
     return new D3BarChart()
-  } catch (ignored) {
+  } catch {
     // if for some reason d3 has not loaded, this will be caught here,
     // and we disable the d3 charts in the popup
     const chartElement = document.getElementsByClassName('chart')[0]

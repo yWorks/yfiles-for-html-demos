@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,23 +31,26 @@ import {
   CanvasComponent,
   ClickEventArgs,
   Cursor,
-  HandleTypes,
-  ICanvasObject,
+  HandleType,
   IHandle,
   IInputModeContext,
   ILabel,
   ILabelModelParameterFinder,
+  IOrientedRectangle,
   IPoint,
+  IRenderContext,
+  IRenderTreeElement,
+  ISize,
   OrientedRectangle,
-  OrientedRectangleIndicatorInstaller,
   Point,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
+import { OrientedRectangleRendererBase } from '../../utils/OrientedRectangleRendererBase'
 
 /**
  * A custom {@link IHandle} implementation that implements the functionality needed for rotating a label.
  */
-export default class LabelRotateHandle extends BaseClass(IHandle) implements IHandle {
+export default class LabelRotateHandle extends BaseClass(IHandle) {
   readonly label: ILabel
   inputModeContext: IInputModeContext
   private handleLocation: LabelRotateHandleLivePoint = new LabelRotateHandleLivePoint(this)
@@ -55,7 +58,7 @@ export default class LabelRotateHandle extends BaseClass(IHandle) implements IHa
   dummyLocation: Point = null!
   up: Point = null!
   private rotationCenter: Point = null!
-  private rotationIndicator: ICanvasObject | null = null
+  private rotationIndicator: IRenderTreeElement | null = null
 
   /**
    * Creates a rotate handler for the given label.
@@ -71,8 +74,8 @@ export default class LabelRotateHandle extends BaseClass(IHandle) implements IHa
   /**
    * Gets the type of the handler.
    */
-  get type(): HandleTypes {
-    return HandleTypes.ROTATE
+  get type(): HandleType {
+    return HandleType.CUSTOM3
   }
 
   /**
@@ -80,6 +83,10 @@ export default class LabelRotateHandle extends BaseClass(IHandle) implements IHa
    */
   get cursor(): Cursor {
     return Cursor.CROSSHAIR
+  }
+
+  get tag(): any {
+    return null
   }
 
   /**
@@ -98,13 +105,13 @@ export default class LabelRotateHandle extends BaseClass(IHandle) implements IHa
     // start using the calculated dummy bounds
     this.emulate = true
     const labelLayout = this.label.layout
-    this.dummyLocation = labelLayout.anchorLocation
+    this.dummyLocation = labelLayout.anchor
     this.up = labelLayout.upVector
 
-    this.rotationCenter = labelLayout.orientedRectangleCenter
+    this.rotationCenter = labelLayout.center
     const canvasComponent = context.canvasComponent
     if (canvasComponent !== null) {
-      this.rotationIndicator = this.createAngleIndicator(canvasComponent)
+      this.createAngleIndicator(canvasComponent)
     }
   }
 
@@ -112,17 +119,11 @@ export default class LabelRotateHandle extends BaseClass(IHandle) implements IHa
    * Creates the indicator that shows the rotation angle of the label during drag.
    */
   private createAngleIndicator(canvasComponent: CanvasComponent) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const handle = this
-    const indicatorInstaller = new (class extends OrientedRectangleIndicatorInstaller {
-      getRectangle(item: any | null): OrientedRectangle {
-        return handle.getCurrentLabelLayout()
-      }
-    })()
-    return indicatorInstaller.addCanvasObject(
-      canvasComponent.canvasContext,
-      canvasComponent.selectionGroup,
-      this
+    const renderer = new RotatedRectangleRenderer()
+    this.rotationIndicator = canvasComponent.renderTree.createElement(
+      canvasComponent.renderTree.selectionGroup,
+      this,
+      renderer
     )
   }
 
@@ -158,7 +159,9 @@ export default class LabelRotateHandle extends BaseClass(IHandle) implements IHa
     // use the normal label bounds if the drag gesture is over
     this.emulate = false
     // remove the visual size indicator
-    this.rotationIndicator?.remove()
+    if (this.rotationIndicator) {
+      context.canvasComponent?.renderTree.remove(this.rotationIndicator)
+    }
     this.rotationIndicator = null
   }
 
@@ -172,9 +175,9 @@ export default class LabelRotateHandle extends BaseClass(IHandle) implements IHa
     const graph = context.graph
     if (graph !== null) {
       const model = this.label.layoutParameter.model
-      const finder = model.lookup(ILabelModelParameterFinder.$class)
+      const finder = model.getContext(this.label).lookup(ILabelModelParameterFinder)
       if (finder !== null) {
-        const param = finder.findBestParameter(this.label, model, this.getCurrentLabelLayout())
+        const param = finder.findBestParameter(this.getCurrentLabelLayout())
         graph.setLabelLayoutParameter(this.label, param)
       }
     }
@@ -206,7 +209,7 @@ export default class LabelRotateHandle extends BaseClass(IHandle) implements IHa
 /**
  * Represents the new resize point for the given handler.
  */
-class LabelRotateHandleLivePoint extends BaseClass(IPoint) implements IPoint {
+class LabelRotateHandleLivePoint extends BaseClass(IPoint) {
   /**
    * Creates a new point for the given handle.
    * @param handle The given handle
@@ -237,13 +240,48 @@ class LabelRotateHandleLivePoint extends BaseClass(IPoint) implements IPoint {
   private getPositionInfo(): { offset: number; anchor: Point; preferredSize: Size; up: Point } {
     const preferredSize = this.handle.label.preferredSize
     const labelLayout = this.handle.label.layout
-    const anchor = this.handle.emulate ? this.handle.dummyLocation : labelLayout.anchorLocation
+    const anchor = this.handle.emulate ? this.handle.dummyLocation : labelLayout.anchor
     const up = this.handle.emulate ? this.handle.up : labelLayout.upVector
-    // calculate the location of the handle from the anchor, the size and the orientation
-    const offset =
-      this.handle.inputModeContext !== null
-        ? 20 / this.handle.inputModeContext.canvasComponent!.zoom
-        : 20
-    return { anchor, up, preferredSize, offset }
+    return { anchor, up, preferredSize, offset: 20 }
+  }
+}
+
+class RotatedRectangleRenderer extends OrientedRectangleRendererBase<LabelRotateHandle> {
+  createIndicatorElement(
+    _context: IRenderContext,
+    size: ISize,
+    _renderTag: LabelRotateHandle
+  ): SVGElement {
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.setAttribute('width', size.width.toString())
+    rect.setAttribute('height', size.height.toString())
+    rect.setAttribute('stroke', 'rgb(56,67,79)')
+    rect.setAttribute('stroke-width', '2')
+    rect.setAttribute('fill', 'none')
+    return rect
+  }
+
+  updateIndicatorElement(
+    _context: IRenderContext,
+    size: ISize,
+    _renderTag: LabelRotateHandle,
+    oldSvgElement: SVGElement
+  ): SVGElement {
+    oldSvgElement.setAttribute('width', size.width.toString())
+    oldSvgElement.setAttribute('height', size.height.toString())
+    return oldSvgElement
+  }
+
+  getLayout(renderTag: LabelRotateHandle): IOrientedRectangle {
+    const handleLocation = renderTag.dummyLocation
+    const handleSize = renderTag.label.preferredSize
+    return new OrientedRectangle(
+      handleLocation.x,
+      handleLocation.y,
+      handleSize.width,
+      handleSize.height,
+      renderTag.up.x,
+      renderTag.up.y
+    )
   }
 }

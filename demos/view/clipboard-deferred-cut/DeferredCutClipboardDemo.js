@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,71 +26,53 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Class,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  ICommand,
   IGraph,
   INode,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   LayoutExecutor,
   License,
   OrthogonalLayout,
   Size
-} from 'yfiles'
-
-import { setClipboardStyles } from './ClipboardStyles.js'
-import { DeferredCutClipboard } from './DeferredCutClipboard.js'
-import { ContextMenu } from 'demo-utils/ContextMenu'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/yfiles'
+import { setClipboardStyles } from './ClipboardStyles'
+import { DeferredCutClipboard } from './DeferredCutClipboard'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-
-/** @type {GraphComponent} */
 let graphComponent
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
-
   // add the graph component
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // set the styles and create a sample graph
   initializeGraph(graphComponent.graph)
   setClipboardStyles(graphComponent.graph)
-
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
-
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new OrthogonalLayout({ gridSpacing: 30 }))
-  graphComponent.fitGraphBounds()
-
+  void graphComponent.fitGraphBounds()
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
-
   /**
    * Creates nodes and edges according to the given data.
    */
   function buildGraph(graph, graphData) {
     const graphBuilder = new GraphBuilder(graph)
-
     graphBuilder
       .createNodesSource({
         data: graphData.nodeList,
         id: (item) => item.id
       })
       .nodeCreator.createLabelBinding((item) => item.label)
-
     graphBuilder
       .createEdgesSource({
         data: graphData.edgeList,
@@ -98,7 +80,6 @@ async function run() {
         targetId: (item) => item.target
       })
       .edgeCreator.createLabelBinding((item) => item.label)
-
     graphBuilder.buildGraph()
   }
   /**
@@ -109,74 +90,56 @@ async function run() {
   function initializeGraph(graph) {
     // set styles for this demo
     initDemoStyles(graph)
-
     // set sizes and locations specific for this demo
     graph.nodeDefaults.size = new Size(50, 50)
-
-    graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+    graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
   }
-
   // configure the clipboard itself
   const clipboard = new DeferredCutClipboard()
   // trigger a repaint after copy since copy removed the "marked for cut" mark from the elements
-  clipboard.addElementsCopiedListener((_) => graphComponent.invalidate())
+  clipboard.addEventListener('items-copied', () => graphComponent.invalidate())
   graphComponent.clipboard = clipboard
-
   // set up the input mode
   const mode = new GraphEditorInputMode()
   mode.marqueeSelectableItems = GraphItemTypes.NODE | GraphItemTypes.BEND
   graphComponent.inputMode = mode
   graphComponent.graph.undoEngineEnabled = true
-
   // for demonstration purposes we configure a context menu
   // to make it possible to paste to an arbitrary location
   configureContextMenu(graphComponent)
 }
-
 /**
  * Configures a context menu.
  * This is to provide the ability to paste graph elements to an arbitrary location.
  * Developers who want to know more about using context menus should look at the
  * contextmenu demo in the input folder.
- * @param {!GraphComponent} graphComponent
  */
 function configureContextMenu(graphComponent) {
   const inputMode = graphComponent.inputMode
-
-  const contextMenu = new ContextMenu(graphComponent)
-  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
-    if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
-      contextMenu.show(location)
+  inputMode.addEventListener('populate-item-context-menu', (evt) => {
+    if (evt.handled) {
+      return
     }
-  })
-  inputMode.addPopulateItemContextMenuListener((_, evt) => {
-    evt.showMenu = true
-    contextMenu.clearItems()
-
+    const inputMode = graphComponent.inputMode
     if (evt.item instanceof INode) {
-      if (!graphComponent.selection.selectedNodes.isSelected(evt.item)) {
+      if (!graphComponent.selection.nodes.includes(evt.item)) {
         graphComponent.selection.clear()
-        graphComponent.selection.selectedNodes.setSelected(evt.item, true)
+        graphComponent.selection.nodes.add(evt.item)
       }
     } else {
       graphComponent.selection.clear()
     }
-    if (graphComponent.selection.selectedNodes.size > 0) {
-      contextMenu.addMenuItem('Cut', () => ICommand.CUT.execute(null, graphComponent))
-      contextMenu.addMenuItem('Copy', () => ICommand.COPY.execute(null, graphComponent))
-      contextMenu.addMenuItem('Delete', () => ICommand.DELETE.execute(null, graphComponent))
+    if (graphComponent.selection.nodes.size > 0) {
+      evt.contextMenu = [
+        { label: 'Cut', action: () => inputMode.cut() },
+        { label: 'Copy', action: () => inputMode.copy() },
+        { label: 'Delete', action: () => inputMode.deleteSelection() }
+      ]
     } else {
-      contextMenu.addMenuItem('Paste', () =>
-        ICommand.PASTE.execute(evt.queryLocation, graphComponent)
-      )
+      evt.contextMenu = [
+        { label: 'Paste', action: () => inputMode.pasteAtLocation(evt.queryLocation) }
+      ]
     }
   })
-  inputMode.contextMenuInputMode.addCloseMenuListener(() => {
-    contextMenu.close()
-  })
-  contextMenu.onClosedCallback = () => {
-    inputMode.contextMenuInputMode.menuClosed()
-  }
 }
-
 run().then(finishLoading)

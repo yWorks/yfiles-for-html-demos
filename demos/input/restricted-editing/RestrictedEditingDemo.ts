@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,13 +31,15 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  IEdge,
   IGraph,
   License
-} from 'yfiles'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+} from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import SampleData from './resources/SampleData'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { EdgePositionHandler } from './EdgePositionHandler'
 
 /**
  * Bootstraps this demo.
@@ -47,8 +49,6 @@ async function run(): Promise<void> {
 
   // create the demo's graph component
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initially disable interactive editing
   configureUserInteraction(graphComponent)
 
@@ -59,7 +59,7 @@ async function run(): Promise<void> {
   createSampleGraph(graphComponent.graph)
 
   // center the demo's graph in the demo's visible area
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   // enable undo and redo
   graphComponent.graph.undoEngineEnabled = true
@@ -101,7 +101,7 @@ function createSampleGraph(graph: IGraph): void {
  * @param graphComponent the demo's main graph view.
  */
 function configureUserInteraction(graphComponent: GraphComponent): void {
-  const geim = new GraphEditorInputMode({
+  graphComponent.inputMode = new GraphEditorInputMode({
     allowAddLabel: false,
     allowAdjustGroupNodeSize: false,
     allowClipboardOperations: false,
@@ -124,12 +124,15 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
     // - node resizing
     // - edge reconnection
     // - bend movement
-    showHandleItems: GraphItemTypes.NONE
+    showHandleItems: GraphItemTypes.NONE,
+    moveSelectedItemsInputMode: { enabled: false },
+    moveUnselectedItemsInputMode: { enabled: false }
   })
-  geim.moveInputMode.enabled = false
-  geim.moveLabelInputMode.enabled = false
 
-  graphComponent.inputMode = geim
+  // register position handlers on edges so that they can be moved
+  graphComponent.graph.decorator.edges.positionHandler.addFactory(
+    (edge: IEdge) => new EdgePositionHandler(edge)
+  )
 }
 
 /**
@@ -151,8 +154,8 @@ function configureEditing(
     const geim = graphComponent.inputMode as GraphEditorInputMode
     allowEditing(geim, false)
     geim.showHandleItems = GraphItemTypes.BEND
-    geim.moveInputMode.enabled = true
-    geim.moveLabelInputMode.enabled = true
+    geim.moveSelectedItemsInputMode.enabled = true
+    geim.moveUnselectedItemsInputMode.enabled = true
   } else {
     allowEditing(graphComponent.inputMode as GraphEditorInputMode, true)
   }
@@ -185,8 +188,8 @@ function allowEditing(geim: GraphEditorInputMode, enabled: boolean): void {
   geim.deletableItems = enabled ? GraphItemTypes.ALL : GraphItemTypes.NONE
   geim.showHandleItems = enabled ? GraphItemTypes.ALL : GraphItemTypes.NONE
 
-  geim.moveInputMode.enabled = enabled
-  geim.moveLabelInputMode.enabled = enabled
+  geim.moveSelectedItemsInputMode.enabled = enabled
+  geim.moveUnselectedItemsInputMode.enabled = enabled
 }
 
 /**
@@ -194,7 +197,7 @@ function allowEditing(geim: GraphEditorInputMode, enabled: boolean): void {
  */
 function initializeUI(graphComponent: GraphComponent): void {
   const allowEditing = document.querySelector<HTMLSelectElement>('#allowed-editing-operations')!
-  allowEditing.addEventListener('change', (evt) =>
+  allowEditing.addEventListener('change', () =>
     configureEditing(graphComponent, allowEditing.value as 'none' | 'moving' | 'all')
   )
 }

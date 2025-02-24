@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
     <default>true</default>
   </key>
@@ -56,26 +56,26 @@
   <key id="d14" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
   <data key="d14">
     <y:SharedData>
-      <y:ExteriorLabelModel x:Key="1" Insets="5"/>
-      <y:CompositeLabelModelParameter x:Key="2">
-        <y:CompositeLabelModelParameter.Parameter>
-          <y:ExteriorLabelModelParameter Position="South" Model="{y:GraphMLReference 1}"/>
-        </y:CompositeLabelModelParameter.Parameter>
-        <y:CompositeLabelModelParameter.Model>
-          <y:CompositeLabelModel>
-            <y:CompositeLabelModel.LabelModels>
+      <yx:ExteriorNodeLabelModel x:Key="1" Margins="5"/>
+      <yx:CompositeLabelModelParameter x:Key="2">
+        <yx:CompositeLabelModelParameter.Parameter>
+          <yx:ExteriorNodeLabelModelParameter Position="Bottom" Model="{y:GraphMLReference 1}"/>
+        </yx:CompositeLabelModelParameter.Parameter>
+        <yx:CompositeLabelModelParameter.Model>
+          <yx:CompositeLabelModel>
+            <yx:CompositeLabelModel.Models>
               <y:GraphMLReference ResourceKey="1"/>
-              <y:InteriorLabelModel/>
-              <y:FreeNodeLabelModel/>
-            </y:CompositeLabelModel.LabelModels>
-          </y:CompositeLabelModel>
-        </y:CompositeLabelModelParameter.Model>
-      </y:CompositeLabelModelParameter>
-      <yjs:DefaultLabelStyle x:Key="3" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" textFill="BLACK">
-        <yjs:DefaultLabelStyle.font>
+              <yx:InteriorNodeLabelModel/>
+              <yx:FreeNodeLabelModel/>
+            </yx:CompositeLabelModel.Models>
+          </yx:CompositeLabelModel>
+        </yx:CompositeLabelModelParameter.Model>
+      </yx:CompositeLabelModelParameter>
+      <yjs:LabelStyle x:Key="3" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" textFill="BLACK">
+        <yjs:LabelStyle.font>
           <yjs:Font fontSize="12" fontFamily="'Arial'"/>
-        </yjs:DefaultLabelStyle.font>
-      </yjs:DefaultLabelStyle>
+        </yjs:LabelStyle.font>
+      </yjs:LabelStyle>
       <yjs:SolidColorFill x:Key="4" color="#FFBF360C"/>
       <yjs:SolidColorFill x:Key="5" color="#FF212121"/>
       <yjs:SolidColorFill x:Key="6" color="#FF212121"/>
@@ -2098,7 +2098,7 @@
     </node>
     <edge id="e0" source="n0" target="n2" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 4}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2113,7 +2113,7 @@
     </edge>
     <edge id="e1" source="n1" target="n3" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 5}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2128,7 +2128,7 @@
     </edge>
     <edge id="e2" source="n1" target="n4" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 6}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2143,7 +2143,7 @@
     </edge>
     <edge id="e3" source="n2" target="n5" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 7}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2158,7 +2158,7 @@
     </edge>
     <edge id="e4" source="n4" target="n8" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 8}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2173,7 +2173,7 @@
     </edge>
     <edge id="e5" source="n4" target="n9" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 9}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2188,7 +2188,7 @@
     </edge>
     <edge id="e6" source="n10" target="n12" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 10}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2203,7 +2203,7 @@
     </edge>
     <edge id="e7" source="n12" target="n13" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 11}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2218,7 +2218,7 @@
     </edge>
     <edge id="e8" source="n10" target="n11" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 12}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2233,7 +2233,7 @@
     </edge>
     <edge id="e9" source="n11" target="n14" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 13}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2248,7 +2248,7 @@
     </edge>
     <edge id="e10" source="n11" target="n15" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 14}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2263,7 +2263,7 @@
     </edge>
     <edge id="e11" source="n13" target="n16" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 15}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2278,7 +2278,7 @@
     </edge>
     <edge id="e12" source="n13" target="n17" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 16}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2293,7 +2293,7 @@
     </edge>
     <edge id="e13" source="n14" target="n18" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 17}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2308,7 +2308,7 @@
     </edge>
     <edge id="e14" source="n14" target="n19" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 18}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2323,7 +2323,7 @@
     </edge>
     <edge id="e15" source="n19" target="n20" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 19}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2338,7 +2338,7 @@
     </edge>
     <edge id="e16" source="n19" target="n21" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 20}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2353,7 +2353,7 @@
     </edge>
     <edge id="e17" source="n17" target="n22" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 21}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2368,7 +2368,7 @@
     </edge>
     <edge id="e18" source="n17" target="n23" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 22}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2383,7 +2383,7 @@
     </edge>
     <edge id="e19" source="n24" target="n26" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 23}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2398,7 +2398,7 @@
     </edge>
     <edge id="e20" source="n26" target="n27" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 24}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2413,7 +2413,7 @@
     </edge>
     <edge id="e21" source="n24" target="n25" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 25}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2428,7 +2428,7 @@
     </edge>
     <edge id="e22" source="n25" target="n28" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 26}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2443,7 +2443,7 @@
     </edge>
     <edge id="e23" source="n25" target="n29" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 27}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2458,7 +2458,7 @@
     </edge>
     <edge id="e24" source="n27" target="n30" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 28}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2473,7 +2473,7 @@
     </edge>
     <edge id="e25" source="n27" target="n31" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 29}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2488,7 +2488,7 @@
     </edge>
     <edge id="e26" source="n28" target="n32" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 30}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2503,7 +2503,7 @@
     </edge>
     <edge id="e27" source="n28" target="n33" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 31}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2518,7 +2518,7 @@
     </edge>
     <edge id="e28" source="n31" target="n34" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 32}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2533,7 +2533,7 @@
     </edge>
     <edge id="e29" source="n31" target="n35" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 33}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2548,7 +2548,7 @@
     </edge>
     <edge id="e30" source="n36" target="n38" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="#FF880E4F" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2563,7 +2563,7 @@
     </edge>
     <edge id="e31" source="n38" target="n39" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="#FF880E4F" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2578,7 +2578,7 @@
     </edge>
     <edge id="e32" source="n36" target="n37" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="#FF880E4F" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2593,7 +2593,7 @@
     </edge>
     <edge id="e33" source="n37" target="n40" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="#FF880E4F" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2608,7 +2608,7 @@
     </edge>
     <edge id="e34" source="n37" target="n41" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="#FF880E4F" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2623,7 +2623,7 @@
     </edge>
     <edge id="e35" source="n39" target="n42" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="#FF880E4F" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2638,7 +2638,7 @@
     </edge>
     <edge id="e36" source="n40" target="n43" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="#FF880E4F" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2653,7 +2653,7 @@
     </edge>
     <edge id="e37" source="n40" target="n44" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="#FF880E4F" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2668,7 +2668,7 @@
     </edge>
     <edge id="e38" source="n44" target="n45" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="#FF880E4F" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2683,7 +2683,7 @@
     </edge>
     <edge id="e39" source="n44" target="n46" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="#FF880E4F" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2698,7 +2698,7 @@
     </edge>
     <edge id="e40" source="n47" target="n49" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 34}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2713,7 +2713,7 @@
     </edge>
     <edge id="e41" source="n49" target="n50" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 35}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2728,7 +2728,7 @@
     </edge>
     <edge id="e42" source="n47" target="n48" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 36}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2743,7 +2743,7 @@
     </edge>
     <edge id="e43" source="n48" target="n51" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 37}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2758,7 +2758,7 @@
     </edge>
     <edge id="e44" source="n50" target="n52" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 38}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2773,7 +2773,7 @@
     </edge>
     <edge id="e45" source="n50" target="n53" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 39}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2788,7 +2788,7 @@
     </edge>
     <edge id="e46" source="n51" target="n54" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 40}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2803,7 +2803,7 @@
     </edge>
     <edge id="e47" source="n51" target="n55" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 41}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2818,7 +2818,7 @@
     </edge>
     <edge id="e48" source="n53" target="n56" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 42}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2833,7 +2833,7 @@
     </edge>
     <edge id="e49" source="n53" target="n57" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 43}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2848,7 +2848,7 @@
     </edge>
     <edge id="e50" source="n58" target="n60" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 44}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2863,7 +2863,7 @@
     </edge>
     <edge id="e51" source="n60" target="n61" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 45}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2878,7 +2878,7 @@
     </edge>
     <edge id="e52" source="n58" target="n59" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 46}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2893,7 +2893,7 @@
     </edge>
     <edge id="e53" source="n59" target="n62" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 47}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2908,7 +2908,7 @@
     </edge>
     <edge id="e54" source="n59" target="n63" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 48}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2923,7 +2923,7 @@
     </edge>
     <edge id="e55" source="n61" target="n64" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 49}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2938,7 +2938,7 @@
     </edge>
     <edge id="e56" source="n61" target="n65" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 50}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2953,7 +2953,7 @@
     </edge>
     <edge id="e57" source="n62" target="n66" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 51}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2968,7 +2968,7 @@
     </edge>
     <edge id="e58" source="n62" target="n67" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 52}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2983,7 +2983,7 @@
     </edge>
     <edge id="e59" source="n67" target="n68" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 53}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -2998,7 +2998,7 @@
     </edge>
     <edge id="e60" source="n67" target="n69" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 54}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3013,7 +3013,7 @@
     </edge>
     <edge id="e61" source="n65" target="n70" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 55}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3028,7 +3028,7 @@
     </edge>
     <edge id="e62" source="n65" target="n71" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 56}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3043,7 +3043,7 @@
     </edge>
     <edge id="e63" source="n72" target="n74" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 57}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3058,7 +3058,7 @@
     </edge>
     <edge id="e64" source="n74" target="n75" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 58}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3073,7 +3073,7 @@
     </edge>
     <edge id="e65" source="n72" target="n73" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 59}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3088,7 +3088,7 @@
     </edge>
     <edge id="e66" source="n73" target="n76" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 60}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3103,7 +3103,7 @@
     </edge>
     <edge id="e67" source="n73" target="n77" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 61}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3118,7 +3118,7 @@
     </edge>
     <edge id="e68" source="n75" target="n78" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 62}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3133,7 +3133,7 @@
     </edge>
     <edge id="e69" source="n75" target="n79" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 63}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3148,7 +3148,7 @@
     </edge>
     <edge id="e70" source="n79" target="n80" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 64}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3163,7 +3163,7 @@
     </edge>
     <edge id="e71" source="n79" target="n81" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 65}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3178,7 +3178,7 @@
     </edge>
     <edge id="e72" source="n82" target="n84" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 66}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3193,7 +3193,7 @@
     </edge>
     <edge id="e73" source="n83" target="n85" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 67}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3208,7 +3208,7 @@
     </edge>
     <edge id="e74" source="n83" target="n86" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 68}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3223,7 +3223,7 @@
     </edge>
     <edge id="e75" source="n84" target="n87" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 69}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3238,7 +3238,7 @@
     </edge>
     <edge id="e76" source="n86" target="n90" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 70}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3253,7 +3253,7 @@
     </edge>
     <edge id="e77" source="n86" target="n91" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 71}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3268,7 +3268,7 @@
     </edge>
     <edge id="e78" source="n93" target="n96" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 72}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3283,7 +3283,7 @@
     </edge>
     <edge id="e79" source="n92" target="n97" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 73}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3298,7 +3298,7 @@
     </edge>
     <edge id="e80" source="n92" target="n98" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 74}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3313,7 +3313,7 @@
     </edge>
     <edge id="e81" source="n95" target="n99" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 75}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3328,7 +3328,7 @@
     </edge>
     <edge id="e82" source="n95" target="n100" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 76}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3343,7 +3343,7 @@
     </edge>
     <edge id="e83" source="n101" target="n102" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 77}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3358,7 +3358,7 @@
     </edge>
     <edge id="e84" source="n101" target="n103" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 78}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3373,7 +3373,7 @@
     </edge>
     <edge id="e85" source="n104" target="n105" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 79}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3388,7 +3388,7 @@
     </edge>
     <edge id="e86" source="n104" target="n106" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 80}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3403,7 +3403,7 @@
     </edge>
     <edge id="e87" source="n107" target="n108" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 81}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3418,7 +3418,7 @@
     </edge>
     <edge id="e88" source="n107" target="n109" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 82}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3433,7 +3433,7 @@
     </edge>
     <edge id="e89" source="n110" target="n111" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 83}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3448,7 +3448,7 @@
     </edge>
     <edge id="e90" source="n110" target="n112" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 84}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3463,7 +3463,7 @@
     </edge>
     <edge id="e91" source="n113" target="n114" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 85}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3478,7 +3478,7 @@
     </edge>
     <edge id="e92" source="n113" target="n115" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 86}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3493,7 +3493,7 @@
     </edge>
     <edge id="e93" source="n59" target="n117" sourceport="p3" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 87}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3508,7 +3508,7 @@
     </edge>
     <edge id="e94" source="n59" target="n118" sourceport="p4" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 88}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3523,7 +3523,7 @@
     </edge>
     <edge id="e95" source="n59" target="n116" sourceport="p5" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 89}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3538,7 +3538,7 @@
     </edge>
     <edge id="e96" source="n119" target="n120" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 90}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3553,7 +3553,7 @@
     </edge>
     <edge id="e97" source="n119" target="n121" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 91}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3568,7 +3568,7 @@
     </edge>
     <edge id="e98" source="n120" target="n122" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 92}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3583,7 +3583,7 @@
     </edge>
     <edge id="e99" source="n120" target="n123" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 93}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3598,7 +3598,7 @@
     </edge>
     <edge id="e100" source="n123" target="n124" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 94}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3613,7 +3613,7 @@
     </edge>
     <edge id="e101" source="n123" target="n125" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 95}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3628,7 +3628,7 @@
     </edge>
     <edge id="e102" source="n126" target="n127" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 96}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3643,7 +3643,7 @@
     </edge>
     <edge id="e103" source="n126" target="n128" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 97}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3658,7 +3658,7 @@
     </edge>
     <edge id="e104" source="n127" target="n129" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 98}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3673,7 +3673,7 @@
     </edge>
     <edge id="e105" source="n127" target="n130" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 99}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3688,7 +3688,7 @@
     </edge>
     <edge id="e106" source="n130" target="n131" sourceport="p1" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 100}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3703,7 +3703,7 @@
     </edge>
     <edge id="e107" source="n130" target="n132" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 101}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3718,7 +3718,7 @@
     </edge>
     <edge id="e108" source="n10" target="n119" sourceport="p2" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 102}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3733,7 +3733,7 @@
     </edge>
     <edge id="e109" source="n10" target="n126" sourceport="p3" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 103}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3748,7 +3748,7 @@
     </edge>
     <edge id="e110" source="n133" target="n134" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 104}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3763,7 +3763,7 @@
     </edge>
     <edge id="e111" source="n135" target="n136" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 105}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3778,7 +3778,7 @@
     </edge>
     <edge id="e112" source="n137" target="n138" sourceport="p0" targetport="p0">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 106}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3793,7 +3793,7 @@
     </edge>
     <edge id="e113" source="n57" target="n32" sourceport="p1" targetport="p1">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 107}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>
@@ -3808,7 +3808,7 @@
     </edge>
     <edge id="e114" source="n55" target="n34" sourceport="p1" targetport="p1">
       <data key="d8">
-        <yjs:PolylineEdgeStyle>
+        <yjs:PolylineEdgeStyle orthogonalEditing="true">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="{y:GraphMLReference 108}" miterLimit="1.45" thickness="1.5"/>
           </yjs:PolylineEdgeStyle.stroke>

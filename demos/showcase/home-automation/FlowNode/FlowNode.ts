@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FreeNodePortLocationModel, GraphComponent, IGraph, INode, Point, SimpleNode } from 'yfiles'
+import {
+  FreeNodePortLocationModel,
+  GraphComponent,
+  IGraph,
+  INode,
+  Point,
+  SimpleNode
+} from '@yfiles/yfiles'
 import { type FlowNodePortProperties } from './FlowNodePort'
 import { FlowNodePortStyle } from './FlowNodePortStyle'
 import { FlowNodeStyle } from './FlowNodeStyle'
@@ -92,15 +99,15 @@ const portStyle = new FlowNodePortStyle()
  * Modifies node-related graph configuration.
  */
 export function configureFlowNodes({ graph, selection }: GraphComponent): void {
-  graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
-  graph.decorator.nodeDecorator.highlightDecorator.hideImplementation()
-  graph.decorator.nodeDecorator.selectionDecorator.hideImplementation()
+  graph.decorator.nodes.focusRenderer.hide()
+  graph.decorator.nodes.highlightRenderer.hide()
+  graph.decorator.nodes.selectionRenderer.hide()
 
   // When a new node appears in the graph, its ports are added automatically. This is done
   // in reaction to `NodeCreated` event so that nodes added from the DnD palette, which doesn't
   // handle nodes with ports correctly, end up having their ports properly configured as soon as
   // they're dropped onto the main graph.
-  graph.addNodeCreatedListener((_sender, event) => {
+  graph.addEventListener('node-created', (event) => {
     const node = event.item
     if (!isFlowNode(node)) {
       return
@@ -111,7 +118,7 @@ export function configureFlowNodes({ graph, selection }: GraphComponent): void {
         graph.addPort({
           owner: node,
           style: portStyle,
-          locationParameter: FreeNodePortLocationModel.NODE_LEFT_ANCHORED,
+          locationParameter: FreeNodePortLocationModel.LEFT,
           tag: {
             side: 'left'
           } as FlowNodePortProperties
@@ -120,25 +127,25 @@ export function configureFlowNodes({ graph, selection }: GraphComponent): void {
         graph.addPort({
           owner: node,
           style: portStyle,
-          locationParameter: FreeNodePortLocationModel.NODE_RIGHT_ANCHORED,
+          locationParameter: FreeNodePortLocationModel.RIGHT,
           tag: {
             side: 'right'
           } as FlowNodePortProperties
         })
     }
     const label = node.tag.label
-    const duplicateLabelNodes = graph.nodes.filter(node => node.tag.label.startsWith(label))
+    const duplicateLabelNodes = graph.nodes.filter((node) => node.tag.label.startsWith(label))
     if (!!label && duplicateLabelNodes.size > 1) {
       const lastLabelNumber = duplicateLabelNodes
         .toArray()
-        .map(node => node.tag.label.split('#')[1] || '0')
-        .map(value => Number.parseInt(value))
+        .map((node) => node.tag.label.split('#')[1] || '0')
+        .map((value) => Number.parseInt(value))
         .sort((a, b) => b - a)[0]
       node.tag = { ...node.tag, label: label + ` #${lastLabelNumber + 1}` }
     }
 
     selection.clear()
-    selection.setSelected(node, true)
+    selection.add(node)
   })
 }
 

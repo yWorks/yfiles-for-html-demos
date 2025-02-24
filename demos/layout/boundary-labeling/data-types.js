@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,37 +29,26 @@
 /**
  * Describes the type of nodes used in this demo.
  */
-export /**
- * @readonly
- * @enum {number}
- */
-const NodeType = {
-  POINT: 0,
-  LABEL: 1
-}
-
-/**
- * The data that describes a point in this demo.
- * @typedef {Object} PointData
- * @property {object} layout
- * @property {string} label
- * @property {NodeType} [type]
- */
-
+export var MultiPageNodeType
+;(function (MultiPageNodeType) {
+  /**
+   * The nodes that represent the points on image.
+   */
+  MultiPageNodeType[(MultiPageNodeType['POINT'] = 0)] = 'POINT'
+  /**
+   * The nodes that represent the label associated with the point.
+   */
+  MultiPageNodeType[(MultiPageNodeType['LABEL'] = 1)] = 'LABEL'
+})(MultiPageNodeType || (MultiPageNodeType = {}))
 /**
  * Returns the data associated with the given node.
- * @param {!INode} node
- * @returns {!PointData}
  */
 export function getPointData(node) {
   return node.tag
 }
-
 /**
  * Returns whether the given node represents a label node.
- * @param {!INode} node
- * @returns {boolean}
  */
 export function isLabel(node) {
-  return getPointData(node).type === NodeType.LABEL
+  return getPointData(node).type === MultiPageNodeType.LABEL
 }

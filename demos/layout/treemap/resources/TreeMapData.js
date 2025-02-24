@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -669,8 +669,8 @@ export default {
       color: 'rgb(0, 102, 121)'
     },
     {
-      groupTag: 'yFiles-for-HTML/demos/showcase/hierarchicgrouping',
-      label: 'hierarchicgrouping',
+      groupTag: 'yFiles-for-HTML/demos/showcase/hierarchicalnesting',
+      label: 'hierarchicalnesting',
       parentGroupRef: 'yFiles-for-HTML/demos/showcase',
       isGroup: true,
       size: 30297,
@@ -917,8 +917,8 @@ export default {
       color: 'rgb(0, 113, 112)'
     },
     {
-      groupTag: 'yFiles-for-HTML/demos/layout/incrementalhierarchic',
-      label: 'incrementalhierarchic',
+      groupTag: 'yFiles-for-HTML/demos/layout/incrementalhierarchical',
+      label: 'incrementalhierarchical',
       parentGroupRef: 'yFiles-for-HTML/demos/layout',
       isGroup: true,
       size: 48484,
@@ -1839,7 +1839,6 @@ export default {
       size: 55304312
     }
   ],
-
   nodesSource: [
     {
       id: 'yFiles-for-HTML/README.html',
@@ -3601,23 +3600,23 @@ export default {
       color: 'rgb(0, 163, 193)'
     },
     {
-      id: 'yFiles-for-HTML/demos/showcase/hierarchicgrouping/HierarchicGroupingDemo.js',
-      label: 'HierarchicGroupingDemo.js\n(22.21kb)',
-      groupRef: 'yFiles-for-HTML/demos/showcase/hierarchicgrouping',
+      id: 'yFiles-for-HTML/demos/showcase/hierarchicalnesting/HierarchicalNestingDemo.js',
+      label: 'HierarchicalNestingDemo.js\n(22.21kb)',
+      groupRef: 'yFiles-for-HTML/demos/showcase/hierarchicalnesting',
       size: '22213',
       color: 'rgb(0, 209, 150)'
     },
     {
-      id: 'yFiles-for-HTML/demos/showcase/hierarchicgrouping/LayoutCoordinatesStage.js',
+      id: 'yFiles-for-HTML/demos/showcase/hierarchicalnesting/LayoutCoordinatesStage.js',
       label: 'LayoutCoordinatesStage.js\n(3.63kb)',
-      groupRef: 'yFiles-for-HTML/demos/showcase/hierarchicgrouping',
+      groupRef: 'yFiles-for-HTML/demos/showcase/hierarchicalnesting',
       size: '3635',
       color: 'rgb(0, 209, 150)'
     },
     {
-      id: 'yFiles-for-HTML/demos/showcase/hierarchicgrouping/index.html',
+      id: 'yFiles-for-HTML/demos/showcase/hierarchicalnesting/index.html',
       label: 'index.html\n(4.45kb)',
-      groupRef: 'yFiles-for-HTML/demos/showcase/hierarchicgrouping',
+      groupRef: 'yFiles-for-HTML/demos/showcase/hierarchicalnesting',
       size: '4449',
       color: 'rgb(0, 209, 150)'
     },
@@ -4686,37 +4685,37 @@ export default {
       color: 'rgb(0, 210, 188)'
     },
     {
-      id: 'yFiles-for-HTML/demos/layout/incrementalhierarchic/IncrementalHierarchicDemo.js',
-      label: 'IncrementalHierarchicDemo.js\n(17.73kb)',
-      groupRef: 'yFiles-for-HTML/demos/layout/incrementalhierarchic',
+      id: 'yFiles-for-HTML/demos/layout/incrementalhierarchical/IncrementalHierarchicalDemo.js',
+      label: 'IncrementalHierarchicalDemo.js\n(17.73kb)',
+      groupRef: 'yFiles-for-HTML/demos/layout/incrementalhierarchical',
       size: '17725',
       color: 'rgb(0, 134, 184)'
     },
     {
-      id: 'yFiles-for-HTML/demos/layout/incrementalhierarchic/LayerPositionHandler.js',
+      id: 'yFiles-for-HTML/demos/layout/incrementalhierarchical/LayerPositionHandler.js',
       label: 'LayerPositionHandler.js\n(6.46kb)',
-      groupRef: 'yFiles-for-HTML/demos/layout/incrementalhierarchic',
+      groupRef: 'yFiles-for-HTML/demos/layout/incrementalhierarchical',
       size: '6465',
       color: 'rgb(0, 134, 184)'
     },
     {
-      id: 'yFiles-for-HTML/demos/layout/incrementalhierarchic/LayerVisual.js',
+      id: 'yFiles-for-HTML/demos/layout/incrementalhierarchical/LayerVisual.js',
       label: 'LayerVisual.js\n(10.31kb)',
-      groupRef: 'yFiles-for-HTML/demos/layout/incrementalhierarchic',
+      groupRef: 'yFiles-for-HTML/demos/layout/incrementalhierarchical',
       size: '10313',
       color: 'rgb(0, 134, 184)'
     },
     {
-      id: 'yFiles-for-HTML/demos/layout/incrementalhierarchic/PortConstraintBendHandle.js',
+      id: 'yFiles-for-HTML/demos/layout/incrementalhierarchical/PortConstraintBendHandle.js',
       label: 'PortConstraintBendHandle.js\n(9.94kb)',
-      groupRef: 'yFiles-for-HTML/demos/layout/incrementalhierarchic',
+      groupRef: 'yFiles-for-HTML/demos/layout/incrementalhierarchical',
       size: '9937',
       color: 'rgb(0, 134, 184)'
     },
     {
-      id: 'yFiles-for-HTML/demos/layout/incrementalhierarchic/index.html',
+      id: 'yFiles-for-HTML/demos/layout/incrementalhierarchical/index.html',
       label: 'index.html\n(4.04kb)',
-      groupRef: 'yFiles-for-HTML/demos/layout/incrementalhierarchic',
+      groupRef: 'yFiles-for-HTML/demos/layout/incrementalhierarchical',
       size: '4044',
       color: 'rgb(0, 134, 184)'
     },
@@ -4742,8 +4741,8 @@ export default {
       color: 'rgb(0, 111, 186)'
     },
     {
-      id: 'yFiles-for-HTML/demos/layout/layoutstyles/BalloonLayoutConfig.js',
-      label: 'BalloonLayoutConfig.js\n(40.01kb)',
+      id: 'yFiles-for-HTML/demos/layout/layoutstyles/RadialTreeLayoutConfig.js',
+      label: 'RadialTreeLayoutConfig.js\n(40.01kb)',
       groupRef: 'yFiles-for-HTML/demos/layout/layoutstyles',
       size: '40011',
       color: 'rgb(0, 147, 157)'
@@ -4777,8 +4776,8 @@ export default {
       color: 'rgb(0, 147, 157)'
     },
     {
-      id: 'yFiles-for-HTML/demos/layout/layoutstyles/GraphTransformerConfig.js',
-      label: 'GraphTransformerConfig.js\n(16.43kb)',
+      id: 'yFiles-for-HTML/demos/layout/layoutstyles/LayoutTransformationsConfig.js',
+      label: 'LayoutTransformationsConfig.js\n(16.43kb)',
       groupRef: 'yFiles-for-HTML/demos/layout/layoutstyles',
       size: '16432',
       color: 'rgb(0, 147, 157)'
@@ -4889,8 +4888,8 @@ export default {
       color: 'rgb(0, 147, 157)'
     },
     {
-      id: 'yFiles-for-HTML/demos/layout/layoutstyles/resources/balloon.graphml',
-      label: 'balloon.graphml\n(21.07kb)',
+      id: 'yFiles-for-HTML/demos/layout/layoutstyles/resources/radial-tree.graphml',
+      label: 'radial-tree.graphml\n(21.07kb)',
       groupRef: 'yFiles-for-HTML/demos/layout/layoutstyles/resources',
       size: '21073',
       color: 'rgb(0, 118, 155)'
@@ -11292,39 +11291,40 @@ export default {
       color: 'rgb(0, 216, 218)'
     },
     {
-      id: 'yFiles-for-HTML/doc/api/assets/y.layout.hierarchic.HierarchicGroupLayouter.example-grouped.2927a936.gif',
-      label: 'y.layout.hierarchic.HierarchicGroupLayouter.example-grouped.2927a936.gif\n(6.34kb)',
+      id: 'yFiles-for-HTML/doc/api/assets/y.layout.hierarchical.HierarchicalGroupLayouter.example-grouped.2927a936.gif',
+      label:
+        'y.layout.hierarchical.HierarchicalGroupLayouter.example-grouped.2927a936.gif\n(6.34kb)',
       groupRef: 'yFiles-for-HTML/doc/api/assets',
       size: '6337',
       color: 'rgb(0, 216, 218)'
     },
     {
-      id: 'yFiles-for-HTML/doc/api/assets/y.layout.hierarchic.HierarchicLayouter.f0892e93.gif',
-      label: 'y.layout.hierarchic.HierarchicLayouter.f0892e93.gif\n(3.76kb)',
+      id: 'yFiles-for-HTML/doc/api/assets/y.layout.hierarchical.HierarchicalLayouter.f0892e93.gif',
+      label: 'y.layout.hierarchical.HierarchicalLayouter.f0892e93.gif\n(3.76kb)',
       groupRef: 'yFiles-for-HTML/doc/api/assets',
       size: '3757',
       color: 'rgb(0, 216, 218)'
     },
     {
-      id: 'yFiles-for-HTML/doc/api/assets/y.layout.hierarchic.incremental.IncrementalHierarchicLayouter.general.d75a89ac.gif',
+      id: 'yFiles-for-HTML/doc/api/assets/y.layout.hierarchical.incremental.IncrementalHierarchicalLayouter.general.d75a89ac.gif',
       label:
-        'y.layout.hierarchic.incremental.IncrementalHierarchicLayouter.general.d75a89ac.gif\n(9.21kb)',
+        'y.layout.hierarchical.incremental.IncrementalHierarchicalLayouter.general.d75a89ac.gif\n(9.21kb)',
       groupRef: 'yFiles-for-HTML/doc/api/assets',
       size: '9209',
       color: 'rgb(0, 216, 218)'
     },
     {
-      id: 'yFiles-for-HTML/doc/api/assets/y.layout.hierarchic.incremental.IncrementalHierarchicLayouter.ports1.12b34d4b.gif',
+      id: 'yFiles-for-HTML/doc/api/assets/y.layout.hierarchical.incremental.IncrementalHierarchicalLayouter.ports1.12b34d4b.gif',
       label:
-        'y.layout.hierarchic.incremental.IncrementalHierarchicLayouter.ports1.12b34d4b.gif\n(7.56kb)',
+        'y.layout.hierarchical.incremental.IncrementalHierarchicalLayouter.ports1.12b34d4b.gif\n(7.56kb)',
       groupRef: 'yFiles-for-HTML/doc/api/assets',
       size: '7563',
       color: 'rgb(0, 216, 218)'
     },
     {
-      id: 'yFiles-for-HTML/doc/api/assets/y.layout.hierarchic.incremental.IncrementalHierarchicLayouter.swimlaneex1.38af45a7.gif',
+      id: 'yFiles-for-HTML/doc/api/assets/y.layout.hierarchical.incremental.IncrementalHierarchicalLayouter.swimlaneex1.38af45a7.gif',
       label:
-        'y.layout.hierarchic.incremental.IncrementalHierarchicLayouter.swimlaneex1.38af45a7.gif\n(6.85kb)',
+        'y.layout.hierarchical.incremental.IncrementalHierarchicalLayouter.swimlaneex1.38af45a7.gif\n(6.85kb)',
       groupRef: 'yFiles-for-HTML/doc/api/assets',
       size: '6851',
       color: 'rgb(0, 216, 218)'
@@ -11463,8 +11463,8 @@ export default {
       color: 'rgb(0, 216, 218)'
     },
     {
-      id: 'yFiles-for-HTML/doc/api/assets/y.layout.tree.BalloonLayouter.5725dc79.gif',
-      label: 'y.layout.tree.BalloonLayouter.5725dc79.gif\n(6.96kb)',
+      id: 'yFiles-for-HTML/doc/api/assets/y.layout.tree.RadialTreeLayouter.5725dc79.gif',
+      label: 'y.layout.tree.RadialTreeLayouter.5725dc79.gif\n(6.96kb)',
       groupRef: 'yFiles-for-HTML/doc/api/assets',
       size: '6962',
       color: 'rgb(0, 216, 218)'
@@ -11792,8 +11792,8 @@ export default {
       color: 'rgb(0, 161, 179)'
     },
     {
-      id: 'yFiles-for-HTML/lib/yfiles/impl/layout-hierarchic.js',
-      label: 'layout-hierarchic.js\n(741.50kb)',
+      id: 'yFiles-for-HTML/lib/yfiles/impl/layout-hierarchical.js',
+      label: 'layout-hierarchical.js\n(741.50kb)',
       groupRef: 'yFiles-for-HTML/lib/yfiles/impl',
       size: '741501',
       color: 'rgb(0, 161, 179)'
@@ -11876,8 +11876,8 @@ export default {
       color: 'rgb(0, 167, 212)'
     },
     {
-      id: 'yFiles-for-HTML/lib/yfiles/layout-hierarchic.js',
-      label: 'layout-hierarchic.js\n(1.09kb)',
+      id: 'yFiles-for-HTML/lib/yfiles/layout-hierarchical.js',
+      label: 'layout-hierarchical.js\n(1.09kb)',
       groupRef: 'yFiles-for-HTML/lib/umd/yfiles',
       size: '1090',
       color: 'rgb(0, 167, 212)'

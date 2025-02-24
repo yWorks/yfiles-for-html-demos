@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 02 Creating Graph Elements - Tutorial: Basic Features
 
-# Creating Graph Elements
+<img src="../../../doc/demo-thumbnails/tutorial-basic-features-graph-element-creation.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/02-graph-element-creation/).
 
 ## How to create a graph programmatically
 
@@ -51,10 +53,7 @@ Edges always start and end at ports. In the above example, where we only specifi
 
 ```
 // Create a port in the center of the node layout
-const port1AtNode1 = graph.addPort(
-  node1,
-  FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-)
+const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.CENTER)
 
 // Create a port at the middle of the left border
 // The location is interpreted as absolute coordinates

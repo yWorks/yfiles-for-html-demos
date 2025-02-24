@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,6 @@
  * This is ONLY required if you want to export Cyrillic or Hiragana characters. jsPDF supports the
  * most common fonts out of the box. However, to register other custom fonts, please see
  * https://github.com/MrRio/jsPDF#use-of-unicode-characters--utf-8
- * @returns {!Promise.<Array.<Awaited.<CustomFontDescriptor>>>}
  */
 export async function loadExternalFonts() {
   const externalFonts = [
@@ -59,12 +58,6 @@ export async function loadExternalFonts() {
     })
   )
 }
-
-/**
- * @param {!ArrayBuffer} bytes
- * @param {!'application/octet-stream'} [type=application/octet-stream]
- * @returns {!Promise.<string>}
- */
 async function bytesToBase64DataUrl(bytes, type = 'application/octet-stream') {
   return await new Promise((resolve, reject) => {
     const reader = new FileReader()

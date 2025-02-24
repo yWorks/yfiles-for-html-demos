@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,77 +26,32 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode } from 'yfiles'
-/**
- * Type describing entities in business data.
- * @typedef {Object} BaseEntity
- * @property {number} id
- * @property {string} type
- * @property {(string|object)} info
- */
-
-/**
- * Type for importing business data containing strings as enter- and exit-dates.
- * @typedef {*} ImportEntity
- */
-
-/**
- * Type for node data during runtime containing Date-type as enter and exit dates to easier comparison of dates.
- * @typedef {*} Entity
- */
-
-/**
- * Type describing connections between entities
- * @typedef {Object} Connection
- * @property {number} from
- * @property {number} to
- * @property {string} [type]
- * @property {boolean} [fraud]
- */
-
-/**
- * Type for a whole set of business data.
- * @typedef {Object} BusinessData
- * @property {Array.<ImportEntity>} nodesSource
- * @property {Array.<Connection>} edgesSource
- */
-
+import { INode } from '@yfiles/yfiles'
 /**
  * Type-safe getter for entity data stored in the node tag.
- * @param {!INode} node
- * @returns {!Entity}
  */
 export function getEntityData(node) {
   return node.tag
 }
-
 /**
  * Sets the given entity data to the given node.
- * @param {!INode} node
- * @param {!Entity} entity
  */
 export function setEntityData(node, entity) {
   node.tag = entity
 }
-
 /**
  * Returns the information stored in the business data for the given node.
  * This is necessary for showing this information in the properties panel
  * and in the tooltip.
- * @param {!INode} node
- * @returns {!(string|object)}
  */
 export function getEntityInfo(node) {
   return getEntityData(node).info
 }
-
 /**
  * Returns an object containing all the information stored in the business data
  * for the given node
  * This is necessary for showing this information in the properties panel
  * and in the tooltip.
- * @param {!INode} node
- * @returns {!Record.<string,string>}
  */
 export function getInfoMap(node) {
   const entity = getEntityData(node)
@@ -118,56 +73,37 @@ export function getInfoMap(node) {
     if (entity.exit.length > 0) {
       records['Exit Date'] = entity.exit[0].toString()
     }
-
     return records
   }
 }
-
 /**
  * Type-safe getter for connection data stored in the edge tag.
- * @param {!IEdge} edge
- * @returns {!Connection}
  */
 export function getConnectionData(edge) {
   return edge.tag
 }
-
 /**
  * Sets the given connection data to the given edge.
- * @param {!IEdge} edge
- * @param {!Connection} connection
  */
 export function setConnectionData(edge, connection) {
   edge.tag = connection
 }
-
 /**
  * Returns the type of the connection stored in the business data for the given edge.
  * If no type exists in the data, it returns 'untyped'.
- * @param {!IEdge} edge
- * @returns {!string}
  */
 export function getEdgeType(edge) {
   return getConnectionData(edge).type ?? 'untyped'
 }
-
 /**
  * Returns whether an item is tagged as fraud.
- * @param {!(INode|IEdge)} item
- * @returns {boolean}
  */
 export function isFraud(item) {
   const tag = item instanceof INode ? getEntityData(item) : getConnectionData(item)
   return tag.fraud ?? false
 }
-
-/**
- * @param {!Entity} item
- * @returns {!TimeEntry}
- */
 export function getTimeEntry(item) {
   const ni = item
-
   if (ni.enter.length === 1 && ni.exit.length === 1) {
     return { start: ni.enter[0].getTime(), end: ni.exit[0].getTime() }
   } else {
@@ -177,12 +113,6 @@ export function getTimeEntry(item) {
     }))
   }
 }
-
-/**
- * @param {!IGraph} graph
- * @param {!Entity} entityData
- * @returns {?INode}
- */
 export function getNode(graph, entityData) {
   return graph.nodes.find((node) => {
     const data = getEntityData(node)

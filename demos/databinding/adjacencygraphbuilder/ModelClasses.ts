@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,7 +30,12 @@
  * Non-UI model classes for the adjacency graph builder demo
  */
 
-import { AdjacencyGraphBuilder, AdjacencyNodesSource, StringTemplateNodeStyle } from 'yfiles'
+import { AdjacencyGraphBuilder, AdjacencyNodesSource } from '@yfiles/yfiles'
+
+import { LitNodeStyle, type LitNodeStyleRenderFunction } from '@yfiles/demo-utils/LitNodeStyle'
+// @ts-ignore Import via URL
+// eslint-disable-next-line import/no-unresolved
+import { nothing, svg } from 'https://unpkg.com/lit-html@2.8.0?module'
 
 /**
  * Defines an adjacency node source consisting of data and bindings
@@ -82,13 +87,23 @@ export class AdjacencyNodesSourceDefinitionBuilderConnector {
       this.nodesSource.idProvider = null
     }
     try {
-      this.nodesSource.nodeCreator.defaults.style = new StringTemplateNodeStyle(
-        this.sourceDefinition.template
+      this.nodesSource.nodeCreator.defaults.style = new LitNodeStyle(
+        this.createRenderFunction(this.sourceDefinition.template)
       )
     } catch (e) {
       throw new Error(`Evaluating the template failed: ${e as Error}`)
     }
     this.graphBuilder.setData(this.nodesSource, parseData(this.sourceDefinition.data))
+  }
+
+  createRenderFunction(template: string): LitNodeStyleRenderFunction<any> {
+    return new Function(
+      'const svg = arguments[0]; const nothing = arguments[1]; const renderFunction = ' +
+        '({layout, tag}) => svg`\n' +
+        template +
+        '`' +
+        '\n return renderFunction'
+    )(svg, nothing)
   }
 
   reset(): void {

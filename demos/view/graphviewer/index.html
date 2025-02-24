@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Graph Viewer Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -49,8 +49,6 @@
         max-height: 200px;
       }
     </style>
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -74,8 +72,11 @@
     </header>
 
     <div class="demo-page__toolbar">
-      <button data-command="OPEN"></button>
-
+      <button
+        id="open-file-button"
+        title="Open a GraphML file"
+        class="demo-icon-yIconOpen labeled"
+      ></button>
       <span class="demo-separator"></span>
       <button data-command="INCREASE_ZOOM"></button>
       <button data-command="ZOOM_ORIGINAL"></button>
@@ -125,7 +126,7 @@
           </li>
           <li>
             Write a term in the search box and see how nodes that contain the specific term are
-            highlighted. Press Enter to focus on these specific nodes.
+            highlighted. Press <kbd>Enter</kbd> to focus on these specific nodes.
           </li>
           <li>
             Change the focused node either by clicking on it or navigating with the keyboard arrow

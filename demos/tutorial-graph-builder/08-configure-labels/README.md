@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 08 Configure Labels - Tutorial: Graph Builder
 
-# Configure label styles and placement
+<img src="../../../doc/demo-thumbnails/tutorial-graph-builder-configure-labels.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/08-configure-labels/).
 
 In this tutorial step, you will learn how to configure [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) to place the labels of the graph elements at a desired position and configure their style.
 
@@ -69,7 +71,7 @@ The label placement can be defined either using a _default_ configuration or usi
 A default placement will apply to all labels of the [LabelsSource](https://docs.yworks.com/yfileshtml/#/api/LabelsSource) for which no other placement is specified. In this example, as a default, we place the labels at the center of the node as follows:
 
 ```
-typeLabelCreator.defaults.layoutParameter = InteriorLabelModel.CENTER
+typeLabelCreator.defaults.layoutParameter = InteriorNodeLabelModel.CENTER
 ```
 
 In the case where you want to determine the label position based on specific properties of the data, you can use a [layout parameter provider](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-layoutParameterProvider) which will provide the information about the desired label placement.
@@ -79,17 +81,17 @@ In this example, we want to create two labels for each node. The first label wil
 ```
 // position the label on the top of the node
 nameLabelCreator.layoutParameterProvider = (): ILabelModelParameter =>
-  InteriorStretchLabelModel.NORTH
+  StretchNodeLabelModel.TOP
 ```
 
 ### Label styles
 
 Similar to node/edge styling, there exist three ways to style labels. Specifically, you can set _defaults_, _style_ _bindings_ and _style_ _providers_ on the [LabelCreator](https://docs.yworks.com/yfileshtml/#/api/LabelCreator).
 
-In our example, we will first create a default style for all labels for which we will not set a specific style. More precisely, we use the [DefaultLabelStyle](https://docs.yworks.com/yfileshtml/#/api/DefaultLabelStyle) and align the text to the `center` of the node.
+In our example, we will first create a default style for all labels for which we will not set a specific style. More precisely, we use the [LabelStyle](https://docs.yworks.com/yfileshtml/#/api/LabelStyle) and align the text to the `center` of the node.
 
 ```
-nameLabelCreator.defaults.style = new DefaultLabelStyle({
+nameLabelCreator.defaults.style = new LabelStyle({
   horizontalTextAlignment: 'center'
 })
 ```
@@ -111,16 +113,16 @@ nameLabelCreator.defaults.shareStyleInstance = false
 // create a provider that will assign a new style, based on the type property
 nameLabelCreator.styleProvider = (data): ILabelStyle => {
   if (data.type === 'Corporation') {
-    return new DefaultLabelStyle({
+    return new LabelStyle({
       backgroundFill: orange,
       horizontalTextAlignment: 'center'
     })
   } else {
     return new IconLabelStyle({
-      icon,
+      href: icon,
       iconSize: new Size(14, 14),
-      iconPlacement: InteriorLabelModel.WEST,
-      wrapped: new DefaultLabelStyle({
+      iconPlacement: InteriorNodeLabelModel.LEFT,
+      wrappedStyle: new LabelStyle({
         backgroundFill: pink,
         horizontalTextAlignment: 'center'
       })
@@ -153,7 +155,7 @@ Following a similar approach, we can configure the edge labels. In this example,
 edgeLabelCreator.layoutParameterProvider = (): ILabelModelParameter =>
   new EdgePathLabelModel({
     autoRotation: false
-  }).createDefaultParameter()
+  }).createRatioParameter()
 
 // configure its style
 edgeLabelCreator.defaults.shareStyleInstance = false

@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>05 Label Placement - Tutorial: Basic Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -157,7 +155,7 @@
                   <pre
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Place node labels in the node center</span>
-graph.<span class="hljs-property">nodeDefaults</span>.<span class="hljs-property">labels</span>.<span class="hljs-property">layoutParameter</span> = <span class="hljs-title class_">InteriorLabelModel</span>.<span class="hljs-property">CENTER</span>
+graph.<span class="hljs-property">nodeDefaults</span>.<span class="hljs-property">labels</span>.<span class="hljs-property">layoutParameter</span> = <span class="hljs-title class_">InteriorNodeLabelModel</span>.<span class="hljs-property">CENTER</span>
 
 <span class="hljs-comment">// Use a rotated layout for edge labels</span>
 graph.<span class="hljs-property">edgeDefaults</span>.<span class="hljs-property">labels</span>.<span class="hljs-property">layoutParameter</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SmartEdgeLabelModel</span>({
@@ -190,18 +188,18 @@ graph.<span class="hljs-property">edgeDefaults</span>.<span class="hljs-property
                   <pre
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// InteriorStretchLabelModel stretches the label width or height to match the node size</span>
-<span class="hljs-keyword">const</span> interiorStretchModel = <span class="hljs-keyword">new</span> <span class="hljs-title class_">InteriorStretchLabelModel</span>({ <span class="hljs-attr">insets</span>: <span class="hljs-number">3</span> })
+<span class="hljs-keyword">const</span> interiorStretchModel = <span class="hljs-keyword">new</span> <span class="hljs-title class_">StretchNodeLabelModel</span>({ <span class="hljs-attr">padding</span>: <span class="hljs-number">3</span> })
 graph.<span class="hljs-title function_">setLabelLayoutParameter</span>(
   label1,
-  interiorStretchModel.<span class="hljs-title function_">createParameter</span>(<span class="hljs-string">&#x27;north&#x27;</span>)
+  interiorStretchModel.<span class="hljs-title function_">createParameter</span>(<span class="hljs-string">&#x27;top&#x27;</span>)
 )
 
 <span class="hljs-comment">// ExteriorLabelModel places the label on discrete positions outside the node bounds</span>
-<span class="hljs-keyword">const</span> exteriorLabelModel = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ExteriorLabelModel</span>({ <span class="hljs-attr">insets</span>: <span class="hljs-number">10</span> })
+<span class="hljs-keyword">const</span> exteriorLabelModel = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ExteriorNodeLabelModel</span>({ <span class="hljs-attr">margins</span>: <span class="hljs-number">10</span> })
 
 graph.<span class="hljs-title function_">setLabelLayoutParameter</span>(
   label2,
-  exteriorLabelModel.<span class="hljs-title function_">createParameter</span>(<span class="hljs-string">&#x27;south&#x27;</span>)
+  exteriorLabelModel.<span class="hljs-title function_">createParameter</span>(<span class="hljs-string">&#x27;bottom&#x27;</span>)
 )
 
 <span class="hljs-comment">// NinePositionsEdgeLabelModel provides a set of 9 predefined locations on an edge</span>
@@ -213,7 +211,7 @@ graph.<span class="hljs-title function_">setLabelLayoutParameter</span>(
               </div>
               <div class="paragraph">
                 <p>
-                  You can also take a look at the <a href="../../layout/nodelabelplacement/" target="_blank">Node Label Placement Demo</a> and the
+                  You can also take a look at the <a href="" target="_blank">node-label-placement</a> and the
                   <a href="../../layout/edgelabelplacement/" target="_blank">Edge Label Placement Demo</a> that show how to configure node and edge
                   labels.
                 </p>

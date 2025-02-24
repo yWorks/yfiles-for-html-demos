@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,26 +26,22 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph, IModelItem, IWriteContext, KeyType, OutputHandlerBase, YObject } from 'yfiles'
-
+import { IGraph, IModelItem, IWriteContext, KeyType, OutputHandlerBase } from '@yfiles/yfiles'
 /**
  * An output handler that writes primitive data types and ignores complex types.
  */
 export class SimpleOutputHandler extends OutputHandlerBase {
-  /**
-   * @param {!GraphMLProperty} property
-   * @param {!PropertiesPanel} propertiesPanel
-   */
+  property
+  propertiesPanel
   constructor(property, propertiesPanel) {
-    super(YObject.$class, YObject.$class, property.keyScope, property.name, property.type)
-    this.propertiesPanel = propertiesPanel
+    super(Object, Object, property.keyScope, property.name, property.type)
     this.property = property
+    this.propertiesPanel = propertiesPanel
     this.defaultExists = property.defaultExists
     if (property.defaultExists) {
       this.defaultValue = property.defaultValue
     }
   }
-
   /**
    * Writes the property data to xml.
    *
@@ -53,8 +49,6 @@ export class SimpleOutputHandler extends OutputHandlerBase {
    * cannot be serialized in a meaningful manner.
    *
    * @see Overrides {@link OutputHandlerBase.writeValueCore}
-   * @param {!IWriteContext} context
-   * @param {*} data
    */
   writeValueCore(context, data) {
     if (data !== null) {
@@ -82,13 +76,9 @@ export class SimpleOutputHandler extends OutputHandlerBase {
       }
     }
   }
-
   /**
    * Gets the value for the given key.
    * @see Overrides {@link OutputHandlerBase.getValue}
-   * @param {!IWriteContext} context
-   * @param {*} key
-   * @returns {*}
    */
   getValue(context, key) {
     if (key instanceof IModelItem) {

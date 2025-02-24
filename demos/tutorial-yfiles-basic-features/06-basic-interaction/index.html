@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>06 Basic Interaction - Tutorial: Basic Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -166,11 +164,12 @@
                   <li>
                     <p>
                       Click a single element with the mouse to select it.
-                      <code>Shift-click</code> the text to select the element&#8217;s label. To
-                      select multiple elements, either extend an existing selection by pressing
-                      <code>Ctrl</code> while clicking, or drag a selection rectangle over all graph
-                      elements that you want in your selection. <code>Ctrl+Α</code> selects all
-                      nodes and bends.
+                      <span class="keyseq"><kbd>Shift</kbd>+<kbd>click</kbd></span> the text to
+                      select the element&#8217;s label. To select multiple elements, either extend
+                      an existing selection by pressing <kbd>Ctrl</kbd> while clicking, or drag a
+                      selection rectangle over all graph elements that you want in your selection.
+                      <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>Α</kbd></span> selects all nodes and
+                      bends.
                     </p>
                   </li>
                   <li>
@@ -179,41 +178,53 @@
                     </p>
                   </li>
                   <li>
-                    <p>Drag a selected node or bend to move it.</p>
+                    <p>Drag a node or an edge bend to move it.</p>
+                  </li>
+                  <li>
+                    <p>Drag an edge at the desired bend location to create an edge bend.</p>
                   </li>
                   <li>
                     <p>
-                      Click and drag an edge at the desired bend location to create an edge bend.
-                    </p>
-                  </li>
-                  <li>
-                    <p>
-                      To create an edge, start dragging anywhere on the unselected source node and
-                      release the mouse button over the target node.
+                      To create an edge, hover over the source node with the mouse to show all
+                      available ports (by default, there is only a single port at the node center).
+                      Start dragging from the port and release the mouse button over the target
+                      node.
                     </p>
                   </li>
                   <li>
                     <p>
                       To create a bend during edge creation, release the left mouse button anywhere
-                      on an empty spot of the canvas while dragging. Click to create more bends.
+                      on an empty spot of the canvas while dragging, and click there to leave a
+                      bend. This can be repeated many times to create more bends.
                     </p>
                   </li>
                   <li>
                     <p>
-                      Nodes may specify multiple port locations (by default, there is only a single
-                      port at the node center). You can either create an edge directly between these
-                      ports, or later move the source or target to a different port (just select the
-                      edge and drag the edge&#8217;s source or target handle). Note that custom port
-                      locations are not part of this tutorial step, but are introduced later.
+                      Nodes may specify multiple port locations. You can either create an edge
+                      directly between these ports, or later move the source or target to a
+                      different port (just select the edge and drag the edge&#8217;s source or
+                      target handle). Note that custom port locations are not part of this tutorial
+                      step, but are introduced later.
                     </p>
                   </li>
                   <li>
                     <p>
-                      To create or edit a label, select a node or an edge and press <code>F2</code>.
+                      To create or edit a label, select a node or an edge and press <kbd>F2</kbd>,
+                      or double click on a node or an edge.
                     </p>
                   </li>
                   <li>
                     <p>Drag a selected label to move it to another location.</p>
+                  </li>
+                  <li>
+                    <p>Click anywhere on an empty spot of canvas to create a new node.</p>
+                  </li>
+                  <li>
+                    <p>
+                      Press <kbd>Delete</kbd> or <kbd>Backspace</kbd> to delete the selected nodes
+                      or edges. When a node is deleted, all edges that connect to it are also
+                      deleted.
+                    </p>
                   </li>
                 </ul>
               </div>

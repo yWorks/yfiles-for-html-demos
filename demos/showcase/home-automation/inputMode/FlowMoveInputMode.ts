@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,23 +26,23 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IEnumerable, INode, InputModeEventArgs, MoveInputMode } from 'yfiles'
+import { IEnumerable, INode, InputModeEventArgs, MoveInputMode } from '@yfiles/yfiles'
 import { recalculateEdges } from '../FlowEdge/FlowEdge'
 
-export class FlowMoveInputMode extends BaseClass(MoveInputMode) {
+export class FlowMoveInputMode extends MoveInputMode {
   protected onDragging(evt: InputModeEventArgs) {
     super.onDragging(evt)
 
     // Get graph component and affected nodes
-    const graph = this.inputModeContext?.graph
-    const nodes = this.affectedItems.filter(item => INode.isInstance(item)) as IEnumerable<INode>
+    const graph = this.parentInputModeContext?.graph
+    const nodes = this.affectedItems.filter((item) => item instanceof INode) as IEnumerable<INode>
 
     if (!graph) {
       return
     }
 
     // Iterate over affected nodes to access connected edges
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       recalculateEdges(graph, node)
     })
   }

@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 04 Preferred Label Size - Tutorial: Label Style Implementation
 
-# Preferred Label Size
+<img src="../../../doc/demo-thumbnails/tutorial-style-implementation-label-preferred-size.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-label/04-preferred-size/).
 
 [LabelStyleBase](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase) provides the abstract method [getPreferredSize](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#LabelStyleBase-method-getPreferredSize) that needs to be implemented to tell the framework how large the label prefers to be.
 
@@ -28,7 +30,7 @@ protected getPreferredSize(label: ILabel): Size {
 }
 ```
 
-To see the labels adjust to different text lengths, select a node or edge and press F2 to edit the label. Press Ctrl+Return to insert a line break.
+To see the labels adjust to different text lengths, select a node or edge and press F2 to edit the label. Press Ctrl+Enter to insert a line break.
 
 We also adjust the translate transform of the text element in `createVisual` to consider the padding vertically.
 

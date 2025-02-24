@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,12 +28,12 @@
  ***************************************************************************/
 import {
   GraphComponent,
-  IndicatorNodeStyleDecorator,
   INode,
+  NodeStyleIndicatorRenderer,
   ShapeNodeShape,
   ShapeNodeStyle
-} from 'yfiles'
-import { GraphSearch } from 'demo-utils/GraphSearch'
+} from '@yfiles/yfiles'
+import { GraphSearch } from '@yfiles/demo-utils/GraphSearch'
 
 let graphSearch: GraphSearch
 
@@ -44,13 +44,12 @@ const searchBox: HTMLInputElement = document.querySelector<HTMLInputElement>('#s
  */
 export function initializeGraphSearch(graphComponent: GraphComponent) {
   graphSearch = new TreeOfLifeGraphSearch(graphComponent)
-  graphSearch.highlightStyle = new IndicatorNodeStyleDecorator({
-    wrapped: new ShapeNodeStyle({
+  graphSearch.highlightRenderer = new NodeStyleIndicatorRenderer({
+    nodeStyle: new ShapeNodeStyle({
       shape: ShapeNodeShape.ROUND_RECTANGLE,
       stroke: '3px tomato',
       fill: null
-    }),
-    padding: 5
+    })
   })
   GraphSearch.registerEventListener(searchBox, graphSearch, getNodeLabelsForAutoComplete())
 }
@@ -67,7 +66,7 @@ export function resetGraphSearch() {
 function getNodeLabelsForAutoComplete() {
   return graphSearch.graphComponent.graph.nodeLabels
     .map((l) => l.text)
-    .orderBy((s) => s)
+    .toSorted()
     .toArray()
 }
 

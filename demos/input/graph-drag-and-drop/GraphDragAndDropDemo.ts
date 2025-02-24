@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,11 +29,11 @@
 /* eslint-disable jsdoc/check-param-names */
 import {
   CanvasComponent,
-  DefaultGraph,
   DragDropEffects,
   EdgePathLabelModel,
   EdgeSides,
   FoldingManager,
+  Graph,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
@@ -41,14 +41,14 @@ import {
   GridSnapTypes,
   IGraph,
   ILabelModelParameter,
-  Insets,
   License,
+  SnappableItems,
   SvgExport
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { GraphDropInputMode } from './GraphDropInputMode'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -58,10 +58,8 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // enable the option to expand and collapse group nodes
-  const masterGraph = new DefaultGraph()
+  const masterGraph = new Graph()
   const manager = new FoldingManager(masterGraph)
   graphComponent.graph = manager.createFoldingView().graph
 
@@ -84,14 +82,11 @@ async function run(): Promise<void> {
 function initializeInputModes(): void {
   // configure graph editor with snapping enabled
   const graphEditorInputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
     snapContext: new GraphSnapContext({
-      nodeToNodeDistance: 30,
+      snappableItems: SnappableItems.NODE | SnappableItems.EDGE,
+      nodeDistance: 30,
       nodeToEdgeDistance: 20,
-      snapOrthogonalMovement: false,
       snapDistance: 10,
-      snapSegmentsToSnapLines: true,
-      snapBendsToSnapLines: true,
       gridSnapType: GridSnapTypes.ALL
     })
   })
@@ -150,7 +145,7 @@ function createPaletteEntry(graph: IGraph): HTMLElement {
       dragPreview
     )
 
-    dragSource.addQueryContinueDragListener((src, evt) => {
+    dragSource.addEventListener('query-continue-drag', (evt) => {
       // hide the preview if there is currently to valid drop target
       if (evt.dropTarget) {
         dragPreview.classList.add('hidden')
@@ -160,24 +155,14 @@ function createPaletteEntry(graph: IGraph): HTMLElement {
     })
   }
 
-  // listen for mouse drag events
+  // listen for pointer events
   paletteEntry.addEventListener(
-    'mousedown',
+    'pointerdown',
     (event) => {
       startDrag()
       event.preventDefault()
     },
     false
-  )
-
-  // listen for touch drag events
-  paletteEntry.addEventListener(
-    'touchstart',
-    (event) => {
-      startDrag()
-      event.preventDefault()
-    },
-    { passive: false }
   )
 
   return paletteEntry
@@ -218,7 +203,7 @@ type GraphData = {
  */
 function toGraph(graphData: GraphData): IGraph {
   // enable the option to expand and collapse group nodes
-  const masterGraph = new DefaultGraph()
+  const masterGraph = new Graph()
   const manager = new FoldingManager(masterGraph)
   const graph = manager.createFoldingView().graph
 
@@ -272,9 +257,9 @@ function createLabelParameter({
 function toSvg(graph: IGraph): string {
   const exportComponent = new GraphComponent()
   exportComponent.graph = graph
-  exportComponent.updateContentRect(new Insets(5))
+  exportComponent.updateContentBounds(5)
 
-  const svgExport = new SvgExport(exportComponent.contentRect)
+  const svgExport = new SvgExport(exportComponent.contentBounds)
   svgExport.scale = 0.5
   const svg = svgExport.exportSvg(exportComponent)
   const svgString = SvgExport.exportSvgString(svg)

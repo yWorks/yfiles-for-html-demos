@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, License, ScrollBarVisibility } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { GraphComponent, License, ScrollBarVisibility } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import {
   configureMinimumSize,
   createSampleGraphIsVisible,
   initializeTutorialDefaults,
-  IsVisibleNodeStyleDescriptor,
+  IsVisibleNodeStyleRenderer,
   startNodeAnimation
 } from '../common'
 import { CustomNodeStyle } from './CustomNodeStyle'
@@ -44,19 +44,18 @@ const graphComponent = new GraphComponent('#graphComponent')
 
 initializeTutorialDefaults(graphComponent)
 graphComponent.horizontalScrollBarPolicy =
-  graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.NEVER
+  graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.HIDDEN
 
 graphComponent.graph.nodeDefaults.style = new CustomNodeStyle()
 
-graphComponent.graphModelManager.nodeDescriptor =
-  new IsVisibleNodeStyleDescriptor()
+graphComponent.graphModelManager.nodeRenderer = new IsVisibleNodeStyleRenderer()
 
 createSampleGraphIsVisible(graphComponent.graph, graphComponent.viewport)
 
 configureMinimumSize(graphComponent)
 
 // Move viewport so that the animation will move nodes outside and back inside
-graphComponent.updateContentRect()
+graphComponent.updateContentBounds()
 
 startNodeAnimation(graphComponent)
 finishLoading()

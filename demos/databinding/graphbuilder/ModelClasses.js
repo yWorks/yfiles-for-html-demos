@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,25 +29,22 @@
 /**
  * Non-UI model classes for the graph builder demo
  */
-
 import {
   Arrow,
   EdgesSource,
   GraphBuilder,
   NodesSource,
   PolylineEdgeStyle,
-  StringTemplateNodeStyle,
   Stroke
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
+import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
+// @ts-ignore Import via URL
+// eslint-disable-next-line import/no-unresolved
+import { nothing, svg } from 'https://unpkg.com/lit-html@2.8.0?module'
 /**
  * Abstract base class for node and edge source definitions
  */
-export class SourceDefinition {
-  name
-  data
-}
-
+export class SourceDefinition {}
 /**
  * Defines a node source consisting of data and bindings
  */
@@ -56,7 +53,6 @@ export class NodesSourceDefinition extends SourceDefinition {
   data
   idBinding
   template
-
   constructor() {
     super()
     this.name = ''
@@ -65,7 +61,6 @@ export class NodesSourceDefinition extends SourceDefinition {
     this.template = ''
   }
 }
-
 /**
  * Defines an edge source consisting of data and bindings
  */
@@ -80,7 +75,6 @@ export class EdgesSourceDefinition extends SourceDefinition {
   targetProvider
   labelTextProvider
   strokeProvider
-
   constructor() {
     super()
     this.name = ''
@@ -91,29 +85,10 @@ export class EdgesSourceDefinition extends SourceDefinition {
     this.strokeBinding = ''
   }
 }
-
 /**
  * Abstract base class for a SourceDefinition to GraphBuilder connector
  */
-export class SourceDefinitionBuilderConnector {
-  sourceDefinition
-
-  /**
-   * Updates/sets the sources' bindings and new data content
-   */
-  applyDefinition() {
-    throw new Error('abstract function call')
-  }
-
-  /**
-   * Sets the source data to the empty string. This is a workaround for the {@link GraphBuilder}
-   * not having a "remove" method for sources.
-   */
-  reset() {
-    throw new Error('abstract function call')
-  }
-}
-
+export class SourceDefinitionBuilderConnector {}
 /**
  * Connector for {@link NodesSource}s and {@link NodesSourceDefinition}s
  */
@@ -121,11 +96,10 @@ export class NodesSourceDefinitionBuilderConnector extends SourceDefinitionBuild
   sourceDefinition
   nodesSource
   graphBuilder
-
   /**
-   * @param {!NodesSourceDefinition} nodesSourceDefinition the {@link NodesSourceDefinition} to connect
-   * @param {!NodesSource} nodesSource the {@link NodesSource} to connect
-   * @param {!GraphBuilder} graphBuilder the {@link GraphBuilder} to set the updated data to
+   * @param nodesSourceDefinition the {@link NodesSourceDefinition} to connect
+   * @param nodesSource the {@link NodesSource} to connect
+   * @param graphBuilder the {@link GraphBuilder} to set the updated data to
    */
   constructor(nodesSourceDefinition, nodesSource, graphBuilder) {
     super()
@@ -133,7 +107,6 @@ export class NodesSourceDefinitionBuilderConnector extends SourceDefinitionBuild
     this.nodesSource = nodesSource
     this.graphBuilder = graphBuilder
   }
-
   /**
    * Updates/sets the sources' bindings and new data content
    */
@@ -144,21 +117,28 @@ export class NodesSourceDefinitionBuilderConnector extends SourceDefinitionBuild
       this.nodesSource.idProvider = null
     }
     try {
-      this.nodesSource.nodeCreator.defaults.style = new StringTemplateNodeStyle(
-        this.sourceDefinition.template
+      this.nodesSource.nodeCreator.defaults.style = new LitNodeStyle(
+        this.createRenderFunction(this.sourceDefinition.template)
       )
     } catch (e) {
       throw new Error(`Evaluating the template failed: ${e}`)
     }
     this.graphBuilder.setData(this.nodesSource, parseData(this.sourceDefinition.data))
   }
-
+  createRenderFunction(template) {
+    return new Function(
+      'const svg = arguments[0]; const nothing = arguments[1]; const renderFunction = ' +
+        '({layout, tag, selected, zoom}) => svg`\n' +
+        template +
+        '`' +
+        '\n return renderFunction'
+    )(svg, nothing)
+  }
   reset() {
     this.sourceDefinition.data = ''
     this.applyDefinition()
   }
 }
-
 /**
  * Connector for {@link EdgesSource}s and {@link EdgesSourceDefinition}s
  */
@@ -166,11 +146,10 @@ export class EdgesSourceDefinitionBuilderConnector extends SourceDefinitionBuild
   sourceDefinition
   edgesSource
   graphBuilder
-
   /**
-   * @param {!EdgesSourceDefinition} edgesSourceDefinition the {@link EdgesSourceDefinition} to connect
-   * @param {!EdgesSource} edgesSource the {@link EdgesSource} to connect
-   * @param {!GraphBuilder} graphBuilder the {@link GraphBuilder} to set the updated data to
+   * @param edgesSourceDefinition the {@link EdgesSourceDefinition} to connect
+   * @param edgesSource the {@link EdgesSource} to connect
+   * @param graphBuilder the {@link GraphBuilder} to set the updated data to
    */
   constructor(edgesSourceDefinition, edgesSource, graphBuilder) {
     super()
@@ -178,7 +157,6 @@ export class EdgesSourceDefinitionBuilderConnector extends SourceDefinitionBuild
     this.edgesSource = edgesSource
     this.graphBuilder = graphBuilder
   }
-
   /**
    * Updates/sets the sources' bindings and new data content
    */
@@ -189,26 +167,21 @@ export class EdgesSourceDefinitionBuilderConnector extends SourceDefinitionBuild
     this.sourceDefinition.strokeProvider = createBinding(this.sourceDefinition.strokeBinding)
     this.graphBuilder.setData(this.edgesSource, parseData(this.sourceDefinition.data))
   }
-
   reset() {
     this.sourceDefinition.data = ''
     this.applyDefinition()
   }
 }
-
 /**
  * flag to prevent error messages from being repeatedly displayed for each graph item
- * @type {boolean}
  */
 let bindingErrorCaught = false
-
 /**
  * Returns a binding for the given string.
  * If the parameter is a function definition, a function object is
  * returned. Otherwise, a binding is created using the parameter as the
  * property path.
- * @returns {!function} The source or target binding
- * @param {!string} bindingString
+ * @returns The source or target binding
  */
 function createBinding(bindingString) {
   if (bindingString.indexOf('function') >= 0 || bindingString.indexOf('=>') >= 0) {
@@ -216,9 +189,9 @@ function createBinding(bindingString) {
       // eval the string to get the function object
       // eslint-disable-next-line no-new-func,@typescript-eslint/no-implied-eval
       const func = new Function(`return (${bindingString})`)()
-
       // wrap the binding function with a function that catches and reports errors
       // that occur in the binding functions
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (dataItem) => {
         try {
           // eslint-disable-next-line no-useless-call
@@ -233,16 +206,17 @@ function createBinding(bindingString) {
         }
       }
     } catch (ignored) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (dataItem) => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
     }
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (dataItem) => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
 }
-
 /**
  * Parses the string entered by the user and returns the parsed object
- * @param {!string} data the data entered by the user
- * @returns {!Array.<*>} the parsed data
+ * @param data the data entered by the user
+ * @returns the parsed data
  */
 function parseData(data) {
   try {
@@ -260,39 +234,28 @@ function parseData(data) {
     throw new Error(`Evaluation of the source data failed: ${e}`)
   }
 }
-
 /**
  * Factory class for creation of {@link SourceDefinitionBuilderConnector}
  */
 export class SourcesFactory {
   graphBuilder
-
-  /**
-   * @param {!GraphBuilder} graphBuilder
-   */
   constructor(graphBuilder) {
     this.graphBuilder = graphBuilder
   }
-
   /**
    * Creates a {link NodesSourceDefinitionBuilderConnector}
-   * @param {!string} sourceName the name of the source
+   * @param sourceName the name of the source
    * @param nodesSourceDefinition the {@link NodesSourceDefinition} to use
-   * @param {!NodesSourceDefinition} [nodesSourceDefinition]
-   * @returns {!NodesSourceDefinitionBuilderConnector}
    */
   createNodesSourceConnector(sourceName, nodesSourceDefinition) {
     const definition =
       nodesSourceDefinition || SourcesFactory.createDefaultNodesSourceDefinition(sourceName)
-
-    const nodesSource = this.graphBuilder.createNodesSource([], null)
-
+    const nodesSource = this.graphBuilder.createNodesSource([], '')
     const nodeCreator = nodesSource.nodeCreator
-    nodeCreator.addNodeUpdatedListener((_, evt) => {
+    nodeCreator.addEventListener('node-updated', (evt) => {
       nodeCreator.updateTag(evt.graph, evt.item, evt.dataItem)
       evt.graph.setStyle(evt.item, nodeCreator.defaults.style)
     })
-
     const connector = new NodesSourceDefinitionBuilderConnector(
       definition,
       nodesSource,
@@ -301,18 +264,14 @@ export class SourcesFactory {
     connector.applyDefinition()
     return connector
   }
-
   /**
    * Creates a {link EdgesSourceDefinitionBuilderConnector}
-   * @param {!string} sourceName the name of the source
+   * @param sourceName the name of the source
    * @param edgesSourceDefinition the {@link EdgesSourceDefinition} to use
-   * @param {!EdgesSourceDefinition} [edgesSourceDefinition]
-   * @returns {!EdgesSourceDefinitionBuilderConnector}
    */
   createEdgesSourceConnector(sourceName, edgesSourceDefinition) {
     const definition =
       edgesSourceDefinition || SourcesFactory.createDefaultEdgesSourceDefinition(sourceName)
-
     const edgesSource = this.graphBuilder.createEdgesSource(
       [],
       (edgeDataItem) =>
@@ -320,26 +279,22 @@ export class SourcesFactory {
       (edgeDataItem) =>
         definition.targetProvider ? definition.targetProvider(edgeDataItem) : undefined
     )
-
     const edgeCreator = edgesSource.edgeCreator
     edgeCreator.defaults.style = new PolylineEdgeStyle({
       stroke: '1.5px #662b00',
-      targetArrow: new Arrow({ color: '#662b00', type: 'triangle' })
+      targetArrow: new Arrow({ fill: '#662b00', type: 'triangle' })
     })
     edgeCreator.defaults.shareStyleInstance = false
     edgeCreator.styleBindings.addBinding('stroke', (edgeDataItem) =>
       definition.strokeProvider ? definition.strokeProvider(edgeDataItem) : '#662b00'
     )
-
-    edgeCreator.addEdgeUpdatedListener((_, evt) => {
+    edgeCreator.addEventListener('edge-updated', (evt) => {
       edgeCreator.applyStyleBindings(evt.graph, evt.item, evt.dataItem)
       edgeCreator.updateLabels(evt.graph, evt.item, evt.dataItem)
     })
-
     edgeCreator.createLabelBinding((edgeDataItem) =>
       definition.labelTextProvider ? definition.labelTextProvider(edgeDataItem) : undefined
     )
-
     const connector = new EdgesSourceDefinitionBuilderConnector(
       definition,
       edgesSource,
@@ -348,12 +303,10 @@ export class SourcesFactory {
     connector.applyDefinition()
     return connector
   }
-
   /**
    * Creates an example {link NodesSourceDefinition} for use in a newly created nodes sources
    * {@link NodesSourceDefinitionBuilderConnector}
-   * @param {!string} sourceName the name of the source
-   * @returns {!NodesSourceDefinition}
+   * @param sourceName the name of the source
    */
   static createDefaultNodesSourceDefinition(sourceName) {
     const nodesSourceDefinition = new NodesSourceDefinition()
@@ -364,12 +317,9 @@ export class SourcesFactory {
 <text transform="translate(10 20)" data-content="{Binding}" style="font-size:18px; fill:#000;"/>`
     return nodesSourceDefinition
   }
-
   /**
    * Creates an example {link EdgesSourceDefinition} for use in a newly created edges sources
    * {@link EdgesSourceDefinitionBuilderConnector}
-   * @param {!string} sourceName
-   * @returns {!EdgesSourceDefinition}
    */
   static createDefaultEdgesSourceDefinition(sourceName) {
     const edgesSourceDefinition = new EdgesSourceDefinition()

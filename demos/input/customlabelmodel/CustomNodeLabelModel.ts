@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,8 +28,8 @@
  ***************************************************************************/
 import {
   BaseClass,
-  Class,
-  DefaultLabelModelParameterFinder,
+  type Constructor,
+  Graph,
   HandleDeserializationEventArgs,
   HandleSerializationEventArgs,
   IEnumerable,
@@ -44,7 +44,7 @@ import {
   List,
   OrientedRectangle,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Custom implementation of @{link ILabelModel} that provides either continuous or discrete label
@@ -54,10 +54,7 @@ import {
  * {@link ILabelModelParameterFinder} and {@link ILabelModelParameterProvider} are also
  * implemented.
  */
-export default class CustomNodeLabelModel
-  extends BaseClass(ILabelModel, ILabelModelParameterProvider, ILabelModelParameterFinder)
-  implements ILabelModel, ILabelModelParameterProvider, ILabelModelParameterFinder
-{
+export default class CustomNodeLabelModel extends BaseClass(ILabelModel) {
   /**
    * The number of discrete label positions around the border.
    *
@@ -69,23 +66,6 @@ export default class CustomNodeLabelModel
    * The offset of the label location, i.e., the distance to the node layout borders.
    */
   offset = 0
-
-  /**
-   * Returns instances of the support interfaces (which are actually the model instance itself)
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T>(type: Class<T>): T | null {
-    if (type === ILabelModelParameterProvider.$class && this.candidateCount > 0) {
-      // If we request a ILabelModelParameterProvider AND we use discrete label candidates, we return the label model
-      // itself, otherwise, null is returned, which means that continuous label positions are supported.
-      return this as unknown as T
-    } else if (type === ILabelModelParameterFinder.$class) {
-      // If we request a ILabelModelParameterProvider, we return the label model itself, so we can always retrieve a
-      // matching parameter for a given actual position.
-      return this as unknown as T
-    }
-    return null
-  }
 
   /**
    * Calculates for the given parameter the actual geometry of the specified label in absolute world coordinates.
@@ -101,27 +81,19 @@ export default class CustomNodeLabelModel
       // and the matching rotation of the label layout box itself.
       const center = ownerNode.layout.center
       const radius = Math.max(ownerNode.layout.width, ownerNode.layout.height) * 0.5
-      const ratio = layoutParameter.ratio
-      const angle = ratio * Math.PI * 2
+      const angle = layoutParameter.ratio * Math.PI * 2
       const x = Math.sin(angle)
       const y = Math.cos(angle)
       const up = new Point(-y, x)
       const result = new OrientedRectangle()
-      result.setUpVector(up.x, up.y)
-      result.resize(label.preferredSize)
+      result.setUpVector(up)
+      result.dynamicSize = label.preferredSize
       result.setCenter(
         center.add(up.multiply(this.offset + radius + label.preferredSize.height * 0.5))
       )
       return result
     }
     return IOrientedRectangle.EMPTY
-  }
-
-  /**
-   * Creates the default parameter for this model. Here it is located at 1/4 around the node's circumference.
-   */
-  createDefaultParameter(): ILabelModelParameter {
-    return this.createParameter(0.25)
   }
 
   /**
@@ -134,45 +106,8 @@ export default class CustomNodeLabelModel
   /**
    * Provides a lookup context for the given combination of label and parameter.
    */
-  getContext(label: ILabel, parameter: ILabelModelParameter): ILookup {
-    return ILookup.EMPTY
-  }
-
-  /**
-   * Returns an enumerator over a set of possible {@link ILabelModelParameter}
-   * instances that can be used for the given label and model.
-   *
-   * Since in {@link lookup}, we return an instance of this class only for positive {@link candidateCount}s,
-   * this method is only called for __discrete__ candidates.
-   */
-  getParameters(label: ILabel, model: ILabelModel): IEnumerable<ILabelModelParameter> {
-    const parameters = new List<ILabelModelParameter>()
-    for (let i = 0; i < this.candidateCount; ++i) {
-      parameters.add(new CustomNodeLabelModelParameter(this, i / this.candidateCount))
-    }
-    return parameters
-  }
-
-  /**
-   * Tries to find a parameter that best matches the given layout for the provided label instance.
-   *
-   * By default, this method is only called when __no discrete__ candidates are specified (i.e. here for
-   * {@link candidateCount} = 0. This implementation just calculates the rotation angle for the center of layout and
-   * creates a parameter for exactly this angle which {@link createParameter}.
-   */
-  findBestParameter(
-    label: ILabel,
-    model: ILabelModel,
-    layout: IOrientedRectangle
-  ): ILabelModelParameter {
-    const labelModel = model as CustomNodeLabelModel
-    const node = label.owner as INode
-    if (labelModel !== null && node !== null) {
-      const direction = layout.orientedRectangleCenter.subtract(node.layout.center).normalized
-      const ratio = Math.atan2(direction.y, -direction.x) / (Math.PI * 2)
-      return labelModel.createParameter(ratio)
-    }
-    return DefaultLabelModelParameterFinder.INSTANCE.findBestParameter(label, labelModel, layout)
+  getContext(label: ILabel): ILookup {
+    return new CustomNodeLabelModelLookup(label, this)
   }
 }
 
@@ -211,18 +146,9 @@ export class CustomNodeLabelModelParameter extends BaseClass(ILabelModelParamete
   }
 
   /**
-   * Predicate that checks if this parameter instance may be used with the given label.
-   *
-   * Our model/parameter implementation only makes sense when used for {@link INode}s.
-   */
-  public supports(label: ILabel): boolean {
-    return label.owner instanceof INode
-  }
-
-  /**
    * Serialization handler for graphML I/O.
    */
-  static serializationHandler = (source: any, args: HandleSerializationEventArgs): void => {
+  static serializationHandler = (args: HandleSerializationEventArgs): void => {
     // only serialize items that are of the specific type
     if (args.item instanceof CustomNodeLabelModelParameter) {
       const modelParameter = args.item
@@ -243,7 +169,7 @@ export class CustomNodeLabelModelParameter extends BaseClass(ILabelModelParamete
   /**
    * Deserialization handler for graphML I/O.
    */
-  static deserializationHandler = (source: any, args: HandleDeserializationEventArgs): void => {
+  static deserializationHandler = (args: HandleDeserializationEventArgs): void => {
     if (args.xmlNode instanceof Element) {
       const element = args.xmlNode
       if (
@@ -261,5 +187,73 @@ export class CustomNodeLabelModelParameter extends BaseClass(ILabelModelParamete
         )
       }
     }
+  }
+}
+
+class CustomNodeLabelModelLookup extends BaseClass(
+  ILookup,
+  ILabelModelParameterProvider,
+  ILabelModelParameterFinder
+) {
+  constructor(
+    private readonly label: ILabel,
+    private readonly model: CustomNodeLabelModel
+  ) {
+    super()
+    if (!Graph.hasOwner(label)) {
+      throw new Error('The label has no valid owner.')
+    }
+    if (!(label.owner instanceof INode)) {
+      throw new Error('This model supports only node labels.')
+    }
+  }
+
+  /**
+   * Returns instances of the support interfaces (which are actually the model instance itself)
+   */
+  lookup<T>(type: Constructor<any>): T | null {
+    if (type === ILabelModelParameterProvider && this.model.candidateCount > 0) {
+      // If we request a ILabelModelParameterProvider AND we use discrete label candidates, we return the label model
+      // itself, otherwise, null is returned, which means that continuous label positions are supported.
+      return this as unknown as T
+    } else if (type === ILabelModelParameterFinder) {
+      // If we request a ILabelModelParameterProvider, we return the label model itself, so we can always retrieve a
+      // matching parameter for a given actual position.
+      return this as unknown as T
+    }
+    return null
+  }
+
+  /**
+   * Returns an enumerator over a set of possible {@link ILabelModelParameter}
+   * instances that can be used for the given label and model.
+   *
+   * Since in {@link lookup}, we return an instance of this class only for positive {@link candidateCount}s,
+   * this method is only called for __discrete__ candidates.
+   */
+  getParameters(): IEnumerable<ILabelModelParameter> {
+    const parameters = new List<ILabelModelParameter>()
+    for (let i = 0; i < this.model.candidateCount; ++i) {
+      parameters.add(this.model.createParameter(i / this.model.candidateCount))
+    }
+    return parameters
+  }
+
+  /**
+   * Tries to find a parameter that best matches the given layout for the provided label instance.
+   *
+   * By default, this method is only called when __no discrete__ candidates are specified (i.e. here for
+   * {@link candidateCount} = 0. This implementation just calculates the rotation angle for the center of layout and
+   * creates a parameter for exactly this angle which {@link createParameter}.
+   */
+  findBestParameter(layout: IOrientedRectangle): ILabelModelParameter {
+    const direction = layout.center.subtract((this.label.owner as INode).layout.center).normalized
+    const ratio = Math.atan2(direction.y, -direction.x) / (Math.PI * 2)
+    return this.model.createParameter(ratio)
+  }
+
+  clone(): this {
+    // we have no mutable state, so return this.
+    return this
   }
 }

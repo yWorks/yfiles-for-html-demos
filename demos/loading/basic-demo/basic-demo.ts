@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, type IGraph, License } from 'yfiles'
+import { GraphComponent, GraphEditorInputMode, type IGraph, License } from '@yfiles/yfiles'
 
 // Register the license
 const response = await fetch('./license.json')
@@ -58,8 +58,8 @@ function createSampleGraph(graph: IGraph) {
 function addUIElements(graphComponent: GraphComponent) {
   const fitButton = document.createElement('button')
   fitButton.innerText = 'Fit content'
-  fitButton.addEventListener('click', () => {
-    graphComponent.fitGraphBounds()
+  fitButton.addEventListener('click', async () => {
+    await graphComponent.fitGraphBounds()
   })
 
   document.querySelector('#actionsArea')!.append(fitButton)

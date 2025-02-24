@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,10 +31,8 @@ import {
   ArrowType,
   BaseClass,
   BridgeManager,
-  Class,
   EdgeStyleBase,
   GeneralPath,
-  GraphMLAttribute,
   IArrow,
   ICanvasContext,
   IEdge,
@@ -47,54 +45,31 @@ import {
   MarkupExtension,
   Point,
   Rect,
-  SvgVisual,
-  TypeAttribute,
-  YBoolean,
-  YString
-} from 'yfiles'
-import { isColorSetName } from 'demo-resources/demo-styles'
-import { Sample2Arrow } from './Sample2Arrow.js'
-import { SVGNS } from './Namespaces.js'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
-
-/**
- * @typedef {Object} EdgeRenderDataCache
- * @property {GeneralPath} path
- * @property {number} obstacleHash
- */
-
-/**
- * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
- * @typedef {TaggedSvgVisual.<(SVGGElement|SVGPathElement),EdgeRenderDataCache>} Sample1EdgeStyleVisual
- */
-
+  SvgVisual
+} from '@yfiles/yfiles'
+import { isColorSetName } from '@yfiles/demo-resources/demo-styles'
+import { Sample2Arrow } from './Sample2Arrow'
+import { SVGNS } from './Namespaces'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 /**
  * A custom demo edge style whose colors match the given well-known CSS style.
  */
 export class Sample2EdgeStyle extends EdgeStyleBase {
+  cssClass
   hiddenArrow = new Arrow({
     type: ArrowType.NONE,
-    cropLength: 6,
-    scale: 1
+    cropLength: 6
   })
   fallbackArrow = new Sample2Arrow()
   markerDefsSupport = null
   showTargetArrows = true
   useMarkerArrows = true
-
-  /**
-   * @param {!(string|ColorSetName)} [cssClass]
-   */
   constructor(cssClass) {
     super()
     this.cssClass = cssClass
   }
-
   /**
    * Helper function to crop a {@link GeneralPath} by the length of the used arrow.
-   * @param {!IEdge} edge
-   * @param {?GeneralPath} gp
-   * @returns {?GeneralPath}
    */
   cropRenderedPath(edge, gp) {
     if (!gp) {
@@ -109,31 +84,23 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     }
     return this.cropPath(edge, IArrow.NONE, IArrow.NONE, gp)
   }
-
   /**
    * Creates the visual for an edge.
-   * @param {!IRenderContext} renderContext
-   * @param {!IEdge} edge
-   * @returns {?Sample1EdgeStyleVisual}
    */
   createVisual(renderContext, edge) {
     let renderPath = this.createPath(edge)
     // crop the path such that the arrow tip is at the end of the edge
     renderPath = this.cropRenderedPath(edge, renderPath)
-
     if (!renderPath || renderPath.getLength() === 0) {
       return null
     }
-
     const gp = this.createPathWithBridges(renderPath, renderContext)
-
     const path = document.createElementNS(SVGNS, 'path')
     const pathData = gp.size === 0 ? '' : gp.createSvgPathData()
     path.setAttribute('d', pathData)
     path.setAttribute('fill', 'none')
     path.setAttribute('stroke', '#662b00')
     path.setAttribute('stroke-width', '1.5px')
-
     if (this.cssClass) {
       if (isColorSetName(this.cssClass)) {
         path.setAttribute('class', `${this.cssClass}-edge`)
@@ -143,44 +110,34 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
         this.fallbackArrow.cssClass = `${this.cssClass}-arrow`
       }
     }
-
     if (!isBrowserWithBadMarkerSupport && this.useMarkerArrows) {
       this.showTargetArrows &&
         path.setAttribute(
           'marker-end',
           'url(#' + renderContext.getDefsId(this.createMarker()) + ')'
         )
-
       return SvgVisual.from(path, {
         path: renderPath,
         obstacleHash: this.getObstacleHash(renderContext)
       })
     }
-
     // use yFiles arrows instead of markers
     const container = document.createElementNS(SVGNS, 'g')
     container.appendChild(path)
     this.showTargetArrows &&
       super.addArrows(renderContext, container, edge, gp, IArrow.NONE, this.fallbackArrow)
-
     return SvgVisual.from(container, {
       path: renderPath,
       obstacleHash: this.getObstacleHash(renderContext)
     })
   }
-
   /**
    * Re-renders the edge by updating the old visual for improved performance.
-   * @param {!IRenderContext} renderContext
-   * @param {!Sample1EdgeStyleVisual} oldVisual
-   * @param {!IEdge} edge
-   * @returns {?Sample1EdgeStyleVisual}
    */
   updateVisual(renderContext, oldVisual, edge) {
     if (oldVisual === null) {
       return this.createVisual(renderContext, edge)
     }
-
     let renderPath = this.createPath(edge)
     if (!renderPath || renderPath.getLength() === 0) {
       return null
@@ -188,7 +145,6 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     // crop the path such that the arrow tip is at the end of the edge
     renderPath = this.cropRenderedPath(edge, renderPath)
     const newObstacleHash = this.getObstacleHash(renderContext)
-
     const path = oldVisual.svgElement
     const cache = oldVisual.tag
     if (
@@ -217,11 +173,8 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     }
     return oldVisual
   }
-
   /**
    * Creates the path of an edge.
-   * @param {!IEdge} edge
-   * @returns {?GeneralPath}
    */
   createPath(edge) {
     if (
@@ -267,38 +220,33 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     }
     return super.getPath(edge)
   }
-
   /**
    * Gets the path of the edge cropped at the node border.
-   * @param {!IEdge} edge
-   * @returns {?GeneralPath}
    */
   getPath(edge) {
     const path = this.createPath(edge)
     // crop path at node border
     return path ? this.cropPath(edge, IArrow.NONE, IArrow.NONE, path) : null
   }
-
   /**
    * Decorates a given path with bridges.
    * All work is delegated to the BridgeManager's addBridges() method.
-   * @param {!GeneralPath} path The path to decorate.
-   * @param {!IRenderContext} context The render context.
-   * @returns {!GeneralPath} A copy of the given path with bridges.
+   * @param path The path to decorate.
+   * @param context The render context.
+   * @returns A copy of the given path with bridges.
    */
   createPathWithBridges(path, context) {
     const manager = this.getBridgeManager(context)
     // if there is a bridge manager registered: use it to add the bridges to the path
     return manager === null ? path : manager.addBridges(context, path, null)
   }
-
   /**
    * Gets an obstacle hash from the context.
    * The obstacle hash changes if any obstacle has changed on the entire graph.
    * The hash is used to avoid re-rendering the edge if nothing has changed.
    * This method gets the obstacle hash from the BridgeManager.
-   * @param {!IRenderContext} context The context to get the obstacle hash for.
-   * @returns {number} A hash value which represents the state of the obstacles.
+   * @param context The context to get the obstacle hash for.
+   * @returns A hash value which represents the state of the obstacles.
    */
   getObstacleHash(context) {
     const manager = this.getBridgeManager(context)
@@ -306,22 +254,16 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     // get a hash value which represents the current state of the obstacles.
     return manager === null ? 42 : manager.getObstacleHash(context)
   }
-
   /**
    * Queries the context's lookup for a BridgeManager instance.
-   * @param {!IRenderContext} context The context to get the BridgeManager from.
-   * @returns {?BridgeManager} The BridgeManager for the given context instance or null
+   * @param context The context to get the BridgeManager from.
+   * @returns The BridgeManager for the given context instance or null
    */
   getBridgeManager(context) {
-    return context.lookup(BridgeManager.$class)
+    return context.lookup(BridgeManager)
   }
-
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
-   * @param {!IInputModeContext} inputModeContext
-   * @param {!Point} p
-   * @param {!IEdge} edge
-   * @returns {boolean}
    */
   isHit(inputModeContext, p, edge) {
     if (
@@ -336,13 +278,8 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     }
     return false
   }
-
   /**
    * Determines whether the edge visual is visible or not.
-   * @param {!ICanvasContext} canvasContext
-   * @param {!Rect} clip
-   * @param {!IEdge} edge
-   * @returns {boolean}
    */
   isVisible(canvasContext, clip, edge) {
     if (
@@ -363,7 +300,6 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
       if (clip.contains(spl)) {
         return true
       }
-
       let outerX, outerY
       if (edge.bends.size === 1) {
         const bendLocation = edge.bends.get(0).location
@@ -382,7 +318,6 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
           outerY = sourcePortLocation.y - 20
         }
       }
-
       // intersect the self-loop lines with the clip
       return (
         clip.intersectsLine(spl, new Point(outerX, spl.y)) ||
@@ -391,13 +326,10 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
         clip.intersectsLine(new Point(tpl.x, outerY), tpl)
       )
     }
-
     return super.isVisible(canvasContext, clip, edge)
   }
-
   /**
    * Helper method to let the svg marker be created by the {@link ISvgDefsCreator} implementation.
-   * @returns {!ISvgDefsCreator}
    */
   createMarker() {
     if (this.markerDefsSupport === null) {
@@ -405,38 +337,28 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     }
     return this.markerDefsSupport
   }
-
   /**
    * This implementation of the look-up provides a custom implementation of the
    * {@link IObstacleProvider} to support bridges.
    * @see Overrides {@link EdgeStyleBase.lookup}
-   * @param {!IEdge} edge
-   * @param {!Class} type
-   * @returns {!object}
    */
   lookup(edge, type) {
-    return type === IObstacleProvider.$class
+    return type === IObstacleProvider
       ? new BasicEdgeObstacleProvider(edge)
       : super.lookup(edge, type)
   }
 }
-
 /**
  * Manages the arrow markers as SVG definitions.
  */
 export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
-  /**
-   * @param {!(string|ColorSetName)} [cssClass]
-   */
+  cssClass
   constructor(cssClass) {
     super()
     this.cssClass = cssClass
   }
-
   /**
    * Creates a defs-element.
-   * @param {!ICanvasContext} context
-   * @returns {!SVGElement}
    */
   createDefsElement(context) {
     const markerElement = document.createElementNS(SVGNS, 'marker')
@@ -446,135 +368,72 @@ export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
     markerElement.setAttribute('markerWidth', '7')
     markerElement.setAttribute('markerHeight', '7')
     markerElement.setAttribute('orient', 'auto')
-
     const path = document.createElementNS(SVGNS, 'path')
     path.setAttribute('d', 'M 0 0 L 15 5 L 0 10 z')
     path.setAttribute('fill', '#662b00')
-
     if (this.cssClass) {
       const attribute = isColorSetName(this.cssClass)
         ? `${this.cssClass}-edge-arrow`
         : `${this.cssClass}-arrow`
       path.setAttribute('class', attribute)
     }
-
     markerElement.appendChild(path)
     return markerElement
   }
-
   /**
    * Checks if the specified node references the element represented by this object.
-   * @param {!ICanvasContext} context
-   * @param {!Node} node
-   * @param {!string} id
-   * @returns {boolean}
    */
   accept(context, node, id) {
     return node.nodeType !== Node.ELEMENT_NODE
       ? false
       : ISvgDefsCreator.isAttributeReference(node, 'marker-end', id)
   }
-
   /**
    * Updates the defs element with the current gradient data.
-   * @param {!ICanvasContext} context
-   * @param {!SVGElement} oldElement
    */
   updateDefsElement(context, oldElement) {
     // Nothing to do here
   }
 }
-
 /**
  * A custom {@link IObstacleProvider} implementation for {@link Sample2EdgeStyle}.
  */
 class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
-  /**
-   * @param {!IEdge} edge
-   */
+  edge
   constructor(edge) {
     super()
     this.edge = edge
   }
-
   /**
    * Returns this edge's path as obstacle.
-   * @returns {?GeneralPath} The edge's path.
-   * @param {!IRenderContext} canvasContext
+   * @returns The edge's path.
    */
   getObstacles(canvasContext) {
     return this.edge.style.renderer.getPathGeometry(this.edge, this.edge.style).getPath()
   }
 }
-
 export class Sample2EdgeStyleExtension extends MarkupExtension {
   _cssClass = ''
   _showTargetArrows = true
   _useMarkerArrows = true
-
-  /**
-   * @type {!string}
-   */
   get cssClass() {
     return this._cssClass
   }
-
-  /**
-   * @type {!string}
-   */
   set cssClass(value) {
     this._cssClass = value
   }
-
-  /**
-   * @type {boolean}
-   */
   get showTargetArrows() {
     return this._showTargetArrows
   }
-
-  /**
-   * @type {boolean}
-   */
   set showTargetArrows(value) {
     this._showTargetArrows = value
   }
-
-  /**
-   * @type {boolean}
-   */
   get useMarkerArrows() {
     return this._useMarkerArrows
   }
-
-  /**
-   * @type {boolean}
-   */
   set useMarkerArrows(value) {
     this._useMarkerArrows = value
   }
-
-  /**
-   * @type {!object}
-   */
-  static get $meta() {
-    return {
-      cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)],
-      showTargetArrows: [
-        GraphMLAttribute().init({ defaultValue: true }),
-        TypeAttribute(YBoolean.$class)
-      ],
-      useMarkerArrows: [
-        GraphMLAttribute().init({ defaultValue: true }),
-        TypeAttribute(YBoolean.$class)
-      ]
-    }
-  }
-
-  /**
-   * @param {!ILookup} serviceProvider
-   * @returns {!Sample2EdgeStyle}
-   */
   provideValue(serviceProvider) {
     const style = new Sample2EdgeStyle()
     style.cssClass = this.cssClass
@@ -583,5 +442,4 @@ export class Sample2EdgeStyleExtension extends MarkupExtension {
     return style
   }
 }
-
 const isBrowserWithBadMarkerSupport = BrowserDetection.safariVersion > 0

@@ -1,19 +1,21 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Layer Constraints Demo
 
-# Layer Constraints Demo
+<img src="../../../doc/demo-thumbnails/layer-constraints.webp" alt="demo-thumbnail" height="320"/>
 
-Shows how to use layer constraints to restrict the node layering in [HierarchicLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout) .
+[You can also run this demo online](https://www.yworks.com/demos/layout/layerconstraints/).
+
+Shows how to use layer constraints to restrict the node layering in [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
 
 The layer is determined by the model data.
 
@@ -30,4 +32,4 @@ A _weighted_ property, controlled by the **Constraints** button, determines whet
 - Run a layout to see how the layer constraints affect the layout.
 - Create a new random graph with the _New Graph_ button.
 - Clicking on ![](../../resources/icons/star-16.svg) activates the constraints for each node.
-- Clicking on ![](../../resources/icons/delete2-16.svg) in the toolbar removes all constraints from the nodes. In this case, integral values between 1 and 100 can be assigned as labels to the edges using the _F2_ key. These values will be interpreted as edge weights during the assignment of the layers. Higher values indicate higher importance. The algorithm tries to minimize the lengths of important edges. Thus, assigning higher edge label values will lead to the adjacent nodes coming closer together with respect to their layering. Although it is possible to assign weights to edges between nodes that have active constraints, constraints always have priority and thus, the result won't be visible as easy.
+- Clicking on ![](../../resources/icons/delete2-16.svg) in the toolbar removes all constraints from the nodes. In this case, integral values between 1 and 100 can be assigned as labels to the edges using the F2 key. These values will be interpreted as edge weights during the assignment of the layers. Higher values indicate higher importance. The algorithm tries to minimize the lengths of important edges. Thus, assigning higher edge label values will lead to the adjacent nodes coming closer together with respect to their layering. Although it is possible to assign weights to edges between nodes that have active constraints, constraints always have priority and thus, the result won't be visible as easy.

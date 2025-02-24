@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -64,7 +64,12 @@ function testBrowser(builder) {
   })
 
   it('Create Edge', async function () {
-    await driver.get('http://localhost:4242/demos-ts/testing/application-under-test/index.html')
+    const url = new URL(
+      'testing/application-under-test/index.html',
+      process.env.TEST_SERVER_URL || 'http://localhost:4241/demos-ts/'
+    ).href
+    console.log(`navigating to ${url}`)
+    await driver.get(url)
     await driver.wait(until.elementLocated(By.css('body.loaded')))
 
     // check the initial node count

@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Organization Chart Demo
 
-# Organization Chart Demo
+<img src="../../../doc/demo-thumbnails/organization-chart.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/showcase/orgchart/).
 
 This demo shows how to create an interactive organization chart from JSON data.
 
@@ -23,7 +25,7 @@ The demo also shows how a [FilteredGraphWrapper](https://docs.yworks.com/yfilesh
 
 ## Automatic Layout
 
-The organization chart is arranged automatically with the [TreeLayout](https://docs.yworks.com/yfileshtml/#/api/TreeLayout) and the [CompactNodePlacer](https://docs.yworks.com/yfileshtml/#/api/CompactNodePlacer) which determines the best arrangement strategy for each node in order to achieve a compact and clear layout.
+The organization chart is arranged automatically with the [TreeLayout](https://docs.yworks.com/yfileshtml/#/api/TreeLayout) and the [CompactSubtreePlacer](https://docs.yworks.com/yfileshtml/#/api/CompactSubtreePlacer) which determines the best arrangement strategy for each node in order to achieve a compact and clear layout.
 
 ## Organization Chart View
 

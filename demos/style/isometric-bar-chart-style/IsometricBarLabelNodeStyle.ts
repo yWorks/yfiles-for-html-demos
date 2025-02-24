@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,8 +28,6 @@
  ***************************************************************************/
 import {
   Font,
-  FontStyle,
-  FontWeight,
   INode,
   INodeStyle,
   IRenderContext,
@@ -39,14 +37,14 @@ import {
   SvgVisualGroup,
   TextRenderSupport,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * An {@link INodeStyle} rendering a label using the node's tag for the content and placement.
  */
 export class IsometricBarLabelNodeStyle extends NodeStyleBase {
   private readonly svgNS = 'http://www.w3.org/2000/svg'
-  private font = new Font('Arial', 12, FontStyle.NORMAL, FontWeight.BOLD)
+  private font = new Font('Arial', 12, 'normal', 'bold')
 
   protected createVisual(context: IRenderContext, node: INode): Visual | null {
     const g = document.createElementNS(this.svgNS, 'g')
@@ -99,7 +97,7 @@ export class IsometricBarLabelNodeStyle extends NodeStyleBase {
     group.transform = context.viewTransform
 
     // get the location of the node in view coordinates
-    const viewCenter = context.toViewCoordinates(node.layout.center)
+    const viewCenter = context.worldToViewCoordinates(node.layout.center)
     // the tip of the bar, in view coordinates but zoom-independent
     const barTip = new Point(viewCenter.x, viewCenter.y - node.tag.height * context.zoom)
 

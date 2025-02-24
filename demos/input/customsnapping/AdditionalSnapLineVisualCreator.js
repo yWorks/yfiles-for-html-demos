@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,31 +36,30 @@ import {
   Point,
   SnapLineOrientation,
   SnapLineSnapTypes,
-  SnapLineVisualizationType,
+  SnapReferenceVisualizationType,
   SvgVisual,
   Visual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * A visual creator for orthogonal snap lines.
  */
 export class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
+  from
+  to
   /**
    * Creates a new instance of {@link AdditionalSnapLineVisualCreator}.
-   * @param {!Point} from The start point
-   * @param {!Point} to The end point
+   * @param from The start point
+   * @param to The end point
    */
   constructor(from, to) {
     super()
-    this.to = to
     this.from = from
+    this.to = to
   }
-
   /**
    * Creates the {@link OrthogonalSnapLine}s that are displayed by this visual creator.
    * Since items should be able to snap from both sides to this line, two snap lines with the same location and
    * different {@link SnapLineSnapTypes}s are created.
-   * @returns {!IEnumerable.<OrthogonalSnapLine>}
    */
   createSnapLines() {
     const lines = new List()
@@ -70,11 +69,11 @@ export class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
         new OrthogonalSnapLine(
           SnapLineOrientation.VERTICAL,
           SnapLineSnapTypes.LEFT,
-          SnapLineVisualizationType.FIXED_LINE,
+          SnapReferenceVisualizationType.FIXED_LINE,
           this.from.add(this.to).multiply(0.5),
           this.from.y,
           this.to.y,
-          this,
+          false,
           50
         )
       )
@@ -82,11 +81,11 @@ export class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
         new OrthogonalSnapLine(
           SnapLineOrientation.VERTICAL,
           SnapLineSnapTypes.RIGHT,
-          SnapLineVisualizationType.FIXED_LINE,
+          SnapReferenceVisualizationType.FIXED_LINE,
           this.from.add(this.to).multiply(0.5),
           this.from.y,
           this.to.y,
-          this,
+          false,
           50
         )
       )
@@ -96,11 +95,11 @@ export class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
         new OrthogonalSnapLine(
           SnapLineOrientation.HORIZONTAL,
           SnapLineSnapTypes.TOP,
-          SnapLineVisualizationType.FIXED_LINE,
+          SnapReferenceVisualizationType.FIXED_LINE,
           this.from.add(this.to).multiply(0.5),
           this.from.x,
           this.to.x,
-          this,
+          false,
           50
         )
       )
@@ -108,24 +107,21 @@ export class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
         new OrthogonalSnapLine(
           SnapLineOrientation.HORIZONTAL,
           SnapLineSnapTypes.BOTTOM,
-          SnapLineVisualizationType.FIXED_LINE,
+          SnapReferenceVisualizationType.FIXED_LINE,
           this.from.add(this.to).multiply(0.5),
           this.from.x,
           this.to.x,
-          this,
+          false,
           50
         )
       )
     }
     return lines
   }
-
   /**
    * Creates the visual for the orthogonal snap lines.
-   * @param {!IRenderContext} ctx
-   * @returns {!Visual}
    */
-  createVisual(ctx) {
+  createVisual(context) {
     const line = window.document.createElementNS('http://www.w3.org/2000/svg', 'line')
     line.setAttribute('x1', this.from.x.toString())
     line.setAttribute('y1', this.from.y.toString())
@@ -135,12 +131,8 @@ export class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
     line.setAttribute('stroke', '#CA0C3B')
     return new SvgVisual(line)
   }
-
   /**
    * Updates a previously created visual.
-   * @param {!IRenderContext} ctx
-   * @param {!Visual} oldVisual
-   * @returns {!Visual}
    */
   updateVisual(ctx, oldVisual) {
     const visual = oldVisual instanceof SvgVisual ? oldVisual : null

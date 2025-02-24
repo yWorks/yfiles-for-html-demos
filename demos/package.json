@@ -1,6 +1,6 @@
 {
-  "name": "typescript-demos-for-yfiles-for-html",
-  "version": "26.0.4",
+  "name": "@yfiles/typescript-demos-for-yfiles-for-html",
+  "version": "30.0.0",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
@@ -15,10 +15,11 @@
   "dependencies": {
     "@babel/standalone": "7.19.3",
     "@fortawesome/fontawesome-free": "6.4.2",
+    "@yfiles/demo-resources": "./resources",
+    "@yfiles/demo-utils": "./utils",
+    "@yfiles/yfiles": "^30.0.0+dev",
     "codemirror": "5.65.16",
     "d3": "~7.8.5",
-    "demo-resources": "./resources",
-    "demo-utils": "./utils",
     "jspdf": "2.5.1",
     "leaflet": "~1.9.4",
     "markdown-it": "13.0.2",
@@ -26,8 +27,7 @@
     "quill": "^2.0.0-rc.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "svg2pdf.js": "2.2.2",
-    "yfiles": "^26.0.0"
+    "svg2pdf.js": "2.2.2"
   },
   "devDependencies": {
     "@types/babel__standalone": "7.1.7",

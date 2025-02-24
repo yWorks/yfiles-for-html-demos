@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,66 +29,43 @@
 import {
   BaseClass,
   Color,
-  Geom,
-  GeomUtilities,
+  GeometryUtilities,
   IGraph,
   IMapper,
   INode,
   IRenderContext,
   IVisualCreator,
   Point,
-  RadialLayoutNodeInfo,
+  RadialLayoutNodePlacementResult,
   Rect,
   Size,
   SvgVisual,
   Visual
-} from 'yfiles'
-
-/**
- * @typedef {Object} Sector
- * @property {number} startAngle
- * @property {number} endAngle
- * @property {number} middleAngle
- * @property {string} color
- * @property {INode} root
- */
-
-/**
- * @typedef {Object} RenderDataCache
- * @property {Array.<Sector>} sectors
- * @property {Sector} highlightedSector
- * @property {number} zoom
- */
-
+} from '@yfiles/yfiles'
+import { toRadians } from '../../utils/LegacyGeometryUtilities'
 /**
  * An {@link IVisualCreator} that manages and renders the sectors.
  */
 export default class SectorVisual extends BaseClass(IVisualCreator) {
   highlightColor = '#e01a4f'
-
   center = Point.ORIGIN
   radius = 100
   sectors = []
   highlightedSector
-
   /**
    * Updates the sector drawing using the sector information from the layout algorithm.
-   * @param {!IGraph} graph
-   * @param {!IMapper.<INode,RadialLayoutNodeInfo>} [sectorMapper]
    */
   updateSectors(graph, sectorMapper) {
     if (!sectorMapper) {
       this.sectors = []
       return
     }
-
     // find the root node of the graph
     const root = graph.nodes.find((node) => graph.inDegree(node) === 0)
     if (!root) {
       this.sectors = []
       return
     }
-
     // determine the center of the circles which is identical to the root node's center
     const rootInfo = sectorMapper.get(root)
     this.center = rootInfo
@@ -97,23 +74,21 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
           rootInfo.centerOffset.y - root.layout.center.y
         )
       : Point.ORIGIN
-
     // determine sector radius
     this.radius = graph.nodes
       .map((node) => sectorMapper.get(node))
       .filter((info) => info != null)
       .reduce((previous, info) => Math.max(info.radius, previous), 100)
-
     // create one sector for each child of the root node
     let lastColor
     this.sectors = graph
       .successors(root)
       .toArray()
-      .filter((child) => sectorMapper.get(child) instanceof RadialLayoutNodeInfo)
+      .filter((child) => sectorMapper.get(child) instanceof RadialLayoutNodePlacementResult)
       .map((child, i) => {
         const info = sectorMapper.get(child)
-        const startAngle = normalizeAngle(Geom.toRadians(info.sectorStart))
-        const endAngle = normalizeAngle(Geom.toRadians(info.sectorStart + info.sectorSize))
+        const startAngle = normalizeAngle(toRadians(info.sectorStart))
+        const endAngle = normalizeAngle(toRadians(info.sectorStart + info.sectorSize))
         const color = Color.from(child.tag.color)
         const alpha = color.equals(lastColor || null) ? (i % 2 === 0 ? 0.1 : 0.2) : 0.1
         lastColor = color
@@ -125,10 +100,8 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
           root: child
         }
       })
-
     // sort the sectors by their start angle to get the neighbor information
     this.sectors = this.sectors.sort((sector1, sector2) => sector2.startAngle - sector1.startAngle)
-
     // fill sectors to get a full circle
     let lastSector
     this.sectors.forEach((sector) => {
@@ -140,7 +113,6 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
           sector.endAngle -= Math.PI * 2
         }
       }
-
       // enlarge the sectors if there is space between them by dividing this space
       const diff = Math.abs(sector.endAngle - lastSector.startAngle)
       if (diff > 0.000001) {
@@ -150,32 +122,23 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
       lastSector = sector
     })
   }
-
   /**
    * Creates a new visual that emphasizes the sectors of the subtrees.
    * @see overrides {@link IVisualCreator.createVisual}
-   * @param {!IRenderContext} context
-   * @returns {!Visual}
    */
   createVisual(context) {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     return this.updateVisual(context, new SvgVisual(g))
   }
-
   /**
    * Updates the visual that emphasizes the sectors of the subtrees.
    * @see overrides {@link IVisualCreator.updateVisual}
-   * @param {!IRenderContext} context
-   * @param {!Visual} oldVisual
-   * @returns {!Visual}
    */
   updateVisual(context, oldVisual) {
     if (!(oldVisual instanceof SvgVisual)) {
       return this.createVisual(context)
     }
-
     const g = oldVisual.svgElement
-
     const cache = g['render-data-cache']
     if (
       cache &&
@@ -187,12 +150,10 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
       // visual needs no update
       return oldVisual
     }
-
     // remove all sector elements
     while (g.childElementCount > 0) {
       g.removeChild(g.lastChild)
     }
-
     if (this.sectors.length === 1) {
       const sectorPath = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
       sectorPath.setAttribute('cx', String(this.center.x))
@@ -209,17 +170,16 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
         // create new sector element
         const sectorPath = document.createElementNS('http://www.w3.org/2000/svg', 'path')
         g.appendChild(sectorPath)
-
         // update path and colors of the sector
         const sectorAngle = getSectorAngle(sector.startAngle, sector.endAngle)
         sectorPath.setAttribute(
           'd',
           `
           M ${this.center.x},${this.center.y}
-          L ${Math.cos(sector.endAngle) * this.radius},${-Math.sin(sector.endAngle) * this.radius}
+          L ${Math.cos(sector.startAngle) * this.radius},${Math.sin(sector.startAngle) * this.radius}
           A ${this.radius},${this.radius},${sector.endAngle < sector.startAngle ? 1 : 0},
-            ${sectorAngle > Math.PI ? 1 : 0},1,${Math.cos(sector.startAngle) * this.radius},
-            ${-Math.sin(sector.startAngle) * this.radius}
+            ${sectorAngle > Math.PI ? 1 : 0},1,${Math.cos(sector.endAngle) * this.radius},
+            ${Math.sin(sector.endAngle) * this.radius}
           Z`
         )
         sectorPath.style.fill = sector.color
@@ -230,7 +190,6 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
         sectorPath.style.cursor = 'pointer'
       })
     }
-
     g['render-data-cache'] = {
       sectors: this.sectors.slice(),
       highlightedSector: this.highlightedSector,
@@ -238,11 +197,8 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
     }
     return oldVisual
   }
-
   /**
    * Updates the highlighted sector. Returns true if the highlighted sector changes, otherwise false.
-   * @param {!Point} location
-   * @returns {boolean}
    */
   updateHighlight(location) {
     const hitSector = this.getSector(location)
@@ -252,11 +208,8 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
     this.highlightedSector = hitSector
     return true
   }
-
   /**
    * Returns the sector that contains the given location.
-   * @param {!Point} location
-   * @returns {!Sector}
    */
   getSector(location) {
     // location is outside the bound of the circle
@@ -264,79 +217,53 @@ export default class SectorVisual extends BaseClass(IVisualCreator) {
     if (!bounds.contains(location)) {
       return
     }
-
     // location is outside the circle
-    const isInCircle = GeomUtilities.ellipseContains(bounds, location, 0)
+    const isInCircle = GeometryUtilities.ellipseContains(bounds, location, 0)
     if (!isInCircle) {
       return
     }
-
     // location is inside the circle and there is only one sector
     if (this.sectors.length === 1) {
       return this.sectors[0]
     }
-
     // location is inside the circle and there are multiple sectors
     // find the sector that contains the location
     const angle = getAngle(location, this.center)
     return this.sectors.find((sector) => isAngleBetween(angle, sector.startAngle, sector.endAngle))
   }
-
   /**
    * Returns the root of the subtree which is in the sector of the given location.
-   * @param {!Point} location
-   * @returns {?INode}
    */
   getSubtreeRoot(location) {
     const sector = this.getSector(location)
     return sector ? sector.root : null
   }
 }
-
 /**
  * Returns the angle between the start and end angle.
- * @param {number} startAngle
- * @param {number} endAngle
  */
 function getSectorAngle(startAngle, endAngle) {
   return startAngle <= endAngle ? endAngle - startAngle : endAngle + Math.PI * 2 - startAngle
 }
-
 /**
  * Checks if the given angle is in between the start and end angle.
- * @param {number} angle
- * @param {number} startAngle
- * @param {number} endAngle
  */
 function isAngleBetween(angle, startAngle, endAngle) {
   return startAngle <= endAngle
     ? angle >= startAngle && angle < endAngle
     : angle >= startAngle || angle < endAngle
 }
-
 /**
  * Get the angle of the location relative to the origin.
- * @param {!Point} location
- * @param {!Point} origin
- * @returns {number}
  */
 function getAngle(location, origin) {
   const delta = location.subtract(origin)
-  const angle = Math.atan2(-delta.y, delta.x)
+  const angle = -Math.atan2(-delta.y, delta.x)
   return normalizeAngle(angle)
 }
-
 /**
  * Normalizes the angle to a value between 0 and 2 * PI.
- * @param {number} angle
- * @returns {number}
  */
 function normalizeAngle(angle) {
-  while (angle < 0) {
-    angle += Math.PI * 2
-  }
-  while (angle >= Math.PI * 2) {
-    angle -= Math.PI * 2
-  }
-  return angle
+  return (angle + 2 * Math.PI) % (2 * Math.PI)
 }

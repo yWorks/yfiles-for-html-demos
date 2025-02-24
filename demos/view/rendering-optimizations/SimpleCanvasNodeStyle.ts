@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,7 +38,7 @@ import {
   Point,
   Rect,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * A simple HTML5 Canvas node style that draws a rectangle with a solid fill.
@@ -81,7 +81,7 @@ export default class SimpleCanvasNodeStyle extends NodeStyleBase {
    * @param node The node that may be hit.
    */
   isHit(context: IInputModeContext, p: Point, node: INode): boolean {
-    return node.layout.toRect().containsWithEps(p, context.hitTestRadius)
+    return node.layout.toRect().contains(p, context.hitTestRadius)
   }
 
   /**
@@ -116,7 +116,7 @@ export default class SimpleCanvasNodeStyle extends NodeStyleBase {
    * @param node The node that may be in the rectangle.
    */
   isInBox(context: IInputModeContext, box: Rect, node: INode): boolean {
-    return box.contains(node.layout)
+    return box.containsRectangle(node.layout)
   }
 }
 
@@ -145,7 +145,7 @@ class NodeRenderVisual extends HtmlCanvasVisual {
    * @param htmlCanvasContext The html canvas context.
    * @see Overrides {@link HtmlCanvasVisual.paint}
    */
-  paint(context: IRenderContext, htmlCanvasContext: CanvasRenderingContext2D): void {
+  render(context: IRenderContext, htmlCanvasContext: CanvasRenderingContext2D): void {
     htmlCanvasContext.fillStyle = this.color
     htmlCanvasContext.fillRect(this.layout.x, this.layout.y, this.layout.width, this.layout.height)
   }

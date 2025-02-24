@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,31 +27,36 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphInputMode,
   GraphItemTypes,
   GroupNodeStyle,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
+  LabelStyle,
   LayoutExecutor,
   License,
+  NodeStyleIndicatorRenderer,
   ShapeNodeShape,
+  type ShapeNodeShapeStringValues,
+  ShapeNodeStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { NodeHighlightManager } from './NodeHighlightManager'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
+
+// Ensure that the LayoutExecutor class is not removed by build optimizers
+// It is needed for the 'applyLayoutAnimated' method in this demo.
+LayoutExecutor.ensure()
 
 /**
  * Bootstraps the demo.
@@ -61,10 +66,7 @@ async function run(): Promise<void> {
 
   // create graph component
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode()
 
   const graph = graphComponent.graph
 
@@ -78,9 +80,8 @@ async function run(): Promise<void> {
   buildGraph(graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graph.applyLayout(new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 }))
-  graphComponent.fitGraphBounds()
+  graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
 
   // enable now the undo engine to prevent undoing of the graph creation
   graph.undoEngineEnabled = true
@@ -126,20 +127,30 @@ function configureHoverHighlight(graphComponent: GraphComponent): void {
   // enable hover effects for nodes and edges
   inputMode.itemHoverInputMode.enabled = true
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
-  inputMode.itemHoverInputMode.discardInvalidItems = false
 
   // specify the hover effect: highlight a node whenever the mouse hovers over the respective node
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener((hoverInputMode, evt): void => {
-    const highlightManager = (hoverInputMode.inputModeContext!.canvasComponent as GraphComponent)
-      .highlightIndicatorManager
-    highlightManager.clearHighlights()
-    const item = evt.item
-    if (item) {
-      highlightManager.addHighlight(item)
+  inputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt): void => {
+    const highlights = graphComponent.highlights
+    highlights.clear()
+    if (evt.item) {
+      highlights.add(evt.item)
     }
   })
 
-  graphComponent.highlightIndicatorManager = new NodeHighlightManager()
+  // configure the node highlight style -> each node highlight should have the shape of the node
+  graphComponent.graph.decorator.nodes.highlightRenderer.addFactory(
+    (node) =>
+      new NodeStyleIndicatorRenderer({
+        nodeStyle: new ShapeNodeStyle({
+          // the tag of each node contains information about the appropriate shape for the highlight
+          shape: getShape(node.tag),
+          stroke: '3px #621B00',
+          fill: 'transparent'
+        }),
+        // the margin from the actual node to its highlight visualization
+        margins: 4
+      })
+  )
 }
 
 /**
@@ -157,7 +168,7 @@ function initializeGraph(graph: IGraph): void {
     stroke: '2px solid #b5dcee',
     contentAreaFill: '#b5dcee'
   })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'left',
     textFill: '#eee'
   })
@@ -165,13 +176,21 @@ function initializeGraph(graph: IGraph): void {
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.shareStyleInstance = false
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
+}
+
+/**
+ * Determines a suitable highlight shape depending on the given tag data.
+ * @param tag the tag of the node to be highlighted.
+ */
+function getShape(tag: any): ShapeNodeShapeStringValues {
+  return tag === 'ellipse' || tag === 'triangle' ? tag : 'rectangle'
 }
 
 run().then(finishLoading)

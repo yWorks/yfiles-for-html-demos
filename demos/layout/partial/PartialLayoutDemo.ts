@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,47 +28,36 @@
  ***************************************************************************/
 import {
   CircularLayout,
-  Class,
   ComponentAssignmentStrategy,
-  DefaultLabelStyle,
-  EdgeRouter,
   FoldingManager,
   GraphComponent,
   GraphEditorInputMode,
   GraphMLIOHandler,
   GroupNodeLabelModel,
-  HierarchicLayout,
+  HierarchicalLayout,
   IEdge,
   IEdgeStyle,
   ILayoutAlgorithm,
   IModelItem,
   INode,
   INodeStyle,
+  LabelStyle,
+  LayoutExecutor,
   License,
   Mapper,
-  OrganicEdgeRouter,
   OrganicLayout,
   OrthogonalLayout,
   PartialLayout,
   PartialLayoutData,
-  PartialLayoutEdgeRoutingStrategy,
   PartialLayoutOrientation,
+  PartialLayoutRoutingStyle,
   PolylineEdgeStyle,
   Size,
-  SubgraphPlacement,
-  YBoolean
-} from 'yfiles'
-import {
-  applyDemoTheme,
-  createDemoGroupStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
-
-// We need to load the modules 'router-polyline' and 'router-other' explicitly to prevent
-// tree-shaking tools from removing this dependency which is needed for 'PartialLayout'.
-Class.ensure(EdgeRouter, OrganicEdgeRouter)
+  SubgraphPlacement
+} from '@yfiles/yfiles'
+import { createDemoGroupStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -86,8 +75,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize default styles
   initializeGraph()
 
@@ -115,7 +102,7 @@ async function runLayout() {
     coreLayout: getSubgraphLayout(),
     componentAssignmentStrategy: getComponentAssignmentStrategy(),
     subgraphPlacement: getSubgraphPlacement(),
-    edgeRoutingStrategy: getEdgeRoutingStrategy(),
+    edgeRoutingStyle: getEdgeRoutingStyle(),
     layoutOrientation: getLayoutOrientation(),
     minimumNodeDistance: Number.isNaN(distance) ? 0 : distance,
     allowMirroring: document.querySelector<HTMLInputElement>(`#mirroring`)!.checked,
@@ -124,12 +111,19 @@ async function runLayout() {
 
   // mark partial elements for the layout algorithm
   const partialLayoutData = new PartialLayoutData({
-    affectedNodes: (node: INode): boolean => !isFixed(node),
-    affectedEdges: (edge: IEdge): boolean => !isFixed(edge)
+    scope: {
+      nodes: (node) => !isFixed(node),
+      edges: (edge) => !isFixed(edge)
+    }
   })
+
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
+
   // run layout algorithm
   try {
-    await graphComponent.morphLayout(partialLayout, '0.5s', partialLayoutData)
+    await graphComponent.applyLayoutAnimated(partialLayout, '0.5s', partialLayoutData)
   } finally {
     setUIDisabled(false)
   }
@@ -144,10 +138,10 @@ function getSubgraphLayout(): ILayoutAlgorithm {
   )
   const layout: string = document.querySelector<HTMLInputElement>(`#subgraph-layout`)!.value
   switch (layout) {
-    case 'hierarchic': {
-      return new HierarchicLayout({
+    case 'hierarchical': {
+      return new HierarchicalLayout({
         minimumLayerDistance: distance,
-        nodeToNodeDistance: distance
+        nodeDistance: distance
       })
     }
     case 'orthogonal': {
@@ -157,19 +151,19 @@ function getSubgraphLayout(): ILayoutAlgorithm {
     }
     case 'organic': {
       return new OrganicLayout({
-        minimumNodeDistance: distance
+        defaultMinimumNodeDistance: distance
       })
     }
     case 'circular': {
       const circularLayout = new CircularLayout()
-      circularLayout.singleCycleLayout.minimumNodeDistance = distance
-      circularLayout.balloonLayout.minimumNodeDistance = distance
+      circularLayout.partitionDescriptor.minimumNodeDistance = distance
+      circularLayout.backboneLayout.minimumNodeDistance = distance
       return circularLayout
     }
     default:
-      return new HierarchicLayout({
+      return new HierarchicalLayout({
         minimumLayerDistance: distance,
-        nodeToNodeDistance: distance
+        nodeDistance: distance
       })
   }
 }
@@ -209,21 +203,21 @@ function getSubgraphPlacement(): SubgraphPlacement {
 /**
  * Retrieves the edge routing strategy for partial edges and edges connected to partial nodes.
  */
-function getEdgeRoutingStrategy(): PartialLayoutEdgeRoutingStrategy {
+function getEdgeRoutingStyle(): PartialLayoutRoutingStyle {
   const edgeRouting: string = document.querySelector<HTMLInputElement>(`#edge-routing-style`)!.value
   switch (edgeRouting) {
     case 'automatic':
-      return PartialLayoutEdgeRoutingStrategy.AUTOMATIC
+      return PartialLayoutRoutingStyle.AUTOMATIC
     case 'orthogonal':
-      return PartialLayoutEdgeRoutingStrategy.ORTHOGONAL
-    case 'straightline':
-      return PartialLayoutEdgeRoutingStrategy.STRAIGHTLINE
+      return PartialLayoutRoutingStyle.ORTHOGONAL
+    case 'straight-line':
+      return PartialLayoutRoutingStyle.STRAIGHT_LINE
     case 'organic':
-      return PartialLayoutEdgeRoutingStrategy.ORGANIC
+      return PartialLayoutRoutingStyle.ORGANIC
     case 'octilinear':
-      return PartialLayoutEdgeRoutingStrategy.OCTILINEAR
+      return PartialLayoutRoutingStyle.OCTILINEAR
     default:
-      return PartialLayoutEdgeRoutingStrategy.AUTOMATIC
+      return PartialLayoutRoutingStyle.AUTOMATIC
   }
 }
 
@@ -273,15 +267,17 @@ function initializeGraph(): void {
 
   graph.groupNodeDefaults.labels.layoutParameter =
     new GroupNodeLabelModel().createTabBackgroundParameter()
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'left',
     textFill: 'white'
   })
   graph.groupNodeDefaults.style = partialGroupStyle
 
   // Create and register mappers that specify partial graph elements
-  partialNodesMapper = new Mapper({ defaultValue: true })
-  partialEdgesMapper = new Mapper({ defaultValue: true })
+  partialNodesMapper = new Mapper()
+  partialNodesMapper.defaultValue = true
+  partialEdgesMapper = new Mapper()
+  partialEdgesMapper.defaultValue = true
 }
 
 /**
@@ -318,15 +314,14 @@ function createEdgeStyle(partial: boolean): IEdgeStyle {
  */
 function initializeInputModes(): void {
   const inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
     allowEditLabel: false
   })
-  inputMode.addItemDoubleClickedListener((_, evt) => {
+  inputMode.addEventListener('item-double-clicked', (evt) => {
     // a graph element was double-clicked => toggle its fixed/partial state
     setFixed(evt.item, !isFixed(evt.item))
   })
   // add a label to newly created nodes and mark the node as non-fixed
-  inputMode.addNodeCreatedListener((_, evt) => {
+  inputMode.addEventListener('node-created', (evt) => {
     const node = evt.item
     const graph = graphComponent.graph
     if (graph.isGroupNode(node)) {
@@ -336,14 +331,14 @@ function initializeInputModes(): void {
     }
     setFixed(node, false)
   })
-  inputMode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
+  inputMode.createEdgeInputMode.addEventListener('edge-created', (evt) => {
     setFixed(evt.item, false)
   })
-  inputMode.navigationInputMode.addGroupCollapsedListener((_, evt) => {
+  inputMode.navigationInputMode.addEventListener('group-collapsed', (evt) => {
     const group = evt.item
     updateStyle(group, isFixed(group))
   })
-  inputMode.navigationInputMode.addGroupExpandedListener((_, evt) => {
+  inputMode.navigationInputMode.addEventListener('group-expanded', (evt) => {
     const group = evt.item
     updateStyle(group, isFixed(group))
   })
@@ -418,10 +413,10 @@ function updateStyle(item: IModelItem, fixed: boolean): void {
  */
 function setSelectionFixed(fixed: boolean): void {
   const selection = graphComponent.selection
-  selection.selectedNodes.forEach((node) => {
+  selection.nodes.forEach((node) => {
     setFixed(node, fixed)
   })
-  selection.selectedEdges.forEach((edge) => {
+  selection.edges.forEach((edge) => {
     setFixed(edge, fixed)
   })
 }
@@ -453,15 +448,15 @@ async function loadScenario(): Promise<void> {
 
   const ioHandler = new GraphMLIOHandler()
   ioHandler.addInputMapper(
-    INode.$class,
-    YBoolean.$class,
-    PartialLayout.AFFECTED_NODES_DP_KEY.name!,
+    INode,
+    Boolean,
+    PartialLayout.NODE_SCOPE_DATA_KEY.id!,
     partialNodesMapper
   )
   ioHandler.addInputMapper(
-    IEdge.$class,
-    YBoolean.$class,
-    PartialLayout.AFFECTED_EDGES_DP_KEY.name!,
+    IEdge,
+    Boolean,
+    PartialLayout.EDGE_SCOPE_DATA_KEY.id!,
     partialEdgesMapper
   )
 
@@ -470,9 +465,9 @@ async function loadScenario(): Promise<void> {
   const path = `resources/${sample}.graphml`
   switch (sample) {
     default:
-    case 'hierarchic':
+    case 'hierarchical':
       setOptions(
-        'hierarchic',
+        'hierarchical',
         'connected',
         'barycenter',
         'orthogonal',
@@ -502,7 +497,7 @@ async function loadScenario(): Promise<void> {
   graph.edges.forEach((edge) => {
     updateStyle(edge, isFixed(edge))
   })
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 }
 
 /**

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,17 +27,15 @@
  **
  ***************************************************************************/
 import {
+  IEdgeStyle,
   IGraph,
+  ILabelStyle,
   INode,
-  Mapper,
-  VoidEdgeStyle,
-  VoidLabelStyle,
-  VoidNodeStyle,
-  VoidPortStyle
-} from 'yfiles'
-
+  INodeStyle,
+  IPortStyle,
+  Mapper
+} from '@yfiles/yfiles'
 const itemToStyle = new Mapper()
-
 /**
  * Hides the visualizations of the given nodes and their related items.
  * In this context, the items related to a node are
@@ -47,41 +45,35 @@ const itemToStyle = new Mapper()
  * - the labels of the node's ports.
  * This method does not remove items from the given graph.
  * This method has to be called prior to using method {@link #showNodesAndRelatedItems}.
- * @param {!IGraph} graph The graph that contains the given nodes.
- * @param {!Array.<INode>} nodes The nodes whose visualizations will be hidden.
+ * @param graph The graph that contains the given nodes.
+ * @param nodes The nodes whose visualizations will be hidden.
  */
 export function hideNodesAndRelatedItems(graph, nodes) {
   itemToStyle.clear()
-
   for (const node of nodes) {
     itemToStyle.set(node, node.style)
-    graph.setStyle(node, VoidNodeStyle.INSTANCE)
-
+    graph.setStyle(node, INodeStyle.VOID_NODE_STYLE)
     for (const edge of graph.edgesAt(node)) {
       const style = edge.style
-      if (style != VoidEdgeStyle.INSTANCE) {
+      if (style != IEdgeStyle.VOID_EDGE_STYLE) {
         itemToStyle.set(edge, style)
-        graph.setStyle(edge, VoidEdgeStyle.INSTANCE)
+        graph.setStyle(edge, IEdgeStyle.VOID_EDGE_STYLE)
       }
     }
-
     for (const label of node.labels) {
       itemToStyle.set(label, label.style)
-      graph.setStyle(label, VoidLabelStyle.INSTANCE)
+      graph.setStyle(label, ILabelStyle.VOID_LABEL_STYLE)
     }
-
     for (const port of node.ports) {
       itemToStyle.set(port, port.style)
-      graph.setStyle(port, VoidPortStyle.INSTANCE)
-
+      graph.setStyle(port, IPortStyle.VOID_PORT_STYLE)
       for (const label of port.labels) {
         itemToStyle.set(label, label.style)
-        graph.setStyle(label, VoidLabelStyle.INSTANCE)
+        graph.setStyle(label, ILabelStyle.VOID_LABEL_STYLE)
       }
     }
   }
 }
-
 /**
  * Shows the visualizations of the given nodes and their related items again.
  * Before using this method, {@link #hideNodesAndRelatedItems} has to be called.
@@ -89,29 +81,24 @@ export function hideNodesAndRelatedItems(graph, nodes) {
  * {@link #hideNodesAndRelatedItems} and using this method.
  * The given set of nodes has to be the same set that was passed to
  * {@link #hideNodesAndRelatedItems} before.
- * @param {!IGraph} graph The graph that contains the given nodes.
- * @param {!Array.<INode>} nodes The nodes whose visualizations will be shown.
+ * @param graph The graph that contains the given nodes.
+ * @param nodes The nodes whose visualizations will be shown.
  */
 export function showNodesAndRelatedItems(graph, nodes) {
   for (const node of nodes) {
     graph.setStyle(node, itemToStyle.get(node))
-
     for (const edge of graph.edgesAt(node)) {
       graph.setStyle(edge, itemToStyle.get(edge))
     }
-
     for (const label of node.labels) {
       graph.setStyle(label, itemToStyle.get(label))
     }
-
     for (const port of node.ports) {
       graph.setStyle(port, itemToStyle.get(port))
-
       for (const label of port.labels) {
         graph.setStyle(label, itemToStyle.get(label))
       }
     }
   }
-
   itemToStyle.clear()
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,7 +35,7 @@ import {
   Point,
   SimpleLabel,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can
@@ -99,25 +99,25 @@ export default class HTMLPopupSupport {
    */
   registerListeners(): void {
     // Adds listener for viewport changes
-    this.graphComponent.addViewportChangedListener((_, evt) => {
+    this.graphComponent.addEventListener('viewport-changed', () => {
       if (this.currentItem) {
         this.dirty = true
       }
     })
 
     // Adds listeners for node bounds changes
-    this.graphComponent.graph.addNodeLayoutChangedListener((_, node, oldLayout) => {
+    this.graphComponent.graph.addEventListener('node-layout-changed', (node, _oldLayout) => {
       if (
         ((this.currentItem && this.currentItem === node) || this.currentItem instanceof IEdge) &&
-        (node === (this.currentItem as IEdge).sourcePort!.owner ||
-          node === (this.currentItem as IEdge).targetPort!.owner)
+        (node === (this.currentItem as IEdge).sourcePort.owner ||
+          node === (this.currentItem as IEdge).targetPort.owner)
       ) {
         this.dirty = true
       }
     })
 
     // Adds listener for updates of the visual tree
-    this.graphComponent.addUpdatedVisualListener((_, evt) => {
+    this.graphComponent.addEventListener('updated-visual', () => {
       if (this.currentItem && this.dirty) {
         this.dirty = false
         this.updateLocation()
@@ -153,7 +153,7 @@ export default class HTMLPopupSupport {
 
   /**
    * Changes the location of this pop-up to the location calculated by the
-   * {@link HTMLPopupSupport.labelModelParameter}. Currently, this implementation does not support rotated pop-ups.
+   * {@link labelModelParameter}. Currently, this implementation does not support rotated pop-ups.
    */
   updateLocation(): void {
     if (!this.currentItem && !this.labelModelParameter) {
@@ -168,14 +168,12 @@ export default class HTMLPopupSupport {
       '',
       this.labelModelParameter
     )
-    if (this.labelModelParameter.supports(dummyLabel)) {
-      dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
-      const newLayout = this.labelModelParameter.model.getGeometry(
-        dummyLabel,
-        this.labelModelParameter
-      )
-      this.setLocation(newLayout.anchorX, newLayout.anchorY - (height + 10) / zoom)
-    }
+    dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
+    const newLayout = this.labelModelParameter.model.getGeometry(
+      dummyLabel,
+      this.labelModelParameter
+    )
+    this.setLocation(newLayout.anchorX, newLayout.anchorY - (height + 10) / zoom)
   }
 
   /**
@@ -185,7 +183,7 @@ export default class HTMLPopupSupport {
    */
   setLocation(x: number, y: number): void {
     // Calculate the view coordinates since we have to place the div in the regular HTML coordinate space
-    const viewPoint = this.graphComponent.toViewCoordinates(new Point(x, y))
+    const viewPoint = this.graphComponent.worldToViewCoordinates(new Point(x, y))
     this.div.style.setProperty('transform', `translate(${viewPoint.x}px, ${viewPoint.y}px)`)
   }
 }

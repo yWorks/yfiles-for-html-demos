@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,7 @@ import {
   NodeStyleBase,
   SvgVisual,
   type Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * A basic node style that renders a rectangle.
@@ -45,7 +45,7 @@ export class CustomNodeStyle extends NodeStyleBase {
     rect.setAttribute('y', String(y))
     rect.setAttribute('width', String(width))
     rect.setAttribute('height', String(height))
-    rect.setAttribute('fill', 'red')
+    rect.setAttribute('fill', '#0b7189')
     rect.setAttribute('stroke', '#042d37')
     return new SvgVisual(rect)
   }

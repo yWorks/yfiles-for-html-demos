@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,7 +31,7 @@ import {
   type GraphEditorInputMode,
   GraphStructureAnalyzer,
   type IGraph
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import './graph-structure-information.css'
 
 /**
@@ -40,31 +40,31 @@ import './graph-structure-information.css'
 export function initializeGraphInformation(graphComponent: GraphComponent): void {
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
 
-  inputMode.addDeletingSelectionListener(async (_) => {
+  inputMode.addEventListener('deleting-selection', async () => {
     updateGraphInformation(graphComponent)
   })
 
-  inputMode.addDeletedSelectionListener(async (_) => {
+  inputMode.addEventListener('deleted-selection', async () => {
     updateGraphInformation(graphComponent)
   })
 
   // edge creation
-  inputMode.createEdgeInputMode.addEdgeCreatedListener(async (_) => {
+  inputMode.createEdgeInputMode.addEventListener('edge-created', async () => {
     updateGraphInformation(graphComponent)
   })
 
-  inputMode.addEdgePortsChangedListener(async (_) => {
+  inputMode.addEventListener('edge-ports-changed', async () => {
     updateGraphInformation(graphComponent)
   })
 
-  inputMode.addNodeCreatedListener((_) => {
+  inputMode.addEventListener('node-created', () => {
     updateGraphInformation(graphComponent)
   })
 
   const engine = graphComponent.graph.undoEngine
   if (engine) {
-    engine.addUnitRedoneListener(() => updateGraphInformation(graphComponent))
-    engine.addUnitUndoneListener(() => updateGraphInformation(graphComponent))
+    engine.addEventListener('unit-redone', () => updateGraphInformation(graphComponent))
+    engine.addEventListener('unit-undone', () => updateGraphInformation(graphComponent))
   }
 }
 
@@ -165,7 +165,7 @@ function hasSelfLoops(graph: IGraph): boolean {
  */
 function hasMultipleEdges(graph: IGraph): boolean {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
-  return structureAnalyzer.hasMultipleEdges()
+  return structureAnalyzer.hasMultiEdges()
 }
 
 /**

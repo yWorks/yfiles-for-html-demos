@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,14 +30,31 @@
  * Enumeration that specifies the supported types of neighborhood graphs to be shown in the
  * demo's {@link NeighborhoodView}.
  */
-export /**
- * @readonly
- * @enum {number}
- */
-const NeighborhoodType = {
-  NEIGHBORHOOD: 0,
-  PREDECESSORS: 1,
-  SUCCESSORS: 2,
-  BOTH: 3,
-  FOLDER_CONTENTS: 4
-}
+export var NeighborhoodType
+;(function (NeighborhoodType) {
+  /**
+   * The neighbors of a given node are all connected nodes. The direction of the edges connecting
+   * neighbor nodes to the given node does not matter.
+   * The union of all predecessor nodes and all successor nodes.
+   * For a graph distance of 1, mode NEIGHBORHOOD yields the same result as mode {@link BOTH}.
+   */
+  NeighborhoodType[(NeighborhoodType['NEIGHBORHOOD'] = 0)] = 'NEIGHBORHOOD'
+  /**
+   * The neighbors of a given node are the source nodes of the given node's incoming edges.
+   */
+  NeighborhoodType[(NeighborhoodType['PREDECESSORS'] = 1)] = 'PREDECESSORS'
+  /**
+   * The neighbors of a given node are the target nodes of the given node's outgoing edges.
+   */
+  NeighborhoodType[(NeighborhoodType['SUCCESSORS'] = 2)] = 'SUCCESSORS'
+  /**
+   * The union of all predecessor nodes and all successor nodes.
+   * For a graph distance of 1, mode BOTH yields the same result as mode {@link NEIGHBORHOOD}.
+   */
+  NeighborhoodType[(NeighborhoodType['BOTH'] = 3)] = 'BOTH'
+  /**
+   * The neighbors of a given node are the node's child nodes.
+   * Thus only group and folder nodes (i.e. collapsed group nodes) can have this type of neighbors.
+   */
+  NeighborhoodType[(NeighborhoodType['FOLDER_CONTENTS'] = 4)] = 'FOLDER_CONTENTS'
+})(NeighborhoodType || (NeighborhoodType = {}))

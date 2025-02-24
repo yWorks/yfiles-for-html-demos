@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,23 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
-
+import { INode, IRenderContext, NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 import * as d3 from 'd3'
-
 const margin = {
   top: 3,
   right: 3,
   bottom: 1,
   left: 3
 }
-
 const xHelper = d3.scaleBand().padding(0.1)
-
 const yHelper = d3.scaleLinear().nice()
-
 const color = d3.scaleLinear().range(['#1dccc2', '#2f5b88']).interpolate(d3.interpolateHcl)
-
 /**
  * A node style that triggers the sparkline rendering and includes the result in
  * the node visualization.
@@ -51,24 +45,18 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
   /**
    * Creates the visual for a node.
    * @see Overrides {@link NodeStyleBase.createVisual}
-   * @param {!IRenderContext} renderContext
-   * @param {!INode} node
-   * @returns {!SvgVisual}
    */
   createVisual(renderContext, node) {
     // create a g element and use it as a container for the sparkline visualization
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
-
     // render the node
     const {
       layout: { x, y, width, height },
       tag: data
     } = node
-
     xHelper.domain(d3.range(0, data.length)).range([0, width])
     yHelper.domain([0, d3.max(data)]).range([height - margin.bottom, margin.top])
     color.domain([0, d3.max(data)])
-
     const group = d3.select(g)
     group
       .attr('transform', `translate(${x} ${y})`)
@@ -78,7 +66,6 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
       .attr('fill', 'aliceblue')
       .attr('stroke', 'black')
       .attr('stroke-width', 1)
-
     group
       .append('g')
       .selectAll('rect')
@@ -92,48 +79,32 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
       .attr('data-value', (d) => d)
       .attr('fill', (d) => color(d))
       .attr('stroke', 'none')
-
-    const svgVisual = new SvgVisual(g)
-    svgVisual['render-data-cache'] = new RenderDataCache(width, height, data)
-
-    return svgVisual
+    return SvgVisual.from(g, new RenderDataCache(width, height, data))
   }
-
   /**
    * Re-renders the node using the old visual for performance reasons.
    * @see Overrides {@link NodeStyleBase.updateVisual}
-   * @param {!IRenderContext} renderContext
-   * @param {!SvgVisual} oldVisual
-   * @param {!INode} node
-   * @returns {!SvgVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const g = oldVisual.svgElement
-
     const {
       layout: { x, y, width, height },
       tag: data
     } = node
-
     xHelper.domain(d3.range(0, data.length)).range([0, width])
     yHelper.domain([0, d3.max(data)]).range([height - margin.bottom, margin.top])
     color.domain([0, d3.max(data)])
-
     const group = d3.select(g)
     group
       .attr('transform', `translate(${x} ${y})`)
       .select('rect')
       .attr('width', width)
       .attr('height', height)
-
-    const oldCache = oldVisual['render-data-cache']
+    const oldCache = oldVisual.tag
     const newCache = new RenderDataCache(width, height, data)
-
     if (!newCache.equals(oldCache)) {
-      oldVisual['render-data-cache'] = newCache
-
+      oldVisual.tag = newCache
       const dataSelection = group.select('g').selectAll('rect').data(data)
-
       dataSelection
         .enter()
         .append('rect')
@@ -144,9 +115,7 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
         .attr('data-value', (d) => d)
         .attr('fill', (d) => color(d))
         .attr('stroke', 'none')
-
       dataSelection.exit().remove()
-
       dataSelection
         .transition()
         .attr('x', (d, i) => xHelper(i))
@@ -158,21 +127,15 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
     return oldVisual
   }
 }
-
 class RenderDataCache {
-  /**
-   * @param {number} width
-   * @param {number} height
-   * @param {!Array.<number>} data
-   */
+  width
+  height
+  data
   constructor(width, height, data) {
-    this.data = data
-    this.height = height
     this.width = width
+    this.height = height
+    this.data = data
   }
-  /**
-   * @param {!RenderDataCache} other
-   */
   equals(other) {
     return (
       other &&

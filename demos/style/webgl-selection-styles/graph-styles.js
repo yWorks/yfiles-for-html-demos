@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,38 +27,21 @@
  **
  ***************************************************************************/
 import {
-  WebGL2Transition,
-  WebGL2BeaconNodeIndicatorStyle,
-  WebGL2NodeIndicatorStyle,
-  WebGL2EdgeIndicatorStyle,
-  WebGL2LabelIndicatorStyle,
   Color,
-  Size,
-  ShapeNodeStyle,
-  DefaultLabelStyle,
-  PolylineEdgeStyle,
   EdgePathLabelModel,
-  EdgeSides
-} from 'yfiles'
-
-/**
- * @typedef {Object} SelectionStyle
- * @property {string} primaryColor
- * @property {number} primaryTransparency
- * @property {string} secondaryColor
- * @property {number} secondaryTransparency
- * @property {number} thickness
- * @property {number} margins
- * @property {(WebGL2IndicatorTypeStringValues|WebGL2BeaconAnimationTypeStringValues)} stylePattern
- * @property {StyleDecorationZoomPolicyStringValues} zoomPolicy
- * @property {WebGL2AnimationEasingStringValues} easing
- * @property {WebGL2Transition} transition
- * @property {WebGL2AnimationTiming} animationTiming
- */
-
+  EdgeSides,
+  LabelStyle,
+  PolylineEdgeStyle,
+  ShapeNodeStyle,
+  Size,
+  WebGLBeaconNodeIndicatorStyle,
+  WebGLEdgeIndicatorStyle,
+  WebGLLabelIndicatorStyle,
+  WebGLNodeIndicatorStyle,
+  WebGLTransition
+} from '@yfiles/yfiles'
 /**
  * Initializes the defaults for the styling in this demo.
- * @param {!IGraph} graph
  */
 export function initStyleDefaults(graph) {
   graph.nodeDefaults.size = new Size(100, 100)
@@ -67,55 +50,45 @@ export function initStyleDefaults(graph) {
     fill: 'lightgray',
     stroke: 'transparent'
   })
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({ insets: 10 })
-
+  graph.nodeDefaults.labels.style = new LabelStyle({ padding: 10 })
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '2px gray',
     targetArrow: 'triangle'
   })
-  graph.edgeDefaults.labels.style = new DefaultLabelStyle({ insets: 10 })
+  graph.edgeDefaults.labels.style = new LabelStyle({ padding: 10 })
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 0,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.ON_EDGE })
 }
-
 /**
  * Reconfigures the selection styles according to the settings chosen in the UI.
- * @param {!SelectionStyle} style
- * @param {!GraphComponent} graphComponent
  */
 export function updateSelectionStyles(style, graphComponent) {
   const selectionIndicatorManager = graphComponent.selectionIndicatorManager
-
   selectionIndicatorManager.nodeStyle = createNodeIndicatorStyle(style)
   selectionIndicatorManager.edgeStyle = createEdgeIndicatorStyle(style)
   selectionIndicatorManager.nodeLabelStyle = createLabelIndicatorStyle(style)
   selectionIndicatorManager.edgeLabelStyle = createLabelIndicatorStyle(style)
-
   reselectSelected(graphComponent)
 }
-
 /**
  * Creates a node indicator style from the given style properties. This can either be a
  * node indicator style or a beacon node indicator style.
- * @param {!SelectionStyle} style
- * @returns {!(WebGL2NodeIndicatorStyle|WebGL2BeaconNodeIndicatorStyle)}
  */
 function createNodeIndicatorStyle(style) {
   // If we have a beacon or a halo style, we want the transition property to be 'scale' instead of
   // 'opacity', which is the default for other styles
   const nodeTransition =
     style.transition && (isBeaconStyle(style.stylePattern) || style.stylePattern === 'halo')
-      ? new WebGL2Transition({
+      ? new WebGLTransition({
           properties: 'scale',
           easing: style.transition.easing,
           duration: style.transition.duration
         })
       : style.transition
-
   if (isBeaconStyle(style.stylePattern)) {
-    return new WebGL2BeaconNodeIndicatorStyle({
+    return new WebGLBeaconNodeIndicatorStyle({
       type: style.stylePattern,
       color: getColor(style.primaryColor, style.primaryTransparency),
       pulseCount: 1,
@@ -127,7 +100,7 @@ function createNodeIndicatorStyle(style) {
       shape: 'node-shape'
     })
   } else {
-    return new WebGL2NodeIndicatorStyle({
+    return new WebGLNodeIndicatorStyle({
       type: style.stylePattern,
       primaryColor: getColor(style.primaryColor, style.primaryTransparency),
       secondaryColor: getColor(style.secondaryColor, style.secondaryTransparency),
@@ -141,14 +114,11 @@ function createNodeIndicatorStyle(style) {
     })
   }
 }
-
 /**
  * Creates an edge indicator style from the given style properties.
- * @param {!SelectionStyle} style
- * @returns {!WebGL2EdgeIndicatorStyle}
  */
 function createEdgeIndicatorStyle(style) {
-  return new WebGL2EdgeIndicatorStyle({
+  return new WebGLEdgeIndicatorStyle({
     type: isNodeOnlyStyle(style.stylePattern) ? 'solid' : style.stylePattern,
     primaryColor: getColor(style.primaryColor, style.primaryTransparency),
     secondaryColor: getColor(style.secondaryColor, style.secondaryTransparency),
@@ -159,14 +129,11 @@ function createEdgeIndicatorStyle(style) {
     thickness: style.thickness
   })
 }
-
 /**
  * Creates a label indicator style from the given style properties.
- * @param {!SelectionStyle} style
- * @returns {!WebGL2LabelIndicatorStyle}
  */
 function createLabelIndicatorStyle(style) {
-  return new WebGL2LabelIndicatorStyle({
+  return new WebGLLabelIndicatorStyle({
     type: isNodeOnlyStyle(style.stylePattern) ? 'solid' : style.stylePattern,
     primaryColor: getColor(style.primaryColor, style.primaryTransparency),
     secondaryColor: getColor(style.secondaryColor, style.secondaryTransparency),
@@ -179,33 +146,24 @@ function createLabelIndicatorStyle(style) {
     shape: 'label-shape'
   })
 }
-
 /**
  * "Re"-selects all already selected graph element to apply newly configured selection styles
- * @param {!GraphComponent} graphComponent
  */
 function reselectSelected(graphComponent) {
   const selectedItems = graphComponent.selection.toArray()
   for (const item of selectedItems) {
-    graphComponent.selection.setSelected(item, false)
-    graphComponent.selection.setSelected(item, true)
+    graphComponent.selection.remove(item)
+    graphComponent.selection.add(item)
   }
 }
-
 /**
  * Determines if the given style string is a beacon style.
- * @param {!string} styleString
- * @returns {!WebGL2BeaconAnimationTypeStringValues}
  */
 function isBeaconStyle(styleString) {
   return styleString === 'fade' || styleString === 'no-fade' || styleString === 'reverse-fade'
 }
-
 /**
  * Creates a Color from a css color string and a provided transparency
- * @param {!string} color
- * @param {number} transparency
- * @returns {!Color}
  */
 function getColor(color, transparency) {
   const r = parseInt(color.substring(1, 3), 16)
@@ -213,11 +171,8 @@ function getColor(color, transparency) {
   const b = parseInt(color.substring(5, 7), 16)
   return Color.fromRGBA(r, g, b, 1 - transparency)
 }
-
 /**
  *  Determines if the style pattern is only available for nodes which is true for beacon and halo styles.
- * @param {!string} styleString
- * @returns {!WebGL2BeaconAnimationTypeStringValues}
  */
 function isNodeOnlyStyle(styleString) {
   return isBeaconStyle(styleString) || styleString === 'halo'

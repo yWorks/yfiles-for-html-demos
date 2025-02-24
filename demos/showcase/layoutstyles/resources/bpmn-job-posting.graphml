@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <key id="d0" for="node" attr.type="boolean" attr.name="SelectedNodes">
     <default>false</default>
   </key>
@@ -72,14 +72,18 @@
             <y:Label.Text><![CDATA[Employee
 required]]></y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="-16.7158203125,-35.9375"/>
+              <yx:ExteriorNodeLabelModelParameter Position="Top">
+                <yx:ExteriorNodeLabelModelParameter.Model>
+                  <yx:ExteriorNodeLabelModel Margins="5"/>
+                </yx:ExteriorNodeLabelModelParameter.Model>
+              </yx:ExteriorNodeLabelModelParameter>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="12" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -114,14 +118,14 @@ required]]></y:Label.Text>
             <y:Label.Text><![CDATA[Review
 Job Posting]]></y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="7.2978515625,11.53125"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="12" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -152,14 +156,14 @@ Job Posting]]></y:Label.Text>
             <y:Label.Text><![CDATA[Report
 Job Opening]]></y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="4.0400390625,11.53125"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="12" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -198,14 +202,14 @@ Job Opening]]></y:Label.Text>
             <y:Label.Text><![CDATA[Write
 Job Position]]></y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="5.7685546875,11.53125"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="12" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -242,14 +246,14 @@ Job Position]]></y:Label.Text>
         <x:List>
           <y:Label>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="51,-2"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="12" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -283,14 +287,14 @@ Job Position]]></y:Label.Text>
         <x:List>
           <y:Label>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="51,-2"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="12" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -326,14 +330,14 @@ Job Position]]></y:Label.Text>
             <y:Label.Text><![CDATA[Publish
 Job Position]]></y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="5.7685546875,11.53125"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="12" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -372,14 +376,18 @@ Job Position]]></y:Label.Text>
             <y:Label.Text><![CDATA[Job
 posted]]></y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="-7.4580078125,34"/>
+              <yx:ExteriorNodeLabelModelParameter Position="Bottom">
+                <yx:ExteriorNodeLabelModelParameter.Model>
+                  <yx:ExteriorNodeLabelModel Margins="5"/>
+                </yx:ExteriorNodeLabelModelParameter.Model>
+              </yx:ExteriorNodeLabelModelParameter>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="12" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -413,14 +421,14 @@ posted]]></y:Label.Text>
             <y:Label.Text><![CDATA[Rework
 Job Posting]]></y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="7.2978515625,11.53125"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="12" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -446,12 +454,12 @@ Job Posting]]></y:Label.Text>
     </node>
     <edge id="e0" source="n0" target="n2" sourceport="p0" targetport="p0">
       <data key="d13">
-        <yjs:PolylineEdgeStyle smoothingLength="20" sourceArrow="NONE">
+        <yjs:PolylineEdgeStyle orthogonalEditing="true" smoothingLength="20">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="Black" miterLimit="1.45"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
-            <yjs:Arrow type="TRIANGLE" fill="Black">
+            <yjs:Arrow type="TRIANGLE" lengthScale="0.5" fill="Black">
               <yjs:Arrow.stroke>
                 <yjs:Stroke fill="Black" miterLimit="1.45"/>
               </yjs:Arrow.stroke>
@@ -462,12 +470,12 @@ Job Posting]]></y:Label.Text>
     </edge>
     <edge id="e1" source="n2" target="n3" sourceport="p1" targetport="p0">
       <data key="d13">
-        <yjs:PolylineEdgeStyle smoothingLength="20" sourceArrow="NONE">
+        <yjs:PolylineEdgeStyle orthogonalEditing="true" smoothingLength="20">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="Black" miterLimit="1.45"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
-            <yjs:Arrow type="TRIANGLE" fill="Black">
+            <yjs:Arrow type="TRIANGLE" lengthScale="0.5" fill="Black">
               <yjs:Arrow.stroke>
                 <yjs:Stroke fill="Black" miterLimit="1.45"/>
               </yjs:Arrow.stroke>
@@ -478,12 +486,12 @@ Job Posting]]></y:Label.Text>
     </edge>
     <edge id="e2" source="n3" target="n4" sourceport="p1" targetport="p0">
       <data key="d13">
-        <yjs:PolylineEdgeStyle smoothingLength="20" sourceArrow="NONE">
+        <yjs:PolylineEdgeStyle orthogonalEditing="true" smoothingLength="20">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="Black" miterLimit="1.45"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
-            <yjs:Arrow type="TRIANGLE" fill="Black">
+            <yjs:Arrow type="TRIANGLE" lengthScale="0.5" fill="Black">
               <yjs:Arrow.stroke>
                 <yjs:Stroke fill="Black" miterLimit="1.45"/>
               </yjs:Arrow.stroke>
@@ -498,25 +506,25 @@ Job Posting]]></y:Label.Text>
           <y:Label>
             <y:Label.Text><![CDATA[Not okay]]></y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:FreeEdgeLabelModelParameter Ratio="0.36212888761335854" Distance="-1.4210854715202004e-14"/>
+              <yx:FreeEdgeLabelModelParameter Ratio="0.36212888761335854" Distance="-1.4210854715202004e-14"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle backgroundFill="#FFFFFFFF" horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle backgroundFill="#FFFFFFFF" horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="12" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
       </data>
       <data key="d13">
-        <yjs:PolylineEdgeStyle smoothingLength="20" sourceArrow="NONE">
+        <yjs:PolylineEdgeStyle orthogonalEditing="true" smoothingLength="20">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="Black" miterLimit="1.45"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
-            <yjs:Arrow type="TRIANGLE" fill="Black">
+            <yjs:Arrow type="TRIANGLE" lengthScale="0.5" fill="Black">
               <yjs:Arrow.stroke>
                 <yjs:Stroke fill="Black" miterLimit="1.45"/>
               </yjs:Arrow.stroke>
@@ -527,12 +535,12 @@ Job Posting]]></y:Label.Text>
     </edge>
     <edge id="e4" source="n8" target="n4" sourceport="p1" targetport="p1">
       <data key="d13">
-        <yjs:PolylineEdgeStyle smoothingLength="20" sourceArrow="NONE">
+        <yjs:PolylineEdgeStyle orthogonalEditing="true" smoothingLength="20">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="Black" miterLimit="1.45"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
-            <yjs:Arrow type="TRIANGLE" fill="Black">
+            <yjs:Arrow type="TRIANGLE" lengthScale="0.5" fill="Black">
               <yjs:Arrow.stroke>
                 <yjs:Stroke fill="Black" miterLimit="1.45"/>
               </yjs:Arrow.stroke>
@@ -547,25 +555,25 @@ Job Posting]]></y:Label.Text>
           <y:Label>
             <y:Label.Text>Okay</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:FreeEdgeLabelModelParameter Ratio="0.29435557397430634"/>
+              <yx:FreeEdgeLabelModelParameter Ratio="0.29435557397430634"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle backgroundFill="#FFFFFFFF" horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle backgroundFill="#FFFFFFFF" horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="12" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
       </data>
       <data key="d13">
-        <yjs:PolylineEdgeStyle smoothingLength="20" sourceArrow="NONE">
+        <yjs:PolylineEdgeStyle orthogonalEditing="true" smoothingLength="20">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="Black" miterLimit="1.45"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
-            <yjs:Arrow type="TRIANGLE" fill="Black">
+            <yjs:Arrow type="TRIANGLE" lengthScale="0.5" fill="Black">
               <yjs:Arrow.stroke>
                 <yjs:Stroke fill="Black" miterLimit="1.45"/>
               </yjs:Arrow.stroke>
@@ -576,12 +584,12 @@ Job Posting]]></y:Label.Text>
     </edge>
     <edge id="e6" source="n6" target="n7" sourceport="p1" targetport="p0">
       <data key="d13">
-        <yjs:PolylineEdgeStyle smoothingLength="20" sourceArrow="NONE">
+        <yjs:PolylineEdgeStyle orthogonalEditing="true" smoothingLength="20">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="Black" miterLimit="1.45"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
-            <yjs:Arrow type="TRIANGLE" fill="Black">
+            <yjs:Arrow type="TRIANGLE" lengthScale="0.5" fill="Black">
               <yjs:Arrow.stroke>
                 <yjs:Stroke fill="Black" miterLimit="1.45"/>
               </yjs:Arrow.stroke>
@@ -592,12 +600,12 @@ Job Posting]]></y:Label.Text>
     </edge>
     <edge id="e7" source="n4" target="n1" sourceport="p2" targetport="p0">
       <data key="d13">
-        <yjs:PolylineEdgeStyle smoothingLength="20" sourceArrow="NONE">
+        <yjs:PolylineEdgeStyle orthogonalEditing="true" smoothingLength="20">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="Black" miterLimit="1.45"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
-            <yjs:Arrow type="TRIANGLE" fill="Black">
+            <yjs:Arrow type="TRIANGLE" lengthScale="0.5" fill="Black">
               <yjs:Arrow.stroke>
                 <yjs:Stroke fill="Black" miterLimit="1.45"/>
               </yjs:Arrow.stroke>
@@ -608,12 +616,12 @@ Job Posting]]></y:Label.Text>
     </edge>
     <edge id="e8" source="n1" target="n5" sourceport="p1" targetport="p2">
       <data key="d13">
-        <yjs:PolylineEdgeStyle smoothingLength="20" sourceArrow="NONE">
+        <yjs:PolylineEdgeStyle orthogonalEditing="true" smoothingLength="20">
           <yjs:PolylineEdgeStyle.stroke>
             <yjs:Stroke fill="Black" miterLimit="1.45"/>
           </yjs:PolylineEdgeStyle.stroke>
           <yjs:PolylineEdgeStyle.targetArrow>
-            <yjs:Arrow type="TRIANGLE" fill="Black">
+            <yjs:Arrow type="TRIANGLE" lengthScale="0.5" fill="Black">
               <yjs:Arrow.stroke>
                 <yjs:Stroke fill="Black" miterLimit="1.45"/>
               </yjs:Arrow.stroke>

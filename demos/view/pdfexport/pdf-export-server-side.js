@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,25 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Insets, SvgExport } from 'yfiles'
-import { exportSvg, requestServerExport } from './server-side-export.js'
-
+import { Insets, SvgExport } from '@yfiles/yfiles'
+import { exportSvg, requestServerExport } from './server-side-export'
 /**
  * Server URL for server-side export.
  */
 export const NODE_SERVER_URL = 'http://localhost:3001'
-
 /**
  * Exports the image on the server. This will open a file dialog to download the image as PDF.
- * @param {!GraphComponent} graphComponent
- * @param {number} scale
- * @param {number} margin
- * @param {!Rect} [exportRectangle]
- * @returns {!Promise}
  */
-export async function exportPdfServerSide(graphComponent, scale, margin, exportRectangle) {
+export async function exportPdfServerSide(
+  graphComponent,
+  scale,
+  margin,
+  exportRectangle,
+  renderCompletionCallback
+) {
   // export the SVG and show a dialog to download the image
-  const pdf = await exportSvg(graphComponent, scale, Insets.from(margin), exportRectangle)
+  const pdf = await exportSvg(
+    graphComponent,
+    scale,
+    Insets.from(margin),
+    exportRectangle,
+    renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
+  )
   const pdfData = SvgExport.exportSvgString(pdf.element)
   requestServerExport(pdfData, 'pdf', pdf.size, NODE_SERVER_URL)
 }

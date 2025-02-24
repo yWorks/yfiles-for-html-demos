@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:x0="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml">
+  <key id="d0" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
+  <key id="d1" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
+  <key id="d2" for="edge" attr.name="EdgeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
+  <data key="d1">
+    <y:SharedData>
+      <yjs:ShapeNodeStyle x:Key="1" fill="#FF0B7189" shape="ROUND_RECTANGLE">
+        <yjs:ShapeNodeStyle.stroke>
+          <yjs:Stroke fill="#FF2D4C53" thickness="1.5"/>
+        </yjs:ShapeNodeStyle.stroke>
+      </yjs:ShapeNodeStyle>
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="2">
+				<yjs:PolylineEdgeStyle.stroke>
+					<yjs:Stroke fill="#FF0B7189" lineCap="SQUARE" thickness="1.5"/>
+				</yjs:PolylineEdgeStyle.stroke>
+				<yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:Arrow type="TRIANGLE" fill="#FF0B7189"/>
+				</yjs:PolylineEdgeStyle.targetArrow>
+			</yjs:PolylineEdgeStyle>
+    </y:SharedData>
+  </data>
+	<graph id="G" edgedefault="directed">
+		<node id="n0">
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+			<port name="p4"/>
+			<port name="p5"/>
+			<port name="p6"/>
+			<port name="p7"/>
+			<port name="p8"/>
+			<port name="p9"/>
+			<port name="p10"/>
+			<port name="p11"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n1">
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n2">
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+			<port name="p4"/>
+			<port name="p5"/>
+			<port name="p6"/>
+			<port name="p7"/>
+			<port name="p8"/>
+			<port name="p9"/>
+			<port name="p10"/>
+			<port name="p11"/>
+			<port name="p12"/>
+			<port name="p13"/>
+			<port name="p14"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n3">
+			<port name="p0"/>
+			<port name="p1"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n4">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n5">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n6">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n7">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n8">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n9">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n10">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n11">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n12">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n13">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n14">
+			<port name="p0"/>
+			<port name="p1"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n15">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n16">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n17">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n18">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n19">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n20">
+			<port name="p0"/>
+			<port name="p1"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n21">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n22">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n23">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n24">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n25">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<node id="n26">
+			<port name="p0"/>
+      <data key="d0">
+        <y:GraphMLReference ResourceKey="1"/>
+      </data>
+		</node>
+		<edge id="e0" source="n0" target="n1" sourceport="p0" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e1" source="n1" target="n2" sourceport="p1" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e2" source="n2" target="n3" sourceport="p1" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e3" source="n1" target="n3" sourceport="p2" targetport="p1">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e4" source="n2" target="n4" sourceport="p2" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e5" source="n2" target="n5" sourceport="p3" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e6" source="n2" target="n6" sourceport="p4" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e7" source="n2" target="n7" sourceport="p5" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e8" source="n2" target="n8" sourceport="p6" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e9" source="n2" target="n9" sourceport="p7" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e10" source="n2" target="n10" sourceport="p8" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e11" source="n2" target="n11" sourceport="p9" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e12" source="n2" target="n12" sourceport="p10" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e13" source="n2" target="n13" sourceport="p11" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e14" source="n2" target="n14" sourceport="p12" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e15" source="n2" target="n15" sourceport="p13" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e16" source="n2" target="n16" sourceport="p14" targetport="p0">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e17" source="n0" target="n14" sourceport="p1" targetport="p1">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e18" source="n17" target="n0" sourceport="p0" targetport="p2">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e19" source="n18" target="n0" sourceport="p0" targetport="p3">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e20" source="n19" target="n0" sourceport="p0" targetport="p4">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e21" source="n20" target="n0" sourceport="p0" targetport="p5">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e22" source="n21" target="n0" sourceport="p0" targetport="p6">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e23" source="n22" target="n0" sourceport="p0" targetport="p7">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e24" source="n23" target="n0" sourceport="p0" targetport="p8">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e25" source="n20" target="n1" sourceport="p1" targetport="p3">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e26" source="n24" target="n0" sourceport="p0" targetport="p9">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e27" source="n25" target="n0" sourceport="p0" targetport="p10">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+		<edge id="e28" source="n26" target="n0" sourceport="p0" targetport="p11">
+      <data key="d2">
+        <y:GraphMLReference ResourceKey="2"/>
+      </data>
+    </edge>
+	</graph>
+</graphml>

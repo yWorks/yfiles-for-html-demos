@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,26 +27,22 @@
  **
  ***************************************************************************/
 import {
-  BendEventArgs,
   BezierEdgeStyle,
   CreateEdgeInputMode,
-  DefaultBendCreator,
   IBend,
   IBendCreator,
-  ICanvasObject,
   IEdge,
   IGraph,
   IHitTestable,
   IInputModeContext,
-  ILookup,
   InputModeEventArgs,
   IPortCandidate,
+  IRenderTreeElement,
   ItemEventArgs,
   OrthogonalEdgeEditingPolicy,
   Point,
   SimpleEdge
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * Custom create edge input mode for bezier edges.
  * This mode can operate in two different ways:
@@ -61,148 +57,113 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
    * Re-entrance flag when we are inserting/removing dummy edge bends.
    */
   augmenting
-
   /**
    * Additional canvas object that highlights the control point sequence.
    */
   controlPointHighlight
-
   /**
    * Whether we want to create smooth splines.
    */
   $createSmoothSplines
-
   /**
    * Determines whether we want to create smooth splines.
    * If true, each "bend" creation inserts one of the "exterior" control points for a cubic segment, and the point in the middle
    * is created automatically by the mode. Otherwise, each control point must be explicitly created.
    * Default value is true.
-   * @type {boolean}
    */
   get createSmoothSplines() {
     return this.$createSmoothSplines
   }
-
   /**
    * Specifies whether we want to create smooth splines.
    * If true, each "bend" creation inserts one of the "exterior" control points for a cubic segment, and the point in the middle
    * is created automatically by the mode. Otherwise, each control point must be explicitly created.
    * Default value is true.
-   * @type {boolean}
    */
   set createSmoothSplines(value) {
     this.$createSmoothSplines = value
   }
-
   constructor() {
     super()
     this.$createSmoothSplines = true
     // By default, we can't create orthogonal edges with this mode
     // (what would that look like)
     this.orthogonalEdgeCreation = OrthogonalEdgeEditingPolicy.NEVER
-
     this.augmenting = false
     this.controlPointHighlight = null
-
+    this.cancelGestureOnInvalidEnd = false
     this.validBendHitTestable = IHitTestable.create((context, location) => {
       if (
-        !this.dummyEdge ||
-        !(this.dummyEdge.style instanceof BezierEdgeStyle) ||
+        !this.previewEdge ||
+        !this.previewEdge.bends.at(-1) ||
+        !(this.previewEdge.style instanceof BezierEdgeStyle) ||
         !this.createSmoothSplines
       ) {
         return true
       }
-      const lastBend = this.dummyEdge.bends.at(-1)
+      const lastBend = this.previewEdge.bends.at(-2)
       if (!lastBend) {
         return true
       }
       // Require a minimum length for the control point triple
       return (
-        lastBend.index % 3 !== 1 || location.subtract(lastBend.location.toPoint()).vectorLength > 10
+        lastBend.index % 3 !== 0 || location.subtract(lastBend.location.toPoint()).vectorLength > 10
       )
     })
+    this.configureDummyGraph()
+    this.addEventListener('edge-creation-started', this.configureDummyEdge.bind(this))
   }
-
   /**
    * If we have a bezier edge style, we decorate it so that we can also show the control points.
    * A better solution that would however be more involved would be to show the decoration.
-   * @returns {!IEdge}
    */
-  createDummyEdge() {
-    const dummyEdge = super.createDummyEdge()
-    const simpleEdge = dummyEdge
-    if (dummyEdge instanceof SimpleEdge && dummyEdge.style instanceof BezierEdgeStyle) {
+  configureDummyEdge() {
+    const simpleEdge = this.previewEdge
+    if (simpleEdge instanceof SimpleEdge && simpleEdge.style instanceof BezierEdgeStyle) {
       // By default, the BezierEdgeStyle has no bend creator
       // However, we want to be able to create bends here
       // So we sneakily insert a BendCreator into the dummy edge lookup
-      const oldLookup = simpleEdge.lookupImplementation
-      simpleEdge.lookupImplementation = ILookup.createCascadingLookup(
-        oldLookup,
-        ILookup.createSingleLookup(new DefaultBendCreator(), IBendCreator.$class)
-      )
+      const defaultBendCreator = new SimpleEdge().lookup(IBendCreator)
+      simpleEdge.getDecorator().bendCreator.addConstant(defaultBendCreator)
     }
-
-    return dummyEdge
   }
-
-  /**
-   * @param {!InputModeEventArgs} inputModeEventArgs
-   */
   onGestureCanceling(inputModeEventArgs) {
     if (this.controlPointHighlight) {
-      this.controlPointHighlight.remove()
+      this.parentInputModeContext?.canvasComponent?.renderTree.remove(this.controlPointHighlight)
       this.controlPointHighlight = null
     }
     super.onGestureCanceling(inputModeEventArgs)
   }
-
-  /**
-   * @param {!InputModeEventArgs} inputModeEventArgs
-   */
   onGestureFinishing(inputModeEventArgs) {
     if (this.controlPointHighlight) {
-      this.controlPointHighlight.remove()
+      this.parentInputModeContext?.canvasComponent?.renderTree.remove(this.controlPointHighlight)
       this.controlPointHighlight = null
     }
     super.onGestureFinishing(inputModeEventArgs)
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   */
   uninstall(context) {
     if (this.controlPointHighlight) {
-      this.controlPointHighlight.remove()
+      this.parentInputModeContext?.canvasComponent?.renderTree.remove(this.controlPointHighlight)
       this.controlPointHighlight = null
     }
     super.uninstall(context)
   }
-
-  /**
-   * @returns {!IGraph}
-   */
-  createDummyEdgeGraph() {
-    const dummyGraph = super.createDummyEdgeGraph()
+  configureDummyGraph() {
+    const dummyGraph = this.previewGraph
     // Register to bend creation and removal events
     // in order to insert additional bends in the middle of a line segment
     // or remove them if the defining bend is removed
-    dummyGraph.addBendAddedListener(this.onBendAdded.bind(this))
-    dummyGraph.addBendRemovedListener(this.onBendRemoved.bind(this))
-    return dummyGraph
+    dummyGraph.addEventListener('bend-added', this.onBendAdded.bind(this))
+    dummyGraph.addEventListener('bend-removed', this.onBendRemoved.bind(this))
   }
-
-  /**
-   * @param {!object} sender
-   * @param {!BendEventArgs} args
-   */
-  onBendRemoved(sender, args) {
+  onBendRemoved() {
     if (!this.augmenting) {
-      if (this.createSmoothSplines && this.dummyEdge.style instanceof BezierEdgeStyle) {
+      if (this.createSmoothSplines && this.previewEdge.style instanceof BezierEdgeStyle) {
         this.augmenting = true
         try {
-          if (this.dummyEdge.bends.size > 0 && this.dummyEdge.bends.size % 3 === 0) {
+          if (this.previewEdge.bends.size > 0 && this.previewEdge.bends.size % 3 === 0) {
             // Undo bend creation that finished a triple
-            this.dummyEdgeGraph.remove(this.dummyEdge.bends.last())
+            this.previewGraph.remove(this.previewEdge.bends.last())
           }
         } finally {
           this.augmenting = false
@@ -210,23 +171,20 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
       }
     }
   }
-
-  /**
-   * @param {!object} sender
-   * @param {!ItemEventArgs.<IBend>} args
-   */
-  onBendAdded(sender, args) {
+  onBendAdded(evt) {
     if (!this.augmenting) {
-      if (this.createSmoothSplines && this.dummyEdge.style instanceof BezierEdgeStyle) {
+      if (this.createSmoothSplines && this.previewEdge.style instanceof BezierEdgeStyle) {
         this.augmenting = true
         try {
-          if (this.dummyEdge.bends.size % 3 === 0) {
+          if (this.previewEdge.bends.size % 3 === 0) {
             // Bend creation that finishes a control point line
             // Insert a middle bend
-            const cp0 = this.dummyEdge.bends.get(this.dummyEdge.bends.size - 2).location.toPoint()
-            const cp2 = args.item.location.toPoint()
+            const cp0 = this.previewEdge.bends
+              .get(this.previewEdge.bends.size - 2)
+              .location.toPoint()
+            const cp2 = evt.item.location.toPoint()
             const cp1 = cp2.subtract(cp0).multiply(0.5).add(cp0)
-            this.dummyEdgeGraph.addBend(this.dummyEdge, cp1, this.dummyEdge.bends.size - 1)
+            this.previewGraph.addBend(this.previewEdge, cp1, this.previewEdge.bends.size - 1)
           }
         } finally {
           this.augmenting = false
@@ -234,30 +192,25 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
       }
     }
   }
-
   /**
    * Overridden to pad the number of bends so that there are always 2 mod 3 by duplicating the last location, if necessary.
-   * @param {!IGraph} graph
-   * @param {!IPortCandidate} sourcePortCandidate
-   * @param {!IPortCandidate} targetPortCandidate
-   * @returns {?(IEdge|Promise.<IEdge>)}
    */
   createEdge(graph, sourcePortCandidate, targetPortCandidate) {
-    if (this.createSmoothSplines && this.dummyEdge.style instanceof BezierEdgeStyle) {
-      if (this.dummyEdge.bends.size > 0) {
+    if (this.createSmoothSplines && this.previewEdge.style instanceof BezierEdgeStyle) {
+      if (this.previewEdge.bends.size > 0) {
         this.augmenting = true
         try {
-          const lastLocation = this.dummyEdge.bends.last().location.toPoint()
-          if (this.dummyEdge.bends.size % 3 === 1) {
+          const lastLocation = this.previewEdge.bends.last().location.toPoint()
+          if (this.previewEdge.bends.size % 3 === 1) {
             // We can reach this branch if we finish the edge creation
             // without having finished a control point triple
             // Just duplicate the last bend
-            this.dummyEdgeGraph.addBend(this.dummyEdge, lastLocation)
-          } else if (this.dummyEdge.bends.size % 3 === 0) {
+            this.previewGraph.addBend(this.previewEdge, lastLocation)
+          } else if (this.previewEdge.bends.size % 3 === 0) {
             // Actually, we shouldn't be able to come here
             // since we always create bend triples and have an initial single control point
-            this.dummyEdgeGraph.addBend(this.dummyEdge, lastLocation)
-            this.dummyEdgeGraph.addBend(this.dummyEdge, lastLocation)
+            this.previewGraph.addBend(this.previewEdge, lastLocation)
+            this.previewGraph.addBend(this.previewEdge, lastLocation)
           }
         } finally {
           this.augmenting = false

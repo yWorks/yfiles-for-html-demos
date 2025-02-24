@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Enum,
   FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
@@ -36,17 +35,16 @@ import {
   License,
   ShapeNodeShape,
   ShapeNodeStyle
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import {
-  applyDemoTheme,
   colorSets,
   createDemoEdgeStyle,
   createDemoNodeLabelStyle,
   initDemoStyles
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Runs the demo.
@@ -54,14 +52,13 @@ import { finishLoading } from 'demo-resources/demo-page'
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   initializeStyleDefaults(graphComponent.graph)
 
   // Create and configure nodes using shape node style
   createSampleNodes(graphComponent.graph)
 
   configureInteraction(graphComponent)
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
   initializeUI(graphComponent)
 }
 
@@ -71,39 +68,30 @@ async function run(): Promise<void> {
  */
 function createSampleNodes(graph: IGraph): void {
   // Create the various shape samples
-  const rectangularShapes: ShapeNodeShape[] = [
+  const shapes: ShapeNodeShape[] = [
     ShapeNodeShape.RECTANGLE,
     ShapeNodeShape.ROUND_RECTANGLE,
-    ShapeNodeShape.PILL
+    ShapeNodeShape.PILL,
+    ShapeNodeShape.ELLIPSE
   ]
-  const ellipticalShapes: ShapeNodeShape[] = [ShapeNodeShape.ELLIPSE]
-  const skewedShapes: ShapeNodeShape[] = [
-    ShapeNodeShape.DIAMOND,
-    ShapeNodeShape.SHEARED_RECTANGLE,
-    ShapeNodeShape.SHEARED_RECTANGLE2,
-    ShapeNodeShape.TRAPEZ,
-    ShapeNodeShape.TRAPEZ2
-  ]
-  const arrowShapes: ShapeNodeShape[] = [ShapeNodeShape.FAT_ARROW, ShapeNodeShape.FAT_ARROW2]
-  const polygonalShapes: ShapeNodeShape[] = [
+  const triangles: ShapeNodeShape[] = [
     ShapeNodeShape.TRIANGLE,
-    ShapeNodeShape.TRIANGLE2,
+    ShapeNodeShape.TRIANGLE_POINTING_RIGHT,
+    ShapeNodeShape.TRIANGLE_POINTING_DOWN,
+    ShapeNodeShape.TRIANGLE_POINTING_LEFT
+  ]
+  const polygons: ShapeNodeShape[] = [
+    ShapeNodeShape.DIAMOND,
+    ShapeNodeShape.PENTAGON,
     ShapeNodeShape.HEXAGON,
-    ShapeNodeShape.HEXAGON2,
+    ShapeNodeShape.HEXAGON_STANDING,
     ShapeNodeShape.OCTAGON
   ]
-  const starShapes: ShapeNodeShape[] = [
-    ShapeNodeShape.STAR5,
-    ShapeNodeShape.STAR5_UP,
-    ShapeNodeShape.STAR6,
-    ShapeNodeShape.STAR8
-  ]
-  createShapeSamples(rectangularShapes, 0, graph)
-
-  createShapeSamples(ellipticalShapes.concat(arrowShapes), 1, graph)
-  createShapeSamples(skewedShapes, 2, graph)
-  createShapeSamples(polygonalShapes, 3, graph)
-  createShapeSamples(starShapes, 4, graph)
+  const stars: ShapeNodeShape[] = [ShapeNodeShape.STAR5, ShapeNodeShape.STAR6, ShapeNodeShape.STAR8]
+  createShapeSamples(shapes, 0, graph)
+  createShapeSamples(triangles, 1, graph)
+  createShapeSamples(polygons, 2, graph)
+  createShapeSamples(stars, 3, graph)
 }
 
 /**
@@ -135,7 +123,7 @@ function createShapeSamples(shapes: ShapeNodeShape[], column: number, graph: IGr
       })
     })
 
-    // Create a blue node wit haspect ratio 2:1
+    // Create a blue node with aspect ratio 2:1
     const n2 = graph.createNode({
       layout: [column * 350 + 100 - size2 / 2, i * 200 - size1 / 2, size2, size1],
       style: new ShapeNodeStyle({
@@ -143,7 +131,7 @@ function createShapeSamples(shapes: ShapeNodeShape[], column: number, graph: IGr
         fill: fill2,
         stroke: stroke2
       }),
-      labels: [Enum.getName(ShapeNodeShape.$class, shapes[i])]
+      labels: [ShapeNodeShape[shapes[i]]]
     })
 
     // Create a yellow node with aspect ratio 1:2
@@ -194,7 +182,7 @@ function configureInteraction(graphComponent: GraphComponent): void {
     allowAddLabel: false,
     allowEditLabel: false,
     deletableItems: GraphItemTypes.NONE,
-    movableItems: GraphItemTypes.NODE
+    movableSelectedItems: GraphItemTypes.NODE
   })
 }
 

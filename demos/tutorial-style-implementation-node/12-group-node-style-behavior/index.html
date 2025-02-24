@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,14 +31,14 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>
       12 Group Node Style Behavior - Tutorial: Node Style Implementation [yFiles for HTML]
     </title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -54,7 +52,7 @@
         <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
         <a href="../../README.html">Demos</a>
 
-        <a href="../../README.html#tutorial-node-style-implementation">
+        <a href="../../README.html#tutorial-style-implementation-node">
           Tutorial: Node Style Implementation
         </a>
 
@@ -145,7 +143,7 @@
             <p>
               In this step, we will set a minimum size for the node style and customize how the
               group size is calculated when adjusting to its content. Similar to
-              <code>INodeInsetsProvider</code> in the previous step, we return implementations for
+              <code>IGroupPaddingProvider</code> in the previous step, we return implementations for
               both customizations in the <code>lookup</code> method.
             </p>
           </div>
@@ -160,16 +158,15 @@
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">INodeSizeConstraintProvider</span>.<span class="hljs-property">$class</span>) {
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">INodeSizeConstraintProvider</span>) {
   <span class="hljs-comment">// use a custom size constraint provider to make sure that the node doesn&#x27;t get smaller than the tab</span>
   <span class="hljs-keyword">return</span> <span class="hljs-title class_">INodeSizeConstraintProvider</span>.<span class="hljs-title function_">create</span>({
     <span class="hljs-comment">// returns the tab size plus a small margin</span>
-    <span class="hljs-attr">getMinimumSize</span>: (<span class="hljs-attr">item</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-function"><span class="hljs-params">Size</span> =&gt;</span>
-      <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(tabWidth + <span class="hljs-number">20</span>, tabHeight + <span class="hljs-number">20</span>),
+    <span class="hljs-attr">getMinimumSize</span>: (): <span class="hljs-function"><span class="hljs-params">Size</span> =&gt;</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(tabWidth + <span class="hljs-number">20</span>, tabHeight + <span class="hljs-number">20</span>),
     <span class="hljs-comment">// don&#x27;t limit the maximum size</span>
-    <span class="hljs-attr">getMaximumSize</span>: (<span class="hljs-attr">item</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-function"><span class="hljs-params">Size</span> =&gt;</span> <span class="hljs-title class_">Size</span>.<span class="hljs-property">INFINITE</span>,
+    <span class="hljs-attr">getMaximumSize</span>: (): <span class="hljs-function"><span class="hljs-params">Size</span> =&gt;</span> <span class="hljs-title class_">Size</span>.<span class="hljs-property">INFINITE</span>,
     <span class="hljs-comment">// don&#x27;t constrain the area</span>
-    <span class="hljs-attr">getMinimumEnclosedArea</span>: (<span class="hljs-attr">item</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-function"><span class="hljs-params">Rect</span> =&gt;</span> <span class="hljs-title class_">Rect</span>.<span class="hljs-property">EMPTY</span>
+    <span class="hljs-attr">getMinimumEnclosedArea</span>: (): <span class="hljs-function"><span class="hljs-params">Rect</span> =&gt;</span> <span class="hljs-title class_">Rect</span>.<span class="hljs-property">EMPTY</span>
   })
 }</code></pre>
             </div>
@@ -185,7 +182,7 @@
               Next, we will add an <a href="https://docs.yworks.com/yfileshtml/#/api/IGroupBoundsCalculator" target="_blank">IGroupBoundsCalculator</a> implementation, which is
               shown with <em>Group 3</em>. Implementations of this interface are used for
               customizing the way the group node layout is calculated when adjusting to the group
-              content. By default, only the child node boundaries and the group node insets are
+              content. By default, only the child node boundaries and the group node padding are
               considered. In this example, we also include the child node labels.
             </p>
           </div>
@@ -193,26 +190,24 @@
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">IGroupBoundsCalculator</span>.<span class="hljs-property">$class</span>) {
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">IGroupBoundsCalculator</span>) {
   <span class="hljs-comment">// use a custom group bounds calculator that takes labels into account</span>
-  <span class="hljs-keyword">return</span> <span class="hljs-title class_">IGroupBoundsCalculator</span>.<span class="hljs-title function_">create</span>(
-    (<span class="hljs-attr">graph</span>: <span class="hljs-title class_">IGraph</span>, <span class="hljs-attr">groupNode</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-function"><span class="hljs-params">Rect</span> =&gt;</span> {
-      <span class="hljs-keyword">let</span> <span class="hljs-attr">bounds</span>: <span class="hljs-title class_">Rect</span> = <span class="hljs-title class_">Rect</span>.<span class="hljs-property">EMPTY</span>
-      <span class="hljs-keyword">const</span> children = graph.<span class="hljs-title function_">getChildren</span>(groupNode)
-      children.<span class="hljs-title function_">forEach</span>((<span class="hljs-attr">child</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
-        bounds = <span class="hljs-title class_">Rect</span>.<span class="hljs-title function_">add</span>(bounds, child.<span class="hljs-property">layout</span>.<span class="hljs-title function_">toRect</span>())
-        child.<span class="hljs-property">labels</span>.<span class="hljs-title function_">forEach</span>((<span class="hljs-attr">label</span>: <span class="hljs-title class_">ILabel</span>): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
-          bounds = <span class="hljs-title class_">Rect</span>.<span class="hljs-title function_">add</span>(bounds, label.<span class="hljs-property">layout</span>.<span class="hljs-property">bounds</span>)
-        })
+  <span class="hljs-keyword">return</span> <span class="hljs-title class_">IGroupBoundsCalculator</span>.<span class="hljs-title function_">create</span>((<span class="hljs-attr">graph</span>: <span class="hljs-title class_">IGraph</span>): <span class="hljs-function"><span class="hljs-params">Rect</span> =&gt;</span> {
+    <span class="hljs-keyword">let</span> <span class="hljs-attr">bounds</span>: <span class="hljs-title class_">Rect</span> = <span class="hljs-title class_">Rect</span>.<span class="hljs-property">EMPTY</span>
+    <span class="hljs-keyword">const</span> children = graph.<span class="hljs-title function_">getChildren</span>(node)
+    children.<span class="hljs-title function_">forEach</span>((<span class="hljs-attr">child</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
+      bounds = <span class="hljs-title class_">Rect</span>.<span class="hljs-title function_">add</span>(bounds, child.<span class="hljs-property">layout</span>.<span class="hljs-title function_">toRect</span>())
+      child.<span class="hljs-property">labels</span>.<span class="hljs-title function_">forEach</span>((<span class="hljs-attr">label</span>: <span class="hljs-title class_">ILabel</span>): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
+        bounds = <span class="hljs-title class_">Rect</span>.<span class="hljs-title function_">add</span>(bounds, label.<span class="hljs-property">layout</span>.<span class="hljs-property">bounds</span>)
       })
+    })
 
-      <span class="hljs-comment">// also consider the node insets</span>
-      <span class="hljs-keyword">const</span> insetsProvider = groupNode.<span class="hljs-title function_">lookup</span>(<span class="hljs-title class_">INodeInsetsProvider</span>.<span class="hljs-property">$class</span>)
-      <span class="hljs-keyword">return</span> insetsProvider
-        ? bounds.<span class="hljs-title function_">getEnlarged</span>(insetsProvider.<span class="hljs-title function_">getInsets</span>(groupNode))
-        : bounds
-    }
-  )
+    <span class="hljs-comment">// also consider the node insets</span>
+    <span class="hljs-keyword">const</span> paddingProvider = node.<span class="hljs-title function_">lookup</span>(<span class="hljs-title class_">IGroupPaddingProvider</span>)
+    <span class="hljs-keyword">return</span> paddingProvider
+      ? bounds.<span class="hljs-title function_">getEnlarged</span>(paddingProvider.<span class="hljs-title function_">getPadding</span>())
+      : bounds
+  })
 }</code></pre>
             </div>
           </div>

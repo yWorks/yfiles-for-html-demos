@@ -13,17 +13,16 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "verbatimModuleSyntax": true,
-    "resolveJsonModule": true,
-    "types": [
-      "vite/client"
-    ]
+    "resolveJsonModule": true
   },
+  "include": [
+    "**/*.ts"
+  ],
   "exclude": [
-    "loading/parcel",
+    "loading/nodejs",
     "loading/vite",
+    "loading/vite-lazy-yfiles",
     "loading/webpack",
-    "loading/webpack-lazy-layout",
-    "loading/webpack-lazy-yfiles",
     "loading/webworker-webpack",
     "node_modules",
     "style/angular-component-node-style",
@@ -43,6 +42,7 @@
     "toolkit/react-class-components",
     "toolkit/solid",
     "toolkit/svelte",
-    "toolkit/vue"
+    "toolkit/vue",
+    "view/graphml"
   ]
 }

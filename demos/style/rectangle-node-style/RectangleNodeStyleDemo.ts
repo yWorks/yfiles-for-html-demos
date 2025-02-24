@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,32 +27,28 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
-  Enum,
   GraphComponent,
   GraphEditorInputMode,
-  GraphSelectionIndicatorManager,
   IGraph,
   INode,
   IReshapeHandler,
+  LabelStyle,
   License,
   NodeReshapeHandleProvider,
   Point,
   RectangleCorners,
   RectangleCornerStyle,
   RectangleNodeStyle,
-  Size,
-  VoidNodeStyle
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 
 import CornerSizeHandleProvider from './CornerSizeHandleProvider'
-import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper'
+import { enableSingleSelection } from './SingleSelectionHelper'
 
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import type { ColorSet } from 'demo-resources/demo-colors'
-import { colorSets } from 'demo-resources/demo-colors'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import type { ColorSet } from '@yfiles/demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 const [yellow, orange, green, blue, gray] = [
   colorSets['demo-palette-71'],
@@ -68,8 +64,6 @@ const [yellow, orange, green, blue, gray] = [
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeGraph(graphComponent.graph)
 
   initializeInteraction(graphComponent)
@@ -161,11 +155,11 @@ function addLabel(graph: IGraph, node: INode, color: ColorSet) {
   graph.addLabel({
     owner: node,
     text: styleToText(node.style as RectangleNodeStyle),
-    style: new DefaultLabelStyle({
+    style: new LabelStyle({
       textFill: color.text,
       backgroundFill: color.nodeLabelFill,
       textSize: 12,
-      insets: 5
+      padding: 5
     })
   })
 }
@@ -181,32 +175,30 @@ function initializeInteraction(graphComponent: GraphComponent) {
   enableSingleSelection(graphComponent)
 
   // add a label to newly created node that shows the current style settings
-  inputMode.addNodeCreatedListener((_, evt) => {
+  inputMode.addEventListener('node-created', (evt) => {
     const node = evt.item
     addLabel(graphComponent.graph, node, gray)
   })
 
-  const nodeDecorator = graphComponent.graph.decorator.nodeDecorator
+  const nodeDecorator = graphComponent.graph.decorator.nodes
 
   // add handle that enables the user to change the corner size of a node
-  nodeDecorator.handleProviderDecorator.setImplementationWrapper(
+  nodeDecorator.handleProvider.addWrapperFactory(
     (n) => n.style instanceof RectangleNodeStyle,
     (node, delegateProvider) => new CornerSizeHandleProvider(node!, delegateProvider)
   )
 
-  // only provide reshape handles for the east, south and south-east sides, so they don't clash with the corner size handle
-  nodeDecorator.reshapeHandleProviderDecorator.setFactory(
+  // only provide reshape handles for the right, bottom and bottom-right sides, so they don't clash with the corner size handle
+  nodeDecorator.reshapeHandleProvider.addFactory(
     (node) =>
-      new NodeReshapeHandleProvider(node, node.lookup(IReshapeHandler.$class)!, [
-        'east',
-        'south',
-        'south-east'
+      new NodeReshapeHandleProvider(node, node.lookup(IReshapeHandler)!, [
+        'right',
+        'bottom',
+        'bottom-right'
       ])
   )
 
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
+  graphComponent.graph.decorator.nodes.selectionRenderer.hide()
 }
 
 /**
@@ -246,7 +238,7 @@ function onSelectionChanged(selectedNode: INode | null): void {
  * Sets the style properties when they have been changed in the editor.
  */
 function updateStyleProperties(graphComponent: GraphComponent): void {
-  const node = graphComponent.selection.selectedNodes.find()
+  const node = graphComponent.selection.nodes.first()
   if (node == null) {
     return
   }
@@ -278,7 +270,7 @@ function updateStyleProperties(graphComponent: GraphComponent): void {
   if (node.labels.size === 0) {
     graphComponent.graph.addLabel(node, styleToText(style))
   } else {
-    graphComponent.graph.setLabelText(node.labels.first(), styleToText(style))
+    graphComponent.graph.setLabelText(node.labels.first()!, styleToText(style))
   }
 
   graphComponent.invalidate()
@@ -335,7 +327,7 @@ function cornersToText(corners: RectangleCorners): string {
  * Returns the display text for the given corner value.
  */
 function cornerValueToText(corner: RectangleCorners): string {
-  return Enum.getName(RectangleCorners.$class, corner).toLocaleLowerCase().replace('_', '-')
+  return RectangleCorners[corner].toLocaleLowerCase().replace('_', '-')
 }
 
 /**
@@ -347,8 +339,8 @@ function initializeUI(graphComponent: GraphComponent): void {
   }
 
   // Update the values of the input elements when the selected element changes
-  graphComponent.selection.addItemSelectionChangedListener((graphComponent) =>
-    onSelectionChanged(graphComponent.selectedNodes.find())
+  graphComponent.selection.addEventListener('item-added', (_, graphComponent) =>
+    onSelectionChanged(graphComponent.nodes.first())
   )
 }
 

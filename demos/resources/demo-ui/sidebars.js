@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,72 +30,53 @@
  * Creates the sidebar toggle buttons if needed and adds the play button for small screens to the
  * left sidebar.
  */
-
 export function initSidebarPanel() {
   const sidebar = document.querySelector('.demo-main__sidebar')
   if (!sidebar) return
-
   const sidebarTitle = sidebar.dataset.title || 'Properties'
-
   const toggle = document.createElement('div')
   toggle.className = 'demo-sidebar__toggle'
-
   const button = document.createElement('div')
   button.setAttribute('class', `demo-sidebar__toggle__button`)
   button.setAttribute('title', `Toggle sidebar`)
   button.addEventListener('click', () => {
     sidebar.classList.toggle('demo-main__sidebar--hidden')
   })
-
   const buttonTitle = document.createElement('div')
   buttonTitle.className = 'demo-sidebar__toggle__title'
   buttonTitle.innerText = sidebarTitle
-
   toggle.append(button, buttonTitle)
   sidebar.appendChild(toggle)
 }
-
 export function initDescriptionPanel() {
   const description = document.querySelector('.demo-page__description')
   if (!description) {
     return
   }
-
   const toggleButton = description.querySelector('.demo-description__toggle-button')
   toggleButton?.addEventListener('click', () => document.body.classList.toggle('demo-left-hidden'))
-
   const playButton = description.querySelector('.demo-description__play-button')
   playButton?.addEventListener('click', () => {
     document.body.classList.toggle('demo-left-hidden')
   })
-
   if (description.classList.contains('demo-description--draggable')) {
     enableDraggableDescription(description)
   }
 }
-
-/**
- * @param {!Element} description
- */
 function enableDraggableDescription(description) {
   // disable grid-area transition
   document.body.style.transition = 'none'
-
   const dragArea = document.createElement('div')
   dragArea.classList.add('demo-description__drag-area')
   const verticalDragArea = dragArea
   const horizontalDragArea = dragArea.cloneNode()
   verticalDragArea.classList.add('demo-description__drag-area--vertical')
   horizontalDragArea.classList.add('demo-description__drag-area--horizontal')
-
   description.append(verticalDragArea, horizontalDragArea)
-
   let resizingElement
   const resize = (event) => {
     if (!resizingElement) return
-
     const vertical = resizingElement.classList.contains('demo-description__drag-area--vertical')
-
     const eventPos =
       event instanceof MouseEvent
         ? vertical
@@ -106,7 +87,6 @@ function enableDraggableDescription(description) {
             ? event.touches.item(0).pageX
             : window.innerHeight - event.touches.item(0).pageY
           : null
-
     if (eventPos == null) {
       return
     }
@@ -114,18 +94,14 @@ function enableDraggableDescription(description) {
     event.preventDefault()
   }
   const endResize = () => (resizingElement = undefined)
-
   verticalDragArea.addEventListener('mousedown', () => (resizingElement = verticalDragArea))
   verticalDragArea.addEventListener('touchstart', () => (resizingElement = verticalDragArea))
   horizontalDragArea.addEventListener('mousedown', () => (resizingElement = horizontalDragArea))
   horizontalDragArea.addEventListener('touchstart', () => (resizingElement = horizontalDragArea))
-
   document.addEventListener('mousemove', resize)
   document.addEventListener('touchmove', resize)
-
   document.addEventListener('touchend', endResize)
   document.addEventListener('mouseup', endResize)
-
   verticalDragArea.addEventListener('dblclick', () => {
     document.body.style.setProperty('--description-width', '100%')
   })
@@ -133,11 +109,6 @@ function enableDraggableDescription(description) {
     document.body.style.setProperty('--description-drag-height', window.innerHeight + 'px')
   })
 }
-
-/**
- * @param {boolean} vertical
- * @param {number} size
- */
 function applyDescriptionSize(vertical, size) {
   const property = vertical ? '--description-width' : '--description-drag-height'
   document.body.style.setProperty(property, `${size}px`)

@@ -1,37 +1,40 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Theme Variants Demo
 
-# Theme Variants Demo
+<img src="../../../doc/demo-thumbnails/theme-variants.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/style/theme-variants/).
 
 This demo shows various interaction visualization [themes](https://docs.yworks.com/yfileshtml/#/dguide/customizing_view_theming) simultaneously.
 
-Each graph component uses a different theme variant:
+Each graph component uses a different  
+`--yfiles-theme-variant`:
 
 Top-left
 
-[Simple round](https://docs.yworks.com/yfileshtml/#/api/ThemeVariant#SIMPLE_ROUND)
+`round`
 
 Top-right
 
-[Simple square](https://docs.yworks.com/yfileshtml/#/api/ThemeVariant#SIMPLE_SQUARE)
+`round-hatched`
 
 Bottom-left
 
-[Classic with non-default colors](https://docs.yworks.com/yfileshtml/#/api/ThemeVariant#CLASSIC)
+`square`
 
 Bottom-right
 
-[Classic with default colors](https://docs.yworks.com/yfileshtml/#/api/ThemeVariant#CLASSIC)
+`square-hatched`
 
 ## Things to Try
 

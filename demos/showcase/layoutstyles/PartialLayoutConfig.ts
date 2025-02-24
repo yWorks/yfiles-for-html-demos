@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,24 +29,19 @@
 import {
   CircularLayout,
   Class,
-  ClearAreaLayout,
   ComponentAssignmentStrategy,
-  Enum,
   GraphComponent,
-  HierarchicLayout,
+  HierarchicalLayout,
   ILayoutAlgorithm,
   LayoutData,
   OrganicLayout,
   OrthogonalLayout,
   PartialLayout,
   PartialLayoutData,
-  PartialLayoutEdgeRoutingStrategy,
   PartialLayoutOrientation,
-  SubgraphPlacement,
-  YBoolean,
-  YNumber,
-  YString
-} from 'yfiles'
+  PartialLayoutRoutingStyle,
+  SubgraphPlacement
+} from '@yfiles/yfiles'
 
 import LayoutConfiguration from './LayoutConfiguration'
 import {
@@ -58,11 +53,15 @@ import {
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from 'demo-resources/demo-option-editor'
+} from '@yfiles/demo-resources/demo-option-editor'
 
-// We need to load the module 'layout-area' explicitly to be able to use the method
-// 'allowMovingFixedElements' from the PartialLayout
-Class.ensure(ClearAreaLayout)
+export enum SubgraphLayouts {
+  HIERARCHIC,
+  ORGANIC,
+  CIRCULAR,
+  ORTHOGONAL,
+  AS_IS
+}
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -70,7 +69,116 @@ Class.ensure(ClearAreaLayout)
 const PartialLayoutConfig = (Class as any)('PartialLayoutConfig', {
   $extends: LayoutConfiguration,
 
-  $meta: [LabelAttribute('PartialLayout')],
+  _meta: {
+    LayoutGroup: [
+      new LabelAttribute('General'),
+      new OptionGroupAttribute('RootGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    descriptionText: [
+      new OptionGroupAttribute('DescriptionGroup', 10),
+      new ComponentAttribute(Components.HTML_BLOCK),
+      new TypeAttribute(String)
+    ],
+    routingToSubgraphItem: [
+      new LabelAttribute(
+        'Edge Routing Style',
+        '#/api/PartialLayout#PartialLayout-property-edgeRoutingStyle'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 10),
+      new EnumValuesAttribute([
+        ['Auto-Detect', PartialLayoutRoutingStyle.AUTOMATIC],
+        ['Octilinear', PartialLayoutRoutingStyle.OCTILINEAR],
+        ['Straight-Line', PartialLayoutRoutingStyle.STRAIGHT_LINE],
+        ['Orthogonal', PartialLayoutRoutingStyle.ORTHOGONAL],
+        ['Organic', PartialLayoutRoutingStyle.ORGANIC]
+      ]),
+      new TypeAttribute(PartialLayoutRoutingStyle)
+    ],
+    componentAssignmentStrategyItem: [
+      new LabelAttribute(
+        'Placement Strategy',
+        '#/api/PartialLayout#PartialLayout-property-componentAssignmentStrategy'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 20),
+      new EnumValuesAttribute([
+        ['Connected Nodes as a Unit', ComponentAssignmentStrategy.CONNECTED],
+        ['Each Node Separately', ComponentAssignmentStrategy.SINGLE],
+        ['All Nodes as a Unit', ComponentAssignmentStrategy.SINGLE],
+        ['Clustering', ComponentAssignmentStrategy.CLUSTERING]
+      ]),
+      new TypeAttribute(ComponentAssignmentStrategy)
+    ],
+    subgraphLayoutItem: [
+      new LabelAttribute(
+        'Subgraph Layouter',
+        '#/api/PartialLayout#PartialLayout-property-coreLayout'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 30),
+      new EnumValuesAttribute([
+        ['Hierarchical', SubgraphLayouts.HIERARCHIC],
+        ['Organic', SubgraphLayouts.ORGANIC],
+        ['Circular', SubgraphLayouts.CIRCULAR],
+        ['Orthogonal', SubgraphLayouts.ORTHOGONAL],
+        ['As Is', SubgraphLayouts.AS_IS]
+      ]),
+      new TypeAttribute(SubgraphLayouts)
+    ],
+    subgraphPlacementItem: [
+      new LabelAttribute(
+        'Preferred Placement',
+        '#/api/PartialLayout#PartialLayout-property-subgraphPlacement'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 40),
+      new EnumValuesAttribute([
+        ['Close to Initial Position', SubgraphPlacement.FROM_SKETCH],
+        ['Close to Neighbors', SubgraphPlacement.BARYCENTER]
+      ]),
+      new TypeAttribute(SubgraphPlacement)
+    ],
+    minNodeDistItem: [
+      new LabelAttribute(
+        'Minimum Node Distance',
+        '#/api/PartialLayout#PartialLayout-property-minimumNodeDistance'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 50),
+      new MinMaxAttribute(1, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    orientationItem: [
+      new LabelAttribute(
+        'Orientation',
+        '#/api/PartialLayout#PartialLayout-property-layoutOrientation'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 60),
+      new EnumValuesAttribute([
+        ['Auto Detect', PartialLayoutOrientation.AUTO_DETECT],
+        ['Top to Bottom', PartialLayoutOrientation.TOP_TO_BOTTOM],
+        ['Left to Right', PartialLayoutOrientation.LEFT_TO_RIGHT],
+        ['Bottom to Top', PartialLayoutOrientation.BOTTOM_TO_TOP],
+        ['Right to Left', PartialLayoutOrientation.RIGHT_TO_LEFT],
+        ['None', PartialLayoutOrientation.NONE]
+      ]),
+      new TypeAttribute(PartialLayoutOrientation)
+    ],
+    alignNodesItem: [
+      new LabelAttribute(
+        'Align Nodes',
+        '#/api/PartialLayout#PartialLayout-property-considerNodeAlignment'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 70),
+      new TypeAttribute(Boolean)
+    ],
+    moveFixedElementsItem: [
+      new LabelAttribute(
+        'Allow Moving Fixed Elements',
+        '#/api/PartialLayout#PartialLayout-property-allowMovingFixedElements'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 80),
+      new TypeAttribute(Boolean)
+    ]
+  },
 
   /**
    * Setup default values for various configuration parameters.
@@ -78,7 +186,7 @@ const PartialLayoutConfig = (Class as any)('PartialLayoutConfig', {
   constructor: function () {
     // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
-    this.routingToSubgraphItem = PartialLayoutEdgeRoutingStrategy.AUTOMATIC
+    this.routingToSubgraphItem = PartialLayoutRoutingStyle.AUTOMATIC
     this.componentAssignmentStrategyItem = ComponentAssignmentStrategy.CONNECTED
     this.subgraphLayoutItem = SubgraphLayouts.HIERARCHIC
     this.subgraphPlacementItem = SubgraphPlacement.FROM_SKETCH
@@ -89,7 +197,7 @@ const PartialLayoutConfig = (Class as any)('PartialLayoutConfig', {
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @returns The configured layout.
@@ -101,14 +209,14 @@ const PartialLayoutConfig = (Class as any)('PartialLayoutConfig', {
     layout.subgraphPlacement = this.subgraphPlacementItem
     layout.componentAssignmentStrategy = this.componentAssignmentStrategyItem
     layout.layoutOrientation = this.orientationItem
-    layout.edgeRoutingStrategy = this.routingToSubgraphItem
+    layout.edgeRoutingStyle = this.routingToSubgraphItem
     layout.allowMovingFixedElements = this.moveFixedElementsItem
 
     let subgraphLayout = null
     if (this.componentAssignmentStrategyItem !== ComponentAssignmentStrategy.SINGLE) {
       switch (this.subgraphLayoutItem) {
         case SubgraphLayouts.HIERARCHIC:
-          subgraphLayout = new HierarchicLayout()
+          subgraphLayout = new HierarchicalLayout()
           break
         case SubgraphLayouts.ORGANIC:
           subgraphLayout = new OrganicLayout()
@@ -136,211 +244,47 @@ const PartialLayoutConfig = (Class as any)('PartialLayoutConfig', {
     graphComponent: GraphComponent,
     layout: PartialLayout
   ): LayoutData {
-    return new PartialLayoutData({
-      affectedNodes: graphComponent.selection.selectedNodes,
-      affectedEdges: graphComponent.selection.selectedEdges
-    })
+    const partialLayoutData = new PartialLayoutData()
+    const selection = graphComponent.selection
+
+    partialLayoutData.scope.nodes = selection.nodes
+    partialLayoutData.scope.edges = selection.edges
+
+    return partialLayoutData
   },
 
   /** @type {OptionGroup} */
-  LayoutGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('General'),
-        OptionGroupAttribute('RootGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  LayoutGroup: null,
 
   /** @type {string} */
   descriptionText: {
-    $meta: function () {
-      return [
-        OptionGroupAttribute('DescriptionGroup', 10),
-        ComponentAttribute(Components.HTML_BLOCK),
-        TypeAttribute(YString.$class)
-      ]
-    },
     get: function (): string {
       return "<p style='margin-top:0'>Partial layout arranges user-specified parts of a diagram, the so-called partial elements, while keeping the other parts fixed. It is related to incremental graph layout. This concept is a perfect fit for incremental scenarios where subsequently added parts should be arranged so that they fit into a given, unchanged diagram.</p><p>In a first step, partial elements are combined to form subgraph components. Subsequently, these are arranged and afterwards placed so that the remainder of the diagram, which consists of the so-called fixed elements, is not affected.</p><p>Placing a subgraph component predominantly means finding a good position that both meets certain proximity criteria and offers enough space to accommodate the subgraph component.</p> <p>In this demo selected elements are considered by the algorithm as partial elements.</p>"
     }
   },
 
-  /** @type {PartialLayoutEdgeRoutingStrategy} */
-  routingToSubgraphItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Edge Routing Style',
-          '#/api/PartialLayout#PartialLayout-property-edgeRoutingStrategy'
-        ),
-        OptionGroupAttribute('LayoutGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Auto-Detect', PartialLayoutEdgeRoutingStrategy.AUTOMATIC],
-            ['Octilinear', PartialLayoutEdgeRoutingStrategy.OCTILINEAR],
-            ['Straight-Line', PartialLayoutEdgeRoutingStrategy.STRAIGHTLINE],
-            ['Orthogonal', PartialLayoutEdgeRoutingStrategy.ORTHOGONAL],
-            ['Organic', PartialLayoutEdgeRoutingStrategy.ORGANIC]
-          ]
-        }),
-        TypeAttribute(PartialLayoutEdgeRoutingStrategy.$class)
-      ]
-    },
-    value: null
-  },
+  /** @type {PartialLayoutRoutingStyle} */
+  routingToSubgraphItem: null,
 
   /** @type {ComponentAssignmentStrategy} */
-  componentAssignmentStrategyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Placement Strategy',
-          '#/api/PartialLayout#PartialLayout-property-componentAssignmentStrategy'
-        ),
-        OptionGroupAttribute('LayoutGroup', 20),
-        EnumValuesAttribute().init({
-          values: [
-            ['Connected Nodes as a Unit', ComponentAssignmentStrategy.CONNECTED],
-            ['Each Node Separately', ComponentAssignmentStrategy.SINGLE],
-            ['All Nodes as a Unit', ComponentAssignmentStrategy.CUSTOMIZED],
-            ['Clustering', ComponentAssignmentStrategy.CLUSTERING]
-          ]
-        }),
-        TypeAttribute(ComponentAssignmentStrategy.$class)
-      ]
-    },
-    value: null
-  },
+  componentAssignmentStrategyItem: null,
 
   /** @type {SubgraphLayouts} */
-  subgraphLayoutItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Subgraph Layouter',
-          '#/api/PartialLayout#PartialLayout-property-coreLayout'
-        ),
-        OptionGroupAttribute('LayoutGroup', 30),
-        EnumValuesAttribute().init({
-          values: [
-            ['Hierarchical', SubgraphLayouts.HIERARCHIC],
-            ['Organic', SubgraphLayouts.ORGANIC],
-            ['Circular', SubgraphLayouts.CIRCULAR],
-            ['Orthogonal', SubgraphLayouts.ORTHOGONAL],
-            ['As Is', SubgraphLayouts.AS_IS]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  subgraphLayoutItem: null,
 
   /** @type {SubgraphPlacement} */
-  subgraphPlacementItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Preferred Placement',
-          '#/api/PartialLayout#PartialLayout-property-subgraphPlacement'
-        ),
-        OptionGroupAttribute('LayoutGroup', 40),
-        EnumValuesAttribute().init({
-          values: [
-            ['Close to Initial Position', SubgraphPlacement.FROM_SKETCH],
-            ['Close to Neighbors', SubgraphPlacement.BARYCENTER]
-          ]
-        }),
-        TypeAttribute(SubgraphPlacement.$class)
-      ]
-    },
-    value: null
-  },
+  subgraphPlacementItem: null,
 
   /** @type {number} */
-  minNodeDistItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Node Distance',
-          '#/api/PartialLayout#PartialLayout-property-minimumNodeDistance'
-        ),
-        OptionGroupAttribute('LayoutGroup', 50),
-        MinMaxAttribute().init({
-          min: 1,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 1
-  },
+  minNodeDistItem: 1,
 
   /** @type {PartialLayoutOrientation} */
-  orientationItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Orientation',
-          '#/api/PartialLayout#PartialLayout-property-layoutOrientation'
-        ),
-        OptionGroupAttribute('LayoutGroup', 60),
-        EnumValuesAttribute().init({
-          values: [
-            ['Auto Detect', PartialLayoutOrientation.AUTO_DETECT],
-            ['Top to Bottom', PartialLayoutOrientation.TOP_TO_BOTTOM],
-            ['Left to Right', PartialLayoutOrientation.LEFT_TO_RIGHT],
-            ['Bottom to Top', PartialLayoutOrientation.BOTTOM_TO_TOP],
-            ['Right to Left', PartialLayoutOrientation.RIGHT_TO_LEFT],
-            ['None', PartialLayoutOrientation.NONE]
-          ]
-        }),
-        TypeAttribute(PartialLayoutOrientation.$class)
-      ]
-    },
-    value: null
-  },
+  orientationItem: null,
 
   /** @type {boolean} */
-  alignNodesItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Align Nodes',
-          '#/api/PartialLayout#PartialLayout-property-considerNodeAlignment'
-        ),
-        OptionGroupAttribute('LayoutGroup', 70),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  alignNodesItem: false,
 
   /** @type {boolean} */
-  moveFixedElementsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Allow Moving Fixed Elements',
-          '#/api/PartialLayout#PartialLayout-property-allowMovingFixedElements'
-        ),
-        OptionGroupAttribute('LayoutGroup', 80),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  }
+  moveFixedElementsItem: false
 })
 export default PartialLayoutConfig
-
-export enum SubgraphLayouts {
-  HIERARCHIC,
-  ORGANIC,
-  CIRCULAR,
-  ORTHOGONAL,
-  AS_IS
-}

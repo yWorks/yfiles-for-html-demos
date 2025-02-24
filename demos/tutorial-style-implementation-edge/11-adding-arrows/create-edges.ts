@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { IGraph } from 'yfiles'
-import { FreeNodeLabelModel, IArrow, ShapeNodeStyle } from 'yfiles'
+import {
+  Arrow,
+  ArrowType,
+  FreeNodeLabelModel,
+  type IGraph,
+  ShapeNodeStyle
+} from '@yfiles/yfiles'
 import { CustomEdgeStyle } from './CustomEdgeStyle'
 
 /**
@@ -60,7 +65,7 @@ export function createEdges(graph: IGraph): void {
   })
 
   const style = new CustomEdgeStyle(2)
-  style.sourceArrow = IArrow.TRIANGLE
+  style.sourceArrow = new Arrow(ArrowType.TRIANGLE)
 
   graph.createEdge({
     source: node1,
@@ -69,7 +74,7 @@ export function createEdges(graph: IGraph): void {
   })
 
   const style2 = new CustomEdgeStyle(2)
-  style2.targetArrow = IArrow.TRIANGLE
+  style2.targetArrow = new Arrow(ArrowType.TRIANGLE)
   graph.createEdge({
     source: node2,
     target: node5,
@@ -77,8 +82,8 @@ export function createEdges(graph: IGraph): void {
   })
 
   const style3 = new CustomEdgeStyle(2)
-  style3.sourceArrow = IArrow.TRIANGLE
-  style3.targetArrow = IArrow.TRIANGLE
+  style3.sourceArrow = new Arrow(ArrowType.TRIANGLE)
+  style3.targetArrow = new Arrow(ArrowType.TRIANGLE)
   graph.createEdge({
     source: node3,
     target: node6,

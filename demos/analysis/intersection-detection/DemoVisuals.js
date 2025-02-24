@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,6 @@
 import {
   BaseClass,
   Color,
-  Comparers,
   IEdge,
   INode,
   Intersection,
@@ -39,33 +38,27 @@ import {
   Point,
   SvgVisual,
   Visual
-} from 'yfiles'
-import { colorSets } from 'demo-resources/demo-styles'
-
+} from '@yfiles/yfiles'
+import { colorSets } from '@yfiles/demo-resources/demo-styles'
 const EDGE_EDGE_INTERSECTION_COLOR = Color.from(colorSets['demo-palette-13'].fill)
 const NODE_EDGE_INTERSECTION_COLOR = Color.from(colorSets['demo-red'].fill)
 const NODE_NODE_INTERSECTION_FILL = Color.from(colorSets['demo-palette-22'].fill)
 const NODE_NODE_INTERSECTION_STROKE = Color.from(colorSets['demo-palette-22'].stroke)
 const LABEL_INTERSECTION_COLOR_FILL = Color.from(colorSets['demo-green'].fill)
 const LABEL_INTERSECTION_COLOR_STROKE = Color.from(colorSets['demo-green'].stroke)
-
 /**
  * Visualizes intersections calculated by the {@link Intersections} algorithm.
  */
 export class IntersectionVisualCreator extends BaseClass(IVisualCreator) {
   intersections = []
-
   /**
    * Creates the visual showing the intersections found by the intersection algorithm.
-   * @param {!IRenderContext} context The context that describes where the visual will be used
-   * @returns {!Visual} The intersection visual
+   * @param context The context that describes where the visual will be used
+   * @returns The intersection visual
    */
   createVisual(context) {
     //sort the intersections so that area intersections (contain more points) are drawn first
-    this.intersections.sort(
-      (a, b) => -Comparers.compare(a.intersectionPoints.size, b.intersectionPoints.size)
-    )
-
+    this.intersections.sort((a, b) => a.intersectionPoints.size - b.intersectionPoints.size)
     //draw each intersection
     const element = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     for (const intersection of this.intersections) {
@@ -84,27 +77,20 @@ export class IntersectionVisualCreator extends BaseClass(IVisualCreator) {
         element.appendChild(createPointElement(points[0], mainColor))
       }
     }
-
     return new SvgVisual(element)
   }
-
   /**
    * Updates the intersection visual.
-   * @param {!IRenderContext} context The context that describes where the visual will be used
-   * @param {!Visual} oldVisual The old visual
-   * @returns {!Visual} The updated intersection visual
+   * @param context The context that describes where the visual will be used
+   * @param oldVisual The old visual
+   * @returns The updated intersection visual
    */
   updateVisual(context, oldVisual) {
     return this.createVisual(context)
   }
 }
-
 /**
  * Creates an SVG polygon path from the given control points.
- * @param {!Array.<Point>} points
- * @param {!Color} fill
- * @param {!Color} stroke
- * @returns {!SVGElement}
  */
 function createPolygonElement(points, fill, stroke) {
   let path = ''
@@ -113,7 +99,6 @@ function createPolygonElement(points, fill, stroke) {
     path += ` L${points[j].x} ${points[j].y}`
   }
   path += 'Z'
-
   const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'path')
   polygon.setAttribute('d', path)
   polygon.setAttribute('fill', `rgb(${fill.r},${fill.g},${fill.b})`)
@@ -122,13 +107,8 @@ function createPolygonElement(points, fill, stroke) {
   polygon.setAttribute('stroke-opacity', '1')
   return polygon
 }
-
 /**
  * Creates an SVG line from the given start point to the given end point.
- * @param {!Point} p1
- * @param {!Point} p2
- * @param {!Color} color
- * @returns {!SVGElement}
  */
 function createLineElement(p1, p2, color) {
   const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
@@ -140,12 +120,8 @@ function createLineElement(p1, p2, color) {
   line.setAttribute('stroke-width', '1.5px')
   return line
 }
-
 /**
  * Creates an SVG circle centered on the given point.
- * @param {!Point} point
- * @param {!Color} color
- * @returns {!SVGElement}
  */
 function createPointElement(point, color) {
   const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
@@ -156,11 +132,8 @@ function createPointElement(point, color) {
   circle.setAttribute('stroke', `rgb(${color.r},${color.g},${color.b})`)
   return circle
 }
-
 /**
  * Returns the color scheme for the given type of intersection.
- * @param {!Intersection} intersection
- * @returns {!object}
  */
 function getIntersectionColors(intersection) {
   const item1 = intersection.item1
@@ -178,7 +151,6 @@ function getIntersectionColors(intersection) {
     //node-edge
     return { mainColor: NODE_EDGE_INTERSECTION_COLOR, stroke: NODE_EDGE_INTERSECTION_COLOR }
   }
-
   //labels
   return { mainColor: LABEL_INTERSECTION_COLOR_FILL, stroke: LABEL_INTERSECTION_COLOR_STROKE }
 }

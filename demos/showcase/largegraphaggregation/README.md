@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Large Graph Aggregation Demo
 
-# Large Graph Aggregation Demo
+<img src="../../../doc/demo-thumbnails/large-graph-aggregation.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/showcase/largegraphaggregation/).
 
 This demo shows how to use the smart [NodeAggregation](https://docs.yworks.com/yfileshtml/#/api/NodeAggregation) algorithm for drill down exploration of a large graph.
 
@@ -25,7 +27,7 @@ The _Aggregation Mode_ determines if nodes are combined in clusters based on the
 
 ## Things to Try
 
-- Switch between the **two layout styles** offered for visualizing the aggregated graph (i.e. [BalloonLayout](https://docs.yworks.com/yfileshtml/#/api/BalloonLayout) and [CactusGroupLayout](https://docs.yworks.com/yfileshtml/#/api/CactusGroupLayout)). This re-runs the aggregation as well.
+- Switch between the **two layout styles** offered for visualizing the aggregated graph (i.e. [RadialTreeLayout](https://docs.yworks.com/yfileshtml/#/api/RadialTreeLayout) and [RadialGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout)). This re-runs the aggregation as well.
 - Click on an aggregated node to **show** its children in the aggregation hierarchy.
 - Click on a separated node to **hide** its children in the aggregation hierarchy.
 - Explore the **configuration options** of the aggregation algorithm.

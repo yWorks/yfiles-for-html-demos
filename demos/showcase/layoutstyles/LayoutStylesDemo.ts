@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,28 +27,27 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultGraph,
+  Arrow,
+  ArrowType,
+  Graph,
   GraphComponent,
   GraphCopier,
   GraphEditorInputMode,
   GraphInputMode,
-  GraphMLSupport,
+  GraphMLIOHandler,
   GraphOverviewComponent,
   GraphSnapContext,
   GridSnapTypes,
+  HandlesRenderer,
   IArrow,
-  ICommand,
   IEdge,
   IEnumerable,
   IGraph,
   IInputMode,
   ILabel,
   ILabelOwner,
-  ImageNodeStyle,
   IModelItem,
   INode,
-  LabelSnapContext,
   License,
   List,
   OrthogonalEdgeEditingContext,
@@ -56,57 +55,47 @@ import {
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs,
   Rect,
-  RenderModes,
+  RenderMode,
   SmartEdgeLabelModel,
-  StorageLocation,
   Stroke,
-  TableNodeStyle,
-  WebGL2GraphModelManager
-} from 'yfiles'
-import { OptionEditor } from 'demo-resources/demo-option-editor'
-import HierarchicLayoutConfig from './HierarchicLayoutConfig'
+  TableNodeStyle
+} from '@yfiles/yfiles'
+import { OptionEditor } from '@yfiles/demo-resources/demo-option-editor'
+import HierarchicalLayoutConfig from './HierarchicalLayoutConfig'
 import OrganicLayoutConfig from './OrganicLayoutConfig'
 import OrthogonalLayoutConfig from './OrthogonalLayoutConfig'
 import CircularLayoutConfig from './CircularLayoutConfig'
 import TreeLayoutConfig from './TreeLayoutConfig'
-import ClassicTreeLayoutConfig from './ClassicTreeLayoutConfig'
-import BalloonLayoutConfig from './BalloonLayoutConfig'
+import RadialTreeLayoutConfig from './RadialTreeLayoutConfig'
 import RadialLayoutConfig from './RadialLayoutConfig'
 import SeriesParallelLayoutConfig from './SeriesParallelLayoutConfig'
-import PolylineEdgeRouterConfig from './PolylineEdgeRouterConfig'
-import ChannelEdgeRouterConfig from './ChannelEdgeRouterConfig'
-import BusEdgeRouterConfig from './BusEdgeRouterConfig'
+import { PolylineEdgeRouterConfig } from './PolylineEdgeRouterConfig'
 import OrganicEdgeRouterConfig from './OrganicEdgeRouterConfig'
 import ParallelEdgeRouterConfig from './ParallelEdgeRouterConfig'
 import LabelingConfig from './LabelingConfig'
 import ComponentLayoutConfig from './ComponentLayoutConfig'
 import TabularLayoutConfig from './TabularLayoutConfig'
 import PartialLayoutConfig from './PartialLayoutConfig'
-import GraphTransformerConfig from './GraphTransformerConfig'
+import LayoutTransformationsConfig from './LayoutTransformationsConfig'
 import CompactDiskLayoutConfig from './CompactDiskLayoutConfig'
 import { PresetsUiBuilder } from './PresetsUiBuilder'
-import { ContextMenu } from 'demo-utils/ContextMenu'
-import { createConfiguredGraphMLIOHandler } from 'demo-utils/FaultTolerantGraphMLIOHandler'
+import { createConfiguredGraphMLIOHandler } from '@yfiles/demo-utils/FaultTolerantGraphMLIOHandler'
 import type { LayoutSample } from './resources/LayoutSamples'
 import { isSeparator, LayoutStyles, Presets } from './resources/LayoutSamples'
 import { LoremIpsum } from './resources/LoremIpsum'
 import type { LayoutConfigurationType } from './LayoutConfiguration'
 import {
-  applyDemoTheme,
   createDemoEdgeStyle,
   createDemoGroupStyle,
   createDemoNodeStyle,
-  DemoStyleOverviewPaintable,
+  DemoStyleOverviewRenderer,
   initDemoStyles
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
-import { configureTwoPointerPanning } from 'demo-utils/configure-two-pointer-panning'
-import { addNavigationButtons, bindYFilesCommand, finishLoading } from 'demo-resources/demo-page'
-
-// We need to load the 'styles-other' module explicitly to prevent tree-shaking
-// tools from removing this dependency which is needed for loading all library styles.
-Class.ensure(ImageNodeStyle)
+} from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 /**
  * The GraphComponent
@@ -144,13 +133,8 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent, { scale: 1 })
-
   // initialize the GraphOverviewComponent
   overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
-
-  // wire up the UI
-  initializeUI()
 
   configOptionsValid = true
 
@@ -160,8 +144,9 @@ async function run(): Promise<void> {
   // use two finger panning to allow easier editing with touch gestures
   configureTwoPointerPanning(graphComponent)
 
-  // use the file system for built-in I/O
-  enableGraphML()
+  // wire up the UI
+  initializeUI()
+
   // initialize the property editor
   const editorElement = document.querySelector<HTMLDivElement>(`#data-editor`)!
   optionEditor = new OptionEditor(editorElement)
@@ -181,7 +166,7 @@ async function run(): Promise<void> {
   initializeGraph()
 
   // configure overview panel
-  overviewComponent.graphVisualCreator = new DemoStyleOverviewPaintable(graphComponent.graph)
+  overviewComponent.graphOverviewRenderer = new DemoStyleOverviewRenderer()
 
   // after the initial graph is loaded, we continue loading with the algorithms
   initializeLayoutAlgorithms()
@@ -194,17 +179,12 @@ async function run(): Promise<void> {
 /**
  * Enables loading and saving the graph to GraphML.
  */
-function enableGraphML(): void {
+function enableGraphML(): GraphMLIOHandler {
   const graphMLIOHandler = createConfiguredGraphMLIOHandler()
-  graphMLIOHandler.addParsedListener((_, evt) => {
+  graphMLIOHandler.addEventListener('parsed', () => {
     updateModifiedGraphSample()
   })
-  new GraphMLSupport({
-    graphComponent,
-    // configure to load and save to the file system
-    storageLocation: StorageLocation.FILE_SYSTEM,
-    graphMLIOHandler: graphMLIOHandler
-  })
+  return graphMLIOHandler
 }
 
 /**
@@ -242,27 +222,23 @@ function initializeLayoutAlgorithms(): void {
  */
 function createLayoutConfig(normalizedName: string): LayoutConfigurationType {
   switch (normalizedName) {
-    case 'balloon':
-      return new BalloonLayoutConfig()
-    case 'bus-router':
-      return new BusEdgeRouterConfig()
-    case 'channel-router':
-      return new ChannelEdgeRouterConfig()
+    case 'radial-tree':
+      return new RadialTreeLayoutConfig()
     case 'circular':
       return new CircularLayoutConfig()
     case 'components':
       return new ComponentLayoutConfig()
     case 'edge-router':
       return new PolylineEdgeRouterConfig()
-    case 'graph-transform':
-      return new GraphTransformerConfig()
-    case 'hierarchic':
-      return new HierarchicLayoutConfig()
+    case 'transformations':
+      return new LayoutTransformationsConfig()
+    case 'hierarchical':
+      return new HierarchicalLayoutConfig()
     case 'labeling':
       return new LabelingConfig()
     case 'organic':
       return new OrganicLayoutConfig()
-    case 'organic-router':
+    case 'organic-edge-router':
       return new OrganicEdgeRouterConfig()
     case 'orthogonal':
       return new OrthogonalLayoutConfig()
@@ -274,16 +250,14 @@ function createLayoutConfig(normalizedName: string): LayoutConfigurationType {
       return new RadialLayoutConfig()
     case 'compact-disk':
       return new CompactDiskLayoutConfig()
-    case 'parallel-router':
+    case 'parallel-edge-router':
       return new ParallelEdgeRouterConfig()
     case 'tabular':
       return new TabularLayoutConfig()
     case 'tree':
       return new TreeLayoutConfig()
-    case 'classic-tree':
-      return new ClassicTreeLayoutConfig()
     default:
-      return new HierarchicLayoutConfig()
+      return new HierarchicalLayoutConfig()
   }
 }
 
@@ -381,8 +355,8 @@ function updateThicknessButtonsState(layoutName: string): void {
   const resetEdgeDirectionButton = document.querySelector<HTMLButtonElement>(
     `#reset-edge-direction-button`
   )!
-  if (layoutName === 'hierarchic') {
-    // enable edge-thickness buttons only for Hierarchic Layout
+  if (layoutName === 'hierarchical') {
+    // enable edge-thickness buttons only for Hierarchical Layout
     generateEdgeThicknessButton.disabled = false
     resetEdgeThicknessButton.disabled = false
     generateEdgeDirectionButton.disabled = false
@@ -562,18 +536,18 @@ async function loadConfigurationFromLocationHash(windowLocationHash: string): Pr
   let preset: string | null = null
 
   // support some specific hashed URLs by parsing specific sample configurations
-  if (hash === 'hierarchic-with-subcomponents') {
-    layout = 'hierarchic'
-    sample = 'hierarchic-with-subcomponents'
-    preset = 'hierarchic-with-subcomponents'
-  } else if (hash === 'hierarchic-with-buses') {
-    layout = 'hierarchic'
-    sample = 'hierarchic-with-buses'
-    preset = 'hierarchic-with-buses'
-  } else if (hash === 'hierarchic-with-curves') {
-    layout = 'hierarchic'
-    sample = 'hierarchic'
-    preset = 'hierarchic-with-curves'
+  if (hash === 'hierarchical-with-subcomponents') {
+    layout = 'hierarchical'
+    sample = 'hierarchical-with-subcomponents'
+    preset = 'hierarchical-with-subcomponents'
+  } else if (hash === 'hierarchical-with-buses') {
+    layout = 'hierarchical'
+    sample = 'hierarchical-with-buses'
+    preset = 'hierarchical-with-buses'
+  } else if (hash === 'hierarchical-with-curves') {
+    layout = 'hierarchical'
+    sample = 'hierarchical'
+    preset = 'hierarchical-with-curves'
   } else if (hash === 'organic-with-substructures') {
     layout = 'organic'
     sample = 'organic-with-substructures'
@@ -595,7 +569,7 @@ async function loadConfigurationFromLocationHash(windowLocationHash: string): Pr
     sample = 'edge-router'
     preset = 'edge-router-with-curves'
   } else if (hash === 'grouping') {
-    layout = 'hierarchic'
+    layout = 'hierarchical'
     sample = 'grouping'
   }
 
@@ -614,7 +588,7 @@ async function loadConfigurationFromUrl(): Promise<void> {
     await loadConfiguration(requestedLayout, requestedSample, requestedPreset)
   } catch (e) {
     /* URLSearchParams is not supported in IE, fallback to default algorithm and sample */
-    onLayoutChanged()
+    await onLayoutChanged()
   }
 }
 
@@ -660,7 +634,7 @@ async function loadConfiguration(
  * Copies the current graph into a temporary {@link IGraph} instance for later use.
  */
 function storeModifiedGraph(): void {
-  customGraph = new DefaultGraph()
+  customGraph = new Graph()
   const copier = new GraphCopier()
   copier.copy(graphComponent.graph, customGraph)
 }
@@ -736,7 +710,7 @@ async function onSampleChangedCore(key: string | null): Promise<void> {
     // no specific item - just clear the graph
     graph.clear()
     // and fit the contents
-    graphComponent.fitGraphBounds()
+    await graphComponent.fitGraphBounds()
     return
   }
   inLoadSample = true
@@ -746,7 +720,7 @@ async function onSampleChangedCore(key: string | null): Promise<void> {
     storeModifiedGraph()
   } else if (key === 'modified-graph') {
     loadModifiedGraph()
-    applyLayout(true)
+    await applyLayout(true)
     customGraphSelected = true
     return
   }
@@ -762,7 +736,7 @@ async function onSampleChangedCore(key: string | null): Promise<void> {
   // update style defaults based on the loaded sample
   updateStyleDefaults(graph)
 
-  graphComponent.zoomTo(getCenter(graph), graphComponent.zoom)
+  graphComponent.zoomTo(graphComponent.zoom, getCenter(graph))
 }
 
 /**
@@ -884,7 +858,7 @@ function adoptFromOldStyle(
 
 function createStroke(prototype: Stroke, thickness: number): Stroke {
   return new Stroke({
-    fill: prototype.fill,
+    fill: prototype.fill ?? 'black',
     thickness: thickness,
     lineCap: prototype.lineCap,
     lineJoin: prototype.lineJoin,
@@ -894,7 +868,9 @@ function createStroke(prototype: Stroke, thickness: number): Stroke {
 
 function getDefaultArrow(graph: IGraph): IArrow {
   const defaultStyleArrow = (graph.edgeDefaults.style as PolylineEdgeStyle).targetArrow
-  return defaultStyleArrow !== IArrow.NONE ? defaultStyleArrow : createDemoEdgeStyle().targetArrow
+  return !(defaultStyleArrow instanceof Arrow && defaultStyleArrow.type === ArrowType.NONE)
+    ? defaultStyleArrow
+    : createDemoEdgeStyle().targetArrow
 }
 
 /**
@@ -911,7 +887,7 @@ function initializeGraph(): void {
 
   // use a smart label model to support integrated labeling
   const model = new SmartEdgeLabelModel({ autoRotation: false })
-  graph.edgeDefaults.labels.layoutParameter = model.createDefaultParameter()
+  graph.edgeDefaults.labels.layoutParameter = model.createParameterFromSource(0)
 
   registerGraphEditListeners()
 }
@@ -922,12 +898,14 @@ function initializeGraph(): void {
  */
 function registerGraphEditListeners(): void {
   const geim = graphComponent.inputMode as GraphEditorInputMode
-  geim.addNodeCreatedListener(onGraphEdited)
-  geim.addNodeReparentedListener(onGraphEdited)
-  geim.addDeletedItemListener(onGraphEdited)
-  geim.addLabelAddedListener(onGraphEdited)
-  geim.addLabelTextChangedListener(onGraphEdited)
-  geim.createEdgeInputMode.addEdgeCreatedListener(onGraphEdited)
+  geim.addEventListener('node-created', onGraphEdited)
+  geim.addEventListener('node-reparented', onGraphEdited)
+  geim.addEventListener('deleted-item', onGraphEdited)
+  geim.addEventListener('items-duplicated', onGraphEdited)
+  geim.addEventListener('items-pasted', onGraphEdited)
+  geim.addEventListener('label-added', onGraphEdited)
+  geim.editLabelInputMode.addEventListener('label-edited', onGraphEdited)
+  geim.createEdgeInputMode.addEventListener('edge-created', onGraphEdited)
 }
 
 /**
@@ -943,7 +921,7 @@ function onGraphEdited(): void {
  */
 function addCustomGraphEntry(): void {
   customGraphSelected = true
-  customGraph = customGraph || new DefaultGraph()
+  customGraph = customGraph || new Graph()
   let customGraphIdx: number = [...sampleComboBox.options].findIndex(
     (entry) => entry.value === 'modified-graph'
   )
@@ -969,22 +947,18 @@ function createEditorMode(): IInputMode {
     gridSnapType: GridSnapTypes.NONE
   })
 
-  const newLabelSnapContext = new LabelSnapContext({
-    enabled: false
-  })
-
   // create default interaction with snapping and orthogonal edge editing
   const mode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
     snapContext: newGraphSnapContext,
-    labelSnapContext: newLabelSnapContext,
     orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext({
       // initially disable the orthogonal edge editing
       enabled: false
-    })
+    }),
+    navigationInputMode: {
+      allowCollapseGroup: false,
+      allowExpandGroup: false
+    }
   })
-  mode.navigationInputMode.allowCollapseGroup = false
-  mode.navigationInputMode.allowExpandGroup = false
 
   // make bend creation more important than moving of selected edges
   // this has the effect that dragging a selected edge (not its bends)
@@ -992,12 +966,11 @@ function createEditorMode(): IInputMode {
   // This is especially nicer in conjunction with orthogonal
   // edge editing because this creates additional bends every time
   // the edge is moved otherwise
-  mode.createBendInputMode.priority = mode.moveInputMode.priority - 1
+  mode.createBendInputMode.priority = mode.moveSelectedItemsInputMode.priority - 1
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
   if (BrowserDetection.webGL2) {
-    Class.ensure(WebGL2GraphModelManager)
-    mode.handleInputMode.renderMode = RenderModes.WEB_GL2
+    mode.handleInputMode.handlesRenderer = new HandlesRenderer(RenderMode.WEBGL)
   }
 
   // also we add a context menu
@@ -1007,42 +980,19 @@ function createEditorMode(): IInputMode {
 }
 
 function initializeContextMenu(inputMode: GraphInputMode): void {
-  // Create a context menu. In this demo, we use our sample context menu implementation, but you can use any other
-  // context menu widget as well. See the Context Menu demo for more details about working with context menus.
-  const contextMenu = new ContextMenu(graphComponent)
-
-  // Add event listeners to the various events that open the context menu. These listeners then
-  // call the provided callback function which in turn asks the current ContextMenuInputMode if a
-  // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
-    if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
-      contextMenu.show(location)
-    }
-  })
-
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
-  // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  inputMode.addPopulateItemContextMenuListener((_, evt) => populateContextMenu(contextMenu, evt))
-
-  // Add a listener that closes the menu when the input mode requests this
-  inputMode.contextMenuInputMode.addCloseMenuListener(() => {
-    contextMenu.close()
-  })
-
-  // If the context menu closes itself, for example because a menu item was clicked, we must inform the input mode
-  contextMenu.onClosedCallback = (): void => {
-    inputMode.contextMenuInputMode.menuClosed()
-  }
+  inputMode.addEventListener('populate-item-context-menu', (evt) => populateContextMenu(evt))
 }
 
 /**
  * Populates the context menu based on the item the mouse hovers over
  */
-function populateContextMenu(
-  contextMenu: ContextMenu,
-  args: PopulateItemContextMenuEventArgs<IModelItem>
-): void {
-  contextMenu.clearItems()
+function populateContextMenu(args: PopulateItemContextMenuEventArgs<IModelItem>): void {
+  if (args.handled) {
+    return
+  }
+
+  const menuItems: { label: string; action: () => void }[] = []
 
   // get the item which is located at the mouse position
   const hits = graphComponent.graphModelManager.hitTester.enumerateHits(
@@ -1051,61 +1001,80 @@ function populateContextMenu(
   )
 
   // check whether a node was it. If it was, we prefer it over edges
-  const hit = hits.find((item) => INode.isInstance(item)) || hits.at(0)
+  const hit = hits.find((item) => item instanceof INode) || hits.at(0)
 
   if (!hit) {
     // empty canvas hit: provide 'select all'
-    contextMenu.addMenuItem('Select All', () => {
-      ICommand.SELECT_ALL.execute(null, graphComponent)
+    menuItems.push({
+      label: 'Select All',
+      action: () => {
+        graphComponent.graph.nodes.forEach((node) => graphComponent.selection.nodes.add(node))
+        graphComponent.graph.edges.forEach((edge) => graphComponent.selection.edges.add(edge))
+      }
     })
   }
 
   const graphSelection = graphComponent.selection
-
+  const inputMode = graphComponent.inputMode as GraphEditorInputMode
   // if a node or an edge is hit: provide 'Select All Nodes' or 'Select All Edges', respectively
   // also: select the hit item
-  if (INode.isInstance(hit)) {
-    contextMenu.addMenuItem('Select All Nodes', () => {
-      graphComponent.selection.clear()
-      graphComponent.graph.nodes.forEach((node) => {
-        graphComponent.selection.setSelected(node, true)
-      })
+  if (hit instanceof INode) {
+    menuItems.push({
+      label: 'Select All Nodes',
+      action: () => {
+        graphComponent.selection.clear()
+        graphComponent.graph.nodes.forEach((node) => {
+          graphComponent.selection.add(node)
+        })
+      }
     })
-    if (!graphSelection.isSelected(hit)) {
+    if (!graphSelection.includes(hit)) {
       graphSelection.clear()
     }
-    graphSelection.setSelected(hit, true)
-  } else if (IEdge.isInstance(hit)) {
-    contextMenu.addMenuItem('Select All Edges', () => {
-      graphComponent.selection.clear()
-      graphComponent.graph.edges.forEach((edge) => {
-        graphComponent.selection.setSelected(edge, true)
-      })
+    graphSelection.add(hit)
+  } else if (hit instanceof IEdge) {
+    menuItems.push({
+      label: 'Select All Edges',
+      action: () => {
+        graphComponent.selection.clear()
+        graphComponent.graph.edges.forEach((edge) => {
+          graphComponent.selection.add(edge)
+        })
+      }
     })
-    if (!graphSelection.isSelected(hit)) {
+    if (!graphSelection.includes(hit)) {
       graphSelection.clear()
     }
-    graphSelection.setSelected(hit, true)
+    graphSelection.add(hit)
   }
   // if one or more nodes are selected: add options to cut and copy
-  if (graphSelection.selectedNodes.size > 0) {
-    contextMenu.addMenuItem('Cut', () => {
-      ICommand.CUT.execute(null, graphComponent)
+  if (graphSelection.nodes.size > 0) {
+    menuItems.push({
+      label: 'Cut',
+      action: () => {
+        inputMode.cut()
+      }
     })
-    contextMenu.addMenuItem('Copy', () => {
-      ICommand.COPY.execute(null, graphComponent)
+    menuItems.push({
+      label: 'Copy',
+      action: () => {
+        inputMode.copy()
+      }
     })
   }
-  if (!graphComponent.clipboard.empty) {
+  if (!graphComponent.clipboard.isEmpty) {
     // clipboard is not empty: add option to paste
-    contextMenu.addMenuItem('Paste', () => {
-      ICommand.PASTE.execute(args.queryLocation, graphComponent)
+    menuItems.push({
+      label: 'Paste',
+      action: () => {
+        inputMode.pasteAtLocation(args.queryLocation)
+      }
     })
   }
 
   // finally, if the context menu has at least one entry, set the showMenu flag
-  if (contextMenu.element.childNodes.length > 0) {
-    args.showMenu = true
+  if (menuItems.length > 0) {
+    args.contextMenu = menuItems
   }
 }
 
@@ -1113,19 +1082,25 @@ function populateContextMenu(
  * Wire up the UI...
  */
 function initializeUI(): void {
-  bindYFilesCommand(
-    "button[data-command='OpenInSidebar']",
-    ICommand.OPEN,
-    graphComponent,
-    null,
-    'Open a GraphML file'
-  )
-
+  // enable graphMLIO I/O
+  const graphMLIOHandler = enableGraphML()
+  document
+    .querySelector<HTMLButtonElement>("button[data-command='OpenInSidebar']")!
+    .addEventListener('click', async () => {
+      await openGraphML(graphComponent, graphMLIOHandler)
+    })
+  document
+    .querySelector<HTMLInputElement>('#open-file-button')!
+    .addEventListener('click', async () => {
+      await openGraphML(graphComponent, graphMLIOHandler)
+    })
+  document.querySelector<HTMLInputElement>('#save-button')!.addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'LayoutStyles.graphml', graphMLIOHandler)
+  })
   document.querySelector('#snapping-button')!.addEventListener('click', () => {
     const snappingEnabled = querySelector<HTMLInputElement>('#snapping-button').checked
     const geim = graphComponent.inputMode as GraphEditorInputMode
     geim.snapContext!.enabled = snappingEnabled
-    geim.labelSnapContext!.enabled = snappingEnabled
   })
 
   document.querySelector('#orthogonal-editing-button')!.addEventListener('click', () => {
@@ -1135,8 +1110,8 @@ function initializeUI(): void {
     ).checked
   })
 
-  document.querySelector('#apply-layout-button')!.addEventListener('click', () => {
-    applyLayout(false)
+  document.querySelector('#apply-layout-button')!.addEventListener('click', async () => {
+    await applyLayout(false)
   })
 
   document.querySelector('#layout-select-box')!.addEventListener('change', async () => {
@@ -1182,22 +1157,26 @@ function initializeUI(): void {
     onResetEdgeDirections(graphComponent.graph, true)
   })
 
-  window.addEventListener('hashchange', () => {
-    onHashChanged()
+  window.addEventListener('hashchange', async () => {
+    await onHashChanged()
   })
 
   // apply layout shortcut with CTRL+Enter
-  window.addEventListener('keydown', (e) => {
+  window.addEventListener('keydown', async (e) => {
     const geim = graphComponent.inputMode as GraphEditorInputMode
-    if (!geim.textEditorInputMode.editing && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-      applyLayout(false)
+    if (
+      !geim.editLabelInputMode.textEditorInputMode.editing &&
+      e.key === 'Enter' &&
+      (e.ctrlKey || e.metaKey)
+    ) {
+      await applyLayout(false)
       e.preventDefault()
     }
   })
   // also allow 'enter' within the option-editor
-  document.querySelector<HTMLDivElement>(`#data-editor`)!.addEventListener('keydown', (e) => {
+  document.querySelector<HTMLDivElement>(`#data-editor`)!.addEventListener('keydown', async (e) => {
     if (e.key === 'Enter') {
-      applyLayout(false)
+      await applyLayout(false)
       e.preventDefault()
     }
   })
@@ -1214,8 +1193,8 @@ function releaseLocks(): void {
  */
 function setUIDisabled(disabled: boolean): void {
   querySelector<HTMLButtonElement>("button[data-command='NEW']").disabled = disabled
-  querySelector<HTMLButtonElement>("button[data-command='OPEN']").disabled = disabled
-  querySelector<HTMLButtonElement>("button[data-command='SAVE']").disabled = disabled
+  querySelector<HTMLButtonElement>('#open-file-button').disabled = disabled
+  querySelector<HTMLButtonElement>('#save-button').disabled = disabled
   sampleComboBox.disabled = disabled
   layoutComboBox.disabled = disabled
   layoutButton.disabled = disabled
@@ -1245,7 +1224,7 @@ function removeLabels(graph: IGraph, item: ILabelOwner): void {
  */
 function getCenter(graph: IGraph): Point {
   if (graph.nodes.size > 0) {
-    let bounds = graph.nodes.first().layout.toRect()
+    let bounds = graph.nodes.first()!.layout.toRect()
     for (const node of graph.nodes) {
       bounds = Rect.add(bounds, node.layout.toRect())
     }

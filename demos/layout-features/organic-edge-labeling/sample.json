@@ -186,196 +186,196 @@
       "id": 0,
       "source": 0,
       "target": 11,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Source" }]
     },
     {
       "id": 1,
       "source": 0,
       "target": 8,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Source" }]
     },
     {
       "id": 2,
       "source": 0,
       "target": 19,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "center" }]
     },
     {
       "id": 3,
       "source": 0,
       "target": 2,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Target" }]
     },
     {
       "id": 4,
       "source": 11,
       "target": 4,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Target" }]
     },
     {
       "id": 5,
       "source": 11,
       "target": 18,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "center" }]
     },
     {
       "id": 6,
       "source": 8,
       "target": 7,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "center" }]
     },
     {
       "id": 7,
       "source": 19,
       "target": 13,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Target" }]
     },
     {
       "id": 8,
       "source": 19,
       "target": 2,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "center" }]
     },
     {
       "id": 9,
       "source": 19,
       "target": 17,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Target" }]
     },
     {
       "id": 10,
       "source": 19,
       "target": 15,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Source" }]
     },
     {
       "id": 11,
       "source": 19,
       "target": 10,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Source" }]
     },
     {
       "id": 12,
       "source": 13,
       "target": 7,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Target" }]
     },
     {
       "id": 13,
       "source": 13,
       "target": 17,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Source" }]
     },
     {
       "id": 14,
       "source": 2,
       "target": 15,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Target" }]
     },
     {
       "id": 15,
       "source": 2,
       "target": 1,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Source" }]
     },
     {
       "id": 16,
       "source": 4,
       "target": 18,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Source" }]
     },
     {
       "id": 17,
       "source": 16,
       "target": 6,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "center" }]
     },
     {
       "id": 18,
       "source": 7,
       "target": 14,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "center" }]
     },
     {
       "id": 19,
       "source": 17,
       "target": 5,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Source" }]
     },
     {
       "id": 20,
       "source": 15,
       "target": 10,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Source" }]
     },
     {
       "id": 21,
       "source": 15,
       "target": 12,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Target" }]
     },
     {
       "id": 22,
       "source": 6,
       "target": 9,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "center" }]
     },
     {
       "id": 23,
       "source": 5,
       "target": 3,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "center" }]
     },
     {
       "id": 24,
       "source": 10,
       "target": 9,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Parallel" }]
     },
     {
       "id": 25,
       "source": 10,
       "target": 9,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Parallel Target" }]
     },
     {
       "id": 26,
       "source": 10,
       "target": 9,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Parallel Source" }]
     },
     {
       "id": 27,
       "source": 3,
       "target": 3,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "labels": [{ "text": "Self-loop" }]
     }
   ]

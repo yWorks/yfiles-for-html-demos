@@ -1,5 +1,5 @@
 {
-  "name": "yfiles-image-export-server",
+  "name": "@yfiles/yfiles-image-export-server",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {

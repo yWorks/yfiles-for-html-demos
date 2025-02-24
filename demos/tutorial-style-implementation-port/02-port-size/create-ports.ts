@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FreeNodePortLocationModel, type IGraph, type INode } from 'yfiles'
+import {
+  FreeNodePortLocationModel,
+  type IGraph,
+  type INode
+} from '@yfiles/yfiles'
 import { CustomPortStyle } from './CustomPortStyle'
 
 export function createNodesAndPorts(graph: IGraph): void {
@@ -45,27 +49,27 @@ function createPorts(owner: INode, graph: IGraph): void {
 
   graph.addPort({
     owner: owner,
-    locationParameter: FreeNodePortLocationModel.NODE_CENTER_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.CENTER,
     style: smallPortStyle
   })
   graph.addPort({
     owner: owner,
-    locationParameter: FreeNodePortLocationModel.NODE_TOP_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.TOP,
     style: largePortStyle
   })
   graph.addPort({
     owner: owner,
-    locationParameter: FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.BOTTOM,
     style: largePortStyle
   })
   graph.addPort({
     owner: owner,
-    locationParameter: FreeNodePortLocationModel.NODE_LEFT_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.LEFT,
     style: defaultPortStyle
   })
   graph.addPort({
     owner: owner,
-    locationParameter: FreeNodePortLocationModel.NODE_RIGHT_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.RIGHT,
     style: defaultPortStyle
   })
 }

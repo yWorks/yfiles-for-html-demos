@@ -1,13 +1,9 @@
 {
   "nodeList": [
-    { "id": 0 },
+    { "id": 0, "label": "Node Label" },
     { "id": 1 },
     { "id": 2 },
-    {
-      "id": 3,
-      "label": "label",
-      "tag": "icon"
-    }
+    { "id": 3, "tag": "icon" }
   ],
   "edgeList": [
     {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,20 +32,18 @@ import {
   ImageNodeStyle,
   IReshapeHandler,
   NodeReshapeHandleProvider
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * Configures node-resize behavior to force resize operations to keep the aspect ratio of the
  * respective nodes.
- * @param {!IGraph} graph
  */
 export function retainAspectRatio(graph) {
-  graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory(
+  graph.decorator.nodes.reshapeHandleProvider.addFactory(
     (node) => node.style instanceof ImageNodeStyle,
     (node) => {
       const keepAspectRatio = new NodeReshapeHandleProvider(
         node,
-        node.lookup(IReshapeHandler.$class),
+        node.lookup(IReshapeHandler),
         HandlePositions.CORNERS
       )
       keepAspectRatio.ratioReshapeRecognizer = EventRecognizers.ALWAYS

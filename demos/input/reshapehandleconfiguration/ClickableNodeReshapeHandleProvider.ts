@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,7 @@ import {
   EventRecognizers,
   GraphEditorInputMode,
   HandlePositions,
-  HandleTypes,
+  HandleType,
   IHandle,
   IInputModeContext,
   INode,
@@ -42,7 +42,7 @@ import {
   NodeReshapeHandleProvider,
   NodeReshapeHandlerHandle,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * A NodeReshapeHandleProvider for cyan nodes that toggles aspect ratio resizing on and of when clicking on its handles.
@@ -64,7 +64,7 @@ export class ClickableNodeReshapeHandleProvider extends NodeReshapeHandleProvide
   }
 }
 
-class ClickableNodeReshapeHandlerHandle extends BaseClass(IHandle) implements IHandle {
+class ClickableNodeReshapeHandlerHandle extends BaseClass(IHandle) {
   private readonly state: ApplicationState
   private readonly wrapped: NodeReshapeHandlerHandle
 
@@ -83,12 +83,14 @@ class ClickableNodeReshapeHandlerHandle extends BaseClass(IHandle) implements IH
   }
 
   /**
-   * Modifies the wrapped {@link IHandle.type} by combining it with {@link HandleTypes.VARIANT2}.
+   * Modifies the wrapped {@link IHandle.type} by combining it with {@link HandleType.MOVE3}.
    */
-  get type(): HandleTypes {
-    return this.state.keepAspectRatio
-      ? (this.wrapped.type |= HandleTypes.VARIANT2)
-      : this.wrapped.type
+  get type(): HandleType {
+    return this.state.keepAspectRatio ? (this.wrapped.type |= HandleType.MOVE3) : this.wrapped.type
+  }
+
+  get tag(): any {
+    return this.wrapped.tag
   }
 
   /**

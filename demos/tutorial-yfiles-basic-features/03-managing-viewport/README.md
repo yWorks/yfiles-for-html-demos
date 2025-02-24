@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 03 Managing Viewport - Tutorial: Basic Features
 
-# Managing the Viewport
+<img src="../../../doc/demo-thumbnails/tutorial-basic-features-managing-viewport.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/03-managing-viewport/).
 
 ## How to influence the viewport.
 
@@ -20,7 +22,7 @@ This step shows how to work with [the viewport of a GraphComponent](https://docs
 The graph in this example consists of four nodes, only three of which are visible in the initial viewport. The fourth node is initially outside of the viewport. Calling [fitGraphBounds](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-method-fitGraphBounds) adjusts the viewport of the [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) to contain the complete graph.
 
 ```
-graphComponent.fitGraphBounds()
+void graphComponent.fitGraphBounds()
 ```
 
 Fit Graph Bounds
@@ -37,7 +39,7 @@ Reset Viewport
 Fitting the graph bounds actually consists of two operations, which are combined in [fitGraphBounds](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-method-fitGraphBounds). First, the [contentRect](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#CanvasComponent-property-contentRect) of the [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) is adjusted to the current graph size. Then, the content rect is fitted into the view using [fitContent](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#CanvasComponent-method-fitContent). Calling [fitGraphBounds](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-method-fitGraphBounds) has the same result as the following code:
 
 ```
-graphComponent.updateContentRect()
+graphComponent.updateContentBounds()
 graphComponent.fitContent()
 ```
 

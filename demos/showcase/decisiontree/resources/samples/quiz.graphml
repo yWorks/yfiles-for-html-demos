@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
 	<key id="d1" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
 	<key id="d2" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
@@ -43,11 +43,11 @@
 	<key id="d7" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
 	<data key="d7">
 		<y:SharedData>
-			<y:GroupNodeLabelModelParameter x:Key="1" PlaceOnTab="false">
-				<y:GroupNodeLabelModelParameter.Model>
-					<y:GroupNodeLabelModel/>
-				</y:GroupNodeLabelModelParameter.Model>
-			</y:GroupNodeLabelModelParameter>
+			<yx:GroupNodeLabelModelParameter x:Key="1" PlaceOnTab="false">
+				<yx:GroupNodeLabelModelParameter.Model>
+					<yx:GroupNodeLabelModel/>
+				</yx:GroupNodeLabelModelParameter.Model>
+			</yx:GroupNodeLabelModelParameter>
 		</y:SharedData>
 	</data>
 	<graph id="G" edgedefault="directed">
@@ -66,7 +66,7 @@
 				<node id="n0::n0">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text><![CDATA[The Amazon]]></y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -108,7 +108,7 @@
 				<node id="n0::n1">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text><![CDATA[The Nile]]></y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -135,7 +135,7 @@
 				<node id="n0::n2">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text><![CDATA[The Yukon]]></y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -162,7 +162,7 @@
 				<node id="n0::n3">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text><![CDATA[The Euphrates]]></y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -189,7 +189,7 @@
 				<node id="n0::n4">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text><![CDATA[The Danube]]></y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -218,7 +218,7 @@
 		<node id="n1">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 						<y:Label.Text><![CDATA[Start Quiz]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -255,7 +255,7 @@
 		<node id="n2">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 						<y:Label.Text><![CDATA[Start Again]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -384,7 +384,7 @@
 				<node id="n3::n0">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>Berlin</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -406,7 +406,7 @@
 				<node id="n3::n1">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>Vienna</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -443,7 +443,7 @@
 				<node id="n3::n2">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>Canberra</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -465,7 +465,7 @@
 				<node id="n3::n3">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>Sydney</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -501,7 +501,7 @@
 				<node id="n4::n0">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>Yellow</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -523,7 +523,7 @@
 				<node id="n4::n1">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>Blue</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -545,7 +545,7 @@
 				<node id="n4::n2">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>Red</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -567,7 +567,7 @@
 				<node id="n4::n3">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>Green</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -618,7 +618,7 @@
 				<node id="n5::n0">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>1776</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -650,7 +650,7 @@
 				<node id="n5::n1">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>1882</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -672,7 +672,7 @@
 				<node id="n5::n2">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>1602</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -694,7 +694,7 @@
 				<node id="n5::n3">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>1745</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -730,7 +730,7 @@
 				<node id="n6::n0">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>MDCCLXXVI</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -752,7 +752,7 @@
 				<node id="n6::n1">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>MDCCLXVII</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -774,7 +774,7 @@
 				<node id="n6::n2">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>MCMXCIX</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -796,7 +796,7 @@
 				<node id="n6::n3">
 					<data key="d0">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+							<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 								<y:Label.Text>MDLXXVI</y:Label.Text>
 							</y:Label>
 						</x:List>
@@ -815,7 +815,7 @@
 		<node id="n7">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
+					<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}">
 						<y:Label.Text><![CDATA[Congratulations, you passed the test!]]></y:Label.Text>
 					</y:Label>
 				</x:List>

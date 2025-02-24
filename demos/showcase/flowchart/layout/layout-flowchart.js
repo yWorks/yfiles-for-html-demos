@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,34 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FlowchartLayout } from './FlowchartLayout.js'
-import { FlowchartLayoutData } from './FlowchartLayoutData.js'
-import { MinimumNodeSizeStage } from 'yfiles'
-
-/**
- * @typedef {Object} LayoutOptions
- * @property {BranchDirection} positiveBranch
- * @property {BranchDirection} negativeBranch
- * @property {InEdgeGrouping} inEdgeGrouping
- * @property {boolean} allowFlatwiseEdges
- */
-
-/**
- * @param {!GraphComponent} graphComponent
- * @param {!LayoutOptions} layoutOptions
- * @returns {!Promise}
- */
+import { FlowchartLayout } from './FlowchartLayout'
+import { FlowchartLayoutData } from './FlowchartLayoutData'
 export async function layoutFlowchart(graphComponent, layoutOptions) {
   const flowchartLayout = new FlowchartLayout()
   flowchartLayout.allowFlatwiseEdges = layoutOptions.allowFlatwiseEdges
-
   const flowchartLayoutData = new FlowchartLayoutData()
   flowchartLayoutData.preferredPositiveBranchDirection = layoutOptions.positiveBranch
   flowchartLayoutData.preferredNegativeBranchDirection = layoutOptions.negativeBranch
   flowchartLayoutData.inEdgeGrouping = layoutOptions.inEdgeGrouping
-
-  await graphComponent.morphLayout(
-    new MinimumNodeSizeStage(flowchartLayout),
+  await graphComponent.applyLayoutAnimated(
+    flowchartLayout,
     '0.5s',
     flowchartLayoutData.create(graphComponent.graph)
   )

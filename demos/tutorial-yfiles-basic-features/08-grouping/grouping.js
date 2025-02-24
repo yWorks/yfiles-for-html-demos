@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,46 +26,26 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  DefaultLabelStyle,
-  GraphEditorInputMode,
-  GroupNodeLabelModel,
-  GroupNodeStyle,
-  Point
-} from 'yfiles'
-
-/**
- * @param {!GraphEditorInputMode} graphEditorInputMode
- */
-export function enableInteractiveGrouping(graphEditorInputMode) {
-  graphEditorInputMode.allowGroupingOperations = true
-}
-
+import { GroupNodeLabelModel, GroupNodeStyle, LabelStyle, Point } from '@yfiles/yfiles'
 /**
  * Configures the default style for group nodes.
- * @param {!IGraph} graph
  */
 export function configureGroupNodeStyles(graph) {
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#0b7189'
   })
-
   // Set a label style with right-aligned text
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'right',
     textFill: 'white'
   })
-
   // Place the label inside the tab area of the group node
   // GroupNodeLabelModel is usually the most appropriate label model for GroupNodeStyle
-  graph.groupNodeDefaults.labels.layoutParameter =
-    new GroupNodeLabelModel().createDefaultParameter()
+  graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
 }
-
 /**
  * Shows how to create group nodes programmatically.
  * Creates a couple of nodes and puts them into a group node.
- * @param {!IGraph} graph
  */
 export function createGroupNodes(graph) {
   const n1 = graph.createNodeAt([30, -200])
@@ -74,23 +54,17 @@ export function createGroupNodes(graph) {
   graph.createEdge(n1, n3)
   // Create an edge that crosses the group node boundary
   graph.createEdge(n3, graph.nodes.first())
-
   // Create a group node that encloses n1, n2 and n3
   const groupNode = graph.groupNodes([n1, n2, n3])
-
   graph.addLabel(groupNode, 'Group Node')
   // Edges starting from the group node itself are also allowed
   const edgeFromGroup = graph.createEdge(groupNode, graph.nodes.at(1))
   graph.addBend(edgeFromGroup, new Point(100, -35), 0)
   graph.addBend(edgeFromGroup, new Point(170, -35), 1)
 }
-
-/**
- * @param {!IGraph} graph
- */
 export function adjustGroupNodeSize(graph) {
   // Get a group node
-  const groupNode = graph.nodes.first((node) => graph.isGroupNode(node))
+  const groupNode = graph.nodes.find((node) => graph.isGroupNode(node))
   // Create a child node that's outside the group bounds
   graph.createNode({ parent: groupNode, layout: [100, -60, 30, 30] })
   // Adjust the group node layout to contain the new child

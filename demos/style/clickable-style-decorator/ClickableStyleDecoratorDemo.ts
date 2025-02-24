@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,26 +28,25 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Class,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   INode,
   LayoutExecutor,
   License,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import NodeStyleDecorator from './NodeStyleDecorator'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
@@ -65,10 +64,7 @@ async function run(): Promise<void> {
 
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode()
 
   // configures default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
@@ -77,11 +73,9 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
@@ -118,32 +112,35 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
  * on the decorator icon.
  */
 function initializeDecorationClickListener(): void {
-  ;(graphComponent.inputMode as GraphEditorInputMode).addItemClickedListener((_, evt): void => {
-    if (!INode.isInstance(evt.item)) {
-      return
-    }
-    const node = evt.item
-    if (
-      !(node.style instanceof NodeStyleDecorator) ||
-      !node.style.getDecorationLayout(node.layout).contains(evt.location)
-    ) {
-      return
-    }
+  ;(graphComponent.inputMode as GraphEditorInputMode).addEventListener(
+    'item-clicked',
+    (evt): void => {
+      if (!(evt.item instanceof INode)) {
+        return
+      }
+      const node = evt.item
+      if (
+        !(node.style instanceof NodeStyleDecorator) ||
+        !node.style.getDecorationLayout(node.layout).contains(evt.location)
+      ) {
+        return
+      }
 
-    // The decorator was clicked.
-    // Handle the click if it should do nothing else than what is defined in the decorator click listener.
-    // Otherwise the click will be handled by other input modes, too. For instance, a node may be created or the
-    // clicked node may be selected.
-    evt.handled = true
+      // The decorator was clicked.
+      // Handle the click if it should do nothing else than what is defined in the decorator click listener.
+      // Otherwise the click will be handled by other input modes, too. For instance, a node may be created or the
+      // clicked node may be selected.
+      evt.handled = true
 
-    // Shows a toast to indicate the successful click, and hides it again.
-    clearTimeout(hideTimer)
-    const toast = document.querySelector<HTMLElement>('#toast')!
-    toast.style.bottom = '40px'
-    hideTimer = setTimeout((): void => {
-      toast.style.bottom = '-50px'
-    }, 2000)
-  })
+      // Shows a toast to indicate the successful click, and hides it again.
+      clearTimeout(hideTimer)
+      const toast = document.querySelector<HTMLElement>('#toast')!
+      toast.style.bottom = '40px'
+      hideTimer = setTimeout((): void => {
+        toast.style.bottom = '-50px'
+      }, 2000)
+    }
+  )
 }
 
 /**
@@ -157,9 +154,9 @@ function initTutorialDefaults(graph: IGraph): void {
 
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,29 +35,28 @@ import {
   GraphSnapContext,
   GridConstraintProvider,
   GridInfo,
+  IBend,
   IEdge,
   IEdgePortHandleProvider,
   IEdgeReconnectionPortCandidateProvider,
   IHitTestable,
   IPortCandidateProvider,
   IPortLocationModel,
-  KeyEventRecognizers,
+  KeyEventArgs,
   License,
-  MouseEventRecognizers,
-  NodeStylePortStyleAdapter,
+  ShapePortStyle,
   OrthogonalEdgeEditingContext,
   Point,
   PolylineEdgeStyle,
   PortRelocationHandleProvider,
-  ShapeNodeStyle,
   Stroke,
   Visualization
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import { EdgePathPortCandidateProvider } from './EdgePathPortCandidateProvider'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -80,8 +79,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeInputMode()
 
   initializeGraph()
@@ -100,29 +97,30 @@ function initializeGraph(): void {
   graph.undoEngineEnabled = true
 
   initDemoStyles(graph)
-  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '1.5px #662b00' })
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: '1.5px #662b00',
+    orthogonalEditing: true
+  })
   graph.edgeDefaults.shareStyleInstance = false
 
   // assign a port style for the ports at the edges
-  graph.edgeDefaults.ports.style = new NodeStylePortStyleAdapter({
-    nodeStyle: new ShapeNodeStyle({
-      shape: 'ellipse',
-      fill: 'black',
-      stroke: null
-    }),
+  graph.edgeDefaults.ports.style = new ShapePortStyle({
+    shape: 'ellipse',
+    fill: 'black',
+    stroke: null,
     renderSize: [3, 3]
   })
 
   // enable edge port candidates
-  graph.decorator.edgeDecorator.portCandidateProviderDecorator.setFactory(
+  graph.decorator.edges.portCandidateProvider.addFactory(
     (edge) => new EdgePathPortCandidateProvider(edge)
   )
 
   // set IEdgeReconnectionPortCandidateProvider to allow re-connecting edges to other edges
-  graph.decorator.edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setImplementation(
-    IEdgeReconnectionPortCandidateProvider.ALL_NODE_AND_EDGE_CANDIDATES
+  graph.decorator.edges.reconnectionPortCandidateProvider.addFactory((edge) =>
+    IEdgeReconnectionPortCandidateProvider.fromAllNodeAndEdgeCandidates(edge)
   )
-  graph.decorator.edgeDecorator.handleProviderDecorator.setFactory((edge) => {
+  graph.decorator.edges.handleProvider.addFactory((edge) => {
     const portRelocationHandleProvider = new PortRelocationHandleProvider(null, edge)
     portRelocationHandleProvider.visualization = Visualization.LIVE
     return portRelocationHandleProvider
@@ -139,7 +137,7 @@ function createSnapContext(): GraphSnapContext {
     gridSnapType: 'none'
   })
   // add constraint provider for nodes, bends, and ports
-  const gridInfo = new GridInfo(50)
+  const gridInfo = new GridInfo(50, 50)
   snapContext.nodeGridConstraintProvider = new GridConstraintProvider(gridInfo)
   snapContext.bendGridConstraintProvider = new GridConstraintProvider(gridInfo)
   snapContext.portGridConstraintProvider = new GridConstraintProvider(gridInfo)
@@ -160,12 +158,22 @@ function initializeInputMode(): void {
   mode.createEdgeInputMode.allowEdgeToEdgeConnections = true
 
   // create bends only when shift is pressed
-  mode.createBendInputMode.pressedRecognizer = EventRecognizers.createAndRecognizer(
-    MouseEventRecognizers.LEFT_DOWN,
-    KeyEventRecognizers.SHIFT_IS_DOWN
+  mode.createBendInputMode.beginRecognizer = (eventSource, evt) =>
+    EventRecognizers.MOUSE_DOWN(eventSource, evt) &&
+    EventRecognizers.SHIFT_IS_DOWN(eventSource, evt)
+
+  mode.createEdgeInputMode.addEventListener('edge-creation-started', (evt) =>
+    setRandomEdgeColor(evt.item)
   )
 
-  mode.createEdgeInputMode.addEdgeCreationStartedListener((_, evt) => setRandomEdgeColor(evt.item))
+  // disable directional constraint recognizer because Shift is used for bend creation
+  mode.handleInputMode.directionalConstraintRecognizer = (evt, eventSource) => {
+    console.log(mode.handleInputMode.affectedItems.some((i) => i instanceof IBend))
+    return (
+      (evt as KeyEventArgs).key == 'Shift' &&
+      !mode.handleInputMode.affectedItems.some((i) => i instanceof IBend)
+    )
+  }
 
   graphComponent.inputMode = mode
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,11 +29,16 @@
 import {
   BendEventArgs,
   CanvasComponent,
-  Class,
   ClickEventArgs,
-  DefaultLabelStyle,
+  ClickInputMode,
+  ClipboardGraphCopier,
+  ContextMenuInputMode,
+  CreateBendInputMode,
+  CreateEdgeInputMode,
   DragDropEffects,
+  DropInputMode,
   EdgeEventArgs,
+  EditLabelInputMode,
   EventArgs,
   FoldingManager,
   FreeNodePortLocationModel,
@@ -43,18 +48,16 @@ import {
   GraphItemTypes,
   GraphViewerInputMode,
   HandleInputMode,
-  HierarchicLayout,
-  HierarchicLayoutEdgeLayoutDescriptor,
-  HierarchicLayoutEdgeRoutingStyle,
-  HierarchicLayoutRoutingStyle,
+  HierarchicalLayout,
+  HierarchicalLayoutEdgeDescriptor,
   HoveredItemChangedEventArgs,
   IBend,
   IEdge,
   IEdgeReconnectionPortCandidateProvider,
   IEdgeStyle,
-  IEnumerable,
   IFoldingView,
   IGraph,
+  IGraphSelection,
   IInputMode,
   ILabel,
   ILabelModelParameter,
@@ -63,6 +66,8 @@ import {
   INode,
   INodeStyle,
   InputModeEventArgs,
+  InputModeItemChangedEventArgs,
+  InputModeItemEventArgs,
   IPort,
   IPortLocationModelParameter,
   IPortStyle,
@@ -70,49 +75,52 @@ import {
   ItemClickedEventArgs,
   ItemCopiedEventArgs,
   ItemEventArgs,
-  ItemSelectionChangedEventArgs,
+  ItemHoverInputMode,
+  ItemsEventArgs,
   KeyEventArgs,
   LabelDropInputMode,
+  type LabelEditingEventArgs,
   LabelEventArgs,
+  LabelStyle,
   LabelTextValidatingEventArgs,
   LayoutExecutor,
   License,
-  MouseEventArgs,
   MoveInputMode,
+  MoveViewportInputMode,
+  NavigationInputMode,
   NodeDropInputMode,
   NodeEventArgs,
-  NodeStylePortStyleAdapter,
-  OrthogonalEdgeEditingContext,
   Point,
+  PointerButtons,
+  PointerEventArgs,
+  PopulateContextMenuEventArgs,
   PopulateItemContextMenuEventArgs,
-  PopulateMenuEventArgs,
   PortDropInputMode,
   PortEventArgs,
   PrepareRenderContextEventArgs,
   PropertyChangedEventArgs,
   QueryItemToolTipEventArgs,
   QueryPositionHandlerEventArgs,
+  QueryToolTipEventArgs,
   Rect,
   SelectionEventArgs,
-  ShapeNodeStyle,
+  ShapePortStyle,
   SimpleLabel,
   SimpleNode,
   SimplePort,
   Size,
   SvgExport,
-  TapEventArgs,
+  TextEditorInputMode,
   TextEventArgs,
-  ToolTipQueryEventArgs,
-  TouchEventArgs,
-  VoidNodeStyle
-} from 'yfiles'
+  ToolTipInputMode
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import EventView from './EventView'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { configureTwoPointerPanning } from 'demo-utils/configure-two-pointer-panning'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 /**
@@ -135,8 +143,6 @@ async function run(): Promise<void> {
   registerInputModeEvents()
   registerNavigationInputModeEvents()
 
-  // Finally, enable the undo engine. This prevents undoing of the graph creation
-  graphComponent.graph.undoEngineEnabled = true
   enableFolding()
 
   initializeGraph()
@@ -146,18 +152,17 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
-    new HierarchicLayout({
-      edgeLayoutDescriptor: new HierarchicLayoutEdgeLayoutDescriptor({
+    new HierarchicalLayout({
+      defaultEdgeDescriptor: new HierarchicalLayoutEdgeDescriptor({
         minimumFirstSegmentLength: 50,
-        minimumLastSegmentLength: 50,
-        routingStyle: new HierarchicLayoutRoutingStyle(HierarchicLayoutEdgeRoutingStyle.ORTHOGONAL)
+        minimumLastSegmentLength: 50
       }),
       minimumLayerDistance: 70
     })
   )
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   enableUndo()
 
@@ -206,586 +211,708 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   graphBuilder.buildGraph()
 }
+
 /**
  * Registers some keyboard events to the graphComponent.
  */
 function registerGraphComponentKeyEvents(): void {
-  graphComponent.addKeyDownListener(controlOnKeyDown)
-  graphComponent.addKeyUpListener(controlOnKeyUp)
-  graphComponent.addKeyPressListener(controlOnKeyPressed)
+  graphComponent.addEventListener('key-down', componentOnKeyDown)
+  graphComponent.addEventListener('key-up', componentOnKeyUp)
 }
 
 /**
- * Deregisters some keyboard events from the graphComponent.
+ * Unregisters some keyboard events from the graphComponent.
  */
-function deregisterGraphComponentKeyEvents(): void {
-  graphComponent.removeKeyDownListener(controlOnKeyDown)
-  graphComponent.removeKeyUpListener(controlOnKeyUp)
-  graphComponent.removeKeyPressListener(controlOnKeyPressed)
+function unregisterGraphComponentKeyEvents(): void {
+  graphComponent.removeEventListener('key-down', componentOnKeyDown)
+  graphComponent.removeEventListener('key-up', componentOnKeyUp)
 }
 
 /**
  * Registers the copy clipboard events to the graphComponent.
  */
 function registerClipboardCopierEvents(): void {
-  graphComponent.clipboard.toClipboardCopier.addGraphCopiedListener(
+  graphComponent.clipboard.toClipboardCopier.addEventListener(
+    'graph-copied',
     clipboardOnGraphCopiedToClipboard
   )
-  graphComponent.clipboard.toClipboardCopier.addNodeCopiedListener(clipboardOnNodeCopiedToClipboard)
-  graphComponent.clipboard.toClipboardCopier.addEdgeCopiedListener(clipboardOnEdgeCopiedToClipboard)
-  graphComponent.clipboard.toClipboardCopier.addPortCopiedListener(clipboardOnPortCopiedToClipboard)
-  graphComponent.clipboard.toClipboardCopier.addLabelCopiedListener(
-    clipboardOnLabelCopiedToClipboard
-  )
-  graphComponent.clipboard.toClipboardCopier.addObjectCopiedListener(
-    clipboardOnObjectCopiedToClipboard
-  )
-
-  graphComponent.clipboard.fromClipboardCopier.addGraphCopiedListener(
-    clipboardOnGraphCopiedFromClipboard
-  )
-  graphComponent.clipboard.fromClipboardCopier.addNodeCopiedListener(
-    clipboardOnNodeCopiedFromClipboard
-  )
-  graphComponent.clipboard.fromClipboardCopier.addEdgeCopiedListener(
-    clipboardOnEdgeCopiedFromClipboard
-  )
-  graphComponent.clipboard.fromClipboardCopier.addPortCopiedListener(
-    clipboardOnPortCopiedFromClipboard
-  )
-  graphComponent.clipboard.fromClipboardCopier.addLabelCopiedListener(
-    clipboardOnLabelCopiedFromClipboard
-  )
-  graphComponent.clipboard.fromClipboardCopier.addObjectCopiedListener(
-    clipboardOnObjectCopiedFromClipboard
-  )
-
-  graphComponent.clipboard.duplicateCopier.addGraphCopiedListener(clipboardOnGraphDuplicated)
-  graphComponent.clipboard.duplicateCopier.addNodeCopiedListener(clipboardOnNodeDuplicated)
-  graphComponent.clipboard.duplicateCopier.addEdgeCopiedListener(clipboardOnEdgeDuplicated)
-  graphComponent.clipboard.duplicateCopier.addPortCopiedListener(clipboardOnPortDuplicated)
-  graphComponent.clipboard.duplicateCopier.addLabelCopiedListener(clipboardOnLabelDuplicated)
-  graphComponent.clipboard.duplicateCopier.addObjectCopiedListener(clipboardOnObjectDuplicated)
-}
-
-/**
- * Deregisters the copy clipboard events from the graphComponent.
- */
-function deregisterClipboardCopierEvents(): void {
-  graphComponent.clipboard.toClipboardCopier.removeGraphCopiedListener(
-    clipboardOnGraphCopiedToClipboard
-  )
-  graphComponent.clipboard.toClipboardCopier.removeNodeCopiedListener(
+  graphComponent.clipboard.toClipboardCopier.addEventListener(
+    'node-copied',
     clipboardOnNodeCopiedToClipboard
   )
-  graphComponent.clipboard.toClipboardCopier.removeEdgeCopiedListener(
+  graphComponent.clipboard.toClipboardCopier.addEventListener(
+    'edge-copied',
     clipboardOnEdgeCopiedToClipboard
   )
-  graphComponent.clipboard.toClipboardCopier.removePortCopiedListener(
+  graphComponent.clipboard.toClipboardCopier.addEventListener(
+    'port-copied',
     clipboardOnPortCopiedToClipboard
   )
-  graphComponent.clipboard.toClipboardCopier.removeLabelCopiedListener(
+  graphComponent.clipboard.toClipboardCopier.addEventListener(
+    'label-copied',
     clipboardOnLabelCopiedToClipboard
   )
-  graphComponent.clipboard.toClipboardCopier.removeObjectCopiedListener(
+  graphComponent.clipboard.toClipboardCopier.addEventListener(
+    'object-copied',
     clipboardOnObjectCopiedToClipboard
   )
 
-  graphComponent.clipboard.fromClipboardCopier.removeGraphCopiedListener(
+  graphComponent.clipboard.fromClipboardCopier.addEventListener(
+    'graph-copied',
     clipboardOnGraphCopiedFromClipboard
   )
-  graphComponent.clipboard.fromClipboardCopier.removeNodeCopiedListener(
+  graphComponent.clipboard.fromClipboardCopier.addEventListener(
+    'node-copied',
     clipboardOnNodeCopiedFromClipboard
   )
-  graphComponent.clipboard.fromClipboardCopier.removeEdgeCopiedListener(
+  graphComponent.clipboard.fromClipboardCopier.addEventListener(
+    'edge-copied',
     clipboardOnEdgeCopiedFromClipboard
   )
-  graphComponent.clipboard.fromClipboardCopier.removePortCopiedListener(
+  graphComponent.clipboard.fromClipboardCopier.addEventListener(
+    'port-copied',
     clipboardOnPortCopiedFromClipboard
   )
-  graphComponent.clipboard.fromClipboardCopier.removeLabelCopiedListener(
+  graphComponent.clipboard.fromClipboardCopier.addEventListener(
+    'label-copied',
     clipboardOnLabelCopiedFromClipboard
   )
-  graphComponent.clipboard.fromClipboardCopier.removeObjectCopiedListener(
+  graphComponent.clipboard.fromClipboardCopier.addEventListener(
+    'object-copied',
     clipboardOnObjectCopiedFromClipboard
   )
 
-  graphComponent.clipboard.duplicateCopier.removeGraphCopiedListener(clipboardOnGraphDuplicated)
-  graphComponent.clipboard.duplicateCopier.removeNodeCopiedListener(clipboardOnNodeDuplicated)
-  graphComponent.clipboard.duplicateCopier.removeEdgeCopiedListener(clipboardOnEdgeDuplicated)
-  graphComponent.clipboard.duplicateCopier.removePortCopiedListener(clipboardOnPortDuplicated)
-  graphComponent.clipboard.duplicateCopier.removeLabelCopiedListener(clipboardOnLabelDuplicated)
-  graphComponent.clipboard.duplicateCopier.removeObjectCopiedListener(clipboardOnObjectDuplicated)
+  graphComponent.clipboard.duplicateCopier.addEventListener(
+    'graph-copied',
+    clipboardOnGraphDuplicated
+  )
+  graphComponent.clipboard.duplicateCopier.addEventListener(
+    'node-copied',
+    clipboardOnNodeDuplicated
+  )
+  graphComponent.clipboard.duplicateCopier.addEventListener(
+    'edge-copied',
+    clipboardOnEdgeDuplicated
+  )
+  graphComponent.clipboard.duplicateCopier.addEventListener(
+    'port-copied',
+    clipboardOnPortDuplicated
+  )
+  graphComponent.clipboard.duplicateCopier.addEventListener(
+    'label-copied',
+    clipboardOnLabelDuplicated
+  )
+  graphComponent.clipboard.duplicateCopier.addEventListener(
+    'object-copied',
+    clipboardOnObjectDuplicated
+  )
 }
 
 /**
- * Registers the mouse events to the graphComponent.
+ * Unregisters the copy clipboard events from the graphComponent.
  */
-function registerGraphComponentMouseEvents(): void {
-  graphComponent.addMouseClickListener(controlOnMouseClick)
-  graphComponent.addMouseEnterListener(controlOnMouseEnter)
-  graphComponent.addMouseLeaveListener(controlOnMouseLeave)
-  graphComponent.addMouseLostCaptureListener(controlOnMouseLostCapture)
-  graphComponent.addMouseDownListener(controlOnMouseDown)
-  graphComponent.addMouseUpListener(controlOnMouseUp)
-  graphComponent.addMouseWheelListener(controlOnMouseWheelTurned)
-  graphComponent.addMouseDragListener(controlOnMouseDrag)
-  graphComponent.addMouseMoveListener(controlOnMouseMove)
+function unregisterClipboardCopierEvents(): void {
+  graphComponent.clipboard.toClipboardCopier.removeEventListener(
+    'graph-copied',
+    clipboardOnGraphCopiedToClipboard
+  )
+  graphComponent.clipboard.toClipboardCopier.removeEventListener(
+    'node-copied',
+    clipboardOnNodeCopiedToClipboard
+  )
+  graphComponent.clipboard.toClipboardCopier.removeEventListener(
+    'edge-copied',
+    clipboardOnEdgeCopiedToClipboard
+  )
+  graphComponent.clipboard.toClipboardCopier.removeEventListener(
+    'port-copied',
+    clipboardOnPortCopiedToClipboard
+  )
+  graphComponent.clipboard.toClipboardCopier.removeEventListener(
+    'label-copied',
+    clipboardOnLabelCopiedToClipboard
+  )
+  graphComponent.clipboard.toClipboardCopier.removeEventListener(
+    'object-copied',
+    clipboardOnObjectCopiedToClipboard
+  )
+
+  graphComponent.clipboard.fromClipboardCopier.removeEventListener(
+    'graph-copied',
+    clipboardOnGraphCopiedFromClipboard
+  )
+  graphComponent.clipboard.fromClipboardCopier.removeEventListener(
+    'node-copied',
+    clipboardOnNodeCopiedFromClipboard
+  )
+  graphComponent.clipboard.fromClipboardCopier.removeEventListener(
+    'edge-copied',
+    clipboardOnEdgeCopiedFromClipboard
+  )
+  graphComponent.clipboard.fromClipboardCopier.removeEventListener(
+    'port-copied',
+    clipboardOnPortCopiedFromClipboard
+  )
+  graphComponent.clipboard.fromClipboardCopier.removeEventListener(
+    'label-copied',
+    clipboardOnLabelCopiedFromClipboard
+  )
+  graphComponent.clipboard.fromClipboardCopier.removeEventListener(
+    'object-copied',
+    clipboardOnObjectCopiedFromClipboard
+  )
+
+  graphComponent.clipboard.duplicateCopier.removeEventListener(
+    'graph-copied',
+    clipboardOnGraphDuplicated
+  )
+  graphComponent.clipboard.duplicateCopier.removeEventListener(
+    'node-copied',
+    clipboardOnNodeDuplicated
+  )
+  graphComponent.clipboard.duplicateCopier.removeEventListener(
+    'edge-copied',
+    clipboardOnEdgeDuplicated
+  )
+  graphComponent.clipboard.duplicateCopier.removeEventListener(
+    'port-copied',
+    clipboardOnPortDuplicated
+  )
+  graphComponent.clipboard.duplicateCopier.removeEventListener(
+    'label-copied',
+    clipboardOnLabelDuplicated
+  )
+  graphComponent.clipboard.duplicateCopier.removeEventListener(
+    'object-copied',
+    clipboardOnObjectDuplicated
+  )
 }
 
 /**
- * Deregisters the mouse events from the graphComponent.
+ * Registers the pointer events to the graphComponent.
  */
-function deregisterGraphComponentMouseEvents(): void {
-  graphComponent.removeMouseClickListener(controlOnMouseClick)
-  graphComponent.removeMouseEnterListener(controlOnMouseEnter)
-  graphComponent.removeMouseLeaveListener(controlOnMouseLeave)
-  graphComponent.removeMouseLostCaptureListener(controlOnMouseLostCapture)
-  graphComponent.removeMouseDownListener(controlOnMouseDown)
-  graphComponent.removeMouseUpListener(controlOnMouseUp)
-  graphComponent.removeMouseWheelListener(controlOnMouseWheelTurned)
-  graphComponent.removeMouseDragListener(controlOnMouseDrag)
-  graphComponent.removeMouseMoveListener(controlOnMouseMove)
+function registerGraphComponentPointerEvents(): void {
+  graphComponent.addEventListener('pointer-click', componentOnPointerClick)
+  graphComponent.addEventListener('pointer-enter', componentOnPointerEnter)
+  graphComponent.addEventListener('pointer-leave', componentOnPointerLeave)
+  graphComponent.addEventListener('lost-pointer-capture', componentOnPointerLostCapture)
+  graphComponent.addEventListener('pointer-down', componentOnPointerDown)
+  graphComponent.addEventListener('pointer-up', componentOnPointerUp)
+  graphComponent.addEventListener('pointer-drag', componentOnPointerDrag)
+  graphComponent.addEventListener('pointer-move', componentOnPointerMove)
+  graphComponent.addEventListener('pointer-cancel', componentOnPointerCancel)
+  graphComponent.addEventListener('pointer-long-rest', componentOnPointerLongRest)
+  graphComponent.addEventListener('wheel', componentOnMouseWheelTurned)
+  graphComponent.addEventListener('pointer-long-press', componentOnPointerLongPress)
+  graphComponent.addEventListener('pointer-long-rest', componentOnPointerLongRest)
 }
 
 /**
- * Registers the touch events to the graphComponent.
+ * Unregisters the pointer events from the graphComponent.
  */
-function registerGraphComponentTouchEvents(): void {
-  graphComponent.addTouchDownListener(controlOnTouchDown)
-  graphComponent.addTouchEnterListener(controlOnTouchEnter)
-  graphComponent.addTouchLeaveListener(controlOnTouchLeave)
-  graphComponent.addTouchLongPressListener(controlOnTouchLongPressed)
-  graphComponent.addTouchLostCaptureListener(controlOnTouchLostCapture)
-  graphComponent.addTouchClickListener(controlOnTouchClick)
-  graphComponent.addTouchUpListener(controlOnTouchUp)
-  graphComponent.addTouchMoveListener(controlOnTouchMove)
-}
-
-/**
- * Deregisters the touch events from the graphComponent.
- */
-function deregisterGraphComponentTouchEvents(): void {
-  graphComponent.removeTouchDownListener(controlOnTouchDown)
-  graphComponent.removeTouchEnterListener(controlOnTouchEnter)
-  graphComponent.removeTouchLeaveListener(controlOnTouchLeave)
-  graphComponent.removeTouchLongPressListener(controlOnTouchLongPressed)
-  graphComponent.removeTouchLostCaptureListener(controlOnTouchLostCapture)
-  graphComponent.removeTouchClickListener(controlOnTouchClick)
-  graphComponent.removeTouchUpListener(controlOnTouchUp)
-  graphComponent.removeTouchMoveListener(controlOnTouchMove)
+function unregisterGraphComponentPointerEvents(): void {
+  graphComponent.removeEventListener('pointer-click', componentOnPointerClick)
+  graphComponent.removeEventListener('pointer-enter', componentOnPointerEnter)
+  graphComponent.removeEventListener('pointer-leave', componentOnPointerLeave)
+  graphComponent.removeEventListener('lost-pointer-capture', componentOnPointerLostCapture)
+  graphComponent.removeEventListener('pointer-down', componentOnPointerDown)
+  graphComponent.removeEventListener('pointer-up', componentOnPointerUp)
+  graphComponent.removeEventListener('pointer-drag', componentOnPointerDrag)
+  graphComponent.removeEventListener('pointer-move', componentOnPointerMove)
+  graphComponent.removeEventListener('pointer-cancel', componentOnPointerCancel)
+  graphComponent.removeEventListener('pointer-long-rest', componentOnPointerLongRest)
+  graphComponent.removeEventListener('wheel', componentOnMouseWheelTurned)
+  graphComponent.removeEventListener('pointer-long-press', componentOnPointerLongPress)
+  graphComponent.removeEventListener('pointer-long-rest', componentOnPointerLongRest)
 }
 
 /**
  * Registers the rendering events to the graphComponent.
  */
 function registerGraphComponentRenderEvents(): void {
-  graphComponent.addPrepareRenderContextListener(controlOnPrepareRenderContext)
-  graphComponent.addUpdatedVisualListener(controlOnUpdatedVisual)
-  graphComponent.addUpdatingVisualListener(controlOnUpdatingVisual)
+  graphComponent.addEventListener('prepare-render-context', componentOnPrepareRenderContext)
+  graphComponent.addEventListener('updated-visual', componentOnUpdatedVisual)
+  graphComponent.addEventListener('updating-visual', componentOnUpdatingVisual)
 }
 
 /**
- * Deregisters the rendering events from the graphComponent.
+ * Unregisters the rendering events from the graphComponent.
  */
-function deregisterGraphComponentRenderEvents(): void {
-  graphComponent.removePrepareRenderContextListener(controlOnPrepareRenderContext)
-  graphComponent.removeUpdatedVisualListener(controlOnUpdatedVisual)
-  graphComponent.removeUpdatingVisualListener(controlOnUpdatingVisual)
+function unregisterGraphComponentRenderEvents(): void {
+  graphComponent.removeEventListener('prepare-render-context', componentOnPrepareRenderContext)
+  graphComponent.removeEventListener('updated-visual', componentOnUpdatedVisual)
+  graphComponent.removeEventListener('updating-visual', componentOnUpdatingVisual)
 }
 
 /**
  * Registers the viewport events to the graphComponent.
  */
 function registerGraphComponentViewportEvents(): void {
-  graphComponent.addViewportChangedListener(controlOnViewportChanged)
-  graphComponent.addZoomChangedListener(controlOnZoomChanged)
+  graphComponent.addEventListener('viewport-changed', componentOnViewportChanged)
+  graphComponent.addEventListener('zoom-changed', componentOnZoomChanged)
 }
 
 /**
- * Deregisters the viewport events from the graphComponent.
+ * Unregisters the viewport events from the graphComponent.
  */
-function deregisterGraphComponentViewportEvents(): void {
-  graphComponent.removeViewportChangedListener(controlOnViewportChanged)
-  graphComponent.removeZoomChangedListener(controlOnZoomChanged)
+function unregisterGraphComponentViewportEvents(): void {
+  graphComponent.removeEventListener('viewport-changed', componentOnViewportChanged)
+  graphComponent.removeEventListener('zoom-changed', componentOnZoomChanged)
 }
 
 /**
  * Registers events regarding node changes to the graphComponent's graph.
  */
 function registerNodeEvents(): void {
-  graphComponent.graph.addNodeLayoutChangedListener(onNodeLayoutChanged)
-  graphComponent.graph.addNodeStyleChangedListener(onNodeStyleChanged)
-  graphComponent.graph.addNodeTagChangedListener(onNodeTagChanged)
-  graphComponent.graph.addNodeCreatedListener(onNodeCreated)
-  graphComponent.graph.addNodeRemovedListener(onNodeRemoved)
+  graphComponent.graph.addEventListener('node-layout-changed', onNodeLayoutChanged)
+  graphComponent.graph.addEventListener('node-style-changed', onNodeStyleChanged)
+  graphComponent.graph.addEventListener('node-tag-changed', onNodeTagChanged)
+  graphComponent.graph.addEventListener('node-created', onNodeCreated)
+  graphComponent.graph.addEventListener('node-removed', onNodeRemoved)
 }
 
 /**
- * Deregisters events regarding node changes from the graphComponent's graph.
+ * Unregisters events regarding node changes from the graphComponent's graph.
  */
-function deregisterNodeEvents(): void {
-  graphComponent.graph.removeNodeLayoutChangedListener(onNodeLayoutChanged)
-  graphComponent.graph.removeNodeStyleChangedListener(onNodeStyleChanged)
-  graphComponent.graph.removeNodeTagChangedListener(onNodeTagChanged)
-  graphComponent.graph.removeNodeCreatedListener(onNodeCreated)
-  graphComponent.graph.removeNodeRemovedListener(onNodeRemoved)
+function unregisterNodeEvents(): void {
+  graphComponent.graph.removeEventListener('node-layout-changed', onNodeLayoutChanged)
+  graphComponent.graph.removeEventListener('node-style-changed', onNodeStyleChanged)
+  graphComponent.graph.removeEventListener('node-tag-changed', onNodeTagChanged)
+  graphComponent.graph.removeEventListener('node-created', onNodeCreated)
+  graphComponent.graph.removeEventListener('node-removed', onNodeRemoved)
 }
 
 /**
  * Registers events regarding edge changes to the graphComponent's graph.
  */
 function registerEdgeEvents(): void {
-  graphComponent.graph.addEdgePortsChangedListener(onEdgePortsChanged)
-  graphComponent.graph.addEdgeStyleChangedListener(onEdgeStyleChanged)
-  graphComponent.graph.addEdgeTagChangedListener(onEdgeTagChanged)
-  graphComponent.graph.addEdgeCreatedListener(onEdgeCreated)
-  graphComponent.graph.addEdgeRemovedListener(onEdgeRemoved)
+  graphComponent.graph.addEventListener('edge-ports-changed', onEdgePortsChanged)
+  graphComponent.graph.addEventListener('edge-style-changed', onEdgeStyleChanged)
+  graphComponent.graph.addEventListener('edge-tag-changed', onEdgeTagChanged)
+  graphComponent.graph.addEventListener('edge-created', onEdgeCreated)
+  graphComponent.graph.addEventListener('edge-removed', onEdgeRemoved)
 }
 
 /**
- * Deregisters events regarding edge changes from the graphComponent's graph.
+ * Unregisters events regarding edge changes from the graphComponent's graph.
  */
-function deregisterEdgeEvents(): void {
-  graphComponent.graph.removeEdgePortsChangedListener(onEdgePortsChanged)
-  graphComponent.graph.removeEdgeStyleChangedListener(onEdgeStyleChanged)
-  graphComponent.graph.removeEdgeTagChangedListener(onEdgeTagChanged)
-  graphComponent.graph.removeEdgeCreatedListener(onEdgeCreated)
-  graphComponent.graph.removeEdgeRemovedListener(onEdgeRemoved)
+function unregisterEdgeEvents(): void {
+  graphComponent.graph.removeEventListener('edge-ports-changed', onEdgePortsChanged)
+  graphComponent.graph.removeEventListener('edge-style-changed', onEdgeStyleChanged)
+  graphComponent.graph.removeEventListener('edge-tag-changed', onEdgeTagChanged)
+  graphComponent.graph.removeEventListener('edge-created', onEdgeCreated)
+  graphComponent.graph.removeEventListener('edge-removed', onEdgeRemoved)
 }
 
 /**
  * Registers events regarding bend changes to the graphComponent's graph.
  */
 function registerBendEvents(): void {
-  graphComponent.graph.addBendAddedListener(onBendAdded)
-  graphComponent.graph.addBendLocationChangedListener(onBendLocationChanged)
-  graphComponent.graph.addBendTagChangedListener(onBendTagChanged)
-  graphComponent.graph.addBendRemovedListener(onBendRemoved)
+  graphComponent.graph.addEventListener('bend-added', onBendAdded)
+  graphComponent.graph.addEventListener('bend-location-changed', onBendLocationChanged)
+  graphComponent.graph.addEventListener('bend-tag-changed', onBendTagChanged)
+  graphComponent.graph.addEventListener('bend-removed', onBendRemoved)
 }
 
 /**
- * Deregisters events regarding bend changes from the graphComponent's graph.
+ * Unregisters events regarding bend changes from the graphComponent's graph.
  */
-function deregisterBendEvents(): void {
-  graphComponent.graph.removeBendAddedListener(onBendAdded)
-  graphComponent.graph.removeBendLocationChangedListener(onBendLocationChanged)
-  graphComponent.graph.removeBendTagChangedListener(onBendTagChanged)
-  graphComponent.graph.removeBendRemovedListener(onBendRemoved)
+function unregisterBendEvents(): void {
+  graphComponent.graph.removeEventListener('bend-added', onBendAdded)
+  graphComponent.graph.removeEventListener('bend-location-changed', onBendLocationChanged)
+  graphComponent.graph.removeEventListener('bend-tag-changed', onBendTagChanged)
+  graphComponent.graph.removeEventListener('bend-removed', onBendRemoved)
 }
 
 /**
  * Registers events regarding port changes to the graphComponent's graph.
  */
 function registerPortEvents(): void {
-  graphComponent.graph.addPortAddedListener(onPortAdded)
-  graphComponent.graph.addPortLocationParameterChangedListener(onPortLocationParameterChanged)
-  graphComponent.graph.addPortStyleChangedListener(onPortStyleChanged)
-  graphComponent.graph.addPortTagChangedListener(onPortTagChanged)
-  graphComponent.graph.addPortRemovedListener(onPortRemoved)
+  graphComponent.graph.addEventListener('port-added', onPortAdded)
+  graphComponent.graph.addEventListener(
+    'port-location-parameter-changed',
+    onPortLocationParameterChanged
+  )
+  graphComponent.graph.addEventListener('port-style-changed', onPortStyleChanged)
+  graphComponent.graph.addEventListener('port-tag-changed', onPortTagChanged)
+  graphComponent.graph.addEventListener('port-removed', onPortRemoved)
 }
 
 /**
- * Deregisters events regarding port changes from the graphComponent's graph.
+ * Unregisters events regarding port changes from the graphComponent's graph.
  */
-function deregisterPortEvents(): void {
-  graphComponent.graph.removePortAddedListener(onPortAdded)
-  graphComponent.graph.removePortLocationParameterChangedListener(onPortLocationParameterChanged)
-  graphComponent.graph.removePortStyleChangedListener(onPortStyleChanged)
-  graphComponent.graph.removePortTagChangedListener(onPortTagChanged)
-  graphComponent.graph.removePortRemovedListener(onPortRemoved)
+function unregisterPortEvents(): void {
+  graphComponent.graph.removeEventListener('port-added', onPortAdded)
+  graphComponent.graph.removeEventListener(
+    'port-location-parameter-changed',
+    onPortLocationParameterChanged
+  )
+  graphComponent.graph.removeEventListener('port-style-changed', onPortStyleChanged)
+  graphComponent.graph.removeEventListener('port-tag-changed', onPortTagChanged)
+  graphComponent.graph.removeEventListener('port-removed', onPortRemoved)
 }
 
 /**
  * Registers events regarding label changes to the graphComponent's graph.
  */
 function registerLabelEvents(): void {
-  graphComponent.graph.addLabelAddedListener(onLabelAdded)
-  graphComponent.graph.addLabelPreferredSizeChangedListener(onLabelPreferredSizeChanged)
-  graphComponent.graph.addLabelLayoutParameterChangedListener(onLabelLayoutParameterChanged)
-  graphComponent.graph.addLabelStyleChangedListener(onLabelStyleChanged)
-  graphComponent.graph.addLabelTagChangedListener(onLabelTagChanged)
-  graphComponent.graph.addLabelTextChangedListener(onLabelTextChanged)
-  graphComponent.graph.addLabelRemovedListener(onLabelRemoved)
+  graphComponent.graph.addEventListener('label-added', onLabelAdded)
+  graphComponent.graph.addEventListener('label-preferred-size-changed', onLabelPreferredSizeChanged)
+  graphComponent.graph.addEventListener(
+    'label-layout-parameter-changed',
+    onLabelLayoutParameterChanged
+  )
+  graphComponent.graph.addEventListener('label-style-changed', onLabelStyleChanged)
+  graphComponent.graph.addEventListener('label-tag-changed', onLabelTagChanged)
+  graphComponent.graph.addEventListener('label-text-changed', onLabelTextChanged)
+  graphComponent.graph.addEventListener('label-removed', onLabelRemoved)
 }
 
 /**
- * Deregisters events regarding label changes from the graphComponent's graph.
+ * Unregisters events regarding label changes from the graphComponent's graph.
  */
-function deregisterLabelEvents(): void {
-  graphComponent.graph.removeLabelAddedListener(onLabelAdded)
-  graphComponent.graph.removeLabelPreferredSizeChangedListener(onLabelPreferredSizeChanged)
-  graphComponent.graph.removeLabelLayoutParameterChangedListener(onLabelLayoutParameterChanged)
-  graphComponent.graph.removeLabelStyleChangedListener(onLabelStyleChanged)
-  graphComponent.graph.removeLabelTagChangedListener(onLabelTagChanged)
-  graphComponent.graph.removeLabelTextChangedListener(onLabelTextChanged)
-  graphComponent.graph.removeLabelRemovedListener(onLabelRemoved)
+function unregisterLabelEvents(): void {
+  graphComponent.graph.removeEventListener('label-added', onLabelAdded)
+  graphComponent.graph.removeEventListener(
+    'label-preferred-size-changed',
+    onLabelPreferredSizeChanged
+  )
+  graphComponent.graph.removeEventListener(
+    'label-layout-parameter-changed',
+    onLabelLayoutParameterChanged
+  )
+  graphComponent.graph.removeEventListener('label-style-changed', onLabelStyleChanged)
+  graphComponent.graph.removeEventListener('label-tag-changed', onLabelTagChanged)
+  graphComponent.graph.removeEventListener('label-text-changed', onLabelTextChanged)
+  graphComponent.graph.removeEventListener('label-removed', onLabelRemoved)
 }
 
 /**
  * Registers events regarding hierarchy changes to the graphComponent's graph.
  */
 function registerHierarchyEvents(): void {
-  graphComponent.graph.addParentChangedListener(onParentChanged)
-  graphComponent.graph.addIsGroupNodeChangedListener(onIsGroupNodeChanged)
+  graphComponent.graph.addEventListener('parent-changed', onParentChanged)
+  graphComponent.graph.addEventListener('is-group-node-changed', onIsGroupNodeChanged)
 }
 
 /**
- * Deregisters events regarding hierarchy changes from the graphComponent's graph.
+ * Unregisters events regarding hierarchy changes from the graphComponent's graph.
  */
-function deregisterHierarchyEvents(): void {
-  graphComponent.graph.removeParentChangedListener(onParentChanged)
-  graphComponent.graph.removeIsGroupNodeChangedListener(onIsGroupNodeChanged)
+function unregisterHierarchyEvents(): void {
+  graphComponent.graph.removeEventListener('parent-changed', onParentChanged)
+  graphComponent.graph.removeEventListener('is-group-node-changed', onIsGroupNodeChanged)
 }
 
 /**
  * Registers events regarding folding changes to the folding view of the graphComponent.
  */
 function registerFoldingEvents(): void {
-  foldingView.addGroupCollapsedListener(onGroupCollapsed)
-  foldingView.addGroupExpandedListener(onGroupExpanded)
-  foldingView.addPropertyChangedListener(onPropertyChanged)
+  foldingView.addEventListener('group-collapsed', onGroupCollapsed)
+  foldingView.addEventListener('group-expanded', onGroupExpanded)
+  foldingView.addEventListener('property-changed', onPropertyChanged)
 }
 
 /**
- * Deregisters events regarding folding changes from the folding view of the graphComponent.
+ * Unregisters events regarding folding changes from the folding view of the graphComponent.
  */
-function deregisterFoldingEvents(): void {
-  foldingView.removeGroupCollapsedListener(onGroupCollapsed)
-  foldingView.removeGroupExpandedListener(onGroupExpanded)
-  foldingView.removePropertyChangedListener(onPropertyChanged)
+function unregisterFoldingEvents(): void {
+  foldingView.removeEventListener('group-collapsed', onGroupCollapsed)
+  foldingView.removeEventListener('group-expanded', onGroupExpanded)
+  foldingView.removeEventListener('property-changed', onPropertyChanged)
 }
 
 /**
  * Registers events regarding updating the current display to the graphComponent's graph.
  */
 function registerGraphRenderEvents(): void {
-  graphComponent.graph.addDisplaysInvalidatedListener(onDisplaysInvalidated)
+  graphComponent.graph.addEventListener('displays-invalidated', onDisplaysInvalidated)
 }
 
 /**
- * Deregisters events regarding updating the current display from the graphComponent's graph.
+ * Unregisters events regarding updating the current display from the graphComponent's graph.
  */
-function deregisterGraphRenderEvents(): void {
-  graphComponent.graph.removeDisplaysInvalidatedListener(onDisplaysInvalidated)
+function unregisterGraphRenderEvents(): void {
+  graphComponent.graph.removeEventListener('displays-invalidated', onDisplaysInvalidated)
 }
 
 /**
  * Registers events to the graphComponent.
  */
 function registerGraphComponentEvents(): void {
-  graphComponent.addCurrentItemChangedListener(controlOnCurrentItemChanged)
-  graphComponent.addGraphChangedListener(controlOnGraphChanged)
-  graphComponent.addInputModeChangedListener(controlOnInputModeChanged)
+  graphComponent.addEventListener('current-item-changed', componentOnCurrentItemChanged)
 }
 
 /**
- * Deregisters events from the graphComponent.
+ * Unregisters events from the graphComponent.
  */
-function deregisterGraphComponentEvents(): void {
-  graphComponent.removeCurrentItemChangedListener(controlOnCurrentItemChanged)
-  graphComponent.removeGraphChangedListener(controlOnGraphChanged)
-  graphComponent.removeInputModeChangedListener(controlOnInputModeChanged)
+function unregisterGraphComponentEvents(): void {
+  graphComponent.removeEventListener('current-item-changed', componentOnCurrentItemChanged)
 }
 
 /**
  * Registers events to the input mode.
  */
 function registerInputModeEvents(): void {
-  editorMode.addCanvasClickedListener(geimOnCanvasClicked)
-  editorMode.addDeletedItemListener(geimOnDeletedItem)
-  editorMode.addDeletedSelectionListener(geimOnDeletedSelection)
-  editorMode.addDeletingSelectionListener(geimOnDeletingSelection)
-  editorMode.addItemClickedListener(geimOnItemClicked)
-  editorMode.addItemDoubleClickedListener(geimOnItemDoubleClicked)
-  editorMode.addItemLeftClickedListener(geimOnItemLeftClicked)
-  editorMode.addItemLeftDoubleClickedListener(geimOnItemLeftDoubleClicked)
-  editorMode.addItemRightClickedListener(geimOnItemRightClicked)
-  editorMode.addItemRightDoubleClickedListener(geimOnItemRightDoubleClicked)
-  editorMode.addLabelAddedListener(geimOnLabelAdded)
-  editorMode.addLabelTextChangedListener(geimOnLabelTextChanged)
-  editorMode.addLabelTextEditingCanceledListener(geimOnLabelTextEditingCanceled)
-  editorMode.addLabelTextEditingStartedListener(geimOnLabelTextEditingStarted)
-  editorMode.addMultiSelectionFinishedListener(geimOnMultiSelectionFinished)
-  editorMode.addMultiSelectionStartedListener(geimOnMultiSelectionStarted)
-  editorMode.addNodeCreatedListener(geimOnNodeCreated)
-  editorMode.addNodeReparentedListener(geimOnNodeReparented)
-  editorMode.addEdgePortsChangedListener(geimOnEdgePortsChanged)
-  editorMode.addPopulateItemContextMenuListener(geimOnPopulateItemContextMenu)
-  editorMode.addQueryItemToolTipListener(geimOnQueryItemToolTip)
-  editorMode.addValidateLabelTextListener(geimOnValidateLabelText)
-  viewerMode.addCanvasClickedListener(gvimOnCanvasClicked)
-  viewerMode.addItemClickedListener(gvimOnItemClicked)
-  viewerMode.addItemDoubleClickedListener(gvimOnItemDoubleClicked)
-  viewerMode.addItemLeftClickedListener(gvimOnItemLeftClicked)
-  viewerMode.addItemLeftDoubleClickedListener(gvimOnItemLeftDoubleClicked)
-  viewerMode.addItemRightClickedListener(gvimOnItemRightClicked)
-  viewerMode.addItemRightDoubleClickedListener(gvimOnItemRightDoubleClicked)
-  viewerMode.addMultiSelectionFinishedListener(gvimOnMultiSelectionFinished)
-  viewerMode.addMultiSelectionStartedListener(gvimOnMultiSelectionStarted)
-  viewerMode.addPopulateItemContextMenuListener(gvimOnPopulateItemContextMenu)
-  viewerMode.addQueryItemToolTipListener(gvimOnQueryItemToolTip)
+  editorMode.addEventListener('canvas-clicked', geimOnCanvasClicked)
+  editorMode.addEventListener('deleted-item', geimOnDeletedItem)
+  editorMode.addEventListener('deleted-selection', geimOnDeletedSelection)
+  editorMode.addEventListener('deleting-selection', geimOnDeletingSelection)
+  editorMode.addEventListener('item-clicked', geimOnItemClicked)
+  editorMode.addEventListener('item-double-clicked', geimOnItemDoubleClicked)
+  editorMode.addEventListener('item-left-clicked', geimOnItemLeftClicked)
+  editorMode.addEventListener('item-left-double-clicked', geimOnItemLeftDoubleClicked)
+  editorMode.addEventListener('item-right-clicked', geimOnItemRightClicked)
+  editorMode.addEventListener('item-right-double-clicked', geimOnItemRightDoubleClicked)
+  editorMode.addEventListener('multi-selection-finished', geimOnMultiSelectionFinished)
+  editorMode.addEventListener('multi-selection-started', geimOnMultiSelectionStarted)
+  editorMode.addEventListener('node-created', geimOnNodeCreated)
+  editorMode.addEventListener('node-reparented', geimOnNodeReparented)
+  editorMode.addEventListener('edge-ports-changed', geimOnEdgePortsChanged)
+  editorMode.addEventListener('populate-item-context-menu', geimOnPopulateItemContextMenu)
+  editorMode.addEventListener('query-item-tool-tip', geimOnQueryItemToolTip)
+  editorMode.addEventListener('label-added', geimOnLabelAdded)
+  editorMode.addEventListener('label-edited', geimOnLabelEdited)
+
+  viewerMode.addEventListener('canvas-clicked', gvimOnCanvasClicked)
+  viewerMode.addEventListener('item-clicked', gvimOnItemClicked)
+  viewerMode.addEventListener('item-double-clicked', gvimOnItemDoubleClicked)
+  viewerMode.addEventListener('item-left-clicked', gvimOnItemLeftClicked)
+  viewerMode.addEventListener('item-left-double-clicked', gvimOnItemLeftDoubleClicked)
+  viewerMode.addEventListener('item-right-clicked', gvimOnItemRightClicked)
+  viewerMode.addEventListener('item-right-double-clicked', gvimOnItemRightDoubleClicked)
+  viewerMode.addEventListener('multi-selection-finished', gvimOnMultiSelectionFinished)
+  viewerMode.addEventListener('multi-selection-started', gvimOnMultiSelectionStarted)
+  viewerMode.addEventListener('populate-item-context-menu', gvimOnPopulateItemContextMenu)
+  viewerMode.addEventListener('query-item-tool-tip', gvimOnQueryItemToolTip)
 }
 
 /**
- * Deregisters events from the input mode.
+ * Unregisters events from the input mode.
  */
-function deregisterInputModeEvents(): void {
-  editorMode.removeCanvasClickedListener(geimOnCanvasClicked)
-  editorMode.removeDeletedItemListener(geimOnDeletedItem)
-  editorMode.removeDeletedSelectionListener(geimOnDeletedSelection)
-  editorMode.removeDeletingSelectionListener(geimOnDeletingSelection)
-  editorMode.removeItemClickedListener(geimOnItemClicked)
-  editorMode.removeItemDoubleClickedListener(geimOnItemDoubleClicked)
-  editorMode.removeItemLeftClickedListener(geimOnItemLeftClicked)
-  editorMode.removeItemLeftDoubleClickedListener(geimOnItemLeftDoubleClicked)
-  editorMode.removeItemRightClickedListener(geimOnItemRightClicked)
-  editorMode.removeItemRightDoubleClickedListener(geimOnItemRightDoubleClicked)
-  editorMode.removeLabelAddedListener(geimOnLabelAdded)
-  editorMode.removeLabelTextChangedListener(geimOnLabelTextChanged)
-  editorMode.removeLabelTextEditingCanceledListener(geimOnLabelTextEditingCanceled)
-  editorMode.removeLabelTextEditingStartedListener(geimOnLabelTextEditingStarted)
-  editorMode.removeMultiSelectionFinishedListener(geimOnMultiSelectionFinished)
-  editorMode.removeMultiSelectionStartedListener(geimOnMultiSelectionStarted)
-  editorMode.removeNodeCreatedListener(geimOnNodeCreated)
-  editorMode.removeNodeReparentedListener(geimOnNodeReparented)
-  editorMode.removeEdgePortsChangedListener(geimOnEdgePortsChanged)
-  editorMode.removePopulateItemContextMenuListener(geimOnPopulateItemContextMenu)
-  editorMode.removeQueryItemToolTipListener(geimOnQueryItemToolTip)
-  editorMode.removeValidateLabelTextListener(geimOnValidateLabelText)
-  viewerMode.removeCanvasClickedListener(gvimOnCanvasClicked)
-  viewerMode.removeItemClickedListener(gvimOnItemClicked)
-  viewerMode.removeItemDoubleClickedListener(gvimOnItemDoubleClicked)
-  viewerMode.removeItemLeftClickedListener(gvimOnItemLeftClicked)
-  viewerMode.removeItemLeftDoubleClickedListener(gvimOnItemLeftDoubleClicked)
-  viewerMode.removeItemRightClickedListener(gvimOnItemRightClicked)
-  viewerMode.removeItemRightDoubleClickedListener(gvimOnItemRightDoubleClicked)
-  viewerMode.removeMultiSelectionFinishedListener(gvimOnMultiSelectionFinished)
-  viewerMode.removeMultiSelectionStartedListener(gvimOnMultiSelectionStarted)
-  viewerMode.removePopulateItemContextMenuListener(gvimOnPopulateItemContextMenu)
-  viewerMode.removeQueryItemToolTipListener(gvimOnQueryItemToolTip)
+function unregisterInputModeEvents(): void {
+  editorMode.removeEventListener('canvas-clicked', geimOnCanvasClicked)
+  editorMode.removeEventListener('deleted-item', geimOnDeletedItem)
+  editorMode.removeEventListener('deleted-selection', geimOnDeletedSelection)
+  editorMode.removeEventListener('deleting-selection', geimOnDeletingSelection)
+  editorMode.removeEventListener('item-clicked', geimOnItemClicked)
+  editorMode.removeEventListener('item-double-clicked', geimOnItemDoubleClicked)
+  editorMode.removeEventListener('item-left-clicked', geimOnItemLeftClicked)
+  editorMode.removeEventListener('item-left-double-clicked', geimOnItemLeftDoubleClicked)
+  editorMode.removeEventListener('item-right-clicked', geimOnItemRightClicked)
+  editorMode.removeEventListener('item-right-double-clicked', geimOnItemRightDoubleClicked)
+  editorMode.removeEventListener('multi-selection-finished', geimOnMultiSelectionFinished)
+  editorMode.removeEventListener('multi-selection-started', geimOnMultiSelectionStarted)
+  editorMode.removeEventListener('node-created', geimOnNodeCreated)
+  editorMode.removeEventListener('node-reparented', geimOnNodeReparented)
+  editorMode.removeEventListener('edge-ports-changed', geimOnEdgePortsChanged)
+  editorMode.removeEventListener('populate-item-context-menu', geimOnPopulateItemContextMenu)
+  editorMode.removeEventListener('query-item-tool-tip', geimOnQueryItemToolTip)
+  viewerMode.removeEventListener('canvas-clicked', gvimOnCanvasClicked)
+  viewerMode.removeEventListener('item-clicked', gvimOnItemClicked)
+  viewerMode.removeEventListener('item-double-clicked', gvimOnItemDoubleClicked)
+  viewerMode.removeEventListener('item-left-clicked', gvimOnItemLeftClicked)
+  viewerMode.removeEventListener('item-left-double-clicked', gvimOnItemLeftDoubleClicked)
+  viewerMode.removeEventListener('item-right-clicked', gvimOnItemRightClicked)
+  viewerMode.removeEventListener('item-right-double-clicked', gvimOnItemRightDoubleClicked)
+  viewerMode.removeEventListener('multi-selection-finished', gvimOnMultiSelectionFinished)
+  viewerMode.removeEventListener('multi-selection-started', gvimOnMultiSelectionStarted)
+  viewerMode.removeEventListener('populate-item-context-menu', gvimOnPopulateItemContextMenu)
+  viewerMode.removeEventListener('query-item-tool-tip', gvimOnQueryItemToolTip)
 }
 
 /**
  * Registers events to the move input mode.
  */
 function registerMoveInputModeEvents(): void {
-  editorMode.moveInputMode.addDragCanceledListener(moveInputModeOnDragCanceled)
-  editorMode.moveInputMode.addDragCancelingListener(moveInputModeOnDragCanceling)
-  editorMode.moveInputMode.addDragFinishedListener(moveInputModeOnDragFinished)
-  editorMode.moveInputMode.addDragFinishingListener(moveInputModeOnDragFinishing)
-  editorMode.moveInputMode.addDragStartedListener(moveInputModeOnDragStarted)
-  editorMode.moveInputMode.addDragStartingListener(moveInputModeOnDragStarting)
-  editorMode.moveInputMode.addDraggedListener(moveInputModeOnDragged)
-  editorMode.moveInputMode.addDraggingListener(moveInputModeOnDragging)
-  editorMode.moveInputMode.addQueryPositionHandlerListener(moveInputModeOnQueryPositionHandler)
+  editorMode.moveSelectedItemsInputMode.addEventListener(
+    'drag-canceled',
+    moveInputModeOnDragCanceled
+  )
+  editorMode.moveSelectedItemsInputMode.addEventListener(
+    'drag-canceling',
+    moveInputModeOnDragCanceling
+  )
+  editorMode.moveSelectedItemsInputMode.addEventListener(
+    'drag-finished',
+    moveInputModeOnDragFinished
+  )
+  editorMode.moveSelectedItemsInputMode.addEventListener(
+    'drag-finishing',
+    moveInputModeOnDragFinishing
+  )
+  editorMode.moveSelectedItemsInputMode.addEventListener('drag-started', moveInputModeOnDragStarted)
+  editorMode.moveSelectedItemsInputMode.addEventListener(
+    'drag-starting',
+    moveInputModeOnDragStarting
+  )
+  editorMode.moveSelectedItemsInputMode.addEventListener('dragged', moveInputModeOnDragged)
+  editorMode.moveSelectedItemsInputMode.addEventListener('dragging', moveInputModeOnDragging)
+  editorMode.moveSelectedItemsInputMode.addEventListener(
+    'query-position-handler',
+    moveInputModeOnQueryPositionHandler
+  )
 }
 
 /**
- * Deregisters events from the move input mode.
+ * Unregisters events from the move input mode.
  */
-function deregisterMoveInputModeEvents(): void {
-  editorMode.moveInputMode.removeDragCanceledListener(moveInputModeOnDragCanceled)
-  editorMode.moveInputMode.removeDragCancelingListener(moveInputModeOnDragCanceling)
-  editorMode.moveInputMode.removeDragFinishedListener(moveInputModeOnDragFinished)
-  editorMode.moveInputMode.removeDragFinishingListener(moveInputModeOnDragFinishing)
-  editorMode.moveInputMode.removeDragStartedListener(moveInputModeOnDragStarted)
-  editorMode.moveInputMode.removeDragStartingListener(moveInputModeOnDragStarting)
-  editorMode.moveInputMode.removeDraggedListener(moveInputModeOnDragged)
-  editorMode.moveInputMode.removeDraggingListener(moveInputModeOnDragging)
-  editorMode.moveInputMode.removeQueryPositionHandlerListener(moveInputModeOnQueryPositionHandler)
-}
-
-/**
- * Registers events to the move input mode regarding labels.
- */
-function registerMoveLabelInputModeEvents(): void {
-  editorMode.moveLabelInputMode.addDragCanceledListener(moveLabelInputModeOnDragCanceled)
-  editorMode.moveLabelInputMode.addDragCancelingListener(moveLabelInputModeOnDragCanceling)
-  editorMode.moveLabelInputMode.addDragFinishedListener(moveLabelInputModeOnDragFinished)
-  editorMode.moveLabelInputMode.addDragFinishingListener(moveLabelInputModeOnDragFinishing)
-  editorMode.moveLabelInputMode.addDragStartedListener(moveLabelInputModeOnDragStarted)
-  editorMode.moveLabelInputMode.addDragStartingListener(moveLabelInputModeOnDragStarting)
-  editorMode.moveLabelInputMode.addDraggedListener(moveLabelInputModeOnDragged)
-  editorMode.moveLabelInputMode.addDraggingListener(moveLabelInputModeOnDragging)
-}
-
-/**
- * Deregisters events from the move input mode regarding labels.
- */
-function deregisterMoveLabelInputModeEvents(): void {
-  editorMode.moveLabelInputMode.removeDragCanceledListener(moveLabelInputModeOnDragCanceled)
-  editorMode.moveLabelInputMode.removeDragCancelingListener(moveLabelInputModeOnDragCanceling)
-  editorMode.moveLabelInputMode.removeDragFinishedListener(moveLabelInputModeOnDragFinished)
-  editorMode.moveLabelInputMode.removeDragFinishingListener(moveLabelInputModeOnDragFinishing)
-  editorMode.moveLabelInputMode.removeDragStartedListener(moveLabelInputModeOnDragStarted)
-  editorMode.moveLabelInputMode.removeDragStartingListener(moveLabelInputModeOnDragStarting)
-  editorMode.moveLabelInputMode.removeDraggedListener(moveLabelInputModeOnDragged)
-  editorMode.moveLabelInputMode.removeDraggingListener(moveLabelInputModeOnDragging)
+function unregisterMoveInputModeEvents(): void {
+  editorMode.moveSelectedItemsInputMode.removeEventListener(
+    'drag-canceled',
+    moveInputModeOnDragCanceled
+  )
+  editorMode.moveSelectedItemsInputMode.removeEventListener(
+    'drag-canceling',
+    moveInputModeOnDragCanceling
+  )
+  editorMode.moveSelectedItemsInputMode.removeEventListener(
+    'drag-finished',
+    moveInputModeOnDragFinished
+  )
+  editorMode.moveSelectedItemsInputMode.removeEventListener(
+    'drag-finishing',
+    moveInputModeOnDragFinishing
+  )
+  editorMode.moveSelectedItemsInputMode.removeEventListener(
+    'drag-started',
+    moveInputModeOnDragStarted
+  )
+  editorMode.moveSelectedItemsInputMode.removeEventListener(
+    'drag-starting',
+    moveInputModeOnDragStarting
+  )
+  editorMode.moveSelectedItemsInputMode.removeEventListener('dragged', moveInputModeOnDragged)
+  editorMode.moveSelectedItemsInputMode.removeEventListener('dragging', moveInputModeOnDragging)
+  editorMode.moveSelectedItemsInputMode.removeEventListener(
+    'query-position-handler',
+    moveInputModeOnQueryPositionHandler
+  )
 }
 
 /**
  * Registers events to the node drop input mode.
  */
 function registerItemDropInputModeEvents(): void {
-  editorMode.nodeDropInputMode.addDragDroppedListener(itemInputModeOnDragDropped)
-  editorMode.nodeDropInputMode.addDragEnteredListener(itemInputModeOnDragEntered)
-  editorMode.nodeDropInputMode.addDragLeftListener(itemInputModeOnDragLeft)
-  editorMode.nodeDropInputMode.addDragOverListener(itemInputModeOnDragOver)
-  editorMode.nodeDropInputMode.addItemCreatedListener(itemInputModeOnItemCreated)
-  editorMode.labelDropInputMode.addDragDroppedListener(itemInputModeOnDragDropped)
-  editorMode.labelDropInputMode.addDragEnteredListener(itemInputModeOnDragEntered)
-  editorMode.labelDropInputMode.addDragLeftListener(itemInputModeOnDragLeft)
-  editorMode.labelDropInputMode.addDragOverListener(itemInputModeOnDragOver)
-  editorMode.labelDropInputMode.addItemCreatedListener(itemInputModeOnItemCreated)
-  editorMode.portDropInputMode.addDragDroppedListener(itemInputModeOnDragDropped)
-  editorMode.portDropInputMode.addDragEnteredListener(itemInputModeOnDragEntered)
-  editorMode.portDropInputMode.addDragLeftListener(itemInputModeOnDragLeft)
-  editorMode.portDropInputMode.addDragOverListener(itemInputModeOnDragOver)
-  editorMode.portDropInputMode.addItemCreatedListener(itemInputModeOnItemCreated)
+  editorMode.nodeDropInputMode.addEventListener('drag-dropped', itemInputModeOnDragDropped)
+  editorMode.nodeDropInputMode.addEventListener('drag-entered', itemInputModeOnDragEntered)
+  editorMode.nodeDropInputMode.addEventListener('drag-left', itemInputModeOnDragLeft)
+  editorMode.nodeDropInputMode.addEventListener('drag-over', itemInputModeOnDragOver)
+  editorMode.nodeDropInputMode.addEventListener('item-created', itemInputModeOnItemCreated)
+  editorMode.labelDropInputMode.addEventListener('drag-dropped', itemInputModeOnDragDropped)
+  editorMode.labelDropInputMode.addEventListener('drag-entered', itemInputModeOnDragEntered)
+  editorMode.labelDropInputMode.addEventListener('drag-left', itemInputModeOnDragLeft)
+  editorMode.labelDropInputMode.addEventListener('drag-over', itemInputModeOnDragOver)
+  editorMode.labelDropInputMode.addEventListener('item-created', itemInputModeOnItemCreated)
+  editorMode.portDropInputMode.addEventListener('drag-dropped', itemInputModeOnDragDropped)
+  editorMode.portDropInputMode.addEventListener('drag-entered', itemInputModeOnDragEntered)
+  editorMode.portDropInputMode.addEventListener('drag-left', itemInputModeOnDragLeft)
+  editorMode.portDropInputMode.addEventListener('drag-over', itemInputModeOnDragOver)
+  editorMode.portDropInputMode.addEventListener('item-created', itemInputModeOnItemCreated)
 }
 
 /**
- * Deregisters events from the node drop input mode.
+ * Unregisters events from the node drop input mode.
  */
-function deregisterItemDropInputModeEvents(): void {
-  editorMode.nodeDropInputMode.removeDragDroppedListener(itemInputModeOnDragDropped)
-  editorMode.nodeDropInputMode.removeDragEnteredListener(itemInputModeOnDragEntered)
-  editorMode.nodeDropInputMode.removeDragLeftListener(itemInputModeOnDragLeft)
-  editorMode.nodeDropInputMode.removeDragOverListener(itemInputModeOnDragOver)
-  editorMode.nodeDropInputMode.removeItemCreatedListener(itemInputModeOnItemCreated)
-  editorMode.labelDropInputMode.removeDragDroppedListener(itemInputModeOnDragDropped)
-  editorMode.labelDropInputMode.removeDragEnteredListener(itemInputModeOnDragEntered)
-  editorMode.labelDropInputMode.removeDragLeftListener(itemInputModeOnDragLeft)
-  editorMode.labelDropInputMode.removeDragOverListener(itemInputModeOnDragOver)
-  editorMode.labelDropInputMode.removeItemCreatedListener(itemInputModeOnItemCreated)
-  editorMode.portDropInputMode.removeDragDroppedListener(itemInputModeOnDragDropped)
-  editorMode.portDropInputMode.removeDragEnteredListener(itemInputModeOnDragEntered)
-  editorMode.portDropInputMode.removeDragLeftListener(itemInputModeOnDragLeft)
-  editorMode.portDropInputMode.removeDragOverListener(itemInputModeOnDragOver)
-  editorMode.portDropInputMode.removeItemCreatedListener(itemInputModeOnItemCreated)
+function unregisterItemDropInputModeEvents(): void {
+  editorMode.nodeDropInputMode.removeEventListener('drag-dropped', itemInputModeOnDragDropped)
+  editorMode.nodeDropInputMode.removeEventListener('drag-entered', itemInputModeOnDragEntered)
+  editorMode.nodeDropInputMode.removeEventListener('drag-left', itemInputModeOnDragLeft)
+  editorMode.nodeDropInputMode.removeEventListener('drag-over', itemInputModeOnDragOver)
+  editorMode.nodeDropInputMode.removeEventListener('item-created', itemInputModeOnItemCreated)
+  editorMode.labelDropInputMode.removeEventListener('drag-dropped', itemInputModeOnDragDropped)
+  editorMode.labelDropInputMode.removeEventListener('drag-entered', itemInputModeOnDragEntered)
+  editorMode.labelDropInputMode.removeEventListener('drag-left', itemInputModeOnDragLeft)
+  editorMode.labelDropInputMode.removeEventListener('drag-over', itemInputModeOnDragOver)
+  editorMode.labelDropInputMode.removeEventListener('item-created', itemInputModeOnItemCreated)
+  editorMode.portDropInputMode.removeEventListener('drag-dropped', itemInputModeOnDragDropped)
+  editorMode.portDropInputMode.removeEventListener('drag-entered', itemInputModeOnDragEntered)
+  editorMode.portDropInputMode.removeEventListener('drag-left', itemInputModeOnDragLeft)
+  editorMode.portDropInputMode.removeEventListener('drag-over', itemInputModeOnDragOver)
+  editorMode.portDropInputMode.removeEventListener('item-created', itemInputModeOnItemCreated)
+}
+
+/**
+ * Registers events from the edit label input mode.
+ */
+function registerEditLabelInputModeEvents(): void {
+  editorMode.editLabelInputMode.addEventListener('label-added', editLabelInputModeLabelAdded)
+  editorMode.editLabelInputMode.addEventListener('label-deleted', editLabelInputModeLabelDeleted)
+  editorMode.editLabelInputMode.addEventListener('label-edited', editLabelInputModeLabelEdited)
+  editorMode.editLabelInputMode.addEventListener(
+    'label-editing-canceled',
+    editLabelInputModeLabelEditingCanceled
+  )
+  editorMode.editLabelInputMode.addEventListener(
+    'label-editing-started',
+    editLabelInputModeLabelEditingStarted
+  )
+  editorMode.editLabelInputMode.addEventListener(
+    'query-label-adding',
+    editLabelInputModeOnQueryLabelAdding
+  )
+  editorMode.editLabelInputMode.addEventListener(
+    'query-label-editing',
+    editLabelInputModeOnQueryLabelEditing
+  )
+  editorMode.editLabelInputMode.addEventListener(
+    'validate-label-text',
+    editLabelInputModeOnQueryValidateLabelText
+  )
+}
+
+/**
+ * Unregisters events from the edit label input mode.
+ */
+function unregisterEditLabelInputModeEvents(): void {
+  editorMode.editLabelInputMode.removeEventListener('label-added', editLabelInputModeLabelAdded)
+  editorMode.editLabelInputMode.removeEventListener('label-deleted', editLabelInputModeLabelDeleted)
+  editorMode.editLabelInputMode.removeEventListener('label-edited', editLabelInputModeLabelEdited)
+  editorMode.editLabelInputMode.removeEventListener(
+    'label-editing-canceled',
+    editLabelInputModeLabelEditingCanceled
+  )
+  editorMode.editLabelInputMode.removeEventListener(
+    'label-editing-started',
+    editLabelInputModeLabelEditingStarted
+  )
+  editorMode.editLabelInputMode.removeEventListener(
+    'query-label-adding',
+    editLabelInputModeOnQueryLabelAdding
+  )
+  editorMode.editLabelInputMode.removeEventListener(
+    'query-label-editing',
+    editLabelInputModeOnQueryLabelEditing
+  )
+  editorMode.editLabelInputMode.removeEventListener(
+    'validate-label-text',
+    editLabelInputModeOnQueryValidateLabelText
+  )
 }
 
 /**
  * Registers hover events to the input mode.
  */
 function registerItemHoverInputModeEvents(): void {
-  editorMode.itemHoverInputMode.addHoveredItemChangedListener(
+  editorMode.itemHoverInputMode.addEventListener(
+    'hovered-item-changed',
     itemHoverInputModeOnHoveredItemChanged
   )
-  viewerMode.itemHoverInputMode.addHoveredItemChangedListener(
+  viewerMode.itemHoverInputMode.addEventListener(
+    'hovered-item-changed',
     itemHoverInputModeOnHoveredItemChanged
   )
 }
 
 /**
- * Deregisters hover events from the input mode.
+ * Unregisters hover events from the input mode.
  */
-function deregisterItemHoverInputModeEvents(): void {
-  editorMode.itemHoverInputMode.removeHoveredItemChangedListener(
+function unregisterItemHoverInputModeEvents(): void {
+  editorMode.itemHoverInputMode.removeEventListener(
+    'hovered-item-changed',
     itemHoverInputModeOnHoveredItemChanged
   )
-  viewerMode.itemHoverInputMode.removeHoveredItemChangedListener(
+  viewerMode.itemHoverInputMode.removeEventListener(
+    'hovered-item-changed',
     itemHoverInputModeOnHoveredItemChanged
   )
 }
@@ -794,380 +921,547 @@ function deregisterItemHoverInputModeEvents(): void {
  * Registers events to the bend input mode.
  */
 function registerCreateBendInputModeEvents(): void {
-  editorMode.createBendInputMode.addBendCreatedListener(createBendInputModeOnBendCreated)
-  editorMode.createBendInputMode.addDragCanceledListener(createBendInputModeOnDragCanceled)
-  editorMode.createBendInputMode.addDraggedListener(createBendInputModeOnDragged)
-  editorMode.createBendInputMode.addDraggingListener(createBendInputModeOnDragging)
+  editorMode.createBendInputMode.addEventListener('bend-created', createBendInputModeOnBendCreated)
+  editorMode.createBendInputMode.addEventListener(
+    'drag-canceled',
+    createBendInputModeOnDragCanceled
+  )
+  editorMode.createBendInputMode.addEventListener('dragged', createBendInputModeOnDragged)
+  editorMode.createBendInputMode.addEventListener('dragging', createBendInputModeOnDragging)
 }
 
 /**
- * Deregisters events from the bend input mode.
+ * Unregisters events from the bend input mode.
  */
-function deregisterCreateBendInputModeEvents(): void {
-  editorMode.createBendInputMode.removeBendCreatedListener(createBendInputModeOnBendCreated)
-  editorMode.createBendInputMode.removeDragCanceledListener(createBendInputModeOnDragCanceled)
-  editorMode.createBendInputMode.removeDraggedListener(createBendInputModeOnDragged)
-  editorMode.createBendInputMode.removeDraggingListener(createBendInputModeOnDragging)
-}
-
-/**
- * "Simulate" a context menu, so the various context menu events are fired.
- * Please see the ContextMenu demo for details about wiring a context menu implementation
- * to the input modes. See the jQuery toolkit demos about using a third-party
- * context menu widget with yFiles.
- */
-function onContextMenu(): void {
-  editorMode.contextMenuInputMode.shouldOpenMenu(Point.ORIGIN)
-  viewerMode.contextMenuInputMode.shouldOpenMenu(Point.ORIGIN)
+function unregisterCreateBendInputModeEvents(): void {
+  editorMode.createBendInputMode.removeEventListener(
+    'bend-created',
+    createBendInputModeOnBendCreated
+  )
+  editorMode.createBendInputMode.removeEventListener(
+    'drag-canceled',
+    createBendInputModeOnDragCanceled
+  )
+  editorMode.createBendInputMode.removeEventListener('dragged', createBendInputModeOnDragged)
+  editorMode.createBendInputMode.removeEventListener('dragging', createBendInputModeOnDragging)
 }
 
 /**
  * Registers events related to the context menu.
  */
 function registerContextMenuInputModeEvents(): void {
-  editorMode.contextMenuInputMode.addPopulateMenuListener(contextMenuInputModeOnPopulateMenu)
-  viewerMode.contextMenuInputMode.addPopulateMenuListener(contextMenuInputModeOnPopulateMenu)
+  editorMode.contextMenuInputMode.addEventListener(
+    'populate-menu',
+    contextMenuInputModeOnPopulateMenu
+  )
+  viewerMode.contextMenuInputMode.addEventListener(
+    'populate-menu',
+    contextMenuInputModeOnPopulateMenu
+  )
 }
 
 /**
- * Deregisters events related to the context menu.
+ * Unregisters events related to the context menu.
  */
-function deregisterContextMenuInputModeEvents(): void {
-  editorMode.contextMenuInputMode.removePopulateMenuListener(contextMenuInputModeOnPopulateMenu)
-  viewerMode.contextMenuInputMode.removePopulateMenuListener(contextMenuInputModeOnPopulateMenu)
-}
-
-/**
- * Registers events related to the tap input mode.
- */
-function registerTapInputModeEvents(): void {
-  editorMode.tapInputMode.addDoubleTappedListener(tapInputModeOnDoubleTapped)
-  editorMode.tapInputMode.addTappedListener(tapInputModeOnTapped)
-  viewerMode.tapInputMode.addDoubleTappedListener(tapInputModeOnDoubleTapped)
-  viewerMode.tapInputMode.addTappedListener(tapInputModeOnTapped)
-}
-
-/**
- * Deregisters events related from the tap input mode.
- */
-function deregisterTapInputModeEvents(): void {
-  editorMode.tapInputMode.removeDoubleTappedListener(tapInputModeOnDoubleTapped)
-  editorMode.tapInputMode.removeTappedListener(tapInputModeOnTapped)
-  viewerMode.tapInputMode.removeDoubleTappedListener(tapInputModeOnDoubleTapped)
-  viewerMode.tapInputMode.removeTappedListener(tapInputModeOnTapped)
+function unregisterContextMenuInputModeEvents(): void {
+  editorMode.contextMenuInputMode.removeEventListener(
+    'populate-menu',
+    contextMenuInputModeOnPopulateMenu
+  )
+  viewerMode.contextMenuInputMode.removeEventListener(
+    'populate-menu',
+    contextMenuInputModeOnPopulateMenu
+  )
 }
 
 /**
  * Registers events related to the text editor mode.
  */
 function registerTextEditorInputModeEvents(): void {
-  editorMode.textEditorInputMode.addEditingCanceledListener(textEditorInputModeOnEditingCanceled)
-  editorMode.textEditorInputMode.addEditingStartedListener(textEditorInputModeOnEditingStarted)
-  editorMode.textEditorInputMode.addTextEditedListener(textEditorInputModeOnTextEdited)
+  const textEditorInputMode = editorMode.editLabelInputMode.textEditorInputMode
+  textEditorInputMode.addEventListener('editing-canceled', textEditorInputModeOnEditingCanceled)
+  textEditorInputMode.addEventListener('editing-started', textEditorInputModeOnEditingStarted)
+  textEditorInputMode.addEventListener('text-edited', textEditorInputModeOnTextEdited)
 }
 
 /**
- * Deregisters events related from the text editor mode.
+ * Unregisters events related from the text editor mode.
  */
-function deregisterTextEditorInputModeEvents(): void {
-  editorMode.textEditorInputMode.removeEditingCanceledListener(textEditorInputModeOnEditingCanceled)
-  editorMode.textEditorInputMode.removeEditingStartedListener(textEditorInputModeOnEditingStarted)
-  editorMode.textEditorInputMode.removeTextEditedListener(textEditorInputModeOnTextEdited)
+function unregisterTextEditorInputModeEvents(): void {
+  const textEditorInputMode = editorMode.editLabelInputMode.textEditorInputMode
+  textEditorInputMode.removeEventListener('editing-canceled', textEditorInputModeOnEditingCanceled)
+  textEditorInputMode.removeEventListener('editing-started', textEditorInputModeOnEditingStarted)
+  textEditorInputMode.removeEventListener('text-edited', textEditorInputModeOnTextEdited)
 }
 
 /**
- * Registers events related to mouse hovering to the input mode.
+ * Registers events related to tooltips to the input mode.
  */
-function registerMouseHoverInputModeEvents(): void {
-  editorMode.mouseHoverInputMode.addQueryToolTipListener(mouseHoverInputModeOnQueryToolTip)
-  viewerMode.mouseHoverInputMode.addQueryToolTipListener(mouseHoverInputModeOnQueryToolTip)
+function registerTooltipInputModeEvents(): void {
+  editorMode.toolTipInputMode.addEventListener('query-tool-tip', toolTipInputModeOnQueryToolTip)
+  viewerMode.toolTipInputMode.addEventListener('query-tool-tip', toolTipInputModeOnQueryToolTip)
 }
 
 /**
- * Registers events related to mouse hovering from the input mode.
+ * Registers events related to tooltips from the input mode.
  */
-function deregisterMouseHoverInputModeEvents(): void {
-  editorMode.mouseHoverInputMode.removeQueryToolTipListener(mouseHoverInputModeOnQueryToolTip)
-  viewerMode.mouseHoverInputMode.removeQueryToolTipListener(mouseHoverInputModeOnQueryToolTip)
+function unregisterToolTipInputModeEvents(): void {
+  editorMode.toolTipInputMode.removeEventListener('query-tool-tip', toolTipInputModeOnQueryToolTip)
+  viewerMode.toolTipInputMode.removeEventListener('query-tool-tip', toolTipInputModeOnQueryToolTip)
 }
 
 /**
- * Registers events related to mouse hovering to the navigation input mode.
+ * Registers events related to group navigation to the navigation input mode.
  */
 function registerNavigationInputModeEvents(): void {
-  editorMode.navigationInputMode.addGroupCollapsedListener(navigationInputModeOnGroupCollapsed)
-  editorMode.navigationInputMode.addGroupCollapsingListener(navigationInputModeOnGroupCollapsing)
-  editorMode.navigationInputMode.addGroupEnteredListener(navigationInputModeOnGroupEntered)
-  editorMode.navigationInputMode.addGroupEnteringListener(navigationInputModeOnGroupEntering)
-  editorMode.navigationInputMode.addGroupExitedListener(navigationInputModeOnGroupExited)
-  editorMode.navigationInputMode.addGroupExitingListener(navigationInputModeOnGroupExiting)
-  editorMode.navigationInputMode.addGroupExpandedListener(navigationInputModeOnGroupExpanded)
-  editorMode.navigationInputMode.addGroupExpandingListener(navigationInputModeOnGroupExpanding)
+  editorMode.navigationInputMode.addEventListener(
+    'group-collapsed',
+    navigationInputModeOnGroupCollapsed
+  )
+  editorMode.navigationInputMode.addEventListener(
+    'group-collapsing',
+    navigationInputModeOnGroupCollapsing
+  )
+  editorMode.navigationInputMode.addEventListener(
+    'group-entered',
+    navigationInputModeOnGroupEntered
+  )
+  editorMode.navigationInputMode.addEventListener(
+    'group-entering',
+    navigationInputModeOnGroupEntering
+  )
+  editorMode.navigationInputMode.addEventListener('group-exited', navigationInputModeOnGroupExited)
+  editorMode.navigationInputMode.addEventListener(
+    'group-exiting',
+    navigationInputModeOnGroupExiting
+  )
+  editorMode.navigationInputMode.addEventListener(
+    'group-expanded',
+    navigationInputModeOnGroupExpanded
+  )
+  editorMode.navigationInputMode.addEventListener(
+    'group-expanding',
+    navigationInputModeOnGroupExpanding
+  )
 
-  viewerMode.navigationInputMode.addGroupCollapsedListener(navigationInputModeOnGroupCollapsed)
-  viewerMode.navigationInputMode.addGroupCollapsingListener(navigationInputModeOnGroupCollapsing)
-  viewerMode.navigationInputMode.addGroupEnteredListener(navigationInputModeOnGroupEntered)
-  viewerMode.navigationInputMode.addGroupEnteringListener(navigationInputModeOnGroupEntering)
-  viewerMode.navigationInputMode.addGroupExitedListener(navigationInputModeOnGroupExited)
-  viewerMode.navigationInputMode.addGroupExitingListener(navigationInputModeOnGroupExiting)
-  viewerMode.navigationInputMode.addGroupExpandedListener(navigationInputModeOnGroupExpanded)
-  viewerMode.navigationInputMode.addGroupExpandingListener(navigationInputModeOnGroupExpanding)
+  viewerMode.navigationInputMode.addEventListener(
+    'group-collapsed',
+    navigationInputModeOnGroupCollapsed
+  )
+  viewerMode.navigationInputMode.addEventListener(
+    'group-collapsing',
+    navigationInputModeOnGroupCollapsing
+  )
+  viewerMode.navigationInputMode.addEventListener(
+    'group-entered',
+    navigationInputModeOnGroupEntered
+  )
+  viewerMode.navigationInputMode.addEventListener(
+    'group-entering',
+    navigationInputModeOnGroupEntering
+  )
+  viewerMode.navigationInputMode.addEventListener('group-exited', navigationInputModeOnGroupExited)
+  viewerMode.navigationInputMode.addEventListener(
+    'group-exiting',
+    navigationInputModeOnGroupExiting
+  )
+  viewerMode.navigationInputMode.addEventListener(
+    'group-expanded',
+    navigationInputModeOnGroupExpanded
+  )
+  viewerMode.navigationInputMode.addEventListener(
+    'group-expanding',
+    navigationInputModeOnGroupExpanding
+  )
 }
 
 /**
- * Deregisters events related to mouse hovering from the navigation input mode.
+ * Unregisters events related to group navigation from the navigation input mode.
  */
-function deregisterNavigationInputModeEvents(): void {
-  editorMode.navigationInputMode.removeGroupCollapsedListener(navigationInputModeOnGroupCollapsed)
-  editorMode.navigationInputMode.removeGroupCollapsingListener(navigationInputModeOnGroupCollapsing)
-  editorMode.navigationInputMode.removeGroupEnteredListener(navigationInputModeOnGroupEntered)
-  editorMode.navigationInputMode.removeGroupEnteringListener(navigationInputModeOnGroupEntering)
-  editorMode.navigationInputMode.removeGroupExitedListener(navigationInputModeOnGroupExited)
-  editorMode.navigationInputMode.removeGroupExitingListener(navigationInputModeOnGroupExiting)
-  editorMode.navigationInputMode.removeGroupExpandedListener(navigationInputModeOnGroupExpanded)
-  editorMode.navigationInputMode.removeGroupExpandingListener(navigationInputModeOnGroupExpanding)
+function unregisterNavigationInputModeEvents(): void {
+  editorMode.navigationInputMode.removeEventListener(
+    'group-collapsed',
+    navigationInputModeOnGroupCollapsed
+  )
+  editorMode.navigationInputMode.removeEventListener(
+    'group-collapsing',
+    navigationInputModeOnGroupCollapsing
+  )
+  editorMode.navigationInputMode.removeEventListener(
+    'group-entered',
+    navigationInputModeOnGroupEntered
+  )
+  editorMode.navigationInputMode.removeEventListener(
+    'group-entering',
+    navigationInputModeOnGroupEntering
+  )
+  editorMode.navigationInputMode.removeEventListener(
+    'group-exited',
+    navigationInputModeOnGroupExited
+  )
+  editorMode.navigationInputMode.removeEventListener(
+    'group-exiting',
+    navigationInputModeOnGroupExiting
+  )
+  editorMode.navigationInputMode.removeEventListener(
+    'group-expanded',
+    navigationInputModeOnGroupExpanded
+  )
+  editorMode.navigationInputMode.removeEventListener(
+    'group-expanding',
+    navigationInputModeOnGroupExpanding
+  )
 
-  viewerMode.navigationInputMode.removeGroupCollapsedListener(navigationInputModeOnGroupCollapsed)
-  viewerMode.navigationInputMode.removeGroupCollapsingListener(navigationInputModeOnGroupCollapsing)
-  viewerMode.navigationInputMode.removeGroupEnteredListener(navigationInputModeOnGroupEntered)
-  viewerMode.navigationInputMode.removeGroupEnteringListener(navigationInputModeOnGroupEntering)
-  viewerMode.navigationInputMode.removeGroupExitedListener(navigationInputModeOnGroupExited)
-  viewerMode.navigationInputMode.removeGroupExitingListener(navigationInputModeOnGroupExiting)
-  viewerMode.navigationInputMode.removeGroupExpandedListener(navigationInputModeOnGroupExpanded)
-  viewerMode.navigationInputMode.removeGroupExpandingListener(navigationInputModeOnGroupExpanding)
+  viewerMode.navigationInputMode.removeEventListener(
+    'group-collapsed',
+    navigationInputModeOnGroupCollapsed
+  )
+  viewerMode.navigationInputMode.removeEventListener(
+    'group-collapsing',
+    navigationInputModeOnGroupCollapsing
+  )
+  viewerMode.navigationInputMode.removeEventListener(
+    'group-entered',
+    navigationInputModeOnGroupEntered
+  )
+  viewerMode.navigationInputMode.removeEventListener(
+    'group-entering',
+    navigationInputModeOnGroupEntering
+  )
+  viewerMode.navigationInputMode.removeEventListener(
+    'group-exited',
+    navigationInputModeOnGroupExited
+  )
+  viewerMode.navigationInputMode.removeEventListener(
+    'group-exiting',
+    navigationInputModeOnGroupExiting
+  )
+  viewerMode.navigationInputMode.removeEventListener(
+    'group-expanded',
+    navigationInputModeOnGroupExpanded
+  )
+  viewerMode.navigationInputMode.removeEventListener(
+    'group-expanding',
+    navigationInputModeOnGroupExpanding
+  )
 }
 
 /**
  * Registers events to the click input mode.
  */
 function registerClickInputModeEvents(): void {
-  editorMode.clickInputMode.addClickedListener(clickInputModeOnClicked)
-  editorMode.clickInputMode.addDoubleClickedListener(clickInputModeOnDoubleClicked)
-  editorMode.clickInputMode.addLeftClickedListener(clickInputModeOnLeftClicked)
-  editorMode.clickInputMode.addLeftDoubleClickedListener(clickInputModeOnLeftDoubleClicked)
-  editorMode.clickInputMode.addRightClickedListener(clickInputModeOnRightClicked)
-  editorMode.clickInputMode.addRightDoubleClickedListener(clickInputModeOnRightDoubleClicked)
-
-  viewerMode.clickInputMode.addClickedListener(clickInputModeOnClicked)
-  viewerMode.clickInputMode.addDoubleClickedListener(clickInputModeOnDoubleClicked)
-  viewerMode.clickInputMode.addLeftClickedListener(clickInputModeOnLeftClicked)
-  viewerMode.clickInputMode.addLeftDoubleClickedListener(clickInputModeOnLeftDoubleClicked)
-  viewerMode.clickInputMode.addRightClickedListener(clickInputModeOnRightClicked)
-  viewerMode.clickInputMode.addRightDoubleClickedListener(clickInputModeOnRightDoubleClicked)
+  editorMode.clickInputMode.addEventListener('clicked', clickInputModeOnClicked)
+  viewerMode.clickInputMode.addEventListener('clicked', clickInputModeOnClicked)
 }
 
 /**
- * Deregisters events from the click input mode.
+ * Unregisters events from the click input mode.
  */
-function deregisterClickInputModeEvents(): void {
-  editorMode.clickInputMode.removeClickedListener(clickInputModeOnClicked)
-  editorMode.clickInputMode.removeDoubleClickedListener(clickInputModeOnDoubleClicked)
-  editorMode.clickInputMode.removeLeftClickedListener(clickInputModeOnLeftClicked)
-  editorMode.clickInputMode.removeLeftDoubleClickedListener(clickInputModeOnLeftDoubleClicked)
-  editorMode.clickInputMode.removeRightClickedListener(clickInputModeOnRightClicked)
-  editorMode.clickInputMode.removeRightDoubleClickedListener(clickInputModeOnRightDoubleClicked)
-
-  viewerMode.clickInputMode.removeClickedListener(clickInputModeOnClicked)
-  viewerMode.clickInputMode.removeDoubleClickedListener(clickInputModeOnDoubleClicked)
-  viewerMode.clickInputMode.removeLeftClickedListener(clickInputModeOnLeftClicked)
-  viewerMode.clickInputMode.removeLeftDoubleClickedListener(clickInputModeOnLeftDoubleClicked)
-  viewerMode.clickInputMode.removeRightClickedListener(clickInputModeOnRightClicked)
-  viewerMode.clickInputMode.removeRightDoubleClickedListener(clickInputModeOnRightDoubleClicked)
+function unregisterClickInputModeEvents(): void {
+  editorMode.clickInputMode.removeEventListener('clicked', clickInputModeOnClicked)
+  viewerMode.clickInputMode.removeEventListener('clicked', clickInputModeOnClicked)
 }
 
 /**
  * Registers events to the click input mode.
  */
 function registerHandleInputModeEvents(): void {
-  editorMode.handleInputMode.addDragCanceledListener(handleInputModeOnDragCanceled)
-  editorMode.handleInputMode.addDragCancelingListener(handleInputModeOnDragCanceling)
-  editorMode.handleInputMode.addDragFinishedListener(handleInputModeOnDragFinished)
-  editorMode.handleInputMode.addDragFinishingListener(handleInputModeOnDragFinishing)
-  editorMode.handleInputMode.addDragStartedListener(handleInputModeOnDragStarted)
-  editorMode.handleInputMode.addDragStartingListener(handleInputModeOnDragStarting)
-  editorMode.handleInputMode.addDraggedListener(handleInputModeOnDragged)
-  editorMode.handleInputMode.addDraggingListener(handleInputModeOnDragging)
+  editorMode.handleInputMode.addEventListener('drag-canceled', handleInputModeOnDragCanceled)
+  editorMode.handleInputMode.addEventListener('drag-canceling', handleInputModeOnDragCanceling)
+  editorMode.handleInputMode.addEventListener('drag-finished', handleInputModeOnDragFinished)
+  editorMode.handleInputMode.addEventListener('drag-finishing', handleInputModeOnDragFinishing)
+  editorMode.handleInputMode.addEventListener('drag-started', handleInputModeOnDragStarted)
+  editorMode.handleInputMode.addEventListener('drag-starting', handleInputModeOnDragStarting)
+  editorMode.handleInputMode.addEventListener('dragged', handleInputModeOnDragged)
+  editorMode.handleInputMode.addEventListener('dragging', handleInputModeOnDragging)
 }
 
 /**
- * Deregisters events from the handle input mode.
+ * Unregisters events from the handle input mode.
  */
-function deregisterHandleInputModeEvents(): void {
-  editorMode.handleInputMode.removeDragCanceledListener(handleInputModeOnDragCanceled)
-  editorMode.handleInputMode.removeDragCancelingListener(handleInputModeOnDragCanceling)
-  editorMode.handleInputMode.removeDragFinishedListener(handleInputModeOnDragFinished)
-  editorMode.handleInputMode.removeDragFinishingListener(handleInputModeOnDragFinishing)
-  editorMode.handleInputMode.removeDragStartedListener(handleInputModeOnDragStarted)
-  editorMode.handleInputMode.removeDragStartingListener(handleInputModeOnDragStarting)
-  editorMode.handleInputMode.removeDraggedListener(handleInputModeOnDragged)
-  editorMode.handleInputMode.removeDraggingListener(handleInputModeOnDragging)
+function unregisterHandleInputModeEvents(): void {
+  editorMode.handleInputMode.removeEventListener('drag-canceled', handleInputModeOnDragCanceled)
+  editorMode.handleInputMode.removeEventListener('drag-canceling', handleInputModeOnDragCanceling)
+  editorMode.handleInputMode.removeEventListener('drag-finished', handleInputModeOnDragFinished)
+  editorMode.handleInputMode.removeEventListener('drag-finishing', handleInputModeOnDragFinishing)
+  editorMode.handleInputMode.removeEventListener('drag-started', handleInputModeOnDragStarted)
+  editorMode.handleInputMode.removeEventListener('drag-starting', handleInputModeOnDragStarting)
+  editorMode.handleInputMode.removeEventListener('dragged', handleInputModeOnDragged)
+  editorMode.handleInputMode.removeEventListener('dragging', handleInputModeOnDragging)
 }
 
 /**
  * Registers events to the move viewport input mode.
  */
 function registerMoveViewportInputModeEvents(): void {
-  editorMode.moveViewportInputMode.addDragCanceledListener(moveViewportInputModeOnDragCanceled)
-  editorMode.moveViewportInputMode.addDragCancelingListener(moveViewportInputModeOnDragCanceling)
-  editorMode.moveViewportInputMode.addDragFinishedListener(moveViewportInputModeOnDragFinished)
-  editorMode.moveViewportInputMode.addDragFinishingListener(moveViewportInputModeOnDragFinishing)
-  editorMode.moveViewportInputMode.addDragStartedListener(moveViewportInputModeOnDragStarted)
-  editorMode.moveViewportInputMode.addDragStartingListener(moveViewportInputModeOnDragStarting)
-  editorMode.moveViewportInputMode.addDraggedListener(moveViewportInputModeOnDragged)
-  editorMode.moveViewportInputMode.addDraggingListener(moveViewportInputModeOnDragging)
+  editorMode.moveViewportInputMode.addEventListener(
+    'drag-canceled',
+    moveViewportInputModeOnDragCanceled
+  )
+  editorMode.moveViewportInputMode.addEventListener(
+    'drag-canceling',
+    moveViewportInputModeOnDragCanceling
+  )
+  editorMode.moveViewportInputMode.addEventListener(
+    'drag-finished',
+    moveViewportInputModeOnDragFinished
+  )
+  editorMode.moveViewportInputMode.addEventListener(
+    'drag-finishing',
+    moveViewportInputModeOnDragFinishing
+  )
+  editorMode.moveViewportInputMode.addEventListener(
+    'drag-started',
+    moveViewportInputModeOnDragStarted
+  )
+  editorMode.moveViewportInputMode.addEventListener(
+    'drag-starting',
+    moveViewportInputModeOnDragStarting
+  )
+  editorMode.moveViewportInputMode.addEventListener('dragged', moveViewportInputModeOnDragged)
+  editorMode.moveViewportInputMode.addEventListener('dragging', moveViewportInputModeOnDragging)
 
-  viewerMode.moveViewportInputMode.addDragCanceledListener(moveViewportInputModeOnDragCanceled)
-  viewerMode.moveViewportInputMode.addDragCancelingListener(moveViewportInputModeOnDragCanceling)
-  viewerMode.moveViewportInputMode.addDragFinishedListener(moveViewportInputModeOnDragFinished)
-  viewerMode.moveViewportInputMode.addDragFinishingListener(moveViewportInputModeOnDragFinishing)
-  viewerMode.moveViewportInputMode.addDragStartedListener(moveViewportInputModeOnDragStarted)
-  viewerMode.moveViewportInputMode.addDragStartingListener(moveViewportInputModeOnDragStarting)
-  viewerMode.moveViewportInputMode.addDraggedListener(moveViewportInputModeOnDragged)
-  viewerMode.moveViewportInputMode.addDraggingListener(moveViewportInputModeOnDragging)
+  viewerMode.moveViewportInputMode.addEventListener(
+    'drag-canceled',
+    moveViewportInputModeOnDragCanceled
+  )
+  viewerMode.moveViewportInputMode.addEventListener(
+    'drag-canceling',
+    moveViewportInputModeOnDragCanceling
+  )
+  viewerMode.moveViewportInputMode.addEventListener(
+    'drag-finished',
+    moveViewportInputModeOnDragFinished
+  )
+  viewerMode.moveViewportInputMode.addEventListener(
+    'drag-finishing',
+    moveViewportInputModeOnDragFinishing
+  )
+  viewerMode.moveViewportInputMode.addEventListener(
+    'drag-started',
+    moveViewportInputModeOnDragStarted
+  )
+  viewerMode.moveViewportInputMode.addEventListener(
+    'drag-starting',
+    moveViewportInputModeOnDragStarting
+  )
+  viewerMode.moveViewportInputMode.addEventListener('dragged', moveViewportInputModeOnDragged)
+  viewerMode.moveViewportInputMode.addEventListener('dragging', moveViewportInputModeOnDragging)
 }
 
 /**
- * Deregisters events from the move viewport input mode.
+ * Unregisters events from the move viewport input mode.
  */
-function deregisterMoveViewportInputModeEvents(): void {
-  editorMode.moveViewportInputMode.removeDragCanceledListener(moveViewportInputModeOnDragCanceled)
-  editorMode.moveViewportInputMode.removeDragCancelingListener(moveViewportInputModeOnDragCanceling)
-  editorMode.moveViewportInputMode.removeDragFinishedListener(moveViewportInputModeOnDragFinished)
-  editorMode.moveViewportInputMode.removeDragFinishingListener(moveViewportInputModeOnDragFinishing)
-  editorMode.moveViewportInputMode.removeDragStartedListener(moveViewportInputModeOnDragStarted)
-  editorMode.moveViewportInputMode.removeDragStartingListener(moveViewportInputModeOnDragStarting)
-  editorMode.moveViewportInputMode.removeDraggedListener(moveViewportInputModeOnDragged)
-  editorMode.moveViewportInputMode.removeDraggingListener(moveViewportInputModeOnDragging)
+function unregisterMoveViewportInputModeEvents(): void {
+  editorMode.moveViewportInputMode.removeEventListener(
+    'drag-canceled',
+    moveViewportInputModeOnDragCanceled
+  )
+  editorMode.moveViewportInputMode.removeEventListener(
+    'drag-canceling',
+    moveViewportInputModeOnDragCanceling
+  )
+  editorMode.moveViewportInputMode.removeEventListener(
+    'drag-finished',
+    moveViewportInputModeOnDragFinished
+  )
+  editorMode.moveViewportInputMode.removeEventListener(
+    'drag-finishing',
+    moveViewportInputModeOnDragFinishing
+  )
+  editorMode.moveViewportInputMode.removeEventListener(
+    'drag-started',
+    moveViewportInputModeOnDragStarted
+  )
+  editorMode.moveViewportInputMode.removeEventListener(
+    'drag-starting',
+    moveViewportInputModeOnDragStarting
+  )
+  editorMode.moveViewportInputMode.removeEventListener('dragged', moveViewportInputModeOnDragged)
+  editorMode.moveViewportInputMode.removeEventListener('dragging', moveViewportInputModeOnDragging)
 
-  viewerMode.moveViewportInputMode.removeDragCanceledListener(moveViewportInputModeOnDragCanceled)
-  viewerMode.moveViewportInputMode.removeDragCancelingListener(moveViewportInputModeOnDragCanceling)
-  viewerMode.moveViewportInputMode.removeDragFinishedListener(moveViewportInputModeOnDragFinished)
-  viewerMode.moveViewportInputMode.removeDragFinishingListener(moveViewportInputModeOnDragFinishing)
-  viewerMode.moveViewportInputMode.removeDragStartedListener(moveViewportInputModeOnDragStarted)
-  viewerMode.moveViewportInputMode.removeDragStartingListener(moveViewportInputModeOnDragStarting)
-  viewerMode.moveViewportInputMode.removeDraggedListener(moveViewportInputModeOnDragged)
-  viewerMode.moveViewportInputMode.removeDraggingListener(moveViewportInputModeOnDragging)
+  viewerMode.moveViewportInputMode.removeEventListener(
+    'drag-canceled',
+    moveViewportInputModeOnDragCanceled
+  )
+  viewerMode.moveViewportInputMode.removeEventListener(
+    'drag-canceling',
+    moveViewportInputModeOnDragCanceling
+  )
+  viewerMode.moveViewportInputMode.removeEventListener(
+    'drag-finished',
+    moveViewportInputModeOnDragFinished
+  )
+  viewerMode.moveViewportInputMode.removeEventListener(
+    'drag-finishing',
+    moveViewportInputModeOnDragFinishing
+  )
+  viewerMode.moveViewportInputMode.removeEventListener(
+    'drag-started',
+    moveViewportInputModeOnDragStarted
+  )
+  viewerMode.moveViewportInputMode.removeEventListener(
+    'drag-starting',
+    moveViewportInputModeOnDragStarting
+  )
+  viewerMode.moveViewportInputMode.removeEventListener('dragged', moveViewportInputModeOnDragged)
+  viewerMode.moveViewportInputMode.removeEventListener('dragging', moveViewportInputModeOnDragging)
 }
 
 /**
  * Registers events to the create edge input mode.
  */
 function registerCreateEdgeInputModeEvents(): void {
-  editorMode.createEdgeInputMode.addEdgeCreatedListener(createEdgeInputModeOnEdgeCreated)
-  editorMode.createEdgeInputMode.addEdgeCreationStartedListener(
+  editorMode.createEdgeInputMode.addEventListener('edge-created', createEdgeInputModeOnEdgeCreated)
+  editorMode.createEdgeInputMode.addEventListener(
+    'edge-creation-started',
     createEdgeInputModeOnEdgeCreationStarted
   )
-  editorMode.createEdgeInputMode.addGestureCanceledListener(createEdgeInputModeOnGestureCanceled)
-  editorMode.createEdgeInputMode.addGestureCancelingListener(createEdgeInputModeOnGestureCanceling)
-  editorMode.createEdgeInputMode.addGestureFinishedListener(createEdgeInputModeOnGestureFinished)
-  editorMode.createEdgeInputMode.addGestureFinishingListener(createEdgeInputModeOnGestureFinishing)
-  editorMode.createEdgeInputMode.addGestureStartedListener(createEdgeInputModeOnGestureStarted)
-  editorMode.createEdgeInputMode.addGestureStartingListener(createEdgeInputModeOnGestureStarting)
-  editorMode.createEdgeInputMode.addMovedListener(createEdgeInputModeOnMoved)
-  editorMode.createEdgeInputMode.addMovingListener(createEdgeInputModeOnMoving)
-  editorMode.createEdgeInputMode.addPortAddedListener(createEdgeInputModeOnPortAdded)
+  editorMode.createEdgeInputMode.addEventListener(
+    'gesture-canceled',
+    createEdgeInputModeOnGestureCanceled
+  )
+  editorMode.createEdgeInputMode.addEventListener(
+    'gesture-canceling',
+    createEdgeInputModeOnGestureCanceling
+  )
+  editorMode.createEdgeInputMode.addEventListener(
+    'gesture-finished',
+    createEdgeInputModeOnGestureFinished
+  )
+  editorMode.createEdgeInputMode.addEventListener(
+    'gesture-finishing',
+    createEdgeInputModeOnGestureFinishing
+  )
+  editorMode.createEdgeInputMode.addEventListener(
+    'gesture-started',
+    createEdgeInputModeOnGestureStarted
+  )
+  editorMode.createEdgeInputMode.addEventListener(
+    'gesture-starting',
+    createEdgeInputModeOnGestureStarting
+  )
+  editorMode.createEdgeInputMode.addEventListener('moved', createEdgeInputModeOnMoved)
+  editorMode.createEdgeInputMode.addEventListener('moving', createEdgeInputModeOnMoving)
+  editorMode.createEdgeInputMode.addEventListener('port-added', createEdgeInputModeOnPortAdded)
 }
 
 /**
- * Deregisters events from the create edge input mode.
+ * Unregisters events from the create edge input mode.
  */
-function deregisterCreateEdgeInputModeEvents(): void {
-  editorMode.createEdgeInputMode.removeEdgeCreatedListener(createEdgeInputModeOnEdgeCreated)
-  editorMode.createEdgeInputMode.removeEdgeCreationStartedListener(
+function unregisterCreateEdgeInputModeEvents(): void {
+  editorMode.createEdgeInputMode.removeEventListener(
+    'edge-created',
+    createEdgeInputModeOnEdgeCreated
+  )
+  editorMode.createEdgeInputMode.removeEventListener(
+    'edge-creation-started',
     createEdgeInputModeOnEdgeCreationStarted
   )
-  editorMode.createEdgeInputMode.removeGestureCanceledListener(createEdgeInputModeOnGestureCanceled)
-  editorMode.createEdgeInputMode.removeGestureCancelingListener(
+  editorMode.createEdgeInputMode.removeEventListener(
+    'gesture-canceled',
+    createEdgeInputModeOnGestureCanceled
+  )
+  editorMode.createEdgeInputMode.removeEventListener(
+    'gesture-canceling',
     createEdgeInputModeOnGestureCanceling
   )
-  editorMode.createEdgeInputMode.removeGestureFinishedListener(createEdgeInputModeOnGestureFinished)
-  editorMode.createEdgeInputMode.removeGestureFinishingListener(
+  editorMode.createEdgeInputMode.removeEventListener(
+    'gesture-finished',
+    createEdgeInputModeOnGestureFinished
+  )
+  editorMode.createEdgeInputMode.removeEventListener(
+    'gesture-finishing',
     createEdgeInputModeOnGestureFinishing
   )
-  editorMode.createEdgeInputMode.removeGestureStartedListener(createEdgeInputModeOnGestureStarted)
-  editorMode.createEdgeInputMode.removeGestureStartingListener(createEdgeInputModeOnGestureStarting)
-  editorMode.createEdgeInputMode.removeMovedListener(createEdgeInputModeOnMoved)
-  editorMode.createEdgeInputMode.removeMovingListener(createEdgeInputModeOnMoving)
-  editorMode.createEdgeInputMode.removePortAddedListener(createEdgeInputModeOnPortAdded)
+  editorMode.createEdgeInputMode.removeEventListener(
+    'gesture-started',
+    createEdgeInputModeOnGestureStarted
+  )
+  editorMode.createEdgeInputMode.removeEventListener(
+    'gesture-starting',
+    createEdgeInputModeOnGestureStarting
+  )
+  editorMode.createEdgeInputMode.removeEventListener('moved', createEdgeInputModeOnMoved)
+  editorMode.createEdgeInputMode.removeEventListener('moving', createEdgeInputModeOnMoving)
+  editorMode.createEdgeInputMode.removeEventListener('port-added', createEdgeInputModeOnPortAdded)
 }
 
 /**
  * Registers selection events to the graphComponent.
  */
 function registerSelectionEvents(): void {
-  graphComponent.selection.addItemSelectionChangedListener(onItemSelectionChanged)
+  graphComponent.selection.addEventListener('item-added', onItemSelectionAdded)
+  graphComponent.selection.addEventListener('item-removed', onItemSelectionRemoved)
 }
 
 /**
- * Deregisters selection events from the graphComponent.
+ * Unregisters selection events from the graphComponent.
  */
-function deregisterSelectionEvents(): void {
-  graphComponent.selection.removeItemSelectionChangedListener(onItemSelectionChanged)
+function unregisterSelectionEvents(): void {
+  graphComponent.selection.removeEventListener('item-added', onItemSelectionAdded)
+  graphComponent.selection.removeEventListener('item-removed', onItemSelectionRemoved)
 }
 
 const eventRegistration: Record<string, () => void> = {
   registerGraphComponentKeyEvents,
-  deregisterGraphComponentKeyEvents,
+  unregisterGraphComponentKeyEvents,
   registerClipboardCopierEvents,
-  deregisterClipboardCopierEvents,
-  registerGraphComponentMouseEvents,
-  deregisterGraphComponentMouseEvents,
-  registerGraphComponentTouchEvents,
-  deregisterGraphComponentTouchEvents,
+  unregisterClipboardCopierEvents,
+  registerGraphComponentPointerEvents,
+  unregisterGraphComponentPointerEvents,
   registerGraphComponentRenderEvents,
-  deregisterGraphComponentRenderEvents,
+  unregisterGraphComponentRenderEvents,
   registerGraphComponentViewportEvents,
-  deregisterGraphComponentViewportEvents,
+  unregisterGraphComponentViewportEvents,
   registerNodeEvents,
-  deregisterNodeEvents,
+  unregisterNodeEvents,
   registerEdgeEvents,
-  deregisterEdgeEvents,
+  unregisterEdgeEvents,
   registerBendEvents,
-  deregisterBendEvents,
+  unregisterBendEvents,
   registerPortEvents,
-  deregisterPortEvents,
+  unregisterPortEvents,
   registerLabelEvents,
-  deregisterLabelEvents,
+  unregisterLabelEvents,
   registerHierarchyEvents,
-  deregisterHierarchyEvents,
+  unregisterHierarchyEvents,
   registerFoldingEvents,
-  deregisterFoldingEvents,
+  unregisterFoldingEvents,
   registerGraphRenderEvents,
-  deregisterGraphRenderEvents,
+  unregisterGraphRenderEvents,
   registerGraphComponentEvents,
-  deregisterGraphComponentEvents,
+  unregisterGraphComponentEvents,
   registerInputModeEvents,
-  deregisterInputModeEvents,
+  unregisterInputModeEvents,
   registerMoveInputModeEvents,
-  deregisterMoveInputModeEvents,
-  registerMoveLabelInputModeEvents,
-  deregisterMoveLabelInputModeEvents,
+  unregisterMoveInputModeEvents,
   registerItemDropInputModeEvents,
-  deregisterItemDropInputModeEvents,
+  unregisterItemDropInputModeEvents,
+  registerEditLabelInputModeEvents,
+  unregisterEditLabelInputModeEvents,
   registerItemHoverInputModeEvents,
-  deregisterItemHoverInputModeEvents,
+  unregisterItemHoverInputModeEvents,
   registerCreateBendInputModeEvents,
-  deregisterCreateBendInputModeEvents,
+  unregisterCreateBendInputModeEvents,
   registerContextMenuInputModeEvents,
-  deregisterContextMenuInputModeEvents,
-  registerTapInputModeEvents,
-  deregisterTapInputModeEvents,
+  unregisterContextMenuInputModeEvents,
   registerTextEditorInputModeEvents,
-  deregisterTextEditorInputModeEvents,
-  registerMouseHoverInputModeEvents,
-  deregisterMouseHoverInputModeEvents,
+  unregisterTextEditorInputModeEvents,
+  registerTooltipInputModeEvents,
+  unregisterToolTipInputModeEvents,
   registerNavigationInputModeEvents,
-  deregisterNavigationInputModeEvents,
+  unregisterNavigationInputModeEvents,
   registerClickInputModeEvents,
-  deregisterClickInputModeEvents,
+  unregisterClickInputModeEvents,
   registerHandleInputModeEvents,
-  deregisterHandleInputModeEvents,
+  unregisterHandleInputModeEvents,
   registerMoveViewportInputModeEvents,
-  deregisterMoveViewportInputModeEvents,
+  unregisterMoveViewportInputModeEvents,
   registerCreateEdgeInputModeEvents,
-  deregisterCreateEdgeInputModeEvents,
+  unregisterCreateEdgeInputModeEvents,
   registerSelectionEvents,
-  deregisterSelectionEvents
+  unregisterSelectionEvents
 }
 
 /**
@@ -1175,7 +1469,7 @@ const eventRegistration: Record<string, () => void> = {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onDisplaysInvalidated(sender: object, args: EventArgs): void {
+function onDisplaysInvalidated(args: EventArgs, sender: IGraph): void {
   log(sender, 'Displays Invalidated')
 }
 
@@ -1184,7 +1478,7 @@ function onDisplaysInvalidated(sender: object, args: EventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onEdgePortsChanged(sender: object, args: EdgeEventArgs): void {
+function onEdgePortsChanged(args: EdgeEventArgs, sender: IGraph): void {
   logWithType(sender, `Edge Ports Changed: ${args.item}`, 'EdgePortsChanged')
 }
 
@@ -1194,7 +1488,7 @@ function onEdgePortsChanged(sender: object, args: EdgeEventArgs): void {
  * @param args An object that
  *   contains the event data
  */
-function onEdgeStyleChanged(sender: object, args: ItemChangedEventArgs<IEdge, IEdgeStyle>): void {
+function onEdgeStyleChanged(args: ItemChangedEventArgs<IEdge, IEdgeStyle>, sender: IGraph): void {
   logWithType(sender, `Edge Style Changed: ${args.item}`, 'EdgeStyleChanged')
 }
 
@@ -1203,7 +1497,7 @@ function onEdgeStyleChanged(sender: object, args: ItemChangedEventArgs<IEdge, IE
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onEdgeTagChanged(sender: object, args: ItemChangedEventArgs<IEdge, any>): void {
+function onEdgeTagChanged(args: ItemChangedEventArgs<IEdge, any>, sender: IGraph): void {
   logWithType(sender, `Edge Tag Changed: ${args.item}`, 'EdgeTagChanged')
 }
 
@@ -1212,7 +1506,7 @@ function onEdgeTagChanged(sender: object, args: ItemChangedEventArgs<IEdge, any>
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onEdgeCreated(sender: IGraph, args: ItemEventArgs<IEdge>): void {
+function onEdgeCreated(args: ItemEventArgs<IEdge>, sender: IGraph): void {
   logWithType(sender, `Edge Created: ${args.item}`, 'EdgeCreated')
 }
 
@@ -1221,7 +1515,7 @@ function onEdgeCreated(sender: IGraph, args: ItemEventArgs<IEdge>): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onEdgeRemoved(sender: object, args: EdgeEventArgs): void {
+function onEdgeRemoved(args: EdgeEventArgs, sender: IGraph): void {
   logWithType(sender, `Edge Removed: ${args.item}`, 'EdgeRemoved')
 }
 
@@ -1230,7 +1524,7 @@ function onEdgeRemoved(sender: object, args: EdgeEventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onLabelAdded(sender: object, args: ItemEventArgs<ILabel>): void {
+function onLabelAdded(args: ItemEventArgs<ILabel>, sender: IGraph): void {
   logWithType(sender, `Label Added: ${args.item}`, 'LabelAdded')
 }
 
@@ -1241,8 +1535,8 @@ function onLabelAdded(sender: object, args: ItemEventArgs<ILabel>): void {
  *   the event data
  */
 function onLabelPreferredSizeChanged(
-  sender: object,
-  args: ItemChangedEventArgs<ILabel, Size>
+  args: ItemChangedEventArgs<ILabel, Size>,
+  sender: IGraph
 ): void {
   logWithType(sender, `Label Preferred Size Changed: ${args.item}`, 'LabelPreferredSizeChanged')
 }
@@ -1254,8 +1548,8 @@ function onLabelPreferredSizeChanged(
  *   that contains the event data
  */
 function onLabelLayoutParameterChanged(
-  sender: object,
-  args: ItemChangedEventArgs<ILabel, ILabelModelParameter>
+  args: ItemChangedEventArgs<ILabel, ILabelModelParameter>,
+  sender: IGraph
 ): void {
   logWithType(sender, `Label Layout Parameter Changed: ${args.item}`, 'LabelLayoutParameterChanged')
 }
@@ -1267,8 +1561,8 @@ function onLabelLayoutParameterChanged(
  *   contains the event data
  */
 function onLabelStyleChanged(
-  sender: object,
-  args: ItemChangedEventArgs<ILabel, ILabelStyle>
+  args: ItemChangedEventArgs<ILabel, ILabelStyle>,
+  sender: IGraph
 ): void {
   logWithType(sender, `Label Style Changed: ${args.item}`, 'LabelStyleChanged')
 }
@@ -1278,7 +1572,7 @@ function onLabelStyleChanged(
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onLabelTagChanged(sender: object, args: ItemChangedEventArgs<ILabel, any>): void {
+function onLabelTagChanged(args: ItemChangedEventArgs<ILabel, any>, sender: IGraph): void {
   logWithType(sender, `Label Tag Changed: ${args.item}`, 'LabelTagChanged')
 }
 
@@ -1287,7 +1581,7 @@ function onLabelTagChanged(sender: object, args: ItemChangedEventArgs<ILabel, an
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onLabelTextChanged(sender: object, args: ItemChangedEventArgs<ILabel, string>): void {
+function onLabelTextChanged(args: ItemChangedEventArgs<ILabel, string>, sender: IGraph): void {
   logWithType(sender, `Label Text Changed: ${args.item}`, 'LabelTextChanged')
 }
 
@@ -1296,16 +1590,17 @@ function onLabelTextChanged(sender: object, args: ItemChangedEventArgs<ILabel, s
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onLabelRemoved(sender: object, args: LabelEventArgs): void {
+function onLabelRemoved(args: LabelEventArgs, sender: IGraph): void {
   logWithType(sender, `Label Removed: ${args.item}`, 'LabelRemoved')
 }
 
 /**
  * Invoked when the layout of a node has changed.
+ * @param oldLayout the layout of the node before the layout changed
  * @param sender The source of the event
  * @param node The given node
  */
-function onNodeLayoutChanged(sender: object, node: INode): void {
+function onNodeLayoutChanged(node: INode, oldLayout: Rect, sender: IGraph): void {
   logWithType(sender, `Node Layout Changed: ${node}`, 'NodeLayoutChanged')
 }
 
@@ -1315,7 +1610,7 @@ function onNodeLayoutChanged(sender: object, node: INode): void {
  * @param args An object that
  *   contains the event data
  */
-function onNodeStyleChanged(sender: object, args: ItemChangedEventArgs<INode, INodeStyle>): void {
+function onNodeStyleChanged(args: ItemChangedEventArgs<INode, INodeStyle>, sender: IGraph): void {
   logWithType(sender, `Node Style Changed: ${args.item}`, 'NodeStyleChanged')
 }
 
@@ -1324,7 +1619,7 @@ function onNodeStyleChanged(sender: object, args: ItemChangedEventArgs<INode, IN
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onNodeTagChanged(sender: object, args: ItemChangedEventArgs<INode, any>): void {
+function onNodeTagChanged(args: ItemChangedEventArgs<INode, any>, sender: IGraph): void {
   logWithType(sender, `Node Tag Changed: ${args.item}`, 'NodeTagChanged')
 }
 
@@ -1333,7 +1628,7 @@ function onNodeTagChanged(sender: object, args: ItemChangedEventArgs<INode, any>
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onNodeCreated(sender: object, args: ItemEventArgs<INode>): void {
+function onNodeCreated(args: ItemEventArgs<INode>, sender: IGraph): void {
   logWithType(sender, `Node Created: ${args.item}`, 'NodeCreated')
 }
 
@@ -1342,7 +1637,7 @@ function onNodeCreated(sender: object, args: ItemEventArgs<INode>): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onNodeRemoved(sender: object, args: NodeEventArgs): void {
+function onNodeRemoved(args: NodeEventArgs, sender: IGraph): void {
   logWithType(sender, `Node Removed: ${args.item}`, 'NodeRemoved')
 }
 
@@ -1351,7 +1646,7 @@ function onNodeRemoved(sender: object, args: NodeEventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onPortAdded(sender: object, args: ItemEventArgs<IPort>): void {
+function onPortAdded(args: ItemEventArgs<IPort>, sender: IGraph): void {
   logWithType(sender, `Port Added: ${args.item}`, 'PortAdded')
 }
 
@@ -1362,8 +1657,8 @@ function onPortAdded(sender: object, args: ItemEventArgs<IPort>): void {
  *   object that contains the event data
  */
 function onPortLocationParameterChanged(
-  sender: object,
-  args: ItemChangedEventArgs<IPort, IPortLocationModelParameter>
+  args: ItemChangedEventArgs<IPort, IPortLocationModelParameter>,
+  sender: IGraph
 ): void {
   logWithType(
     sender,
@@ -1378,7 +1673,7 @@ function onPortLocationParameterChanged(
  * @param args An object that
  *   contains the event data
  */
-function onPortStyleChanged(sender: object, args: ItemChangedEventArgs<IPort, IPortStyle>): void {
+function onPortStyleChanged(args: ItemChangedEventArgs<IPort, IPortStyle>, sender: IGraph): void {
   logWithType(sender, `Port Style Changed: ${args.item}`, 'PortStyleChanged')
 }
 
@@ -1387,7 +1682,7 @@ function onPortStyleChanged(sender: object, args: ItemChangedEventArgs<IPort, IP
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onPortTagChanged(sender: object, args: ItemChangedEventArgs<IPort, any>): void {
+function onPortTagChanged(args: ItemChangedEventArgs<IPort, any>, sender: IGraph): void {
   logWithType(sender, `Port Tag Changed: ${args.item}`, 'PortTagChanged')
 }
 
@@ -1396,7 +1691,7 @@ function onPortTagChanged(sender: object, args: ItemChangedEventArgs<IPort, any>
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onPortRemoved(sender: object, args: PortEventArgs): void {
+function onPortRemoved(args: PortEventArgs, sender: IGraph): void {
   logWithType(sender, `Port Removed: ${args.item}`, 'PortRemoved')
 }
 
@@ -1405,7 +1700,7 @@ function onPortRemoved(sender: object, args: PortEventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onBendAdded(sender: object, args: ItemEventArgs<IBend>): void {
+function onBendAdded(args: ItemEventArgs<IBend>, sender: IGraph): void {
   logWithType(sender, `Bend Added: ${args.item}`, 'BendAdded')
 }
 
@@ -1413,8 +1708,9 @@ function onBendAdded(sender: object, args: ItemEventArgs<IBend>): void {
  * Invoked when the location of a bend has changed.
  * @param sender The source of the event
  * @param bend The bend whose location has changed
+ * @param oldLocation The location of the bend before the change
  */
-function onBendLocationChanged(sender: object, bend: IBend): void {
+function onBendLocationChanged(bend: IBend, oldLocation: Point, sender: IGraph): void {
   logWithType(sender, `Bend Location Changed: ${bend}`, 'BendLocationChanged')
 }
 
@@ -1423,7 +1719,7 @@ function onBendLocationChanged(sender: object, bend: IBend): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onBendTagChanged(sender: object, args: ItemChangedEventArgs<IBend, any>): void {
+function onBendTagChanged(args: ItemChangedEventArgs<IBend, any>, sender: IGraph): void {
   logWithType(sender, `Bend Tag Changed: ${args.item}`, 'BendTagChanged')
 }
 
@@ -1432,7 +1728,7 @@ function onBendTagChanged(sender: object, args: ItemChangedEventArgs<IBend, any>
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onBendRemoved(sender: object, args: BendEventArgs): void {
+function onBendRemoved(args: BendEventArgs, sender: IGraph): void {
   logWithType(sender, `Bend Removed: ${args.item}`, 'BendRemoved')
 }
 
@@ -1441,7 +1737,7 @@ function onBendRemoved(sender: object, args: BendEventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onParentChanged(sender: object, args: NodeEventArgs): void {
+function onParentChanged(args: NodeEventArgs, sender: IGraph): void {
   logWithType(
     sender,
     `Parent Changed: ${args.parent} -> ${graphComponent.graph.getParent(args.item)}`,
@@ -1454,7 +1750,7 @@ function onParentChanged(sender: object, args: NodeEventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onIsGroupNodeChanged(sender: object, args: NodeEventArgs): void {
+function onIsGroupNodeChanged(args: NodeEventArgs, sender: IGraph): void {
   logWithType(sender, `Group State Changed: ${args.isGroupNode}`, 'IsGroupNodeChanged')
 }
 
@@ -1463,7 +1759,7 @@ function onIsGroupNodeChanged(sender: object, args: NodeEventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onGroupCollapsed(sender: object, args: ItemEventArgs<INode>): void {
+function onGroupCollapsed(args: ItemEventArgs<INode>, sender: IFoldingView): void {
   logWithType(sender, `Group Collapsed: ${args.item}`, 'GroupCollapsed')
 }
 
@@ -1472,17 +1768,17 @@ function onGroupCollapsed(sender: object, args: ItemEventArgs<INode>): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onGroupExpanded(sender: object, args: ItemEventArgs<INode>): void {
+function onGroupExpanded(args: ItemEventArgs<INode>, sender: IFoldingView): void {
   logWithType(sender, `Group Expanded: ${args.item}`, 'GroupExpanded')
 }
 
 /**
  * Invoked when a property has changed.
- * @param sender The source of the event
  * @param args An object that contains the event data
+ * @param view The source of the event
  */
-function onPropertyChanged(sender: object, args: PropertyChangedEventArgs): void {
-  logWithType(sender, `Property Changed: ${args.propertyName}`, 'PropertyChanged')
+function onPropertyChanged(args: PropertyChangedEventArgs, view: IFoldingView): void {
+  logWithType(view, `Property Changed: ${args.propertyName}`, 'PropertyChanged')
 }
 
 /**
@@ -1491,8 +1787,8 @@ function onPropertyChanged(sender: object, args: PropertyChangedEventArgs): void
  * @param args An object that contains the event data
  */
 function clipboardOnGraphCopiedToClipboard(
-  sender: object,
-  args: ItemCopiedEventArgs<IGraph>
+  args: ItemCopiedEventArgs<IGraph>,
+  sender: ClipboardGraphCopier
 ): void {
   log(sender, 'Graph copied to Clipboard')
 }
@@ -1502,7 +1798,10 @@ function clipboardOnGraphCopiedToClipboard(
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function clipboardOnNodeCopiedToClipboard(sender: object, args: ItemCopiedEventArgs<INode>): void {
+function clipboardOnNodeCopiedToClipboard(
+  args: ItemCopiedEventArgs<INode>,
+  sender: ClipboardGraphCopier
+): void {
   log(sender, 'Graph Item copied to Clipboard')
 }
 
@@ -1511,7 +1810,10 @@ function clipboardOnNodeCopiedToClipboard(sender: object, args: ItemCopiedEventA
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function clipboardOnEdgeCopiedToClipboard(sender: object, args: ItemCopiedEventArgs<IEdge>): void {
+function clipboardOnEdgeCopiedToClipboard(
+  args: ItemCopiedEventArgs<IEdge>,
+  sender: ClipboardGraphCopier
+): void {
   log(sender, 'Graph Item copied to Clipboard')
 }
 
@@ -1520,7 +1822,10 @@ function clipboardOnEdgeCopiedToClipboard(sender: object, args: ItemCopiedEventA
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function clipboardOnPortCopiedToClipboard(sender: object, args: ItemCopiedEventArgs<IPort>): void {
+function clipboardOnPortCopiedToClipboard(
+  args: ItemCopiedEventArgs<IPort>,
+  sender: ClipboardGraphCopier
+): void {
   log(sender, 'Graph Item copied to Clipboard')
 }
 
@@ -1530,8 +1835,8 @@ function clipboardOnPortCopiedToClipboard(sender: object, args: ItemCopiedEventA
  * @param args An object that contains the event data
  */
 function clipboardOnLabelCopiedToClipboard(
-  sender: object,
-  args: ItemCopiedEventArgs<ILabel>
+  args: ItemCopiedEventArgs<ILabel>,
+  sender: ClipboardGraphCopier
 ): void {
   log(sender, 'Graph Item copied to Clipboard')
 }
@@ -1541,7 +1846,10 @@ function clipboardOnLabelCopiedToClipboard(
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function clipboardOnObjectCopiedToClipboard(sender: object, args: ItemCopiedEventArgs<any>): void {
+function clipboardOnObjectCopiedToClipboard(
+  args: ItemCopiedEventArgs<any>,
+  sender: ClipboardGraphCopier
+): void {
   log(sender, 'Object copied to Clipboard')
 }
 
@@ -1551,8 +1859,8 @@ function clipboardOnObjectCopiedToClipboard(sender: object, args: ItemCopiedEven
  * @param args An object that contains the event data
  */
 function clipboardOnGraphCopiedFromClipboard(
-  sender: object,
-  args: ItemCopiedEventArgs<IGraph>
+  args: ItemCopiedEventArgs<IGraph>,
+  sender: ClipboardGraphCopier
 ): void {
   log(sender, 'Graph copied from Clipboard')
 }
@@ -1563,8 +1871,8 @@ function clipboardOnGraphCopiedFromClipboard(
  * @param args An object that contains the event data
  */
 function clipboardOnNodeCopiedFromClipboard(
-  sender: object,
-  args: ItemCopiedEventArgs<INode>
+  args: ItemCopiedEventArgs<INode>,
+  sender: ClipboardGraphCopier
 ): void {
   log(sender, 'Graph Item copied to Clipboard')
 }
@@ -1575,8 +1883,8 @@ function clipboardOnNodeCopiedFromClipboard(
  * @param args An object that contains the event data
  */
 function clipboardOnEdgeCopiedFromClipboard(
-  sender: object,
-  args: ItemCopiedEventArgs<IEdge>
+  args: ItemCopiedEventArgs<IEdge>,
+  sender: ClipboardGraphCopier
 ): void {
   log(sender, 'Graph Item copied to Clipboard')
 }
@@ -1587,8 +1895,8 @@ function clipboardOnEdgeCopiedFromClipboard(
  * @param args An object that contains the event data
  */
 function clipboardOnPortCopiedFromClipboard(
-  sender: object,
-  args: ItemCopiedEventArgs<IPort>
+  args: ItemCopiedEventArgs<IPort>,
+  sender: ClipboardGraphCopier
 ): void {
   log(sender, 'Graph Item copied to Clipboard')
 }
@@ -1599,8 +1907,8 @@ function clipboardOnPortCopiedFromClipboard(
  * @param args An object that contains the event data
  */
 function clipboardOnLabelCopiedFromClipboard(
-  sender: object,
-  args: ItemCopiedEventArgs<ILabel>
+  args: ItemCopiedEventArgs<ILabel>,
+  sender: ClipboardGraphCopier
 ): void {
   log(sender, 'Graph Item copied to Clipboard')
 }
@@ -1611,8 +1919,8 @@ function clipboardOnLabelCopiedFromClipboard(
  * @param args An object that contains the event data
  */
 function clipboardOnObjectCopiedFromClipboard(
-  sender: object,
-  args: ItemCopiedEventArgs<any>
+  args: ItemCopiedEventArgs<any>,
+  sender: ClipboardGraphCopier
 ): void {
   log(sender, 'Object copied from Clipboard')
 }
@@ -1622,7 +1930,10 @@ function clipboardOnObjectCopiedFromClipboard(
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function clipboardOnGraphDuplicated(sender: object, args: ItemCopiedEventArgs<IGraph>): void {
+function clipboardOnGraphDuplicated(
+  args: ItemCopiedEventArgs<IGraph>,
+  sender: ClipboardGraphCopier
+): void {
   log(sender, 'Graph duplicated.')
 }
 
@@ -1631,7 +1942,10 @@ function clipboardOnGraphDuplicated(sender: object, args: ItemCopiedEventArgs<IG
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function clipboardOnNodeDuplicated(sender: object, args: ItemCopiedEventArgs<INode>): void {
+function clipboardOnNodeDuplicated(
+  args: ItemCopiedEventArgs<INode>,
+  sender: ClipboardGraphCopier
+): void {
   log(sender, 'Graph Item duplicated')
 }
 
@@ -1640,7 +1954,10 @@ function clipboardOnNodeDuplicated(sender: object, args: ItemCopiedEventArgs<INo
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function clipboardOnEdgeDuplicated(sender: object, args: ItemCopiedEventArgs<IEdge>): void {
+function clipboardOnEdgeDuplicated(
+  args: ItemCopiedEventArgs<IEdge>,
+  sender: ClipboardGraphCopier
+): void {
   log(sender, 'Graph Item duplicated')
 }
 
@@ -1649,7 +1966,10 @@ function clipboardOnEdgeDuplicated(sender: object, args: ItemCopiedEventArgs<IEd
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function clipboardOnPortDuplicated(sender: object, args: ItemCopiedEventArgs<IPort>): void {
+function clipboardOnPortDuplicated(
+  args: ItemCopiedEventArgs<IPort>,
+  sender: ClipboardGraphCopier
+): void {
   log(sender, 'Graph Item duplicated')
 }
 
@@ -1658,7 +1978,10 @@ function clipboardOnPortDuplicated(sender: object, args: ItemCopiedEventArgs<IPo
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function clipboardOnLabelDuplicated(sender: object, args: ItemCopiedEventArgs<ILabel>): void {
+function clipboardOnLabelDuplicated(
+  args: ItemCopiedEventArgs<ILabel>,
+  sender: ClipboardGraphCopier
+): void {
   log(sender, 'Graph Item duplicated')
 }
 
@@ -1667,7 +1990,10 @@ function clipboardOnLabelDuplicated(sender: object, args: ItemCopiedEventArgs<IL
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function clipboardOnObjectDuplicated(sender: object, args: ItemCopiedEventArgs<ILabel>): void {
+function clipboardOnObjectDuplicated(
+  args: ItemCopiedEventArgs<ILabel>,
+  sender: ClipboardGraphCopier
+): void {
   log(sender, 'Object duplicated')
 }
 
@@ -1676,26 +2002,11 @@ function clipboardOnObjectDuplicated(sender: object, args: ItemCopiedEventArgs<I
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnCurrentItemChanged(sender: object, args: PropertyChangedEventArgs): void {
+function componentOnCurrentItemChanged(
+  args: PropertyChangedEventArgs,
+  sender: GraphComponent
+): void {
   log(sender, 'GraphComponent CurrentItemChanged')
-}
-
-/**
- * Invoked when the graph property has been changed.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function controlOnGraphChanged(sender: object, args: ItemEventArgs<IGraph>): void {
-  log(sender, 'GraphComponent GraphChanged')
-}
-
-/**
- * Invoked when the inputMode property has been changed.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function controlOnInputModeChanged(sender: object, args: EventArgs): void {
-  log(sender, 'GraphComponent InputModeChanged')
 }
 
 /**
@@ -1703,7 +2014,7 @@ function controlOnInputModeChanged(sender: object, args: EventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnKeyDown(sender: object, args: KeyEventArgs): void {
+function componentOnKeyDown(args: KeyEventArgs, sender: GraphComponent): void {
   logWithType(sender, `GraphComponent KeyDown: ${args.key}`, 'GraphComponentKeyDown')
 }
 
@@ -1712,89 +2023,89 @@ function controlOnKeyDown(sender: object, args: KeyEventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnKeyUp(sender: object, args: KeyEventArgs): void {
+function componentOnKeyUp(args: KeyEventArgs, sender: GraphComponent): void {
   logWithType(sender, `GraphComponent KeyUp: ${args.key}`, 'GraphComponentKeyUp')
 }
 
 /**
- * Invoked when keys are being typed, i.e. keypress.
+ * Invoked when the user clicked the pointer.
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnKeyPressed(sender: object, args: KeyEventArgs): void {
-  logWithType(sender, `GraphComponent KeyPress: ${args.key}`, 'GraphComponentKeyPress')
+function componentOnPointerClick(args: PointerEventArgs, sender: GraphComponent): void {
+  log(sender, `GraphComponent PointerClick, clicks: ${args.clickCount}`)
 }
 
 /**
- * Invoked when the user clicked the mouse.
+ * Invoked when the pointer is being moved while at least one of the pointer buttons is pressed.
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnMouseClick(sender: object, args: MouseEventArgs): void {
-  log(sender, 'GraphComponent MouseClick')
+function componentOnPointerDrag(args: PointerEventArgs, sender: GraphComponent): void {
+  log(sender, 'GraphComponent PointerDrag')
 }
 
 /**
- * Invoked when the mouse is being moved while at least one of the mouse buttons is pressed.
+ * Invoked when the pointer has entered the canvas.
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnMouseDrag(sender: object, args: MouseEventArgs): void {
-  log(sender, 'GraphComponent MouseDrag')
+function componentOnPointerEnter(args: PointerEventArgs, sender: GraphComponent): void {
+  log(sender, 'GraphComponent PointerEnter')
 }
 
 /**
- * Invoked when the mouse has entered the canvas.
+ * Invoked when the pointer has exited the canvas.
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnMouseEnter(sender: object, args: MouseEventArgs): void {
-  log(sender, 'GraphComponent MouseEnter')
+function componentOnPointerLeave(args: PointerEventArgs, sender: GraphComponent): void {
+  log(sender, 'GraphComponent PointerLeave')
 }
 
 /**
- * Invoked when the mouse has exited the canvas.
+ * Invoked when the pointer capture has been lost.
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnMouseLeave(sender: object, args: MouseEventArgs): void {
-  log(sender, 'GraphComponent MouseLeave')
+function componentOnPointerLostCapture(args: PointerEventArgs, sender: GraphComponent): void {
+  log(sender, 'GraphComponent PointerLostCapture')
 }
 
 /**
- * Invoked when the mouse capture has been lost.
+ * Invoked when the pointer has been moved in world coordinates.
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnMouseLostCapture(sender: object, args: MouseEventArgs): void {
-  log(sender, 'GraphComponent MouseLostCapture')
+function componentOnPointerMove(args: PointerEventArgs, sender: GraphComponent): void {
+  log(sender, 'GraphComponent PointerMove')
 }
 
 /**
- * Invoked when the mouse has been moved in world coordinates.
+ * Invoked when a pointer button has been pressed.
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnMouseMove(sender: object, args: MouseEventArgs): void {
-  log(sender, 'GraphComponent MouseMove')
+function componentOnPointerDown(args: PointerEventArgs, sender: GraphComponent): void {
+  log(sender, 'GraphComponent PointerDown')
 }
 
 /**
- * Invoked when a mouse button has been pressed.
+ * Invoked when the pointer button has been released.
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnMouseDown(sender: object, args: MouseEventArgs): void {
-  log(sender, 'GraphComponent MouseDown')
+function componentOnPointerUp(args: PointerEventArgs, sender: GraphComponent): void {
+  log(sender, 'GraphComponent PointerUp')
 }
 
 /**
- * Invoked when the mouse button has been released.
+ * Invoked when the pointer input has been canceled.
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnMouseUp(sender: object, args: MouseEventArgs): void {
-  log(sender, 'GraphComponent MouseUp')
+function componentOnPointerCancel(args: PointerEventArgs, sender: GraphComponent): void {
+  log(sender, 'GraphComponent PointerCancel')
 }
 
 /**
@@ -1802,80 +2113,26 @@ function controlOnMouseUp(sender: object, args: MouseEventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnMouseWheelTurned(sender: object, args: MouseEventArgs): void {
+function componentOnMouseWheelTurned(args: PointerEventArgs, sender: GraphComponent): void {
   log(sender, 'GraphComponent MouseWheelTurned')
 }
 
 /**
- * Invoked when a finger has been put on the touch screen.
+ * Invoked when a long press gesture has been performed with a touch pointer.
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnTouchDown(sender: object, args: TouchEventArgs): void {
-  log(sender, 'GraphComponent TouchDown')
+function componentOnPointerLongPress(args: PointerEventArgs, sender: GraphComponent): void {
+  log(sender, 'GraphComponent LongPress')
 }
 
 /**
- * Invoked when a finger on the touch screen has entered the canvas.
+ * Invoked when a long press gesture has been performed with a touch pointer.
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnTouchEnter(sender: object, args: TouchEventArgs): void {
-  log(sender, 'GraphComponent TouchEnter')
-}
-
-/**
- * Invoked when a finger on the touch screen has exited the canvas.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function controlOnTouchLeave(sender: object, args: TouchEventArgs): void {
-  log(sender, 'GraphComponent TouchLeave')
-}
-
-/**
- * Invoked when the user performed a long press gesture with a finger on the touch screen.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function controlOnTouchLongPressed(sender: object, args: TouchEventArgs): void {
-  log(sender, 'GraphComponent TouchLongPressed')
-}
-
-/**
- * Invoked when the touch capture has been lost
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function controlOnTouchLostCapture(sender: object, args: TouchEventArgs): void {
-  log(sender, 'GraphComponent TouchLostCapture')
-}
-
-/**
- * Invoked when a finger has been moved on the touch screen.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function controlOnTouchMove(sender: object, args: TouchEventArgs): void {
-  log(sender, 'GraphComponent TouchMove')
-}
-
-/**
- * Invoked when the user performed a tap gesture with a finger on the touch screen.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function controlOnTouchClick(sender: object, args: TouchEventArgs): void {
-  log(sender, 'GraphComponent TouchClick')
-}
-
-/**
- * Invoked when a finger has been removed from the touch screen.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function controlOnTouchUp(sender: object, args: TouchEventArgs): void {
-  log(sender, 'GraphComponent TouchUp')
+function componentOnPointerLongRest(args: PointerEventArgs, sender: GraphComponent): void {
+  log(sender, 'GraphComponent LongRest')
 }
 
 /**
@@ -1883,7 +2140,10 @@ function controlOnTouchUp(sender: object, args: TouchEventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnPrepareRenderContext(sender: object, args: PrepareRenderContextEventArgs): void {
+function componentOnPrepareRenderContext(
+  args: PrepareRenderContextEventArgs,
+  sender: GraphComponent
+): void {
   log(sender, 'GraphComponent PrepareRenderContext')
 }
 
@@ -1892,7 +2152,7 @@ function controlOnPrepareRenderContext(sender: object, args: PrepareRenderContex
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnUpdatedVisual(sender: object, args: EventArgs): void {
+function componentOnUpdatedVisual(args: EventArgs, sender: GraphComponent): void {
   log(sender, 'GraphComponent UpdatedVisual')
 }
 
@@ -1901,7 +2161,7 @@ function controlOnUpdatedVisual(sender: object, args: EventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnUpdatingVisual(sender: object, args: EventArgs): void {
+function componentOnUpdatingVisual(args: EventArgs, sender: GraphComponent): void {
   log(sender, 'GraphComponent UpdatingVisual')
 }
 
@@ -1910,7 +2170,7 @@ function controlOnUpdatingVisual(sender: object, args: EventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnViewportChanged(sender: object, args: PropertyChangedEventArgs): void {
+function componentOnViewportChanged(args: PropertyChangedEventArgs, sender: GraphComponent): void {
   log(sender, 'GraphComponent ViewportChanged')
 }
 
@@ -1919,7 +2179,7 @@ function controlOnViewportChanged(sender: object, args: PropertyChangedEventArgs
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function controlOnZoomChanged(sender: object, args: EventArgs): void {
+function componentOnZoomChanged(args: EventArgs, sender: GraphComponent): void {
   log(sender, 'GraphComponent ZoomChanged')
 }
 
@@ -1928,7 +2188,7 @@ function controlOnZoomChanged(sender: object, args: EventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnCanvasClicked(sender: object, args: ClickEventArgs): void {
+function geimOnCanvasClicked(args: ClickEventArgs, sender: GraphEditorInputMode): void {
   log(sender, 'GraphEditorInputMode CanvasClicked')
 }
 
@@ -1937,7 +2197,10 @@ function geimOnCanvasClicked(sender: object, args: ClickEventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnDeletedItem(sender: object, args: ItemEventArgs<IModelItem>): void {
+function geimOnDeletedItem(
+  args: InputModeItemEventArgs<IModelItem>,
+  sender: GraphEditorInputMode
+): void {
   log(sender, 'GraphEditorInputMode DeletedItem')
 }
 
@@ -1947,7 +2210,7 @@ function geimOnDeletedItem(sender: object, args: ItemEventArgs<IModelItem>): voi
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnDeletedSelection(sender: object, args: SelectionEventArgs<IModelItem>): void {
+function geimOnDeletedSelection(args: ItemsEventArgs, sender: GraphEditorInputMode): void {
   log(sender, 'GraphEditorInputMode DeletedSelection')
 }
 
@@ -1957,7 +2220,10 @@ function geimOnDeletedSelection(sender: object, args: SelectionEventArgs<IModelI
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnDeletingSelection(sender: object, args: SelectionEventArgs<IModelItem>): void {
+function geimOnDeletingSelection(
+  args: SelectionEventArgs<IModelItem>,
+  sender: GraphEditorInputMode
+): void {
   log(sender, 'GraphEditorInputMode DeletingSelection')
 }
 
@@ -1966,7 +2232,10 @@ function geimOnDeletingSelection(sender: object, args: SelectionEventArgs<IModel
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnItemClicked(sender: object, args: ItemClickedEventArgs<IModelItem>): void {
+function geimOnItemClicked(
+  args: ItemClickedEventArgs<IModelItem>,
+  sender: GraphEditorInputMode
+): void {
   log(sender, `GraphEditorInputMode ItemClicked ${args.handled ? '(Handled)' : '(Unhandled)'}`)
 }
 
@@ -1975,7 +2244,10 @@ function geimOnItemClicked(sender: object, args: ItemClickedEventArgs<IModelItem
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnItemDoubleClicked(sender: object, args: ItemClickedEventArgs<IModelItem>): void {
+function geimOnItemDoubleClicked(
+  args: ItemClickedEventArgs<IModelItem>,
+  sender: GraphEditorInputMode
+): void {
   log(sender, `GraphEditorInputMode ItemDoubleClicked${args.handled ? '(Handled)' : '(Unhandled)'}`)
 }
 
@@ -1984,7 +2256,10 @@ function geimOnItemDoubleClicked(sender: object, args: ItemClickedEventArgs<IMod
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnItemLeftClicked(sender: object, args: ItemClickedEventArgs<IModelItem>): void {
+function geimOnItemLeftClicked(
+  args: ItemClickedEventArgs<IModelItem>,
+  sender: GraphEditorInputMode
+): void {
   log(sender, `GraphEditorInputMode ItemLeftClicked${args.handled ? '(Handled)' : '(Unhandled)'}`)
 }
 
@@ -1993,7 +2268,10 @@ function geimOnItemLeftClicked(sender: object, args: ItemClickedEventArgs<IModel
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnItemLeftDoubleClicked(sender: object, args: ItemClickedEventArgs<IModelItem>): void {
+function geimOnItemLeftDoubleClicked(
+  args: ItemClickedEventArgs<IModelItem>,
+  sender: GraphEditorInputMode
+): void {
   log(
     sender,
     `GraphEditorInputMode ItemLeftDoubleClicked${args.handled ? '(Handled)' : '(Unhandled)'}`
@@ -2005,7 +2283,10 @@ function geimOnItemLeftDoubleClicked(sender: object, args: ItemClickedEventArgs<
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnItemRightClicked(sender: object, args: ItemClickedEventArgs<IModelItem>): void {
+function geimOnItemRightClicked(
+  args: ItemClickedEventArgs<IModelItem>,
+  sender: GraphEditorInputMode
+): void {
   log(sender, `GraphEditorInputMode ItemRightClicked${args.handled ? '(Handled)' : '(Unhandled)'}`)
 }
 
@@ -2015,8 +2296,8 @@ function geimOnItemRightClicked(sender: object, args: ItemClickedEventArgs<IMode
  * @param args An object that contains the event data
  */
 function geimOnItemRightDoubleClicked(
-  sender: object,
-  args: ItemClickedEventArgs<IModelItem>
+  args: ItemClickedEventArgs<IModelItem>,
+  sender: GraphEditorInputMode
 ): void {
   log(
     sender,
@@ -2029,7 +2310,10 @@ function geimOnItemRightDoubleClicked(
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnLabelAdded(sender: object, args: ItemEventArgs<ILabel>): void {
+function geimOnLabelAdded(
+  args: InputModeItemEventArgs<ILabel>,
+  sender: GraphEditorInputMode
+): void {
   log(sender, 'GraphEditorInputMode LabelAdded')
 }
 
@@ -2038,26 +2322,11 @@ function geimOnLabelAdded(sender: object, args: ItemEventArgs<ILabel>): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnLabelTextChanged(sender: object, args: ItemEventArgs<ILabel>): void {
-  log(sender, 'GraphEditorInputMode LabelTextChanged')
-}
-
-/**
- * Invoked when the actual label editing process is about to start.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function geimOnLabelTextEditingStarted(sender: object, args: LabelEventArgs): void {
-  log(sender, 'GraphEditorInputMode LabelTextEditingStarted')
-}
-
-/**
- * Invoked when the actual label editing process is canceled
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function geimOnLabelTextEditingCanceled(sender: object, args: LabelEventArgs): void {
-  log(sender, 'GraphEditorInputMode LabelTextEditingCanceled')
+function geimOnLabelEdited(
+  args: InputModeItemEventArgs<ILabel>,
+  sender: GraphEditorInputMode
+): void {
+  log(sender, 'GraphEditorInputMode LabelEdited')
 }
 
 /**
@@ -2065,7 +2334,10 @@ function geimOnLabelTextEditingCanceled(sender: object, args: LabelEventArgs): v
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnMultiSelectionFinished(sender: object, args: SelectionEventArgs<IModelItem>): void {
+function geimOnMultiSelectionFinished(
+  args: SelectionEventArgs<IModelItem>,
+  sender: GraphEditorInputMode
+): void {
   log(sender, 'GraphEditorInputMode MultiSelectionFinished')
 }
 
@@ -2074,7 +2346,10 @@ function geimOnMultiSelectionFinished(sender: object, args: SelectionEventArgs<I
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnMultiSelectionStarted(sender: object, args: SelectionEventArgs<IModelItem>): void {
+function geimOnMultiSelectionStarted(
+  args: SelectionEventArgs<IModelItem>,
+  sender: GraphEditorInputMode
+): void {
   log(sender, 'GraphEditorInputMode MultiSelectionStarted')
 }
 
@@ -2083,7 +2358,10 @@ function geimOnMultiSelectionStarted(sender: object, args: SelectionEventArgs<IM
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnNodeCreated(sender: object, args: ItemEventArgs<INode>): void {
+function geimOnNodeCreated(
+  args: InputModeItemEventArgs<INode>,
+  sender: GraphEditorInputMode
+): void {
   log(sender, 'GraphEditorInputMode NodeCreated')
 }
 
@@ -2092,7 +2370,10 @@ function geimOnNodeCreated(sender: object, args: ItemEventArgs<INode>): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnNodeReparented(sender: object, args: NodeEventArgs): void {
+function geimOnNodeReparented(
+  args: InputModeItemChangedEventArgs<INode, NodeEventArgs>,
+  sender: GraphEditorInputMode
+): void {
   log(sender, 'GraphEditorInputMode NodeReparented')
 }
 
@@ -2101,11 +2382,14 @@ function geimOnNodeReparented(sender: object, args: NodeEventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function geimOnEdgePortsChanged(sender: object, args: EdgeEventArgs): void {
+function geimOnEdgePortsChanged(
+  args: InputModeItemChangedEventArgs<IEdge, EdgeEventArgs>,
+  sender: GraphEditorInputMode
+): void {
+  const edge = args.item
   log(
     sender,
-    `GraphEditorInputMode Edge ${args.item} Ports Changed from ${args.sourcePort}->${args.targetPort}` +
-      ` to ${args.item.sourcePort}->${args.item.targetPort}`
+    `GraphEditorInputMode Edge ${edge} Ports Changed to ${edge.sourcePort}->${edge.targetPort}`
   )
 }
 
@@ -2116,8 +2400,8 @@ function geimOnEdgePortsChanged(sender: object, args: EdgeEventArgs): void {
  *   event data
  */
 function geimOnPopulateItemContextMenu(
-  sender: object,
-  args: PopulateItemContextMenuEventArgs<IModelItem>
+  args: PopulateItemContextMenuEventArgs<IModelItem>,
+  sender: GraphEditorInputMode
 ): void {
   log(
     sender,
@@ -2126,22 +2410,16 @@ function geimOnPopulateItemContextMenu(
 }
 
 /**
- * Invoked when the mouse is hovering over an item to determine the tool tip to display.
+ * Invoked when the pointer is hovering over an item to determine the tool tip to display.
  * @param sender The source of the event
  * @param args An object that contains the event
  *   data
  */
-function geimOnQueryItemToolTip(sender: object, args: QueryItemToolTipEventArgs<IModelItem>): void {
+function geimOnQueryItemToolTip(
+  args: QueryItemToolTipEventArgs<IModelItem>,
+  sender: GraphEditorInputMode
+): void {
   log(sender, `GraphEditorInputMode QueryItemToolTip${args.handled ? '(Handled)' : '(Unhandled)'}`)
-}
-
-/**
- * Invoked when a label that is about to be added or edited.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function geimOnValidateLabelText(sender: object, args: LabelTextValidatingEventArgs): void {
-  log(sender, 'GraphEditorInputMode ValidateLabelText')
 }
 
 /**
@@ -2149,7 +2427,7 @@ function geimOnValidateLabelText(sender: object, args: LabelTextValidatingEventA
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function gvimOnCanvasClicked(sender: object, args: ClickEventArgs): void {
+function gvimOnCanvasClicked(args: ClickEventArgs, sender: GraphViewerInputMode): void {
   log(sender, 'GraphViewerInputMode CanvasClicked')
 }
 
@@ -2158,7 +2436,10 @@ function gvimOnCanvasClicked(sender: object, args: ClickEventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function gvimOnItemClicked(sender: object, args: ItemClickedEventArgs<IModelItem>): void {
+function gvimOnItemClicked(
+  args: ItemClickedEventArgs<IModelItem>,
+  sender: GraphViewerInputMode
+): void {
   log(sender, 'GraphViewerInputMode ItemClicked')
 }
 
@@ -2167,7 +2448,10 @@ function gvimOnItemClicked(sender: object, args: ItemClickedEventArgs<IModelItem
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function gvimOnItemDoubleClicked(sender: object, args: ItemClickedEventArgs<IModelItem>): void {
+function gvimOnItemDoubleClicked(
+  args: ItemClickedEventArgs<IModelItem>,
+  sender: GraphViewerInputMode
+): void {
   log(sender, 'GraphViewerInputMode ItemDoubleClicked')
 }
 
@@ -2176,7 +2460,10 @@ function gvimOnItemDoubleClicked(sender: object, args: ItemClickedEventArgs<IMod
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function gvimOnItemLeftClicked(sender: object, args: ItemClickedEventArgs<IModelItem>): void {
+function gvimOnItemLeftClicked(
+  args: ItemClickedEventArgs<IModelItem>,
+  sender: GraphViewerInputMode
+): void {
   log(sender, 'GraphViewerInputMode ItemLeftClicked')
 }
 
@@ -2185,7 +2472,10 @@ function gvimOnItemLeftClicked(sender: object, args: ItemClickedEventArgs<IModel
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function gvimOnItemLeftDoubleClicked(sender: object, args: ItemClickedEventArgs<IModelItem>): void {
+function gvimOnItemLeftDoubleClicked(
+  args: ItemClickedEventArgs<IModelItem>,
+  sender: GraphViewerInputMode
+): void {
   log(sender, 'GraphViewerInputMode ItemLeftDoubleClicked')
 }
 
@@ -2194,7 +2484,10 @@ function gvimOnItemLeftDoubleClicked(sender: object, args: ItemClickedEventArgs<
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function gvimOnItemRightClicked(sender: object, args: ItemClickedEventArgs<IModelItem>): void {
+function gvimOnItemRightClicked(
+  args: ItemClickedEventArgs<IModelItem>,
+  sender: GraphViewerInputMode
+): void {
   log(sender, 'GraphViewerInputMode ItemRightClicked')
 }
 
@@ -2204,8 +2497,8 @@ function gvimOnItemRightClicked(sender: object, args: ItemClickedEventArgs<IMode
  * @param args An object that contains the event data
  */
 function gvimOnItemRightDoubleClicked(
-  sender: object,
-  args: ItemClickedEventArgs<IModelItem>
+  args: ItemClickedEventArgs<IModelItem>,
+  sender: GraphViewerInputMode
 ): void {
   log(sender, 'GraphViewerInputMode ItemRightDoubleClicked')
 }
@@ -2215,7 +2508,10 @@ function gvimOnItemRightDoubleClicked(
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function gvimOnMultiSelectionFinished(sender: object, args: SelectionEventArgs<IModelItem>): void {
+function gvimOnMultiSelectionFinished(
+  args: SelectionEventArgs<IModelItem>,
+  sender: GraphViewerInputMode
+): void {
   log(sender, 'GraphViewerInputMode MultiSelectionFinished')
 }
 
@@ -2224,7 +2520,10 @@ function gvimOnMultiSelectionFinished(sender: object, args: SelectionEventArgs<I
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function gvimOnMultiSelectionStarted(sender: object, args: SelectionEventArgs<IModelItem>): void {
+function gvimOnMultiSelectionStarted(
+  args: SelectionEventArgs<IModelItem>,
+  sender: GraphViewerInputMode
+): void {
   log(sender, 'GraphViewerInputMode MultiSelectionStarted')
 }
 
@@ -2235,19 +2534,22 @@ function gvimOnMultiSelectionStarted(sender: object, args: SelectionEventArgs<IM
  *   event data
  */
 function gvimOnPopulateItemContextMenu(
-  sender: object,
-  args: PopulateItemContextMenuEventArgs<IModelItem>
+  args: PopulateItemContextMenuEventArgs<IModelItem>,
+  sender: GraphViewerInputMode
 ): void {
   log(sender, 'GraphViewerInputMode PopulateItemContextMenu')
 }
 
 /**
- * Invoked when the mouse is hovering over an item to determine the tool tip to display.
+ * Invoked when the pointer is hovering over an item to determine the tool tip to display.
  * @param sender The source of the event
  * @param args An object that contains the event
  *   data
  */
-function gvimOnQueryItemToolTip(sender: object, args: QueryItemToolTipEventArgs<IModelItem>): void {
+function gvimOnQueryItemToolTip(
+  args: QueryItemToolTipEventArgs<IModelItem>,
+  sender: GraphViewerInputMode
+): void {
   log(sender, 'GraphViewerInputMode QueryItemToolTip')
 }
 
@@ -2256,7 +2558,7 @@ function gvimOnQueryItemToolTip(sender: object, args: QueryItemToolTipEventArgs<
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveInputModeOnDragCanceled(sender: object, args: InputModeEventArgs): void {
+function moveInputModeOnDragCanceled(args: InputModeEventArgs, sender: MoveInputMode): void {
   logWithType(sender, 'MoveInputMode DragCanceled', 'DragCanceled')
 }
 
@@ -2265,7 +2567,7 @@ function moveInputModeOnDragCanceled(sender: object, args: InputModeEventArgs): 
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveInputModeOnDragCanceling(sender: object, args: InputModeEventArgs): void {
+function moveInputModeOnDragCanceling(args: InputModeEventArgs, sender: MoveInputMode): void {
   logWithType(sender, 'MoveInputMode DragCanceling', 'DragCanceling')
 }
 
@@ -2274,7 +2576,7 @@ function moveInputModeOnDragCanceling(sender: object, args: InputModeEventArgs):
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveInputModeOnDragFinished(sender: object, args: InputModeEventArgs): void {
+function moveInputModeOnDragFinished(args: InputModeEventArgs, sender: MoveInputMode): void {
   logWithType(sender, 'MoveInputMode DragFinished', 'DragFinished')
 }
 
@@ -2283,7 +2585,7 @@ function moveInputModeOnDragFinished(sender: object, args: InputModeEventArgs): 
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveInputModeOnDragFinishing(sender: object, args: InputModeEventArgs): void {
+function moveInputModeOnDragFinishing(args: InputModeEventArgs, sender: MoveInputMode): void {
   logWithType(sender, `MoveInputMode DragFinishing${getAffectedItems(sender)}`, 'DragFinishing')
 }
 
@@ -2292,7 +2594,7 @@ function moveInputModeOnDragFinishing(sender: object, args: InputModeEventArgs):
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveInputModeOnDragged(sender: object, args: InputModeEventArgs): void {
+function moveInputModeOnDragged(args: InputModeEventArgs, sender: MoveInputMode): void {
   logWithType(sender, 'MoveInputMode Dragged', 'Dragged')
 }
 
@@ -2301,7 +2603,7 @@ function moveInputModeOnDragged(sender: object, args: InputModeEventArgs): void 
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveInputModeOnDragging(sender: object, args: InputModeEventArgs): void {
+function moveInputModeOnDragging(args: InputModeEventArgs, sender: MoveInputMode): void {
   logWithType(sender, 'MoveInputMode Dragging', 'Dragging')
 }
 
@@ -2310,7 +2612,7 @@ function moveInputModeOnDragging(sender: object, args: InputModeEventArgs): void
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveInputModeOnDragStarted(sender: object, args: InputModeEventArgs): void {
+function moveInputModeOnDragStarted(args: InputModeEventArgs, sender: MoveInputMode): void {
   logWithType(sender, `MoveInputMode DragStarted${getAffectedItems(sender)}`, 'DragStarted')
 }
 
@@ -2319,7 +2621,7 @@ function moveInputModeOnDragStarted(sender: object, args: InputModeEventArgs): v
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveInputModeOnDragStarting(sender: object, args: InputModeEventArgs): void {
+function moveInputModeOnDragStarting(args: InputModeEventArgs, sender: MoveInputMode): void {
   logWithType(sender, 'MoveInputMode DragStarting', 'DragStarting')
 }
 
@@ -2329,86 +2631,10 @@ function moveInputModeOnDragStarting(sender: object, args: InputModeEventArgs): 
  * @param args An object that contains the event data
  */
 function moveInputModeOnQueryPositionHandler(
-  sender: object,
-  args: QueryPositionHandlerEventArgs
+  args: QueryPositionHandlerEventArgs,
+  sender: MoveInputMode
 ): void {
   log(sender, 'MoveInputMode QueryPositionHandler')
-}
-
-/**
- * Invoked when the drag has been canceled.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function moveLabelInputModeOnDragCanceled(sender: object, args: InputModeEventArgs): void {
-  logWithType(sender, 'MoveLabelInputMode DragCanceled', 'DragCanceled')
-}
-
-/**
- * Invoked before the drag will be canceled.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function moveLabelInputModeOnDragCanceling(sender: object, args: InputModeEventArgs): void {
-  logWithType(sender, 'MoveLabelInputMode DragCanceling', 'DragCanceling')
-}
-
-/**
- * Invoked once the drag has been finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function moveLabelInputModeOnDragFinished(sender: object, args: InputModeEventArgs): void {
-  logWithType(sender, 'MoveLabelInputMode DragFinished', 'DragFinished')
-}
-
-/**
- * Invoked before the drag will be finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function moveLabelInputModeOnDragFinishing(sender: object, args: InputModeEventArgs): void {
-  logWithType(
-    sender,
-    `MoveLabelInputMode DragFinishing${getAffectedItems(sender)}`,
-    'DragFinishing'
-  )
-}
-
-/**
- * Invoked at the end of every drag.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function moveLabelInputModeOnDragged(sender: object, args: InputModeEventArgs): void {
-  logWithType(sender, 'MoveLabelInputMode Dragged', 'Dragged')
-}
-
-/**
- * Invoked once the drag is starting.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function moveLabelInputModeOnDragging(sender: object, args: InputModeEventArgs): void {
-  logWithType(sender, 'MoveLabelInputMode Dragging', 'Dragging')
-}
-
-/**
- * Invoked once the drag is initialized and has started.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function moveLabelInputModeOnDragStarted(sender: object, args: InputModeEventArgs): void {
-  logWithType(sender, `MoveLabelInputMode DragStarted${getAffectedItems(sender)}`, 'DragStarted')
-}
-
-/**
- * Invoked once the drag is starting.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function moveLabelInputModeOnDragStarting(sender: object, args: InputModeEventArgs): void {
-  logWithType(sender, 'MoveLabelInputMode DragStarting', 'DragStarting')
 }
 
 /**
@@ -2416,7 +2642,7 @@ function moveLabelInputModeOnDragStarting(sender: object, args: InputModeEventAr
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function itemInputModeOnDragDropped(sender: object, args: InputModeEventArgs): void {
+function itemInputModeOnDragDropped(args: InputModeEventArgs, sender: DropInputMode): void {
   let inputMode = 'NodeDropInputMode'
   if (sender instanceof LabelDropInputMode) {
     inputMode = 'LabelDropInputMode'
@@ -2431,7 +2657,7 @@ function itemInputModeOnDragDropped(sender: object, args: InputModeEventArgs): v
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function itemInputModeOnDragEntered(sender: object, args: InputModeEventArgs): void {
+function itemInputModeOnDragEntered(args: InputModeEventArgs, sender: DropInputMode): void {
   let inputMode = 'NodeDropInputMode'
   if (sender instanceof LabelDropInputMode) {
     inputMode = 'LabelDropInputMode'
@@ -2446,7 +2672,7 @@ function itemInputModeOnDragEntered(sender: object, args: InputModeEventArgs): v
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function itemInputModeOnDragLeft(sender: object, args: InputModeEventArgs): void {
+function itemInputModeOnDragLeft(args: InputModeEventArgs, sender: DropInputMode): void {
   let inputMode = 'NodeDropInputMode'
   if (sender instanceof LabelDropInputMode) {
     inputMode = 'LabelDropInputMode'
@@ -2461,7 +2687,7 @@ function itemInputModeOnDragLeft(sender: object, args: InputModeEventArgs): void
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function itemInputModeOnDragOver(sender: object, args: InputModeEventArgs): void {
+function itemInputModeOnDragOver(args: InputModeEventArgs, sender: DropInputMode): void {
   let inputMode = 'NodeDropInputMode'
   if (sender instanceof LabelDropInputMode) {
     inputMode = 'LabelDropInputMode'
@@ -2476,7 +2702,10 @@ function itemInputModeOnDragOver(sender: object, args: InputModeEventArgs): void
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function itemInputModeOnItemCreated(sender: object, args: ItemEventArgs<any>): void {
+function itemInputModeOnItemCreated(
+  args: InputModeItemEventArgs<any>,
+  sender: DropInputMode
+): void {
   let inputMode = 'NodeDropInputMode'
   if (sender instanceof LabelDropInputMode) {
     inputMode = 'LabelDropInputMode'
@@ -2487,13 +2716,13 @@ function itemInputModeOnItemCreated(sender: object, args: ItemEventArgs<any>): v
 }
 
 /**
- * Invoked when the item that is being hovered over with the mouse changes.
+ * Invoked when the item that is being hovered over with the pointer changes.
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
 function itemHoverInputModeOnHoveredItemChanged(
-  sender: object,
-  args: HoveredItemChangedEventArgs
+  args: HoveredItemChangedEventArgs,
+  sender: ItemHoverInputMode
 ): void {
   logWithType(
     sender,
@@ -2509,7 +2738,10 @@ function itemHoverInputModeOnHoveredItemChanged(
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createBendInputModeOnBendCreated(sender: object, args: BendEventArgs): void {
+function createBendInputModeOnBendCreated(
+  args: InputModeItemEventArgs<IBend>,
+  sender: CreateBendInputMode
+): void {
   log(sender, 'CreateBendInputMode Bend Created')
 }
 
@@ -2518,7 +2750,10 @@ function createBendInputModeOnBendCreated(sender: object, args: BendEventArgs): 
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createBendInputModeOnDragCanceled(sender: object, args: InputModeEventArgs): void {
+function createBendInputModeOnDragCanceled(
+  args: InputModeEventArgs,
+  sender: CreateBendInputMode
+): void {
   logWithType(sender, 'CreateBendInputMode DragCanceled', 'DragCanceled')
 }
 
@@ -2527,7 +2762,7 @@ function createBendInputModeOnDragCanceled(sender: object, args: InputModeEventA
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createBendInputModeOnDragged(sender: object, args: InputModeEventArgs): void {
+function createBendInputModeOnDragged(args: InputModeEventArgs, sender: CreateBendInputMode): void {
   logWithType(sender, 'CreateBendInputMode Dragged', 'Dragged')
 }
 
@@ -2536,7 +2771,10 @@ function createBendInputModeOnDragged(sender: object, args: InputModeEventArgs):
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createBendInputModeOnDragging(sender: object, args: InputModeEventArgs): void {
+function createBendInputModeOnDragging(
+  args: InputModeEventArgs,
+  sender: CreateBendInputMode
+): void {
   logWithType(sender, 'CreateBendInputMode Dragging', 'Dragging')
 }
 
@@ -2545,29 +2783,11 @@ function createBendInputModeOnDragging(sender: object, args: InputModeEventArgs)
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function contextMenuInputModeOnPopulateMenu(sender: object, args: PopulateMenuEventArgs): void {
-  // as we just "simulated" a context menu by calling contextMenuInputMode.shouldOpenMenu
-  // we should either fill and show a menu or - as in this case - set showMenu to 'false'
-  args.showMenu = false
+function contextMenuInputModeOnPopulateMenu(
+  args: PopulateContextMenuEventArgs,
+  sender: ContextMenuInputMode
+): void {
   log(sender, 'ContextMenuInputMode Populate Context Menu')
-}
-
-/**
- * Invoked once a double-tap has been detected.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function tapInputModeOnDoubleTapped(sender: object, args: TapEventArgs): void {
-  log(sender, 'TapInputMode Double Tapped')
-}
-
-/**
- * Invoked once a tap has been detected.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function tapInputModeOnTapped(sender: object, args: TapEventArgs): void {
-  log(sender, 'TapInputMode Tapped')
 }
 
 /**
@@ -2575,7 +2795,10 @@ function tapInputModeOnTapped(sender: object, args: TapEventArgs): void {
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function textEditorInputModeOnEditingCanceled(sender: object, args: TextEventArgs): void {
+function textEditorInputModeOnEditingCanceled(
+  args: TextEventArgs,
+  sender: TextEditorInputMode
+): void {
   log(sender, 'TextEditorInputMode Editing Canceled')
 }
 
@@ -2584,7 +2807,10 @@ function textEditorInputModeOnEditingCanceled(sender: object, args: TextEventArg
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function textEditorInputModeOnEditingStarted(sender: object, args: TextEventArgs): void {
+function textEditorInputModeOnEditingStarted(
+  args: TextEventArgs,
+  sender: TextEditorInputMode
+): void {
   log(sender, 'TextEditorInputMode Editing Started')
 }
 
@@ -2593,7 +2819,7 @@ function textEditorInputModeOnEditingStarted(sender: object, args: TextEventArgs
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function textEditorInputModeOnTextEdited(sender: object, args: TextEventArgs): void {
+function textEditorInputModeOnTextEdited(args: TextEventArgs, sender: TextEditorInputMode): void {
   log(sender, 'TextEditorInputMode Text Edited')
 }
 
@@ -2602,8 +2828,11 @@ function textEditorInputModeOnTextEdited(sender: object, args: TextEventArgs): v
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function mouseHoverInputModeOnQueryToolTip(sender: object, args: ToolTipQueryEventArgs): void {
-  log(sender, 'MouseHoverInputMode QueryToolTip')
+function toolTipInputModeOnQueryToolTip(
+  args: QueryToolTipEventArgs,
+  sender: ToolTipInputMode
+): void {
+  log(sender, 'TooltipInputMode QueryToolTip')
 }
 
 /**
@@ -2611,53 +2840,9 @@ function mouseHoverInputModeOnQueryToolTip(sender: object, args: ToolTipQueryEve
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function clickInputModeOnClicked(sender: object, args: ClickEventArgs): void {
-  log(sender, 'ClickInputMode Clicked')
-}
-
-/**
- * Invoked once a double-click has been detected.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function clickInputModeOnDoubleClicked(sender: object, args: ClickEventArgs): void {
-  log(sender, 'ClickInputMode Double Clicked')
-}
-
-/**
- * Invoked once a left-click has been detected.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function clickInputModeOnLeftClicked(sender: object, args: ClickEventArgs): void {
-  log(sender, 'ClickInputMode Left Clicked')
-}
-
-/**
- * Invoked once a left double-click has been detected.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function clickInputModeOnLeftDoubleClicked(sender: object, args: ClickEventArgs): void {
-  log(sender, 'ClickInputMode Left Double Clicked')
-}
-
-/**
- * Invoked once a right-click has been detected.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function clickInputModeOnRightClicked(sender: object, args: ClickEventArgs): void {
-  log(sender, 'ClickInputMode Right Clicked')
-}
-
-/**
- * Invoked once a right double-click has been detected.
- * @param sender The source of the event
- * @param args An object that contains the event data
- */
-function clickInputModeOnRightDoubleClicked(sender: object, args: ClickEventArgs): void {
-  log(sender, 'ClickInputMode Right Double Clicked')
+function clickInputModeOnClicked(args: ClickEventArgs, sender: ClickInputMode): void {
+  const details = `buttons: ${PointerButtons[args.pointerButtons]}, clicks: ${args.clickCount}`
+  log(sender, `ClickInputMode Clicked (${details})`)
 }
 
 /**
@@ -2665,7 +2850,7 @@ function clickInputModeOnRightDoubleClicked(sender: object, args: ClickEventArgs
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function handleInputModeOnDragCanceled(sender: object, args: InputModeEventArgs): void {
+function handleInputModeOnDragCanceled(args: InputModeEventArgs, sender: HandleInputMode): void {
   logWithType(sender, 'HandleInputMode DragCanceled', 'DragCanceled')
 }
 
@@ -2674,7 +2859,7 @@ function handleInputModeOnDragCanceled(sender: object, args: InputModeEventArgs)
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function handleInputModeOnDragCanceling(sender: object, args: InputModeEventArgs): void {
+function handleInputModeOnDragCanceling(args: InputModeEventArgs, sender: HandleInputMode): void {
   logWithType(sender, 'HandleInputMode DragCanceling', 'DragCanceling')
 }
 
@@ -2683,7 +2868,7 @@ function handleInputModeOnDragCanceling(sender: object, args: InputModeEventArgs
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function handleInputModeOnDragFinished(sender: object, args: InputModeEventArgs): void {
+function handleInputModeOnDragFinished(args: InputModeEventArgs, sender: HandleInputMode): void {
   logWithType(sender, 'HandleInputMode DragFinished', 'DragFinished')
 }
 
@@ -2692,7 +2877,7 @@ function handleInputModeOnDragFinished(sender: object, args: InputModeEventArgs)
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function handleInputModeOnDragFinishing(sender: object, args: InputModeEventArgs): void {
+function handleInputModeOnDragFinishing(args: InputModeEventArgs, sender: HandleInputMode): void {
   logWithType(sender, `HandleInputMode DragFinishing${getAffectedItems(sender)}`, 'DragFinishing')
 }
 
@@ -2701,7 +2886,7 @@ function handleInputModeOnDragFinishing(sender: object, args: InputModeEventArgs
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function handleInputModeOnDragged(sender: object, args: InputModeEventArgs): void {
+function handleInputModeOnDragged(args: InputModeEventArgs, sender: HandleInputMode): void {
   logWithType(sender, 'HandleInputMode Dragged', 'Dragged')
 }
 
@@ -2710,7 +2895,7 @@ function handleInputModeOnDragged(sender: object, args: InputModeEventArgs): voi
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function handleInputModeOnDragging(sender: object, args: InputModeEventArgs): void {
+function handleInputModeOnDragging(args: InputModeEventArgs, sender: HandleInputMode): void {
   logWithType(sender, 'HandleInputMode Dragging', 'Dragging')
 }
 
@@ -2719,7 +2904,7 @@ function handleInputModeOnDragging(sender: object, args: InputModeEventArgs): vo
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function handleInputModeOnDragStarted(sender: object, args: InputModeEventArgs): void {
+function handleInputModeOnDragStarted(args: InputModeEventArgs, sender: HandleInputMode): void {
   logWithType(sender, `HandleInputMode DragStarted${getAffectedItems(sender)}`, 'DragStarted')
 }
 
@@ -2728,7 +2913,7 @@ function handleInputModeOnDragStarted(sender: object, args: InputModeEventArgs):
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function handleInputModeOnDragStarting(sender: object, args: InputModeEventArgs): void {
+function handleInputModeOnDragStarting(args: InputModeEventArgs, sender: HandleInputMode): void {
   logWithType(sender, 'HandleInputMode DragStarting', 'DragStarting')
 }
 
@@ -2737,7 +2922,10 @@ function handleInputModeOnDragStarting(sender: object, args: InputModeEventArgs)
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveViewportInputModeOnDragCanceled(sender: object, args: InputModeEventArgs): void {
+function moveViewportInputModeOnDragCanceled(
+  args: InputModeEventArgs,
+  sender: MoveViewportInputMode
+): void {
   logWithType(sender, 'MoveViewportInputMode DragCanceled', 'DragCanceled')
 }
 
@@ -2746,7 +2934,10 @@ function moveViewportInputModeOnDragCanceled(sender: object, args: InputModeEven
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveViewportInputModeOnDragCanceling(sender: object, args: InputModeEventArgs): void {
+function moveViewportInputModeOnDragCanceling(
+  args: InputModeEventArgs,
+  sender: MoveViewportInputMode
+): void {
   logWithType(sender, 'MoveViewportInputMode DragCanceling', 'DragCanceling')
 }
 
@@ -2755,7 +2946,10 @@ function moveViewportInputModeOnDragCanceling(sender: object, args: InputModeEve
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveViewportInputModeOnDragFinished(sender: object, args: InputModeEventArgs): void {
+function moveViewportInputModeOnDragFinished(
+  args: InputModeEventArgs,
+  sender: MoveViewportInputMode
+): void {
   logWithType(sender, 'MoveViewportInputMode DragFinished', 'DragFinished')
 }
 
@@ -2764,12 +2958,11 @@ function moveViewportInputModeOnDragFinished(sender: object, args: InputModeEven
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveViewportInputModeOnDragFinishing(sender: object, args: InputModeEventArgs): void {
-  logWithType(
-    sender,
-    `MoveViewportInputMode DragFinishing${getAffectedItems(sender)}`,
-    'DragFinishing'
-  )
+function moveViewportInputModeOnDragFinishing(
+  args: InputModeEventArgs,
+  sender: MoveViewportInputMode
+): void {
+  logWithType(sender, `MoveViewportInputMode DragFinishing`, 'DragFinishing')
 }
 
 /**
@@ -2777,7 +2970,10 @@ function moveViewportInputModeOnDragFinishing(sender: object, args: InputModeEve
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveViewportInputModeOnDragged(sender: object, args: InputModeEventArgs): void {
+function moveViewportInputModeOnDragged(
+  args: InputModeEventArgs,
+  sender: MoveViewportInputMode
+): void {
   logWithType(sender, 'MoveViewportInputMode Dragged', 'Dragged')
 }
 
@@ -2786,7 +2982,10 @@ function moveViewportInputModeOnDragged(sender: object, args: InputModeEventArgs
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveViewportInputModeOnDragging(sender: object, args: InputModeEventArgs): void {
+function moveViewportInputModeOnDragging(
+  args: InputModeEventArgs,
+  sender: MoveViewportInputMode
+): void {
   logWithType(sender, 'MoveViewportInputMode Dragging', 'Dragging')
 }
 
@@ -2795,8 +2994,11 @@ function moveViewportInputModeOnDragging(sender: object, args: InputModeEventArg
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveViewportInputModeOnDragStarted(sender: object, args: InputModeEventArgs): void {
-  logWithType(sender, `MoveViewportInputMode DragStarted${getAffectedItems(sender)}`, 'DragStarted')
+function moveViewportInputModeOnDragStarted(
+  args: InputModeEventArgs,
+  sender: MoveViewportInputMode
+): void {
+  logWithType(sender, `MoveViewportInputMode DragStarted`, 'DragStarted')
 }
 
 /**
@@ -2804,7 +3006,10 @@ function moveViewportInputModeOnDragStarted(sender: object, args: InputModeEvent
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function moveViewportInputModeOnDragStarting(sender: object, args: InputModeEventArgs): void {
+function moveViewportInputModeOnDragStarting(
+  args: InputModeEventArgs,
+  sender: MoveViewportInputMode
+): void {
   logWithType(sender, 'MoveViewportInputMode DragStarting', 'DragStarting')
 }
 
@@ -2813,7 +3018,10 @@ function moveViewportInputModeOnDragStarting(sender: object, args: InputModeEven
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function navigationInputModeOnGroupCollapsed(sender: object, args: ItemEventArgs<INode>): void {
+function navigationInputModeOnGroupCollapsed(
+  args: InputModeItemEventArgs<INode>,
+  sender: NavigationInputMode
+): void {
   logWithType(sender, `NavigationInputMode Group Collapsed: ${args.item}`, 'GroupCollapsed')
 }
 
@@ -2822,7 +3030,10 @@ function navigationInputModeOnGroupCollapsed(sender: object, args: ItemEventArgs
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function navigationInputModeOnGroupCollapsing(sender: object, args: ItemEventArgs<INode>): void {
+function navigationInputModeOnGroupCollapsing(
+  args: InputModeItemEventArgs<INode>,
+  sender: NavigationInputMode
+): void {
   logWithType(sender, `NavigationInputMode Group Collapsing: ${args.item}`, 'Group Collapsing')
 }
 
@@ -2831,7 +3042,10 @@ function navigationInputModeOnGroupCollapsing(sender: object, args: ItemEventArg
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function navigationInputModeOnGroupEntered(sender: object, args: ItemEventArgs<INode>): void {
+function navigationInputModeOnGroupEntered(
+  args: InputModeItemEventArgs<INode>,
+  sender: NavigationInputMode
+): void {
   logWithType(sender, `NavigationInputMode Group Entered: ${args.item}`, 'Group Entered')
 }
 
@@ -2840,7 +3054,10 @@ function navigationInputModeOnGroupEntered(sender: object, args: ItemEventArgs<I
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function navigationInputModeOnGroupEntering(sender: object, args: ItemEventArgs<INode>): void {
+function navigationInputModeOnGroupEntering(
+  args: InputModeItemEventArgs<INode>,
+  sender: NavigationInputMode
+): void {
   logWithType(sender, `NavigationInputMode Group Entering: ${args.item}`, 'Group Entering')
 }
 
@@ -2849,7 +3066,10 @@ function navigationInputModeOnGroupEntering(sender: object, args: ItemEventArgs<
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function navigationInputModeOnGroupExited(sender: object, args: ItemEventArgs<INode>): void {
+function navigationInputModeOnGroupExited(
+  args: InputModeItemEventArgs<INode>,
+  sender: NavigationInputMode
+): void {
   logWithType(sender, `NavigationInputMode Group Exited: ${args.item}`, 'Group Exited')
 }
 
@@ -2858,7 +3078,10 @@ function navigationInputModeOnGroupExited(sender: object, args: ItemEventArgs<IN
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function navigationInputModeOnGroupExiting(sender: object, args: ItemEventArgs<INode>): void {
+function navigationInputModeOnGroupExiting(
+  args: InputModeItemEventArgs<INode>,
+  sender: NavigationInputMode
+): void {
   logWithType(sender, `NavigationInputMode Group Exiting: ${args.item}`, 'Group Exiting')
 }
 
@@ -2867,7 +3090,10 @@ function navigationInputModeOnGroupExiting(sender: object, args: ItemEventArgs<I
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function navigationInputModeOnGroupExpanded(sender: object, args: ItemEventArgs<INode>): void {
+function navigationInputModeOnGroupExpanded(
+  args: InputModeItemEventArgs<INode>,
+  sender: NavigationInputMode
+): void {
   logWithType(sender, `NavigationInputMode Group Expanded: ${args.item}`, 'Group Expanded')
 }
 
@@ -2876,7 +3102,10 @@ function navigationInputModeOnGroupExpanded(sender: object, args: ItemEventArgs<
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function navigationInputModeOnGroupExpanding(sender: object, args: ItemEventArgs<INode>): void {
+function navigationInputModeOnGroupExpanding(
+  args: InputModeItemEventArgs<INode>,
+  sender: NavigationInputMode
+): void {
   logWithType(sender, `NavigationInputMode Group Expanding: ${args.item}`, 'Group Expanding')
 }
 
@@ -2885,7 +3114,10 @@ function navigationInputModeOnGroupExpanding(sender: object, args: ItemEventArgs
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createEdgeInputModeOnEdgeCreated(sender: object, args: EdgeEventArgs): void {
+function createEdgeInputModeOnEdgeCreated(
+  args: InputModeItemEventArgs<IEdge>,
+  sender: CreateEdgeInputMode
+): void {
   log(sender, 'CreateEdgeInputMode Edge Created')
 }
 
@@ -2894,7 +3126,10 @@ function createEdgeInputModeOnEdgeCreated(sender: object, args: EdgeEventArgs): 
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createEdgeInputModeOnEdgeCreationStarted(sender: object, args: EdgeEventArgs): void {
+function createEdgeInputModeOnEdgeCreationStarted(
+  args: InputModeItemEventArgs<IEdge>,
+  sender: CreateEdgeInputMode
+): void {
   log(sender, 'CreateEdgeInputMode Edge Creation Started')
 }
 
@@ -2903,7 +3138,10 @@ function createEdgeInputModeOnEdgeCreationStarted(sender: object, args: EdgeEven
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createEdgeInputModeOnGestureCanceled(sender: object, args: InputModeEventArgs): void {
+function createEdgeInputModeOnGestureCanceled(
+  args: InputModeEventArgs,
+  sender: CreateEdgeInputMode
+): void {
   log(sender, 'CreateEdgeInputMode Gesture Canceled')
 }
 
@@ -2912,7 +3150,10 @@ function createEdgeInputModeOnGestureCanceled(sender: object, args: InputModeEve
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createEdgeInputModeOnGestureCanceling(sender: object, args: InputModeEventArgs): void {
+function createEdgeInputModeOnGestureCanceling(
+  args: InputModeEventArgs,
+  sender: CreateEdgeInputMode
+): void {
   log(sender, 'CreateEdgeInputMode Gesture Canceling')
 }
 
@@ -2921,7 +3162,10 @@ function createEdgeInputModeOnGestureCanceling(sender: object, args: InputModeEv
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createEdgeInputModeOnGestureFinished(sender: object, args: InputModeEventArgs): void {
+function createEdgeInputModeOnGestureFinished(
+  args: InputModeEventArgs,
+  sender: CreateEdgeInputMode
+): void {
   log(sender, 'CreateEdgeInputMode Gesture Finished')
 }
 
@@ -2930,7 +3174,10 @@ function createEdgeInputModeOnGestureFinished(sender: object, args: InputModeEve
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createEdgeInputModeOnGestureFinishing(sender: object, args: InputModeEventArgs): void {
+function createEdgeInputModeOnGestureFinishing(
+  args: InputModeEventArgs,
+  sender: CreateEdgeInputMode
+): void {
   log(sender, 'CreateEdgeInputMode Gesture Finishing')
 }
 
@@ -2939,7 +3186,10 @@ function createEdgeInputModeOnGestureFinishing(sender: object, args: InputModeEv
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createEdgeInputModeOnGestureStarted(sender: object, args: InputModeEventArgs): void {
+function createEdgeInputModeOnGestureStarted(
+  args: InputModeEventArgs,
+  sender: CreateEdgeInputMode
+): void {
   log(sender, 'CreateEdgeInputMode Gesture Started')
 }
 
@@ -2948,7 +3198,10 @@ function createEdgeInputModeOnGestureStarted(sender: object, args: InputModeEven
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createEdgeInputModeOnGestureStarting(sender: object, args: InputModeEventArgs): void {
+function createEdgeInputModeOnGestureStarting(
+  args: InputModeEventArgs,
+  sender: CreateEdgeInputMode
+): void {
   log(sender, 'CreateEdgeInputMode Gesture Starting')
 }
 
@@ -2957,7 +3210,7 @@ function createEdgeInputModeOnGestureStarting(sender: object, args: InputModeEve
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createEdgeInputModeOnMoved(sender: object, args: InputModeEventArgs): void {
+function createEdgeInputModeOnMoved(args: InputModeEventArgs, sender: CreateEdgeInputMode): void {
   log(sender, 'CreateEdgeInputMode Moved')
 }
 
@@ -2966,7 +3219,7 @@ function createEdgeInputModeOnMoved(sender: object, args: InputModeEventArgs): v
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createEdgeInputModeOnMoving(sender: object, args: InputModeEventArgs): void {
+function createEdgeInputModeOnMoving(args: InputModeEventArgs, sender: CreateEdgeInputMode): void {
   log(sender, 'CreateEdgeInputMode Moving')
 }
 
@@ -2975,7 +3228,10 @@ function createEdgeInputModeOnMoving(sender: object, args: InputModeEventArgs): 
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function createEdgeInputModeOnPortAdded(sender: object, args: ItemEventArgs<IPort>): void {
+function createEdgeInputModeOnPortAdded(
+  args: InputModeItemEventArgs<IPort>,
+  sender: CreateEdgeInputMode
+): void {
   log(sender, 'CreateEdgeInputMode Port Added')
 }
 
@@ -2984,8 +3240,113 @@ function createEdgeInputModeOnPortAdded(sender: object, args: ItemEventArgs<IPor
  * @param sender The source of the event
  * @param args An object that contains the event data
  */
-function onItemSelectionChanged(sender: object, args: ItemSelectionChangedEventArgs<any>): void {
-  log(sender, 'GraphComponent Item Selection Changed')
+function onItemSelectionAdded(args: ItemEventArgs<any>, sender: IGraphSelection): void {
+  log(sender, 'GraphComponent Item Selection Added')
+}
+
+/**
+ * Invoked when an item changed its selection state from selected to unselected or vice versa.
+ * @param sender The source of the event
+ * @param args An object that contains the event data
+ */
+function onItemSelectionRemoved(args: ItemEventArgs<any>, sender: IGraphSelection): void {
+  log(sender, 'GraphComponent Item Selection Removed')
+}
+
+/**
+ * Invoked when a adding a new label is finished.
+ * @param sender The source of the event
+ * @param args An object that contains the event data
+ */
+function editLabelInputModeLabelAdded(
+  args: InputModeItemEventArgs<ILabel>,
+  sender: EditLabelInputMode
+): void {
+  log(sender, 'Label Added')
+}
+
+/**
+ * Invoked when a removing a label is finished.
+ * @param sender The source of the event
+ * @param args An object that contains the event data
+ */
+function editLabelInputModeLabelDeleted(
+  args: InputModeItemChangedEventArgs<ILabel, EventArgs>,
+  sender: EditLabelInputMode
+): void {
+  log(sender, 'Label Deleted')
+}
+
+/**
+ * Invoked when the label editing process is finished.
+ * @param sender The source of the event
+ * @param args An object that contains the event data
+ */
+function editLabelInputModeLabelEdited(
+  args: InputModeItemEventArgs<ILabel>,
+  sender: EditLabelInputMode
+): void {
+  log(sender, 'Label Edited')
+}
+
+/**
+ * Invoked when the label editing process is canceled.
+ * @param sender The source of the event
+ * @param args An object that contains the event data
+ */
+function editLabelInputModeLabelEditingCanceled(
+  args: InputModeItemEventArgs<ILabel>,
+  sender: EditLabelInputMode
+): void {
+  log(sender, 'Label Text Editing Canceled')
+}
+
+/**
+ * Invoked when the label editing process is started.
+ * @param sender The source of the event
+ * @param args An object that contains the event data
+ */
+function editLabelInputModeLabelEditingStarted(
+  args: InputModeItemEventArgs<ILabel>,
+  sender: EditLabelInputMode
+): void {
+  log(sender, 'Label Text Editing Started')
+}
+
+/**
+ * Invoked when a label is about to be added.
+ * @param sender The source of the event
+ * @param args An object that contains the event data
+ */
+function editLabelInputModeOnQueryLabelAdding(
+  args: LabelEditingEventArgs,
+  sender: EditLabelInputMode
+): void {
+  log(sender, 'Query Label Adding')
+}
+
+/**
+ * Invoked when the label editing process is about to be started.
+ * @param sender The source of the event
+ * @param args An object that contains the event data
+ */
+function editLabelInputModeOnQueryLabelEditing(
+  args: LabelEditingEventArgs,
+  sender: EditLabelInputMode
+): void {
+  log(sender, 'Query Label Editing')
+}
+
+/**
+ * Invoked when a label that is about to be added or edited.
+ * @param sender The source of the event
+ * @param args An object that contains the event data
+ */
+function editLabelInputModeOnQueryValidateLabelText(
+  args: LabelTextValidatingEventArgs,
+  sender: EditLabelInputMode
+): void {
+  log(sender, 'Validate Label Text')
 }
 
 function clearButtonClick(): any {
@@ -3030,28 +3391,28 @@ function logWithType(sender: object, message: string, type: string | null): void
 
 function initializeGraphComponent(): void {
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
 }
 
 function initializeInputModes(): void {
-  const orthogonalEdgeEditingContext = new OrthogonalEdgeEditingContext({
-    movePorts: true,
-    enabled: false
-  })
-  editorMode = new GraphEditorInputMode({
-    orthogonalEdgeEditingContext,
-    allowGroupingOperations: true
-  })
+  editorMode = new GraphEditorInputMode()
   editorMode.itemHoverInputMode.hoverItems = GraphItemTypes.ALL
   editorMode.nodeDropInputMode.enabled = true
   editorMode.labelDropInputMode.enabled = true
   editorMode.portDropInputMode.enabled = true
+  // initially, we want to disable editing orthogonal edges altogether
+  editorMode.orthogonalEdgeEditingContext.enabled = false
+
+  editorMode.contextMenuInputMode.addEventListener('populate-menu', (evt) => {
+    evt.contextMenu = [
+      {
+        label: 'Context Menu Action',
+        action: () => log(editorMode.contextMenuInputMode, 'Context Menu Item Action')
+      }
+    ]
+  })
 
   viewerMode = new GraphViewerInputMode()
   viewerMode.itemHoverInputMode.hoverItems = GraphItemTypes.ALL
-
-  // "Simulate" a context menu, so the various context menu events are fired.
-  graphComponent.div.addEventListener('contextmenu', onContextMenu, true)
 
   graphComponent.inputMode = editorMode
 
@@ -3061,11 +3422,11 @@ function initializeInputModes(): void {
 
 function initializeGraph(): void {
   const graph = graphComponent.graph
-  initDemoStyles(graph, { foldingEnabled: true })
+  initDemoStyles(graph, { foldingEnabled: true, orthogonalEditing: true })
   graph.nodeDefaults.size = new Size(60, 40)
-  graph.edgeDefaults.labels.style = new DefaultLabelStyle({
+  graph.edgeDefaults.labels.style = new LabelStyle({
     backgroundFill: 'white',
-    insets: [3, 5, 3, 5]
+    padding: [3, 5, 3, 5]
   })
 }
 
@@ -3080,13 +3441,13 @@ function createDraggableNode(): HTMLElement {
   // create the node visual
   const exportComponent = new GraphComponent()
   exportComponent.graph.createNode(new Rect(0, 0, 30, 30), graphComponent.graph.nodeDefaults.style)
-  exportComponent.updateContentRect()
-  const svgExport = new SvgExport(exportComponent.contentRect)
+  exportComponent.updateContentBounds()
+  const svgExport = new SvgExport(exportComponent.contentBounds)
   const dataUrl = SvgExport.encodeSvgDataUrl(
     SvgExport.exportSvgString(svgExport.exportSvg(exportComponent))
   )
   const div = document.createElement('div')
-  div.setAttribute('style', 'width: 30px; height: 30px; margin: 0 10px;')
+  div.setAttribute('style', 'width: 30px; height: 30px; margin: 0 10px; touch-action: none;')
   div.setAttribute('title', 'Draggable Node')
   const img = document.createElement('img')
   img.setAttribute('style', 'width: auto; height: auto;')
@@ -3107,7 +3468,7 @@ function createDraggableNode(): HTMLElement {
       true,
       dragPreview
     )
-    dragSource.addQueryContinueDragListener((_, evt) => {
+    dragSource.addEventListener('query-continue-drag', (evt) => {
       if (evt.dropTarget === null) {
         dragPreview.classList.remove('hidden')
       } else {
@@ -3117,21 +3478,12 @@ function createDraggableNode(): HTMLElement {
   }
 
   img.addEventListener(
-    'mousedown',
+    'pointerdown',
     (event) => {
       startDrag()
       event.preventDefault()
     },
     false
-  )
-
-  img.addEventListener(
-    'touchstart',
-    (event) => {
-      startDrag()
-      event.preventDefault()
-    },
-    { passive: false }
   )
 
   return div
@@ -3142,15 +3494,18 @@ function createDraggableLabel(): HTMLDivElement {
   const defaultLabelParameter = graphComponent.graph.nodeDefaults.labels.layoutParameter
   const defaultLabelStyle = graphComponent.graph.nodeDefaults.labels.style
   const exportComponent = new GraphComponent()
-  const dummyNode = exportComponent.graph.createNode(new Rect(0, 0, 30, 30), VoidNodeStyle.INSTANCE)
+  const dummyNode = exportComponent.graph.createNode(
+    new Rect(0, 0, 30, 30),
+    INodeStyle.VOID_NODE_STYLE
+  )
   exportComponent.graph.addLabel(dummyNode, 'Label', defaultLabelParameter, defaultLabelStyle)
-  exportComponent.contentRect = new Rect(0, 0, 30, 30)
-  const svgExport = new SvgExport(exportComponent.contentRect)
+  exportComponent.contentBounds = new Rect(0, 0, 30, 30)
+  const svgExport = new SvgExport(exportComponent.contentBounds)
   const dataUrl = SvgExport.encodeSvgDataUrl(
     SvgExport.exportSvgString(svgExport.exportSvg(exportComponent))
   )
   const div = document.createElement('div')
-  div.setAttribute('style', 'width: 30px; height: 30px; margin: 0 10px;')
+  div.setAttribute('style', 'width: 30px; height: 30px; margin: 0 10px; touch-action: none;')
   div.setAttribute('title', 'Draggable Label')
   const img = document.createElement('img')
   img.setAttribute('style', 'width: auto; height: auto;')
@@ -3176,7 +3531,7 @@ function createDraggableLabel(): HTMLDivElement {
       true,
       dragPreview
     )
-    dragSource.addQueryContinueDragListener((_, evt) => {
+    dragSource.addEventListener('query-continue-drag', (evt) => {
       if (evt.dropTarget === null) {
         dragPreview.classList.remove('hidden')
       } else {
@@ -3186,7 +3541,7 @@ function createDraggableLabel(): HTMLDivElement {
   }
 
   img.addEventListener(
-    'mousedown',
+    'pointerdown',
     (event) => {
       startDrag()
       event.preventDefault()
@@ -3194,38 +3549,30 @@ function createDraggableLabel(): HTMLDivElement {
     false
   )
 
-  img.addEventListener(
-    'touchstart',
-    (event) => {
-      startDrag()
-      event.preventDefault()
-    },
-    { passive: false }
-  )
-
   return div
 }
 
 function createDraggablePort(): HTMLDivElement {
   // create the port visual
-  const locationParameter = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-  const portStyle = new NodeStylePortStyleAdapter({
-    nodeStyle: new ShapeNodeStyle({
-      fill: 'rgb(51, 102, 153)',
-      stroke: null,
-      shape: 'ellipse'
-    })
+  const locationParameter = FreeNodePortLocationModel.CENTER
+  const portStyle = new ShapePortStyle({
+    fill: 'rgb(51, 102, 153)',
+    stroke: null,
+    shape: 'ellipse'
   })
   const exportComponent = new GraphComponent()
-  const dummyNode = exportComponent.graph.createNode(new Rect(0, 0, 30, 30), VoidNodeStyle.INSTANCE)
+  const dummyNode = exportComponent.graph.createNode(
+    new Rect(0, 0, 30, 30),
+    INodeStyle.VOID_NODE_STYLE
+  )
   exportComponent.graph.addPort(dummyNode, locationParameter, portStyle)
-  exportComponent.contentRect = new Rect(0, 0, 30, 30)
-  const svgExport = new SvgExport(exportComponent.contentRect)
+  exportComponent.contentBounds = new Rect(0, 0, 30, 30)
+  const svgExport = new SvgExport(exportComponent.contentBounds)
   const dataUrl = SvgExport.encodeSvgDataUrl(
     SvgExport.exportSvgString(svgExport.exportSvg(exportComponent))
   )
   const div = document.createElement('div')
-  div.setAttribute('style', 'width: 30px; height: 30px; margin: 0 10px;')
+  div.setAttribute('style', 'width: 30px; height: 30px; margin: 0 10px; touch-action: none;')
   div.setAttribute('title', 'Draggable Port')
   const img = document.createElement('img')
   img.setAttribute('style', 'width: auto; height: auto;')
@@ -3247,7 +3594,7 @@ function createDraggablePort(): HTMLDivElement {
       true,
       dragPreview
     )
-    dragSource.addQueryContinueDragListener((_, evt) => {
+    dragSource.addEventListener('query-continue-drag', (evt) => {
       if (evt.dropTarget === null) {
         dragPreview.classList.remove('hidden')
       } else {
@@ -3257,7 +3604,7 @@ function createDraggablePort(): HTMLDivElement {
   }
 
   img.addEventListener(
-    'mousedown',
+    'pointerdown',
     (event) => {
       startDrag()
       event.preventDefault()
@@ -3265,27 +3612,18 @@ function createDraggablePort(): HTMLDivElement {
     false
   )
 
-  img.addEventListener(
-    'touchstart',
-    (event) => {
-      startDrag()
-      event.preventDefault()
-    },
-    { passive: false }
-  )
-
   return div
 }
 
 function setupToolTips(): void {
   editorMode.toolTipItems = GraphItemTypes.NODE
-  editorMode.addQueryItemToolTipListener((_, evt) => {
+  editorMode.addEventListener('query-item-tool-tip', (evt) => {
     evt.toolTip = `ToolTip for ${evt.item}`
     evt.handled = true
   })
 
   viewerMode.toolTipItems = GraphItemTypes.NODE
-  viewerMode.addQueryItemToolTipListener((_, evt) => {
+  viewerMode.addEventListener('query-item-tool-tip', (evt) => {
     evt.toolTip = `ToolTip for ${evt.item}`
     evt.handled = true
   })
@@ -3293,14 +3631,12 @@ function setupToolTips(): void {
 
 function setupContextMenu(): void {
   editorMode.contextMenuItems = GraphItemTypes.NODE
-  editorMode.addPopulateItemContextMenuListener((_, evt) => {
-    evt.showMenu = false
+  editorMode.addEventListener('populate-item-context-menu', (evt) => {
     evt.handled = true
   })
 
   viewerMode.contextMenuItems = GraphItemTypes.NODE
-  viewerMode.addPopulateItemContextMenuListener((_, evt) => {
-    evt.showMenu = false
+  viewerMode.addEventListener('populate-item-context-menu', (evt) => {
     evt.handled = true
   })
 }
@@ -3309,8 +3645,10 @@ function enableFolding(): void {
   const graph = graphComponent.graph
 
   // enabled changing ports
-  const decorator = graph.decorator.edgeDecorator.edgeReconnectionPortCandidateProviderDecorator
-  decorator.setImplementation(IEdgeReconnectionPortCandidateProvider.ALL_NODE_AND_EDGE_CANDIDATES)
+  const decorator = graph.decorator.edges.reconnectionPortCandidateProvider
+  decorator.addFactory((edge) =>
+    IEdgeReconnectionPortCandidateProvider.fromAllNodeAndEdgeCandidates(edge)
+  )
 
   manager = new FoldingManager(graph)
   foldingView = manager.createFoldingView()
@@ -3332,13 +3670,13 @@ function bindEventCheckBoxes() {
   for (let i = 0; i < elements.length; i++) {
     const element = elements[i]
 
-    element.addEventListener('click', (e: Event) => {
+    element.addEventListener('click', (_: Event) => {
       const eventKind = element.getAttribute('data-event-kind')
       if (eventKind) {
         const enable = element.checked
         const fn = enable
           ? (eventRegistration as any)[`register${eventKind}Events`]
-          : (eventRegistration as any)[`deregister${eventKind}Events`]
+          : (eventRegistration as any)[`unregister${eventKind}Events`]
         if (typeof fn === 'function') {
           fn()
         } else if (typeof window.console !== 'undefined') {
@@ -3384,31 +3722,18 @@ let graphComponent: GraphComponent
  * Returns the number of affected items as string.
  * @param sender The source of the event
  */
-function getAffectedItems(sender: object): string {
-  let items: IEnumerable<IModelItem> | null = null
+function getAffectedItems(sender: MoveInputMode | HandleInputMode): string {
+  let items = sender.affectedItems
 
-  const mim = sender instanceof MoveInputMode ? sender : null
-  if (mim) {
-    items = mim.affectedItems
-  }
-
-  const him = sender instanceof HandleInputMode ? sender : null
-  if (him) {
-    items = him.affectedItems
-  }
-
-  if (items) {
-    const nodeCount = items.ofType(INode.$class).size
-    const edgeCount = items.ofType(IEdge.$class).size
-    const bendCount = items.ofType(IBend.$class).size
-    const labelCount = items.ofType(ILabel.$class).size
-    const portCount = items.ofType(IPort.$class).size
-    return (
-      `(${items.size} items: ${nodeCount} nodes, ${bendCount} bends, ${edgeCount} edges,` +
-      ` ${labelCount} labels, ${portCount} ports)`
-    )
-  }
-  return ''
+  const nodeCount = items.ofType(INode).size
+  const edgeCount = items.ofType(IEdge).size
+  const bendCount = items.ofType(IBend).size
+  const labelCount = items.ofType(ILabel).size
+  const portCount = items.ofType(IPort).size
+  return (
+    `(${items.size} items: ${nodeCount} nodes, ${bendCount} bends, ${edgeCount} edges,` +
+    ` ${labelCount} labels, ${portCount} ports)`
+  )
 }
 
 /**
@@ -3448,4 +3773,5 @@ function initOptionHeadings(): void {
     })
   }
 }
+
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -1537,57 +1537,33 @@ body.loaded .hide-before-loaded {
   visibility: visible;
 }
 .elevation-1 {
-  box-shadow:
-    0 1px 3px 0 rgba(0, 0, 0, 0.2),
-    0 1px 1px 0 rgba(0, 0, 0, 0.14),
-    0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
 /* Floating Buttons */
 .elevation-2 {
-  box-shadow:
-    0 1px 5px 0 rgba(0, 0, 0, 0.2),
-    0 2px 2px 0 rgba(0, 0, 0, 0.14),
-    0 3px 1px -2px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12);
 }
 .elevation-3 {
-  box-shadow:
-    0 1px 8px 0 rgba(0, 0, 0, 0.2),
-    0 3px 4px 0 rgba(0, 0, 0, 0.14),
-    0 3px 3px -2px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 4px 0 rgba(0, 0, 0, 0.14), 0 3px 3px -2px rgba(0, 0, 0, 0.12);
 }
 /* header */
 .elevation-4 {
-  box-shadow:
-    0 2px 4px -1px rgba(0, 0, 0, 0.2),
-    0px 4px 5px 0px rgba(0, 0, 0, 0.14),
-    0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
 }
 /* Menu, Floating Buttons:hover */
 .elevation-8 {
-  box-shadow:
-    0 5px 5px -3px rgba(0, 0, 0, 0.2),
-    0px 8px 10px 1px rgba(0, 0, 0, 0.14),
-    0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 .elevation-12 {
-  box-shadow:
-    0 7px 8px -4px rgba(0, 0, 0, 0.2),
-    0px 12px 17px 2px rgba(0, 0, 0, 0.14),
-    0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12);
 }
 /* Nav Drawer */
 .elevation-16 {
-  box-shadow:
-    0 8px 10px -5px rgba(0, 0, 0, 0.2),
-    0px 16px 24px 2px rgba(0, 0, 0, 0.14),
-    0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
 }
 /* Dialog */
 .elevation-24 {
-  box-shadow:
-    0 11px 15px -7px rgba(0, 0, 0, 0.2),
-    0px 24px 38px 3px rgba(0, 0, 0, 0.14),
-    0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
 }
 .layer-0 {
   z-index: 0;
@@ -1630,7 +1606,6 @@ body {
   height: 100%;
   background-color: white;
   touch-action: none;
-  -ms-touch-action: none;
   overflow: hidden;
 }
 body {
@@ -1638,9 +1613,7 @@ body {
      - otherwise, event coordinates will be wrong if scrolling
      is re-enabled later */
   display: grid;
-  grid-template-columns:
-    clamp(var(--description-min-width), var(--description-width), var(--description-max-width))
-    1fr;
+  grid-template-columns: clamp(var(--description-min-width), var(--description-width), var(--description-max-width)) 1fr;
   grid-template-rows: 60px auto 1fr;
   grid-template-areas: 'sidebar header' 'sidebar toolbar' 'sidebar content';
   transition: grid-template 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
@@ -1653,7 +1626,7 @@ body.demo-left-hidden {
     grid-template-rows: 30px auto 1fr;
   }
 }
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 640px ) {
   body {
     grid-template-columns: 100% 100%;
   }
@@ -1673,6 +1646,11 @@ body.demo-left-hidden {
 .yfiles-group-node-icon .yfiles-icon-foreground > * {
   transition: transform 0.3s;
 }
+.yfiles-canvascomponent {
+  --yfiles-theme-primary: #38434f;
+  --yfiles-theme-background: #fff;
+  --yfiles-theme-scale: 1.4;
+}
 .demo-page__main {
   position: relative;
   grid-area: content;
@@ -1691,12 +1669,10 @@ body:not(.loaded) .demo-page__main:after {
   top: 0;
   left: 0;
   z-index: 999;
-  background: #fff
-    url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMy42NCAyNS4wMiIgaWQ9InN2ZzUxMDUiPg0KICA8ZyBpZD0ibGF5ZXIxIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtOTMuODEgLTExMS4xMykiPg0KICAgIDxnIGlkPSJnNTczNiIgdHJhbnNmb3JtPSJtYXRyaXgoLjI2NDU4IDAgMCAuMjY0NTggOTAuNjMgMTA4LjY1KSI+DQogICAgICA8cGF0aCBpZD0icGF0aDU2NTIiIGQ9Ik0xMi4zOSA0Ny4yOWwuMSAxOS4zYTI3Ljc0IDI3Ljc0IDAgMCAwIDEzLjkgMjMuOGwxNi44IDkuNmEyNy4zMiAyNy4zMiAwIDAgMCAyNy41LS4yTDg3LjM5IDkwQTI3LjQ0IDI3LjQ0IDAgMCAwIDEwMSA2Ni4wOWwtLjEtMTkuNEEyNy44NiAyNy44NiAwIDAgMCA4NyAyMi44OWwtMTYuNy05LjVhMjcuMzIgMjcuMzIgMCAwIDAtMjcuNS4ybC0xNi43IDkuOGEyNy41IDI3LjUgMCAwIDAtMTMuNyAyMy45IiBmaWxsPSIjMjQyMjY1Ii8+DQogICAgICA8ZyBpZD0iZzU2NzYiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1IDkpIj4NCiAgICAgICAgPGcgaWQ9Imc1Njc0IiB0cmFuc2Zvcm09InJvdGF0ZSg1NCkiPg0KICAgICAgICAgIDxwYXRoIGlkPSJwYXRoNTY1NCIgZD0iTTY2Ljg5LTIwLjA0bC4xIDQuOGMuMiAyLjQuOCA0LjUgMi4zIDYuNSAxLjMgMS44IDMgMyA1IDRsMi41IDEuNWMyIDEuNSAxLjMgMy4yLTIuMyAxLjJsLTMtMS42YTExLjYgMTEuNiAwIDAgMC0xMC40LS4zbC0zLjkgMi4xYy00IDEtMi41LTEgMS0zLjEgMy0xLjUgNS4xLTQuMSA2LTcuMy40LTEuNS42LTMgLjUtNC42di0zLjdjLS41LTQgMi44LTQgMi4yLjV6IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgPGcgaWQ9Imc1NjYwIj4NCiAgICAgICAgICAgIDxnIGlkPSJnNTY1OCIgY2xhc3M9IndvYmJsZSIgc3R5bGU9InRyYW5zZm9ybS1vcmlnaW46NjdweCAwcHg7YW5pbWF0aW9uLWRlbGF5Oi4xMjVzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1NjU2IiBkPSJNNjUuNjEtMzguMzRjLTEuMyAwLTIuNS42LTMuNSAxLjVhNiA2IDAgMCAwLTEuNiA2LjNjLjQgMS4yIDEgMi4zIDEuOCAzLjRsMS4yIDIuMmMuOCAxLjYgMS4yIDMuMyAxLjQgNXYzLjFjMCAxLS4zIDQuOSAxIDQuOSAxLjQgMCAxLjMtMy44IDEuMi00Ljl2LTIuNmMwLTEuNi40LTMuMiAxLTQuNy41LTEuMiAxLjItMi4zIDEuOC0zLjQuNy0xLjIgMS40LTIuNSAxLjYtMy45YTYgNiAwIDAgMC0xLjctNS40IDUuNiA1LjYgMCAwIDAtNC4yLTEuNSIgZmlsbD0iIzAwZDhmZiIvPg0KICAgICAgICAgICAgPC9nPg0KICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8ZyBpZD0iZzU2NjYiIHRyYW5zZm9ybT0icm90YXRlKDEyMCA0NS45IDQ4LjcpIj4NCiAgICAgICAgICAgIDxnIGlkPSJnNTY2NCIgY2xhc3M9IndvYmJsZSIgc3R5bGU9InRyYW5zZm9ybS1vcmlnaW46LTE0LjVweCA0OHB4O2FuaW1hdGlvbi1kZWxheTouNDVzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1NjYyIiBkPSJNLTEzLjk4IDMwLjMyYy0xLjMgMC0yLjUuNi0zLjUgMS41YTYgNiAwIDAgMC0xLjYgNi4zYy40IDEuMiAxIDIuMyAxLjggMy40bDEuMiAyLjJjLjggMS42IDEuMiAzLjMgMS40IDV2My4xYzAgMS0uMyA0LjkgMSA0LjkgMS40IDAgMS4zLTMuOCAxLjItNC45di0yLjZjMC0xLjYuNC0zLjIgMS00LjcuNS0xLjIgMS4yLTIuMyAxLjgtMy40LjctMS4yIDEuNC0yLjUgMS42LTMuOWE2IDYgMCAwIDAtMS43LTUuNCA1LjYgNS42IDAgMCAwLTQuMi0xLjUiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8L2c+DQogICAgICAgICAgPGcgaWQ9Imc1NjcyIiB0cmFuc2Zvcm09InJvdGF0ZSgtMTIwIDQ1LjkgNDguNykiPg0KICAgICAgICAgICAgPGcgaWQ9Imc1NjcwIiBjbGFzcz0id29iYmxlIiBzdHlsZT0idHJhbnNmb3JtLW9yaWdpbjo4NnB4IDg5cHg7YW5pbWF0aW9uLWRlbGF5Oi43OXMiPg0KICAgICAgICAgICAgICA8cGF0aCBpZD0icGF0aDU2NjgiIGQ9Ik04NC44NSA2NC43NWMtMS4zIDAtMi41LjYtMy41IDEuNWE2IDYgMCAwIDAtMS42IDYuM2MuNCAxLjIgMSAyLjMgMS44IDMuNGwxLjIgMi4yYy44IDEuNiAxLjIgMy4zIDEuNCA1djMuMWMwIDEtLjMgNC45IDEgNC45IDEuNCAwIDEuMy0zLjggMS4yLTQuOXYtMi42YzAtMS42LjQtMy4yIDEtNC43LjUtMS4yIDEuMi0yLjMgMS44LTMuNC43LTEuMiAxLjQtMi41IDEuNi0zLjlhNiA2IDAgMCAwLTEuNy01LjQgNS42IDUuNiAwIDAgMC00LjItMS41IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgICA8L2c+DQogICAgICAgICAgPC9nPg0KICAgICAgICA8L2c+DQogICAgICA8L2c+DQogICAgICA8ZyBpZD0iZzU3MDAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDkgNikiPg0KICAgICAgICA8ZyBpZD0iZzU2OTgiIHRyYW5zZm9ybT0icm90YXRlKDEwKSI+DQogICAgICAgICAgPHBhdGggaWQ9InBhdGg1Njc4IiBkPSJNNTQuMjMgMjguMzVsLjEgNC44Yy4yIDIuNC44IDQuNSAyLjMgNi41IDEuMyAxLjggMyAzIDUgNGwyLjUgMS41YzIgMS41IDEuMyAzLjItMi4zIDEuMmwtMy0xLjZhMTEuNiAxMS42IDAgMCAwLTEwLjQtLjNsLTMuOSAyLjFjLTQgMS0yLjUtMSAxLTMuMSAzLTEuNSA1LjEtNC4xIDYtNy4zLjQtMS41LjYtMyAuNS00LjZ2LTMuN2MtLjUtNCAyLjgtNCAyLjIuNXoiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICA8ZyBpZD0iZzU2ODQiPg0KICAgICAgICAgICAgPGcgaWQ9Imc1NjgyIiBjbGFzcz0id29iYmxlIiBzdHlsZT0idHJhbnNmb3JtLW9yaWdpbjogNTNweCAzM3B4OyI+DQogICAgICAgICAgICAgIDxwYXRoIGlkPSJwYXRoNTY4MCIgZD0iTTUyLjcxIDEwLjA5Yy0xLjMgMC0yLjUuNi0zLjUgMS41YTYgNiAwIDAgMC0xLjYgNi4zYy40IDEuMiAxIDIuMyAxLjggMy40bDEuMiAyLjJjLjggMS42IDEuMiAzLjMgMS40IDV2My4xYzAgMS0uMyA0LjkgMSA0LjkgMS40IDAgMS4zLTMuOCAxLjItNC45di0yLjZjMC0xLjYuNC0zLjIgMS00LjcuNS0xLjIgMS4yLTIuMyAxLjgtMy40LjctMS4yIDEuNC0yLjUgMS42LTMuOWE2IDYgMCAwIDAtMS43LTUuNCA1LjYgNS42IDAgMCAwLTQuMi0xLjUiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8L2c+DQogICAgICAgICAgPGcgaWQ9Imc1NjkwIiB0cmFuc2Zvcm09InJvdGF0ZSgxMjAgNDUuOSA0OC43KSI+DQogICAgICAgICAgICA8ZyBpZD0iZzU2ODgiIGNsYXNzPSJ3b2JibGUiIHN0eWxlPSJ0cmFuc2Zvcm0tb3JpZ2luOjM3cHggNTBweDthbmltYXRpb24tZGVsYXk6LjMzMzNzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1Njg2IiBkPSJNMzQuMzQgMTYuMzljLTEuMyAwLTIuNS42LTMuNSAxLjVhNiA2IDAgMCAwLTEuNiA2LjNjLjQgMS4yIDEgMi4zIDEuOCAzLjRsMS4yIDIuMmMuOCAxLjYgMS4yIDMuMyAxLjQgNXYzLjFjMCAxLS4zIDQuOSAxIDQuOSAxLjQgMCAxLjMtMy44IDEuMi00Ljl2LTIuNmMwLTEuNi40LTMuMiAxLTQuNy41LTEuMiAxLjItMi4zIDEuOC0zLjQuNy0xLjIgMS40LTIuNSAxLjYtMy45YTYgNiAwIDAgMC0xLjctNS40IDUuNiA1LjYgMCAwIDAtNC4yLTEuNSIgZmlsbD0iIzAwZDhmZiIvPg0KICAgICAgICAgICAgPC9nPg0KICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8ZyBpZD0iZzU2OTYiIHRyYW5zZm9ybT0icm90YXRlKC0xMjAgNDUuOSA0OC43KSI+DQogICAgICAgICAgICA8ZyBpZD0iZzU2OTQiIGNsYXNzPSJ3b2JibGUiIHN0eWxlPSJ0cmFuc2Zvcm0tb3JpZ2luOjQ5cHggNTNweDthbmltYXRpb24tZGVsYXk6LjY2NnMiPg0KICAgICAgICAgICAgICA8cGF0aCBpZD0icGF0aDU2OTIiIGQ9Ik00OS4wMSAyOC45MmMtMS4zIDAtMi41LjYtMy41IDEuNWE2IDYgMCAwIDAtMS42IDYuM2MuNCAxLjIgMSAyLjMgMS44IDMuNGwxLjIgMi4yYy44IDEuNiAxLjIgMy4zIDEuNCA1djMuMWMwIDEtLjMgNC45IDEgNC45IDEuNCAwIDEuMy0zLjggMS4yLTQuOXYtMi42YzAtMS42LjQtMy4yIDEtNC43LjUtMS4yIDEuMi0yLjMgMS44LTMuNC43LTEuMiAxLjQtMi41IDEuNi0zLjlhNiA2IDAgMCAwLTEuNy01LjQgNS42IDUuNiAwIDAgMC00LjItMS41IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgICA8L2c+DQogICAgICAgICAgPC9nPg0KICAgICAgICA8L2c+DQogICAgICA8L2c+DQogICAgPC9nPg0KICA8L2c+DQogIDxzdHlsZSBpZD0ic3R5bGU1NjUwIj4NCiAgICBAa2V5ZnJhbWVzIHdvYmJsZSB7DQogICAgMCUsDQogICAgMzMlLA0KICAgIHRvIHsNCiAgICB0cmFuc2Zvcm06IHNjYWxlKDEpOw0KICAgIH0NCiAgICA1MCUgew0KICAgIHRyYW5zZm9ybTogc2NhbGUoMC45NSk7DQogICAgfQ0KICAgIDY2JSB7DQogICAgdHJhbnNmb3JtOiBzY2FsZSgxLjE1KTsNCiAgICB9DQogICAgfQ0KICAgIC53b2JibGUgew0KICAgIGFuaW1hdGlvbjogd29iYmxlIDFzIGVhc2UtaW4tb3V0IGluZmluaXRlOw0KICAgIHRyYW5zZm9ybS1vcmlnaW46IDUyLjNweCAzNC40NXB4Ow0KICAgIH0NCiAgPC9zdHlsZT4NCjwvc3ZnPg==)
-    no-repeat center;
+  background: #fff url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMy42NCAyNS4wMiIgaWQ9InN2ZzUxMDUiPg0KICA8ZyBpZD0ibGF5ZXIxIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtOTMuODEgLTExMS4xMykiPg0KICAgIDxnIGlkPSJnNTczNiIgdHJhbnNmb3JtPSJtYXRyaXgoLjI2NDU4IDAgMCAuMjY0NTggOTAuNjMgMTA4LjY1KSI+DQogICAgICA8cGF0aCBpZD0icGF0aDU2NTIiIGQ9Ik0xMi4zOSA0Ny4yOWwuMSAxOS4zYTI3Ljc0IDI3Ljc0IDAgMCAwIDEzLjkgMjMuOGwxNi44IDkuNmEyNy4zMiAyNy4zMiAwIDAgMCAyNy41LS4yTDg3LjM5IDkwQTI3LjQ0IDI3LjQ0IDAgMCAwIDEwMSA2Ni4wOWwtLjEtMTkuNEEyNy44NiAyNy44NiAwIDAgMCA4NyAyMi44OWwtMTYuNy05LjVhMjcuMzIgMjcuMzIgMCAwIDAtMjcuNS4ybC0xNi43IDkuOGEyNy41IDI3LjUgMCAwIDAtMTMuNyAyMy45IiBmaWxsPSIjMjQyMjY1Ii8+DQogICAgICA8ZyBpZD0iZzU2NzYiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE1IDkpIj4NCiAgICAgICAgPGcgaWQ9Imc1Njc0IiB0cmFuc2Zvcm09InJvdGF0ZSg1NCkiPg0KICAgICAgICAgIDxwYXRoIGlkPSJwYXRoNTY1NCIgZD0iTTY2Ljg5LTIwLjA0bC4xIDQuOGMuMiAyLjQuOCA0LjUgMi4zIDYuNSAxLjMgMS44IDMgMyA1IDRsMi41IDEuNWMyIDEuNSAxLjMgMy4yLTIuMyAxLjJsLTMtMS42YTExLjYgMTEuNiAwIDAgMC0xMC40LS4zbC0zLjkgMi4xYy00IDEtMi41LTEgMS0zLjEgMy0xLjUgNS4xLTQuMSA2LTcuMy40LTEuNS42LTMgLjUtNC42di0zLjdjLS41LTQgMi44LTQgMi4yLjV6IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgPGcgaWQ9Imc1NjYwIj4NCiAgICAgICAgICAgIDxnIGlkPSJnNTY1OCIgY2xhc3M9IndvYmJsZSIgc3R5bGU9InRyYW5zZm9ybS1vcmlnaW46NjdweCAwcHg7YW5pbWF0aW9uLWRlbGF5Oi4xMjVzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1NjU2IiBkPSJNNjUuNjEtMzguMzRjLTEuMyAwLTIuNS42LTMuNSAxLjVhNiA2IDAgMCAwLTEuNiA2LjNjLjQgMS4yIDEgMi4zIDEuOCAzLjRsMS4yIDIuMmMuOCAxLjYgMS4yIDMuMyAxLjQgNXYzLjFjMCAxLS4zIDQuOSAxIDQuOSAxLjQgMCAxLjMtMy44IDEuMi00Ljl2LTIuNmMwLTEuNi40LTMuMiAxLTQuNy41LTEuMiAxLjItMi4zIDEuOC0zLjQuNy0xLjIgMS40LTIuNSAxLjYtMy45YTYgNiAwIDAgMC0xLjctNS40IDUuNiA1LjYgMCAwIDAtNC4yLTEuNSIgZmlsbD0iIzAwZDhmZiIvPg0KICAgICAgICAgICAgPC9nPg0KICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8ZyBpZD0iZzU2NjYiIHRyYW5zZm9ybT0icm90YXRlKDEyMCA0NS45IDQ4LjcpIj4NCiAgICAgICAgICAgIDxnIGlkPSJnNTY2NCIgY2xhc3M9IndvYmJsZSIgc3R5bGU9InRyYW5zZm9ybS1vcmlnaW46LTE0LjVweCA0OHB4O2FuaW1hdGlvbi1kZWxheTouNDVzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1NjYyIiBkPSJNLTEzLjk4IDMwLjMyYy0xLjMgMC0yLjUuNi0zLjUgMS41YTYgNiAwIDAgMC0xLjYgNi4zYy40IDEuMiAxIDIuMyAxLjggMy40bDEuMiAyLjJjLjggMS42IDEuMiAzLjMgMS40IDV2My4xYzAgMS0uMyA0LjkgMSA0LjkgMS40IDAgMS4zLTMuOCAxLjItNC45di0yLjZjMC0xLjYuNC0zLjIgMS00LjcuNS0xLjIgMS4yLTIuMyAxLjgtMy40LjctMS4yIDEuNC0yLjUgMS42LTMuOWE2IDYgMCAwIDAtMS43LTUuNCA1LjYgNS42IDAgMCAwLTQuMi0xLjUiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8L2c+DQogICAgICAgICAgPGcgaWQ9Imc1NjcyIiB0cmFuc2Zvcm09InJvdGF0ZSgtMTIwIDQ1LjkgNDguNykiPg0KICAgICAgICAgICAgPGcgaWQ9Imc1NjcwIiBjbGFzcz0id29iYmxlIiBzdHlsZT0idHJhbnNmb3JtLW9yaWdpbjo4NnB4IDg5cHg7YW5pbWF0aW9uLWRlbGF5Oi43OXMiPg0KICAgICAgICAgICAgICA8cGF0aCBpZD0icGF0aDU2NjgiIGQ9Ik04NC44NSA2NC43NWMtMS4zIDAtMi41LjYtMy41IDEuNWE2IDYgMCAwIDAtMS42IDYuM2MuNCAxLjIgMSAyLjMgMS44IDMuNGwxLjIgMi4yYy44IDEuNiAxLjIgMy4zIDEuNCA1djMuMWMwIDEtLjMgNC45IDEgNC45IDEuNCAwIDEuMy0zLjggMS4yLTQuOXYtMi42YzAtMS42LjQtMy4yIDEtNC43LjUtMS4yIDEuMi0yLjMgMS44LTMuNC43LTEuMiAxLjQtMi41IDEuNi0zLjlhNiA2IDAgMCAwLTEuNy01LjQgNS42IDUuNiAwIDAgMC00LjItMS41IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgICA8L2c+DQogICAgICAgICAgPC9nPg0KICAgICAgICA8L2c+DQogICAgICA8L2c+DQogICAgICA8ZyBpZD0iZzU3MDAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDkgNikiPg0KICAgICAgICA8ZyBpZD0iZzU2OTgiIHRyYW5zZm9ybT0icm90YXRlKDEwKSI+DQogICAgICAgICAgPHBhdGggaWQ9InBhdGg1Njc4IiBkPSJNNTQuMjMgMjguMzVsLjEgNC44Yy4yIDIuNC44IDQuNSAyLjMgNi41IDEuMyAxLjggMyAzIDUgNGwyLjUgMS41YzIgMS41IDEuMyAzLjItMi4zIDEuMmwtMy0xLjZhMTEuNiAxMS42IDAgMCAwLTEwLjQtLjNsLTMuOSAyLjFjLTQgMS0yLjUtMSAxLTMuMSAzLTEuNSA1LjEtNC4xIDYtNy4zLjQtMS41LjYtMyAuNS00LjZ2LTMuN2MtLjUtNCAyLjgtNCAyLjIuNXoiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICA8ZyBpZD0iZzU2ODQiPg0KICAgICAgICAgICAgPGcgaWQ9Imc1NjgyIiBjbGFzcz0id29iYmxlIiBzdHlsZT0idHJhbnNmb3JtLW9yaWdpbjogNTNweCAzM3B4OyI+DQogICAgICAgICAgICAgIDxwYXRoIGlkPSJwYXRoNTY4MCIgZD0iTTUyLjcxIDEwLjA5Yy0xLjMgMC0yLjUuNi0zLjUgMS41YTYgNiAwIDAgMC0xLjYgNi4zYy40IDEuMiAxIDIuMyAxLjggMy40bDEuMiAyLjJjLjggMS42IDEuMiAzLjMgMS40IDV2My4xYzAgMS0uMyA0LjkgMSA0LjkgMS40IDAgMS4zLTMuOCAxLjItNC45di0yLjZjMC0xLjYuNC0zLjIgMS00LjcuNS0xLjIgMS4yLTIuMyAxLjgtMy40LjctMS4yIDEuNC0yLjUgMS42LTMuOWE2IDYgMCAwIDAtMS43LTUuNCA1LjYgNS42IDAgMCAwLTQuMi0xLjUiIGZpbGw9IiMwMGQ4ZmYiLz4NCiAgICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8L2c+DQogICAgICAgICAgPGcgaWQ9Imc1NjkwIiB0cmFuc2Zvcm09InJvdGF0ZSgxMjAgNDUuOSA0OC43KSI+DQogICAgICAgICAgICA8ZyBpZD0iZzU2ODgiIGNsYXNzPSJ3b2JibGUiIHN0eWxlPSJ0cmFuc2Zvcm0tb3JpZ2luOjM3cHggNTBweDthbmltYXRpb24tZGVsYXk6LjMzMzNzIj4NCiAgICAgICAgICAgICAgPHBhdGggaWQ9InBhdGg1Njg2IiBkPSJNMzQuMzQgMTYuMzljLTEuMyAwLTIuNS42LTMuNSAxLjVhNiA2IDAgMCAwLTEuNiA2LjNjLjQgMS4yIDEgMi4zIDEuOCAzLjRsMS4yIDIuMmMuOCAxLjYgMS4yIDMuMyAxLjQgNXYzLjFjMCAxLS4zIDQuOSAxIDQuOSAxLjQgMCAxLjMtMy44IDEuMi00Ljl2LTIuNmMwLTEuNi40LTMuMiAxLTQuNy41LTEuMiAxLjItMi4zIDEuOC0zLjQuNy0xLjIgMS40LTIuNSAxLjYtMy45YTYgNiAwIDAgMC0xLjctNS40IDUuNiA1LjYgMCAwIDAtNC4yLTEuNSIgZmlsbD0iIzAwZDhmZiIvPg0KICAgICAgICAgICAgPC9nPg0KICAgICAgICAgIDwvZz4NCiAgICAgICAgICA8ZyBpZD0iZzU2OTYiIHRyYW5zZm9ybT0icm90YXRlKC0xMjAgNDUuOSA0OC43KSI+DQogICAgICAgICAgICA8ZyBpZD0iZzU2OTQiIGNsYXNzPSJ3b2JibGUiIHN0eWxlPSJ0cmFuc2Zvcm0tb3JpZ2luOjQ5cHggNTNweDthbmltYXRpb24tZGVsYXk6LjY2NnMiPg0KICAgICAgICAgICAgICA8cGF0aCBpZD0icGF0aDU2OTIiIGQ9Ik00OS4wMSAyOC45MmMtMS4zIDAtMi41LjYtMy41IDEuNWE2IDYgMCAwIDAtMS42IDYuM2MuNCAxLjIgMSAyLjMgMS44IDMuNGwxLjIgMi4yYy44IDEuNiAxLjIgMy4zIDEuNCA1djMuMWMwIDEtLjMgNC45IDEgNC45IDEuNCAwIDEuMy0zLjggMS4yLTQuOXYtMi42YzAtMS42LjQtMy4yIDEtNC43LjUtMS4yIDEuMi0yLjMgMS44LTMuNC43LTEuMiAxLjQtMi41IDEuNi0zLjlhNiA2IDAgMCAwLTEuNy01LjQgNS42IDUuNiAwIDAgMC00LjItMS41IiBmaWxsPSIjMDBkOGZmIi8+DQogICAgICAgICAgICA8L2c+DQogICAgICAgICAgPC9nPg0KICAgICAgICA8L2c+DQogICAgICA8L2c+DQogICAgPC9nPg0KICA8L2c+DQogIDxzdHlsZSBpZD0ic3R5bGU1NjUwIj4NCiAgICBAa2V5ZnJhbWVzIHdvYmJsZSB7DQogICAgMCUsDQogICAgMzMlLA0KICAgIHRvIHsNCiAgICB0cmFuc2Zvcm06IHNjYWxlKDEpOw0KICAgIH0NCiAgICA1MCUgew0KICAgIHRyYW5zZm9ybTogc2NhbGUoMC45NSk7DQogICAgfQ0KICAgIDY2JSB7DQogICAgdHJhbnNmb3JtOiBzY2FsZSgxLjE1KTsNCiAgICB9DQogICAgfQ0KICAgIC53b2JibGUgew0KICAgIGFuaW1hdGlvbjogd29iYmxlIDFzIGVhc2UtaW4tb3V0IGluZmluaXRlOw0KICAgIHRyYW5zZm9ybS1vcmlnaW46IDUyLjNweCAzNC40NXB4Ow0KICAgIH0NCiAgPC9zdHlsZT4NCjwvc3ZnPg==) no-repeat center;
   background-size: 200px;
 }
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 640px ) {
   .demo-page__main {
     min-width: 100vw;
   }
@@ -1716,10 +1692,7 @@ body:not(.loaded) .demo-page__main:after {
   font-family: Tahoma, Verdana, sans-serif;
   font-size: 14px;
   letter-spacing: 1px;
-  transition:
-    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .flat-button.secondary {
   border: thin solid #4caf50;
@@ -1741,14 +1714,11 @@ body:not(.loaded) .demo-page__main:after {
   height: 230px;
   background: #f7f7f7;
   overflow: hidden;
-  box-shadow:
-    0 2px 4px -1px rgba(0, 0, 0, 0.2),
-    0px 4px 5px 0px rgba(0, 0, 0, 0.14),
-    0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
   z-index: 4;
   transition: height 1s cubic-bezier(0.23, 1, 0.32, 1) 0s;
 }
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 640px ) {
   .demo-overlay {
     visibility: hidden;
   }
@@ -1820,7 +1790,6 @@ body:not(.loaded) .demo-page__main:after {
 }
 .demo-dialog * {
   box-sizing: border-box;
-  -moz-box-sizing: border-box;
 }
 .demo-dialog__title {
   padding-left: 10px;
@@ -1900,9 +1869,7 @@ body:not(.loaded) .demo-page__main:after {
   bottom: 0;
   right: 0;
   width: 320px;
-  font:
-    20px Tahoma,
-    sans-serif;
+  font: 20px Tahoma, sans-serif;
   padding: 1em;
   box-sizing: border-box;
 }
@@ -1936,7 +1903,6 @@ body:not(.loaded) .demo-page__main:after {
   top: 50%;
   width: 100%;
   height: 200px;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   margin-top: -100px;
   background-color: rgba(0, 0, 0, 0.6);
@@ -1961,9 +1927,7 @@ body:not(.loaded) .demo-page__main:after {
   height: 100%;
   background-color: #ffffff;
 }
-rect:not(.yfiles-node-highlight-inner-template):not(.yfiles-node-highlight-middle-template):not(
-    .yfiles-node-highlight-outer-template
-  ).yfiles-node-highlight-template {
+rect.yfiles-node-highlight-template {
   stroke: darkgray;
 }
 .demo-context-menu {
@@ -2106,7 +2070,7 @@ rect:not(.yfiles-node-highlight-inner-template):not(.yfiles-node-highlight-middl
   width: 60px;
   height: 60px;
 }
-@media screen and (max-width: 960px) {
+@media screen and (max-width: 960px ) {
   .demo-header__right > * {
     margin: 0 5px;
     width: 30px;
@@ -2309,7 +2273,7 @@ body:not(.loaded) .demo-page__toolbar:after {
 .demo-page__toolbar .demo-toggle-button:checked:active + label {
   background-color: #b2b2b2;
 }
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 640px ) {
   .demo-page__toolbar button.demo-unimportant {
     display: none;
   }
@@ -2344,9 +2308,7 @@ body:not(.loaded) .demo-page__toolbar:after {
 .demo-page__toolbar .overflow-button {
   position: absolute;
   right: 4px;
-  background: #ebeef0
-    url("data:image/svg+xml,%3Csvg fill='%23666' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z'/%3E%3C/svg%3E")
-    no-repeat center 4px;
+  background: #ebeef0 url("data:image/svg+xml,%3Csvg fill='%23666' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z'/%3E%3C/svg%3E") no-repeat center 4px;
 }
 .demo-page__toolbar .overflow-button.hidden {
   display: none;
@@ -2365,10 +2327,7 @@ body:not(.loaded) .demo-page__toolbar:after {
   right: 0;
   width: 200px;
   background-color: #f7f7f7;
-  box-shadow:
-    0 2px 4px -1px rgba(0, 0, 0, 0.2),
-    0px 4px 5px 0px rgba(0, 0, 0, 0.14),
-    0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
   visibility: collapse;
   z-index: 1000;
 }
@@ -2413,54 +2372,26 @@ body:not(.loaded) .demo-page__toolbar:after {
     line-height: 24px;
   }
 }
-.demo-page__toolbar
-  .overflow-container__content
-  > *:not(.labeled)[class^='demo-icon-'][title]::after,
-.demo-page__toolbar
-  .overflow-container__content
-  > button:not(.labeled)[class^='demo-icon-'][title]::after,
-.demo-page__toolbar
-  .overflow-container__content
-  > label:not(.labeled)[class^='demo-icon-'][title]::after,
-.demo-page__toolbar
-  .overflow-container__content
-  > .demo-toggle-button
-  + label:not(.labeled)[class^='demo-icon-'][title]::after,
-.demo-page__toolbar
-  .overflow-container__content
-  > .demo-toggle-button.labeled
-  + label:not(.labeled)[class^='demo-icon-'][title]::after,
-.demo-page__toolbar
-  .overflow-container__content
-  > button.labeled:not(.labeled)[class^='demo-icon-'][title]::after,
+.demo-page__toolbar .overflow-container__content > *:not(.labeled)[class^='demo-icon-'][title]::after,
+.demo-page__toolbar .overflow-container__content > button:not(.labeled)[class^='demo-icon-'][title]::after,
+.demo-page__toolbar .overflow-container__content > label:not(.labeled)[class^='demo-icon-'][title]::after,
+.demo-page__toolbar .overflow-container__content > .demo-toggle-button + label:not(.labeled)[class^='demo-icon-'][title]::after,
+.demo-page__toolbar .overflow-container__content > .demo-toggle-button.labeled + label:not(.labeled)[class^='demo-icon-'][title]::after,
+.demo-page__toolbar .overflow-container__content > button.labeled:not(.labeled)[class^='demo-icon-'][title]::after,
 .demo-page__toolbar .overflow-container__content > *:not(.labeled)[data-command][title]::after,
 .demo-page__toolbar .overflow-container__content > button:not(.labeled)[data-command][title]::after,
 .demo-page__toolbar .overflow-container__content > label:not(.labeled)[data-command][title]::after,
-.demo-page__toolbar
-  .overflow-container__content
-  > .demo-toggle-button
-  + label:not(.labeled)[data-command][title]::after,
-.demo-page__toolbar
-  .overflow-container__content
-  > .demo-toggle-button.labeled
-  + label:not(.labeled)[data-command][title]::after,
-.demo-page__toolbar
-  .overflow-container__content
-  > button.labeled:not(.labeled)[data-command][title]::after {
+.demo-page__toolbar .overflow-container__content > .demo-toggle-button + label:not(.labeled)[data-command][title]::after,
+.demo-page__toolbar .overflow-container__content > .demo-toggle-button.labeled + label:not(.labeled)[data-command][title]::after,
+.demo-page__toolbar .overflow-container__content > button.labeled:not(.labeled)[data-command][title]::after {
   content: attr(title);
   display: block;
 }
 .demo-page__toolbar .overflow-container__content > *:not(.labeled)[title]::after,
 .demo-page__toolbar .overflow-container__content > button:not(.labeled)[title]::after,
 .demo-page__toolbar .overflow-container__content > label:not(.labeled)[title]::after,
-.demo-page__toolbar
-  .overflow-container__content
-  > .demo-toggle-button
-  + label:not(.labeled)[title]::after,
-.demo-page__toolbar
-  .overflow-container__content
-  > .demo-toggle-button.labeled
-  + label:not(.labeled)[title]::after,
+.demo-page__toolbar .overflow-container__content > .demo-toggle-button + label:not(.labeled)[title]::after,
+.demo-page__toolbar .overflow-container__content > .demo-toggle-button.labeled + label:not(.labeled)[title]::after,
 .demo-page__toolbar .overflow-container__content > button.labeled:not(.labeled)[title]::after,
 .demo-page__toolbar .overflow-container__content > *.labeled,
 .demo-page__toolbar .overflow-container__content > button.labeled,
@@ -2491,10 +2422,7 @@ body:not(.loaded) .demo-page__toolbar:after {
 .demo-page__toolbar .overflow-container__content input[type='checkbox']:focus {
   outline: none;
 }
-.demo-page__toolbar
-  .overflow-container__content
-  input[type='checkbox'].demo-toggle-button.labeled
-  + label {
+.demo-page__toolbar .overflow-container__content input[type='checkbox'].demo-toggle-button.labeled + label {
   padding-left: 45px !important;
   line-height: 32px;
   white-space: nowrap;
@@ -2503,10 +2431,7 @@ body:not(.loaded) .demo-page__toolbar:after {
   text-align: left;
 }
 @media screen and (max-height: 500px) {
-  .demo-page__toolbar
-    .overflow-container__content
-    input[type='checkbox'].demo-toggle-button.labeled
-    + label {
+  .demo-page__toolbar .overflow-container__content input[type='checkbox'].demo-toggle-button.labeled + label {
     line-height: 24px;
   }
 }
@@ -2536,15 +2461,11 @@ body:not(.loaded) .demo-page__toolbar:after {
   height: 100%;
   width: 100%;
   line-height: 140%;
-  min-width: clamp(
-    var(--description-min-width),
-    var(--description-width),
-    var(--description-max-width)
-  );
+  min-width: clamp(var(--description-min-width), var(--description-width), var(--description-max-width));
   background-color: var(--description-color);
   z-index: 16;
 }
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 640px ) {
   .demo-page__description {
     --description-width: 100vw;
   }
@@ -2635,15 +2556,14 @@ body:not(.loaded) .demo-page__toolbar:after {
   right: 0;
   top: 0;
   cursor: pointer;
-  background: url("data:image/svg+xml,%3Csvg fill='%23343f4a' height='24' viewBox='2 2 20 20' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 7h10v10H7z' fill='%2300d8ff'/%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z'/%3E%3C/svg%3E")
-    no-repeat calc(100% - 15px);
+  background: url("data:image/svg+xml,%3Csvg fill='%23343f4a' height='24' viewBox='2 2 20 20' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 7h10v10H7z' fill='%2300d8ff'/%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z'/%3E%3C/svg%3E") no-repeat calc(100% - 15px);
   background-size: 35px;
   font-size: 1.1rem;
   line-height: 60px;
   text-align: right;
   padding-right: 60px;
 }
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 640px ) {
   .demo-description__play-button {
     display: block;
   }
@@ -2677,7 +2597,7 @@ body:not(.loaded) .demo-page__toolbar:after {
   top: 50%;
   line-height: 7px;
 }
-@media screen and (max-width: 960px) {
+@media screen and (max-width: 960px ) {
   .demo-description__drag-area--vertical {
     display: none;
   }
@@ -2693,7 +2613,7 @@ body:not(.loaded) .demo-page__toolbar:after {
   top: 0;
   line-height: 9px;
 }
-@media screen and (max-width: 960px) {
+@media screen and (max-width: 960px ) {
   .demo-description__drag-area--horizontal {
     display: block;
   }
@@ -2705,7 +2625,7 @@ body:not(.loaded) .demo-page__toolbar:after {
 .demo-description--draggable .demo-description__play-button {
   display: none;
 }
-@media screen and (max-width: 960px) {
+@media screen and (max-width: 960px ) {
   .demo-description--draggable {
     border-right: none;
     border-top: 9px solid #d5d7d8;
@@ -2736,9 +2656,7 @@ body:not(.loaded) .demo-page__toolbar:after {
   line-height: 140%;
   width: var(--sidebar-width);
   border-left: 1px solid #d5d7d8;
-  transition:
-    width 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s,
-    padding-left 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+  transition: width 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s, padding-left 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
 }
 .demo-main__sidebar--hidden {
   padding-left: 24px;
@@ -2778,10 +2696,7 @@ body:not(.loaded) .demo-page__toolbar:after {
   background-image: url('../icons/single-arrow-right.svg');
   background-size: 8px;
   background-repeat: no-repeat;
-  transition:
-    top 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s,
-    background-color 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s,
-    transform 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+  transition: top 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s, background-color 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s, transform 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
 }
 .demo-sidebar__toggle__button:hover {
   background-color: #dedede;
@@ -2823,9 +2738,7 @@ body:not(.loaded) .demo-page__toolbar:after {
 .demo-main__sidebar--hidden .demo-sidebar__toggle__title {
   opacity: 1;
   transform: translateX(0);
-  transition:
-    transform 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0.1s,
-    opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0.1s, opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
 }
 .demo-properties__settings fieldset {
   border: 1px solid #888;
@@ -2847,7 +2760,6 @@ body:not(.loaded) .demo-page__toolbar:after {
 .demo-properties__settings textarea,
 .demo-properties__settings input:not([type='button']) {
   width: 100%;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   border: 1px solid #888;
   padding: 1px 2px;
@@ -2937,7 +2849,6 @@ body:not(.loaded) .demo-page__toolbar:after {
 .demo-complex-properties textarea,
 .demo-complex-properties input:not([type='button']):not([type='range']) {
   width: 100%;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   border: 1px solid #888;
   padding: 1px 2px;
@@ -3156,14 +3067,14 @@ body.demo-tutorial {
   --description-color: none;
   grid-template-areas: 'header header' 'toolbar toolbar' 'sidebar content';
 }
-@media screen and (max-width: 960px) {
+@media screen and (max-width: 960px ) {
   body.demo-tutorial {
     grid-template-columns: 1fr;
     grid-template-rows: 60px auto 1fr clamp(25%, var(--description-drag-height), 65%);
     grid-template-areas: 'header' 'toolbar' 'content' 'sidebar';
   }
 }
-@media screen and (max-width: 960px) and (max-height: 500px) {
+@media screen and (max-width: 960px ) and (max-height: 500px) {
   body.demo-tutorial {
     grid-template-rows: 30px auto 1fr clamp(25%, var(--description-drag-height), 65%);
   }
@@ -3245,7 +3156,7 @@ body.demo-tutorial {
 .demo-toolbar__button--forward:after {
   border-width: 2px 2px 0 0;
 }
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 640px ) {
   .demo-toolbar__button--back,
   .demo-toolbar__button--forward {
     padding: 0;
@@ -3261,7 +3172,7 @@ body.demo-tutorial {
     padding-right: 4px;
   }
 }
-@media screen and (max-width: 960px) {
+@media screen and (max-width: 960px ) {
   .demo-toolbar__tutorial-step-title {
     display: none;
   }
@@ -3302,13 +3213,8 @@ body.demo-tutorial {
   border-radius: 6px;
   background-color: var(--toolbar-color);
   overflow-y: hidden;
-  box-shadow:
-    0 5px 5px -3px rgba(0, 0, 0, 0.2),
-    0px 8px 10px 1px rgba(0, 0, 0, 0.14),
-    0px 3px 14px 2px rgba(0, 0, 0, 0.12);
-  transition:
-    opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s,
-    max-height 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+  transition: opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s, max-height 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
 }
 .demo-toolbar__tutorial-dropdown .tutorial-dropdown__item {
   display: block;
@@ -3334,9 +3240,7 @@ body.demo-tutorial {
   margin-bottom: 1px;
   transform: translateX(-10px) rotate(45deg);
   opacity: 0;
-  transition:
-    transform 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s,
-    opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s, opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
 }
 .demo-toolbar__tutorial-dropdown .tutorial-dropdown__item:hover {
   background-color: #29323c;
@@ -3369,9 +3273,7 @@ body.demo-tutorial.theme-dark .demo-description__content .paragraph code {
   background: var(--description-kbd-background);
   border: 1px solid var(--description-kbd-border-color);
   border-radius: 0.25em;
-  box-shadow:
-    0 1px 0 var(--description-kbd-border-color),
-    0 0 0 0.1em var(--description-kbd-background) inset;
+  box-shadow: 0 1px 0 var(--description-kbd-border-color), 0 0 0 0.1em var(--description-kbd-background) inset;
   display: inline-block;
   font-size: 80%;
   padding: 0.1em 0.5em;

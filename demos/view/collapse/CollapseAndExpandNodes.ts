@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,24 +31,23 @@ import {
   Bfs,
   CompositeLayoutData,
   FilteredGraphWrapper,
-  FixNodeLayoutData,
   GraphComponent,
   HashMap,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   IGraph,
-  IIncrementalHintsFactory,
   ILayoutAlgorithm,
   IList,
   INode,
-  LayoutMode,
+  LayoutAnchoringPolicy,
+  LayoutAnchoringStageData,
   List,
   OrganicLayout,
   OrganicLayoutData,
-  OrganicLayoutScope,
   PlaceNodesAtBarycenterStage,
-  PlaceNodesAtBarycenterStageData
-} from 'yfiles'
+  PlaceNodesAtBarycenterStageData,
+  TimeSpan
+} from '@yfiles/yfiles'
 
 /**
  * Provides utility function for collapsing and expanding nodes as well as configuring layout
@@ -193,8 +192,9 @@ export default class CollapseAndExpandNodes {
     if (toggledNode) {
       // keep the clicked node at its location
       currentLayoutData.items.add(
-        new FixNodeLayoutData({
-          fixedNodes: toggledNode
+        new LayoutAnchoringStageData({
+          nodeAnchoringPolicies: (node) =>
+            node === toggledNode ? LayoutAnchoringPolicy.CENTER : LayoutAnchoringPolicy.NONE
         })
       )
 
@@ -206,8 +206,9 @@ export default class CollapseAndExpandNodes {
       const incrementalMap = new HashMap<INode, boolean>()
       incrementalNodes.forEach((node) => {
         incrementalMap.set(node, true)
-        const co = this.graphComponent.graphModelManager.getMainCanvasObject(node)
-        const toggledNodeCo = this.graphComponent.graphModelManager.getMainCanvasObject(toggledNode)
+        const co = this.graphComponent.graphModelManager.getMainRenderTreeElement(node)
+        const toggledNodeCo =
+          this.graphComponent.graphModelManager.getMainRenderTreeElement(toggledNode)
         if (co && toggledNodeCo) {
           co.below(toggledNodeCo)
         }
@@ -226,14 +227,12 @@ export default class CollapseAndExpandNodes {
       }
       if (currentLayout instanceof OrganicLayout) {
         currentLayout.compactnessFactor = 0.7
-        currentLayout.preferredEdgeLength = 60
+        currentLayout.defaultPreferredEdgeLength = 60
 
-        currentLayout.considerNodeSizes = false
-        currentLayout.nodeOverlapsAllowed = false
-        currentLayout.minimumNodeDistance = 10
+        currentLayout.allowNodeOverlaps = false
+        currentLayout.defaultMinimumNodeDistance = 10
         currentLayout.qualityTimeRatio = 1
-        currentLayout.maximumDuration = 1000 + graph.nodes.size * 50
-        currentLayout.scope = OrganicLayoutScope.ALL
+        currentLayout.stopDuration = TimeSpan.fromMilliseconds(1000 + graph.nodes.size * 50)
 
         const layerIds = new Bfs({
           coreNodes: incrementalNodes.concat(toggledNode),
@@ -246,24 +245,17 @@ export default class CollapseAndExpandNodes {
             nodeStress: (obj) => 1 / (layerIds.get(obj)! + 1)
           })
         )
-      } else if (currentLayout instanceof HierarchicLayout) {
-        currentLayout.layoutMode = LayoutMode.INCREMENTAL
+      } else if (currentLayout instanceof HierarchicalLayout) {
+        currentLayout.fromSketchMode = true
 
-        currentLayoutData.items.add(
-          new HierarchicLayoutData({
-            incrementalHints: (item: object, hintsFactory: IIncrementalHintsFactory) => {
-              if (item instanceof INode && incrementalNodes.includes(item)) {
-                return hintsFactory.createLayerIncrementallyHint(item)
-              }
-            }
-          })
-        )
+        const hierarchicalLayoutData = new HierarchicalLayoutData({
+          incrementalNodes
+        })
+        currentLayoutData.items.add(hierarchicalLayoutData)
       }
     } else {
-      if (currentLayout instanceof OrganicLayout) {
-        currentLayout.scope = OrganicLayoutScope.ALL
-      } else if (currentLayout instanceof HierarchicLayout) {
-        currentLayout.layoutMode = LayoutMode.FROM_SCRATCH
+      if (currentLayout instanceof HierarchicalLayout) {
+        currentLayout.fromSketchMode = false
       }
     }
   }

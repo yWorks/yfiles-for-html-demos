@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,26 +28,24 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Class,
   GraphBuilder,
   GraphComponent,
-  GraphHighlightIndicatorManager,
   IGraph,
-  IndicatorNodeStyleDecorator,
   INode,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   LayoutExecutor,
   License,
+  NodeStyleIndicatorRenderer,
   RadialLayout,
   Rect,
   ShapeNodeStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 /**
@@ -65,8 +63,6 @@ async function run(): Promise<void> {
 
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // configure default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
 
@@ -77,7 +73,7 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new RadialLayout())
   graphComponent.fitGraphBounds()
 
@@ -110,19 +106,17 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
  * @param graphComponent The component containing the graph.
  */
 function initSearchHighlightingStyle(graphComponent: GraphComponent): void {
-  const searchHighlightStyle = new IndicatorNodeStyleDecorator({
+  const searchHighlightStyle = new NodeStyleIndicatorRenderer({
     // we choose a shape node style
-    wrapped: new ShapeNodeStyle({
+    nodeStyle: new ShapeNodeStyle({
       shape: 'round-rectangle',
       stroke: '3px #0B7189',
       fill: 'transparent'
     }),
     // with a margin for the decoration
-    padding: 7
+    margins: 7
   })
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    nodeStyle: searchHighlightStyle
-  })
+  graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(searchHighlightStyle)
 }
 
 /**
@@ -131,15 +125,15 @@ function initSearchHighlightingStyle(graphComponent: GraphComponent): void {
  */
 function updateSearch(searchText: string): void {
   // we use the search highlight manager to highlight matching items
-  const manager = graphComponent.highlightIndicatorManager
+  const highlights = graphComponent.highlights
 
   // first remove previous highlights
-  manager.clearHighlights()
+  highlights.clear()
   if (searchText.trim() !== '') {
     graphComponent.graph.nodes.forEach((node) => {
       if (matches(node, searchText)) {
         // if the node is a match, highlight it
-        manager.addHighlight(node)
+        highlights.add(node)
       }
     })
   }
@@ -167,7 +161,7 @@ function initializeGraph(graph: IGraph): void {
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(80, 40)
   graph.nodeDefaults.shareStyleInstance = false
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
 }
 
 /**

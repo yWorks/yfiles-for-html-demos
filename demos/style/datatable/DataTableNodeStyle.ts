@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,7 @@ import {
   type IRenderContext,
   NodeStyleBase,
   type TaggedHtmlVisual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { DataTableRenderSupport, RenderDataCache } from './DataTableRenderSupport'
 
 type DataTableNodeStyleVisual = TaggedHtmlVisual<HTMLDivElement, RenderDataCache>

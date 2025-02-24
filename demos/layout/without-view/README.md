@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Algorithms Without a View
 
-# Layout without View Demo
+<img src="../../../doc/demo-thumbnails/without-view.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/layout/without-view/).
 
 This demo shows how to create a graph, run a graph analysis algorithm and calculate a layout without using a view or the [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) API.
 

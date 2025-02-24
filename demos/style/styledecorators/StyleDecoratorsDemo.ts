@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,38 +27,35 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultLabelStyle,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   IGraph,
   IInputMode,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
+  LabelStyle,
   LayoutExecutor,
   License,
-  NodeStylePortStyleAdapter,
+  ShapePortStyle,
   OrganicLayout,
   ShapeNodeStyle,
   Size,
   SmartEdgeLabelModel
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import LabelStyleDecorator from './LabelStyleDecorator'
 import EdgeStyleDecorator from './EdgeStyleDecorator'
 import NodeStyleDecorator from './NodeStyleDecorator'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   graphComponent.inputMode = createInputMode()
   configureGraph(graphComponent.graph)
   loadGraph(graphComponent)
@@ -71,20 +68,21 @@ function loadGraph(graphComponent: GraphComponent): void {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(new OrganicLayout({ minimumNodeDistance: 100 }))
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new OrganicLayout({ defaultMinimumNodeDistance: 100 }))
+  void graphComponent.fitGraphBounds()
 
   // add some bends
   for (const edge of graphComponent.graph.edges) {
-    const sp = edge.sourcePort!
-    const tp = edge.targetPort!
+    const sp = edge.sourcePort
+    const tp = edge.targetPort
     graphComponent.graph.addBend(edge, sp.location.add(tp.location).multiply(0.5))
   }
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
  */
@@ -117,7 +115,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 }
 
 /**
- * Creates an input mode that supports interactive editing like e.g. creating new nodes and edges or
+ * Creates an input mode that supports interactive editing like e.g., creating new nodes and edges or
  * editing labels.
  */
 function createInputMode(): IInputMode {
@@ -126,7 +124,7 @@ function createInputMode(): IInputMode {
   })
 
   // set a random traffic value to edges created interactively
-  geim.createEdgeInputMode.addEdgeCreationStartedListener((_, evt) => {
+  geim.createEdgeInputMode.addEventListener('edge-creation-started', (evt) => {
     switch (Math.floor(Math.random() * 4)) {
       case 0:
         evt.item.tag = 'TRAFFIC_VERY_HIGH'
@@ -164,22 +162,20 @@ function configureGraph(graph: IGraph): void {
   graph.nodeDefaults.size = new Size(80, 40)
   graph.nodeDefaults.shareStyleInstance = false
   graph.edgeDefaults.style = new EdgeStyleDecorator(
-    new NodeStylePortStyleAdapter({
-      nodeStyle: new ShapeNodeStyle({
-        fill: 'lightgray',
-        stroke: null,
-        shape: 'ellipse'
-      }),
+    new ShapePortStyle({
+      fill: 'lightgray',
+      stroke: null,
+      shape: 'ellipse',
       renderSize: [5, 5]
     })
   )
   graph.nodeDefaults.labels.style = new LabelStyleDecorator(
-    new DefaultLabelStyle({ textFill: '224556', backgroundFill: '#B4DBED' })
+    new LabelStyle({ textFill: '224556', backgroundFill: '#B4DBED' })
   )
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
 
-  graph.edgeDefaults.labels.style = new LabelStyleDecorator(new DefaultLabelStyle())
-  graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createDefaultParameter()
+  graph.edgeDefaults.labels.style = new LabelStyleDecorator(new LabelStyle())
+  graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
   graph.edgeDefaults.shareStyleInstance = false
 }
 

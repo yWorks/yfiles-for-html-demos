@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,20 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, INodeStyle, IRenderContext, NodeStyleBase, SvgVisual, Visual } from 'yfiles'
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { INode, INodeStyle, IRenderContext, NodeStyleBase, SvgVisual, Visual } from '@yfiles/yfiles'
 export default class LevelOfDetailNodeStyle extends NodeStyleBase {
   detailThreshold
   intermediateThreshold
   detailNodeStyle
   intermediateNodeStyle
   overviewNodeStyle
-
   /**
    * Creates a new instance of LevelOfDetailNodeStyle which combines three styles for different zoom level.
-   * @param {!INodeStyle} detailNodeStyle
-   * @param {!INodeStyle} intermediateNodeStyle
-   * @param {!INodeStyle} overviewNodeStyle
    */
   constructor(detailNodeStyle, intermediateNodeStyle, overviewNodeStyle) {
     super()
@@ -49,12 +45,6 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
     this.intermediateNodeStyle = intermediateNodeStyle
     this.overviewNodeStyle = overviewNodeStyle
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!INode} node
-   * @returns {!SvgVisual}
-   */
   createVisual(renderContext, node) {
     const zoom = renderContext.zoom
     let visual
@@ -74,20 +64,11 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
         .createVisual(renderContext)
       visual.svgElement['data-levelsRenderDataCache'] = this.overviewNodeStyle.renderer
     }
-
     return visual
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!SvgVisual} oldVisual
-   * @param {!INode} node
-   * @returns {!Visual}
-   */
   updateVisual(renderContext, oldVisual, node) {
     const zoom = renderContext.zoom
     let newVisual = null
-
     if (oldVisual === null) {
       return this.createVisual(renderContext, node)
     }

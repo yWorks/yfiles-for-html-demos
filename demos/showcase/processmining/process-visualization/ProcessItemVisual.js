@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,91 +28,67 @@
  ***************************************************************************/
 import {
   BaseClass,
+  WebGLVisual,
   Color,
   IArrow,
   IBoundsProvider,
-  ICanvasObjectDescriptor,
   IHitTestable,
+  IObjectRenderer,
   IVisibilityTestable,
   IVisualCreator,
   PathType,
   PolylineEdgeStyle,
-  SimpleEdge,
-  WebGLVisual
-} from 'yfiles'
-import { WebGLProgramInfo } from './webgl-utils.js'
-
-/**
- * @typedef {*} ProcessItemWebGLProgram
- */
-
-/**
- * @typedef {Object} ItemEntry
- * @property {number} color
- * @property {number} startTime
- * @property {number} endTime
- * @property {number} x0
- * @property {number} x1
- * @property {number} y0
- * @property {number} y1
- * @property {number} size
- */
-
-/** @type {ProcessItemVisual} */
+  SimpleEdge
+} from '@yfiles/yfiles'
+import { WebGLProgramInfo } from './webgl-utils'
 let processItemVisual
-
-const dummyEdgeStyle = new PolylineEdgeStyle({ sourceArrow: IArrow.NONE, targetArrow: IArrow.NONE })
-
+const dummyEdgeStyle = new PolylineEdgeStyle({
+  sourceArrow: IArrow.NONE,
+  targetArrow: IArrow.NONE
+})
 /**
  * Installs a process item visual in the given canvas component.
- * @param {!CanvasComponent} canvas
  */
 export function installProcessItemVisual(canvas) {
   processItemVisual = new ProcessItemVisual()
-  canvas.highlightGroup.addChild(processItemVisual, new ProcessItemCanvasObjectDescriptor())
+  canvas.renderTree.createElement(
+    canvas.renderTree.highlightGroup,
+    processItemVisual,
+    new ProcessItemRenderer()
+  )
 }
-
 /**
  * Updates the time in the process item visual.
  * This is used to update the visuals over time.
- * @param {number} time
  */
 export function updateTime(time) {
   if (processItemVisual) {
     processItemVisual.time = time
   }
 }
-
 /**
  * Adds an event item to the process item visual for the given edge and a specified timespan.
- * @param {!IEdge} path the edge that the item should follow
- * @param {boolean} reverse the direction in which the item should move
- * @param {number} startTime the time when the item starts traversing the edge
- * @param {number} endTime the time when the item stops traversing the edge
- * @param {number} size the diameter of the item's circle
- * @param {number} color a color value
+ * @param path the edge that the item should follow
+ * @param reverse the direction in which the item should move
+ * @param startTime the time when the item starts traversing the edge
+ * @param endTime the time when the item stops traversing the edge
+ * @param size the diameter of the item's circle
+ * @param color a color value
  */
 export function addItem(path, reverse, startTime, endTime, size, color) {
   if (processItemVisual) {
     processItemVisual.addItem(path, reverse, startTime, endTime, size, color)
   }
 }
-
-/**
- * @param {!IEdge} path
- * @returns {!GeneralPath}
- */
 function getGeneralPath(path) {
-  const dummyEdge = new SimpleEdge({
+  const previewEdge = new SimpleEdge({
     sourcePort: path.sourcePort,
     targetPort: path.targetPort,
     style: dummyEdgeStyle,
     bends: path.bends
   })
-
-  return dummyEdge.style.renderer.getPathGeometry(dummyEdge, dummyEdge.style).getPath()
+  return previewEdge.style.renderer.getPathGeometry(previewEdge, previewEdge.style).getPath()
 }
-
 class ProcessItemProgramInfo extends WebGLProgramInfo {
   toPositionData
   fromPositionData
@@ -124,10 +100,6 @@ class ProcessItemProgramInfo extends WebGLProgramInfo {
   samplerUniformLocation = null
   timeUniformLocation = null
   texture = null
-
-  /**
-   * @param {number} entryCount
-   */
   constructor(entryCount) {
     super(entryCount)
     this.toPositionData = this.createFloatBuffer('a_to', 2)
@@ -138,23 +110,12 @@ class ProcessItemProgramInfo extends WebGLProgramInfo {
     this.endTimeData = this.createFloatBuffer('a_endTime', 1)
     this.colorData = this.createFloatBuffer('a_color', 1)
   }
-
-  /**
-   * @param {!WebGLRenderingContext} gl
-   * @param {!WebGLProgram} program
-   */
   init(gl, program) {
     super.init(gl, program)
     this.initRainbowTexture(gl)
-
     this.samplerUniformLocation = gl.getUniformLocation(program, 'u_Sampler')
     this.timeUniformLocation = gl.getUniformLocation(program, 'time')
   }
-
-  /**
-   * @param {!WebGLRenderingContext} gl
-   * @returns {?WebGLTexture}
-   */
   initRainbowTexture(gl) {
     const texture = (this.texture = gl.createTexture())
     gl.bindTexture(gl.TEXTURE_2D, texture)
@@ -176,20 +137,13 @@ class ProcessItemProgramInfo extends WebGLProgramInfo {
       gl.UNSIGNED_BYTE,
       new Uint8Array(values)
     )
-
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
     return texture
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!WebGLRenderingContext} gl
-   */
   enableRendering(renderContext, gl) {
     super.enableRendering(renderContext, gl)
-
     // Tell WebGL we want to affect texture unit 0
     gl.activeTexture(gl.TEXTURE0)
     // Bind the texture to texture unit 0
@@ -197,12 +151,6 @@ class ProcessItemProgramInfo extends WebGLProgramInfo {
     // Tell the shader we bound the texture to texture unit 0
     gl.uniform1i(this.samplerUniformLocation, 0)
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!WebGLRenderingContext} gl
-   * @param {number} time
-   */
   render(renderContext, gl, time) {
     if (this.entryCount > 0) {
       this.enableRendering(renderContext, gl)
@@ -211,25 +159,14 @@ class ProcessItemProgramInfo extends WebGLProgramInfo {
       this.disableRendering(renderContext, gl)
     }
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!WebGLRenderingContext} gl
-   */
   disableRendering(renderContext, gl) {
     super.disableRendering(renderContext, gl)
   }
-
-  /**
-   * @param {!WebGLRenderingContext} gl
-   * @param {!WebGLProgram} program
-   */
   dispose(gl, program) {
     super.dispose(gl, program)
     gl.deleteTexture(this.texture)
   }
 }
-
 // language=GLSL
 const fragmentShader = `
 #ifdef GL_OES_standard_derivatives
@@ -258,7 +195,6 @@ void main()
   }
 #endif
 }`
-
 // language=GLSL
 const vertexShader = `
 uniform   float time;
@@ -302,7 +238,6 @@ void main() {
     gl_Position = vec4(-10.,-10.,-10.,1);
   }
 }`
-
 /**
  * A render visual that draws process items in a canvas using WebGL.
  */
@@ -312,7 +247,6 @@ export class ProcessItemVisual extends WebGLVisual {
   dirty
   $time
   timeDirty
-
   constructor() {
     super()
     this.timeDirty = true
@@ -321,51 +255,29 @@ export class ProcessItemVisual extends WebGLVisual {
     this.entryCount = 0
     this.dirty = false
   }
-
-  /**
-   * @type {number}
-   */
   set time(value) {
     this.$time = value
     this.timeDirty = true
   }
-
-  /**
-   * @type {number}
-   */
   get time() {
     return this.$time
   }
-
   clearItems() {
     this.dirty = true
     this.entries.length = 0
     this.entryCount = 0
   }
-
-  /**
-   * @param {!IEdge} path
-   * @param {boolean} reverse
-   * @param {number} [startTime=0]
-   * @param {number} [endTime=1]
-   * @param {number} [size=10]
-   * @param {number} [color=0.5]
-   */
   addItem(path, reverse, startTime = 0, endTime = 1, size = 10, color = 0.5) {
     this.dirty = true
-
     const entries = this.entries
-
     function appendSegment(x0, y0, x1, y1) {
       if (reverse) {
         const dx = x0 - x1
         const dy = y0 - y1
         const length = Math.sqrt(dx * dx + dy * dy)
-
         const segmentStartTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
         runningTotal -= length
         const segmentEndTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
-
         entries.push({
           color,
           startTime: segmentEndTime,
@@ -380,11 +292,9 @@ export class ProcessItemVisual extends WebGLVisual {
         const dx = x1 - x0
         const dy = y1 - y0
         const length = Math.sqrt(dx * dx + dy * dy)
-
         const segmentStartTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
         runningTotal += length
         const segmentEndTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
-
         entries.push({
           color,
           startTime: segmentStartTime,
@@ -397,21 +307,15 @@ export class ProcessItemVisual extends WebGLVisual {
         })
       }
     }
-
     const generalPath = getGeneralPath(path)
-
     const totalLength = generalPath.getLength()
-
     const pathCursor = generalPath.createCursor()
     const coords = [0, 0, 0, 0, 0, 0]
-
     let runningTotal = reverse ? totalLength : 0
-
     let lastMoveX = 0
     let lastMoveY = 0
     let lastX = 0
     let lastY = 0
-
     while (pathCursor.moveNext()) {
       switch (pathCursor.getCurrent(coords)) {
         case PathType.LINE_TO:
@@ -433,22 +337,8 @@ export class ProcessItemVisual extends WebGLVisual {
       }
     }
   }
-
-  expungeOldEntries() {
-    const currentTime = this.time
-    const entries = this.entries
-    for (let i = 0; i < entries.length; i++) {
-      if (entries[i].endTime < currentTime) {
-        entries.splice(i, 1)
-        i--
-      }
-    }
-  }
-
   /**
    * Paints onto the context using WebGL item styles.
-   * @param {!IRenderContext} renderContext
-   * @param {!WebGLRenderingContext} gl
    */
   render(renderContext, gl) {
     gl.getExtension('GL_OES_standard_derivatives')
@@ -460,18 +350,12 @@ export class ProcessItemVisual extends WebGLVisual {
       if (program.info) {
         program.info.dispose(gl, program)
       }
-
       program.info = new ProcessItemProgramInfo(vertexCount)
       program.info.init(gl, program)
       this.updateData(program.info)
     }
-
     program.info.render(renderContext, gl, this.time)
   }
-
-  /**
-   * @param {!ProcessItemProgramInfo} programInfo
-   */
   updateData(programInfo) {
     const toPosition = programInfo.toPositionData.data
     const fromPosition = programInfo.fromPositionData.data
@@ -501,73 +385,29 @@ export class ProcessItemVisual extends WebGLVisual {
     this.dirty = false
     this.timeDirty = false
   }
-
-  /**
-   * @type {boolean}
-   */
   get needsRepaint() {
     return (this.entryCount > 0 && this.timeDirty) || (this.dirty && this.entries.length > 0)
   }
 }
-
-class ProcessItemCanvasObjectDescriptor extends BaseClass(ICanvasObjectDescriptor, IVisualCreator) {
+class ProcessItemRenderer extends BaseClass(IObjectRenderer, IVisualCreator) {
   processItemVisual = null
-  /**
-   * @param {!unknown} forUserObject
-   * @returns {!IBoundsProvider}
-   */
-  getBoundsProvider(forUserObject) {
+  getBoundsProvider(_) {
     return IBoundsProvider.UNBOUNDED
   }
-
-  /**
-   * @param {!unknown} forUserObject
-   * @returns {!IHitTestable}
-   */
-  getHitTestable(forUserObject) {
+  getHitTestable(_) {
     return IHitTestable.NEVER
   }
-
-  /**
-   * @param {!unknown} forUserObject
-   * @returns {!IVisibilityTestable}
-   */
-  getVisibilityTestable(forUserObject) {
+  getVisibilityTestable(_) {
     return IVisibilityTestable.ALWAYS
   }
-
-  /**
-   * @param {!unknown} forUserObject
-   * @returns {!IVisualCreator}
-   */
-  getVisualCreator(forUserObject) {
-    this.processItemVisual = forUserObject
+  getVisualCreator(renderTag) {
+    this.processItemVisual = renderTag
     return this
   }
-
-  /**
-   * @param {!ICanvasContext} context
-   * @param {!ICanvasObject} canvasObject
-   * @returns {boolean}
-   */
-  isDirty(context, canvasObject) {
-    return canvasObject.dirty || canvasObject.userObject.needsRepaint
-  }
-
-  /**
-   * @param {!IRenderContext} context
-   * @returns {?Visual}
-   */
-  createVisual(context) {
+  createVisual(_) {
     return this.processItemVisual
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {?Visual} oldVisual
-   * @returns {?Visual}
-   */
-  updateVisual(context, oldVisual) {
+  updateVisual(_, __) {
     return this.processItemVisual
   }
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,14 @@ import {
   EnvironmentInjector,
   Type
 } from '@angular/core'
-import { NodeStyleBase, HtmlVisual, INode, IRenderContext, Visual, TaggedHtmlVisual } from 'yfiles'
+import {
+  HtmlVisual,
+  INode,
+  IRenderContext,
+  NodeStyleBase,
+  type TaggedHtmlVisual,
+  Visual
+} from '@yfiles/yfiles'
 
 type InputProvider<P extends object> = (context: IRenderContext, node: INode) => P
 
@@ -56,7 +63,7 @@ export class AngularNodeComponentStyle<C> extends NodeStyleBase<AngularNodeStyle
   }
 
   protected createVisual(renderContext: IRenderContext, node: INode): AngularNodeStyleVisual<C> {
-    const div = renderContext.canvasComponent!.div.ownerDocument.createElement('div')
+    const div = renderContext.canvasComponent!.htmlElement.ownerDocument.createElement('div')
 
     const componentRef = createComponent(this.component, {
       hostElement: div,

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,9 +30,8 @@ import {
   BaseClass,
   Color,
   Font,
-  FontWeight,
   GeneralPath,
-  Geom,
+  GeometryUtilities,
   IRectangle,
   IRenderContext,
   IVisualCreator,
@@ -42,12 +41,11 @@ import {
   SvgVisual,
   TextRenderSupport,
   Visual,
-  YList,
-  YPoint
-} from 'yfiles'
+  YList
+} from '@yfiles/yfiles'
 
 import type { VoronoiDiagram } from './VoronoiDiagram'
-import { colorSets } from 'demo-resources/demo-styles'
+import { colorSets } from '@yfiles/demo-resources/demo-styles'
 
 const GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
 const GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
@@ -65,10 +63,7 @@ function setAttribute(e: Element, name: string, value: number | string): void {
 /**
  * This visual draws a Voronoi diagram.
  */
-export class VoronoiVisual
-  extends BaseClass<IVisualCreator>(IVisualCreator)
-  implements IVisualCreator
-{
+export class VoronoiVisual extends BaseClass(IVisualCreator) {
   /**
    * Creates a new VoronoiVisual that draws the faces of the given voronoi diagram.
    */
@@ -142,10 +137,7 @@ export class VoronoiVisual
 /**
  * This visual creates a polygon around the nodes that belong to the same cluster.
  */
-export class PolygonVisual
-  extends BaseClass<IVisualCreator>(IVisualCreator)
-  implements IVisualCreator
-{
+export class PolygonVisual extends BaseClass(IVisualCreator) {
   startColor: Color
   endColor: Color
 
@@ -184,23 +176,24 @@ export class PolygonVisual
       const color = colors[i]
       let generalPath: GeneralPath = new GeneralPath()
       if (clusterNodeBounds.length > 1) {
-        const points = new YList()
+        const points = new YList<Point>()
         clusterNodeBounds.forEach((layout) => {
           const offset = 0
           const x = layout.x
           const y = layout.y
           const height = layout.height
           const width = layout.width
-          points.add(new YPoint(x - offset, y - offset))
-          points.add(new YPoint(x - offset, y + height + offset))
-          points.add(new YPoint(x + width + offset, y - offset))
-          points.add(new YPoint(x + width + offset, y + height + offset))
+          points.add(new Point(x - offset, y - offset))
+          points.add(new Point(x - offset, y + height + offset))
+          points.add(new Point(x + width + offset, y - offset))
+          points.add(new Point(x + width + offset, y + height + offset))
         })
 
-        const convexHull = Geom.calcConvexHull(points)
-        generalPath.moveTo(convexHull.get(0).x, convexHull.get(0).y)
+        const convexHull = GeometryUtilities.getConvexHull(points)
+        const firstPoint = convexHull.at(0)!
+        generalPath.moveTo(firstPoint.x, firstPoint.y)
         for (let j = 1; j < convexHull.size; j++) {
-          const nextPoint = convexHull.get(j)
+          const nextPoint = convexHull.at(j)!
           generalPath.lineTo(nextPoint.x, nextPoint.y)
         }
         generalPath.close()
@@ -250,14 +243,8 @@ export class PolygonVisual
  * Creates the coordinate axis of the dendrogram.
  * This is only used for Hierarchical Clustering.
  */
-export class AxisVisual
-  extends BaseClass<IVisualCreator>(IVisualCreator)
-  implements IVisualCreator
-{
-  constructor(
-    private maxY: number,
-    private rect: Rect
-  ) {
+export class AxisVisual extends BaseClass(IVisualCreator) {
+  constructor(private rect: Rect) {
     super()
   }
 
@@ -303,7 +290,7 @@ export class AxisVisual
         new Font({
           fontFamily: 'Arial',
           fontSize: 8,
-          fontWeight: FontWeight.BOLD
+          fontWeight: 'bold'
         })
       )
       setAttribute(text, 'transform', 'translate(4 14)')
@@ -335,10 +322,7 @@ export class AxisVisual
  * A red line with a label for the cut-off value.
  * This is only used for Hierarchical Clustering.
  */
-export class CutoffVisual
-  extends BaseClass<IVisualCreator>(IVisualCreator)
-  implements IVisualCreator
-{
+export class CutoffVisual extends BaseClass(IVisualCreator) {
   public cutOffValue: number
 
   constructor(
@@ -370,7 +354,7 @@ export class CutoffVisual
 
     const font = new Font({
       fontSize: 14,
-      fontWeight: FontWeight.BOLD
+      fontWeight: 'bold'
     })
 
     const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')

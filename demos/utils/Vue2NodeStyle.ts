@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,7 +30,6 @@
 import {
   Font,
   FontStyle,
-  FontWeight,
   GraphComponent,
   INode,
   IRenderContext,
@@ -38,10 +37,10 @@ import {
   Size,
   SvgDefsManager,
   SvgVisual,
-  TextDecoration,
+  TextDecorations,
   TextRenderSupport,
   TextWrapping
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 declare const Vue: any
 
@@ -152,16 +151,14 @@ class ObservedContext {
       }
     }
     if (oldState.hasOwnProperty('selected')) {
-      const newValue = this.graphComponent.selection.selectedNodes.isSelected(this.node)
+      const newValue = this.graphComponent.selection.nodes.includes(this.node)
       if (newValue !== oldState.selected) {
         delta.selected = newValue
         change = true
       }
     }
     if (oldState.hasOwnProperty('highlighted')) {
-      const newValue = this.graphComponent.highlightIndicatorManager.selectionModel!.isSelected(
-        this.node
-      )
+      const newValue = this.graphComponent.highlights.includes(this.node)
       if (newValue !== oldState.highlighted) {
         delta.highlighted = newValue
         change = true
@@ -224,9 +221,7 @@ class ObservedContext {
     if (this.observed.hasOwnProperty('selected')) {
       return this.observed.selected!
     }
-    return (this.observed.selected = this.graphComponent.selection.selectedNodes.isSelected(
-      this.node
-    ))
+    return (this.observed.selected = this.graphComponent.selection.nodes.includes(this.node))
   }
 
   /**
@@ -236,8 +231,7 @@ class ObservedContext {
     if (this.observed.hasOwnProperty('highlighted')) {
       return this.observed.highlighted!
     }
-    return (this.observed.highlighted =
-      this.graphComponent.highlightIndicatorManager.selectionModel!.isSelected(this.node))
+    return (this.observed.highlighted = this.graphComponent.highlights.includes(this.node))
   }
 
   /**
@@ -574,9 +568,9 @@ function initializeDesignerVueComponents(): void {
     const fontSettings: {
       fontFamily?: string
       fontSize?: number
-      fontWeight?: FontWeight
+      fontWeight?: string
       fontStyle?: FontStyle
-      textDecoration?: TextDecoration
+      textDecoration?: TextDecorations
       lineSpacing?: number
     } = {}
     if (typeof fontFamily !== 'undefined') {
@@ -589,7 +583,7 @@ function initializeDesignerVueComponents(): void {
       fontSettings.fontStyle = Number(fontStyle)
     }
     if (typeof fontWeight !== 'undefined') {
-      fontSettings.fontWeight = Number(fontWeight)
+      fontSettings.fontWeight = String(fontWeight)
     }
     if (typeof textDecoration !== 'undefined') {
       fontSettings.textDecoration = Number(textDecoration)
@@ -598,15 +592,19 @@ function initializeDesignerVueComponents(): void {
       fontSettings.lineSpacing = Number(lineSpacing)
     }
     const font = new Font(fontSettings)
-    let textWrapping: TextWrapping = TextWrapping.CHARACTER_ELLIPSIS
+    let textWrapping: TextWrapping = TextWrapping.WRAP_CHARACTER_ELLIPSIS
 
     if (typeof wrapping !== 'undefined' && wrapping !== null) {
       switch (Number(wrapping)) {
-        case TextWrapping.CHARACTER_ELLIPSIS:
-        case TextWrapping.CHARACTER:
         case TextWrapping.NONE:
-        case TextWrapping.WORD:
-        case TextWrapping.WORD_ELLIPSIS:
+        case TextWrapping.TRIM_CHARACTER_ELLIPSIS:
+        case TextWrapping.TRIM_CHARACTER:
+        case TextWrapping.TRIM_WORD:
+        case TextWrapping.TRIM_WORD_ELLIPSIS:
+        case TextWrapping.WRAP_CHARACTER_ELLIPSIS:
+        case TextWrapping.WRAP_CHARACTER:
+        case TextWrapping.WRAP_WORD:
+        case TextWrapping.WRAP_WORD_ELLIPSIS:
           textWrapping = Number(wrapping)
           break
         default:
@@ -623,7 +621,7 @@ function initializeDesignerVueComponents(): void {
     }
 
     // do the text wrapping
-    // This sample uses the strategy CHARACTER_ELLIPSIS. You can use any other setting.
+    // This sample uses the strategy WRAP_CHARACTER_ELLIPSIS. You can use any other setting.
     TextRenderSupport.addText(textElement, text, font, new Size(Number(w), Number(h)), textWrapping)
 
     return textElement
@@ -845,7 +843,7 @@ function initializeDesignerVueComponents(): void {
       },
       wrapping: {
         type: [String, Number],
-        default: TextWrapping.CHARACTER_ELLIPSIS,
+        default: TextWrapping.WRAP_CHARACTER_ELLIPSIS,
         required: false
       },
       transform: {

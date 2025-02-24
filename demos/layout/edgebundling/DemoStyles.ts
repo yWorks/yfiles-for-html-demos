@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,19 +27,13 @@
  **
  ***************************************************************************/
 import {
-  CanvasComponent,
   Color,
   EdgeStyleBase,
   GeneralPath,
-  GeomUtilities,
+  GeometryUtilities,
   GraphComponent,
-  GraphHighlightIndicatorManager,
-  HierarchicNestingPolicy,
-  ICanvasObjectGroup,
   IEdge,
   IInputModeContext,
-  IModelItem,
-  IndicatorEdgeStyleDecorator,
   INode,
   IRectangle,
   IRenderContext,
@@ -48,9 +42,8 @@ import {
   PathType,
   Point,
   SvgVisual,
-  Visual,
-  YObject
-} from 'yfiles'
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
 
 type EdgeStyleCache = {
   startColor: Color
@@ -60,6 +53,7 @@ type EdgeStyleCache = {
   selected: boolean
   equals: (self: EdgeStyleCache, other: EdgeStyleCache) => boolean
 }
+type EdgeStyleVisual = TaggedSvgVisual<SVGGElement, EdgeStyleCache>
 
 type NodeStyleCache = {
   nodeCenter: Point
@@ -68,15 +62,16 @@ type NodeStyleCache = {
   color: Color
   circleNodeSize: number
   selected: boolean
-  nodeLayout: IRectangle & YObject
+  nodeLayout: IRectangle
   equals: (self: NodeStyleCache, other: NodeStyleCache) => boolean
 }
+type NodeStyleVisual = TaggedSvgVisual<SVGPathElement, NodeStyleCache>
 
 /**
  * This class draws the edges with cubic bezier curves. Also, the edges are drawn with gradient colors from red that
  * starts from the source node of the edge to blue that ends to the target node of the edge.
  */
-export class DemoEdgeStyle extends EdgeStyleBase {
+export class DemoEdgeStyle extends EdgeStyleBase<EdgeStyleVisual> {
   pathThickness: number
   startColor: Color
   endColor: Color
@@ -99,7 +94,7 @@ export class DemoEdgeStyle extends EdgeStyleBase {
    * @param context The render context
    * @param edge The edge to which this style instance is assigned
    */
-  createVisual(context: IRenderContext, edge: IEdge): SvgVisual {
+  createVisual(context: IRenderContext, edge: IEdge): EdgeStyleVisual {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
     // Get the necessary data for rendering of the edge
@@ -108,7 +103,8 @@ export class DemoEdgeStyle extends EdgeStyleBase {
     // Render the edge
     this.render(g, cache, edge)
 
-    return new SvgVisual(g)
+    // store information with the visual on how we created it
+    return SvgVisual.from(g, cache)
   }
 
   /**
@@ -117,10 +113,9 @@ export class DemoEdgeStyle extends EdgeStyleBase {
    * @param oldVisual The old visual
    * @param edge The edge to which this style instance is assigned
    */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, edge: IEdge): Visual {
-    const container = oldVisual.svgElement
+  updateVisual(context: IRenderContext, oldVisual: EdgeStyleVisual, edge: IEdge): EdgeStyleVisual {
     // get the data with which the oldvisual was created
-    const oldCache = (container as any)['data-renderDataCache']
+    const oldCache = oldVisual.tag
     // get the data for the new visual
     const newCache = this.createRenderDataCache(context, edge)
 
@@ -140,7 +135,7 @@ export class DemoEdgeStyle extends EdgeStyleBase {
    */
   createRenderDataCache(context: IRenderContext, edge: IEdge): EdgeStyleCache {
     const selection = (context.canvasComponent as GraphComponent).selection
-    const selected = selection !== null && selection.isSelected(edge)
+    const selected = selection !== null && selection.includes(edge)
     return {
       startColor: this.startColor,
       endColor: this.endColor,
@@ -163,15 +158,12 @@ export class DemoEdgeStyle extends EdgeStyleBase {
    * @param edge The edge to which this style instance is assigned
    */
   render(container: Element, cache: EdgeStyleCache, edge: IEdge): void {
-    // store information with the visual on how we created it
-    ;(container as any)['data-renderDataCache'] = cache
-
     const gradientColors = DemoEdgeStyle.generateColors(this.startColor, this.endColor)
     const selectionColors = DemoEdgeStyle.generateColors(Color.RED, Color.GOLD)
     if (edge.bends.size > 1) {
       const controlPoints = calculateControlPoints(edge)
       // for each pairwise bezier curve create a general path that will have a different gradient fill color
-      let lastPoint: Point = edge.sourcePort!.location
+      let lastPoint: Point = edge.sourcePort.location
       for (let i = 0; i < controlPoints.length - 3; i += 3) {
         const generalPath = new GeneralPath()
         generalPath.moveTo(lastPoint)
@@ -224,16 +216,16 @@ export class DemoEdgeStyle extends EdgeStyleBase {
     const path = new GeneralPath()
     if (edge.bends.size > 1) {
       const controlPoints = calculateControlPoints(edge)
-      path.moveTo(edge.sourcePort!.location)
+      path.moveTo(edge.sourcePort.location)
       for (let i = 0; i < controlPoints.length - 3; i += 3) {
         path.cubicTo(controlPoints[i + 1], controlPoints[i + 2], controlPoints[i + 3])
       }
     } else {
-      path.moveTo(edge.sourcePort!.location)
+      path.moveTo(edge.sourcePort.location)
       edge.bends.forEach((bend) => {
         path.lineTo(bend.location)
       })
-      path.lineTo(edge.targetPort!.location)
+      path.lineTo(edge.targetPort.location)
     }
     return path
   }
@@ -278,7 +270,7 @@ export class DemoEdgeStyle extends EdgeStyleBase {
 /**
  * This class draws the nodes in a circular-sector style.
  */
-export class DemoNodeStyle extends NodeStyleBase {
+export class DemoNodeStyle extends NodeStyleBase<NodeStyleVisual> {
   color: Color
   thickness: number
 
@@ -298,13 +290,15 @@ export class DemoNodeStyle extends NodeStyleBase {
    * @param context The render context
    * @param node The given node
    */
-  createVisual(context: IRenderContext, node: INode): SvgVisual {
+  createVisual(context: IRenderContext, node: INode): NodeStyleVisual {
     // This implementation creates a CanvasContainer and uses it for the rendering of the node.
     const path = window.document.createElementNS('http://www.w3.org/2000/svg', 'path')
 
     const cache = this.createRenderDataCache(context, node)
     this.render(path, node, cache)
-    return new SvgVisual(path)
+
+    // store information with the visual on how we created it
+    return SvgVisual.from(path, cache)
   }
 
   /**
@@ -313,10 +307,9 @@ export class DemoNodeStyle extends NodeStyleBase {
    * @param oldVisual The old visual
    * @param node The given node
    */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
-    const container = oldVisual.svgElement
+  updateVisual(context: IRenderContext, oldVisual: NodeStyleVisual, node: INode): NodeStyleVisual {
     // get the data with which the oldvisual was created
-    const oldCache = (container as any)['data-renderDataCache']
+    const oldCache = oldVisual.tag
     // get the data for the new visual
     const newCache = this.createRenderDataCache(context, node)
     // check if something changed
@@ -335,7 +328,7 @@ export class DemoNodeStyle extends NodeStyleBase {
    */
   createRenderDataCache(context: IRenderContext, node: INode): NodeStyleCache {
     const selection = (context.canvasComponent as GraphComponent).selection
-    const selected = selection !== null && selection.isSelected(node)
+    const selected = selection !== null && selection.includes(node)
     return {
       nodeCenter: node.layout.center,
       circleCenter: (node.tag && node.tag.center) || Point.ORIGIN,
@@ -351,7 +344,10 @@ export class DemoNodeStyle extends NodeStyleBase {
         self.color === other.color &&
         self.circleNodeSize === other.circleNodeSize &&
         self.selected === other.selected &&
-        self.nodeLayout.equals(other.nodeLayout)
+        self.nodeLayout.x === other.nodeLayout.x &&
+        self.nodeLayout.y === other.nodeLayout.y &&
+        self.nodeLayout.width === other.nodeLayout.width &&
+        self.nodeLayout.height === other.nodeLayout.height
     }
   }
 
@@ -362,9 +358,6 @@ export class DemoNodeStyle extends NodeStyleBase {
    * @param cache The render data cache object
    */
   render(container: Element, node: INode, cache: NodeStyleCache): void {
-    // store information with the visual on how we created it
-    ;(container as any)['data-renderDataCache'] = cache
-
     let pathData: string
     const nodeCenter = node.layout.center
     if (node.tag && node.tag.circleNodeSize > 2 && node.tag.center) {
@@ -433,65 +426,8 @@ export class DemoNodeStyle extends NodeStyleBase {
 
       return Math.acos(delta.normalized.scalarProduct(hitDelta.normalized)) < angle
     } else {
-      return GeomUtilities.ellipseContains(node.layout.toRect(), location, 0)
+      return GeometryUtilities.ellipseContains(node.layout.toRect(), location, 0)
     }
-  }
-}
-
-/**
- * Install a visual representation of a highlight decoration for the edges such that the edge highlight is drawn
- * below the node group.
- */
-export class HighlightManager extends GraphHighlightIndicatorManager {
-  edgeHighlightGroup: ICanvasObjectGroup | null = null
-
-  /**
-   * Creates a new instance and configures the node and edge styles used for highlighting.
-   */
-  constructor() {
-    super()
-    this.nodeStyle = new DemoNodeStyle(Color.RED)
-    this.edgeStyle = new IndicatorEdgeStyleDecorator({
-      wrapped: new DemoEdgeStyle(6, Color.RED, Color.GOLD)
-    })
-  }
-
-  /**
-   * Installs the manager on the canvas.
-   * Adds the highlight group
-   */
-  install(canvas: CanvasComponent) {
-    if (canvas instanceof GraphComponent) {
-      // create a new group for the edge highlight that lies below the node group
-      const graphModelManager = canvas.graphModelManager
-      graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NONE
-      this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
-      this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
-    }
-    super.install(canvas)
-  }
-
-  /**
-   * Uninstalls the manager from the canvas
-   * removes the highlight groups
-   */
-  uninstall(canvas: CanvasComponent) {
-    super.uninstall(canvas)
-    if (this.edgeHighlightGroup) {
-      this.edgeHighlightGroup.remove()
-      this.edgeHighlightGroup = null
-    }
-  }
-
-  /**
-   * Retrieves the Canvas Object group to use for the given item.
-   * @param item The given item
-   */
-  getCanvasObjectGroup(item: IModelItem): ICanvasObjectGroup | null {
-    if (IEdge.isInstance(item)) {
-      return this.edgeHighlightGroup
-    }
-    return super.getCanvasObjectGroup(item)!
   }
 }
 
@@ -551,13 +487,13 @@ function getPathPoints(path: GeneralPath): Point[] {
 function calculateControlPoints(edge: IEdge): Point[] {
   const controlPoints = []
   // add the source port
-  controlPoints.push(edge.sourcePort!.location)
+  controlPoints.push(edge.sourcePort.location)
   // add all edge bends
   edge.bends.forEach((bend) => {
     controlPoints.push(new Point(bend.location.x, bend.location.y))
   })
   // add the target port
-  const targetLocation = edge.targetPort!.location
+  const targetLocation = edge.targetPort.location
   controlPoints.push(targetLocation)
 
   // check if the control points can create piecewise bezier curves, if not duplicate the target port

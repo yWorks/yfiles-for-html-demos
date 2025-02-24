@@ -1,19 +1,21 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 01 Rendering the Port - Tutorial: Port Style Implementation
 
-# Custom port visualizations
+<img src="../../../doc/demo-thumbnails/tutorial-style-implementation-port.webp" alt="demo-thumbnail" height="320"/>
 
-yFiles for HTML comes with a lot of predefined item visualizations and lots of different shapes for nodes, which can also be used to visualize ports using [NodeStylePortStyleAdapter](https://docs.yworks.com/yfileshtml/#/api/NodeStylePortStyleAdapter). However, in some cases, it is required to create fully custom visualizations based on SVG. This might be the case if you need shapes that are not available out-of-the-box, because they are domain-specific. Also, the rendering of custom visualizations can be optimized for performance-critical applications.
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-port/01-render-port-shape/).
+
+yFiles for HTML comes with a lot of predefined item visualizations and lots of different shapes for nodes, which can also be used to visualize ports using [NodeStylePortStyleAdapter](https://docs.yworks.com/yfileshtml/#/api/NodeStylePortStyleAdapter) and [ShapePortStyle](https://docs.yworks.com/yfileshtml/#/api/ShapePortStyle). However, in some cases, it is required to create fully custom visualizations based on SVG. This might be the case if you need shapes that are not available out-of-the-box, because they are domain-specific. Also, the rendering of custom visualizations can be optimized for performance-critical applications.
 
 This tutorial will guide you through creating your own port visualizations for yFiles for HTML with SVG.
 

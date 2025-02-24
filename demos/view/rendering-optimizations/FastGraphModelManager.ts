@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,21 +28,14 @@
  ***************************************************************************/
 import {
   BaseClass,
-  CanvasComponent,
-  Class,
-  DefaultGraph,
+  Graph,
   GraphComponent,
   GraphModelManager,
   HtmlCanvasVisual,
   IBoundsProvider,
   ICanvasContext,
-  ICanvasObject,
-  ICanvasObjectDescriptor,
-  ICanvasObjectGroup,
-  IContextLookup,
   IContextLookupChainLink,
   IEdge,
-  IEdgeHitTester,
   IEdgeStyle,
   IEnumerable,
   IGraph,
@@ -50,18 +43,17 @@ import {
   IHitTester,
   IInputModeContext,
   ILabel,
-  ILabelHitTester,
-  ILabelOwner,
-  ILabelOwnerHitTester,
   ILabelStyle,
+  ILookupDecorator,
   IModelItem,
   INode,
-  INodeHitTester,
   INodeStyle,
+  IObjectRenderer,
   IPort,
-  IPortHitTester,
   IPortStyle,
   IRenderContext,
+  IRenderTreeElement,
+  IRenderTreeGroup,
   IVisibilityTestable,
   IVisualCreator,
   List,
@@ -71,17 +63,11 @@ import {
   Size,
   SvgExport,
   SvgVisual,
-  Visual,
-  VoidLabelStyle,
-  VoidPortStyle,
-  WebGLPolylineEdgeStyle,
-  WebGLShapeNodeStyle,
-  WebGLVisual
-} from 'yfiles'
+  Visual
+} from '@yfiles/yfiles'
 
 import SvgEdgeStyle from './SvgEdgeStyle'
 import SimpleSvgNodeStyle from './SimpleSvgNodeStyle'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
 
 /**
  * A {@link GraphModelManager} implementation that uses several optimizations
@@ -130,28 +116,23 @@ import { BrowserDetection } from 'demo-utils/BrowserDetection'
  * @see {@link OptimizationMode}
  */
 export class FastGraphModelManager extends GraphModelManager {
-  private _graphComponent: GraphComponent | null
-
-  // create the custom descriptors for graph items
-  private readonly fastNodeDescriptor: AutoSwitchDescriptor = new AutoSwitchDescriptor(
-    GraphModelManager.DEFAULT_NODE_DESCRIPTOR,
+  // create the custom renderers for graph items
+  private readonly fastNodeRenderer: AutoSwitchRenderer<INode> = new AutoSwitchRenderer(
+    GraphModelManager.DEFAULT_NODE_RENDERER,
     this
   )
-  private readonly fastEdgeDescriptor: AutoSwitchDescriptor = new AutoSwitchDescriptor(
-    GraphModelManager.DEFAULT_EDGE_DESCRIPTOR,
+  private readonly fastEdgeRenderer: AutoSwitchRenderer<IEdge> = new AutoSwitchRenderer(
+    GraphModelManager.DEFAULT_EDGE_RENDERER,
     this
   )
-  private readonly fastLabelDescriptor: AutoSwitchDescriptor = new AutoSwitchDescriptor(
-    GraphModelManager.DEFAULT_LABEL_DESCRIPTOR,
+  private readonly fastLabelRenderer: AutoSwitchRenderer<ILabel> = new AutoSwitchRenderer(
+    GraphModelManager.DEFAULT_LABEL_RENDERER,
     this
   )
-  private readonly fastPortDescriptor: AutoSwitchDescriptor = new AutoSwitchDescriptor(
-    GraphModelManager.DEFAULT_PORT_DESCRIPTOR,
+  private readonly fastPortRenderer: AutoSwitchRenderer<IPort> = new AutoSwitchRenderer(
+    GraphModelManager.DEFAULT_PORT_RENDERER,
     this
   )
-
-  private _overviewNodeStyle: INodeStyle
-  private _overviewEdgeStyle: IEdgeStyle
 
   // set default values
   private _intermediateZoomThreshold = 1
@@ -174,54 +155,41 @@ export class FastGraphModelManager extends GraphModelManager {
     | null = null
 
   // create the image renderer
-  private _imageRendererCanvasObject: ICanvasObject | null = null
+  private _imageRenderTreeElement: IRenderTreeElement | null = null
   private readonly imageRenderer: ImageGraphRenderer
 
   // add a chain link to the graphComponent's lookup that customizes item hit test
-  private hitTestInputChainLink: HitTestInputChainLink | null = null
+  // private hitTestInputChainLink: HitTestInputChainLink | null = null
 
   private _graphOptimizationMode = OptimizationMode.DEFAULT
 
   private readonly zoomChangedHandler: () => void
   private readonly graphChangedHandler: () => void
+  private iHitTester: IContextLookupChainLink | null = null
 
   /**
    * Creates a new instance of this class.
-   * @param graphComponent The {@link GraphComponent} that uses this instance.
-   * @param contentGroup The content group in which to render the graph items.
    */
-  constructor(graphComponent: GraphComponent, contentGroup: ICanvasObjectGroup) {
-    super(graphComponent, contentGroup)
-    this._graphComponent = graphComponent
+  constructor() {
+    super()
     this._graphOptimizationMode = OptimizationMode.DEFAULT
 
-    // set the graph for the component view
-    this.graph = graphComponent.graph
-
-    this.nodeDescriptor = this.fastNodeDescriptor
-    this.edgeDescriptor = this.fastEdgeDescriptor
-    this.nodeLabelDescriptor = this.fastLabelDescriptor
-    this.edgeLabelDescriptor = this.fastLabelDescriptor
-    this.portDescriptor = this.fastPortDescriptor
+    this.nodeRenderer = this.fastNodeRenderer
+    this.edgeRenderer = this.fastEdgeRenderer
+    this.nodeLabelRenderer = this.fastLabelRenderer
+    this.edgeLabelRenderer = this.fastLabelRenderer
+    this.portLabelRenderer = this.fastPortRenderer
 
     // initialize the intermediate and overview styles with default values
-    if (BrowserDetection.webGL) {
-      this.overviewNodeStyle = new WebGLShapeNodeStyle()
-      this.overviewEdgeStyle = new WebGLPolylineEdgeStyle()
-      this._overviewNodeStyle = new WebGLShapeNodeStyle()
-      this._overviewEdgeStyle = new WebGLPolylineEdgeStyle()
-    } else {
-      this.overviewNodeStyle = new SimpleSvgNodeStyle()
-      this.overviewEdgeStyle = new SvgEdgeStyle()
-      this._overviewNodeStyle = new SimpleSvgNodeStyle()
-      this._overviewEdgeStyle = new SvgEdgeStyle()
-    }
+    this.overviewNodeStyle = new SimpleSvgNodeStyle()
+    this.overviewEdgeStyle = new SvgEdgeStyle()
+
     // there is an intermediate level visualization for nodes and edges
     this.intermediateNodeStyle = new SimpleSvgNodeStyle()
     this.intermediateEdgeStyle = new SvgEdgeStyle()
     // we do not render ports and labels in other levels than the default level
-    this.overviewLabelStyle = VoidLabelStyle.INSTANCE
-    this.overviewPortStyle = VoidPortStyle.INSTANCE
+    this.overviewLabelStyle = ILabelStyle.VOID_LABEL_STYLE
+    this.overviewPortStyle = IPortStyle.VOID_PORT_STYLE
 
     this.imageRenderer = new ImageGraphRenderer(this)
 
@@ -229,17 +197,23 @@ export class FastGraphModelManager extends GraphModelManager {
     this.graphChangedHandler = () => this.onGraphComponentGraphChanged()
   }
 
-  install(graphComponent: GraphComponent, graph: IGraph): void {
-    super.install(graphComponent, graph)
+  install(
+    graphComponent: GraphComponent,
+    graph: IGraph,
+    contentGroup?: IRenderTreeGroup | null
+  ): void {
+    if (this.graphComponent != null) {
+      throw new Error('This instance is already installed.')
+    }
 
-    this._graphComponent = graphComponent
+    super.install(graphComponent, graphComponent.graph, graphComponent.renderTree.contentGroup)
 
     // register to graphComponent events that could trigger a visualization change
-    graphComponent.addZoomChangedListener(this.zoomChangedHandler)
-    graphComponent.addGraphChangedListener(this.graphChangedHandler)
+    graphComponent.addEventListener('zoom-changed', this.zoomChangedHandler)
 
-    this.hitTestInputChainLink = new HitTestInputChainLink(graphComponent)
-    graphComponent.inputModeContextLookupChain.add(this.hitTestInputChainLink)
+    this.iHitTester = graphComponent
+      .getInputModeContextDecoratorFor(IHitTester)
+      .addFactory((context) => new MyHitTestEnumerator(context.graph!))
 
     if (graphComponent.graph != null) {
       // install rendering, if necessary
@@ -248,25 +222,22 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   uninstall(graphComponent: GraphComponent): void {
-    if (this._imageRendererCanvasObject) {
-      this._imageRendererCanvasObject.remove()
-      this._imageRendererCanvasObject = null
+    // Remove image renderer. Note that this is installed in updateRendering on demand
+    if (this.imageRenderTreeElement) {
+      graphComponent.renderTree.remove(this.imageRenderTreeElement)
+      this.imageRenderTreeElement = null
     }
 
     // unregister to graphComponent events that could trigger a visualization change
-    graphComponent.removeGraphChangedListener(this.graphChangedHandler)
-    graphComponent.removeZoomChangedListener(this.zoomChangedHandler)
+    graphComponent.removeEventListener('zoom-changed', this.zoomChangedHandler)
 
-    graphComponent.inputModeContextLookupChain.remove(this.hitTestInputChainLink!)
-    this.hitTestInputChainLink = null
-
-    this._graphComponent = null
+    graphComponent.lookup(ILookupDecorator)!.removeLookup(IInputModeContext, this.iHitTester!)
 
     super.uninstall(graphComponent)
   }
 
   get graphComponent(): GraphComponent | null {
-    return this._graphComponent
+    return this.canvasComponent as GraphComponent
   }
 
   /**
@@ -289,99 +260,99 @@ export class FastGraphModelManager extends GraphModelManager {
   /**
    * Sets the canvas object for image rendering.
    */
-  set imageRendererCanvasObject(value: ICanvasObject | null) {
-    this._imageRendererCanvasObject = value
+  set imageRenderTreeElement(value: IRenderTreeElement | null) {
+    this._imageRenderTreeElement = value
   }
 
   /**
    * Gets the canvas object for image rendering.
    */
-  get imageRendererCanvasObject(): ICanvasObject | null {
-    return this._imageRendererCanvasObject
+  get imageRenderTreeElement(): IRenderTreeElement | null {
+    return this._imageRenderTreeElement
   }
 
   /**
    * Sets the intermediate node style.
    */
   set intermediateNodeStyle(value: INodeStyle) {
-    this.fastNodeDescriptor.intermediateStyle = value
+    this.fastNodeRenderer.intermediateStyle = value
   }
 
   /**
    * Gets the intermediate node style.
    */
   get intermediateNodeStyle(): INodeStyle {
-    return this.fastNodeDescriptor.intermediateStyle as INodeStyle
+    return this.fastNodeRenderer.intermediateStyle as INodeStyle
   }
 
   /**
    * Sets the intermediate edge style.
    */
   set intermediateEdgeStyle(value: IEdgeStyle) {
-    this.fastEdgeDescriptor.intermediateStyle = value
+    this.fastEdgeRenderer.intermediateStyle = value
   }
 
   /**
    * Gets the intermediate edge style.
    */
   get intermediateEdgeStyle(): IEdgeStyle {
-    return this.fastEdgeDescriptor.intermediateStyle as IEdgeStyle
+    return this.fastEdgeRenderer.intermediateStyle as IEdgeStyle
   }
 
   /**
    * Sets the overview node style.
    */
   set overviewNodeStyle(value: INodeStyle) {
-    this.fastNodeDescriptor.overviewStyle = value
+    this.fastNodeRenderer.overviewStyle = value
   }
 
   /**
    * Gets the overview node style.
    */
   get overviewNodeStyle(): INodeStyle {
-    return this.fastNodeDescriptor.overviewStyle as INodeStyle
+    return this.fastNodeRenderer.overviewStyle as INodeStyle
   }
 
   /**
    * Sets the overview edge style.
    */
   set overviewEdgeStyle(value: IEdgeStyle) {
-    this.fastEdgeDescriptor.overviewStyle = value
+    this.fastEdgeRenderer.overviewStyle = value
   }
 
   /**
    * Gets the overview edge style.
    */
   get overviewEdgeStyle(): IEdgeStyle {
-    return this.fastEdgeDescriptor.overviewStyle as IEdgeStyle
+    return this.fastEdgeRenderer.overviewStyle as IEdgeStyle
   }
 
   /**
    * Sets the overview label style.
    */
   set overviewLabelStyle(value: ILabelStyle) {
-    this.fastLabelDescriptor.overviewStyle = this.fastLabelDescriptor.intermediateStyle = value
+    this.fastLabelRenderer.overviewStyle = this.fastLabelRenderer.intermediateStyle = value
   }
 
   /**
    * Gets the overview label style.
    */
   get overviewLabelStyle(): ILabelStyle {
-    return this.fastLabelDescriptor.overviewStyle as ILabelStyle
+    return this.fastLabelRenderer.overviewStyle as ILabelStyle
   }
 
   /**
    * Sets the overview port style.
    */
   set overviewPortStyle(value: IPortStyle) {
-    this.fastPortDescriptor.overviewStyle = this.fastPortDescriptor.intermediateStyle = value
+    this.fastPortRenderer.overviewStyle = this.fastPortRenderer.intermediateStyle = value
   }
 
   /**
    * Gets the overview port style.
    */
   get overviewPortStyle(): IPortStyle {
-    return this.fastPortDescriptor.overviewStyle as IPortStyle
+    return this.fastPortRenderer.overviewStyle as IPortStyle
   }
 
   /**
@@ -607,7 +578,7 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Tells the descriptors whether an image is used or default rendering.
+   * Tells the renderers whether an image is used or default rendering.
    * `true`, if the image renderer should be used to render the graph.
    * `false` if the default rendering code should be used.
    */
@@ -621,13 +592,12 @@ export class FastGraphModelManager extends GraphModelManager {
       (optimizationMode === OptimizationMode.STATIC_CANVAS ||
         optimizationMode === OptimizationMode.SVG_IMAGE ||
         optimizationMode === OptimizationMode.DYNAMIC_CANVAS_WITH_ITEM_STYLES ||
-        optimizationMode === OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK ||
-        optimizationMode === OptimizationMode.WEBGL)
+        optimizationMode === OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK)
 
-    this.fastNodeDescriptor.shouldUseImage = value
-    this.fastEdgeDescriptor.shouldUseImage = value
-    this.fastLabelDescriptor.shouldUseImage = value
-    this.fastPortDescriptor.shouldUseImage = value
+    this.fastNodeRenderer.shouldUseImage = value
+    this.fastEdgeRenderer.shouldUseImage = value
+    this.fastLabelRenderer.shouldUseImage = value
+    this.fastPortRenderer.shouldUseImage = value
 
     return value
   }
@@ -644,14 +614,14 @@ export class FastGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * Sets the styles to use on the descriptors depending on the current
+   * Sets the styles to use on the renderers depending on the current
    * graphOptimizationMode and the zoom level of the GraphComponent
    */
   updateEffectiveStyles() {
-    this.fastNodeDescriptor.updateEffectiveStyle()
-    this.fastEdgeDescriptor.updateEffectiveStyle()
-    this.fastLabelDescriptor.updateEffectiveStyle()
-    this.fastPortDescriptor.updateEffectiveStyle()
+    this.fastNodeRenderer.updateEffectiveStyle()
+    this.fastEdgeRenderer.updateEffectiveStyle()
+    this.fastLabelRenderer.updateEffectiveStyle()
+    this.fastPortRenderer.updateEffectiveStyle()
   }
 
   /**
@@ -669,7 +639,7 @@ export class FastGraphModelManager extends GraphModelManager {
     }
     const shouldUseImage = this.updateShouldUseImage()
     if (shouldUseImage && this.graph === this.graphComponent.graph) {
-      this.graph = new DefaultGraph()
+      this.graph = new Graph()
     } else if (!shouldUseImage && this.graph !== this.graphComponent.graph) {
       this.graph = this.graphComponent.graph
     }
@@ -680,17 +650,24 @@ export class FastGraphModelManager extends GraphModelManager {
    * it if not needed.
    */
   updateImageRenderer() {
+    if (!this.graphComponent) {
+      return
+    }
+
     const imageRendererNeeded = this.updateShouldUseImage()
-    if (imageRendererNeeded && this.imageRendererCanvasObject === null) {
+    const renderTree = this.graphComponent.renderTree
+    if (imageRendererNeeded && this.imageRenderTreeElement == null) {
       // add image renderer to graphComponent
-      this.imageRendererCanvasObject = this.contentGroup.addChild(
-        this.imageRenderer,
-        ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+      this.imageRenderTreeElement = renderTree?.createElement(
+        this.contentGroup!,
+        this.imageRenderer
       )
-    } else if (!imageRendererNeeded && this.imageRendererCanvasObject !== null) {
+    } else if (!imageRendererNeeded && this.imageRenderTreeElement != null) {
       // remove image renderer from graphComponent
-      this.imageRendererCanvasObject.remove()
-      this.imageRendererCanvasObject = null
+      if (this.imageRenderTreeElement) {
+        renderTree.remove(this.imageRenderTreeElement)
+      }
+      this.imageRenderTreeElement = null
     }
   }
 
@@ -723,7 +700,7 @@ export class FastGraphModelManager extends GraphModelManager {
  * Each optimization mode has different advantages and disadvantages. The concrete
  * use-cases for each option depend on various factors, like interaction, graph size
  * and visual complexity. Every optimization comes at a cost that makes this strategy
- * unsuitable for general use. Please read the descriptions of the separate optimization
+ * unsuitable for general use. Please read the renderers of the separate optimization
  * modes for detailed information.
  * @readonly
  * @enum {number}
@@ -827,19 +804,14 @@ export const OptimizationMode = {
    * for higher zoom levels. It is only suitable for scenarios where the graph is drawn with very low zoom levels,
    * e.g. in a graph overview.
    */
-  STATIC_CANVAS: 6,
-
-  /**
-   * This option draws the complete graph onto a WebGL canvas using predefined WebGL item styles.
-   */
-  WEBGL: 7
+  STATIC_CANVAS: 6
 }
 
 /**
- * An {@link ICanvasObjectDescriptor} implementation
+ * An {@link IObjectRenderer} implementation
  * that switches between default and optimized styles.
  */
-class AutoSwitchDescriptor extends BaseClass(ICanvasObjectDescriptor) {
+class AutoSwitchRenderer<TModelItem extends IModelItem> extends BaseClass(IObjectRenderer<INode>) {
   // whether we are using an image for the rendering and should thus not normally be considered dirty
   shouldUseImage = false
   private effectiveStyle: INodeStyle | IEdgeStyle | ILabelStyle | IPortStyle | null = null
@@ -847,12 +819,12 @@ class AutoSwitchDescriptor extends BaseClass(ICanvasObjectDescriptor) {
   private _overviewStyle: INodeStyle | IEdgeStyle | ILabelStyle | IPortStyle | null = null
 
   /**
-   * Creates a new instance of AutoSwitchDescriptor.
-   * @param backingInstance The ICanvasObjectDescriptor implementation
+   * Creates a new instance of AutoSwitchRenderer.
+   * @param backingInstance The IObjectRenderer implementation
    * @param manager A reference to the FastGraphModelManager.
    */
   constructor(
-    private readonly backingInstance: ICanvasObjectDescriptor,
+    private readonly backingInstance: IObjectRenderer<TModelItem>,
     private readonly manager: FastGraphModelManager
   ) {
     super()
@@ -894,26 +866,22 @@ class AutoSwitchDescriptor extends BaseClass(ICanvasObjectDescriptor) {
     }
   }
 
-  isDirty(context: ICanvasContext, canvasObject: ICanvasObject): boolean {
-    return !this.shouldUseImage || this.backingInstance.isDirty(context, canvasObject)
-  }
-
-  getVisualCreator(item: IModelItem): IVisualCreator {
+  getVisualCreator(item: unknown | null): IVisualCreator {
     const style = this.effectiveStyle || (item as any).style
     return style.renderer.getVisualCreator(item, style)
   }
 
-  getBoundsProvider(item: IModelItem): IBoundsProvider {
+  getBoundsProvider(item: unknown | null): IBoundsProvider {
     const style = this.effectiveStyle || (item as any).style
     return style.renderer.getBoundsProvider(item, style)
   }
 
-  getVisibilityTestable(item: IModelItem): IVisibilityTestable {
+  getVisibilityTestable(item: unknown | null): IVisibilityTestable {
     const style = this.effectiveStyle || (item as any).style
     return style.renderer.getVisibilityTestable(item, style)
   }
 
-  getHitTestable(item: IModelItem): IHitTestable {
+  getHitTestable(item: unknown | null): IHitTestable {
     const style = this.effectiveStyle || (item as any).style
     return style.renderer.getHitTestable(item, style)
   }
@@ -959,9 +927,6 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
       case OptimizationMode.STATIC_CANVAS:
         visual = this.createCompleteGraphCanvasVisual()
         break
-      case OptimizationMode.WEBGL:
-        visual = this.createCompleteGraphWebglVisual()
-        break
       default:
         visual = this.createStaticSvgVisual()
         break
@@ -990,7 +955,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
       (oldVisual as any).needsUpdate(
         context.zoom,
         canvasComponent.viewport,
-        canvasComponent.contentRect
+        canvasComponent.contentBounds
       )
     ) {
       // update simple dynamic canvas if necessary
@@ -1002,7 +967,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
       (oldVisual as any).needsUpdate(
         context.zoom,
         canvasComponent.viewport,
-        canvasComponent.contentRect
+        canvasComponent.contentBounds
       )
     ) {
       // update complex dynamic canvas if necessary
@@ -1061,8 +1026,8 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
    * Creates a visual that renders a static SVG image of the graph.
    */
   createStaticSvgVisual(): Visual {
-    const contentRect = this.outer.graphComponent!.contentRect
-    const scale = this.getSuitableScale(this.outer.graphComponent!.contentRect)
+    const contentRect = this.outer.graphComponent!.contentBounds
+    const scale = this.getSuitableScale(this.outer.graphComponent!.contentBounds)
     const svg = this.exportRectToSvg(contentRect, scale)
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
     new Matrix(1 / scale, 0, 0, 1 / scale, contentRect.x, contentRect.y).applyTo(g)
@@ -1141,9 +1106,9 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
   createCompleteGraphCanvasVisual(): Visual {
     const graphComponent = this.outer.graphComponent!
     const zoom = graphComponent.zoom
-    const exportRect = graphComponent.contentRect
+    const exportRect = graphComponent.contentBounds
 
-    const scale = this.getSuitableScale(graphComponent.contentRect)
+    const scale = this.getSuitableScale(graphComponent.contentBounds)
     const svgElement = this.exportRectToSvg(exportRect, scale)
     const dataUrl = SvgExport.encodeSvgDataUrl(SvgExport.exportSvgString(svgElement))
 
@@ -1165,10 +1130,6 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     return visual
   }
 
-  createCompleteGraphWebglVisual(): GLVisual {
-    return new GLVisual(this.outer.graphComponent!.graph)
-  }
-
   /**
    * Draws the graph into a canvas and updates the given visual with the newly created canvas.
    * @param visual The given visual
@@ -1178,7 +1139,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     const viewport = graphComponent.viewport
     const zoom = graphComponent.zoom
     const factor = this.outer.imageSizeFactor
-    const contentRect = graphComponent.contentRect
+    const contentRect = graphComponent.contentBounds
 
     // calculate the area to export in world coordinates
     let exportRect: Rect = new Rect(
@@ -1270,8 +1231,8 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
       this.outer.drawEdgeCallback(edge, canvasContext)
     } else {
       canvasContext.strokeStyle = '#000000'
-      const sourcePort = edge.sourcePort!
-      const targetPort = edge.targetPort!
+      const sourcePort = edge.sourcePort
+      const targetPort = edge.targetPort
       const sourceLocation = sourcePort.locationParameter.model.getLocation(
         sourcePort,
         sourcePort.locationParameter
@@ -1329,7 +1290,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     const viewport = graphComponent.viewport
     const zoom = graphComponent.zoom
     const factor = this.outer.imageSizeFactor
-    const contentRect = graphComponent.contentRect
+    const contentRect = graphComponent.contentBounds
 
     // calculate the area to export in world coordinates
     let exportRect: Rect = new Rect(
@@ -1434,7 +1395,7 @@ class CanvasRenderVisual extends HtmlCanvasVisual {
    * @param context The context to paint on
    * @param htmlCanvasContext The given HtmlCanvasContext
    */
-  paint(context: IRenderContext, htmlCanvasContext: CanvasRenderingContext2D): void {
+  render(context: IRenderContext, htmlCanvasContext: CanvasRenderingContext2D): void {
     htmlCanvasContext.drawImage(
       this.canvas,
       this.initialArea.topLeft.x,
@@ -1503,114 +1464,6 @@ class CanvasRenderVisual extends HtmlCanvasVisual {
 }
 
 /**
- * A render visual that draws a given graph in a canvas using WebGL item styles.
- */
-class GLVisual extends WebGLVisual {
-  private readonly edgeStyle: WebGLPolylineEdgeStyle = new WebGLPolylineEdgeStyle({
-    thickness: 5
-  })
-  private readonly nodeStyle: WebGLShapeNodeStyle = new WebGLShapeNodeStyle({
-    color: '#FF6C00'
-  })
-  private visuals: WebGLVisual[] | null = null
-
-  /**
-   * Creates a new GLVisual.
-   * @param graph The graph to render.
-   */
-  constructor(private readonly graph: IGraph) {
-    super()
-  }
-
-  /**
-   * Paints onto the context using WebGL item styles.
-   * @param ctx The context to paint on
-   * @param gl The given WebGLRenderingContext
-   */
-  render(ctx: IRenderContext, gl: WebGLRenderingContext): void {
-    if (!this.visuals) {
-      this.visuals = []
-      this.graph.edges.forEach((edge) => {
-        this.visuals!.push(
-          this.edgeStyle.renderer
-            .getVisualCreator(edge, this.edgeStyle)
-            .createVisual(ctx) as WebGLVisual
-        )
-      })
-      this.graph.nodes.forEach((node) => {
-        this.visuals!.push(
-          this.nodeStyle.renderer
-            .getVisualCreator(node, this.nodeStyle)
-            .createVisual(ctx) as WebGLVisual
-        )
-      })
-    }
-    this.visuals.forEach((visual) => {
-      visual.render(ctx, gl)
-    })
-  }
-}
-
-/**
- * A custom lookup chain link for fast hit testing.
- * The {@link IHitTester} implementations returned by this link ignore the actual rendering order
- * and simply iterate over the corresponding model items in the graph of the link's graph component.
- */
-class HitTestInputChainLink extends BaseClass(IContextLookupChainLink) {
-  private next: IContextLookup | null = null
-
-  /**
-   * Constructs a new instance of HitTestInputChainLink.
-   * @param graphComponent The graph component whose elements will be enumerated.
-   */
-  constructor(private readonly graphComponent: GraphComponent) {
-    super()
-  }
-
-  /**
-   * Retrieves an implementation of the given type for a given item.
-   * @param item The item to lookup for
-   * @param type The type to lookup for
-   * @returns the implementation found
-   */
-  contextLookup(item: object, type: Class<any>): object | null {
-    const graph = this.graphComponent.graph
-    if (type === IHitTester.$class) {
-      return new MyHitTestEnumerator(graph)
-    }
-    if (type === INodeHitTester.$class) {
-      return new MyNodeHitTestEnumerator(graph)
-    }
-    if (type === IEdgeHitTester.$class) {
-      return new MyEdgeHitTestEnumerator(graph)
-    }
-    if (type === ILabelHitTester.$class) {
-      return new MyLabelHitTestEnumerator(graph)
-    }
-    if (type === IPortHitTester.$class) {
-      return new MyPortHitTestEnumerator(graph)
-    }
-    if (type === ILabelOwnerHitTester.$class) {
-      return new MyLabelOwnerHitTestEnumerator(graph)
-    }
-
-    if (this.next) {
-      return this.next.contextLookup(item, type)
-    }
-
-    return null
-  }
-
-  /**
-   * Called to register the fallback lookup implementation that should be used.
-   * @param next The context to use as a fallback
-   */
-  setNext(next: IContextLookup): void {
-    this.next = next
-  }
-}
-
-/**
  * Enumerates all graph elements of a given graph for hit testing.
  */
 class MyHitTestEnumerator extends BaseClass(IHitTester) {
@@ -1639,156 +1492,6 @@ class MyHitTestEnumerator extends BaseClass(IHitTester) {
         hits.add(label)
       }
     })
-    this.graph.edges.forEach((edge) => {
-      if (edge.style.renderer.getHitTestable(edge, edge.style).isHit(context, location)) {
-        hits.add(edge)
-      }
-    })
-    this.graph.nodes.forEach((node) => {
-      if (node.style.renderer.getHitTestable(node, node.style).isHit(context, location)) {
-        hits.add(node)
-      }
-    })
-    return hits
-  }
-}
-
-/**
- * Enumerates all nodes of a given graph for hit testing.
- */
-class MyNodeHitTestEnumerator extends BaseClass<INodeHitTester>(INodeHitTester) {
-  /**
-   * Initializes a new instance of {@link MyNodeHitTestEnumerator}.
-   * @param graph The graph whose nodes will be enumerated.
-   */
-  constructor(private readonly graph: IGraph) {
-    super()
-  }
-
-  /**
-   * Enumerates the hits for the given location.
-   * @param context The context to perform the hit
-   * @param location The location in world coordinates
-   */
-  enumerateHits(context: IInputModeContext, location: Point): IEnumerable<INode> {
-    const hits = new List<INode>()
-    this.graph.nodes.forEach((node) => {
-      if (node.style.renderer.getHitTestable(node, node.style).isHit(context, location)) {
-        hits.add(node)
-      }
-    })
-    return hits
-  }
-}
-
-/**
- * Enumerates all edges of a given graph for hit testing.
- */
-class MyEdgeHitTestEnumerator extends BaseClass(IEdgeHitTester) {
-  /**
-   * Initializes a new instance of {@link MyEdgeHitTestEnumerator}.
-   * @param graph The graph whose edges will be enumerated.
-   */
-  constructor(private readonly graph: IGraph) {
-    super()
-  }
-
-  /**
-   * Enumerates the hits for the given location.
-   * @param context The context to perform the hit
-   * @param location The location in world coordinates
-   */
-  enumerateHits(context: IInputModeContext, location: Point): IEnumerable<IEdge> {
-    const hits = new List<IEdge>()
-    this.graph.edges.forEach((edge) => {
-      if (edge.style.renderer.getHitTestable(edge, edge.style).isHit(context, location)) {
-        hits.add(edge)
-      }
-    })
-    return hits
-  }
-}
-
-/**
- * Enumerates all labels of a given graph for hit testing.
- */
-class MyLabelHitTestEnumerator extends BaseClass<ILabelHitTester>(ILabelHitTester) {
-  /**
-   * Initializes a new instance of {@link MyLabelHitTestEnumerator}.
-   * @param graph The graph whose labels will be enumerated.
-   */
-  constructor(private readonly graph: IGraph) {
-    super()
-  }
-
-  /**
-   * Enumerates the hits for the given location.
-   * @param context The context to perform the hit
-   * @param location The location in world coordinates
-   */
-  enumerateHits(context: IInputModeContext, location: Point): IEnumerable<ILabel> {
-    const hits = new List<ILabel>()
-    this.graph.edgeLabels.forEach((label) => {
-      if (label.style.renderer.getHitTestable(label, label.style).isHit(context, location)) {
-        hits.add(label)
-      }
-    })
-    this.graph.nodeLabels.forEach((label) => {
-      if (label.style.renderer.getHitTestable(label, label.style).isHit(context, location)) {
-        hits.add(label)
-      }
-    })
-    return hits
-  }
-}
-
-/**
- * Enumerates all ports of a given graph for hit testing.
- */
-class MyPortHitTestEnumerator extends BaseClass(IPortHitTester) {
-  /**
-   * Initializes a new instance of {@link MyPortHitTestEnumerator}.
-   * @param graph The graph whose ports will be enumerated.
-   */
-  constructor(private readonly graph: IGraph) {
-    super()
-  }
-
-  /**
-   * Enumerates the hits for the given location.
-   * @param context The context to perform the hit
-   * @param location The location in world coordinates
-   */
-  enumerateHits(context: IInputModeContext, location: Point): IEnumerable<IPort> {
-    const hits = new List<IPort>()
-    this.graph.ports.forEach((port) => {
-      if (port.style.renderer.getHitTestable(port, port.style).isHit(context, location)) {
-        hits.add(port)
-      }
-    })
-    return hits
-  }
-}
-
-/**
- * Enumerates all nodes and edges of a given graph for hit testing.
- */
-class MyLabelOwnerHitTestEnumerator extends BaseClass(ILabelOwnerHitTester) {
-  /**
-   * Initializes a new instance of {@link MyLabelOwnerHitTestEnumerator}.
-   * @param graph The graph whose nodes and edges will be enumerated.
-   */
-  constructor(private readonly graph: IGraph) {
-    super()
-  }
-
-  /**
-   * Enumerates the hits for the given location.
-   * @param context The context to perform the hit
-   * @param location The location in world coordinates
-   */
-  enumerateHits(context: IInputModeContext, location: Point): IEnumerable<ILabelOwner> {
-    const hits = new List<ILabelOwner>()
     this.graph.edges.forEach((edge) => {
       if (edge.style.renderer.getHitTestable(edge, edge.style).isHit(context, location)) {
         hits.add(edge)

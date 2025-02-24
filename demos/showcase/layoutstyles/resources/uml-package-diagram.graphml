@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
     <default>true</default>
   </key>
@@ -56,16 +56,16 @@
   <key id="d14" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
   <data key="d14">
     <y:SharedData>
-      <yjs:DefaultLabelStyle x:Key="1" horizontalTextAlignment="CENTER" textSize="13">
-        <yjs:DefaultLabelStyle.font>
-          <yjs:Font fontSize="13" fontStyle="ITALIC" fontWeight="BOLD"/>
-        </yjs:DefaultLabelStyle.font>
-      </yjs:DefaultLabelStyle>
-      <yjs:DefaultLabelStyle x:Key="3" horizontalTextAlignment="CENTER" textSize="13">
-        <yjs:DefaultLabelStyle.font>
-          <yjs:Font fontSize="13" fontWeight="BOLD"/>
-        </yjs:DefaultLabelStyle.font>
-      </yjs:DefaultLabelStyle>
+      <yjs:LabelStyle x:Key="1" horizontalTextAlignment="CENTER" textSize="13">
+        <yjs:LabelStyle.font>
+          <yjs:Font fontSize="13" fontStyle="ITALIC" fontWeight="bold"/>
+        </yjs:LabelStyle.font>
+      </yjs:LabelStyle>
+      <yjs:LabelStyle x:Key="3" horizontalTextAlignment="CENTER" textSize="13">
+        <yjs:LabelStyle.font>
+          <yjs:Font fontSize="13" fontWeight="bold"/>
+        </yjs:LabelStyle.font>
+      </yjs:LabelStyle>
       <yjs:ShapeNodeStyle x:Key="2" fill="#FFD4FFCB" shape="ELLIPSE">
         <yjs:ShapeNodeStyle.stroke>
           <yjs:Stroke fill="#FFBEBECD"/>
@@ -81,15 +81,18 @@
           <yjs:Stroke fill="#FFBEBECD"/>
         </yjs:ShapeNodeStyle.stroke>
       </yjs:ShapeNodeStyle>
-      <yjs:PolylineEdgeStyle x:Key="6" targetArrow="NONE">
+      <yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="6">
         <yjs:PolylineEdgeStyle.stroke>
           <yjs:Stroke fill="#FF000000"/>
         </yjs:PolylineEdgeStyle.stroke>
         <yjs:PolylineEdgeStyle.sourceArrow>
           <yjs:Arrow type="TRIANGLE" stroke="#FF000000" fill="TRANSPARENT"/>
         </yjs:PolylineEdgeStyle.sourceArrow>
+        <yjs:PolylineEdgeStyle.targetArrow>
+          <yjs:Arrow type="NONE"/>
+        </yjs:PolylineEdgeStyle.targetArrow>
       </yjs:PolylineEdgeStyle>
-      <yjs:PolylineEdgeStyle x:Key="8" targetArrow="NONE">
+      <yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="8">
         <yjs:PolylineEdgeStyle.stroke>
           <yjs:Stroke fill="#FF000000">
             <yjs:Stroke.dashStyle>
@@ -100,6 +103,9 @@
         <yjs:PolylineEdgeStyle.sourceArrow>
           <yjs:Arrow type="TRIANGLE" stroke="#FF000000" fill="TRANSPARENT"/>
         </yjs:PolylineEdgeStyle.sourceArrow>
+        <yjs:PolylineEdgeStyle.targetArrow>
+          <yjs:Arrow type="NONE"/>
+        </yjs:PolylineEdgeStyle.targetArrow>
       </yjs:PolylineEdgeStyle>
     </y:SharedData>
   </data>
@@ -110,7 +116,7 @@
           <y:Label Style="{y:GraphMLReference 1}">
             <y:Label.Text>ICloneable</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="19.407198692882275,4.790962336666894"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -128,7 +134,7 @@
           <y:Label Style="{y:GraphMLReference 1}">
             <y:Label.Text>ICollection&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="26.485118216168757,4.790962336666922"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -171,7 +177,7 @@
           <y:Label Style="{y:GraphMLReference 1}">
             <y:Label.Text>IDisposable</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="21.233758569859333,4.790962336666894"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -190,7 +196,7 @@
           <y:Label Style="{y:GraphMLReference 1}">
             <y:Label.Text>IEnumerable&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="29.909917985500897,4.790962336666929"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -233,7 +239,7 @@
           <y:Label Style="{y:GraphMLReference 1}">
             <y:Label.Text>IEnumerator&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="29.681598000878694,4.790962336666894"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -261,7 +267,7 @@
           <y:Label Style="{y:GraphMLReference 1}">
             <y:Label.Text>IEventArgs</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="19.86383866212651,4.790962336666894"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -294,7 +300,7 @@
           <y:Label Style="{y:GraphMLReference 1}">
             <y:Label.Text><![CDATA[IEventListener<T extends IEventArgs>]]></y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="66.44111552504387,4.790962336666894"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -313,7 +319,7 @@
           <y:Label Style="{y:GraphMLReference 1}">
             <y:Label.Text>IList&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="15.982398923550136,4.790962336666922"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -336,7 +342,7 @@
           <y:Label Style="{y:GraphMLReference 1}">
             <y:Label.Text>IListEnumerable&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="35.84623758567659,4.790962336666922"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -374,7 +380,7 @@
           <y:Label Style="{y:GraphMLReference 1}">
             <y:Label.Text>IObservableCollection&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="45.20735695518448,4.790962336666922"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -397,7 +403,7 @@
           <y:Label Style="{y:GraphMLReference 1}">
             <y:Label.Text>IReference&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="27.17007817003514,4.790962336666951"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -460,7 +466,7 @@
           <y:Label Style="{y:GraphMLReference 1}">
             <y:Label.Text>IStruct</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="13.014239123462175,4.790962336666894"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -478,7 +484,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text><![CDATA[AbstractDelegate<T extends AbstractDelegate, THandler>]]></y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="6.64500000000001,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -497,7 +503,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text><![CDATA[FlagsEnum<T extends FlagsEnum>]]></y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="4.034999999999968,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -515,7 +521,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>Internal</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="14.612479015817257,4.7909623366670075"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -533,7 +539,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>Obfuscation</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="22.147038508348032,4.7909623366670075"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -551,7 +557,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>Activator</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.1100000000000136,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -569,7 +575,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>ArrayListHelper</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.830000000000041,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -587,7 +593,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>AutoResetEvent</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.875,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -605,7 +611,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>BooleanReference</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.1299999999999955,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -624,7 +630,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>Bridge</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="0.8550000000000182,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -642,7 +648,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>ByteReference</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.740000000000009,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -665,7 +671,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>CharReference</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.7550000000001091,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -688,7 +694,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>CollectionExtensions</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.384999999999991,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -706,7 +712,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>DefaultValue</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.544999999999959,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -724,7 +730,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>DoubleReference</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.025000000000091,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -747,7 +753,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>DurationExtensions</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.25,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -765,7 +771,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>EnumExtensions</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.919999999999959,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -783,7 +789,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>ExceptionHelper</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.9349999999999454,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -801,7 +807,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>FloatReference</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.7999999999999545,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -824,7 +830,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>Future&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.2899999999999636,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -842,7 +848,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>GenericListCell&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.2049999999999272,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -860,7 +866,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>GenericYList&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.9499999999999886,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -883,7 +889,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>HashSet&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.4850000000000136,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -906,7 +912,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>IEventArgs.EmptyEventArgs</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="3.210000000000008,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -925,7 +931,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text><![CDATA[IEventListener.Delegate<T extends IEventArgs>]]></y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="5.430000000000007,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -953,7 +959,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>ImageSupport</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.69500000000005,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -971,7 +977,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>IntReference</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.5299999999999727,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -994,7 +1000,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>ItemEventArgs&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.189999999999941,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1017,7 +1023,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>IterableExtensions</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.159999999999968,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1035,7 +1041,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>LicenseConfig</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.6649999999999636,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1053,7 +1059,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>ListEnumerable&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.2799999999999727,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1076,7 +1082,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>ListEnumerableExtensions</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="3.0149999999999864,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1094,7 +1100,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>ListExtensions</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.6949999999999363,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1112,7 +1118,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>LocaleHelper</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.5599999999999454,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1130,7 +1136,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>LongReference</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.7849999999999682,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1153,7 +1159,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>MapExtensions</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.7849999999999682,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1171,7 +1177,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>MethodId</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.169999999999959,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1189,7 +1195,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>Monitor</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="0.9600000000000364,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1207,7 +1213,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>NumberExtensions</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.189999999999941,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1225,7 +1231,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>ObjectExtensions</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.0249999999999773,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1243,7 +1249,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>ObjectReference&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.4150000000000205,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1266,7 +1272,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>ObservableCollection&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.9099999999999966,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1294,7 +1300,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>PropertyChangedEventArgs</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="3.194999999999993,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1317,7 +1323,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>Regex</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="0.8099999999999454,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1335,7 +1341,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>ShortReference</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.829999999999984,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1358,7 +1364,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>SingleEnumerable&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.5650000000000546,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1396,7 +1402,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>SingleEnumerator&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.534999999999968,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1415,7 +1421,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>SingletonCollection&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.6849999999999454,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1443,7 +1449,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>SingletonList&lt;T&gt;</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.9950000000000045,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1472,7 +1478,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>StringExtensions</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.9649999999999181,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1490,7 +1496,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>Tuple</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="0.7200000000000273,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1508,7 +1514,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>TypeExtensions</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.830000000000041,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1526,7 +1532,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>Version</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="0.94500000000005,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1544,7 +1550,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>NumberStyles</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="1.6649999999999636,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1562,7 +1568,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>StringComparison</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.1000000000000227,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>
@@ -1580,7 +1586,7 @@
           <y:Label Style="{y:GraphMLReference 3}">
             <y:Label.Text>StringSplitOptions</y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="2.1299999999999955,0"/>
+              <yx:InteriorNodeLabelModelParameter Position="Center" />
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>

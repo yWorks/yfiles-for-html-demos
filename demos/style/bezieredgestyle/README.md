@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Bezier Edge Style Demo
 
-# Bezier Edge Style Demo
+<img src="../../../doc/demo-thumbnails/bezier-edge-style.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/style/bezieredgestyle/).
 
 [BezierEdgeStyle](https://docs.yworks.com/yfileshtml/#/api/BezierEdgeStyle) allows for smooth curved edge routes. This demo shows how to use this style and interactively edit the bezier curves.
 
@@ -25,7 +27,7 @@ When _Smooth Editing_ is enabled, the edge path will consist of only smooth curv
 
 Labels can also be arranged at the curved splines. They can be aligned with different orientations.
 
-Select an edge and press `F2` to add a label or use the sample _Graph with Labels_ which provides labels with varying settings.
+Select an edge and press F2 to add a label or use the sample _Graph with Labels_ which provides labels with varying settings.
 
 - _Auto Rotation_ will rotate the label according to its position at the curved path.
 - _Auto Snapping_ moves the label as close to the edge path as possible.

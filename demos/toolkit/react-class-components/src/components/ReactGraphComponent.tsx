@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,7 @@
 import { Component, createRef, RefObject } from 'react'
 import {
   Arrow,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphInputMode,
@@ -38,7 +38,7 @@ import {
   Point,
   PolylineEdgeStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import './ReactGraphComponent.css'
 import yFilesLicense from '../../../../../lib/license.json'
 import ReactComponentNodeStyle from '../ReactComponentNodeStyle'
@@ -65,14 +65,14 @@ export default class ReactGraphComponent extends Component {
 
   async componentDidMount(): Promise<void> {
     // Append the GraphComponent to the DOM
-    this.div.current!.appendChild(this.graphComponent.div)
+    this.div.current!.appendChild(this.graphComponent.htmlElement)
     this.createSampleGraph(this.graphComponent.graph)
     await this.graphComponent.fitGraphBounds()
   }
 
   componentWillUnmount() {
     this.graphComponent.graph.clear()
-    this.div.current!.removeChild(this.graphComponent.div)
+    this.div.current!.removeChild(this.graphComponent.htmlElement)
   }
 
   /**
@@ -81,21 +81,22 @@ export default class ReactGraphComponent extends Component {
   initializeDefaultStyles(): void {
     this.graphComponent.graph.nodeDefaults.size = new Size(60, 40)
     this.graphComponent.graph.nodeDefaults.style = new ReactComponentNodeStyle(NodeTemplate)
-    this.graphComponent.graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
+    this.graphComponent.graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.BOTTOM
     this.graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
       smoothingLength: 25,
       stroke: '4px #66485B',
       targetArrow: new Arrow({
         fill: '#66485B',
-        scale: 2,
-        type: 'circle'
+        lengthScale: 2,
+        widthScale: 2,
+        type: 'ellipse'
       })
     })
   }
 
   createInputMode(): GraphInputMode {
     const mode = new GraphEditorInputMode()
-    mode.addNodeCreatedListener((modeInput, { item }) => {
+    mode.addEventListener('node-created', ({ item }, modeInput) => {
       item.tag = { name: `Node ${modeInput.graph!.nodes.size + 1}` }
     })
     return mode
@@ -117,16 +118,16 @@ export default class ReactGraphComponent extends Component {
     const edge3 = graph.createEdge(node3, node4)
     const edge4 = graph.createEdge(node3, node5)
     const edge5 = graph.createEdge(node1, node5)
-    graph.setPortLocation(edge1.sourcePort!, new Point(123.33, 40))
-    graph.setPortLocation(edge1.targetPort!, new Point(145, 75))
-    graph.setPortLocation(edge2.sourcePort!, new Point(96.67, 40))
-    graph.setPortLocation(edge2.targetPort!, new Point(75, 75))
-    graph.setPortLocation(edge3.sourcePort!, new Point(65, 115))
-    graph.setPortLocation(edge3.targetPort!, new Point(30, 155))
-    graph.setPortLocation(edge4.sourcePort!, new Point(85, 115))
-    graph.setPortLocation(edge4.targetPort!, new Point(90, 155))
-    graph.setPortLocation(edge5.sourcePort!, new Point(110, 40))
-    graph.setPortLocation(edge5.targetPort!, new Point(110, 155))
+    graph.setPortLocation(edge1.sourcePort, new Point(123.33, 40))
+    graph.setPortLocation(edge1.targetPort, new Point(145, 75))
+    graph.setPortLocation(edge2.sourcePort, new Point(96.67, 40))
+    graph.setPortLocation(edge2.targetPort, new Point(75, 75))
+    graph.setPortLocation(edge3.sourcePort, new Point(65, 115))
+    graph.setPortLocation(edge3.targetPort, new Point(30, 155))
+    graph.setPortLocation(edge4.sourcePort, new Point(85, 115))
+    graph.setPortLocation(edge4.targetPort, new Point(90, 155))
+    graph.setPortLocation(edge5.sourcePort, new Point(110, 40))
+    graph.setPortLocation(edge5.targetPort, new Point(110, 155))
     graph.addBends(edge1, [new Point(123.33, 55), new Point(145, 55)])
     graph.addBends(edge2, [new Point(96.67, 55), new Point(75, 55)])
     graph.addBends(edge3, [new Point(65, 130), new Point(30, 130)])

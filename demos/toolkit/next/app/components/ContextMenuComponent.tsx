@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,16 +29,15 @@
 import './ContextMenuComponent.css'
 import React, { ReactElement, useCallback, useLayoutEffect, useState } from 'react'
 import {
+  Command,
   GraphComponent,
   GraphViewerInputMode,
-  ICommand,
   IEdge,
   IModelItem,
   INode,
   PopulateItemContextMenuEventArgs,
   Rect
-} from 'yfiles'
-import { BrowserDetection } from '../utils/BrowserDetection'
+} from '@yfiles/yfiles'
 
 interface ContextMenuItem {
   title: string
@@ -49,38 +48,10 @@ interface ContextMenuProps {
   graphComponent: GraphComponent
 }
 
-/**
- * Helper function to determine the page's center location.
- */
-function getCenterInPage(element: HTMLElement): { x: number; y: number } {
-  let left = element.clientWidth / 2.0
-  let top = element.clientHeight / 2.0
-  while (element.offsetParent) {
-    left += element.offsetLeft
-    top += element.offsetTop
-    element = element.offsetParent as HTMLElement
-  }
-  return { x: left, y: top }
-}
-
 export function ContextMenuComponent({ graphComponent }: ContextMenuProps) {
   const [menuVisible, setMenuVisible] = useState(false)
   const [menuLocation, setMenuLocation] = useState({ x: 0, y: 0 })
   const [menuItems, setMenuItems] = useState<ContextMenuItem[]>([])
-
-  const openContextMenu = useCallback(
-    (location: { x: number; y: number }) => {
-      const worldLocation = graphComponent.toWorldFromPage(location)
-      const showMenu = (
-        graphComponent.inputMode as GraphViewerInputMode
-      ).contextMenuInputMode.shouldOpenMenu(worldLocation)
-      if (showMenu) {
-        setMenuLocation(location)
-        setMenuVisible(true)
-      }
-    },
-    [graphComponent]
-  )
 
   const populateContextMenu = useCallback(
     (args: PopulateItemContextMenuEventArgs<IModelItem>) => {
@@ -94,10 +65,10 @@ export function ContextMenuComponent({ graphComponent }: ContextMenuProps) {
             const targetBounds =
               item instanceof INode
                 ? item.layout.toRect()
-                : Rect.add(item.sourceNode!.layout.toRect(), item.targetNode!.layout.toRect())
-            ICommand.ZOOM.execute(
-              targetBounds.getEnlarged(50 / graphComponent.zoom),
-              graphComponent
+                : Rect.add(item.sourceNode.layout.toRect(), item.targetNode.layout.toRect())
+            graphComponent.executeCommand(
+              Command.ZOOM,
+              targetBounds.getEnlarged(50 / graphComponent.zoom)
             )
           }
         })
@@ -122,73 +93,38 @@ export function ContextMenuComponent({ graphComponent }: ContextMenuProps) {
    * Registers the context menu listeners.
    */
   useLayoutEffect(() => {
-    const componentDiv = graphComponent.div
-    const contextMenuListener = (evt: MouseEvent) => {
-      evt.preventDefault()
-      openContextMenu({ x: evt.pageX, y: evt.pageY })
-    }
-
-    // Listen for the contextmenu event
-    // Note: On Linux based systems (e.g. Ubuntu), the contextmenu event is fired on mouse down
-    // which triggers the ContextMenuInputMode before the ClickInputMode. Therefore handling the
-    // event, will prevent the ItemRightClicked event from firing.
-    // For more information, see https://docs.yworks.com/yfileshtml/#/kb/article/780/
-    componentDiv.addEventListener('contextmenu', contextMenuListener, false)
-
-    if (BrowserDetection.safariVersion > 0 || BrowserDetection.iOSVersion > 0) {
-      // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
-      let contextMenuTimer: ReturnType<typeof setTimeout> | undefined
-      graphComponent.addTouchDownListener((_, evt) => {
-        contextMenuTimer = setTimeout(() => {
-          openContextMenu(
-            graphComponent.toPageFromView(graphComponent.toViewCoordinates(evt.location))
-          )
-        }, 500)
-      })
-      graphComponent.addTouchUpListener(() => {
-        clearTimeout(contextMenuTimer!)
-      })
-    }
-
-    // Listen to the context menu key to make it work in Chrome
-    const contextMenuKeyListener = (evt: KeyboardEvent) => {
-      if (evt.key === 'ContextMenu') {
-        evt.preventDefault()
-        openContextMenu(getCenterInPage(componentDiv))
-      }
-    }
-    componentDiv.addEventListener('keyup', contextMenuKeyListener)
-
     // register the close listener
     const closeMenuListener = () => {
       setMenuVisible(false)
     }
     const inputMode = graphComponent.inputMode as GraphViewerInputMode
-    inputMode.contextMenuInputMode.addCloseMenuListener(closeMenuListener)
+    inputMode.contextMenuInputMode.addEventListener('menu-closed', closeMenuListener)
 
     // register populate items listener
-    const populateContextMenuListener = (
-      _: GraphViewerInputMode,
-      args: PopulateItemContextMenuEventArgs<IModelItem>
-    ) => {
+    const populateContextMenuListener = (evt: PopulateItemContextMenuEventArgs<IModelItem>) => {
       // select the item
-      if (args.item) {
+      if (evt.item) {
+        evt.showMenu = true
+        setMenuLocation(
+          graphComponent.viewToPageCoordinates(
+            graphComponent.worldToViewCoordinates(evt.queryLocation)
+          )
+        )
+        setMenuVisible(true)
         graphComponent.selection.clear()
-        graphComponent.selection.setSelected(args.item, true)
+        graphComponent.selection.add(evt.item)
       }
       // populate the menu
-      populateContextMenu(args)
+      populateContextMenu(evt)
     }
-    inputMode.addPopulateItemContextMenuListener(populateContextMenuListener)
+    inputMode.addEventListener('populate-item-context-menu', populateContextMenuListener)
 
     return () => {
       // cleanup
-      componentDiv.removeEventListener('contextmenu', contextMenuListener)
-      componentDiv.removeEventListener('keyup', contextMenuKeyListener)
-      inputMode.contextMenuInputMode.removeCloseMenuListener(closeMenuListener)
-      inputMode.removePopulateItemContextMenuListener(populateContextMenuListener)
+      inputMode.contextMenuInputMode.removeEventListener('menu-closed', closeMenuListener)
+      inputMode.removeEventListener('populate-item-context-menu', populateContextMenuListener)
     }
-  }, [graphComponent, openContextMenu, populateContextMenu])
+  }, [graphComponent, populateContextMenu])
 
   let contextMenuItems: ReactElement[] = []
   if (menuVisible) {

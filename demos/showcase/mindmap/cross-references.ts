@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,39 +28,38 @@
  ***************************************************************************/
 import {
   ArcEdgeStyle,
-  ArcEdgeStyleRenderer,
   Arrow,
   ArrowType,
   BaseClass,
-  type CreateEdgeInputMode,
-  DefaultLabelStyle,
-  DefaultPortCandidate,
-  type EdgeEventArgs,
+  DelegatingEdgeStyle,
   EdgePathLabelModel,
   EdgeSides,
+  EdgeStyleIndicatorRenderer,
   FreeNodePortLocationModel,
   type GraphComponent,
   type GraphEditorInputMode,
-  GraphSelectionIndicatorManager,
   type IEdge,
+  type IEdgeStyle,
   type IEnumerable,
   type IGraph,
   type IHandle,
   IHandleProvider,
   type IInputModeContext,
   type IPortCandidate,
+  LabelStyle,
   List,
+  PortCandidate,
   PortCandidateProviderBase
-} from 'yfiles'
-import { MindMapGraphModelManager } from './MindMapGraphModelManager'
+} from '@yfiles/yfiles'
 import { getRoot } from './subtrees'
+import { MindMapGraphModelManager } from './MindMapGraphModelManager'
 
 /**
  * Runs all initialization required for the custom cross-reference edges.
  */
 export function initializeCrossReferences(graphComponent: GraphComponent): void {
   // use a custom graph model manager that renders cross-reference edges above other nodes and edges
-  graphComponent.graphModelManager = new MindMapGraphModelManager(graphComponent)
+  graphComponent.graphModelManager = new MindMapGraphModelManager()
 
   const graph = graphComponent.graph
   const decorator = graph.decorator
@@ -70,22 +69,25 @@ export function initializeCrossReferences(graphComponent: GraphComponent): void 
   createEdgeInputMode.enabled = false
   createEdgeInputMode.allowCreateBend = false
   // disable CreateEdgeInputMode after cross-reference edge has been created
-  createEdgeInputMode.addEdgeCreatedListener(async (_, evt) => {
+  createEdgeInputMode.addEventListener('edge-created', async (evt) => {
     createEdgeInputMode.enabled = false
     graphComponent.currentItem = null
-    void inputMode.editLabel(evt.item.labels.at(0)!)
+    void inputMode.editLabelInputMode.startLabelEditing(evt.item.labels.at(0)!)
   })
-  createEdgeInputMode.addGestureCanceledListener(() => (createEdgeInputMode.enabled = false))
+  createEdgeInputMode.addEventListener(
+    'gesture-canceled',
+    () => (createEdgeInputMode.enabled = false)
+  )
   createEdgeInputMode.edgeCreator = createCrossReferenceEdge
 
   // disable all edge handles except for height handle
-  decorator.edgeDecorator.handleProviderDecorator.setFactory(
+  decorator.edges.handleProvider.addFactory(
     (edge: IEdge) => new CrossReferenceEdgeHandleProvider(edge)
   )
 
   const edgeDefaults = graph.edgeDefaults
   edgeDefaults.style = new ArcEdgeStyle({
-    stroke: '8px #662e282a',
+    stroke: '8px #2e282a66',
     height: 50,
     targetArrow: new Arrow({
       fill: '#2e282a',
@@ -100,43 +102,36 @@ export function initializeCrossReferences(graphComponent: GraphComponent): void 
   const labelModel = new EdgePathLabelModel({ offset: 20, sideOfEdge: EdgeSides.BELOW_EDGE })
   edgeDefaults.labels.layoutParameter = labelModel.createRatioParameter(0.5)
 
-  edgeDefaults.labels.style = new DefaultLabelStyle({
+  edgeDefaults.labels.style = new LabelStyle({
     font: '16px Arial',
-    insets: [3, 5, 3, 5]
+    padding: [3, 5, 3, 5]
   })
 
   // initialize a custom selection style for edges
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    edgeStyle: new ArcEdgeStyle({
-      renderer: new (class ArcEdgeHighlightStyle extends ArcEdgeStyleRenderer {
-        configure(): void {
-          if (this.edge.style instanceof ArcEdgeStyle) {
-            // Take the height of the edge's actual style and assign
-            // it to the style instance used by this renderer
-            this.style.height = this.edge.style.height
-          }
-          super.configure()
-        }
-      })(),
-      stroke: '8px #f26419',
-      height: 50,
-      targetArrow: new Arrow({
-        fill: '#f26419',
-        stroke: '6px #f26419',
-        type: 'triangle'
-      })
+  graph.decorator.edges.selectionRenderer.addConstant(
+    new EdgeStyleIndicatorRenderer({
+      edgeStyle: new ArcEdgeSelectionStyle(
+        new ArcEdgeStyle({
+          stroke: '8px #f26419',
+          height: 50,
+          targetArrow: new Arrow({
+            fill: '#f26419',
+            stroke: '6px #f26419',
+            type: 'triangle'
+          })
+        })
+      ),
+      zoomPolicy: 'world-coordinates'
     })
-  })
+  )
 
   // customize the port candidate provider
   // to ensure that cross-reference edges connect to the node center
-  decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
+  decorator.nodes.portCandidateProvider.addFactory(
     (node) =>
       new (class extends PortCandidateProviderBase {
-        getPortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
-          return List.fromArray([
-            new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
-          ])
+        getPortCandidates(_context: IInputModeContext): IEnumerable<IPortCandidate> {
+          return List.fromArray([new PortCandidate(node, FreeNodePortLocationModel.CENTER)])
         }
       })()
   )
@@ -148,7 +143,7 @@ export function initializeCrossReferences(graphComponent: GraphComponent): void 
  * @param graph The input graph.
  * @param sourceCandidate The source port candidate.
  * @param targetCandidate The target port candidate.
- * @param dummyEdge The temporary edge that serves as template for the actual
+ * @param previewEdge The temporary edge that serves as template for the actual
  * edge creation.
  * @returns The newly created cross-reference edge.
  */
@@ -157,7 +152,7 @@ export function createCrossReferenceEdge(
   graph: IGraph,
   sourceCandidate: IPortCandidate,
   targetCandidate: IPortCandidate | null,
-  dummyEdge: IEdge
+  previewEdge: IEdge
 ): IEdge | null {
   if (!targetCandidate) {
     // cancel if the target candidate is missing
@@ -168,7 +163,7 @@ export function createCrossReferenceEdge(
   const targetPort = targetCandidate.port || targetCandidate.createPort(context)
 
   // adjust the direction of the arc when the source/target node is the root
-  if (dummyEdge.style instanceof ArcEdgeStyle) {
+  if (previewEdge.style instanceof ArcEdgeStyle) {
     const root = getRoot(graph)
     const sourcePortLocation = sourcePort.location
     const targetPortLocation = targetPort.location
@@ -179,14 +174,14 @@ export function createCrossReferenceEdge(
       const otherPoint = sourcePortLocation.equals(root.layout.center)
         ? targetPortLocation
         : sourcePortLocation
-      const height = dummyEdge.style.height
+      const height = previewEdge.style.height
       const isTopLeft = otherPoint.x > root.layout.x && otherPoint.y <= root.layout.center.y
       const isBottomRight = otherPoint.x < root.layout.x && otherPoint.y > root.layout.center.y
       const rootIsSource = otherPoint.equals(sourcePortLocation)
       if (isTopLeft || isBottomRight) {
-        dummyEdge.style.height = rootIsSource ? -height : height
+        previewEdge.style.height = rootIsSource ? -height : height
       } else {
-        dummyEdge.style.height = rootIsSource ? height : -height
+        previewEdge.style.height = rootIsSource ? height : -height
       }
     }
   }
@@ -195,7 +190,7 @@ export function createCrossReferenceEdge(
   return graph.createEdge({
     sourcePort,
     targetPort,
-    style: dummyEdge.style,
+    style: previewEdge.style,
     tag: { type: 'cross-reference' },
     labels: ['']
   })
@@ -205,20 +200,33 @@ export function createCrossReferenceEdge(
  * This class provides style-handles for cross-reference-edges.
  * All other handle types (move, ...) are not provided and thus disabled.
  */
-class CrossReferenceEdgeHandleProvider
-  extends BaseClass(IHandleProvider)
-  implements IHandleProvider
-{
+class CrossReferenceEdgeHandleProvider extends BaseClass(IHandleProvider) {
   constructor(private edge: IEdge) {
     super()
   }
 
   getHandles(inputModeContext: IInputModeContext): IEnumerable<IHandle> {
-    const renderer = this.edge.style.renderer as ArcEdgeStyleRenderer
-    const styleHandleProvider = renderer.lookup(IHandleProvider.$class)
-    if (styleHandleProvider) {
-      return styleHandleProvider.getHandles(inputModeContext)
+    const renderer = this.edge.style.renderer
+    const context = renderer.getContext(this.edge, this.edge.style)
+    return context.lookup(IHandleProvider)?.getHandles(inputModeContext) ?? new List()
+  }
+}
+
+/**
+ * An arc edge style used for the edge selection.
+ */
+class ArcEdgeSelectionStyle extends DelegatingEdgeStyle {
+  constructor(private delegatingEdgeStyle: IEdgeStyle) {
+    super()
+  }
+
+  getStyle(edge: IEdge): IEdgeStyle {
+    const delegatingStyle = this.delegatingEdgeStyle
+    if (delegatingStyle instanceof ArcEdgeStyle) {
+      // Take the height of the edge's actual style and assign
+      // it to the style instance used by this renderer
+      delegatingStyle.height = (edge.style as ArcEdgeStyle).height
     }
-    return new List()
+    return delegatingStyle
   }
 }

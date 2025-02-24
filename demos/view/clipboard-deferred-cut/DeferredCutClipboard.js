@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphClipboard, IGraph, IModelItem, INode, Point } from 'yfiles'
-
+import {
+  ClipboardOperationContext,
+  GraphClipboard,
+  IEnumerable,
+  IGraph,
+  IModelItem,
+  INode,
+  Point
+} from '@yfiles/yfiles'
 /**
  * A special clipboard implementation which doesn't cut elements immediately.
  * Instead, the elements are stored as "to be cut" and actually removed
@@ -42,78 +49,57 @@ export class DeferredCutClipboard extends GraphClipboard {
    * To support multiple source graphs this is implemented
    * as a map which maps elements to their source graph.
    */
-  _elementsToBeCut = new Map()
-
+  _itemsToBeCut = new Map()
   /**
    * Whether the given element is marked as "to be cut".
-   * @param {!IModelItem} item
-   * @returns {boolean}
    */
   isToBeCut(item) {
-    return this._elementsToBeCut.has(item)
+    return this._itemsToBeCut.has(item)
   }
-
   /**
    * Overrides the default cut implementation.
-   * This override sets the pasteDelta of the clipboard to (15,15)
+   * This override sets the pasteOffset of the clipboard to (15,15)
    * instead of the default which doesn't move the pasted elements.
    *
    * This is mainly for demonstration purposes, otherwise
    * a cut with a subsequent paste would not be visible.
-   * @param {!IGraph} sourceGraph
-   * @param {?function} filter
    */
-  cut(sourceGraph, filter) {
-    super.cut(sourceGraph, filter)
-    this.pasteDelta = new Point(15, 15)
+  cut(sourceGraph, itemsToCut) {
+    super.cut(sourceGraph, itemsToCut)
+    this.pasteOffset = new Point(15, 15)
   }
-
   /**
    * This method is called by cut to remove the element from the source graph.
    * It is overridden to do nothing, since the actual removal will happen in
-   * {@link onElementPasted}.
-   * @param {!IGraph} sourceGraph
-   * @param {!function} predicate
+   * {@link onItemPasted}.
    */
-  removeElements(sourceGraph, predicate) {
+  removeItems(graph, itemsToRemove) {
     // don't remove anything, instead remember the cut elements in onElementCut
   }
-
   /**
    * The method which actually copies elements from one graph to another.
    * Invoked by both cut and copy.
-   * Overridden to clear the {@link _elementsToBeCut} before the actual copying.
-   * @param {!IGraph} sourceGraph
-   * @param {!function} filter
-   * @param {!IGraph} targetGraph
-   * @param {?INode} targetRootNode
-   * @param {?function} elementCopiedCallback
+   * Overridden to clear the {@link _itemsToBeCut} before the actual copying.
    */
-  onCopy(sourceGraph, filter, targetGraph, targetRootNode, elementCopiedCallback) {
-    this._elementsToBeCut.clear()
-    return super.onCopy(sourceGraph, filter, targetGraph, targetRootNode, elementCopiedCallback)
+  onCopy(copyContext, targetRootNode, itemCopiedCallback) {
+    this._itemsToBeCut.clear()
+    return super.onCopy(copyContext, targetRootNode, itemCopiedCallback)
   }
-
   /**
    * Called for each element after being cut.
-   * Adds the element to the {@link _elementsToBeCut}.
-   * @param {!IModelItem} original
-   * @param {!IModelItem} copy
+   * Adds the element to the {@link _itemsToBeCut}.
    */
-  onElementCut(original, copy) {
-    this._elementsToBeCut.set(original, this.clipboardContext.sourceGraph)
+  onItemCut(context, original, copy) {
+    this._itemsToBeCut.set(original, this.clipboardContext.sourceGraph)
   }
-
   /**
    * Called for each element after being pasted.
-   * Removes the original if the original is in the {@link _elementsToBeCut} collection.
-   * @param {!IModelItem} original
-   * @param {!IModelItem} copy
+   * Removes the original if the original is in the {@link _itemsToBeCut} collection.
    */
-  onElementPasted(original, copy) {
+  onItemPasted(context, original, copy) {
     const sourceItem = this.idProvider.getItem(this.clipboardContext, this.getId(original))
-    if (sourceItem && this._elementsToBeCut.has(sourceItem)) {
-      const sourceGraph = this._elementsToBeCut.get(sourceItem)
+    if (sourceItem && this._itemsToBeCut.has(sourceItem)) {
+      const sourceGraph = this._itemsToBeCut.get(sourceItem)
       if (sourceGraph.contains(sourceItem)) {
         sourceGraph.remove(sourceItem)
       }

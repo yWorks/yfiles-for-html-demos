@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,8 +31,7 @@
  * and give it a bit of styling.
  */
 import {
-  DefaultFolderNodeConverter,
-  DefaultLabelStyle,
+  FolderNodeConverter,
   FoldingManager,
   FreeEdgeLabelModel,
   GraphComponent,
@@ -41,48 +40,39 @@ import {
   IGraph,
   ILabelOwner,
   IList,
-  Insets,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   LabelShape,
+  LabelStyle,
   PolylineEdgeStyle,
   ShapeNodeShape,
   ShapeNodeStyle,
-  Size,
   VerticalTextAlignment
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * Creates a sample graph with grouping.
- * @param {!IGraph} graph The input graph to be filled.
+ * @param graph The input graph to be filled.
  */
 export function createGroupedSampleGraph(graph) {
   graph.clear()
-
   graph.nodeDefaults.size = [75, 75]
-
   const root = graph.createNode()
-
   for (let i = 0; i < 2; i++) {
     const groupNode = graph.createGroupNode()
     const nestedGroupNode1 = graph.createGroupNode(groupNode)
     const nestedGroupNode2 = graph.createGroupNode(groupNode)
-
     const nodes = []
     for (let j = 0; j < 2; j++) {
       nodes[j] = graph.createNode()
       graph.setParent(nodes[j], groupNode)
     }
-
     for (let k = 2; k < 4; k++) {
       nodes[k] = graph.createNode()
       graph.setParent(nodes[k], nestedGroupNode1)
     }
-
     for (let l = 4; l < 8; l++) {
       nodes[l] = graph.createNode()
       graph.setParent(nodes[l], nestedGroupNode2)
     }
-
     graph.createEdge(root, nodes[1])
     graph.createEdge(nodes[3], nodes[7])
     graph.createEdge(nodes[0], nodes[1])
@@ -90,16 +80,14 @@ export function createGroupedSampleGraph(graph) {
     graph.createEdge(nodes[1], nodes[2])
     graph.createEdge(nodes[5], nodes[6])
   }
-
   generateItemLabels(graph, graph.edges.toList())
   generateItemLabels(graph, graph.nodes.filter((node) => !graph.isGroupNode(node)).toList())
 }
-
 /**
  * Generate and add random labels for a collection of ModelItems.
  * Existing items will be deleted before adding the new items.
- * @param {!IGraph} graph the current graph
- * @param {!IList.<ILabelOwner>} items the collection of items the labels are generated for
+ * @param graph the current graph
+ * @param items the collection of items the labels are generated for
  */
 function generateItemLabels(graph, items) {
   const wordCountMin = 2
@@ -109,7 +97,6 @@ function generateItemLabels(graph, items) {
   const labelCount = Math.floor(
     items.size * (Math.random() * (labelPercMax - labelPercMin) + labelPercMin)
   )
-
   const loremList = [
     'lorem',
     'ipsum',
@@ -612,7 +599,6 @@ function generateItemLabels(graph, items) {
     'turpis',
     'a'
   ]
-
   // add random item labels
   for (let i = 0; i < labelCount; i++) {
     let label = ''
@@ -628,30 +614,22 @@ function generateItemLabels(graph, items) {
     graph.addLabel(item, label)
   }
 }
-
 /**
  * Initializes the graph defaults and adds item created listeners that set a unique ID to each new node and edge.
  * The IDs are used in the exported JSON files to identify items in the graph model.
- * @param {!GraphComponent} graphComponent
  */
 export function initializeFolding(graphComponent) {
   // Configure folding
   const manager = new FoldingManager()
-  const folderNodeConverter = new DefaultFolderNodeConverter()
-  folderNodeConverter.folderNodeSize = new Size(150, 100)
-  manager.folderNodeConverter = folderNodeConverter
-
+  manager.folderNodeConverter = new FolderNodeConverter({
+    folderNodeDefaults: { size: [150, 180] }
+  })
   const foldingView = manager.createFoldingView()
   foldingView.enqueueNavigationalUndoUnits = true
   graphComponent.graph = foldingView.graph
-
   // enable undo/redo support
   manager.masterGraph.undoEngineEnabled = true
 }
-
-/**
- * @param {!IGraph} graph
- */
 export function initializeBasicDemoStyles(graph) {
   const colorSet = {
     fill: '#ff6c00',
@@ -660,7 +638,6 @@ export function initializeBasicDemoStyles(graph) {
     edgeLabelFill: '#e0d5cc',
     text: '#662b00'
   }
-
   const colorSet2 = {
     fill: '#242265',
     stroke: '#0e0e28',
@@ -668,49 +645,44 @@ export function initializeBasicDemoStyles(graph) {
     edgeLabelFill: '#cfcfd4',
     text: '#0e0e28'
   }
-
   // set (group-)node defaults
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: ShapeNodeShape.ROUND_RECTANGLE,
     fill: colorSet.fill,
     stroke: `1.5px ${colorSet.stroke}`
   })
-
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     groupIcon: 'minus',
     folderIcon: 'plus',
     tabFill: colorSet2.nodeLabelFill,
     stroke: `2px solid ${colorSet2.fill}`,
-    contentAreaInsets: 20,
+    contentAreaPadding: 20,
     tabBackgroundFill: colorSet2.fill,
     tabPosition: 'top-trailing',
     tabWidth: 30,
     tabHeight: 20,
-    tabInset: 3,
+    tabPadding: 3,
     iconOffset: 2,
     iconSize: 14,
     iconForegroundFill: colorSet2.fill,
     hitTransparentContentArea: true
   })
-
   // set edge defaults
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: `1.5px ${colorSet.stroke}`,
     targetArrow: `${colorSet.stroke} small triangle`
   })
-
   // set label defaults
-  const defaultLabelStyle = new DefaultLabelStyle({
+  const defaultLabelStyle = new LabelStyle({
     shape: LabelShape.ROUND_RECTANGLE,
     backgroundFill: colorSet.nodeLabelFill,
     textFill: colorSet.text,
     verticalTextAlignment: VerticalTextAlignment.CENTER,
     horizontalTextAlignment: HorizontalTextAlignment.CENTER,
-    insets: new Insets(4, 2, 4, 1)
+    padding: [2, 4, 1, 4]
   })
-
   graph.nodeDefaults.labels.style = defaultLabelStyle
   graph.edgeDefaults.labels.style = defaultLabelStyle
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
-  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+  graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
+  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createParameter()
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,12 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CustomEdgeStyle } from './CustomEdgeStyle.js'
-import { Point, ShapeNodeStyle } from 'yfiles'
-
+import { CustomEdgeStyle } from './CustomEdgeStyle'
+import { Point, ShapeNodeStyle } from '@yfiles/yfiles'
 /**
  * Creates the sample edges for this tutorial step
- * @param {!IGraph} graph
  */
 export function createEdges(graph) {
   graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -48,17 +46,13 @@ export function createEdges(graph) {
   const node3 = graph.createNode({
     layout: [0, 200, 30, 30]
   })
-
   // the distance can be specified in the constructor
   const style1 = new CustomEdgeStyle(5)
-
   // the distance can also be changed later using the property on the style class
   const style2 = new CustomEdgeStyle(1)
   style2.distance = 3
-
   // not specifying the distance will use the default value
   const style3 = new CustomEdgeStyle()
-
   graph.createEdge({
     source: node1,
     target: node2,

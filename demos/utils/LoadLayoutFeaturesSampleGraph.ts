@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,9 +27,8 @@
  **
  ***************************************************************************/
 import {
-  Color,
-  DefaultEdgePathCropper,
-  DefaultLabelStyle,
+  CssFill,
+  EdgePathCropper,
   FreeEdgeLabelModel,
   GraphBuilder,
   GroupNodeLabelModel,
@@ -40,16 +39,14 @@ import {
   IGraph,
   ILabelStyle,
   INodeStyle,
-  Insets,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   LabelShape,
+  LabelStyle,
   PolylineEdgeStyle,
   ShapeNodeStyle,
-  ShapeNodeStyleRenderer,
-  SolidColorFill,
   Stroke,
   VerticalTextAlignment
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * @yjs:keep = nodeList,edgeList
@@ -82,7 +79,7 @@ export async function loadLayoutSampleGraph(graph: IGraph, fileName: string): Pr
     (data: any) => data.labels || []
   ).labelCreator
   nodeLabelCreator.textProvider = (data: any) => data.text
-  nodeLabelCreator.layoutParameterProvider = (data: any) => InteriorLabelModel.CENTER
+  nodeLabelCreator.layoutParameterProvider = () => InteriorNodeLabelModel.CENTER
   nodeLabelCreator.styleProvider = (data: any) => getLabelStyle(2.5, data)
 
   const groupCreator = groupSource.nodeCreator
@@ -92,9 +89,9 @@ export async function loadLayoutSampleGraph(graph: IGraph, fileName: string): Pr
     (data: any) => data.labels || []
   ).labelCreator
   groupLabelCreator.textProvider = (data: any) => data.text
-  groupLabelCreator.layoutParameterProvider = (data: any) =>
+  groupLabelCreator.layoutParameterProvider = () =>
     new GroupNodeLabelModel().createTabBackgroundParameter()
-  groupLabelCreator.styleProvider = (data: any) => getGroupLabelStyle()
+  groupLabelCreator.styleProvider = () => getGroupLabelStyle()
 
   const edgesSource = builder.createEdgesSource({
     data: data.edgeList,
@@ -111,8 +108,7 @@ export async function loadLayoutSampleGraph(graph: IGraph, fileName: string): Pr
     (data: any) => data.labels || []
   ).labelCreator
   edgeLabelCreator.textProvider = (data: any) => data.text || ''
-  edgeLabelCreator.layoutParameterProvider = (data: any) =>
-    new FreeEdgeLabelModel().createDefaultParameter()
+  edgeLabelCreator.layoutParameterProvider = () => new FreeEdgeLabelModel().createParameter()
   edgeLabelCreator.styleProvider = (data: any) => getLabelStyle(2.0, data)
 
   builder.buildGraph()
@@ -121,8 +117,8 @@ export async function loadLayoutSampleGraph(graph: IGraph, fileName: string): Pr
 function initStyles(graph: IGraph): void {
   graph.nodeDefaults.style = getNodeStyle(null)
   graph.edgeDefaults.style = getEdgeStyle(null)
-  graph.decorator.portDecorator.edgePathCropperDecorator.setImplementation(
-    new DefaultEdgePathCropper({ cropAtPort: false, extraCropLength: 1.0 })
+  graph.decorator.ports.edgePathCropper.addConstant(
+    new EdgePathCropper({ cropAtPort: false, extraCropLength: 1.0 })
   )
   graph.nodeDefaults.labels.style = getLabelStyle(2.5, null)
   graph.edgeDefaults.labels.style = getLabelStyle(2.0, null)
@@ -133,7 +129,7 @@ function initStyles(graph: IGraph): void {
 }
 
 function getGroupLabelStyle(): ILabelStyle {
-  return new DefaultLabelStyle({
+  return new LabelStyle({
     verticalTextAlignment: 'center',
     horizontalTextAlignment: 'left',
     textFill: '#9CC5CF'
@@ -150,13 +146,11 @@ function getGroupNodeStyle(data: any): INodeStyle {
 }
 
 function getNodeStyle(data: any): INodeStyle {
-  const shapeNodeStyle = new ShapeNodeStyle({
+  return new ShapeNodeStyle({
     shape: data && data.shape ? data.shape : 'round-rectangle',
     fill: data && data.fill ? data.fill : '#FF6C00',
     stroke: data && data.stroke ? data.stroke : '1.5px #662b00'
   })
-  ;(shapeNodeStyle.renderer as ShapeNodeStyleRenderer).roundRectArcRadius = 3.5
-  return shapeNodeStyle
 }
 
 function getEdgeStyle(data: any): IEdgeStyle {
@@ -172,22 +166,22 @@ function getArrow(dataArrow: string | null, stroke: Stroke): IArrow {
   if (!dataArrow) {
     return IArrow.NONE
   }
-  if (dataArrow === 'default') {
-    //the arrow is default, so we take the color from the edge stroke
-    const color = stroke.fill instanceof SolidColorFill ? stroke.fill.color : Color.from('#662b00')
-    return IArrow.from(`rgba(${color.r},${color.g},${color.b},${color.a}) small triangle`)
+  if (dataArrow === 'stealth') {
+    //the arrow is stealth, so we take the color from the edge stroke
+    const color = stroke.fill instanceof CssFill ? stroke.fill.value : '#662b00'
+    return IArrow.from(`${color} small triangle`)
   }
   //custom arrow from json data, use it directly
   return IArrow.from(dataArrow)
 }
 
 function getLabelStyle(rounding: number, data: any): ILabelStyle {
-  const labelStyle = new DefaultLabelStyle()
+  const labelStyle = new LabelStyle()
   labelStyle.shape = LabelShape.ROUND_RECTANGLE
   labelStyle.backgroundFill = data && data.fill ? data.fill : '#FFC398'
   labelStyle.textFill = data && data.textFill ? data.textFill : '#662b00'
   labelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
   labelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
-  labelStyle.insets = new Insets(4, 2, 4, 1)
+  labelStyle.padding = [2, 4, 1, 4]
   return labelStyle
 }

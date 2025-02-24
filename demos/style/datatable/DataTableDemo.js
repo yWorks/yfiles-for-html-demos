@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,78 +27,55 @@
  **
  ***************************************************************************/
 import {
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  GraphMLSupport,
+  GraphMLIOHandler,
   IGraph,
   INode,
   License,
   Point,
-  Rect,
-  StorageLocation
-} from 'yfiles'
-
-import createNewRandomUserData from './UserDataFactory.js'
-import DataTableLabelStyle from './DataTableLabelStyle.js'
-import DataTableNodeStyle from './DataTableNodeStyle.js'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { DataTableRenderSupport } from './DataTableRenderSupport.js'
-
-/**
- * @returns {!Promise}
- */
+  Rect
+} from '@yfiles/yfiles'
+import createNewRandomUserData from './UserDataFactory'
+import DataTableLabelStyle from './DataTableLabelStyle'
+import DataTableNodeStyle from './DataTableNodeStyle'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { DataTableRenderSupport } from './DataTableRenderSupport'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 async function run() {
   License.value = await fetchLicense()
-
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // since the labels always show the data of their owners, they can only be copied together with their owner
   graphComponent.clipboard.independentCopyItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
-
   // initialize default demo styles
   initializeStyles(graphComponent.graph)
-
   // initialize the input mode
   initializeInputMode(graphComponent)
-
   // enable the graphml support for loading and saving
   enableGraphML(graphComponent)
-
   // create a sample graph
   createSampleGraph(graphComponent.graph, 4)
-
   graphComponent.fitGraphBounds()
-
   // enable the undo engine
   graphComponent.graph.undoEngineEnabled = true
-
   // wire up the UI
   initializeUI(graphComponent)
 }
-
 /**
  * Initializes the default styles for nodes and labels.
- * @param {!IGraph} graph
  */
 function initializeStyles(graph) {
   // initialize node style
   graph.nodeDefaults.style = new DataTableNodeStyle()
-
   // initialize default label
   graph.nodeDefaults.labels.style = new DataTableLabelStyle()
 }
-
 /**
  * Initializes the input mode.
- * @param {!GraphComponent} graphComponent
  */
 function initializeInputMode(graphComponent) {
   const mode = new GraphEditorInputMode({
@@ -107,48 +84,42 @@ function initializeInputMode(graphComponent) {
     allowAddLabel: false
   })
   // add random user data to new nodes
-  mode.addNodeCreatedListener((_, evt) => {
+  mode.addEventListener('node-created', (evt) => {
     evt.item.tag = createNewRandomUserData()
     // check if the label should be displayed
     onToggleNodeLabel(graphComponent.graph, evt.item, shouldAddLabels())
     updateNodeSize(evt.item, graphComponent.graph)
-    graphComponent.updateContentRect()
+    graphComponent.updateContentBounds()
   })
   graphComponent.inputMode = mode
 }
-
 /**
  * Enables loading and saving the graph from/to GraphML.
- * @param {!GraphComponent} graphComponent
  */
 function enableGraphML(graphComponent) {
-  // create a new GraphMLSupport instance that handles save and load operations
-  const gs = new GraphMLSupport({
-    graphComponent,
-    // configure to load and save to the file system
-    storageLocation: StorageLocation.FILE_SYSTEM
+  // create a new graphMLIOHandler instance that handles save and load operations
+  const graphMLIOHandler = new GraphMLIOHandler()
+  // enable serialization of the custom styles - at the very minimum, we need to register a namespace for the classes
+  graphMLIOHandler.addTypeInformation(DataTableNodeStyle, {
+    name: 'DataTableNodeStyle',
+    xmlNamespace: 'http://www.yworks.com/yFilesHTML/demos/DataTableNodeStyle/1.0'
   })
-
-  // enable serialization of the custom styles - without a namespace mapping, serialization will fail
-  gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/DataTableNodeStyle/1.0',
-    'DataTableNodeStyle',
-    DataTableNodeStyle.$class
-  )
-  gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/DataTableLabelStyle/1.0',
-    'DataTableLabelStyle',
-    DataTableLabelStyle.$class
-  )
-
-  gs.graphMLIOHandler.addParsedListener((_, evt) => {
+  graphMLIOHandler.addTypeInformation(DataTableLabelStyle, {
+    name: 'DataTableLabelStyle',
+    xmlNamespace: 'http://www.yworks.com/yFilesHTML/demos/DataTableLabelStyle/1.0'
+  })
+  graphMLIOHandler.addEventListener('parsed', (evt) => {
     onToggleLabels(evt.context.graph)
   })
+  document.querySelector('#open-file-button').addEventListener('click', async () => {
+    await openGraphML(graphComponent, graphMLIOHandler)
+  })
+  document.querySelector('#save-button').addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'dataTable.graphml', graphMLIOHandler)
+  })
 }
-
 /**
  * Executed when Toggle Labels button is pressed.
- * @param {!IGraph} graph
  */
 function onToggleLabels(graph) {
   const addLabels = shouldAddLabels()
@@ -156,20 +127,16 @@ function onToggleLabels(graph) {
     onToggleNodeLabel(graph, node, addLabels)
   }
 }
-
 /**
  * Executed for each node when Toggle Labels button is pressed.
- * @param {!IGraph} graph
- * @param {!INode} node
- * @param {boolean} addLabels
  */
 function onToggleNodeLabel(graph, node, addLabels) {
   if (addLabels) {
-    const exteriorLabelModel = new ExteriorLabelModel({ insets: 10 })
+    const exteriorNodeLabelModel = new ExteriorNodeLabelModel({ margins: 10 })
     const parameter =
       node.layout.x < 200
-        ? exteriorLabelModel.createParameter(ExteriorLabelModelPosition.WEST)
-        : exteriorLabelModel.createParameter(ExteriorLabelModelPosition.EAST)
+        ? exteriorNodeLabelModel.createParameter('left')
+        : exteriorNodeLabelModel.createParameter('right')
     graph.addLabel(node, '', parameter)
   } else {
     // if there are labels, remove them
@@ -178,30 +145,20 @@ function onToggleNodeLabel(graph, node, addLabels) {
     }
   }
 }
-
 /**
  * Determines whether to add or to remove labels.
- * @returns {boolean}
  */
 function shouldAddLabels() {
   return document.querySelector('#toggle-labels-btn').checked
 }
-
-/**
- * @param {!INode} node
- * @param {!IGraph} graph
- */
 function updateNodeSize(node, graph) {
   const userData = node.tag
   const size = DataTableRenderSupport.calculateTableSize(userData, 'data-table-node')
   const origLayout = node.layout
   graph.setNodeLayout(node, new Rect(origLayout.x, origLayout.y, size.width, size.height))
 }
-
 /**
  * Creates an initial graph.
- * @param {!IGraph} graph
- * @param {number} nodeCount
  */
 function createSampleGraph(graph, nodeCount) {
   // Create nodes with random user data
@@ -213,10 +170,8 @@ function createSampleGraph(graph, nodeCount) {
       tag: createNewRandomUserData()
     })
   }
-
   // resize nodes
   graph.nodes.forEach((node) => updateNodeSize(node, graph))
-
   // Create some edges
   if (nodes.length > 1) {
     graph.createEdge(nodes[0], nodes[1])
@@ -226,17 +181,14 @@ function createSampleGraph(graph, nodeCount) {
     graph.createEdge(nodes[i - 2], nodes[i])
   }
 }
-
 /**
  * Binds actions to the demo's UI controls.
- * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
   document.querySelector('#toggle-labels-btn').addEventListener('click', () => {
     onToggleLabels(graphComponent.graph)
-    graphComponent.updateContentRect()
-    void graphComponent.ensureVisible(graphComponent.contentRect)
+    graphComponent.updateContentBounds()
+    void graphComponent.ensureVisible(graphComponent.contentBounds)
   })
 }
-
 run().then(finishLoading)

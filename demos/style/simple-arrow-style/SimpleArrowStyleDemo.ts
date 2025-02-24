@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,24 +28,23 @@
  ***************************************************************************/
 import {
   BridgeEdgeStyle,
-  Class,
+  Color,
   Fill,
   GraphComponent,
   GraphEditorInputMode,
-  GraphMLSupport,
-  ICommand,
+  GraphMLIOHandler,
   IGraph,
   License,
   PolylineEdgeStyle,
-  SolidColorFill,
   Stroke
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { TaperedArrow, TaperedArrowExtension } from './TaperedArrow'
-import { colorSets } from 'demo-resources/demo-colors'
-import { finishLoading } from 'demo-resources/demo-page'
+import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 /**
  * Runs the demo.
@@ -55,13 +54,8 @@ async function run(): Promise<void> {
 
   // initialize graph component
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize input mode
   graphComponent.inputMode = new GraphEditorInputMode()
-
-  // configure GraphML so that custom arrows can be serialized and deserialized to this format
-  createGraphMLIOHandler(graphComponent)
 
   // initialize demo styles
   initializeStyleDefaults(graphComponent.graph)
@@ -74,36 +68,26 @@ async function run(): Promise<void> {
 
 /**
  * Configure GraphML so that custom arrows can be serialized and deserialized to this format.
- * @param graphComponent The graphComponent.
  */
-function createGraphMLIOHandler(graphComponent: GraphComponent) {
-  const gs = new GraphMLSupport({
-    graphComponent,
-    storageLocation: 'file-system'
-  })
-  const graphMLIOHandler = gs.graphMLIOHandler
+function createGraphMLIOHandler(): GraphMLIOHandler {
+  const graphMLIOHandler = new GraphMLIOHandler()
+
   // ensure that these constants can be deserialized even when they have not yet been used yet
-  Class.fixType(TaperedArrowExtension)
-  graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/TaperedArrow/1.0',
-    'TaperedArrow',
-    TaperedArrowExtension.$class
-  )
-  // a serialization listener that must be added when the custom arrow style is serialized
-  graphMLIOHandler.addHandleSerializationListener((_, evt) => {
-    const item = evt.item
-    if (!(item instanceof TaperedArrow)) {
-      return
+  graphMLIOHandler.addTypeInformation(TaperedArrow, {
+    extension: (item: TaperedArrow) => {
+      return TaperedArrowExtension.create(item)
     }
-
-    const markupExtension = new TaperedArrowExtension()
-    markupExtension.width = item.width
-    markupExtension.length = item.length
-    markupExtension.fill = item.fill
-
-    evt.context.serializeReplacement(TaperedArrowExtension.$class, item, markupExtension)
-    evt.handled = true
   })
+  graphMLIOHandler.addTypeInformation(TaperedArrowExtension, {
+    name: 'TaperedArrow',
+    xmlNamespace: 'http://www.yworks.com/yFilesHTML/demos/TaperedArrow/1.0',
+    properties: {
+      fill: { default: Color.BLACK, type: Fill },
+      length: { default: 0, type: Number },
+      width: { default: 2, type: Number }
+    }
+  })
+  return graphMLIOHandler
 }
 
 /**
@@ -114,7 +98,7 @@ function initializeStyleDefaults(graph: IGraph): void {
   initDemoStyles(graph)
 
   // default edge style with the following arrow configuration
-  const taperedArrow = new TaperedArrow(5, 10, new SolidColorFill('#ab2346'))
+  const taperedArrow = new TaperedArrow(5, 10, Fill.from('#ab2346'))
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: new Stroke('#ab2346', 5),
     sourceArrow: taperedArrow,
@@ -154,16 +138,27 @@ function createSampleGraph(graphComponent: GraphComponent): void {
     )
   }
 
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
 
 /**
  * Binds actions to the demo's UI controls.
  */
 function initializeUI(graphComponent: GraphComponent): void {
+  // configure GraphML so that custom arrows can be serialized and deserialized to this format
+  const graphMLIOHandler = createGraphMLIOHandler()
+
   document.querySelector<HTMLButtonElement>('#reload')!.addEventListener('click', () => {
     graphComponent.graph.clear()
     createSampleGraph(graphComponent)
+  })
+  document
+    .querySelector<HTMLInputElement>('#open-file-button')!
+    .addEventListener('click', async () => {
+      await openGraphML(graphComponent, graphMLIOHandler)
+    })
+  document.querySelector<HTMLInputElement>('#save-button')!.addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'arrowStyle.graphml', graphMLIOHandler)
   })
 }
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  Class,
   FreeLabelModel,
   ICanvasContext,
   IEdge,
@@ -36,15 +35,16 @@ import {
   ILabel,
   ILabelStyle,
   INode,
+  IOrientedRectangle,
   IRenderContext,
-  ISelectionIndicatorInstaller,
+  ISelectionRenderer,
+  ISize,
   ISvgDefsCreator,
   IVisualCreator,
   LabelStyleBase,
   Matrix,
   MatrixOrder,
   OrientedRectangle,
-  OrientedRectangleIndicatorInstaller,
   Point,
   Rect,
   SimpleLabel,
@@ -52,8 +52,8 @@ import {
   SvgVisual,
   SvgVisualGroup,
   WebGLSupport
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
+import { OrientedRectangleRendererBase } from '../../utils/OrientedRectangleRendererBase'
 /**
  * A label style that renders labels at the same size regardless of the zoom level.
  * The style is implemented as a wrapper for an existing label style.
@@ -69,80 +69,67 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   dummyLabelBounds = new OrientedRectangle()
   dummyLabel
   zoomThreshold
-
   /**
    * Instantiates a new label style.
    *
-   * @param {!ILabelStyle} innerLabelStyle the style of the label
-   * @param {number} zoomThreshold the threshold that we use to control the label's size
+   * @param innerLabelStyle the style of the label
+   * @param zoomThreshold the threshold that we use to control the label's size
    */
   constructor(innerLabelStyle, zoomThreshold) {
     super()
     this.innerLabelStyle = innerLabelStyle
-    this.dummyLabel = new SimpleLabel(
-      null,
-      '',
-      FreeLabelModel.INSTANCE.createDynamic(this.dummyLabelLayout)
-    )
+    this.dummyLabel = new SimpleLabel({
+      layoutParameter: FreeLabelModel.INSTANCE.createDynamic(this.dummyLabelLayout)
+    })
     this.zoomThreshold = typeof zoomThreshold === 'undefined' ? 2.0 : zoomThreshold
   }
-
   /**
    * Returns the preferred size calculated by the inner style.
    *
-   * @param {!ILabel} label the current label which will be styled
-   * @returns {!Size}
+   * @param label the current label which will be styled
    */
   getPreferredSize(label) {
     return this.innerLabelStyle.renderer.getPreferredSize(label, this.innerLabelStyle)
   }
-
   /**
    * Determines the scale factor for the given label and zoom level.
    *
-   * @param {!ILabel} label the current label which will be styled
-   * @param {number} zoom the current zoom level
-   * @returns {number}
+   * @param label the current label which will be styled
+   * @param zoom the current zoom level
    */
   getScaleForZoom(label, zoom) {
     // base implementation does nothing
     return 1
   }
-
   /**
    * Creates the visual for the label.
    *
-   * @param {!IRenderContext} ctx The render context.
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {!SvgVisualGroup} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param ctx The render context.
+   * @param label The label to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    */
   createVisual(ctx, label) {
     this.updateDummyLabel(ctx, label)
-
     // creates the container for the visual and sets a transform for view coordinates
     const container = new SvgVisualGroup()
-
     const scale = this.getScaleForZoom(label, ctx.zoom)
     container.transform = new Matrix(
       scale,
       0,
       0,
       scale,
-      label.layout.orientedRectangleCenter.x,
-      label.layout.orientedRectangleCenter.y
+      label.layout.center.x,
+      label.layout.center.y
     )
-
     const creator = this.innerLabelStyle.renderer.getVisualCreator(
       this.dummyLabel,
       this.innerLabelStyle
     )
-
     // pass inverse transform to nullify the scaling and translation on the context
     // therefore inner styles can use the context's methods without considering the current transform
     const inverseTransform = container.transform.clone()
     inverseTransform.invert()
     const innerContext = new DummyContext(ctx, scale * ctx.zoom, inverseTransform)
-
     // the wrapped style should always think it's rendering with the zoom level set in this.zoomThreshold
     const visual = creator.createVisual(innerContext)
     if (visual === null) {
@@ -152,107 +139,89 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
     container.children.add(visual)
     return container
   }
-
   /**
    * Update the visual previously created by createVisual.
    *
-   * @param {!IRenderContext} ctx The render context.
-   * @param {!SvgVisualGroup} oldVisual The visual that has been created in the call to createVisual.
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {?SvgVisual} visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param ctx The render context.
+   * @param oldVisual The visual that has been created in the call to createVisual.
+   * @param label The label to which this style instance is assigned.
+   * @returns visual as required by the {@link IVisualCreator.createVisual} interface.
    */
   updateVisual(ctx, oldVisual, label) {
     this.updateDummyLabel(ctx, label)
-
     const visual = oldVisual.children.get(0)
     if (visual === null) {
       return this.createVisual(ctx, label)
     }
-
     const scale = this.getScaleForZoom(label, ctx.zoom)
-
     oldVisual.transform = new Matrix(
       scale,
       0,
       0,
       scale,
-      label.layout.orientedRectangleCenter.x,
-      label.layout.orientedRectangleCenter.y
+      label.layout.center.x,
+      label.layout.center.y
     )
-
     // update the visual created by the inner style renderer
     const creator = this.innerLabelStyle.renderer.getVisualCreator(
       this.dummyLabel,
       this.innerLabelStyle
     )
-
     // pass inverse transform to nullify the scaling and translation on the context
     // therefore inner styles can use the context's methods without considering the current transform
     const inverseTransform = oldVisual.transform.clone()
     inverseTransform.invert()
     const innerContext = new DummyContext(ctx, scale * ctx.zoom, inverseTransform)
-
     const updatedVisual = creator.updateVisual(innerContext, visual)
     if (!updatedVisual) {
       // nothing to display -> return nothing
       return null
     }
-
     if (updatedVisual !== visual) {
       oldVisual.remove(visual)
       oldVisual.add(updatedVisual)
     }
-
     return oldVisual
   }
-
   /**
    * Updates the internal label to match the given original label.
-   * @param {!ICanvasContext} context
-   * @param {!ILabel} original
    */
   updateDummyLabel(context, original) {
     this.dummyLabel.owner = original.owner
     this.dummyLabel.style = original.style
     this.dummyLabel.tag = original.tag
     this.dummyLabel.text = original.text
-
     const originalLayout = original.layout
-    this.dummyLabelLayout.reshape(originalLayout)
+    this.dummyLabelLayout.setShape(originalLayout)
     this.dummyLabelLayout.setCenter(new Point(0, 0))
     this.dummyLabel.preferredSize = this.dummyLabelLayout.toSize()
-
     const scale = this.getScaleForZoom(original, context.zoom)
-    this.dummyLabelBounds.reshape(originalLayout)
-    this.dummyLabelBounds.resize(originalLayout.width * scale, originalLayout.height * scale)
-    this.dummyLabelBounds.setCenter(originalLayout.orientedRectangleCenter)
+    this.dummyLabelBounds.setUpVector(originalLayout.upVector)
+    this.dummyLabelBounds.width = originalLayout.width * scale
+    this.dummyLabelBounds.height = originalLayout.height * scale
+    this.dummyLabelBounds.setCenter(originalLayout.center)
   }
-
   /**
    * Creates a new copy of this instance.
    *
-   * In addition to the defualt memberwise clone, the internal fields for caching the layout are
+   * In addition to the default memberwise clone, the internal fields for caching the layout are
    * initialized with new instances, too.
-   * @returns {*}
    */
   clone() {
     const clone = super.clone()
     clone.dummyLabelBounds = new OrientedRectangle()
     clone.dummyLabelLayout = new OrientedRectangle()
-    clone.dummyLabel = new SimpleLabel(
-      null,
-      '',
-      FreeLabelModel.INSTANCE.createDynamic(clone.dummyLabelLayout)
-    )
+    clone.dummyLabel = new SimpleLabel({
+      layoutParameter: FreeLabelModel.INSTANCE.createDynamic(clone.dummyLabelLayout)
+    })
     return clone
   }
-
   /**
    * Gets the bounds of the visual for the label in the given context.
    *
-   * @param {!ICanvasContext} canvasContext The canvas context.
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {!Rect} The visual bounds of the visual representation.
+   * @param canvasContext The canvas context.
+   * @param label The label to which this style instance is assigned.
+   * @returns The visual bounds of the visual representation.
    */
   getBounds(canvasContext, label) {
     this.updateDummyLabel(canvasContext, label)
@@ -265,68 +234,56 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
     const newLocation = new Point(center.x - newSize.width * 0.5, center.y - newSize.height * 0.5)
     return new Rect(newLocation, newSize)
   }
-
   /**
    * Determines whether the visualization for the specified label is visible in the context.
    *
-   * @param {!ICanvasContext} canvasContext The canvas context.
-   * @param {!Rect} clip The clipping rectangle.
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {boolean}
+   * @param canvasContext The canvas context.
+   * @param clip The clipping rectangle.
+   * @param label The label to which this style instance is assigned.
    */
   isVisible(canvasContext, clip, label) {
     this.updateDummyLabel(canvasContext, label)
     return this.getBounds(canvasContext, label).intersects(clip)
   }
-
   /**
    * Determines whether the visual representation of the label has been hit at the given location.
    *
-   * @param {!IInputModeContext} canvasContext The canvas context.
-   * @param {!Point} p The point to test.
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {boolean}
+   * @param canvasContext The canvas context.
+   * @param p The point to test.
+   * @param label The label to which this style instance is assigned.
    */
   isHit(canvasContext, p, label) {
     this.updateDummyLabel(canvasContext, label)
-    return this.dummyLabelBounds.containsWithEps(p, 0.001)
+    return this.dummyLabelBounds.contains(p, 0.001)
   }
-
   /**
    * Determines whether the visualization for the specified label is included in the marquee selection.
    *
-   * @param {!IInputModeContext} canvasContext The canvas context.
-   * @param {!Rect} box The marquee selection box.
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {boolean}
+   * @param canvasContext The canvas context.
+   * @param box The marquee selection box.
+   * @param label The label to which this style instance is assigned.
    */
   isInBox(canvasContext, box, label) {
     this.updateDummyLabel(canvasContext, label)
     return this.getBounds(canvasContext, label).intersects(box)
   }
-
   /**
    * Returns an adjusted selection rectangle for the resized label styles.
    *
-   * @param {!ILabel} label
-   * @param {!Class} type
-   * @returns {!object}
    */
   lookup(label, type) {
-    if (type === ISelectionIndicatorInstaller.$class) {
-      return new OrientedRectangleIndicatorInstaller(this.dummyLabelBounds)
+    if (type === ISelectionRenderer) {
+      return new ZoomInvariantSelectionRenderer(this.dummyLabelBounds)
     }
     return super.lookup(label, type)
   }
 }
-
 export class ZoomInvariantBelowThresholdLabelStyle extends ZoomInvariantLabelStyleBase {
   /**
    * Stops the label from getting smaller in view coordinates if the zoom is smaller than zoomThreshold.
    *
-   * @param {!ILabel} label the current label which will be styled
-   * @param {number} zoom the current zoom level
-   * @returns {number}
+   * @param label the current label which will be styled
+   * @param zoom the current zoom level
    */
   getScaleForZoom(label, zoom) {
     if (zoom > this.zoomThreshold) {
@@ -335,14 +292,12 @@ export class ZoomInvariantBelowThresholdLabelStyle extends ZoomInvariantLabelSty
     return this.zoomThreshold / zoom
   }
 }
-
 export class ZoomInvariantAboveThresholdLabelStyle extends ZoomInvariantLabelStyleBase {
   /**
    * Stops the label from getting larger in view coordinates if the zoom is greater than zoomThreshold.
    *
-   * @param {!ILabel} label the current label which will be styled
-   * @param {number} zoom the current zoom level
-   * @returns {number}
+   * @param label the current label which will be styled
+   * @param zoom the current zoom level
    */
   getScaleForZoom(label, zoom) {
     if (zoom < this.zoomThreshold) {
@@ -351,25 +306,18 @@ export class ZoomInvariantAboveThresholdLabelStyle extends ZoomInvariantLabelSty
     return this.zoomThreshold / zoom
   }
 }
-
 export class ZoomInvariantOutsideRangeLabelStyle extends ZoomInvariantLabelStyleBase {
-  /**
-   * @param {!ILabelStyle} innerLabelStyle
-   * @param {number} zoomThreshold
-   * @param {number} maxScale
-   */
+  maxScale
   constructor(innerLabelStyle, zoomThreshold, maxScale) {
     super(innerLabelStyle, zoomThreshold)
     this.maxScale = maxScale
   }
-
   /**
    * Stops the label from getting smaller in view coordinates if the zoom is smaller than zoomThreshold
    * and stops it from getting larger in view coordinates if the zoom is greater than maxScale.
    *
-   * @param {!ILabel} label the current label which will be styled
-   * @param {number} zoom the current zoom level
-   * @returns {number}
+   * @param label the current label which will be styled
+   * @param zoom the current zoom level
    */
   getScaleForZoom(label, zoom) {
     if (zoom < this.zoomThreshold) {
@@ -381,20 +329,14 @@ export class ZoomInvariantOutsideRangeLabelStyle extends ZoomInvariantLabelStyle
     return 1
   }
 }
-
 export class FitOwnerLabelStyle extends ZoomInvariantLabelStyleBase {
-  /**
-   * @param {!ILabelStyle} innerLabelStyle
-   */
   constructor(innerLabelStyle) {
     super(innerLabelStyle, 1)
   }
-
   /**
    * Scales the label to fit its owner.
-   * @param {!ILabel} label the current label which will be styled
-   * @param {number} zoom the scale for the zoom
-   * @returns {number}
+   * @param label the current label which will be styled
+   * @param zoom the scale for the zoom
    */
   getScaleForZoom(label, zoom) {
     const labelWidth = label.layout.width
@@ -412,145 +354,100 @@ export class FitOwnerLabelStyle extends ZoomInvariantLabelStyleBase {
     return ratio
   }
 }
-
 class DummyContext extends BaseClass(IRenderContext) {
+  innerContext
   _zoom
   _transform
   // multiply all necessary transforms with the given inverse transform to nullify the outer transform
   _viewTransform
   _intermediateTransform
   _projection
-
-  /**
-   * @param {!IRenderContext} innerContext
-   * @param {number} zoom
-   * @param {!Matrix} inverseTransform
-   */
   constructor(innerContext, zoom, inverseTransform) {
     super()
     this.innerContext = innerContext
     this._zoom = zoom
     this._transform = inverseTransform
-
     // multiply all necessary transforms with the given inverse transform to nullify the outer transform
     this._viewTransform = this.transformMatrix(innerContext.viewTransform)
     this._intermediateTransform = this.transformMatrix(innerContext.intermediateTransform)
     this._projection = this.transformMatrix(innerContext.projection)
   }
-
   get canvasComponent() {
     return this.innerContext.canvasComponent
   }
-
-  /**
-   * @type {!Rect}
-   */
   get clip() {
     return this.innerContext.clip
   }
-
-  /**
-   * @type {!Matrix}
-   */
   get viewTransform() {
     return this._viewTransform
   }
-
-  /**
-   * @type {!Matrix}
-   */
   get intermediateTransform() {
     return this._intermediateTransform
   }
-
-  /**
-   * @type {!Matrix}
-   */
   get projection() {
     return this._projection
   }
-
-  /**
-   * @type {!Element}
-   */
   get defsElement() {
     return this.innerContext.defsElement
   }
-
   get svgDefsManager() {
     return this.innerContext.svgDefsManager
   }
-
-  /**
-   * @type {number}
-   */
   get zoom() {
     return this._zoom
   }
-
-  /**
-   * @type {number}
-   */
   get hitTestRadius() {
     return this.innerContext.hitTestRadius
   }
-
-  /**
-   * @type {!WebGLSupport}
-   */
   get webGLSupport() {
     return this.innerContext.webGLSupport
   }
-
-  /**
-   * @param {!Point} worldPoint
-   * @returns {!Point}
-   */
-  toViewCoordinates(worldPoint) {
+  worldToViewCoordinates(worldPoint) {
     return this._viewTransform.transform(worldPoint)
   }
-
-  /**
-   * @param {!Point} intermediatePoint
-   * @returns {!Point}
-   */
   intermediateToViewCoordinates(intermediatePoint) {
     return this._projection.transform(intermediatePoint)
   }
-
-  /**
-   * @param {!Point} worldPoint
-   * @returns {!Point}
-   */
   worldToIntermediateCoordinates(worldPoint) {
     return this._intermediateTransform.transform(worldPoint)
   }
-
-  /**
-   * @param {!ISvgDefsCreator} defsSupport
-   * @returns {!string}
-   */
   getDefsId(defsSupport) {
     return this.innerContext.getDefsId(defsSupport)
   }
-
-  /**
-   * @template T
-   * @param {!Class.<T>} type
-   * @returns {?T}
-   */
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.innerContext.lookup(type)
   }
-
   /**
    * Multiplies the given matrix with the inverse transform of the invariant label style.
-   * @param {!Matrix} matrix
-   * @returns {!Matrix}
    */
   transformMatrix(matrix) {
     const transformed = matrix.clone()
     transformed.multiply(this._transform, MatrixOrder.APPEND)
     return transformed
+  }
+}
+class ZoomInvariantSelectionRenderer extends OrientedRectangleRendererBase {
+  fixedLayout
+  constructor(fixedLayout) {
+    super()
+    this.fixedLayout = fixedLayout
+  }
+  createIndicatorElement(_context, size, _renderTag) {
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.setAttribute('width', size.width.toString())
+    rect.setAttribute('height', size.height.toString())
+    rect.setAttribute('stroke', 'rgb(56,67,79)')
+    rect.setAttribute('stroke-width', '2')
+    rect.setAttribute('fill', 'none')
+    return rect
+  }
+  updateIndicatorElement(_context, size, _renderTag, oldSvgElement) {
+    oldSvgElement.setAttribute('width', size.width.toString())
+    oldSvgElement.setAttribute('height', size.height.toString())
+    return oldSvgElement
+  }
+  getLayout(_renderTag) {
+    return this.fixedLayout
   }
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,20 +26,43 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import optimizer from '@yworks/optimizer/rollup-plugin'
+import * as fs from 'node:fs'
+import path from 'node:path'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const plugins = [vue()]
+  const plugins: Plugin[] = [
+    vue(),
+    {
+      name: 'resource-copy',
+      writeBundle(options) {
+        const resourcesDir = path.join(__dirname, 'resources')
+        for (const svgFileName of fs
+          .readdirSync(resourcesDir)
+          .filter((name) => name.endsWith('.svg'))) {
+          fs.cpSync(
+            path.join(resourcesDir, svgFileName),
+            path.join(options.dir!, 'resources', svgFileName)
+          )
+        }
+      }
+    }
+  ]
   if (mode === 'production') {
     plugins.push(
       optimizer({
         shouldOptimize({ id }) {
-          // make sure not to exclude demo-utils since it is in node_modules and uses yFiles API
-          return id.includes('demo-utils') || !id.includes('node_modules')
-        }
+          // make sure not to exclude demo-resources since it is in node_modules and uses yFiles API
+          return (
+            id.includes('demo-resources') ||
+            id.includes('demo-utils') ||
+            !id.includes('node_modules')
+          )
+        },
+        blacklist: ['getValue', 'setValue', 'focused', 'template', 'content', 'visible', 'icon']
       })
     )
   }
@@ -50,7 +73,8 @@ export default defineConfig(({ mode }) => {
       extensions: ['.ts', '.js'],
       alias: {
         vue: 'vue/dist/vue.esm-bundler.js'
-      }
+      },
+      preserveSymlinks: true
     }
   }
 })

@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 08 Grouping - Tutorial: Basic Features
 
-# Grouped Graphs
+<img src="../../../doc/demo-thumbnails/tutorial-basic-features-grouping.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/08-grouping/).
 
 This step shows how to configure [support for grouped or hierarchically organized graphs](https://docs.yworks.com/yfileshtml/#/dguide/interaction-support#interaction-grouping).
 
@@ -19,11 +21,7 @@ Note
 
 Collapse/expand functionality is demonstrated in the [folding demo](./../../application-features/folding/index.html).
 
-[GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) already provides default gestures for grouping/ungrouping. To use the gesture, we have to enable [allowGroupingOperations](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode#GraphEditorInputMode-property-allowGroupingOperations).
-
-```
-graphEditorInputMode.allowGroupingOperations = true
-```
+[GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) already provides default gestures for grouping/ungrouping.
 
 - Press Ctrl+G to group the currently selected nodes.
 
@@ -34,7 +32,7 @@ Group Selected Nodes
 Ungroup Selected Nodes
 
 - Press Shift+Ctrl+G to shrink a selected group node to its minimum size.
-- Hold Shift when dragging nodes into or out of groups to change the graph hierarchy.
+- Hold Ctrl when dragging nodes into or out of groups to change the graph hierarchy.
 
 Group nodes can use special styles that are optimized to visualize a group with content. However, a group node can also use a normal node style like [ShapeNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle). In this example, we use [GroupNodeStyle](https://docs.yworks.com/yfileshtml/#/api/GroupNodeStyle).
 
@@ -44,7 +42,7 @@ graph.groupNodeDefaults.style = new GroupNodeStyle({
 })
 
 // Set a label style with right-aligned text
-graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+graph.groupNodeDefaults.labels.style = new LabelStyle({
   horizontalTextAlignment: 'right',
   textFill: 'white'
 })
@@ -52,7 +50,7 @@ graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
 // Place the label inside the tab area of the group node
 // GroupNodeLabelModel is usually the most appropriate label model for GroupNodeStyle
 graph.groupNodeDefaults.labels.layoutParameter =
-  new GroupNodeLabelModel().createDefaultParameter()
+  new GroupNodeLabelModel().createTabParameter()
 ```
 
 We create some nodes and group them.
@@ -63,7 +61,7 @@ const n2 = graph.createNodeAt([170, -200])
 const n3 = graph.createNodeAt([30, -100])
 graph.createEdge(n1, n3)
 // Create an edge that crosses the group node boundary
-graph.createEdge(n3, graph.nodes.first())
+graph.createEdge(n3, graph.nodes.first()!)
 
 // Create a group node that encloses n1, n2 and n3
 const groupNode = graph.groupNodes([n1, n2, n3])
@@ -77,7 +75,7 @@ If the group content is changed in code, i.e. a child node is added or removed p
 
 ```
 // Get a group node
-const groupNode = graph.nodes.first((node) => graph.isGroupNode(node))
+const groupNode = graph.nodes.find((node) => graph.isGroupNode(node))!
 // Create a child node that's outside the group bounds
 graph.createNode({ parent: groupNode, layout: [100, -60, 30, 30] })
 // Adjust the group node layout to contain the new child

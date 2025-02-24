@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Arrow, GraphComponent, PolylineEdgeStyle, Rect, Size, VoidLabelStyle } from 'yfiles'
+import { Arrow, GraphComponent, ILabelStyle, PolylineEdgeStyle, Rect, Size } from '@yfiles/yfiles'
 import { SolidComponentSvgNodeStyle } from '../utils/SolidComponentSvgNodeStyle'
 import { SolidNodeTemplate, SolidNodeTemplateProps } from '../components/SolidNodeTemplate'
 
@@ -47,7 +47,7 @@ export function createDefaultGraph(graphComponent: GraphComponent): () => void {
       })
     )
     // hide default labels as we render them within the node template
-    graph.nodeDefaults.labels.style = new VoidLabelStyle()
+    graph.nodeDefaults.labels.style = ILabelStyle.VOID_LABEL_STYLE
 
     graph.edgeDefaults.style = new PolylineEdgeStyle({
       stroke: '#66485B',

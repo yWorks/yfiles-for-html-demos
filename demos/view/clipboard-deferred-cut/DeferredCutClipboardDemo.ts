@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,28 +28,25 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Class,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  ICommand,
   IGraph,
   INode,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   LayoutExecutor,
   License,
   OrthogonalLayout,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import { setClipboardStyles } from './ClipboardStyles'
 import { DeferredCutClipboard } from './DeferredCutClipboard'
-import { ContextMenu } from 'demo-utils/ContextMenu'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
@@ -59,8 +56,6 @@ async function run(): Promise<void> {
 
   // add the graph component
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // set the styles and create a sample graph
   initializeGraph(graphComponent.graph)
   setClipboardStyles(graphComponent.graph)
@@ -69,9 +64,9 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new OrthogonalLayout({ gridSpacing: 30 }))
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
@@ -99,6 +94,7 @@ async function run(): Promise<void> {
 
     graphBuilder.buildGraph()
   }
+
   /**
    * Initializes the defaults for the styling in this demo.
    *
@@ -111,13 +107,13 @@ async function run(): Promise<void> {
     // set sizes and locations specific for this demo
     graph.nodeDefaults.size = new Size(50, 50)
 
-    graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+    graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
   }
 
   // configure the clipboard itself
   const clipboard = new DeferredCutClipboard()
   // trigger a repaint after copy since copy removed the "marked for cut" mark from the elements
-  clipboard.addElementsCopiedListener((_) => graphComponent.invalidate())
+  clipboard.addEventListener('items-copied', () => graphComponent.invalidate())
   graphComponent.clipboard = clipboard
 
   // set up the input mode
@@ -140,40 +136,32 @@ async function run(): Promise<void> {
 function configureContextMenu(graphComponent: GraphComponent): void {
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
 
-  const contextMenu = new ContextMenu(graphComponent)
-  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
-    if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
-      contextMenu.show(location)
+  inputMode.addEventListener('populate-item-context-menu', (evt) => {
+    if (evt.handled) {
+      return
     }
-  })
-  inputMode.addPopulateItemContextMenuListener((_, evt) => {
-    evt.showMenu = true
-    contextMenu.clearItems()
 
+    const inputMode = graphComponent.inputMode as GraphEditorInputMode
     if (evt.item instanceof INode) {
-      if (!graphComponent.selection.selectedNodes.isSelected(evt.item)) {
+      if (!graphComponent.selection.nodes.includes(evt.item)) {
         graphComponent.selection.clear()
-        graphComponent.selection.selectedNodes.setSelected(evt.item, true)
+        graphComponent.selection.nodes.add(evt.item)
       }
     } else {
       graphComponent.selection.clear()
     }
-    if (graphComponent.selection.selectedNodes.size > 0) {
-      contextMenu.addMenuItem('Cut', () => ICommand.CUT.execute(null, graphComponent))
-      contextMenu.addMenuItem('Copy', () => ICommand.COPY.execute(null, graphComponent))
-      contextMenu.addMenuItem('Delete', () => ICommand.DELETE.execute(null, graphComponent))
+    if (graphComponent.selection.nodes.size > 0) {
+      evt.contextMenu = [
+        { label: 'Cut', action: () => inputMode.cut() },
+        { label: 'Copy', action: () => inputMode.copy() },
+        { label: 'Delete', action: () => inputMode.deleteSelection() }
+      ]
     } else {
-      contextMenu.addMenuItem('Paste', () =>
-        ICommand.PASTE.execute(evt.queryLocation, graphComponent)
-      )
+      evt.contextMenu = [
+        { label: 'Paste', action: () => inputMode.pasteAtLocation(evt.queryLocation) }
+      ]
     }
   })
-  inputMode.contextMenuInputMode.addCloseMenuListener(() => {
-    contextMenu.close()
-  })
-  contextMenu.onClosedCallback = () => {
-    inputMode.contextMenuInputMode.menuClosed()
-  }
 }
 
 run().then(finishLoading)

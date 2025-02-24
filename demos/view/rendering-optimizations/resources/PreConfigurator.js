@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,12 +31,10 @@ export default class PreConfigurator {
   warningRadios
   graphComponent
   modeMapping = ['view', 'move', 'edit']
-
   /**
    * These limits define up to which node count the specific setting is considered as practical.
    * It also defines a fall-back GraphModelManager setting that is used, if the default GMM
    * is not practical anymore.
-   * @type {*}
    */
   get preConfigurationLimits() {
     return {
@@ -277,10 +275,8 @@ export default class PreConfigurator {
       }
     }
   }
-
   /**
    * Constructs a new instance and registers listeners to the graph item styles radio buttons.
-   * @param {!GraphComponent} graphComponent
    */
   constructor(graphComponent) {
     this.graphItemStylesSettings = document.getElementById('settingsGraphItemStyles')
@@ -291,20 +287,17 @@ export default class PreConfigurator {
     }
     this.graphComponent = graphComponent
   }
-
   /**
    * On change of graph or graph item style, the pre configuration is loaded and applied.
    */
   updatePreConfiguration() {
     const nodeCount = this.graphComponent.graph.nodes.size
-
     // remove unrecommended classes
     const unrecommendedLabels = document.getElementsByClassName('unrecommended')
     while (unrecommendedLabels.length > 0) {
       const label = unrecommendedLabels[0]
       label.className = label.className.replace(/\s?\bunrecommended\b/, '')
     }
-
     // get current graph item style
     let graphItemStyle
     const radioButtons = this.graphItemStylesSettings.getElementsByTagName('input')
@@ -314,12 +307,9 @@ export default class PreConfigurator {
         break
       }
     }
-
     const editMode = this.modeMapping[document.querySelector('#modeChooserBox').selectedIndex]
-
     // get style specific limits
     const styleLimits = this.preConfigurationLimits[graphItemStyle]
-
     // set unrecommended classes
     Object.keys(styleLimits).forEach((gmmOptimization) => {
       const styleLimit = styleLimits[gmmOptimization][editMode]
@@ -333,7 +323,6 @@ export default class PreConfigurator {
       }
     })
   }
-
   /**
    * Adds the warning class to the respective items.
    */
@@ -345,7 +334,6 @@ export default class PreConfigurator {
       }
     }
   }
-
   /**
    * Removes the warning class from the respective items.
    */

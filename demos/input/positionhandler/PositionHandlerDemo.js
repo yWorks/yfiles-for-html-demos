@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,19 +35,14 @@ import {
   License,
   MutableRectangle,
   Rect
-} from 'yfiles'
-import LimitingRectangleDescriptor from './LimitedRectangleDescriptor.js'
-import GreenPositionHandler from './GreenPositionHandler.js'
-import RedPositionHandler from './RedPositionHandler.js'
-import OrangePositionHandler from './OrangePositionHandler.js'
-import {
-  applyDemoTheme,
-  createDemoNodeLabelStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from '@yfiles/yfiles'
+import { LimitingRectangleRenderer } from './LimitingRectangleRenderer'
+import GreenPositionHandler from './GreenPositionHandler'
+import RedPositionHandler from './RedPositionHandler'
+import OrangePositionHandler from './OrangePositionHandler'
+import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link IPositionHandler} for each node.
@@ -56,26 +51,20 @@ import { finishLoading } from 'demo-resources/demo-page'
  * to that node and the 'delegateHandler' parameter will be set to the
  * position handler that would have been returned without setting this
  * function as decorator.
- * @param {!IGraph} graph The given graph
- * @param {!MutableRectangle} boundaryRectangle The rectangle that limits the nodes position.
+ * @param graph The given graph
+ * @param boundaryRectangle The rectangle that limits the nodes position.
  */
 function registerPositionHandler(graph, boundaryRectangle) {
-  const positionHandlerDecorator = graph.decorator.nodeDecorator.positionHandlerDecorator
-  positionHandlerDecorator.setImplementationWrapper((node, delegateHandler) => {
-    if (!delegateHandler) {
-      return null
-    }
-
+  graph.decorator.nodes.positionHandler.addWrapperFactory((node, originalHandler) => {
     // Check if it is a known tag and choose the respective implementation.
     // Fallback to the default behavior otherwise.
-    if (node == null || typeof node.tag !== 'string') {
-      return delegateHandler
+    if (node == null || typeof node.tag !== 'string' || originalHandler == null) {
+      return originalHandler
     }
-
     switch (node.tag) {
       case 'orange':
         // This implementation delegates certain behavior to the default implementation
-        return new OrangePositionHandler(boundaryRectangle, node, delegateHandler)
+        return new OrangePositionHandler(boundaryRectangle, node, originalHandler)
       case 'red':
         // A simple implementation that prohibits moving
         return new RedPositionHandler()
@@ -84,60 +73,52 @@ function registerPositionHandler(graph, boundaryRectangle) {
         return new OrangePositionHandler(
           boundaryRectangle,
           node,
-          new GreenPositionHandler(delegateHandler)
+          new GreenPositionHandler(originalHandler)
         )
       case 'green':
         // Another implementation that delegates certain behavior to the default implementation
-        return new GreenPositionHandler(delegateHandler)
+        return new GreenPositionHandler(originalHandler)
       default:
-        return delegateHandler
+        return originalHandler
     }
   })
 }
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   configureUserInteraction(graphComponent)
-
   // Create the rectangle that limits the movement of some nodes
   // and add it to the graphComponent.
   const boundaryRectangle = new MutableRectangle(20, 20, 480, 400)
-  graphComponent.backgroundGroup.addChild(boundaryRectangle, new LimitingRectangleDescriptor())
-
+  const renderTree = graphComponent.renderTree
+  renderTree.createElement(
+    renderTree.backgroundGroup,
+    boundaryRectangle,
+    new LimitingRectangleRenderer()
+  )
   registerPositionHandler(graphComponent.graph, boundaryRectangle)
-
   createSampleGraph(graphComponent.graph)
 }
-
 /**
- * Restricits interactive editing to selecting and moving nodes for the given graph component.
- * @param {!GraphComponent} graphComponent The demo's graph component.
+ * Restricts interactive editing to selecting and moving nodes for the given graph component.
+ * @param graphComponent The demo's graph component.
  */
 function configureUserInteraction(graphComponent) {
   // Create a default editor input mode
   const graphEditorInputMode = new GraphEditorInputMode()
-
   // Just for user convenience: disable node, edge creation and clipboard operations,
   graphEditorInputMode.allowCreateEdge = false
   graphEditorInputMode.allowCreateNode = false
   graphEditorInputMode.allowClipboardOperations = false
   // don't show resize handles,
   graphEditorInputMode.showHandleItems = GraphItemTypes.NONE
-
   // Finally, set the input mode to the graph component.
   graphComponent.inputMode = graphEditorInputMode
 }
-
 /**
  * Creates the sample graph for this demo.
- * @param {!IGraph} graph The graph displayed in the demo's graph component.
+ * @param graph The graph displayed in the demo's graph component.
  */
 function createSampleGraph(graph) {
   createNode(graph, 100, 100, 100, 30, 'demo-red', 'red', 'Unmovable')
@@ -154,17 +135,16 @@ function createSampleGraph(graph) {
     'Limited to Rectangle\nand One Axis'
   )
 }
-
 /**
  * Creates a sample node for this demo.
- * @param {!IGraph} graph The given graph
- * @param {number} x The node's x-coordinate
- * @param {number} y The node's y-coordinate
- * @param {number} w The node's width
- * @param {number} h The node's height
- * @param {!ColorSetName} color The given color set name
- * @param {!string} tag The tag to identify the position handler
- * @param {!string} labelText The node's label text
+ * @param graph The given graph
+ * @param x The node's x-coordinate
+ * @param y The node's y-coordinate
+ * @param w The node's width
+ * @param h The node's height
+ * @param color The given color set name
+ * @param tag The tag to identify the position handler
+ * @param labelText The node's label text
  */
 function createNode(graph, x, y, w, h, color, tag, labelText) {
   const node = graph.createNode({
@@ -178,5 +158,4 @@ function createNode(graph, x, y, w, h, color, tag, labelText) {
     style: createDemoNodeLabelStyle(color)
   })
 }
-
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,48 +27,44 @@
  **
  ***************************************************************************/
 import {
-  DefaultEdgePathCropper,
+  EdgePathCropper,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicNestingPolicy,
+  HierarchicalNestingPolicy,
   IGraph,
   INode,
   IPortCandidateProvider,
   License,
-  NodeStylePortStyleAdapter,
+  ShapePortStyle,
   PortCandidateValidity,
   Rect,
   ShapeNodeStyle
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import OrangePortCandidateProvider from './OrangePortCandidateProvider'
 import GreenPortCandidateProvider from './GreenPortCandidateProvider'
 import BluePortCandidateProvider from './BluePortCandidateProvider'
 import RedPortCandidateProvider from './RedPortCandidateProvider'
-import type { ColorSetName } from 'demo-resources/demo-styles'
+import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
 import {
-  applyDemoTheme,
   createDemoNodeLabelStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // Disable automatic cleanup of unconnected ports since some nodes have a predefined set of ports
   graph.nodeDefaults.ports.autoCleanUp = false
-  graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter(
-    new ShapeNodeStyle({
-      shape: 'ellipse'
-    })
-  )
+  graph.nodeDefaults.ports.style = new ShapePortStyle({
+    shape: 'ellipse'
+  })
 
   // Initialize basic demo styles
   initDemoStyles(graph)
@@ -77,10 +73,9 @@ async function run(): Promise<void> {
   const graphEditorInputMode = new GraphEditorInputMode({
     // Just for user convenience: disable node creation and clipboard operations
     allowCreateNode: false,
-    allowClipboardOperations: false
+    allowClipboardOperations: false,
+    createEdgeInputMode: { useHitItemsCandidatesOnly: true }
   })
-  graphEditorInputMode.createEdgeInputMode.useHitItemsCandidatesOnly = true
-
   // and enable the undo feature.
   graph.undoEngineEnabled = true
 
@@ -89,8 +84,8 @@ async function run(): Promise<void> {
   registerPortCandidateProvider(graph)
 
   // crop the edge path at the port and not at the node bounds
-  graph.decorator.portDecorator.edgePathCropperDecorator.setImplementation(
-    new DefaultEdgePathCropper({
+  graph.decorator.ports.edgePathCropper.addConstant(
+    new EdgePathCropper({
       cropAtPort: true,
       extraCropLength: 3
     })
@@ -98,11 +93,11 @@ async function run(): Promise<void> {
 
   // draw edges in front of the nodes
   graphComponent.graphModelManager.edgeGroup.toFront()
-  graphComponent.graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES
+  graphComponent.graphModelManager.hierarchicalNestingPolicy = HierarchicalNestingPolicy.NODES
 
   // create the graph
   createSampleGraph(graphComponent)
-  graphComponent.updateContentRect()
+  graphComponent.updateContentBounds()
 }
 
 /**
@@ -114,7 +109,7 @@ async function run(): Promise<void> {
  * @param graph The given graph
  */
 function registerPortCandidateProvider(graph: IGraph): void {
-  graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory((node) => {
+  graph.decorator.nodes.portCandidateProvider.addFactory((node) => {
     // Obtain the tag from the edge
     const nodeTag = node.tag
 

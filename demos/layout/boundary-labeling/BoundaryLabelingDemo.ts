@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,28 +27,27 @@
  **
  ***************************************************************************/
 import {
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   Font,
   GraphComponent,
   GraphViewerInputMode,
-  ICanvasObjectDescriptor,
   type IGraph,
+  INodeStyle,
+  LayoutExecutor,
   License,
   MarkupLabelStyle,
   PolylineEdgeStyle,
   Rect,
   ShapeNodeStyle,
   Size,
-  TextWrapping,
-  VoidNodeStyle
-} from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+  TextWrapping
+} from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import ImageVisualCreator from './ImageVisualCreator'
 import { configureLayout } from './configure-layout'
-import { NodeType } from './data-types'
+import { MultiPageNodeType } from './data-types'
 import { pointsData } from './resources/points-data'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 const imageRect = new Rect(0, 0, 350, 477)
 
@@ -56,8 +55,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // configure user interaction, disable selection and focus
   graphComponent.inputMode = new GraphViewerInputMode()
 
@@ -91,21 +88,21 @@ function initializeGraph(graph: IGraph): void {
         graph.nodeDefaults.size.width,
         graph.nodeDefaults.size.height
       ),
-      tag: { ...data, type: NodeType.POINT }
+      tag: { ...data, type: MultiPageNodeType.POINT }
     })
 
     // create the label node and define its tag based on the tag of the associated point
     const labelNode = graph.createNode({
       layout: point.layout,
-      style: new VoidNodeStyle(),
-      tag: { type: NodeType.LABEL }
+      style: INodeStyle.VOID_NODE_STYLE,
+      tag: { type: MultiPageNodeType.LABEL }
     })
 
     // add the label to the new label node and use a MarkupLabelStyle to support HTML tags
     graph.addLabel({
       owner: labelNode,
       text: data.label,
-      layoutParameter: ExteriorLabelModel.NORTH
+      layoutParameter: ExteriorNodeLabelModel.TOP
     })
 
     // ... create an edge between the point and the label node
@@ -127,16 +124,12 @@ function initializeDefaultStyles(graph: IGraph): void {
 }
 
 /**
- * Adds the image that shall be annotated to the background group of the given graph component.
+ * Adds the image to the background group of the given graph component.
  */
 function addBackgroundImage(graphComponent: GraphComponent): void {
-  // create the image and display it
-  // using ICanvasObjectDescriptor.DYNAMIC_DIRTY_INSTANCE without actually marking the corresponding
-  // canvas object as dirty means the visual for the background image is created only once and
-  // never updated/changed - which is fine for this demo, because the background image cannot change
-  graphComponent.backgroundGroup.addChild(
-    new ImageVisualCreator(imageRect),
-    ICanvasObjectDescriptor.DYNAMIC_DIRTY_INSTANCE
+  graphComponent.renderTree.createElement(
+    graphComponent.renderTree.backgroundGroup,
+    new ImageVisualCreator(imageRect)
   )
 }
 
@@ -145,8 +138,12 @@ function addBackgroundImage(graphComponent: GraphComponent): void {
  *  associated labels.
  */
 async function runLayout(graphComponent: GraphComponent, animated = false): Promise<void> {
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
+
   const { layout, layoutData } = configureLayout(graphComponent.graph, imageRect)
-  await graphComponent.morphLayout(layout, animated ? '0.2s' : '0s', layoutData)
+  await graphComponent.applyLayoutAnimated(layout, animated ? '0.2s' : '0s', layoutData)
 }
 
 /**
@@ -173,9 +170,9 @@ function initializeUI(graphComponent: GraphComponent): void {
  */
 function getLabelStyle(font = new Font({ fontSize: 12 })): MarkupLabelStyle {
   return new MarkupLabelStyle({
-    wrapping: TextWrapping.WORD_ELLIPSIS,
+    wrapping: TextWrapping.WRAP_WORD_ELLIPSIS,
     maximumSize: [400, 100],
-    insets: 4,
+    padding: 4,
     font,
     backgroundStroke: '1px black',
     backgroundFill: 'white'

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,54 +33,18 @@ import {
   Size,
   Visual,
   VisualCachingPolicy
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 import { createRoot } from 'react-dom/client'
 import { createElement } from 'react'
-/**
- * @typedef {(FunctionComponent.<TTag>|ComponentClass.<TTag>)} RenderType
- */
-
-/**
- * Helper for the ReactComponentHtmlNodeStyle to factor out the props retrieval per node
- * @typedef {function} TagProvider
- */
-
 /**
  * The default implementation just uses the props from the tag of the item to be rendered.
  * @param context
  * @param node
  */
 const defaultTagProvider = (context, node) => node.tag
-
-/**
- * The interface of the props passed to the HTML react component for rendering the label contents.
- * @typedef {Object} ReactComponentHtmlLabelStyleProps
- * @property {boolean} selected
- * @property {string} text
- * @property {('low'|'high')} detail
- * @property {TTag} tag
- */
-
-/**
- * @typedef {Object} Cache
- * @property {ReactComponentHtmlLabelStyleProps.<TTag>} props
- * @property {Root} root
- */
-
-/**
- * Utility type for type-safe implementation of the Visual that stores the props
- * it has been created for along with the React Root.
- * @typedef {TaggedHtmlVisual.<HTMLDivElement,Cache.<TTag>>} ReactComponentHtmlLabelStyleVisual
- */
-
 /**
  * Helper method that will be used by the below style to release React resources when the
  * label gets removed from the yFiles scene graph.
- * @param {!IRenderContext} context
- * @param {!Visual} removedVisual
- * @param {boolean} dispose
- * @returns {?Visual}
  */
 function unmountReact(context, removedVisual, dispose) {
   const visual = removedVisual
@@ -98,7 +62,6 @@ function unmountReact(context, removedVisual, dispose) {
   }
   return null
 }
-
 /**
  * A simple ILabelStyle implementation that uses React Components/render functions
  * for rendering the label visualizations as an HtmlVisual
@@ -119,72 +82,50 @@ function unmountReact(context, removedVisual, dispose) {
  * ```
  */
 export class ReactComponentHtmlLabelStyle extends LabelStyleBase {
+  reactComponent
+  tagProvider
   size
   /**
    * Creates a new instance
-   * @param {!RenderType.<ReactComponentHtmlLabelStyleProps.<TTag>>} reactComponent the React component rendering the HTML content
-   * @param {!TagProvider.<TTag>} tagProvider the optional provider function that provides the "tag" in the props.
+   * @param reactComponent the React component rendering the HTML content
+   * @param size The size of the component
+   * @param tagProvider the optional provider function that provides the "tag" in the props.
    * By default, this will use the node's tag.
-   * @param {!(Size|SizeConvertible)} size
    */
   constructor(reactComponent, size, tagProvider = defaultTagProvider) {
     super()
-    this.tagProvider = tagProvider
     this.reactComponent = reactComponent
+    this.tagProvider = tagProvider
     this.size = Size.from(size)
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @returns {!ReactComponentHtmlLabelStyleProps.<TTag>}
-   */
   createProps(context, label) {
     return {
       selected:
         context.canvasComponent instanceof GraphComponent &&
-        context.canvasComponent.selection.selectedLabels.isSelected(label),
+        context.canvasComponent.selection.labels.includes(label),
       text: label.text,
       detail: context.zoom < 0.5 ? 'low' : 'high',
       tag: this.tagProvider(context, label)
     }
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @returns {!ReactComponentHtmlLabelStyleVisual.<TTag>}
-   */
   createVisual(context, label) {
     // obtain the properties from the label
     const props = this.createProps(context, label)
-
     // create a React root and render the component into
     const div = document.createElement('div')
     const root = createRoot(div)
     root.render(createElement(this.reactComponent, props))
-
     const cache = { props, root }
     // wrap the Dom element into a HtmlVisual, adding the "root" for later use in updateVisual
     const visual = HtmlVisual.from(div, cache)
-
     // set the CSS layout for the container
     HtmlVisual.setLayout(visual.element, label.layout.bounds)
-
     // register a callback that unmounts the React app when the visual is discarded
     context.setDisposeCallback(visual, unmountReact)
     return visual
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ReactComponentHtmlLabelStyleVisual.<TTag>} oldVisual
-   * @param {!ILabel} label
-   * @returns {!ReactComponentHtmlLabelStyleVisual.<TTag>}
-   */
   updateVisual(context, oldVisual, label) {
     const newProps = this.createProps(context, label)
-
     const cache = oldVisual.tag
     const oldProps = cache.props
     if (
@@ -196,18 +137,11 @@ export class ReactComponentHtmlLabelStyle extends LabelStyleBase {
       oldVisual.tag.root.render(element)
       cache.props = newProps
     }
-
     // update the CSS layout of the container element
     HtmlVisual.setLayout(oldVisual.element, label.layout.bounds)
-
     return oldVisual
   }
-
-  /**
-   * @param {!ILabel} label
-   * @returns {!Size}
-   */
   getPreferredSize(label) {
-    return Size.from(this.size)
+    return this.size
   }
 }

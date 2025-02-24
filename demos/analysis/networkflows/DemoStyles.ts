@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -46,8 +46,14 @@ import {
   Point,
   Rect,
   SvgVisual,
+  type TaggedSvgVisual,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
+
+/**
+ * Augment the SvgVisual type with the data used to cache the rendering information
+ */
+type NetworkFlowNodeStyleVisual = TaggedSvgVisual<SVGGElement, NodeRenderDataCache>
 
 /**
  * Sets the value of the attribute with the given name for the given element.
@@ -63,7 +69,7 @@ function setAttribute(e: Element, name: string, value: number | string): void {
  * A NetworkFlowNodeStyle represents the flow that is regulated at the according node.
  * By setting a tag, the flow can be adjusted for this node.
  */
-export class NetworkFlowNodeStyle extends NodeStyleBase {
+export class NetworkFlowNodeStyle extends NodeStyleBase<NetworkFlowNodeStyleVisual> {
   flowColor1: Color
   flowColor2: Color
 
@@ -82,18 +88,20 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
    * @param node The node to which this style instance is assigned.
    * @returns The new visual
    */
-  createVisual(context: IRenderContext, node: INode): SvgVisual {
+  createVisual(context: IRenderContext, node: INode): NetworkFlowNodeStyleVisual {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     // Get the necessary data for rendering of the node
     const cache = NetworkFlowNodeStyle.createRenderDataCache(context, node)
 
     // Render the node
-    this.render(context, node, g, cache)
+    this.render(context, node, g)
 
     // set the location
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
-    return new SvgVisual(g)
+
+    // store information with the visual on how we created it
+    return SvgVisual.from(g, cache)
   }
 
   /**
@@ -103,12 +111,14 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
    * @param node The node to which this style instance is assigned
    * @returns The updated visual
    */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
-    const container = oldVisual.svgElement as SVGElement & {
-      'data-renderDataCache'?: NodeRenderDataCache
-    }
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: NetworkFlowNodeStyleVisual,
+    node: INode
+  ): NetworkFlowNodeStyleVisual {
+    const container = oldVisual.svgElement
 
-    const oldCache = container['data-renderDataCache']
+    const oldCache = oldVisual.tag
     const newCache = NetworkFlowNodeStyle.createRenderDataCache(context, node)
 
     // check if something changed except for the location of the node
@@ -117,7 +127,8 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
       while (container.lastChild != null) {
         container.removeChild(container.lastChild)
       }
-      this.render(context, node, container, newCache)
+      this.render(context, node, container)
+      oldVisual.tag = newCache
     }
     // make sure that the location is up to date
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
@@ -129,19 +140,8 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
    * @param context The render context
    * @param node The node to which this style instance is assigned
    * @param container The svg container
-   * @param cache The render data cache
    */
-  render(
-    context: IRenderContext,
-    node: INode,
-    container: SVGElement & {
-      'data-renderDataCache'?: NodeRenderDataCache
-    },
-    cache: NodeRenderDataCache
-  ): void {
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
-
+  render(context: IRenderContext, node: INode, container: SVGGElement): void {
     const graph = (context.canvasComponent! as GraphComponent).graph
     const layout = node.layout
     const source = graph.inDegree(node) === 0 && graph.outDegree(node) !== 0
@@ -383,7 +383,12 @@ class NodeRenderDataCache {
   }
 }
 
-export class NetworkFlowEdgeStyle extends EdgeStyleBase {
+/**
+ * Augment the SvgVisual type with the data used to cache the rendering information
+ */
+type NetworkFlowEdgeStyleVisual = TaggedSvgVisual<SVGGElement, EdgeRenderDataCache>
+
+export class NetworkFlowEdgeStyle extends EdgeStyleBase<NetworkFlowEdgeStyleVisual> {
   highlightColor: Color | null
 
   /**
@@ -401,14 +406,14 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * @see Overrides {@link EdgeStyleBase.createVisual}
    * @returns The new visual
    */
-  createVisual(context: IRenderContext, edge: IEdge): Visual {
+  createVisual(context: IRenderContext, edge: IEdge): NetworkFlowEdgeStyleVisual {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     const selection = context.canvasComponent
       ? (context.canvasComponent as GraphComponent).selection
       : null
-    const selected = !!selection && selection.isSelected(edge)
+    const selected = !!selection && selection.includes(edge)
     // Get the necessary data for rendering of the edge
     const cache = NetworkFlowEdgeStyle.createRenderDataCache(
       edge.tag,
@@ -418,7 +423,8 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     )
     // Render the edge
     this.render(context, edge, g, cache)
-    return new SvgVisual(g)
+    // store information with the visual on how we created it
+    return SvgVisual.from(g, cache)
   }
 
   /**
@@ -429,18 +435,20 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    * @see Overrides {@link EdgeStyleBase.updateVisual}
    * @returns The updated visual
    */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, edge: IEdge): Visual {
-    const container = oldVisual.svgElement as SVGElement & {
-      'data-renderDataCache'?: EdgeRenderDataCache
-    }
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: NetworkFlowEdgeStyleVisual,
+    edge: IEdge
+  ): NetworkFlowEdgeStyleVisual {
+    const container = oldVisual.svgElement
 
     // get the data with which the oldvisual was created
-    const oldCache = container['data-renderDataCache']
+    const oldCache = oldVisual.tag
 
     const selection = context.canvasComponent
       ? (context.canvasComponent as GraphComponent).selection
       : null
-    const selected = !!selection && selection.isSelected(edge)
+    const selected = !!selection && selection.includes(edge)
 
     // get the data for the new visual
     const newCache = NetworkFlowEdgeStyle.createRenderDataCache(
@@ -460,6 +468,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
       container.removeChild(container.lastChild)
     }
     this.render(context, edge, container, newCache)
+    oldVisual.tag = newCache
     return oldVisual
   }
 
@@ -473,14 +482,9 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
   render(
     context: IRenderContext,
     edge: IEdge,
-    container: SVGElement & {
-      'data-renderDataCache'?: EdgeRenderDataCache
-    },
+    container: SVGGElement,
     cache: EdgeRenderDataCache
   ): void {
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
-
     // edge background
     const backgroundPath = cache.path.createSvgPath()
     setAttribute(backgroundPath, 'fill', 'none')
@@ -514,15 +518,14 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
 
     if (edge.tag && edge.tag.color) {
       const linearGradient = new LinearGradient()
-      const gradientStop1 = new GradientStop()
-      gradientStop1.color = this.highlightColor || edge.tag.color
-      gradientStop1.offset = 0
-      linearGradient.gradientStops.add(gradientStop1)
+      linearGradient.gradientStops.add(new GradientStop(this.highlightColor || edge.tag.color))
+      linearGradient.gradientStops.add(
+        new GradientStop(
+          this.generateLighterOrDarkerColor(this.highlightColor || edge.tag.color, false, 90),
+          1
+        )
+      )
 
-      const gradientStop2 = new GradientStop()
-      gradientStop2.color = this.generateLighterOrDarkerColor(gradientStop1.color, false, 90)
-      gradientStop2.offset = 1
-      linearGradient.gradientStops.add(gradientStop2)
       linearGradient.startPoint = new Point(0, 0)
       linearGradient.endPoint = new Point(30, 30)
       linearGradient.spreadMethod = GradientSpreadMethod.REFLECT
@@ -591,8 +594,8 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    */
   isHit(canvasContext: IInputModeContext, p: Point, edge: IEdge): boolean {
     let thickness = 0
-    const sourcePortX = edge.sourcePort!.location.x
-    const targetPortX = edge.targetPort!.location.x
+    const sourcePortX = edge.sourcePort.location.x
+    const targetPortX = edge.targetPort.location.x
 
     const sourcePortLeft = sourcePortX < targetPortX
     if (edge.tag && edge.tag.capacity) {
@@ -615,11 +618,11 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
   getPath(edge: IEdge): GeneralPath {
     // Create a general path from the locations of the ports and the bends of the edge.
     const path = new GeneralPath()
-    path.moveTo(edge.sourcePort!.location)
-    path.lineTo(edge.sourcePort!.location.add(new Point(5, 0)))
+    path.moveTo(edge.sourcePort.location)
+    path.lineTo(edge.sourcePort.location.add(new Point(5, 0)))
     edge.bends.forEach((bend) => path.lineTo(bend.location))
-    path.lineTo(edge.targetPort!.location.subtract(new Point(5, 0)))
-    path.lineTo(edge.targetPort!.location)
+    path.lineTo(edge.targetPort.location.subtract(new Point(5, 0)))
+    path.lineTo(edge.targetPort.location)
     return path
   }
 
@@ -737,7 +740,7 @@ function createAnimatedGradient(linearGradient: LinearGradient): SVGElement {
 /**
  * Background visual that draws a line visualizing the minimum cut of the flow-network.
  */
-export class MinCutLine extends BaseClass(IVisualCreator) implements IVisualCreator {
+export class MinCutLine extends BaseClass(IVisualCreator) {
   private $bounds: Rect
   private $visible: boolean
 

@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Isometric Drawing Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -62,18 +60,23 @@
     </header>
 
     <div class="demo-page__toolbar">
-      <button id="open-file" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
-
-      <button id="fit-content" data-command="FIT_GRAPH_BOUNDS"></button>
-
-      <span class="demo-separator"></span>
-
       <button
-        id="hierarchic-layout"
-        title="Calculates a hierarchic layout"
+        id="open-file-button"
+        title="Open a GraphML file"
+        class="demo-icon-yIconOpen"
+      ></button>
+      <span class="demo-separator"></span>
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <button
+        id="hierarchical-layout"
+        title="Calculates a hierarchical layout"
         class="demo-icon-yIconLayout labeled"
       >
-        Hierarchic
+        Hierarchical
       </button>
       <button
         id="orthogonal-layout"
@@ -147,7 +150,7 @@
         <h2>Layout</h2>
         <p>There are two suitable layout algorithms to apply to the graph.</p>
         <ul>
-          <li>Hierarchic layout</li>
+          <li>Hierarchical layout</li>
           <li>Orthogonal layout</li>
         </ul>
 

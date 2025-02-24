@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title id="title">Organization Chart Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -40,9 +40,7 @@
     <link rel="stylesheet" href="resources/orgchart-style.css" />
 
     <!-- load Vue.js and a helper package-->
-
     <script src="https://unpkg.com/vue@2.6.11"></script>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
 
   <body>
@@ -73,7 +71,11 @@
       <button data-command="FIT_GRAPH_BOUNDS"></button>
 
       <span class="demo-separator"></span>
-      <button id="show-all-button" class="demo-icon-yIconShowAll demo-toolbar-button"></button>
+      <button
+        title="Show all nodes"
+        id="show-all-button"
+        class="demo-icon-yIconShowAll demo-toolbar-button"
+      ></button>
 
       <span class="demo-separator"></span>
 
@@ -124,7 +126,7 @@
           <h2>Automatic Layout</h2>
           <p>
             The organization chart is arranged automatically with the <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">TreeLayout</a> and
-            the <a href="https://docs.yworks.com/yfileshtml/#/api/CompactNodePlacer" target="_blank">CompactNodePlacer</a>
+            the <a href="https://docs.yworks.com/yfileshtml/#/api/CompactSubtreePlacer" target="_blank">CompactSubtreePlacer</a>
             which determines the best arrangement strategy for each node in order to achieve a
             compact and clear layout.
           </p>

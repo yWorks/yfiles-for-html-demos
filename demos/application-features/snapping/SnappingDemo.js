@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,129 +27,98 @@
  **
  ***************************************************************************/
 import {
-  Class,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphSnapContext,
   GroupNodeStyle,
   GroupNodeStyleTabPosition,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
-  LabelSnapContext,
   LayoutExecutor,
   License,
   Size
-} from 'yfiles'
-
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-
-/** @type {GraphComponent} */
 let graphComponent
-
 /**
  * Bootstraps the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
-
+  graphComponent.inputMode = new GraphEditorInputMode()
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
-
   // enable snapping for labels and other graph items
   initializeSnapping()
-
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
-
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
-  graphComponent.fitGraphBounds()
-
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
-
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
- * @param {!IGraph} graph
- * @param {!JSONGraph} graphData
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-
   graphBuilder.createNodesSource({
     data: graphData.nodeList.filter((item) => !item.isGroup),
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
-
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
-
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
-
   graphBuilder.buildGraph()
 }
-
 /**
  * Initializes snapping for labels and other graph items. The default snapping behavior can easily be enabled by
  * setting the according snap context. Those snap contexts provide many options to fine tune their behavior. Please
- * see the documentation of {@link GraphSnapContext} and {@link LabelSnapContext} for
- * more information.
+ * see the documentation of {@link GraphSnapContext} for more information.
  */
 function initializeSnapping() {
   const inputMode = graphComponent.inputMode
   inputMode.snapContext = new GraphSnapContext()
-  inputMode.labelSnapContext = new LabelSnapContext()
 }
-
 /**
  * Initializes the defaults for the styling in this demo.
  *
- * @param {!IGraph} graph The graph.
+ * @param graph The graph.
  */
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
-
   const groupNodeStyle = graph.groupNodeDefaults.style
   groupNodeStyle.tabPosition = GroupNodeStyleTabPosition.RIGHT
   groupNodeStyle.cornerRadius = 8
-
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
-
 run().then(finishLoading)

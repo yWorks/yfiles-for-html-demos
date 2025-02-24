@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,60 +26,49 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode } from 'yfiles'
-
+import { GraphComponent, GraphEditorInputMode } from '@yfiles/yfiles'
 /**
  * Enables undo functionality.
- * @param {!IGraph} graph
  */
 export function enableUndo(graph) {
   graph.undoEngineEnabled = true
 }
-
 /**
  * Performs an undo operation
- * @param {!IGraph} graph
  */
 export function undo(graph) {
   if (graph.undoEngineEnabled && graph.undoEngine && graph.undoEngine.canUndo()) {
     graph.undoEngine.undo()
   }
 }
-
 /**
  * Performs a redo operation
- * @param {!IGraph} graph
  */
 export function redo(graph) {
   if (graph.undoEngineEnabled && graph.undoEngine && graph.undoEngine.canRedo()) {
     graph.undoEngine.redo()
   }
 }
-
 /**
  * Clears the undo entries.
- * @param {!IGraph} graph
  */
 export function clearUndoQueue(graph) {
   if (graph.undoEngineEnabled && graph.undoEngine) {
     graph.undoEngine.clear()
   }
 }
-
 /**
  * Demonstrates clipboard low-level functionality.
- * @param {!GraphComponent} graphComponent
  */
 function enableClipboard(graphComponent) {
   const graphEditorInputMode = graphComponent.inputMode
   graphEditorInputMode.allowClipboardOperations = true // this is the default, already
-
   // programmatically copy the selected graph items
-  if (graphComponent.selection.selectedNodes.size > 0) {
+  if (graphComponent.selection.nodes.size > 0) {
     graphEditorInputMode.copy()
   }
   // programmatically paste and clear the clipboard content
-  if (!graphComponent.clipboard.empty) {
+  if (!graphComponent.clipboard.isEmpty) {
     graphEditorInputMode.paste()
     graphComponent.clipboard.clear()
   }

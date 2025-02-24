@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Fraud Detection Demo
 
-# Fraud Detection Demo
+<img src="../../../doc/demo-thumbnails/fraud-detection.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/showcase/frauddetection/).
 
 This demo shows how _yFiles for HTML_ can be used for detecting _fraud cases_ in time-dependent data. Fraud affects many companies worldwide causing economic loss and liability issues. Fraud detection relies on the analysis of a huge amount of data-sets and thus, visualizations can be valuable for the quick detection of fraud schemes.
 
@@ -20,7 +22,7 @@ This demo shows how _yFiles for HTML_ can be used for detecting _fraud cases_ in
 - Shows the graph according to the current time frame.
 - Provides additional information for the nodes on _click_ (displayed in the right-panel) or on _hover_.
 - Highlights fraud rings on _hover_.
-- Graph elements, selection and highlight are rendered using the WebGL2 rendering technique, if this is supported by the browser.
+- Graph elements, selection and highlight are rendered using the WebGL rendering technique, if this is supported by the browser.
 
 ## Timeline Component
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,22 +28,23 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  BaseClass,
   ClearAreaStrategy,
   ComponentAssignmentStrategy,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  GraphItemTypes,
   HandleInputMode,
   HandlePositions,
+  type IEnumerable,
   IHandle,
   IHitTestable,
+  IHitTester,
+  type IInputMode,
   IInputModeContext,
   INode,
-  INodeHitTester,
+  InputModeContext,
   InputModeEventArgs,
-  IRenderContext,
-  IVisualTemplate,
   License,
   ModifierKeys,
   MoveInputMode,
@@ -52,20 +53,19 @@ import {
   ObservableCollection,
   Point,
   Rect,
-  RectangleIndicatorInstaller,
   RectangleReshapeHandleProvider,
-  Size,
-  SvgVisual
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
 import { LayoutOptions } from './LayoutOptions'
 import { RectanglePositionHandler } from './RectanglePositionHandler'
 
 import SampleData from './resources/SampleData'
-import { applyDemoTheme, createDemoGroupStyle, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { createDemoGroupStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { RectangleRenderer } from '../../utils/RectangleRenderer'
 
 // UI components
 const samplesComboBox = document.querySelector<HTMLSelectElement>('#sample-graph-combobox')!
@@ -103,9 +103,9 @@ let groupNode: INode | null
 let layoutHelper: ClearAreaLayoutHelper
 
 /**
- * A  {@link INodeHitTester} to determine the group node we are currently hovering.
+ * A  {@link IHitTester} to determine the group node we are currently hovering.
  */
-let nodeHitTester: INodeHitTester | null
+let nodeHitTester: IHitTester | null
 
 /**
  * The GraphComponent
@@ -118,8 +118,6 @@ let graphComponent: GraphComponent
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeUI()
 
   initializeInputModes()
@@ -177,7 +175,7 @@ function onComponentAssignmentStrategyChanged(): void {
 function initializeGraph(): void {
   graphComponent.graph.undoEngineEnabled = true
   initDemoStyles(graphComponent.graph)
-  loadGraph('hierarchic')
+  loadGraph('hierarchical')
   graphComponent.graph.undoEngine!.clear()
 }
 
@@ -193,13 +191,11 @@ function initializeInputModes(): void {
   graphComponent.inputMode = editMode
 
   // visualize it
-  const rectangleIndicatorInstaller = new RectangleIndicatorInstaller(clearRect)
-  rectangleIndicatorInstaller.template = new ClearRectTemplate()
 
-  rectangleIndicatorInstaller.addCanvasObject(
-    graphComponent.canvasContext,
-    graphComponent.highlightGroup,
-    clearRect
+  graphComponent.renderTree.createElement(
+    graphComponent.renderTree.highlightGroup,
+    clearRect,
+    new RectangleRenderer('rgba(77,131,153,0.65)', 'rgba(0,187,255,0.65)')
   )
 
   addClearRectInputModes(editMode)
@@ -223,34 +219,38 @@ function addClearRectInputModes(inputMode: MultiplexingInputMode): void {
   inputMode.add(handleInputMode)
 
   // now the handles
-  const inputModeContext = IInputModeContext.createInputModeContext(handleInputMode)
+  const inputModeContext = new InputModeContext(inputMode.createInputModeContext(), handleInputMode)
   const handleCollection = new ObservableCollection<IHandle>()
 
-  handleCollection.add(rectangleHandles.getHandle(inputModeContext, HandlePositions.NORTH_EAST))
-  handleCollection.add(rectangleHandles.getHandle(inputModeContext, HandlePositions.NORTH_WEST))
-  handleCollection.add(rectangleHandles.getHandle(inputModeContext, HandlePositions.SOUTH_EAST))
-  handleCollection.add(rectangleHandles.getHandle(inputModeContext, HandlePositions.SOUTH_WEST))
+  handleCollection.add(rectangleHandles.getHandle(inputModeContext, HandlePositions.TOP_RIGHT))
+  handleCollection.add(rectangleHandles.getHandle(inputModeContext, HandlePositions.TOP_LEFT))
+  handleCollection.add(rectangleHandles.getHandle(inputModeContext, HandlePositions.BOTTOM_RIGHT))
+  handleCollection.add(rectangleHandles.getHandle(inputModeContext, HandlePositions.BOTTOM_LEFT))
 
   handleInputMode.handles = handleCollection
 
   // create a mode that allows for dragging the rectangle at the sides
   const moveInputMode = new MoveInputMode({
     positionHandler: new RectanglePositionHandler(clearRect),
-    hitTestable: IHitTestable.create((context, location) => clearRect.contains(location)),
+    hitTestable: IHitTestable.create((context, location) => clearRect.toRect().contains(location)),
     priority: 41
   })
 
   // handle dragging the rectangle
-  moveInputMode.addDragStartingListener((inputMove, evt) => onDragStarting(inputMove, evt))
-  moveInputMode.addDraggedListener((inputMove, evt) => onDragged(inputMove, evt))
-  moveInputMode.addDragCanceledListener(onDragCanceled)
-  moveInputMode.addDragFinishedListener(onDragFinished)
+  moveInputMode.addEventListener('drag-starting', (evt, inputMove) =>
+    onDragStarting(evt, inputMove)
+  )
+  moveInputMode.addEventListener('dragged', (evt, inputMove) => onDragged(evt, inputMove))
+  moveInputMode.addEventListener('drag-canceled', onDragCanceled)
+  moveInputMode.addEventListener('drag-finished', onDragFinished)
 
   // handle resizing the rectangle
-  handleInputMode.addDragStartingListener((inputHandle, evt) => onDragStarting(inputHandle, evt))
-  handleInputMode.addDraggedListener((inputHandle, evt) => onDragged(inputHandle, evt))
-  handleInputMode.addDragCanceledListener(onDragCanceled)
-  handleInputMode.addDragFinishedListener(onDragFinished)
+  handleInputMode.addEventListener('drag-starting', (evt, inputHandle) =>
+    onDragStarting(evt, inputHandle)
+  )
+  handleInputMode.addEventListener('dragged', (evt, inputHandle) => onDragged(evt, inputHandle))
+  handleInputMode.addEventListener('drag-canceled', onDragCanceled)
+  handleInputMode.addEventListener('drag-finished', onDragFinished)
 
   // add it to the edit mode
   inputMode.add(moveInputMode)
@@ -259,8 +259,8 @@ function addClearRectInputModes(inputMode: MultiplexingInputMode): void {
 /**
  * The rectangular area is upon to be moved or resized.
  */
-function onDragStarting(sender: any, e: InputModeEventArgs): void {
-  const lookup = e.context.lookup(INodeHitTester.$class)!
+function onDragStarting(e: InputModeEventArgs, _inputMode: IInputMode): void {
+  const lookup = e.context.lookup(IHitTester)!
   nodeHitTester = lookup || null
   layoutHelper = new ClearAreaLayoutHelper(graphComponent, clearRect, options)
   layoutHelper.initializeLayout()
@@ -270,7 +270,7 @@ function onDragStarting(sender: any, e: InputModeEventArgs): void {
  * The rectangular area is currently be moved or resized.
  * For each drag a new layout is calculated and applied if the previous one is completed.
  */
-function onDragged(sender: any, e: InputModeEventArgs): void {
+function onDragged(e: InputModeEventArgs, _inputMode: IInputMode): void {
   if (isShiftPressed(e)) {
     // We do not change the layout now, instead we check if we are hovering a group node.
     // If so, we use that group node inside which the cleared area should be located.
@@ -279,10 +279,10 @@ function onDragged(sender: any, e: InputModeEventArgs): void {
       const hitGroupNode = getHitGroupNode(e.context)
       if (hitGroupNode !== groupNode) {
         if (groupNode != null) {
-          graphComponent.highlightIndicatorManager.removeHighlight(groupNode)
+          graphComponent.highlights.remove(groupNode)
         }
         if (hitGroupNode != null) {
-          graphComponent.highlightIndicatorManager.addHighlight(hitGroupNode)
+          graphComponent.highlights.add(hitGroupNode)
         }
         groupNode = hitGroupNode
       }
@@ -290,7 +290,7 @@ function onDragged(sender: any, e: InputModeEventArgs): void {
   } else {
     if (isShiftChanged(e) && groupNode != null) {
       // now we remove the highlight of the group
-      graphComponent.highlightIndicatorManager.removeHighlight(groupNode)
+      graphComponent.highlights.remove(groupNode)
     }
 
     // invoke the layout calculation and animation
@@ -323,22 +323,22 @@ function onDragFinished(): void {
  * group node null is returned.
  */
 function getHitGroupNode(context: IInputModeContext): INode | null {
-  if (nodeHitTester) {
-    return nodeHitTester
-      .enumerateHits(context, context.canvasComponent!.lastEventLocation)
-      .find((n) => graphComponent.graph.isGroupNode(n))
+  if (!nodeHitTester) {
+    return null
   }
-  return null
+  const hits = nodeHitTester.enumerateHits(
+    context,
+    context.canvasComponent!.lastEventLocation,
+    GraphItemTypes.NODE
+  ) as IEnumerable<INode>
+  return hits.find((n) => graphComponent.graph.isGroupNode(n))
 }
 
 /**
  * Determines whether {@link ModifierKeys} SHIFT is currently is pressed.
  */
 function isShiftPressed(e: InputModeEventArgs): boolean {
-  return (
-    (e.context.canvasComponent!.lastMouseEvent.modifiers & ModifierKeys.SHIFT) ===
-    ModifierKeys.SHIFT
-  )
+  return e.context.canvasComponent!.lastInputEvent.shiftKey
 }
 
 /**
@@ -346,7 +346,7 @@ function isShiftPressed(e: InputModeEventArgs): boolean {
  */
 function isShiftChanged(e: InputModeEventArgs): boolean {
   return (
-    (e.context.canvasComponent!.lastMouseEvent.changedModifiers & ModifierKeys.SHIFT) ===
+    (e.context.canvasComponent!.lastInputEvent.changedModifiers & ModifierKeys.SHIFT) ===
     ModifierKeys.SHIFT
   )
 }
@@ -369,6 +369,10 @@ function loadGraph(sampleName: string): void {
     parentId: 'parentId',
     layout: (data: any) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
+  const groupStyle = createDemoGroupStyle({})
+  // set hitTransparentContentArea to false so group nodes are properly hit in getHitGroupNode
+  groupStyle.hitTransparentContentArea = false
+  graph.groupNodeDefaults.style = groupStyle
   if (data.groups) {
     const nodesSource = builder.createGroupNodesSource({
       data: data.groups,
@@ -376,10 +380,6 @@ function loadGraph(sampleName: string): void {
       parentId: 'parentId',
       layout: (data: any) => data // the data object itself has x, y, width, height properties
     })
-    const groupStyle = createDemoGroupStyle({})
-    // set hitTransparentContentArea to false so group nodes are properly hit in getHitGroupNode
-    groupStyle.hitTransparentContentArea = false
-    nodesSource.nodeCreator.defaults.style = groupStyle
   }
   builder.createEdgesSource(data.edges, 'source', 'target', 'id')
 
@@ -387,10 +387,10 @@ function loadGraph(sampleName: string): void {
 
   graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
-      graph.setPortLocation(edge.sourcePort!, Point.from(edge.tag.sourcePort))
+      graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
     }
     if (edge.tag.targetPort) {
-      graph.setPortLocation(edge.targetPort!, Point.from(edge.tag.targetPort))
+      graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
     }
     edge.tag.bends.forEach((bend: { x: number; y: number }) => {
       graph.addBend(edge, bend)
@@ -401,35 +401,7 @@ function loadGraph(sampleName: string): void {
   graphComponent.graph.undoEngine!.clear()
 
   // move the clear rectangle to the default initial position
-  clearRect.relocate(new Point(0, 0))
-}
-
-/**
- * Visual template used for the clear rectangle
- */
-class ClearRectTemplate extends BaseClass(IVisualTemplate) {
-  createVisual(context: IRenderContext, bounds: Rect, dataObject: object): SvgVisual | null {
-    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-
-    rect.setAttribute('fill', 'rgba(0,187,255,0.65)')
-    rect.setAttribute('stroke', 'rgba(77,131,153,0.65)')
-    rect.setAttribute('stroke-width', '1.5')
-    rect.setAttribute('x', `${bounds.x}`)
-    rect.setAttribute('y', `${bounds.y}`)
-    rect.setAttribute('width', `${bounds.width}`)
-    rect.setAttribute('height', `${bounds.height}`)
-
-    return new SvgVisual(rect)
-  }
-
-  updateVisual(
-    context: IRenderContext,
-    oldVisual: SvgVisual,
-    bounds: Rect,
-    dataObject: object
-  ): SvgVisual | null {
-    return this.createVisual(context, bounds, dataObject)
-  }
+  clearRect.setLocation(new Point(0, 0))
 }
 
 run().then(finishLoading)

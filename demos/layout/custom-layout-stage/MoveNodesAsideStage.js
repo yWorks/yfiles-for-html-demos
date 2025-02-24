@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,18 +28,14 @@
  ***************************************************************************/
 import {
   EdgeRouter,
-  INode,
+  EdgeRouterData,
   LayoutGraph,
-  LayoutGraphAdapter,
   LayoutGraphHider,
-  LayoutGraphUtilities,
+  LayoutNode,
   LayoutStageBase,
-  Maps,
-  YNode
-} from 'yfiles'
-
+  Point
+} from '@yfiles/yfiles'
 const NODE_DISTANCE = 15
-
 /**
  * A layout stage that excludes nodes with a special tag
  * (`{ moveAside: boolean }`) from the core layout
@@ -58,95 +54,65 @@ const NODE_DISTANCE = 15
  * no group nodes exist), SubgraphLayoutStage, and others.
  */
 export default class MoveNodesAsideStage extends LayoutStageBase {
-  /**
-   * @param {!LayoutGraph} graph
-   */
-  applyLayout(graph) {
+  applyLayoutImpl(graph) {
+    if (!this.coreLayout) {
+      return
+    }
     // The simplest way to hide items in the graph temporarily is the LayoutGraphHider,
     // which also remembers the hidden items and can re-show them later.
     const hider = new LayoutGraphHider(graph)
-    // To get access to the original node we can use LayoutGraphAdapter's
-    // ORIGINAL_NODE_DP_KEY. This will only work if the layout is performed on an IGraph
-    // instance, typically via LayoutExecutor. However, in most usages of yFiles this is
-    // the case. Alternative approaches to get custom data into the layout exist, and are
-    // shown in the other layout stages. In this specific case where only the node's tag
-    // is required, it would also be sufficient to use the LayoutGraphAdapter.ORIGINAL_TAG_DP_KEY.
-    // The provider registered with it yields the tag of the original INode given a layout graph node.
-    const originalNodeDp = graph.getDataProvider(LayoutGraphAdapter.ORIGINAL_NODE_DP_KEY)
-
     const asideNodes = []
-
-    if (originalNodeDp) {
-      for (const node of graph.nodes) {
-        // For each node, get the original node and see whether the tag specifies that it
-        // should be handled specially.
-        const iNode = originalNodeDp.get(node)
-        if (iNode?.tag?.moveAside) {
-          // If so, hide the node for now ...
-          hider.hide(node)
-          // ... and remember it for later use
-          asideNodes.push(node)
-        }
+    for (const node of graph.nodes) {
+      // For each node, get the original node and see whether the tag specifies that it
+      // should be handled specially.
+      if (node.tag?.moveAside) {
+        // If so, hide the node for now ...
+        hider.hide(node)
+        // ... and remember it for later use
+        asideNodes.push(node)
       }
     }
-
     // Then, run the core layout, which calculates a layout for the remaining graph.
-    super.applyLayoutCore(graph)
-
+    this.coreLayout.applyLayout(graph)
     // What's left now is to place the nodes we've hidden earlier.
     // Since we've hidden them from the core layout, they remain at their
     // original location for now.
-
     // We need the bounding box of the graph without the nodes, to place
     // them correctly.
-    const boundingBox = LayoutGraphUtilities.getBoundingBox(
-      graph,
-      graph.getNodeCursor(),
-      graph.getEdgeCursor()
-    )
-
+    const boundingBox = graph.getBounds()
     // Then we show everything again. We've collected the originally-hidden
     // nodes and edges above, already. We also have to make sure in general
     // that the graph doesn't change its structure during layout. So we always
     // have to undo everything we do to the graph structure.
     hider.unhideAll()
-
     // In this case we want to place all of the “aside” nodes in a single column
     // to the right of the rest of the graph. Let's first figure out how tall that
     // column is so we can immediately place them in the correct place.
     let nodeStackHeight = 0
     for (const node of asideNodes) {
-      nodeStackHeight += graph.getHeight(node)
+      nodeStackHeight += node.layout.height
     }
     // Also account for the distance between the nodes
     nodeStackHeight += NODE_DISTANCE * (asideNodes.length - 1)
-
     // Now we can place the nodes.
     const x = boundingBox.maxX + NODE_DISTANCE
     let y = boundingBox.centerY - nodeStackHeight / 2
     for (const node of asideNodes) {
-      graph.setLocation(node, x, y)
-      y += graph.getLayout(node).height + NODE_DISTANCE
+      node.layout.topLeft = new Point(x, y)
+      y += node.layout.height + NODE_DISTANCE
     }
-
     // Now we still have to deal with the edges that may have been connected to
     // the nodes we've moved aside. Those still have their original path from
     // before the layout because they've been hidden as well.
-
     // In this case we simply apply an EdgeRouter to calculate suitable routes
     // to the nodes that we moved aside.
-    const edgeRouter = new EdgeRouter({
-      scope: 'route-edges-at-affected-nodes'
-    })
+    const edgeRouter = new EdgeRouter()
     // We also have to tell the EdgeRouter which edges to route (in this case,
     // edges at affected nodes, so we tell it the affected nodes)
-    const affectedNodesDp = Maps.createHashedNodeMap()
-    asideNodes.forEach((node) => affectedNodesDp.setBoolean(node, true))
-    graph.addDataProvider(edgeRouter.affectedNodesDpKey, affectedNodesDp)
-
+    const edgeRouterData = new EdgeRouterData({
+      scope: { incidentNodes: asideNodes }
+    })
     // Finally, EdgeRouter can calculate routes for the remaining edges.
-    edgeRouter.applyLayout(graph)
-
-    graph.removeDataProvider(edgeRouter.affectedNodesDpKey)
+    graph.applyLayout(edgeRouter, edgeRouterData)
   }
 }

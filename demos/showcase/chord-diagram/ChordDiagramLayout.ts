@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,15 +27,14 @@
  **
  ***************************************************************************/
 import {
-  Edge,
-  IComparer,
-  IDataMap,
+  EdgeDataKey,
   IGraph,
+  IMapper,
+  LayoutEdge,
   LayoutGraph,
   LayoutStageBase,
-  Point,
-  YPoint
-} from 'yfiles'
+  Point
+} from '@yfiles/yfiles'
 
 import type { EdgeStyleHints } from './ChordEdgeStyle'
 
@@ -49,15 +48,17 @@ import type { EdgeStyleHints } from './ChordEdgeStyle'
 export class ChordDiagramLayout extends LayoutStageBase {
   private _gapRatio: number
 
-  static readonly EDGE_WEIGHT_KEY = 'EDGE_WEIGHT_DP_KEY'
-  static readonly STYLE_HINT_KEY = 'STYLE_HINT_DP_KEY'
+  static readonly EDGE_WEIGHT_KEY: EdgeDataKey<number> = new EdgeDataKey('EDGE_WEIGHT_DATA_KEY')
+  static readonly STYLE_HINT_KEY: EdgeDataKey<EdgeStyleHints> = new EdgeDataKey(
+    'STYLE_HINT_DATA_KEY'
+  )
 
   static readonly CENTER = Point.ORIGIN
   static readonly RADIUS = 300
 
   /**
    * Sets the ratio of gaps to nodes, default value is 25%
-   * @param value [0..1] what ratio is occupied by empty space
+   * @param value - [0..1] what ratio is occupied by empty space
    */
   set gapRatio(value: number) {
     this._gapRatio = value
@@ -75,37 +76,38 @@ export class ChordDiagramLayout extends LayoutStageBase {
     super()
     this._gapRatio = 0.25
   }
+
   /**
    * Arranges the given graph.
    * Note, the input graph is a {@link LayoutGraph}, which is a copy of the {@link IGraph} that
    * is operated on when setting styles or where input events are received from.
    * @param graph the graph to be arranged.
    */
-  applyLayout(graph: LayoutGraph): void {
+  protected applyLayoutImpl(graph: LayoutGraph): void {
     // Retrieve the mapper that assigns a thickness to each edge. This has been set up
     // through the layout data
-    const edgeThicknessProvider = graph.getDataProvider(
+    const edgeThicknessMap = graph.context.getItemData(
       ChordDiagramLayout.EDGE_WEIGHT_KEY
-    ) as IDataMap
+    ) as IMapper<LayoutEdge, number>
 
     // this mapper is used to make style information available to the EdgeStyle
-    const edgeStyleHintProvider = graph.getDataProvider(
+    const edgeStyleHintMap = graph.context.getItemData(
       ChordDiagramLayout.STYLE_HINT_KEY
-    ) as IDataMap
+    ) as IMapper<LayoutEdge, EdgeStyleHints>
 
     const radius = ChordDiagramLayout.RADIUS
 
     // compute the total thickness of all edges
     const totalEdgeWeights = graph.edges.reduce(
-      (acc, current) => acc + edgeThicknessProvider.getNumber(current),
+      (acc, current) => acc + edgeThicknessMap.get(current)!,
       0
     )
 
     // normalize the edge weights
     graph.edges.forEach((edge) => {
-      const votesOnEdge = edgeThicknessProvider.getNumber(edge)
+      const votesOnEdge = edgeThicknessMap.get(edge)!
       const normalizedThickness = (votesOnEdge / totalEdgeWeights) * (Math.PI * (1 - this.gapRatio)) // reserve half the circle for gaps between nodes
-      edgeThicknessProvider.setNumber(edge, normalizedThickness)
+      edgeThicknessMap.set(edge, normalizedThickness)
     })
 
     // nodes will be successively placed around a circle,
@@ -117,32 +119,28 @@ export class ChordDiagramLayout extends LayoutStageBase {
 
     // compute a map of node sizes. The node size is equal to the compound size of all edges at the node
     const nodeSizes = graph.nodes
-      .map((node) =>
-        node.edges.reduce((acc, curr) => acc + edgeThicknessProvider.getNumber(curr), 0)
-      )
+      .map((node) => node.edges.reduce((acc, curr) => acc + edgeThicknessMap.get(curr)!, 0))
       .toArray()
 
     // sort edges to prevent intra-node crossings
     graph.nodes.forEach((n, idx) => {
-      const outComparer = IComparer.create((edge0: Edge, edge1: Edge) => {
+      n.sortOutEdges((edge0: LayoutEdge, edge1: LayoutEdge) => {
         const targetIndex0 = graph.nodes.findIndex((node) => node == edge0.target)
         const targetIndex1 = graph.nodes.findIndex((node) => node == edge1.target)
         return compareEdges(idx, targetIndex0, targetIndex1, nodeSizes, gap)
       })
-      n.sortOutEdges(outComparer)
 
-      const inComparer = IComparer.create((edge0: Edge, edge1: Edge) => {
+      n.sortInEdges((edge0: LayoutEdge, edge1: LayoutEdge) => {
         const targetIndex0 = graph.nodes.findIndex((node) => node == edge0.source)
         const targetIndex1 = graph.nodes.findIndex((node) => node == edge1.source)
         return compareEdges(idx, targetIndex0, targetIndex1, nodeSizes, gap)
       })
-      n.sortInEdges(inComparer)
 
       // observe how a different sorting strategy (or not sorting at all) influences the result
       // n.sortOutEdges(
       //   IComparer.create((edge0, edge1) => {
-      //     const weight0 = edgeThicknessProvider.getNumber(edge0)
-      //     const weight1 = edgeThicknessProvider.getNumber(edge1)
+      //     const weight0 = edgeThicknessMap.getNumber(edge0)
+      //     const weight1 = edgeThicknessMap.getNumber(edge1)
       //     if (weight0 < weight1) {
       //       return -1
       //     } else if (weight0 > weight1) {
@@ -156,32 +154,25 @@ export class ChordDiagramLayout extends LayoutStageBase {
 
     graph.nodes.forEach((n, idx) => {
       const nodeSize = nodeSizes[idx]
-
-      graph.setSize(n, nodeSize, 40)
-
+      n.layout.width = nodeSize
+      n.layout.height = 40
       // set the position of this node as the center of its arc segment
-      graph.setCenter(
-        n,
-        new YPoint(
-          radius * Math.cos(startAngle + (nodeSize + gap) * 0.5),
-          radius * Math.sin(startAngle + (nodeSize + gap) * 0.5)
-        )
+      n.layout.center = new Point(
+        radius * Math.cos(startAngle + (nodeSize + gap) * 0.5),
+        radius * Math.sin(startAngle + (nodeSize + gap) * 0.5)
       )
 
       let edgeSegmentStart = startAngle + gap / 2
 
       // compute where the start and end points of inbound edges lie on a node
-      n.inEdges.forEach((edge, idx) => {
-        const thickness = edgeThicknessProvider.getNumber(edge)
+      n.inEdges.forEach((edge) => {
+        const thickness = edgeThicknessMap.get(edge)!
         const edgeSegmentEnd = edgeSegmentStart + thickness
         const center = edgeSegmentStart + 0.5 * thickness
 
-        graph.setTargetPointAbs(
-          edge,
-          new YPoint(radius * Math.cos(center), radius * Math.sin(center))
-        )
+        edge.targetPortLocation = new Point(radius * Math.cos(center), radius * Math.sin(center))
 
-        const hints = getHints(edgeStyleHintProvider, edge)
+        const hints = getHints(edgeStyleHintMap, edge)
         hints.targetStart = new Point(
           radius * Math.cos(edgeSegmentStart),
           radius * Math.sin(edgeSegmentStart)
@@ -194,17 +185,14 @@ export class ChordDiagramLayout extends LayoutStageBase {
       })
 
       // compute where the start and end points of outbound edges lie on a node
-      n.outEdges.forEach((edge, idx) => {
-        const thickness = edgeThicknessProvider.getNumber(edge)
+      n.outEdges.forEach((edge) => {
+        const thickness = edgeThicknessMap.get(edge)!
         const edgeSegmentEnd = edgeSegmentStart + thickness
         const center = edgeSegmentStart + 0.5 * thickness
 
-        graph.setSourcePointAbs(
-          edge,
-          new YPoint(radius * Math.cos(center), radius * Math.sin(center))
-        )
+        edge.sourcePortLocation = new Point(radius * Math.cos(center), radius * Math.sin(center))
 
-        const hints = getHints(edgeStyleHintProvider, edge)
+        const hints = getHints(edgeStyleHintMap, edge)
         hints.sourceStart = new Point(
           radius * Math.cos(edgeSegmentStart),
           radius * Math.sin(edgeSegmentStart)
@@ -223,10 +211,10 @@ export class ChordDiagramLayout extends LayoutStageBase {
   }
 }
 
-/**
+/**f
  * Gets the hints for the given edge.
  */
-function getHints(map: IDataMap, edge: Edge): EdgeStyleHints {
+function getHints(map: IMapper<LayoutEdge, EdgeStyleHints>, edge: LayoutEdge): EdgeStyleHints {
   let hints = map.get(edge)
   if (!hints) {
     hints = {
@@ -287,7 +275,7 @@ function counterclockwiseDistance(
 
 /**
  * Helper function to compute which edge should precede another on a node. If the shortest paths from
- * the start node lead in the same direction, sort them by distance. Else, arrange them so they
+ * the start node lead in the same direction, sort them by distance. Else, arrange them, so they
  * spread out undisturbed by one another.
  */
 function compareEdges(

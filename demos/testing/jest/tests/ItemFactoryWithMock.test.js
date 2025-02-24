@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,20 +26,20 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { DefaultGraph } from 'yfiles'
+import { Graph } from '@yfiles/yfiles'
 import { createNode } from '../src/ItemFactory.js'
 
 /**
  * This test file tests ItemFactory while mocking yFiles. Note that some yFiles functionality
  * (such as GraphComponent) requires a working DOM implementation. Jest's JSDOM environment
- * misses some required DOM APIs. For code importing yFiles modules that require a DOM, it is
+ * misses some required DOM APIs. For code importing yFiles library files that require a DOM, it is
  * necessary to mock yFiles.
  */
 
 // Mock yFiles. Note that Jests automatic mocking mechanism does not work with yFiles because
 // of the internal structure of the yFiles library.
-jest.mock('yfiles', () => ({
-  DefaultGraph: class DefaultGraph {
+jest.mock('@yfiles/yfiles', () => ({
+  Graph: class Graph {
     createNode({ layout }) {
       return { layout }
     }
@@ -59,7 +59,7 @@ jest.mock('yfiles', () => ({
 }))
 
 test('creates a node at the specified location', () => {
-  const graph = new DefaultGraph()
+  const graph = new Graph()
 
   const node = createNode(graph, 13, 37)
   expect(node.layout.x).toEqual(13)

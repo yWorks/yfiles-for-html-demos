@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 12 Analysis Algorithms - Tutorial: Basic Features
 
-# Running Graph Analysis Algorithms
+<img src="../../../doc/demo-thumbnails/tutorial-basic-features-graph-analysis.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/12-graph-analysis/).
 
 ## How to analyze the graph structure.
 
@@ -27,7 +29,7 @@ Run Reachability
 
 ```
 // use the selected nodes as start nodes
-const startNodes = graphComponent.selection.selectedNodes
+const startNodes = graphComponent.selection.nodes
 
 const reachability = new Reachability({
   startNodes: startNodes,
@@ -37,11 +39,11 @@ const reachabilityResult = reachability.run(graphComponent.graph)
 
 // highlight the reachable nodes
 reachabilityResult.reachableNodes.forEach((n: INode): void => {
-  graphComponent.highlightIndicatorManager.addHighlight(n)
+  graphComponent.highlights.add(n)
 })
 ```
 
-- Select two nodes with `Ctrl+Click` and click 'Run Shortest Path' to calculate the shortest path. If a path is found, the nodes on the path and the edges will be highlighted. The distance to the target node will be shown as a tooltip on the target node.
+- Select two nodes with Ctrl+Click and click 'Run Shortest Path' to calculate the shortest path. If a path is found, the nodes on the path and the edges will be highlighted. The distance to the target node will be shown as a tooltip on the target node.
 
 Run Shortest Path
 
@@ -52,7 +54,7 @@ const shortestPath = new ShortestPath({
   directed: false, // don't consider edge direction
   // calculate the cost per edge as the distance between source and target node
   costs: (edge: IEdge): number =>
-    edge.sourceNode!.layout.center.subtract(edge.targetNode!.layout.center)
+    edge.sourceNode.layout.center.subtract(edge.targetNode.layout.center)
       .vectorLength
 })
 const shortestPathResult = shortestPath.run(graph)

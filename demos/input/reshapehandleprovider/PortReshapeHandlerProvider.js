@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,52 +33,50 @@ import {
   IInputModeContext,
   IPort,
   IReshapeHandleProvider,
-  KeyEventRecognizers,
-  NodeStylePortStyleAdapter,
+  ShapePortStyle,
   Size
-} from 'yfiles'
-import { PortReshapeHandle } from './PortReshapeHandle.js'
-
+} from '@yfiles/yfiles'
+import { PortReshapeHandle } from './PortReshapeHandle'
 /**
- * An {@link IReshapeHandleProvider} implementation for {@link IPort}s using a {@link NodeStylePortStyleAdapter}.
- * The provided {@link PortReshapeHandle} modifies the {@link NodeStylePortStyleAdapter.renderSize render size}
- * of the port style.
+ * An {@link IReshapeHandleProvider} implementation for {@link IPort}s using {@link ShapePortStyle}.
+ * The provided {@link PortReshapeHandle} modifies the {@link ShapePortStyle.renderSize render size}.
  */
 export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
+  port
+  portStyle
+  minimumSize
   /**
    * Creates a new instance for port and its adapter.
-   * @param {!IPort} port The port whose visualization shall be resized.
-   * @param {!NodeStylePortStyleAdapter} adapter The adapter whose render size shall be changed.
-   * @param {!Size} minimumSize The minimum size the {@link NodeStylePortStyleAdapter.renderSize} may have.
+   * @param port The port whose visualization shall be resized.
+   * @param portStyle The adapter whose render size shall be changed.
+   * @param minimumSize The minimum size the {@link ShapePortStyle.renderSize} may have.
    */
-  constructor(port, adapter, minimumSize) {
+  constructor(port, portStyle, minimumSize) {
     super()
-    this.minimumSize = minimumSize
-    this.adapter = adapter
     this.port = port
+    this.portStyle = portStyle
+    this.minimumSize = minimumSize
   }
-
   /**
    * Returns {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER} as available handle
-   * positions depending on the modifier state of `Ctrl`.
-   * @param {!IInputModeContext} context The context the handles are created in.
-   * @returns {!HandlePositions} Either {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER}
+   * positions depending on the modifier state of `Shift`.
+   * @param context The context the handles are created in.
+   * @returns Either {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER}
    */
   getAvailableHandles(context) {
     const canvasComponent = context.canvasComponent
-    const ctrlPressed = KeyEventRecognizers.CTRL_IS_DOWN(this, canvasComponent.lastInputEvent)
-    // when Ctrl is pressed, all border positions are returned, otherwise only the corner positions
-    return canvasComponent.focused && ctrlPressed ? HandlePositions.BORDER : HandlePositions.CORNERS
+    return canvasComponent.focused && canvasComponent.lastInputEvent.shiftKey
+      ? HandlePositions.BORDER
+      : HandlePositions.CORNERS
   }
-
   /**
    * Returns a {@link PortReshapeHandle} for the port at the given position and
    * sets its {@link PortReshapeHandle.minimumSize} to {@link minimumSize}.
-   * @param {!IInputModeContext} context The context the handles are created in.
-   * @param {!HandlePositions} position The position the handle shall be created for.
-   * @returns {!IHandle} A {@link PortReshapeHandle} for the port at the given position.
+   * @param context The context the handles are created in.
+   * @param position The position the handle shall be created for.
+   * @returns A {@link PortReshapeHandle} for the port at the given position.
    */
   getHandle(context, position) {
-    return new PortReshapeHandle(context, this.port, this.adapter, position, this.minimumSize)
+    return new PortReshapeHandle(context, this.port, this.portStyle, position, this.minimumSize)
   }
 }

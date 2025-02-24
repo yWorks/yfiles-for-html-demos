@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,38 +26,31 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CanvasComponent, GraphComponent, GraphOverviewComponent, ICommand } from 'yfiles'
-import { initToolbars } from './toolbar.js'
-import { bindYFilesCommand } from './element-utils.js'
-
+import { CanvasComponent, Command, GraphComponent, GraphOverviewComponent } from '@yfiles/yfiles'
+import { initToolbars } from './toolbar'
+import { bindYFilesCommand } from './element-utils'
 export function finishLoading() {
   const graphComponent = CanvasComponent.getComponent(document.querySelector('#graphComponent'))
   if (graphComponent instanceof GraphComponent) {
     registerDefaultCommands(graphComponent)
     registerDevicePixelRatioChangeListener(graphComponent)
   }
-
   const overviewComponent = CanvasComponent.getComponent(
     document.querySelector('#overviewComponent')
   )
   if (overviewComponent instanceof GraphOverviewComponent) {
     registerDevicePixelRatioChangeListener(overviewComponent)
   }
-
   document.body.classList.add('loaded')
   window['data-demo-status'] = 'OK'
-
   initToolbars()
 }
-
 /**
  * Sets the device pixel ratio of the given component and register a listener that applies
  * device pixel ratio changes.
- * @param {!CanvasComponent} canvasComponent
  */
 function registerDevicePixelRatioChangeListener(canvasComponent) {
   let removeCallback = () => {}
-
   const updatePixelRatio = () => {
     removeCallback()
     const mqString = `(resolution: ${window.devicePixelRatio}dppx)`
@@ -66,98 +59,74 @@ function registerDevicePixelRatioChangeListener(canvasComponent) {
     removeCallback = () => {
       media.removeEventListener('change', updatePixelRatio)
     }
-
     canvasComponent.devicePixelRatio = window.devicePixelRatio || 1
   }
   updatePixelRatio()
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- */
 function registerDefaultCommands(graphComponent) {
   document.querySelector("button[data-command='NEW']")?.addEventListener('click', () => {
     graphComponent.graph.clear()
     graphComponent.graph.undoEngine?.clear()
     graphComponent.fitGraphBounds()
   })
-
-  bindYFilesCommand(
-    "[data-command='OPEN']",
-    ICommand.OPEN,
-    graphComponent,
-    null,
-    'Open a GraphML file'
-  )
-  bindYFilesCommand(
-    "[data-command='SAVE']",
-    ICommand.SAVE,
-    graphComponent,
-    null,
-    'Save a GraphML file'
-  )
-
   bindYFilesCommand(
     "[data-command='FIT_GRAPH_BOUNDS']",
-    ICommand.FIT_GRAPH_BOUNDS,
+    Command.FIT_GRAPH_BOUNDS,
     graphComponent,
     null,
     'Fit content'
   )
   bindYFilesCommand(
     "[data-command='INCREASE_ZOOM']",
-    ICommand.INCREASE_ZOOM,
+    Command.INCREASE_ZOOM,
     graphComponent,
     null,
     'Increase zoom'
   )
   bindYFilesCommand(
     "[data-command='DECREASE_ZOOM']",
-    ICommand.DECREASE_ZOOM,
+    Command.DECREASE_ZOOM,
     graphComponent,
     null,
     'Decrease zoom'
   )
   bindYFilesCommand(
     "[data-command='ZOOM_ORIGINAL']",
-    ICommand.ZOOM,
+    Command.ZOOM,
     graphComponent,
     1.0,
     'Zoom to original size'
   )
-
-  bindYFilesCommand("[data-command='CUT']", ICommand.CUT, graphComponent, null, 'Cut')
-  bindYFilesCommand("[data-command='COPY']", ICommand.COPY, graphComponent, null, 'Copy')
-  bindYFilesCommand("[data-command='PASTE']", ICommand.PASTE, graphComponent, null, 'Paste')
-  bindYFilesCommand("[data-command='DELETE']", ICommand.DELETE, graphComponent, null, 'Delete')
-
-  bindYFilesCommand("[data-command='UNDO']", ICommand.UNDO, graphComponent, null, 'Undo')
-  bindYFilesCommand("[data-command='REDO']", ICommand.REDO, graphComponent, null, 'Redo')
-
+  bindYFilesCommand("[data-command='CUT']", Command.CUT, graphComponent, null, 'Cut')
+  bindYFilesCommand("[data-command='COPY']", Command.COPY, graphComponent, null, 'Copy')
+  bindYFilesCommand("[data-command='PASTE']", Command.PASTE, graphComponent, null, 'Paste')
+  bindYFilesCommand("[data-command='DELETE']", Command.DELETE, graphComponent, null, 'Delete')
+  bindYFilesCommand("[data-command='UNDO']", Command.UNDO, graphComponent, null, 'Undo')
+  bindYFilesCommand("[data-command='REDO']", Command.REDO, graphComponent, null, 'Redo')
   bindYFilesCommand(
     "[data-command='GROUP_SELECTION']",
-    ICommand.GROUP_SELECTION,
+    Command.GROUP_SELECTION,
     graphComponent,
     null,
     'Group selected element'
   )
   bindYFilesCommand(
     "[data-command='UNGROUP_SELECTION']",
-    ICommand.UNGROUP_SELECTION,
+    Command.UNGROUP_SELECTION,
     graphComponent,
     null,
     'Ungroup selected element'
   )
   bindYFilesCommand(
     "[data-command='ENTER_GROUP']",
-    ICommand.ENTER_GROUP,
+    Command.ENTER_GROUP,
     graphComponent,
     null,
     'Enter group'
   )
   bindYFilesCommand(
     "[data-command='EXIT_GROUP']",
-    ICommand.EXIT_GROUP,
+    Command.EXIT_GROUP,
     graphComponent,
     null,
     'Exit group'

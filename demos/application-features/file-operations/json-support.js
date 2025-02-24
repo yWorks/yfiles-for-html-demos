@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,18 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, ILabelModelParameter, IPortLocationModelParameter, Point } from 'yfiles'
-import { getDefaultWriterOptions, toJSON } from '../../utils/json-writer.js'
-
+import { GraphBuilder, Point } from '@yfiles/yfiles'
+import { getDefaultWriterOptions, toJSON } from '../../utils/json-writer'
 /**
  * This file provides functions to read and write a graph to a JSON string.
  * The JSON is expected to conform to the structure outlined by {@link JSONGraph}.
  * {@link readJSON Reading} is done by a properly configured {@link GraphBuilder},
  * {@link writeJSON writing} is backed by the {@link toJSON} function.
- * @param {!GraphComponent} graphComponent
- * @param {!string} text
  */
-
 /**
  * Reads a graph from the given JSON {@link text} and sets it to the given {@link graphComponent}.
  * The JSON is expected to conform to the structure outlined by {@link JSONGraph}.
@@ -47,7 +43,6 @@ import { getDefaultWriterOptions, toJSON } from '../../utils/json-writer.js'
 export function readJSON(graphComponent, text) {
   try {
     const data = JSON.parse(text)
-
     graphComponent.graph.clear()
     const graphBuilder = new GraphBuilder(graphComponent.graph)
     const nodesSource = graphBuilder.createNodesSource({
@@ -58,13 +53,8 @@ export function readJSON(graphComponent, text) {
     })
     nodesSource.nodeCreator.createLabelsSource({
       data: (data) => data.labels || [],
-      text: (data) => data.text,
-      layoutParameter: (data) =>
-        data.layoutParameter
-          ? ILabelModelParameter.deserializeParameter(data.layoutParameter)
-          : null
+      text: (data) => data.text
     })
-
     const groupNodesSource = graphBuilder.createGroupNodesSource({
       data: data.nodeList.filter((item) => item.isGroup === true),
       id: (item) => item.id,
@@ -73,13 +63,8 @@ export function readJSON(graphComponent, text) {
     })
     groupNodesSource.nodeCreator.createLabelsSource({
       data: (data) => data.labels || [],
-      text: (data) => data.text,
-      layoutParameter: (data) =>
-        data.layoutParameter
-          ? ILabelModelParameter.deserializeParameter(data.layoutParameter)
-          : null
+      text: (data) => data.text
     })
-
     const { edgeCreator } = graphBuilder.createEdgesSource(
       data.edgeList,
       (item) => item.source,
@@ -87,28 +72,10 @@ export function readJSON(graphComponent, text) {
     )
     edgeCreator.createLabelsSource({
       data: (data) => data.labels || [],
-      text: (data) => data.text,
-      layoutParameter: (data) =>
-        data.layoutParameter
-          ? ILabelModelParameter.deserializeParameter(data.layoutParameter)
-          : null
+      text: (data) => data.text
     })
     edgeCreator.bendsProvider = (item) => item.bends
-
-    // Ports are not handled by GraphBuilder by default, so we use the EdgeCreated event for this.
-    const tryDeserializePortParameter = (portParameter, port, graph) => {
-      try {
-        if (portParameter != null) {
-          graph.setPortLocationParameter(
-            port,
-            IPortLocationModelParameter.deserializeParameter(portParameter)
-          )
-        }
-      } catch (_) {
-        // Silently ignore
-      }
-    }
-    edgeCreator.addEdgeCreatedListener((_, evt) => {
+    edgeCreator.addEventListener('edge-created', (evt) => {
       const dataItem = evt.dataItem
       if (dataItem.sourcePort) {
         evt.graph.setPortLocation(evt.item.sourcePort, Point.from(dataItem.sourcePort))
@@ -116,21 +83,15 @@ export function readJSON(graphComponent, text) {
       if (dataItem.targetPort) {
         evt.graph.setPortLocation(evt.item.targetPort, Point.from(dataItem.targetPort))
       }
-      tryDeserializePortParameter(dataItem.sourcePortParameter, evt.item.sourcePort, evt.graph)
-      tryDeserializePortParameter(dataItem.targetPortParameter, evt.item.targetPort, evt.graph)
     })
-
     graphBuilder.buildGraph()
-    graphComponent.fitGraphBounds()
+    void graphComponent.fitGraphBounds()
   } catch (err) {
     alert(`Error parsing JSON. Cause: ${err.message}`)
   }
 }
-
 /**
  * Writes the graph of the given {@link graphComponent} to text.
- * @param {!GraphComponent} graphComponent
- * @returns {!string}
  */
 export function writeJSON(graphComponent) {
   try {

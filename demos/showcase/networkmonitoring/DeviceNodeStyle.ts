@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,21 +28,22 @@
  ***************************************************************************/
 import {
   GeneralPath,
-  GeomUtilities,
+  GeometryUtilities,
   type IInputModeContext,
   type INode,
   type IRenderContext,
   NodeStyleBase,
   type Point,
-  SvgVisual
-} from 'yfiles'
+  SvgVisual,
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
 import { convertLoadToColor, type Device, DeviceKind } from './model/Device'
 
 /**
  * A node style that visualizes the devices of a network.
  * It renders the icon according to the device kind and adds the 'failed' icon if necessary.
  */
-export class DeviceNodeStyle extends NodeStyleBase {
+export class DeviceNodeStyle extends NodeStyleBase<DeviceNodeStyleVisual> {
   /**
    * Creates a new instance of NetworkMonitoringNodeStyle.
    */
@@ -53,9 +54,8 @@ export class DeviceNodeStyle extends NodeStyleBase {
     super()
   }
 
-  createVisual(context: IRenderContext, node: INode): SvgVisual {
-    const container = document.createElementNS('http://www.w3.org/2000/svg', 'g') as SVGGElement &
-      RenderDataHolder
+  createVisual(context: IRenderContext, node: INode): DeviceNodeStyleVisual {
+    const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     const device = this.dataProvider(node)
 
@@ -92,19 +92,23 @@ export class DeviceNodeStyle extends NodeStyleBase {
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
 
     // cache the node's properties
-    container.renderData = {
+    const renderData = {
       enabled: device.enabled,
       failed: device.failed,
       load: device.load
     }
 
-    return new SvgVisual(container)
+    return SvgVisual.from(container, renderData)
   }
 
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: DeviceNodeStyleVisual,
+    node: INode
+  ): DeviceNodeStyleVisual {
     const device = node.tag as Device
-    const container = oldVisual.svgElement as SVGGElement & RenderDataHolder
-    const oldData = container.renderData
+    const container = oldVisual.svgElement
+    const oldData = oldVisual.tag
 
     // update the image
     const wasNodeWorking = oldData.enabled && oldData.failed
@@ -133,7 +137,7 @@ export class DeviceNodeStyle extends NodeStyleBase {
     }
 
     // cache the node's properties
-    container.renderData = {
+    oldVisual.tag = {
       enabled: device.enabled,
       failed: device.failed,
       load: device.load
@@ -158,7 +162,7 @@ export class DeviceNodeStyle extends NodeStyleBase {
    * This method is implemented explicitly to optimize the performance for elliptic shape.
    */
   getIntersection(node: INode, inner: Point, outer: Point): Point | null {
-    return GeomUtilities.findEllipseLineIntersection(node.layout.toRect(), inner, outer)
+    return GeometryUtilities.getEllipseLineIntersection(node.layout.toRect(), inner, outer)
   }
 
   /**
@@ -166,7 +170,7 @@ export class DeviceNodeStyle extends NodeStyleBase {
    * This method is implemented explicitly to optimize the performance for elliptic shape.
    */
   isInside(node: INode, point: Point): boolean {
-    return GeomUtilities.ellipseContains(node.layout.toRect(), point, 0)
+    return GeometryUtilities.ellipseContains(node.layout.toRect(), point, 0)
   }
 
   /**
@@ -174,7 +178,7 @@ export class DeviceNodeStyle extends NodeStyleBase {
    * This method is implemented explicitly to optimize the performance for elliptic shape.
    */
   isHit(canvasContext: IInputModeContext, location: Point, node: INode): boolean {
-    return GeomUtilities.ellipseContains(
+    return GeometryUtilities.ellipseContains(
       node.layout.toRect(),
       location,
       canvasContext.hitTestRadius
@@ -188,7 +192,7 @@ type RenderData = {
   load: number
 }
 
-type RenderDataHolder = { renderData: RenderData }
+type DeviceNodeStyleVisual = TaggedSvgVisual<SVGGElement, RenderData>
 
 function dataChanged(data1: RenderData, data2: RenderData): boolean {
   return Object.entries(data1).some(([key, value]) => {

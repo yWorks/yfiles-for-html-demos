@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,25 +28,20 @@
  ***************************************************************************/
 import {
   Class,
-  DefaultSeriesParallelLayoutPortAssignment,
   EdgeRouter,
-  EdgeRouterScope,
-  ForkStyle,
   GraphComponent,
-  GraphMLAttribute,
   ILayoutAlgorithm,
   LayoutOrientation,
   OrganicEdgeRouter,
   SeriesParallelLayout,
+  SeriesParallelLayoutPortAssigner,
   SeriesParallelLayoutPortAssignmentMode,
   SeriesParallelLayoutRoutingStyle,
-  StraightLineEdgeRouter,
-  YBoolean,
-  YNumber,
-  YString
-} from 'yfiles'
+  StraightLineEdgeRouter
+} from '@yfiles/yfiles'
 
 import LayoutConfiguration from './LayoutConfiguration'
+
 import {
   ComponentAttribute,
   Components,
@@ -56,7 +51,13 @@ import {
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from 'demo-resources/demo-option-editor'
+} from '@yfiles/demo-resources/demo-option-editor'
+
+enum NonSeriesParallelRoutingStyle {
+  ORTHOGONAL,
+  ORGANIC,
+  STRAIGHT
+}
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -64,20 +65,227 @@ import {
 const SeriesParallelLayoutConfig = (Class as any)('SeriesParallelLayoutConfig', {
   $extends: LayoutConfiguration,
 
-  $meta: [LabelAttribute('SeriesParallelLayout')],
+  _meta: {
+    generalGroup: [
+      new LabelAttribute('General'),
+      new OptionGroupAttribute('RootGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    edgesGroup: [
+      new LabelAttribute('Edges'),
+      new OptionGroupAttribute('RootGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    descriptionText: [
+      new OptionGroupAttribute('descriptionGroup', 10),
+      new ComponentAttribute(Components.HTML_BLOCK),
+      new TypeAttribute(String)
+    ],
+    orientationItem: [
+      new LabelAttribute(
+        'Orientation',
+        '#/api/SeriesParallelLayout#SeriesParallelLayout-property-layoutOrientation'
+      ),
+      new OptionGroupAttribute('generalGroup', 10),
+      new EnumValuesAttribute([
+        ['Top to Bottom', LayoutOrientation.TOP_TO_BOTTOM],
+        ['Left to Right', LayoutOrientation.LEFT_TO_RIGHT],
+        ['Bottom to Top', LayoutOrientation.BOTTOM_TO_TOP],
+        ['Right to Left', LayoutOrientation.RIGHT_TO_LEFT]
+      ]),
+      new TypeAttribute(LayoutOrientation)
+    ],
+    parallelSubgraphAlignmentItem: [
+      new LabelAttribute(
+        'Parallel Subgraph Alignment',
+        '#/api/SeriesParallelLayout#SeriesParallelLayout-property-parallelSubgraphAlignment'
+      ),
+      new OptionGroupAttribute('generalGroup', 20),
+      new EnumValuesAttribute([
+        ['Top', 0.0],
+        ['Center', 0.5],
+        ['Bottom', 1.0]
+      ]),
+      new TypeAttribute(Number)
+    ],
+    useDrawingAsSketchItem: [
+      new LabelAttribute(
+        'Use Drawing as Sketch',
+        '#/api/SeriesParallelLayout#SeriesParallelLayout-property-fromSketchMode'
+      ),
+      new OptionGroupAttribute('generalGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    distanceGroup: [
+      new LabelAttribute('Minimum Distances'),
+      new OptionGroupAttribute('generalGroup', 30),
+      new TypeAttribute(OptionGroup)
+    ],
+    minimumNodeToNodeDistanceItem: [
+      new LabelAttribute(
+        'Node Distance',
+        '#/api/SeriesParallelLayout#SeriesParallelLayout-property-minimumNodeDistance'
+      ),
+      new MinMaxAttribute(0, 100),
+      new OptionGroupAttribute('distanceGroup', 10),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumNodeToEdgeDistanceItem: [
+      new LabelAttribute(
+        'Node to Edge Distance',
+        '#/api/SeriesParallelLayout#SeriesParallelLayout-property-minimumNodeToEdgeDistance'
+      ),
+      new MinMaxAttribute(0, 100),
+      new OptionGroupAttribute('distanceGroup', 20),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumEdgeDistanceItem: [
+      new LabelAttribute(
+        'Edge Distance',
+        '#/api/SeriesParallelLayout#SeriesParallelLayout-property-minimumEdgeDistance'
+      ),
+      new MinMaxAttribute(0, 100),
+      new OptionGroupAttribute('distanceGroup', 30),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    labelingGroup: [
+      new LabelAttribute('Labeling'),
+      new OptionGroupAttribute('generalGroup', 40),
+      new TypeAttribute(OptionGroup)
+    ],
+    considerNodeLabelsItem: [
+      new LabelAttribute(
+        'Consider Node Labels',
+        '#/api/SeriesParallelLayout#SeriesParallelLayout-property-nodeLabelPlacement'
+      ),
+      new OptionGroupAttribute('labelingGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    placeEdgeLabelsItem: [
+      new LabelAttribute(
+        'Place Edge Labels',
+        '#/api/SeriesParallelLayout#SeriesParallelLayout-property-edgeLabelPlacement'
+      ),
+      new OptionGroupAttribute('labelingGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    portStyleItem: [
+      new LabelAttribute(
+        'Port Style',
+        '#/api/SeriesParallelLayoutPortAssigner#SeriesParallelLayoutPortAssigner-property-mode'
+      ),
+      new OptionGroupAttribute('edgesGroup', 10),
+      new EnumValuesAttribute([
+        ['Centered', SeriesParallelLayoutPortAssignmentMode.CENTER],
+        ['Distributed', SeriesParallelLayoutPortAssignmentMode.DISTRIBUTED],
+        ['Center on side', SeriesParallelLayoutPortAssignmentMode.CENTER_ON_SIDE],
+        ['Distributed on side', SeriesParallelLayoutPortAssignmentMode.DISTRIBUTED_ON_SIDE]
+      ]),
+      new TypeAttribute(SeriesParallelLayoutPortAssignmentMode)
+    ],
+    routingStyleItem: [
+      new LabelAttribute(
+        'Routing Style',
+        '#/api/SeriesParallelLayout#SeriesParallelLayout-property-edgeRoutingStyle'
+      ),
+      new OptionGroupAttribute('edgesGroup', 20),
+      new EnumValuesAttribute([
+        ['Orthogonal', SeriesParallelLayoutRoutingStyle.ORTHOGONAL],
+        ['Octilinear', SeriesParallelLayoutRoutingStyle.OCTILINEAR],
+        ['Polyline', SeriesParallelLayoutRoutingStyle.POLYLINE]
+      ]),
+      new TypeAttribute(SeriesParallelLayoutRoutingStyle)
+    ],
+    preferredOctilinearSegmentLengthItem: [
+      new LabelAttribute(
+        'Preferred Octilinear Segment Length',
+        '#/api/SeriesParallelLayout#SeriesParallelLayout-property-preferredOctilinearSegmentLength'
+      ),
+      new OptionGroupAttribute('edgesGroup', 30),
+      new MinMaxAttribute(0, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumPolylineSegmentLengthItem: [
+      new LabelAttribute(
+        'Minimum Polyline Segment Length',
+        '#/api/SeriesParallelLayout#SeriesParallelLayout-property-minimumPolylineSegmentLength'
+      ),
+      new OptionGroupAttribute('edgesGroup', 40),
+      new MinMaxAttribute(0, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumSlopeItem: [
+      new MinMaxAttribute(0.0, 5.0, 0.01),
+      new LabelAttribute(
+        'Minimum Slope',
+        '#/api/SeriesParallelLayout#SeriesParallelLayout-property-minimumSlope'
+      ),
+      new OptionGroupAttribute('edgesGroup', 50),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    routingStyleNonSeriesParallelItem: [
+      new LabelAttribute(
+        'Routing Style (Non-Series-Parallel Edges)',
+        '#/api/SeriesParallelLayout#SeriesParallelLayout-property-nonSeriesParallelEdgeRouter'
+      ),
+      new OptionGroupAttribute('edgesGroup', 60),
+      new EnumValuesAttribute([
+        ['Orthogonal', NonSeriesParallelRoutingStyle.ORTHOGONAL],
+        ['Organic', NonSeriesParallelRoutingStyle.ORGANIC],
+        ['Straight-Line', NonSeriesParallelRoutingStyle.STRAIGHT]
+      ]),
+      new TypeAttribute(NonSeriesParallelRoutingStyle)
+    ],
+    minimumFirstSegmentLengthItem: [
+      new LabelAttribute(
+        'Minimum First Segment Length',
+        '#/api/SeriesParallelLayoutEdgeDescriptor#SeriesParallelLayoutEdgeDescriptor-property-minimumFirstSegmentLength'
+      ),
+      new OptionGroupAttribute('edgesGroup', 80),
+      new MinMaxAttribute(0, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumLastSegmentLengthItem: [
+      new LabelAttribute(
+        'Minimum Last Segment Length',
+        '#/api/SeriesParallelLayoutEdgeDescriptor#SeriesParallelLayoutEdgeDescriptor-property-minimumLastSegmentLength'
+      ),
+      new OptionGroupAttribute('edgesGroup', 90),
+      new MinMaxAttribute(0, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumEdgeLengthItem: [
+      new LabelAttribute(
+        'Minimum Edge Length',
+        '#/api/SeriesParallelLayoutEdgeDescriptor#SeriesParallelLayoutEdgeDescriptor-property-minimumLength'
+      ),
+      new OptionGroupAttribute('edgesGroup', 100),
+      new MinMaxAttribute(0, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ]
+  },
 
   constructor: function () {
     // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
     const layout = new SeriesParallelLayout()
-    const edgeLayoutDescriptor = layout.defaultEdgeLayoutDescriptor
+    const edgeDescriptor = layout.defaultEdgeDescriptor
 
     this.orientationItem = LayoutOrientation.TOP_TO_BOTTOM
-    this.verticalAlignmentItem = 0.5
+    this.parallelSubgraphAlignmentItem = 0.5
     this.useDrawingAsSketchItem = layout.fromSketchMode
     this.minimumNodeToNodeDistanceItem = 30
     this.minimumNodeToEdgeDistanceItem = 15
-    this.minimumEdgeToEdgeDistanceItem = 15
+    this.minimumEdgeDistanceItem = 15
     this.considerNodeLabelsItem = true
     this.placeEdgeLabelsItem = true
 
@@ -86,10 +294,9 @@ const SeriesParallelLayoutConfig = (Class as any)('SeriesParallelLayoutConfig', 
     this.preferredOctilinearSegmentLengthItem = layout.preferredOctilinearSegmentLength
     this.minimumPolylineSegmentLengthItem = layout.minimumPolylineSegmentLength
     this.minimumSlopeItem = layout.minimumSlope
-    this.routingStyleNonSeriesParallelItem = ROUTING_STYLE_ORTHOGONAL
-    this.routeEdgesInFlowDirectionItem = true
-    this.minimumFirstSegmentLengthItem = edgeLayoutDescriptor.minimumFirstSegmentLength
-    this.minimumLastSegmentLengthItem = edgeLayoutDescriptor.minimumLastSegmentLength
+    this.routingStyleNonSeriesParallelItem = NonSeriesParallelRoutingStyle.ORTHOGONAL
+    this.minimumFirstSegmentLengthItem = edgeDescriptor.minimumFirstSegmentLength
+    this.minimumLastSegmentLengthItem = edgeDescriptor.minimumLastSegmentLength
     this.minimumEdgeLengthItem = 20
     this.title = 'Series-Parallel Layout'
   },
@@ -101,27 +308,20 @@ const SeriesParallelLayoutConfig = (Class as any)('SeriesParallelLayoutConfig', 
    */
   createConfiguredLayout: function (graphComponent: GraphComponent): ILayoutAlgorithm {
     const layout = new SeriesParallelLayout()
-    layout.generalGraphHandling = true
 
     layout.layoutOrientation = this.orientationItem
-
-    layout.verticalAlignment = this.verticalAlignmentItem
+    layout.parallelSubgraphAlignment = this.parallelSubgraphAlignmentItem
     layout.fromSketchMode = this.useDrawingAsSketchItem
-
-    layout.minimumNodeToNodeDistance = this.minimumNodeToNodeDistanceItem
+    layout.minimumNodeDistance = this.minimumNodeToNodeDistanceItem
     layout.minimumNodeToEdgeDistance = this.minimumNodeToEdgeDistanceItem
-    layout.minimumEdgeToEdgeDistance = this.minimumEdgeToEdgeDistanceItem
+    layout.minimumEdgeDistance = this.minimumEdgeDistanceItem
+    layout.nodeLabelPlacement = this.considerNodeLabelsItem ? 'consider' : 'ignore'
+    layout.edgeLabelPlacement = this.placeEdgeLabelsItem ? 'integrated' : 'ignore'
 
-    layout.considerNodeLabels = this.considerNodeLabelsItem
-    layout.integratedEdgeLabeling = this.placeEdgeLabelsItem
-
-    const portAssignment = layout.defaultPortAssignment as DefaultSeriesParallelLayoutPortAssignment
+    const portAssignment = layout.defaultPortAssigner as SeriesParallelLayoutPortAssigner
     portAssignment.mode = this.portStyleItem
-    portAssignment.forkStyle = this.routeEdgesInFlowDirectionItem
-      ? ForkStyle.OUTSIDE_NODE
-      : ForkStyle.AT_NODE
 
-    layout.routingStyle = this.routingStyleItem
+    layout.edgeRoutingStyle = this.routingStyleItem
     if (this.routingStyleItem === SeriesParallelLayoutRoutingStyle.OCTILINEAR) {
       layout.preferredOctilinearSegmentLength = this.preferredOctilinearSegmentLengthItem
     } else if (this.routingStyleItem === SeriesParallelLayoutRoutingStyle.POLYLINE) {
@@ -129,481 +329,113 @@ const SeriesParallelLayoutConfig = (Class as any)('SeriesParallelLayoutConfig', 
       layout.minimumSlope = this.minimumSlopeItem
     }
 
-    if (this.routingStyleNonSeriesParallelItem === ROUTING_STYLE_ORTHOGONAL) {
-      const edgeRouter = new EdgeRouter({
-        rerouting: true,
-        scope: EdgeRouterScope.ROUTE_AFFECTED_EDGES
+    if (this.routingStyleNonSeriesParallelItem === NonSeriesParallelRoutingStyle.ORTHOGONAL) {
+      layout.nonSeriesParallelEdgeRouter = new EdgeRouter({
+        rerouting: true
       })
-      layout.nonSeriesParallelEdgeRouter = edgeRouter
-      layout.nonSeriesParallelEdgesDpKey = edgeRouter.affectedEdgesDpKey
-    } else if (this.routingStyleNonSeriesParallelItem === ROUTING_STYLE_ORGANIC) {
+    } else if (this.routingStyleNonSeriesParallelItem === NonSeriesParallelRoutingStyle.ORGANIC) {
       layout.nonSeriesParallelEdgeRouter = new OrganicEdgeRouter()
-      layout.nonSeriesParallelEdgesDpKey = OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
-    } else if (this.routingStyleNonSeriesParallelItem === ROUTING_STYLE_STRAIGHT) {
-      const edgeRouter = new StraightLineEdgeRouter({
-        scope: EdgeRouterScope.ROUTE_AFFECTED_EDGES
-      })
-      layout.nonSeriesParallelEdgeRouter = edgeRouter
-      layout.nonSeriesParallelEdgesDpKey = edgeRouter.affectedEdgesDpKey
+    } else if (this.routingStyleNonSeriesParallelItem === NonSeriesParallelRoutingStyle.STRAIGHT) {
+      layout.nonSeriesParallelEdgeRouter = new StraightLineEdgeRouter()
     }
 
-    const edgeLayoutDescriptor = layout.defaultEdgeLayoutDescriptor
-    edgeLayoutDescriptor.minimumFirstSegmentLength = this.minimumFirstSegmentLengthItem
-    edgeLayoutDescriptor.minimumLastSegmentLength = this.minimumLastSegmentLengthItem
-    edgeLayoutDescriptor.minimumLength = this.minimumEdgeLengthItem
+    const edgeDescriptor = layout.defaultEdgeDescriptor
+    edgeDescriptor.minimumFirstSegmentLength = this.minimumFirstSegmentLengthItem
+    edgeDescriptor.minimumLastSegmentLength = this.minimumLastSegmentLengthItem
+    edgeDescriptor.minimumLength = this.minimumEdgeLengthItem
 
     return layout
   },
 
   /** @type {OptionGroup} */
-  generalGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('General'),
-        OptionGroupAttribute('RootGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  generalGroup: null,
 
   /** @type {OptionGroup} */
-  edgesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Edges'),
-        OptionGroupAttribute('RootGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  edgesGroup: null,
 
   /** @type {string} */
   descriptionText: {
-    $meta: function () {
-      return [
-        OptionGroupAttribute('descriptionGroup', 10),
-        ComponentAttribute(Components.HTML_BLOCK),
-        TypeAttribute(YString.$class)
-      ]
-    },
     get: function () {
-      return '<p>The series-parallel layout algorithm highlights the main direction or flow of a graph, similar to the hierarchic style. In comparison, this algorithm is usually faster but can be used only on special graphs, namely series-parallel graphs.</p>'
+      return '<p>The series-parallel layout algorithm highlights the main direction or flow of a graph, similar to the hierarchical style. In comparison, this algorithm is usually faster but can be used only on special graphs, namely series-parallel graphs.</p>'
     }
   },
 
   /** @type {LayoutOrientation} */
-  orientationItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Orientation',
-          '#/api/OrientationLayout#OrientationLayout-property-orientation'
-        ),
-        GraphMLAttribute().init({ defaultValue: LayoutOrientation.TOP_TO_BOTTOM }),
-        OptionGroupAttribute('generalGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Top to Bottom', LayoutOrientation.TOP_TO_BOTTOM],
-            ['Left to Right', LayoutOrientation.LEFT_TO_RIGHT],
-            ['Bottom to Top', LayoutOrientation.BOTTOM_TO_TOP],
-            ['Right to Left', LayoutOrientation.RIGHT_TO_LEFT]
-          ]
-        }),
-        TypeAttribute(LayoutOrientation.$class)
-      ]
-    },
-    value: null
-  },
+  orientationItem: null,
 
   /** @type {number} */
-  verticalAlignmentItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Vertical Alignment',
-          '#/api/yfiles.seriesparallel.SeriesParallelLayout#SeriesParallelLayout-property-verticalAlignment'
-        ),
-        GraphMLAttribute().init({ defaultValue: 0.5 }),
-        OptionGroupAttribute('generalGroup', 20),
-        EnumValuesAttribute().init({
-          values: [
-            ['Top', 0.0],
-            ['Center', 0.5],
-            ['Bottom', 1.0]
-          ]
-        }),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  parallelSubgraphAlignmentItem: 0,
 
   /** @type {boolean} */
-  useDrawingAsSketchItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Use Drawing as Sketch',
-          '#/api/yfiles.seriesparallel.SeriesParallelLayout#SeriesParallelLayout-property-fromSketchMode'
-        ),
-        OptionGroupAttribute('generalGroup', 20),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  useDrawingAsSketchItem: false,
 
   /** @type {OptionGroup} */
-  distanceGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Minimum Distances'),
-        OptionGroupAttribute('generalGroup', 30),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  distanceGroup: null,
 
   /** @type {number} */
-  minimumNodeToNodeDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Node to Node Distance',
-          '#/api/yfiles.seriesparallel.SeriesParallelLayout#SeriesParallelLayout-property-minimumNodeToNodeDistance'
-        ),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        OptionGroupAttribute('distanceGroup', 10),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumNodeToNodeDistanceItem: 0,
 
   /** @type {number} */
-  minimumNodeToEdgeDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Node to Edge Distance',
-          '#/api/yfiles.seriesparallel.SeriesParallelLayout#SeriesParallelLayout-property-minimumNodeToEdgeDistance'
-        ),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        OptionGroupAttribute('distanceGroup', 20),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumNodeToEdgeDistanceItem: 0,
 
   /** @type {number} */
-  minimumEdgeToEdgeDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Edge to Edge Distance',
-          '#/api/yfiles.seriesparallel.SeriesParallelLayout#SeriesParallelLayout-property-minimumEdgeToEdgeDistance'
-        ),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        OptionGroupAttribute('distanceGroup', 30),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumEdgeDistanceItem: 0,
 
   /** @type {OptionGroup} */
-  labelingGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Labeling'),
-        OptionGroupAttribute('generalGroup', 40),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  labelingGroup: null,
 
   /** @type {boolean} */
-  considerNodeLabelsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Consider Node Labels',
-          '#/api/yfiles.seriesparallel.SeriesParallelLayout#SeriesParallelLayout-property-considerNodeLabels'
-        ),
-        OptionGroupAttribute('labelingGroup', 20),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  considerNodeLabelsItem: false,
 
   /** @type {boolean} */
-  placeEdgeLabelsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Place Edge Labels',
-          '#/api/yfiles.seriesparallel.SeriesParallelLayout#SeriesParallelLayout-property-integratedEdgeLabeling'
-        ),
-        OptionGroupAttribute('labelingGroup', 20),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  placeEdgeLabelsItem: false,
 
   /** @type {SeriesParallelLayoutPortAssignmentMode} */
-  portStyleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Port Style',
-          '#/api/yfiles.seriesparallel.DefaultPortAssignment#DefaultPortAssignment-property-mode'
-        ),
-        OptionGroupAttribute('edgesGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Centered', SeriesParallelLayoutPortAssignmentMode.CENTER],
-            ['Distributed', SeriesParallelLayoutPortAssignmentMode.DISTRIBUTED]
-          ]
-        }),
-        TypeAttribute(SeriesParallelLayoutPortAssignmentMode.$class)
-      ]
-    },
-    value: null
-  },
+  portStyleItem: null,
 
   /** @type {SeriesParallelLayoutRoutingStyle} */
-  routingStyleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Routing Style',
-          '#/api/yfiles.seriesparallel.SeriesParallelLayout#SeriesParallelLayout-property-routingStyle'
-        ),
-        OptionGroupAttribute('edgesGroup', 20),
-        EnumValuesAttribute().init({
-          values: [
-            ['Orthogonal', SeriesParallelLayoutRoutingStyle.ORTHOGONAL],
-            ['Octilinear', SeriesParallelLayoutRoutingStyle.OCTILINEAR],
-            ['Polyline', SeriesParallelLayoutRoutingStyle.POLYLINE]
-          ]
-        }),
-        TypeAttribute(SeriesParallelLayoutRoutingStyle.$class)
-      ]
-    },
-    value: null
-  },
+  routingStyleItem: null,
 
   /** @type {number} */
-  preferredOctilinearSegmentLengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Preferred Octilinear Segment Length',
-          '#/api/yfiles.seriesparallel.SeriesParallelLayout#SeriesParallelLayout-property-preferredOctilinearSegmentLength'
-        ),
-        OptionGroupAttribute('edgesGroup', 30),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  preferredOctilinearSegmentLengthItem: 0,
 
   /** @type {boolean} */
   shouldDisablePreferredOctilinearSegmentLengthItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.routingStyleItem !== SeriesParallelLayoutRoutingStyle.OCTILINEAR
     }
   },
 
   /** @type {number} */
-  minimumPolylineSegmentLengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Polyline Segment Length',
-          '#/api/yfiles.seriesparallel.SeriesParallelLayout#SeriesParallelLayout-property-minimumPolylineSegmentLength'
-        ),
-        OptionGroupAttribute('edgesGroup', 40),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumPolylineSegmentLengthItem: 0,
 
   /** @type {boolean} */
   shouldDisableMinimumPolylineSegmentLengthItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.routingStyleItem !== SeriesParallelLayoutRoutingStyle.POLYLINE
     }
   },
 
   /** @type {number} */
-  minimumSlopeItem: {
-    $meta: function () {
-      return [
-        MinMaxAttribute().init({
-          min: 0.0,
-          max: 5.0,
-          step: 0.01
-        }),
-        LabelAttribute(
-          'Minimum Slope',
-          '#/api/yfiles.seriesparallel.SeriesParallelLayout#SeriesParallelLayout-property-minimumSlope'
-        ),
-        OptionGroupAttribute('edgesGroup', 50),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumSlopeItem: 0,
 
   /** @type {boolean} */
   shouldDisableMinimumSlopeItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.routingStyleItem !== SeriesParallelLayoutRoutingStyle.POLYLINE
     }
   },
 
   /** @type {string} */
-  routingStyleNonSeriesParallelItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Routing Style (Non-Series-Parallel Edges)',
-          '#/api/yfiles.seriesparallel.SeriesParallelLayout#SeriesParallelLayout-property-nonSeriesParallelEdgeRouter'
-        ),
-        OptionGroupAttribute('edgesGroup', 60),
-        EnumValuesAttribute().init({
-          values: [
-            ['Orthogonal', ROUTING_STYLE_ORTHOGONAL],
-            ['Organic', ROUTING_STYLE_ORGANIC],
-            ['Straight-Line', ROUTING_STYLE_STRAIGHT]
-          ]
-        }),
-        TypeAttribute(YString.$class)
-      ]
-    },
-    value: null
-  },
-
-  /** @type {boolean} */
-  routeEdgesInFlowDirectionItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Route Edges in Flow Direction',
-          '#/api/yfiles.seriesparallel.DefaultPortAssignment#DefaultPortAssignment-property-forkStyle'
-        ),
-        OptionGroupAttribute('edgesGroup', 70),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  routingStyleNonSeriesParallelItem: null,
 
   /** @type {number} */
-  minimumFirstSegmentLengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum First Segment Length',
-          '#/api/SeriesParallelLayoutEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-minimumFirstSegmentLength'
-        ),
-        OptionGroupAttribute('edgesGroup', 80),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumFirstSegmentLengthItem: 0,
 
   /** @type {number} */
-  minimumLastSegmentLengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Last Segment Length',
-          '#/api/SeriesParallelLayoutEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-minimumLastSegmentLength'
-        ),
-        OptionGroupAttribute('edgesGroup', 90),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumLastSegmentLengthItem: 0,
 
   /** @type {number} */
-  minimumEdgeLengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Edge Length',
-          '#/api/SeriesParallelLayoutEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-minimumLength'
-        ),
-        OptionGroupAttribute('edgesGroup', 100),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  }
+  minimumEdgeLengthItem: 0
 })
 export default SeriesParallelLayoutConfig
-
-const ROUTING_STYLE_ORTHOGONAL = 'RoutingStyle.Orthogonal'
-
-const ROUTING_STYLE_ORGANIC = 'RoutingStyle.Organic'
-
-const ROUTING_STYLE_STRAIGHT = 'RoutingStyle.Straight'

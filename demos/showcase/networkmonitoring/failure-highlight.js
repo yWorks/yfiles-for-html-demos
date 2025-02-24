@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,14 +28,13 @@
  ***************************************************************************/
 import {
   HighlightIndicatorManager,
-  WebGL2BeaconNodeIndicatorStyle,
-  WebGL2HighlightIndicatorManager
-} from 'yfiles'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
-
+  WebGLBeaconNodeIndicatorStyle,
+  WebGLHighlightIndicatorManager
+} from '@yfiles/yfiles'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 const highlightIndicatorManager = BrowserDetection.webGL2
-  ? new WebGL2HighlightIndicatorManager({
-      nodeStyle: new WebGL2BeaconNodeIndicatorStyle({
+  ? new WebGLHighlightIndicatorManager({
+      nodeStyle: new WebGLBeaconNodeIndicatorStyle({
         shape: 'triangle',
         color: '#cc0000',
         pulseCount: 3,
@@ -46,17 +45,14 @@ const highlightIndicatorManager = BrowserDetection.webGL2
       })
     })
   : new HighlightIndicatorManager()
-
 /**
  * Initializes failure highlighting for the given component.
- * @param {!CanvasComponent} canvasComponent
  */
 export function installFailureHighlight(canvasComponent) {
   // First, check if the highlight is installed in another component
   uninstallFailureHighlight()
   highlightIndicatorManager.install(canvasComponent)
 }
-
 /**
  * Uninstalls failure highlighting from its component.
  */
@@ -66,19 +62,15 @@ export function uninstallFailureHighlight() {
   }
   highlightIndicatorManager.uninstall(highlightIndicatorManager.canvasComponent)
 }
-
 /**
  * Shows the given node highlighted.
- * @param {!INode} node
  */
 export function addFailureHighlight(node) {
-  highlightIndicatorManager.addHighlight(node)
+  highlightIndicatorManager.items.add(node)
 }
-
 /**
  * Stops highlighting the given node.
- * @param {!INode} node
  */
 export function removeFailureHighlight(node) {
-  highlightIndicatorManager.removeHighlight(node)
+  highlightIndicatorManager.items.remove(node)
 }

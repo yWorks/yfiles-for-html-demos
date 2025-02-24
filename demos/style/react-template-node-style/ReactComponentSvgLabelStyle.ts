@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { ILabel, IRenderContext, SizeConvertible, TaggedSvgVisual } from 'yfiles'
+import type { ILabel, IRenderContext, SizeConvertible, TaggedSvgVisual } from '@yfiles/yfiles'
 import {
   GraphComponent,
   LabelStyleBase,
@@ -34,9 +34,9 @@ import {
   SvgVisual,
   Visual,
   VisualCachingPolicy
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { type Root, createRoot } from 'react-dom/client'
+import { createRoot, type Root } from 'react-dom/client'
 import { createElement } from 'react'
 
 /**
@@ -146,7 +146,7 @@ export class ReactComponentSvgLabelStyle<TTag> extends LabelStyleBase<ReactStyle
       height: layout.height,
       selected:
         context.canvasComponent instanceof GraphComponent &&
-        context.canvasComponent.selection.selectedLabels.isSelected(label),
+        context.canvasComponent.selection.labels.includes(label),
       text: label.text,
       detail: context.zoom < 0.5 ? 'low' : 'high',
       tag: this.tagProvider(context, label)
@@ -191,6 +191,6 @@ export class ReactComponentSvgLabelStyle<TTag> extends LabelStyleBase<ReactStyle
   }
 
   protected getPreferredSize(label: ILabel): Size {
-    return Size.from(this.size)
+    return this.size
   }
 }

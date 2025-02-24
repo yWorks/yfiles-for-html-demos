@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,18 +29,16 @@
 import {
   BezierEdgeStyle,
   CreateBendInputMode,
-  CreateEdgeInputMode,
   GraphEditorInputMode,
   HandleInputMode,
   IBend,
   IEdge,
   IGraph,
   IModelItem,
-  InputModeEventArgs,
-  ItemEventArgs,
+  InputModeItemEventArgs,
   Point,
   SelectionEventArgs
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { BezierCreateEdgeInputMode } from './BezierCreateEdgeInputMode'
 
 export class BezierGraphEditorInputMode extends GraphEditorInputMode {
@@ -49,6 +47,14 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
   constructor(config: { smoothSegments: boolean }) {
     super()
     this.config = config
+    const bezierBendInputMode = new BezierCreateBendInputMode()
+    bezierBendInputMode.priority = super.createBendInputMode.priority
+    this.createBendInputMode = bezierBendInputMode
+
+    const bezierEdgeInputMode = new BezierCreateEdgeInputMode()
+    bezierEdgeInputMode.priority = super.createEdgeInputMode.priority
+    bezierEdgeInputMode.createSmoothSplines = config.smoothSegments
+    this.createEdgeInputMode = bezierEdgeInputMode
   }
 
   /**
@@ -64,49 +70,52 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
       .filter(
         (bend) =>
           bend instanceof IBend &&
-          bend.owner!.style instanceof BezierEdgeStyle &&
-          bend.owner!.bends.size % 3 === 2 &&
+          bend.owner.style instanceof BezierEdgeStyle &&
+          bend.owner.bends.size % 3 === 2 &&
           bend.index % 3 === 2
       )
       .toList()
     selectedCurveBends.forEach((selectedCurveBend) => {
       const curveBend = selectedCurveBend as IBend
-      args.selection.setSelected(curveBend.owner!.bends.get(curveBend.index - 1), true)
-      args.selection.setSelected(curveBend.owner!.bends.get(curveBend.index + 1), true)
+      args.selection.add(curveBend.owner.bends.get(curveBend.index - 1))
+      args.selection.add(curveBend.owner.bends.get(curveBend.index + 1))
     })
     // Remove remaining single control points from the list...
     const singularControlPoints = args.selection
       .filter(
         (bend) =>
           bend instanceof IBend &&
-          bend.owner!.style instanceof BezierEdgeStyle &&
-          bend.owner!.bends.size % 3 === 2 &&
+          bend.owner.style instanceof BezierEdgeStyle &&
+          bend.owner.bends.size % 3 === 2 &&
           (bend.index === 0 ||
-            bend.index === bend.owner!.bends.size - 1 ||
+            bend.index === bend.owner.bends.size - 1 ||
             (bend.index % 3 === 1 &&
-              !args.selection.isSelected(bend.owner!.bends.get(bend.index + 1))) ||
+              !args.selection.includes(bend.owner.bends.get(bend.index + 1))) ||
             (bend.index % 3 === 0 &&
-              !args.selection.isSelected(bend.owner!.bends.get(bend.index + -1))))
+              !args.selection.includes(bend.owner.bends.get(bend.index + -1))))
       )
       .toList()
     singularControlPoints.forEach((singularControlPoint) => {
-      const owner = (singularControlPoint as IBend).owner!
+      const owner = (singularControlPoint as IBend).owner
       if (owner.bends.size > 2) {
-        args.selection.setSelected(singularControlPoint, false)
+        args.selection.remove(singularControlPoint)
       } else {
         // Special case: Remove both of the last control points
-        args.selection.setSelected(owner.bends.get(0), true)
-        args.selection.setSelected(owner.bends.get(1), true)
+        args.selection.add(owner.bends.get(0))
+        args.selection.add(owner.bends.get(1))
       }
     })
 
     super.onDeletingSelection(args)
   }
 
-  public onCreateBendInputModeBendCreated(sender: object, event: ItemEventArgs<IBend>): void {
+  public onCreateBendInputModeDragSegmentFinished(
+    event: InputModeItemEventArgs<IBend>,
+    sender: object
+  ): void {
     const bend = event.item
     if (bend) {
-      const edge = bend.owner!
+      const edge = bend.owner
       const mode = sender
 
       if (
@@ -124,31 +133,9 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
           handler.dragged()
         }
       } else {
-        super.onCreateBendInputModeBendCreated(sender, event)
+        super.onCreateBendInputModeDragSegmentFinished(event, sender)
       }
     }
-  }
-
-  /**
-   * This class removes the dragged bend when the handle input mode is canceled.
-   * This is to support the {@link GraphEditorInputMode.onCreateBendInputModeBendCreated}
-   * implementation for bends that are created during the gesture and the user wants to cancel
-   * the gesture, not only moving the bend back to the original location, but also removing
-   * the newly created bend.
-   *
-   * This implementation also removes the additionally created bends for a bezier edge and resets the positions of the control points.
-   */
-  public createCreateBendInputMode(): CreateBendInputMode {
-    const inputMode = new BezierCreateBendInputMode()
-    inputMode.priority = 42
-    return inputMode
-  }
-
-  public createCreateEdgeInputMode(): CreateEdgeInputMode {
-    const inputMode = new BezierCreateEdgeInputMode()
-    inputMode.priority = 45
-    inputMode.createSmoothSplines = this.config.smoothSegments
-    return inputMode
   }
 }
 
@@ -184,17 +171,11 @@ class BendCreationHandler {
   private initialized: boolean
   private inputMode: HandleInputMode | null
 
-  private dragStartedListener: {
-    (sender: object, inputModeEventArgs: InputModeEventArgs): void
-  } | null
+  private dragStartedListener: (() => void) | undefined
 
-  private dragCanceledListener: {
-    (sender: object, inputModeEventArgs: InputModeEventArgs): void
-  } | null
+  private dragCanceledListener: (() => void) | undefined
 
-  private dragFinishedListener: {
-    (sender: object, inputModeEventArgs: InputModeEventArgs): void
-  } | null
+  private dragFinishedListener: (() => void) | undefined
 
   constructor(bend: IBend, graph: IGraph, bendInputMode: BezierCreateBendInputMode) {
     this.bend = bend
@@ -202,10 +183,6 @@ class BendCreationHandler {
     this.bendInputMode = bendInputMode
     this.initialized = false
     this.inputMode = null
-
-    this.dragStartedListener = null
-    this.dragCanceledListener = null
-    this.dragFinishedListener = null
   }
 
   public register(inputMode: HandleInputMode): void {
@@ -213,19 +190,19 @@ class BendCreationHandler {
     this.dragStartedListener = this.inputModeOnDragStarted.bind(this)
     this.dragCanceledListener = this.inputModeOnDragCanceled.bind(this)
     this.dragFinishedListener = this.inputModeOnDragFinished.bind(this)
-    inputMode.addDragStartedListener(this.dragStartedListener)
-    inputMode.addDragCanceledListener(this.dragCanceledListener)
-    inputMode.addDragFinishedListener(this.dragFinishedListener)
+    inputMode.addEventListener('drag-started', this.dragStartedListener)
+    inputMode.addEventListener('drag-canceled', this.dragCanceledListener)
+    inputMode.addEventListener('drag-finished', this.dragFinishedListener)
   }
 
-  private inputModeOnDragFinished(sender: object, args: InputModeEventArgs): void {
+  private inputModeOnDragFinished(): void {
     this.unregister()
   }
 
-  private inputModeOnDragCanceled(sender: object, args: InputModeEventArgs): void {
+  private inputModeOnDragCanceled(): void {
     this.unregister()
     if (this.graph.contains(this.bend)) {
-      const edge = this.bend.owner!
+      const edge = this.bend.owner
       const bendIndex = this.bend.index
       let previousBend = null
       let nextBend = null
@@ -267,7 +244,7 @@ class BendCreationHandler {
     }
   }
 
-  private inputModeOnDragStarted(sender: object, args: InputModeEventArgs): void {
+  private inputModeOnDragStarted(): void {
     this.initialized = true
   }
 
@@ -278,11 +255,8 @@ class BendCreationHandler {
   }
 
   private unregister(): void {
-    this.inputMode!.removeDragStartedListener(this.dragStartedListener!)
-    this.inputMode!.removeDragCanceledListener(this.dragCanceledListener!)
-    this.inputMode!.removeDragFinishedListener(this.dragFinishedListener!)
-    this.dragStartedListener = null
-    this.dragCanceledListener = null
-    this.dragFinishedListener = null
+    this.inputMode!.removeEventListener('drag-started', this.dragStartedListener!)
+    this.inputMode!.removeEventListener('drag-canceled', this.dragCanceledListener!)
+    this.inputMode!.removeEventListener('drag-finished', this.dragFinishedListener!)
   }
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,32 +26,24 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { GraphComponent, License } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   createSimpleGraph,
   enableGraphEditing,
   fitGraphBounds,
   initializeLabelModel,
   initializeTutorialDefaults
-} from '../common.js'
-import { CustomLabelStyle } from './CustomLabelStyle.js'
-
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from '../common'
+import { CustomLabelStyle } from './CustomLabelStyle'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 License.value = await fetchLicense()
-
 const graphComponent = new GraphComponent('#graphComponent')
-
 initializeTutorialDefaults(graphComponent)
 initializeLabelModel(graphComponent)
-
 graphComponent.graph.nodeDefaults.labels.style = new CustomLabelStyle()
 graphComponent.graph.edgeDefaults.labels.style = new CustomLabelStyle()
-
 createSimpleGraph(graphComponent.graph)
 enableGraphEditing(graphComponent)
-
-fitGraphBounds(graphComponent)
-
+await fitGraphBounds(graphComponent)
 finishLoading()

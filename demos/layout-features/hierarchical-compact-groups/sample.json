@@ -1,0 +1,461 @@
+{
+  "nodeList": [
+    {
+      "id": 0,
+      "layout": {
+        "x": 99,
+        "y": -249.5,
+        "width": 198,
+        "height": 240
+      },
+      "tag": null,
+      "labels": [
+        {
+          "text": "Group 1",
+          "anchorX": 176,
+          "anchorY": -122.5,
+          "upX": 0,
+          "upY": -1,
+          "width": 44,
+          "height": 14
+        }
+      ],
+      "isGroup": true
+    },
+    {
+      "id": 1,
+      "layout": {
+        "x": 104,
+        "y": -124.5,
+        "width": 188,
+        "height": 30
+      },
+      "tag": null,
+      "parent": 0
+    },
+    {
+      "id": 2,
+      "layout": {
+        "x": 104,
+        "y": -44.5,
+        "width": 188,
+        "height": 30
+      },
+      "tag": null,
+      "parent": 0
+    },
+    {
+      "id": 3,
+      "layout": {
+        "x": 104,
+        "y": -204.5,
+        "width": 188,
+        "height": 30
+      },
+      "tag": null,
+      "parent": 0
+    },
+    {
+      "id": 4,
+      "layout": {
+        "x": 104,
+        "y": -84.5,
+        "width": 188,
+        "height": 30
+      },
+      "tag": null,
+      "parent": 0
+    },
+    {
+      "id": 5,
+      "layout": {
+        "x": 104,
+        "y": -244.5,
+        "width": 188,
+        "height": 30
+      },
+      "tag": null,
+      "parent": 0
+    },
+    {
+      "id": 6,
+      "layout": {
+        "x": 104,
+        "y": -164.5,
+        "width": 188,
+        "height": 30
+      },
+      "tag": null,
+      "parent": 0
+    },
+    {
+      "id": 7,
+      "layout": {
+        "x": 332,
+        "y": -249.5,
+        "width": 198,
+        "height": 120
+      },
+      "tag": null,
+      "labels": [
+        {
+          "text": "Group 2",
+          "anchorX": 410.5,
+          "anchorY": -182.5,
+          "upX": 0,
+          "upY": -1,
+          "width": 41,
+          "height": 14
+        }
+      ],
+      "isGroup": true
+    },
+    {
+      "id": 8,
+      "layout": {
+        "x": 337,
+        "y": -244.5,
+        "width": 188,
+        "height": 30
+      },
+      "tag": null,
+      "parent": 7
+    },
+    {
+      "id": 9,
+      "layout": {
+        "x": 337,
+        "y": -164.5,
+        "width": 188,
+        "height": 30
+      },
+      "tag": null,
+      "parent": 7
+    },
+    {
+      "id": 10,
+      "layout": {
+        "x": 337,
+        "y": -204.5,
+        "width": 188,
+        "height": 30
+      },
+      "tag": null,
+      "parent": 7
+    },
+    {
+      "id": 11,
+      "layout": {
+        "x": 332,
+        "y": -99,
+        "width": 431,
+        "height": 99
+      },
+      "tag": null,
+      "labels": [
+        {
+          "text": "Group 3",
+          "anchorX": 525.5,
+          "anchorY": -42.5,
+          "upX": 0,
+          "upY": -1,
+          "width": 44,
+          "height": 14
+        }
+      ],
+      "isGroup": true
+    },
+    {
+      "id": 12,
+      "layout": {
+        "x": 337,
+        "y": -94,
+        "width": 188,
+        "height": 30
+      },
+      "tag": null,
+      "parent": 11
+    },
+    {
+      "id": 13,
+      "layout": {
+        "x": 570,
+        "y": -94,
+        "width": 188,
+        "height": 30
+      },
+      "tag": null,
+      "parent": 11
+    },
+    {
+      "id": 14,
+      "layout": {
+        "x": 570,
+        "y": -35,
+        "width": 188,
+        "height": 30
+      },
+      "tag": null,
+      "parent": 11
+    },
+    {
+      "id": 15,
+      "layout": {
+        "x": 411,
+        "y": -54,
+        "width": 40,
+        "height": 34
+      },
+      "tag": null,
+      "parent": 11
+    },
+    {
+      "id": 16,
+      "layout": {
+        "x": 0,
+        "y": -144.5,
+        "width": 59,
+        "height": 30
+      },
+      "tag": null
+    }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 2,
+      "target": 14,
+      "targetArrow": "stealth",
+      "sourcePort": {
+        "x": 292,
+        "y": -22
+      },
+      "targetPort": {
+        "x": 570,
+        "y": -12.5
+      },
+      "bends": [
+        {
+          "x": 302,
+          "y": -22
+        },
+        {
+          "x": 327,
+          "y": -5
+        },
+        {
+          "x": 451,
+          "y": -5
+        },
+        {
+          "x": 555,
+          "y": -12.5
+        }
+      ],
+      "labels": [],
+      "tag": null
+    },
+    {
+      "id": 1,
+      "source": 6,
+      "target": 9,
+      "targetArrow": "stealth",
+      "sourcePort": {
+        "x": 292,
+        "y": -149.5
+      },
+      "targetPort": {
+        "x": 337,
+        "y": -149.5
+      },
+      "bends": [],
+      "labels": [],
+      "tag": null
+    },
+    {
+      "id": 2,
+      "source": 4,
+      "target": 12,
+      "targetArrow": "stealth",
+      "sourcePort": {
+        "x": 292,
+        "y": -69.5
+      },
+      "targetPort": {
+        "x": 337,
+        "y": -79
+      },
+      "bends": [
+        {
+          "x": 302,
+          "y": -69.5
+        },
+        {
+          "x": 322,
+          "y": -79
+        }
+      ],
+      "labels": [],
+      "tag": null
+    },
+    {
+      "id": 3,
+      "source": 9,
+      "target": 13,
+      "targetArrow": "stealth",
+      "sourcePort": {
+        "x": 525,
+        "y": -149.5
+      },
+      "targetPort": {
+        "x": 570,
+        "y": -86.5
+      },
+      "bends": [
+        {
+          "x": 535,
+          "y": -149.5
+        },
+        {
+          "x": 555,
+          "y": -86.5
+        }
+      ],
+      "labels": [],
+      "tag": null
+    },
+    {
+      "id": 4,
+      "source": 15,
+      "target": 14,
+      "targetArrow": "stealth",
+      "sourcePort": {
+        "x": 451,
+        "y": -28.5
+      },
+      "targetPort": {
+        "x": 570,
+        "y": -27.5
+      },
+      "bends": [
+        {
+          "x": 555,
+          "y": -27.5
+        }
+      ],
+      "labels": [],
+      "tag": null
+    },
+    {
+      "id": 5,
+      "source": 5,
+      "target": 8,
+      "targetArrow": "stealth",
+      "sourcePort": {
+        "x": 292,
+        "y": -229.5
+      },
+      "targetPort": {
+        "x": 337,
+        "y": -229.5
+      },
+      "bends": [],
+      "labels": [],
+      "tag": null
+    },
+    {
+      "id": 6,
+      "source": 15,
+      "target": 13,
+      "sourcePort": {
+        "x": 451,
+        "y": -45.5
+      },
+      "targetPort": {
+        "x": 570,
+        "y": -71.5
+      },
+      "bends": [
+        {
+          "x": 525,
+          "y": -45.5
+        },
+        {
+          "x": 555,
+          "y": -71.5
+        }
+      ],
+      "labels": [],
+      "tag": null
+    },
+    {
+      "id": 7,
+      "source": 2,
+      "target": 15,
+      "targetArrow": "stealth",
+      "sourcePort": {
+        "x": 292,
+        "y": -37
+      },
+      "targetPort": {
+        "x": 411,
+        "y": -37
+      },
+      "bends": [],
+      "labels": [],
+      "tag": null
+    },
+    {
+      "id": 8,
+      "source": 16,
+      "target": 2,
+      "targetArrow": "stealth",
+      "sourcePort": {
+        "x": 59,
+        "y": -122
+      },
+      "targetPort": {
+        "x": 104,
+        "y": -29.5
+      },
+      "bends": [
+        {
+          "x": 69,
+          "y": -122
+        },
+        {
+          "x": 89,
+          "y": -29.5
+        }
+      ],
+      "labels": [],
+      "tag": null
+    },
+    {
+      "id": 9,
+      "source": 16,
+      "target": 5,
+      "targetArrow": "stealth",
+      "sourcePort": {
+        "x": 59,
+        "y": -137
+      },
+      "targetPort": {
+        "x": 104,
+        "y": -229.5
+      },
+      "bends": [
+        {
+          "x": 69,
+          "y": -137
+        },
+        {
+          "x": 89,
+          "y": -229.5
+        }
+      ],
+      "labels": [],
+      "tag": null
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,12 +29,11 @@
 import {
   type GraphComponent,
   HtmlVisual,
-  ICommand,
   type INode,
   type IRenderContext,
   NodeStyleBase,
   type TypedHtmlVisual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { avatars, statusValues, type UserData } from './data'
 
 const avatarImages = avatars
@@ -50,7 +49,7 @@ type HtmlEditableNodeStyleVisual = TypedHtmlVisual<HTMLDivElement>
  */
 export class HtmlEditableNodeStyle extends NodeStyleBase<HtmlEditableNodeStyleVisual> {
   protected createVisual(context: IRenderContext, node: INode): HtmlEditableNodeStyleVisual {
-    const doc = context.canvasComponent!.div.ownerDocument
+    const doc = context.canvasComponent!.htmlElement.ownerDocument
     const div = doc.createElement('div')
     div.classList.add('html-style')
     const visual = HtmlVisual.from(div)
@@ -163,8 +162,8 @@ export class HtmlEditableNodeStyle extends NodeStyleBase<HtmlEditableNodeStyleVi
 
       // Select the node (re-selecting it if necessary) to cause the node data view to update
       const graphComponent = context.canvasComponent as GraphComponent
-      ICommand.DESELECT_ALL.execute(null, graphComponent)
-      ICommand.SELECT_ITEM.execute(node, graphComponent)
+      graphComponent.selection.clear()
+      graphComponent.selection.add(node)
 
       setStatusClass(element.firstElementChild!, data)
       evt.preventDefault()

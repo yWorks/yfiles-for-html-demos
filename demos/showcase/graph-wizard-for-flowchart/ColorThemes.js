@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,16 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * A set of colors for the fill and outline color of a node style as well as the text and background
- * fill of its labels.
- * @typedef {Object} ColorSet
- * @property {string} fill
- * @property {string} outline
- * @property {string} labelFill
- * @property {string} labelText
- */
-
 /**
  * Themes of {@link ColorSet color sets} suiting each other.
  */

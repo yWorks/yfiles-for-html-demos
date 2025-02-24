@@ -1,25 +1,27 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Edge Router - Layout Features
 
-# Edge Router
+<img src="../../../doc/demo-thumbnails/layout-edgerouter.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/layout-features/edge-router/).
 
 This demo shows common configuration options for the (polyline) [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter).
 
-- Basic distance settings like the [minimum node-edge distance](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#inimumNodeToEdgeDistance) and the [minimum edge-edge distance](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeLayoutDescriptor#minimumEdgeToEdgeDistance).
+- Basic distance settings like the [minimum node-edge distance](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#inimumNodeToEdgeDistance) and the [minimum edge-edge distance](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeDescriptor#minimumEdgeDistance).
 - [Scope](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#scope): the orange edges are _not_ routed by the algorithm, they are so-called _fixed_ edges. All other edges are routed, thus, called _affected_ edges.
-- [Routing Style](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeLayoutDescriptor#routingStyle): the default style in this example is orthogonal, but the blue edges are routed using the octilinear style.
+- [Routing Style](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeDescriptor#routingStyle): the default style in this example is orthogonal, but the blue edges are routed using the octilinear style.
 - Grouping of edges: the pink edges are grouped at their target side.
-- Restricting ports via [Port Candidates](https://docs.yworks.com/yfileshtml/#/api/PortCandidate): at node '5' and node '7', ports are restricted to be on the left or right side (west/east). For other nodes the port sides are not restricted.
+- Restricting ports via [Port Candidates](https://docs.yworks.com/yfileshtml/#/api/PortCandidate): at node '5' and node '7', ports are restricted to be on the left or right side. For other nodes the port sides are not restricted.
 - [Grid routing](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#grid). Edges are routed on a 10x10 grid.
 
 ### Code Snippet

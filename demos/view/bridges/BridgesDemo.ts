@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,17 +34,17 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphObstacleProvider,
-  HierarchicNestingPolicy,
+  HierarchicalNestingPolicy,
   Insets,
   License,
   Point,
   Rect
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import { CustomCallback, GroupNodeObstacleProvider } from './BridgeHelper'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Holds the graphComponent.
@@ -62,18 +62,15 @@ let bridgeManager: BridgeManager
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // draw edges in front, so that group nodes don't hide the bridges
   graphComponent.graphModelManager.edgeGroup.toFront()
-  graphComponent.graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES
+  graphComponent.graphModelManager.hierarchicalNestingPolicy = HierarchicalNestingPolicy.NODES
 
   initDemoStyles(graph)
 
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode()
 
   configureBridges()
 
@@ -106,7 +103,7 @@ function configureBridges(): void {
 
   // We register a custom obstacle provider in the node's lookup of group nodes
   // that can be used by bridgeManager (through provider...)
-  graphComponent.graph.decorator.nodeDecorator.obstacleProviderDecorator.setFactory(
+  graphComponent.graph.decorator.nodes.obstacleProvider.addFactory(
     (node) => graphComponent.graph.isGroupNode(node),
     (node) => new GroupNodeObstacleProvider(node)
   )
@@ -316,7 +313,7 @@ function createSampleGraph(): void {
     children: [{ layout: new Rect(400, 140, 30, 30) }]
   })
   graph.adjustGroupNodeLayout(groupNode)
-  graph.setNodeLayout(groupNode, groupNode.layout.toRect().getEnlarged(new Insets(15, 0, 15, 0)))
+  graph.setNodeLayout(groupNode, groupNode.layout.toRect().getEnlarged(new Insets(0, 15, 0, 15)))
 
   graphComponent.fitGraphBounds()
 }

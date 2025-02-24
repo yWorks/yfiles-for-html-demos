@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { GraphBuilder, INodeStyle } from 'yfiles'
-import { GroupNodeStyle, InteriorLabelModel, Size } from 'yfiles'
+import {
+  type GraphBuilder,
+  GroupNodeStyle,
+  type INodeStyle,
+  InteriorNodeLabelModel,
+  Size
+} from '@yfiles/yfiles'
 import { type ChildData, edgeData, type ItemData, nodeData } from './group-data'
 
 export function createGroupNodes(graphBuilder: GraphBuilder): void {
@@ -38,7 +43,7 @@ export function createGroupNodes(graphBuilder: GraphBuilder): void {
     id: idProvider
   })
   nodesSource.nodeCreator.defaults.labels.layoutParameter =
-    InteriorLabelModel.NORTH
+    InteriorNodeLabelModel.TOP
   nodesSource.nodeCreator.defaults.size = new Size(60, 40)
 
   // Describe how to create the first level of groups from the items in the NodeData
@@ -85,7 +90,7 @@ export function createGroupNodes(graphBuilder: GraphBuilder): void {
   // the "path" containers are pale blue
   parentsSource.nodeCreator.defaults.style = new GroupNodeStyle({
     tabFill: '#9dc6d0',
-    contentAreaInsets: 10
+    contentAreaPadding: 10
   })
 
   // whereas the entities in the NodeData and all other group nodes have their respective

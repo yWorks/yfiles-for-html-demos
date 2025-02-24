@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,7 +31,6 @@ import {
   Color,
   GraphComponent,
   GraphEditorInputMode,
-  ICanvasObjectDescriptor,
   INode,
   IRenderContext,
   IVisualCreator,
@@ -39,111 +38,90 @@ import {
   License,
   OrganicLayout,
   OrganicLayoutData,
-  OrganicLayoutScope,
   ShapeNodeStyle,
-  Size,
-  SolidColorFill
-} from 'yfiles'
-import WebglBlobVisual from './WebglBlobVisual.js'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { checkWebGLSupport, finishLoading } from 'demo-resources/demo-page'
-
-/** @type {GraphComponent} */
+  Size
+} from '@yfiles/yfiles'
+import WebglBlobVisual from './WebglBlobVisual'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { checkWebGLSupport, finishLoading } from '@yfiles/demo-resources/demo-page'
 let graphComponent
-
 const blueColor = Color.from('#242265')
 const redColor = Color.from('#e01a4f')
 const greyColor = Color.from('#767586')
 const purpleColor = Color.from('#aa4586')
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   if (!checkWebGLSupport()) {
     return
   }
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode({
     allowEditLabel: true,
-    hideLabelDuringEditing: false,
-    allowGroupingOperations: true
+    editLabelInputMode: {
+      hideLabelDuringEditing: false
+    }
   })
-
   createSampleGraph()
-
   // add a blob visualization for the reddish group
-  graphComponent.backgroundGroup.addChild(
+  const renderTree = graphComponent.renderTree
+  renderTree.createElement(
+    renderTree.backgroundGroup,
     new BlobBackground(
       (n) => {
-        const color = n.style.fill.color
+        const color = n.style.fill
         return color == redColor || color == purpleColor
       },
       new Color(224, 113, 113, 196),
       120
-    ),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    )
   )
-
   // add a blob visualization for the bluish group
-  graphComponent.backgroundGroup.addChild(
+  renderTree.createElement(
+    renderTree.backgroundGroup,
     new BlobBackground(
       (n) => {
-        const color = n.style.fill.color
+        const color = n.style.fill
         return color == blueColor || color == purpleColor
       },
       new Color(144, 142, 208, 196),
       150
-    ),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    )
   )
-
   changeLayout()
-
   initializeUI()
 }
-
 const redStyle = new ShapeNodeStyle({
   shape: 'ellipse',
-  fill: new SolidColorFill(redColor),
+  fill: redColor,
   stroke: null
 })
 const blueStyle = new ShapeNodeStyle({
   shape: 'ellipse',
-  fill: new SolidColorFill(blueColor),
+  fill: blueColor,
   stroke: null
 })
 const purpleStyle = new ShapeNodeStyle({
   shape: 'ellipse',
-  fill: new SolidColorFill(purpleColor),
+  fill: purpleColor,
   stroke: null
 })
 const greyStyle = new ShapeNodeStyle({
   shape: 'ellipse',
-  fill: new SolidColorFill(greyColor),
+  fill: greyColor,
   stroke: null
 })
-
 /**
  * Creates the initial sample graph.
  */
 function createSampleGraph() {
   const graph = graphComponent.graph
-
   graph.nodeDefaults.size = new Size(50, 50)
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'ellipse',
-    fill: new SolidColorFill(redColor)
+    fill: redColor
   })
-
-  graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.hideImplementation()
-
+  graph.decorator.nodes.reshapeHandleProvider.hide()
   const styles = [greyStyle, redStyle, purpleStyle, blueStyle]
   for (const type of '0002211333000221333000221333000221333000221333000221333') {
     graph.createNode({ style: styles[Number(type)] })
@@ -157,43 +135,37 @@ function createSampleGraph() {
   )
     .split(',')
     .map((e) => e.split(':').map(Number))
-
   const nodes = graph.nodes.toArray()
   for (const e of edges) {
     graph.createEdge(nodes[e[0]], nodes[e[1]])
   }
-
   graphComponent.fitGraphBounds()
 }
-
 /**
  * Modifies the tag of each leaf node.
  */
 function changeLayout() {
   const organicLayout = new OrganicLayout({
     compactnessFactor: Math.random() * 0.8,
-    preferredEdgeLength: 70 + Math.random() * 20,
-    scope: OrganicLayoutScope.SUBSET
+    defaultPreferredEdgeLength: 70 + Math.random() * 20
   })
-
   const organicLayoutData = new OrganicLayoutData({
-    affectedNodes: graphComponent.graph.nodes
+    scope: {
+      nodes: graphComponent.graph.nodes
+    }
   })
-
   new LayoutExecutor({
     graphComponent,
     layout: organicLayout,
     layoutData: organicLayoutData,
-    duration: '1s',
+    animationDuration: '1s',
     animateViewport: true,
     easedAnimation: true
   }).start()
 }
-
 function initializeUI() {
   document.querySelector('#change-layout').addEventListener('click', changeLayout)
 }
-
 /**
  * A background visual creator that produces the metaball groups.
  */
@@ -201,23 +173,12 @@ class BlobBackground extends BaseClass(IVisualCreator) {
   selector
   size
   color
-
-  /**
-   * @param {!function} selector
-   * @param {!Color} color
-   * @param {number} size
-   */
   constructor(selector, color, size) {
     super()
     this.selector = selector
     this.size = size
     this.color = color
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @returns {!WebglBlobVisual}
-   */
   createVisual(renderContext) {
     return new WebglBlobVisual(
       renderContext.canvasComponent.graph.nodes
@@ -227,15 +188,8 @@ class BlobBackground extends BaseClass(IVisualCreator) {
       this.size
     )
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!WebglBlobVisual} oldVisual
-   * @returns {!WebglBlobVisual}
-   */
   updateVisual(renderContext, oldVisual) {
     return oldVisual
   }
 }
-
 run().then(finishLoading)

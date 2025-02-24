@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent } from 'yfiles'
+import { GraphComponent } from '@yfiles/yfiles'
 import React, { useLayoutEffect, useRef } from 'react'
 
 export function DiagramComponent(props: { initGraph: (graphComponent: GraphComponent) => void }) {
@@ -35,12 +35,12 @@ export function DiagramComponent(props: { initGraph: (graphComponent: GraphCompo
   useLayoutEffect(() => {
     if (gcDiv.current) {
       const graphComponent = new GraphComponent()
-      gcDiv.current!.appendChild(graphComponent.div)
+      gcDiv.current!.appendChild(graphComponent.htmlElement)
       props.initGraph(graphComponent)
       graphComponent.fitGraphBounds()
       return () => {
-        if (graphComponent.div.parentElement) {
-          graphComponent.div.parentElement.removeChild(graphComponent.div)
+        if (graphComponent.htmlElement.parentElement) {
+          graphComponent.htmlElement.parentElement.removeChild(graphComponent.htmlElement)
         }
         graphComponent.cleanUp()
       }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,32 +27,25 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
-  Enum,
   GraphComponent,
   GraphEditorInputMode,
-  GraphSelectionIndicatorManager,
   IGraph,
   INode,
   IReshapeHandler,
+  LabelStyle,
   License,
   NodeReshapeHandleProvider,
   Point,
   RectangleCorners,
   RectangleCornerStyle,
   RectangleNodeStyle,
-  Size,
-  VoidNodeStyle
-} from 'yfiles'
-
-import CornerSizeHandleProvider from './CornerSizeHandleProvider.js'
-import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper.js'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { colorSets } from 'demo-resources/demo-colors'
-import { finishLoading } from 'demo-resources/demo-page'
-
+  Size
+} from '@yfiles/yfiles'
+import CornerSizeHandleProvider from './CornerSizeHandleProvider'
+import { enableSingleSelection } from './SingleSelectionHelper'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 const [yellow, orange, green, blue, gray] = [
   colorSets['demo-palette-71'],
   colorSets['demo-palette-72'],
@@ -60,36 +53,26 @@ const [yellow, orange, green, blue, gray] = [
   colorSets['demo-palette-74'],
   colorSets['demo-palette-75']
 ]
-
 /**
  * Runs the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeGraph(graphComponent.graph)
-
   initializeInteraction(graphComponent)
-
   graphComponent.fitGraphBounds()
-
   initializeUI(graphComponent)
 }
-
 /**
  * Initializes defaults for the given graph and
  * creates a small sample with different node style settings.
- * @param {!IGraph} graph
  */
 function initializeGraph(graph) {
   // Set defaults for new nodes
   graph.nodeDefaults.style = new RectangleNodeStyle({ fill: gray.fill, stroke: gray.stroke })
   graph.nodeDefaults.size = new Size(300, 100)
   graph.nodeDefaults.shareStyleInstance = false
-
   // Create nodes with round corners with different resizing behaviors
   createNode(graph, new Point(0, 0), yellow, RectangleCornerStyle.ROUND, false, 10)
   createNode(graph, new Point(0, 200), orange, RectangleCornerStyle.ROUND, true, 0.2)
@@ -103,7 +86,6 @@ function initializeGraph(graph) {
     0.8,
     RectangleCorners.BOTTOM
   )
-
   // Create nodes with cut-off corners with different resizing behaviors
   createNode(graph, new Point(400, 0), yellow, RectangleCornerStyle.CUT, false, 10)
   createNode(graph, new Point(400, 200), orange, RectangleCornerStyle.CUT, true, 0.2)
@@ -118,17 +100,15 @@ function initializeGraph(graph) {
     RectangleCorners.BOTTOM
   )
 }
-
 /**
  * Creates a node with a label that describes the configuration of the RectangleNodeStyle.
- * @param {!IGraph} graph The graph to which the node belongs.
- * @param {!Point} location The location of the node.
- * @param {!ColorSet} color The color set of the node and label.
- * @param {!RectangleCornerStyle} cornerStyle Whether corners should be round or a line.
- * @param {boolean} scaleCornerSize Whether the corner size should be used as absolute value or be scaled with the node size.
- * @param {number} cornerSize The corner size.
+ * @param graph The graph to which the node belongs.
+ * @param location The location of the node.
+ * @param color The color set of the node and label.
+ * @param cornerStyle Whether corners should be round or a line.
+ * @param scaleCornerSize Whether the corner size should be used as absolute value or be scaled with the node size.
+ * @param cornerSize The corner size.
  * @param corners Which corners are drawn with the given corner style.
- * @param {!RectangleCorners} [corners]
  */
 function createNode(graph, location, color, cornerStyle, scaleCornerSize, cornerSize, corners) {
   const style = new RectangleNodeStyle({
@@ -139,86 +119,69 @@ function createNode(graph, location, color, cornerStyle, scaleCornerSize, corner
     cornerSize,
     corners
   })
-
   const node = graph.createNodeAt(location, style)
-
   addLabel(graph, node, color)
 }
-
 /**
  * Adds a label that describes the owner's style configuration.
- * @param {!IGraph} graph The graph to which the label belongs.
- * @param {!INode} node The owner of the label.
- * @param {!ColorSet} color The color set of the label.
+ * @param graph The graph to which the label belongs.
+ * @param node The owner of the label.
+ * @param color The color set of the label.
  */
 function addLabel(graph, node, color) {
   graph.addLabel({
     owner: node,
     text: styleToText(node.style),
-    style: new DefaultLabelStyle({
+    style: new LabelStyle({
       textFill: color.text,
       backgroundFill: color.nodeLabelFill,
       textSize: 12,
-      insets: 5
+      padding: 5
     })
   })
 }
-
 /**
  * Sets up an input mode for the GraphComponent, and adds a custom handle
  * that allows to change the corner size.
- * @param {!GraphComponent} graphComponent
  */
 function initializeInteraction(graphComponent) {
   const inputMode = new GraphEditorInputMode()
   graphComponent.inputMode = inputMode
-
   enableSingleSelection(graphComponent)
-
   // add a label to newly created node that shows the current style settings
-  inputMode.addNodeCreatedListener((_, evt) => {
+  inputMode.addEventListener('node-created', (evt) => {
     const node = evt.item
     addLabel(graphComponent.graph, node, gray)
   })
-
-  const nodeDecorator = graphComponent.graph.decorator.nodeDecorator
-
+  const nodeDecorator = graphComponent.graph.decorator.nodes
   // add handle that enables the user to change the corner size of a node
-  nodeDecorator.handleProviderDecorator.setImplementationWrapper(
+  nodeDecorator.handleProvider.addWrapperFactory(
     (n) => n.style instanceof RectangleNodeStyle,
     (node, delegateProvider) => new CornerSizeHandleProvider(node, delegateProvider)
   )
-
-  // only provide reshape handles for the east, south and south-east sides, so they don't clash with the corner size handle
-  nodeDecorator.reshapeHandleProviderDecorator.setFactory(
+  // only provide reshape handles for the right, bottom and bottom-right sides, so they don't clash with the corner size handle
+  nodeDecorator.reshapeHandleProvider.addFactory(
     (node) =>
-      new NodeReshapeHandleProvider(node, node.lookup(IReshapeHandler.$class), [
-        'east',
-        'south',
-        'south-east'
+      new NodeReshapeHandleProvider(node, node.lookup(IReshapeHandler), [
+        'right',
+        'bottom',
+        'bottom-right'
       ])
   )
-
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
+  graphComponent.graph.decorator.nodes.selectionRenderer.hide()
 }
-
 /**
  * Updates the style properties editor when a different node is selected.
- * @param {?INode} selectedNode
  */
 function onSelectionChanged(selectedNode) {
   if (selectedNode != null) {
     const style = selectedNode.style
-
     const cornerStyle = style.cornerStyle === RectangleCornerStyle.ROUND ? 'rounded' : 'cut'
     const cornerSizeScaling = style.scaleCornerSize ? 'relative' : 'absolute'
     const topLeftCornerAffected = (style.corners & RectangleCorners.TOP_LEFT) !== 0
     const topRightCornerAffected = (style.corners & RectangleCorners.TOP_RIGHT) !== 0
     const bottomLeftCornerAffected = (style.corners & RectangleCorners.BOTTOM_LEFT) !== 0
     const bottomRightCornerAffected = (style.corners & RectangleCorners.BOTTOM_RIGHT) !== 0
-
     setComboBoxState('#corner-style', false, cornerStyle)
     setComboBoxState('#corner-size-scaling', false, cornerSizeScaling)
     setCheckboxState('#corner-top-left', false, topLeftCornerAffected)
@@ -228,7 +191,6 @@ function onSelectionChanged(selectedNode) {
     setPropertiesViewState(false)
     return
   }
-
   setComboBoxState('#corner-style', true, '')
   setComboBoxState('#corner-size-scaling', true, '')
   setCheckboxState('#corner-top-left', true, false)
@@ -237,26 +199,20 @@ function onSelectionChanged(selectedNode) {
   setCheckboxState('#corner-bottom-right', true, false)
   setPropertiesViewState(true)
 }
-
 /**
  * Sets the style properties when they have been changed in the editor.
- * @param {!GraphComponent} graphComponent
  */
 function updateStyleProperties(graphComponent) {
-  const node = graphComponent.selection.selectedNodes.find()
+  const node = graphComponent.selection.nodes.first()
   if (node == null) {
     return
   }
-
   const style = node.style
-
   const cornerStyle = document.querySelector('#corner-style').value
   style.cornerStyle =
     cornerStyle === 'rounded' ? RectangleCornerStyle.ROUND : RectangleCornerStyle.CUT
-
   const cornerSizeScaling = document.querySelector('#corner-size-scaling').value
   style.scaleCornerSize = cornerSizeScaling === 'relative'
-
   let corners = RectangleCorners.NONE
   if (document.querySelector('#corner-top-left').checked) {
     corners |= RectangleCorners.TOP_LEFT
@@ -271,29 +227,22 @@ function updateStyleProperties(graphComponent) {
     corners |= RectangleCorners.BOTTOM_RIGHT
   }
   style.corners = corners
-
   if (node.labels.size === 0) {
     graphComponent.graph.addLabel(node, styleToText(style))
   } else {
     graphComponent.graph.setLabelText(node.labels.first(), styleToText(style))
   }
-
   graphComponent.invalidate()
 }
-
 /**
  * Shows the properties of the selected node if a node is selected. Otherwise, it shows an information message to select a node.
- * @param {boolean} disabled
  */
 function setPropertiesViewState(disabled) {
   document.querySelector('.demo-form-block').style.display = disabled ? 'none' : ''
   document.querySelector('.info-message').style.display = disabled ? 'inline-block' : 'none'
 }
-
 /**
  * Returns a text description of the style configuration.
- * @param {!RectangleNodeStyle} style
- * @returns {!string}
  */
 function styleToText(style) {
   return (
@@ -302,11 +251,8 @@ function styleToText(style) {
     `Affected Corners: ${cornersToText(style.corners)}`
   )
 }
-
 /**
  * Returns a text description of the given corner configuration.
- * @param {!RectangleCorners} corners
- * @returns {!string}
  */
 function cornersToText(corners) {
   const affected = [
@@ -330,53 +276,38 @@ function cornersToText(corners) {
     .map((corner) => cornerValueToText(corner))
   return affected.length > 0 ? affected.join(' & ') : 'none'
 }
-
 /**
  * Returns the display text for the given corner value.
- * @param {!RectangleCorners} corner
- * @returns {!string}
  */
 function cornerValueToText(corner) {
-  return Enum.getName(RectangleCorners.$class, corner).toLocaleLowerCase().replace('_', '-')
+  return RectangleCorners[corner].toLocaleLowerCase().replace('_', '-')
 }
-
 /**
  * Binds actions to the toolbar and style property input elements.
- * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
   for (const element of document.getElementsByClassName('option-element')) {
     element.addEventListener('change', () => updateStyleProperties(graphComponent))
   }
-
   // Update the values of the input elements when the selected element changes
-  graphComponent.selection.addItemSelectionChangedListener((graphComponent) =>
-    onSelectionChanged(graphComponent.selectedNodes.find())
+  graphComponent.selection.addEventListener('item-added', (_, graphComponent) =>
+    onSelectionChanged(graphComponent.nodes.first())
   )
 }
-
 /**
  * Sets the disabled and checked states of the `input` element with the given ID.
- * @param {!string} id
- * @param {boolean} disabled
- * @param {boolean} checked
  */
 function setCheckboxState(id, disabled, checked) {
   const checkbox = document.querySelector(id)
   checkbox.disabled = disabled
   checkbox.checked = checked
 }
-
 /**
  * Sets the disabled state and value of the `select` element with the given ID.
- * @param {!string} id
- * @param {boolean} disabled
- * @param {!string} value
  */
 function setComboBoxState(id, disabled, value) {
   const comboBox = document.querySelector(id)
   comboBox.disabled = disabled
   comboBox.value = value
 }
-
 run().then(finishLoading)

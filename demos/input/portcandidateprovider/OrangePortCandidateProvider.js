@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,45 +27,41 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   IEnumerable,
   IInputModeContext,
   INode,
   IPortCandidate,
   List,
+  PortCandidate,
   PortCandidateProviderBase
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * This port candidate provider uses dynamic port candidates that allow
  * any location inside the node.
  */
 export default class OrangePortCandidateProvider extends PortCandidateProviderBase {
   node
-
   /**
    * Creates a new instance of {@link OrangePortCandidateProvider}.
-   * @param {!INode} node The given node.
+   * @param node The given node.
    */
   constructor(node) {
     super()
     this.node = node
   }
-
   /**
    * Returns a list that contains a single dynamic port candidate. That candidate
    * allows any location inside the node layout.
    * Note that the various variants of getPortCandidates of
    * {@link PortCandidateProviderBase} delegate to this method. This can be
    * used to provide the same candidates for all use-cases.
-   * @param {!IInputModeContext} context The context for which the candidates should be provided
+   * @param context The context for which the candidates should be provided
    * @see Overrides {@link PortCandidateProviderBase.getPortCandidates}
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getPortCandidates(context) {
     const list = new List()
-    list.add(new DefaultPortCandidate(this.node, FreeNodePortLocationModel.INSTANCE))
+    list.add(new PortCandidate(this.node, FreeNodePortLocationModel.INSTANCE))
     return list
   }
 }

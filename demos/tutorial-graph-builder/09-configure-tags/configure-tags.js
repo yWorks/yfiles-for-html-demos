@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,30 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @typedef {Object} EntityData
- * @property {string} id
- * @property {string} name
- * @property {('Trust'|'Corporation'|'Branch'|'PE_Risk')} type
- * @property {string} [currency]
- * @property {Array.<string>} [jurisdiction]
- */
-
-/**
- * @typedef {Object} OwnerData
- * @property {string} name
- * @property {string} type
- */
-
-/**
- * @typedef {Object} Data
- * @property {Array.<EntityData>} nodesSource
- * @property {Array.<OwnerData>} edgesSource
- */
-
-/**
- * @param {!NodesSource.<EntityData>} nodesSource
- */
 export function createNodeTags(nodesSource) {
   // configure the provider that returns an object with the name and the type property of the nodes
   nodesSource.nodeCreator.tagProvider = (data) => {

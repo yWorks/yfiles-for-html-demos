@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,13 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ShapeNodeStyle } from 'yfiles'
-import { CustomEdgeStyle } from './CustomEdgeStyle.js'
-import { CustomArrow } from './CustomArrow.js'
-
+import { ShapeNodeStyle } from '@yfiles/yfiles'
+import { CustomEdgeStyle } from './CustomEdgeStyle'
+import { CustomArrow } from './CustomArrow'
 /**
  * Creates the sample edges for this tutorial step
- * @param {!IGraph} graph
  */
 export function createEdges(graph) {
   graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -40,7 +38,6 @@ export function createEdges(graph) {
     fill: '#0b7189',
     stroke: '#042d37'
   })
-
   const node1 = graph.createNode({
     layout: [0, 0, 30, 30]
   })
@@ -59,16 +56,13 @@ export function createEdges(graph) {
   const node6 = graph.createNode({
     layout: [100, 100, 30, 30]
   })
-
   const style = new CustomEdgeStyle(4)
   style.sourceArrow = new CustomArrow(4)
-
   graph.createEdge({
     source: node1,
     target: node4,
     style: style
   })
-
   const style2 = new CustomEdgeStyle(2)
   style2.targetArrow = new CustomArrow(2)
   graph.createEdge({
@@ -76,7 +70,6 @@ export function createEdges(graph) {
     target: node5,
     style: style2
   })
-
   const style3 = new CustomEdgeStyle(6)
   style3.sourceArrow = new CustomArrow(6)
   style3.targetArrow = new CustomArrow(6)

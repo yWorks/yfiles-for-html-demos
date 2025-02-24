@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Rendering Optimizations Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -43,8 +43,6 @@
       // run yFiles in production mode for performance reasons
       window.process = { env: { NODE_ENV: 'production' } }
     </script>
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -88,10 +86,6 @@
         </p>
         <div class="node-preview"></div>
       </div>
-      <div id="simple-webgl-radio-info">
-        <p>Each node is drawn as a solid star using WebGL.</p>
-        <div class="node-preview"></div>
-      </div>
 
       <div id="fix-label-positions-info">
         Use static label positions that aren't calculated dynamically.
@@ -105,14 +99,14 @@
       </div>
       <div id="WebglGmm-radio-info">
         <p class="tooltip-gray">
-          Uses the built-in <strong>WebGL2-based rendering</strong> method. This features high
+          Uses the built-in <strong>WebGL-based rendering</strong> method. This features high
           rendering performance for large graphs for both static and dynamic data and optimized code
           paths for user interaction.
         </p>
         <p class="tooltip-lightgray">
           On the downside, only the predefined styles can be used, some advanced features of the
           user interaction are not supported (e.g. snapping), and text rendering at high zoom levels
-          is less clear. Note that WebGL2 is not supported in Safari 14 and lower.
+          is less clear. Note that WebGL is not supported in Safari 14 and lower.
         </p>
         <p class="tooltip-green">
           This option is suited for almost all scenarios with a large graph and a moderate
@@ -128,8 +122,7 @@
           overview level.
         </p>
         <p class="tooltip-lightgray">
-          In this case, the simple SVG style is used for intermediate level, and the WebGL style for
-          the overview level.
+          In this case, the simple SVG style is used for intermediate and overview levels.
           <br />
           With this approach, the rendering still makes use of virtualization, i.e., visualizations
           are removed if the item leaves the viewport and re-created if it enters the viewport
@@ -227,15 +220,6 @@
           scenarios where the graph is drawn with very low zoom levels, e.g., in a graph overview.
         </p>
       </div>
-      <div id="StaticWebglImageGmm-radio-info">
-        <p class="tooltip-gray">
-          This option renders a snapshot of the complete graph using WebGL.
-        </p>
-        <p class="tooltip-green">
-          In contrast to the pre-rendered image-based options, the snapshot is re-rendered every
-          frame, thus producing <strong>good results for at all zoom levels</strong>.
-        </p>
-      </div>
 
       <div id="autoRedrawCheckbox-info">
         Enables/disables automatic redraw of the graph. This is only necessary for static
@@ -258,11 +242,11 @@
       <div id="webglWarningToolTip" class="warningToolTip">
         <div class="warningIcon" style="height: 60px"><img src="resources/warning.svg" /></div>
         <div id="webgl-warning-text">
-          WebGL2 is not supported by this browser.
+          WebGL is not supported by this browser.
           <br />
           Please use a modern browser like Chrome, Edge, Firefox, or Opera. In Safari and on iOS,
-          WebGL2 still marked as an experimental feature that needs to be activated explicitly in
-          the settings, first.
+          WebGL still marked as an experimental feature that needs to be activated explicitly in the
+          settings, first.
         </div>
       </div>
     </div>
@@ -312,10 +296,10 @@
         </p>
         <p>
           yFiles comes with a dedicated
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2" target="_blank">WebGL2-based rendering pipeline</a> that is especially suited for
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2" target="_blank">WebGL-based rendering pipeline</a> that is especially suited for
           large graphs. This is the easiest way to get good performance for large data sets, but
           comes with a few drawbacks. This pipeline is enabled with the
-          <strong>WebGL2 rendering</strong> option in the
+          <strong>WebGL rendering</strong> option in the
           <span class="section-name">GraphModelManager Optimizations</span> section.
         </p>
         <p>
@@ -349,7 +333,7 @@
             </p>
             <p>
               This demo showcases two different GraphModelManager implementations. The demo's
-              <a href="https://docs.yworks.com/yfileshtml/#/api/WebGL2GraphModelManager" target="_blank">WebGL2GraphModelManager</a>-based GMM uses yFiles' WebGL2-based rendering
+              <a href="https://docs.yworks.com/yfileshtml/#/api/WebGLGraphModelManager" target="_blank">WebGLGraphModelManager</a>-based GMM uses yFiles' WebGL-based rendering
               pipeline for the utmost performance gain.
             </p>
             <p>
@@ -439,7 +423,7 @@
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
-        <div id="graphComponent"></div>
+        <div id="graphComponent" style="--yfiles-theme-scale: 1"></div>
       </div>
       <div id="detailLevelPopup" style="pointer-events: none"></div>
 
@@ -520,16 +504,6 @@
                 <label for="complex-canvas-radio" class="styleSample complexCanvas">
                   Complex Canvas Style
                 </label>
-                <input
-                  id="simple-webgl-radio"
-                  type="radio"
-                  value="WebGLStyles"
-                  name="graph-item-styles"
-                  class="hasTooltip"
-                />
-                <label for="simple-webgl-radio" class="styleSample simpleWebgl">
-                  Simple WebGL Style
-                </label>
               </div>
             </form>
           </fieldset>
@@ -571,7 +545,7 @@
                   class="hasTooltip"
                   checked=""
                 />
-                <label for="WebglGmm-radio" id="WebglGmm-label">WebGL2 rendering</label>
+                <label for="WebglGmm-radio" id="WebglGmm-label">WebGL rendering</label>
                 <input
                   id="levelOfDetailGmm-radio"
                   type="radio"
@@ -624,16 +598,6 @@
                   class="hasTooltip mayHaveWarning"
                 />
                 <label for="StaticCanvasImageGmm-radio">Pre-rendered Canvas image of graph</label>
-                <input
-                  id="StaticWebglImageGmm-radio"
-                  type="radio"
-                  value="webgl"
-                  name="gmm"
-                  class="hasTooltip mayHaveWarning"
-                />
-                <label for="StaticWebglImageGmm-radio">
-                  Simple dynamic WebGL rendering of graph
-                </label>
               </div>
             </form>
           </fieldset>

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,15 +29,12 @@
 /**
  * This demo supports specific PDF output sizes.
  */
-export /**
- * @readonly
- * @enum {number}
- */
-const PaperSize = {
-  A3: 'A3',
-  A4: 'A4',
-  A5: 'A5',
-  A6: 'A6',
-  LETTER: 'Letter',
-  AUTO: 'Auto'
-}
+export var PaperSize
+;(function (PaperSize) {
+  PaperSize['A3'] = 'A3'
+  PaperSize['A4'] = 'A4'
+  PaperSize['A5'] = 'A5'
+  PaperSize['A6'] = 'A6'
+  PaperSize['LETTER'] = 'Letter'
+  PaperSize['AUTO'] = 'Auto'
+})(PaperSize || (PaperSize = {}))

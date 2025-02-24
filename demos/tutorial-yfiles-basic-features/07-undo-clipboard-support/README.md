@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 07 Undo Clipboard Support - Tutorial: Basic Features
 
-# Undo and Clipboard Support
+<img src="../../../doc/demo-thumbnails/tutorial-basic-features-undo-clipboard-support.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/07-undo-clipboard-support/).
 
 ## How to activate undo and clipboard.
 
@@ -85,14 +87,14 @@ graphEditorInputMode.allowClipboardOperations = true // this is the default, alr
 
 ```
 // programmatically copy the selected graph items
-if (graphComponent.selection.selectedNodes.size > 0) {
+if (graphComponent.selection.nodes.size > 0) {
   graphEditorInputMode.copy()
 }
 ```
 
 ```
 // programmatically paste and clear the clipboard content
-if (!graphComponent.clipboard.empty) {
+if (!graphComponent.clipboard.isEmpty) {
   graphEditorInputMode.paste()
   graphComponent.clipboard.clear()
 }

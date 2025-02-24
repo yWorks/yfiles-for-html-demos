@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,62 +26,39 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IClipboardHelper, IGraphClipboardContext, IModelItem, INode } from 'yfiles'
+import {
+  BaseClass,
+  IClipboardHelper,
+  IGraphClipboardContext,
+  IModelItem,
+  INode
+} from '@yfiles/yfiles'
 
 /**
  * This class is used to assign custom labels to pasted nodes.
  * {@link IClipboardHelper} implementations can be used to associate custom actions
  * with graph elements when the element is cut/copied/pasted. Moreover, a clipboard helper
- * allows to add user state to clipboard operations. This implementation uses these possibilities
+ * allows adding user state to clipboard operations. This implementation uses these possibilities
  * to retrieve the label of the original node for a Paste operation and the number of copies
- * so far in order to set a customized label for the pasted node.
+ * so far to set a customized label for the pasted node.
  */
-export class TaggedNodeClipboardHelper
-  extends BaseClass(IClipboardHelper)
-  implements IClipboardHelper
-{
-  /**
-   * Nodes can be copied unconditionally.
-   * @param context The context in which this interface is used, can be null
-   * @param item The item to be copied
-   * @see Specified by {@link IClipboardHelper.shouldCopy}.
-   */
-  shouldCopy(context: IGraphClipboardContext | null, item: IModelItem): boolean {
-    return true
-  }
-
-  /**
-   * Nodes can be cut unconditionally.
-   * @param context The context in which this interface is used, can be null
-   * @param item The item to be cut
-   * @see Specified by {@link IClipboardHelper.shouldCut}.
-   */
-  shouldCut(context: IGraphClipboardContext | null, item: IModelItem): boolean {
-    return true
-  }
-
-  /**
-   * Nodes can be pasted unconditionally.
-   * @param context The context in which this interface is used, can be null
-   * @param item The item to be pasted
-   * @param userData The state memento that had been created during cut or copy
-   * @see Specified by {@link IClipboardHelper.shouldPaste}.
-   */
-  shouldPaste(context: IGraphClipboardContext | null, item: IModelItem, userData: any): boolean {
-    return true
-  }
+export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
+  private userData: CopyItem | null = null
 
   /**
    * If the copied node has at least one label, we store a variant of the label text
    * (see {@link CopyItem} implementation).
-   * @param context The context in which this interface is used, can be null
+   * @param _context The context in which this interface is used, can be null
    * @param item The item to be copied
-   * @see Specified by {@link IClipboardHelper.copy}.
    */
-  copy(context: IGraphClipboardContext | null, item: IModelItem): any | null {
-    return item instanceof INode && item.labels.size > 0
-      ? new CopyItem(item.labels.get(0).text)
-      : null
+  onCopied(_context: IGraphClipboardContext | null, item: IModelItem): any | null {
+    const node = item as INode
+    // If we are a Node with at least one label, we
+    // store a variant of the label text (see CopyItem
+    // implementation)
+    if (node.labels.size > 0) {
+      this.userData = new CopyItem(node.labels.at(0)!.text)
+    }
   }
 
   /**
@@ -89,12 +66,10 @@ export class TaggedNodeClipboardHelper
    * (see {@link CopyItem} implementation).
    * @param context The context in which this interface is used, can be null
    * @param item The item to be cut
-   * @see Specified by {@link IClipboardHelper.cut}.
    */
-  cut(context: IGraphClipboardContext | null, item: IModelItem): any | null {
-    return item instanceof INode && item.labels.size > 0
-      ? new CopyItem(item.labels.get(0).text)
-      : null
+  onCut(context: IGraphClipboardContext | null, item: IModelItem): void {
+    // do the same for Cut, since it's essentially just a Copy and Delete in succession.
+    this.onCopied(context, item)
   }
 
   /**
@@ -102,13 +77,50 @@ export class TaggedNodeClipboardHelper
    * by `userData`.
    * @param context The context in which this interface is used, can be null
    * @param item The copied item The item to be pasted
-   * @param userData The state memento that had been created during cut or copy
+   */
+  onPasted(context: IGraphClipboardContext | null, item: IModelItem): void {
+    //Note: This is the _copied_ item
+    const node = item as INode
+    if (node.labels.size > 0) {
+      if (this.userData != null && context != null) {
+        // If we are a Node with at least one label, we
+        // change our text to the one that is provided by userData.
+        context.targetGraph.setLabelText(node.labels.at(0)!, this.userData.toString())
+      }
+    }
+  }
+
+  /**
+   * If the original node has at least one label, we change the text of the duplicate node with
+   * the one that is provided by the original node.
+   * @param context The context in which this interface is used, can be null
+   * @param original The original item to be duplicated
+   * @param duplicate The duplicated item
    * @see Specified by {@link IClipboardHelper.paste}.
    */
-  paste(context: IGraphClipboardContext | null, item: IModelItem, userData: any): void {
-    if (item instanceof INode && item.labels.size > 0 && userData instanceof CopyItem) {
-      context?.targetGraph.setLabelText(item.labels.get(0), userData.toString())
+  onDuplicated(context: IGraphClipboardContext, original: IModelItem, duplicate: IModelItem): void {
+    if (
+      original instanceof INode &&
+      original.labels.size > 0 &&
+      duplicate instanceof INode &&
+      duplicate.labels.size > 0
+    ) {
+      const data = new CopyItem(original.labels.at(0)!.text)
+      context.targetGraph.setLabelText(duplicate.labels.at(0)!, data.toString())
     }
+  }
+
+  shouldCopy(_context: IGraphClipboardContext | null, _item: IModelItem): boolean {
+    return true
+  }
+  shouldCut(_context: IGraphClipboardContext | null, _item: IModelItem): boolean {
+    return true
+  }
+  shouldPaste(_context: IGraphClipboardContext | null, _item: IModelItem): boolean {
+    return true
+  }
+  shouldDuplicate(_context: IGraphClipboardContext, _item: IModelItem): boolean {
+    return true
   }
 }
 

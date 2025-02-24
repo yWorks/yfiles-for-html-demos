@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, IGraph, INode, Rect } from 'yfiles'
-
+import { IEdge, IGraph, INode, Rect } from '@yfiles/yfiles'
 /**
  * This class holds the nodes and edges of a subtree rooted at a specific node.
  */
@@ -37,11 +36,10 @@ export default class Subtree {
   nodes
   edges
   $newParent
-
   /**
    * Initializes a subtree with the given root node.
-   * @param {!IGraph} graph The graph in which the subtree lives
-   * @param {!INode} root The root of the subtree
+   * @param graph The graph in which the subtree lives
+   * @param root The root of the subtree
    */
   constructor(graph, root) {
     this.graph = graph
@@ -51,27 +49,21 @@ export default class Subtree {
     this.initializeSubtree(root)
     this.$newParent = this.parent
   }
-
   /**
    * Returns the edge connecting the parent and the root.
-   * @type {!IEdge}
    */
   get parentToRootEdge() {
     return this.graph.inEdgesAt(this.root).at(0)
   }
-
   /**
    * Returns the parent node of the subtree.
-   * @type {?INode}
    */
   get parent() {
     return this.parentToRootEdge ? this.parentToRootEdge.sourceNode : null
   }
-
   /**
    * Sets the parent node of the subtree.
    * @param parent The parent node of the subtree
-   * @type {?INode}
    */
   set parent(parent) {
     if (parent && this.parentToRootEdge) {
@@ -83,26 +75,20 @@ export default class Subtree {
       this.graph.clearBends(this.parentToRootEdge)
     }
   }
-
   /**
    * Returns the new parent of the subtree.
-   * @type {?INode}
    */
   get newParent() {
     return this.$newParent
   }
-
   /**
    * Sets the new parent of the subtree.
-   * @type {?INode}
    */
   set newParent(newParent) {
     this.$newParent = newParent
   }
-
   /**
    * Returns the bounds including the nodes of the subtree.
-   * @type {!Rect}
    */
   get bounds() {
     let subtreeBounds = Rect.EMPTY
@@ -111,10 +97,9 @@ export default class Subtree {
     })
     return subtreeBounds
   }
-
   /**
    * Determines the nodes and edges of a subtree of a given root.
-   * @param {!INode} root The root node of the subtree
+   * @param root The root node of the subtree
    */
   initializeSubtree(root) {
     this.graph.outEdgesAt(root).forEach((outEdge) => {

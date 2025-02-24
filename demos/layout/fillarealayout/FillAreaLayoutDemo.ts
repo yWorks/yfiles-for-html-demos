@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,20 +38,20 @@ import {
   IEdge,
   IModelItem,
   INode,
-  ISelectionModel,
+  type IObservableCollection,
+  ItemsEventArgs,
   LayoutExecutor,
   License,
-  OrthogonalEdgeEditingContext,
   OrthogonalEdgeEditingPolicy,
   Point,
   Rect,
   SelectionEventArgs
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import SampleData from './resources/SampleData'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent = null!
 
@@ -68,12 +68,10 @@ let componentAssignmentStrategy: ComponentAssignmentStrategy = ComponentAssignme
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeInputModes()
 
-  initDemoStyles(graphComponent.graph)
-  loadGraph('hierarchic')
+  initDemoStyles(graphComponent.graph, { orthogonalEditing: true })
+  loadGraph('hierarchical')
 
   // bind the buttons to their functionality
   initializeUI()
@@ -85,24 +83,21 @@ async function run(): Promise<void> {
  */
 function initializeInputModes(): void {
   // create a GraphEditorInputMode instance and install the edit mode into the canvas.
-  const editMode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext()
-  })
+  const editMode = new GraphEditorInputMode()
   editMode.createEdgeInputMode.orthogonalEdgeCreation = OrthogonalEdgeEditingPolicy.ALWAYS
   editMode.orthogonalBendRemoval = OrthogonalEdgeEditingPolicy.ALWAYS
   graphComponent.inputMode = editMode
 
   // registers handlers which are called when selected nodes are deleted
-  editMode.addDeletingSelectionListener(onDeletingSelection)
+  editMode.addEventListener('deleting-selection', onDeletingSelection)
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  editMode.addDeletedSelectionListener(onDeletedSelection)
+  editMode.addEventListener('deleted-selection', onDeletedSelection)
 }
 
 /**
  * Prepares the {@link LayoutExecutor} that is called after the selection is deleted.
  */
-function onDeletingSelection(sender: object, event: SelectionEventArgs<IModelItem>): void {
+function onDeletingSelection(event: SelectionEventArgs<IModelItem>): void {
   // determine the bounds of the selection
   selectionRect = getBounds(event.selection)
 }
@@ -110,18 +105,15 @@ function onDeletingSelection(sender: object, event: SelectionEventArgs<IModelIte
 /**
  * Calls the prepared {@link LayoutExecutor}.
  */
-async function onDeletedSelection(
-  sender: object,
-  evt: SelectionEventArgs<IModelItem>
-): Promise<void> {
+async function onDeletedSelection(_event: ItemsEventArgs): Promise<void> {
   // configure the layout that will fill free space
   const layout = new FillAreaLayout({
     componentAssignmentStrategy: componentAssignmentStrategy,
-    area: selectionRect!.toYRectangle()
+    area: selectionRect!
   })
 
   // configure the LayoutExecutor that will perform the layout and morph the result
-  const executor = new LayoutExecutor({ graphComponent, layout, duration: '150ms' })
+  const executor = new LayoutExecutor({ graphComponent, layout, animationDuration: '150ms' })
   await executor.start()
 
   selectionRect = null
@@ -130,17 +122,17 @@ async function onDeletedSelection(
 /**
  * The bounds including the nodes of the selection.
  */
-function getBounds(selection: ISelectionModel<IModelItem>): Rect {
+function getBounds(selection: IObservableCollection<IModelItem>): Rect {
   let bounds = Rect.EMPTY
   selection.forEach((item) => {
     if (item instanceof INode) {
       bounds = Rect.add(bounds, item.layout.toRect())
     } else if (item instanceof IEdge) {
-      bounds = bounds.add(item.sourcePort!.location)
+      bounds = bounds.add(item.sourcePort.location)
       item.bends.forEach((bend) => {
         bounds = bounds.add(bend.location.toPoint())
       })
-      bounds = bounds.add(item.targetPort!.location)
+      bounds = bounds.add(item.targetPort.location)
     } else if (item instanceof IBend) {
       bounds = new Rect(item.location.x, item.location.y, 1, 1)
     }
@@ -180,10 +172,10 @@ function loadGraph(sampleName: string): void {
 
   graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
-      graph.setPortLocation(edge.sourcePort!, Point.from(edge.tag.sourcePort))
+      graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
     }
     if (edge.tag.targetPort) {
-      graph.setPortLocation(edge.targetPort!, Point.from(edge.tag.targetPort))
+      graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
     }
     edge.tag.bends.forEach((bend: { x: number; y: number }) => {
       graph.addBend(edge, bend)

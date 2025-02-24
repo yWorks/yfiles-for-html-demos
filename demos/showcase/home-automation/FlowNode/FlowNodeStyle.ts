@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,7 +40,7 @@ import {
   type TaggedSvgVisual,
   TextRenderSupport,
   TextWrapping
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { FlowNodePortStyle } from './FlowNodePortStyle'
 import { getNodeIconSvg } from './icons'
 import { assertIsFlowNode, type FlowNodeProperties } from './FlowNode'
@@ -149,7 +149,7 @@ export class FlowNodeStyle extends NodeStyleBase<SvgVisualWithCache> {
     const { width: labelWidth, height: labelHeight } = TextRenderSupport.measureText({
       text: label,
       font: new Font('sans-serif', labelFontSize),
-      wrapping: TextWrapping.CHARACTER_ELLIPSIS,
+      wrapping: TextWrapping.WRAP_CHARACTER_ELLIPSIS,
       maximumSize: new Size(maxLabelWidth, height)
     })
 
@@ -207,12 +207,12 @@ export class FlowNodeStyle extends NodeStyleBase<SvgVisualWithCache> {
 
   private static isSelected(context: IRenderContext, node: INode): boolean {
     const gc = context.canvasComponent instanceof GraphComponent ? context.canvasComponent : null
-    return gc?.selection.isSelected(node) ?? false
+    return gc?.selection.includes(node) ?? false
   }
 
   private static isHovered(context: IRenderContext, node: INode): boolean {
     const gc = context.canvasComponent instanceof GraphComponent ? context.canvasComponent : null
-    return gc?.highlightIndicatorManager.selectionModel?.includes(node) ?? false
+    return gc?.highlights.includes(node) ?? false
   }
 
   protected createVisual(context: IRenderContext, node: INode): SvgVisualWithCache {
@@ -269,7 +269,7 @@ export class FlowNodeStyle extends NodeStyleBase<SvgVisualWithCache> {
       targetElement: svg.label,
       text: label,
       font: new Font('sans-serif', labelFontSize),
-      wrapping: TextWrapping.CHARACTER_ELLIPSIS,
+      wrapping: TextWrapping.WRAP_CHARACTER_ELLIPSIS,
       maximumSize: new Size(maxLabelWidth, visibleHeight)
     })
     svg.label.setAttribute(
@@ -419,7 +419,7 @@ export class FlowNodeStyle extends NodeStyleBase<SvgVisualWithCache> {
         targetElement: svg.label,
         text: label,
         font: new Font('sans-serif', labelFontSize),
-        wrapping: TextWrapping.CHARACTER_ELLIPSIS,
+        wrapping: TextWrapping.WRAP_CHARACTER_ELLIPSIS,
         maximumSize: new Size(maxLabelWidth, visibleHeight)
       })
 

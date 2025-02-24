@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent } from 'yfiles'
+import { GraphComponent } from '@yfiles/yfiles'
 
 describe('yfiles spec', () => {
   it('should increase edge count by 1', () => {
@@ -35,7 +35,12 @@ describe('yfiles spec', () => {
      * If not, please start it with the appropriate script or change
      * the URL below to an application you would like to test.
      */
-    cy.visit('http://localhost:4242/demos-ts/testing/application-under-test/index.html').then(() => {
+    cy.visit(
+      new URL(
+        'testing/application-under-test/index.html',
+        Cypress.env('testingUrl') || 'http://localhost:4241/demos-ts'
+      ).href
+    ).then(() => {
       cy.get('.loaded').should('exist')
       cy.window().then((win) => {
         // win is the remote window

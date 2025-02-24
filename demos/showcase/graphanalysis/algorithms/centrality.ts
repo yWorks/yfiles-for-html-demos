@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,24 +30,24 @@ import {
   BetweennessCentrality,
   ClosenessCentrality,
   ConnectedComponents,
-  DefaultLabelStyle,
   DegreeCentrality,
   EigenvectorCentrality,
   GraphCentrality,
   GraphStructureAnalyzer,
   type IGraph,
+  LabelStyle,
   PageRank,
   WeightCentrality
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import type { AlgorithmConfig } from './algorithms'
 import { setCentrality } from './algorithms'
 
-const centralityLabelStyle = new DefaultLabelStyle({
+const centralityLabelStyle = new LabelStyle({
   font: '10px bold Tahoma,sans-serif',
   backgroundStroke: '2px #17bebb',
   backgroundFill: '#ffffff',
   autoFlip: false,
-  insets: [3, 5, 3, 5]
+  padding: [3, 5, 3, 5]
 })
 
 /**

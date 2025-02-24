@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,8 +27,7 @@
  **
  ***************************************************************************/
 import {
-  DefaultFolderNodeConverter,
-  DefaultLabelStyle,
+  FolderNodeConverter,
   FoldingManager,
   GraphComponent,
   GraphEditorInputMode,
@@ -36,27 +35,25 @@ import {
   GraphModelManager,
   GroupNodeLabelModel,
   GroupNodeStyle,
-  ICommand,
   IGraph,
   INode,
+  LabelStyle,
   License,
   NodeAlignmentPolicy,
   Rect,
-  WebGL2GraphModelManager
-} from 'yfiles'
+  WebGLGraphModelManager
+} from '@yfiles/yfiles'
 import { configureToolTips } from './ToolTipHelper'
-import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { initializeSvgWebGlSwitchButton } from './svg-webgl-switch'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   configureFolding(graphComponent)
   configureInteraction(graphComponent)
   configureRenderMode(graphComponent)
@@ -65,7 +62,7 @@ async function run(): Promise<void> {
   createSampleGraph(graphComponent.graph)
 
   // center the sample graph in the visible area
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   initializeSvgWebGlSwitchButton('#styleTypeChooser', graphComponent)
 }
@@ -151,7 +148,7 @@ function createSampleGraph(graph: IGraph): void {
       iconBackgroundShape: 'circle-solid',
       tabFill: orange.fill,
       tabHeight: 22.0,
-      tabInset: 8.0,
+      tabPadding: 8.0,
       stroke: `1px ${orange.stroke}`
     })
   )
@@ -233,30 +230,28 @@ function createSampleGraph(graph: IGraph): void {
       tabPosition: 'left',
       tabFill: purple.fill,
       tabHeight: 22.0,
-      tabInset: 8.0,
+      tabPadding: 8.0,
       stroke: `1px ${purple.stroke}`
     })
   )
 
   // create label styles that use the same color sets as the GroupNodeStyle instances created above
-  const labelStyles: DefaultLabelStyle[] = []
+  const labelStyles: LabelStyle[] = []
 
   // style for red nodes
   labelStyles.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'top',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: red.nodeLabelFill
     })
   )
 
   // style for green nodes
   labelStyles.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: green.text
     })
   )
@@ -264,59 +259,53 @@ function createSampleGraph(graph: IGraph): void {
   // style for blue nodes
   // this style uses centered horizontal text because of the sloped tab in the blue nodes
   labelStyles.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       horizontalTextAlignment: 'center',
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: blue.nodeLabelFill
     })
   )
 
   // style for orange nodes
   labelStyles.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: orange.nodeLabelFill
     })
   )
 
-  const labelStylesWithTabAtMiscPositions: DefaultLabelStyle[] = []
+  const labelStylesWithTabAtMiscPositions: LabelStyle[] = []
 
   // style for gold nodes
   labelStylesWithTabAtMiscPositions.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: gold.nodeLabelFill
     })
   )
   // style for gray nodes
   labelStylesWithTabAtMiscPositions.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis'
+      wrapping: 'wrap-character-ellipsis'
     })
   )
   // style for light-green nodes
   labelStylesWithTabAtMiscPositions.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: green.nodeLabelFill
     })
   )
   // style for purple nodes
   labelStylesWithTabAtMiscPositions.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: purple.nodeLabelFill
     })
   )
@@ -399,7 +388,7 @@ function createSampleGraph(graph: IGraph): void {
 function createGroupAndFolderNodes(
   graph: IGraph,
   nodeStyles: GroupNodeStyle[],
-  labelStyles: DefaultLabelStyle[],
+  labelStyles: LabelStyle[],
   labelTexts: string[],
   x0: number,
   y0: number
@@ -449,7 +438,7 @@ function createChildNode(graph: IGraph, parent: INode, xOffset: number, yOffset:
  * Collapses the last group node in the given graph.
  */
 function collapseLast(graph: IGraph): void {
-  graph.foldingView!.collapse(graph.nodes.last())
+  graph.foldingView!.collapse(graph.nodes.last()!)
 }
 
 /**
@@ -457,8 +446,10 @@ function collapseLast(graph: IGraph): void {
  */
 function configureFolding(graphComponent: GraphComponent): void {
   graphComponent.graph = new FoldingManager({
-    folderNodeConverter: new DefaultFolderNodeConverter({
-      copyFirstLabel: true
+    folderNodeConverter: new FolderNodeConverter({
+      folderNodeDefaults: {
+        copyLabels: true
+      }
     }),
     masterGraph: graphComponent.graph
   }).createFoldingView().graph
@@ -468,31 +459,42 @@ function configureFolding(graphComponent: GraphComponent): void {
  * Enables basic user interaction for the given graph component.
  */
 function configureInteraction(graphComponent: GraphComponent): void {
-  const geim = new GraphEditorInputMode({
+  const editorInputMode = new GraphEditorInputMode({
     allowCreateNode: false,
-    allowGroupingOperations: true,
-    deletableItems: GraphItemTypes.ALL & ~GraphItemTypes.NODE
+    deletableItems: GraphItemTypes.ALL & ~GraphItemTypes.NODE,
+    // give labels a higher priority, so that double-clicking labels will still trigger the label
+    // editing, even though below we handle the double clicks for nodes
+    doubleClickHitTestOrder: [GraphItemTypes.LABEL, GraphItemTypes.ALL],
+    navigationInputMode: {
+      autoGroupNodeAlignmentPolicy: NodeAlignmentPolicy.CENTER
+    }
   })
-  geim.navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.CENTER
-
   // Provide a way to collapse group nodes or expand folder nodes even if their style does not
   // show an icon for collapsing or expanding.
-  geim.addItemLeftDoubleClickedListener((_, evt) => {
+  editorInputMode.addEventListener('item-left-double-clicked', (evt) => {
     const item = evt.item
     if (item instanceof INode) {
-      if (ICommand.TOGGLE_EXPANSION_STATE.canExecute(item, graphComponent)) {
-        ICommand.TOGGLE_EXPANSION_STATE.execute(item, graphComponent)
+      const foldingView = graphComponent.graph.foldingView
+      if (
+        foldingView &&
+        foldingView.manager.masterGraph.isGroupNode(foldingView.getMasterItem(item))
+      ) {
+        if (foldingView.isExpanded(item)) {
+          editorInputMode.navigationInputMode.collapseGroup(item)
+        } else {
+          editorInputMode.navigationInputMode.expandGroup(item)
+        }
         // we need to make sure that any handles that are present are reevaluated because they
         // may have different constraints after the expand/collapse operation
-        geim.requeryHandles()
+        editorInputMode.requeryHandles()
         evt.handled = true
       }
     }
   })
 
-  configureToolTips(geim)
+  configureToolTips(editorInputMode)
 
-  graphComponent.inputMode = geim
+  graphComponent.inputMode = editorInputMode
 }
 
 /**
@@ -501,8 +503,8 @@ function configureInteraction(graphComponent: GraphComponent): void {
  */
 function configureRenderMode(graphComponent: GraphComponent) {
   graphComponent.graphModelManager = BrowserDetection.webGL2
-    ? new WebGL2GraphModelManager({ renderMode: 'svg' })
-    : new GraphModelManager(graphComponent, graphComponent.contentGroup)
+    ? new WebGLGraphModelManager({ renderMode: 'svg' })
+    : new GraphModelManager()
 }
 
 /**

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,29 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { StringTemplateNodeStyle } from 'yfiles'
-
-/** @type {number} */
+import {} from '@yfiles/yfiles'
 let counter = 0
-
-/**
- * @typedef {Object} NodeBusinessData
- * @property {string} name
- */
-
 /**
  * Creates an instance of ClipboardBusinessObject with a new name.
  */
 export function createNodeBusinessData() {
-  const obj = { name: `Name ${++counter}` }
-  return StringTemplateNodeStyle.makeObservable(obj)
+  return { name: `Name ${++counter}` }
 }
-
 /**
  * Returns the common name of the selected nodes if such a common name
  * exists, or the empty string otherwise.
- * @param {!ISelectionModel.<INode>} selectedNodes
- * @returns {!string}
  */
 export function getCommonName(selectedNodes) {
   if (selectedNodes.size === 0) {

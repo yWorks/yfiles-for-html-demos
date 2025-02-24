@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,19 +28,14 @@
  ***************************************************************************/
 import {
   BaseClass,
+  Command,
   EventArgs,
-  GraphClipboard,
   GraphComponent,
   GraphEditorInputMode,
   GraphMLIOHandler,
-  GraphModelManager,
   GroupingNodePositionHandler,
   GroupingSupport,
   HashMap,
-  ICanvasObject,
-  ICanvasObjectGroup,
-  ICommand,
-  IComparer,
   IEnumerable,
   IFoldingView,
   IGraph,
@@ -54,9 +49,11 @@ import {
   IOutputHandler,
   IParseContext,
   IPositionHandler,
+  IRenderTreeElement,
+  IRenderTreeGroup,
   IReparentNodeHandler,
-  ItemCopiedEventArgs,
   ItemEventArgs,
+  ItemsEventArgs,
   IUndoUnit,
   IWriteContext,
   KeyScope,
@@ -66,17 +63,17 @@ import {
   NodeEventArgs,
   OutputHandlerBase,
   Point,
-  QueryInputHandlersEventArgs,
-  QueryOutputHandlersEventArgs,
   SelectionEventArgs,
-  WritePrecedence,
-  YNumber
-} from 'yfiles'
+  WritePrecedence
+} from '@yfiles/yfiles'
+import { ZOrderGraphClipboard } from './ZOrderGraphClipboard'
+
+type Comparator<T> = (x: T | null, y: T | null) => number
 
 /**
  * An utility class to add z-order consistency for nodes to a {@link GraphComponent}.
  */
-export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
+export class ZOrderSupport {
   get masterGraph(): IGraph {
     return this.$masterGraph
   }
@@ -85,6 +82,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
   private readonly zOrderChangedListeners: Array<
     (sender: object, eventArgs: ZIndexChangedEventArgs) => void
   >
+  public readonly nodeComparison: Comparator<INode>
 
   private $graphComponent: GraphComponent = null!
   private $masterGraph: IGraph = null!
@@ -106,8 +104,8 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
    * Creates a new instance and installs it on the given {@link ZOrderSupport.graphComponent}.
    */
   constructor(graphComponent: GraphComponent) {
-    super()
     this.zOrderChangedListeners = []
+    this.nodeComparison = (x, y) => this.compare(x!, y!)
 
     // initialize maps
     this.zOrders = new HashMap<INode, number>()
@@ -127,17 +125,15 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     this.masterGroupingSupport = this.masterGraph.groupingSupport
 
     // use this ZOrderSupport as node comparer for the visualization
-    // The ItemModelManager.Comparer needs the user objects to be accessible from the main canvas objects
-    this.$graphComponent.graphModelManager.provideUserObjectOnMainCanvasObject = true
-    this.$graphComponent.graphModelManager.nodeManager.comparer = this
+    this.$graphComponent.graphModelManager.nodeManager.comparator = this.nodeComparison
+    // The ItemModelManager.Comparer needs the user objects to be accessible from the main render tree elements
+    this.$graphComponent.graphModelManager.provideRenderTagOnMainRenderTreeElement = true
     // keep labels at their owners for this demo
-    graphComponent.graphModelManager.labelLayerPolicy = LabelLayerPolicy.AT_OWNER
+    graphComponent.graphModelManager.nodeLabelLayerPolicy = LabelLayerPolicy.AT_OWNER
 
-    graphComponent.graph.decorator.nodeDecorator.positionHandlerDecorator.setFactory(
-      (node: INode) => {
-        return new ZOrderNodePositionHandler(node, this, null)
-      }
-    )
+    graphComponent.graph.decorator.nodes.positionHandler.addFactory((node: INode) => {
+      return new ZOrderNodePositionHandler(node, this)
+    })
 
     if (addInputMode) {
       // configure the edit mode to keep z-order consistent during grouping/folding/reparenting gestures
@@ -147,23 +143,23 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     }
 
     // configure the clipboard that transfers the relative z-order of copied/cut nodes
-    this.configureGraphClipboard(graphComponent.clipboard)
+    this.configureGraphClipboard()
 
     // listen for new nodes to assign an initial z-order
-    this.masterGraph.addNodeCreatedListener(this.onNodeCreated.bind(this))
+    this.masterGraph.addEventListener('node-created', this.onNodeCreated.bind(this))
   }
 
   public configureGraphMLIOHandler(ioHandler: GraphMLIOHandler): void {
     let zOrderKeyDefinitionFound = false
     let maxExistingZOrder = Number.MIN_VALUE
 
-    ioHandler.addQueryOutputHandlersListener((_, evt) => {
+    ioHandler.addEventListener('query-output-handlers', (evt) => {
       if (evt.scope === KeyScope.NODE) {
         evt.addOutputHandler(new ZOrderOutputHandler(this))
       }
     })
 
-    ioHandler.addQueryInputHandlersListener((_, evt) => {
+    ioHandler.addEventListener('query-input-handlers', (evt) => {
       if (
         !evt.handled &&
         GraphMLIOHandler.matchesScope(evt.keyDefinition, KeyScope.NODE) &&
@@ -175,7 +171,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
       }
     })
 
-    ioHandler.addParsingListener((_, evt) => {
+    ioHandler.addEventListener('parsing', () => {
       // clear old z-orders of old graph
       if (ioHandler.clearGraphBeforeRead) {
         this.clear()
@@ -187,7 +183,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
       zOrderKeyDefinitionFound = false
     })
 
-    ioHandler.addParsedListener((_, evt) => {
+    ioHandler.addEventListener('parsed', () => {
       // enable automatic z-order creation for new nodes again
       this.addZOrderForNewNodes = true
       if (!zOrderKeyDefinitionFound) {
@@ -227,10 +223,16 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
       // for a common parent we can just compare the z-order values
       return this.zOrderOf(masterX) - this.zOrderOf(masterY)
     }
+    if (this.masterGroupingSupport.isDescendant(masterX, masterY)) {
+      return 1
+    }
+    if (this.masterGroupingSupport.isDescendant(masterY, masterX)) {
+      return -1
+    }
     // there is no common parent so find the ancestors that have a common parent
     const nca = this.masterGroupingSupport.getNearestCommonAncestor(masterX, masterY)
-    const pathToRootX = this.masterGroupingSupport.getPathToRoot(masterX)
-    const pathToRootY = this.masterGroupingSupport.getPathToRoot(masterY)
+    const pathToRootX = this.masterGroupingSupport.getAncestors(masterX)
+    const pathToRootY = this.masterGroupingSupport.getAncestors(masterY)
 
     const ancestorX = !nca ? pathToRootX.at(-1)! : pathToRootX.at(pathToRootX.indexOf(nca) - 1)!
     const ancestorY = !nca ? pathToRootY.at(-1)! : pathToRootY.at(pathToRootY.indexOf(nca) - 1)!
@@ -251,7 +253,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
    */
   public setZOrder(key: INode, newZOrder: number): void {
     const master = this.getMasterNode(key)
-    const oldZOrder = this.zOrders.get(master)
+    const oldZOrder = this.zOrders.get(master) ?? 0
     if (oldZOrder !== newZOrder) {
       if (this.masterGraph.undoEngineEnabled) {
         this.masterGraph.addUndoUnit(
@@ -304,19 +306,20 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
 
   /**
    * Sets new ascending z-orders for `viewNodes` starting from `zOrder` and sorts their
-   * {@link GraphModelManager.getMainCanvasObject canvas objects} as well.
+   * {@link GraphModelManager.getMainRenderTreeElement canvas objects} as well.
    */
   public arrangeNodes(viewNodes: IEnumerable<INode>, zOrder: number): void {
-    let prev: ICanvasObject | null = null
+    let prev: IRenderTreeElement | null = null
     for (const node of viewNodes) {
       this.setZOrder(this.getMasterNode(node), zOrder++)
-      const canvasObject = this.graphComponent.graphModelManager.getMainCanvasObject(node)!
+      const renderTreeElement =
+        this.graphComponent.graphModelManager.getMainRenderTreeElement(node)!
       if (!prev) {
-        canvasObject.toBack()
+        renderTreeElement.toBack()
       } else {
-        canvasObject.above(prev)
+        renderTreeElement.above(prev)
       }
-      prev = canvasObject
+      prev = renderTreeElement
     }
   }
 
@@ -346,7 +349,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
    */
   public setTempNormalizedZOrders(parent: INode | null): void {
     const children = this.graphComponent.graph.getChildren(parent).toList()
-    children.sort(this)
+    children.sort(this.nodeComparison)
     let zOrder = 0
     for (const child of children) {
       this.setTempZOrder(child, parent, zOrder++)
@@ -387,12 +390,12 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
   }
 
   public raise(nodes: List<INode>): void {
-    nodes.sort(this)
+    nodes.sort(this.nodeComparison)
 
     let prev: INode | null = null
     for (let i = nodes.size - 1; i >= 0; i--) {
       const node = nodes.get(i)
-      const co = this.graphComponent.graphModelManager.getMainCanvasObject(node)!
+      const co = this.graphComponent.graphModelManager.getMainRenderTreeElement(node)!
       const nextCO = co.nextSibling
       if (nextCO) {
         let tmp
@@ -410,18 +413,14 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
   }
 
   public lower(nodes: List<INode>): void {
-    nodes.sort(this)
+    nodes.sort(this.nodeComparison)
 
     let prev: INode | null = null
     for (const node of nodes) {
-      const co = this.graphComponent.graphModelManager.getMainCanvasObject(node)!
-      const prevCO = co.previousSibling
-      if (prevCO) {
-        let tmp
-        const prevNode =
-          (tmp = this.graphComponent.graphModelManager.getModelItem(prevCO)) instanceof INode
-            ? tmp
-            : null
+      const rte = this.graphComponent.graphModelManager.getMainRenderTreeElement(node)!
+      const prevRte = rte.previousSibling
+      if (prevRte) {
+        const prevNode = this.graphComponent.graphModelManager.getModelItem(prevRte) as INode
         if (prevNode && prevNode !== prev) {
           this.swapZOrder(node, prevNode)
           this.graphComponent.graphModelManager.update(node)
@@ -443,12 +442,12 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
       const toFrontChildren = grouping.children
       const allChildren = this.graphComponent.graph.getChildren(groupNode).toList()
       if (toFrontChildren.size < allChildren.size) {
-        allChildren.sort(this)
-        toFrontChildren.sort(this)
+        allChildren.sort(this.nodeComparison)
+        toFrontChildren.sort(this.nodeComparison)
         allChildren.removeAll((node: INode) => {
           return toFrontChildren.includes(node)
         })
-        const last = allChildren.last()
+        const last = allChildren.last()!
         let zOrder = this.getZOrder(last) + 1
         for (const node of toFrontChildren) {
           this.setZOrder(node, zOrder++)
@@ -470,8 +469,8 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
       const toBackChildren = grouping.children
       const allChildren = this.graphComponent.graph.getChildren(groupNode).toList()
       if (toBackChildren.size < allChildren.size) {
-        allChildren.sort(this)
-        toBackChildren.sort(this)
+        allChildren.sort(this.nodeComparison)
+        toBackChildren.sort(this.nodeComparison)
         allChildren.removeAll((node: INode) => {
           return toBackChildren.includes(node)
         })
@@ -487,7 +486,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     }
   }
 
-  private onNodeCreated(sender: object, evt: ItemEventArgs<INode>): void {
+  private onNodeCreated(evt: ItemEventArgs<INode>): void {
     const undoEngine = this.graphComponent.graph.undoEngine!
     if (!this.addZOrderForNewNodes || undoEngine.performingUndo || undoEngine.performingRedo) {
       // don't assign z-orders during undo/redo automatically
@@ -559,10 +558,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
       return zOrder
     }
     zOrder = this.zOrders.get(node)
-    if (zOrder) {
-      return zOrder
-    }
-    return 0
+    return zOrder ?? 0
   }
 
   private swapZOrder(node1: INode, node2: INode): void {
@@ -572,229 +568,52 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     this.setZOrder(node2, zOrder1)
   }
 
-  ////////////////////////////////////////// Clipboard support /////////////////////////////////////
+  ////////////////////////////////////////// Clipboard //////////////////////////////
 
-  private readonly $clipboardZOrders: HashMap<INode, number> = new HashMap<INode, number>()
-  private readonly $newClipboardItems: List<INode> = new List<INode>()
-  private $clipboard: GraphClipboard | null = null
-
-  public configureGraphClipboard(clipboard: GraphClipboard): void {
-    this.$clipboard = clipboard
-
-    // copy z-order to item copied to clipboard
-    clipboard.toClipboardCopier.addNodeCopiedListener(this.onCopiedToClipboard.bind(this))
-
-    // copy z-order to item copied to graph and collect those copied items
-    clipboard.fromClipboardCopier.addNodeCopiedListener(this.onCopiedFromClipboard.bind(this))
-    clipboard.duplicateCopier.addNodeCopiedListener(this.onCopiedFromClipboard.bind(this))
-
-    clipboard.addElementsCuttingListener(this.beforeCut.bind(this))
-    clipboard.addElementsCopyingListener(this.beforeCopy.bind(this))
-    clipboard.addElementsPastingListener(this.beforePaste.bind(this))
-    clipboard.addElementsDuplicatingListener(this.beforeDuplicate.bind(this))
-    clipboard.addElementsPastedListener(this.afterPaste.bind(this))
-    clipboard.addElementsDuplicatedListener(this.afterDuplicate.bind(this))
+  configureGraphClipboard() {
+    this.graphComponent.clipboard = new ZOrderGraphClipboard(this)
   }
-
-  private onCopiedToClipboard(sender: object, evt: ItemCopiedEventArgs<INode>): void {
-    // transfer relative z-order from original node to the copy in the clipboard graph
-    this.$clipboardZOrders.set(evt.copy, this.getClipboardZOrder(evt.original))
-  }
-
-  private onCopiedFromClipboard(sender: object, evt: ItemCopiedEventArgs<INode>): void {
-    // store new node to use in ArrangeItems
-    this.$newClipboardItems.add(evt.copy)
-    // transfer relative z-order from node in the clipboard graph to the new node
-    this.$clipboardZOrders.set(evt.copy, this.getClipboardZOrder(evt.original))
-  }
-
-  /**
-   * Returns the z-order previously stored for the `node`.
-   * The z-order stored in the {@link ZOrderSupport} is used as fallback for items currently not in the view.
-   */
-  private getClipboardZOrder(node: INode): number {
-    const zOrder = this.$clipboardZOrders.get(node)
-    return zOrder != null ? zOrder : this.getZOrder(node)
-  }
-
-  private beforeCut(sender: object, eventArgs: EventArgs): void {
-    // store the relative z-order for cut or copied items
-    this.storeInitialZOrder(
-      this.$graphComponent.graph,
-      this.$clipboard!.createDefaultCutFilter(
-        this.$graphComponent.selection,
-        this.$graphComponent.graph
-      )
-    )
-  }
-
-  private beforeCopy(sender: object, eventArgs: EventArgs): void {
-    // store the relative z-order for cut or copied items
-    this.storeInitialZOrder(
-      this.$graphComponent.graph,
-      this.$clipboard!.createDefaultCopyFilter(
-        this.$graphComponent.selection,
-        this.$graphComponent.graph
-      )
-    )
-  }
-
-  private beforePaste(sender: object, eventArgs: EventArgs): void {
-    // collect new items in the OnCopiedFromClipboard callbacks
-    this.$newClipboardItems.clear()
-  }
-
-  private afterPaste(sender: object, eventArgs: EventArgs): void {
-    const targetGraph = this.$graphComponent.graph
-    // set final z-orders of newItems depending on their new parent group
-    this.arrangeItems(this.$newClipboardItems, targetGraph.foldingView)
-  }
-
-  private beforeDuplicate(sender: object, eventArgs: EventArgs): void {
-    // store the relative z-order for duplicated items
-    this.storeInitialZOrder(
-      this.$graphComponent.graph,
-      this.$clipboard!.createDefaultDuplicateFilter(
-        this.$graphComponent.selection,
-        this.$graphComponent.graph
-      )
-    )
-    // collect new items in the OnCopiedFromClipboard callbacks
-    this.$newClipboardItems.clear()
-  }
-
-  private afterDuplicate(sender: object, eventArgs: EventArgs): void {
-    const sourceGraph = this.$graphComponent.graph
-    // set final z-orders of newItems depending on their new parent group
-    this.arrangeItems(this.$newClipboardItems, sourceGraph.foldingView)
-  }
-
-  private storeInitialZOrder(sourceGraph: IGraph, filter: (obj: IModelItem) => boolean): void {
-    // determine the view items involved in the clipboard operation and sort them by their visual z-order
-    const items = sourceGraph.nodes.filter((node: INode) => filter(node)).toList()
-    if (items.size > 1) {
-      items.sort(this)
-    }
-    this.$clipboardZOrders.clear()
-    const foldingView = sourceGraph.foldingView
-    for (let i = 0; i < items.size; i++) {
-      // in case of folding store relative z-order for master item as it will be used by the GraphCopier
-      const item = foldingView ? foldingView.getMasterItem<INode>(items.get(i)) : items.get(i)
-      this.$clipboardZOrders.set(item, i)
-    }
-  }
-
-  private arrangeItems(newMasterItems: List<INode>, foldingView: IFoldingView | null): void {
-    // sort new items by the relative z-order transferred in onCopiedFromClipboard
-    newMasterItems.sort((node1: INode, node2: INode) => {
-      return this.getZOrder(node1) - this.getZOrder(node2)
-    })
-    const gmm = this.$graphComponent.graphModelManager
-
-    // group new nodes by common parent canvas object groups of their main canvas objects
-    const itemsNotInView = new List<INode>()
-    const groupToItems = new HashMap<ICanvasObjectGroup, List<INode>>()
-    for (const masterItem of newMasterItems) {
-      const viewItem = foldingView ? foldingView.getViewItem<INode>(masterItem) : masterItem
-      if (!viewItem) {
-        // new item is not in view (e.g. child of a collapsed folder node)
-        itemsNotInView.add(masterItem)
-      } else {
-        const co = gmm.getMainCanvasObject(viewItem)
-        if (!co) {
-          itemsNotInView.add(masterItem)
-        } else {
-          const coGroup = co.group
-          let newNodesInGroup = groupToItems.get(coGroup)
-          if (!newNodesInGroup) {
-            newNodesInGroup = new List<INode>()
-            groupToItems.set(coGroup, newNodesInGroup)
-          }
-          newNodesInGroup.add(viewItem)
-        }
-      }
-    }
-    // set z-order items not in view just in ascending order
-    for (let i = 0; i < itemsNotInView.size; i++) {
-      this.setZOrder(itemsNotInView.get(i), i)
-    }
-
-    // for each common parent set ascending z-orders for new nodes
-    for (const groupItemsPair of groupToItems) {
-      const itemsInGroup = groupItemsPair.value
-
-      // find the top-most node that wasn't just added and lookup its z-order
-      let topNodeNotJustAdded: INode | null = null
-      let walker = groupItemsPair.key.lastChild
-      while (walker) {
-        let tmp
-        const node = (tmp = gmm.getModelItem(walker)) instanceof INode ? tmp : null
-        if (node && !itemsInGroup.includes(node)) {
-          topNodeNotJustAdded = node
-          break
-        }
-        walker = walker.previousSibling
-      }
-      let nextZOrder = topNodeNotJustAdded ? this.getZOrder(topNodeNotJustAdded) + 1 : 0
-
-      // set new z-orders starting from nextZOrder
-      for (const node of itemsInGroup) {
-        this.setZOrder(node, nextZOrder++)
-      }
-      // update the view using the new z-orders
-      for (const node of itemsInGroup) {
-        this.update(node)
-      }
-    }
-  }
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////// Input mode configuration //////////////////////////////
 
   private $inputMode: GraphEditorInputMode | null = null
 
-  public static RAISE: ICommand = ICommand.createCommand('Raise')
-  public static LOWER: ICommand = ICommand.createCommand('Lower')
-  public static TO_FRONT: ICommand = ICommand.createCommand('ToFront')
-  public static TO_BACK: ICommand = ICommand.createCommand('ToBack')
-
   public configureInputMode(inputMode: GraphEditorInputMode): void {
     this.$inputMode = inputMode
-    this.addCommandBinding(ZOrderSupport.RAISE, this.raise.bind(this))
-    this.addCommandBinding(ZOrderSupport.LOWER, this.lower.bind(this))
-    this.addCommandBinding(ZOrderSupport.TO_FRONT, this.toFront.bind(this))
-    this.addCommandBinding(ZOrderSupport.TO_BACK, this.toBack.bind(this))
-    inputMode.addDeletingSelectionListener(this.beforeDeleteSelection.bind(this))
-    inputMode.addDeletedSelectionListener(this.afterDeleteSelection.bind(this))
-    inputMode.addGroupingSelectionListener(this.beforeGrouping.bind(this))
-    inputMode.addUngroupingSelectionListener(this.beforeUngrouping.bind(this))
+    this.addCommandBinding(Command.RAISE, this.raise.bind(this))
+    this.addCommandBinding(Command.LOWER, this.lower.bind(this))
+    this.addCommandBinding(Command.TO_FRONT, this.toFront.bind(this))
+    this.addCommandBinding(Command.TO_BACK, this.toBack.bind(this))
+    inputMode.addEventListener('deleting-selection', this.beforeDeleteSelection.bind(this))
+    inputMode.addEventListener('deleted-selection', this.afterDeleteSelection.bind(this))
+    inputMode.addEventListener('grouping-selection', this.beforeGrouping.bind(this))
+    inputMode.addEventListener('ungrouping-selection', this.beforeUngrouping.bind(this))
     inputMode.reparentNodeHandler = new ZOrderReparentHandler(inputMode.reparentNodeHandler, this)
     this.configureMoveInputMode(inputMode)
   }
 
-  private addCommandBinding(newCommand: ICommand, method: (obj: List<INode>) => void): void {
+  private addCommandBinding(newCommand: Command, method: (obj: List<INode>) => void): void {
     this.$inputMode!.keyboardInputMode.addCommandBinding(
       newCommand,
-      (command: ICommand, parameter: any, sender: object): boolean => {
-        const nodes = this.resolveParameter(parameter)
+      (evt) => {
+        const nodes = this.resolveParameter(evt.parameter)
         if (nodes !== null) {
           method(nodes)
-          return true
+          evt.handled = true
         }
-        return false
       },
-      (command: ICommand, parameter: any, sender: object): boolean => {
-        const nodes = this.resolveParameter(parameter)
-        return nodes !== null
+      (evt) => {
+        const nodes = this.resolveParameter(evt.parameter)
+        evt.canExecute = nodes !== null
+        evt.handled = true
       }
     )
   }
 
   private resolveParameter(parameter: object): List<INode> | null {
     if (!parameter) {
-      if (this.graphComponent.selection.selectedNodes.size > 0) {
-        return this.graphComponent.selection.selectedNodes.toList()
+      if (this.graphComponent.selection.nodes.size > 0) {
+        return this.graphComponent.selection.nodes.toList()
       }
     } else if (parameter instanceof IModelItem) {
       const nodes = new List<INode>()
@@ -811,10 +630,10 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
 
   ////////////////////////////////////////// Grouping operations ///////////////////////////////////
 
-  private beforeGrouping(sender: object, e: SelectionEventArgs<IModelItem>): void {
+  private beforeGrouping(e: SelectionEventArgs<IModelItem>): void {
     // get all selected nodes and sort by their current z-order
-    const nodes = (<IGraphSelection>e.selection).selectedNodes.toList()
-    nodes.sort(this)
+    const nodes = (<IGraphSelection>e.selection).nodes.toList()
+    nodes.sort(this.nodeComparison)
 
     // set increasing z-orders
     for (let i = 0; i < nodes.size; i++) {
@@ -822,21 +641,21 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     }
   }
 
-  private beforeUngrouping(sender: object, e: SelectionEventArgs<IModelItem>): void {
+  private beforeUngrouping(e: SelectionEventArgs<IModelItem>): void {
     const graph = this.$graphComponent.graph
     // store all selected nodes that have a parent group
-    const nodes = (<IGraphSelection>e.selection).selectedNodes
+    const nodes = (<IGraphSelection>e.selection).nodes
       .filter((node: INode) => {
         return graph.getParent(node) !== null
       })
       .toList()
 
     // sort selected nodes by their current z-order
-    nodes.sort(this)
+    nodes.sort(this.nodeComparison)
 
     // collect top level nodes
     const topLevelNodes = graph.getChildren(null).toList()
-    topLevelNodes.sort(this)
+    topLevelNodes.sort(this.nodeComparison)
 
     const newTopLevelNodes = new List<INode>()
     let topLevelIndex = 0
@@ -845,7 +664,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     const gs = graph.groupingSupport
 
     for (const node of nodes) {
-      const topLevelAncestor = gs.getPathToRoot(node).at(-1)
+      const topLevelAncestor = gs.getAncestors(node).at(-1)
       while (topLevelAncestor !== nextTopLevelNode) {
         nextTopLevelNode = topLevelNodes.get(topLevelIndex++)
         newTopLevelNodes.add(nextTopLevelNode)
@@ -866,13 +685,13 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
 
   private $deleteSelectionNewParents: Set<INode | null> | null = null
   private $absOrder: Map<INode, number> | null = null
-  private $parentChangedListener: ((sender: object, evt: NodeEventArgs) => void) | null = null
+  private $parentChangedListener: ((evt: NodeEventArgs) => void) | null = null
 
-  private beforeDeleteSelection(sender: object, e: SelectionEventArgs<IModelItem>): void {
+  private beforeDeleteSelection(_e: SelectionEventArgs<IModelItem>): void {
     const graph = this.$graphComponent.graph
     // collect absolute order of all view items
     const nodes = graph.nodes.toList()
-    nodes.sort(this)
+    nodes.sort(this.nodeComparison)
     this.$absOrder = new Map<INode, number>()
     for (let i = 0; i < nodes.size; i++) {
       this.$absOrder.set(nodes.get(i), i)
@@ -881,30 +700,29 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     this.$deleteSelectionNewParents = new Set<INode>()
     // before the group node is removed, all its children get reparented so we listen for each ParentChanged event.
     this.$parentChangedListener = this.onParentChanged.bind(this)
-    graph.addParentChangedListener(this.$parentChangedListener)
+    graph.addEventListener('parent-changed', this.$parentChangedListener)
   }
 
-  private afterDeleteSelection(sender: object, e: SelectionEventArgs<IModelItem>): void {
+  private afterDeleteSelection(_e: ItemsEventArgs): void {
     const graph = this.$graphComponent.graph
-    graph.removeParentChangedListener(this.$parentChangedListener!)
+    graph.removeEventListener('parent-changed', this.$parentChangedListener!)
 
     // for each new parent sort their children in previously stored absolute order
     for (const newParent of this.$deleteSelectionNewParents!) {
       if (newParent === null || graph.contains(newParent)) {
         // newParent hasn't been removed as well, so sort its children
         const children = graph.getChildren(newParent).toList()
-        children.sort((node1: INode, node2: INode) => {
-          return this.$absOrder!.get(node1)! - this.$absOrder!.get(node2)!
-        })
+        children.sort(
+          (node1: INode, node2: INode) => this.$absOrder!.get(node1)! - this.$absOrder!.get(node2)!
+        )
         this.arrangeNodes(children, 0)
       }
     }
     this.$deleteSelectionNewParents = null
   }
 
-  private onParentChanged(sender: object, evt: NodeEventArgs): void {
-    const graph = this.$graphComponent.graph
-    const newParent = graph.getParent(evt.item)
+  private onParentChanged(evt: NodeEventArgs): void {
+    const newParent = this.$graphComponent.graph.getParent(evt.item)
     this.$deleteSelectionNewParents!.add(newParent)
   }
 
@@ -923,9 +741,18 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
   private $maxRootZOrder: number = Number.MIN_VALUE
 
   public configureMoveInputMode(geim: GraphEditorInputMode): void {
-    geim.moveInputMode.addDragStartingListener(this.moveStarting.bind(this))
-    geim.moveInputMode.addDragFinishedListener(this.moveFinished.bind(this))
-    geim.moveInputMode.addDragCanceledListener(this.moveCanceled.bind(this))
+    geim.moveUnselectedItemsInputMode.addEventListener(
+      'drag-starting',
+      this.moveStarting.bind(this)
+    )
+    geim.moveUnselectedItemsInputMode.addEventListener(
+      'drag-finished',
+      this.moveFinished.bind(this)
+    )
+    geim.moveUnselectedItemsInputMode.addEventListener(
+      'drag-canceled',
+      this.moveCanceled.bind(this)
+    )
   }
 
   ////////////////////////////////////////// Initialize fields on MoveStarting /////////////////////
@@ -934,13 +761,14 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
    * Stores all moved nodes, their parents and the maximum z-order of children of their parents before the move gesture
    * starts.
    */
-  private moveStarting(sender: object, e: InputModeEventArgs) {
+  private moveStarting(_e: InputModeEventArgs) {
     const graph = this.$graphComponent.graph
 
     // store all selected nodes which might get reparented
-    this.$movedNodes = this.$inputMode!.graphSelection!.selectedNodes.toList()
+    this.$movedNodes =
+      this.$inputMode!.moveUnselectedItemsInputMode.affectedItems.ofType(INode).toList()
     // sort this list by their relative z-order
-    this.$movedNodes.sort(this)
+    this.$movedNodes.sort(this.nodeComparison)
 
     // calculate max z-order for all group nodes containing any moved node
     this.$movedNodes.forEach((node: INode) => {
@@ -1006,13 +834,13 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
     return 0
   }
 
-  private moveFinished(sender: object, e: InputModeEventArgs): void {
+  private moveFinished(_e: InputModeEventArgs): void {
     // Apply the temporary z-orders for all reparented nodes
     this.applyTempZOrders()
     this.cleanup()
   }
 
-  private moveCanceled(sender: object, e: InputModeEventArgs): void {
+  private moveCanceled(_e: InputModeEventArgs): void {
     // clear temporary z-orders and keep the original ones.
     this.clearTempZOrders()
     this.cleanup()
@@ -1066,9 +894,13 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
   constructor(
     node: INode,
     zOrderSupport: ZOrderSupport,
-    wrappedHandler: IPositionHandler | null = null
+    wrappedHandler?: IPositionHandler | undefined
   ) {
-    super(node, wrappedHandler)
+    if (wrappedHandler) {
+      super(node, wrappedHandler)
+    } else {
+      super(node)
+    }
     this.$node = node
 
     this.$zOrderSupport = zOrderSupport
@@ -1087,20 +919,15 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
   }
 
   /**
-   * Customizes the temporary new parent of `node` and its z-order in its new {@link ICanvasObjectGroup}
+   * Customizes the temporary new parent of `node` and its z-order in its new {@link IRenderTreeGroup}
    */
   public setCurrentParent(context: IInputModeContext, node: INode, parent: INode): void {
     if (parent !== this.$initialParent) {
       // node is temporarily at a new parent
-      const zOrderSupport: ZOrderSupport = context.graph?.lookup(
-        ZOrderSupport.$class
-      ) as ZOrderSupport
-      if (zOrderSupport) {
-        // the ZOrderMoveInputMode knows all moved nodes and therefore can provide the new z-order for this node
-        const tempZOrder = zOrderSupport.getZOrderForNewParent(node, parent)
-        // 'parent' is only a temporary new parent so the old z-order should be kept but a new temporary one is set
-        this.$zOrderSupport.setTempZOrder(node, parent, tempZOrder)
-      }
+      // the ZOrderMoveInputMode knows all moved nodes and therefore can provide the new z-order for this node
+      const tempZOrder = this.$zOrderSupport.getZOrderForNewParent(node, parent)
+      // 'parent' is only a temporary new parent so the old z-order should be kept but a new temporary one is set
+      this.$zOrderSupport.setTempZOrder(node, parent, tempZOrder)
       super.setCurrentParent(context, node, parent)
     } else if (parent !== this.$currentParent) {
       // node is reset to its initial parent: reset its temporary z-order so the original one is used again
@@ -1130,11 +957,11 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
 /**
  * An {@link InputHandlerBase input handler} that reads the z-order of nodes, edges and ports.
  */
-class ZOrderInputHandler extends InputHandlerBase<INode, number> {
+class ZOrderInputHandler extends InputHandlerBase<INode, Number> {
   private readonly zOrderSupport: ZOrderSupport
 
   constructor(zOrderSupport: ZOrderSupport) {
-    super(INode.$class, YNumber.$class)
+    super(INode, Number)
     this.zOrderSupport = zOrderSupport
   }
 
@@ -1150,7 +977,7 @@ class ZOrderInputHandler extends InputHandlerBase<INode, number> {
   }
 
   public applyDefault(context: IParseContext): void {
-    const key = context.getCurrent(INode.$class)!
+    const key = context.getCurrent(INode)!
     this.setValue(context, key, 0)
   }
 }
@@ -1158,7 +985,7 @@ class ZOrderInputHandler extends InputHandlerBase<INode, number> {
 /**
  * An {@link IOutputHandler} that writes the z-order of nodes, edges and ports.
  */
-class ZOrderOutputHandler extends OutputHandlerBase<INode, number> {
+class ZOrderOutputHandler extends OutputHandlerBase<INode, Number> {
   private readonly zOrderSupport: ZOrderSupport
 
   public static get Z_ORDER_KEY_NAME(): string {
@@ -1174,13 +1001,7 @@ class ZOrderOutputHandler extends OutputHandlerBase<INode, number> {
   }
 
   constructor(zOrderSupport: ZOrderSupport) {
-    super(
-      INode.$class,
-      YNumber.$class,
-      KeyScope.NODE,
-      ZOrderOutputHandler.Z_ORDER_KEY_NAME,
-      KeyType.INT
-    )
+    super(INode, Number, KeyScope.NODE, ZOrderOutputHandler.Z_ORDER_KEY_NAME, KeyType.INT)
     this.zOrderSupport = zOrderSupport
     this.writeKeyDefault = false
     this.precedence = WritePrecedence.BEFORE_CHILDREN
@@ -1206,7 +1027,7 @@ class ZOrderOutputHandler extends OutputHandlerBase<INode, number> {
  * provide pre- and post-processing only. The actual reparenting operation should be performed by
  * the reparent handler that is passed to the callback function.
  */
-class ZOrderReparentHandler extends BaseClass<IReparentNodeHandler>(IReparentNodeHandler) {
+class ZOrderReparentHandler extends BaseClass(IReparentNodeHandler) {
   constructor(
     private readonly handler: IReparentNodeHandler,
     private readonly zOrderSupport: ZOrderSupport

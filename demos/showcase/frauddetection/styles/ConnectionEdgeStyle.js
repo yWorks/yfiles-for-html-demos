@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EdgeStyleBase, HtmlCanvasVisual } from 'yfiles'
-import { getStroke } from './graph-styles.js'
-
+import { EdgeStyleBase, HtmlCanvasVisual } from '@yfiles/yfiles'
+import { getStroke } from './graph-styles'
 /**
  * A very basic edge style that uses HTML5 canvas high-performance rendering.
  * Arrows are not supported by this implementation.
@@ -36,38 +35,24 @@ import { getStroke } from './graph-styles.js'
 export class ConnectionEdgeStyle extends EdgeStyleBase {
   /**
    * Creates the visual for an edge.
-   * @param {!IRenderContext} context
-   * @param {!IEdge} edge
-   * @returns {!EdgeRenderVisual}
    */
   createVisual(context, edge) {
     return new EdgeRenderVisual(edge)
   }
-
   /**
    * Updates the visual for an edge.
-   * @param {!IRenderContext} context
-   * @param {!Visual} oldVisual
-   * @param {!IEdge} edge
-   * @returns {!Visual}
    */
   updateVisual(context, oldVisual, edge) {
     return oldVisual
   }
-
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
-   * @param {!IInputModeContext} canvasContext
-   * @param {!Point} p
-   * @param {!IEdge} edge
-   * @returns {boolean}
    */
   isHit(canvasContext, p, edge) {
     // we use a basic hit logic here (the base implementation)
     if (!super.isHit(canvasContext, p, edge)) {
       return false
     }
-
     // but we exclude hits on the source and target node
     const s = edge.sourceNode
     const t = edge.targetNode
@@ -77,27 +62,23 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
     )
   }
 }
-
 /**
  * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeRenderVisual extends HtmlCanvasVisual {
+  edge
   /**
    * Creates an EdgeRenderVisual for the given edge with the given thickness.
-   * @param {!IEdge} edge
    */
   constructor(edge) {
     super()
     this.edge = edge
     this.edge = edge
   }
-
   /**
    * Paints onto the context using HTML5 Canvas operations.
-   * @param {!IRenderContext} context
-   * @param {!CanvasRenderingContext2D} ctx
    */
-  paint(context, ctx) {
+  render(context, ctx) {
     ctx.save()
     ctx.beginPath()
     let location = this.edge.sourcePort.location

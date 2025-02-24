@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { ILabel, IRenderContext, TaggedSvgVisual } from 'yfiles'
+import type { ILabel, IRenderContext, TaggedSvgVisual } from '@yfiles/yfiles'
 import {
   Font,
   GraphComponent,
@@ -35,9 +35,9 @@ import {
   SvgVisual,
   TextRenderSupport,
   TextWrapping
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { ComponentClass, createElement, FunctionComponent } from 'react'
-import { type Root, createRoot } from 'react-dom/client'
+import { createRoot, type Root } from 'react-dom/client'
 
 /**
  * The interface of the props passed to the SVG react component for rendering the label contents.
@@ -95,7 +95,7 @@ export default class ReactComponentLabelStyle<TTag> extends LabelStyleBase<
       height: label.layout.height,
       selected:
         context.canvasComponent instanceof GraphComponent &&
-        context.canvasComponent.selection.isSelected(label),
+        context.canvasComponent.selection.includes(label),
       tag: label.tag as TTag,
       text: label.text
     }
@@ -153,7 +153,7 @@ export default class ReactComponentLabelStyle<TTag> extends LabelStyleBase<
     const textSize = TextRenderSupport.measureText({
       text: label.text,
       font: Font.from('normal 12px sans-serif'),
-      wrapping: TextWrapping.WORD_ELLIPSIS
+      wrapping: TextWrapping.WRAP_WORD_ELLIPSIS
     })
     return new Size(textSize.width + 10, textSize.height + 2)
   }

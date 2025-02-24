@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,20 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { html } from '../../preact-loader.js'
-
-/**
- * @typedef {Object} NodeTemplateProps
- * @property {number} width
- * @property {number} height
- * @property {TTag} tag
- */
-
+// @ts-ignore - We have no proper types for preact, here
+import { html } from '../../preact-loader'
 const NodeTemplate = ({ width, height, tag: { id, state } }) => html`
   <g class="node ${state ? 'node-enabled' : 'node-disabled'}">
     <rect class="node-rect" rx="3.5" ry="3.5" width="${width}" height="${height}"></rect>
     <text x="${width * 0.5}" y="${height * 0.5}" class="node-text">${id}</text>
   </g>
 `
-
 export default NodeTemplate

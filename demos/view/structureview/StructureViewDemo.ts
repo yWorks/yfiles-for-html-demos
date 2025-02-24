@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,29 +27,26 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultGraph,
   FoldingManager,
+  Graph,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicLayout,
-  ICommand,
+  HierarchicalLayout,
   type IGraph,
   LayoutExecutor,
   License,
-  NodeAlignmentPolicy,
   StraightLineEdgeRouter
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { StructureView } from './StructureView'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { sampleData } from './resources/structure-view-data'
 
-// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for 'applyLayout'.
-Class.ensure(LayoutExecutor)
+// Ensure that the LayoutExecutor class is not removed by build optimizers
+// It is needed for the 'applyLayoutAnimated' method in this demo.
+LayoutExecutor.ensure()
 
 /**
  * Runs the demo.
@@ -57,9 +54,7 @@ Class.ensure(LayoutExecutor)
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
-  const graph = new DefaultGraph()
+  const graph = new Graph()
   // set demo styles ...
   initDemoStyles(graph, { foldingEnabled: true })
   // ... and create a sample graph
@@ -73,7 +68,7 @@ async function run(): Promise<void> {
   graphComponent.inputMode = createEditorInputMode()
 
   // center the sample graph in the view
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   // create the structure view
   const structureView = createStructureView(graphComponent)
@@ -98,15 +93,15 @@ function createStructureView(graphComponent: GraphComponent): StructureView {
   const structureView = new StructureView('#structure-view', graphComponent.graph)
 
   // Zoom to the node when clicking on an element in the structure view
-  structureView.elementClickedCallback = (node): void => {
+  structureView.elementClickedCallback = async (node): Promise<void> => {
     const viewNode = graphComponent.graph.foldingView
       ? graphComponent.graph.foldingView.getViewItem(node)
       : node
     if (viewNode) {
       graphComponent.currentItem = viewNode
       graphComponent.selection.clear()
-      graphComponent.selection.setSelected(viewNode, true)
-      ICommand.ZOOM_TO_CURRENT_ITEM.execute(null, graphComponent)
+      graphComponent.selection.add(viewNode)
+      await graphComponent.zoomToAnimated(graphComponent.zoom, viewNode.layout.center)
     }
   }
 
@@ -145,17 +140,17 @@ function createGraph(graph: IGraph): void {
   graphBuilder.buildGraph()
 
   // apply initial layout
-  const layout = new HierarchicLayout()
+  const layout = new HierarchicalLayout()
   layout.minimumLayerDistance = 40
   graph.applyLayout(new StraightLineEdgeRouter(layout))
 }
 
 function createEditorInputMode(): GraphEditorInputMode {
-  const inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
+  return new GraphEditorInputMode({
+    navigationInputMode: {
+      autoGroupNodeAlignmentPolicy: 'top-right'
+    }
   })
-  inputMode.navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.TOP_RIGHT
-  return inputMode
 }
 
 /**

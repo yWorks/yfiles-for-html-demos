@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,36 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { PortStyleBase, Rect, SvgVisual } from 'yfiles'
-
-/**
- * Augment the SvgVisual type with the data used to cache the rendering information
- * @typedef {Object} Cache
- * @property {number} size
- * @property {string} color
- */
-
-/**
- * @typedef {TaggedSvgVisual.<SVGEllipseElement,Cache>} CustomPortStyleVisual
- */
-
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+import { PortStyleBase, Rect, SvgVisual } from '@yfiles/yfiles'
 /**
  * A basic port style that renders a circle.
  */
 export class CustomPortStyle extends PortStyleBase {
-  /**
-   * @param {number} [size=6]
-   */
+  size
   constructor(size = 6) {
     super()
     this.size = size
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!IPort} port
-   * @returns {!CustomPortStyleVisual}
-   */
   createVisual(context, port) {
     const ellipseElement = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     const { x, y } = port.location
@@ -69,25 +51,15 @@ export class CustomPortStyle extends PortStyleBase {
     ellipseElement.setAttribute('fill', color)
     ellipseElement.setAttribute('stroke', '#e6f8ff')
     ellipseElement.setAttribute('stroke-width', '1')
-
     const cache = { size: this.size, color }
-
     return SvgVisual.from(ellipseElement, cache)
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!CustomPortStyleVisual} oldVisual
-   * @param {!IPort} port
-   * @returns {!CustomPortStyleVisual}
-   */
   updateVisual(context, oldVisual, port) {
     const { x, y } = port.location
     // get the ellipse element that needs updating from the old visual
     const ellipseElement = oldVisual.svgElement
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
-
     // get the graph from the render context
     const graph = context.canvasComponent.graph
     const color = this.getColor(graph, port)
@@ -95,37 +67,26 @@ export class CustomPortStyle extends PortStyleBase {
       ellipseElement.setAttribute('fill', color)
       cache.color = color
     }
-
     if (cache.size !== this.size) {
       const radius = this.size * 0.5
       ellipseElement.setAttribute('rx', String(radius))
       ellipseElement.setAttribute('ry', String(radius))
       cache.size = this.size
     }
-
     // move the visualization to the port location
     ellipseElement.setAttribute('cx', String(x))
     ellipseElement.setAttribute('cy', String(y))
-
     return oldVisual
   }
-
   /**
    * Gets the port's color from the tag or calculates it from the number of connected edges.
-   * @param {!IGraph} graph
-   * @param {!IPort} port
-   * @returns {!string}
    */
   getColor(graph, port) {
     return port.tag?.color ?? this.calculateColorByDegree(graph, port)
   }
-
   /**
    * Calculates the node color based on the number of connected edges.
    * The color is blended between green (0 edges) and red (10+ edges).
-   * @param {!IGraph} graph
-   * @param {!IPort} port
-   * @returns {!string}
    */
   calculateColorByDegree(graph, port) {
     // get the number of edges connected to the port
@@ -134,12 +95,6 @@ export class CustomPortStyle extends PortStyleBase {
     const hue = (1 - ratio) * 100
     return `hsl(${hue}deg 100% 50%)`
   }
-
-  /**
-   * @param {!ICanvasContext} context
-   * @param {!IPort} port
-   * @returns {!Rect}
-   */
   getBounds(context, port) {
     const { x, y } = port.location
     const radius = this.size * 0.5

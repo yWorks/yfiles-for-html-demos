@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Neo4j Integration Demo
 
-# Neo4j Integration Demo
+<img src="../../../doc/demo-thumbnails/neo4j.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/toolkit/neo4j/).
 
 This demo shows how to load data from a Neo4j database and display it with yFiles for HTML.
 
@@ -32,7 +34,7 @@ After establishing a connection, a small set of data from the database will be d
 
 ## Details
 
-This demo uses the [Neo4j driver for JavaScript](https://github.com/neo4j/neo4j-javascript-driver) to connect to a Neo4j database and query it for data.
+This demo uses the [Neo4j driver for JavaScript](https://neo4j.com/docs/javascript-manual/current/) to connect to a Neo4j database and query it for data.
 
 The query results are then used by a [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) with a custom configuration to construct a graph from the data, while assigning different node styles to nodes with different labels.
 

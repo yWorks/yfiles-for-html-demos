@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 12 Custom Arrow - Tutorial: Edge Style Implementation
 
-# Custom arrow visualization
+<img src="../../../doc/demo-thumbnails/tutorial-style-implementation-edge-custom-arrow.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-edge/12-custom-arrow/).
 
 This step shows how to implement a visualization of a custom arrow that fits the "parallel line" edge style.
 
@@ -152,17 +154,16 @@ In `getBounds` we use the stored values to calculate the arrow’s bounds.
 
 ```
 getBounds(context: ICanvasContext): Rect {
-  return this.createArrowPath(this.distance)
-    .getBounds()
-    .getTransformed(
-      new Matrix(
-        -this.direction.x,
-        -this.direction.y,
-        this.direction.y,
-        -this.direction.x,
-        this.anchor.x,
-        this.anchor.y
-      )
-    )
+  const bounds = this.createArrowPath(this.distance).getBounds()
+  const matrix = new Matrix(
+    -this.direction.x,
+    -this.direction.y,
+    this.direction.y,
+    -this.direction.x,
+    this.anchor.x,
+    this.anchor.y
+  )
+  matrix.scale(this.length, this.length)
+  return matrix.calculateTransformedBounds(bounds)
 }
 ```

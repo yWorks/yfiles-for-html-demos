@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,4 +31,16 @@
   stroke: #e8cb87;
   stroke-width: 2px;
   stroke-linejoin: round;
+}
+
+.input-button path {
+  transition:
+    fill,
+    opacity 0.3s;
+  fill: #7ea3cc;
+  opacity: 0.7;
+}
+.input-button:hover path {
+  fill: #b3001b;
+  opacity: 1;
 }

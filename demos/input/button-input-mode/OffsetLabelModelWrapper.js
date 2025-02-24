@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  Class,
   FreeLabelModel,
   ILabel,
   ILabelModel,
@@ -39,8 +38,7 @@ import {
   Point,
   SimpleLabel,
   Size
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * An {@see ILabelModel} that moves the layout of a label provided by a wrapped label model
  * by a fixed offset.
@@ -54,44 +52,27 @@ import {
  * which correspond to ratio (0, 1).
  */
 export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
-  /** @type {OffsetLabelModelWrapper} */
-  static get INSTANCE() {
-    if (typeof OffsetLabelModelWrapper.$INSTANCE === 'undefined') {
-      OffsetLabelModelWrapper.$INSTANCE = new OffsetLabelModelWrapper()
-    }
-
-    return OffsetLabelModelWrapper.$INSTANCE
-  }
-
-  /** @type {OffsetLabelModelWrapper} */
-  static set INSTANCE(INSTANCE) {
-    OffsetLabelModelWrapper.$INSTANCE = INSTANCE
-  }
-
-  /**
-   * @returns {!ILabelModelParameter}
-   */
+  static INSTANCE = new OffsetLabelModelWrapper()
   createDefaultParameter() {
     return new OffsetLabelModelWrapperParameter(
       this,
-      FreeLabelModel.INSTANCE.createDefaultParameter(),
+      FreeLabelModel.INSTANCE.createAbsolute(Point.ORIGIN),
       Point.ORIGIN,
       Size.EMPTY,
       new Point(0, 1),
       new Point(0, 1)
     )
   }
-
   /**
    * Creates a parameter that describes a label layout provided by the wrapped layout
    * parameter moved by the offset.
-   * @param {!ILabelModelParameter} wrapped The parameter used to calculate the base layout.
-   * @param {!Point} offset The offset to move the label relative to its rotation.
-   * @param {!Size} wrappedSize The label size that shall be used when calculating the base layout.
-   * @param {!Point} wrappedRatio The ratio that describes the reference point on the wrapped label's layout
+   * @param wrapped The parameter used to calculate the base layout.
+   * @param offset The offset to move the label relative to its rotation.
+   * @param wrappedSize The label size that shall be used when calculating the base layout.
+   * @param wrappedRatio The ratio that describes the reference point on the wrapped label's layout
    * relative to its upper-left corner. A value of (0,0) describes the upper-left corner,
    * while (1,1) is the lower-right corner.
-   * @param {!Point} labelRatio The ratio that describes the reference point on the label's layout
+   * @param labelRatio The ratio that describes the reference point on the label's layout
    * relative to its upper-left corner. A value of (0,0) describes the upper-left corner,
    * while (1,1) is the lower-right corner.
    */
@@ -111,25 +92,10 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
       labelRatio
     )
   }
-
-  /**
-   * @param {!ILabel} label
-   * @param {!ILabelModelParameter} layoutParameter
-   * @returns {!ILookup}
-   */
-  getContext(label, layoutParameter) {
-    const offsetParameter = layoutParameter
-    return offsetParameter.wrappedParameter.model.getContext(
-      label,
-      offsetParameter.wrappedParameter
-    )
+  getContext(label) {
+    const offsetParameter = label.layoutParameter
+    return offsetParameter.wrappedParameter.model.getContext(label)
   }
-
-  /**
-   * @param {!ILabel} label
-   * @param {!ILabelModelParameter} layoutParameter
-   * @returns {!IOrientedRectangle}
-   */
   getGeometry(label, layoutParameter) {
     const offsetParameter = layoutParameter
     // temporarily set the wrappedSize to calculate the wrappedLayout
@@ -143,7 +109,6 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
     if (!offsetParameter.wrappedSize.isEmpty && label instanceof SimpleLabel) {
       label.preferredSize = labelSize
     }
-
     // calculate dx and dy considering the reference points and the offset but ignoring the rotation
     const unrotatedDx =
       offsetParameter.wrappedRatio.x * wrappedLayout.width +
@@ -153,11 +118,9 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
       -(1 - offsetParameter.wrappedRatio.y) * wrappedLayout.height +
       offsetParameter.offset.y +
       (1 - offsetParameter.labelRatio.y) * labelSize.height
-
     // consider the rotation; note that unrotatedDy is negated as the default upY is negative
     const dX = -unrotatedDx * wrappedLayout.upY - unrotatedDy * wrappedLayout.upX
     const dY = -unrotatedDy * wrappedLayout.upY + unrotatedDx * wrappedLayout.upX
-
     // use the anchor of wrappedLayout moved by dx/dy, the original labelSize and the common up vector
     return new OrientedRectangle(
       wrappedLayout.anchorX + dX,
@@ -168,17 +131,11 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
       wrappedLayout.upY
     )
   }
-
-  /**
-   * @template T
-   * @param {!Class.<T>} type
-   * @returns {?T}
-   */
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return null
   }
 }
-
 class OffsetLabelModelWrapperParameter extends BaseClass(ILabelModelParameter) {
   _model
   wrappedRatio
@@ -186,15 +143,6 @@ class OffsetLabelModelWrapperParameter extends BaseClass(ILabelModelParameter) {
   wrappedParameter
   offset
   wrappedSize
-
-  /**
-   * @param {!OffsetLabelModelWrapper} model
-   * @param {!ILabelModelParameter} wrappedParameter
-   * @param {!Point} offset
-   * @param {!Size} wrappedSize
-   * @param {!Point} wrappedRatio
-   * @param {!Point} labelRatio
-   */
   constructor(model, wrappedParameter, offset, wrappedSize, wrappedRatio, labelRatio) {
     super()
     this.wrappedRatio = wrappedRatio
@@ -204,26 +152,10 @@ class OffsetLabelModelWrapperParameter extends BaseClass(ILabelModelParameter) {
     this.offset = offset
     this.wrappedSize = wrappedSize
   }
-
-  /**
-   * @returns {*}
-   */
   clone() {
     return this
   }
-
-  /**
-   * @type {!ILabelModel}
-   */
   get model() {
     return this._model
-  }
-
-  /**
-   * @param {!ILabel} label
-   * @returns {boolean}
-   */
-  supports(label) {
-    return this.wrappedParameter.supports(label)
   }
 }

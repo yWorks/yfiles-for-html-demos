@@ -4,7 +4,7 @@
     "chainSubstructureStyle": "NONE",
     "starSubstructureStyle": "SEPARATED_RADIAL",
     "parallelSubstructureStyle": "RECTANGULAR",
-    "treeSubstructureStyle": "ORIENTED",
+    "treeSubstructureStyle": "IGNORE",
     "groupSubstructures": "NO_GROUPS",
     "useEdgeGrouping": true,
     "considerNodeTypes": true,

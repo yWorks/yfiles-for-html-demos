@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,29 +31,28 @@ import {
   GraphItemTypes,
   License,
   ScrollBarVisibility
-} from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+} from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
-  startAnimation,
   createSampleGraphIsVisible,
   enableGraphEditing,
   initializeTutorialDefaults,
-  IsVisibleEdgeStyleDescriptor
+  IsVisibleEdgeStyleRenderer,
+  startAnimation
 } from '../common'
 
-import { finishLoading } from 'demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { CustomEdgeStyle } from './CustomEdgeStyle'
 
 License.value = await fetchLicense()
 
 const graphComponent = new GraphComponent('#graphComponent')
 
-graphComponent.graphModelManager.edgeDescriptor =
-  new IsVisibleEdgeStyleDescriptor()
+graphComponent.graphModelManager.edgeRenderer = new IsVisibleEdgeStyleRenderer()
 
 initializeTutorialDefaults(graphComponent)
 graphComponent.horizontalScrollBarPolicy =
-  graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.NEVER
+  graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.HIDDEN
 
 graphComponent.graph.edgeDefaults.style = new CustomEdgeStyle()
 
@@ -62,10 +61,10 @@ createSampleGraphIsVisible(graphComponent.graph)
 const graphEditorInputMode = enableGraphEditing(graphComponent)
 graphEditorInputMode.selectableItems = GraphItemTypes.NONE
 
-graphComponent.updateContentRect()
-graphComponent.contentRect = graphComponent.contentRect.getEnlarged(10)
+graphComponent.updateContentBounds()
+graphComponent.contentBounds = graphComponent.contentBounds.getEnlarged(10)
 graphComponent.zoom =
-  graphComponent.viewport.height / graphComponent.contentRect.height
+  graphComponent.viewport.height / graphComponent.contentBounds.height
 
 startAnimation(graphComponent)
 finishLoading()

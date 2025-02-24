@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ICanvasContext,
   IHitTestable,
@@ -41,8 +42,7 @@ import {
   SvgVisual,
   SvgVisualGroup,
   Visual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * This node style decorator adds a circle with a native click listener representing a button.
  *
@@ -51,31 +51,27 @@ import {
  */
 export default class NodeStyleDecorator extends NodeStyleBase {
   baseStyle
-
   /**
    * Initializes a new instance of this class.
-   * @param {!INodeStyle} baseStyle The optional base style.
+   * @param baseStyle The optional base style.
    */
   constructor(baseStyle) {
     super()
     this.baseStyle = baseStyle || new ShapeNodeStyle()
   }
-
   /**
    * Creates a new visual as combination of the base node visualization and the decoration.
-   * @param {!IRenderContext} context The render context.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!SvgVisual} The created visual.
+   * @param context The render context.
+   * @param node The node to which this style instance is assigned.
+   * @returns The created visual.
    * @see {@link NodeStyleBase.createVisual}
    */
   createVisual(context, node) {
     const layout = node.layout.toRect()
-
     // create the base visualization
     const baseVisual = this.baseStyle.renderer
       .getVisualCreator(node, this.baseStyle)
       .createVisual(context)
-
     // create the decoration
     const button = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     button.setAttribute('cx', `${layout.center.x}`)
@@ -83,14 +79,14 @@ export default class NodeStyleDecorator extends NodeStyleBase {
     button.setAttribute('rx', '7')
     button.setAttribute('ry', '7')
     button.setAttribute('class', 'button')
-
     // register a native click listener on the SVG element
     button.addEventListener('click', showToast)
-    // the input mode should not handle any event on the the button where we registered a native click listener
-    button.addEventListener('mousedown', (e) => e.preventDefault())
-
+    // pointerdown causes the capturing of subsequent pointer events, thus we need to disable
+    // pointerdown on the current element such that the native click event is triggered furthermore
+    // this causes the input mode should to not handle any event on the button where we registered
+    // a native click listener
+    button.addEventListener('pointerdown', (e) => e.preventDefault())
     const decorationVisual = new SvgVisual(button)
-
     // add both to a group
     const group = new SvgVisualGroup()
     group.add(baseVisual)
@@ -99,28 +95,24 @@ export default class NodeStyleDecorator extends NodeStyleBase {
       cx: layout.center.x,
       cy: layout.center.y
     }
-
     return group
   }
-
   /**
    * Updates the provided visual.
-   * @param {!IRenderContext} context The render context.
-   * @param {!Visual} oldVisual The visual that has been created in the call to
+   * @param context The render context.
+   * @param oldVisual The visual that has been created in the call to
    *        {@link NodeStyleBase.createVisual}.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!Visual} The updated visual.
+   * @param node The node to which this style instance is assigned.
+   * @returns The updated visual.
    * @see {@link NodeStyleBase.updateVisual}
    */
   updateVisual(context, oldVisual, node) {
     const layout = node.layout.toRect()
-
     // check whether the elements are as expected
     const children = oldVisual.children
     if (children.size !== 2) {
       return this.createVisual(context, node)
     }
-
     // update the base visual
     const baseVisual = this.baseStyle.renderer
       .getVisualCreator(node, this.baseStyle)
@@ -129,7 +121,6 @@ export default class NodeStyleDecorator extends NodeStyleBase {
     if (baseVisual !== children.get(0)) {
       children.set(0, baseVisual)
     }
-
     // update the decoration visual
     const cache = oldVisual['render-data-cache']
     const center = layout.center
@@ -138,23 +129,19 @@ export default class NodeStyleDecorator extends NodeStyleBase {
       const button = decorationVisual.svgElement
       button.setAttribute('cx', `${center.x}`)
       button.setAttribute('cy', `${center.y}`)
-
-      // store the button location in the render data cache
       oldVisual['render-data-cache'] = {
         cx: center.x,
         cy: center.y
       }
     }
-
     return oldVisual
   }
-
   /**
    * Returns whether at least one of the base visualization and the decoration is visible.
-   * @param {!ICanvasContext} context The canvas context.
-   * @param {!Rect} rectangle The clipping rectangle.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {boolean} `true` if either the base visualization or the decoration is visible.
+   * @param context The canvas context.
+   * @param rectangle The clipping rectangle.
+   * @param node The node to which this style instance is assigned.
+   * @returns `true` if either the base visualization or the decoration is visible.
    * @see {@link NodeStyleBase.isVisible}
    */
   isVisible(context, rectangle, node) {
@@ -162,25 +149,23 @@ export default class NodeStyleDecorator extends NodeStyleBase {
       .getVisibilityTestable(node, this.baseStyle)
       .isVisible(context, rectangle)
   }
-
   /**
    * Returns whether the base visualization is hit.
-   * @param {!IInputModeContext} context The context.
-   * @param {!Point} location The point to test.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {boolean} `true` if the base visualization is hit.
+   * @param context The context.
+   * @param location The point to test.
+   * @param node The node to which this style instance is assigned.
+   * @returns `true` if the base visualization is hit.
    * @see {@link NodeStyleBase.isHit}
    */
   isHit(context, location, node) {
     return this.baseStyle.renderer.getHitTestable(node, this.baseStyle).isHit(context, location)
   }
-
   /**
    * Returns whether the base visualization is in the box, we don't want the decoration to be marquee selectable.
-   * @param {!IInputModeContext} context The input mode context.
-   * @param {!Rect} rectangle The marquee selection box.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {boolean} `true` if the base visualization is hit.
+   * @param context The input mode context.
+   * @param rectangle The marquee selection box.
+   * @param node The node to which this style instance is assigned.
+   * @returns `true` if the base visualization is hit.
    * @see {@link NodeStyleBase.isInBox}
    */
   isInBox(context, rectangle, node) {
@@ -188,14 +173,13 @@ export default class NodeStyleDecorator extends NodeStyleBase {
       .getMarqueeTestable(node, this.baseStyle)
       .isInBox(context, rectangle)
   }
-
   /**
    * Gets the intersection of a line with the visual representation of the node.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @param {!Point} inner The coordinates of a point lying
+   * @param node The node to which this style instance is assigned.
+   * @param inner The coordinates of a point lying
    *   {@link NodeStyleBase.isInside inside} the shape.
-   * @param {!Point} outer The coordinates of a point lying outside the shape.
-   * @returns {?Point} The intersection point if one has been found or `null`, otherwise.
+   * @param outer The coordinates of a point lying outside the shape.
+   * @returns The intersection point if one has been found or `null`, otherwise.
    * @see {@link NodeStyleBase.getIntersection}
    */
   getIntersection(node, inner, outer) {
@@ -203,20 +187,17 @@ export default class NodeStyleDecorator extends NodeStyleBase {
       .getShapeGeometry(node, this.baseStyle)
       .getIntersection(inner, outer)
   }
-
   /**
    * Returns whether the provided point is inside of the base visualization.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @param {!Point} location The point to test.
-   * @returns {boolean} `true` if the provided location is inside of the base visualization.
+   * @param node The node to which this style instance is assigned.
+   * @param location The point to test.
+   * @returns `true` if the provided location is inside of the base visualization.
    * @see {@link NodeStyleBase.isInside}
    */
   isInside(node, location) {
     return this.baseStyle.renderer.getShapeGeometry(node, this.baseStyle).isInside(location)
   }
 }
-
-/** @type {*} */
 let hideTimer = null
 function showToast() {
   // Shows a toast to indicate the successful click, and hides it again.

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,19 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @typedef {('demo-orange'|'demo-blue'|'demo-red'|'demo-green'|'demo-purple'|'demo-lightblue'|'demo-palette-11'|'demo-palette-12'|'demo-palette-13'|'demo-palette-14'|'demo-palette-15'|'demo-palette-21'|'demo-palette-22'|'demo-palette-23'|'demo-palette-24'|'demo-palette-25'|'demo-palette-31'|'demo-palette-32'|'demo-palette-33'|'demo-palette-34'|'demo-palette-35'|'demo-palette-41'|'demo-palette-42'|'demo-palette-43'|'demo-palette-44'|'demo-palette-45'|'demo-palette-46'|'demo-palette-47'|'demo-palette-48'|'demo-palette-401'|'demo-palette-402'|'demo-palette-403'|'demo-palette-51'|'demo-palette-52'|'demo-palette-53'|'demo-palette-54'|'demo-palette-55'|'demo-palette-56'|'demo-palette-57'|'demo-palette-58'|'demo-palette-59'|'demo-palette-510'|'demo-palette-511'|'demo-palette-61'|'demo-palette-62'|'demo-palette-63'|'demo-palette-64'|'demo-palette-65'|'demo-palette-71'|'demo-palette-72'|'demo-palette-73'|'demo-palette-74'|'demo-palette-75'|'demo-palette-81'|'demo-palette-82'|'demo-palette-83'|'demo-palette-84'|'demo-palette-91'|'demo-palette-92'|'demo-palette-93'|'demo-palette-94'|'demo-palette-95'|'demo-palette-96')} ColorSetName
- */
-
-/**
- * @typedef {Object} ColorSet
- * @property {string} fill
- * @property {string} stroke
- * @property {string} nodeLabelFill
- * @property {string} edgeLabelFill
- * @property {string} text
- */
-
 export const colorSets = {
   'demo-orange': {
     fill: '#ff6c00',

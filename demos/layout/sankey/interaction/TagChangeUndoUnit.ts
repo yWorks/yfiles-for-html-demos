@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { type IModelItem, UndoUnitBase } from 'yfiles'
+import { BaseClass, type IModelItem, IUndoUnit } from '@yfiles/yfiles'
 
 /**
  * This class provides undo/redo for an operation for changing tag data.
  * Since information about node/edge color and edge thickness is stored in the item's tag, it is
  * important to undo these changes along with the changes in style and layout.
  */
-export class TagChangeUndoUnit extends UndoUnitBase {
+export class TagChangeUndoUnit extends BaseClass(IUndoUnit) {
+  private readonly _undoName: string
+  private readonly _redoName: string
+
   /**
    * Creates a new instance of TagChangeUndoUnit.
    * @param undoName Name of the undo operation.
@@ -51,7 +54,17 @@ export class TagChangeUndoUnit extends UndoUnitBase {
     private readonly item: IModelItem,
     private readonly undoRedoCallback?: () => void | null
   ) {
-    super(undoName, redoName)
+    super()
+    this._undoName = undoName
+    this._redoName = redoName
+  }
+
+  get undoName(): string {
+    return this._undoName
+  }
+
+  get redoName(): string {
+    return this._redoName
   }
 
   /**
@@ -68,5 +81,15 @@ export class TagChangeUndoUnit extends UndoUnitBase {
   redo(): void {
     this.item.tag = this.newTag
     this.undoRedoCallback?.()
+  }
+
+  dispose(): void {}
+
+  tryMergeUnit(_unit: IUndoUnit): boolean {
+    return false
+  }
+
+  tryReplaceUnit(_unit: IUndoUnit): boolean {
+    return false
   }
 }

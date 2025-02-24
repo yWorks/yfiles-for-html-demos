@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,8 +28,8 @@
  ***************************************************************************/
 // @ts-ignore - We have no proper types for preact, here
 import { type FunctionalComponent, html, render, useState } from './preact-loader'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { License } from 'yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { License } from '@yfiles/yfiles'
 import ItemList from './components/items/ItemList'
 import PreactGraphComponent from './components/graphComponent/PreactGraphComponent'
 
@@ -61,6 +61,7 @@ const App: FunctionalComponent = () => {
     { from: 3, to: 4 },
     { from: 3, to: 5 }
   ])
+  const [layoutRunning, setLayoutRunning] = useState<boolean>(false)
 
   /**
    * Toggle the state property of a specific item.
@@ -99,12 +100,17 @@ const App: FunctionalComponent = () => {
   }
 
   return html`
-    <${PreactGraphComponent} itemData="${items}" connectionData="${connections}" />
+    <${PreactGraphComponent}
+      itemData="${items}"
+      connectionData="${connections}"
+      setLayoutRunning="${setLayoutRunning}"
+    />
     <${ItemList}
       itemData="${items}"
       toggleState="${toggleItemState}"
       removeDataItem="${removeDataItem}"
       addDataItem="${addDataItem}"
+      disabled="${layoutRunning}"
     />
   `
 }

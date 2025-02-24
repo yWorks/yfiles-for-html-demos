@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,70 +33,69 @@ import {
   IOrthogonalEdgeHelper,
   IShapeGeometry,
   OrthogonalEdgeHelper
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * An {@link OrthogonalEdgeHelper} that enables moving the
  * source/target of the edge to another port, removes bends inside the bounds
  * of the node and relocates the port to the last bend inside the node.
  */
 export default class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
+  constructor(edge) {
+    super(edge)
+  }
   /**
    * Enables moving the source and target of the edge to other ports.
-   * @param {!IInputModeContext} inputModeContext The input mode context in which the segment is edited
-   * @param {!IEdge} edge The edge to inspect
-   * @param {boolean} sourceEnd `true` if the source end of the edge is queried, `false` for
+   * @param _inputModeContext The input mode context in which the segment is edited
+   * @param _sourceEnd `true` if the source end of the edge is queried, `false` for
    * the target end
    * @see Overrides {@link OrthogonalEdgeHelper.shouldMoveEndImplicitly}
    * @see Specified by {@link IOrthogonalEdgeHelper.shouldMoveEndImplicitly}.
-   * @returns {boolean}
    */
-  shouldMoveEndImplicitly(inputModeContext, edge, sourceEnd) {
+  shouldMoveEndImplicitly(_inputModeContext, _sourceEnd) {
     return true
   }
-
   /**
    * Removes bends inside of nodes, in addition to the clean-ups provided by
    * the base implementation.
-   * @param {!IInputModeContext} inputModeContext The input mode context which edited the edge
-   * @param {!IGraph} graph The graph to use for modifying the edge instance
-   * @param {!IEdge} edge The edge to clean up the path
+   * @param inputModeContext The input mode context which edited the edge
+   * @param graph The graph to use for modifying the edge instance
    * @see Overrides {@link OrthogonalEdgeHelper.cleanUpEdge}
    * @see Specified by {@link IOrthogonalEdgeHelper.cleanUpEdge}.
    */
-  cleanUpEdge(inputModeContext, graph, edge) {
-    super.cleanUpEdge(inputModeContext, graph, edge)
-
+  cleanUpEdge(inputModeContext, graph) {
+    super.cleanUpEdge(inputModeContext, graph)
     // now check bends which lie inside the node bounds and remove them...
-    const sourceNode = edge.sourceNode
+    const sourceNode = this.edge.sourceNode
     if (sourceNode) {
-      const sourceContainsTest = sourceNode.lookup(IShapeGeometry.$class)
+      const sourceContainsTest = sourceNode.lookup(IShapeGeometry)
       while (
-        edge.bends.size > 0 &&
-        sourceContainsTest.isInside(edge.bends.first().location.toPoint())
+        this.edge.bends.size > 0 &&
+        sourceContainsTest.isInside(this.edge.bends.first().location.toPoint())
       ) {
-        const bendLocation = edge.bends.first().location.toPoint()
-        // we try to move to port to the bend location so that the edge shape stays the same
-        graph.setPortLocation(edge.sourcePort, bendLocation)
-        if (!edge.sourcePort.location.toPoint().equals(bendLocation)) {
+        const firstBend = this.edge.bends.first()
+        const bendLocation = firstBend.location.toPoint()
+        // we try to move to port to the bend location so that the this.edge shape stays the same
+        graph.setPortLocation(this.edge.sourcePort, bendLocation)
+        if (!this.edge.sourcePort.location.toPoint().equals(bendLocation)) {
           break // does not work - bail out
         }
-        graph.remove(edge.bends.first())
+        graph.remove(firstBend)
       }
     }
-
-    const targetNode = edge.targetNode
+    const targetNode = this.edge.targetNode
     if (targetNode) {
-      const targetContainsTest = targetNode.lookup(IShapeGeometry.$class)
+      const targetContainsTest = targetNode.lookup(IShapeGeometry)
       while (
-        edge.bends.size > 0 &&
-        targetContainsTest.isInside(edge.bends.get(edge.bends.size - 1).location.toPoint())
+        this.edge.bends.size > 0 &&
+        targetContainsTest.isInside(
+          this.edge.bends.get(this.edge.bends.size - 1).location.toPoint()
+        )
       ) {
-        const lastBend = edge.bends.get(edge.bends.size - 1)
+        const lastBend = this.edge.bends.get(this.edge.bends.size - 1)
         const bendLocation = lastBend.location.toPoint()
         // we try to move to port to the bend location so that the edge shape stays the same
-        graph.setPortLocation(edge.targetPort, bendLocation)
-        if (!edge.targetPort.location.toPoint().equals(bendLocation)) {
+        graph.setPortLocation(this.edge.targetPort, bendLocation)
+        if (!this.edge.targetPort.location.toPoint().equals(bendLocation)) {
           break // does not work - bail out
         }
         graph.remove(lastBend)

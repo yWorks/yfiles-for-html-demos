@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,36 +28,37 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DefaultLabelStyle,
   EventArgs,
   EventRecognizers,
   GraphComponent,
   GraphEditorInputMode,
+  GraphItemTypes,
   GroupNodeStyle,
+  type IEnumerable,
   IGraph,
+  IGroupPaddingProvider,
   IHitTestable,
+  IHitTester,
   IInputModeContext,
   INode,
-  INodeHitTester,
-  INodeInsetsProvider,
   Insets,
-  InteriorLabelModel,
-  KeyEventRecognizers,
+  InteriorNodeLabelModel,
+  LabelStyle,
   License,
   MoveInputMode,
   Point,
   Rect,
   ShowPortCandidates,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, colorSets, createDemoEdgeStyle } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { colorSets, createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
-let moveUnselectedInputMode: MoveInputMode
+let moveUnselectedItemsInputMode: MoveInputMode
 
 const moveModeSelect = document.querySelector<HTMLSelectElement>('#move-modes')!
 const moveEnabledButton = document.querySelector<HTMLInputElement>('#toggle-move-enabled')!
@@ -84,25 +85,23 @@ async function run(): Promise<void> {
  */
 function initializeGraph(): void {
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   const graph = graphComponent.graph
 
   // set the default node style
   graph.nodeDefaults.style = new GroupNodeStyle({
     tabFill: colorSets['demo-orange'].fill,
-    contentAreaInsets: Insets.EMPTY
+    contentAreaPadding: Insets.EMPTY
   })
   graph.nodeDefaults.size = new Size(60, 80)
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.NORTH
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({ textFill: 'white' })
+  graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.TOP
+  graph.nodeDefaults.labels.style = new LabelStyle({ textFill: 'white' })
 
   graph.edgeDefaults.style = createDemoEdgeStyle()
 
   // Create a sample node
   graph.addLabel(graph.createNode(), 'Node')
 
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
 
 /**
@@ -113,7 +112,7 @@ function initializeInputModes(): void {
 
   // Always add a label to the newly created nodes
   graphEditorInputMode.nodeCreator = (
-    context: IInputModeContext,
+    _context: IInputModeContext,
     graph: IGraph,
     location: Point
   ): INode => {
@@ -123,17 +122,15 @@ function initializeInputModes(): void {
   }
 
   // Enable the MoveUnselectedInputMode
-  moveUnselectedInputMode = graphEditorInputMode.moveUnselectedInputMode
-  moveUnselectedInputMode.enabled = true
+  moveUnselectedItemsInputMode = graphEditorInputMode.moveUnselectedItemsInputMode
+  moveUnselectedItemsInputMode.enabled = true
   // The recognizers should behave differently, depending on what mode is selected in the demo
-  moveUnselectedInputMode.pressedRecognizer = EventRecognizers.createAndRecognizer(
-    moveUnselectedInputMode.pressedRecognizer,
-    isRecognized
-  )
-  moveUnselectedInputMode.hoverRecognizer = EventRecognizers.createAndRecognizer(
-    moveUnselectedInputMode.hoverRecognizer,
-    isRecognized
-  )
+  const originalBeginRecognizer = moveUnselectedItemsInputMode.beginRecognizer
+  moveUnselectedItemsInputMode.beginRecognizer = (evt, eventSource) =>
+    originalBeginRecognizer(evt, eventSource) && isRecognized(evt, eventSource)
+  const originalHoverRecognizer = moveUnselectedItemsInputMode.hoverRecognizer
+  moveUnselectedItemsInputMode.hoverRecognizer = (evt, eventSource) =>
+    originalHoverRecognizer(evt, eventSource) && isRecognized(evt, eventSource)
 
   graphComponent.inputMode = graphEditorInputMode
 }
@@ -144,21 +141,29 @@ function initializeInputModes(): void {
  */
 function onMoveModeChanged(): void {
   const selectedIndex = moveModeSelect.selectedIndex
+  let geim = graphComponent.inputMode as GraphEditorInputMode
   if (selectedIndex === 2) {
     // mode 2 (only top region): set a custom hit-testable which detects hits only at the top of
     // the nodes
-    moveUnselectedInputMode.hitTestable = new TopInsetsHitTestable(
-      moveUnselectedInputMode.hitTestable,
-      graphComponent.inputMode as GraphEditorInputMode
+    moveUnselectedItemsInputMode.hitTestable = new TopPaddingHitTestable(
+      moveUnselectedItemsInputMode.hitTestable,
+      geim
     )
-  } else if (moveUnselectedInputMode.hitTestable instanceof TopInsetsHitTestable) {
-    // all other modes: if a TopInsetsHitTestable is the current hit-testable, restore the original
+  } else if (moveUnselectedItemsInputMode.hitTestable instanceof TopPaddingHitTestable) {
+    // all other modes: if a TopPaddingHitTestable is the current hit-testable, restore the original
     // hit testable
-    moveUnselectedInputMode.hitTestable = moveUnselectedInputMode.hitTestable.original
+    moveUnselectedItemsInputMode.hitTestable = moveUnselectedItemsInputMode.hitTestable.original
+  }
+  // mode 1 (Shift Not Pressed): disable directional constraints (which is bound to Shift too)
+  if (selectedIndex === 1) {
+    geim.createEdgeInputMode.directionalConstraintRecognizer = EventRecognizers.NEVER
+  } else {
+    geim.createEdgeInputMode.directionalConstraintRecognizer = EventRecognizers.SHIFT_IS_DOWN
   }
   const showMoveEnabledButton = selectedIndex === 3
   moveEnabledButton.style.display = showMoveEnabledButton ? 'inline-block' : 'none'
   moveEnabledLabel.style.display = showMoveEnabledButton ? 'inline-block' : 'none'
+  onEdgeCreationModeChanged()
 }
 
 /**
@@ -169,14 +174,17 @@ function onEdgeCreationModeChanged(): void {
   const selectedIndex = edgeCreationModeSelect.selectedIndex
   const geim = graphComponent.inputMode as GraphEditorInputMode
   if (selectedIndex === 0) {
-    geim.moveUnselectedInputMode.priority = 41
-    geim.moveInputMode.priority = 40
+    geim.moveUnselectedItemsInputMode.priority = 41
+    geim.moveSelectedItemsInputMode.priority = 40
     geim.createEdgeInputMode.startOverCandidateOnly = false
-    geim.createEdgeInputMode.showPortCandidates = ShowPortCandidates.TARGET
   } else if (selectedIndex === 1) {
-    geim.moveUnselectedInputMode.priority = 47
-    geim.moveInputMode.priority = 46
+    geim.moveUnselectedItemsInputMode.priority = 47
+    geim.moveSelectedItemsInputMode.priority = 46
     geim.createEdgeInputMode.startOverCandidateOnly = true
+  }
+  if (selectedIndex === 0 || moveModeSelect.selectedIndex === 0) {
+    geim.createEdgeInputMode.showPortCandidates = ShowPortCandidates.END
+  } else {
     geim.createEdgeInputMode.showPortCandidates = ShowPortCandidates.ALL
   }
 }
@@ -186,7 +194,7 @@ function onEdgeCreationModeChanged(): void {
  *
  * Has to return true if the move input mode is allowed to move a node.
  */
-function isRecognized(source: any, args: EventArgs): boolean {
+function isRecognized(evt: EventArgs, source: any): boolean {
   // return the value according to the Mode combo box
   switch (moveModeSelect.selectedIndex) {
     case 0: // always
@@ -194,7 +202,7 @@ function isRecognized(source: any, args: EventArgs): boolean {
       // the same as only enabling the MoveUnselectedInputMode without changing the recognizers
       return true
     case 1: // shift is not pressed
-      return !KeyEventRecognizers.SHIFT_IS_DOWN(source, args)
+      return !EventRecognizers.SHIFT_IS_DOWN(evt, source)
     case 3: // if enabled
       return moveEnabledButton.checked
     default:
@@ -210,20 +218,20 @@ function initializeUI(): void {
   edgeCreationModeSelect.addEventListener('change', onEdgeCreationModeChanged)
 
   classicModeButton.addEventListener('click', () => {
-    const mode = (graphComponent.inputMode as GraphEditorInputMode).moveInputMode
+    const mode = (graphComponent.inputMode as GraphEditorInputMode).moveSelectedItemsInputMode
     mode.enabled = !mode.enabled
   })
 }
 
 /**
- * An IHitTestable implementation which detects hits only on top insets of a node.
+ * An IHitTestable implementation which detects hits only on top padding of a node.
  *
  * This instance keeps a reference to the original hit testable,
  * so the original behavior can be restored conveniently.
  */
-class TopInsetsHitTestable extends BaseClass<IHitTestable>(IHitTestable) implements IHitTestable {
+class TopPaddingHitTestable extends BaseClass(IHitTestable) {
   /**
-   * Creates a new instance of {@link TopInsetsHitTestable}.
+   * Creates a new instance of {@link TopPaddingHitTestable}.
    */
   constructor(
     original: IHitTestable,
@@ -241,27 +249,30 @@ class TopInsetsHitTestable extends BaseClass<IHitTestable>(IHitTestable) impleme
   /**
    * Test whether the given location is a valid hit.
    *
-   * The hit is considered as valid if the location lies inside a node's top insets.
+   * The hit is considered as valid if the location lies inside a node's top padding.
    * @param context - The current input mode context.
    * @param location - The location to test.
    */
   isHit(context: IInputModeContext, location: Point): boolean {
-    // get the current hit tester from the input mode context
-    const inputModeContext = this.inputMode.inputModeContext!
-    const hitTester = inputModeContext.lookup(INodeHitTester.$class)
-    if (!hitTester) {
-      return false
-    }
     // get an enumerator over all elements at the given location
-    const hits = hitTester.enumerateHits(inputModeContext, location)
-    return hits.some((node) => {
-      // determine whether the given location lies inside the top insets
-      const insets = node.lookup(INodeInsetsProvider.$class)?.getInsets(node)
-      const layout = node.layout
-      return (
-        insets != null && new Rect(layout.x, layout.y, layout.width, insets.top).contains(location)
-      )
-    })
+    const enumerator = context.lookup(IHitTester)
+    if (enumerator != null) {
+      const hits = enumerator.enumerateHits(
+        context,
+        location,
+        GraphItemTypes.NODE
+      ) as IEnumerable<INode>
+      return hits.some((node) => {
+        // determine whether the given location lies inside the top padding
+        const padding = node.lookup(IGroupPaddingProvider)?.getPadding()
+        return (
+          padding != null &&
+          new Rect(node.layout.x, node.layout.y, node.layout.width, padding.top).contains(location)
+        )
+      })
+    }
+    // no hits found: return false
+    return false
   }
 }
 

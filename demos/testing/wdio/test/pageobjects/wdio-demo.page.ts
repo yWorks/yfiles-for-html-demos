@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import Page from './page.js'
-import type { CanvasComponent, GraphComponent } from 'yfiles'
+import type { CanvasComponent, GraphComponent } from '@yfiles/yfiles'
 
 // provide types for the global yFiles object
 declare const yfiles: {
@@ -58,8 +58,8 @@ class WdioDemoPage extends Page {
     return browser.execute((location) => {
       const graphComponent = yfiles.CanvasComponent.getComponent(
         document.getElementById('graphComponent')
-      )
-      const worldLocation = graphComponent.toWorldFromPage(location)
+      ) as GraphComponent
+      const worldLocation = graphComponent.pageToWorldCoordinates(location)
       return graphComponent.graph.nodes.filter((node) => node.layout.contains(worldLocation)).size
     }, location)
   }
@@ -69,7 +69,7 @@ class WdioDemoPage extends Page {
       const graphComponent = yfiles.CanvasComponent.getComponent(
         document.getElementById('graphComponent')
       ) as GraphComponent
-      const worldLocation = graphComponent.toWorldFromPage(location)
+      const worldLocation = graphComponent.pageToWorldCoordinates(location)
 
       return graphComponent.graph.bends.filter((bend) =>
         worldLocation.equalsEps(bend.location.toPoint(), 2)
@@ -100,7 +100,7 @@ class WdioDemoPage extends Page {
   }
 
   public open() {
-    return super.open('/demos-ts/testing/wdio/index.html')
+    return super.open('testing/wdio/index.html')
   }
 }
 

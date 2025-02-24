@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Tree of Life Demo
 
-# Tree of Life Demo
+<img src="../../../doc/demo-thumbnails/tree-of-life.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/showcase/tree-of-life/).
 
 This demo shows an interactive radial dendrogram visualization for the so-called _Tree of Life_.
 
@@ -19,7 +21,7 @@ In biology, this is a tree structure used to describe the relationships (i.e., a
 
 The dataset in this demo is not complete, and demonstrates only a portion of the over 2.3 million species that have lived on Earth.
 
-For better interaction and rendering performance, WebGL2 is used for the rendering of the graph elements, if this is supported by the browser. Otherwise, the graph elements are rendered using SVG elements.
+For better interaction and rendering performance, WebGL is used for the rendering of the graph elements, if this is supported by the browser. Otherwise, the graph elements are rendered using SVG elements.
 
 ## Things to try
 

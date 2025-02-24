@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Critical Path Analysis (CPA) Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -44,7 +44,6 @@
         stroke: #f26419;
       }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
 
   <body>
@@ -127,7 +126,7 @@
           that represents its slack. Afterwards, we calculate the shortest path between the
           first/last ranked nodes while taking into consideration the slack values of each edge,
           i.e. the paths with higher slack are longer. At the end, we apply a
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a>
           such that nodes are placed in layers based on their ranking, while the edges that belong
           to the critical path gain priority so that the corresponding nodes incident to them are
           horizontally-aligned.

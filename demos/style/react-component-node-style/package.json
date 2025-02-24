@@ -1,5 +1,5 @@
 {
-  "name": "react-component-node-style-demo-for-yfiles-for-html",
+  "name": "@yfiles/react-component-node-style-demo-for-yfiles-for-html",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -9,20 +9,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.11.16",
-    "@mui/material": "^5.13.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz"
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^5.16.14",
+    "@mui/material": "^5.16.14",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.0.1",
     "@yworks/optimizer": "^1.8.1",
-    "typescript": "~5.3.2",
-    "vite": "~5.0.4"
+    "typescript": "~5.7.3",
+    "vite": "~6.1.0"
   }
 }

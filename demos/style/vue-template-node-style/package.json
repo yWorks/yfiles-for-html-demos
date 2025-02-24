@@ -1,5 +1,5 @@
 {
-  "name": "vue-template-node-style-demo",
+  "name": "@yfiles/vue-template-node-style-demo",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -11,10 +11,10 @@
   "dependencies": {
     "vue": "^3.3.4",
     "vuetify": "^3.3.5",
-    "demo-utils": "../../utils",
-    "demo-resources": "../../resources",
-    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz",
-    "codemirror": "5.65.16"
+    "@yfiles/demo-resources": "../../resources",
+    "@yfiles/demo-utils": "../../utils",
+    "codemirror": "5.65.16",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
   },
   "devDependencies": {
     "@tsconfig/node18": "^2.0.1",

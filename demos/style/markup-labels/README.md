@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Markup Labels - Application Features
 
-# Markup Labels
+<img src="../../../doc/demo-thumbnails/markup-labels.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/style/markup-labels/).
 
 This demo shows how to create labels with rich text features using [MarkupLabelStyle](https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle).
 
@@ -21,6 +23,7 @@ Since the [MarkupLabelStyle](https://docs.yworks.com/yfileshtml/#/api/MarkupLabe
 
 - Press the F2 key while an element or connection is selected.
 - Insert HTML-style markup text into the editor, i.e. `<strong>Hello World</strong>`
+- Use Shift + Enter to enter a new line and Enter to apply the changes.
 
 #### Supported Markup
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,11 +30,10 @@ import {
   ClearAreaLayout,
   ClearAreaLayoutData,
   ClearAreaStrategy,
-  ComponentAssignmentStrategy,
   CompositeLayoutData,
   FilteredGraphWrapper,
-  GivenCoordinatesStage,
-  GivenCoordinatesStageData,
+  GivenCoordinatesLayout,
+  GivenCoordinatesLayoutData,
   GraphComponent,
   IEdge,
   IEnumerable,
@@ -46,7 +45,7 @@ import {
   List,
   Point,
   Rect
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Performs layout and animation during the drag and drop operation.
@@ -70,7 +69,7 @@ export class ClearAreaLayoutHelper {
   /**
    * The original layout before the drag and drop operation has been started.
    */
-  private resetToOriginalGraphStageData!: GivenCoordinatesStageData
+  private resetToOriginalGraphStageData!: GivenCoordinatesLayoutData
 
   /**
    * The location of the current drag.
@@ -143,10 +142,10 @@ export class ClearAreaLayoutHelper {
   }
 
   /**
-   * Creates a {@link GivenCoordinatesStageData} that store the layout of nodes and edges.
+   * Creates a {@link GivenCoordinatesLayoutData} that store the layout of nodes and edges.
    */
-  private createGivenCoordinateStageData(): GivenCoordinatesStageData {
-    const givenCoordinatesStageData = new GivenCoordinatesStageData()
+  private createGivenCoordinateStageData(): GivenCoordinatesLayoutData {
+    const givenCoordinatesStageData = new GivenCoordinatesLayoutData()
 
     // store the initial coordinates and sizes of all nodes and bends not related to the current component
     this.graph.nodes
@@ -158,7 +157,7 @@ export class ClearAreaLayoutHelper {
     this.graph.edges
       .filter(
         (edge) =>
-          !this.component.includes(edge.sourceNode!) || !this.component.includes(edge.targetNode!)
+          !this.component.includes(edge.sourceNode) || !this.component.includes(edge.targetNode)
       )
       .forEach((edge) => {
         givenCoordinatesStageData.edgePaths.mapper.set(edge, this.getEdgePath(edge))
@@ -171,11 +170,11 @@ export class ClearAreaLayoutHelper {
    */
   private getEdgePath(edge: IEdge): List<Point> {
     const points = new List<Point>()
-    points.add(edge.sourcePort!.location.toPoint())
+    points.add(edge.sourcePort.location.toPoint())
     edge.bends.forEach((bend) => {
       points.add(bend.location.toPoint())
     })
-    points.add(edge.targetPort!.location.toPoint())
+    points.add(edge.targetPort.location.toPoint())
     return points
   }
 
@@ -187,18 +186,18 @@ export class ClearAreaLayoutHelper {
    */
   private createDraggingLayoutExecutor(): LayoutExecutor {
     const clearAreaLayout = new ClearAreaLayout({
-      componentAssignmentStrategy: ComponentAssignmentStrategy.CUSTOMIZED,
       clearAreaStrategy: ClearAreaStrategy.PRESERVE_SHAPES
     })
 
     clearAreaLayout.configureAreaOutline(this.component, 10)
-    const layout = new GivenCoordinatesStage(clearAreaLayout)
+    const layout = new GivenCoordinatesLayout(clearAreaLayout)
     this.clearAreaLayout = clearAreaLayout
 
     const layoutData = new CompositeLayoutData(
       this.resetToOriginalGraphStageData,
       new ClearAreaLayoutData({
-        componentIds: (node: INode): void => (this.keepComponents ? node.tag.component : null)
+        componentIds: (node: INode): number | null =>
+          this.keepComponents ? node.tag.component : null
       })
     )
 
@@ -211,7 +210,8 @@ export class ClearAreaLayoutHelper {
       ),
       layout: layout,
       layoutData: layoutData,
-      duration: '150ms'
+      animationDuration: '150ms',
+      animateViewport: false
     })
   }
 
@@ -223,9 +223,9 @@ export class ClearAreaLayoutHelper {
   private createCanceledLayoutExecutor(): LayoutExecutor {
     return new LayoutExecutor({
       graphComponent: this.graphComponent,
-      layout: new GivenCoordinatesStage(),
+      layout: new GivenCoordinatesLayout(),
       layoutData: this.resetToOriginalGraphStageData,
-      duration: '150ms'
+      animationDuration: '150ms'
     })
   }
 
@@ -235,9 +235,8 @@ export class ClearAreaLayoutHelper {
    * for the component that has been dropped.
    */
   private createFinishedLayoutExecutor(): LayoutExecutor {
-    const layout = new GivenCoordinatesStage(
+    const layout = new GivenCoordinatesLayout(
       new ClearAreaLayout({
-        componentAssignmentStrategy: ComponentAssignmentStrategy.CUSTOMIZED,
         clearAreaStrategy: ClearAreaStrategy.PRESERVE_SHAPES
       })
     )
@@ -246,7 +245,8 @@ export class ClearAreaLayoutHelper {
     layoutData.items.add(
       new ClearAreaLayoutData({
         areaNodes: this.component,
-        componentIds: (node: INode): void => (this.keepComponents ? node.tag.component : null)
+        componentIds: (node: INode): number | null =>
+          this.keepComponents ? node.tag.component : null
       })
     )
 
@@ -254,7 +254,7 @@ export class ClearAreaLayoutHelper {
       graphComponent: this.graphComponent,
       layout,
       layoutData,
-      duration: '150ms'
+      animationDuration: '150ms'
     })
   }
 

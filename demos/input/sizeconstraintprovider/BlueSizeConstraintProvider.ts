@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,38 +26,39 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, INode, INodeSizeConstraintProvider, Rect, Size } from 'yfiles'
+import { BaseClass, INode, INodeSizeConstraintProvider, Rect, Size } from '@yfiles/yfiles'
 
 /**
  * An {@link INodeSizeConstraintProvider} that prevents shrinking of
  * nodes. Additionally, neither side of the node can become larger than
  * three times its initial size in each resizing operation.
  */
-export default class BlueSizeConstraintProvider
-  extends BaseClass(INodeSizeConstraintProvider)
-  implements INodeSizeConstraintProvider
-{
+export default class BlueSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
+  constructor(private readonly node: INode) {
+    super()
+  }
+
   /**
    * Returns the current node size to prevent the shrinking of nodes.
    * @see Specified by {@link INodeSizeConstraintProvider.getMinimumSize}.
    */
-  getMinimumSize(node: INode): Size {
-    return node.layout.toSize()
+  getMinimumSize(): Size {
+    return this.node.layout.toSize()
   }
 
   /**
    * Returns three times the current node size.
    * @see Specified by {@link INodeSizeConstraintProvider.getMaximumSize}.
    */
-  getMaximumSize(node: INode): Size {
-    return new Size(node.layout.width * 3, node.layout.height * 3)
+  getMaximumSize(): Size {
+    return new Size(this.node.layout.width * 3, this.node.layout.height * 3)
   }
 
   /**
    * Returns an empty rectangle since this area is not constraint.
    * @see Specified by {@link INodeSizeConstraintProvider.getMinimumEnclosedArea}.
    */
-  getMinimumEnclosedArea(node: INode): Rect {
+  getMinimumEnclosedArea(): Rect {
     return Rect.EMPTY
   }
 }

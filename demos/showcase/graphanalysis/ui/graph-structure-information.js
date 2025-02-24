@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,217 +26,159 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphStructureAnalyzer } from 'yfiles'
+import { GraphStructureAnalyzer } from '@yfiles/yfiles'
 import './graph-structure-information.css'
-
 /**
  * Registers listener to graph changes to update the graph information.
- * @param {!GraphComponent} graphComponent
  */
 export function initializeGraphInformation(graphComponent) {
   const inputMode = graphComponent.inputMode
-
-  inputMode.addDeletingSelectionListener(async (_) => {
+  inputMode.addEventListener('deleting-selection', async () => {
     updateGraphInformation(graphComponent)
   })
-
-  inputMode.addDeletedSelectionListener(async (_) => {
+  inputMode.addEventListener('deleted-selection', async () => {
     updateGraphInformation(graphComponent)
   })
-
   // edge creation
-  inputMode.createEdgeInputMode.addEdgeCreatedListener(async (_) => {
+  inputMode.createEdgeInputMode.addEventListener('edge-created', async () => {
     updateGraphInformation(graphComponent)
   })
-
-  inputMode.addEdgePortsChangedListener(async (_) => {
+  inputMode.addEventListener('edge-ports-changed', async () => {
     updateGraphInformation(graphComponent)
   })
-
-  inputMode.addNodeCreatedListener((_) => {
+  inputMode.addEventListener('node-created', () => {
     updateGraphInformation(graphComponent)
   })
-
   const engine = graphComponent.graph.undoEngine
   if (engine) {
-    engine.addUnitRedoneListener(() => updateGraphInformation(graphComponent))
-    engine.addUnitUndoneListener(() => updateGraphInformation(graphComponent))
+    engine.addEventListener('unit-redone', () => updateGraphInformation(graphComponent))
+    engine.addEventListener('unit-undone', () => updateGraphInformation(graphComponent))
   }
 }
-
 /**
  * Updates the table that holds information about the graph.
- * @param {!GraphComponent} graphComponent
  */
 export function updateGraphInformation(graphComponent) {
   // clear table
   const table = document.getElementById('graph-structure-information')
-
   // fill table with updated information
   const graph = graphComponent.graph
-
   updateNumberOfElements(graph, table.querySelector('#graph-elements'))
   updateStructureAnalysis(graph, table.querySelector('#structure-analysis'))
 }
-
 /**
  * Returns the number of nodes in the given graph.
- * @param {!IGraph} graph
- * @returns {number}
  */
 function getNodeCount(graph) {
   return graph.nodes.size
 }
-
 /**
  * Returns the number of edges in the given graph.
- * @param {!IGraph} graph
- * @returns {number}
  */
 function getEdgeCount(graph) {
   return graph.edges.size
 }
-
 /**
  * Checks whether the given graph is acyclic.
- * @param {!IGraph} graph
- * @returns {boolean}
  */
 function isAcyclic(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isAcyclic(false)
 }
-
 /**
  * Checks whether the given graph is bipartite.
- * @param {!IGraph} graph
- * @returns {boolean}
  */
 function isBipartite(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isBipartite()
 }
-
 /**
  * Checks whether the given graph is connected.
- * @param {!IGraph} graph
- * @returns {boolean}
  */
 function isConnected(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isConnected()
 }
-
 /**
  * Checks whether the given graph is biconnected.
- * @param {!IGraph} graph
- * @returns {boolean}
  */
 function isBiconnected(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isBiconnected()
 }
-
 /**
  * Checks whether the given graph is strongly connected.
- * @param {!IGraph} graph
- * @returns {boolean}
  */
 function isStronglyConnected(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isStronglyConnected()
 }
-
 /**
  * Checks whether the given graph is planar.
- * @param {!IGraph} graph
- * @returns {boolean}
  */
 function isPlanar(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isPlanar()
 }
-
 /**
  * Checks whether the given graph is a tree.
- * @param {!IGraph} graph
- * @returns {boolean}
  */
 function isTree(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isTree(false)
 }
-
 /**
  * Checks whether the given graph contains self-loop edges.
- * @param {!IGraph} graph
- * @returns {boolean}
  */
 function hasSelfLoops(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.hasSelfLoops()
 }
-
 /**
  * Checks whether the given graph has multiple edges between any two nodes.
- * @param {!IGraph} graph
- * @returns {boolean}
  */
 function hasMultipleEdges(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
-  return structureAnalyzer.hasMultipleEdges()
+  return structureAnalyzer.hasMultiEdges()
 }
-
 /**
  * Updates the number of graph elements the panel.
- * @param {!IGraph} graph
- * @param {!HTMLDivElement} container
  */
 function updateNumberOfElements(graph, container) {
   while (container.childElementCount > 0) {
     container.lastElementChild?.remove()
   }
-
   ;['Nodes', 'Edges'].forEach((element) => {
     const row = document.createElement('div')
     row.classList.add('row', 'bold')
     container.appendChild(row)
-
     const name = document.createElement('div')
     name.className = 'name'
     const elementCount = element === 'Nodes' ? getNodeCount(graph) : getEdgeCount(graph)
     name.appendChild(document.createTextNode(`Number of ${element}`))
-
     const result = document.createElement('div')
     result.className = 'value'
     result.appendChild(document.createTextNode(elementCount.toString()))
-
     row.appendChild(name)
     row.appendChild(result)
   })
 }
-
 /**
  * Updates the results of structure analysis in the panel.
- * @param {!IGraph} graph
- * @param {!Element} container
  */
 function updateStructureAnalysis(graph, container) {
   while (container.childElementCount > 0) {
     container.lastElementChild?.remove()
   }
-
   structureAnalysis.forEach((algorithm) => {
     const row = document.createElement('div')
     row.className = 'row'
     container.appendChild(row)
-
     const name = document.createElement('div')
     name.className = 'name'
     const result = algorithm.apply(graph)
     name.appendChild(document.createTextNode(algorithm.name))
     name.classList.add(result ? 'applicable' : 'inapplicable')
-
     const infoButton = document.createElement('div')
     infoButton.className = 'value'
     const a = document.createElement('a')
@@ -247,12 +189,10 @@ function updateStructureAnalysis(graph, container) {
     a.href = algorithm.url ?? ''
     a.target = '_blank'
     infoButton.appendChild(a)
-
     row.appendChild(name)
     row.appendChild(infoButton)
   })
 }
-
 /**
  * List of all structural analysis algorithms whose results are displayed in the panel.
  */

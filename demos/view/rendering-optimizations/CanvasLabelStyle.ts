@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,7 +30,6 @@ import {
   CanvasComponent,
   Font,
   FontStyle,
-  FontWeight,
   HtmlCanvasVisual,
   ILabel,
   IOrientedRectangle,
@@ -42,7 +41,7 @@ import {
   TextRenderSupport,
   TextWrapping,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * A simple label style that draws the text into the HTML5 Canvas. This
@@ -83,13 +82,12 @@ export default class CanvasLabelStyle extends LabelStyleBase {
    * @returns The preferred size.
    */
   getPreferredSize(label: ILabel): Size {
-    return TextRenderSupport.measureText(
-      label.text,
-      this.font,
-      null,
-      TextWrapping.NONE,
-      TextMeasurePolicy.CANVAS
-    )
+    return TextRenderSupport.measureText({
+      text: label.text,
+      font: this.font,
+      wrapping: TextWrapping.NONE,
+      measurePolicy: TextMeasurePolicy.CANVAS
+    })
   }
 }
 
@@ -115,7 +113,7 @@ class LabelRenderVisual extends HtmlCanvasVisual {
    * @param context The render context of the {@link CanvasComponent}
    * @param htmlCanvasContext The HTML5 Canvas context to use for rendering.
    */
-  paint(context: IRenderContext, htmlCanvasContext: CanvasRenderingContext2D): void {
+  render(context: IRenderContext, htmlCanvasContext: CanvasRenderingContext2D): void {
     htmlCanvasContext.save()
     setFont(htmlCanvasContext, this.font)
     htmlCanvasContext.fillStyle = 'rgba(0,0,0,1)'
@@ -164,9 +162,9 @@ class LabelRenderVisual extends HtmlCanvasVisual {
  * Sets the font on the context using HTML5 Canvas.
  */
 function setFont(htmlCanvasContext: CanvasRenderingContext2D, font: Font): void {
-  htmlCanvasContext.font = `${fontStyleToString(font.fontStyle)} ${fontWeightToString(
+  htmlCanvasContext.font = `${fontStyleToString(font.fontStyle)} ${
     font.fontWeight
-  )} ${font.fontSize}px ${font.fontFamily}`
+  } ${font.fontSize}px ${font.fontFamily}`
 }
 
 /**
@@ -185,44 +183,5 @@ function fontStyleToString(fontStyle: FontStyle): string {
       return 'inherit'
     default:
       throw new Error(`${fontStyle} is not a valid FontStyle`)
-  }
-}
-
-/**
- * Converts the font weight into a string.
- * @param fontWeight The font weight to convert.
- */
-function fontWeightToString(fontWeight: FontWeight): string {
-  switch (fontWeight) {
-    case FontWeight.NORMAL:
-      return 'normal'
-    case FontWeight.BOLD:
-      return 'bold'
-    case FontWeight.BOLDER:
-      return 'bolder'
-    case FontWeight.LIGHTER:
-      return 'lighter'
-    case FontWeight.INHERIT:
-      return 'inherit'
-    case FontWeight.ITEM100:
-      return '100'
-    case FontWeight.ITEM200:
-      return '200'
-    case FontWeight.ITEM300:
-      return '300'
-    case FontWeight.ITEM400:
-      return '400'
-    case FontWeight.ITEM500:
-      return '500'
-    case FontWeight.ITEM600:
-      return '600'
-    case FontWeight.ITEM700:
-      return '700'
-    case FontWeight.ITEM800:
-      return '800'
-    case FontWeight.ITEM900:
-      return '900'
-    default:
-      throw new Error(`${fontWeight} is not a valid FontWeight`)
   }
 }

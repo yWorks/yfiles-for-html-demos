@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,36 +27,33 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphSnapContext,
   GridConstraintProvider,
   GridInfo,
+  GridRenderer,
   GridSnapTypes,
-  GridVisualCreator,
-  ICanvasObjectDescriptor,
   IGraph,
-  LabelSnapContext,
+  LabelStyle,
   License,
   List,
   Point,
   Rect,
   ShapeNodeStyle,
   Size,
-  SmartEdgeLabelModel
-} from 'yfiles'
+  SmartEdgeLabelModel,
+  SnappableItems
+} from '@yfiles/yfiles'
 
 import { AdditionalSnapLineVisualCreator } from './AdditionalSnapLineVisualCreator'
 import { OrthogonalLabelSnapLineProviderWrapper } from './OrthogonalLabelSnapLineProviderWrapper'
 import { ShapeBasedGridNodeSnapResultProvider } from './ShapeBasedGridNodeSnapResultProvider'
 import { AdditionalSnapLineMoveInputMode } from './AdditionalSnapLineMoveInputMode'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-let grid: GridVisualCreator = null!
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Returns a list of the free {@link AdditionalSnapLineVisualCreator}s used in this demo.
@@ -69,13 +66,11 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   decorateModelItemLookupForCustomSnappingBehaviour(graph)
 
   const graphSnapContext = createGraphSnapContext()
-  const labelSnapContext = createLabelSnapContext()
 
   initializeGrid(graphComponent, graphSnapContext)
 
@@ -86,8 +81,7 @@ async function run(): Promise<void> {
 
   // initialize the input mode for this demo
   const graphEditorInputMode = new GraphEditorInputMode({
-    snapContext: graphSnapContext,
-    labelSnapContext
+    snapContext: graphSnapContext
   })
 
   // add an input mode that allows to move the additional snap lines
@@ -107,7 +101,7 @@ async function run(): Promise<void> {
   // create a sample graph for the demo
   createSampleGraph(graph)
   // center the sample graph in the demo's GraphComponent
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
 
 /**
@@ -115,42 +109,21 @@ async function run(): Promise<void> {
  */
 function createGraphSnapContext(): GraphSnapContext {
   const context = new GraphSnapContext({
-    snapOrthogonalMovement: false,
-    snapBendAdjacentSegments: true,
-    gridSnapType: GridSnapTypes.ALL,
+    snappableItems:
+      SnappableItems.ALL & ~(SnappableItems.BEND | SnappableItems.ORTHOGONAL_MOVEMENT),
+    gridSnapType: GridSnapTypes.LINES,
     snapDistance: 10
   })
   // use the free additional snap lines
-  context.addCollectSnapLinesListener((_, evt) => {
+  context.addEventListener('collect-snap-references', (evt) => {
     // Creates and adds snap lines for the free AdditionalSnapLineVisualCreator to a GraphSnapContext.
     // While the AdditionalSnapLineVisualCreators are used to visualize free snap lines, corresponding
     // OrthogonalSnapLines have to be added to the snapping mechanism to provide the snapping behavior.
     additionalSnapLineVisualCreators.forEach((creator) =>
-      creator.createSnapLines().forEach((snapLine) => evt.addAdditionalSnapLine(snapLine))
+      creator.createSnapLines().forEach((snapLine) => evt.addSnapReference(snapLine))
     )
   })
   return context
-}
-
-/**
- * Creates a pre-configured {@link LabelSnapContext}.
- */
-function createLabelSnapContext(): LabelSnapContext {
-  const snapContext = new LabelSnapContext({
-    snapDistance: 10,
-    collectInitialLocationSnapLines: false
-  })
-
-  snapContext.addCollectSnapLinesListener((_, evt) => {
-    // Creates and adds snap lines for the free AdditionalSnapLineVisualCreator to a LabelSnapContext.
-    // While the AdditionalSnapLineVisualCreators are used to visualize free snap lines, corresponding
-    // OrthogonalSnapLines have to be added to the snapping mechanism to provide the snapping behavior.
-    additionalSnapLineVisualCreators.forEach((creator) =>
-      creator.createSnapLines().forEach((snapLine) => evt.addSnapLine(snapLine))
-    )
-  })
-
-  return snapContext
 }
 
 /**
@@ -160,19 +133,17 @@ function createLabelSnapContext(): LabelSnapContext {
 function decorateModelItemLookupForCustomSnappingBehaviour(graph: IGraph): void {
   // add additional snap lines for orthogonal labels of nodes
   const decorator = graph.decorator
-  decorator.nodeDecorator.snapLineProviderDecorator.setImplementationWrapper(
-    (node, wrappedProvider) => new OrthogonalLabelSnapLineProviderWrapper(wrappedProvider!)
+  decorator.nodes.snapReferenceProvider.addWrapperFactory(
+    (node, wrappedProvider) => new OrthogonalLabelSnapLineProviderWrapper(node, wrappedProvider!)
   )
 
   // add additional snap lines for orthogonal labels of edges
-  decorator.edgeDecorator.snapLineProviderDecorator.setImplementationWrapper(
-    (edge, wrappedProvider) => new OrthogonalLabelSnapLineProviderWrapper(wrappedProvider!)
+  decorator.edges.snapReferenceProvider.addWrapperFactory(
+    (edge, wrappedProvider) => new OrthogonalLabelSnapLineProviderWrapper(edge, wrappedProvider!)
   )
 
   // for nodes using ShapeNodeStyle use a customized grid snapping behavior based on their shape
-  decorator.nodeDecorator.nodeSnapResultProviderDecorator.setImplementation(
-    new ShapeBasedGridNodeSnapResultProvider()
-  )
+  decorator.nodes.snapResultProvider.addConstant(new ShapeBasedGridNodeSnapResultProvider())
 }
 
 /**
@@ -185,14 +156,17 @@ function initializeGrid(graphComponent: GraphComponent, graphSnapContext: GraphS
   gridInfo.horizontalSpacing = 200
   gridInfo.verticalSpacing = 200
 
-  grid = new GridVisualCreator(gridInfo)
-  graphComponent.backgroundGroup.addChild(grid, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE)
+  graphComponent.renderTree.createElement(
+    graphComponent.renderTree.backgroundGroup,
+    gridInfo,
+    new GridRenderer()
+  )
 
   graphComponent.invalidate()
-  graphComponent.addZoomChangedListener((): void => {
+  graphComponent.addEventListener('zoom-changed', (): void => {
     graphComponent.invalidate()
   })
-  graphComponent.addViewportChangedListener(() => graphComponent.invalidate())
+  graphComponent.addEventListener('viewport-changed', () => graphComponent.invalidate())
 
   graphSnapContext.nodeGridConstraintProvider = new GridConstraintProvider(gridInfo)
   graphSnapContext.bendGridConstraintProvider = new GridConstraintProvider(gridInfo)
@@ -203,7 +177,7 @@ function initializeGrid(graphComponent: GraphComponent, graphSnapContext: GraphS
  * @param graph The graph for which default styles are configured
  */
 function initializeGraphDefaults(graph: IGraph): void {
-  const labelStyle = new DefaultLabelStyle()
+  const labelStyle = new LabelStyle()
   graph.nodeDefaults.labels.style = labelStyle
   graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createParameter(
     [0.5, 0.0],
@@ -238,10 +212,9 @@ function addAdditionalSnapLineVisualCreator(
 ): void {
   const lineVisualCreator = new AdditionalSnapLineVisualCreator(from, to)
   additionalSnapLineVisualCreators.add(lineVisualCreator)
-  // Specify the canvas object descriptor for this line. It is responsible for the rendering, amongst others.
-  graphComponent.backgroundGroup.addChild(
-    lineVisualCreator,
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+  graphComponent.renderTree.createElement(
+    graphComponent.renderTree.backgroundGroup,
+    lineVisualCreator
   )
 }
 

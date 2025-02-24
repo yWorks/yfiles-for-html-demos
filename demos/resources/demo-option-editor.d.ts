@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,8 +27,6 @@
  **
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { Class } from 'yfiles'
-
 export enum Components {
   SLIDER,
   COMBOBOX,
@@ -38,21 +36,31 @@ export enum Components {
   HTML_BLOCK
 }
 
-export function ComponentAttribute(value: Components): ComponentAttribute
-interface ComponentAttribute {}
-
-export function EnumValuesAttribute(): EnumValuesAttribute
-interface EnumValuesAttribute {
-  init(options: { values: any[] }): EnumValuesAttribute
+export class ComponentAttribute {
+  constructor(value: Components)
 }
 
-export function LabelAttribute(label: string, link?: string): LabelAttribute
-interface LabelAttribute {}
+export class EnumValuesAttribute {
+  constructor(values: any[])
+}
 
-export function MinMaxAttribute(): MinMaxAttribute
+/*interface EnumValuesAttribute {
+  init(options: { values: any[] }): EnumValuesAttribute
+}*/
+
+export class LabelAttribute {
+  constructor(label: string, link?: string)
+}
+
+export class MinMaxAttribute {
+  constructor(min: number, max: number, step: number = 1)
+}
+
+/*
+(): MinMaxAttribute
 interface MinMaxAttribute {
   init(options: { min: number; max: number; step?: number }): MinMaxAttribute
-}
+}*/
 
 export class OptionEditor {
   constructor(rootElement: HTMLDivElement)
@@ -76,12 +84,12 @@ export class OptionEditor {
   setPresetName(name: string | null): void
 }
 
-export class OptionGroup {
-  static $class: Class<OptionGroup>
+export class OptionGroup {}
+
+export class OptionGroupAttribute {
+  constructor(name: string, position: number)
 }
 
-export function OptionGroupAttribute(name: string, position: number): OptionGroupAttribute
-interface OptionGroupAttribute {}
-
-export function TypeAttribute(type: Class): TypeAttribute
-interface TypeAttribute {}
+export class TypeAttribute {
+  constructor(type: Constructor<any>)
+}

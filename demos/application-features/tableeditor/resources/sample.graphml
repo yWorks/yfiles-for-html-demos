@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,9 +30,9 @@
 
 <graphml
   xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd "
-  xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0"
+  xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0"
   xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0"
-  xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml"
+  xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml"
   xmlns:demo="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <key id="d0" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
@@ -57,7 +57,7 @@
   <data key="d10">
     <y:SharedData>
       <yjs:Font x:Key="1" fontSize="12" fontFamily="'Arial'"/>
-      <yjs:DefaultLabelStyle x:Key="2" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 1}" textFill="#FFFFFFFF"/>
+      <yjs:LabelStyle x:Key="2" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 1}" textFill="#FFFFFFFF"/>
       <demo:DemoStripeStyle x:Key="3"/>
       <yjs:ShapeNodeStyle x:Key="7" fill="TRANSPARENT" shape="ROUND_RECTANGLE">
         <yjs:ShapeNodeStyle.stroke>
@@ -70,7 +70,7 @@
     <node id="n0">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.North}" Style="{y:GraphMLReference 2}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Top}" Style="{y:GraphMLReference 2}">
             <y:Label.Text><![CDATA[Pool 1]]></y:Label.Text>
           </y:Label>
         </x:List>
@@ -84,96 +84,96 @@
             <demo:TableBackgroundStyle/>
           </demo:DemoTableStyle.backgroundStyle>
           <demo:DemoTableStyle.table>
-            <y:Table>
-              <y:Table.Rows>
-                <y:Row MinimumSize="50" Size="300" Insets="30,0,0,0">
-                  <y:Row MinimumSize="50" Size="150" Insets="30,0,0,0">
-                    <y:Row.Labels>
-                      <y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 2}">
+            <yx:Table>
+              <yx:Table.Rows>
+                <yx:Row MinimumSize="50" Size="300" Padding="30,0,0,0">
+                  <yx:Row MinimumSize="50" Size="150" Padding="30,0,0,0">
+                    <yx:Row.Labels>
+                      <y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 2}">
                         <y:Label.Text><![CDATA[Lane 1.1]]></y:Label.Text>
                       </y:Label>
-                    </y:Row.Labels>
-                    <y:Row.Style>
+                    </yx:Row.Labels>
+                    <yx:Row.Style>
                       <yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 3}"/>
-                    </y:Row.Style>
-                  </y:Row>
-                  <y:Row MinimumSize="50" Size="150" Insets="30,0,0,0">
-                    <y:Row.Labels>
-                      <y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 2}">
+                    </yx:Row.Style>
+                  </yx:Row>
+                  <yx:Row MinimumSize="50" Size="150" Padding="30,0,0,0">
+                    <yx:Row.Labels>
+                      <y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 2}">
                         <y:Label.Text><![CDATA[Lane 1.2]]></y:Label.Text>
                       </y:Label>
-                    </y:Row.Labels>
-                    <y:Row.Style>
+                    </yx:Row.Labels>
+                    <yx:Row.Style>
                       <yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 3}"/>
-                    </y:Row.Style>
-                  </y:Row>
-                  <y:Row.Labels>
-                    <y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 2}">
+                    </yx:Row.Style>
+                  </yx:Row>
+                  <yx:Row.Labels>
+                    <y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 2}">
                       <y:Label.Text><![CDATA[Lane 1]]></y:Label.Text>
                     </y:Label>
-                  </y:Row.Labels>
-                  <y:Row.Style>
+                  </yx:Row.Labels>
+                  <yx:Row.Style>
                     <yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 3}"/>
-                  </y:Row.Style>
-                </y:Row>
-                <y:Row MinimumSize="50" Size="114" Insets="30,0,0,0">
-                  <y:Row.Labels>
-                    <y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 2}">
+                  </yx:Row.Style>
+                </yx:Row>
+                <yx:Row MinimumSize="50" Size="114" Padding="30,0,0,0">
+                  <yx:Row.Labels>
+                    <y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 2}">
                       <y:Label.Text><![CDATA[Lane 2]]></y:Label.Text>
                     </y:Label>
-                  </y:Row.Labels>
-                  <y:Row.Style>
+                  </yx:Row.Labels>
+                  <yx:Row.Style>
                     <yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 3}"/>
-                  </y:Row.Style>
-                </y:Row>
-              </y:Table.Rows>
-              <y:Table.Columns>
-                <y:Column MinimumSize="200" Size="500" Insets="5,30,5,0">
-                  <y:Column.Style>
+                  </yx:Row.Style>
+                </yx:Row>
+              </yx:Table.Rows>
+              <yx:Table.Columns>
+                <yx:Column MinimumSize="200" Size="500" Padding="5,30,5,0">
+                  <yx:Column.Style>
                     <yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 3}"/>
-                  </y:Column.Style>
-                  <y:Column.Labels>
-                    <y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" Style="{y:GraphMLReference 2}">
+                  </yx:Column.Style>
+                  <yx:Column.Labels>
+                    <y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Top}" Style="{y:GraphMLReference 2}">
                       <y:Label.Text><![CDATA[Milestone 1]]></y:Label.Text>
                     </y:Label>
-                  </y:Column.Labels>
-                </y:Column>
-                <y:Column MinimumSize="200" Size="348" Insets="5,30,5,0">
-                  <y:Column.Style>
+                  </yx:Column.Labels>
+                </yx:Column>
+                <yx:Column MinimumSize="200" Size="348" Padding="5,30,5,0">
+                  <yx:Column.Style>
                     <yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 3}"/>
-                  </y:Column.Style>
-                  <y:Column.Labels>
-                    <y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" Style="{y:GraphMLReference 2}">
+                  </yx:Column.Style>
+                  <yx:Column.Labels>
+                    <y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Top}" Style="{y:GraphMLReference 2}">
                       <y:Label.Text><![CDATA[Milestone 2]]></y:Label.Text>
                     </y:Label>
-                  </y:Column.Labels>
-                </y:Column>
-              </y:Table.Columns>
-              <y:Table.RowDefaults>
-                <y:StripeDefaults Insets="30,0,0,0" Size="150" MinimumSize="50">
-                  <y:StripeDefaults.Labels>
+                  </yx:Column.Labels>
+                </yx:Column>
+              </yx:Table.Columns>
+              <yx:Table.RowDefaults>
+                <yx:StripeDefaults Padding="30,0,0,0" Size="150" MinimumSize="50">
+                  <yx:StripeDefaults.Labels>
                     <y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true"
-                                     LayoutParameter="{x:Static y:StretchStripeLabelModel.West}"
+                                     LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}"
                                      Style="{y:GraphMLReference 2}" ShareStyleInstance="true"/>
-                  </y:StripeDefaults.Labels>
-                  <y:StripeDefaults.Style>
+                  </yx:StripeDefaults.Labels>
+                  <yx:StripeDefaults.Style>
                     <yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 3}"/>
-                  </y:StripeDefaults.Style>
-                </y:StripeDefaults>
-              </y:Table.RowDefaults>
-              <y:Table.ColumnDefaults>
-                <y:StripeDefaults Insets="0,30,0,0" Size="200" MinimumSize="200">
-                  <y:StripeDefaults.Labels>
+                  </yx:StripeDefaults.Style>
+                </yx:StripeDefaults>
+              </yx:Table.RowDefaults>
+              <yx:Table.ColumnDefaults>
+                <yx:StripeDefaults Padding="0,30,0,0" Size="200" MinimumSize="200">
+                  <yx:StripeDefaults.Labels>
                     <y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true"
-                                     LayoutParameter="{x:Static y:StretchStripeLabelModel.North}"
+                                     LayoutParameter="{x:Static yx:StretchStripeLabelModel.Top}"
                                      Style="{y:GraphMLReference 2}" ShareStyleInstance="true"/>
-                  </y:StripeDefaults.Labels>
-                  <y:StripeDefaults.Style>
+                  </yx:StripeDefaults.Labels>
+                  <yx:StripeDefaults.Style>
                     <yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 3}"/>
-                  </y:StripeDefaults.Style>
-                </y:StripeDefaults>
-              </y:Table.ColumnDefaults>
-            </y:Table>
+                  </yx:StripeDefaults.Style>
+                </yx:StripeDefaults>
+              </yx:Table.ColumnDefaults>
+            </yx:Table>
           </demo:DemoTableStyle.table>
         </demo:DemoTableStyle>
       </data>

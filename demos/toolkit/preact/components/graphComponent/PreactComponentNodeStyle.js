@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,34 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { h, render } from '../../preact-loader.js'
-import { NodeStyleBase, SvgVisual, Visual } from 'yfiles'
-
-/**
- * The interface of the props passed to the SVG Preact component for rendering the node contents.
- * @typedef {Object} PreactComponentNodeStyleProps
- * @property {number} width
- * @property {number} height
- * @property {TTag} tag
- */
-
-/**
- * @param {!IRenderContext} context
- * @param {!Visual} removedVisual
- * @param {boolean} dispose
- * @returns {?Visual}
- */
+// @ts-ignore - We have no proper types for preact, here
+import { h, render } from '../../preact-loader'
+import { NodeStyleBase, SvgVisual, Visual } from '@yfiles/yfiles'
 function dispose(context, removedVisual, dispose) {
   const gElement = removedVisual.svgElement
   // see https://github.com/preactjs/preact/issues/53#issuecomment-522328979
   render(null, gElement)
   return null
 }
-
-/**
- * @typedef {ComponentType.<PreactComponentNodeStyleProps.<TTag>>} RenderType
- */
-
 /**
  * A simple INodeStyle implementation that uses Preact Components/render functions
  * for rendering the node visualizations
@@ -75,18 +56,11 @@ function dispose(context, removedVisual, dispose) {
  * ```
  */
 export default class PreactComponentNodeStyle extends NodeStyleBase {
-  /**
-   * @param {!RenderType.<TTag>} type
-   */
+  type
   constructor(type) {
     super()
     this.type = type
   }
-
-  /**
-   * @param {!INode} node
-   * @returns {!PreactComponentNodeStyleProps.<TTag>}
-   */
   createProps(node) {
     return {
       width: node.layout.width,
@@ -94,38 +68,20 @@ export default class PreactComponentNodeStyle extends NodeStyleBase {
       tag: node.tag
     }
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {?Visual}
-   */
   createVisual(context, node) {
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const props = this.createProps(node)
     const element = h(this.type, props)
     render(element, gElement)
     SvgVisual.setTranslate(gElement, node.layout.x, node.layout.y)
-    const svgVisual = new SvgVisual(gElement)
-    svgVisual.cache = props
-
+    const svgVisual = SvgVisual.from(gElement, props)
     context.setDisposeCallback(svgVisual, dispose)
     return svgVisual
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!Visual} oldVisual
-   * @param {!INode} node
-   * @returns {?Visual}
-   */
   updateVisual(context, oldVisual, node) {
-    const oldSvgVisual = oldVisual
-    const gElement = oldSvgVisual.svgElement
-
+    const gElement = oldVisual.svgElement
     const props = this.createProps(node)
-
-    const lastProps = oldSvgVisual.cache
+    const lastProps = oldVisual.tag
     if (
       lastProps.width !== props.width ||
       lastProps.height !== props.height ||
@@ -133,7 +89,7 @@ export default class PreactComponentNodeStyle extends NodeStyleBase {
     ) {
       const element = h(this.type, props)
       render(element, gElement)
-      oldSvgVisual.cache = props
+      oldVisual.tag = props
     }
     SvgVisual.setTranslate(gElement, node.layout.x, node.layout.y)
     return oldVisual

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,16 +28,14 @@
  ***************************************************************************/
 import {
   AdjacencyTypes,
-  DefaultLabelStyle,
   FreeNodeLabelModel,
-  HashMap,
   IEdge,
   IEdgeStyle,
   ILabelStyle,
   IListEnumerable,
-  IMap,
   INode,
   INodeStyle,
+  LabelStyle,
   List,
   ListEnumerable,
   NodeAggregate,
@@ -47,8 +45,8 @@ import {
   Rect,
   ShapeNodeStyle,
   Size
-} from 'yfiles'
-import type { AggregationGraphWrapper } from 'demo-utils/AggregationGraphWrapper'
+} from '@yfiles/yfiles'
+import type { AggregationGraphWrapper } from '@yfiles/demo-utils/AggregationGraphWrapper'
 
 /**
  * A helper class that provides methods to aggregate and separate nodes according to a {@link NodeAggregationResult}.
@@ -92,12 +90,12 @@ export class AggregationHelper {
   /**
    * Maps {@link NodeAggregate}s to aggregation nodes.
    */
-  private readonly $aggregateToNode: IMap<NodeAggregate, INode>
+  private readonly $aggregateToNode: Map<NodeAggregate, INode>
 
   /**
    * A map for placeholder nodes that maps original nodes to their aggregation placeholder node.
    */
-  private readonly $placeholderMap: IMap<INode, INode>
+  private readonly $placeholderMap: Map<INode, INode>
 
   public get visibleNodes(): number {
     return this.aggregateGraph
@@ -127,12 +125,12 @@ export class AggregationHelper {
     this.aggregateGraph = aggregateGraph
     this.$aggregationResult = aggregationResult
 
-    this.$aggregateToNode = new HashMap<NodeAggregate, INode>()
-    this.$placeholderMap = new HashMap<INode, INode>()
+    this.$aggregateToNode = new Map<NodeAggregate, INode>()
+    this.$placeholderMap = new Map<INode, INode>()
 
     this.aggregationNodeStyle = new ShapeNodeStyle({ shape: 'ellipse' })
     this.hierarchyEdgeStyle = new PolylineEdgeStyle()
-    this.descendantLabelStyle = new DefaultLabelStyle()
+    this.descendantLabelStyle = new LabelStyle()
   }
 
   /**
@@ -178,7 +176,7 @@ export class AggregationHelper {
     if (aggregationNode) {
       affectedNodes.add(aggregationNode)
 
-      const parentNode = this.$aggregateToNode.get(aggregate.parent)
+      const parentNode = this.$aggregateToNode.get(aggregate.parent!)
       if (parentNode) {
         this.aggregateGraph.createEdge(
           parentNode,
@@ -249,7 +247,7 @@ export class AggregationHelper {
         this.aggregateGraph.addLabel(
           aggregationNode,
           `(${maxChild.node.labels.get(0).text}, …)`,
-          FreeNodeLabelModel.INSTANCE.createDefaultParameter(),
+          FreeNodeLabelModel.CENTER,
           this.descendantLabelStyle
         )
       }
@@ -279,12 +277,7 @@ export class AggregationHelper {
    */
   private $copyLabels(source: INode, target: INode): void {
     for (const label of source.labels) {
-      this.aggregateGraph.addLabel(
-        target,
-        label.text,
-        FreeNodeLabelModel.INSTANCE.createDefaultParameter(),
-        label.style
-      )
+      this.aggregateGraph.addLabel(target, label.text, FreeNodeLabelModel.CENTER, label.style)
     }
   }
 
@@ -337,15 +330,17 @@ export class AggregationHelper {
     affectedNodes.add(aggregationNode)
     affectedNodes.addRange(aggregatedItems)
 
-    const parentNode = this.$aggregateToNode.get(aggregate.parent)
-    if (aggregate.parent && parentNode) {
-      this.aggregateGraph.createEdge(
-        parentNode,
-        aggregationNode,
-        this.hierarchyEdgeStyle,
-        'aggregation-edge'
-      )
-      affectedNodes.add(parentNode)
+    if (aggregate.parent) {
+      const parentNode = this.$aggregateToNode.get(aggregate.parent!)
+      if (parentNode) {
+        this.aggregateGraph.createEdge(
+          parentNode,
+          aggregationNode,
+          this.hierarchyEdgeStyle,
+          'aggregation-edge'
+        )
+        affectedNodes.add(parentNode)
+      }
     }
 
     if (aggregate.node) {
@@ -377,10 +372,10 @@ export class AggregationHelper {
       .wrappedGraph!.edgesAt(originalNode, AdjacencyTypes.ALL)
       .toList()
       .forEach((edge) => {
-        if (edge.targetPort!.owner === originalNode) {
-          this.$createReplacementEdge(edge.sourceNode!, node, edge, true)
+        if (edge.targetPort.owner === originalNode) {
+          this.$createReplacementEdge(edge.sourceNode, node, edge, true)
         } else {
-          this.$createReplacementEdge(node, edge.targetPort!.owner as INode, edge, false)
+          this.$createReplacementEdge(node, edge.targetPort.owner as INode, edge, false)
         }
       })
   }

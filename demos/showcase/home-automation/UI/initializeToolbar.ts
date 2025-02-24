@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,15 +26,34 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GridVisualCreator, ICommand } from 'yfiles'
+import { GraphComponent, type GridRenderer } from '@yfiles/yfiles'
 import { runAutoLayout, triggerGridDisplay } from '../utils/customTriggers'
-import { bindYFilesCommand } from '../utils/elementUtils'
 
-export function initializeToolbar(graphComponent: GraphComponent, grid: GridVisualCreator): void {
+export function initializeToolbar(graphComponent: GraphComponent, grid: GridRenderer): void {
   const gridButton = document.querySelector<HTMLInputElement>('#grid-button')!
   gridButton.addEventListener('click', () => triggerGridDisplay(graphComponent, grid))
-  bindYFilesCommand("button[data-command='Undo2']", ICommand.UNDO, graphComponent, null, 'Undo')
-  bindYFilesCommand("button[data-command='Redo2']", ICommand.REDO, graphComponent, null, 'Redo')
+  const undoEngine = graphComponent.graph.undoEngine!
+
+  const undoButton = document.querySelector<HTMLButtonElement>("button[data-command='UNDO']")!
+  undoButton.addEventListener('click', () => {
+    if (undoEngine.canUndo()) {
+      undoEngine.undo()
+    }
+  })
+
+  const redoButton = document.querySelector<HTMLButtonElement>("button[data-command='REDO']")!
+  redoButton.addEventListener('click', () => {
+    if (undoEngine.canRedo()) {
+      undoEngine.redo()
+    }
+  })
+
+  // add a listener to the undoEngine to enable/disable the buttons
+  undoEngine.addEventListener('property-changed', () => {
+    undoButton.disabled = !undoEngine.canUndo()
+    undoButton.disabled = !undoEngine.canRedo()
+  })
+
   const layoutButton = document.querySelector<HTMLButtonElement>('#layoutButton')!
   layoutButton.addEventListener('click', async () => runAutoLayout(graphComponent))
 }

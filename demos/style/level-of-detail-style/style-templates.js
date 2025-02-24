@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,104 +27,60 @@
  **
  ***************************************************************************/
 //language=HTML
-export const detailNodeStyleTemplate = `
-  <defs>
-    <linearGradient x1="0.5" y1="0" x2="0.5" y2="1" spreadMethod="pad" id="background_gradient">
-      <stop stop-color="#CCFFFF" stop-opacity="1" offset="0"/>
-      <stop stop-color="#249AE7" stop-opacity="1" offset="1"/>
-    </linearGradient>
+export const detailNodeStyleTemplateSource = `({layout, tag, selected, zoom}) => svg\`
+<rect fill="#C0C0C0" width="285" height="100" transform="translate(2 2)" />
+<rect fill="#FFFFFF" stroke="#C0C0C0" width="285" height="100" />
 
-    <linearGradient
-      x1="0.5"
-      y1="0"
-      x2="0.5"
-      y2="1"
-      spreadMethod="pad"
-      id="background_gradient_focused"
-    >
-      <stop stop-color="#FFFFFF" stop-opacity="1" offset="0"/>
-      <stop stop-color="#FFA500" stop-opacity="1" offset="1"/>
-    </linearGradient>
-
-    <linearGradient
-      x1="0.5"
-      y1="0"
-      x2="0.5"
-      y2="1"
-      spreadMethod="pad"
-      id="background_gradient_hover"
-    >
-      <stop stop-color="#FFFFFF" stop-opacity="0.6" offset="0"/>
-      <stop stop-color="#FFFFFF" stop-opacity="0.6" offset="1"/>
-    </linearGradient>
-  </defs>
-
-  <rect fill="#C0C0C0" width="285" height="100" transform="translate(2 2)" />
-  <rect fill="#FFFFFF" stroke="#C0C0C0" width="285" height="100" />
-
-  <use xlink:href="{Binding status" />
-
-  <g>
-    <rect width="3" height="100"/>
-    <rect width="3" height="100" transform="translate(282 0)"/>
-    <rect width="285" height="3"></rect>
-    <rect width="285" height="3" transform="translate(0 97)"/>
-  </g>
-  <g style="font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444">
-    <text
-      transform="translate(10 25)"
-      data-content="{Binding name}"
-      style="font-size:16px; fill:#336699"
-    />
-    <text
-      transform="translate(10 45)"
-      data-content="{Binding position}"
-      style="text-transform: uppercase; font-weight: 400"
-    />
-    <text transform="translate(10 72)" data-content="{Binding email}"/>
-    <text transform="translate(10 88)" data-content="{Binding phone}"/>
-    <text transform="translate(70 88)" data-content="{Binding fax}"/>
-  </g>
-`
-
+<g>
+  <rect width="3" height="100" />
+  <rect width="3" height="100" transform="translate(282 0)" />
+  <rect width="285" height="3"></rect>
+  <rect width="285" height="3" transform="translate(0 97)" />
+</g>
+<g style="font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444">
+  <text
+    transform="translate(10 25)"
+    style="font-size:16px; fill:#336699">$\{tag.name}
+  </text>
+  <text
+    transform="translate(10 45)"
+    style="text-transform: uppercase; font-weight: 400">$\{tag.position}
+  </text>
+  <text transform="translate(10 72)">$\{tag.email}</text>
+  <text transform="translate(10 88)">$\{tag.phone}</text>
+  <text transform="translate(70 88)">$\{tag.fax}</text>
+</g>
+\``
 //language=HTML
-export const intermediateNodeStyleTemplate = `
-  <rect fill="#C0C0C0" width="285" height="100" transform="translate(2 2)" />
-  <rect fill="#FFFFFF" stroke="#C0C0C0" width="285" height="100" />
-  <use xlink:href="{Binding status}" />
-  <g>
-    <rect width="3" height="100"/>
-    <rect width="3" height="100" transform="translate(282 0)"/>
-    <rect width="285" height="3"/>
-    <rect width="285" height="3" transform="translate(0 97)"/>
-  </g>
+export const intermediateNodeStyleTemplateSource = `({layout, tag, selected, zoom}) => svg\`
+<rect fill="#C0C0C0" width="285" height="100" transform="translate(2 2)" />
+<rect fill="#FFFFFF" stroke="#C0C0C0" width="285" height="100" />
+<g>
+  <rect width="3" height="100" />
+  <rect width="3" height="100" transform="translate(282 0)" />
+  <rect width="285" height="3" />
+  <rect width="285" height="3" transform="translate(0 97)" />
+</g>
 
-  <text
-    transform="translate(10 40)"
-    data-content="{Binding name}"
-    style="font-size:26px; font-family:Roboto,sans-serif; fill:#336699;"
-  />
-  <text
-    transform="translate(10 70)"
-    data-content="{Binding position}"
-    style="font-size:15px; font-family:Roboto,sans-serif; text-transform: uppercase; font-weight: 400"
-  />
-`
-
+<text
+  transform="translate(10 40)"
+  style="font-size:26px; font-family:Roboto,sans-serif; fill:#336699;">$\{tag.name}
+</text>
+<text
+  transform="translate(10 70)"
+  style="font-size:15px; font-family:Roboto,sans-serif; text-transform: uppercase; font-weight: 400">$\{tag.position}</text>
+\``
 //language=HTML
-export const overviewNodeStyleTemplate = `
-  <rect fill="#AAA" width="288" height="103" transform="translate(-1 -1)" />
-  <rect fill="#FFFFFF" width="285" height="100" />
-  <use xlink:href="{Binding status}" />
-  <g>
-    <rect width="3" height="100"/>
-    <rect width="3" height="100" transform="translate(282 0)"/>
-    <rect width="285" height="3"/>
-    <rect width="285" height="3" transform="translate(0 97)"/>
-  </g>
-  <text
-    transform="translate(10 50)"
-    data-content="{Binding name}"
-    style="font-size:40px; font-family:Roboto,sans-serif; fill:#336699; dominant-baseline: central;"
-  />
-`
+export const overviewNodeStyleTemplateSource = `({layout, tag, selected, zoom}) => svg\`
+<rect fill="#AAA" width="288" height="103" transform="translate(-1 -1)" />
+<rect fill="#FFFFFF" width="285" height="100" />
+<g>
+  <rect width="3" height="100" />
+  <rect width="3" height="100" transform="translate(282 0)" />
+  <rect width="285" height="3" />
+  <rect width="285" height="3" transform="translate(0 97)" />
+</g>
+<text
+  transform="translate(10 50)"
+  style="font-size:40px; font-family:Roboto,sans-serif; fill:#336699; dominant-baseline: central;">$\{tag.name}</text>
+\``

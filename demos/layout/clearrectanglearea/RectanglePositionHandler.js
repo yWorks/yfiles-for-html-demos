@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,76 +32,59 @@ import {
   IMutablePoint,
   IPoint,
   IPositionHandler,
+  MutableRectangle,
   Point
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
- * Simple implementation of an {@link IPositionHandler} that moves an {@link IMutablePoint}
+ * Simple implementation of an {@link IPositionHandler} that moves a {@link MutableRectangle}
  */
 export class RectanglePositionHandler extends BaseClass(IPositionHandler) {
-  position
+  rectangle
   startPosition = null
-
   /**
-   * Creates a position handler that delegates to a mutable position.
-   * @param {!IMutablePoint} position The position that will be read and changed.
+   * Creates a position handler updates the provided rectangles position
+   * @param rectangle The rectangle that will be read and changed.
    */
-  constructor(position) {
+  constructor(rectangle) {
     super()
-    this.position = position
+    this.rectangle = rectangle
   }
-
-  /**
-   * @type {!IPoint}
-   */
   get location() {
-    return this.position
+    return this.rectangle.dynamicLocation
   }
-
   /**
    * Stores the initial position of the {@link IMutablePoint}
-   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
-    this.startPosition = this.position.toPoint()
+    this.startPosition = this.rectangle.topLeft
   }
-
   /**
    * Moves the {@link IMutablePoint} away from the start position by the difference
    * between newLocation and originalLocation
-   * @param {!IInputModeContext} context The context
-   * @param {!Point} originalLocation the original location
-   * @param {!Point} newLocation the new location
+   * @param context The context
+   * @param originalLocation the original location
+   * @param newLocation the new location
    */
   handleMove(context, originalLocation, newLocation) {
     if (this.startPosition) {
       const currentPosition = this.startPosition.add(newLocation.subtract(originalLocation))
-      if (this.position.x !== currentPosition.x || this.position.y !== currentPosition.y) {
-        this.position.x = currentPosition.x
-        this.position.y = currentPosition.y
+      if (this.rectangle.x !== currentPosition.x || this.rectangle.y !== currentPosition.y) {
+        this.rectangle.x = currentPosition.x
+        this.rectangle.y = currentPosition.y
       }
     }
   }
-
   /**
    * Moves the {@link IMutablePoint} back to the start position.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     if (this.startPosition) {
-      if (this.position.x !== this.startPosition.x || this.position.y !== this.startPosition.y) {
-        this.position.x = this.startPosition.x
-        this.position.y = this.startPosition.y
+      if (this.rectangle.x !== this.startPosition.x || this.rectangle.y !== this.startPosition.y) {
+        this.rectangle.x = this.startPosition.x
+        this.rectangle.y = this.startPosition.y
       }
     }
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
-   */
   dragFinished(context, originalLocation, newLocation) {
     // eslint-disable-next-line no-useless-return
     return

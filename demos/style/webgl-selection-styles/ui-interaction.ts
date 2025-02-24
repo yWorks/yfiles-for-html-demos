@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,14 +29,14 @@
 import { createGraph } from './load-sample-graph'
 import {
   type GraphComponent,
-  type StyleDecorationZoomPolicyStringValues,
+  type StyleIndicatorZoomPolicyStringValues,
   TimeSpan,
-  WebGL2AnimationDirection,
-  type WebGL2AnimationEasingStringValues,
-  WebGL2AnimationTiming,
-  type WebGL2IndicatorTypeStringValues,
-  WebGL2Transition
-} from 'yfiles'
+  WebGLAnimationDirection,
+  type WebGLAnimationEasingStringValues,
+  WebGLAnimationTiming,
+  type WebGLIndicatorTypeStringValues,
+  WebGLTransition
+} from '@yfiles/yfiles'
 import { type SelectionStyle, updateSelectionStyles } from './graph-styles'
 
 /**
@@ -45,7 +45,7 @@ import { type SelectionStyle, updateSelectionStyles } from './graph-styles'
 export function wireUpUI(style: SelectionStyle, graphComponent: GraphComponent): void {
   document.getElementById('reset-button')?.addEventListener('click', () => {
     graphComponent.graph.clear()
-    createGraph(graphComponent)
+    createGraph(graphComponent.graph)
     selectNodes(graphComponent)
   })
 
@@ -67,7 +67,7 @@ export function wireUpUI(style: SelectionStyle, graphComponent: GraphComponent):
 
   document.getElementById('change-style-pattern')?.addEventListener('change', (e) => {
     const target = e.target as HTMLSelectElement
-    style.stylePattern = target.value as WebGL2IndicatorTypeStringValues
+    style.stylePattern = target.value as WebGLIndicatorTypeStringValues
     const selectedIndex = target.selectedIndex
 
     const dashAnimated = document.querySelector<HTMLInputElement>('#change--dash-animated')!
@@ -114,67 +114,67 @@ export function wireUpUI(style: SelectionStyle, graphComponent: GraphComponent):
 
   document.getElementById('change-transitioned')?.addEventListener('change', (e) => {
     const target = e.target as HTMLInputElement
-    style.transition = target.checked ? createTransition(style.easing) : null
+    style.transition = target.checked ? createTransition(style.easing) : undefined
     updateSelectionStyles(style, graphComponent)
   })
 
   document.getElementById('change--dash-animated')?.addEventListener('change', (e) => {
     const target = e.target as HTMLInputElement
     style.animationTiming = target.checked
-      ? new WebGL2AnimationTiming(
+      ? new WebGLAnimationTiming(
           TimeSpan.fromSeconds(1),
           style.easing,
           255,
-          WebGL2AnimationDirection.NORMAL
+          WebGLAnimationDirection.NORMAL
         )
-      : null
+      : undefined
 
     updateSelectionStyles(style, graphComponent)
   })
 
   document.getElementById('change-easing')?.addEventListener('change', (e) => {
     const target = e.target as HTMLInputElement
-    style.easing = target.value as WebGL2AnimationEasingStringValues
+    style.easing = target.value as WebGLAnimationEasingStringValues
 
     // also update transition and dash animation, if activated
-    style.transition = style.transition ? createTransition(style.easing) : null
+    style.transition = style.transition ? createTransition(style.easing) : undefined
 
     style.animationTiming = style.animationTiming
-      ? new WebGL2AnimationTiming(
+      ? new WebGLAnimationTiming(
           TimeSpan.fromSeconds(1),
           style.easing,
           255,
-          WebGL2AnimationDirection.NORMAL
+          WebGLAnimationDirection.NORMAL
         )
-      : null
+      : undefined
 
     updateSelectionStyles(style, graphComponent)
   })
 
   document.getElementById('change-zoom-policy')?.addEventListener('change', (e) => {
     const target = e.target as HTMLInputElement
-    style.zoomPolicy = target.value as StyleDecorationZoomPolicyStringValues
+    style.zoomPolicy = target.value as StyleIndicatorZoomPolicyStringValues
     updateSelectionStyles(style, graphComponent)
   })
 }
 
 export function selectNodes(graphComponent: GraphComponent): void {
-  graphComponent.graph.nodes.forEach((item) => graphComponent.selection.setSelected(item, true))
+  graphComponent.graph.nodes.forEach((item) => graphComponent.selection.add(item))
 }
 
 function selectEdges(graphComponent: GraphComponent): void {
-  graphComponent.graph.edges.forEach((item) => graphComponent.selection.setSelected(item, true))
+  graphComponent.graph.edges.forEach((item) => graphComponent.selection.add(item))
 }
 
 function selectLabels(graphComponent: GraphComponent): void {
-  graphComponent.graph.labels.forEach((item) => graphComponent.selection.setSelected(item, true))
+  graphComponent.graph.labels.forEach((item) => graphComponent.selection.add(item))
 }
 
 /**
- * Creates a WebGL2Transition with the given easing and default values.
+ * Creates a WebGLTransition with the given easing and default values.
  */
-export function createTransition(easing: WebGL2AnimationEasingStringValues): WebGL2Transition {
-  return new WebGL2Transition({
+export function createTransition(easing: WebGLAnimationEasingStringValues): WebGLTransition {
+  return new WebGLTransition({
     properties: 'opacity',
     easing,
     duration: '0.5s'

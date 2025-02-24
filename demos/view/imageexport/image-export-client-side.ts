@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,9 +33,9 @@ import {
   type Rect,
   Size,
   SvgExport,
-  WebGL2GraphModelManager
-} from 'yfiles'
-import { useWebGL2Rendering } from './webgl-support'
+  WebGLGraphModelManager
+} from '@yfiles/yfiles'
+import { useWebGLRendering } from './webgl-support'
 
 /**
  * Exports the image on the client. This will open a dialog with a preview and the option to save the image as PNG.
@@ -44,10 +44,17 @@ export async function exportImageClientSide(
   graphComponent: GraphComponent,
   scale: number,
   margin: number,
-  exportRectangle?: Rect
+  exportRectangle?: Rect,
+  renderCompletionCallback?: () => Promise<void | void[]>
 ): Promise<HTMLImageElement> {
   // export the image and show a dialog to save the image
-  return await exportImage(graphComponent, scale, Insets.from(margin), exportRectangle)
+  return await exportImage(
+    graphComponent,
+    scale,
+    Insets.from(margin),
+    exportRectangle,
+    renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
+  )
 }
 
 /**
@@ -59,20 +66,21 @@ export async function exportImage(
   graphComponent: GraphComponent,
   scale = 1,
   margins = Insets.from(5),
-  exportRect?: Rect
+  exportRect?: Rect,
+  renderCompletionCallback?: () => Promise<void | void[]>
 ): Promise<HTMLImageElement> {
   // Create a new graph component for exporting the original SVG content
   const exportComponent = new GraphComponent()
   // ... and assign it the same graph.
   exportComponent.graph = graphComponent.graph
-  exportComponent.updateContentRect()
+  exportComponent.updateContentBounds()
 
-  if (graphComponent.graphModelManager instanceof WebGL2GraphModelManager) {
-    useWebGL2Rendering(exportComponent)
+  if (graphComponent.graphModelManager instanceof WebGLGraphModelManager) {
+    useWebGLRendering(exportComponent)
   }
 
   // Determine the bounds of the exported area
-  const targetRect = exportRect ?? exportComponent.contentRect
+  const targetRect = exportRect ?? exportComponent.contentBounds
 
   // Create the exporter class
   const exporter = new SvgExport({
@@ -87,7 +95,10 @@ export async function exportImage(
   exporter.cssStyleSheet = null
 
   // Export the component to svg
-  const svgElement = await exporter.exportSvgAsync(exportComponent)
+  const svgElement = await exporter.exportSvgAsync(
+    exportComponent,
+    renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
+  )
 
   return renderSvgToPng(
     svgElement as SVGElement,

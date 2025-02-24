@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,8 +29,8 @@
 import type { Activity, Task } from './resources/data-model'
 import { getActivity } from './resources/data-model'
 import { ganttChartData as dataModel } from './resources/gantt-chart-data'
-import type { GraphComponent, GraphEditorInputMode, INode } from 'yfiles'
-import { Animator, IAnimation, Rect, TimeSpan } from 'yfiles'
+import type { GraphComponent, GraphEditorInputMode, INode } from '@yfiles/yfiles'
+import { Animator, IAnimation, Rect, TimeSpan } from '@yfiles/yfiles'
 
 /**
  * Type that describes the data needed for the sweep-line.
@@ -219,7 +219,6 @@ export async function updateSubRows(
 export function calculateMappingForTask(
   task: Task,
   taskId2Activities: Map<number, INode[]>,
-  // eslint-disable-next-line @typescript-eslint/no-shadow
   subRowMap: Map<Activity, number>,
   graphComponent: GraphComponent
 ): number {
@@ -260,7 +259,6 @@ export function calculateMappingForTask(
       if (d.open) {
         // search for the first available sub-row
         let i = 0
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         while (subRows[i]) {
           i++
         }

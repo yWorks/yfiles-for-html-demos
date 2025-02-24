@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,88 +26,54 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode } from 'yfiles'
-import { ContextMenu } from 'demo-utils/ContextMenu'
-
+import { INode } from '@yfiles/yfiles'
 /**
  * Initializes the context menu.
- * @param {!GraphComponent} graphComponent
- * @param {!CollapsibleTree} orgChartGraph
  */
 export function configureContextMenu(graphComponent, orgChartGraph) {
   const inputMode = graphComponent.inputMode
-
-  // Create a context menu. In this demo, we use our sample context menu implementation, but you can use any other
-  // context menu widget as well. See the Context Menu demo for more details about working with context menus.
-  const contextMenu = new ContextMenu(graphComponent)
-
-  // Add event listeners to the various events that open the context menu. These listeners then
-  // call the provided callback-function which in turn asks the current ContextMenuInputMode if a
-  // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
-    if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
-      contextMenu.show(location)
-    }
-  })
-
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
-  // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  inputMode.addPopulateItemContextMenuListener((_, evt) => {
-    populateContextMenu(graphComponent, orgChartGraph, contextMenu, evt)
+  inputMode.addEventListener('populate-item-context-menu', (evt) => {
+    populateContextMenu(graphComponent, orgChartGraph, evt)
   })
-
-  // Add a listener that closes the menu when the input mode requests this
-  inputMode.contextMenuInputMode.addCloseMenuListener(() => {
-    contextMenu.close()
-  })
-
-  // If the context menu closes itself, for example, because a menu item was clicked, we must inform the input mode
-  contextMenu.onClosedCallback = () => {
-    inputMode.contextMenuInputMode.menuClosed()
-  }
 }
-
 /**
  * Populates the context menu based on the item the mouse hovers over.
- * @param {!GraphComponent} graphComponent
- * @param {!CollapsibleTree} orgChartGraph
- * @param {!ContextMenu} contextMenu
- * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args
  */
-function populateContextMenu(graphComponent, orgChartGraph, contextMenu, args) {
-  // The 'showMenu' property is set to true to inform the input mode that we actually want to show a context menu
-  // for this item (or more generally, the location provided by the event args).
-  // If you don't want to show a context menu for some locations, set 'false' in these cases.
-  args.showMenu = true
-
-  contextMenu.clearItems()
-
+function populateContextMenu(graphComponent, orgChartGraph, args) {
   const node = args.item
-
   // if we clicked on a node
   if (node instanceof INode) {
     graphComponent.currentItem = node
     // Create the context menu items
+    const menuItems = []
     if (orgChartGraph.canExecuteHideParent(node)) {
-      contextMenu.addMenuItem('Hide Parent', () => orgChartGraph.executeHideParent(node))
+      menuItems.push({ label: 'Hide Parent', action: () => orgChartGraph.executeHideParent(node) })
     }
     if (orgChartGraph.canExecuteShowParent(node)) {
-      contextMenu.addMenuItem('Show Parent', () => orgChartGraph.executeShowParent(node))
+      menuItems.push({ label: 'Show Parent', action: () => orgChartGraph.executeShowParent(node) })
     }
-
     if (orgChartGraph.canExecuteHideChildren(node)) {
-      contextMenu.addMenuItem('Hide Children', () => orgChartGraph.executeHideChildren(node))
+      menuItems.push({
+        label: 'Hide Children',
+        action: () => orgChartGraph.executeHideChildren(node)
+      })
     }
     if (orgChartGraph.canExecuteShowChildren(node)) {
-      contextMenu.addMenuItem('Show Children', () => orgChartGraph.executeShowChildren(node))
+      menuItems.push({
+        label: 'Show Children',
+        action: () => orgChartGraph.executeShowChildren(node)
+      })
     }
-
     if (orgChartGraph.canExecuteShowAll()) {
-      contextMenu.addMenuItem('Show all', () => orgChartGraph.executeShowAll())
+      menuItems.push({ label: 'Show all', action: () => orgChartGraph.executeShowAll() })
+    }
+    if (menuItems.length > 0) {
+      args.contextMenu = menuItems
     }
   } else {
     // no node has been hit
     if (orgChartGraph.canExecuteShowAll())
-      contextMenu.addMenuItem('Show all', () => orgChartGraph.executeShowAll())
+      args.contextMenu = [{ label: 'Show all', action: () => orgChartGraph.executeShowAll() }]
   }
 }

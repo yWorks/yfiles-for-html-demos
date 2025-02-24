@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IEdge, IEnumerable, IHandle, IHandleProvider, IInputModeContext } from 'yfiles'
+import {
+  BaseClass,
+  IEdge,
+  IEnumerable,
+  IHandle,
+  IHandleProvider,
+  IInputModeContext
+} from '@yfiles/yfiles'
 
 /**
  * Custom implementation for bezier edges that always shows all handles for the control points
@@ -46,7 +53,7 @@ export class BezierEdgeHandleProvider extends BaseClass(IHandleProvider) {
   public getHandles(context: IInputModeContext): IEnumerable<IHandle> {
     return this.coreImpl
       .getHandles(context)
-      .concat(this.edge.bends.map((b) => b.lookup(IHandle.$class)))
+      .concat(this.edge.bends.map((b) => b.lookup(IHandle)))
       .toList()
   }
 }

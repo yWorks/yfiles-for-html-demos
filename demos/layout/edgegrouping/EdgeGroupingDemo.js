@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,101 +31,81 @@ import {
   ArrowType,
   BridgeCrossingStyle,
   BridgeManager,
+  CssFill,
   EdgeStyleBase,
+  EdgeStyleIndicatorRenderer,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GraphObstacleProvider,
-  GraphSelectionIndicatorManager,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   IArrow,
   IEdge,
   IModelItem,
   INode,
+  IPortStyle,
   IRenderContext,
-  LayoutMode,
+  LayoutExecutor,
   License,
-  NodeStylePortStyleAdapter,
+  ShapePortStyle,
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs,
   ShapeNodeShape,
   ShapeNodeStyle,
-  SimplexNodePlacer,
   SmoothingPolicy,
-  SolidColorFill,
   SvgVisual,
   SvgVisualGroup,
-  Visual,
-  VoidPortStyle
-} from 'yfiles'
-
-import { ContextMenu } from 'demo-utils/ContextMenu'
-import SampleData from './resources/SampleData.js'
-import { applyDemoTheme, createDemoNodeStyle, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/**
- * @typedef {Object} EdgeTag
- * @property {string} [sourceGroupId]
- * @property {string} [targetGroupId]
- */
-
-/** @type {GraphComponent} */
+  Visual
+} from '@yfiles/yfiles'
+import SampleData from './resources/SampleData'
+import { createDemoNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 let graphComponent = null
-
-/** @type {boolean} */
 let portGroupMode = false
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   configureInteraction()
   createSampleGraph()
   initializeUI()
 }
-
 /**
  * Applies a layout to the current graph including the edge/port group information in the edges'
  * tags.
- * @param {boolean} incremental
  */
-async function runLayout(incremental) {
+async function runLayout(fromSketch) {
   setUIDisabled(true)
-  const layout = new HierarchicLayout({
-    orthogonalRouting: true,
+  const layout = new HierarchicalLayout({
     minimumLayerDistance: 70,
-    layoutMode: incremental ? LayoutMode.INCREMENTAL : LayoutMode.FROM_SCRATCH
+    fromSketchMode: fromSketch,
+    coordinateAssigner: {
+      bendReduction: false
+    }
   })
-  layout.nodePlacer.barycenterMode = true
-  layout.nodePlacer.bendReduction = false
-
-  const layoutData = new HierarchicLayoutData({
+  const layoutData = new HierarchicalLayoutData({
     edgeThickness: 3,
-    incrementalHints: { incrementalSequencingItems: graphComponent.graph.edges }
+    incrementalEdges: graphComponent.graph.edges
   })
   if (portGroupMode) {
-    layoutData.sourcePortGroupIds.delegate = (edge) =>
+    layoutData.ports.sourcePortGroupIds = (edge) =>
       edge.tag && edge.tag.sourceGroupId ? edge.tag.sourceGroupId : null
-    layoutData.targetPortGroupIds.delegate = (edge) =>
+    layoutData.ports.targetPortGroupIds = (edge) =>
       edge.tag && edge.tag.targetGroupId ? edge.tag.targetGroupId : null
   } else {
-    layoutData.sourceGroupIds.delegate = (edge) =>
+    layoutData.sourceGroupIds = (edge) =>
       edge.tag && edge.tag.sourceGroupId ? edge.tag.sourceGroupId : null
-    layoutData.targetGroupIds.delegate = (edge) =>
+    layoutData.targetGroupIds = (edge) =>
       edge.tag && edge.tag.targetGroupId ? edge.tag.targetGroupId : null
   }
-
-  await graphComponent.morphLayout(layout, '700ms', layoutData)
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
+  await graphComponent.applyLayoutAnimated(layout, '700ms', layoutData)
   setUIDisabled(false)
 }
-
 function createSampleGraph() {
   const graph = graphComponent.graph
   graph.clear()
@@ -141,57 +121,49 @@ function createSampleGraph() {
     smoothingLength: 15
   })
   graph.edgeDefaults.shareStyleInstance = false
-
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    edgeStyle: new HighlightEdgeStyle()
-  })
-
+  graph.decorator.edges.selectionRenderer.addConstant(
+    new EdgeStyleIndicatorRenderer({
+      edgeStyle: new HighlightEdgeStyle(),
+      zoomPolicy: 'world-coordinates'
+    })
+  )
   const bridgeManager = new BridgeManager({
     canvasComponent: graphComponent,
     defaultBridgeCrossingStyle: BridgeCrossingStyle.GAP
   })
   bridgeManager.addObstacleProvider(new GraphObstacleProvider())
-
   const builder = new GraphBuilder(graph)
   builder.createNodesSource(SampleData.nodes, 'id')
   builder.createEdgesSource(SampleData.edges, 'from', 'to', 'id')
   builder.buildGraph()
-
   graph.edges.forEach((edge) => {
     edge.tag = edge.tag.groupIds
     updateStyles(edge)
   })
-
   graphComponent.fitGraphBounds()
   runLayout(false)
 }
-
 /**
  * Updates the selection when an item is right-clicked for a context menu.
- * @param {!IModelItem} item
  */
 function updateSelection(item) {
   const selection = graphComponent.selection
   if (item) {
-    if (!selection.isSelected(item)) {
+    if (!selection.includes(item)) {
       selection.clear()
-      selection.setSelected(item, true)
+      selection.add(item)
     } else {
       if (item instanceof IEdge) {
-        selection.selectedNodes.clear()
+        selection.nodes.clear()
       } else {
-        selection.selectedEdges.clear()
+        selection.edges.clear()
       }
-      selection.setSelected(item, true)
+      selection.add(item)
     }
   }
 }
-
 /**
  * Groups the given edges according to the type. In case 'override' is true, a new tag is set.
- * @param {!('source'|'target'|'source-and-target'|'ungroup')} type
- * @param {!Array.<IEdge>} edges
- * @param {boolean} override
  */
 function groupEdges(type, edges, override) {
   const id = Date.now()
@@ -210,7 +182,6 @@ function groupEdges(type, edges, override) {
         break
       default:
     }
-
     if (!edge.tag || override || type === 'ungroup') {
       edge.tag = tag
     } else {
@@ -219,29 +190,22 @@ function groupEdges(type, edges, override) {
     }
     updateStyles(edge)
   })
-
   runLayout(true)
 }
-
 /**
  * Returns the hash code of the given node.
- * @param {!INode} node
- * @returns {number}
  */
 function hashCode(node) {
   return node.hashCode()
 }
-
 /**
  * Updates the styles to distinguish the different types of edge/port grouping.
- * @param {!IEdge} edge
  */
 function updateStyles(edge) {
   const tag = edge.tag
   if (!tag) {
     return // the ungrouped edge default
   }
-
   let color = '#BBBBBB'
   if (portGroupMode) {
     if (tag.sourceGroupId && tag.targetGroupId) {
@@ -258,26 +222,22 @@ function updateStyles(edge) {
   } else if (tag.targetGroupId) {
     color = '#483D8B'
   }
-
-  const portStyle = new NodeStylePortStyleAdapter({
-    nodeStyle: new ShapeNodeStyle({
-      shape: ShapeNodeShape.ELLIPSE,
-      fill: color,
-      stroke: null
-    }),
+  const portStyle = new ShapePortStyle({
+    shape: ShapeNodeShape.ELLIPSE,
+    fill: color,
+    stroke: null,
     renderSize: [7, 7]
   })
   if (tag.sourceGroupId) {
     graphComponent.graph.setStyle(edge.sourcePort, portStyle)
   } else {
-    graphComponent.graph.setStyle(edge.sourcePort, new VoidPortStyle())
+    graphComponent.graph.setStyle(edge.sourcePort, IPortStyle.VOID_PORT_STYLE)
   }
   if (tag.targetGroupId) {
     graphComponent.graph.setStyle(edge.targetPort, portStyle)
   } else {
-    graphComponent.graph.setStyle(edge.targetPort, new VoidPortStyle())
+    graphComponent.graph.setStyle(edge.targetPort, IPortStyle.VOID_PORT_STYLE)
   }
-
   graphComponent.graph.setStyle(
     edge,
     new PolylineEdgeStyle({
@@ -292,7 +252,6 @@ function updateStyles(edge) {
     })
   )
 }
-
 /**
  * Sets a {@link GraphEditorInputMode} and initializes the context menu.
  */
@@ -300,146 +259,152 @@ function configureInteraction() {
   const inputMode = new GraphEditorInputMode({
     selectableItems: GraphItemTypes.EDGE | GraphItemTypes.NODE
   })
-
-  const contextMenu = new ContextMenu(graphComponent)
-  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
-    const worldLocation = graphComponent.toWorldFromPage(location)
-    const showMenu = inputMode.contextMenuInputMode.shouldOpenMenu(worldLocation)
-    if (showMenu) {
-      contextMenu.show(location)
-    }
-  })
-  inputMode.addPopulateItemContextMenuListener((_, evt) => populateContextMenu(contextMenu, evt))
-  inputMode.contextMenuInputMode.addCloseMenuListener(() => contextMenu.close())
-  contextMenu.onClosedCallback = () => inputMode.contextMenuInputMode.menuClosed()
+  inputMode.addEventListener('populate-item-context-menu', (evt) => populateContextMenu(evt))
   graphComponent.inputMode = inputMode
 }
-
 /**
  * Adds menu items to the context menu depending on what type of graph element was hit.
- * @param {!ContextMenu} contextMenu
- * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args
  */
-function populateContextMenu(contextMenu, args) {
-  args.showMenu = true
-  contextMenu.clearItems()
-
+function populateContextMenu(args) {
+  if (args.handled) {
+    return
+  }
   let item = args.item
   const selection = graphComponent.selection
-  if (!item && selection.selectedEdges.size > 0) {
-    item = selection.selectedEdges.first()
+  if (!item && selection.edges.size > 0) {
+    item = selection.edges.first()
   }
   updateSelection(item)
+  const menuItems = []
   if (item instanceof IEdge) {
-    contextMenu.clearItems()
-    const selectedEdges = selection.selectedEdges.toArray()
+    const selectedEdges = selection.edges.toArray()
     if (portGroupMode) {
-      const sourcePortGroupMenuItem = contextMenu.addMenuItem('Source Port Group', () =>
-        groupEdges('source', selectedEdges, true)
-      )
-      const targetPortGroupMenuItem = contextMenu.addMenuItem('Target Port Group', () =>
-        groupEdges('target', selectedEdges, true)
-      )
-      const sourceAndTargetPortGroupMenuItem = contextMenu.addMenuItem(
-        'Source and Target Port Group',
-        () => groupEdges('source-and-target', selectedEdges, true)
-      )
-      sourcePortGroupMenuItem.classList.add('source-port-group')
-      targetPortGroupMenuItem.classList.add('target-port-group')
-      sourceAndTargetPortGroupMenuItem.classList.add('source-and-target-port-group')
+      menuItems.push({
+        label: 'Source Port Group',
+        action: () => groupEdges('source', selectedEdges, true),
+        cssClass: 'source-port-group'
+      })
+      menuItems.push({
+        label: 'Source and Target Port Group',
+        action: () => groupEdges('source-and-target', selectedEdges, true),
+        cssClass: 'source-and-target-port-group'
+      })
+      menuItems.push({
+        label: 'Target Port Group',
+        action: () => groupEdges('target', selectedEdges, true),
+        cssClass: 'target-port-group'
+      })
     } else {
-      const sourceGroupMenuItem = contextMenu.addMenuItem('Source Group', () =>
-        groupEdges('source', selectedEdges, true)
-      )
-      const targetGroupMenuItem = contextMenu.addMenuItem('Target Group', () =>
-        groupEdges('target', selectedEdges, true)
-      )
-      const sourceAndTargetGroupMenuItem = contextMenu.addMenuItem('Source and Target Group', () =>
-        groupEdges('source-and-target', selectedEdges, true)
-      )
-      sourceGroupMenuItem.classList.add('source-edge-group')
-      targetGroupMenuItem.classList.add('target-edge-group')
-      sourceAndTargetGroupMenuItem.classList.add('source-and-target-edge-group')
+      menuItems.push({
+        label: 'Source Group',
+        action: () => groupEdges('source', selectedEdges, true),
+        cssClass: 'source-edge-group'
+      })
+      menuItems.push({
+        label: 'Target Group',
+        action: () => groupEdges('target', selectedEdges, true),
+        cssClass: 'target-edge-group'
+      })
+      menuItems.push({
+        label: 'Source and Target Group',
+        action: () => groupEdges('source-and-target', selectedEdges, true),
+        cssClass: 'source-and-target-edge-group'
+      })
     }
-    contextMenu.addMenuItem('Ungroup', () => groupEdges('ungroup', selectedEdges, true))
+    menuItems.push({ label: 'Ungroup', action: () => groupEdges('ungroup', selectedEdges, true) })
   } else if (item instanceof INode) {
     let outgoingEdges = []
     let incomingEdges = []
     let incidentEdges = []
-    selection.selectedNodes.forEach((node) => {
+    selection.nodes.forEach((node) => {
       outgoingEdges = outgoingEdges.concat(graphComponent.graph.outEdgesAt(node).toArray())
       incomingEdges = incomingEdges.concat(graphComponent.graph.inEdgesAt(node).toArray())
       incidentEdges = incidentEdges.concat(graphComponent.graph.edgesAt(node).toArray())
     })
     if (portGroupMode) {
-      const sourcePortGroupMenuItem = contextMenu.addMenuItem('Port Group Outgoing Edges', () =>
-        groupEdges('source', outgoingEdges, false)
-      )
-      const targetPortGroupMenuItem = contextMenu.addMenuItem('Port Group Incoming Edges', () =>
-        groupEdges('target', incomingEdges, false)
-      )
-      const sourceAndTargetPortGroupMenuItem = contextMenu.addMenuItem(
-        'Port Group Incident Edges',
-        () => {
+      menuItems.push({
+        label: 'Port Group Outgoing Edges',
+        action: () => groupEdges('source', outgoingEdges, false),
+        cssClass: 'source-port-group'
+      })
+      menuItems.push({
+        label: 'Port Group Incoming Edges',
+        action: () => groupEdges('target', incomingEdges, false),
+        cssClass: 'target-port-group'
+      })
+      menuItems.push({
+        label: 'Port Group Incident Edges',
+        action: () => {
           groupEdges('source', outgoingEdges, false)
           groupEdges('target', incomingEdges, false)
-        }
-      )
-      sourcePortGroupMenuItem.classList.add('source-port-group')
-      targetPortGroupMenuItem.classList.add('target-port-group')
-      sourceAndTargetPortGroupMenuItem.classList.add('source-and-target-port-group')
+        },
+        cssClass: 'source-and-target-port-group'
+      })
     } else {
-      const sourceGroupMenuItem = contextMenu.addMenuItem('Group Outgoing Edges', () =>
-        groupEdges('source', outgoingEdges, false)
-      )
-      const targetGroupMenuItem = contextMenu.addMenuItem('Group Incoming Edges', () =>
-        groupEdges('target', incomingEdges, false)
-      )
-      const sourceAndTargetGroupMenuItem = contextMenu.addMenuItem('Group Incident Edges', () =>
-        groupEdges('source-and-target', incidentEdges, false)
-      )
-      sourceGroupMenuItem.classList.add('source-edge-group')
-      targetGroupMenuItem.classList.add('target-edge-group')
-      sourceAndTargetGroupMenuItem.classList.add('source-and-target-edge-group')
+      menuItems.push({
+        label: 'Group Outgoing Edges',
+        action: () => groupEdges('source', outgoingEdges, false),
+        cssClass: 'source-edge-group'
+      })
+      menuItems.push({
+        label: 'Group Incoming Edges',
+        action: () => groupEdges('target', incomingEdges, false),
+        cssClass: 'target-edge-group'
+      })
+      menuItems.push({
+        label: 'Group Incident Edges',
+        action: () => groupEdges('source-and-target', incidentEdges, false),
+        cssClass: 'source-and-target-edge-group'
+      })
     }
-    contextMenu.addMenuItem('Ungroup Incident Edges', () =>
-      groupEdges('ungroup', incidentEdges, false)
-    )
+    menuItems.push({
+      label: 'Ungroup Incident Edges',
+      action: () => groupEdges('ungroup', incidentEdges, false)
+    })
   } else {
     const allEdges = graphComponent.graph.edges.toArray()
     if (portGroupMode) {
-      const sourcePortGroupMenuItem = contextMenu.addMenuItem('Source Port Group All Edges', () =>
-        groupEdges('source', allEdges, true)
-      )
-      const targetPortGroupMenuItem = contextMenu.addMenuItem('Target Port Group All Edges', () =>
-        groupEdges('target', allEdges, true)
-      )
-      const sourceAndTargetPortGroupMenuItem = contextMenu.addMenuItem(
-        'Source and Target Port Group All Edges',
-        () => groupEdges('source-and-target', allEdges, true)
-      )
-      sourcePortGroupMenuItem.classList.add('source-port-group')
-      targetPortGroupMenuItem.classList.add('target-port-group')
-      sourceAndTargetPortGroupMenuItem.classList.add('source-and-target-port-group')
+      menuItems.push({
+        label: 'Source Port Group All Edges',
+        action: () => groupEdges('source', allEdges, true),
+        cssClass: 'source-port-group'
+      })
+      menuItems.push({
+        label: 'Target Port Group All Edges',
+        action: () => groupEdges('target', allEdges, true),
+        cssClass: 'target-port-group'
+      })
+      menuItems.push({
+        label: 'Source and Target Port Group All Edges',
+        action: () => groupEdges('source-and-target', allEdges, true),
+        cssClass: 'source-and-target-port-group'
+      })
     } else {
-      const sourceGroupMenuItem = contextMenu.addMenuItem('Source Group All Edges', () =>
-        groupEdges('source', allEdges, true)
-      )
-      const targetGroupMenuItem = contextMenu.addMenuItem('Target Group All Edges', () =>
-        groupEdges('target', allEdges, true)
-      )
-      const sourceAndTargetGroupMenuItem = contextMenu.addMenuItem(
-        'Source and Target Group All Edges',
-        () => groupEdges('source-and-target', allEdges, true)
-      )
-      sourceGroupMenuItem.classList.add('source-edge-group')
-      targetGroupMenuItem.classList.add('target-edge-group')
-      sourceAndTargetGroupMenuItem.classList.add('source-and-target-edge-group')
+      menuItems.push({
+        label: 'Source Group All Edges',
+        action: () => groupEdges('source', allEdges, true),
+        cssClass: 'source-edge-group'
+      })
+      menuItems.push({
+        label: 'Target Group All Edges',
+        action: () => groupEdges('target', allEdges, true),
+        cssClass: 'target-edge-group'
+      })
+      menuItems.push({
+        label: 'Source and Target Group All Edges',
+        action: () => groupEdges('source-and-target', allEdges, true),
+        cssClass: 'source-and-target-edge-group'
+      })
     }
-    contextMenu.addMenuItem('Ungroup All Edges', () => groupEdges('ungroup', allEdges, true))
+    menuItems.push({
+      label: 'Ungroup All Edges',
+      action: () => groupEdges('ungroup', allEdges, true)
+    })
+  }
+  if (menuItems.length > 0) {
+    args.contextMenu = menuItems
   }
 }
-
 /**
  * Binds the various actions to the buttons in the toolbar.
  */
@@ -455,10 +420,9 @@ function initializeUI() {
     runLayout(true)
   })
 }
-
 /**
  * Disables the HTML elements of the UI.
- * @param {boolean} disabled true if the element should be disabled, false otherwise
+ * @param disabled true if the element should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
   document.querySelector('#reset').disabled = disabled
@@ -466,20 +430,13 @@ function setUIDisabled(disabled) {
   document.querySelector('#toggle-port-group-mode').disabled = disabled
   graphComponent.inputMode.enabled = !disabled
 }
-
 /**
  * An edge style to draw the selection highlight 'below' the edge.
  */
 class HighlightEdgeStyle extends EdgeStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!IEdge} edge
-   * @returns {!Visual}
-   */
   createVisual(context, edge) {
     const style = edge.style
-    const strokeColor = style.stroke.fill.color
-    const highlightColor = `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b})`
+    const highlightColor = style.stroke.fill.value
     const visualGroup = new SvgVisualGroup()
     const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const highlightPath = document.createElementNS('http://www.w3.org/2000/svg', 'path')
@@ -500,20 +457,18 @@ class HighlightEdgeStyle extends EdgeStyleBase {
       path,
       IArrow.NONE,
       new Arrow({
-        color: highlightColor,
-        scale: 1.5,
+        fill: highlightColor,
+        lengthScale: 1.5,
+        widthScale: 1.5,
         type: ArrowType.TRIANGLE
       })
     )
     highlight.appendChild(highlightPath)
     highlight.setAttribute('opacity', '0.75')
-
     const highlightVisual = new SvgVisual(highlight)
     visualGroup.add(highlightVisual)
     visualGroup.add(style.renderer.getVisualCreator(edge, style).createVisual(context))
-
     return visualGroup
   }
 }
-
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,11 +31,10 @@ import {
   BaseClass,
   BendEventArgs,
   CanvasComponent,
-  Class,
   CollectionModelManager,
   ConcurrencyController,
+  type Constructor,
   Cursor,
-  DefaultLabelStyle,
   delegate,
   EdgeEventArgs,
   FreeLabelModel,
@@ -45,8 +44,6 @@ import {
   IBend,
   IBoundsProvider,
   ICanvasContext,
-  ICanvasObject,
-  ICanvasObjectDescriptor,
   IconLabelStyle,
   IEdge,
   IGraph,
@@ -61,30 +58,28 @@ import {
   IModelItem,
   INode,
   InputModeBase,
-  InteriorStretchLabelModel,
+  IObjectRenderer,
   IObservableCollection,
   IOrientedRectangle,
   IPort,
   IRenderContext,
   ISvgDefsCreator,
-  ItemEventArgs,
   IVisibilityTestable,
   IVisualCreator,
-  Key,
   KeyEventArgs,
   LabelEventArgs,
+  LabelStyle,
   LabelStyleBase,
   ListEnumerable,
   Matrix,
   MatrixOrder,
-  ModifierKeys,
-  MouseButtons,
-  MouseEventArgs,
-  MouseHoverInputMode,
   NodeEventArgs,
   ObservableCollection,
   OrientedRectangle,
   Point,
+  PointerButtons,
+  PointerEventArgs,
+  PointerType,
   PortEventArgs,
   PropertyChangedEventArgs,
   Rect,
@@ -94,17 +89,18 @@ import {
   SimpleNode,
   SimplePort,
   Size,
+  StretchNodeLabelModel,
   Stroke,
   SvgVisual,
   SvgVisualGroup,
+  type TaggedSvgVisual,
   TimeSpan,
-  TouchEventArgs,
+  ToolTipInputMode,
   Visual,
-  WebGLSupport,
-  YObject
-} from 'yfiles'
+  WebGLSupport
+} from '@yfiles/yfiles'
 
-export type QueryButtonsListener = (_: ButtonInputMode, evt: QueryButtonsEvent) => void
+export type QueryButtonsListener = (evt: QueryButtonsEvent, _: ButtonInputMode) => void
 export type ButtonHoverListener = (button: Button) => void
 export type ButtonActionListener = (button: Button) => void
 
@@ -148,7 +144,7 @@ export enum ButtonTrigger {
  * {@link validOwnerTypes valid owner types}.
  *
  * Different {@link ButtonTrigger} can be used to trigger that buttons for an item are
- * {@link addQueryButtonsListener queried} and all buttons that were
+ * {@link setQueryButtonsListener queried} and all buttons that were
  * {@link QueryButtonsEvent.addButton added} to the {@link QueryButtonsEvent} are displayed using
  * the provided location and styling.
  *
@@ -156,23 +152,20 @@ export enum ButtonTrigger {
  * are called when hovering over or out of the button while {@link Button.onAction onAction} is
  * called when clicking or touch-clicking the button or starting a mouse-drag.
  *
- * When the {@link GraphComponent} is focused, the {@link Key.TAB} can be used to set a focus
+ * When the {@link GraphComponent} is focused, the 'Tab' key can be used to set a focus
  * the first button and cycle through all buttons. A focused button can be triggered using
- * {@link Key.ENTER} or {@link Key.SPACE}.
+ * the 'Enter' or the 'Space' key.
  */
 export class ButtonInputMode extends InputModeBase {
   private buttons: Button[] | null = null
   private buttonLabelManager: CollectionModelManager<Button>
   private queryButtonsListener: QueryButtonsListener | null = null
   private itemRemovedListener = this.onItemRemoved.bind(this)
-  private onMouseMoveListener = this.onMouseMove.bind(this)
-  private onMouseDragListener = this.onMouseDrag.bind(this)
-  private onMouseClickedListener = this.onMouseClicked.bind(this)
-  private onMouseDownListener = this.onMouseDown.bind(this)
-  private onTouchClickedListener = this.onTouchClicked.bind(this)
+  private onPointerMoveListener = this.onPointerMove.bind(this)
+  private onPointerDragListener = this.onPointerDrag.bind(this)
+  private onPointerClickedListener = this.onPointerClicked.bind(this)
+  private onPointerDownListener = this.onPointerDown.bind(this)
   private onKeyDownListener = this.onKeyDown.bind(this)
-  private onKeyPressedListener = this.onKeyPressed.bind(this)
-  private graphChangedListener = this.onGraphChanged.bind(this)
   private currentItemChangedListener = this.onCurrentItemChanged.bind(this)
 
   private _cursor: Cursor | null
@@ -186,9 +179,10 @@ export class ButtonInputMode extends InputModeBase {
   private buttonOwner: IModelItem | null = null
   private hoveredOwner: IModelItem | null = null
   private hoveredButton: Button | null = null
-  private mouseDownButton: Button | null = null
-  private tooltipMode: MouseHoverInputMode = new MouseHoverInputMode({
-    mouseHoverSize: Size.INFINITE // Ensure that the tooltip doesn't disappear when moving the mouse
+  private pointerDownButton: Button | null = null
+  private tooltipMode: ToolTipInputMode = new ToolTipInputMode({
+    mouseHoverSize: Size.INFINITE, // Ensure that the tooltip doesn't disappear when moving the mouse
+    toolTipLocationOffset: new Point(0, -10)
   })
   private _lastTooltipTimeout: any = undefined
   private _focusedButton: Button | null = null
@@ -221,7 +215,7 @@ export class ButtonInputMode extends InputModeBase {
 
   /**
    * The time an {@link IModelItem} has to be hovered before {@link Button}s are
-   * {@link addQueryButtonsListener queried} for it.
+   * {@link setQueryButtonsListener queried} for it.
    *
    * This property is only used when {@link buttonTrigger} is {@link ButtonTrigger.HOVER}.
    *
@@ -254,7 +248,7 @@ export class ButtonInputMode extends InputModeBase {
    * The time a {@link Button} has to be hovered before its {@link Button.tooltip tooltip} is
    * displayed.
    *
-   * The `default` is `750`.
+   * The `default` is `100`.
    */
   get hoverTooltipTime(): number {
     return this._hoverTooltipTime
@@ -277,6 +271,20 @@ export class ButtonInputMode extends InputModeBase {
   set buttonTrigger(value: ButtonTrigger) {
     this.hideButtons()
     this._buttonTrigger = value
+    switch (value) {
+      case ButtonTrigger.HOVER:
+        if (this.graphComponent) {
+          this.updateHoveredItem(
+            this.graphComponent.canvasContext.canvasComponent.lastEventLocation
+          )
+        }
+        break
+      case ButtonTrigger.CURRENT_ITEM:
+        if (this.graphComponent) {
+          this.onCurrentItemChanged(new PropertyChangedEventArgs(''), this.graphComponent)
+        }
+        break
+    }
   }
 
   /**
@@ -294,14 +302,18 @@ export class ButtonInputMode extends InputModeBase {
 
   /**
    * The style used to highlight the focused button.
-   * Using the {@link Key.TAB} the focus can be moved to the next button.
+   * Using the TAB key, the focus can be moved to the next button.
    */
   get focusedButtonStyle(): ILabelStyle {
-    return (this.buttonLabelManager.descriptor as ButtonDescriptor).focusedButtonStyle
+    return (this.buttonLabelManager.renderer as ButtonRenderer).focusedButtonStyle
   }
 
   set focusedButtonStyle(style: ILabelStyle) {
-    ;(this.buttonLabelManager.descriptor as ButtonDescriptor).focusedButtonStyle = style
+    ;(this.buttonLabelManager.renderer as ButtonRenderer).focusedButtonStyle = style
+  }
+
+  get graphComponent(): GraphComponent {
+    return this.parentInputModeContext?.canvasComponent as GraphComponent
   }
 
   constructor() {
@@ -314,8 +326,8 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   private createButtonLabelCollectionModel() {
-    const buttonLabelManager = new CollectionModelManager<Button>(Button.$class)
-    buttonLabelManager.descriptor = new ButtonDescriptor()
+    const buttonLabelManager = new CollectionModelManager<Button>(Button)
+    buttonLabelManager.renderer = new ButtonRenderer()
     buttonLabelManager.model = new ObservableCollection<Button>()
     return buttonLabelManager
   }
@@ -336,7 +348,7 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   /**
-   * {@link hideButtons Hides} the current buttons and {@link addQueryButtonsListener queries} and
+   * {@link hideButtons Hides} the current buttons and {@link setQueryButtonsListener queries} and
    * displays new {@link Button}s for the given item.
    *
    * When {@link buttonTrigger} is set to {@link ButtonTrigger.NONE}, calling this method is the
@@ -356,19 +368,20 @@ export class ButtonInputMode extends InputModeBase {
         })
 
         if (ensureVisible) {
-          const canvasContext = this.inputModeContext?.canvasComponent
+          const canvasContext = this.parentInputModeContext?.canvasComponent
             ?.canvasContext as ICanvasContext
           // get the bounding rectangle around all the buttons in this set
           const wholeBounds = this.buttons.reduce((previousValue, currentValue) => {
-            const boundsProvider =
-              this.buttonLabelManager.descriptor!.getBoundsProvider(currentValue)
+            const boundsProvider = this.buttonLabelManager.renderer!.getBoundsProvider(currentValue)
             return Rect.add(previousValue, boundsProvider.getBounds(canvasContext))
           }, Rect.EMPTY)
           // get the bounds for the owner of the buttons
-          const itemBoundsProvider = item.lookup(IBoundsProvider.$class)!
+          const itemBoundsProvider = item.lookup(IBoundsProvider)!
           const itemBounds = itemBoundsProvider.getBounds(canvasContext)
           // pan the viewport so both are visible
-          this.inputModeContext?.canvasComponent?.ensureVisible(Rect.add(itemBounds, wholeBounds))
+          this.parentInputModeContext?.canvasComponent?.ensureVisible(
+            Rect.add(itemBounds, wholeBounds)
+          )
         }
       }
     }
@@ -407,7 +420,7 @@ export class ButtonInputMode extends InputModeBase {
   /**
    * Returns the {@link Button buttons} that shall be displayed for the item.
    *
-   * This implementation {@link QueryButtonsEvent queries} all {@link addQueryButtonsListener added}
+   * This implementation {@link QueryButtonsEvent queries} all {@link setQueryButtonsListener added}
    * listeners and returns the buttons {@link QueryButtonsEvent.addButton added} by them.
    * @param item The item to provide buttons for.
    */
@@ -415,7 +428,7 @@ export class ButtonInputMode extends InputModeBase {
     const buttons: Button[] = []
     const event = new QueryButtonsEvent(this, item, buttons)
     if (this.queryButtonsListener) {
-      this.queryButtonsListener(this, event)
+      this.queryButtonsListener(event, this)
     }
     return buttons
   }
@@ -425,53 +438,57 @@ export class ButtonInputMode extends InputModeBase {
    * {@link QueryButtonsEvent.owner owner}.
    * @param listener The listener to add.
    */
-  addQueryButtonsListener(listener: QueryButtonsListener) {
-    this.queryButtonsListener = delegate.combine(this.queryButtonsListener, listener)
+  setQueryButtonsListener(listener: QueryButtonsListener) {
+    this.queryButtonsListener = delegate.combine(listener, this.queryButtonsListener)
   }
 
   /**
-   * Removes a previously {@link addQueryButtonsListener added} query buttons listener.
+   * Removes a previously {@link setQueryButtonsListener added} query buttons listener.
    * @param listener The listener to remove.
    */
   removeQueryButtonsListener(listener: QueryButtonsListener) {
-    this.queryButtonsListener = delegate.remove(this.queryButtonsListener, listener)
+    this.queryButtonsListener = delegate.remove(listener, this.queryButtonsListener)
   }
 
   private getHitButtons(context: IInputModeContext, location: Point) {
-    return context
-      .canvasComponent!.hitElementsAt(context, location, this.buttonLabelManager.canvasObjectGroup)
-      .map((canvasObject) => canvasObject.userObject as Button)
+    const graphComponent = context.canvasComponent as GraphComponent
+    return graphComponent.renderTree
+      .hitElementsAt({
+        context,
+        location,
+        root: this.buttonLabelManager.renderTreeGroup
+      })
+      .map((element) => element.tag as Button)
   }
 
   private getFirstHitButton(location: Point): Button | null {
-    return this.getHitButtons(this.inputModeContext!, location).at(0) ?? null
+    return this.getHitButtons(this.parentInputModeContext!, location).at(0) ?? null
   }
 
   install(context: IInputModeContext, controller: ConcurrencyController) {
     super.install(context, controller)
     const graphComponent = context.canvasComponent as GraphComponent
-    this.buttonLabelManager.canvasObjectGroup = graphComponent.inputModeGroup.addGroup()
-    graphComponent.addMouseMoveListener(this.onMouseMoveListener)
-    graphComponent.addMouseDragListener(this.onMouseDragListener)
-    graphComponent.addMouseLeaveListener(this.onMouseMoveListener)
-    graphComponent.addMouseClickListener(this.onMouseClickedListener)
-    graphComponent.addMouseDownListener(this.onMouseDownListener)
-    graphComponent.addTouchClickListener(this.onTouchClickedListener)
-    graphComponent.addKeyDownListener(this.onKeyDownListener)
-    graphComponent.addKeyPressListener(this.onKeyPressedListener)
-    graphComponent.addGraphChangedListener(this.graphChangedListener)
-    graphComponent.addCurrentItemChangedListener(this.currentItemChangedListener)
+    this.buttonLabelManager.renderTreeGroup = graphComponent.renderTree.createGroup(
+      graphComponent.renderTree.inputModeGroup
+    )
+    graphComponent.addEventListener('pointer-move', this.onPointerMoveListener)
+    graphComponent.addEventListener('pointer-drag', this.onPointerDragListener)
+    graphComponent.addEventListener('pointer-leave', this.onPointerMoveListener)
+    graphComponent.addEventListener('pointer-click', this.onPointerClickedListener)
+    graphComponent.addEventListener('pointer-down', this.onPointerDownListener)
+    graphComponent.addEventListener('key-down', this.onKeyDownListener)
+    graphComponent.addEventListener('current-item-changed', this.currentItemChangedListener)
     const graph = graphComponent.graph
-    this.addGraphListener(graph)
+    this.setGraphListeners(graph)
     this.tooltipMode.install(context, controller)
   }
 
-  private addGraphListener(graph: IGraph) {
-    graph.addNodeRemovedListener(this.itemRemovedListener)
-    graph.addEdgeRemovedListener(this.itemRemovedListener)
-    graph.addLabelRemovedListener(this.itemRemovedListener)
-    graph.addPortRemovedListener(this.itemRemovedListener)
-    graph.addBendRemovedListener(this.itemRemovedListener)
+  private setGraphListeners(graph: IGraph) {
+    graph.addEventListener('node-removed', this.itemRemovedListener)
+    graph.addEventListener('edge-removed', this.itemRemovedListener)
+    graph.addEventListener('label-removed', this.itemRemovedListener)
+    graph.addEventListener('port-removed', this.itemRemovedListener)
+    graph.addEventListener('bend-removed', this.itemRemovedListener)
   }
 
   uninstall(context: IInputModeContext) {
@@ -479,30 +496,27 @@ export class ButtonInputMode extends InputModeBase {
     const graphComponent = context.canvasComponent as GraphComponent
     const graph = graphComponent.graph
     this.removeGraphListener(graph)
-    graphComponent.removeCurrentItemChangedListener(this.currentItemChangedListener)
-    graphComponent.removeGraphChangedListener(this.graphChangedListener)
-    graphComponent.removeKeyDownListener(this.onKeyDownListener)
-    graphComponent.removeKeyPressListener(this.onKeyPressedListener)
-    graphComponent.removeTouchClickListener(this.onTouchClickedListener)
-    graphComponent.removeMouseDownListener(this.onMouseDownListener)
-    graphComponent.removeMouseClickListener(this.onMouseClickedListener)
-    graphComponent.removeMouseMoveListener(this.onMouseMoveListener)
-    graphComponent.removeMouseDragListener(this.onMouseDragListener)
-    graphComponent.removeMouseLeaveListener(this.onMouseMoveListener)
+    graphComponent.removeEventListener('current-item-changed', this.currentItemChangedListener)
+    graphComponent.removeEventListener('key-down', this.onKeyDownListener)
+    graphComponent.removeEventListener('pointer-down', this.onPointerDownListener)
+    graphComponent.removeEventListener('pointer-click', this.onPointerClickedListener)
+    graphComponent.removeEventListener('pointer-move', this.onPointerMoveListener)
+    graphComponent.removeEventListener('pointer-drag', this.onPointerDragListener)
+    graphComponent.removeEventListener('pointer-leave', this.onPointerMoveListener)
     this.updateHoveredButton(null)
-    this.buttonLabelManager.canvasObjectGroup!.remove()
+    graphComponent.renderTree.remove(this.buttonLabelManager.renderTreeGroup!)
     super.uninstall(context)
   }
 
   private removeGraphListener(graph: IGraph) {
-    graph.removeNodeRemovedListener(this.itemRemovedListener)
-    graph.removeEdgeRemovedListener(this.itemRemovedListener)
-    graph.removeLabelRemovedListener(this.itemRemovedListener)
-    graph.removePortRemovedListener(this.itemRemovedListener)
-    graph.removeBendRemovedListener(this.itemRemovedListener)
+    graph.removeEventListener('node-removed', this.itemRemovedListener)
+    graph.removeEventListener('edge-removed', this.itemRemovedListener)
+    graph.removeEventListener('label-removed', this.itemRemovedListener)
+    graph.removeEventListener('port-removed', this.itemRemovedListener)
+    graph.removeEventListener('bend-removed', this.itemRemovedListener)
   }
 
-  private onMouseMove(sender: CanvasComponent, evt: MouseEventArgs) {
+  private onPointerMove(evt: PointerEventArgs) {
     const newButton = this.getFirstHitButton(evt.location)
     this.updateHoveredButton(newButton)
     if (!newButton && this.buttonTrigger === ButtonTrigger.HOVER) {
@@ -510,21 +524,21 @@ export class ButtonInputMode extends InputModeBase {
     }
   }
 
-  private onMouseDown(sender: CanvasComponent, evt: MouseEventArgs) {
-    this.mouseDownButton = this.getFirstHitButton(evt.location)
+  private onPointerDown(evt: PointerEventArgs) {
+    this.pointerDownButton = this.getFirstHitButton(evt.location)
   }
 
-  private onMouseDrag(sender: CanvasComponent, evt: MouseEventArgs) {
+  private onPointerDrag(evt: PointerEventArgs) {
     const draggedButton = this.getFirstHitButton(evt.location)
-    if (draggedButton && this.mouseDownButton === draggedButton) {
+    if (draggedButton && this.pointerDownButton === draggedButton) {
       this.triggerAction(draggedButton)
     }
-    this.mouseDownButton = null
+    this.pointerDownButton = null
   }
 
   private updateHoveredButton(newButton: Button | null) {
     if (this.hoveredButton != newButton) {
-      this.mouseDownButton = null
+      this.pointerDownButton = null
       if (this.hoveredButton) {
         // reset cursor
         this.controller!.preferredCursor = null
@@ -569,15 +583,15 @@ export class ButtonInputMode extends InputModeBase {
   private calculateTooltipLocation(button: Button): Point {
     const tooltipWorldSize = this.calculateTooltipWorldSize(button.tooltip)
 
-    // get the bounds of the button using the ButtonDescriptor
+    // get the bounds of the button using the ButtonRenderer
     const buttonBounds = this.buttonLabelManager
-      .descriptor!.getBoundsProvider(button)
-      .getBounds(this.inputModeContext!.canvasComponent!.canvasContext)
+      .renderer!.getBoundsProvider(button)
+      .getBounds(this.parentInputModeContext!.canvasComponent!.canvasContext)
 
     // horizontally the tooltip is centered with the button center
     const x = buttonBounds.centerX - tooltipWorldSize.width / 2
     // vertically the tooltip is on top of the button with an offset of 10 in view coordinates
-    const y = buttonBounds.y - tooltipWorldSize.height - 10 / this.inputModeContext!.zoom
+    const y = buttonBounds.y - tooltipWorldSize.height - 10 / this.parentInputModeContext!.zoom
     return new Point(x, y)
   }
 
@@ -590,9 +604,9 @@ export class ButtonInputMode extends InputModeBase {
     const viewSize = ButtonInputMode.measureTooltipSize(tooltip)
 
     // convert the view coordinates into world coordinates
-    const canvas = this.inputModeContext!.canvasComponent!
-    const topLeft = canvas.toWorldCoordinates(Point.ORIGIN)!
-    const bottomRight = canvas.toWorldCoordinates(new Point(viewSize.width, viewSize.height))!
+    const canvas = this.parentInputModeContext!.canvasComponent!
+    const topLeft = canvas.viewToWorldCoordinates(Point.ORIGIN)!
+    const bottomRight = canvas.viewToWorldCoordinates(new Point(viewSize.width, viewSize.height))!
     return new Size(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y)
   }
 
@@ -659,21 +673,26 @@ export class ButtonInputMode extends InputModeBase {
    * @param focusedButton The button to focus or `null` if no button shall be focused.
    */
   public set focusedButton(focusedButton: Button | null) {
-    ;(this.buttonLabelManager.descriptor as ButtonDescriptor).focusedButton = focusedButton
+    ;(this.buttonLabelManager.renderer as ButtonRenderer).focusedButton = focusedButton
     this._focusedButton = focusedButton
     if (focusedButton) {
       this.buttonLabelManager.update(focusedButton)
     }
-    this.inputModeContext?.canvasComponent?.invalidate()
+    this.parentInputModeContext?.canvasComponent?.invalidate()
   }
 
   public get focusedButton(): Button | null {
     return this._focusedButton
   }
 
-  private onMouseClicked(sender: CanvasComponent, evt: MouseEventArgs) {
-    const leftClick = (evt.changedButtons & MouseButtons.LEFT) !== 0
-    const rightClick = (evt.changedButtons & MouseButtons.RIGHT) !== 0
+  private onPointerClicked(evt: PointerEventArgs) {
+    const leftClick =
+      (evt.pointerType === PointerType.TOUCH && evt.pointerId === 0) ||
+      (evt.changedButtons & PointerButtons.MOUSE_LEFT) !== 0 ||
+      (evt.changedButtons & PointerButtons.PEN_CONTACT) !== 0
+    const rightClick =
+      (evt.changedButtons & PointerButtons.MOUSE_RIGHT) !== 0 ||
+      (evt.changedButtons & PointerButtons.PEN_BARREL) !== 0
     if (leftClick) {
       const hitButton = this.getFirstHitButton(evt.location)
       if (hitButton && !evt.defaultPrevented) {
@@ -690,32 +709,21 @@ export class ButtonInputMode extends InputModeBase {
     }
   }
 
-  private onTouchClicked(sender: CanvasComponent, evt: TouchEventArgs) {
-    const hitButton = this.getFirstHitButton(evt.location)
-    if (hitButton && !evt.defaultPrevented) {
-      evt.preventDefault()
-      this.triggerAction(hitButton)
-    }
-  }
-
-  private onKeyDown(sender: CanvasComponent, evt: KeyEventArgs) {
-    if (evt.key == Key.TAB) {
+  private onKeyDown(evt: KeyEventArgs) {
+    if (evt.key === 'Tab') {
       evt.preventDefault()
       if (this.buttons) {
-        if ((evt.modifiers & ModifierKeys.SHIFT) === ModifierKeys.SHIFT) {
+        if (evt.shiftKey) {
           this.updateFocusedButton(-1)
         } else {
           this.updateFocusedButton(+1)
         }
       }
     }
-  }
-
-  private onKeyPressed(sender: CanvasComponent, evt: KeyEventArgs) {
     if (evt.defaultPrevented) {
       return
     }
-    if (this._focusedButton != null && (evt.key == Key.ENTER || evt.key == Key.SPACE)) {
+    if (this._focusedButton != null && (evt.key === 'Enter' || evt.key === ' ')) {
       evt.preventDefault()
       this.triggerAction(this._focusedButton)
     }
@@ -733,8 +741,8 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   private getHitItem(location: Point) {
-    const context = this.inputModeContext!
-    const hitTester = context.lookup<IHitTester<IModelItem>>(IHitTester.$class)
+    const context = this.parentInputModeContext!
+    const hitTester = context.lookup<IHitTester>(IHitTester)
     const hitItem: IModelItem | null =
       hitTester?.enumerateHits(context, location).find(this.isValidItem.bind(this)) ?? null
 
@@ -753,28 +761,19 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   private onItemRemoved(
-    sender: IGraph,
     evt: NodeEventArgs | EdgeEventArgs | LabelEventArgs | PortEventArgs | BendEventArgs
   ) {
     if (this.buttonOwner === evt.item) {
       this.hideButtons()
     }
   }
-  private onGraphChanged(sender: GraphComponent, evt: ItemEventArgs<IGraph>) {
-    if (evt.item) {
-      this.removeGraphListener(evt.item)
-    }
-    if (sender.graph) {
-      this.addGraphListener(sender.graph)
-    }
-  }
 
-  private onCurrentItemChanged(sender: GraphComponent, evt: PropertyChangedEventArgs) {
+  private onCurrentItemChanged(evt: PropertyChangedEventArgs, component: GraphComponent) {
     if (this.buttonTrigger === ButtonTrigger.CURRENT_ITEM) {
-      if (sender.currentItem === null || !this.isValidItem(sender.currentItem)) {
+      if (component.currentItem === null || !this.isValidItem(component.currentItem)) {
         this.hideButtons()
       } else {
-        this.showButtons(sender.currentItem)
+        this.showButtons(component.currentItem)
       }
     }
   }
@@ -840,21 +839,21 @@ export class QueryButtonsEvent {
     if (!_style) {
       if (options.icon) {
         _style = new IconLabelStyle({
-          icon: options.icon,
+          href: options.icon,
           iconSize: _size,
-          iconPlacement: InteriorStretchLabelModel.CENTER,
+          iconPlacement: StretchNodeLabelModel.CENTER,
           autoFlip: false
         })
       } else if (options.text) {
-        _style = new DefaultLabelStyle({
+        _style = new LabelStyle({
           backgroundStroke: 'darkgray',
           backgroundFill: 'lightgray',
           textSize: 14,
-          insets: 2
+          padding: 2
         })
         _size = options.size || Size.EMPTY
       } else {
-        _style = new DefaultLabelStyle({
+        _style = new LabelStyle({
           autoFlip: false,
           backgroundFill: 'lightgray',
           backgroundStroke: 'darkgray',
@@ -885,7 +884,7 @@ export class QueryButtonsEvent {
  * A button that is temporarily displayed at an owner {@link IModelItem} and can trigger an action
  * that relates to this item.
  */
-export class Button extends YObject {
+export class Button {
   private readonly _owner: IModelItem
   private readonly _dummyOwner: ILabelOwner
   private readonly _onAction: ButtonActionListener
@@ -930,7 +929,6 @@ export class Button extends YObject {
     tag: any
     onHoverOver: ((button: Button) => void) | undefined
   }) {
-    super()
     this._owner = options.owner
     this._onAction = options.onAction
     this._onHoverOver = options.onHoverOver || null
@@ -950,7 +948,7 @@ export class Button extends YObject {
         layout: Rect.fromCenter(this._owner.location, new Size(1, 1))
       })
     } else if (this._owner instanceof ILabel) {
-      // for labels a node is used as dummy owner. The label rotation is considered by ButtonDescriptor
+      // for labels a node is used as dummy owner. The label rotation is considered by ButtonRenderer
       // when calculating the layout
       this._dummyOwner = new SimpleNode({ layout: this._owner.layout.bounds })
     } else {
@@ -1077,10 +1075,10 @@ export class Button extends YObject {
 }
 
 /**
- * An {@link ICanvasObjectDescriptor} for {@link Button}s used by the {@link ButtonInputMode}.
+ * An {@link IObjectRenderer} for {@link Button}s used by the {@link ButtonInputMode}.
  */
-class ButtonDescriptor extends BaseClass(
-  ICanvasObjectDescriptor,
+class ButtonRenderer extends BaseClass(
+  IObjectRenderer,
   IVisualCreator,
   IBoundsProvider,
   IVisibilityTestable,
@@ -1090,7 +1088,7 @@ class ButtonDescriptor extends BaseClass(
   private readonly dummyLabelLayout: OrientedRectangle
   private readonly dummyLabelBounds: OrientedRectangle
   private readonly dummyNode: SimpleNode
-  private readonly dummyEdge: SimpleEdge
+  private readonly previewEdge: SimpleEdge
   private readonly dummySourceNode: SimpleNode
   private readonly dummyTargetNode: SimpleNode
   private readonly dummyBends: SimpleBend[]
@@ -1107,34 +1105,31 @@ class ButtonDescriptor extends BaseClass(
     super()
     this.dummyLabelLayout = new OrientedRectangle()
     this.dummyLabelBounds = new OrientedRectangle()
-    this.dummyLabel = new SimpleLabel(
-      null,
-      '',
-      FreeLabelModel.INSTANCE.createDynamic(this.dummyLabelLayout)
-    )
+    this.dummyLabel = new SimpleLabel()
+    this.dummyLabel.layoutParameter = FreeLabelModel.INSTANCE.createDynamic(this.dummyLabelLayout)
     this.dummyNode = new SimpleNode()
     this.dummySourceNode = new SimpleNode()
     this.dummyTargetNode = new SimpleNode()
-    this.dummyEdge = new SimpleEdge({
+    this.previewEdge = new SimpleEdge({
       sourcePort: new SimplePort(this.dummySourceNode),
       targetPort: new SimplePort(this.dummyTargetNode)
     })
     this.dummyBends = []
     this.dummyBendsBackup = []
-    this.dummyEdge.bends = new ListEnumerable(this.dummyBends)
+    this.previewEdge.bends = new ListEnumerable(this.dummyBends)
 
     this.focusedButtonStyle = new FocusLabelStyle(Stroke.from('3px #FFCF00'))
   }
 
-  private initialize(forUserObject: any) {
-    this.button = forUserObject as Button
+  private initialize(renderTag: any) {
+    this.button = renderTag as Button
     this.label = this.button.label
   }
 
   //region IBoundsProvider
 
-  getBoundsProvider(forUserObject: any): IBoundsProvider {
-    this.initialize(forUserObject)
+  getBoundsProvider(renderTag: any): IBoundsProvider {
+    this.initialize(renderTag)
     return this
   }
 
@@ -1150,8 +1145,8 @@ class ButtonDescriptor extends BaseClass(
 
   //region IHitTestable
 
-  getHitTestable(forUserObject: any): IHitTestable {
-    this.initialize(forUserObject)
+  getHitTestable(renderTag: any): IHitTestable {
+    this.initialize(renderTag)
     return this
   }
 
@@ -1160,15 +1155,15 @@ class ButtonDescriptor extends BaseClass(
    */
   isHit(ctx: IInputModeContext, p: Point) {
     this.updateDummyLabel(ctx)
-    return this.dummyLabelBounds.containsWithEps(p, 0.001)
+    return this.dummyLabelBounds.contains(p, 0.001)
   }
 
   //endregion
 
   //region IVisibilityTestable
 
-  getVisibilityTestable(forUserObject: any): IVisibilityTestable {
-    this.initialize(forUserObject)
+  getVisibilityTestable(renderTag: any): IVisibilityTestable {
+    this.initialize(renderTag)
     return this
   }
 
@@ -1184,8 +1179,8 @@ class ButtonDescriptor extends BaseClass(
 
   //region IVisualCreator
 
-  getVisualCreator(forUserObject: any): IVisualCreator {
-    this.initialize(forUserObject)
+  getVisualCreator(renderTag: any): IVisualCreator {
+    this.initialize(renderTag)
     return this
   }
 
@@ -1199,7 +1194,7 @@ class ButtonDescriptor extends BaseClass(
     const container = new SvgVisualGroup()
 
     const scale = getScaleForZoom(this.label, ctx.zoom)
-    const dummyLabelCenter = this.dummyLabelBounds.orientedRectangleCenter
+    const dummyLabelCenter = this.dummyLabelBounds.center
     container.transform = new Matrix(scale, 0, 0, scale, dummyLabelCenter.x, dummyLabelCenter.y)
 
     const creator = this.label.style.renderer.getVisualCreator(this.dummyLabel, this.label.style)
@@ -1241,7 +1236,7 @@ class ButtonDescriptor extends BaseClass(
     }
 
     const scale = getScaleForZoom(this.label, ctx.zoom)
-    const dummyLabelCenter = this.dummyLabelBounds.orientedRectangleCenter
+    const dummyLabelCenter = this.dummyLabelBounds.center
 
     container.transform = new Matrix(scale, 0, 0, scale, dummyLabelCenter.x, dummyLabelCenter.y)
 
@@ -1304,7 +1299,7 @@ class ButtonDescriptor extends BaseClass(
     this.dummyLabel.text = this.label.text
 
     const originalLayout = this.label.layout
-    this.dummyLabelLayout.reshape(originalLayout)
+    this.dummyLabelLayout.setShape(originalLayout)
     this.dummyLabelLayout.setCenter(new Point(0, 0))
     this.dummyLabel.preferredSize = this.dummyLabelLayout.toSize()
 
@@ -1318,8 +1313,9 @@ class ButtonDescriptor extends BaseClass(
 
     const scale = getScaleForZoom(this.label, ctx.zoom)
 
-    this.dummyLabelBounds.reshape(originalLayout)
-    this.dummyLabelBounds.resize(originalLayout.width * scale, originalLayout.height * scale)
+    this.dummyLabelBounds.setShape(originalLayout)
+    this.dummyLabelBounds.width = originalLayout.width * scale
+    this.dummyLabelBounds.height = originalLayout.height * scale
     this.dummyLabelBounds.setCenter(worldCenter)
 
     this.updateDummyAngles()
@@ -1333,34 +1329,34 @@ class ButtonDescriptor extends BaseClass(
       this.dummyNode.layout = this.getViewNodeLayout(owner, canvas)
       return this.dummyNode
     } else if (owner instanceof IEdge) {
-      this.dummyEdge.style = owner.style
-      this.dummySourceNode.layout = this.getViewNodeLayout(owner.sourceNode!, canvas)
-      const sourcePort = this.dummyEdge.sourcePort as SimplePort
+      this.previewEdge.style = owner.style
+      this.dummySourceNode.layout = this.getViewNodeLayout(owner.sourceNode, canvas)
+      const sourcePort = this.previewEdge.sourcePort as SimplePort
       sourcePort.locationParameter = FreeNodePortLocationModel.INSTANCE.createParameter(
-        this.dummyEdge.sourcePort!.owner!,
-        canvas.toViewCoordinates(owner.sourcePort!.location)
+        this.previewEdge.sourcePort.owner,
+        canvas.worldToViewCoordinates(owner.sourcePort.location)
       )
       this.ensureDummyBends(owner.bends.size)
       this.dummyBends.length = 0
       owner.bends.forEach((bend, index) => {
         const dummyBend = this.dummyBendsBackup[index]
-        dummyBend.location = canvas.toViewCoordinates(bend.location)
+        dummyBend.location = canvas.worldToViewCoordinates(bend.location)
         this.dummyBends.push(dummyBend)
       })
-      this.dummyTargetNode.layout = this.getViewNodeLayout(owner.targetNode!, canvas)
-      const targetPort = this.dummyEdge.targetPort as SimplePort
+      this.dummyTargetNode.layout = this.getViewNodeLayout(owner.targetNode, canvas)
+      const targetPort = this.previewEdge.targetPort as SimplePort
       targetPort.locationParameter = FreeNodePortLocationModel.INSTANCE.createParameter(
-        this.dummyEdge.targetPort!.owner!,
-        canvas.toViewCoordinates(owner.targetPort!.location)
+        this.previewEdge.targetPort.owner,
+        canvas.worldToViewCoordinates(owner.targetPort.location)
       )
-      return this.dummyEdge
+      return this.previewEdge
     } else if (owner instanceof IBend || owner instanceof IPort) {
-      const centerView = canvas.toViewCoordinates(owner.location)
+      const centerView = canvas.worldToViewCoordinates(owner.location)
       this.dummyNode.layout = Rect.fromCenter(centerView, new Size(1, 1))
       return this.dummyNode
     } else {
       const labelOwner = owner as ILabel
-      const centerView = canvas.toViewCoordinates(labelOwner.layout.orientedRectangleCenter)
+      const centerView = canvas.worldToViewCoordinates(labelOwner.layout.center)
       this.dummyNode.layout = Rect.fromCenter(
         centerView,
         labelOwner.layout.toSize().multiply(ctx.zoom)
@@ -1371,8 +1367,8 @@ class ButtonDescriptor extends BaseClass(
 
   private getViewNodeLayout(owner: INode, canvas: CanvasComponent) {
     const ownerLayout = owner.layout
-    const topLeftView = canvas.toViewCoordinates(ownerLayout.topLeft)
-    const bottomRightView = canvas.toViewCoordinates(ownerLayout.bottomRight)
+    const topLeftView = canvas.worldToViewCoordinates(ownerLayout.topLeft)
+    const bottomRightView = canvas.worldToViewCoordinates(ownerLayout.bottomRight)
     return new Rect(topLeftView, bottomRightView)
   }
 
@@ -1390,28 +1386,24 @@ class ButtonDescriptor extends BaseClass(
     const owner = this.button!.owner
     if (owner instanceof ILabel) {
       const viewOwnerCenter = this.dummyNode.layout.center
-      const viewButtonCenter = viewBounds.orientedRectangleCenter
+      const viewButtonCenter = viewBounds.center
       const viewCenterOffset = rotate(
         viewButtonCenter.subtract(viewOwnerCenter),
         getAngle(owner.layout)
       )
-      return canvas.toWorldCoordinates(viewOwnerCenter.add(viewCenterOffset))
+      return canvas.viewToWorldCoordinates(viewOwnerCenter.add(viewCenterOffset))
     } else {
-      return canvas.toWorldCoordinates(viewBounds.orientedRectangleCenter)
+      return canvas.viewToWorldCoordinates(viewBounds.center)
     }
   }
 
   private ensureDummyBends(count: number) {
     while (count > this.dummyBendsBackup.length) {
-      this.dummyBendsBackup.push(new SimpleBend(this.dummyEdge))
+      this.dummyBendsBackup.push(new SimpleBend(this.previewEdge, Point.ORIGIN))
     }
   }
 
   //endregion
-
-  isDirty(ctx: ICanvasContext, canvasObject: ICanvasObject): boolean {
-    return true
-  }
 }
 
 /**
@@ -1428,7 +1420,7 @@ function getAngle(r: IOrientedRectangle): number {
 }
 
 function setAngle(r: OrientedRectangle, angle: number): void {
-  const center = r.orientedRectangleCenter
+  const center = r.center
   r.angle = angle
   r.setCenter(center)
 }
@@ -1448,7 +1440,7 @@ function rotate(vector: Point, angle: number): Point {
   return new Point(cos * vector.x + sin * vector.y, cos * vector.y - sin * vector.x)
 }
 
-class DummyContext extends BaseClass<IRenderContext>(IRenderContext) {
+class DummyContext extends BaseClass(IRenderContext) {
   private readonly innerContext: IRenderContext
   private readonly $zoom: number
   private readonly $transform: Matrix
@@ -1508,7 +1500,7 @@ class DummyContext extends BaseClass<IRenderContext>(IRenderContext) {
     return this.innerContext.hitTestRadius
   }
 
-  toViewCoordinates(worldPoint: Point): Point {
+  worldToViewCoordinates(worldPoint: Point): Point {
     return this.$viewTransform.transform(worldPoint)
   }
 
@@ -1524,7 +1516,7 @@ class DummyContext extends BaseClass<IRenderContext>(IRenderContext) {
     return this.innerContext.getDefsId(defsSupport)
   }
 
-  lookup(type: Class): any {
+  lookup(type: Constructor<any>): any {
     return this.innerContext.lookup(type)
   }
 
@@ -1539,14 +1531,25 @@ class DummyContext extends BaseClass<IRenderContext>(IRenderContext) {
 }
 
 /**
+ * Augment the SvgVisual type with the data used to cache the rendering information
+ */
+type Cache = {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+type FocusLabelStyleVisual = TaggedSvgVisual<SVGRectElement, Cache>
+
+/**
  * A style implementation that draws nothing but a border for its associated label.
  */
-class FocusLabelStyle extends LabelStyleBase {
+class FocusLabelStyle extends LabelStyleBase<FocusLabelStyleVisual> {
   constructor(private stroke: Stroke) {
     super()
   }
 
-  protected createVisual(context: IRenderContext, label: ILabel): SvgVisual {
+  protected createVisual(context: IRenderContext, label: ILabel): FocusLabelStyleVisual {
     const labelBounds = label.layout.bounds
     const frame = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     this.stroke.applyTo(frame, context)
@@ -1556,20 +1559,23 @@ class FocusLabelStyle extends LabelStyleBase {
     frame.setAttribute('y', `${labelBounds.y}`)
     frame.setAttribute('width', `${labelBounds.width}`)
     frame.setAttribute('height', `${labelBounds.height}`)
-    asCacheOwner(frame)['data-renderDataCache'] = {
+
+    return SvgVisual.from(frame, {
       x: labelBounds.x,
       y: labelBounds.y,
       width: labelBounds.width,
       height: labelBounds.height
-    }
-
-    return new SvgVisual(frame)
+    })
   }
 
-  protected updateVisual(context: IRenderContext, oldVisual: SvgVisual, label: ILabel): SvgVisual {
+  protected updateVisual(
+    context: IRenderContext,
+    oldVisual: FocusLabelStyleVisual,
+    label: ILabel
+  ): FocusLabelStyleVisual {
     const labelBounds = label.layout.bounds
     const frame = oldVisual.svgElement
-    const cache = asCacheOwner(frame)['data-renderDataCache']
+    const cache = oldVisual.tag
     if (cache.x != labelBounds.x) {
       frame.setAttribute('x', `${labelBounds.x}`)
       cache.x = labelBounds.x
@@ -1591,23 +1597,5 @@ class FocusLabelStyle extends LabelStyleBase {
 
   protected getPreferredSize(label: ILabel): Size {
     return new Size(0, 0)
-  }
-}
-
-function asCacheOwner(element: SVGElement): {
-  'data-renderDataCache': {
-    x: number
-    y: number
-    width: number
-    height: number
-  }
-} {
-  return element as SVGElement & {
-    'data-renderDataCache': {
-      x: number
-      y: number
-      width: number
-      height: number
-    }
   }
 }

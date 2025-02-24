@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,171 +31,152 @@ import {
   CanvasComponent,
   ClickEventArgs,
   Cursor,
-  HandleTypes,
-  ICanvasObject,
+  HandleType,
   IHandle,
   IInputModeContext,
   ILabel,
   ILabelModelParameterFinder,
+  IOrientedRectangle,
   IPoint,
+  IRenderContext,
+  IRenderTreeElement,
+  ISize,
   OrientedRectangle,
-  OrientedRectangleIndicatorInstaller,
   Point,
   Size
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
+import { OrientedRectangleRendererBase } from '../../utils/OrientedRectangleRendererBase'
 /**
  * A custom {@link IHandle} implementation that allows resizing a label.
  */
 export default class LabelResizeHandle extends BaseClass(IHandle) {
+  label
+  symmetricResize
   sizeIndicator = null
   handleLocation = new LabelResizeHandleLivePoint(this)
   emulate = false
   dummyPreferredSize = null
   dummyLocation = null
-
   /**
    * Creates a new instance of {@link LabelResizeHandle}.
-   * @param {!ILabel} label The label this handle is for
-   * @param {boolean} symmetricResize A value indicating whether resizing should be symmetric
+   * @param label The label this handle is for
+   * @param symmetricResize A value indicating whether resizing should be symmetric
    */
   constructor(label, symmetricResize) {
     super()
-    this.symmetricResize = symmetricResize
     this.label = label
+    this.symmetricResize = symmetricResize
   }
-
   /**
    * Gets the type of the handle.
-   * @type {!HandleTypes}
    */
   get type() {
-    return HandleTypes.RESIZE
+    return HandleType.RESIZE
   }
-
+  get tag() {
+    return null
+  }
   /**
    * Returns the handle's cursor.
-   * @type {!Cursor}
    */
   get cursor() {
     return Cursor.EW_RESIZE
   }
-
   /**
    * Returns the handle's location.
-   * @type {!IPoint}
    */
   get location() {
     return this.handleLocation
   }
-
   /**
    * Invoked when dragging is about to start.
-   * @param {!IInputModeContext} context The context to retrieve information
+   * @param context The context to retrieve information
    */
   initializeDrag(context) {
     // start using the calculated dummy bounds
     this.emulate = true
     this.dummyPreferredSize = this.label.preferredSize
-    this.dummyLocation = this.label.layout.anchorLocation
+    this.dummyLocation = this.label.layout.anchor
     const canvasComponent = context.canvasComponent
     if (canvasComponent !== null) {
-      this.sizeIndicator = this.createSizeIndicator(canvasComponent)
+      this.createSizeIndicator(canvasComponent)
     }
   }
-
   /**
    * Creates the indicator that shows the size of the label during drag.
-   * @param {!CanvasComponent} canvasComponent
    */
   createSizeIndicator(canvasComponent) {
-    const handle = this
-    const indicatorInstaller = new (class extends OrientedRectangleIndicatorInstaller {
-      /**
-       * @param {*} item
-       * @returns {!OrientedRectangle}
-       */
-      getRectangle(item) {
-        return handle.getCurrentLabelLayout()
-      }
-    })()
-    return indicatorInstaller.addCanvasObject(
-      canvasComponent.canvasContext,
-      canvasComponent.selectionGroup,
-      this
+    const renderer = new LabelResizeRectangleRenderer()
+    this.sizeIndicator = canvasComponent.renderTree.createElement(
+      canvasComponent.renderTree.selectionGroup,
+      this,
+      renderer
     )
   }
-
   /**
    * Invoked when an element has been dragged and its position should be updated.
-   * @param {!IInputModeContext} context The context to retrieve information
-   * @param {!Point} originalLocation The value of the location property at the time of
+   * @param context The context to retrieve information
+   * @param originalLocation The value of the location property at the time of
    *   initializeDrag
-   * @param {!Point} newLocation The new location in the world coordinate system
+   * @param newLocation The new location in the world coordinate system
    */
   handleMove(context, originalLocation, newLocation) {
     const layout = this.label.layout
     // the normal (orthogonal) vector of the 'up' vector
     const upNormal = new Point(-layout.upY, layout.upX)
-
     // calculate the total distance the handle has been moved in this drag gesture
     let delta = upNormal.scalarProduct(newLocation.subtract(originalLocation))
-
     // max with minus half the label size - because the label width can't shrink below zero
     delta = Math.max(delta, -layout.width * (this.symmetricResize ? 0.5 : 1))
-
     // add one or two times delta to the width to expand the label right and left
     const newWidth = layout.width + delta * (this.symmetricResize ? 2 : 1)
     this.dummyPreferredSize = new Size(newWidth, this.dummyPreferredSize.height)
     // calculate the new location
-    this.dummyLocation = layout.anchorLocation.subtract(
+    this.dummyLocation = layout.anchor.subtract(
       this.symmetricResize ? new Point(upNormal.x * delta, upNormal.y * delta) : new Point(0, 0)
     )
   }
-
   /**
    * Invoked when dragging has canceled.
-   * @param {!IInputModeContext} context The context to retrieve information
-   * @param {!Point} originalLocation The value of the location property at the time of
+   * @param context The context to retrieve information
+   * @param originalLocation The value of the location property at the time of
    *   initializeDrag
    */
   cancelDrag(context, originalLocation) {
     // use the normal label bounds if the drag gesture is over
     this.emulate = false
     // remove the visual size indicator
-    this.sizeIndicator?.remove()
+    if (this.sizeIndicator) {
+      context.canvasComponent?.renderTree.remove(this.sizeIndicator)
+    }
     this.sizeIndicator = null
   }
-
   /**
    * Invoked when dragging has finished.
-   * @param {!IInputModeContext} context The context to retrieve information
-   * @param {!Point} originalLocation The value of the location property at the time of
+   * @param context The context to retrieve information
+   * @param originalLocation The value of the location property at the time of
    *   initializeDrag
-   * @param {!Point} newLocation The new location in the world coordinate system
+   * @param newLocation The new location in the world coordinate system
    */
   dragFinished(context, originalLocation, newLocation) {
     const graph = context.graph
     if (graph !== null) {
       // assign the new size
       graph.setLabelPreferredSize(this.label, this.dummyPreferredSize)
-
       // Use the layout of the resize rectangle to find a new labelLayoutParameter. This ensures
       // that the resize rectangle which acts as user feedback is in sync with the actual
       // labelLayoutParameter that is assigned to the label.
       const model = this.label.layoutParameter.model
-      const finder = model.lookup(ILabelModelParameterFinder.$class)
+      const finder = model.getContext(this.label).lookup(ILabelModelParameterFinder)
       if (finder !== null) {
-        const param = finder.findBestParameter(this.label, model, this.getCurrentLabelLayout())
+        const param = finder.findBestParameter(this.getCurrentLabelLayout())
         graph.setLabelLayoutParameter(this.label, param)
       }
     }
     this.cancelDrag(context, originalLocation)
   }
-
   /**
    * Returns the current label layout.
-   * @returns {!OrientedRectangle}
    */
   getCurrentLabelLayout() {
     const labelLayout = this.label.layout
@@ -218,50 +199,42 @@ export default class LabelResizeHandle extends BaseClass(IHandle) {
       labelLayout.upY
     )
   }
-
   /**
    * This implementation does nothing special when clicked.
-   * @param {!ClickEventArgs} evt
    */
   handleClick(evt) {}
 }
-
 /**
  * Represents the new resize point for the given handler.
  */
 class LabelResizeHandleLivePoint extends BaseClass(IPoint) {
+  handle
   /**
    * Creates a new point for the given handler.
-   * @param {!LabelResizeHandle} handle The given handler
+   * @param handle The given handler
    */
   constructor(handle) {
     super()
     this.handle = handle
   }
-
   /**
    * Returns the x-coordinate of the location of the handle from the anchor, the size and the
    * orientation.
-   * @type {number}
    */
   get x() {
     const { anchor, up, preferredSize } = this.getPositionInfo()
     return anchor.x + (up.x * preferredSize.height * 0.5 - up.y * preferredSize.width)
   }
-
   /**
    * Returns the y-coordinate of the location of the handle from the anchor, the size and the
    * orientation.
-   * @type {number}
    */
   get y() {
     const { anchor, up, preferredSize } = this.getPositionInfo()
     return anchor.y + (up.y * preferredSize.height * 0.5 + up.x * preferredSize.width)
   }
-
   /**
    * Prepares all relevant information needed to calculate the position of the handle.
-   * @returns {!object}
    */
   getPositionInfo() {
     const layout = this.handle.label.layout
@@ -269,7 +242,36 @@ class LabelResizeHandleLivePoint extends BaseClass(IPoint) {
     const preferredSize = this.handle.emulate
       ? this.handle.dummyPreferredSize
       : this.handle.label.preferredSize
-    const anchor = this.handle.emulate ? this.handle.dummyLocation : layout.anchorLocation
+    const anchor = this.handle.emulate ? this.handle.dummyLocation : layout.anchor
     return { anchor, up, preferredSize }
+  }
+}
+class LabelResizeRectangleRenderer extends OrientedRectangleRendererBase {
+  createIndicatorElement(_context, size, _renderTag) {
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.setAttribute('width', size.width.toString())
+    rect.setAttribute('height', size.height.toString())
+    rect.setAttribute('stroke', 'rgb(56,67,79)')
+    rect.setAttribute('stroke-width', '2')
+    rect.setAttribute('fill', 'none')
+    return rect
+  }
+  updateIndicatorElement(_context, size, _renderTag, oldSvgElement) {
+    oldSvgElement.setAttribute('width', size.width.toString())
+    oldSvgElement.setAttribute('height', size.height.toString())
+    return oldSvgElement
+  }
+  getLayout(_renderTag) {
+    const handleLocation = _renderTag.dummyLocation
+    const handleSize = _renderTag.dummyPreferredSize
+    const labelLayout = _renderTag.label.layout
+    return new OrientedRectangle(
+      handleLocation.x,
+      handleLocation.y,
+      handleSize.width,
+      handleSize.height,
+      labelLayout.upX,
+      labelLayout.upY
+    )
   }
 }

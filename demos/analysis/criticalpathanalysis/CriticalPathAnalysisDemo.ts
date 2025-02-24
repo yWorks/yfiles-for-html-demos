@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,21 +28,19 @@
  ***************************************************************************/
 import {
   EdgePathLabelModel,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
-  Insets,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   License,
   PolylineEdgeStyle
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import GraphData from './resources/GraphData'
 import { calculateCriticalPathEdges, runLayout } from './CriticalPathHelper'
-import { applyDemoTheme, createDemoNodeStyle, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { createDemoNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Runs this demo.
@@ -50,7 +48,6 @@ import { finishLoading } from 'demo-resources/demo-page'
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphViewerInputMode()
 
   initializeGraph(graphComponent)
@@ -102,8 +99,8 @@ function showResult(graphComponent: GraphComponent) {
   const finishNodeStyle = createDemoNodeStyle('demo-palette-403')
 
   graph.edges.forEach((edge) => {
-    const sourceNode = edge.sourceNode!
-    const targetNode = edge.targetNode!
+    const sourceNode = edge.sourceNode
+    const targetNode = edge.targetNode
 
     if (edge.tag.critical) {
       // change the style of the critical edge
@@ -128,9 +125,7 @@ function showResult(graphComponent: GraphComponent) {
       graph.addLabel(
         targetNode,
         `Total: ${targetNode.tag.layerId}d`,
-        new ExteriorLabelModel({ insets: new Insets(5) }).createParameter(
-          ExteriorLabelModelPosition.NORTH
-        )
+        new ExteriorNodeLabelModel({ margins: 5 }).createParameter('top')
       )
     }
   })
@@ -145,12 +140,12 @@ function initializeGraph(graphComponent: GraphComponent) {
 
   // configure node/edge style defaults
   initDemoStyles(graph, { theme: 'demo-palette-58' })
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: new Insets(5)
-  }).createParameter(ExteriorLabelModelPosition.SOUTH)
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 3
-  }).createDefaultParameter()
+  }).createRatioParameter()
 }
 
 /**
@@ -182,7 +177,7 @@ function loadSampleGraph(graphComponent: GraphComponent) {
   // we add a label that shows the duration of each task
   graph.nodes.forEach((node) => {
     if (node.labels.get(0).text !== 'START' && node.labels.get(0).text !== 'FINISH') {
-      graph.addLabel(node, `${node.tag.duration} d`, InteriorLabelModel.CENTER)
+      graph.addLabel(node, `${node.tag.duration} d`, InteriorNodeLabelModel.CENTER)
     }
   })
 }

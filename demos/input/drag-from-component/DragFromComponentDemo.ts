@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,30 +27,28 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultLabelStyle,
+  EventRecognizers,
   Fill,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   INode,
-  Insets,
   LabelShape,
+  LabelStyle,
   LayoutExecutor,
   License,
-  ModifierKeys,
-  MouseEventArgs,
-  MouseEventTypes,
+  PointerEventArgs,
+  PointerEventType,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import { DraggableGraphComponent, NodeDragInputMode } from './NodeDragInputMode'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent = null!
@@ -63,8 +61,6 @@ async function run(): Promise<void> {
 
   // initialize graph component
   graphComponent = new DraggableGraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize the input modes and the Drag and Drop
   configureInputModes(graphComponent)
 
@@ -75,11 +71,9 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
@@ -113,24 +107,24 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   nodesSource.nodeCreator.createLabelBinding((item) => item.label).styleProvider = (item) => {
     if (item.label) {
       if (item.label.startsWith('Red')) {
-        return new DefaultLabelStyle({
+        return new LabelStyle({
           backgroundFill: '#dda7b5',
           shape: LabelShape.ROUND_RECTANGLE,
-          insets: new Insets(4, 2, 4, 1)
+          padding: [2, 4, 1, 4]
         })
       }
       if (item.label.startsWith('Orange')) {
-        return new DefaultLabelStyle({
+        return new LabelStyle({
           backgroundFill: '#ffc499',
           shape: LabelShape.ROUND_RECTANGLE,
-          insets: new Insets(4, 2, 4, 1)
+          padding: [2, 4, 1, 4]
         })
       }
       if (item.label.startsWith('Blue')) {
-        return new DefaultLabelStyle({
+        return new LabelStyle({
           backgroundFill: '#a0a5b7',
           shape: LabelShape.ROUND_RECTANGLE,
-          insets: new Insets(4, 2, 4, 1)
+          padding: [2, 4, 1, 4]
         })
       }
     }
@@ -153,24 +147,28 @@ function configureInputModes(graphComponent: GraphComponent): void {
 
   // edge creation: start with drag + shift down
   // since drag without shift will start dragging a node from the component
-  mode.createEdgeInputMode.prepareRecognizer = (_eventSource, evt) =>
-    evt instanceof MouseEventArgs &&
-    evt.eventType == MouseEventTypes.DOWN &&
-    evt.modifiers == ModifierKeys.SHIFT
+  mode.createEdgeInputMode.beginRecognizer = (evt) =>
+    evt instanceof PointerEventArgs && evt.eventType == PointerEventType.DOWN && evt.shiftKey
 
   // move nodes: start with drag + shift down,
   // so dragging a selected node without shift will start dragging a node from the component
-  mode.moveInputMode.pressedRecognizer = (_eventSource, evt) =>
-    evt instanceof MouseEventArgs &&
-    evt.eventType == MouseEventTypes.DOWN &&
-    evt.modifiers == ModifierKeys.SHIFT
+  mode.moveSelectedItemsInputMode.beginRecognizer = (evt) =>
+    evt instanceof PointerEventArgs && evt.eventType == PointerEventType.DOWN && evt.shiftKey
+  mode.moveUnselectedItemsInputMode.beginRecognizer = (evt) =>
+    evt instanceof PointerEventArgs && evt.eventType == PointerEventType.DOWN && evt.shiftKey
+
+  // disable directional constraint editing (the shift key is the default modifier, which
+  // conflicts with the gestures above)
+  mode.moveSelectedItemsInputMode.directionalConstraintRecognizer = EventRecognizers.NEVER
+  mode.moveUnselectedItemsInputMode.directionalConstraintRecognizer = EventRecognizers.NEVER
+  mode.createEdgeInputMode.directionalConstraintRecognizer = EventRecognizers.NEVER
 
   // configure dragging from the component
   const dragMode = new NodeDragInputMode()
   // lower priority than moveInputMode, so
   // dragging a selected node moves it
   // dragging an unselected node starts drag and drop
-  dragMode.priority = mode.moveInputMode.priority + 1
+  dragMode.priority = mode.moveSelectedItemsInputMode.priority + 1
   mode.add(dragMode)
 
   // configure the drop targets to handle the item drop

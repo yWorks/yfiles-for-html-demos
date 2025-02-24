@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,31 +27,24 @@
  **
  ***************************************************************************/
 import {
-  type Class,
-  CollapsibleNodeStyleDecorator,
-  DefaultLabelStyle,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
   FoldingManager,
   GraphComponent,
   GraphEditorInputMode,
-  type GraphMLIOHandler,
-  GraphMLSupport,
-  type HandleSerializationEventArgs,
-  ICommand,
+  GraphItemTypes,
+  GraphMLIOHandler,
+  GroupPaddingProvider,
   type IGraph,
   Insets,
-  InteriorLabelModel,
-  InteriorLabelModelPosition,
+  InteriorNodeLabelModel,
+  IPortStyle,
+  LabelStyle,
   License,
-  NodeInsetsProvider,
   Point,
   Rect,
-  Size,
-  VoidPortStyle
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 
-import Sample1CollapsibleNodeStyleDecoratorRenderer from './Sample1CollapsibleNodeStyleDecoratorRenderer'
 import Sample1GroupNodeStyle from './Sample1GroupNodeStyle'
 import Sample1LabelStyle from './Sample1LabelStyle'
 import Sample1EdgeStyle from './Sample1EdgeStyle'
@@ -62,17 +55,15 @@ import { Sample2EdgeStyle, Sample2EdgeStyleExtension } from './Sample2EdgeStyle'
 import { Sample2NodeStyle, Sample2NodeStyleExtension } from './Sample2NodeStyle'
 import { Sample2Arrow, Sample2ArrowExtension } from './Sample2Arrow'
 import { applyDefaultStyles } from './style-utils'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, addOptions, finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { saveGraphML } from '@yfiles/demo-utils/graphml-support'
+import Sample1CollapsibleNodeStyleDecorator from './Sample1CollapsibleNodeStyleDecorator'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // Enable folding such that the group styles show an expand/collapse button
   const foldingManager = new FoldingManager(graphComponent.graph)
   graphComponent.graph = foldingManager.createFoldingView().graph
@@ -86,13 +77,10 @@ async function run(): Promise<void> {
 
   // Initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
+    clickHitTestOrder: [GraphItemTypes.LABEL, GraphItemTypes.EDGE, GraphItemTypes.NODE]
   })
 
-  // Enable support to save the second sample to graphml
-  enableGraphML(graphComponent)
-
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   initializeUI(graphComponent)
 }
@@ -103,28 +91,25 @@ async function run(): Promise<void> {
 function applySample1(graph: IGraph): void {
   // Wrap the group style with CollapsibleNodeStyleDecorator
   // Use a custom renderer to change the collapse button visualization
-  const nodeStyleDecorator = new CollapsibleNodeStyleDecorator(
-    new Sample1GroupNodeStyle(),
-    new Sample1CollapsibleNodeStyleDecoratorRenderer(new Size(14, 14))
-  )
+  const nodeStyleDecorator = new Sample1CollapsibleNodeStyleDecorator(new Sample1GroupNodeStyle())
   // Use a specific label model for the placement of the group button
-  nodeStyleDecorator.buttonPlacement = new InteriorLabelModel({ insets: 2 }).createParameter(
-    InteriorLabelModelPosition.SOUTH_EAST
+  nodeStyleDecorator.buttonPlacement = new InteriorNodeLabelModel({ padding: 2 }).createParameter(
+    'bottom-right'
   )
 
   graph.groupNodeDefaults.style = nodeStyleDecorator
 
   graph.nodeDefaults.style = new Sample1NodeStyle()
   graph.nodeDefaults.labels.style = new Sample1LabelStyle()
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.NORTH
+  graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.TOP
   graph.nodeDefaults.ports.style = new Sample1PortStyle()
 
   graph.edgeDefaults.style = new Sample1EdgeStyle()
   graph.edgeDefaults.labels.style = new Sample1LabelStyle()
 
-  // add some insets to the group nodes
-  graph.decorator.nodeDecorator.insetsProviderDecorator.setFactory(
-    () => new NodeInsetsProvider(new Insets(10, 30, 10, 25))
+  // add some padding to the group nodes
+  graph.decorator.nodes.groupPaddingProvider.addFactory(
+    () => new GroupPaddingProvider(new Insets(30, 10, 25, 10))
   )
 }
 
@@ -135,13 +120,13 @@ function applySample2(graph: IGraph): void {
   // define the demo node style using the 'node-color' css rule
   graph.nodeDefaults.style = new Sample2NodeStyle('node-color')
 
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     backgroundFill: '#c8dfb3',
     shape: 'pill',
-    insets: 5
+    padding: 5
   })
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.NORTH
-  graph.nodeDefaults.ports.style = VoidPortStyle.INSTANCE
+  graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.TOP
+  graph.nodeDefaults.ports.style = IPortStyle.VOID_PORT_STYLE
 
   const groupNodeStyle = new Sample2GroupNodeStyle()
   groupNodeStyle.isCollapsible = true
@@ -149,15 +134,15 @@ function applySample2(graph: IGraph): void {
 
   // define the demo edge style using the 'edge-color' css rule
   graph.edgeDefaults.style = new Sample2EdgeStyle('edge-color')
-  graph.edgeDefaults.labels.style = new DefaultLabelStyle({
+  graph.edgeDefaults.labels.style = new LabelStyle({
     backgroundFill: '#acb5a3',
     shape: 'pill',
-    insets: 5
+    padding: 5
   })
 
-  // add some insets to the group nodes
-  graph.decorator.nodeDecorator.insetsProviderDecorator.setFactory(
-    () => new NodeInsetsProvider(new Insets(10, 30, 10, 25))
+  // add some padding to the group nodes
+  graph.decorator.nodes.groupPaddingProvider.addFactory(
+    () => new GroupPaddingProvider(new Insets(30, 10, 25, 10))
   )
 }
 
@@ -167,14 +152,10 @@ function applySample2(graph: IGraph): void {
  *
  * Only supported for the styles shown in sample 2.
  */
-function enableGraphML(graphComponent: GraphComponent): void {
-  const gs = new GraphMLSupport({
-    graphComponent,
-    storageLocation: 'file-system'
-  })
-
+function enableGraphML(): GraphMLIOHandler {
   // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  gs.graphMLIOHandler.addXamlNamespaceMapping(
+  const graphMLIOHandler = new GraphMLIOHandler()
+  graphMLIOHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0',
     {
       Sample2NodeStyle,
@@ -187,65 +168,71 @@ function enableGraphML(graphComponent: GraphComponent): void {
       Sample2GroupNodeStyleExtension
     }
   )
-  gs.graphMLIOHandler.addHandleSerializationListener(demoSerializationListener)
+  registerMarkupExtensions(graphMLIOHandler)
+  return graphMLIOHandler
 }
 
 /**
- * Serialization listener which enables to write and load the custom style implementations
- * {@link Sample2NodeStyle}, {@link Sample2EdgeStyle}, {@link Sample2Arrow} and {@link Sample2GroupNodeStyle} to
- * and from graphml.
+ * Helper method that registers the markup extensions for our custom styles
  *
- * It uses the respective markup extension classes {@link Sample2NodeStyleExtension},
- * {@link Sample2EdgeStyleExtension}, {@link Sample2ArrowExtension} and {@link Sample2GroupNodeStyleExtension}.
- *
- * @param source the graphml handler
- * @param args the event arguments
  */
-function demoSerializationListener(
-  source: GraphMLIOHandler,
-  args: HandleSerializationEventArgs
-): void {
-  const item = args.item as
-    | Sample2NodeStyle
-    | Sample2GroupNodeStyle
-    | Sample2EdgeStyle
-    | Sample2Arrow
-    | null
-
-  let markupExtension:
-    | Sample2NodeStyleExtension
-    | Sample2GroupNodeStyleExtension
-    | Sample2EdgeStyleExtension
-    | Sample2ArrowExtension
-    | null = null
-  let markupExtensionClass: Class | null = null
-  if (item instanceof Sample2NodeStyle) {
-    markupExtension = new Sample2NodeStyleExtension()
-    markupExtension.cssClass = item.cssClass != null ? item.cssClass : ''
-    markupExtensionClass = Sample2NodeStyleExtension.$class
-  } else if (item instanceof Sample2GroupNodeStyle) {
-    markupExtension = new Sample2GroupNodeStyleExtension()
-    markupExtension.cssClass = item.cssClass != null ? item.cssClass : ''
-    markupExtension.isCollapsible = item.isCollapsible
-    markupExtension.solidHitTest = item.solidHitTest
-    markupExtensionClass = Sample2GroupNodeStyleExtension.$class
-  } else if (item instanceof Sample2EdgeStyle) {
-    markupExtension = new Sample2EdgeStyleExtension()
-    markupExtension.cssClass = item.cssClass != null ? item.cssClass : ''
-    markupExtension.showTargetArrows = item.showTargetArrows
-    markupExtension.useMarkerArrows = item.useMarkerArrows
-    markupExtensionClass = Sample2EdgeStyleExtension.$class
-  } else if (item instanceof Sample2Arrow) {
-    markupExtension = new Sample2ArrowExtension()
-    markupExtension.cssClass = item.cssClass != null ? item.cssClass : ''
-    markupExtensionClass = Sample2ArrowExtension.$class
-  }
-
-  if (markupExtension && markupExtensionClass) {
-    const context = args.context
-    context.serializeReplacement(markupExtensionClass, item, markupExtension)
-    args.handled = true
-  }
+function registerMarkupExtensions(graphMLIOHandler: GraphMLIOHandler) {
+  graphMLIOHandler.addTypeInformation(Sample2NodeStyle, {
+    extension: (item: Sample2NodeStyle) => {
+      const markupExtension = new Sample2NodeStyleExtension()
+      markupExtension.cssClass = item.cssClass != null ? item.cssClass : ''
+      return markupExtension
+    }
+  })
+  graphMLIOHandler.addTypeInformation(Sample2NodeStyleExtension, {
+    properties: {
+      cssClass: { default: '', type: String }
+    }
+  })
+  graphMLIOHandler.addTypeInformation(Sample2GroupNodeStyle, {
+    extension: (item: Sample2GroupNodeStyle) => {
+      const markupExtension = new Sample2GroupNodeStyleExtension()
+      markupExtension.cssClass = item.cssClass != null ? item.cssClass : ''
+      markupExtension.isCollapsible = item.isCollapsible
+      markupExtension.solidHitTest = item.solidHitTest
+      return markupExtension
+    }
+  })
+  graphMLIOHandler.addTypeInformation(Sample2GroupNodeStyleExtension, {
+    properties: {
+      cssClass: { default: '', type: String },
+      isCollapsible: { default: false, type: Boolean },
+      solidHitTest: { default: false, type: Boolean }
+    }
+  })
+  graphMLIOHandler.addTypeInformation(Sample2EdgeStyle, {
+    extension: (item: Sample2EdgeStyle) => {
+      const markupExtension = new Sample2EdgeStyleExtension()
+      markupExtension.cssClass = item.cssClass != null ? item.cssClass : ''
+      markupExtension.showTargetArrows = item.showTargetArrows
+      markupExtension.useMarkerArrows = item.useMarkerArrows
+      return markupExtension
+    }
+  })
+  graphMLIOHandler.addTypeInformation(Sample2EdgeStyleExtension, {
+    properties: {
+      cssClass: { default: '', type: String },
+      showTargetArrows: { default: true, type: Boolean },
+      useMarkerArrows: { default: true, type: Boolean }
+    }
+  })
+  graphMLIOHandler.addTypeInformation(Sample2Arrow, {
+    extension: (item: Sample2Arrow) => {
+      const markupExtension = new Sample2ArrowExtension()
+      markupExtension.cssClass = item.cssClass != null ? item.cssClass : ''
+      return markupExtension
+    }
+  })
+  graphMLIOHandler.addTypeInformation(Sample2ArrowExtension, {
+    properties: {
+      cssClass: { default: '', type: String }
+    }
+  })
 }
 
 /**
@@ -294,18 +281,18 @@ function createSampleGraph(graph: IGraph): void {
     tag: 'rgb(216, 0, 255)'
   })
 
-  const labelModel = new ExteriorLabelModel({ insets: 15 })
+  const labelModel = new ExteriorNodeLabelModel({ margins: 15 })
 
-  graph.addLabel(n0, 'Node 0', labelModel.createParameter(ExteriorLabelModelPosition.SOUTH))
-  graph.addLabel(n1, 'Node 1', labelModel.createParameter(ExteriorLabelModelPosition.SOUTH_EAST))
-  graph.addLabel(n2, 'Node 2', labelModel.createParameter(ExteriorLabelModelPosition.EAST))
-  graph.addLabel(n3, 'Node 3', labelModel.createParameter(ExteriorLabelModelPosition.EAST))
-  graph.addLabel(n4, 'Node 4', labelModel.createParameter(ExteriorLabelModelPosition.NORTH_EAST))
-  graph.addLabel(n5, 'Node 5', labelModel.createParameter(ExteriorLabelModelPosition.NORTH))
-  graph.addLabel(n6, 'Node 6', labelModel.createParameter(ExteriorLabelModelPosition.NORTH_WEST))
-  graph.addLabel(n7, 'Node 7', labelModel.createParameter(ExteriorLabelModelPosition.WEST))
-  graph.addLabel(n8, 'Node 8', labelModel.createParameter(ExteriorLabelModelPosition.WEST))
-  graph.addLabel(n9, 'Node 9', labelModel.createParameter(ExteriorLabelModelPosition.SOUTH_WEST))
+  graph.addLabel(n0, 'Node 0', labelModel.createParameter('bottom'))
+  graph.addLabel(n1, 'Node 1', labelModel.createParameter('bottom-right'))
+  graph.addLabel(n2, 'Node 2', labelModel.createParameter('right'))
+  graph.addLabel(n3, 'Node 3', labelModel.createParameter('right'))
+  graph.addLabel(n4, 'Node 4', labelModel.createParameter('top-right'))
+  graph.addLabel(n5, 'Node 5', labelModel.createParameter('top'))
+  graph.addLabel(n6, 'Node 6', labelModel.createParameter('top-left'))
+  graph.addLabel(n7, 'Node 7', labelModel.createParameter('left'))
+  graph.addLabel(n8, 'Node 8', labelModel.createParameter('left'))
+  graph.addLabel(n9, 'Node 9', labelModel.createParameter('bottom-left'))
 
   graph.createEdge(n0, n4)
   graph.createEdge(n6, n0)
@@ -321,6 +308,8 @@ function createSampleGraph(graph: IGraph): void {
 }
 
 function initializeUI(graphComponent: GraphComponent): void {
+  // Enable support to save the second sample to graphml
+  const graphMLIOHandler = enableGraphML()
   const modifyColors = document.querySelector<HTMLButtonElement>('#modify-colors-button')!
   modifyColors.addEventListener('click', () => {
     // Set the tag of all non-group nodes to a new color
@@ -336,7 +325,10 @@ function initializeUI(graphComponent: GraphComponent): void {
 
   // Wire the save button, but initially disable it - will be enabled on selecting sample 2
   const saveButton = document.querySelector<HTMLButtonElement>(`#save-button`)!
-  saveButton.addEventListener('click', () => ICommand.SAVE.execute(null, graphComponent))
+  saveButton.addEventListener(
+    'click',
+    async () => await saveGraphML(graphComponent, 'CustomStyles.graphml', graphMLIOHandler)
+  )
   saveButton.disabled = true
 
   const sampleSelectElements = ['#sample-select--sidebar', '#sample-select--toolbar'].map(

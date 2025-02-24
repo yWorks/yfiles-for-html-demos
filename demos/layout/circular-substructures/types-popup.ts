@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import NodeTypePanel from 'demo-utils/NodeTypePanel'
-import { colorSets, createDemoNodeStyle } from 'demo-resources/demo-styles'
-import type { GraphComponent, INode } from 'yfiles'
-import type { ColorSetName } from 'demo-resources/demo-colors'
-import type { NodeType } from './resources/SampleData'
+import NodeTypePanel from '@yfiles/demo-utils/NodeTypePanel'
+import { colorSets, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import type { GraphComponent, INode } from '@yfiles/yfiles'
+import type { ColorSetName } from '@yfiles/demo-resources/demo-colors'
+import type { MultiPageNodeType } from './resources/SampleData'
 
 /**
  * The color sets for the eight different node types.
@@ -50,7 +50,7 @@ export const nodeTypeColors: ColorSetName[] = [
  * Gets the type of the given node by querying it from the node's tag.
  */
 export function getNodeType(node: INode): number {
-  return (node.tag as NodeType | undefined | null)?.type ?? 0
+  return (node.tag as MultiPageNodeType | undefined | null)?.type ?? 0
 }
 
 /**
@@ -74,9 +74,10 @@ export function initializeTypePanel(graphComponent: GraphComponent): NodeTypePan
   }
 
   // update the nodes whose types will be changed on selection change events
-  graphComponent.selection.addItemSelectionChangedListener(
+  graphComponent.selection.addEventListener(
+    'item-added',
     () =>
-      (typePanel.currentItems = graphComponent.selection.selectedNodes
+      (typePanel.currentItems = graphComponent.selection.nodes
         .filter((n) => !graph.isGroupNode(n))
         .toArray())
   )

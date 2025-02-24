@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,68 +26,44 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GanttTimestamp,
-  getTaskColor,
-  getTaskForId,
-  getTotalActivityDuration
-} from './gantt-utils.js'
-
-/**
- * @param {!string} text
- * @param {!Point} location
- * @param {!CanvasComponent} canvasComponent
- */
+import { GanttTimestamp, getTaskColor, getTaskForId, getTotalActivityDuration } from './gantt-utils'
 export function showInfo(text, location, canvasComponent) {
   const info = document.querySelector('#info')
-  const pageLocation = canvasComponent.toPageFromView(canvasComponent.toViewCoordinates(location))
+  const pageLocation = canvasComponent.viewToPageCoordinates(
+    canvasComponent.worldToViewCoordinates(location)
+  )
   info.textContent = text
   info.classList.remove('hidden')
-
   const width = info.clientWidth
   const height = info.clientHeight
-  const gcViewBox = canvasComponent.div.getBoundingClientRect()
-
-  info.style.left = `${Math.max(
-    gcViewBox.x,
-    Math.min(pageLocation.x - width * 0.5, gcViewBox.x + gcViewBox.width - width)
-  )}px`
+  const gcViewBox = canvasComponent.htmlElement.getBoundingClientRect()
+  info.style.left = `${Math.max(gcViewBox.x, Math.min(pageLocation.x - width * 0.5, gcViewBox.x + gcViewBox.width - width))}px`
   info.style.top = `${pageLocation.y - height - 10}px`
 }
-
 export function hideInfo() {
   document.getElementById('info').classList.add('hidden')
 }
-
 /**
  * Shows information about the given activity.
- * @param {!Activity} activity
- * @param {!Point} location
- * @param {!GraphComponent} graphComponent
  */
 export function showActivityInfo(activity, location, graphComponent) {
   const width = 400
-  const viewLocation = graphComponent.toViewCoordinates(location)
-  const pageLocation = graphComponent.toPageFromView(viewLocation)
-
+  const viewLocation = graphComponent.worldToViewCoordinates(location)
+  const pageLocation = graphComponent.viewToPageCoordinates(viewLocation)
   const formatted = (isoString) => {
     return new GanttTimestamp(isoString).format()
   }
-
   const createEntry = (name, content) => {
     const entry = document.createElement('div')
     entry.className = 'node-info__row'
     entry.innerHTML = `<div class="node-info__cell">${name}</div><div class="node-info__cell">${content}</div>`
     return entry
   }
-
   const nodeInfo = document.querySelector('#node-info')
   nodeInfo.innerText = ''
-
   const nodeInfoName = document.createElement('div')
   nodeInfoName.className = 'node-info__name'
   nodeInfoName.textContent = activity.name
-
   const nodeInfoContent = document.createElement('div')
   nodeInfoContent.className = 'node-info__content'
   nodeInfoContent.append(
@@ -98,13 +74,11 @@ export function showActivityInfo(activity, location, graphComponent) {
     createEntry('Total Duration', `${getTotalActivityDuration(activity)}h`),
     createEntry('Task', getTaskForId(activity.taskId).name)
   )
-
   nodeInfo.append(nodeInfoName, nodeInfoContent)
   nodeInfo.style.width = `${width}px`
   nodeInfo.style.border = `3px solid ${getTaskColor(getTaskForId(activity.taskId))}`
   nodeInfo.classList.remove('hidden')
-
-  const gcViewBox = graphComponent.div.getBoundingClientRect()
+  const gcViewBox = graphComponent.htmlElement.getBoundingClientRect()
   const xPosition = Math.max(
     gcViewBox.x,
     Math.min(pageLocation.x - width * 0.5, gcViewBox.x + gcViewBox.width - width)
@@ -113,11 +87,9 @@ export function showActivityInfo(activity, location, graphComponent) {
     viewLocation.y > 200
       ? pageLocation.y - nodeInfo.getBoundingClientRect().height - 30
       : pageLocation.y + 30
-
   nodeInfo.style.left = `${xPosition}px`
   nodeInfo.style.top = `${yPosition}px`
 }
-
 /**
  * Hides the tool tip that displays detailed information for selected nodes.
  */

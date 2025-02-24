@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,21 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @param {!FlowNodeProperties} _
- * @returns {!FlowNodeValidation}
- */
+import {} from './FlowNode'
 export function defaultFlowNodeValidationFn(_) {
   return {
     invalidProperties: [],
     validationMessages: []
   }
 }
-
-/**
- * @param {!FlowNodeProperties} args
- * @returns {!FlowNodeValidation}
- */
 export function validateStorageReadWriteNode(args) {
   const invalidProperties = []
   const validationMessages = []
@@ -53,11 +45,6 @@ export function validateStorageReadWriteNode(args) {
     validationMessages
   }
 }
-
-/**
- * @param {!FlowNodeProperties} args
- * @returns {!FlowNodeValidation}
- */
 export function validateParserCsvNode(args) {
   const invalidProperties = []
   const validationMessages = []
@@ -74,11 +61,6 @@ export function validateParserCsvNode(args) {
     validationMessages
   }
 }
-
-/**
- * @param {!FlowNodeProperties} args
- * @returns {!FlowNodeValidation}
- */
 export function validateParserJsonNode(args) {
   const invalidProperties = []
   const validationMessages = []
@@ -91,11 +73,6 @@ export function validateParserJsonNode(args) {
     validationMessages
   }
 }
-
-/**
- * @param {!FlowNodeProperties} args
- * @returns {!FlowNodeValidation}
- */
 export function validateParserXmlNode(args) {
   const invalidProperties = []
   const validationMessages = []
@@ -108,11 +85,6 @@ export function validateParserXmlNode(args) {
     validationMessages
   }
 }
-
-/**
- * @param {!FlowNodeProperties} args
- * @returns {!FlowNodeValidation}
- */
 export function validateNetworkTcpNode(args) {
   const invalidProperties = []
   const validationMessages = []
@@ -125,11 +97,6 @@ export function validateNetworkTcpNode(args) {
     validationMessages
   }
 }
-
-/**
- * @param {!FlowNodeProperties} args
- * @returns {!FlowNodeValidation}
- */
 export function validateFunctionFunctionNode(args) {
   const invalidProperties = []
   const validationMessages = []
@@ -142,11 +109,6 @@ export function validateFunctionFunctionNode(args) {
     validationMessages
   }
 }
-
-/**
- * @param {!FlowNodeProperties} args
- * @returns {!FlowNodeValidation}
- */
 export function validateFunctionDelayNode(args) {
   const invalidProperties = []
   const validationMessages = []

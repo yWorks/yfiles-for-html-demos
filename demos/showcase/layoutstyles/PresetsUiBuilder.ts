@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { OptionEditor } from 'demo-resources/demo-option-editor'
+import type { OptionEditor } from '@yfiles/demo-resources/demo-option-editor'
 import { Tooltip } from './Tooltip'
 import type { Preset } from './resources/LayoutSamples'
 
@@ -125,14 +125,14 @@ export class PresetsUiBuilder {
   ): HTMLButtonElement {
     const btn = document.createElement('button')
     btn.innerText = preset.label
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
       if (btn.classList.contains(CSS_CLASS_INVALID_PRESET)) {
         //ignore click because preset is invalid for current sample
         return
       }
       handler(e.target as HTMLElement)
       this.optionEditor.setPresetName(preset.label)
-      this.onPresetApplied(presetId)
+      await this.onPresetApplied(presetId)
       clearTimeout(this.tooltipTimer)
       this.tooltip.hide()
     })

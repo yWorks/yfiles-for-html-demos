@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  Class,
   HandleDeserializationEventArgs,
   HandleSerializationEventArgs,
   ILookup,
@@ -38,53 +37,44 @@ import {
   IPortLocationModelParameter,
   IPortOwner,
   Point
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * Symbolic constants for the five supported port locations.
  */
-export /**
- * @readonly
- * @enum {number}
- */
-const PortLocation = {
-  CENTER: 0,
-  NORTH: 1,
-  SOUTH: 2,
-  EAST: 3,
-  WEST: 4
-}
-
+export var PortLocation
+;(function (PortLocation) {
+  PortLocation[(PortLocation['CENTER'] = 0)] = 'CENTER'
+  PortLocation[(PortLocation['TOP'] = 1)] = 'TOP'
+  PortLocation[(PortLocation['BOTTOM'] = 2)] = 'BOTTOM'
+  PortLocation[(PortLocation['RIGHT'] = 3)] = 'RIGHT'
+  PortLocation[(PortLocation['LEFT'] = 4)] = 'LEFT'
+})(PortLocation || (PortLocation = {}))
 /**
  * Custom implementation of {@link IPortLocationModel} that provides
  * five discrete port locations, one at the node center and one at each side.
  */
 export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
+  inset
   /**
    * Creates a new instance of {@link CustomNodePortLocationModel}.
-   * @param inset The inset for port locations NORTH, WEST, SOUTH, and EAST.
-   * @param {number} [inset=0]
+   * @param inset The inset for port locations TOP, LEFT, BOTTOM, and RIGHT.
    */
   constructor(inset = 0) {
     super()
     this.inset = inset
   }
-
   /**
    * Returns an instance that implements the given type or null.
-   * @param {!Class.<T>} type The type for which an instance shall be returned
-   * @template T
-   * @returns {?T}
+   * @param type The type for which an instance shall be returned
    */
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return null
   }
-
   /**
    * Determines the actual absolute world location of the given port for the given parameter.
-   * @param {!IPort} port The port to determine the location for
-   * @param {!IPortLocationModelParameter} locationParameter The parameter to use
-   * @returns {!Point}
+   * @param port The port to determine the location for
+   * @param locationParameter The parameter to use
    */
   getLocation(port, locationParameter) {
     if (
@@ -99,19 +89,19 @@ export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
       switch (modelParameter.location) {
         case PortLocation.CENTER:
           return layout.center
-        case PortLocation.NORTH:
+        case PortLocation.TOP:
           return layout.topLeft.add(layout.topRight).multiply(0.5).add(new Point(0, this.inset))
-        case PortLocation.SOUTH:
+        case PortLocation.BOTTOM:
           return layout.bottomLeft
             .add(layout.bottomRight)
             .multiply(0.5)
             .add(new Point(0, -this.inset))
-        case PortLocation.EAST:
+        case PortLocation.RIGHT:
           return layout.topRight
             .add(layout.bottomRight)
             .multiply(0.5)
             .add(new Point(-this.inset, 0))
-        case PortLocation.WEST:
+        case PortLocation.LEFT:
           return layout.topLeft.add(layout.bottomLeft).multiply(0.5).add(new Point(this.inset, 0))
         default:
           throw new Error('Unknown PortLocation')
@@ -121,7 +111,6 @@ export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
       return Point.ORIGIN
     }
   }
-
   /**
    * Factory method that creates a parameter for the given port that tries to match the provided location in absolute
    * world coordinates.
@@ -134,11 +123,11 @@ export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
    * location; still, the actual location should probably be included in the coordinate subset that is mapped to the
    * return value (otherwise behaviour will be very confusing).
    *
-   * @param {!IPortOwner} owner The port owner that will own the port for which the parameter shall be
+   * @param owner The port owner that will own the port for which the parameter shall be
    * created
-   * @param {!Point} location The location in the world coordinate system that should be matched as
+   * @param location The location in the world coordinate system that should be matched as
    * best as possible
-   * @returns {!IPortLocationModelParameter} A new instance that can be used to describe the location of
+   * @returns A new instance that can be used to describe the location of
    * an {@link IPort} at the given owner
    */
   createParameter(owner, location) {
@@ -152,34 +141,28 @@ export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
       }
       // map to a location on the side
       if (Math.abs(delta.x) > Math.abs(delta.y)) {
-        return this.createCustomParameter(delta.x > 0 ? PortLocation.EAST : PortLocation.WEST)
+        return this.createCustomParameter(delta.x > 0 ? PortLocation.RIGHT : PortLocation.LEFT)
       }
-      return this.createCustomParameter(delta.y > 0 ? PortLocation.SOUTH : PortLocation.NORTH)
+      return this.createCustomParameter(delta.y > 0 ? PortLocation.BOTTOM : PortLocation.TOP)
     }
     // Just return a fallback  - getLocation will ignore this anyway if the owner is null or not a node.
     return this.createCustomParameter(PortLocation.CENTER)
   }
-
   /**
    * Factory method that creates a custom port location parameter.
-   * @param {!PortLocation} location The location of the port
-   * @returns {!CustomNodePortLocationModelParameter}
+   * @param location The location of the port
    */
   createCustomParameter(location) {
     return new CustomNodePortLocationModelParameter(this, location)
   }
-
   /**
    * Provides a lookup context for the given combination of port and parameter.
-   * @param {!IPort} port The port to use in the context
-   * @param {!IPortLocationModelParameter} locationParameter The parameter to use for the port in the context
-   * @returns {!ILookup}
+   * @param _port The port to use in the context
    */
-  getContext(port, locationParameter) {
+  getContext(_port) {
     return ILookup.EMPTY
   }
 }
-
 /**
  * Custom implementation of {@link IPortLocationModelParameter} that is
  * tailored to match {@link CustomNodePortLocationModel} instances.
@@ -187,53 +170,36 @@ export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
  * This implementation just stores one of the symbolic {@link PortLocation} instances.
  */
 export class CustomNodePortLocationModelParameter extends BaseClass(IPortLocationModelParameter) {
+  owner
+  location
   /**
    * Creates an instance of CustomNodePortLocationModelParameter.
-   * @param {!CustomNodePortLocationModel} owner
-   * @param {!PortLocation} location
    */
   constructor(owner, location) {
     super()
-    this.location = location
     this.owner = owner
+    this.location = location
   }
-
   /**
    * Returns a model instance to which this parameter belongs.
    *
    * This is usually a reference to the model instance that has created this parameter.
-   * @type {!CustomNodePortLocationModel}
    */
   get model() {
     return this.owner
   }
-
-  /**
-   * Determines if this parameter instance may be used to describe ports for the given owner.
-   *
-   * Our model/parameter implementation only makes sense when used for {@link INode}s.
-   * @param {!IPortOwner} owner
-   * @returns {boolean}
-   */
-  supports(owner) {
-    return owner instanceof INode
-  }
-
   /**
    * Creates a clone of this {@link CustomNodePortLocationModelParameter} object.
-   * @returns {*}
    */
   clone() {
     // we have no mutable state, so return this.
     return this
   }
-
   /**
    * Handles GraphML serialization for this parameter instance.
-   * @param {!object} source The source of the event
-   * @param {!HandleSerializationEventArgs} args An object that contains the event data
+   * @param args An object that contains the event data
    */
-  static serializationHandler(source, args) {
+  static serializationHandler(args) {
     // only serialize items that are of the specific type
     if (args.item instanceof CustomNodePortLocationModelParameter) {
       const modelParameter = args.item
@@ -249,13 +215,11 @@ export class CustomNodePortLocationModelParameter extends BaseClass(IPortLocatio
       args.handled = true
     }
   }
-
   /**
    * Handles GraphML deserialization for this parameter instance.
-   * @param {!object} source The source of the event
-   * @param {!HandleDeserializationEventArgs} args An object that contains the event data
+   * @param args An object that contains the event data
    */
-  static deserializationHandler(source, args) {
+  static deserializationHandler(args) {
     if (args.xmlNode instanceof Element) {
       const element = args.xmlNode
       if (

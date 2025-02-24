@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,37 +33,40 @@ import {
   ArrowType,
   CreateEdgeInputMode,
   Cursor,
-  DefaultLabelStyle,
-  DefaultPortCandidate,
   EdgeCreator,
-  FreeEdgeLabelModel,
+  EdgePortCandidates,
+  EventRecognizers,
   FreeNodePortLocationModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  HierarchicLayout,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
+  HierarchicalLayoutEdgeDescriptor,
+  HierarchicalLayoutRoutingStyle,
   IEdge,
   IGraph,
   IHitTestable,
   IInputMode,
   ILabel,
-  IModelItem,
   INode,
   INodeStyle,
   LabelEventArgs,
-  MouseButtons,
-  MouseEventRecognizers,
+  LabelStyle,
+  LayoutExecutor,
   NinePositionsEdgeLabelModel,
-  Point,
+  PointerButtons,
   PolylineEdgeStyle,
-  PopulateItemContextMenuEventArgs,
-  PortCalculator,
+  PortAdjustmentPolicy,
+  PortCandidate,
+  PortData,
+  PortSides,
+  RoutingStyleDescriptor,
   ShapeNodeStyle,
   Size,
-  StringTemplateNodeStyle,
-  VoidNodeStyle
-} from 'yfiles'
+  SmartEdgeLabelModel
+} from '@yfiles/yfiles'
 import {
   AdjacencyNodesSourceDefinition,
   AdjacencyNodesSourceDefinitionBuilderConnector,
@@ -71,10 +74,13 @@ import {
   parseData
 } from './ModelClasses'
 import { EditAdjacencyNodesSourceDialog } from './EditAdjacencyNodeSourceDialog'
-import { ContentRectViewportLimiter } from './ContentRectViewportLimiter'
 import { FlippedArrow } from './FlippedArrow'
-import { ContextMenu } from 'demo-utils/ContextMenu'
-import { applyDemoTheme, createDemoEdgeStyle } from 'demo-resources/demo-styles'
+import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
+import { LitNodeStyle, type LitNodeStyleRenderFunction } from '@yfiles/demo-utils/LitNodeStyle'
+
+// @ts-ignore Import via URL
+// eslint-disable-next-line import/no-unresolved
+import { nothing, svg } from 'https://unpkg.com/lit-html@2.8.0?module'
 
 type NeighborType = 'successor' | 'predecessor'
 
@@ -101,7 +107,7 @@ type DataType = DataItemType[] | Record<string, DataItemType>
 const arrow = new Arrow({
   fill: '#BBBBBB',
   type: ArrowType.TRIANGLE,
-  scale: 1.5,
+  widthScale: 1.5,
   cropLength: 2
 })
 const successorEdgeStyle = new PolylineEdgeStyle({
@@ -135,10 +141,7 @@ export class SchemaComponent {
 
     this.schemaGraphComponent = new GraphComponent(selector)
     this.configureSchemaStyles()
-    applyDemoTheme(this.schemaGraphComponent)
-
     this.schemaGraphComponent.inputMode = this.configureInputMode(this.schemaGraphComponent.graph)
-    this.schemaGraphComponent.viewportLimiter = new ContentRectViewportLimiter()
 
     this.adjacencyGraphBuilder = new AdjacencyGraphBuilder(graph)
     this.edgeCreator = new EdgeCreator<DataItemType>()
@@ -152,7 +155,7 @@ export class SchemaComponent {
    * schemaChangedCallback
    */
   private schemaChanged(): void {
-    this.schemaGraphComponent.updateContentRect()
+    this.schemaGraphComponent.updateContentBounds()
     this.schemaChangedCallback()
   }
 
@@ -162,16 +165,16 @@ export class SchemaComponent {
   private configureSchemaStyles(): void {
     const nodeDefaults = this.schemaGraphComponent.graph.nodeDefaults
     nodeDefaults.size = new Size(50, 50)
-    nodeDefaults.labels.style = new DefaultLabelStyle({
+    nodeDefaults.labels.style = new LabelStyle({
       backgroundFill: 'rgba(255,255,255,0.7)',
-      insets: [2, 5]
+      padding: [2, 5]
     })
     const edgeDefaults = this.schemaGraphComponent.graph.edgeDefaults
     edgeDefaults.style = successorEdgeStyle
-    edgeDefaults.labels.style = new DefaultLabelStyle({
+    edgeDefaults.labels.style = new LabelStyle({
       backgroundFill: 'white',
       textFill: '#555555',
-      insets: 2
+      padding: 2
     })
     edgeDefaults.labels.layoutParameter = NinePositionsEdgeLabelModel.CENTER_CENTERED
   }
@@ -188,12 +191,12 @@ export class SchemaComponent {
     inputMode.labelEditableItems = GraphItemTypes.EDGE
     inputMode.showHandleItems = GraphItemTypes.NONE
     inputMode.focusableItems = GraphItemTypes.NONE
-    inputMode.movableItems = GraphItemTypes.NONE
+    inputMode.movableSelectedItems = GraphItemTypes.NONE
     inputMode.allowCreateBend = false
 
     // configure the tooltips
-    inputMode.mouseHoverInputMode.delay = '0.5s'
-    inputMode.mouseHoverInputMode.duration = '5m'
+    inputMode.toolTipInputMode.delay = '0.5s'
+    inputMode.toolTipInputMode.duration = '5m'
 
     // the pointer cursor should be shown when hovering over certain graph items to indicate their clickable
     inputMode.itemHoverInputMode.enabled = true
@@ -203,86 +206,85 @@ export class SchemaComponent {
 
     // easily move viewport and create new edges when dragging on another node
     inputMode.marqueeSelectionInputMode.enabled = false
-    inputMode.moveViewportInputMode.pressedRecognizer = MouseEventRecognizers.LEFT_DOWN
+    inputMode.moveViewportInputMode.beginRecognizer = EventRecognizers.MOUSE_DOWN
     inputMode.moveViewportInputMode.priority = inputMode.createEdgeInputMode.priority + 1
     this.enableTargetNodeCreation(inputMode.createEdgeInputMode)
 
     // start label edit when an edge or edge label is clicked
-    inputMode.addItemClickedListener((_, evt) => {
-      if ((evt.mouseButtons & MouseButtons.LEFT) === 0) {
+    inputMode.addEventListener('item-clicked', (evt) => {
+      if ((evt.pointerButtons & PointerButtons.MOUSE_LEFT) === 0) {
         return
       }
 
       const graphComponent = evt.context.canvasComponent as GraphComponent
-      if (IEdge.isInstance(evt.item)) {
+      if (evt.item instanceof IEdge) {
         evt.handled = true
         const edge = evt.item
-        graphComponent.selection.setSelected(edge, true)
+        graphComponent.selection.edges.add(edge)
 
         if (edge.labels.size === 0) {
           // noinspection JSIgnoredPromiseFromCall
-          inputMode.addLabel(edge)
+          inputMode.editLabelInputMode.startLabelAddition(edge)
         } else {
           // noinspection JSIgnoredPromiseFromCall
-          inputMode.editLabel(edge.labels.get(0))
+          inputMode.editLabelInputMode.startLabelEditing(edge.labels.get(0))
         }
-      } else if (ILabel.isInstance(evt.item) && IEdge.isInstance(evt.item.owner)) {
+      } else if (evt.item instanceof ILabel && evt.item.owner instanceof IEdge) {
         evt.handled = true
-        graphComponent.selection.setSelected(evt.item.owner, true)
+        graphComponent.selection.add(evt.item.owner)
         // noinspection JSIgnoredPromiseFromCall
-        inputMode.editLabel(evt.item)
+        inputMode.editLabelInputMode.startLabelEditing(evt.item)
       }
     })
 
     // open node dialog when a node is double clicked
-    inputMode.addItemDoubleClickedListener((_, evt) => {
-      if (INode.isInstance(evt.item)) {
+    inputMode.addEventListener('item-double-clicked', (evt) => {
+      if (evt.item instanceof INode) {
         evt.handled = true
         this.openEditNodeSourceDialog(evt.item)
       }
     })
 
     // create a new nodes source and layout the graph
-    inputMode.addNodeCreatedListener((_, evt) => {
+    inputMode.addEventListener('node-created', (evt) => {
       this.createNewAdjacencyNodesSource(evt.item)
       // noinspection JSIgnoredPromiseFromCall
       this.applySchemaLayout()
     })
 
     // create the relationship in the AdjacencyGraphBuilder and layout the graph
-    inputMode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
+    inputMode.createEdgeInputMode.addEventListener('edge-created', (evt) => {
       this.createNeighborRelationship('successors', evt.item, 'successor')
       // noinspection JSIgnoredPromiseFromCall
       this.applySchemaLayout()
     })
 
     // update the schema
-    inputMode.addLabelTextChangedListener((_, evt) => {
-      if (IEdge.isInstance(evt.owner)) {
-        evt.owner.tag.provider = evt.item.text
-        evt.owner.tag.binding = createBinding(evt.item.text)
+    inputMode.editLabelInputMode.addEventListener('label-edited', (evt) => {
+      const owner = evt.item.owner
+      if (owner instanceof IEdge) {
+        owner.tag.provider = evt.item.text
+        owner.tag.binding = createBinding(evt.item.text)
         this.schemaChanged()
       }
     })
 
     // remove edge when label was removed, recreate graph on all removals
-    inputMode.addDeletedItemListener((_, evt) => {
-      if (LabelEventArgs.isInstance(evt)) {
-        if (evt.owner) {
-          graph.remove(evt.owner)
-        }
+    inputMode.addEventListener('deleted-item', (evt) => {
+      if (evt.details instanceof LabelEventArgs && evt.details.owner) {
+        graph.remove(evt.details.owner)
       }
       this.recreateGraph()
     })
 
     // create Tooltips for node data
-    inputMode.addQueryItemToolTipListener((_, evt) => {
+    inputMode.addEventListener('query-item-tool-tip', (evt) => {
       if (evt.handled) {
         // A tooltip has already been assigned => nothing to do.
         return
       }
 
-      if (INode.isInstance(evt.item)) {
+      if (evt.item instanceof INode) {
         const hitNode = evt.item
         if (hitNode.labels.size > 0) {
           const sourceConnector = hitNode.tag as AdjacencyNodesSourceDefinitionBuilderConnector
@@ -304,43 +306,28 @@ export class SchemaComponent {
    * Initializes the context menu for schema edges.
    */
   setupEdgeContextMenu(inputMode: GraphEditorInputMode): void {
-    const graphComponent = this.schemaGraphComponent
     inputMode.contextMenuItems = GraphItemTypes.EDGE
 
-    const contextMenu = new ContextMenu(graphComponent)
-
-    contextMenu.addOpeningEventListeners(graphComponent, (location: Point): void => {
-      const worldLocation = graphComponent.toWorldFromPage(location)
-      const showMenu = inputMode.contextMenuInputMode.shouldOpenMenu(worldLocation)
-      if (showMenu) {
-        contextMenu.show(location)
-      }
-    })
-
     // Add item-specific menu entries
-    inputMode.addPopulateItemContextMenuListener((_, evt): void => {
-      contextMenu.clearItems()
-      if (IEdge.isInstance(evt.item)) {
-        evt.showMenu = true
+    inputMode.addEventListener('populate-item-context-menu', (evt): void => {
+      if (evt.handled) {
+        return
+      }
 
+      if (evt.item instanceof IEdge) {
         const edge = evt.item
-        contextMenu.addMenuItem('Invert neighbor type (successor/predecessor)', (): void => {
-          edge.tag.neighborType =
-            edge.tag.neighborType === 'predecessor' ? 'successor' : 'predecessor'
-          this.recreateGraph()
-        })
+        evt.contextMenu = [
+          {
+            label: 'Invert neighbor type (successor/predecessor)',
+            action: (): void => {
+              edge.tag.neighborType =
+                edge.tag.neighborType === 'predecessor' ? 'successor' : 'predecessor'
+              this.recreateGraph()
+            }
+          }
+        ]
       }
     })
-
-    // Add a listener that closes the menu when the input mode requests this
-    inputMode.contextMenuInputMode.addCloseMenuListener((): void => {
-      contextMenu.close()
-    })
-
-    // If the context menu closes itself, for example because a menu item was clicked, we must inform the input mode
-    contextMenu.onClosedCallback = (): void => {
-      inputMode.contextMenuInputMode.menuClosed()
-    }
   }
 
   /**
@@ -392,7 +379,7 @@ export class SchemaComponent {
       (e) => e.thisSource,
       (e) => e.neighborSource
     )
-    schemaEdgesSource.edgeCreator.addEdgeCreatedListener((_, evt) => {
+    schemaEdgesSource.edgeCreator.addEventListener('edge-created', (evt) => {
       this.createNeighborRelationship(
         evt.dataItem.neighborBinding,
         evt.item,
@@ -423,8 +410,8 @@ export class SchemaComponent {
     // gather remaining edge definitions
     const edgesSourceDefinitions: SchemaEdge[] = []
     schemaGraph.edges.forEach((edge: IEdge) => {
-      const sourceConnector = edge.sourceNode!.tag as AdjacencyNodesSourceDefinitionBuilderConnector
-      const targetConnector = edge.targetNode!.tag as AdjacencyNodesSourceDefinitionBuilderConnector
+      const sourceConnector = edge.sourceNode.tag as AdjacencyNodesSourceDefinitionBuilderConnector
+      const targetConnector = edge.targetNode.tag as AdjacencyNodesSourceDefinitionBuilderConnector
 
       const schemaEdge: SchemaEdge = {
         thisSource: sourceConnector.sourceDefinition.name,
@@ -449,21 +436,21 @@ export class SchemaComponent {
 
   /**
    * Creates the neighbor relations between to schema graph nodes connected by an edge.
-   * @param neighborDataProvider the binding string for the neighbor relation
+   * @param neighborDataMap the binding string for the neighbor relation
    * @param edge the edge to connecting the nodes with neighbor relations
    * @param neighborType whether to add the source as successor or predecessor
    */
   private createNeighborRelationship(
-    neighborDataProvider: string,
+    neighborDataMap: string,
     edge: IEdge,
     neighborType: NeighborType
   ): void {
-    const sourceConnector = edge.sourceNode!.tag as AdjacencyNodesSourceDefinitionBuilderConnector
-    const targetConnector = edge.targetNode!.tag as AdjacencyNodesSourceDefinitionBuilderConnector
+    const sourceConnector = edge.sourceNode.tag as AdjacencyNodesSourceDefinitionBuilderConnector
+    const targetConnector = edge.targetNode.tag as AdjacencyNodesSourceDefinitionBuilderConnector
 
     edge.tag = {
-      provider: neighborDataProvider,
-      binding: createBinding(neighborDataProvider),
+      provider: neighborDataMap,
+      binding: createBinding(neighborDataMap),
       neighborType
     }
 
@@ -489,11 +476,11 @@ export class SchemaComponent {
       edge.tag.neighborType === 'successor' ? successorEdgeStyle : predecessorEdgeStyle
     )
 
-    const labelModel = new FreeEdgeLabelModel()
+    const labelModel = new SmartEdgeLabelModel({ autoRotation: false })
     this.schemaGraphComponent.graph.addLabel(
       edge,
-      neighborDataProvider,
-      labelModel.createDefaultParameter()
+      neighborDataMap,
+      labelModel.createParameterFromSource(0)
     )
   }
 
@@ -523,12 +510,14 @@ export class SchemaComponent {
   ): AdjacencyNodesSourceDefinitionBuilderConnector {
     const data = SchemaComponent.hasData(sourceDefinition) ? parseData(sourceDefinition.data) : []
     const nodesSource: AdjacencyNodesSource<DataItemType> =
-      this.adjacencyGraphBuilder.createNodesSource(data)
+      this.adjacencyGraphBuilder.createNodesSource(data, null)
 
     const nodeCreator = nodesSource.nodeCreator
-    nodeCreator.defaults.style = new StringTemplateNodeStyle(sourceDefinition.template)
+    nodeCreator.defaults.style = new LitNodeStyle(
+      this.createRenderFunction(sourceDefinition.template)
+    )
     nodesSource.nodeCreator.defaults.size = new Size(150, 60)
-    nodesSource.nodeCreator.addNodeUpdatedListener((_, evt) => {
+    nodesSource.nodeCreator.addEventListener('node-updated', (evt) => {
       nodeCreator.updateTag(evt.graph, evt.item, evt.dataItem)
       evt.graph.setStyle(evt.item, nodeCreator.defaults.style)
     })
@@ -540,17 +529,49 @@ export class SchemaComponent {
     )
   }
 
+  createRenderFunction(template: string): LitNodeStyleRenderFunction<any> {
+    return new Function(
+      'const svg = arguments[0]; const nothing = arguments[1]; const renderFunction = ' +
+        '({layout, tag}) => svg`\n' +
+        template +
+        '`' +
+        '\n return renderFunction'
+    )(svg, nothing)
+  }
+
   /**
    * Applies the layout for the schema graph component
    */
   private async applySchemaLayout(): Promise<void> {
-    const layout = new HierarchicLayout({
-      considerNodeLabels: true,
-      integratedEdgeLabeling: true,
-      backLoopRoutingForSelfLoops: true
+    const layout = new HierarchicalLayout({
+      defaultEdgeDescriptor: new HierarchicalLayoutEdgeDescriptor({
+        routingStyleDescriptor: new RoutingStyleDescriptor(HierarchicalLayoutRoutingStyle.POLYLINE)
+      })
     })
-    await this.schemaGraphComponent.morphLayout(new PortCalculator(layout))
-    this.schemaGraphComponent.updateContentRect()
+
+    const layoutData = new HierarchicalLayoutData({
+      ports: new PortData({
+        sourcePortCandidates: (edge) => {
+          return edge.isSelfLoop
+            ? new EdgePortCandidates().addFreeCandidate(PortSides.BOTTOM)
+            : null
+        },
+        targetPortCandidates: (edge) => {
+          return edge.isSelfLoop ? new EdgePortCandidates().addFreeCandidate(PortSides.TOP) : null
+        }
+      })
+    })
+
+    // Ensure that the LayoutExecutor class is not removed by build optimizers
+    // It is needed for the 'applyLayoutAnimated' method in this demo.
+    LayoutExecutor.ensure()
+
+    await this.schemaGraphComponent.applyLayoutAnimated({
+      layout,
+      layoutData,
+      portAdjustmentPolicies: PortAdjustmentPolicy.ALWAYS
+    })
+    this.schemaGraphComponent.updateContentBounds()
   }
 
   /**
@@ -563,7 +584,7 @@ export class SchemaComponent {
     // noinspection JSIgnoredPromiseFromCall
     new EditAdjacencyNodesSourceDialog(sourceDefinitionConnector, () => {
       this.schemaGraphComponent.graph.setLabelText(
-        schemaNode.labels.first(),
+        schemaNode.labels.first()!,
         sourceDefinitionConnector.sourceDefinition.name
       )
       this.setSchemaNodeStyle(schemaNode)
@@ -583,32 +604,29 @@ export class SchemaComponent {
    * canvas with a newly created node.
    */
   private enableTargetNodeCreation(createEdgeInputMode: CreateEdgeInputMode): void {
-    createEdgeInputMode.dummyEdgeGraph.nodeDefaults.size =
+    createEdgeInputMode.previewGraph.nodeDefaults.size =
       this.schemaGraphComponent.graph.nodeDefaults.size
 
     // each edge creation should use another random target node color
-    createEdgeInputMode.addGestureStartingListener((src) => {
+    createEdgeInputMode.addEventListener('gesture-starting', (_, src) => {
       const nodeStyle = new ShapeNodeStyle({
         shape: 'ellipse',
         fill: '#6495ED',
         stroke: 'white'
       })
 
-      src.dummyEdgeGraph.nodeDefaults.style = nodeStyle
-      src.dummyEdgeGraph.setStyle(src.dummyTargetNode, nodeStyle)
+      src.previewGraph.nodeDefaults.style = nodeStyle
+      src.previewGraph.setStyle(src.previewEndNode, nodeStyle)
     })
 
     // If targeting another node during edge creation, the dummy target node should not be rendered
     // because we'd use that actual graph node as target if the gesture is finished on a node.
-    createEdgeInputMode.addTargetPortCandidateChangedListener((_, evt) => {
-      const dummyEdgeGraph = createEdgeInputMode.dummyEdgeGraph
-      if (evt.item && INode.isInstance(evt.item.owner)) {
-        dummyEdgeGraph.setStyle(createEdgeInputMode.dummyTargetNode, VoidNodeStyle.INSTANCE)
+    createEdgeInputMode.addEventListener('end-port-candidate-changed', (evt) => {
+      const previewGraph = createEdgeInputMode.previewGraph
+      if (evt.item && evt.item.owner instanceof INode) {
+        previewGraph.setStyle(createEdgeInputMode.previewEndNode, INodeStyle.VOID_NODE_STYLE)
       } else {
-        dummyEdgeGraph.setStyle(
-          createEdgeInputMode.dummyTargetNode,
-          dummyEdgeGraph.nodeDefaults.style
-        )
+        previewGraph.setStyle(createEdgeInputMode.previewEndNode, previewGraph.nodeDefaults.style)
       }
     })
 
@@ -631,7 +649,7 @@ export class SchemaComponent {
         return edgeCreator(context, graph, sourcePortCandidate, targetPortCandidate, templateEdge)
       }
       // we use the dummy target node to create a new node at the current location
-      const dummyTargetNode = createEdgeInputMode.dummyTargetNode
+      const dummyTargetNode = createEdgeInputMode.previewEndNode
       const node = this.schemaGraphComponent.graph.createNode(dummyTargetNode.layout)
       this.createNewAdjacencyNodesSource(node)
 
@@ -639,7 +657,7 @@ export class SchemaComponent {
         context,
         graph,
         sourcePortCandidate,
-        new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED),
+        new PortCandidate(node, FreeNodePortLocationModel.CENTER),
         templateEdge
       )
     }

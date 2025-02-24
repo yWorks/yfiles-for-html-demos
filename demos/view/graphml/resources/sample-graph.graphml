@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,470 +28,349 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
 	</key>
-	<key id="d1" for="node" attr.type="string" attr.name="Url"/>
-	<key id="d2" for="node" attr.type="string" attr.name="Description"/>
-	<key id="d3" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
-	<key id="d4" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
-	<key id="d5" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
-	<key id="d6" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
-	<key id="d7" for="node" attr.name="NodeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState"/>
-	<key id="d8" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
-	<key id="d9" for="edge" attr.name="EdgeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
-	<key id="d10" for="edge" attr.name="EdgeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
-	<key id="d11" for="edge" attr.name="EdgeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState"/>
-	<key id="d12" for="port" attr.name="PortLocationParameter" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
+	<key id="d1" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
+	<key id="d2" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
+	<key id="d3" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
+	<key id="d4" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
+	<key id="d5" for="node" attr.name="NodeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState"/>
+	<key id="d6" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
+	<key id="d7" for="edge" attr.name="EdgeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
+	<key id="d8" for="edge" attr.name="EdgeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
+	<key id="d9" for="edge" attr.name="EdgeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState"/>
+	<key id="d10" for="port" attr.name="PortLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLabels"/>
+	<key id="d11" for="port" attr.name="PortLocationParameter" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
 		<default>
 			<x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored"/>
 		</default>
 	</key>
-	<key id="d13" for="port" attr.name="PortStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
+	<key id="d12" for="port" attr.name="PortStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
 		<default>
 			<x:Static Member="y:VoidPortStyle.Instance"/>
 		</default>
 	</key>
-	<key id="d14" for="port" attr.name="PortViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/PortViewState"/>
-	<key id="d15" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
-	<data key="d15">
+	<key id="d13" for="port" attr.name="PortViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/PortViewState"/>
+	<key id="d14" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
+	<data key="d14">
 		<y:SharedData>
 			<yjs:ShapeNodeStyle x:Key="1" fill="#FFABC8E2"/>
-			<yjs:DefaultLabelStyle x:Key="2" verticalTextAlignment="{y:GraphMLReference 3}" horizontalTextAlignment="{y:GraphMLReference 4}" textFill="BLACK">
-				<yjs:DefaultLabelStyle.font>
-					<yjs:Font fontSize="12"/>
-				</yjs:DefaultLabelStyle.font>
-			</yjs:DefaultLabelStyle>
-			<yjs:VerticalTextAlignment x:Key="3">CENTER</yjs:VerticalTextAlignment>
-			<yjs:HorizontalTextAlignment x:Key="4">CENTER</yjs:HorizontalTextAlignment>
-			<yjs:ShapeNodeStyle x:Key="5" fill="#00FFFFFF"/>
-			<yjs:TextWrapping x:Key="6">WORD</yjs:TextWrapping>
-			<yjs:SolidColorFill x:Key="7" color="Black"/>
-			<yjs:Font x:Key="8" fontSize="12"/>
-			<yjs:LinearGradient x:Key="9" spreadMethod="{y:GraphMLReference 15}" startPoint="0,0" endPoint="1,1">
-				<yjs:GradientStop color="#FFECF5FF" offset="0"/>
+			<yjs:LabelStyle x:Key="2" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 3}"/>
+			<yjs:Font x:Key="3" fontSize="12"/>
+			<yjs:ShapeNodeStyle x:Key="4" fill="TRANSPARENT"/>
+			<yjs:Color x:Key="5" value="#FFECF5FF"/>
+			<yjs:LinearGradient x:Key="6" spreadMethod="PAD" startPoint="0,0" endPoint="1,1">
+				<yjs:GradientStop color="{y:GraphMLReference 5}" offset="0"/>
 				<yjs:GradientStop color="#FFC4D7ED" offset="1"/>
 			</yjs:LinearGradient>
-			<yjs:PolylineEdgeStyle x:Key="10" targetArrow="DEFAULT"/>
-			<yjs:StringTemplateNodeStyle x:Key="11"><![CDATA[
-                <g>
-                    <rect fill="rgba(0,0,0,0.25)" width="{TemplateBinding width}" height="{TemplateBinding height}" transform="translate(2 2)"/>
-                    <rect fill="#FFFFFF" width="{TemplateBinding width}" height="{TemplateBinding height}"/>
-                    <use xlink:href="{Binding icon}" transform="scale(0.85) translate(15 10)"/>
-                    <g style="font-size:10px; font-family:Roboto; font-weight: 300; fill: #444">
-                        <text transform="translate(100 25)" data-content="{Binding name}" style="font-size:16px; fill:#336699"/>
-                        <text transform="translate(100 46)" data-content="{Binding position}" style="text-transform: uppercase; font-weight: 400"/>
-                        <text transform="translate(100 69)" data-content="{Binding email}"/>
-                        <text transform="translate(100 85)" data-content="{Binding phone}"/>
-                        <text transform="translate(170 85)" data-content="{Binding fax}"/>
-                    </g>
-                </g>
-
-                <defs>
-                    <svg version="1.1" id="usericon_female2" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="75px" height="75px" viewBox="0 0 75 75" xml:space="preserve">
-                        <circle fill="#CAEACA" stroke="#C6E5C6" stroke-miterlimit="10" cx="37.5" cy="37.5" r="37"/>
-                        <rect x="18.37" y="29.42" fill="#A87E5A" width="37.66" height="25.01"/>
-                        <path fill="#EAD6BE" d="M47.08,52.05h-5.69v-5.67H33v5.67h-6.52c-7.32,0-13.35,5.48-14.24,12.55c6.6,6.14,15.45,9.9,25.18,9.9
-                      c9.16,0,17.53-3.33,23.99-8.84C61.01,58.08,54.76,52.05,47.08,52.05z"/>
-                        <path fill="#E2CCB7" d="M47.08,52.05h-5.69v-5.67h-3.97V74.5c0.03,0,0.06,0,0.09,0c9.12,0,17.46-3.3,23.91-8.77
-                      C61.05,58.12,54.78,52.05,47.08,52.05z"/>
-                        <circle opacity="0.05" cx="37.19" cy="33.39" r="15.62"/>
-                        <circle fill="#EAD6BE" cx="36.78" cy="32.05" r="15.62"/>
-                        <path fill="#E2CCB7" d="M37.19,16.45v31.2c8.43-0.22,15.21-7.11,15.21-15.6S45.63,16.67,37.19,16.45z"/>
-                        <path opacity="0.1" fill="#56513A" d="M56.71,42.07l-0.23-15.12c-1.23-9.81-9.59-16.07-19.74-16.07c-9.9,0-18.09,6.6-19.62,16.07
-                      l-0.47,15.1c-3.37,0.5-5.95,3.4-5.95,6.9c0,3.86,3.13,6.99,6.99,6.99c3.35,0,6.88-2.35,7.56-5.49l0,0
-                      c0.07-0.42,0.16-0.86,0.16-1.3c0,0-0.04-14.81,0-19.42c1.52,0.54,2.51,0.84,4.22,0.84c6.11,0,11.55-1.66,13.71-7
-                      c1.16,1.45,2.66,2.75,4.69,2.75c0.11,0,0,29.5,0,29.5l8.89,0c3.23-0.62,5.67-3.45,5.67-6.86C62.58,45.48,60.03,42.6,56.71,42.07z"
-                      />
-                        <path fill="#C49A6C" d="M56.71,40.82L56.48,25.7c-1.23-9.81-9.59-16.07-19.74-16.07c-9.9,0-18.09,6.6-19.62,16.07l-0.47,15.1
-                      c-3.37,0.5-5.95,3.4-5.95,6.9c0,3.86,3.13,6.99,6.99,6.99c3.35,0,6.3-2.35,6.98-5.49h-0.03c0.07-0.42,0.11-0.86,0.11-1.3
-                      c0,0-0.01-14.81,0.03-19.42c1.52,0.54,3.14,0.84,4.85,0.84c6.11,0,11.34-2.13,13.5-7.47c1.16,1.45,3.28,3.21,5.31,3.21
-                      c0.11,0,0,29.5,0,29.5l8.48,0c3.23-0.62,5.67-3.45,5.67-6.86C62.58,44.23,60.03,41.35,56.71,40.82z"/>
-                        <path fill="#B78D63" d="M21.41,27.98V46.2h-0.03c-0.25,2.66-2.49,4.74-5.22,4.74c-2.83,0-5.13-2.24-5.23-5.04
-                      c-0.16,0.58-0.24,1.19-0.24,1.81c0,3.86,3.13,6.99,6.99,6.99c3.35,0,6.3-2.35,6.98-5.49h-0.03c0.07-0.42,0.11-0.86,0.11-1.3
-                      c0,0-0.01-14.48,0.03-19.25C23.62,28.55,22.49,28.32,21.41,27.98z"/>
-                        <g>
-                            <path fill="#AD7E53" d="M56.71,40.85l-0.23-15.12c-1.03-8.25-7.11-13.97-15.05-15.59c0.19,0.97,0.29,1.96,0.29,2.98
-                        c0,8.63-6.99,15.62-15.62,15.62c-0.23,0-0.46-0.02-0.7-0.04c1.34,0.41,2.75,0.65,4.22,0.65c6.11,0,11.34-2.13,13.5-7.47
-                        c1.16,1.45,3.28,3.21,5.31,3.21c0.11,0,0,29.5,0,29.5l8.48,0c3.23-0.62,5.67-3.45,5.67-6.86C62.58,44.26,60.03,41.38,56.71,40.85
-                        z"/>
-                        </g>
-                        <path fill="#2D77AA" d="M47.08,52.05l-9.53,13.16L26.48,52.05c-7.29,0-13.3,5.44-14.23,12.48c6.61,6.18,15.49,9.97,25.25,9.97
-                      c9.12,0,17.46-3.3,23.91-8.77C61.05,58.12,54.78,52.05,47.08,52.05z"/>
-                        <path fill="#1F639B" d="M47.08,52.05L37.5,65.21v9.29h0c9.12,0,17.46-3.31,23.91-8.77C61.05,58.12,54.78,52.05,47.08,52.05z"/>
-                    </svg>
-                    <svg version="1.1" id="usericon_male3" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="75px" height="75px" viewBox="0 0 75 75" xml:space="preserve">
-                        <circle fill="#EAD3D3" stroke="#E5CCCC" stroke-miterlimit="10" cx="37.5" cy="37.5" r="37"/>
-                        <path fill="#8E7968" d="M51.8,52.22h-5.33V38.39H28.38v13.83h-5.33c-6.23,0-11.55,4.01-13.55,9.57
-                      c6.78,7.85,16.8,12.82,27.99,12.82c11.13,0,21.11-4.92,27.89-12.7C63.42,56.28,58.07,52.22,51.8,52.22z"/>
-                        <path fill="#8E7968" d="M65.39,61.7c-2.02-5.51-7.32-9.48-13.51-9.48h-5.33V38.39H37.5V74.6C48.66,74.55,58.64,69.56,65.39,61.7z"
-                      />
-                        <path opacity="0.05" d="M39.32,48.44h-3.96c-6.6,0-12-5.4-12-12v-8.89c0-6.6,5.4-12,12-12h3.96c6.6,0,12,5.4,12,12v8.89
-                      C51.32,43.04,45.92,48.44,39.32,48.44z"/>
-                        <path fill="#998474" d="M39.48,47.2h-3.96c-6.6,0-12-5.4-12-12V24.4c0-6.6,5.4-12,12-12h3.96c6.6,0,12,5.4,12,12v10.8
-                      C51.48,41.8,46.08,47.2,39.48,47.2z"/>
-                        <path fill="#8E7968" d="M41.61,14.31H37.5V47.2h4.11c5.43,0,9.87-4.44,9.87-9.87V24.18C51.48,18.75,47.04,14.31,41.61,14.31z"/>
-                        <path opacity="0.15" fill="#56513A" d="M51.71,14.56c-2.09-3.73-7.73-6.41-14.39-6.41s-12.29,2.68-14.39,6.41
-                      c-2.29,2.5-3.7,5.81-3.7,9.44v3.23c0,3.94,1.66,7.51,4.3,10.07V25.82c0-1.15,0.21-2.24,0.57-3.27c2.64,2.87,7.56,4.81,13.21,4.81
-                      c3.01,0,6.63-1.37,8.99-2.32c-0.58-0.59-0.83-1.27-0.94-2.3c-0.15-1.38,1.03-2.47,2.47-2.47c1.62,0,2.96,1.17,3.23,2.71
-                      c0.27,0.9,0.43,1.85,0.43,2.83v11.09c2.42-2.52,3.92-5.93,3.92-9.68V24C55.41,20.37,54,17.06,51.71,14.56z"/>
-                        <path fill="#493A2F" d="M51.71,13.23c-2.09-3.73-7.73-6.41-14.39-6.41s-12.29,2.68-14.39,6.41c-2.29,2.5-3.7,5.81-3.7,9.44v4.87
-                      c0,3.94,1.66,7.51,4.3,10.07V24.49c0-1.15,0.21-2.24,0.57-3.27c2.64,2.87,7.56,4.81,13.21,4.81c3.01,0,5.8-0.55,8.16-1.49
-                      c-0.58-0.59-0.94-1.4-0.94-2.3c0-1.82,1.47-3.29,3.29-3.29c1.62,0,2.96,1.17,3.23,2.71c0.27,0.9,0.43,1.85,0.43,2.83v12.73
-                      c2.42-2.52,3.92-5.93,3.92-9.68v-4.87C55.41,19.03,54,15.72,51.71,13.23z"/>
-                        <path fill="#56473C" d="M36.85,15.24c0-3.27,2.08-6.15,5.27-7.95c-1.48-0.3-3.05-0.48-4.69-0.48c-6.65,0-12.29,2.68-14.39,6.41
-                      c-2.29,2.5-3.7,5.81-3.7,9.44v4.87c0,3.94,1.66,7.51,4.3,10.07V24.49c0-1.15,0.21-2.24,0.57-3.27c2.64,2.87,7.56,4.81,13.21,4.81
-                      c2.92,0,5.63-0.52,7.95-1.41c-0.03-0.04-0.05-0.08-0.08-0.12C40.37,23.11,36.85,19.49,36.85,15.24z"/>
-                        <path fill="#4E6887" d="M51.8,52.22h-0.97c0.01,0.07,0.03,0.14,0.03,0.21c0,2.63-6.01,4.75-13.43,4.75
-                      c-7.42,0-13.43-2.13-13.43-4.75c0-0.07,0.02-0.14,0.03-0.21h-0.97c-6.23,0-11.55,4.01-13.55,9.57
-                      c6.78,7.85,16.8,12.82,27.99,12.82c11.13,0,21.11-4.92,27.89-12.7C63.42,56.28,58.07,52.22,51.8,52.22z"/>
-                        <path fill="#3E587C" d="M51.87,52.22H50.9c0.01,0.07,0.03,0.14,0.03,0.21c0,2.63-6.01,4.75-13.43,4.75c-0.06,0-0.12,0-0.18,0V74.6
-                      c0.06,0,0.12,0,0.18,0c11.16,0,21.16-4.95,27.94-12.76C63.46,56.26,58.12,52.22,51.87,52.22z"/>
-                    </svg>
-                </defs>
-		]]></yjs:StringTemplateNodeStyle>
-			<y:ExteriorLabelModelPosition x:Key="12">SOUTH</y:ExteriorLabelModelPosition>
-			<yjs:StringTemplateNodeStyle x:Key="13"><![CDATA[
-                <use xlink:href="#movie" width="{TemplateBinding width}" height="{TemplateBinding height}"/>
-                <defs>
-                    <svg version="1.1" id="movie" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                      viewBox="0 0 48 48" enable-background="new 0 0 48 48" xml:space="preserve" data-referencesafe="true">
-                        <defs>
-                            <linearGradient id="MOVIE_ID_01" gradientUnits="userSpaceOnUse" x1="225.8613" y1="590.7773" x2="225.8613" y2="566.9873" gradientTransform="matrix(1 0 0 1 -201.9199 -546.3203)">
-                                <stop  offset="0" style="stop-color:#000000"/>
-                                <stop  offset="0.8788" style="stop-color:#8A8A8A"/>
-                                <stop  offset="1" style="stop-color:#424242"/>
-                            </linearGradient>
-                            <linearGradient id="MOVIE_ID_02" gradientUnits="userSpaceOnUse" x1="428" y1="1109.5508" x2="428" y2="1114.6267" gradientTransform="matrix(1 0 0 1 -404.0879 -1091.709)">
-                                <stop  offset="0" style="stop-color:#FFFFFF"/>
-                                <stop  offset="1" style="stop-color:#C4C4C9"/>
-                            </linearGradient>
-                            <linearGradient id="MOVIE_ID_03" gradientUnits="userSpaceOnUse" x1="-1767.9546" y1="1318.5508" x2="-1767.9546" y2="1323.4955" gradientTransform="matrix(-0.9808 0.1952 0.1952 0.9808 -1968.6603 -937.5378)">
-                                <stop  offset="0" style="stop-color:#FFFFFF"/>
-                                <stop  offset="0.238" style="stop-color:#F8F8F8"/>
-                                <stop  offset="0.5934" style="stop-color:#E3E3E6"/>
-                                <stop  offset="1" style="stop-color:#C4C4C9"/>
-                            </linearGradient>
-                        </defs>
-                        <path fill="url(#MOVIE_ID_01)" stroke="#000000" stroke-width="0.5" d="M41.134,41.25c0,1.1-0.899,2-2,2H8.75c-1.1,0-2-0.9-2-2V22.498c0-1.1,0.9-2,2-2h30.384c1.101,0,2,0.9,2,2V41.25z"/>
-                        <rect x="4.606" y="18.667" fill="url(#MOVIE_ID_02)" stroke="#000000" stroke-width="0.5" width="38.613" height="3.661"/>
-                        <polygon points="21.549,18.667 23.56,22.328 26.335,22.328 24.324,18.667 "/>
-                        <polygon points="15.875,18.667 17.886,22.328 20.66,22.328 18.648,18.667 "/>
-                        <polygon points="27.225,18.667 29.234,22.328 32.008,22.328 29.999,18.667 "/>
-                        <polygon points="4.527,18.667 6.538,22.328 9.312,22.328 7.301,18.667 "/>
-                        <polygon points="10.2,18.667 12.211,22.328 14.985,22.328 12.975,18.667 "/>
-                        <polygon points="32.84,18.667 34.85,22.328 37.624,22.328 35.613,18.667 "/>
-                        <polygon points="38.514,18.667 40.521,22.328 43.298,22.328 41.288,18.667 "/>
-                        <polygon fill="url(#MOVIE_ID_03)" stroke="#000000" stroke-width="0.5" points="42.48,10.927 4.611,18.464 3.897,14.873 41.768,7.336"/>
-                        <polygon points="25.15,10.643 23.892,14.626 21.17,15.168 22.428,11.185 "/>
-                        <polygon points="30.714,9.536 29.457,13.519 26.736,14.061 27.994,10.077 "/>
-                        <polygon points="19.584,11.751 18.327,15.734 15.607,16.275 16.862,12.292 "/>
-                        <polygon points="41.844,7.32 40.587,11.304 37.866,11.845 39.124,7.862 "/>
-                        <polygon points="36.279,8.428 35.021,12.411 32.302,12.953 33.561,8.969 "/>
-                        <polygon points="14.076,12.847 12.82,16.83 10.099,17.372 11.355,13.389 "/>
-                        <polygon points="8.512,13.955 7.256,17.938 4.534,18.479 5.791,14.496 "/>
-                        <line fill="none" stroke="#DBDBDB" stroke-width="2.5" x1="10.637" y1="26.594" x2="22.734" y2="26.594"/>
-                        <line fill="none" stroke="#DBDBDB" stroke-width="2.5" x1="10.637" y1="32.402" x2="37.305" y2="32.402"/>
-                        <line fill="none" stroke="#DBDBDB" stroke-width="2.5" x1="10.637" y1="38.213" x2="37.363" y2="38.213"/>
-                    </svg>
-                </defs>
-		]]></yjs:StringTemplateNodeStyle>
-			<y:SliderParameterLocation x:Key="14">FROM_TARGET</y:SliderParameterLocation>
-			<yjs:GradientSpreadMethod x:Key="15">PAD</yjs:GradientSpreadMethod>
+			<yjs:PolylineEdgeStyle x:Key="7" sourceArrow="None">
+				<yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:Arrow fill="{y:GraphMLReference 8}" type="TRIANGLE"/>
+				</yjs:PolylineEdgeStyle.targetArrow>
+			</yjs:PolylineEdgeStyle>
+			<yjs:Color x:Key="8" value="Black"/>
+			<yx:FreeNodeLabelModel x:Key="9"/>
+			<yjs:Font x:Key="10" fontSize="12" lineSpacing="0.2"/>
+			<yjs:ShapeNodeStyle x:Key="11"/>
+			<yjs:Color x:Key="12" value="#FF0B7189"/>
+			<yjs:Font x:Key="13" lineSpacing="0.2"/>
+			<yjs:ImageNodeStyle x:Key="14" backgroundShape="RECTANGLE">
+				<yjs:ImageNodeStyle.href>data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgNDggNDgiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDQ4IDQ4IiB4bWw6c3BhY2U9InByZXNlcnZlIiBkYXRhLXJlZmVyZW5jZXNhZmU9InRydWUiPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iTU9WSUVfSURfMDEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMjI1Ljg2MTMiIHkxPSI1OTAuNzc3MyIgeDI9IjIyNS44NjEzIiB5Mj0iNTY2Ljk4NzMiIGdyYWRpZW50VHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgMSAtMjAxLjkxOTkgLTU0Ni4zMjAzKSI+PHN0b3AgIG9mZnNldD0iMCIgc3R5bGU9InN0b3AtY29sb3I6IzAwMDAwMCIvPjxzdG9wICBvZmZzZXQ9IjAuODc4OCIgc3R5bGU9InN0b3AtY29sb3I6IzhBOEE4QSIvPjxzdG9wICBvZmZzZXQ9IjEiIHN0eWxlPSJzdG9wLWNvbG9yOiM0MjQyNDIiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0iTU9WSUVfSURfMDIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iNDI4IiB5MT0iMTEwOS41NTA4IiB4Mj0iNDI4IiB5Mj0iMTExNC42MjY3IiBncmFkaWVudFRyYW5zZm9ybT0ibWF0cml4KDEgMCAwIDEgLTQwNC4wODc5IC0xMDkxLjcwOSkiPjxzdG9wICBvZmZzZXQ9IjAiIHN0eWxlPSJzdG9wLWNvbG9yOiNGRkZGRkYiLz48c3RvcCAgb2Zmc2V0PSIxIiBzdHlsZT0ic3RvcC1jb2xvcjojQzRDNEM5Ii8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9Ik1PVklFX0lEXzAzIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9Ii0xNzY3Ljk1NDYiIHkxPSIxMzE4LjU1MDgiIHgyPSItMTc2Ny45NTQ2IiB5Mj0iMTMyMy40OTU1IiBncmFkaWVudFRyYW5zZm9ybT0ibWF0cml4KC0wLjk4MDggMC4xOTUyIDAuMTk1MiAwLjk4MDggLTE5NjguNjYwMyAtOTM3LjUzNzgpIj48c3RvcCAgb2Zmc2V0PSIwIiBzdHlsZT0ic3RvcC1jb2xvcjojRkZGRkZGIi8+PHN0b3AgIG9mZnNldD0iMC4yMzgiIHN0eWxlPSJzdG9wLWNvbG9yOiNGOEY4RjgiLz48c3RvcCAgb2Zmc2V0PSIwLjU5MzQiIHN0eWxlPSJzdG9wLWNvbG9yOiNFM0UzRTYiLz48c3RvcCAgb2Zmc2V0PSIxIiBzdHlsZT0ic3RvcC1jb2xvcjojQzRDNEM5Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHBhdGggZmlsbD0idXJsKCNNT1ZJRV9JRF8wMSkiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSIwLjUiIGQ9Ik00MS4xMzQsNDEuMjVjMCwxLjEtMC44OTksMi0yLDJIOC43NWMtMS4xLDAtMi0wLjktMi0yVjIyLjQ5OGMwLTEuMSwwLjktMiwyLTJoMzAuMzg0YzEuMTAxLDAsMiwwLjksMiwyVjQxLjI1eiIvPjxyZWN0IHg9IjQuNjA2IiB5PSIxOC42NjciIGZpbGw9InVybCgjTU9WSUVfSURfMDIpIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iMC41IiB3aWR0aD0iMzguNjEzIiBoZWlnaHQ9IjMuNjYxIi8+PHBvbHlnb24gcG9pbnRzPSIyMS41NDksMTguNjY3IDIzLjU2LDIyLjMyOCAyNi4zMzUsMjIuMzI4IDI0LjMyNCwxOC42NjcgIi8+PHBvbHlnb24gcG9pbnRzPSIxNS44NzUsMTguNjY3IDE3Ljg4NiwyMi4zMjggMjAuNjYsMjIuMzI4IDE4LjY0OCwxOC42NjcgIi8+PHBvbHlnb24gcG9pbnRzPSIyNy4yMjUsMTguNjY3IDI5LjIzNCwyMi4zMjggMzIuMDA4LDIyLjMyOCAyOS45OTksMTguNjY3ICIvPjxwb2x5Z29uIHBvaW50cz0iNC41MjcsMTguNjY3IDYuNTM4LDIyLjMyOCA5LjMxMiwyMi4zMjggNy4zMDEsMTguNjY3ICIvPjxwb2x5Z29uIHBvaW50cz0iMTAuMiwxOC42NjcgMTIuMjExLDIyLjMyOCAxNC45ODUsMjIuMzI4IDEyLjk3NSwxOC42NjcgIi8+PHBvbHlnb24gcG9pbnRzPSIzMi44NCwxOC42NjcgMzQuODUsMjIuMzI4IDM3LjYyNCwyMi4zMjggMzUuNjEzLDE4LjY2NyAiLz48cG9seWdvbiBwb2ludHM9IjM4LjUxNCwxOC42NjcgNDAuNTIxLDIyLjMyOCA0My4yOTgsMjIuMzI4IDQxLjI4OCwxOC42NjcgIi8+PHBvbHlnb24gZmlsbD0idXJsKCNNT1ZJRV9JRF8wMykiIHN0cm9rZT0iIzAwMDAwMCIgc3Ryb2tlLXdpZHRoPSIwLjUiIHBvaW50cz0iNDIuNDgsMTAuOTI3IDQuNjExLDE4LjQ2NCAzLjg5NywxNC44NzMgNDEuNzY4LDcuMzM2Ii8+PHBvbHlnb24gcG9pbnRzPSIyNS4xNSwxMC42NDMgMjMuODkyLDE0LjYyNiAyMS4xNywxNS4xNjggMjIuNDI4LDExLjE4NSAiLz48cG9seWdvbiBwb2ludHM9IjMwLjcxNCw5LjUzNiAyOS40NTcsMTMuNTE5IDI2LjczNiwxNC4wNjEgMjcuOTk0LDEwLjA3NyAiLz48cG9seWdvbiBwb2ludHM9IjE5LjU4NCwxMS43NTEgMTguMzI3LDE1LjczNCAxNS42MDcsMTYuMjc1IDE2Ljg2MiwxMi4yOTIgIi8+PHBvbHlnb24gcG9pbnRzPSI0MS44NDQsNy4zMiA0MC41ODcsMTEuMzA0IDM3Ljg2NiwxMS44NDUgMzkuMTI0LDcuODYyICIvPjxwb2x5Z29uIHBvaW50cz0iMzYuMjc5LDguNDI4IDM1LjAyMSwxMi40MTEgMzIuMzAyLDEyLjk1MyAzMy41NjEsOC45NjkgIi8+PHBvbHlnb24gcG9pbnRzPSIxNC4wNzYsMTIuODQ3IDEyLjgyLDE2LjgzIDEwLjA5OSwxNy4zNzIgMTEuMzU1LDEzLjM4OSAiLz48cG9seWdvbiBwb2ludHM9IjguNTEyLDEzLjk1NSA3LjI1NiwxNy45MzggNC41MzQsMTguNDc5IDUuNzkxLDE0LjQ5NiAiLz48bGluZSBmaWxsPSJub25lIiBzdHJva2U9IiNEQkRCREIiIHN0cm9rZS13aWR0aD0iMi41IiB4MT0iMTAuNjM3IiB5MT0iMjYuNTk0IiB4Mj0iMjIuNzM0IiB5Mj0iMjYuNTk0Ii8+PGxpbmUgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjREJEQkRCIiBzdHJva2Utd2lkdGg9IjIuNSIgeDE9IjEwLjYzNyIgeTE9IjMyLjQwMiIgeDI9IjM3LjMwNSIgeTI9IjMyLjQwMiIvPjxsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0RCREJEQiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHgxPSIxMC42MzciIHkxPSIzOC4yMTMiIHgyPSIzNy4zNjMiIHkyPSIzOC4yMTMiLz48L3N2Zz4=</yjs:ImageNodeStyle.href>
+			</yjs:ImageNodeStyle>
 		</y:SharedData>
 	</data>
 	<graph id="G" edgedefault="directed">
 		<node id="n0">
-			<data key="d1"/>
-			<data key="d2"/>
-			<data key="d3">
+			<data key="d1">
 				<x:List>
-					<y:Label>
-						<y:Label.Text><![CDATA[Table Node]]></y:Label.Text>
+					<y:Label Text="Table Node" PreferredSize="82,17">
 						<y:Label.LayoutParameter>
-							<y:InteriorLabelModelParameter Position="North">
-								<y:InteriorLabelModelParameter.Model>
-									<y:InteriorLabelModel/>
-								</y:InteriorLabelModelParameter.Model>
-							</y:InteriorLabelModelParameter>
+							<yx:InteriorNodeLabelModelParameter Position="Top">
+								<yx:InteriorNodeLabelModelParameter.Model>
+									<yx:InteriorNodeLabelModel/>
+								</yx:InteriorNodeLabelModelParameter.Model>
+							</yx:InteriorNodeLabelModelParameter>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle textFill="BLACK" textSize="16">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle textSize="16">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="16"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d4">
+			<data key="d2">
 				<y:RectD X="58.18559576361508" Y="16.29817440584378" Width="380.77880847276987" Height="231.55026515516602"/>
 			</data>
-			<data key="d6">
+			<data key="d4">
 				<yjs:TableNodeStyle>
 					<yjs:TableNodeStyle.backgroundStyle>
-						<yjs:ShapeNodeStyle fill="#FFECF5FF"/>
+						<yjs:ShapeNodeStyle fill="{y:GraphMLReference 5}"/>
 					</yjs:TableNodeStyle.backgroundStyle>
 					<yjs:TableNodeStyle.table>
-						<y:Table Insets="0,30,0,0">
-							<y:Table.Rows>
-								<y:Row MinimumSize="50" Size="171.55026515516602">
-									<y:Row.Style>
-										<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 5}"/>
-									</y:Row.Style>
-								</y:Row>
-							</y:Table.Rows>
-							<y:Table.Columns>
-								<y:Column MinimumSize="50" Size="158.66274808895662" Insets="0,30,0,0">
-									<y:Column.Style>
+						<yx:Table Padding="0,30,0,0">
+							<yx:Table.Rows>
+								<yx:Row MinimumSize="50" Size="171.55026515516602">
+									<yx:Row.Style>
+										<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 4}"/>
+									</yx:Row.Style>
+								</yx:Row>
+							</yx:Table.Rows>
+							<yx:Table.Columns>
+								<yx:Column MinimumSize="50" Size="158.66274808895662" Padding="0,30,0,0">
+									<yx:Column.Style>
 										<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 1}"/>
-									</y:Column.Style>
-									<y:Column.Labels>
-										<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" Style="{y:GraphMLReference 2}">
-											<y:Label.Text>Column1</y:Label.Text>
-										</y:Label>
-									</y:Column.Labels>
-								</y:Column>
-								<y:Column MinimumSize="50" Size="222.11606038381325" Insets="0,30,0,0">
-									<y:Column.Style>
+									</yx:Column.Style>
+									<yx:Column.Labels>
+										<y:Label Text="Column1" LayoutParameter="{x:Static yx:StretchStripeLabelModel.Top}" Style="{y:GraphMLReference 2}" PreferredSize="49,14"/>
+									</yx:Column.Labels>
+								</yx:Column>
+								<yx:Column MinimumSize="50" Size="222.11606038381325" Padding="0,30,0,0">
+									<yx:Column.Style>
 										<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 1}"/>
-									</y:Column.Style>
-									<y:Column.Labels>
-										<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" Style="{y:GraphMLReference 2}">
-											<y:Label.Text>Column2</y:Label.Text>
-										</y:Label>
-									</y:Column.Labels>
-								</y:Column>
-							</y:Table.Columns>
-							<y:Table.RowDefaults>
-								<y:StripeDefaults MinimumSize="50">
-									<y:StripeDefaults.Labels>
-										<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" ShareStyleInstance="true">
+									</yx:Column.Style>
+									<yx:Column.Labels>
+										<y:Label Text="Column2" LayoutParameter="{x:Static yx:StretchStripeLabelModel.Top}" Style="{y:GraphMLReference 2}" PreferredSize="49,14"/>
+									</yx:Column.Labels>
+								</yx:Column>
+							</yx:Table.Columns>
+							<yx:Table.RowDefaults>
+								<yx:StripeDefaults MinimumSize="50">
+									<yx:StripeDefaults.Labels>
+										<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" ShareStyleInstance="true">
 											<y:LabelDefaults.Style>
-												<yjs:DefaultLabelStyle verticalTextAlignment="{y:GraphMLReference 3}" horizontalTextAlignment="{y:GraphMLReference 4}" textFill="BLACK">
-													<yjs:DefaultLabelStyle.font>
-														<yjs:Font fontSize="12"/>
-													</yjs:DefaultLabelStyle.font>
-												</yjs:DefaultLabelStyle>
+												<yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 3}"/>
 											</y:LabelDefaults.Style>
 										</y:LabelDefaults>
-									</y:StripeDefaults.Labels>
-									<y:StripeDefaults.Style>
-										<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 5}"/>
-									</y:StripeDefaults.Style>
-								</y:StripeDefaults>
-							</y:Table.RowDefaults>
-							<y:Table.ColumnDefaults>
-								<y:StripeDefaults Insets="0,30,0,0" MinimumSize="50">
-									<y:StripeDefaults.Labels>
-										<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" Style="{y:GraphMLReference 2}" ShareStyleInstance="true"/>
-									</y:StripeDefaults.Labels>
-									<y:StripeDefaults.Style>
+									</yx:StripeDefaults.Labels>
+									<yx:StripeDefaults.Style>
+										<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 4}"/>
+									</yx:StripeDefaults.Style>
+								</yx:StripeDefaults>
+							</yx:Table.RowDefaults>
+							<yx:Table.ColumnDefaults>
+								<yx:StripeDefaults Padding="0,30,0,0" MinimumSize="50">
+									<yx:StripeDefaults.Labels>
+										<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static yx:StretchStripeLabelModel.Top}" Style="{y:GraphMLReference 2}" ShareStyleInstance="true"/>
+									</yx:StripeDefaults.Labels>
+									<yx:StripeDefaults.Style>
 										<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 1}"/>
-									</y:StripeDefaults.Style>
-								</y:StripeDefaults>
-							</y:Table.ColumnDefaults>
-						</y:Table>
+									</yx:StripeDefaults.Style>
+								</yx:StripeDefaults>
+							</yx:Table.ColumnDefaults>
+						</yx:Table>
 					</yjs:TableNodeStyle.table>
 				</yjs:TableNodeStyle>
 			</data>
 			<graph id="n0:" edgedefault="directed">
 				<node id="n0::n0">
-					<data key="d1"/>
-					<data key="d2"/>
-					<data key="d3">
+					<data key="d1">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
-								<y:Label.Text><![CDATA[Node 1]]></y:Label.Text>
+							<y:Label Text="Node 1" LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}" PreferredSize="39,14">
 								<y:Label.Style>
-									<yjs:DefaultLabelStyle verticalTextAlignment="{y:GraphMLReference 3}" horizontalTextAlignment="{y:GraphMLReference 4}" wrapping="{y:GraphMLReference 6}" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+									<yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" wrapping="WRAP_WORD" font="{y:GraphMLReference 3}"/>
 								</y:Label.Style>
 							</y:Label>
 						</x:List>
 					</data>
-					<data key="d4">
+					<data key="d2">
 						<y:RectD X="77.18559576361508" Y="107.05924107251019" Width="105" Height="64"/>
 					</data>
-					<data key="d6">
-						<yjs:ShapeNodeStyle fill="{y:GraphMLReference 9}"/>
+					<data key="d4">
+						<yjs:ShapeNodeStyle fill="{y:GraphMLReference 6}"/>
 					</data>
 					<port name="p0"/>
 					<port name="p1"/>
 				</node>
 				<node id="n0::n1">
-					<data key="d1"/>
-					<data key="d2"/>
-					<data key="d3">
+					<data key="d1">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
-								<y:Label.Text>InteriorStretchLabelModel</y:Label.Text>
+							<y:Label Text="StretchNodeLabelModel" LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}" PreferredSize="129,14">
 								<y:Label.Style>
-									<yjs:DefaultLabelStyle verticalTextAlignment="{y:GraphMLReference 3}" horizontalTextAlignment="{y:GraphMLReference 4}" wrapping="{y:GraphMLReference 6}" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
+									<yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" wrapping="WRAP_WORD" font="{y:GraphMLReference 3}"/>
 								</y:Label.Style>
 							</y:Label>
 						</x:List>
 					</data>
-					<data key="d4">
+					<data key="d2">
 						<y:RectD X="242.89275310326582" Y="88.25987456001752" Width="175.49762442184732" Height="101.59873302498528"/>
 					</data>
-					<data key="d6">
-						<yjs:ShapeNodeStyle fill="{y:GraphMLReference 9}" shape="DIAMOND"/>
+					<data key="d4">
+						<yjs:ShapeNodeStyle fill="{y:GraphMLReference 6}" shape="DIAMOND"/>
 					</data>
 					<port name="p0"/>
 					<port name="p1"/>
 				</node>
 				<edge id="n0::e0" source="n0::n1" target="n0::n0" sourceport="p0" targetport="p0">
-					<data key="d10">
-						<y:GraphMLReference ResourceKey="10"/>
+					<data key="d8">
+						<y:GraphMLReference ResourceKey="7"/>
 					</data>
 				</edge>
 				<edge id="n0::e1" source="n0::n0" target="n0::n1" sourceport="p1" targetport="p1">
-					<data key="d8">
+					<data key="d6">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:NinePositionsEdgeLabelModel.CenterCentered}">
-								<y:Label.Text>NinePositionsEdgeLabelModel</y:Label.Text>
+							<y:Label Text="NinePositionsEdgeLabelModel" LayoutParameter="{x:Static yx:NinePositionsEdgeLabelModel.CenterCentered}" PreferredSize="164,14">
 								<y:Label.Style>
-									<yjs:DefaultLabelStyle backgroundFill="WHITE" backgroundStroke="#FFFFFFFF" textFill="#FF336699">
-										<yjs:DefaultLabelStyle.font>
-											<yjs:Font fontSize="12"/>
-										</yjs:DefaultLabelStyle.font>
-									</yjs:DefaultLabelStyle>
+									<yjs:LabelStyle backgroundFill="WHITE" backgroundStroke="#FFFFFFFF" font="{y:GraphMLReference 3}" textFill="#FF336699"/>
 								</y:Label.Style>
 							</y:Label>
 						</x:List>
 					</data>
-					<data key="d9">
+					<data key="d7">
 						<x:List>
 							<y:Bend Location="129.68559576361505,219.3508633057885"/>
 							<y:Bend Location="330.6415653141895,219.3508633057885"/>
 						</x:List>
 					</data>
-					<data key="d10">
-						<y:GraphMLReference ResourceKey="10"/>
+					<data key="d8">
+						<y:GraphMLReference ResourceKey="7"/>
 					</data>
 				</edge>
 			</graph>
 		</node>
 		<node id="n1">
-			<data key="d1"/>
-			<data key="d2"/>
-			<data key="d4">
+			<data key="d2">
 				<y:RectD X="314.6975162766057" Y="-158.9094674099194" Width="57.15" Height="58"/>
 			</data>
-			<data key="d6">
-				<yjs:ShapeNodeStyle fill="#FFF0F8FF"/>
+			<data key="d4">
+				<yjs:ShapeNodeStyle fill="ALICE_BLUE"/>
 			</data>
 			<port name="p0"/>
 			<port name="p1">
-				<data key="d12">
+				<data key="d11">
 					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
 				</data>
-				<data key="d13">
-					<yjs:NodeStylePortStyleAdapter>
-						<yjs:NodeStylePortStyleAdapter.nodeStyle>
-							<yjs:ShapeNodeStyle fill="BLACK" shape="ELLIPSE"/>
-						</yjs:NodeStylePortStyleAdapter.nodeStyle>
-					</yjs:NodeStylePortStyleAdapter>
+				<data key="d12">
+						<yjs:ShapePortStyle/>
 				</data>
 			</port>
 		</node>
 		<node id="n2">
-			<data key="d1"/>
-			<data key="d2"/>
-			<data key="d3">
+			<data key="d1">
 				<x:List>
-					<y:Label>
-						<y:Label.Text>ExteriorLabelModel</y:Label.Text>
+					<y:Label Text="ExteriorNodeLabelModel" PreferredSize="133,14">
 						<y:Label.LayoutParameter>
-							<y:ExteriorLabelModelParameter Position="{y:GraphMLReference 12}">
-								<y:ExteriorLabelModelParameter.Model>
-									<y:ExteriorLabelModel/>
-								</y:ExteriorLabelModelParameter.Model>
-							</y:ExteriorLabelModelParameter>
+							<yx:ExteriorNodeLabelModelParameter Position="Bottom">
+								<yx:ExteriorNodeLabelModelParameter.Model>
+									<yx:ExteriorNodeLabelModel/>
+								</yx:ExteriorNodeLabelModelParameter.Model>
+							</yx:ExteriorNodeLabelModelParameter>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle textFill="#FF323232">
-								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+							<yjs:LabelStyle font="{y:GraphMLReference 3}" textFill="#FF323232"/>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d4">
+			<data key="d2">
 				<y:RectD X="222.575" Y="-62.22520746045609" Width="30" Height="30"/>
 			</data>
-			<data key="d6">
-				<yjs:ImageNodeStyle image="./resources/y.svg"/>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/y.svg" backgroundShape="RECTANGLE"/>
 			</data>
 			<port name="p0"/>
 		</node>
 		<node id="n3">
-			<data key="d1"/>
-			<data key="d2"/>
-			<data key="d4">
+			<data key="d1">
+				<x:List>
+					<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}" PreferredSize="239,86">
+						<y:Label.Text><![CDATA[Alexander Burns
+
+Senior Executive Assistant
+
+aburns@yoyodyne.com
+555-0102      555-0103]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:IconLabelStyle iconSize="64,64" wrappedStylePadding="96,2,2,2" backgroundShape="RECTANGLE">
+								<yjs:IconLabelStyle.href>data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI3NXB4IiBoZWlnaHQ9Ijc1cHgiIHZpZXdCb3g9IjAgMCA3NSA3NSIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGNpcmNsZSBmaWxsPSIjRUFEM0QzIiBzdHJva2U9IiNFNUNDQ0MiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgY3g9IjM3LjUiIGN5PSIzNy41IiByPSIzNyIvPjxwYXRoIGZpbGw9IiM4RTc5NjgiIGQ9Ik01MS44LDUyLjIyaC01LjMzVjM4LjM5SDI4LjM4djEzLjgzaC01LjMzYy02LjIzLDAtMTEuNTUsNC4wMS0xMy41NSw5LjU3IGM2Ljc4LDcuODUsMTYuOCwxMi44MiwyNy45OSwxMi44MmMxMS4xMywwLDIxLjExLTQuOTIsMjcuODktMTIuN0M2My40Miw1Ni4yOCw1OC4wNyw1Mi4yMiw1MS44LDUyLjIyeiIvPjxwYXRoIGZpbGw9IiM4RTc5NjgiIGQ9Ik02NS4zOSw2MS43Yy0yLjAyLTUuNTEtNy4zMi05LjQ4LTEzLjUxLTkuNDhoLTUuMzNWMzguMzlIMzcuNVY3NC42QzQ4LjY2LDc0LjU1LDU4LjY0LDY5LjU2LDY1LjM5LDYxLjd6IiAvPjxwYXRoIG9wYWNpdHk9IjAuMDUiIGQ9Ik0zOS4zMiw0OC40NGgtMy45NmMtNi42LDAtMTItNS40LTEyLTEydi04Ljg5YzAtNi42LDUuNC0xMiwxMi0xMmgzLjk2YzYuNiwwLDEyLDUuNCwxMiwxMnY4Ljg5IEM1MS4zMiw0My4wNCw0NS45Miw0OC40NCwzOS4zMiw0OC40NHoiLz48cGF0aCBmaWxsPSIjOTk4NDc0IiBkPSJNMzkuNDgsNDcuMmgtMy45NmMtNi42LDAtMTItNS40LTEyLTEyVjI0LjRjMC02LjYsNS40LTEyLDEyLTEyaDMuOTZjNi42LDAsMTIsNS40LDEyLDEydjEwLjggQzUxLjQ4LDQxLjgsNDYuMDgsNDcuMiwzOS40OCw0Ny4yeiIvPjxwYXRoIGZpbGw9IiM4RTc5NjgiIGQ9Ik00MS42MSwxNC4zMUgzNy41VjQ3LjJoNC4xMWM1LjQzLDAsOS44Ny00LjQ0LDkuODctOS44N1YyNC4xOEM1MS40OCwxOC43NSw0Ny4wNCwxNC4zMSw0MS42MSwxNC4zMXoiLz48cGF0aCBvcGFjaXR5PSIwLjE1IiBmaWxsPSIjNTY1MTNBIiBkPSJNNTEuNzEsMTQuNTZjLTIuMDktMy43My03LjczLTYuNDEtMTQuMzktNi40MXMtMTIuMjksMi42OC0xNC4zOSw2LjQxIGMtMi4yOSwyLjUtMy43LDUuODEtMy43LDkuNDR2My4yM2MwLDMuOTQsMS42Niw3LjUxLDQuMywxMC4wN1YyNS44MmMwLTEuMTUsMC4yMS0yLjI0LDAuNTctMy4yN2MyLjY0LDIuODcsNy41Niw0LjgxLDEzLjIxLDQuODEgYzMuMDEsMCw2LjYzLTEuMzcsOC45OS0yLjMyYy0wLjU4LTAuNTktMC44My0xLjI3LTAuOTQtMi4zYy0wLjE1LTEuMzgsMS4wMy0yLjQ3LDIuNDctMi40N2MxLjYyLDAsMi45NiwxLjE3LDMuMjMsMi43MSBjMC4yNywwLjksMC40MywxLjg1LDAuNDMsMi44M3YxMS4wOWMyLjQyLTIuNTIsMy45Mi01LjkzLDMuOTItOS42OFYyNEM1NS40MSwyMC4zNyw1NCwxNy4wNiw1MS43MSwxNC41NnoiLz48cGF0aCBmaWxsPSIjNDkzQTJGIiBkPSJNNTEuNzEsMTMuMjNjLTIuMDktMy43My03LjczLTYuNDEtMTQuMzktNi40MXMtMTIuMjksMi42OC0xNC4zOSw2LjQxYy0yLjI5LDIuNS0zLjcsNS44MS0zLjcsOS40NHY0Ljg3IGMwLDMuOTQsMS42Niw3LjUxLDQuMywxMC4wN1YyNC40OWMwLTEuMTUsMC4yMS0yLjI0LDAuNTctMy4yN2MyLjY0LDIuODcsNy41Niw0LjgxLDEzLjIxLDQuODFjMy4wMSwwLDUuOC0wLjU1LDguMTYtMS40OSBjLTAuNTgtMC41OS0wLjk0LTEuNC0wLjk0LTIuM2MwLTEuODIsMS40Ny0zLjI5LDMuMjktMy4yOWMxLjYyLDAsMi45NiwxLjE3LDMuMjMsMi43MWMwLjI3LDAuOSwwLjQzLDEuODUsMC40MywyLjgzdjEyLjczIGMyLjQyLTIuNTIsMy45Mi01LjkzLDMuOTItOS42OHYtNC44N0M1NS40MSwxOS4wMyw1NCwxNS43Miw1MS43MSwxMy4yM3oiLz48cGF0aCBmaWxsPSIjNTY0NzNDIiBkPSJNMzYuODUsMTUuMjRjMC0zLjI3LDIuMDgtNi4xNSw1LjI3LTcuOTVjLTEuNDgtMC4zLTMuMDUtMC40OC00LjY5LTAuNDhjLTYuNjUsMC0xMi4yOSwyLjY4LTE0LjM5LDYuNDEgYy0yLjI5LDIuNS0zLjcsNS44MS0zLjcsOS40NHY0Ljg3YzAsMy45NCwxLjY2LDcuNTEsNC4zLDEwLjA3VjI0LjQ5YzAtMS4xNSwwLjIxLTIuMjQsMC41Ny0zLjI3YzIuNjQsMi44Nyw3LjU2LDQuODEsMTMuMjEsNC44MSBjMi45MiwwLDUuNjMtMC41Miw3Ljk1LTEuNDFjLTAuMDMtMC4wNC0wLjA1LTAuMDgtMC4wOC0wLjEyQzQwLjM3LDIzLjExLDM2Ljg1LDE5LjQ5LDM2Ljg1LDE1LjI0eiIvPjxwYXRoIGZpbGw9IiM0RTY4ODciIGQ9Ik01MS44LDUyLjIyaC0wLjk3YzAuMDEsMC4wNywwLjAzLDAuMTQsMC4wMywwLjIxYzAsMi42My02LjAxLDQuNzUtMTMuNDMsNC43NSBjLTcuNDIsMC0xMy40My0yLjEzLTEzLjQzLTQuNzVjMC0wLjA3LDAuMDItMC4xNCwwLjAzLTAuMjFoLTAuOTdjLTYuMjMsMC0xMS41NSw0LjAxLTEzLjU1LDkuNTcgYzYuNzgsNy44NSwxNi44LDEyLjgyLDI3Ljk5LDEyLjgyYzExLjEzLDAsMjEuMTEtNC45MiwyNy44OS0xMi43QzYzLjQyLDU2LjI4LDU4LjA3LDUyLjIyLDUxLjgsNTIuMjJ6Ii8+PHBhdGggZmlsbD0iIzNFNTg3QyIgZD0iTTUxLjg3LDUyLjIySDUwLjljMC4wMSwwLjA3LDAuMDMsMC4xNCwwLjAzLDAuMjFjMCwyLjYzLTYuMDEsNC43NS0xMy40Myw0Ljc1Yy0wLjA2LDAtMC4xMiwwLTAuMTgsMFY3NC42IGMwLjA2LDAsMC4xMiwwLDAuMTgsMGMxMS4xNiwwLDIxLjE2LTQuOTUsMjcuOTQtMTIuNzZDNjMuNDYsNTYuMjYsNTguMTIsNTIuMjIsNTEuODcsNTIuMjJ6Ii8+PC9zdmc+</yjs:IconLabelStyle.href>
+								<yjs:IconLabelStyle.iconPlacement>
+									<yx:FreeNodeLabelModelParameter LayoutOffset="2,2" Model="{y:GraphMLReference 9}"/>
+								</yjs:IconLabelStyle.iconPlacement>
+								<yjs:LabelStyle font="{y:GraphMLReference 10}"/>
+							</yjs:IconLabelStyle>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d2">
 				<y:RectD X="-16.42500000000001" Y="287.3718214273096" Width="250" Height="100"/>
 			</data>
-			<data key="d5">
+			<data key="d3">
 				<y:Json>{"name":"Alexander Burns","position":"Senior Executive Assistant","email":"aburns@yoyodyne.com","phone":"555-0102","fax":"555-0103","icon":"#usericon_male3"}</y:Json>
 			</data>
-			<data key="d6">
+			<data key="d4">
 				<y:GraphMLReference ResourceKey="11"/>
 			</data>
 			<port name="p0"/>
 		</node>
 		<node id="n4">
-			<data key="d1"/>
-			<data key="d2"/>
-			<data key="d4">
+			<data key="d1">
+				<x:List>
+					<y:Label LayoutParameter="{x:Static yx:StretchNodeLabelModel.Center}" PreferredSize="223,86">
+						<y:Label.Text><![CDATA[Laurie Aitken
+
+Senior Design Engineer
+
+laitken@yoyodyne.com
+555-0164      555-0165]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:IconLabelStyle iconSize="64,64" wrappedStylePadding="96,2,2,2" backgroundShape="RECTANGLE">
+								<yjs:IconLabelStyle.href>data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI3NXB4IiBoZWlnaHQ9Ijc1cHgiIHZpZXdCb3g9IjAgMCA3NSA3NSIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGNpcmNsZSBmaWxsPSIjQ0FFQUNBIiBzdHJva2U9IiNDNkU1QzYiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgY3g9IjM3LjUiIGN5PSIzNy41IiByPSIzNyIvPjxyZWN0IHg9IjE4LjM3IiB5PSIyOS40MiIgZmlsbD0iI0E4N0U1QSIgd2lkdGg9IjM3LjY2IiBoZWlnaHQ9IjI1LjAxIi8+PHBhdGggZmlsbD0iI0VBRDZCRSIgZD0iTTQ3LjA4LDUyLjA1aC01LjY5di01LjY3SDMzdjUuNjdoLTYuNTJjLTcuMzIsMC0xMy4zNSw1LjQ4LTE0LjI0LDEyLjU1YzYuNiw2LjE0LDE1LjQ1LDkuOSwyNS4xOCw5LjkgYzkuMTYsMCwxNy41My0zLjMzLDIzLjk5LTguODRDNjEuMDEsNTguMDgsNTQuNzYsNTIuMDUsNDcuMDgsNTIuMDV6Ii8+PHBhdGggZmlsbD0iI0UyQ0NCNyIgZD0iTTQ3LjA4LDUyLjA1aC01LjY5di01LjY3aC0zLjk3Vjc0LjVjMC4wMywwLDAuMDYsMCwwLjA5LDBjOS4xMiwwLDE3LjQ2LTMuMywyMy45MS04Ljc3IEM2MS4wNSw1OC4xMiw1NC43OCw1Mi4wNSw0Ny4wOCw1Mi4wNXoiLz48Y2lyY2xlIG9wYWNpdHk9IjAuMDUiIGN4PSIzNy4xOSIgY3k9IjMzLjM5IiByPSIxNS42MiIvPjxjaXJjbGUgZmlsbD0iI0VBRDZCRSIgY3g9IjM2Ljc4IiBjeT0iMzIuMDUiIHI9IjE1LjYyIi8+PHBhdGggZmlsbD0iI0UyQ0NCNyIgZD0iTTM3LjE5LDE2LjQ1djMxLjJjOC40My0wLjIyLDE1LjIxLTcuMTEsMTUuMjEtMTUuNlM0NS42MywxNi42NywzNy4xOSwxNi40NXoiLz48cGF0aCBvcGFjaXR5PSIwLjEiIGZpbGw9IiM1NjUxM0EiIGQ9Ik01Ni43MSw0Mi4wN2wtMC4yMy0xNS4xMmMtMS4yMy05LjgxLTkuNTktMTYuMDctMTkuNzQtMTYuMDdjLTkuOSwwLTE4LjA5LDYuNi0xOS42MiwxNi4wNyBsLTAuNDcsMTUuMWMtMy4zNywwLjUtNS45NSwzLjQtNS45NSw2LjljMCwzLjg2LDMuMTMsNi45OSw2Ljk5LDYuOTljMy4zNSwwLDYuODgtMi4zNSw3LjU2LTUuNDlsMCwwIGMwLjA3LTAuNDIsMC4xNi0wLjg2LDAuMTYtMS4zYzAsMC0wLjA0LTE0LjgxLDAtMTkuNDJjMS41MiwwLjU0LDIuNTEsMC44NCw0LjIyLDAuODRjNi4xMSwwLDExLjU1LTEuNjYsMTMuNzEtNyBjMS4xNiwxLjQ1LDIuNjYsMi43NSw0LjY5LDIuNzVjMC4xMSwwLDAsMjkuNSwwLDI5LjVsOC44OSwwYzMuMjMtMC42Miw1LjY3LTMuNDUsNS42Ny02Ljg2QzYyLjU4LDQ1LjQ4LDYwLjAzLDQyLjYsNTYuNzEsNDIuMDd6IiAvPjxwYXRoIGZpbGw9IiNDNDlBNkMiIGQ9Ik01Ni43MSw0MC44Mkw1Ni40OCwyNS43Yy0xLjIzLTkuODEtOS41OS0xNi4wNy0xOS43NC0xNi4wN2MtOS45LDAtMTguMDksNi42LTE5LjYyLDE2LjA3bC0wLjQ3LDE1LjEgYy0zLjM3LDAuNS01Ljk1LDMuNC01Ljk1LDYuOWMwLDMuODYsMy4xMyw2Ljk5LDYuOTksNi45OWMzLjM1LDAsNi4zLTIuMzUsNi45OC01LjQ5aC0wLjAzYzAuMDctMC40MiwwLjExLTAuODYsMC4xMS0xLjMgYzAsMC0wLjAxLTE0LjgxLDAuMDMtMTkuNDJjMS41MiwwLjU0LDMuMTQsMC44NCw0Ljg1LDAuODRjNi4xMSwwLDExLjM0LTIuMTMsMTMuNS03LjQ3YzEuMTYsMS40NSwzLjI4LDMuMjEsNS4zMSwzLjIxIGMwLjExLDAsMCwyOS41LDAsMjkuNWw4LjQ4LDBjMy4yMy0wLjYyLDUuNjctMy40NSw1LjY3LTYuODZDNjIuNTgsNDQuMjMsNjAuMDMsNDEuMzUsNTYuNzEsNDAuODJ6Ii8+PHBhdGggZmlsbD0iI0I3OEQ2MyIgZD0iTTIxLjQxLDI3Ljk4VjQ2LjJoLTAuMDNjLTAuMjUsMi42Ni0yLjQ5LDQuNzQtNS4yMiw0Ljc0Yy0yLjgzLDAtNS4xMy0yLjI0LTUuMjMtNS4wNCBjLTAuMTYsMC41OC0wLjI0LDEuMTktMC4yNCwxLjgxYzAsMy44NiwzLjEzLDYuOTksNi45OSw2Ljk5YzMuMzUsMCw2LjMtMi4zNSw2Ljk4LTUuNDloLTAuMDNjMC4wNy0wLjQyLDAuMTEtMC44NiwwLjExLTEuMyBjMCwwLTAuMDEtMTQuNDgsMC4wMy0xOS4yNUMyMy42MiwyOC41NSwyMi40OSwyOC4zMiwyMS40MSwyNy45OHoiLz48Zz48cGF0aCBmaWxsPSIjQUQ3RTUzIiBkPSJNNTYuNzEsNDAuODVsLTAuMjMtMTUuMTJjLTEuMDMtOC4yNS03LjExLTEzLjk3LTE1LjA1LTE1LjU5YzAuMTksMC45NywwLjI5LDEuOTYsMC4yOSwyLjk4IGMwLDguNjMtNi45OSwxNS42Mi0xNS42MiwxNS42MmMtMC4yMywwLTAuNDYtMC4wMi0wLjctMC4wNGMxLjM0LDAuNDEsMi43NSwwLjY1LDQuMjIsMC42NWM2LjExLDAsMTEuMzQtMi4xMywxMy41LTcuNDcgYzEuMTYsMS40NSwzLjI4LDMuMjEsNS4zMSwzLjIxYzAuMTEsMCwwLDI5LjUsMCwyOS41bDguNDgsMGMzLjIzLTAuNjIsNS42Ny0zLjQ1LDUuNjctNi44NkM2Mi41OCw0NC4yNiw2MC4wMyw0MS4zOCw1Ni43MSw0MC44NSB6Ii8+PC9nPjxwYXRoIGZpbGw9IiMyRDc3QUEiIGQ9Ik00Ny4wOCw1Mi4wNWwtOS41MywxMy4xNkwyNi40OCw1Mi4wNWMtNy4yOSwwLTEzLjMsNS40NC0xNC4yMywxMi40OGM2LjYxLDYuMTgsMTUuNDksOS45NywyNS4yNSw5Ljk3IGM5LjEyLDAsMTcuNDYtMy4zLDIzLjkxLTguNzdDNjEuMDUsNTguMTIsNTQuNzgsNTIuMDUsNDcuMDgsNTIuMDV6Ii8+PHBhdGggZmlsbD0iIzFGNjM5QiIgZD0iTTQ3LjA4LDUyLjA1TDM3LjUsNjUuMjF2OS4yOWgwYzkuMTIsMCwxNy40Ni0zLjMxLDIzLjkxLTguNzdDNjEuMDUsNTguMTIsNTQuNzgsNTIuMDUsNDcuMDgsNTIuMDV6Ii8+PC9zdmc+</yjs:IconLabelStyle.href>
+								<yjs:IconLabelStyle.iconPlacement>
+									<yx:FreeNodeLabelModelParameter LayoutOffset="2,2" Model="{y:GraphMLReference 9}"/>
+								</yjs:IconLabelStyle.iconPlacement>
+								<yjs:LabelStyle font="{y:GraphMLReference 10}"/>
+							</yjs:IconLabelStyle>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d2">
 				<y:RectD X="263.57499999999993" Y="287.3718214273096" Width="250" Height="100"/>
 			</data>
-			<data key="d5">
+			<data key="d3">
 				<y:Json>{"name":"Laurie Aitken","position":"Senior Design Engineer","email":"laitken@yoyodyne.com","phone":"555-0164","fax":"555-0165","icon":"#usericon_female2"}</y:Json>
 			</data>
-			<data key="d6">
+			<data key="d4">
 				<y:GraphMLReference ResourceKey="11"/>
 			</data>
 			<port name="p0"/>
 		</node>
 		<node id="n5">
-			<data key="d1"/>
-			<data key="d2"/>
-			<data key="d4">
+			<data key="d2">
 				<y:RectD X="90.11059576361504" Y="-170" Width="57.150000000000006" Height="65"/>
 			</data>
-			<data key="d6">
-				<yjs:GroupNodeStyle x:Key="8" tabWidth="30" tabHeight="20" tabInset="3" tabPosition="TOP_TRAILING" groupIcon="MINUS" iconForegroundFill="#FF0B7189" iconOffset="2" tabBackgroundFill="#FF0B7189" tabFill="#FF969696" hitTransparentContentArea="true">
-          <yjs:GroupNodeStyle.stroke>
-            <yjs:Stroke fill="#FF0B7189" lineCap="SQUARE" thickness="2"/>
-          </yjs:GroupNodeStyle.stroke>
-        </yjs:GroupNodeStyle>
+			<data key="d4">
+				<yjs:GroupNodeStyle tabWidth="30" tabHeight="20" tabPadding="3" tabPosition="TOP_TRAILING" groupIcon="MINUS" iconForegroundFill="{y:GraphMLReference 12}" iconOffset="2" minimumContentAreaSize="0,0" hitTransparentContentArea="true" tabBackgroundFill="{y:GraphMLReference 12}" tabFill="#FF969696">
+					<yjs:GroupNodeStyle.stroke>
+						<yjs:Stroke fill="{y:GraphMLReference 12}" lineCap="SQUARE" thickness="2"/>
+					</yjs:GroupNodeStyle.stroke>
+				</yjs:GroupNodeStyle>
 			</data>
 			<graph id="n5:" edgedefault="directed">
 				<node id="n5::n0">
-					<data key="d1"/>
-					<data key="d2"/>
-					<data key="d4">
+					<data key="d2">
 						<y:RectD X="103.68559576361503" Y="-142.74858932675596" Width="30" Height="30"/>
 					</data>
-					<data key="d6">
-						<yjs:RectangleNodeStyle fill="{y:GraphMLReference 9}"/>
+					<data key="d4">
+						<yjs:RectangleNodeStyle fill="{y:GraphMLReference 6}"/>
 					</data>
 					<port name="p0">
-						<data key="d12">
+						<data key="d11">
 							<y:FreeNodePortLocationModelParameter Ratio="0.2333333333333333,1"/>
 						</data>
 					</port>
 					<port name="p1">
-						<data key="d12">
+						<data key="d11">
 							<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 						</data>
 					</port>
 					<port name="p2">
-						<data key="d12">
+						<data key="d11">
 							<y:FreeNodePortLocationModelParameter Ratio="0.8333333333333333,1"/>
 						</data>
 					</port>
@@ -501,143 +380,150 @@
 			</graph>
 		</node>
 		<node id="n6">
-      <data key="d1"><![CDATA[http://imdb.com/title/tt0443543/]]></data>
-      <data key="d2"><![CDATA[A Wonderful, suspenseful, sensual escape from reality]]></data>
-			<data key="d3">
+			<data key="d1">
 				<x:List>
-					<y:Label>
-						<y:Label.Text><![CDATA[The Illusionist]]></y:Label.Text>
+					<y:Label Text="The Illusionist" PreferredSize="62,11">
 						<y:Label.LayoutParameter>
-							<y:SandwichParameter Position="{y:GraphMLReference 12}">
-								<y:SandwichParameter.Model>
-									<y:SandwichLabelModel/>
-								</y:SandwichParameter.Model>
-							</y:SandwichParameter>
+							<yx:ExteriorNodeLabelModelParameter Position="Bottom">
+								<yx:ExteriorNodeLabelModelParameter.Model>
+									<yx:ExteriorNodeLabelModel/>
+								</yx:ExteriorNodeLabelModelParameter.Model>
+							</yx:ExteriorNodeLabelModelParameter>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle clipText="false" font="Arial" textFill="BLACK" textSize="10"/>
+							<yjs:LabelStyle wrapping="NONE" font="{y:GraphMLReference 13}" textSize="10"/>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d4">
+			<data key="d2">
 				<y:RectD X="145.22794562189478" Y="-304.3816348092019" Width="57.15" Height="58"/>
 			</data>
-			<data key="d6">
-				<y:GraphMLReference ResourceKey="13"/>
+			<data key="d4">
+				<y:GraphMLReference ResourceKey="14"/>
 			</data>
+			<port name="p0"/>
 		</node>
 		<node id="n7">
-      <data key="d1"><![CDATA[http://imdb.com/title/tt0379786/]]></data>
-      <data key="d2"><![CDATA[The crew of the Serenity is getting desperate. They have lain lower and lower to protect their doctor.]]></data>
-			<data key="d3">
+			<data key="d1">
 				<x:List>
-					<y:Label>
-						<y:Label.Text>Serenity</y:Label.Text>
+					<y:Label Text="Serenity" PreferredSize="37,11">
 						<y:Label.LayoutParameter>
-							<y:SandwichParameter Position="{y:GraphMLReference 12}">
-								<y:SandwichParameter.Model>
-									<y:SandwichLabelModel/>
-								</y:SandwichParameter.Model>
-							</y:SandwichParameter>
+							<yx:ExteriorNodeLabelModelParameter Position="Bottom">
+								<yx:ExteriorNodeLabelModelParameter.Model>
+									<yx:ExteriorNodeLabelModel/>
+								</yx:ExteriorNodeLabelModelParameter.Model>
+							</yx:ExteriorNodeLabelModelParameter>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle clipText="false" font="Arial" textFill="BLACK" textSize="10"/>
+							<yjs:LabelStyle wrapping="NONE" font="{y:GraphMLReference 13}" textSize="10"/>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d4">
+			<data key="d2">
 				<y:RectD X="294.7720543781052" Y="-304.3816348092019" Width="57.15" Height="58"/>
 			</data>
-			<data key="d6">
-				<y:GraphMLReference ResourceKey="13"/>
+			<data key="d4">
+				<y:GraphMLReference ResourceKey="14"/>
 			</data>
+			<port name="p0"/>
 		</node>
 		<edge id="e0" source="n2" target="n5::n0" sourceport="p0" targetport="p3">
-			<data key="d9">
+			<data key="d7">
 				<x:List>
 					<y:Bend Location="118.68559576361503,-47.22520746045609"/>
 				</x:List>
 			</data>
-			<data key="d10">
-				<yjs:PolylineEdgeStyle targetArrow="SIMPLE" sourceArrow="CIRCLE"/>
+			<data key="d8">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow fill="{y:GraphMLReference 8}" type="TRIANGLE"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow fill="{y:GraphMLReference 8}" type="ELLIPSE"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
 			</data>
 		</edge>
 		<edge id="e1" source="n5::n0" target="n1" sourceport="p4" targetport="p0">
-			<data key="d10">
-				<yjs:BezierEdgeStyle targetArrow="DEFAULT">
+			<data key="d7">
+				<x:List>
+					<y:Bend Location="118.68559576361503,-220"/>
+					<y:Bend Location="343.2725162766057,-230"/>
+				</x:List>
+			</data>
+			<data key="d8">
+				<yjs:BezierEdgeStyle sourceArrow="None">
 					<yjs:BezierEdgeStyle.stroke>
-						<yjs:Stroke fill="#FF000000">
+						<yjs:Stroke>
 							<yjs:Stroke.dashStyle>
 								<yjs:DashStyle dashes="3 2" offset="0"/>
 							</yjs:Stroke.dashStyle>
 						</yjs:Stroke>
 					</yjs:BezierEdgeStyle.stroke>
+					<yjs:BezierEdgeStyle.targetArrow>
+						<yjs:Arrow fill="{y:GraphMLReference 8}" type="TRIANGLE"/>
+					</yjs:BezierEdgeStyle.targetArrow>
 				</yjs:BezierEdgeStyle>
 			</data>
-      <data key="d9">
-        <x:List>
-          <y:Bend Location="118.68559576361503,-220" />
-          <y:Bend Location="343.2725162766057‬,-230" />
-        </x:List>
-      </data>
 		</edge>
 		<edge id="e2" source="n1" target="n2" sourceport="p1" targetport="p0">
-			<data key="d8">
+			<data key="d6">
 				<x:List>
-					<y:Label>
-						<y:Label.Text>SmartEdgeLabelModel</y:Label.Text>
+					<y:Label Text="SmartEdgeLabelModel" PreferredSize="123,14">
 						<y:Label.LayoutParameter>
-							<y:SmartEdgeLabelModelParameter Location="{y:GraphMLReference 14}" SegmentRatio="0.17018835920603426" Distance="7.684259949463261">
-								<y:SmartEdgeLabelModelParameter.Model>
-									<y:SmartEdgeLabelModel/>
-								</y:SmartEdgeLabelModelParameter.Model>
-							</y:SmartEdgeLabelModelParameter>
+							<yx:SmartEdgeLabelModelParameter Location="FromTarget" SegmentRatio="0.17018835920603426" Distance="7.684259949463261">
+								<yx:SmartEdgeLabelModelParameter.Model>
+									<yx:SmartEdgeLabelModel/>
+								</yx:SmartEdgeLabelModelParameter.Model>
+							</yx:SmartEdgeLabelModelParameter>
 						</y:Label.LayoutParameter>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle textFill="BLACK">
-								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+							<yjs:LabelStyle font="{y:GraphMLReference 3}"/>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d9">
+			<data key="d7">
 				<x:List>
 					<y:Bend Location="408.8475162766057,-129.9094674099194"/>
 					<y:Bend Location="408.8475162766057,-47.22520746045609"/>
 				</x:List>
 			</data>
-			<data key="d10">
-				<yjs:PolylineEdgeStyle targetArrow="DEFAULT">
+			<data key="d8">
+				<yjs:PolylineEdgeStyle sourceArrow="None">
 					<yjs:PolylineEdgeStyle.stroke>
 						<yjs:Stroke thickness="4">
 							<yjs:Stroke.fill>
-								<yjs:LinearGradient spreadMethod="{y:GraphMLReference 15}" startPoint="0,0" endPoint="1,0">
+								<yjs:LinearGradient spreadMethod="PAD" startPoint="0,0" endPoint="1,0">
 									<yjs:GradientStop color="Lime" offset="0"/>
 									<yjs:GradientStop color="Blue" offset="1"/>
 								</yjs:LinearGradient>
 							</yjs:Stroke.fill>
 						</yjs:Stroke>
 					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow fill="{y:GraphMLReference 8}" type="TRIANGLE"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
 				</yjs:PolylineEdgeStyle>
 			</data>
 		</edge>
-    <edge id="e3" source="n6" target="n7">
-      <data key="d10">
-        <yjs:ArcEdgeStyle height="100" targetArrow="DEFAULT">
-          <yjs:ArcEdgeStyle.stroke>
-            <yjs:Stroke fill="#FF000000">
-              <yjs:Stroke.dashStyle>
-                <yjs:DashStyle dashes="3 2" offset="0"/>
-              </yjs:Stroke.dashStyle>
-            </yjs:Stroke>
-          </yjs:ArcEdgeStyle.stroke>
-        </yjs:ArcEdgeStyle>
-      </data>
-    </edge>
+		<edge id="e3" source="n6" target="n7" sourceport="p0" targetport="p0">
+			<data key="d8">
+				<yjs:ArcEdgeStyle height="100" sourceArrow="None">
+					<yjs:ArcEdgeStyle.stroke>
+						<yjs:Stroke>
+							<yjs:Stroke.dashStyle>
+								<yjs:DashStyle dashes="3 2" offset="0"/>
+							</yjs:Stroke.dashStyle>
+						</yjs:Stroke>
+					</yjs:ArcEdgeStyle.stroke>
+					<yjs:ArcEdgeStyle.targetArrow>
+						<yjs:Arrow fill="{y:GraphMLReference 8}" type="TRIANGLE"/>
+					</yjs:ArcEdgeStyle.targetArrow>
+				</yjs:ArcEdgeStyle>
+			</data>
+		</edge>
 	</graph>
 </graphml>

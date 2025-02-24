@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,20 +29,19 @@
 import {
   BaseClass,
   type GraphComponent,
-  type ICanvasObject,
-  ICanvasObjectDescriptor,
   type INode,
   type IRenderContext,
+  type IRenderTreeElement,
   IVisualCreator,
   SvgVisual,
   type Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getWayPoint } from './resources/TrekkingData'
 
 /**
  * The visual that contains the icon associated with a node that is being hovered.
  */
-let iconDescriptionVisual: ICanvasObject | null
+let iconDescriptionVisual: IRenderTreeElement | null
 
 /**
  * Adds the icon visual associated to the given node to the background group of the
@@ -50,9 +49,9 @@ let iconDescriptionVisual: ICanvasObject | null
  * Called when a node is being hovered.
  */
 export function addIconDescription(graphComponent: GraphComponent, node: INode): void {
-  iconDescriptionVisual = graphComponent.highlightGroup.addChild(
-    new IconDescriptionVisual(node),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+  iconDescriptionVisual = graphComponent.renderTree.createElement(
+    graphComponent.renderTree.highlightGroup,
+    new IconDescriptionVisual(node)
   )
 }
 
@@ -60,9 +59,9 @@ export function addIconDescription(graphComponent: GraphComponent, node: INode):
  * Removes the icon visual from the background group of the given graph component.
  * Called whenever the highlighting of a node is being removed.
  */
-export function removeIconDescription(): void {
+export function removeIconDescription(graphComponent: GraphComponent): void {
   if (iconDescriptionVisual) {
-    iconDescriptionVisual.remove()
+    graphComponent.renderTree.remove(iconDescriptionVisual)
     iconDescriptionVisual = null
   }
 }
@@ -70,10 +69,7 @@ export function removeIconDescription(): void {
 /**
  * Creates a background visual that contains an icon for the given node.
  */
-export class IconDescriptionVisual
-  extends BaseClass<IVisualCreator>(IVisualCreator)
-  implements IVisualCreator
-{
+export class IconDescriptionVisual extends BaseClass(IVisualCreator) {
   constructor(private readonly node: INode) {
     super()
   }

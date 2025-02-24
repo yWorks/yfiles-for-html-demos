@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { type BranchDirection, FlowchartLayout } from './FlowchartLayout'
 import { FlowchartLayoutData, type InEdgeGrouping } from './FlowchartLayoutData'
-import { type GraphComponent, MinimumNodeSizeStage } from 'yfiles'
+import type { GraphComponent } from '@yfiles/yfiles'
 
 export type LayoutOptions = {
   positiveBranch: BranchDirection
@@ -49,8 +49,8 @@ export async function layoutFlowchart(
   flowchartLayoutData.preferredNegativeBranchDirection = layoutOptions.negativeBranch
   flowchartLayoutData.inEdgeGrouping = layoutOptions.inEdgeGrouping
 
-  await graphComponent.morphLayout(
-    new MinimumNodeSizeStage(flowchartLayout),
+  await graphComponent.applyLayoutAnimated(
+    flowchartLayout,
     '0.5s',
     flowchartLayoutData.create(graphComponent.graph)
   )

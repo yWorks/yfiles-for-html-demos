@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Compact Tabular Layout - Layout Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -105,16 +103,16 @@
 
         <p>
           If the <em>Preserve Aspect Ratio</em> button in the toolbar is selected, the tabular
-          layout algorithm will use <a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayoutPolicy" target="_blank">layout policy</a>
+          layout algorithm will use <a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayoutMode" target="_blank">layout mode</a>
           <code>FIXED_SIZE</code> to arrange the graph with an aspect ratio close to the aspect
-          ratio of the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a>. Otherwise, the algorithm will use layout
-          policy <code>AUTO_SIZE</code> to get a result that is as compact as possible.
+          ratio of the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a>. Otherwise, the algorithm will use layout mode
+          <code>AUTO_SIZE</code> to get a result that is as compact as possible.
         </p>
 
         <p>
-          If layout policy <code>FIXED_SIZE</code> is used, the tabular layout algorithm requires a
-          <a href="https://docs.yworks.com/yfileshtml/#/api/PartitionGrid" target="_blank">PartitionGrid</a> that defines the columns and rows for the resulting tabular
-          arrangement. A <code>PartitionGrid</code> is not necessary for layout policy
+          If layout mode <code>FIXED_SIZE</code> is used, the tabular layout algorithm requires a
+          <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutGrid" target="_blank">LayoutGrid</a> that defines the columns and rows for the resulting tabular
+          arrangement. A <code>LayoutGrid</code> is not necessary for layout mode
           <code>AUTO_SIZE</code>. However, an empty grid may be given to the algorithm to specify
           the distances between the automatically calculated columns and rows.
         </p>

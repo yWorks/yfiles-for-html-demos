@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -44,8 +44,7 @@ import {
   SvgVisual,
   SvgVisualGroup,
   Visual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * This node style decorator adds an image in the upper right corner of a given node style.
  *
@@ -60,72 +59,64 @@ import {
  * {@link NodeStyleDecorator.isVisible}.
  */
 export default class NodeStyleDecorator extends NodeStyleBase {
+  baseStyle
+  imageUrl
   imageStyle = new ImageNodeStyle()
   // This dummy node is passed to the image node style to render the decoration image.
   // Its size is the size of the decoration. Its location is adjusted during each createVisual
   // and updateVisual.
   dummyDecorationNode = new SimpleNode()
-
   /**
    * Initializes a new instance of this class.
-   * @param {!INodeStyle} baseStyle The base style.
-   * @param {!string} imageUrl The URL of the image to use for the decoration.
+   * @param baseStyle The base style.
+   * @param imageUrl The URL of the image to use for the decoration.
    */
   constructor(baseStyle, imageUrl) {
     super()
-    this.imageUrl = imageUrl
     this.baseStyle = baseStyle
+    this.imageUrl = imageUrl
     this.dummyDecorationNode.layout = new Rect(0, 0, 32, 32)
   }
-
   /**
    * Creates a new visual as combination of the base node visualization and the decoration.
-   * @param {!IRenderContext} context The render context.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {?Visual} The created visual.
+   * @param context The render context.
+   * @param node The node to which this style instance is assigned.
+   * @returns The created visual.
    * @see {@link NodeStyleBase.createVisual}
    */
   createVisual(context, node) {
     if (!this.imageUrl) {
       return this.baseStyle.renderer.getVisualCreator(node, this.baseStyle).createVisual(context)
     }
-
     const layout = node.layout.toRect()
-
     // create the base visualization
     const baseVisual = this.baseStyle.renderer
       .getVisualCreator(node, this.baseStyle)
       .createVisual(context)
-
     // create the decoration
-    this.imageStyle.image = this.imageUrl
+    this.imageStyle.href = this.imageUrl
     this.dummyDecorationNode.layout = this.getDecorationLayout(layout)
     const decorationRenderer = this.imageStyle.renderer.getVisualCreator(
       this.dummyDecorationNode,
       this.imageStyle
     )
     const decorationVisual = decorationRenderer.createVisual(context)
-
     // add both to a group
     const group = new SvgVisualGroup()
     group.add(baseVisual)
     group.add(decorationVisual)
-
-    // save image URL with the visual for the update method
     group['data-renderDataCache'] = {
       imageUrl: this.imageUrl
     }
-
     return group
   }
-
   /**
    * Updates the provided visual.
-   * @param {!IRenderContext} context The render context.
-   * @param {!Visual} oldVisual The visual that has been created in the call to
+   * @param context The render context.
+   * @param oldVisual The visual that has been created in the call to
    *        {@link NodeStyleBase.createVisual}.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {?Visual} The updated visual.
+   * @param node The node to which this style instance is assigned.
+   * @returns The updated visual.
    * @see {@link NodeStyleBase.updateVisual}
    */
   updateVisual(context, oldVisual, node) {
@@ -134,14 +125,11 @@ export default class NodeStyleDecorator extends NodeStyleBase {
         .getVisualCreator(node, this.baseStyle)
         .updateVisual(context, oldVisual)
     }
-
     const layout = node.layout.toRect()
-
     // check whether the elements are as expected
     if (!(oldVisual instanceof SvgVisualGroup) || oldVisual.children.size !== 2) {
       return this.createVisual(context, node)
     }
-
     // update the base visual
     const baseVisual = this.baseStyle.renderer
       .getVisualCreator(node, this.baseStyle)
@@ -150,14 +138,12 @@ export default class NodeStyleDecorator extends NodeStyleBase {
     if (baseVisual !== oldVisual.children.get(0)) {
       oldVisual.children.set(0, baseVisual)
     }
-
     // update the decoration visual
     const oldRenderData = oldVisual['data-renderDataCache']
     // first, check whether the image URL changed
     if (this.imageUrl !== oldRenderData.imageUrl) {
-      this.imageStyle.image = this.imageUrl
+      this.imageStyle.href = this.imageUrl
     }
-
     this.dummyDecorationNode.layout = this.getDecorationLayout(layout)
     const decorationRenderer = this.imageStyle.renderer.getVisualCreator(
       this.dummyDecorationNode,
@@ -168,19 +154,16 @@ export default class NodeStyleDecorator extends NodeStyleBase {
       // check whether the updateVisual method created a new element and replace the old one if needed
       oldVisual.children.set(1, decorationVisual)
     }
-
     // update the stored image URL for the next update visual call
     oldVisual['data-renderDataCache'] = {
       imageUrl: this.imageUrl
     }
-
     return oldVisual
   }
-
   /**
    * Returns the layout of the decoration for the given node layout.
-   * @param {!IRectangle} nodeLayout The layout of the node.
-   * @returns {!Rect} The layout of the decoration for the given node layout.
+   * @param nodeLayout The layout of the node.
+   * @returns The layout of the decoration for the given node layout.
    */
   getDecorationLayout(nodeLayout) {
     const size = this.dummyDecorationNode.layout.toSize()
@@ -191,13 +174,12 @@ export default class NodeStyleDecorator extends NodeStyleBase {
       size.height
     )
   }
-
   /**
    * Returns whether at least one of the base visualization and the decoration is visible.
-   * @param {!ICanvasContext} context The canvas context.
-   * @param {!Rect} rectangle The clipping rectangle.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {boolean} `true` if either the base visualization or the decoration is visible.
+   * @param context The canvas context.
+   * @param rectangle The clipping rectangle.
+   * @param node The node to which this style instance is assigned.
+   * @returns `true` if either the base visualization or the decoration is visible.
    * @see {@link NodeStyleBase.isVisible}
    */
   isVisible(context, rectangle, node) {
@@ -208,25 +190,23 @@ export default class NodeStyleDecorator extends NodeStyleBase {
       rectangle.intersects(this.getDecorationLayout(node.layout))
     )
   }
-
   /**
    * Returns whether the base visualization is hit, we don't want the decoration to be hit testable.
-   * @param {!IInputModeContext} context The context.
-   * @param {!Point} location The point to test.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {boolean} `true` if the base visualization is hit.
+   * @param context The context.
+   * @param location The point to test.
+   * @param node The node to which this style instance is assigned.
+   * @returns `true` if the base visualization is hit.
    * @see {@link NodeStyleBase.isHit}
    */
   isHit(context, location, node) {
     return this.baseStyle.renderer.getHitTestable(node, this.baseStyle).isHit(context, location)
   }
-
   /**
    * Returns whether the base visualization is in the box, we don't want the decoration to be marquee selectable.
-   * @param {!IInputModeContext} context The input mode context.
-   * @param {!Rect} rectangle The marquee selection box.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {boolean} `true` if the base visualization is hit.
+   * @param context The input mode context.
+   * @param rectangle The marquee selection box.
+   * @param node The node to which this style instance is assigned.
+   * @returns `true` if the base visualization is hit.
    * @see {@link NodeStyleBase.isInBox}
    */
   isInBox(context, rectangle, node) {
@@ -235,14 +215,13 @@ export default class NodeStyleDecorator extends NodeStyleBase {
       .getMarqueeTestable(node, this.baseStyle)
       .isInBox(context, rectangle)
   }
-
   /**
    * Gets the intersection of a line with the visual representation of the node.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @param {!Point} inner The coordinates of a point lying
+   * @param node The node to which this style instance is assigned.
+   * @param inner The coordinates of a point lying
    *   {@link NodeStyleBase.isInside inside} the shape.
-   * @param {!Point} outer The coordinates of a point lying outside the shape.
-   * @returns {?Point} The intersection point if one has been found or `null`, otherwise.
+   * @param outer The coordinates of a point lying outside the shape.
+   * @returns The intersection point if one has been found or `null`, otherwise.
    * @see {@link NodeStyleBase.getIntersection}
    */
   getIntersection(node, inner, outer) {
@@ -250,12 +229,11 @@ export default class NodeStyleDecorator extends NodeStyleBase {
       .getShapeGeometry(node, this.baseStyle)
       .getIntersection(inner, outer)
   }
-
   /**
    * Returns whether the provided point is inside of the base visualization.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @param {!Point} location The point to test.
-   * @returns {boolean} `true` if the provided location is inside of the base visualization.
+   * @param node The node to which this style instance is assigned.
+   * @param location The point to test.
+   * @returns `true` if the provided location is inside of the base visualization.
    * @see {@link NodeStyleBase.isInside}
    */
   isInside(node, location) {

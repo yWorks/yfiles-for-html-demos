@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,6 +30,8 @@
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
      //
      ////////////////////////////////////////////////////////////////////////-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>BPMN Graph Editor [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
@@ -125,7 +125,6 @@
         opacity: 0;
       }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
 
   <body>
@@ -152,12 +151,11 @@
     <div class="demo-page__toolbar">
       <button class="demo-icon-yIconNew" id="new-button"></button>
       <button
+        id="open-file-button"
         title="Open a GraphML or BPMN file"
         class="demo-icon-yIconOpen"
-        onclick="document.getElementById('file-input').click();"
       ></button>
-      <input type="file" id="file-input" style="display: none" />
-      <button data-command="SAVE"></button>
+      <button id="save-button" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
       <span class="demo-separator"></span>
       <select title="Select a sample graph" id="sample-combobox">
         <option value="business">Business</option>
@@ -229,11 +227,13 @@
             actions depending on the clicked item.
           </li>
           <li>
-            Edit the label of a selected node or edge by pressing <code>F2</code>. Note that you can
-            also select the label directly using the detail selection ( <code>SHIFT + Click</code>).
+            Edit the label of a selected node or edge by pressing <kbd>F2</kbd>. Note that you can
+            also select the label directly using the detail selection (<kbd>Shift</kbd> +
+            <kbd>Click</kbd>).
           </li>
           <li>
-            Add an additional label to a selected node or edge by pressing <code>SHIFT + F2</code>.
+            Add an additional label to a selected node or edge by pressing <kbd>Shift</kbd> +
+            <kbd>F2</kbd>.
           </li>
         </ul>
       </div>

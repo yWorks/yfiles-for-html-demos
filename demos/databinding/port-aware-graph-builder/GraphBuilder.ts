@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -46,9 +46,8 @@ import {
   PolylineEdgeStyle,
   Rect,
   ShapeNodeStyle,
-  Size,
-  VoidPortStyle
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 import { AndGateNodeStyle } from '../../showcase/logicgates/node-styles/AndGateNodeStyle'
 import { NotNodeStyle } from '../../showcase/logicgates/node-styles/NotNodeStyle'
 import { OrNodeStyle } from '../../showcase/logicgates/node-styles/OrNodeStyle'
@@ -343,7 +342,7 @@ class TypeAwareNodeCreator extends NodeCreator<NodeData> {
    */
   private getPortStyle(pin: PortData): IPortStyle {
     // the ports are invisible
-    return VoidPortStyle.INSTANCE
+    return IPortStyle.VOID_PORT_STYLE
   }
 
   /**
@@ -422,21 +421,21 @@ class PortAwareEdgeCreator extends EdgeCreator<EdgeData> {
     // Otherwise, get the first port at the source node which matches the ID.
     const sourcePortId = this.getSourcePortId(dataItem)
     const sourcePort =
-      sourcePortId && sourcePortId !== edge.sourcePort!.tag
-        ? edge.sourcePort!.owner!.ports.find((p) => p.tag === sourcePortId)
+      sourcePortId && sourcePortId !== edge.sourcePort.tag
+        ? edge.sourcePort.owner.ports.find((p) => p.tag === sourcePortId)
         : edge.sourcePort
     // same for the target port
     const targetPortId = this.getTargetPortId(dataItem)
     const targetPort =
-      targetPortId && targetPortId !== edge.targetPort!.tag
-        ? edge.targetPort!.owner!.ports.find((p) => p.tag === targetPortId)
+      targetPortId && targetPortId !== edge.targetPort.tag
+        ? edge.targetPort.owner.ports.find((p) => p.tag === targetPortId)
         : edge.targetPort
     // remember the current source and target ports
-    const oldSource = edge.sourcePort!
-    const oldTarget = edge.targetPort!
+    const oldSource = edge.sourcePort
+    const oldTarget = edge.targetPort
 
     // now set the new ports
-    graph.setEdgePorts(edge, sourcePort ?? edge.sourcePort!, targetPort ?? edge.targetPort!)
+    graph.setEdgePorts(edge, sourcePort ?? edge.sourcePort, targetPort ?? edge.targetPort)
 
     // if the source or target port has been changed and the old port doesn't have a tag:
     // remove it since it has been auto-generated

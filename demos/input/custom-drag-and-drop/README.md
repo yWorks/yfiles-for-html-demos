@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Custom Drag and Drop Demo
 
-# Custom Drag and Drop Demo
+<img src="../../../doc/demo-thumbnails/custom-drag-and-drop.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/input/custom-drag-and-drop/).
 
 This demo shows how to change the color of nodes and edges using drag and drop operations.
 
@@ -32,4 +34,4 @@ As an example, the demo uses an implementation of the [DropInputMode](https://do
 - [Drag and Drop Demo](../../input/draganddrop/)
 - [Graph Drag and Drop Demo](../../input/graph-drag-and-drop/)
 - [Drag From Component Demo](../../input/drag-from-component/)
-- [Simple Drag And Drop Demo](../../application-features/drag-and-drop/)
+- application-features-drag-and-drop

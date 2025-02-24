@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,56 +27,48 @@
  **
  ***************************************************************************/
 import {
-  DefaultEdgePathCropper,
+  EdgePathCropper,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
   IGraph,
-  INodeInsetsProvider,
+  IGroupPaddingProvider,
   Insets,
+  LayoutExecutor,
   License,
   ShapeNodeStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import {
-  applyDemoTheme,
   colorSets,
   createDemoEdgeStyle,
   createDemoNodeLabelStyle
-} from 'demo-resources/demo-styles'
-import { createFeatureLayoutConfiguration } from './CompactDiskGroups.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/**
- * @returns {!Promise}
- */
+} from '@yfiles/demo-resources/demo-styles'
+import { createFeatureLayoutConfiguration } from './CompactDiskGroups'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphViewerInputMode()
-
   // initialize the styles of the graph items to look good for the compact disk layout example
   initializeStyleDefaults(graphComponent.graph)
-
   // load the sample graph
   await loadSampleGraph(graphComponent.graph)
-
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
   // configure and apply the layout to the graph
   const { layout, layoutData } = createFeatureLayoutConfiguration(graphComponent.graph)
-  await graphComponent.morphLayout(layout, '0s', layoutData)
+  await graphComponent.applyLayoutAnimated(layout, '0s', layoutData)
 }
-
 /**
  * Initializes the style defaults for the graph so that it uses round nodes and group nodes
  * for the purpose of this demo.
- * @param {!IGraph} graph
  */
 function initializeStyleDefaults(graph) {
   // initialize the basic style of the graph items
   const normalNodeTheme = 'demo-palette-91'
-
   // define a round style for normal nodes
   graph.nodeDefaults.style = new ShapeNodeStyle({
     fill: colorSets[normalNodeTheme].fill,
@@ -84,46 +76,38 @@ function initializeStyleDefaults(graph) {
     shape: 'ellipse'
   })
   graph.nodeDefaults.shareStyleInstance = false
-
   // define default size of nodes and an edge style
   graph.nodeDefaults.size = new Size(50, 50)
   graph.edgeDefaults.style = createDemoEdgeStyle({
     colorSetName: normalNodeTheme,
     showTargetArrow: false
   })
-  graph.decorator.portDecorator.edgePathCropperDecorator.setImplementation(
-    new DefaultEdgePathCropper({ cropAtPort: false, extraCropLength: 2 })
+  graph.decorator.ports.edgePathCropper.addConstant(
+    new EdgePathCropper({ cropAtPort: false, extraCropLength: 2 })
   )
-
   // also define a round style for group nodes
   graph.groupNodeDefaults.style = new ShapeNodeStyle({
     fill: 'white',
     stroke: `5px ${colorSets[normalNodeTheme].stroke}`,
     shape: 'ellipse'
   })
-
-  // add additional insets to the round group nodes to avoid that content may be outside, since
+  // add additional padding to the round group nodes to avoid that content may be outside, since
   // the layout algorithms internally always use rectangular group node bounds
-  graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementation(
+  graph.decorator.nodes.groupPaddingProvider.addConstant(
     (node) => graph.isGroupNode(node),
-    INodeInsetsProvider.create(() => new Insets(20))
+    IGroupPaddingProvider.create(() => new Insets(20))
   )
 }
-
 /**
  * Loads the sample graph from the json file.
  * @yjs:keep = nodeList, edgeList
- * @param {!IGraph} graph
- * @returns {!Promise}
  */
 async function loadSampleGraph(graph) {
   // fetch the sample data
   const response = await fetch('sample.json')
   const data = await response.json()
-
   // use the graph builder to create the graph items from the sample data
   const builder = new GraphBuilder(graph)
-
   // define source and creation options for nodes and group nodes
   const nodesSource = builder.createNodesSource({
     data: data.nodeList.filter((node) => !node.isGroup),
@@ -139,9 +123,8 @@ async function loadSampleGraph(graph) {
     layout: 'layout',
     parentId: 'parent'
   })
-
   // for nodes with a node type stored in the tag, add a label and change the color
-  nodesSource.nodeCreator.addNodeCreatedListener((_, evt) => {
+  nodesSource.nodeCreator.addEventListener('node-created', (evt) => {
     const node = evt.item
     if (node.tag && node.tag.nodeType) {
       let palette
@@ -152,12 +135,10 @@ async function loadSampleGraph(graph) {
       } else {
         palette = 'demo-palette-92'
       }
-
       // change the color of node depending on node type value
       const style = node.style
       style.fill = colorSets[palette].fill
       style.stroke = `1.5px ${colorSets[palette].stroke}`
-
       // add a label reflecting the node type
       graph.addLabel({
         owner: node,
@@ -166,7 +147,6 @@ async function loadSampleGraph(graph) {
       })
     }
   })
-
   // define a source for creation of edges
   builder.createEdgesSource({
     data: data.edgeList,
@@ -175,9 +155,7 @@ async function loadSampleGraph(graph) {
     sourceId: 'source',
     targetId: 'target'
   })
-
   // build the graph
   builder.buildGraph()
 }
-
 run().then(finishLoading)

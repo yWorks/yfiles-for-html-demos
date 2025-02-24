@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,128 +27,106 @@
  **
  ***************************************************************************/
 import {
-  BalloonLayout,
   CircularLayout,
-  Class,
-  DefaultPortCandidate,
   EdgePathLabelModel,
   EdgeRouter,
   FoldingManager,
   FreeNodePortLocationModel,
   GeneralPath,
+  GenericLayoutData,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  GraphMLSupport,
+  GraphMLIOHandler,
   GraphSnapContext,
-  HierarchicLayout,
+  HierarchicalLayout,
   ILayoutAlgorithm,
   INode,
   INodeStyle,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   IOrientedRectangle,
   IPortCandidateProvider,
-  LabelSnapContext,
   LayoutExecutor,
   License,
-  NodeStylePortStyleAdapter,
+  ShapePortStyle,
   OrganicEdgeRouter,
   OrganicLayout,
   OrientedRectangle,
-  OrthogonalEdgeEditingContext,
   OrthogonalLayout,
   Point,
+  PortCandidate,
   RadialLayout,
+  RadialTreeLayout,
   Rect,
   RectangleNodeStyle,
   ShapeNodeShape,
   ShapeNodeStyle,
   SimpleNode,
   Size,
-  StorageLocation,
+  SnappableItems,
   TreeLayout,
-  TreeReductionStage,
-  YObject
-} from 'yfiles'
-
-import RotatedNodeLayoutStage from './RotatedNodeLayoutStage.js'
-import { CircleSample, SineSample } from './resources/SampleData.js'
-import RotationAwareGroupBoundsCalculator from './RotationAwareGroupBoundsCalculator.js'
-import AdjustOutlinePortInsidenessEdgePathCropper from './AdjustOutlinePortInsidenessEdgePathCropper.js'
-import * as RotatableNodeLabels from './RotatableNodeLabels.js'
-import * as RotatablePorts from './RotatablePorts.js'
-import * as RotatableNodes from './RotatableNodes.js'
+  TreeReductionStage
+} from '@yfiles/yfiles'
+import RotatedNodeLayoutStage from './RotatedNodeLayoutStage'
+import { CircleSample, SineSample } from './resources/SampleData'
+import RotationAwareGroupBoundsCalculator from './RotationAwareGroupBoundsCalculator'
+import AdjustOutlinePortInsidenessEdgePathCropper from './AdjustOutlinePortInsidenessEdgePathCropper'
+import * as RotatableNodeLabels from './RotatableNodeLabels'
 import {
-  RotatableNodesSerializationListener,
-  RotatableNodeStyleDecorator
-} from './RotatableNodes.js'
+  RotatableNodeLabelModelDecorator,
+  RotatableNodeLabelModelDecoratorParameter
+} from './RotatableNodeLabels'
+import * as RotatablePorts from './RotatablePorts'
 import {
-  applyDemoTheme,
+  RotatablePortLocationModelDecorator,
+  RotatablePortLocationModelDecoratorParameter
+} from './RotatablePorts'
+import * as RotatableNodes from './RotatableNodes'
+import { NodeRotateHandle, RotatableNodeStyleDecorator } from './RotatableNodes'
+import {
   createDemoEdgeLabelStyle,
   createDemoEdgeStyle,
   createDemoGroupStyle,
   createDemoNodeLabelStyle,
   createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
-
-/** @type {GraphComponent} */
+} from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 let graphComponent
-
-/** @type {GraphMLSupport} */
-let graphmlSupport
-
 const selectLayout = document.querySelector('#select-layout')
 const selectSample = document.querySelector('#select-sample')
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeInputMode()
-  initializeGraphML()
   initializeGraph()
   loadGraph('sine')
-
   initializeUI()
 }
-
 /**
  * Initializes the interaction with the graph.
  */
 function initializeInputMode() {
-  graphComponent.inputMode = new GraphEditorInputMode({
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext(),
+  let graphEditorInputMode = new GraphEditorInputMode({
     snapContext: new GraphSnapContext({
-      enabled: false,
+      enabled: true,
+      snappableItems: SnappableItems.NONE,
       collectNodePairSegmentSnapLines: false,
       collectNodePairSnapLines: false,
-      collectEdgeSnapLines: false,
-      collectNodeSnapLines: false,
-      collectPortSnapLines: false,
-      snapBendAdjacentSegments: false,
       collectNodeSizes: false
     }),
-    labelSnapContext: new LabelSnapContext({
-      enabled: false
-    }),
-    allowClipboardOperations: true,
-    allowGroupingOperations: true
+    allowClipboardOperations: true
   })
-
+  graphComponent.inputMode = graphEditorInputMode
   // Update the label that shows the current rotation angle
-  const handleInputMode = graphComponent.inputMode.handleInputMode
-  handleInputMode.addDraggedListener((src, evt) => {
-    if (src.currentHandle instanceof RotatableNodes.NodeRotateHandle) {
+  const handleInputMode = graphEditorInputMode.handleInputMode
+  handleInputMode.addEventListener('dragged', (evt, src) => {
+    if (src.currentHandle instanceof NodeRotateHandle) {
       const rotatedNode = src.affectedItems.find((item) => item instanceof INode)
       if (
         rotatedNode &&
-        rotatedNode.style instanceof RotatableNodes.RotatableNodeStyleDecorator &&
+        rotatedNode.style instanceof RotatableNodeStyleDecorator &&
         rotatedNode.labels.size === 1 &&
         rotatedNode.labels.first().text.endsWith('°')
       ) {
@@ -160,99 +138,70 @@ function initializeInputMode() {
     }
   })
 }
-
 /**
  * Initialize loading from and saving to graphml-files.
  */
 function initializeGraphML() {
   // initialize (de-)serialization for load/save commands
-  graphmlSupport = new GraphMLSupport({
-    graphComponent,
-    storageLocation: StorageLocation.FILE_SYSTEM
-  })
-
+  const graphMLIOHandler = new GraphMLIOHandler()
   // enable serialization of the required classes - without a namespace mapping, serialization will fail
   const xmlNamespace = 'http://www.yworks.com/yFilesHTML/demos/RotatableNodes/1.0'
-  graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, RotatableNodes)
-  graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, RotatablePorts)
-  graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, RotatableNodeLabels)
-  graphmlSupport.graphMLIOHandler.addHandleSerializationListener(
-    RotatableNodesSerializationListener
-  )
+  graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, RotatableNodes)
+  graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, RotatablePorts)
+  graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, RotatableNodeLabels)
+  return graphMLIOHandler
 }
-
 /**
  * Initializes styles and decorators for the graph.
  */
 function initializeGraph() {
   const foldingManager = new FoldingManager()
   const graph = foldingManager.createFoldingView().graph
-
   const decorator = graph.decorator
-
   // For rotated nodes, need to provide port candidates that are backed by a rotatable port location model
   // If you want to support non-rotated port candidates, you can just provide undecorated instances here
-  decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
-    (node) => node.style instanceof RotatableNodes.RotatableNodeStyleDecorator,
+  decorator.nodes.portCandidateProvider.addFactory(
+    (node) => node.style instanceof RotatableNodeStyleDecorator,
     createPortCandidateProvider
   )
-
-  decorator.portDecorator.edgePathCropperDecorator.setImplementation(
-    new AdjustOutlinePortInsidenessEdgePathCropper()
+  decorator.ports.edgePathCropper.addConstant(new AdjustOutlinePortInsidenessEdgePathCropper())
+  decorator.nodes.groupBoundsCalculator.addFactory(
+    (node) => new RotationAwareGroupBoundsCalculator(node)
   )
-  decorator.nodeDecorator.groupBoundsCalculatorDecorator.setImplementation(
-    new RotationAwareGroupBoundsCalculator()
-  )
-
-  graph.nodeDefaults.style = new RotatableNodes.RotatableNodeStyleDecorator(createDemoNodeStyle())
+  graph.nodeDefaults.style = new RotatableNodeStyleDecorator(createDemoNodeStyle())
   graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.size = new Size(100, 50)
-
-  const coreLabelModel = new InteriorLabelModel()
+  const coreLabelModel = new InteriorNodeLabelModel()
   graph.nodeDefaults.labels.style = createDemoNodeLabelStyle()
-  graph.nodeDefaults.labels.layoutParameter =
-    new RotatableNodeLabels.RotatableNodeLabelModelDecorator(
-      coreLabelModel
-    ).createWrappingParameter(InteriorLabelModel.CENTER)
-
+  graph.nodeDefaults.labels.layoutParameter = new RotatableNodeLabelModelDecorator(
+    coreLabelModel
+  ).createWrappingParameter(InteriorNodeLabelModel.CENTER)
   // Make ports visible
-  graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter(
-    new ShapeNodeStyle({
-      shape: ShapeNodeShape.ELLIPSE,
-      fill: '#662b00',
-      stroke: '#662b00'
-    })
-  )
+  graph.nodeDefaults.ports.style = new ShapePortStyle({
+    shape: ShapeNodeShape.ELLIPSE,
+    fill: '#662b00',
+    stroke: '#662b00'
+  })
   // Use a rotatable port model as default
   graph.nodeDefaults.ports.locationParameter =
-    new RotatablePorts.RotatablePortLocationModelDecorator().createWrappingParameter(
-      FreeNodePortLocationModel.NODE_TOP_ANCHORED
-    )
-
+    new RotatablePortLocationModelDecorator().createWrappingParameter(FreeNodePortLocationModel.TOP)
   graph.groupNodeDefaults.style = createDemoGroupStyle({ foldingEnabled: true })
-
-  graph.edgeDefaults.style = createDemoEdgeStyle()
+  graph.edgeDefaults.style = createDemoEdgeStyle({ orthogonalEditing: true })
   graph.edgeDefaults.labels.style = createDemoEdgeLabelStyle()
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 10
-  }).createDefaultParameter()
-
+  }).createRatioParameter()
   foldingManager.masterGraph.undoEngineEnabled = true
-
   graphComponent.graph = graph
 }
-
 /**
  * Creates a {@link IPortCandidateProvider} that considers the node's shape and rotation.
- * @param {!INode} node
  */
 function createPortCandidateProvider(node) {
-  const rotatedPortModel = RotatablePorts.RotatablePortLocationModelDecorator.INSTANCE
+  const rotatedPortModel = RotatablePortLocationModelDecorator.INSTANCE
   const freeModel = FreeNodePortLocationModel.INSTANCE
-
   const rnsd = node.style
   const wrapped = rnsd.wrapped
-
   if (isRoundRectangle(wrapped)) {
     return IPortCandidateProvider.combine(
       // Take all existing ports - these are assumed to have the correct port location model
@@ -260,50 +209,50 @@ function createPortCandidateProvider(node) {
       // Provide explicit candidates - these are all backed by a rotatable port location model
       IPortCandidateProvider.fromCandidates(
         // Port candidates at the corners that are slightly inset
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
           rotatedPortModel.createWrappingParameter(
             freeModel.createParameterForRatios(new Point(0, 0), new Point(5, 5))
           )
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
           rotatedPortModel.createWrappingParameter(
             freeModel.createParameterForRatios(new Point(0, 1), new Point(5, -5))
           )
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
           rotatedPortModel.createWrappingParameter(
             freeModel.createParameterForRatios(new Point(1, 0), new Point(-5, 5))
           )
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
           rotatedPortModel.createWrappingParameter(
             freeModel.createParameterForRatios(new Point(1, 1), new Point(-5, -5))
           )
         ),
         // Port candidates at the sides and the center
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.NODE_LEFT_ANCHORED)
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.LEFT)
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED)
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.BOTTOM)
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.CENTER)
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.NODE_TOP_ANCHORED)
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.TOP)
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.NODE_RIGHT_ANCHORED)
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.RIGHT)
         )
       )
     )
@@ -313,48 +262,42 @@ function createPortCandidateProvider(node) {
       IPortCandidateProvider.fromUnoccupiedPorts(node),
       IPortCandidateProvider.fromCandidates(
         // Port candidates at the corners
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.NODE_TOP_LEFT_ANCHORED)
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.TOP_LEFT)
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(
-            FreeNodePortLocationModel.NODE_TOP_RIGHT_ANCHORED
-          )
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.TOP_RIGHT)
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(
-            FreeNodePortLocationModel.NODE_BOTTOM_LEFT_ANCHORED
-          )
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.BOTTOM_LEFT)
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(
-            FreeNodePortLocationModel.NODE_BOTTOM_RIGHT_ANCHORED
-          )
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.BOTTOM_RIGHT)
         ),
         // Port candidates at the sides and the center
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.NODE_LEFT_ANCHORED)
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.LEFT)
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED)
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.BOTTOM)
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.CENTER)
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.NODE_TOP_ANCHORED)
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.TOP)
         ),
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
-          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.NODE_RIGHT_ANCHORED)
+          rotatedPortModel.createWrappingParameter(FreeNodePortLocationModel.RIGHT)
         )
       )
     )
@@ -368,7 +311,7 @@ function createPortCandidateProvider(node) {
     const shapeCandidates = shapeProvider.getAllTargetPortCandidates(null)
     const rotatingCandidates = shapeCandidates.map(
       (candidate) =>
-        new DefaultPortCandidate(
+        new PortCandidate(
           node,
           rotatedPortModel.createWrappingParameter(candidate.locationParameter)
         )
@@ -378,13 +321,11 @@ function createPortCandidateProvider(node) {
       IPortCandidateProvider.fromCandidates(rotatingCandidates)
     )
   }
-  return null
+  return IPortCandidateProvider.NO_CANDIDATES
 }
-
 /**
  * Determines if the given style visualizes nodes with a rounded rectangle shape.
- * @param {!INodeStyle} style the style instance to check.
- * @returns {boolean}
+ * @param style the style instance to check.
  */
 function isRoundRectangle(style) {
   return (
@@ -392,11 +333,9 @@ function isRoundRectangle(style) {
     (style instanceof RectangleNodeStyle && style.cornerSize > 0)
   )
 }
-
 /**
  * Determines if the given style visualizes nodes with a rectangle shape.
- * @param {!INodeStyle} style the style instance to check.
- * @returns {boolean}
+ * @param style the style instance to check.
  */
 function isRectangle(style) {
   return (
@@ -404,20 +343,16 @@ function isRectangle(style) {
     (style instanceof RectangleNodeStyle && style.cornerSize === 0)
   )
 }
-
-// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for 'applyLayout'.
-Class.ensure(LayoutExecutor)
-
+// Ensure that the LayoutExecutor class is not removed by build optimizers
+// It is needed for the 'applyLayoutAnimated' method in this demo.
+LayoutExecutor.ensure()
 /**
  * Loads the graph data.
- * @param {!('sine'|'circle')} sample
  */
 function loadGraph(sample) {
   const graph = graphComponent.graph
   graph.clear()
   const data = sample === 'sine' ? SineSample : CircleSample
-
   const defaultNodeSize = graph.nodeDefaults.size
   const builder = new GraphBuilder(graph)
   const nodesSource = builder.createNodesSource({
@@ -432,35 +367,23 @@ function loadGraph(sample) {
   })
   nodesSource.nodeCreator.createLabelBinding((data) => `${data.angle}°`)
   builder.createEdgesSource(data.edges, 'source', 'target')
-
   builder.buildGraph()
-
   // apply an initial edge routing
-  graph.mapperRegistry.createDelegateMapper(
-    INode.$class,
-    YObject.$class,
-    RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY,
-    (node) => {
-      const style = node.style
-      return {
-        outline: getOutline(style, node),
-        orientedLayout: getOrientedLayout(style, node)
-      }
+  const layoutData = new GenericLayoutData()
+  layoutData.addItemMapping(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DATA_KEY).mapperFunction = (
+    node
+  ) => {
+    const style = node.style
+    return {
+      outline: getOutline(style, node),
+      orientedLayout: getOrientedLayout(style, node)
     }
-  )
-  graphComponent.graph.applyLayout(new RotatedNodeLayoutStage(new EdgeRouter()))
-  graph.mapperRegistry.removeMapper(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY)
-  graphComponent.fitGraphBounds()
-
+  }
+  graphComponent.graph.applyLayout(new RotatedNodeLayoutStage(new EdgeRouter()), layoutData)
+  void graphComponent.fitGraphBounds()
   // clear undo-queue
   graphComponent.graph.undoEngine.clear()
 }
-
-/**
- * @param {!INodeStyle} style
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function getOutline(style, node) {
   let outline = style.renderer.getShapeGeometry(node, style).getOutline()
   if (!outline) {
@@ -471,72 +394,61 @@ function getOutline(style, node) {
   }
   return outline
 }
-
-/**
- * @param {!INodeStyle} style
- * @param {!INode} node
- * @returns {!IOrientedRectangle}
- */
 function getOrientedLayout(style, node) {
-  return style instanceof RotatableNodes.RotatableNodeStyleDecorator
+  return style instanceof RotatableNodeStyleDecorator
     ? style.getRotatedLayout(node)
     : new OrientedRectangle(node.layout)
 }
-
 /**
  * Runs a layout algorithm which is configured to consider node rotations.
  */
 async function applyLayout() {
-  const graph = graphComponent.graph
-
   // provide the rotated outline and layout for the layout algorithm
-  graph.mapperRegistry.createDelegateMapper(
-    INode.$class,
-    YObject.$class,
-    RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY,
-    (node) => {
-      const style = node.style
-      return {
-        outline: getOutline(style, node),
-        orientedLayout: getOrientedLayout(style, node)
-      }
+  const layoutData = new GenericLayoutData()
+  layoutData.addItemMapping(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DATA_KEY).mapperFunction = (
+    node
+  ) => {
+    const style = node.style
+    return {
+      outline: getOutline(style, node),
+      orientedLayout: getOrientedLayout(style, node)
     }
-  )
-
+  }
   // get the selected layout algorithm
   const layout = getLayoutAlgorithm()
-
   // wrap the algorithm in RotatedNodeLayoutStage to make it aware of the node rotations
   const rotatedNodeLayout = new RotatedNodeLayoutStage(layout)
   rotatedNodeLayout.edgeRoutingMode = getRoutingMode()
-
   selectLayout.disabled = true
   selectSample.disabled = true
   try {
     // apply the layout
-    await graphComponent.morphLayout(rotatedNodeLayout, '700ms')
-
-    // clean up mapper registry
-    graph.mapperRegistry.removeMapper(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY)
+    await graphComponent.applyLayoutAnimated(rotatedNodeLayout, '700ms', layoutData)
   } finally {
     selectSample.disabled = false
     selectLayout.disabled = false
   }
 }
-
 /**
  * Gets the layout algorithm selected by the user.
- * @returns {!ILayoutAlgorithm}
  */
 function getLayoutAlgorithm() {
   const graph = graphComponent.graph
   switch (selectLayout.value) {
     default:
-    case 'hierarchic':
-      return new HierarchicLayout()
+    case 'hierarchical':
+      return new HierarchicalLayout({
+        minimumLayerDistance: 50,
+        nodeDistance: 100,
+        defaultEdgeDescriptor: {
+          routingStyleDescriptor: {
+            defaultRoutingStyle: 'octilinear'
+          }
+        }
+      })
     case 'organic':
       return new OrganicLayout({
-        preferredEdgeLength:
+        defaultPreferredEdgeLength:
           1.5 * Math.max(graph.nodeDefaults.size.width, graph.nodeDefaults.size.height)
       })
     case 'orthogonal':
@@ -548,9 +460,9 @@ function getLayoutAlgorithm() {
         coreLayout: new TreeLayout(),
         nonTreeEdgeRouter: new OrganicEdgeRouter()
       })
-    case 'balloon':
+    case 'radial-tree':
       return new TreeReductionStage({
-        coreLayout: new BalloonLayout(),
+        coreLayout: new RadialTreeLayout(),
         nonTreeEdgeRouter: new OrganicEdgeRouter()
       })
     case 'radial':
@@ -558,19 +470,17 @@ function getLayoutAlgorithm() {
     case 'router-polyline':
       return new EdgeRouter()
     case 'router-organic':
-      return new OrganicEdgeRouter({ edgeNodeOverlapAllowed: false })
+      return new OrganicEdgeRouter({ allowEdgeNodeOverlaps: false })
   }
 }
-
 /**
  * Get the routing mode that suits the selected layout algorithm. Layout algorithms that place edge
  * ports in the center of the node don't need to add a routing step.
- * @returns {!('no-routing'|'shortest-straight-path-to-border'|'fixed-port')}
  */
 function getRoutingMode() {
   const value = selectLayout.value
   if (
-    value === 'hierarchic' ||
+    value === 'hierarchical' ||
     value === 'orthogonal' ||
     value === 'tree' ||
     value === 'router-polyline'
@@ -579,43 +489,36 @@ function getRoutingMode() {
   }
   return 'no-routing'
 }
-
 /**
  * Wires up the UI.
  */
 function initializeUI() {
-  const element = document.querySelector("button[data-command='OPEN']")
-  element.setAttribute('data-command-registered', 'true')
-  element.setAttribute('title', 'Open a GraphML file')
-  element.addEventListener('click', async () => {
-    await graphmlSupport.openFile(graphComponent.graph, StorageLocation.FILE_SYSTEM)
+  const graphMLIOHandler = initializeGraphML()
+  document.querySelector('#open-file-button').addEventListener('click', async () => {
+    await openGraphML(graphComponent, graphMLIOHandler)
     // after loading apply, wrap node styles, node label models and port location models in rotatable decorators
     addRotatedStyles()
-    graphComponent.fitGraphBounds()
+    void graphComponent.fitGraphBounds()
   })
-
+  document.querySelector('#save-button').addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'rotatableNodes.graphml', graphMLIOHandler)
+  })
   const snappingButton = document.querySelector('#demo-snapping-button')
   snappingButton.addEventListener('click', () => {
     const inputMode = graphComponent.inputMode
     inputMode.snapContext.enabled = snappingButton.checked
-    inputMode.labelSnapContext.enabled = snappingButton.checked
   })
-
   const orthogonalEditing = document.querySelector('#demo-orthogonal-editing-button')
   orthogonalEditing.addEventListener('click', () => {
     const inputMode = graphComponent.inputMode
     inputMode.orthogonalEdgeEditingContext.enabled = orthogonalEditing.checked
   })
-
   addNavigationButtons(selectSample).addEventListener('change', (e) => {
     loadGraph(e.target.value)
   })
-
   addNavigationButtons(selectLayout).addEventListener('change', applyLayout)
-
   document.querySelector('#layout').addEventListener('click', applyLayout)
 }
-
 /**
  * When loading a graph without rotatable nodes, the node styles, node label models and port
  * location models are wrapped so they can be rotated in this demo.
@@ -624,34 +527,24 @@ function addRotatedStyles() {
   const graph = graphComponent.graph
   graph.nodes.forEach((node) => {
     if (!graph.isGroupNode(node)) {
-      if (!(node.style instanceof RotatableNodes.RotatableNodeStyleDecorator)) {
-        graph.setStyle(node, new RotatableNodes.RotatableNodeStyleDecorator(node.style))
+      if (!(node.style instanceof RotatableNodeStyleDecorator)) {
+        graph.setStyle(node, new RotatableNodeStyleDecorator(node.style))
       }
       node.labels.forEach((label) => {
-        if (
-          !(
-            label.layoutParameter instanceof
-            RotatableNodeLabels.RotatableNodeLabelModelDecoratorParameter
-          )
-        ) {
+        if (!(label.layoutParameter instanceof RotatableNodeLabelModelDecoratorParameter)) {
           graph.setLabelLayoutParameter(
             label,
-            new RotatableNodeLabels.RotatableNodeLabelModelDecorator(
+            new RotatableNodeLabelModelDecorator(
               label.layoutParameter.model
             ).createWrappingParameter(label.layoutParameter)
           )
         }
       })
       node.ports.forEach((port) => {
-        if (
-          !(
-            port.locationParameter instanceof
-            RotatablePorts.RotatablePortLocationModelDecoratorParameter
-          )
-        ) {
+        if (!(port.locationParameter instanceof RotatablePortLocationModelDecoratorParameter)) {
           graph.setPortLocationParameter(
             port,
-            RotatablePorts.RotatablePortLocationModelDecorator.INSTANCE.createWrappingParameter(
+            RotatablePortLocationModelDecorator.INSTANCE.createWrappingParameter(
               port.locationParameter
             )
           )
@@ -660,5 +553,4 @@ function addRotatedStyles() {
     }
   })
 }
-
 run().then(finishLoading)

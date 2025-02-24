@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,104 +27,34 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
-  Enum,
+  Color,
   EventArgs,
+  EventRecognizers,
   Fill,
   HorizontalTextAlignment,
   IconLabelStyle,
   ILabelModelParameter,
   ILabelStyle,
   IModelItem,
-  Insets,
-  InteriorLabelModel,
-  InteriorStretchLabelModel,
-  Key,
+  InteriorNodeLabelModel,
   KeyEventArgs,
   KeyEventType,
+  LabelStyle,
   ModifierKeys,
   Size,
+  StretchNodeLabelModel,
   VerticalTextAlignment
-} from 'yfiles'
-import { GraphWizardInputMode } from './GraphWizardInputMode.js'
-/**
- * A condition that has to be met so that a {@link WizardAction} is active.
- * @typedef {function} PreCondition
- */
-
-/**
- * A callback to decide, whether an event triggers an active {@link WizardAction}.
- * @typedef {function} Trigger
- */
-
-/**
- * A combination of {@link Key} and {@link ModifierKeys} that describe a keyboard shortcut.
- * @typedef {Object} Shortcut
- * @property {Key} key
- * @property {ModifierKeys} [modifier]
- */
-
-/**
- * A callback that is called to handle a {@link WizardAction} that has been {@link Trigger triggered}.
- *
- * Returns whether the handling is considered to be successful.
- * @typedef {function} Handler
- */
-
-/**
- * The configuration for an icon style for a {@link Button}.
- * @typedef {Object} IconButton
- * @property {'icon'} type
- * @property {string} iconPath
- * @property {string} [backgroundFill]
- */
-
-/**
- * The configuration for a rectangular style for a {@link Button}.
- * @typedef {Object} RectButton
- * @property {'rect'} type
- * @property {string} [outline]
- * @property {string} [fill]
- */
-
-/**
- * The configuration for a text label style for a {@link Button} that may optionally have an icon.
- * @typedef {Object} TextButton
- * @property {'text'} type
- * @property {string} text
- * @property {string} [iconPath]
- * @property {string} [backgroundFill]
- */
-
+} from '@yfiles/yfiles'
+import { GraphWizardInputMode } from './GraphWizardInputMode'
 /**
  * The layout style buttons shall be arranged in.
  */
-export /**
- * @readonly
- * @enum {number}
- */
-const PickerLayout = {
-  Grid: 0,
-  Row: 1,
-  Column: 2
-}
-
-/**
- * The configuration options for a {@link Button} used for a {@link WizardAction}.
- * @typedef {Object} ButtonOptions
- * @property {Size} [size]
- * @property {ILabelModelParameter} [layout]
- * @property {function} [layoutFactory]
- * @property {string} [type]
- * @property {function} [typeFactory]
- * @property {string} [tooltip]
- * @property {function} [tooltipFactory]
- * @property {(IconButton|RectButton|TextButton)} [style]
- * @property {function} [styleFactory]
- * @property {Array.<ButtonOptions>} [pickerButtons]
- * @property {PickerLayout} [pickerLayout]
- */
-
+export var PickerLayout
+;(function (PickerLayout) {
+  PickerLayout[(PickerLayout['Grid'] = 0)] = 'Grid'
+  PickerLayout[(PickerLayout['Row'] = 1)] = 'Row'
+  PickerLayout[(PickerLayout['Column'] = 2)] = 'Column'
+})(PickerLayout || (PickerLayout = {}))
 /**
  * An action managed by the {@link GraphWizardInputMode}.
  */
@@ -138,38 +68,30 @@ export default class WizardAction {
   _description
   _noUndo
   button = null
-
   /**
    * The type of the action that is passed to the {@link WizardAction.handler}.
-   * @type {!string}
    */
   get type() {
     return this._type
   }
-
   /**
    * Creates a new {@link WizardAction}.
-   * @param {!string} type The type of the action that is passed to the {@link WizardAction.handler}.
-   * @param {!PreCondition} preCondition The pre-condition that has to be met so that the action is active.
-   * @param {!Handler} handler The callback executing the action once it is triggered.
+   * @param type The type of the action that is passed to the {@link WizardAction.handler}.
+   * @param preCondition The pre-condition that has to be met so that the action is active.
+   * @param handler The callback executing the action once it is triggered.
    * @param shortcuts The keyboard shortcuts to trigger this action.
    * @param description The description added to the legend when this action is active.
    * @param buttonOptions The configuration options for a button that is displayed when this action is active.
    * @param trigger A callback to decide whether an event should trigger this action in addition
    * to the short-cuts and the button.
    * @param noUndo Whether the action should not be enqueued in the undo stack.
-   * @param {?Array.<Shortcut>} [shortcuts]
-   * @param {!string} [description]
-   * @param {?ButtonOptions} [buttonOptions]
-   * @param {?Trigger} [trigger]
-   * @param {boolean} [noUndo]
    */
   constructor(type, preCondition, handler, shortcuts, description, buttonOptions, trigger, noUndo) {
     this._type = type
     this._preCondition = preCondition
     this._shortcuts = shortcuts ?? []
-    this._trigger = (source, evt) => {
-      if (trigger && trigger(source, evt)) {
+    this._trigger = (evt, source) => {
+      if (trigger && trigger(evt, source)) {
         return true
       } else if (
         this.shortcuts.length > 0 &&
@@ -178,7 +100,7 @@ export default class WizardAction {
       ) {
         return this.shortcuts.some(
           (shortCut) =>
-            shortCut.key == evt.key &&
+            shortCut.key.toUpperCase() === evt.key.toUpperCase() &&
             (shortCut.modifier === undefined || shortCut.modifier == evt.modifiers)
         )
       }
@@ -189,90 +111,65 @@ export default class WizardAction {
     this._buttonOptions = buttonOptions || null
     this._noUndo = noUndo ?? false
   }
-
   /**
    * The pre-condition that has to be met so that the action is active.
-   * @type {!PreCondition}
    */
   get preCondition() {
     return this._preCondition
   }
-
   /**
    * The callback to decide whether an event should trigger this action.
-   * @type {!Trigger}
    */
   get trigger() {
     return this._trigger
   }
-
   /**
    * The keyboard shortcuts that trigger this action.
-   * @type {!Array.<Shortcut>}
    */
   get shortcuts() {
     return this._shortcuts
   }
-
   /**
    * The callback executing the action once it is triggered.
-   * @type {!Handler}
    */
   get handler() {
     return this._handler
   }
-
   /**
    * The description added to the legend when this action is active.
-   * @type {!string}
    */
   get description() {
     return this._description
   }
-
   /**
    * The configuration options for a button that is displayed when this action is active.
-   * @type {?ButtonOptions}
    */
   get buttonOptions() {
     return this._buttonOptions
   }
-
   /**
    * Whether the action should not be enqueued in the undo stack.
-   * @type {boolean}
    */
   get noUndo() {
     return this._noUndo
   }
-
   /**
    * Returns the default action used for all picker buttons as well as for the main button if no
    * picker buttons are used is to handle this action.
-   * @param {!GraphWizardInputMode} mode The {@link GraphWizardInputMode} handling this action.
-   * @returns {!ButtonActionListener}
+   * @param mode The {@link GraphWizardInputMode} handling this action.
    */
   getDefaultAction(mode) {
-    return (button) => {
-      mode.handleAction(
-        this,
-        button.owner,
-        button.tag,
-        mode.inputModeContext.canvasComponent.lastInputEvent
-      )
-    }
+    return (button) =>
+      mode.handleAction(this, button.owner, button.tag, mode.graphComponent.lastInputEvent)
   }
-
   /**
    * Clears the action state when the action gets deactivated.
    */
   clear() {}
-
   /**
    * Returns the type of the action triggered by the button configured by the button options.
-   * @param {!ButtonOptions} options The {@link ButtonOptions} to determine the type for.
-   * @param {!IModelItem} owner The model item owning the button.
-   * @returns {!string}
+   * @param options The {@link ButtonOptions} to determine the type for.
+   * @param owner The model item owning the button.
    */
   static getButtonType(options, owner) {
     let type = ''
@@ -283,43 +180,41 @@ export default class WizardAction {
     }
     return type
   }
-
   /**
    * Returns the {@link ILabelStyle style} used for the button configured by the button options.
-   * @param {!ButtonOptions} options The {@link ButtonOptions} to determine the style for.
-   * @param {!IModelItem} owner The model item owning the button.
-   * @param {!Size} buttonSize The size of the button.
-   * @returns {!ILabelStyle}
+   * @param options The {@link ButtonOptions} to determine the style for.
+   * @param owner The model item owning the button.
+   * @param buttonSize The size of the button.
    */
   static getButtonStyle(options, owner, buttonSize) {
     // Determine the style config that has to be defined either by style or styleFactory
     const styleConfig = options.style || options.styleFactory(owner)
     if (styleConfig && styleConfig.type === 'icon') {
       const iconLabelStyle = new IconLabelStyle({
-        icon: styleConfig.iconPath,
+        href: styleConfig.iconPath,
         iconSize: buttonSize,
-        iconPlacement: InteriorStretchLabelModel.CENTER
+        iconPlacement: StretchNodeLabelModel.CENTER
       })
       const fill = styleConfig.backgroundFill
         ? Fill.from(styleConfig.backgroundFill)
-        : Fill.WHITE_SMOKE
-      iconLabelStyle.wrapped = new DefaultLabelStyle({
+        : Color.WHITE_SMOKE
+      iconLabelStyle.wrappedStyle = new LabelStyle({
         backgroundFill: fill
       })
       return iconLabelStyle
     } else if (styleConfig && styleConfig.type === 'rect') {
-      return new DefaultLabelStyle({
+      return new LabelStyle({
         backgroundStroke: styleConfig.outline,
         backgroundFill: styleConfig.fill || null,
-        insets: new Insets(4)
+        padding: 4
       })
     } else if (styleConfig && styleConfig.type === 'text') {
       const fill = styleConfig.backgroundFill
         ? Fill.from(styleConfig.backgroundFill)
-        : Fill.WHITE_SMOKE
-      const labelStyle = new DefaultLabelStyle({
+        : Color.WHITE_SMOKE
+      const labelStyle = new LabelStyle({
         backgroundFill: fill,
-        insets: new Insets(1),
+        padding: 1,
         verticalTextAlignment: VerticalTextAlignment.CENTER,
         horizontalTextAlignment: styleConfig.iconPath
           ? HorizontalTextAlignment.RIGHT
@@ -328,25 +223,23 @@ export default class WizardAction {
       if (styleConfig.iconPath) {
         const min = Math.min(buttonSize.width, buttonSize.height)
         return new IconLabelStyle({
-          icon: styleConfig.iconPath,
+          href: styleConfig.iconPath,
           iconSize: new Size(min, min),
-          iconPlacement: InteriorLabelModel.WEST,
-          wrapped: labelStyle
+          iconPlacement: InteriorNodeLabelModel.LEFT,
+          wrappedStyle: labelStyle
         })
       }
       return labelStyle
     } else {
-      return new DefaultLabelStyle()
+      return new LabelStyle()
     }
   }
-
   /**
    * Returns the text used for the button configured by the button options.
    *
    * The text is only considered when {@link ButtonOptions.style} is {@link TextButton}.
-   * @param {!ButtonOptions} options The {@link ButtonOptions} to determine the text for.
-   * @param {!IModelItem} owner The model item owning the button.
-   * @returns {!string}
+   * @param options The {@link ButtonOptions} to determine the text for.
+   * @param owner The model item owning the button.
    */
   static getButtonText(options, owner) {
     // Determine the style config that has to be defined either by style or styleFactory
@@ -356,12 +249,10 @@ export default class WizardAction {
     }
     return ''
   }
-
   /**
    * Returns the {@link ILabelModelParameter layout} used for the button configured by the button options.
-   * @param {!ButtonOptions} options The {@link ButtonOptions} to determine the layout for.
-   * @param {!IModelItem} owner The model item owning the button.
-   * @returns {!ILabelModelParameter}
+   * @param options The {@link ButtonOptions} to determine the layout for.
+   * @param owner The model item owning the button.
    */
   static getButtonLayout(options, owner) {
     if (options.layout) {
@@ -372,14 +263,11 @@ export default class WizardAction {
       return GraphWizardInputMode.getBaseLayout(owner)
     }
   }
-
   /**
    * Returns the tooltip displayed when hovering over the button.
-   * @param {!ButtonOptions} options The {@link ButtonOptions} to determine the tooltip for.
-   * @param {!IModelItem} owner The model item owning the button.
+   * @param options The {@link ButtonOptions} to determine the tooltip for.
+   * @param owner The model item owning the button.
    * @param shortcuts The shortcuts to include in the tooltip.
-   * @param {!Array.<Shortcut>} [shortcuts]
-   * @returns {!string}
    */
   static getButtonTooltip(options, owner, shortcuts) {
     let tooltip = ''
@@ -390,15 +278,12 @@ export default class WizardAction {
     }
     return WizardAction.getTextWithShortcuts(tooltip, 'tooltip', shortcuts)
   }
-
   /**
    * Returns a styled html string that combines the text with a presentation of the shortcuts.
    *
-   * @param {!string} text The text to start with.
-   * @param {!string} classPrefix The prefix of the class names used in the html string.
+   * @param text The text to start with.
+   * @param classPrefix The prefix of the class names used in the html string.
    * @param shortcuts The shortcuts to add.
-   * @param {!Array.<Shortcut>} [shortcuts]
-   * @returns {!string}
    */
   static getTextWithShortcuts(text, classPrefix, shortcuts) {
     let htmlText = '<div class="' + classPrefix + '-container">'
@@ -413,22 +298,18 @@ export default class WizardAction {
     htmlText += '</div>'
     return htmlText
   }
-
   /**
    * Returns a HTML string that visualizes the shortcut keys.
-   * @param {!Array.<Shortcut>} shortcuts The shortcuts to visualize.
-   * @returns {!string}
+   * @param shortcuts The shortcuts to visualize.
    */
   static getShortcutsString(shortcuts) {
     const startKey = '<kbd class="shortcut">'
     const endKey = '</kbd>'
-
     let tooltip = ''
     for (let i = 0; i < shortcuts.length; i++) {
       if (i != 0) {
         tooltip += ' / '
       }
-
       const shortcut = shortcuts[i]
       if (shortcut.modifier) {
         if ((shortcut.modifier & ModifierKeys.CONTROL) === ModifierKeys.CONTROL) {
@@ -445,46 +326,32 @@ export default class WizardAction {
     }
     return tooltip
   }
-
-  /**
-   * @param {!Key} key
-   * @returns {!string}
-   */
   static getKeyName(key) {
-    if (key == Key.ARROW_UP) {
+    if (key == 'ArrowUp') {
       return '&uarr;'
-    } else if (key == Key.ARROW_DOWN) {
+    } else if (key == 'ArrowDown') {
       return '&darr;'
-    } else if (key == Key.ARROW_LEFT) {
+    } else if (key == 'ArrowLeft') {
       return '&larr;'
-    } else if (key == Key.ARROW_RIGHT) {
+    } else if (key == 'ArrowRight') {
       return '&rarr;'
+    } else if (key == ' ') {
+      return 'Space'
     }
-    return Enum.getName(Key.$class, key)
+    return key
   }
 }
-
-/**
- * A single step in a series of cancelable steps handled by {@link handleMultipleSteps}.
- * @typedef {Object} ActionStep
- * @property {function} action
- * @property {function} undo
- */
-
 /**
  * Handles processing multiple {@link ActionStep}s that may be canceled to go back to previous steps.
  *
  * Returns `true` if the last step was successful, `false` otherwise.
- * @param {!Array.<ActionStep>} steps The steps to process.
- * @returns {!Promise.<boolean>}
+ * @param steps The steps to process.
  */
 export async function handleMultipleSteps(steps) {
   let currentIndex = 0
   let wasCanceled = false
-
   const undoDataStore = []
   const nextStepDataStore = []
-
   // iterate until either the first step was canceled or the last succeeds
   while (currentIndex >= 0 && currentIndex < steps.length) {
     const currentStep = steps[currentIndex]

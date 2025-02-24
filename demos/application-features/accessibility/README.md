@@ -1,23 +1,25 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Accessibility with Aria Attributes - Application Features
 
-# Accessibility with Aria Attributes
+<img src="../../../doc/demo-thumbnails/accessibility.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/application-features/accessibility/).
 
 This demo shows how to improve accessibility with ARIA attributes and a [live region](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Live_Regions) for the graph component. Switching an element in this demo, updates the live region of the graph component with the currently selected label.
 
 ## Things to Try
 
-- Focus the GraphComponent with `TAB` key and cycle through the nodes with the arrow keys. The screen reader reads the label of the currently selected node.
+- Focus the GraphComponent with Tab key and cycle through the nodes with the arrow keys. The screen reader reads the label of the currently selected node.
 - Select an item to trigger the screen reader to read the label.
 - Hover a node to trigger its tooltip which is also read by the screen reader.
 - Toggle Aria-Atomic: This toggles `aria-atomic` on the live region. When enabled, the screen reader reads the entire content of the live region. When disabled, the screen reader reads only the changed part (i.e., the item's label).

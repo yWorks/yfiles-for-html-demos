@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 05 Label Placement - Tutorial: Basic Features
 
-# Placing Labels
+<img src="../../../doc/demo-thumbnails/tutorial-basic-features-label-placement.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/05-label-placement/).
 
 ## How to influence the placement of labels.
 
@@ -21,7 +23,7 @@ The default label layout parameters can be configured in the graph’s [nodeDefa
 
 ```
 // Place node labels in the node center
-graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
 
 // Use a rotated layout for edge labels
 graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel({
@@ -39,18 +41,18 @@ Change Label Layout Parameters Reset to Default
 
 ```
 // InteriorStretchLabelModel stretches the label width or height to match the node size
-const interiorStretchModel = new InteriorStretchLabelModel({ insets: 3 })
+const interiorStretchModel = new StretchNodeLabelModel({ padding: 3 })
 graph.setLabelLayoutParameter(
   label1,
-  interiorStretchModel.createParameter('north')
+  interiorStretchModel.createParameter('top')
 )
 
 // ExteriorLabelModel places the label on discrete positions outside the node bounds
-const exteriorLabelModel = new ExteriorLabelModel({ insets: 10 })
+const exteriorLabelModel = new ExteriorNodeLabelModel({ margins: 10 })
 
 graph.setLabelLayoutParameter(
   label2,
-  exteriorLabelModel.createParameter('south')
+  exteriorLabelModel.createParameter('bottom')
 )
 
 // NinePositionsEdgeLabelModel provides a set of 9 predefined locations on an edge
@@ -60,6 +62,6 @@ graph.setLabelLayoutParameter(
 )
 ```
 
-You can also take a look at the [Node Label Placement Demo](../../layout/nodelabelplacement/) and the [Edge Label Placement Demo](../../layout/edgelabelplacement/) that show how to configure node and edge labels.
+You can also take a look at the node-label-placement and the [Edge Label Placement Demo](../../layout/edgelabelplacement/) that show how to configure node and edge labels.
 
 [06 Basic Interaction](../../tutorial-yfiles-basic-features/06-basic-interaction/)

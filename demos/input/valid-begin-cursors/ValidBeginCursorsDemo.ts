@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,33 +28,44 @@
  ***************************************************************************/
 import {
   BaseClass,
-  Class,
   Cursor,
   EventRecognizers,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   IEdge,
   IGraph,
   IHitTestable,
   IInputModeContext,
-  KeyEventRecognizers,
   LayoutExecutor,
   License,
-  ModifierKeys,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
-const lassoCursor: Cursor = new Cursor('resources/lasso.cur', Cursor.CROSSHAIR)
-const createEdgeCursor: Cursor = new Cursor('resources/createedge.cur', Cursor.DEFAULT)
+const lassoCursor: Cursor = new Cursor('resources/lasso.svg', 17, 15, Cursor.CROSSHAIR)
+const lassoCursorPlus: Cursor = new Cursor('resources/lasso_plus.svg', 17, 15, Cursor.CROSSHAIR)
+const lassoCursorMinus: Cursor = new Cursor('resources/lasso_minus.svg', 17, 15, Cursor.CROSSHAIR)
+const createEdgeCursor: Cursor = new Cursor('resources/createedge.svg', 16, 16, Cursor.DEFAULT)
+const crosshairCursorPlus: Cursor = new Cursor(
+  'resources/crosshair_plus.svg',
+  16,
+  16,
+  Cursor.DEFAULT
+)
+const crosshairCursorMinus: Cursor = new Cursor(
+  'resources/crosshair_minus.svg',
+  16,
+  16,
+  Cursor.DEFAULT
+)
 
 /**
  * Runs the demo.
@@ -64,8 +75,6 @@ async function run(): Promise<void> {
 
   // Initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // Assign the default demo styles
   initDemoStyles(graphComponent.graph)
 
@@ -73,9 +82,9 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(new HierarchicLayout({ minimumLayerDistance: 35 }))
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  void graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
@@ -120,36 +129,36 @@ function createEditorMode(): GraphEditorInputMode {
 
   // Lasso selection is disabled per default and has to be enabled first.
   mode.lassoSelectionInputMode.enabled = true
-  // 'Shift' has to be pressed to start lasso selection which is indicated by a lasso cursor.
-  mode.lassoSelectionInputMode.validBeginRecognizer = KeyEventRecognizers.SHIFT_IS_DOWN
+
+  // 'Alt' has to be pressed to start lasso selection which is indicated by a lasso cursor.
+  mode.lassoSelectionInputMode.validBeginRecognizer = EventRecognizers.ALT_IS_DOWN
   mode.lassoSelectionInputMode.validBeginCursor = lassoCursor
   mode.lassoSelectionInputMode.lassoCursor = lassoCursor
+  mode.lassoSelectionInputMode.extendSelectionCursor = lassoCursorPlus
+  mode.lassoSelectionInputMode.subtractSelectionCursor = lassoCursorMinus
+
   // A finish radius is set and the cross-hair cursor is used to indicate that the gesture may end there.
   mode.lassoSelectionInputMode.validEndCursor = Cursor.CROSSHAIR
   mode.lassoSelectionInputMode.finishRadius = 10
 
-  // Marquee selection should not start when 'Shift' is pressed.
-  // Due to its relatively higher priority it also won't start when 'Ctrl' is pressed as in this
-  // case the MoveViewportInputMode kicks in.
-  mode.marqueeSelectionInputMode.validBeginRecognizer = EventRecognizers.inverse(
-    KeyEventRecognizers.SHIFT_IS_DOWN
-  )
   mode.marqueeSelectionInputMode.validBeginCursor = Cursor.CROSSHAIR
   mode.marqueeSelectionInputMode.marqueeCursor = Cursor.CROSSHAIR
+  mode.marqueeSelectionInputMode.extendSelectionCursor = crosshairCursorPlus
+  mode.marqueeSelectionInputMode.subtractSelectionCursor = crosshairCursorMinus
 
   // 'Ctrl' has to be pressed to start moving the viewport which is indicated by a grab cursor
-  mode.moveViewportInputMode.validBeginRecognizer = KeyEventRecognizers.CTRL_IS_DOWN
+  mode.moveViewportInputMode.validBeginRecognizer = EventRecognizers.CTRL_IS_DOWN
   mode.moveViewportInputMode.validBeginCursor = Cursor.GRAB
   mode.moveViewportInputMode.dragCursor = Cursor.GRABBING
 
   // Only hovering over an edge is a valid tool tip location and is indicated by the help cursor
-  mode.mouseHoverInputMode.validHoverLocationHitTestable = new EdgeHitTestable()
-  mode.mouseHoverInputMode.validHoverLocationCursor = Cursor.HELP
-  // The hover input mode should have a lower priority then the MoveViewportInputMode so its cursor
+  mode.toolTipInputMode.validHoverLocationHitTestable = new EdgeHitTestable()
+  mode.toolTipInputMode.validHoverLocationCursor = Cursor.HELP
+  // The hover input mode should have a lower priority then the createEdgeInputMode so its cursor
   // is displayed when hovering over an edge.
-  mode.mouseHoverInputMode.priority = mode.moveViewportInputMode.priority - 3
+  mode.toolTipInputMode.priority = mode.createEdgeInputMode.priority - 3
   // For edges a simple tooltip containing information about the source and target node is used.
-  mode.addQueryItemToolTipListener((_, evt) => {
+  mode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.item instanceof IEdge && !evt.handled) {
       evt.toolTip = `${evt.item.sourceNode} -> ${evt.item.targetNode}`
       evt.handled = true
@@ -162,13 +171,12 @@ function createEditorMode(): GraphEditorInputMode {
   const defaultBeginHitTestable = mode.createEdgeInputMode.beginHitTestable
   mode.createEdgeInputMode.beginHitTestable = IHitTestable.create(
     (context, location) =>
-      defaultBeginHitTestable.isHit(context, location) &&
-      (graphComponent.lastInputEvent.modifiers & ModifierKeys.CONTROL) === ModifierKeys.CONTROL
+      defaultBeginHitTestable.isHit(context, location) && graphComponent.lastInputEvent.ctrlKey
   )
   // Use a custom create-edge cursor to indicate that edge creation is valid to begin and while
   // still dragging over the source node.
   mode.createEdgeInputMode.validBeginCursor = createEdgeCursor
-  mode.createEdgeInputMode.sourceNodeDraggingCursor = createEdgeCursor
+  mode.createEdgeInputMode.startPortOwnerDraggingCursor = createEdgeCursor
   // disable enforced bend creation, so we can end edge creation with 'Ctrl' held down
   mode.createEdgeInputMode.enforceBendCreationRecognizer = EventRecognizers.NEVER
   // As both CreateEdgeInputMode and MoveViewportInputMode now use the 'Ctrl' modifier, we have
@@ -176,18 +184,21 @@ function createEditorMode(): GraphEditorInputMode {
   // always win.
   mode.createEdgeInputMode.priority = mode.moveViewportInputMode.priority - 2
 
-  // Node should be movable whether selected or not, so we enabled the moveUnselectedInputMode
-  mode.moveUnselectedInputMode.enabled = true
-  mode.moveUnselectedInputMode.priority = mode.moveViewportInputMode.priority - 1
+  // Node should be movable whether selected or not, so we enabled the moveUnselectedItemsInputMode
+  mode.moveUnselectedItemsInputMode.enabled = true
+  mode.moveUnselectedItemsInputMode.priority = mode.moveViewportInputMode.priority - 1
   return mode
 }
 
 /**
  * This hit testable returns true when any edge is at the given location.
  */
-class EdgeHitTestable extends BaseClass(IHitTestable) implements IHitTestable {
+class EdgeHitTestable extends BaseClass(IHitTestable) {
   public isHit(_context: IInputModeContext, location: Point): boolean {
-    return graphComponent.graphModelManager.typedHitElementsAt(IEdge.$class, location).some()
+    return graphComponent.graphModelManager
+      .hitElementsAt(location)
+      .filter((e) => e instanceof IEdge)
+      .some()
   }
 }
 

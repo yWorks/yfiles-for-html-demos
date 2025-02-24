@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -50,14 +50,14 @@ export default [
     ]
   }
 ]`,
-        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'/>
-<text transform='translate(10 20)' data-content='{Binding id}' style='font-size:18px; fill:#000;'/>`,
+        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='\${layout.width}' height='\${layout.height}'/>
+<text transform='translate(10 20)' style='font-size:18px; fill:#000;'>\${tag.id}</text>`,
         idBinding: 'id'
       },
       {
         name: 'Blue Nodes',
-        template: `<rect fill='#242265' stroke='#24113D' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'/>
-<text transform='translate(10 20)' data-content='{Binding id}' style='font-size:18px; fill:#FFFFFF;'/>`,
+        template: `<rect fill='#242265' stroke='#24113D' stroke-width='1.5' rx='3.5' ry='3.5' width='\${layout.width}' height='\${layout.height}'/>
+<text transform='translate(10 20)' style='font-size:18px; fill:#FFFFFF;'>\${tag.id}</text>`,
         idBinding: 'id'
       }
     ],
@@ -89,20 +89,20 @@ export default [
     ]
   }
 ]`,
-        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'/>
-<text transform='translate(10 20)' data-content='{Binding id}' style='font-size:18px; fill:#000;'/>`,
+        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='\${layout.width}' height='\${layout.height}'/>
+<text transform='translate(10 20)' style='font-size:18px; fill:#000;'>\${tag.id}</text>`,
         idBinding: 'id'
       },
       {
         name: 'Blue Nodes',
-        template: `<rect fill='#242265' stroke='#24113D' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'/>
-<text transform='translate(10 20)' data-content='{Binding id}' style='font-size:18px; fill:#FFFFFF;'/>`,
+        template: `<rect fill='#242265' stroke='#24113D' stroke-width='1.5' rx='3.5' ry='3.5' width='\${layout.width}' height='\${layout.height}'/>
+<text transform='translate(10 20)' style='font-size:18px; fill:#FFFFFF;'>\${tag.id}</text>`,
         idBinding: 'id'
       },
       {
         name: 'Red Nodes',
-        template: `<rect fill="#AB2346" stroke="#673E49" stroke-width='1.5' rx='3.5' ry='3.5' width="{TemplateBinding width}" height="{TemplateBinding height}"/>
-<text transform="translate(10 20)" data-content="{Binding id}" style="font-size:18px; fill:white;"/>`,
+        template: `<rect fill="#AB2346" stroke="#673E49" stroke-width='1.5' rx='3.5' ry='3.5' width="\${layout.width}" height="\${layout.height}"/>
+<text transform="translate(10 20)" style="font-size:18px; fill:white;">\${tag.id}</text>`,
         idBinding: 'id'
       }
     ],
@@ -131,14 +131,14 @@ export default [
     ]
   }
 ]`,
-        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'/>
-<text transform='translate(10 20)' data-content='{Binding id}' style='font-size:18px; fill:#000;'/>`,
+        template: `<rect fill='#ff6c00' stroke='#662b00' stroke-width='1.5' rx='3.5' ry='3.5' width='\${layout.width}' height='\${layout.height}'/>
+<text transform='translate(10 20)' style='font-size:18px; fill:#000;'>\${tag.id}</text>`,
         idBinding: 'node => node.id'
       },
       {
         name: 'Blue Nodes',
-        template: `<rect fill='#242265' stroke='#24113D' stroke-width='1.5' rx='3.5' ry='3.5' width='{TemplateBinding width}' height='{TemplateBinding height}'/>
-<text transform='translate(10 20)' data-content='{Binding id}' style='font-size:18px; fill:#FFFFFF;'/>`,
+        template: `<rect fill='#242265' stroke='#24113D' stroke-width='1.5' rx='3.5' ry='3.5' width='\${layout.width}' height='\${layout.height}'/>
+<text transform='translate(10 20)' style='font-size:18px; fill:#FFFFFF;'>\${tag.id}</text>`,
         idBinding: 'node => node.id'
       }
     ],

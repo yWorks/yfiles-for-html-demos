@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,99 +27,80 @@
  **
  ***************************************************************************/
 import {
-  DefaultEdgePathCropper,
+  EdgePathCropper,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicNestingPolicy,
+  HierarchicalNestingPolicy,
   IGraph,
   INode,
   IPortCandidateProvider,
   License,
-  NodeStylePortStyleAdapter,
+  ShapePortStyle,
   PortCandidateValidity,
   Rect,
   ShapeNodeStyle
-} from 'yfiles'
-
-import OrangePortCandidateProvider from './OrangePortCandidateProvider.js'
-import GreenPortCandidateProvider from './GreenPortCandidateProvider.js'
-import BluePortCandidateProvider from './BluePortCandidateProvider.js'
-import RedPortCandidateProvider from './RedPortCandidateProvider.js'
+} from '@yfiles/yfiles'
+import OrangePortCandidateProvider from './OrangePortCandidateProvider'
+import GreenPortCandidateProvider from './GreenPortCandidateProvider'
+import BluePortCandidateProvider from './BluePortCandidateProvider'
+import RedPortCandidateProvider from './RedPortCandidateProvider'
 import {
-  applyDemoTheme,
   createDemoNodeLabelStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/**
- * @returns {!Promise}
- */
+} from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
-
   // Disable automatic cleanup of unconnected ports since some nodes have a predefined set of ports
   graph.nodeDefaults.ports.autoCleanUp = false
-  graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter(
-    new ShapeNodeStyle({
-      shape: 'ellipse'
-    })
-  )
-
+  graph.nodeDefaults.ports.style = new ShapePortStyle({
+    shape: 'ellipse'
+  })
   // Initialize basic demo styles
   initDemoStyles(graph)
-
   // Create a default editor input mode and configure it
   const graphEditorInputMode = new GraphEditorInputMode({
     // Just for user convenience: disable node creation and clipboard operations
     allowCreateNode: false,
-    allowClipboardOperations: false
+    allowClipboardOperations: false,
+    createEdgeInputMode: { useHitItemsCandidatesOnly: true }
   })
-  graphEditorInputMode.createEdgeInputMode.useHitItemsCandidatesOnly = true
-
   // and enable the undo feature.
   graph.undoEngineEnabled = true
-
   // Finally, set the input mode to the graph component.
   graphComponent.inputMode = graphEditorInputMode
   registerPortCandidateProvider(graph)
-
   // crop the edge path at the port and not at the node bounds
-  graph.decorator.portDecorator.edgePathCropperDecorator.setImplementation(
-    new DefaultEdgePathCropper({
+  graph.decorator.ports.edgePathCropper.addConstant(
+    new EdgePathCropper({
       cropAtPort: true,
       extraCropLength: 3
     })
   )
-
   // draw edges in front of the nodes
   graphComponent.graphModelManager.edgeGroup.toFront()
-  graphComponent.graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES
-
+  graphComponent.graphModelManager.hierarchicalNestingPolicy = HierarchicalNestingPolicy.NODES
   // create the graph
   createSampleGraph(graphComponent)
-  graphComponent.updateContentRect()
+  graphComponent.updateContentBounds()
 }
-
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link IPortCandidateProvider} for each node.
  * This callback function is called whenever a node in the graph is queried
  * for its {@link IPortCandidateProvider}. In this case, the 'node'
  * parameter will be assigned that node.
- * @param {!IGraph} graph The given graph
+ * @param graph The given graph
  */
 function registerPortCandidateProvider(graph) {
-  graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory((node) => {
+  graph.decorator.nodes.portCandidateProvider.addFactory((node) => {
     // Obtain the tag from the edge
     const nodeTag = node.tag
-
     // Check if it is a known tag and choose the respective implementation
     if (typeof nodeTag !== 'string') {
       return null
@@ -136,22 +117,18 @@ function registerPortCandidateProvider(graph) {
     return null
   })
 }
-
 /**
  * Creates the sample graph for this demo.
- * @param {!GraphComponent} graphComponent The given graphComponent
+ * @param graphComponent The given graphComponent
  */
 function createSampleGraph(graphComponent) {
   const graph = graphComponent.graph
-
   createNode(graph, 100, 100, 80, 30, 'demo-red', 'red', 'No Edge')
   createNode(graph, 350, 200, 80, 30, 'demo-red', 'red', 'No Edge')
   createNode(graph, 350, 100, 80, 30, 'demo-green', 'green', 'Green Only')
   createNode(graph, 100, 200, 80, 30, 'demo-green', 'green', 'Green Only')
-
   const blue1 = createNode(graph, 100, 300, 80, 30, 'demo-lightblue', 'blue', 'One   Port')
   graph.addPortAt(blue1, blue1.layout.center)
-
   const blue2 = createNode(graph, 350, 300, 100, 100, 'demo-lightblue', 'blue', 'Many Ports')
   const portCandidateProvider = IPortCandidateProvider.fromShapeGeometry(blue2, 0, 0.25, 0.5, 0.75)
   const candidates = portCandidateProvider.getAllSourcePortCandidates(
@@ -160,25 +137,21 @@ function createSampleGraph(graphComponent) {
   candidates
     .filter((portCandidate) => portCandidate.validity !== PortCandidateValidity.DYNAMIC)
     .forEach((portCandidate) => portCandidate.createPort(graphComponent.inputModeContext))
-
   // The orange node
   createNode(graph, 100, 400, 100, 100, 'demo-orange', 'orange', 'Dynamic Ports')
-
   // clear undo after initial graph loading
   graph.undoEngine.clear()
 }
-
 /**
  * Creates a sample node for this demo.
- * @param {!IGraph} graph The given graph
- * @param {number} x The node's x-coordinate
- * @param {number} y The node's y-coordinate
- * @param {number} w The node's width
- * @param {number} h The node's height
- * @param {!ColorSetName} colorSet The color set name
- * @param {!string} tag The tag to identify the port candidate provider
- * @param {!string} labelText The nodes label's text
- * @returns {!INode}
+ * @param graph The given graph
+ * @param x The node's x-coordinate
+ * @param y The node's y-coordinate
+ * @param w The node's width
+ * @param h The node's height
+ * @param colorSet The color set name
+ * @param tag The tag to identify the port candidate provider
+ * @param labelText The nodes label's text
  */
 function createNode(graph, x, y, w, h, colorSet, tag, labelText) {
   const node = graph.createNode({
@@ -193,5 +166,4 @@ function createNode(graph, x, y, w, h, colorSet, tag, labelText) {
   })
   return node
 }
-
 run().then(finishLoading)

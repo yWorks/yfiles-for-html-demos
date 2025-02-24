@@ -1,5 +1,5 @@
 {
-  "name": "angular-component-node-style-demo-for-yfiles-for-html",
+  "name": "@yfiles/angular-component-node-style-demo-for-yfiles-for-html",
   "version": "1.0.0",
   "scripts": {
     "start": "ng serve",
@@ -19,8 +19,8 @@
     "@angular/router": "^16.2.12",
     "rxjs": "~7.8.1",
     "tslib": "^2.5.3",
-    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz",
-    "zone.js": "~0.13.1"
+    "zone.js": "~0.13.1",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
   },
   "devDependencies": {
     "@angular-builders/custom-webpack": "^16.0.0",

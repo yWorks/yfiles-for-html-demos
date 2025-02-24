@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,6 +30,8 @@
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
      //
      ////////////////////////////////////////////////////////////////////////-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Table Editor Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
@@ -89,7 +89,6 @@
         opacity: 0;
       }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -114,8 +113,16 @@
 
     <div class="demo-page__toolbar">
       <button data-command="NEW"></button>
-      <button data-command="OPEN"></button>
-      <button data-command="SAVE"></button>
+      <button
+        id="open-file-button"
+        title="Open a GraphML file"
+        class="demo-icon-yIconOpen labeled"
+      ></button>
+      <button
+        id="save-button"
+        title="Save a GraphML file"
+        class="demo-icon-yIconSave labeled"
+      ></button>
 
       <span class="demo-separator"></span>
 
@@ -155,11 +162,11 @@
         <ul>
           <li>
             Select a row or column by clicking on its header. Multiple rows or columns can be
-            selected by keeping <code>Ctrl</code> pressed. Note that selecting a graph element will
+            selected by keeping <kbd>Ctrl</kbd> pressed. Note that selecting a graph element will
             clear the table selection and vice versa.
           </li>
           <li>
-            Press <code>F2</code> to edit the label of a selected stripe. Enter an empty text to
+            Press <kbd>F2</kbd> to edit the label of a selected stripe. Enter an empty text to
             remove the label.
           </li>
           <li>Press the right mouse button on a stripe header to activate a context menu.</li>
@@ -176,7 +183,7 @@
             onto a table.
           </li>
           <li>
-            Delete selected items using the <code>Delete</code> key. Children will be reparented to
+            Delete selected items using the <kbd>Delete</kbd> key. Children will be reparented to
             the deleted stripe's parent. The parent and/or the siblings are resized to disturb the
             overall table layout as little as possible.
           </li>
@@ -197,11 +204,11 @@
             bottom/to the right.
           </li>
           <li>
-            Press <code>Shift</code> at the beginning of the gesture to redistribute the sizes of
-            the two attached stripes.
+            Press <kbd>Shift</kbd> at the beginning of the gesture to redistribute the sizes of the
+            two attached stripes.
           </li>
           <li>
-            By default, stripe borders cannot be dragged over content nodes. Press <code>Ctrl</code>
+            By default, stripe borders cannot be dragged over content nodes. Press <kbd>Ctrl</kbd>
             at the beginning of the resize gesture to resize the stripes freely.
           </li>
           <li>Resizing the table node will resize the outermost stripe(s) accordingly.</li>
@@ -210,7 +217,7 @@
         <h2>Automatic Layout</h2>
         <ul>
           <li>
-            Calculate a new hierarchic layout for the tables and their contents by pressing the
+            Calculate a new hierarchical layout for the tables and their contents by pressing the
             layout button.
           </li>
         </ul>

@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,20 +31,22 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Flowchart Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="./option-panel/option-panel.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
-
     <style>
-      .demo-dnd-panel {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-auto-rows: max-content;
-        gap: 0 0;
+      .yfiles-drag {
+        z-index: 15;
+        opacity: 0.35;
+        transition: opacity 0.2s ease-in-out;
+      }
+      .yfiles-drag.hidden {
+        opacity: 0;
       }
     </style>
   </head>
@@ -72,8 +72,16 @@
     </header>
 
     <div class="demo-page__toolbar">
-      <button data-command="OPEN"></button>
-      <button data-command="SAVE"></button>
+      <button
+        id="open-file-button"
+        title="Open a GraphML file"
+        class="demo-icon-yIconOpen labeled"
+      ></button>
+      <button
+        id="save-button"
+        title="Save a GraphML file"
+        class="demo-icon-yIconSave labeled"
+      ></button>
 
       <span class="demo-separator"></span>
 
@@ -104,7 +112,7 @@
 
         <h2>Flowchart Layout</h2>
         There is an adjusted
-        <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>
+        <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a>
         which considers some flowchart specialities.
         <ul>
           <li>

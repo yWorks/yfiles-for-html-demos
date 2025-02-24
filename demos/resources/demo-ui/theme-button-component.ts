@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-const themeDarkIcon = new URL('../../resources/icons/theme-dark.svg', import.meta.url)
-const themeLightIcon = new URL('../../resources/icons/theme-light.svg', import.meta.url)
+const themeDarkIcon = new URL('../icons/theme-dark.svg', import.meta.url)
+const themeLightIcon = new URL('../icons/theme-light.svg', import.meta.url)
 
 const template = document.createElement('template')
 template.innerHTML = `

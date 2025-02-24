@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,25 +34,25 @@ import {
   GraphModelManager,
   IBoundsProvider,
   type ICanvasContext,
-  type ICanvasObject,
-  ICanvasObjectDescriptor,
-  type ICanvasObjectGroup,
   IEdge,
   IHitTestable,
   type IInputModeContext,
   type IModelItem,
   INode,
   InputModeBase,
+  IObjectRenderer,
   type IRenderContext,
+  type IRenderTreeElement,
+  type IRenderTreeGroup,
   IVisibilityTestable,
   IVisualCreator,
-  MouseButtons,
-  type MouseEventArgs,
   Point,
+  PointerButtons,
+  type PointerEventArgs,
   type Rect,
   SvgVisual,
   type Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getColorForComponent } from '../styles'
 import { getTag, type Tag } from '../demo-types'
 
@@ -68,11 +68,11 @@ export class ComponentSwitchingInputMode extends InputModeBase {
   /** The {@link GraphModelManager} that shows an overlay for potentially every node. */
   private modelManager?: GraphModelManager
   /** The canvas object group into which the overlays are rendered. */
-  private canvasObjectGroup?: ICanvasObjectGroup
+  private renderTreeGroup?: IRenderTreeGroup
   /** The node currently hovered over, showing an extended popup for selecting the displayed component. */
   hoveredNode?: INode
   /** The canvas object for the popup on a hovered node */
-  private popupCanvasObject?: ICanvasObject
+  private popupRenderTreeElement?: IRenderTreeElement
 
   // Input event listeners; we need to bind them once, so we can remove them later again.
   private readonly mouseMovedHandler = this.onMouseMoved.bind(this)
@@ -84,38 +84,40 @@ export class ComponentSwitchingInputMode extends InputModeBase {
     const graphComponent = context.canvasComponent as GraphComponent
 
     // Add custom node overlays where multiple components are present
-    this.canvasObjectGroup = context.canvasComponent!.rootGroup.addGroup()
+    const renderTree = context.canvasComponent!.renderTree
+    this.renderTreeGroup = renderTree.createGroup(renderTree.rootGroup)
     // Show them right above the graph and below the selection
-    this.canvasObjectGroup.below(graphComponent.selectionGroup)
+    this.renderTreeGroup.below(renderTree.selectionGroup)
     // We use a GraphModelManager here, which automatically keeps one visualization
     // for each graph item around.
-    this.modelManager = new GraphModelManager(null, this.canvasObjectGroup)
+    this.modelManager = new GraphModelManager()
     // Apply custom rendering for nodes
-    this.modelManager.nodeDescriptor = new ComponentOverlayDescriptor(this)
+    this.modelManager.nodeRenderer = new ComponentOverlayRenderer(this)
     // Disable all other graph items
-    this.modelManager.edgeDescriptor =
-      this.modelManager.portDescriptor =
-      this.modelManager.edgeLabelDescriptor =
-      this.modelManager.nodeLabelDescriptor =
-      this.modelManager.portLabelDescriptor =
-        ICanvasObjectDescriptor.VOID
+    this.modelManager.edgeRenderer = IObjectRenderer.VOID_OBJECT_RENDERER
+    this.modelManager.portRenderer = IObjectRenderer.VOID_OBJECT_RENDERER
+    this.modelManager.edgeLabelRenderer = IObjectRenderer.VOID_OBJECT_RENDERER
+    this.modelManager.nodeLabelRenderer = IObjectRenderer.VOID_OBJECT_RENDERER
+    this.modelManager.portLabelRenderer = IObjectRenderer.VOID_OBJECT_RENDERER
     this.modelManager.install(graphComponent, graphComponent.graph)
 
     // Input event handling
-    graphComponent.addMouseMoveListener(this.mouseMovedHandler)
-    graphComponent.addMouseLeaveListener(this.mouseLeftHandler)
-    graphComponent.addMouseClickListener(this.mouseClickedHandler)
+    graphComponent.addEventListener('pointer-move', this.mouseMovedHandler)
+    graphComponent.addEventListener('pointer-leave', this.mouseLeftHandler)
+    graphComponent.addEventListener('pointer-click', this.mouseClickedHandler)
   }
 
   uninstall(context: IInputModeContext): void {
     const graphComponent = context.canvasComponent as GraphComponent
     this.modelManager?.uninstall(graphComponent)
-    this.canvasObjectGroup?.remove()
-    this.canvasObjectGroup = undefined
+    if (this.renderTreeGroup) {
+      graphComponent.renderTree.remove(this.renderTreeGroup)
+      this.renderTreeGroup = undefined
+    }
 
-    graphComponent.removeMouseMoveListener(this.mouseMovedHandler)
-    graphComponent.removeMouseLeaveListener(this.mouseLeftHandler)
-    graphComponent.removeMouseClickListener(this.mouseClickedHandler)
+    graphComponent.removeEventListener('pointer-move', this.mouseMovedHandler)
+    graphComponent.removeEventListener('pointer-leave', this.mouseLeftHandler)
+    graphComponent.removeEventListener('pointer-click', this.mouseClickedHandler)
 
     super.uninstall(context)
   }
@@ -125,13 +127,13 @@ export class ComponentSwitchingInputMode extends InputModeBase {
    * This performs a hit-test to see what item is under the mouse pointer
    * and then proceeds accordingly, depending on what has been hit.
    */
-  private onMouseMoved(sender: GraphComponent, evt: MouseEventArgs): void {
-    const hitTest = this.hitTest(this.createChildInputModeContext(), sender.lastEventLocation)
+  private onMouseMoved(evt: PointerEventArgs, sender: GraphComponent): void {
+    const hitTest = this.hitTest(this.createInputModeContext(), sender.lastEventLocation)
     switch (hitTest.result) {
       case 'nothing':
         this.highlightComponent(null)
         this.hideFlyout()
-        this.inputModeContext?.invalidateDisplays()
+        this.parentInputModeContext?.invalidateDisplays()
         break
       case 'node':
         if (shouldShowOverlay(hitTest.item)) {
@@ -153,18 +155,19 @@ export class ComponentSwitchingInputMode extends InputModeBase {
    * Determines what item is at the given location.
    */
   private hitTest(context: IInputModeContext, location: Point): HitResult {
-    if (context.canvasComponent) {
-      for (const canvasObject of context.canvasComponent.hitElementsAt(context, location)) {
-        const userObject = canvasObject.userObject as unknown
-        if (userObject instanceof ComponentSelectionPopup) {
-          return { result: 'popup', item: userObject }
-        }
-        if (userObject instanceof INode) {
-          return { result: 'node', item: userObject }
-        }
-        if (userObject instanceof IEdge) {
-          return { result: 'edge', item: userObject }
-        }
+    for (const renderTreeElement of context.canvasComponent.renderTree.hitElementsAt(
+      location,
+      context
+    )) {
+      const userObject = renderTreeElement.tag as unknown
+      if (userObject instanceof ComponentSelectionPopup) {
+        return { result: 'popup', item: userObject }
+      }
+      if (userObject instanceof INode) {
+        return { result: 'node', item: userObject }
+      }
+      if (userObject instanceof IEdge) {
+        return { result: 'edge', item: userObject }
       }
     }
     return { result: 'nothing' }
@@ -177,22 +180,28 @@ export class ComponentSwitchingInputMode extends InputModeBase {
   private onMouseLeft(): void {
     this.highlightComponent(null)
     this.hideFlyout()
-    this.inputModeContext?.invalidateDisplays()
+    this.parentInputModeContext?.invalidateDisplays()
   }
 
   /**
    * Highlights all nodes and edges belonging to a particular component.
    */
   private highlightComponent(componentId: number | null): void {
-    const graph = this.inputModeContext?.graph
+    const graph = this.parentInputModeContext?.graph
     if (graph) {
       for (const node of graph.nodes) {
-        this.updateHighlightedComponent(getTag(node), componentId)
+        const tag = getTag(node)
+        if (tag) {
+          this.updateHighlightedComponent(tag, componentId)
+        }
       }
       for (const edge of graph.edges) {
-        this.updateHighlightedComponent(getTag(edge), componentId)
+        const tag = getTag(edge)
+        if (tag) {
+          this.updateHighlightedComponent(tag, componentId)
+        }
       }
-      this.inputModeContext?.invalidateDisplays()
+      this.parentInputModeContext!.invalidateDisplays()
     }
   }
 
@@ -213,18 +222,28 @@ export class ComponentSwitchingInputMode extends InputModeBase {
    * to select the component to display.
    */
   private showPopup(node: INode): void {
-    if (this.popupCanvasObject) {
+    if (this.popupRenderTreeElement) {
       return
     }
     this.hoveredNode = node
-    this.popupCanvasObject = this.canvasObjectGroup?.addChild(new ComponentSelectionPopup(node))
-    this.popupCanvasObject?.toBack()
+    if (this.renderTreeGroup) {
+      const componentSelectionPopup = new ComponentSelectionPopup(node)
+      this.popupRenderTreeElement =
+        this.parentInputModeContext?.canvasComponent.renderTree.createElement(
+          this.renderTreeGroup,
+          componentSelectionPopup,
+          componentSelectionPopup
+        )
+      this.popupRenderTreeElement?.toBack()
+    }
   }
 
   private hideFlyout(): void {
     this.hoveredNode = undefined
-    this.popupCanvasObject?.remove()
-    this.popupCanvasObject = undefined
+    if (this.popupRenderTreeElement) {
+      this.parentInputModeContext?.canvasComponent.renderTree.remove(this.popupRenderTreeElement)
+    }
+    this.popupRenderTreeElement = undefined
   }
 
   /**
@@ -232,9 +251,9 @@ export class ComponentSwitchingInputMode extends InputModeBase {
    * Clicking on a component color in the popup makes that component display
    * in front of others.
    */
-  private onMouseClicked(_sender: GraphComponent, evt: MouseEventArgs): void {
-    if (evt.changedButtons === MouseButtons.LEFT && this.hoveredNode) {
-      const hitTest = this.hitTest(this.createChildInputModeContext(), evt.location)
+  private onMouseClicked(evt: PointerEventArgs, _sender: GraphComponent): void {
+    if (evt.changedButtons === PointerButtons.MOUSE_LEFT && this.hoveredNode) {
+      const hitTest = this.hitTest(this.createInputModeContext(), evt.location)
       if (hitTest.result === 'popup') {
         this.requestMutex()
         const component = getCurrentComponent(hitTest.item, evt.location)
@@ -247,30 +266,36 @@ export class ComponentSwitchingInputMode extends InputModeBase {
   /**
    * Causes the given component to be rendered if it belongs to a node or edge.
    * This works by virtue of the first component in the tag being used for
-   * the node and edge colors (cf. {@link TagColoredShapeNodeStyleRenderer}).
+   * the node and edge colors (cf. {@link TagColoredShapeNodeStyle}).
    */
   private switchToComponent(component: number): void {
     // Reorder the desired component to start of the components' list,
     // so it will be highlighted for all nodes where this is a shared component
-    const graph = this.inputModeContext?.graph
-    if (graph) {
+    const graph = this.parentInputModeContext?.graph
+    if (this.parentInputModeContext && graph) {
       for (const node of graph.nodes) {
-        sortToBeginning(component, getTag(node).components)
+        const tag = getTag(node)
+        if (tag) {
+          sortToBeginning(component, tag.components)
+        }
       }
       for (const edge of graph.edges) {
-        sortToBeginning(component, getTag(edge).components)
+        const tag = getTag(edge)
+        if (tag) {
+          sortToBeginning(component, tag.components)
+        }
       }
-      this.inputModeContext?.invalidateDisplays()
+      this.parentInputModeContext.invalidateDisplays()
     }
   }
 }
 
 /**
- * A custom descriptor implementation that renders a multicolored circle for nodes
+ * A custom renderer implementation that renders a multicolored circle for nodes
  * that belong to multiple components.
  */
-class ComponentOverlayDescriptor extends BaseClass(
-  ICanvasObjectDescriptor,
+class ComponentOverlayRenderer extends BaseClass(
+  IObjectRenderer,
   IVisibilityTestable,
   IVisualCreator
 ) {
@@ -288,7 +313,7 @@ class ComponentOverlayDescriptor extends BaseClass(
       return null
     }
 
-    const tag = getTag(node)
+    const tag = getTag(node)!
     const components = getSortedComponents(tag.components)
 
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -331,7 +356,7 @@ class ComponentOverlayDescriptor extends BaseClass(
 
   updateVisual(context: IRenderContext, oldVisual: Visual | null): Visual | null {
     const node = this.node!
-    const tag = getTag(node)
+    const tag = getTag(node)!
     const components = getSortedComponents(tag.components)
     if (components.length < 2) {
       return null
@@ -367,7 +392,7 @@ class ComponentOverlayDescriptor extends BaseClass(
     } else {
       element.classList.remove('hovered')
     }
-    const tag = getTag(this.node!)
+    const tag = getTag(this.node!)!
     if (tag.highlightedComponent !== undefined) {
       element.classList.add('highlighted')
     } else {
@@ -383,28 +408,22 @@ class ComponentOverlayDescriptor extends BaseClass(
     return rectangle.intersects(node.layout.toRect().getEnlarged(node.layout.width))
   }
 
-  // ICanvasObjectDescriptor implementation - many parts are not needed at all
-
-  getBoundsProvider(forUserObject: any): IBoundsProvider {
+  getBoundsProvider(renderTag: any): IBoundsProvider {
     return IBoundsProvider.EMPTY
   }
 
-  getHitTestable(forUserObject: any): IHitTestable {
+  getHitTestable(renderTag: any): IHitTestable {
     return IHitTestable.NEVER
   }
 
-  getVisibilityTestable(forUserObject: any): IVisibilityTestable {
-    this.node = forUserObject as INode
+  getVisibilityTestable(renderTag: any): IVisibilityTestable {
+    this.node = renderTag as INode
     return this
   }
 
-  getVisualCreator(forUserObject: any): IVisualCreator {
-    this.node = forUserObject as INode
+  getVisualCreator(renderTag: any): IVisualCreator {
+    this.node = renderTag as INode
     return this
-  }
-
-  isDirty(context: ICanvasContext, canvasObject: ICanvasObject): boolean {
-    return true
   }
 }
 
@@ -413,7 +432,7 @@ class ComponentOverlayDescriptor extends BaseClass(
  */
 function shouldShowOverlay(node: INode): boolean {
   const tag = getTag(node)
-  return !tag.type && tag.components.length > 1 && tag.gradient === undefined
+  return !!tag && !tag.type && tag.components.length > 1 && tag.gradient === undefined
 }
 
 /**
@@ -466,7 +485,7 @@ function getCurrentComponent(
     return getComponentFromPopup(item, location)
   } else {
     const tag = getTag(item)
-    if (tag.components.length > 0) {
+    if (tag && tag.components.length > 0) {
       return tag.components[0]
     }
   }
@@ -474,8 +493,8 @@ function getCurrentComponent(
 }
 
 function getComponentFromPopup(popup: ComponentSelectionPopup, location: Point): number {
-  const node = popup.node
-  const tag = getTag(node)
+  const node = popup.node!
+  const tag = getTag(node)!
   const center = node.layout.center
   const up = new Point(0, -1)
   const vector = location.subtract(center)
@@ -510,12 +529,28 @@ function sortToBeginning(component: number, components: number[]): void {
 
 /**
  * Helper hit-testing object added around a node, so that we can distinguish
- * hitting a node, this popup, or nothing with a yFiles {@link ICanvasObject}-based
+ * hitting a node, this popup, or nothing with a yFiles {@link IRenderTreeElement}-based
  * hit-test.
  */
-class ComponentSelectionPopup extends BaseClass(IHitTestable) {
-  constructor(readonly node: INode) {
+class ComponentSelectionPopup extends BaseClass(IObjectRenderer, IHitTestable) {
+  constructor(public node: INode) {
     super()
+  }
+
+  getBoundsProvider(renderTag: any): IBoundsProvider {
+    return IBoundsProvider.UNBOUNDED
+  }
+
+  getHitTestable(renderTag: any): IHitTestable {
+    return this
+  }
+
+  getVisibilityTestable(renderTag: any): IVisibilityTestable {
+    return IVisibilityTestable.ALWAYS
+  }
+
+  getVisualCreator(renderTag: any): IVisualCreator {
+    return IVisualCreator.VOID_VISUAL_CREATOR
   }
 
   isHit(context: IInputModeContext, location: Point): boolean {

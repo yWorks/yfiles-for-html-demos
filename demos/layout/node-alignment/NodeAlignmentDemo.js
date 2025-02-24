@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,75 +28,49 @@
  ***************************************************************************/
 import {
   AlignmentStageAlignmentPolicy,
-  Class,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  ICanvasObjectDescriptor,
   LayoutExecutor,
   License,
   MoveInputMode,
   SimpleNode
-} from 'yfiles'
-import { createConfiguredLayoutAlgorithm, createDefaultSettings } from './configure-layout.js'
-import { SnapDistanceVisualCreator } from './SnapDistanceVisualCreator.js'
-import { sampleData } from './resources/node-alignment-data.js'
-import { DragAndDropPanel } from 'demo-utils/DragAndDropPanel'
-import { finishLoading } from 'demo-resources/demo-page'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import {
-  applyDemoTheme,
-  createDemoShapeNodeStyle,
-  initDemoStyles
-} from 'demo-resources/demo-styles'
-import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper.js'
-
-// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for 'applyLayout'.
-Class.ensure(LayoutExecutor)
-
+} from '@yfiles/yfiles'
+import { createConfiguredLayoutAlgorithm, createDefaultSettings } from './configure-layout'
+import { SnapDistanceVisualCreator } from './SnapDistanceVisualCreator'
+import { sampleData } from './resources/node-alignment-data'
+import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { createDemoShapeNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { enableSingleSelection } from './SingleSelectionHelper'
 /**
  * The settings for re-aligning the nodes in the demo's graph.
  */
 const layoutSettings = createDefaultSettings()
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
-
   // initialize the graph component
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   createSampleGraph(graphComponent.graph)
-
   // for new nodes, use colors different from the colors used for nodes in the sample graph
   initDemoStyles(graphComponent.graph)
-
   // enable undo and redo for this demo
   graphComponent.graph.undoEngineEnabled = true
-
   graphComponent.focusIndicatorManager.enabled = false
-
   // create and populate a palette component from which new nodes may be dragged and dropped
   // into the demo's graph component
   createDragPanel()
-
   // enable interactive editing as well as visible hints for areas that will result in new node
   // positions due to re-aligning nodes after dropping a node from the demo's palette into the
   // demo's graph component
   configureInteraction(graphComponent)
-
   // configure the controls for editing the layout settings used for re-aligning the nodes in the
   // demo's graph
   initializeUI(graphComponent)
-
   // center the sample graph inside the visible area
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 }
-
 /**
  * Creates and populates a palette component that provides templates for new nodes.
  * Dragging a template from the palette and dropping said template in the demo's graph component
@@ -110,10 +84,8 @@ function createDragPanel() {
   panel.maxItemWidth = 160
   panel.populatePanel(createNodeTemplates())
 }
-
 /**
  * Create the set of templates for the demo's palette panel.
- * @returns {!Array.<DragAndDropPanelItem.<INode>>}
  */
 function createNodeTemplates() {
   return [
@@ -143,25 +115,22 @@ function createNodeTemplates() {
     })
   ]
 }
-
 /**
  * Configures interactive editing.
  * Most notably, this method enables support for creating new nodes through Drag and Drop
  * operations and showing visual hints for areas that will result in new node positions due to
  * re-aligning nodes after dropping a node from the demo's palette into the demo's graph component.
- * @param {!GraphComponent} graphComponent
  */
 function configureInteraction(graphComponent) {
   // show visual hints for areas that result in new node positions due to re-aligning nodes
   // the hints are gray columns and rows in the background of the demo's graph component
-  const snapDistanceCanvasObject = graphComponent.backgroundGroup.addChild(
-    new SnapDistanceVisualCreator(),
-    ICanvasObjectDescriptor.DYNAMIC_DIRTY_INSTANCE
+  const snapDistanceRenderTreeElement = graphComponent.renderTree.createElement(
+    graphComponent.renderTree.backgroundGroup,
+    new SnapDistanceVisualCreator()
   )
-
   // create an input mode for interactive editing
   const inputMode = new GraphEditorInputMode({
-    movableItems: 'node',
+    movableSelectedItems: 'node',
     showHandleItems: 'none'
   })
   // additionally, run the alignment layout calculation whenever a new node is created
@@ -172,159 +141,134 @@ function configureInteraction(graphComponent) {
   // the positions of the nodes in the demo's graph only change if the distance between the center
   // of an existing node and the center of the new node is less than or equal to the current snap
   // distance
-  inputMode.addNodeCreatedListener(async () => alignNodes(graphComponent))
-
+  inputMode.addEventListener('node-created', async () => alignNodes(graphComponent))
   // configure the visual hints that are displayed during Drag and Drop operations
   const nodeDropInputMode = inputMode.nodeDropInputMode
-  nodeDropInputMode.addDragEnteredListener((inputNode) =>
-    initializeHints(inputNode, snapDistanceCanvasObject)
+  nodeDropInputMode.addEventListener('drag-entered', (evt, inputNode) =>
+    initializeHints(evt.context, inputNode, snapDistanceRenderTreeElement)
   )
-  nodeDropInputMode.addDragLeftListener(() => disposeHints(snapDistanceCanvasObject))
-  nodeDropInputMode.addDragDroppedListener(() => disposeHints(snapDistanceCanvasObject))
-  nodeDropInputMode.addDragOverListener((inputNode) =>
-    updateHints(inputNode, snapDistanceCanvasObject)
+  nodeDropInputMode.addEventListener('drag-left', () => disposeHints(snapDistanceRenderTreeElement))
+  nodeDropInputMode.addEventListener('drag-dropped', () =>
+    disposeHints(snapDistanceRenderTreeElement)
+  )
+  nodeDropInputMode.addEventListener('drag-over', (_, inputNode) =>
+    updateHints(inputNode, snapDistanceRenderTreeElement)
   )
   nodeDropInputMode.enabled = true
-
   // display the same visual hints when moving an existing node
-  const mim = inputMode.moveInputMode
-  mim.addDragStartedListener((inputMove) => {
-    initializeHints(inputMove, snapDistanceCanvasObject)
-
+  const mim = inputMode.moveSelectedItemsInputMode
+  mim.addEventListener('drag-started', (evt, inputMove) => {
+    initializeHints(evt.context, inputMove, snapDistanceRenderTreeElement)
     // force the graph component to render the initial state of the hints visualization
-    getGraphComponent(inputMove).updateVisual()
+    getGraphComponent(evt.context).updateVisual()
   })
-  mim.addDraggedListener((inputMove) => updateHints(inputMove, snapDistanceCanvasObject))
-  mim.addDragFinishedListener(async (inputMove) => {
-    disposeHints(snapDistanceCanvasObject)
-
+  mim.addEventListener('dragged', (_, inputMove) =>
+    updateHints(inputMove, snapDistanceRenderTreeElement)
+  )
+  mim.addEventListener('drag-finished', async (evt) => {
+    disposeHints(snapDistanceRenderTreeElement)
     // run the alignment layout calculation after a node has been moved
-    return await alignNodes(getGraphComponent(inputMove))
+    return await alignNodes(getGraphComponent(evt.context))
   })
-
   graphComponent.inputMode = inputMode
-
   // only one graph item may be selected at a time to prevent multiple nodes from being moved at
   // the same time
   enableSingleSelection(graphComponent)
 }
-
 /**
  * Starts displaying the visual hints for areas that will result in new node positions after
  * dropping or moving a node.
- * @param {!(MoveInputMode|NodeDropInputMode)} mode
- * @param {!ICanvasObject} snapDistanceCanvasObject
  */
-function initializeHints(mode, snapDistanceCanvasObject) {
+function initializeHints(context, mode, snapDistanceRenderTreeElement) {
   // the canvas object for the hints has to be marked as dirty to make yFiles rendering framework
   // request a visualization of the hints
-  snapDistanceCanvasObject.dirty = true
-
-  // calculate the columns and rows to be displayed as visual hints
-  // if a column or row contains the current mouse position, this column or row is highlighted
-  // because dropping a dragged node template at this position will result in new node positions
-  // when running the alignment layout algorithm
-  snapDistanceCanvasObject.userObject.initialize(
-    getGraphComponent(mode),
+  snapDistanceRenderTreeElement.dirty = true
+  snapDistanceRenderTreeElement.tag.initialize(
+    getGraphComponent(context),
     getNodeCenter(mode),
     layoutSettings
   )
 }
-
 /**
  * Updates the visual hints for a new positions during Drag and Drop drag and node move operations.
  * Dropping a dragged node template or ending node movement at the current position will result in
  * new node positions when running the alignment layout algorithm.
- * @param {!(MoveInputMode|NodeDropInputMode)} mode
- * @param {!ICanvasObject} snapDistanceCanvasObject
  */
-function updateHints(mode, snapDistanceCanvasObject) {
-  const SnapDistanceVisualCreator = snapDistanceCanvasObject.userObject
-  snapDistanceCanvasObject.dirty = SnapDistanceVisualCreator.updateNodeCenter(getNodeCenter(mode))
+function updateHints(mode, snapDistanceRenderTreeElement) {
+  const SnapDistanceVisualCreator = snapDistanceRenderTreeElement.tag
+  snapDistanceRenderTreeElement.dirty = SnapDistanceVisualCreator.updateNodeCenter(
+    getNodeCenter(mode)
+  )
 }
-
 /**
  * Stops displaying the visual hints for areas that will result in new node positions after
  * dropping or moving a node.
- * @param {!ICanvasObject} snapDistanceCanvasObject
  */
-function disposeHints(snapDistanceCanvasObject) {
-  snapDistanceCanvasObject.userObject.clear()
-  snapDistanceCanvasObject.dirty = true
+function disposeHints(snapDistanceRenderTreeElement) {
+  snapDistanceRenderTreeElement.tag.clear()
+  snapDistanceRenderTreeElement.dirty = true
 }
-
 /**
  * Retrieves the graph component associated to the given input mode.
- * @param {!(MoveInputMode|NodeDropInputMode)} mode
- * @returns {!GraphComponent}
  */
-function getGraphComponent(mode) {
-  return mode.inputModeContext.canvasComponent
+function getGraphComponent(context) {
+  return context.canvasComponent
 }
-
 /**
  * Determines the node center for updating the visual hints for areas that will result in new node
  * positions after dropping or moving a node.
- * @param {!(MoveInputMode|NodeDropInputMode)} mode
- * @returns {!IPoint}
  */
 function getNodeCenter(mode) {
   if (mode instanceof MoveInputMode) {
     const node = mode.affectedItems.first()
     return node.layout.center
   } else {
-    return mode.mousePosition
+    return mode.pointerPosition
   }
 }
-
 /**
  * Runs the alignment layout calculation for the graph in the given graph component.
  * This method is called whenever a new node is created in said graph.
- * @param {!GraphComponent} graphComponent
- * @returns {!Promise}
  */
 async function alignNodes(graphComponent) {
   const algorithm = createConfiguredLayoutAlgorithm(layoutSettings)
-  await graphComponent.morphLayout({ layout: algorithm, animateViewport: false })
+  const layoutExecutor = new LayoutExecutor({
+    graphComponent,
+    layout: algorithm,
+    animateViewport: false,
+    animationDuration: '0.5s'
+  })
+  await layoutExecutor.start()
 }
-
 /**
  * Creates a sample graph for this demo.
- * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
   // for sample nodes, use colors different from the colors used for new nodes created later
   initDemoStyles(graph, { theme: 'demo-lightblue' })
-
   const graphBuilder = new GraphBuilder(graph)
-
   // create nodes
   graphBuilder.createNodesSource({
     data: sampleData.nodes,
     id: 'id',
     layout: 'layout'
   })
-
   // create edges
   graphBuilder.createEdgesSource({
     data: sampleData.edges,
     sourceId: 'source',
     targetId: 'target'
   })
-
   graphBuilder.buildGraph()
 }
-
 /**
  * Adds event listeners to the controls for editing the demo's layout settings that update said
  * settings and start the alignment layout calculation whenever a setting is changed.
- * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
   document
     .querySelector('#align-nodes-button')
     .addEventListener('click', async () => await alignNodes(graphComponent))
-
   const alignmentControl = document.querySelector('#alignment-policy')
   alignmentControl.selectedIndex = indexOf(alignmentControl, layoutSettings.alignmentPolicy)
   alignmentControl.addEventListener('change', async () => {
@@ -333,21 +277,18 @@ function initializeUI(graphComponent) {
     layoutSettings.alignmentPolicy = policy
     await alignNodes(graphComponent)
   })
-
   const nodeDistanceControl = document.querySelector('#minimum-node-distance')
   nodeDistanceControl.value = `${layoutSettings.minimumNodeDistance}`
   nodeDistanceControl.addEventListener('change', async () => {
     layoutSettings.minimumNodeDistance = parseValue(nodeDistanceControl.value)
     await alignNodes(graphComponent)
   })
-
   const snapDistanceControl = document.querySelector('#snap-distance')
   snapDistanceControl.value = `${layoutSettings.snapDistance}`
   snapDistanceControl.addEventListener('change', async () => {
     layoutSettings.snapDistance = parseValue(snapDistanceControl.value)
     await alignNodes(graphComponent)
   })
-
   const separateStripesControl = document.querySelector('#separate-stripes')
   separateStripesControl.checked = layoutSettings.separateStripes
   separateStripesControl.addEventListener('change', async () => {
@@ -355,19 +296,14 @@ function initializeUI(graphComponent) {
     await alignNodes(graphComponent)
   })
 }
-
 /**
  * Determines the index of the option that corresponds to the given
  * {@link AlignmentStageAlignmentPolicy} value.
- * @param {!HTMLSelectElement} select
- * @param {!AlignmentStageAlignmentPolicy} policy
- * @returns {number}
  */
 function indexOf(select, policy) {
   let idx = -1
   for (const option of select.options) {
     ++idx
-
     const value = option.value
     if (AlignmentStageAlignmentPolicy[value] === policy) {
       return idx
@@ -375,14 +311,10 @@ function indexOf(select, policy) {
   }
   return idx
 }
-
 /**
  * Parses the given string as non-negative number.
- * @param {!string} value
- * @returns {number}
  */
 function parseValue(value) {
   return Math.max(0, Number.parseFloat(value))
 }
-
 void run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent } from 'yfiles'
-
-/**
- * @param {!GraphComponent} graphComponent
- */
+import { GraphComponent } from '@yfiles/yfiles'
 export function configureGraphEvents(graphComponent) {
   // trigger a re-rendering of the graph when a node tag changed to have the labels reflect the data
-  graphComponent.graph.addNodeTagChangedListener(() => {
+  graphComponent.graph.addEventListener('node-tag-changed', () => {
     graphComponent.invalidate()
   })
 }

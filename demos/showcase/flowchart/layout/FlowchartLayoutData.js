@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,19 +31,17 @@ import {
   GroupNodeStyle,
   IEdge,
   INode,
-  PortConstraintKeys,
+  LayoutKeys,
   TableNodeStyle
-} from 'yfiles'
-
-import { FlowchartNodeStyle, FlowchartNodeType } from '../style/FlowchartStyle.js'
-import { EDGE_TYPE_DP_KEY, EdgeType, NODE_TYPE_DP_KEY, NodeType } from './flowchart-elements.js'
-
-import { BranchDirection, FlowchartLayout } from './FlowchartLayout.js'
-
-/**
- * @typedef {('optimized'|'none'|'all')} InEdgeGrouping
- */
-
+} from '@yfiles/yfiles'
+import { FlowchartNodeStyle, FlowchartNodeType } from '../style/FlowchartStyle'
+import {
+  EDGE_TYPE_DATA_KEY,
+  MultiPageEdgeType,
+  MultiPageNodeType,
+  NODE_TYPE_DATA_KEY
+} from './flowchart-elements'
+import { BranchDirection, FlowchartLayout } from './FlowchartLayout'
 const nodeActivityElements = new Set([
   FlowchartNodeType.Process,
   FlowchartNodeType.PredefinedProcess,
@@ -77,7 +75,6 @@ const nodeReferenceElements = new Set([
   FlowchartNodeType.OffPageReference
 ])
 const nodeStartElements = new Set([FlowchartNodeType.Start1, FlowchartNodeType.Start2])
-
 /**
  * Prepares flowchart specific layout hints for the flowchart styles and configures
  * the preferred direction of decision nodes' outgoing edges ('branch' edges).
@@ -88,105 +85,85 @@ export class FlowchartLayoutData {
   $preferredNegativeBranchDirection = 0
   $adjustedPositiveBranchDirection = 0
   $adjustedNegativeBranchDirection = 0
-
   constructor() {
     this.preferredPositiveBranchDirection = BranchDirection.WithTheFlow
     this.preferredNegativeBranchDirection = BranchDirection.Flatwise
   }
-
   /**
    * The label text that defines a negative branch.
    */
   negativeBranchLabel = 'No'
-
   /**
    * The label text that defines a positive branch.
    */
   positiveBranchLabel = 'Yes'
-
   /**
    * Returns the preferred direction for negative branches.
    * @returns the preferred direction for negative branches.
-   * @type {!BranchDirection}
    */
   get preferredNegativeBranchDirection() {
     return this.$preferredNegativeBranchDirection
   }
-
   /**
    * Sets the preferred direction for negative branches.
    * @param direction the preferred direction for negative branches.
-   * @type {!BranchDirection}
    */
   set preferredNegativeBranchDirection(direction) {
     this.$preferredNegativeBranchDirection = direction
     this.$adjustedPositiveBranchDirection = this.calculateAdjustedPositiveBranchDirection()
     this.$adjustedNegativeBranchDirection = this.calculateAdjustedNegativeBranchDirection()
   }
-
   /**
    * Returns the preferred direction for positive branches.
    * @returns the preferred direction for positive branches.
-   * @type {!BranchDirection}
    */
   get preferredPositiveBranchDirection() {
     return this.$preferredPositiveBranchDirection
   }
-
   /**
    * Sets the preferred direction for positive branches.
    * @param direction the preferred direction for positive branches.
-   * @type {!BranchDirection}
    */
   set preferredPositiveBranchDirection(direction) {
     this.$preferredPositiveBranchDirection = direction
     this.$adjustedPositiveBranchDirection = this.calculateAdjustedPositiveBranchDirection()
     this.$adjustedNegativeBranchDirection = this.calculateAdjustedNegativeBranchDirection()
   }
-
   /**
    * Returns the adjusted direction that is set to negative branches. If the preferred positive and negative branches
    * interfere, this class adjusts them.
    * @returns the adjusted direction that is set to negative branches.
-   * @type {!BranchDirection}
    */
   get adjustedNegativeBranchDirection() {
     return this.$adjustedNegativeBranchDirection
   }
-
   /**
    * Returns the adjusted direction that is set to positive branches. If the preferred positive and negative branches
    * interfere, this class adjusts them.
    * @returns the adjusted direction that is set to positive branches.
-   * @type {!BranchDirection}
    */
   get adjustedPositiveBranchDirection() {
     return this.$adjustedPositiveBranchDirection
   }
-
   /**
    * Specifies in which way incoming-edges are grouped. There is either no grouping, a full grouping or an optimized
    * grouping. The optimized grouping keeps the edges centered at the four sides of the node like in most flowchart
    * diagrams.
    */
   inEdgeGrouping = 'optimized'
-
   /**
    * Returns the flow direction for negative branches
    * according to the {@link FlowchartLayoutData.preferredNegativeBranchDirection}
    * and the {@link FlowchartLayoutData.adjustedNegativeBranchDirection}.
-   * @returns {!BranchDirection}
    */
   calculateAdjustedNegativeBranchDirection() {
     const positiveDir = this.adjustedPositiveBranchDirection
     const negativeDir = this.preferredNegativeBranchDirection
-
     switch (negativeDir) {
       case BranchDirection.Straight:
         return positiveDir !== BranchDirection.WithTheFlow
           ? BranchDirection.WithTheFlow
           : BranchDirection.Flatwise
-
       case BranchDirection.Flatwise:
         if (positiveDir === BranchDirection.RightInFlow) {
           return BranchDirection.LeftInFlow
@@ -194,25 +171,20 @@ export class FlowchartLayoutData {
           return BranchDirection.RightInFlow
         }
         return negativeDir
-
       default:
       case BranchDirection.AgainstTheFlow:
         return BranchDirection.Undefined
       case BranchDirection.WithTheFlow:
         return positiveDir !== negativeDir ? negativeDir : BranchDirection.Flatwise
-
       case BranchDirection.LeftInFlow:
         return positiveDir !== negativeDir ? negativeDir : BranchDirection.RightInFlow
-
       case BranchDirection.RightInFlow:
         return positiveDir !== negativeDir ? negativeDir : BranchDirection.LeftInFlow
     }
   }
-
   /**
    * Returns the flow direction for positive branches
    * according to the {@link FlowchartLayoutData.preferredPositiveBranchDirection}.
-   * @returns {!BranchDirection}
    */
   calculateAdjustedPositiveBranchDirection() {
     switch (this.preferredPositiveBranchDirection) {
@@ -231,28 +203,15 @@ export class FlowchartLayoutData {
         return this.preferredPositiveBranchDirection
     }
   }
-
   /**
    * Creates the layout data for FlowChart layout
-   * @param {!IGraph} graph
-   * @returns {!LayoutData}
    */
   create(graph) {
     const data = new GenericLayoutData()
-
-    data.addEdgeItemMapping(FlowchartLayout.PREFERRED_DIRECTION_DP_KEY).delegate = (edge) =>
+    data.addItemMapping(FlowchartLayout.PREFERRED_DIRECTION_DATA_KEY).mapperFunction = (edge) =>
       this.getBranchType(edge)
-
-    data.addNodeItemMapping(NODE_TYPE_DP_KEY).delegate = (node) => this.getType(node)
-    data.addEdgeItemMapping(EDGE_TYPE_DP_KEY).delegate = (edge) => this.getType(edge)
-
-    if (graph.groupingSupport.hasGroupNodes()) {
-      data.addLabelItemMapping(FlowchartLayout.LABEL_LAYOUT_DP_KEY).delegate = (label) => {
-        const node = label.owner
-        return node instanceof INode && label === node.labels.at(0) && !graph.isGroupNode(node)
-      }
-    }
-
+    data.addItemMapping(NODE_TYPE_DATA_KEY).mapperFunction = (node) => this.getType(node)
+    data.addItemMapping(EDGE_TYPE_DATA_KEY).mapperFunction = (edge) => this.getType(edge)
     if (this.inEdgeGrouping !== 'none') {
       let inDegreeThreshold
       let degreeThreshold
@@ -263,8 +222,7 @@ export class FlowchartLayoutData {
         inDegreeThreshold = 3
         degreeThreshold = 4
       }
-
-      data.addEdgeItemMapping(PortConstraintKeys.TARGET_GROUP_ID_DP_KEY).delegate = (edge) => {
+      data.addItemMapping(LayoutKeys.TARGET_EDGE_GROUP_ID_DATA_KEY).mapperFunction = (edge) => {
         const node = edge.targetNode
         return graph.inDegree(node) >= 2 &&
           graph.inDegree(node) >= inDegreeThreshold &&
@@ -275,55 +233,51 @@ export class FlowchartLayoutData {
     }
     return data
   }
-
   /**
    * Returns the flowchart element type of the given model item.
-   * @returns {number} one of the node type constants in the FlowchartElements file.
-   * @param {!IModelItem} item
+   * @returns one of the node type constants in the FlowchartElements file.
    */
   getType(item) {
     if (item instanceof INode) {
       const style = item.style
       if (style instanceof TableNodeStyle) {
-        return NodeType.Pool
+        return MultiPageNodeType.Pool
       } else if (style instanceof GroupNodeStyle) {
-        return NodeType.Group
+        return MultiPageNodeType.Group
       } else if (style instanceof FlowchartNodeStyle) {
         const type = style.type
         if (nodeActivityElements.has(type)) {
-          return NodeType.Process
+          return MultiPageNodeType.Process
         } else if (nodeDataElements.has(type)) {
-          return NodeType.Data
+          return MultiPageNodeType.Data
         } else if (nodeAnnotationElements.has(type)) {
-          return NodeType.Annotation
+          return MultiPageNodeType.Annotation
         } else if (nodeGatewayElements.has(type)) {
-          return NodeType.Decision
+          return MultiPageNodeType.Decision
         } else if (nodeEndElements.has(type)) {
-          return NodeType.EndEvent
+          return MultiPageNodeType.EndEvent
         } else if (nodeEventElements.has(type)) {
-          return NodeType.Event
+          return MultiPageNodeType.Event
         } else if (nodeReferenceElements.has(type)) {
-          return NodeType.Process
+          return MultiPageNodeType.Process
         } else if (nodeStartElements.has(type)) {
-          return NodeType.StartEvent
+          return MultiPageNodeType.StartEvent
         }
       }
     } else if (item instanceof IEdge) {
       if (
-        this.getType(item.sourceNode) === NodeType.Annotation ||
-        this.getType(item.targetNode) === NodeType.Annotation
+        this.getType(item.sourceNode) === MultiPageNodeType.Annotation ||
+        this.getType(item.targetNode) === MultiPageNodeType.Annotation
       ) {
-        return EdgeType.MessageFlow
+        return MultiPageEdgeType.MessageFlow
       }
-      return EdgeType.SequenceFlow
+      return MultiPageEdgeType.SequenceFlow
     }
-    return NodeType.Invalid
+    return MultiPageNodeType.Invalid
   }
-
   /**
    * Returns the branch type of the given edge.
-   * @returns {!BranchDirection} one of the direction constants in {@link FlowchartLayout}.
-   * @param {!IEdge} edge
+   * @returns one of the direction constants in {@link FlowchartLayout}.
    */
   getBranchType(edge) {
     if (this.isPositiveBranch(edge)) {
@@ -333,40 +287,34 @@ export class FlowchartLayoutData {
     }
     return BranchDirection.Undefined
   }
-
   /**
    * Returns whether the given edge is a positive branch. This default implementation considers an edge
    *  as a positive branch if its source is a decision and if its label text equals 'Yes' (ignoring case considerations).
-   * @param {!IEdge} edge the edge to consider.
-   * @returns {boolean} whether the given edge is a positive branch.
+   * @param edge the edge to consider.
+   * @returns whether the given edge is a positive branch.
    */
   isPositiveBranch(edge) {
     return (
-      this.getType(edge.sourceNode) === NodeType.Decision &&
+      this.getType(edge.sourceNode) === MultiPageNodeType.Decision &&
       edge.labels.size > 0 &&
       FlowchartLayoutData.isMatchingLabelText(edge.labels.first(), this.positiveBranchLabel)
     )
   }
-
   /**
    * Returns whether the given edge is a positive branch. This default implementation considers an edge
    *  as a negative branch if its source is a decision and if its label text equals 'No' (ignoring case considerations).
-   * @param {!IEdge} edge the edge to consider.
-   * @returns {boolean} whether the given edge is a negative branch.
+   * @param edge the edge to consider.
+   * @returns whether the given edge is a negative branch.
    */
   isNegativeBranch(edge) {
     return (
-      this.getType(edge.sourceNode) === NodeType.Decision &&
+      this.getType(edge.sourceNode) === MultiPageNodeType.Decision &&
       edge.labels.size > 0 &&
       FlowchartLayoutData.isMatchingLabelText(edge.labels.first(), this.negativeBranchLabel)
     )
   }
-
   /**
    * Returns true if the text of the given label equals, case ignored, the given text.
-   * @param {!ILabel} label
-   * @param {!string} text
-   * @returns {boolean}
    */
   static isMatchingLabelText(label, text) {
     return label.text.toLowerCase() === text.toLowerCase()

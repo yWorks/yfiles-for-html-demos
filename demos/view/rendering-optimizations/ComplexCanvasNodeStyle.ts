@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
  ***************************************************************************/
 import {
   GeneralPath,
-  GeomUtilities,
+  GeometryUtilities,
   HtmlCanvasVisual,
   ICanvasContext,
   IInputModeContext,
@@ -40,7 +40,7 @@ import {
   Point,
   Rect,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * A node style for HTML5 Canvas rendering with a complex visualization. Its visual complexity is
@@ -107,7 +107,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
       return false
     }
     const bounds = this.getEllipseBounds(node.layout)
-    return GeomUtilities.ellipseContains(bounds, p, context.hitTestRadius)
+    return GeometryUtilities.ellipseContains(bounds, p, context.hitTestRadius)
   }
 
   /**
@@ -132,7 +132,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
       return false
     }
 
-    if (outline.intersects(rectangle, eps)) {
+    if (outline.pathIntersects(rectangle, eps)) {
       return true
     }
     if (
@@ -159,7 +159,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
       return false
     }
     const bounds = this.getEllipseBounds(node.layout)
-    return GeomUtilities.ellipseContains(bounds, p, 0)
+    return GeometryUtilities.ellipseContains(bounds, p, 0)
   }
 
   /**
@@ -171,7 +171,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
    * @param outer The outer point of the line.
    */
   getIntersection(node: INode, inner: Point, outer: Point): Point | null {
-    return GeomUtilities.findEllipseLineIntersection(
+    return GeometryUtilities.getEllipseLineIntersection(
       this.getEllipseBounds(node.layout),
       inner,
       outer
@@ -248,6 +248,7 @@ function createColorSchemes(): ColorScheme[] {
   })
   return colorSchemes
 }
+
 /**
  * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
@@ -275,7 +276,7 @@ class NodeRenderVisual extends HtmlCanvasVisual {
    * it is a converted SVG but with a rectangular shape.
    * @see Overrides {@link HtmlCanvasVisual.paint}
    */
-  paint(context: IRenderContext, htmlCanvasContext: CanvasRenderingContext2D): void {
+  render(context: IRenderContext, htmlCanvasContext: CanvasRenderingContext2D): void {
     const l = this.layout
 
     // get the min of width and height to be able to draw the icon in a square

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,29 +26,29 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { GraphBuilderItemEventArgs } from 'yfiles'
 import {
   AdjacencyGraphBuilder,
+  type GraphBuilderItemEventArgs,
   GraphComponent,
   GraphViewerInputMode,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   IGraph,
   INode,
   InsideOutsidePortLabelModel,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   LayoutExecutor,
   License,
   PolylineEdgeStyle,
+  PortPlacementPolicy,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import { createPortAwareAdjacencyGraphBuilder, setBuilderData } from './AdjacencyGraphBuilder'
 import GraphData from './graph-builder-data'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * This demo shows how to automatically build a graph from business data using
@@ -64,7 +64,6 @@ async function run(): Promise<void> {
 
   // initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   setGraphDefaults(graphComponent.graph)
 
   // use the viewer input mode since this demo should not allow interactive graph editing
@@ -75,9 +74,9 @@ async function run(): Promise<void> {
   builder.buildGraph()
 
   // center graph in the visible area
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
-  // arrange the graph using a hierarchic layout algorithm
+  // arrange the graph using a hierarchical layout algorithm
   await arrangeGraph(graphComponent, graphComponent.graph.nodes.toArray())
 
   // register toolbar actions
@@ -97,11 +96,9 @@ async function updateGraph(graphComponent: GraphComponent, nodesSource: any[]): 
 
   // determine which nodes were added while updating the graph
   const newNodes: INode[] = []
-  const nodeCreatedListener = (
-    _: AdjacencyGraphBuilder,
-    evt: GraphBuilderItemEventArgs<INode, any>
-  ) => newNodes.push(evt.item)
-  builder.addNodeCreatedListener(nodeCreatedListener)
+  const nodeCreatedListener = (evt: GraphBuilderItemEventArgs<INode, any>) =>
+    newNodes.push(evt.item)
+  builder.addEventListener('node-created', nodeCreatedListener)
 
   // update the graph according the new (but related) data
   // this will remove nodes whose IDs are not in the new data set
@@ -109,7 +106,7 @@ async function updateGraph(graphComponent: GraphComponent, nodesSource: any[]): 
   setBuilderData(nodesSource)
   builder.updateGraph()
 
-  builder.removeNodeCreatedListener(nodeCreatedListener)
+  builder.removeEventListener('node-created', nodeCreatedListener)
 
   // hide the new items (i.e. the new nodes, the edges connected to the new nodes, their labels
   // and their ports) during the animated layout calculation
@@ -134,25 +131,24 @@ function arrangeGraph(graphComponent: GraphComponent, newNodes: INode[]): Promis
 
   const graph = graphComponent.graph
   // if there are less new nodes than there are nodes in total, calculate an incremental layout
-  // i.e. try to keep the positions of the "old" nodes while finding good positions for new nodes
+  // i.e., try to keep the positions of the "old" nodes while finding good positions for new nodes
   const arrangeIncrementally = newNodes.length < graph.nodes.size
 
-  const algorithm = new HierarchicLayout({
+  const algorithm = new HierarchicalLayout({
     layoutOrientation: 'left-to-right',
     minimumLayerDistance: 50,
-    orthogonalRouting: true,
-    layoutMode: arrangeIncrementally ? 'incremental' : 'from-scratch'
+    fromSketchMode: arrangeIncrementally
   })
-  const eld = algorithm.edgeLayoutDescriptor
+  const eld = algorithm.defaultEdgeDescriptor
   eld.minimumFirstSegmentLength = 30
   eld.minimumLastSegmentLength = 30
 
-  const hierarchicLayoutData = new HierarchicLayoutData()
+  const hierarchicalLayoutData = new HierarchicalLayoutData()
   // specify which nodes are the "new" nodes in the case of an incremental layout calculation
   // i.e. for which nodes the algorithm needs to calculate layer assignment and sequence order
   // for "old" nodes, the algorithm will determine layer and sequence from their current positions
   if (arrangeIncrementally) {
-    hierarchicLayoutData.incrementalHints.incrementalLayeringNodes = newNodes
+    hierarchicalLayoutData.incrementalNodes = newNodes
   }
 
   // arrange the graph with the chosen layout algorithm
@@ -160,10 +156,10 @@ function arrangeGraph(graphComponent: GraphComponent, newNodes: INode[]): Promis
     graphComponent: graphComponent,
     graph: graph,
     layout: algorithm,
-    layoutData: hierarchicLayoutData,
-    fixPorts: true,
+    layoutData: hierarchicalLayoutData,
+    portPlacementPolicies: PortPlacementPolicy.KEEP_PARAMETER,
     animateViewport: true,
-    duration: '0.5s'
+    animationDuration: '0.5s'
   })
     .start()
     .finally(() => {
@@ -176,9 +172,9 @@ function arrangeGraph(graphComponent: GraphComponent, newNodes: INode[]): Promis
  */
 function setGraphDefaults(graph: IGraph) {
   graph.nodeDefaults.size = new Size(100, 160)
-  graph.nodeDefaults.labels.layoutParameter = new InteriorLabelModel({ insets: 5 }).createParameter(
-    'south'
-  )
+  graph.nodeDefaults.labels.layoutParameter = new InteriorNodeLabelModel({
+    padding: 5
+  }).createParameter('bottom')
   graph.nodeDefaults.labels.shareLayoutParameterInstance = true
 
   // we want to keep the ports

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,33 +26,29 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import DecisionTree from './DecisionTree.js'
-import {
-  getRootNode,
-  readSampleGraph,
-  setAsRootNode
-} from '../editor-component/editor-component.js'
-import { ICommand } from 'yfiles'
-import { addNavigationButtons } from 'demo-resources/demo-page'
+import DecisionTree from './DecisionTree'
+import { getRootNode, readSampleGraph, setAsRootNode } from '../editor-component/editor-component'
+import { Command } from '@yfiles/yfiles'
+import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
 import './decision-tree.css'
-
-/** @type {DecisionTree} */
 let decisionTree
-
 /**
  * Initializes the decision tree component.
  * Wires-up the buttons in the toolbar of the decision tree component.
- * @param {!GraphComponent} graphComponent the editor graph component
+ * @param graphComponent the editor graph component
  */
 export function initializeDecisionTreeComponent(graphComponent) {
   document.querySelector('#restart').addEventListener('click', () => {
     showDecisionTree(graphComponent.graph)
   })
-  bindCommand('INCREASE_ZOOM_DECISION_TREE', ICommand.INCREASE_ZOOM)
-  bindCommand('DECREASE_ZOOM_DECISION_TREE', ICommand.DECREASE_ZOOM)
-  bindCommand('FIT_GRAPH_BOUNDS_DECISION_TREE', ICommand.FIT_GRAPH_BOUNDS)
-  bindCommand('ZOOM_ORIGINAL_DECISION_TREE', ICommand.ZOOM, 1)
-
+  bindCommand('INCREASE_ZOOM_DECISION_TREE', Command.INCREASE_ZOOM)
+  bindCommand('DECREASE_ZOOM_DECISION_TREE', Command.DECREASE_ZOOM)
+  document
+    .querySelector("button[data-command='FIT_GRAPH_BOUNDS']")
+    .addEventListener('click', async () => {
+      await graphComponent.fitGraphBounds()
+    })
+  bindCommand('ZOOM_ORIGINAL_DECISION_TREE', Command.ZOOM, 1)
   // add the sample graphs
   const samples = document.querySelector('#samples')
   ;['cars', 'what-to-do', 'quiz'].forEach((graph) => {
@@ -67,10 +63,8 @@ export function initializeDecisionTreeComponent(graphComponent) {
     showDecisionTree(graphComponent.graph)
   })
 }
-
 /**
  * Creates a new decision tree based on the given graph.
- * @param {!IGraph} graph
  */
 export function showDecisionTree(graph) {
   hideDecisionTree()
@@ -84,13 +78,12 @@ export function showDecisionTree(graph) {
       setLayoutRunning,
       setLayoutRunning
     )
-  } catch (error) {
+  } catch {
     alert(
       'No suitable root node found. The root node is a node with no incoming edges, if not specified explicitly.'
     )
   }
 }
-
 /**
  * Disposes and hides the decision tree.
  */
@@ -101,11 +94,10 @@ export function hideDecisionTree() {
     decisionTree = null
   }
 }
-
 /**
  * Updates the demo's UI depending on whether a layout is currently calculated.
- * @param {boolean} running true indicates that a layout is currently calculated
- * @param {!GraphComponent} graphComponent the decision tree graph component
+ * @param running true indicates that a layout is currently calculated
+ * @param graphComponent the decision tree graph component
  */
 function setLayoutRunning(running, graphComponent) {
   graphComponent.inputMode.waitInputMode.waiting = running
@@ -113,20 +105,16 @@ function setLayoutRunning(running, graphComponent) {
     element.disabled = running
   })
 }
-
 /**
  * Binds the given command and command parameter to the {@link HTMLButtonElement} that matches the
  * given <code>data-command</code> name in the decision tree's toolbar.
- * @param {!string} name
- * @param {!ICommand} command
- * @param {?number} [parameter=null]
  */
 function bindCommand(name, command, parameter = null) {
   document
     .querySelector(`#decision-tree-toolbar button[data-command='${name}']`)
     .addEventListener('click', () => {
       if (decisionTree) {
-        command.execute(parameter, decisionTree.graphComponent)
+        decisionTree.graphComponent.executeCommand(command, parameter)
       }
     })
 }

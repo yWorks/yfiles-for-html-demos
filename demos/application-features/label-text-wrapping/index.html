@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Label Text Wrapping - Application Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -67,7 +65,7 @@
       <span class="demo-separator"></span>
       <select title="Select the render mode to use" id="render-modes">
         <option value="svg">SVG Style</option>
-        <option value="webgl">WebGL2 Style</option>
+        <option value="webgl">WebGL Style</option>
       </select>
     </div>
     <aside class="demo-page__description">
@@ -87,19 +85,19 @@
 
         <p>
           This demo shows how to enable the text wrapping and trimming feature provided by the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultLabelStyle" target="_blank">DefaultLabelStyle</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle" target="_blank">LabelStyle</a>
           class. The options include
-          <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultLabelStyle#wrapping" target="_blank">wrapping</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle#wrapping" target="_blank">wrapping</a>
           at character or at word bounds, both with or without ellipsis.
         </p>
         <p>
           Aside from wrapping in rectangular shapes, the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultLabelStyle#textWrappingShape" target="_blank">textWrappingShape</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle#textWrappingShape" target="_blank">textWrappingShape</a>
           property allows for wrapping in many more shapes like triangle, hexagon or ellipse. This
           can be combined with
-          <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultLabelStyle#textWrappingPadding" target="_blank">padding</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle#textWrappingPadding" target="_blank">padding</a>
           and
-          <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultLabelStyle#insets" target="_blank">insets</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle#insets" target="_blank">insets</a>
           to fine-tune the wrapping.
         </p>
 
@@ -111,6 +109,14 @@
           <li>
             Try the right to left text direction. This will rebuild the graph with Hebrew text
             labels.
+          </li>
+          <li>
+            Switch between SVG and WebGL rendering and observe that the styles are automatically
+            converted. Note that in WebGL, the
+            <a href="https://docs.yworks.com/yfileshtml/#/api/WebGLLabelStyle#textWrappingPadding" target="_blank">textWrappingPadding</a> and
+            <a href="https://docs.yworks.com/yfileshtml/#/api/WebGLLabelStyle#padding" target="_blank">padding</a> properties are numbers, not of type
+            <a href="https://docs.yworks.com/yfileshtml/#/api/Insets" target="_blank"></a>, like the corresponding properties of
+            <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle" target="_blank"></a>.
           </li>
         </ul>
 

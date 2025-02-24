@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,18 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphViewerInputMode, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { loadLayoutSampleGraph } from 'demo-utils/LoadLayoutFeaturesSampleGraph'
+import { GraphComponent, GraphViewerInputMode, LayoutExecutor, License } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { loadLayoutSampleGraph } from '@yfiles/demo-utils/LoadLayoutFeaturesSampleGraph'
 import { createFeatureLayoutConfiguration } from './CompactTabularLayout'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphViewerInputMode()
 
   // load the graph and run the layout
@@ -48,8 +46,12 @@ async function run(): Promise<void> {
 }
 
 async function runLayout(graphComponent: GraphComponent): Promise<void> {
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
+
   const { layout, layoutData } = createFeatureLayoutConfiguration(graphComponent.graph)
-  await graphComponent.morphLayout(layout, '0.5s', layoutData)
+  await graphComponent.applyLayoutAnimated(layout, '0.5s', layoutData)
 }
 
 function initializeUI(graphComponent: GraphComponent): void {

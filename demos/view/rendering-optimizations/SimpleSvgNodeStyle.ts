@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,13 +36,24 @@ import {
   Point,
   Rect,
   SvgVisual,
-  Visual
-} from 'yfiles'
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
+
+/**
+ * Augment the SvgVisual type with the data used to cache the rendering information
+ */
+type Cache = {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+type SimpleSvgNodeStyleVisual = TaggedSvgVisual<SVGRectElement, Cache>
 
 /**
  * A simple SVG node style consisting of one filled rect element.
  */
-export default class SimpleSvgNodeStyle extends NodeStyleBase {
+export default class SimpleSvgNodeStyle extends NodeStyleBase<SimpleSvgNodeStyleVisual> {
   /**
    * Constructs a node style with the given color or a magenta node style if no color is defined.
    * @param color The fill color for the node.
@@ -59,7 +70,7 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
    * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SimpleSvgNodeStyle.updateVisual}
    */
-  createVisual(context: IRenderContext, node: INode): Visual {
+  createVisual(context: IRenderContext, node: INode): SimpleSvgNodeStyleVisual {
     const { x, y, width, height } = node.layout
     const color = this.color!
 
@@ -73,9 +84,7 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
     SvgVisual.setTranslate(rect, x, y)
 
     // store the data with which we created the rect so we can efficiently update it later
-    ;(rect as any)['data-cache'] = { x, y, width, height }
-
-    return new SvgVisual(rect)
+    return SvgVisual.from(rect, { x, y, width, height })
   }
 
   /**
@@ -87,13 +96,17 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
    * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SimpleSvgNodeStyle.createVisual}
    */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): Visual {
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: SimpleSvgNodeStyleVisual,
+    node: INode
+  ): SimpleSvgNodeStyleVisual {
     const { x, y, width, height } = node.layout
     // get the rect element
     const rect = oldVisual.svgElement
 
     // get the cache we stored in CreateVisual
-    const cache = (rect as any)['data-cache']
+    const cache = oldVisual.tag
 
     // update width and height only if necessary
     if (cache.width !== width || cache.height !== height) {
@@ -122,7 +135,7 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
    * @param node The node that may be hit.
    */
   isHit(context: IInputModeContext, p: Point, node: INode): boolean {
-    return node.layout.toRect().containsWithEps(p, context.hitTestRadius)
+    return node.layout.toRect().contains(p, context.hitTestRadius)
   }
 
   /**
@@ -157,6 +170,6 @@ export default class SimpleSvgNodeStyle extends NodeStyleBase {
    * @param node The node that may be in the rectangle.
    */
   isInBox(context: IInputModeContext, rectangle: Rect, node: INode): boolean {
-    return rectangle.contains(node.layout)
+    return rectangle.containsRectangle(node.layout)
   }
 }

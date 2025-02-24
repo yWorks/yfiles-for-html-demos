@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,8 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
   GraphBuilder,
@@ -36,41 +34,39 @@ import {
   GraphEditorInputMode,
   GroupNodeLabelModel,
   GroupNodeStyle,
-  HierarchicLayout,
+  HierarchicalLayout,
   IEdge,
   IGraph,
   ILabel,
   ILabelOwner,
   IModelItem,
   INode,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   IPort,
+  LabelStyle,
   LayoutExecutor,
   License,
   Point,
-  QueryItemToolTipEventArgs,
-  Size,
-  ToolTipQueryEventArgs
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent = null!
 
-/**
- * Bootstraps the demo.
- */
+// Ensure that the LayoutExecutor class is not removed by build optimizers
+// It is needed for the 'applyLayoutAnimated' method in this demo.
+LayoutExecutor.ensure()
+
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
     focusableItems: 'all'
   })
 
@@ -83,9 +79,8 @@ async function run(): Promise<void> {
   buildGraph(graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graph.applyLayout(new HierarchicLayout({ minimumLayerDistance: 70 }))
-  graphComponent.fitGraphBounds()
+  graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 70 }))
+  void graphComponent.fitGraphBounds()
 
   // enable now the undo engine to prevent undoing of the graph creation
   graph.undoEngineEnabled = true
@@ -133,44 +128,40 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 }
 
 /**
- * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for
- * the {@link MouseHoverInputMode.addQueryToolTipListener QueryToolTip} event of the
- * GraphEditorInputMode using the
- * {@link ToolTipQueryEventArgs} parameter.
- * The {@link ToolTipQueryEventArgs} parameter provides three relevant properties:
- * Handled, QueryLocation, and ToolTip. The Handled property is a flag which indicates
+ * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for the 'query-item-tool-tip'
+ * event of the {@link GraphEditorInputMode} using the {@link QueryItemToolTipEventArgs} parameter.
+ * The {@link QueryItemToolTipEventArgs} parameter provides three relevant properties:
+ * handled, queryLocation, and toolTip. The {@link QueryItemToolTipEventArgs.handled} property is a flag which indicates
  * whether the tooltip was already set by one of possibly several tooltip providers. The
- * QueryLocation property contains the mouse position for the query in world coordinates.
- * The tooltip is set by setting the ToolTip property.
+ * {@link QueryItemToolTipEventArgs.queryLocation} property contains the mouse position for the query in world coordinates.
+ * The {@link QueryItemToolTipEventArgs.toolTip} is set by setting the ToolTip property.
  */
 function initializeTooltips(): void {
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
 
   // Customize the tooltip's behavior to our liking.
-  const mouseHoverInputMode = inputMode.mouseHoverInputMode
-  mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)
-  mouseHoverInputMode.delay = '500ms'
-  mouseHoverInputMode.duration = '5s'
+  const toolTipInputMode = inputMode.toolTipInputMode
+  toolTipInputMode.toolTipLocationOffset = new Point(15, 15)
+  toolTipInputMode.delay = '500ms'
+  toolTipInputMode.duration = '5s'
 
   // Register a listener for when a tooltip should be shown.
-  inputMode.addQueryItemToolTipListener(
-    (_src: object, eventArgs: QueryItemToolTipEventArgs<IModelItem>): void => {
-      if (eventArgs.handled) {
-        // Tooltip content has already been assigned -> nothing to do.
-        return
-      }
-
-      // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
-      const toolTip = createTooltipContent(eventArgs.item)
-      eventArgs.toolTip = toolTip
-
-      // Indicate that the tooltip content has been set.
-      eventArgs.handled = true
-
-      // Notify the screen reader about the tooltip
-      setLiveRegionContent(toolTip.cloneNode(true) as HTMLElement)
+  inputMode.addEventListener('query-item-tool-tip', (eventArgs): void => {
+    if (eventArgs.handled) {
+      // Tooltip content has already been assigned -> nothing to do.
+      return
     }
-  )
+
+    // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
+    const toolTip = createTooltipContent(eventArgs.item)
+    eventArgs.toolTip = toolTip
+
+    // Indicate that the tooltip content has been set.
+    eventArgs.handled = true
+
+    // Notify the screen reader about the tooltip
+    setLiveRegionContent(toolTip.cloneNode(true) as HTMLElement)
+  })
 }
 
 /**
@@ -181,9 +172,9 @@ function initializeLiveRegion(): void {
   const selectedLiveElement = document.createElement('p')
   selectedLiveElement.innerHTML = `Label of selected item: <span class="current-item">No label</span>`
 
-  graphComponent.addCurrentItemChangedListener((): void => {
+  graphComponent.addEventListener('current-item-changed', (): void => {
     const currentItem = graphComponent.currentItem
-    if (ILabelOwner.isInstance(currentItem)) {
+    if (currentItem instanceof ILabelOwner) {
       const label = currentItem.labels.at(0)
       if (label) {
         // Update the live region
@@ -215,23 +206,23 @@ function createTooltipContent(item: IModelItem | null): HTMLDivElement {
   const title = document.createElement('h4')
 
   // depending on the item, show a different title
-  if (INode.isInstance(item)) {
+  if (item instanceof INode) {
     title.innerHTML = 'Node Tooltip'
-  } else if (IEdge.isInstance(item)) {
+  } else if (item instanceof IEdge) {
     title.innerHTML = 'Edge Tooltip'
-  } else if (IPort.isInstance(item)) {
+  } else if (item instanceof IPort) {
     title.innerHTML = 'Port Tooltip'
-  } else if (ILabel.isInstance(item)) {
+  } else if (item instanceof ILabel) {
     title.innerHTML = 'Label Tooltip'
   }
 
   // extract the first label from the item
   let label = ''
-  if (INode.isInstance(item) || IEdge.isInstance(item) || IPort.isInstance(item)) {
+  if (item instanceof INode || item instanceof IEdge || item instanceof IPort) {
     if (item.labels.size > 0) {
-      label = item.labels.first().text
+      label = item.labels.first()!.text
     }
-  } else if (ILabel.isInstance(item)) {
+  } else if (item instanceof ILabel) {
     label = item.text
   }
   const text = document.createElement('p')
@@ -260,16 +251,15 @@ function initializeGraph(graph: IGraph): void {
     stroke: '2px solid #662b00',
     tabPosition: 'left-leading'
   })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'left',
     textFill: '#662b00'
   })
-  graph.groupNodeDefaults.labels.layoutParameter =
-    new GroupNodeLabelModel().createDefaultParameter()
+  graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
 
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(60, 30)
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true

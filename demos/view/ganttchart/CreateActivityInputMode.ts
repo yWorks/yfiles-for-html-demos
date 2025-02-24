@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { ICanvasObject, IGraph, IInputModeContext, IPoint } from 'yfiles'
+import type { IGraph, IInputModeContext, IPoint, IRenderTreeElement } from '@yfiles/yfiles'
 import {
   BaseClass,
   Cursor,
@@ -40,7 +40,7 @@ import {
   Rect,
   SimpleLabel,
   SimpleNode
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import { ActivityNodeStyle } from './activity-node/ActivityNodeStyle'
 import { getDate, getTaskColor, syncActivityWithNodeLayout } from './gantt-utils'
@@ -69,11 +69,10 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
   private locationPoint = new MutablePoint()
   private temporaryNode: SimpleNode | null = null
   /** Canvas object for the node visualization during the gesture */
-  private nodeCanvasObject: ICanvasObject | null = null
+  private nodeRenderTreeElement: IRenderTreeElement | null = null
   /** Canvas object for the label visualization during the gesture */
-  private labelCanvasObject: ICanvasObject | null = null
+  private labelRenderTreeElement: IRenderTreeElement | null = null
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   initializeDrag(context: IInputModeContext): void {}
 
   /**
@@ -88,7 +87,7 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
       this.showTemporaryNode(context)
     }
     // update the location of the node
-    this.locationPoint.relocate(newLocation)
+    this.locationPoint.setLocation(newLocation)
     this.updateTemporaryNode(originalLocation, newLocation)
 
     // Show info text
@@ -108,7 +107,7 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
     syncActivityWithNodeLayout(this.temporaryNode!)
 
     // remove the dummy node from the graphComponent's content group and hide the popup info
-    this.hideTemporaryNode()
+    this.hideTemporaryNode(context)
     hideInfo()
 
     // create the new node as part of the actual graph
@@ -120,7 +119,7 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
    * Removes the dummy node from the graph component and hides the popup info.
    */
   cancelDrag(context: IInputModeContext, originalLocation: Point): void {
-    this.hideTemporaryNode()
+    this.hideTemporaryNode(context)
     this.temporaryNode = null
     hideInfo()
   }
@@ -224,16 +223,18 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
     // Add the node and its label with the default descriptor for nodes and labels.
     // Those know how to render graph items with their style.
     const canvasComponent = context.canvasComponent
-    if (this.temporaryNode && canvasComponent) {
-      this.nodeCanvasObject = canvasComponent.contentGroup.addChild(
+    if (this.temporaryNode) {
+      this.nodeRenderTreeElement = canvasComponent.renderTree.createElement(
+        canvasComponent.renderTree.contentGroup,
         this.temporaryNode,
-        GraphModelManager.DEFAULT_NODE_DESCRIPTOR
+        GraphModelManager.DEFAULT_NODE_RENDERER
       )
       const label = this.temporaryNode.labels.at(0)
       if (label) {
-        this.labelCanvasObject = canvasComponent.contentGroup.addChild(
+        this.labelRenderTreeElement = canvasComponent.renderTree.createElement(
+          canvasComponent.renderTree.contentGroup,
           label,
-          GraphModelManager.DEFAULT_LABEL_DESCRIPTOR
+          GraphModelManager.DEFAULT_LABEL_RENDERER
         )
       }
     }
@@ -242,10 +243,14 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
   /**
    * Hides the temporary node visualization.
    */
-  private hideTemporaryNode(): void {
-    this.nodeCanvasObject?.remove()
-    this.nodeCanvasObject = null
-    this.labelCanvasObject?.remove()
-    this.labelCanvasObject = null
+  private hideTemporaryNode(context: IInputModeContext): void {
+    if (this.nodeRenderTreeElement) {
+      context.canvasComponent.renderTree.remove(this.nodeRenderTreeElement)
+    }
+    this.nodeRenderTreeElement = null
+    if (this.labelRenderTreeElement) {
+      context.canvasComponent.renderTree.remove(this.labelRenderTreeElement)
+    }
+    this.labelRenderTreeElement = null
   }
 }

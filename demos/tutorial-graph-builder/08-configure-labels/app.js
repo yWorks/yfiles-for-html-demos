@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,10 +33,10 @@ import {
   PolylineEdgeStyle,
   ShapeNodeStyle,
   Size
-} from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { runLayout } from '../common.js'
+} from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { runLayout } from '../common'
 import {
   configureDefaultPlacement,
   configureEdgeLabels,
@@ -49,14 +49,9 @@ import {
   createLabelsForName,
   createLabelsForType,
   createNodesSource
-} from './configure-labels.js'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
+} from './configure-labels'
 License.value = await fetchLicense()
-
 const graphComponent = new GraphComponent('#graphComponent')
-applyDemoTheme(graphComponent)
-
 const graph = graphComponent.graph
 graph.nodeDefaults.style = new ShapeNodeStyle({
   shape: 'rectangle',
@@ -68,32 +63,20 @@ graph.edgeDefaults.style = new PolylineEdgeStyle({
   stroke: '#aaaaaa',
   targetArrow: '#aaaaaa small triangle'
 })
-
 const graphBuilder = new GraphBuilder(graph)
-
 const nodesSource = createNodesSource(graphBuilder)
 const edgesSource = createEdgesSource(graphBuilder)
-
 const nameLabelCreator = createLabelsForName(nodesSource)
 const typeLabelCreator = createLabelsForType(nodesSource)
-
 configureDefaultPlacement(nameLabelCreator)
 configureDefaultPlacement(typeLabelCreator)
-
 configureNodeLabelParameter(nameLabelCreator)
-
 configureLabelDefaultStyles(nameLabelCreator)
 configureLabelDefaultStyles(typeLabelCreator)
-
 configureLabelStylingWithBinding(typeLabelCreator)
 configureLabelStylingWithProvider(nameLabelCreator)
-
 configureLabelSizeWithProvider(typeLabelCreator)
-
 configureEdgeLabels(edgesSource)
-
 graphBuilder.buildGraph()
-
 void runLayout(graphComponent)
-
 finishLoading()

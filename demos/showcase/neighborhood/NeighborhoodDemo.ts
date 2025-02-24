@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,34 +28,31 @@
  ***************************************************************************/
 import {
   GraphComponent,
-  GraphFocusIndicatorManager,
   GraphInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
-  GraphSelectionIndicatorManager,
   GraphViewerInputMode,
-  IndicatorNodeStyleDecorator,
   License,
+  NodeStyleIndicatorRenderer,
   ShapeNodeStyle,
-  StyleDecorationZoomPolicy,
-  TemplateNodeStyle,
-  VoidNodeStyle
-} from 'yfiles'
+  StyleIndicatorZoomPolicy
+} from '@yfiles/yfiles'
 
 import { NeighborhoodView } from './NeighborhoodView'
 import { NeighborhoodType } from './NeighborhoodType'
 import { getApplyLayoutCallback } from './apply-layout-callback'
 import { getBuildGraphCallback } from './build-graph-callback'
 import { enableFolding } from './enable-folding'
-import { enableGraphML } from './enable-graphml'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   addNavigationButtons,
   disableUIElements,
   enableUIElements,
   finishLoading
-} from 'demo-resources/demo-page'
+} from '@yfiles/demo-resources/demo-page'
+import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/StringTemplateNodeStyle'
+import { registerTemplateStyleSerialization } from '@yfiles/demo-utils/template-styles/MarkupExtensions'
 
 let graphComponent: GraphComponent
 
@@ -64,23 +61,20 @@ async function run(): Promise<void> {
 
   // initialize a GraphComponent with folding and GraphML I/O support
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-  enableGraphML(graphComponent)
   const viewerInputMode = createInputMode()
   enableFolding(graphComponent, viewerInputMode)
   graphComponent.inputMode = viewerInputMode
 
   // configure a vivid selection indicator and some default styling for graph items
   initializeSelectionIndicator()
-  initializeTemplateStyleConverters()
   initDemoStyles(graphComponent.graph, { foldingEnabled: true })
 
   // create and configure the NeighborhoodView component
   const neighborhoodView = createNeighborhoodView(graphComponent)
-  applyDemoTheme(neighborhoodView.neighborhoodComponent)
-
   // wire up the UI elements of this demo
   initializeUI(neighborhoodView)
+  //bind converters of the template node styles.
+  initializeConverters()
 
   // start the demo with an initial sample graph
   readSampleGraph()
@@ -97,13 +91,13 @@ function createNeighborhoodView(graphComponent: GraphComponent): NeighborhoodVie
  * Configure a vivid, rectangular selection indicator.
  */
 function initializeSelectionIndicator(): void {
-  const highlightNodeStyle = new IndicatorNodeStyleDecorator({
+  const highlightNodeStyle = new NodeStyleIndicatorRenderer({
     // the indicator should be slightly bigger than the node
-    padding: 5,
+    margins: 5,
     // but have a fixed size in the view coordinates
-    zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES,
+    zoomPolicy: StyleIndicatorZoomPolicy.VIEW_COORDINATES,
     // create a vivid selection style
-    wrapped: new ShapeNodeStyle({
+    nodeStyle: new ShapeNodeStyle({
       shape: 'round-rectangle',
       stroke: '3px solid #ff4500',
       fill: 'transparent'
@@ -111,12 +105,9 @@ function initializeSelectionIndicator(): void {
   })
 
   // now indicate the nodes with custom highlight styles
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    nodeStyle: highlightNodeStyle
-  })
-  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
+  graphComponent.graph.decorator.nodes.selectionRenderer.addConstant(highlightNodeStyle)
+
+  graphComponent.graph.decorator.nodes.focusRenderer.hide()
 }
 
 /**
@@ -232,13 +223,13 @@ function configureNeighborhoodView(
             const viewNode = foldingView.getViewItem(node)
             if (viewNode) {
               graphComponent.selection.clear()
-              graphComponent.selection.setSelected(viewNode, true)
+              graphComponent.selection.add(viewNode)
             }
           }
         }
       : (node) => {
           graphComponent.selection.clear()
-          graphComponent.selection.setSelected(node, true)
+          graphComponent.selection.add(node)
         }
 }
 
@@ -255,14 +246,16 @@ async function readSampleGraph(): Promise<void> {
   const fileName = `resources/${selectedItem}.graphml`
 
   // load the file
-  await new GraphMLIOHandler().readFromURL(graphComponent.graph, fileName)
+  const ioHandler = new GraphMLIOHandler()
+  registerTemplateStyleSerialization(ioHandler)
+  await ioHandler.readFromURL(graphComponent.graph, fileName)
   graphComponent.fitGraphBounds()
 
   // pre-select a node to show its neighborhood
   graphComponent.selection.clear()
   const node = graphComponent.graph.nodes.at(0)
   if (node) {
-    graphComponent.selection.setSelected(node, true)
+    graphComponent.selection.add(node)
   }
 
   // re-enable navigation buttons
@@ -270,22 +263,42 @@ async function readSampleGraph(): Promise<void> {
 }
 
 /**
- * Initializes the converters for the org chart styles.
+ * Initializes the converters for the bindings of the template node styles.
  */
-function initializeTemplateStyleConverters(): void {
-  TemplateNodeStyle.CONVERTERS.orgchartconverters = {
-    linebreakconverter: (value: any, firstline: any): string => {
-      if (typeof value === 'string') {
-        let copy: string = value
-        while (copy.length > 20 && copy.indexOf(' ') > -1) {
-          copy = copy.substring(0, copy.lastIndexOf(' '))
-        }
-        if (firstline === 'true') {
-          return copy
-        }
-        return value.substring(copy.length)
+function initializeConverters(): void {
+  const colors = {
+    present: '#76b041',
+    busy: '#ab2346',
+    travel: '#a367dc',
+    unavailable: '#c1c1c1'
+  }
+
+  StringTemplateNodeStyle.CONVERTERS.demoConverters = {
+    // converter function for the background color of nodes
+    statusColorConverter: (value: keyof typeof colors) => colors[value] || 'white',
+
+    // converter function for the border color nodes
+    selectedStrokeConverter: (value: any) => {
+      if (typeof value === 'boolean') {
+        return value ? '#ff6c00' : 'rgba(0,0,0,0)'
       }
-      return ''
+      return '#FFF'
+    },
+
+    // converter function that adds the numbers given as value and parameter
+    addConverter: (value: string, parameter: any) => {
+      if (typeof parameter === 'string') {
+        return String(Number(value) + Number(parameter))
+      }
+      return value
+    },
+
+    // converter function that converts the given string to a valid path
+    pathConverter: (value: any) => {
+      if (typeof value === 'string') {
+        return `./resources/${value}.svg`
+      }
+      return value
     }
   }
 }

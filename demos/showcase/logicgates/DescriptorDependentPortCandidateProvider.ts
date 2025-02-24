@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   type IEnumerable,
   type IGraph,
@@ -40,10 +39,11 @@ import {
   List,
   ListEnumerable,
   Point,
+  PortCandidate,
   PortCandidateValidity,
   SimpleNode,
   SimplePort
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import type { GateNodeStyle } from './node-styles/GateNodeStyle'
 import { LogicGateType } from './LogicGateType'
 
@@ -118,7 +118,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
     // iterate over all available ports
     for (const port of this.node.ports) {
       // create a port candidate, invalidate it (so it is visible but not usable)
-      const candidate = new DefaultPortCandidate(port)
+      const candidate = new PortCandidate(port)
       candidate.validity = PortCandidateValidity.INVALID
 
       // get the port descriptor which is stored in the port's tag

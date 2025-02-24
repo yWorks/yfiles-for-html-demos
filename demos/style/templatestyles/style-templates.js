@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,6 @@ export const orgchartPortTemplate =
     <ellipse fill="rgb(229,233,240)" cx="0" cy="0"
       rx="{TemplateBinding width, Converter=calc, Parameter=$v*0.5}"
       ry="{TemplateBinding height, Converter=calc, Parameter=$v*0.5}"/>`
-
 //language=HTML
 export const orgchartLabelTemplate =
   //A template for labels renders the label text with an outline stroke
@@ -45,7 +44,6 @@ export const orgchartLabelTemplate =
       <text data-content="{TemplateBinding labelText}" dy="1em" fill="rgb(229,233,240)"
         text-anchor="middle" transform="translate(50 0)"/>
     </g>`
-
 //language=HTML
 export const orgchartNodeTemplate =
   //A template for nodes that renders the icon and name as well as a status indicator and selection visualization

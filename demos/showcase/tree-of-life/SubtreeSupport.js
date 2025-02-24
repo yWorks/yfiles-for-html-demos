@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,21 +35,13 @@ import {
   Subtree,
   TreeAnalysis,
   TreeAnalysisResult
-} from 'yfiles'
-
-/** @type {INode} */
+} from '@yfiles/yfiles'
 let globalRoot
-
-/** @type {TreeAnalysisResult} */
 let treeAnalysisResult
-
 // caches for each node the subtree it is the root of
 const subtrees = new Map()
-
 /**
- * Returns the global root of the tree, i.e. the node without predecessors.
- * @param {!IGraph} graph
- * @returns {!INode}
+ * Returns the global root of the tree, i.e., the node without predecessors.
  */
 export function getGlobalRoot(graph) {
   if (!globalRoot) {
@@ -57,68 +49,50 @@ export function getGlobalRoot(graph) {
   }
   return globalRoot
 }
-
 /**
  * Returns the subtree rooted by the given node.
- * @param {!INode} subtreeRoot
- * @param {!IGraph} graph
- * @returns {!Subtree}
  */
 export function getSubtree(subtreeRoot, graph) {
   const existingSubtree = subtrees.get(subtreeRoot)
   if (existingSubtree != null) {
     return existingSubtree
   }
-
   const treeAnalysis = getTreeAnalysis(graph)
   const subtree = treeAnalysis.getSubtree(subtreeRoot)
   subtrees.set(subtreeRoot, subtree)
   return subtree
 }
-
 /**
  * Returns the (cached) result of the tree analysis for the whole graph.
- * @param {!IGraph} graph
- * @returns {!TreeAnalysisResult}
  */
 function getTreeAnalysis(graph) {
   if (treeAnalysisResult != null) {
     return treeAnalysisResult
   }
-  const treeAnalysis = new TreeAnalysis({ customRootNode: getGlobalRoot(graph) })
+  const treeAnalysis = new TreeAnalysis({
+    customRootNode: getGlobalRoot(graph)
+  })
   treeAnalysisResult = treeAnalysis.run(graph)
   return treeAnalysisResult
 }
-
 /**
  * Highlights all items in the subtree with the given root or edge to the root.
- * @param {!IModelItem} item
- * @param {!GraphComponent} graphComponent
  */
 export function highlightSubtree(item, graphComponent) {
-  const highlightManager = graphComponent.highlightIndicatorManager
-  highlightManager.clearHighlights()
-
+  const highlights = graphComponent.highlights
+  highlights.clear()
   if (item == null) {
     return
   }
-
   const graph = graphComponent.graph
   const subtreeRoot = getNode(item)
   const subtree = getSubtree(subtreeRoot, graph.wrappedGraph)
-  subtree.nodes
-    .filter((node) => graph.contains(node))
-    .forEach((node) => highlightManager.addHighlight(node))
-  subtree.edges
-    .filter((edge) => graph.contains(edge))
-    .forEach((edge) => highlightManager.addHighlight(edge))
-  highlightManager.addHighlight(subtreeRoot.labels.first())
+  subtree.nodes.filter((node) => graph.contains(node)).forEach((node) => highlights.add(node))
+  subtree.edges.filter((edge) => graph.contains(edge)).forEach((edge) => highlights.add(edge))
+  highlights.add(subtreeRoot.labels.first())
 }
-
 /**
  * Returns the node that is represented by the given item.
- * @param {!IModelItem} item
- * @returns {!INode}
  */
 function getNode(item) {
   return item instanceof INode ? item : item instanceof IEdge ? item.sourceNode : item.owner

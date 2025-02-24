@@ -1,23 +1,25 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Large Collapsible Tree Demo
 
-# Large Collapsible Tree Demo
+<img src="../../../doc/demo-thumbnails/large-tree.webp" alt="demo-thumbnail" height="320"/>
 
-The Large Tree Demo uses [WebGL2](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) as the rendering technique to display a large tree graph in order to optimize performance.
+[You can also run this demo online](https://www.yworks.com/demos/view/large-tree/).
+
+The Large Tree Demo uses [WebGL](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) as the rendering technique to display a large tree graph in order to optimize performance.
 
 The graph can be manipulated by adding or removing layers. The child count of new layers can be changed with the slider control.
 
-Adding and removing nodes is animated with layout and WebGL2 fade animations running in parallel.
+Adding and removing nodes is animated with layout and WebGL fade animations running in parallel.
 
 The maximum graph size is limited to 250000 nodes.
 

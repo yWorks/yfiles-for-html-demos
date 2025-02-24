@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,29 +27,29 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   IGraph,
   INode,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
+  LabelStyle,
   License,
   Point,
   Rect,
   Size,
-  WebGL2FocusIndicatorManager,
-  WebGL2GraphModelManager,
-  WebGL2HighlightIndicatorManager,
-  WebGL2SelectionIndicatorManager,
+  WebGLFocusIndicatorManager,
+  WebGLGraphModelManager,
+  WebGLHighlightIndicatorManager,
+  WebGLSelectionIndicatorManager,
   Workarounds
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { checkWebGL2Support, finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -63,8 +63,6 @@ async function run(): Promise<void> {
 
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
 
@@ -73,7 +71,7 @@ async function run(): Promise<void> {
 
   // create an initial sample graph
   await createGraph(graphComponent.graph)
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   // _After_ creating the graph, enable the undo engine
   // This prevents undoing of the graph creation
@@ -81,13 +79,13 @@ async function run(): Promise<void> {
 }
 
 /**
- * Enables WebGL2 as the rendering technique.
+ * Enables WebGL as the rendering technique.
  */
 function enableWebGLRendering(graphComponent: GraphComponent) {
-  graphComponent.graphModelManager = new WebGL2GraphModelManager()
-  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
-  graphComponent.focusIndicatorManager = new WebGL2FocusIndicatorManager()
-  graphComponent.highlightIndicatorManager = new WebGL2HighlightIndicatorManager()
+  graphComponent.graphModelManager = new WebGLGraphModelManager()
+  graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager()
+  graphComponent.focusIndicatorManager = new WebGLFocusIndicatorManager()
+  graphComponent.highlightIndicatorManager = new WebGLHighlightIndicatorManager()
 
   // Optional: precompile the selection shaders
   // This has the effect that the selection is not rendered with a simple fallback style
@@ -96,20 +94,18 @@ function enableWebGLRendering(graphComponent: GraphComponent) {
 }
 
 /**
- * Configures the interaction so that it works nicer with WebGL2.
+ * Configures the interaction so that it works nicer with WebGL.
  */
 function initInteraction(graphComponent: GraphComponent) {
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode()
 }
 
 /**
  * Initializes the defaults for the graph items in this demo.
  *
- * WebGL2 rendering converts the normal yFiles style of each graph item into a corresponding
+ * WebGL rendering converts the normal yFiles style of each graph item into a corresponding
  * WebGL visualization. It's also possible to explicitly specify the WebGL visualization with the
- * {@link WebGL2GraphModelManager}.
+ * {@link WebGLGraphModelManager}.
  *
  * @param graph The graph.
  */
@@ -119,17 +115,17 @@ function initializeGraph(graph: IGraph): void {
 
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(120, 120)
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'center'
   })
-  graph.groupNodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('north')
+  graph.groupNodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('top')
 }
 
 /**

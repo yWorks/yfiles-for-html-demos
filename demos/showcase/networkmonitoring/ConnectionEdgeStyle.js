@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,33 +35,28 @@ import {
   Point,
   SvgVisual,
   TimeSpan
-} from 'yfiles'
-import { convertLoadToColor } from './model/Device.js'
-
+} from '@yfiles/yfiles'
+import { convertLoadToColor } from './model/Device'
 /**
  * An edge style that visualizes the connections of a network.
  * It colors the edge based on the load and renders the animated packet as well as the 'failed'
  * icon.
  */
 export class ConnectionEdgeStyle extends EdgeStyleBase {
+  packetAnimator
   /**
    * Initializes the EdgeStyle using the given Animator.
-   * @param {!Animator} packetAnimator The animator for the animation of the packages.
+   * @param packetAnimator The animator for the animation of the packages.
    */
   constructor(packetAnimator) {
     super()
     this.packetAnimator = packetAnimator
   }
-
   /**
    * @see Overrides {@link EdgeStyleBase.createVisual}
-   * @param {!IRenderContext} context
-   * @param {!IEdge} edge
-   * @returns {!SvgVisual}
    */
   createVisual(context, edge) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-
     // create the edge path
     const connection = edge.tag
     const pathColor = this.getPathColor(connection)
@@ -72,19 +67,15 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
     path.setAttribute('stroke-linecap', 'round')
     path.setAttribute('class', 'edgePath')
     path.dataset.color = pathColor
-
     container.appendChild(path)
-
     // create the element for forward packets
     const forwardPacket = this.createPacketElement()
     forwardPacket.style.setProperty('visibility', 'hidden')
     container.appendChild(forwardPacket)
-
     // create the element for backward packets
     const backwardPacket = this.createPacketElement()
     backwardPacket.style.setProperty('visibility', 'hidden')
     container.appendChild(backwardPacket)
-
     // start animations if necessary
     if (connection.hasForwardPacket) {
       const animation = new PacketAnimation(forwardPacket, edge, true)
@@ -94,38 +85,27 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
       const animation = new PacketAnimation(backwardPacket, edge, false)
       void this.packetAnimator.animate(animation)
     }
-
     if (connection.failed) {
       path.style.setProperty('cursor', 'pointer')
       // draw failed icon
       this.addExclamationMark(edge, container)
     }
     container.dataset.failed = String(connection.failed)
-
     return new SvgVisual(container)
   }
-
   /**
    * @see Overrides {@link EdgeStyleBase.updateVisual}
-   * @param {!IRenderContext} context
-   * @param {!Visual} oldVisual
-   * @param {!IEdge} edge
-   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, edge) {
     if (!(oldVisual instanceof SvgVisual)) {
       return this.createVisual(context, edge)
     }
-
     const container = oldVisual.svgElement
-
     const path = container.childNodes[0]
-
     // update the edge path
     const gp = this.getPath(edge)
     const updatedPath = gp.createSvgPath()
     path.setAttribute('d', updatedPath.getAttribute('d'))
-
     // update the path color
     const connection = edge.tag
     const pathColor = this.getPathColor(connection)
@@ -133,7 +113,6 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
       path.setAttribute('stroke', this.getPathColor(connection))
       path.dataset.color = pathColor
     }
-
     // start the packet animations, if necessary
     if (connection.hasForwardPacket) {
       const forwardPacket = container.childNodes.item(1)
@@ -149,7 +128,6 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
         void this.packetAnimator.animate(animation)
       }
     }
-
     // update the 'failed' icon
     if (container.dataset.failed !== String(connection.failed)) {
       if (connection.failed) {
@@ -161,13 +139,10 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
       }
       container.dataset.failed = String(connection.failed)
     }
-
     return oldVisual
   }
-
   /**
    * Creates a packet visualization.
-   * @returns {!SVGElement}
    */
   createPacketElement() {
     const packet = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
@@ -177,33 +152,24 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
     packet.setAttribute('cy', '0')
     return packet
   }
-
   /**
    * Determines whether the visualization for the specified edge is visible in the context.
    * This method is implemented explicitly for improved performance.
    * @see Overrides {@link EdgeStyleBase.isVisible}
-   * @param {!ICanvasContext} canvasContext
-   * @param {!Rect} clip
-   * @param {!IEdge} edge
-   * @returns {boolean}
    */
   isVisible(canvasContext, clip, edge) {
     const sourcePortLocation = edge.sourcePort.location
     if (clip.contains(sourcePortLocation)) {
       return true
     }
-
     const targetPortLocation = edge.targetPort.location
     return clip.intersectsLine(sourcePortLocation, targetPortLocation)
   }
-
   /**
    * Creates the edge path.
    * This is an optimized implementation to reduce the amount of calculation
    * that needs to be done for edge cropping. Bends are not considered.
    * @see Overrides {@link EdgeStyleBase.getPath}
-   * @param {!IEdge} edge
-   * @returns {!GeneralPath}
    */
   getPath(edge) {
     const path = new GeneralPath()
@@ -214,13 +180,8 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
     path.lineTo(edge.targetPort.location)
     return this.cropPath(edge, IArrow.NONE, IArrow.NONE, path)
   }
-
   /**
    * Check whether hitting the edge is considered a hit.
-   * @param {!IInputModeContext} context
-   * @param {!Point} location
-   * @param {!IEdge} edge
-   * @returns {boolean}
    */
   isHit(context, location, edge) {
     // first, use the fast path base implementation, that does not consider
@@ -233,21 +194,15 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
       return false
     }
   }
-
   /**
    * Returns the color of the Edge depending on its (load) state.
-   * @param {!Connection} connection
-   * @returns {!string}
    */
   getPathColor(connection) {
     const edgeWorks = !connection.failed && connection.enabled
     return edgeWorks ? convertLoadToColor(connection.load, 1) : 'rgb(211, 211, 211)'
   }
-
   /**
    * Adds the 'failed' icon to the given g element.
-   * @param {!IEdge} edge
-   * @param {!SVGElement} g
    */
   addExclamationMark(edge, g) {
     const center = this.getPath(edge).getPoint(0.5)
@@ -262,7 +217,6 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
     imageExclamation.setAttribute('transform', `translate(${center.x - 12} ${center.y - 12})`)
     imageExclamation.setAttribute('class', 'failed')
     imageExclamation.setAttribute('cursor', 'pointer')
-
     // TODO - add exclamation mark to hit test of edge and get rid of click and touch handling
     const repairEdge = (evt) => {
       const connection = edge.tag
@@ -271,13 +225,10 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
     }
     imageExclamation.addEventListener('mousedown', repairEdge, true)
     imageExclamation.addEventListener('touchstart', repairEdge, { passive: false })
-
     g.appendChild(imageExclamation)
   }
-
   /**
    * Removes the 'failed' icon from the given g element.
-   * @param {!SVGElement} g
    */
   static removeExclamationMark(g) {
     while (g.childNodes.length > 3) {
@@ -285,41 +236,35 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
     }
   }
 }
-
 /**
  * An animation that moves a packet visualization along the edge path.
  */
 class PacketAnimation extends BaseClass(IAnimation) {
+  packet
+  edge
+  forward
   sourceLocation = null
   targetLocation = null
-
   /**
    * The preferred duration of the animation.
-   * @type {!TimeSpan}
    */
   get preferredDuration() {
     return TimeSpan.fromMilliseconds(1400)
   }
-
   /**
    * Constructor that takes the packet Element, the Edge to move on and the move direction.
-   * @param {!SVGElement} packet
-   * @param {!IEdge} edge
-   * @param {boolean} forward
    */
   constructor(packet, edge, forward) {
     super()
-    this.forward = forward
-    this.edge = edge
     this.packet = packet
+    this.edge = edge
+    this.forward = forward
   }
-
   /**
    * Initializes the packet location and starts the animation.
    */
   initialize() {
     this.packet.dataset.animationRunning = 'true'
-
     // find the source and target point for the animation
     const path = this.edge.style.renderer.getPathGeometry(this.edge, this.edge.style).getPath()
     const pathCursor = path.createCursor()
@@ -327,7 +272,6 @@ class PacketAnimation extends BaseClass(IAnimation) {
     this.sourceLocation = pathCursor.currentEndPoint
     pathCursor.toLast()
     this.targetLocation = pathCursor.currentEndPoint
-
     // translate to the source point
     this.packet.setAttribute(
       'transform',
@@ -336,20 +280,16 @@ class PacketAnimation extends BaseClass(IAnimation) {
     // show the element
     this.packet.style.setProperty('visibility', 'visible')
   }
-
   /**
    * One update step. Updates the current packet location.
-   * @param {number} time
    */
   animate(time) {
     // interpolate the current packet location
     const currentLocation = this.forward
       ? Point.interpolate(this.sourceLocation, this.targetLocation, time)
       : Point.interpolate(this.targetLocation, this.sourceLocation, time)
-
     this.packet.setAttribute('transform', `translate(${currentLocation.x} ${currentLocation.y})`)
   }
-
   /**
    * Hides the packet Element.
    */

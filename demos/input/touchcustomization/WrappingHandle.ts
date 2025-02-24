@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,19 +30,19 @@ import {
   BaseClass,
   ClickEventArgs,
   Cursor,
-  HandleTypes,
+  HandleType,
   IDragHandler,
   IHandle,
   IInputModeContext,
   IPoint,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * A handle implementation that wraps another handle and overrides the handle type and cursor with
  * the ones given in the constructor. This makes it possible to use a different handle template.
  */
-export default class WrappingHandle extends BaseClass<IHandle>(IHandle) {
+export default class WrappingHandle extends BaseClass(IHandle) {
   /**
    * Initializes a new WrappingHandle instance.
    * @param wrappedHandle The inner handle implementation.
@@ -51,7 +51,7 @@ export default class WrappingHandle extends BaseClass<IHandle>(IHandle) {
    */
   constructor(
     private wrappedHandle: IHandle,
-    private handleType: HandleTypes | null,
+    private handleType: HandleType | null,
     private handleCursor: Cursor | null
   ) {
     super()
@@ -60,8 +60,12 @@ export default class WrappingHandle extends BaseClass<IHandle>(IHandle) {
   /**
    * Gets the types of handles that determine how this handle is visualized.
    */
-  get type(): HandleTypes {
+  get type(): HandleType {
     return this.handleType || this.wrappedHandle.type
+  }
+
+  get tag() {
+    return null
   }
 
   /**

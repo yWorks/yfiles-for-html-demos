@@ -1,23 +1,25 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Custom Edge Creation Demo
 
-# Custom Edge Creation Demo
+<img src="../../../doc/demo-thumbnails/custom-edge-creation.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/input/customedgecreation/).
 
 This demo shows how to provide directional [IPort](https://docs.yworks.com/yfileshtml/#/api/IPort)s and [PortCandidate](https://docs.yworks.com/yfileshtml/#/api/PortCandidate)s and demonstrates several customizations for the edge creation gesture.
 
 ## Ports and PortCandidates
 
-Each node provides directional ports that are visualized with the [NodeStylePortStyleAdapter](https://docs.yworks.com/yfileshtml/#/api/NodeStylePortStyleAdapter) and a circular [ShapeNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle).
+Each node provides directional ports that are visualized with a circular [ShapePortStyle](https://docs.yworks.com/yfileshtml/#/api/ShapePortStyle).
 
 This demo restricts edge creation to the provided [PortCandidate](https://docs.yworks.com/yfileshtml/#/api/PortCandidate)s. Therefore, the PortCandidates are also shown on the source on hover to indicate that edge creation may start there.
 
@@ -33,7 +35,6 @@ The edge color of newly created edges is dynamically determined by the source no
 
 This demo illustrates different approaches to interactive edge routing during edge creation:
 
-- **Default Orthogonal**: Utilizes the [OrthogonalEdgeEditingContext](https://docs.yworks.com/yfileshtml/#/api/OrthogonalEdgeEditingContext) which does not use a dedicated layout algorithm. It is the fastest approach but does not consider port directions or other nodes.
+- **Default Orthogonal**: Utilizes the [OrthogonalEdgeEditingContext](https://docs.yworks.com/yfileshtml/#/api/OrthogonalEdgeEditingContext) by enabling [orthogonal editing](https://docs.yworks.com/yfileshtml/#/api/PolylineEdgeStyle#orthogonalEditing) on the edge style which does not require a dedicated layout algorithm. It is the fastest approach but does not consider port directions or other nodes.
 - **Edge Router (Quality)**: Applies the [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter) with each move during the edge creation gesture. This is the most expensive approach but yields nicely routed edges.
-- **Edge Router (Performance)**: Applies the [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter) as well but sets its `maximumDuration` to `0` such that a less performance heavy approach is used. This still routes around other nodes but sometimes yields less appealing results.
-- **Channel Edge Router**: Uses the [ChannelEdgeRouter](https://docs.yworks.com/yfileshtml/#/api/ChannelEdgeRouter) to layout the edge during the gesture. This implementation is usually faster than the EdgeRouter but may produce node-edge overlaps.
+- **Edge Router (Performance)**: Applies the [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter) as well but sets its `stopDuration` to `0` such that a less performance heavy approach is used. This still routes around other nodes but sometimes yields less appealing results.

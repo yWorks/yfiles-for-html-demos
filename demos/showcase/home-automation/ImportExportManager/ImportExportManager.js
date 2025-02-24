@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,20 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { showErrorDialog } from '../UI/showErrorDialog.js'
-import { GraphData } from './GraphData.js'
-import { GraphComponent } from 'yfiles'
-
-/**
- * @param {!GraphComponent} graphComponent
- */
+import { showErrorDialog } from '../UI/showErrorDialog'
+import { GraphData } from './GraphData'
+import { GraphComponent } from '@yfiles/yfiles'
 export function initializeJsonIo(graphComponent) {
   setupButtons(graphComponent)
 }
-
 /**
  * Retrieves the "Open" & "Save" buttons from the DOM and sets up event listeners.
- * @param {!GraphComponent} graphComponent
  */
 function setupButtons(graphComponent) {
   const buttons = {
@@ -49,16 +43,12 @@ function setupButtons(graphComponent) {
   if (!buttons.open || !buttons.save) {
     throw new Error('Could not retrieve command buttons from the DOM')
   }
-
   buttons.open.addEventListener('click', () => importGraphData(graphComponent))
   buttons.save.addEventListener('click', () => exportGraphData(graphComponent))
 }
-
 /**
  * Creates a new graph from graph data. If the dataset is not specified, the user
  * will be prompted to select a JSON file from their local filesystem.
- * @param {!GraphComponent} graphComponent
- * @param {!SerializableGraphData} [data]
  */
 export async function importGraphData(graphComponent, data) {
   try {
@@ -66,7 +56,6 @@ export async function importGraphData(graphComponent, data) {
       data = await importJsonData()
     }
     GraphData.fromJSONData(data).applyToGraph(graphComponent.graph)
-
     graphComponent.selection.clear()
     await graphComponent.fitGraphBounds({ animated: true })
   } catch (error) {
@@ -77,11 +66,9 @@ export async function importGraphData(graphComponent, data) {
     return
   }
 }
-
 /**
  * Handles the details of prompting file selection, reading the specified file,
  * and parsing its JSON contents.
- * @returns {!Promise.<SerializableGraphData>}
  */
 function importJsonData() {
   return new Promise((resolve, reject) => {
@@ -91,24 +78,20 @@ function importJsonData() {
     fileInput.style.display = 'none'
     document.body.appendChild(fileInput)
     fileInput.click()
-
     function handleFileSelect(event) {
       const target = event.target
       target.removeEventListener('change', handleFileSelect)
       document.body.removeChild(fileInput)
-
       const file = target.files?.[0]
       if (!file) {
         return
       }
-
       const reader = new FileReader()
       reader.onload = (event) => {
         const fileContent = event.target?.result
         if (typeof fileContent !== 'string') {
           throw new Error('Error reading file')
         }
-
         try {
           resolve(JSON.parse(fileContent))
         } catch (error) {
@@ -122,17 +105,11 @@ function importJsonData() {
       reader.onerror = () => {
         reject(new Error('Error reading file'))
       }
-
       reader.readAsText(file)
     }
-
     fileInput.addEventListener('change', handleFileSelect)
   })
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- */
 function exportGraphData(graphComponent) {
   const dataString = GraphData.fromGraph(graphComponent.graph).toJSON()
   const blob = new Blob([dataString], { type: 'application/json' })

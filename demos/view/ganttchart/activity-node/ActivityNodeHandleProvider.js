@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,17 +30,17 @@ import {
   BaseClass,
   Cursor,
   HandlePositions,
-  HandleTypes,
+  HandleType,
   IEnumerable,
   IHandle,
   IHandleProvider,
   IPoint,
   IRectangle,
   IReshapeHandler,
-  IVisualTemplate,
+  ObjectRendererBase,
   ReshapeHandlerHandle,
   SvgVisual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import {
   getDate,
   getFollowUpWidth,
@@ -49,10 +49,9 @@ import {
   getMainActivityX,
   hoursToWorldLength,
   worldLengthToHours
-} from '../gantt-utils.js'
-import { getActivity } from '../resources/data-model.js'
-import { patternFill } from './ActivityNodeStyle.js'
-
+} from '../gantt-utils'
+import { getActivity } from '../resources/data-model'
+import { patternFill } from './ActivityNodeStyle'
 /**
  * Provides the handles for an activity node. Each activity node contains four handles.
  * Two of them are placed on the left/right of the solid internal area and determine the activity duration,
@@ -60,66 +59,51 @@ import { patternFill } from './ActivityNodeStyle.js'
  * the lead/follow-up time of the activity.
  */
 export class ActivityNodeHandleProvider extends BaseClass(IHandleProvider) {
-  /**
-   * @param {!INode} node
-   */
+  node
   constructor(node) {
     super()
     this.node = node
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @returns {!IEnumerable.<IHandle>}
-   */
-  getHandles(context) {
+  getHandles(_context) {
     // lead/follow-up duration handles
     const leadTimeHandle = new TimeHandle(this.node)
     const followUpTimeHandle = new TimeHandle(this.node, true)
-
     // activity duration handles
     const activityReshapeHandler = new ActivityNodeReshapeHandler(this.node)
-    const eastWrappedHandle = new ReshapeHandlerHandle(HandlePositions.EAST, activityReshapeHandler)
-    const westWrappedHandle = new ReshapeHandlerHandle(HandlePositions.WEST, activityReshapeHandler)
-
+    const rightWrappedHandle = new ReshapeHandlerHandle(
+      HandlePositions.RIGHT,
+      activityReshapeHandler
+    )
+    const leftWrappedHandle = new ReshapeHandlerHandle(HandlePositions.LEFT, activityReshapeHandler)
     // contains the four handles for the activity node
     return IEnumerable.from([
       leadTimeHandle,
       followUpTimeHandle,
-      eastWrappedHandle,
-      westWrappedHandle
+      rightWrappedHandle,
+      leftWrappedHandle
     ])
   }
 }
-
 /**
  * Controls the node reshape operation. Enlarges the activity node, calculates the new
  * start/end dates and updates the activity data associated with the given node.
  */
 class ActivityNodeReshapeHandler extends BaseClass(IReshapeHandler, IRectangle) {
+  node
   wrappedHandler
-
-  /**
-   * @param {!INode} node
-   */
   constructor(node) {
     super()
     this.node = node
-    this.wrappedHandler = node.lookup(IReshapeHandler.$class)
+    this.wrappedHandler = node.lookup(IReshapeHandler)
   }
-
   /**
    * Returns the bounds of this activity node.
-   * @type {!IRectangle}
    */
   get bounds() {
     return this
   }
-
   /**
    * Enlarges the node bounds based on the size of the lead and follow-up time, if any.
-   * @param {!Rect} bounds
-   * @returns {!Rect}
    */
   expandBounds(bounds) {
     const activity = getActivity(this.node)
@@ -128,22 +112,16 @@ class ActivityNodeReshapeHandler extends BaseClass(IReshapeHandler, IRectangle) 
       right: getFollowUpWidth(activity)
     })
   }
-
   /**
    * Delegates the call to the default reshape handle implementation of the node.
-   * @param {!IInputModeContext} context
    */
   initializeReshape(context) {
     this.wrappedHandler.initializeReshape(context)
   }
-
   /**
    * Delegates the call to the default reshape handle implementation of the node.
    * The current node bounds and the bounds that the node had when the reshaping started are also
    * expanded to consider the lead/follow-up time.
-   * @param {!IInputModeContext} context
-   * @param {!Rect} originalBounds
-   * @param {!Rect} newBounds
    */
   handleReshape(context, originalBounds, newBounds) {
     this.wrappedHandler.handleReshape(
@@ -152,13 +130,9 @@ class ActivityNodeReshapeHandler extends BaseClass(IReshapeHandler, IRectangle) 
       this.expandBounds(newBounds)
     )
   }
-
   /**
    * When the reshaping finishes, the start/end dates are calculated and the data associated with
    * the current node are updated.
-   * @param {!IInputModeContext} context
-   * @param {!Rect} originalBounds
-   * @param {!Rect} newBounds
    */
   reshapeFinished(context, originalBounds, newBounds) {
     this.wrappedHandler.reshapeFinished(
@@ -166,7 +140,6 @@ class ActivityNodeReshapeHandler extends BaseClass(IReshapeHandler, IRectangle) 
       this.expandBounds(originalBounds),
       this.expandBounds(newBounds)
     )
-
     // Write the actual date back to the activity
     const activity = getActivity(this.node)
     if (originalBounds.x !== newBounds.x) {
@@ -178,37 +151,28 @@ class ActivityNodeReshapeHandler extends BaseClass(IReshapeHandler, IRectangle) 
       activity.endDate = endDate.toISOString()
     }
   }
-
   /**
    * Cancels the reshaping gesture by delegating to the default
    * implementation of the node's reshape handler.
-   * @param {!IInputModeContext} context
-   * @param {!Rect} originalBounds
    */
   cancelReshape(context, originalBounds) {
     this.wrappedHandler.cancelReshape(context, this.expandBounds(originalBounds))
   }
-
   /**
    * Returns the x-coordinate where the 'solid' part of the activity node lies.
-   * @type {number}
    */
   get x() {
     return this.node.layout.x + getLeadWidth(getActivity(this.node))
   }
-
   /**
    * Returns the y-coordinate of the activity node lies.
-   * @type {number}
    */
   get y() {
     return this.node.layout.y
   }
-
   /**
    * Returns the actual width of the 'solid' part of the activity node
    * i.e., without considering the lead/ follow-up time.
-   * @type {number}
    */
   get width() {
     return (
@@ -217,20 +181,19 @@ class ActivityNodeReshapeHandler extends BaseClass(IReshapeHandler, IRectangle) 
       getFollowUpWidth(getActivity(this.node))
     )
   }
-
   /**
    * Returns the height of the activity node.
-   * @type {number}
    */
   get height() {
     return this.node.layout.height
   }
 }
-
 /**
  * A handle implementation that modifies the lead or follow-up time of an activity.
  */
 export class TimeHandle extends BaseClass(IHandle, IPoint) {
+  node
+  isFollowUpTime
   /**
    * Stores the time when at which the drag operation was started.
    */
@@ -239,22 +202,15 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
   originalNodeLayout
   activity
   originalExtent = 0
-
-  /**
-   * @param {!INode} node
-   * @param {boolean} [isFollowUpTime=false]
-   */
   constructor(node, isFollowUpTime = false) {
     super()
-    this.isFollowUpTime = isFollowUpTime
     this.node = node
+    this.isFollowUpTime = isFollowUpTime
     this.activity = getActivity(this.node)
   }
-
   /**
    * Determines the original lead or follow-up time for the associated activity node when a resize
    * gesture starts.
-   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
     this.minimumWidth =
@@ -266,13 +222,9 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
       ? this.node.layout.maxX - getFollowUpWidth(this.activity)
       : this.node.layout.x + getLeadWidth(this.activity)
   }
-
   /**
    * Adjusts the lead or follow-up time for the associated activity node during node resize
    * operations.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   handleMove(context, originalLocation, newLocation) {
     const newDuration = this.calculateNewDuration(newLocation)
@@ -281,40 +233,29 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
     const newNodeLayout = this.calculateNewNodeLayout(newLength)
     context.graph?.setNodeLayout(this.node, newNodeLayout)
   }
-
   /**
    * Adjusts the lead or follow-up time for the associated activity node when a resize gesture is
    * finished.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     // Nothing to do: We've already updated everything in handleMove
   }
-
   /**
    * Resets the lead or follow-up time for the associated activity node when a resize gesture is
    * cancelled.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     context.graph?.setNodeLayout(this.node, this.originalNodeLayout)
     this.setNewDuration(this.originalDuration)
   }
-
-  /**
-   * @param {!ClickEventArgs} evt
-   */
   handleClick(evt) {
     // we don't handle clicks
   }
-
+  get tag() {
+    return null
+  }
   /**
    * Calculates the duration of an activity based on the new location and whether the time is follow-up.
-   * @param {!Point} newLocation
-   * @returns {number}
    */
   calculateNewDuration(newLocation) {
     if (this.isFollowUpTime) {
@@ -325,11 +266,8 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
       return Math.round(worldLengthToHours(newWidth)) // Quantize to full hours
     }
   }
-
   /**
    * Calculates the new bounds of the node based on the new duration of the activity.
-   * @param {number} newLength
-   * @returns {!Rect}
    */
   calculateNewNodeLayout(newLength) {
     const widthChange = newLength - hoursToWorldLength(this.originalDuration)
@@ -337,20 +275,16 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
       this.isFollowUpTime ? { right: widthChange } : { left: widthChange }
     )
   }
-
   /**
    * Returns the new lead or follow-up time stored in the data of this activity.
-   * @returns {number}
    */
   getDuration() {
     // read the value for the specific activity
     const time = this.isFollowUpTime ? this.activity.followUpTime : this.activity.leadTime
     return time ?? 0
   }
-
   /**
    * Stores the new lead or follow-up time in hours in the data of this activity.
-   * @param {number} hours
    */
   setNewDuration(hours) {
     if (this.isFollowUpTime) {
@@ -359,34 +293,26 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
       this.activity.leadTime = hours
     }
   }
-
   /**
    * Returns the types of handles for the activity nodes.
-   * @type {!HandleTypes}
    */
   get type() {
-    return HandleTypes.RESIZE | HandleTypes.VARIANT2
+    return HandleType.RESIZE | HandleType.CUSTOM2
   }
-
   /**
    * Returns the type of cursor for this handle.
-   * @type {!Cursor}
    */
   get cursor() {
     return Cursor.EW_RESIZE
   }
-
   /**
    * Returns the location of this handle.
-   * @type {!IPoint}
    */
   get location() {
     return this
   }
-
   /**
    * Returns the x-position of this handle based on whether the time is lead or follow-up.
-   * @type {number}
    */
   get x() {
     const activity = this.activity
@@ -400,67 +326,53 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
       return getMainActivityX(activity, this.node) - Math.max(12, getLeadWidth(activity) + 6)
     }
   }
-
   /**
    * Returns the y-coordinate of the center of the node.
-   * @type {number}
    */
   get y() {
     return this.node.layout.center.y
   }
 }
-
 /**
- * A handle template for {@link TimeHandle}s, so that they can look different from the normal
+ * A handle renderer for {@link TimeHandle}s, so that they can look different from the normal
  * resize handles.
  */
-export class TimeHandleTemplate extends BaseClass(IVisualTemplate) {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!Rect} bounds
-   * @param {*} dataObject
-   * @returns {?SvgVisual}
-   */
-  createVisual(context, bounds, dataObject) {
+export class TimeHandleRenderer extends ObjectRendererBase {
+  createVisual(context, renderTag) {
+    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const radius = 10
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    const d = `M ${radius} ${radius} h -${radius * 0.5} a ${radius} ${radius} 0 0 1 0 -${
-      radius * 2
-    } h ${radius * 0.5} z`
-    path.setAttribute('d', d)
-    path.setAttribute('fill', 'black')
-    path.setAttribute('stroke', 'white')
-    path.setAttribute('stroke-width', '5')
-
-    const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    pattern.setAttribute('d', d)
-    patternFill.applyTo(pattern, context)
-    pattern.setAttribute('stroke', 'black')
-    pattern.setAttribute('stroke-width', '1.5')
-
-    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-    g.append(path, pattern)
-    const scale = dataObject.isFollowUpTime ? -5 / radius : 5 / radius
-    g.setAttribute('transform', `scale(${scale})`)
-
-    return new SvgVisual(g)
+    renderTag?.handles.forEach((handle) => {
+      const { x, y } = handle.location
+      if (handle instanceof TimeHandle) {
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+        const d = `M ${x} ${y} m ${radius} ${radius} h -${radius * 0.5} a ${radius} ${radius} 0 0 1 0 -${radius * 2} h ${radius * 0.5} z`
+        path.setAttribute('d', d)
+        path.setAttribute('fill', 'black')
+        path.setAttribute('stroke', 'white')
+        path.setAttribute('stroke-width', '5')
+        const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+        pattern.setAttribute('d', d)
+        patternFill.applyTo(pattern, context)
+        pattern.setAttribute('stroke', 'black')
+        pattern.setAttribute('stroke-width', '1.5')
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+        g.append(path, pattern)
+        const scale = handle.isFollowUpTime ? -5 / radius : 5 / radius
+        g.setAttribute('transform', `translate(${x} ${y}) scale(${scale}) translate(${-x} ${-y})`)
+        group.append(g)
+      } else {
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+        circle.setAttribute('r', `${radius * 0.5}`)
+        circle.setAttribute('cx', `${x}`)
+        circle.setAttribute('cy', `${y}`)
+        circle.setAttribute('fill', 'silver')
+        circle.setAttribute('stroke', 'black')
+        group.append(circle)
+      }
+    })
+    return new SvgVisual(group)
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!SvgVisual} oldVisual
-   * @param {!Rect} bounds
-   * @param {*} dataObject
-   * @returns {?SvgVisual}
-   */
-  updateVisual(
-    context,
-    oldVisual,
-    bounds,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dataObject
-  ) {
-    return oldVisual
+  updateVisual(context, oldVisual, renderTag) {
+    return this.createVisual(context, renderTag)
   }
 }

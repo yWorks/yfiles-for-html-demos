@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -75,35 +75,27 @@ template.innerHTML = `
   </div>
 </div>
 `
-
 class ShowSourceButtonComponent extends HTMLElement {
   showSourceButton = null
   showSourceContent = null
   showSourceHandler
-
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-
     if (this.shadowRoot) {
       this.shadowRoot.appendChild(template.content.cloneNode(true))
-
       this.showSourceButton = this.shadowRoot.querySelector('.show-source-button')
       this.showSourceContent = this.shadowRoot.querySelector('.show-source-content')
       this.showSourceHandler = () => this.showSourceContent?.classList.toggle('hidden')
     }
   }
-
   connectedCallback() {
     this.showSourceButton?.addEventListener('click', this.showSourceHandler)
   }
-
   disconnectedCallback() {
     this.showSourceButton?.removeEventListener('click', this.showSourceHandler)
   }
 }
-
 customElements.define('show-source-button', ShowSourceButtonComponent)
-
 // Empty export to force TypeScript to threat this as a module
 export {}

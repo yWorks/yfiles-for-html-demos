@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/unbound-method */
 import {
   CanvasComponent,
   ConcurrencyController,
@@ -34,13 +35,10 @@ import {
   GraphComponent,
   IInputModeContext,
   InputModeBase,
-  MouseEventArgs,
   MouseWheelBehaviors,
+  PointerEventArgs,
   ScrollBarVisibility
-} from 'yfiles'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
+} from '@yfiles/yfiles'
 // noinspection CssInvalidFunction
 /**
  * A specialized input mode that shows a floating magnifying lens that magnifies the cursor's
@@ -50,31 +48,23 @@ export class LensInputMode extends InputModeBase {
   lensElement
   lensGraphComponent = null
   $zoomFactor = 2
-
   constructor() {
     super()
     // The changeable radius of the lens
     const radius = 120
     // The changeable difference between the coordinates of the mouse and the border of the lens
     const margin = 0
-
     // Some derived values
     const center = margin + radius
     const diameter = 2 * radius
     // The size with a small offset to make sure that the lens stroke is fully visible
     const size = diameter + margin + 10
-
     // The SVG path of the "shadow" of the lens
     const lensShadowPath = `m ${margin} ${center} L 0 20 L 20 0 L ${center} ${margin} A ${radius} ${radius} 0 0 0 ${margin} ${center}`
     // THe SVG path of the cross in the center of the lens
-    const crossPath = `M ${center - 10} ${center} h 7 m 6 0 h 7 M ${center} ${
-      center - 10
-    } v 7 m 0 6 v 7`
+    const crossPath = `M ${center - 10} ${center} h 7 m 6 0 h 7 M ${center} ${center - 10} v 7 m 0 6 v 7`
     // The placement of the lens graph component
-    const lensComponentPlacement = `width: ${diameter}px; height: ${diameter}px; top: ${
-      margin + 5
-    }px; left: ${margin + 5}px;`
-
+    const lensComponentPlacement = `width: ${diameter}px; height: ${diameter}px; top: ${margin + 5}px; left: ${margin + 5}px;`
     // The DOM elements of the lens
     this.lensElement = document.createElement('div')
     this.lensElement.setAttribute(
@@ -114,28 +104,25 @@ export class LensInputMode extends InputModeBase {
         <path d='${crossPath}' stroke='#333' stroke-opacity='0.8' stroke-width='2' stroke-linecap='round' />
       </svg> `
   }
-
   /**
    * Hides the HTML element that represents the lens component.
    */
   hideLens() {
     this.lensElement.style.opacity = '0.0'
   }
-
   /**
    * Shows the HTML element that represents the lens component.
    */
   showLens() {
     this.lensElement.style.opacity = '1.0'
   }
-
   /**
    * Determines whether the lens element should be visible or not.
    * Normally, the magnifying glass should be hidden when the zoom level of the graphComponent is
    * larger than 0.7 or if the size of the graphComponent is small.
    */
   updateLensVisibility() {
-    const canvasComponent = this.inputModeContext?.canvasComponent
+    const canvasComponent = this.parentInputModeContext?.canvasComponent
     if (
       canvasComponent != null &&
       canvasComponent.zoom < 0.7 &&
@@ -151,115 +138,93 @@ export class LensInputMode extends InputModeBase {
       return false
     }
   }
-
   /**
    * Updates the location of the magnifying component.
-   * @param {!CanvasComponent} sender The source of the event
+   * @param component The source of the event
    * @param location The event
    * @param location.location The current mouse location
-   * @param {!MouseEventArgs} undefined
    */
-  updateLensLocation(sender, { location }) {
+  updateLensLocation({ location }, component) {
     if (
       this.lensGraphComponent != null &&
       this.lensElement != null &&
       this.updateLensVisibility()
     ) {
       this.lensGraphComponent.center = location
-      const viewCoords = sender.toViewCoordinates(location)
+      const viewCoords = component.worldToViewCoordinates(location)
       this.lensElement.style.left = `${Math.round(viewCoords.x)}px`
       this.lensElement.style.top = `${Math.round(viewCoords.y)}px`
     }
   }
-
   /**
    * Returns the zoom factor of the graphComponent of the LensInputMode.
-   * @type {number}
    */
   get zoomFactor() {
     return this.$zoomFactor
   }
-
   /**
    * Set the zoom factor of the graphComponent of the LensInputMode.
-   * @type {number}
    */
   set zoomFactor(value) {
     this.$zoomFactor = value
-    this.inputModeContext.canvasComponent.invalidate()
+    this.parentInputModeContext.canvasComponent.invalidate()
     this.lensGraphComponent.zoom = this.zoomFactor
   }
-
   /**
    * Installs this LensInputMode.
-   * @param {!IInputModeContext} context The context to install this mode into
-   * @param {!ConcurrencyController} controller The controller for this mode
+   * @param context The context to install this mode into
+   * @param controller The controller for this mode
    */
   install(context, controller) {
     super.install(context, controller)
-
     const graphComponent = context.canvasComponent
-
     // Initialize the lens graph component
     this.lensGraphComponent = new GraphComponent({
       // Get the div for the lens graphComponent
-      div: this.lensElement.querySelector('.demo-lens-component'),
-
+      htmlElement: this.lensElement.querySelector('.demo-lens-component'),
       // Re-use the same graph, selection, projection
       graph: graphComponent.graph,
       selection: graphComponent.selection,
       projection: graphComponent.projection,
-
       // Disable interaction and scrollbars
       mouseWheelBehavior: MouseWheelBehaviors.NONE,
-      autoDrag: false,
-      horizontalScrollBarPolicy: ScrollBarVisibility.NEVER,
-      verticalScrollBarPolicy: ScrollBarVisibility.NEVER,
-
+      autoScrollOnBounds: false,
+      horizontalScrollBarPolicy: ScrollBarVisibility.HIDDEN,
+      verticalScrollBarPolicy: ScrollBarVisibility.HIDDEN,
       // Set the zoom factor of the graph component
       zoom: this.zoomFactor
     })
-    applyDemoTheme(this.lensGraphComponent)
-
     graphComponent.overlayPanel.appendChild(this.lensElement)
-
     // Add the listeners to the initial graph component that will update the position and the zoom
     // of the lens
     const mouseMoveListener = delegate(this.updateLensLocation, this)
-    graphComponent.addMouseMoveListener(mouseMoveListener)
-    graphComponent.addMouseDragListener(mouseMoveListener)
-
+    graphComponent.addEventListener('pointer-move', mouseMoveListener)
+    graphComponent.addEventListener('pointer-drag', mouseMoveListener)
     const visibilityChangeListener = delegate(this.updateLensVisibility, this)
-    graphComponent.addZoomChangedListener(visibilityChangeListener)
-    graphComponent.addMouseLeaveListener(visibilityChangeListener)
-    graphComponent.addMouseEnterListener(visibilityChangeListener)
-
+    graphComponent.addEventListener('zoom-changed', visibilityChangeListener)
+    graphComponent.addEventListener('pointer-leave', visibilityChangeListener)
+    graphComponent.addEventListener('pointer-enter', visibilityChangeListener)
     this.hideLens()
   }
-
   /**
    * Uninstalls this LensInputMode.
-   * @param {!IInputModeContext} context The context to install this mode into
+   * @param context The context to install this mode into
    */
   uninstall(context) {
     this.hideLens()
     const canvasComponent = context.canvasComponent
-
     // remove the listeners
     const mouseMoveListener = delegate(this.updateLensLocation, this)
-    canvasComponent.removeMouseMoveListener(mouseMoveListener)
-    canvasComponent.removeMouseDragListener(mouseMoveListener)
-
+    canvasComponent.removeEventListener('pointer-move', mouseMoveListener)
+    canvasComponent.removeEventListener('pointer-drag', mouseMoveListener)
     const visibilityChangeListener = delegate(this.updateLensVisibility, this)
-    canvasComponent.removeZoomChangedListener(visibilityChangeListener)
-    canvasComponent.removeMouseLeaveListener(visibilityChangeListener)
-    canvasComponent.removeMouseEnterListener(visibilityChangeListener)
-
+    canvasComponent.removeEventListener('zoom-changed', visibilityChangeListener)
+    canvasComponent.removeEventListener('pointer-leave', visibilityChangeListener)
+    canvasComponent.removeEventListener('pointer-enter', visibilityChangeListener)
     // clean up
-    canvasComponent.overlayPanel.removeChild(this.lensGraphComponent.div)
+    canvasComponent.overlayPanel.removeChild(this.lensGraphComponent.htmlElement)
     this.lensGraphComponent.cleanUp()
     this.lensGraphComponent = null
-
     super.uninstall(context)
   }
 }

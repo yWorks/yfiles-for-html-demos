@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,14 +38,12 @@ import {
   SvgVisual,
   TextRenderSupport,
   TextWrapping
-} from 'yfiles'
-import { colorSets } from 'demo-resources/demo-styles'
-
+} from '@yfiles/yfiles'
+import { colorSets } from '@yfiles/demo-resources/demo-styles'
 const HORIZONTAL_INSET = 3
 const VERTICAL_INSET = 2
 const ARROW_SIZE = 18
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
-
 /**
  * A label style for edges which renders a flow indicator.
  * The indicator points to the edge's source or target,
@@ -62,33 +60,25 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
   arrowFill = 'orange'
   /** The stroke for the indicator */
   arrowStroke = 'black'
-
   /** The text font */
   font = new Font({
     fontFamily: 'Arial',
     fontSize: 12
   })
-
   /**
    * Creates a new instance.
    * @param toSource If set to true the indicator points to the source.
-   * @param {boolean} [toSource=false]
    */
   constructor(toSource = false) {
     super()
     this.toSource = toSource
   }
-
   /**
    * Creates the visual for a label to be drawn.
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @returns {!SvgVisual}
    */
   createVisual(context, label) {
     // Create a 'g' element and uses it as base for the rendering of the label.
     const container = document.createElementNS(SVG_NAMESPACE, 'g')
-
     // Get the necessary data for rendering of the label
     const cache = DirectedEdgeLabelStyle.createRenderDataCache(
       context,
@@ -106,26 +96,22 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     // move container to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, false)
     transform.applyTo(container)
-
-    return new SvgVisual(container)
+    // store information with the visual on how we created it
+    return SvgVisual.from(container, cache)
   }
-
   /**
    * Determines the direction for the indicator.
    * Calculates it from the direction to the edge's port of interest relative to the center of the label layout.
    * The port of interest is the source port if toSource is true, the target port otherwise.
-   * @param {!ILabel} label The label to get the direction for.
-   * @returns {!ArrowDirection}
+   * @param label The label to get the direction for.
    */
   getDirection(label) {
     if (!(label.owner instanceof IEdge)) {
       // fallback if the label has been removed or is not at an edge
       return ArrowDirection.UP
     }
-    const center = label.layout.orientedRectangleCenter
-    const target = this.toSource
-      ? label.owner.sourcePort?.location
-      : label.owner.targetPort?.location
+    const center = label.layout.center
+    const target = this.toSource ? label.owner.sourcePort.location : label.owner.targetPort.location
     if (!target) {
       // fallback if the edge has been removed
       return ArrowDirection.UP
@@ -140,19 +126,14 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
       return dx > 0 ? ArrowDirection.LEFT : ArrowDirection.RIGHT
     }
   }
-
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase.updateVisual}
-   * @param {!IRenderContext} context
-   * @param {!SvgVisual} oldVisual
-   * @param {!ILabel} label
-   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, label) {
     const container = oldVisual.svgElement
     // get the data with which the old visual was created
-    const oldCache = container['data-renderDataCache']
+    const oldCache = oldVisual.tag
     // get the data for the new visual
     const newCache = DirectedEdgeLabelStyle.createRenderDataCache(
       context,
@@ -168,6 +149,7 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     if (!newCache.equals(oldCache)) {
       // something changed - re-render the visual
       this.render(container, label.layout, newCache)
+      oldVisual.tag = newCache
     }
     // nothing changed, return the old visual
     // arrange because the layout might have changed
@@ -175,17 +157,10 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     transform.applyTo(container)
     return oldVisual
   }
-
   /**
    * Creates the visual appearance of a label.
-   * @param {*} container
-   * @param {!IOrientedRectangle} labelLayout
-   * @param {!LabelRenderDataCache} cache
    */
   render(container, labelLayout, cache) {
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
-
     // The background rectangle
     let rect
     if (container.childElementCount > 0) {
@@ -200,7 +175,6 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     rect.setAttribute('ry', '3')
     rect.setAttribute('stroke-width', '1')
     rect.setAttribute('fill', this.backgroundFill)
-
     // The text
     let text
     if (container.childElementCount > 1) {
@@ -217,22 +191,17 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
       labelLayout.toSize(),
       TextWrapping.NONE
     )
-
     // calculate the size of the text element
     const textSize = TextRenderSupport.measureText(textContent, cache.font)
-
     // if the indicator points to the source it is placed left, then
     // move the text to the right
     const translateX = cache.toSource ? 2 * HORIZONTAL_INSET + ARROW_SIZE : HORIZONTAL_INSET
-
     // calculate vertical offset for centered alignment
     const translateY = (labelLayout.height - textSize.height) * 0.5
-
     text.setAttribute('transform', `translate(${translateX} ${translateY})`)
     while (container.childElementCount > 2) {
       container.removeChild(container.lastChild)
     }
-
     const button = createArrow(cache.direction, cache.arrowStroke, cache.arrowFill)
     new Matrix(
       1,
@@ -244,19 +213,8 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     ).applyTo(button)
     container.appendChild(button)
   }
-
   /**
    * Creates an object containing all necessary data to create a label visual.
-   * @param {!IRenderContext} _
-   * @param {!ILabel} label
-   * @param {!Font} font
-   * @param {boolean} toSource
-   * @param {!ArrowDirection} direction
-   * @param {!string} textFill
-   * @param {!string} backgroundFill
-   * @param {!string} arrowStroke
-   * @param {!string} arrowFill
-   * @returns {!LabelRenderDataCache}
    */
   static createRenderDataCache(
     _,
@@ -281,13 +239,10 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
       arrowFill
     )
   }
-
   /**
    * Calculates the preferred size for the given label if this style is used for the rendering.
    * The size is calculated from the label's text.
    * @see Overrides {@link LabelStyleBase.getPreferredSize}
-   * @param {!ILabel} label
-   * @returns {!Size}
    */
   getPreferredSize(label) {
     // first measure
@@ -299,13 +254,6 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     )
   }
 }
-
-/**
- * @param {!ArrowDirection} direction
- * @param {!string} arrowStroke
- * @param {!string} arrowFill
- * @returns {!SVGElement}
- */
 function createArrow(direction, arrowStroke, arrowFill) {
   const path = document.createElementNS(SVG_NAMESPACE, 'path')
   switch (direction) {
@@ -327,44 +275,32 @@ function createArrow(direction, arrowStroke, arrowFill) {
   // path.setAttribute('stroke-width', '1')
   return path
 }
-
-/**
- * @readonly
- * @enum {number}
- */
-const ArrowDirection = {
-  UP: 0,
-  RIGHT: 1,
-  DOWN: 2,
-  LEFT: 3
-}
-
+var ArrowDirection
+;(function (ArrowDirection) {
+  ArrowDirection[(ArrowDirection['UP'] = 0)] = 'UP'
+  ArrowDirection[(ArrowDirection['RIGHT'] = 1)] = 'RIGHT'
+  ArrowDirection[(ArrowDirection['DOWN'] = 2)] = 'DOWN'
+  ArrowDirection[(ArrowDirection['LEFT'] = 3)] = 'LEFT'
+})(ArrowDirection || (ArrowDirection = {}))
 class LabelRenderDataCache {
-  /**
-   * @param {!string} text
-   * @param {boolean} toSource
-   * @param {!ArrowDirection} direction
-   * @param {!Font} font
-   * @param {!string} textFill
-   * @param {!string} backgroundFill
-   * @param {!string} arrowStroke
-   * @param {!string} arrowFill
-   */
+  text
+  toSource
+  direction
+  font
+  textFill
+  backgroundFill
+  arrowStroke
+  arrowFill
   constructor(text, toSource, direction, font, textFill, backgroundFill, arrowStroke, arrowFill) {
-    this.arrowFill = arrowFill
-    this.arrowStroke = arrowStroke
-    this.backgroundFill = backgroundFill
-    this.textFill = textFill
-    this.font = font
-    this.direction = direction
-    this.toSource = toSource
     this.text = text
+    this.toSource = toSource
+    this.direction = direction
+    this.font = font
+    this.textFill = textFill
+    this.backgroundFill = backgroundFill
+    this.arrowStroke = arrowStroke
+    this.arrowFill = arrowFill
   }
-
-  /**
-   * @param {!LabelRenderDataCache} [other]
-   * @returns {boolean}
-   */
   equals(other) {
     return (
       !!other &&

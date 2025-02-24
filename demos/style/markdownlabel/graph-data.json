@@ -14,11 +14,11 @@
     },
     {
       "id": 3,
-      "label": "## ILabel \n *interface*\n \n The interface used in an **IGraph** implementation for labels. \n ### Code example: \n``` \n const nodeLabel = graph.addLabel(node, 'Node Label', ExteriorLabelModel.SOUTH) \n const edgeLabel = graph.addLabel(edge, 'Edge Label', FreeEdgeLabelModel.INSTANCE.createDefaultParameter()) \n```"
+      "label": "## ILabel \n *interface*\n \n The interface used in an **IGraph** implementation for labels. \n ### Code example: \n``` \n const nodeLabel = graph.addLabel(node, 'Node Label', ExteriorNodeLabelModel.BOTTOM) \n const edgeLabel = graph.addLabel(edge, 'Edge Label', FreeEdgeLabelModel.INSTANCE.createParameter()) \n```"
     },
     {
       "id": 4,
-      "label": "## IPort \n *interface*\n \n The interface used in an **IGraph** implementation for **IEdges** to connect to. \n ### Code example: \n``` \n const port = graph.addPort(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED) \n```"
+      "label": "## IPort \n *interface*\n \n The interface used in an **IGraph** implementation for **IEdges** to connect to. \n ### Code example: \n``` \n const port = graph.addPort(node, FreeNodePortLocationModelParameter.NODE_CENTER_ANCHORED) \n```"
     },
     {
       "id": 5,

@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Graph Wizard for Flowchart [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="./resources/graph-creation-wizard.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -63,7 +61,11 @@
 
     <div class="demo-page__toolbar">
       <button id="new" class="demo-icon-yIconNew"></button>
-      <button data-command="SAVE"></button>
+      <button
+        id="save-button"
+        title="Save a GraphML file"
+        class="demo-icon-yIconSave labeled"
+      ></button>
 
       <span class="demo-separator"></span>
       <button data-command="INCREASE_ZOOM"></button>
@@ -76,7 +78,11 @@
       <button data-command="REDO"></button>
 
       <span class="demo-separator"></span>
-      <button data-command="NewLayout" class="demo-icon-yIconLayoutHierarchic"></button>
+      <button
+        id="layout-button"
+        title="Run layout from scratch"
+        class="demo-icon-yIconLayoutHierarchic"
+      ></button>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -107,7 +113,7 @@
         <p>
           Many actions can be triggered by a button that is displayed close to the current model
           item when the action is active. Those buttons can also be accessed via keyboard by
-          pressing the <em>Tab</em> key and confirming the action using <em>Enter</em>.
+          pressing the <kbd>Tab</kbd> key and confirming the action using <kbd>Enter</kbd>.
         </p>
         <h2>Flowchart Diagrams</h2>
         <p>
@@ -121,16 +127,16 @@
         <h2>Things to Try</h2>
         <ul>
           <li>
-            Press <em>Space</em> to create a new flowchart node in a free direction. Note that after
-            the new node and an edge to it are created, the node type can be selected and the labels
-            for the edge and node can be edited.
+            Press <kbd>Space</kbd> to create a new flowchart node in a free direction. Note that
+            after the new node and an edge to it are created, the node type can be selected and the
+            labels for the edge and node can be edited.
           </li>
-          <li>Use the <b>Arrow</b> keys to switch to another node in this direction.</li>
-          <li>Press the <em>C</em> key to trigger the shortcut for switching the node color.</li>
+          <li>Use the arrow keys to switch to another node in this direction.</li>
+          <li>Press the <kbd>C</kbd> key to trigger the shortcut for switching the node color.</li>
           <li>
             Click on the node type button and choose the diamond-shaped <b>Decision</b> type. For
-            this you can either click the corresponding button or focus it using the
-            <em>Arrow</em> keys and select is using <em>Enter</em>.
+            this you can either click the corresponding button or focus it using the arrow keys and
+            select it using <kbd>Enter</kbd>.
             <p>
               Note that the new <b>Create two child nodes...</b> action is now available for the
               decision node.
@@ -140,12 +146,12 @@
             Click the <b>Add two child nodes</b> button of a decision node to create two nodes with
             edges from the decision node and edit their labels.
             <p>
-              During this multi-step action, pressing the <em>Esc</em> key brings you back to the
+              During this multi-step action, pressing the <kbd>Esc</kbd> key brings you back to the
               last step.
             </p>
           </li>
           <li>
-            Press the <em>L</em> key or click the layout button in the main toolbar to calculate a
+            Press the <kbd>L</kbd> key or click the layout button in the main toolbar to calculate a
             fresh layout from scratch.
           </li>
         </ul>

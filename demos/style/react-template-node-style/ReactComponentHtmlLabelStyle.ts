@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { ILabel, IRenderContext, TaggedHtmlVisual } from 'yfiles'
+import type { ILabel, IRenderContext, TaggedHtmlVisual } from '@yfiles/yfiles'
 import {
   GraphComponent,
   HtmlVisual,
@@ -35,10 +35,11 @@ import {
   type SizeConvertible,
   Visual,
   VisualCachingPolicy
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { type Root, createRoot } from 'react-dom/client'
-import { type FunctionComponent, type ComponentClass, createElement } from 'react'
+import { createRoot, type Root } from 'react-dom/client'
+import { type ComponentClass, createElement, type FunctionComponent } from 'react'
+
 type RenderType<TTag> = FunctionComponent<TTag> | ComponentClass<TTag>
 
 /**
@@ -125,6 +126,7 @@ export class ReactComponentHtmlLabelStyle<TTag> extends LabelStyleBase<
   /**
    * Creates a new instance
    * @param reactComponent the React component rendering the HTML content
+   * @param size The size of the component
    * @param tagProvider the optional provider function that provides the "tag" in the props.
    * By default, this will use the node's tag.
    */
@@ -141,7 +143,7 @@ export class ReactComponentHtmlLabelStyle<TTag> extends LabelStyleBase<
     return {
       selected:
         context.canvasComponent instanceof GraphComponent &&
-        context.canvasComponent.selection.selectedLabels.isSelected(label),
+        context.canvasComponent.selection.labels.includes(label),
       text: label.text,
       detail: context.zoom < 0.5 ? 'low' : 'high',
       tag: this.tagProvider(context, label)
@@ -201,6 +203,6 @@ export class ReactComponentHtmlLabelStyle<TTag> extends LabelStyleBase<
   }
 
   protected getPreferredSize(label: ILabel): Size {
-    return Size.from(this.size)
+    return this.size
   }
 }

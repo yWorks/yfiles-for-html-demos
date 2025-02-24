@@ -1,21 +1,23 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# WebGL2 Selection Styles Demo
+# WebGL Selection Styles Demo
 
-# WebGL2 Selection Styles Demo
+<img src="../../../doc/demo-thumbnails/webgl-selection-styles.webp" alt="demo-thumbnail" height="320"/>
 
-This demo shows the available _selection_ styles for nodes, edges, and labels in WebGL2 rendering.
+[You can also run this demo online](https://www.yworks.com/demos/style/webgl-selection-styles/).
 
-In WebGL2, selections can be configured in various ways: There are multiple patterns to choose from, and colors, thickness, and margins are configurable. Additionally, selections can be activated and deactivated using animated transitions, and for the appropriate selection styles, a "marching ants" animation is available, too.
+This demo shows the available _selection_ styles for nodes, edges, and labels in WebGL rendering.
+
+In WebGL, selections can be configured in various ways: There are multiple patterns to choose from, and colors, thickness, and margins are configurable. Additionally, selections can be activated and deactivated using animated transitions, and for the appropriate selection styles, a "marching ants" animation is available, too.
 
 ## Things to Try
 

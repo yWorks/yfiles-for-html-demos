@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,9 +27,7 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
   GeneralPath,
   IEdge,
   IEdgeStyle,
@@ -38,113 +36,80 @@ import {
   ImageNodeStyle,
   INode,
   INodeStyle,
+  LabelStyle,
   Point,
   Rect,
   Size,
-  WebGL2Effect,
-  WebGL2IconNodeStyle,
-  WebGL2PolylineEdgeStyle,
-  WebGL2ShapeNodeShape,
-  WebGL2ShapeNodeStyle
-} from 'yfiles'
-import getSVGDataURL from './SVGDataURLFetch.js'
-import { DemoConfiguration } from './DemoConfiguration.js'
-import { createDemoGroupStyle } from 'demo-resources/demo-styles'
-
+  WebGLEffect,
+  WebGLImageNodeStyle,
+  WebGLNodeStyleDecorator,
+  WebGLShapeNodeShape,
+  WebGLShapeNodeStyle
+} from '@yfiles/yfiles'
+import getSVGDataURL from './SVGDataURLFetch'
+import { DemoConfiguration } from './DemoConfiguration'
+import { createDemoGroupStyle } from '@yfiles/demo-resources/demo-styles'
 class LargeGraphDemoConfiguration extends DemoConfiguration {
   svgThreshold = 0.5
-
-  // Node styles used in WebGL2 rendering
-  webGL2NodeStyles = []
+  // Node styles used in WebGL rendering
+  webGLNodeStyles = []
   // Node styles used in SVG rendering
   imageNodeStyles = []
-
-  webGL2GroupNodeStyle = new WebGL2ShapeNodeStyle('rectangle', '#bbb')
-
-  webGL2EdgeStyle = new WebGL2PolylineEdgeStyle({ targetArrow: 'default' })
-
   /**
    * Creates a random integer in the range [0, upper[.
    */
   getRandomInt = (upper) => Math.floor(Math.random() * upper)
-
-  webGL2EdgeStyleProvider = (edge, graph) => {
-    return this.webGL2EdgeStyle
-  }
-
-  webGL2NodeStyleProvider = (node, graph) => {
-    if (graph.isGroupNode(node)) {
-      return this.webGL2GroupNodeStyle
-    }
-    return this.webGL2NodeStyles[this.getIndex(node)]
-  }
-
   nodeStyleProvider = (node, graph) => {
     if (graph.isGroupNode(node)) {
       return graph.groupNodeDefaults.getStyleInstance()
     } else {
-      return this.imageNodeStyles[this.getIndex(node)]
+      const nodeIndex = this.getIndex(node)
+      return new WebGLNodeStyleDecorator(
+        this.imageNodeStyles[nodeIndex],
+        this.webGLNodeStyles[nodeIndex]
+      )
     }
   }
-
   edgeStyleProvider = (edge, graph) => {
     return graph.edgeDefaults.getStyleInstance()
   }
-
   nodeCreator = (context, graph, location, parent) => {
-    const node = graph.createNode(
+    const node = graph.createNode({
       parent,
-      Rect.fromCenter(location, graph.nodeDefaults.size),
-      null,
-      {
+      layout: Rect.fromCenter(location, graph.nodeDefaults.size),
+      tag: {
         id: graph.nodes.size,
-        type: this.getRandomInt(this.webGL2NodeStyles.length)
+        type: this.getRandomInt(this.webGLNodeStyles.length)
       }
-    )
-    graph.setStyle(node, this.imageNodeStyles[this.getIndex(node)])
+    })
+    graph.setStyle(node, this.nodeStyleProvider(node, graph))
     return node
   }
-
   /**
    * Sets default styles for nodes and labels
-   * @param {!IGraph} graph
    */
   async initializeStyleDefaults(graph) {
     await this.initializeNodeStyles()
-
     graph.nodeDefaults.size = new Size(50, 50)
-
-    graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-      insets: [0, 0, 5, 0]
-    }).createParameter(ExteriorLabelModelPosition.SOUTH)
-
-    graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-      backgroundFill: '#dfff'
+    graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+      margins: [0, 0, 5, 0]
+    }).createParameter('bottom')
+    graph.nodeDefaults.labels.style = new LabelStyle({
+      backgroundFill: '#fffd'
     })
-
     graph.groupNodeDefaults.style = createDemoGroupStyle({})
   }
-
-  /**
-   * @param {!IGraph} graph
-   * @param {*} id
-   * @param {!Rect} layout
-   * @param {*} nodeData
-   */
   createNode(graph, id, layout, nodeData) {
     const node = graph.createNode({
       layout: layout,
-      tag: { id, type: this.getRandomInt(this.webGL2NodeStyles.length) }
+      tag: { id, type: this.getRandomInt(this.webGLNodeStyles.length) }
     })
-    graph.setStyle(node, this.imageNodeStyles[this.getIndex(node)])
+    graph.setStyle(node, this.nodeStyleProvider(node, graph))
     graph.addLabel(node, `Item ${id}`)
     return node
   }
-
   /**
    * Returns a promise, which draws an image into the canvas after loading it.
-   * @param {!CanvasRenderingContext2D} ctx
-   * @param {!HTMLImageElement} image
    */
   createImageDataPromise(ctx, image) {
     return new Promise((resolve) => {
@@ -156,31 +121,24 @@ class LargeGraphDemoConfiguration extends DemoConfiguration {
       }
     })
   }
-
   /**
-   * Creates a WebGL2IconNodeStyle by awaiting the loading and drawing of the image
+   * Creates a WebGLImageNodeStyle by awaiting the loading and drawing of the image
    * using {@link createImageDataPromise}
-   * @param {!string} dataURL
-   * @param {!CanvasRenderingContext2D} ctx
-   * @param {!HTMLImageElement} image
-   * @returns {!Promise.<(WebGL2ShapeNodeStyle|WebGL2IconNodeStyle)>}
    */
-  async createWebGL2NodeStyle(dataURL, ctx, image) {
+  async createWebGLNodeStyle(dataURL, ctx, image) {
     const promise = this.createImageDataPromise(ctx, image)
     image.src = dataURL
     const imageData = await promise
-
-    return new WebGL2IconNodeStyle({
-      icon: imageData,
-      shape: WebGL2ShapeNodeShape.ELLIPSE,
-      fill: 'white',
-      stroke: 'none',
-      effect: WebGL2Effect.NONE
+    return new WebGLImageNodeStyle({
+      image: imageData,
+      backgroundShape: WebGLShapeNodeShape.ELLIPSE,
+      backgroundFill: 'white',
+      backgroundStroke: 'none',
+      effect: WebGLEffect.NONE
     })
   }
-
   /**
-   * Initializes the nodes styles used for WebGL2 and SVG rendering
+   * Initializes the nodes styles used for WebGL and SVG rendering
    */
   async initializeNodeStyles() {
     const canvas = document.createElement('canvas')
@@ -195,28 +153,22 @@ class LargeGraphDemoConfiguration extends DemoConfiguration {
         const circlePath = new GeneralPath()
         circlePath.appendEllipse(new Rect(0, 0, 1, 1), false)
         this.imageNodeStyles[count] = new ImageNodeStyle({
-          image: dataURL,
+          href: dataURL,
           normalizedOutline: circlePath
         })
-        this.webGL2NodeStyles[count] = await this.createWebGL2NodeStyle(dataURL, ctx, image)
+        this.webGLNodeStyles[count] = await this.createWebGLNodeStyle(dataURL, ctx, image)
         count++
       }
     }
   }
-
-  /**
-   * @param {!INode} node
-   */
   getIndex(node) {
     const type = typeof node.tag?.type === 'number' ? node.tag?.type : 0
-    return Math.max(0, Math.min(type, this.webGL2NodeStyles.length - 1))
+    return Math.max(0, Math.min(type, this.webGLNodeStyles.length - 1))
   }
 }
-
-export class HierarchicDemoConfiguration extends LargeGraphDemoConfiguration {
+export class HierarchicalDemoConfiguration extends LargeGraphDemoConfiguration {
   graphResourcePath = 'resources/hierarchic-10000-11000-circles.json'
 }
-
 export class OrganicDemoConfiguration extends LargeGraphDemoConfiguration {
-  graphResourcePath = 'resources/balloon_10000_9999.json'
+  graphResourcePath = 'resources/radial_tree_10000_9999.json'
 }

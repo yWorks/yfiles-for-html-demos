@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,6 +30,8 @@
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
      //
      ////////////////////////////////////////////////////////////////////////-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Graph Builder Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
@@ -133,7 +133,6 @@
         margin-right: 11px;
       }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -199,8 +198,8 @@
 
         <p>
           Per default, <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> stores the business data object of each node in
-          the node's <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a> property. Thus, the properties of a node's
-          <a href="https://docs.yworks.com/yfileshtml/#/api/TemplateNodeStyle" target="_blank">TemplateNodeStyle</a> can be bound to this object.
+          the node's <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a> property. Using the LitNodeStyle, the properties
+          can be bound and visualized.
         </p>
 
         <h2>Things to Try</h2>
@@ -223,9 +222,9 @@
             can edit and remove existing nodes sources as well as add new ones. <br />
             The nodes source can either be an array or another object containing the nodes business
             data. <br />
-            The nodes visual appearance is configured in the template field. See
-            <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_template-styles" target="_blank">Using SVG Templates in Styles</a> for
-            further information.
+            The nodes visual appearance is configured in the template field and realized using the
+            Lit template node style. See the <a href="../../style/lit-template-node-style/" target="_blank">Lit Template Node Style Demo</a> for further
+            information.
           </li>
           <li>
             <em>Edges Sources</em> contains the data that specifies the graph's edges sources. You

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,35 +26,32 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type {
-  CanvasComponent,
-  CreateEdgeInputMode,
-  GraphComponent,
-  HoveredItemChangedEventArgs,
-  IHandle,
-  ItemHoverInputMode
-} from 'yfiles'
 import {
-  AdjustContentRectPolicy,
+  AdjustContentBoundsPolicy,
+  type CanvasComponent,
+  type CreateEdgeInputMode,
   EventRecognizers,
+  type GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GraphSnapContext,
   GridConstraintProvider,
   GridInfo,
+  GridSnappableItems,
   GridSnapTypes,
   HandleInputMode,
+  type HoveredItemChangedEventArgs,
   IEdge,
+  type IHandle,
   INode,
-  KeyEventRecognizers,
   LabelEventArgs,
-  MouseEventRecognizers,
   NodeEventArgs,
-  Point
-} from 'yfiles'
+  Point,
+  SnappableItems
+} from '@yfiles/yfiles'
 import { hideActivityInfo, hideInfo, showActivityInfo, showInfo } from './info-panel'
 import { ganttDayWidth, getDate } from './gantt-utils'
-import { TimeHandle } from './activity-node/ActivityNodeHandleProvider'
+import { TimeHandle, TimeHandleRenderer } from './activity-node/ActivityNodeHandleProvider'
 import { ganttActivityHeight } from './sweepline-layout'
 import { CreateActivityInputMode } from './CreateActivityInputMode'
 import { getActivity } from './resources/data-model'
@@ -71,10 +68,13 @@ export function configureInteraction(
     allowCreateBend: false,
     allowCreateNode: false,
     showHandleItems: GraphItemTypes.NODE,
-    adjustContentRectPolicy: AdjustContentRectPolicy.NEVER,
+    adjustContentBoundsPolicy: AdjustContentBoundsPolicy.NEVER,
     clickableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     clickHitTestOrder: [GraphItemTypes.NODE, GraphItemTypes.EDGE],
-    marqueeSelectableItems: GraphItemTypes.NONE
+    marqueeSelectableItems: GraphItemTypes.NONE,
+    createEdgeInputMode: {
+      startOverCandidateOnly: false
+    }
   })
 
   // configure an input mode that moves unselected nodes
@@ -94,30 +94,29 @@ export function configureInteraction(
   configureActivityNodeCreation(graphEditorInputMode, modelChangedCallback)
 
   // update the activity data information when the label changes
-  graphEditorInputMode.addLabelTextChangedListener((_, evt) => {
-    if (evt.owner instanceof INode) {
-      getActivity(evt.owner).name = evt.item.text
+  graphEditorInputMode.editLabelInputMode.addEventListener('label-edited', (evt) => {
+    const owner = evt.item.owner
+    if (owner instanceof INode) {
+      getActivity(owner).name = evt.item.text
     }
   })
-  graphEditorInputMode.addLabelAddedListener((_, evt) => {
-    if (evt.owner instanceof INode) {
-      getActivity(evt.owner).name = evt.item.text
+  graphEditorInputMode.addEventListener('label-added', (evt) => {
+    const owner = evt.item.owner
+    if (owner instanceof INode) {
+      getActivity(owner).name = evt.item.text
     }
   })
 
-  graphEditorInputMode.addDeletedItemListener(async (_, evt) => {
-    if (evt instanceof NodeEventArgs) {
+  graphEditorInputMode.addEventListener('deleted-item', async (evt) => {
+    if (evt.details instanceof NodeEventArgs) {
       await modelChangedCallback()
       hideActivityInfo()
-    } else if (evt instanceof LabelEventArgs) {
-      const labelOwner = evt.owner
-      if (labelOwner instanceof INode) {
-        getActivity(labelOwner).name = ''
-      }
+    } else if (evt.details instanceof LabelEventArgs && evt.details.owner instanceof INode) {
+      getActivity(evt.details.owner).name = ''
     }
   })
 
-  graphEditorInputMode.addItemLeftClickedListener((inputMode, evt) => {
+  graphEditorInputMode.addEventListener('item-left-clicked', (evt, inputMode) => {
     if (evt.item instanceof INode) {
       showActivityInfo(getActivity(evt.item), evt.item.layout.center, inputMode.graphComponent!)
     } else {
@@ -126,10 +125,16 @@ export function configureInteraction(
   })
 
   // on click on the empty space, hide the node info popup
-  graphEditorInputMode.addCanvasClickedListener(() => hideActivityInfo())
+  graphEditorInputMode.addEventListener('canvas-clicked', () => hideActivityInfo())
 
   // hide the node popup if the label is being edited
-  graphEditorInputMode.textEditorInputMode.addEditingStartedListener(() => hideActivityInfo())
+  graphEditorInputMode.editLabelInputMode.textEditorInputMode.addEventListener(
+    'editing-started',
+    () => hideActivityInfo()
+  )
+
+  // Use a different look for the handles that change the lead/follow-up time of activities
+  graphEditorInputMode.handleInputMode.handlesRenderer = new TimeHandleRenderer()
 
   // configure an edge input mode to create edges on shift + left mouse button
   enableCreateEdgeOnShift(graphEditorInputMode.createEdgeInputMode)
@@ -145,8 +150,7 @@ function enableHighlighting(graphEditorInputMode: GraphEditorInputMode): void {
   // configure node and edge highlights on hover
   graphEditorInputMode.itemHoverInputMode.enabled = true
   graphEditorInputMode.itemHoverInputMode.hoverItems = GraphItemTypes.EDGE | GraphItemTypes.NODE
-  graphEditorInputMode.itemHoverInputMode.discardInvalidItems = false
-  graphEditorInputMode.itemHoverInputMode.addHoveredItemChangedListener(updateHighlights)
+  graphEditorInputMode.itemHoverInputMode.addEventListener('hovered-item-changed', updateHighlights)
 }
 
 /**
@@ -159,22 +163,22 @@ function initializeNodeDragging(
   // create the customized input mode
   const handleInputMode = new HandleInputMode()
 
-  handleInputMode.addDragStartedListener((_, evt) => {
+  handleInputMode.addEventListener('drag-started', (evt) => {
     hideActivityInfo()
     showInfoBox(handleInputMode.currentHandle!, evt.context.canvasComponent!)
   })
 
-  handleInputMode.addDraggedListener((_, evt) => {
+  handleInputMode.addEventListener('dragged', (evt) => {
     showInfoBox(handleInputMode.currentHandle!, evt.context.canvasComponent!)
   })
 
   // apply the graph modifications when a handle has been dragged
-  handleInputMode.addDragFinishedListener(async () => {
+  handleInputMode.addEventListener('drag-finished', async () => {
     hideInfo()
     await modelChangedCallback()
   })
 
-  handleInputMode.addDragCanceledListener(() => hideInfo())
+  handleInputMode.addEventListener('drag-canceled', () => hideInfo())
 
   graphEditorInputMode.handleInputMode = handleInputMode
 }
@@ -188,8 +192,11 @@ function configureActivityNodeCreation(
 ): void {
   // create the customized input mode
   const createActivityInputMode = new CreateActivityInputMode()
-  createActivityInputMode.addDragStartedListener(() => hideActivityInfo())
-  createActivityInputMode.addDragFinishedListener(async () => await modelChangedCallback())
+  createActivityInputMode.addEventListener('drag-started', () => hideActivityInfo())
+  createActivityInputMode.addEventListener(
+    'drag-finished',
+    async () => await modelChangedCallback()
+  )
 
   // add the input mode with the same priority as MarqueeSelectionInputMode
   createActivityInputMode.priority = graphEditorInputMode.marqueeSelectionInputMode.priority
@@ -198,27 +205,19 @@ function configureActivityNodeCreation(
 
 /**
  * Initializes the node snapping feature so that a vertical grid is created and
- * the nodes are snapped based on their timestamp (in hours(.
+ * the nodes are snapped based on their timestamp (in hours).
  */
 function initializeGridSnapping(graphEditorInputMode: GraphEditorInputMode): void {
-  const snapContext = new GraphSnapContext({
-    enabled: true,
-    snapBendAdjacentSegments: false,
-    snapBendsToSnapLines: false,
-    snapNodesToSnapLines: false,
-    snapOrthogonalMovement: false,
-    snapPortAdjacentSegments: false,
-    snapSegmentsToSnapLines: false
-  })
-  graphEditorInputMode.snapContext = snapContext
-
   // install a grid to enable snapping to hours
-  const gridInfo = new GridInfo()
-  gridInfo.horizontalSpacing = ganttDayWidth
+  const gridInfo = new GridInfo(ganttDayWidth)
 
-  snapContext.gridSnapType = GridSnapTypes.VERTICAL_LINES
-  snapContext.visualizeSnapResults = false
-  snapContext.nodeGridConstraintProvider = new GridConstraintProvider(gridInfo)
+  graphEditorInputMode.snapContext = new GraphSnapContext({
+    snappableItems: SnappableItems.NONE,
+    gridSnappableItems: GridSnappableItems.NODE,
+    gridSnapType: GridSnapTypes.VERTICAL_LINES,
+    visualizeSnapResults: false,
+    nodeGridConstraintProvider: new GridConstraintProvider(gridInfo)
+  })
 }
 
 /**
@@ -226,13 +225,12 @@ function initializeGridSnapping(graphEditorInputMode: GraphEditorInputMode): voi
  */
 function enableCreateEdgeOnShift(createEdgeInputMode: CreateEdgeInputMode): void {
   // start the edge creation on shift + left mouse button
-  createEdgeInputMode.prepareRecognizer = EventRecognizers.createAndRecognizer(
-    MouseEventRecognizers.LEFT_DOWN,
-    KeyEventRecognizers.SHIFT_IS_DOWN
-  )
+  createEdgeInputMode.beginRecognizer = (eventSource, evt) =>
+    EventRecognizers.MOUSE_DOWN(eventSource, evt) &&
+    EventRecognizers.SHIFT_IS_DOWN(eventSource, evt)
 
   // configure edge creation
-  createEdgeInputMode.allowSelfloops = false
+  createEdgeInputMode.allowSelfLoops = false
   createEdgeInputMode.allowCreateBend = false
   createEdgeInputMode.forceSnapToCandidate = true
   // only allow edges to connect to explicit candidates to make sure edges only connect to the correct side of a
@@ -267,33 +265,27 @@ function showInfoBox(handle: IHandle, canvasComponent: CanvasComponent): void {
  * Updates the highlighted nodes and edges when the mouse is moved over a
  * node or an edge.
  */
-function updateHighlights(
-  sender: ItemHoverInputMode,
-  hoveredItemChangedEventArgs: HoveredItemChangedEventArgs
-): void {
-  const manager = (sender.inputModeContext!.canvasComponent as GraphComponent)
-    .highlightIndicatorManager
+function updateHighlights(evt: HoveredItemChangedEventArgs): void {
+  const highlights = (evt.context!.canvasComponent as GraphComponent).highlights
 
   // remove previous highlights
-  manager.clearHighlights()
-  const item = hoveredItemChangedEventArgs.item
+  highlights.clear()
+  const item = evt.item
 
-  // The item property is incorrectly annotated as NotNull
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (item === null) {
     return
   }
-  manager.addHighlight(item)
+  highlights.add(item)
   if (item instanceof INode) {
     // highlight dependencies and their activities
-    sender.inputModeContext!.graph!.inEdgesAt(item).forEach((edge) => {
-      manager.addHighlight(edge)
-      manager.addHighlight(edge.sourceNode!)
+    evt.context!.graph!.inEdgesAt(item).forEach((edge) => {
+      highlights.add(edge)
+      highlights.add(edge.sourceNode)
     })
   } else if (item instanceof IEdge) {
     // highlight the source and target activity
-    manager.addHighlight(item.sourceNode!)
-    manager.addHighlight(item.targetNode!)
+    highlights.add(item.sourceNode)
+    highlights.add(item.targetNode)
   }
 }
 
@@ -305,13 +297,16 @@ function enableMovingUnselectedNodes(
   modelChangedCallback: () => Promise<void>
 ): void {
   // disable default move gestures
-  graphEditorInputMode.moveInputMode.enabled = false
+  graphEditorInputMode.moveSelectedItemsInputMode.enabled = false
 
   // configure an input mode that moves unselected nodes
-  const moveUnselectedInputMode = graphEditorInputMode.moveUnselectedInputMode
-  moveUnselectedInputMode.priority = graphEditorInputMode.createEdgeInputMode.priority + 1
-  moveUnselectedInputMode.enabled = true
+  const moveUnselectedItemsInputMode = graphEditorInputMode.moveUnselectedItemsInputMode
+  moveUnselectedItemsInputMode.priority = graphEditorInputMode.createEdgeInputMode.priority + 1
+  moveUnselectedItemsInputMode.enabled = true
 
-  moveUnselectedInputMode.addDragStartedListener(() => hideActivityInfo())
-  moveUnselectedInputMode.addDragFinishedListener(async () => await modelChangedCallback())
+  moveUnselectedItemsInputMode.addEventListener('drag-started', () => hideActivityInfo())
+  moveUnselectedItemsInputMode.addEventListener(
+    'drag-finished',
+    async () => await modelChangedCallback()
+  )
 }

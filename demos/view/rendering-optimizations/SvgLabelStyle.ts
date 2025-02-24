@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,18 +35,26 @@ import {
   LabelStyleBase,
   Size,
   SvgVisual,
+  type TaggedSvgVisual,
   TextRenderSupport,
-  TextWrapping,
-  Visual
-} from 'yfiles'
+  TextWrapping
+} from '@yfiles/yfiles'
 
 const SVG_NS = 'http://www.w3.org/2000/svg'
+
+/**
+ * Augment the SvgVisual type with the data used to cache the rendering information
+ */
+type Cache = {
+  text: string
+}
+type SvgLabelStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 /**
  * A fast label style. It only renders the text but doesn't support features like text clipping and
  * trimming that are potentially costly.
  */
-export default class SvgLabelStyle extends LabelStyleBase {
+export default class SvgLabelStyle extends LabelStyleBase<SvgLabelStyleVisual> {
   private readonly font: Font = new Font({ fontSize: 14 })
 
   /**
@@ -56,7 +64,7 @@ export default class SvgLabelStyle extends LabelStyleBase {
    * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SvgLabelStyle.updateVisual}
    */
-  createVisual(context: IRenderContext, label: ILabel): Visual {
+  createVisual(context: IRenderContext, label: ILabel): SvgLabelStyleVisual {
     const layout = label.layout
 
     const g = document.createElementNS(SVG_NS, 'g')
@@ -69,8 +77,7 @@ export default class SvgLabelStyle extends LabelStyleBase {
     transform.applyTo(g)
 
     // Cache the necessary data for rendering of the label
-    ;(g as SVGElement & { 'data-cache'?: string })['data-cache'] = label.text
-    return new SvgVisual(g)
+    return SvgVisual.from(g, { text: label.text })
   }
 
   /**
@@ -82,18 +89,22 @@ export default class SvgLabelStyle extends LabelStyleBase {
    * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SvgLabelStyle.createVisual}
    */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, label: ILabel): Visual {
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: SvgLabelStyleVisual,
+    label: ILabel
+  ): SvgLabelStyleVisual {
     const layout = label.layout
-    const g = oldVisual.svgElement as SVGElement & { 'data-cache'?: string }
+    const g = oldVisual.svgElement
 
     // if text changed, re-create the text element
-    const oldText = g['data-cache']
+    const oldText = oldVisual.tag.text
     if (oldText !== label.text) {
       // remove the old text element
       g.removeChild(g.firstChild!)
       this.render(label, layout, g)
       // update the cache
-      g['data-cache'] = label.text
+      oldVisual.tag.text = label.text
     }
 
     // move container to correct location

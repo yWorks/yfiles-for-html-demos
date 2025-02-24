@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,26 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, License, SvgExport } from 'yfiles'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { initializeToggleWebGl2RenderingButton } from './webgl-support.js'
-import { initializeExportRectangle } from './export-rectangle/export-rectangle.js'
-import { createSampleGraph } from './samples.js'
+import { GraphComponent, GraphEditorInputMode, License, SvgExport } from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initializeToggleWebGlRenderingButton } from './webgl-support'
+import { initializeExportRectangle } from './export-rectangle/export-rectangle'
+import { createSampleGraph } from './samples'
 import './option-panel/option-panel.css'
-import { initializeOptionPanel } from './option-panel/option-panel.js'
-import { exportSvg } from './svg-export.js'
-import { initializeExportDialog, showExportDialog } from './export-dialog/export-dialog.js'
-import { retainAspectRatio } from './aspect-ratio.js'
-import { downloadFile } from 'demo-utils/file-support'
-
-/**
- * @returns {!Promise}
- */
+import { initializeOptionPanel } from './option-panel/option-panel'
+import { exportSvg } from './svg-export'
+import { initializeExportDialog, showExportDialog } from './export-dialog/export-dialog'
+import { retainAspectRatio } from './aspect-ratio'
+import { downloadFile } from '@yfiles/demo-utils/file-support'
 async function run() {
   License.value = await fetchLicense()
-
   if (window.location.protocol === 'file:') {
     alert(
       'This demo features image export with inlined images. ' +
@@ -53,16 +48,12 @@ async function run() {
         'Please start the demo from a web server.'
     )
   }
-
   // initialize the main graph component
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
-  applyDemoTheme(graphComponent)
   initDemoStyles(graphComponent.graph)
   retainAspectRatio(graphComponent.graph)
-
   const exportRect = initializeExportRectangle(graphComponent)
-
   initializeOptionPanel(async (options) => {
     const element = await exportSvg(
       graphComponent,
@@ -72,25 +63,21 @@ async function run() {
     )
     showExportDialog(element)
   })
-
   initializeExportDialog('SVG Export', (svgElement) => {
     const fileContent = SvgExport.exportSvgString(svgElement)
     try {
       downloadFile(fileContent, 'graph.svg')
-    } catch (e) {
+    } catch {
       alert(
         'Saving directly to the filesystem is not supported by this browser.' +
           ' Please use the server-based export instead.'
       )
     }
   })
-
   // wire up the export button
-  initializeToggleWebGl2RenderingButton(graphComponent)
-
+  initializeToggleWebGlRenderingButton(graphComponent)
   // create a sample graph
   await createSampleGraph(graphComponent)
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 }
-
 void run().then(finishLoading)

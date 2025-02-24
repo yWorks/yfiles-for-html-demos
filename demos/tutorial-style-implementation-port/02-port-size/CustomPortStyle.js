@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,25 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { PortStyleBase, Rect, SvgVisual } from 'yfiles'
-
+import { PortStyleBase, Rect, SvgVisual } from '@yfiles/yfiles'
 /**
  * A basic port style that renders a circle.
  */
 export class CustomPortStyle extends PortStyleBase {
-  /**
-   * @param {number} [size=6]
-   */
+  size
   constructor(size = 6) {
     super()
     this.size = size
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!IPort} port
-   * @returns {?Visual}
-   */
   createVisual(context, port) {
     const ellipseElement = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     const { x, y } = port.location
@@ -58,12 +49,6 @@ export class CustomPortStyle extends PortStyleBase {
     ellipseElement.setAttribute('stroke-width', '1')
     return new SvgVisual(ellipseElement)
   }
-
-  /**
-   * @param {!ICanvasContext} context
-   * @param {!IPort} port
-   * @returns {!Rect}
-   */
   getBounds(context, port) {
     const { x, y } = port.location
     const radius = this.size * 0.5

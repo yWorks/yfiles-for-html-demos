@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import 'demo-resources/style/loading-demo.css'
+import '@yfiles/demo-resources/style/loading-demo.css'
 import {
   GraphComponent,
   GraphEditorInputMode,
@@ -34,7 +34,7 @@ import {
   License,
   Rect,
   ShapeNodeStyle
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import license from '../../../../lib/license.json'
 
 const layoutWorker = new Worker(new URL('./LayoutWorker.js', import.meta.url), { type: 'module' })
@@ -59,7 +59,7 @@ initializeUI()
 
 // Enable undo and center the graph in the view
 graph.undoEngineEnabled = true
-graphComponent.fitGraphBounds()
+void graphComponent.fitGraphBounds()
 
 function initializeGraph(graph) {
   const node1 = graph.createNode(new Rect(50, 50, 30, 30))
@@ -77,19 +77,11 @@ function initializeUI() {
  * Runs a layout in a web worker
  */
 function runLayout() {
-  // helper function that performs the actual message passing to the web worker
-  function webWorkerMessageHandler(data) {
-    return new Promise((resolve) => {
-      layoutWorker.onmessage = (e) => resolve(e.data)
-      layoutWorker.postMessage(data)
-    })
-  }
-
   // create an asynchronous layout executor that calculates a layout on the worker
   const executor = new LayoutExecutorAsync({
-    messageHandler: webWorkerMessageHandler,
+    messageHandler: LayoutExecutorAsync.createWebWorkerMessageHandler(layoutWorker),
     graphComponent,
-    duration: '1s',
+    animationDuration: '1s',
     easedAnimation: true,
     animateViewport: true
   })

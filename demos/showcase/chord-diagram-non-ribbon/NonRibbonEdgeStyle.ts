@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,24 +26,34 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { IInputModeContext, SolidColorFill } from 'yfiles'
 import {
+  Color,
+  CssFill,
   EdgeStyleBase,
   GeneralPath,
   IEdge,
+  type IInputModeContext,
   INode,
   IRenderContext,
   Point,
   ShapeNodeStyle,
   SvgVisual,
-  Visual
-} from 'yfiles'
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
+
+/**
+ * Augment the SvgVisual type with the data used to cache the rendering information
+ */
+type Cache = {
+  generalPath: GeneralPath
+}
+type NonRibbonEdgeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 /**
  * A custom edge style implementation for cubic Bézier curves. The curves are subdivided and each
  * edge is drawn with two colors (one from the source node and one from the target node).
  */
-export class NonRibbonEdgeStyle extends EdgeStyleBase {
+export class NonRibbonEdgeStyle extends EdgeStyleBase<NonRibbonEdgeStyleVisual> {
   // meant to be used to create thicker edges
   private readonly thicknessOffset: number
 
@@ -57,10 +67,10 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
    * @param edge The edge to which this style instance is assigned
    * @yjs:keep = connections
    */
-  createVisual(context: IRenderContext, edge: IEdge): SvgVisual | null {
+  createVisual(context: IRenderContext, edge: IEdge): NonRibbonEdgeStyleVisual | null {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
     // store the path of the edge, so that we can check whether something has changed if an update is needed
-    ;(g as any)['data-renderDataCache'] = this.getPath(edge)!
+    const generalPath = this.getPath(edge)!
 
     // subdivide the Bézier curve in two curves so that we can apply the different colors
     const controlPoints = NonRibbonEdgeStyle.subdivideBezierCurve(edge)
@@ -70,8 +80,8 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
       return null
     }
 
-    const sourceColor = NonRibbonEdgeStyle.getColor(edge.sourceNode!)
-    const targetColor = NonRibbonEdgeStyle.getColor(edge.targetNode!)
+    const sourceColor = NonRibbonEdgeStyle.getColor(edge.sourceNode)
+    const targetColor = NonRibbonEdgeStyle.getColor(edge.targetNode)
     // for the two parts of the curve, create a new path
     for (let i = 0; i < 2; i++) {
       const generalPath = new GeneralPath()
@@ -88,7 +98,7 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
       g.appendChild(path)
     }
 
-    return new SvgVisual(g)
+    return SvgVisual.from(g, { generalPath })
   }
 
   /**
@@ -97,9 +107,13 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
    * @param oldVisual The old visual
    * @param edge The edge to which this style instance is assigned
    */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, edge: IEdge): Visual | null {
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: NonRibbonEdgeStyleVisual,
+    edge: IEdge
+  ): NonRibbonEdgeStyleVisual | null {
     // get the data with which the oldvisual was created
-    const oldCache = (oldVisual.svgElement as any)['data-renderDataCache']
+    const oldCache = oldVisual.tag.generalPath
     // get the data for the new visual
     const newCache = this.getPath(edge)!
 
@@ -123,8 +137,8 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
     }
 
     const path = new GeneralPath()
-    path.moveTo(edge.sourcePort!.location)
-    path.cubicTo(edge.bends.get(0).location, edge.bends.get(1).location, edge.targetPort!.location)
+    path.moveTo(edge.sourcePort.location)
+    path.cubicTo(edge.bends.get(0).location, edge.bends.get(1).location, edge.targetPort.location)
     return path
   }
 
@@ -152,10 +166,10 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
       return []
     }
     // the four original control points of th edge
-    const p0 = edge.sourcePort!.location.toPoint()
+    const p0 = edge.sourcePort.location.toPoint()
     const p1 = edge.bends.get(0).location.toPoint()
     const p2 = edge.bends.get(1).location.toPoint()
-    const p3 = edge.targetPort!.location.toPoint()
+    const p3 = edge.targetPort.location.toPoint()
 
     // use the De Casteljau's algorithm
     const p4 = NonRibbonEdgeStyle.lerp(p0, p1)
@@ -186,7 +200,13 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
     if (!(node.style instanceof ShapeNodeStyle)) {
       return 'black'
     }
-    const fill = (node.style.fill as SolidColorFill).color
-    return `rgba(${fill.r},${fill.g},${fill.b},${fill.a})`
+    if (node.style.fill instanceof CssFill) {
+      return node.style.fill.value
+    }
+    if (node.style.fill instanceof Color) {
+      const color = node.style.fill
+      return `rgba(${color.r},${color.g},${color.b},${color.a})`
+    }
+    return 'black'
   }
 }

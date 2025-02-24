@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,22 +27,14 @@
  **
  ***************************************************************************/
 import {
-  BendConverter,
   Class,
-  CompositeLayoutStage,
   GraphComponent,
   ILayoutAlgorithm,
   LayoutData,
   OrganicEdgeRouter,
-  OrganicEdgeRouterData,
-  RemoveOverlapsStage,
-  SequentialLayout,
-  YBoolean,
-  YNumber,
-  YString
-} from 'yfiles'
-
-import LayoutConfiguration from './LayoutConfiguration.js'
+  OrganicEdgeRouterData
+} from '@yfiles/yfiles'
+import LayoutConfiguration from './LayoutConfiguration'
 import {
   ComponentAttribute,
   Components,
@@ -51,32 +43,82 @@ import {
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from 'demo-resources/demo-option-editor'
-
+} from '@yfiles/demo-resources/demo-option-editor'
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
   $extends: LayoutConfiguration,
-
-  $meta: [LabelAttribute('OrganicEdgeRouter')],
-
+  _meta: {
+    LayoutGroup: [
+      new LabelAttribute('General'),
+      new OptionGroupAttribute('RootGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    descriptionText: [
+      new OptionGroupAttribute('DescriptionGroup', 10),
+      new ComponentAttribute(Components.HTML_BLOCK),
+      new TypeAttribute(String)
+    ],
+    selectionOnlyItem: [
+      new LabelAttribute(
+        'Route Selected Edges Only',
+        '#/api/OrganicEdgeRouterData#OrganicEdgeRouterData-property-scope'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 10),
+      new TypeAttribute(Boolean)
+    ],
+    minimumNodeDistanceItem: [
+      new LabelAttribute(
+        'Minimum Distance',
+        '#/api/OrganicEdgeRouter#OrganicEdgeRouter-property-minimumDistance'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 20),
+      new MinMaxAttribute(0, 100),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    keepBendsItem: [
+      new LabelAttribute(
+        'Keep Existing Bends',
+        '#/api/OrganicEdgeRouter#OrganicEdgeRouter-property-keepExistingBends'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 30),
+      new TypeAttribute(Boolean)
+    ],
+    routeOnlyNecessaryItem: [
+      new LabelAttribute(
+        'Route Only Necessary',
+        '#/api/OrganicEdgeRouter#OrganicEdgeRouter-property-routeAllEdges'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 40),
+      new TypeAttribute(Boolean)
+    ],
+    allowMovingNodesItem: [
+      new LabelAttribute(
+        'Allow Moving Nodes',
+        '#/api/OrganicEdgeRouter#OrganicEdgeRouter-property-allowMovingNodes'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 50),
+      new TypeAttribute(Boolean)
+    ]
+  },
   /**
    * Setup default values for various configuration parameters.
    */
   constructor: function () {
+    // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
     const router = new OrganicEdgeRouter()
     this.selectionOnlyItem = false
-    this.minimumNodeDistanceItem = router.minimumDistance
+    this.minimumNodeDistanceItem = 10
     this.keepBendsItem = router.keepExistingBends
     this.routeOnlyNecessaryItem = !router.routeAllEdges
     this.allowMovingNodesItem = false
     this.title = 'Organic Edge Router'
   },
-
   /**
-   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @returns The configured layout algorithm.
@@ -86,145 +128,37 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
     router.minimumDistance = this.minimumNodeDistanceItem
     router.keepExistingBends = this.keepBendsItem
     router.routeAllEdges = !this.routeOnlyNecessaryItem
-
-    const layout = new SequentialLayout()
-    if (this.allowMovingNodesItem) {
-      // if we are allowed to move nodes, we can improve the routing results by temporarily enlarging nodes and
-      // removing overlaps (this strategy ensures that there is enough space for the edges)
-      const cls = new CompositeLayoutStage()
-      cls.appendStage(router.createNodeEnlargementStage())
-      cls.appendStage(new RemoveOverlapsStage(0))
-      layout.appendLayout(cls)
-    }
-    if (router.keepExistingBends) {
-      // we want to keep the original bends
-      const bendConverter = new BendConverter()
-      bendConverter.affectedEdgesDpKey = OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
-      bendConverter.adoptAffectedEdges = this.selectionOnlyItem
-      bendConverter.coreLayout = router
-      layout.appendLayout(bendConverter)
-    } else {
-      layout.appendLayout(router)
-    }
-
-    return layout
+    router.allowMovingNodes = this.allowMovingNodesItem
+    return router
   },
-
   /**
    * Creates and configures the layout data.
    * @returns The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
+    const layoutData = new OrganicEdgeRouterData()
     if (this.selectionOnlyItem) {
-      return new OrganicEdgeRouterData({
-        affectedEdges: graphComponent.selection.selectedEdges
-      })
-    } else {
-      return new OrganicEdgeRouterData()
+      layoutData.scope.edges = graphComponent.selection.edges
     }
+    return layoutData
   },
-
   /** @type {OptionGroup} */
-  LayoutGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('General'),
-        OptionGroupAttribute('RootGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  LayoutGroup: null,
   /** @type {string} */
   descriptionText: {
-    $meta: function () {
-      return [
-        OptionGroupAttribute('DescriptionGroup', 10),
-        ComponentAttribute(Components.HTML_BLOCK),
-        TypeAttribute(YString.$class)
-      ]
-    },
     get: function () {
       return "<p style='margin-top:0'>The organic edge routing algorithm routes edges in soft curves to ensure that they do not overlap with nodes. It is especially well suited for non-orthogonal, organic or circular diagrams.</p>"
     }
   },
-
   /** @type {boolean} */
-  selectionOnlyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Route Selected Edges Only',
-          '#/api/OrganicEdgeRouterData#OrganicEdgeRouterData-property-affectedEdges'
-        ),
-        OptionGroupAttribute('LayoutGroup', 10),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  selectionOnlyItem: false,
   /** @type {number} */
-  minimumNodeDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Distance',
-          '#/api/OrganicEdgeRouter#OrganicEdgeRouter-property-minimumDistance'
-        ),
-        OptionGroupAttribute('LayoutGroup', 20),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
-
+  minimumNodeDistanceItem: 10,
   /** @type {boolean} */
-  keepBendsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Keep Existing Bends',
-          '#/api/OrganicEdgeRouter#OrganicEdgeRouter-property-keepExistingBends'
-        ),
-        OptionGroupAttribute('LayoutGroup', 30),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  keepBendsItem: false,
   /** @type {boolean} */
-  routeOnlyNecessaryItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Route Only Necessary',
-          '#/api/OrganicEdgeRouter#OrganicEdgeRouter-property-routeAllEdges'
-        ),
-        OptionGroupAttribute('LayoutGroup', 40),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  routeOnlyNecessaryItem: false,
   /** @type {boolean} */
-  allowMovingNodesItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Allow Moving Nodes', '#/api/CompositeLayoutStage'),
-        OptionGroupAttribute('LayoutGroup', 50),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  }
+  allowMovingNodesItem: false
 })
 export default OrganicEdgeRouterConfig

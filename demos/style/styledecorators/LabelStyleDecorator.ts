@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import {
-  Class,
+  type Constructor,
   EdgeStyleBase,
   ICanvasContext,
   IInputModeContext,
@@ -42,7 +42,7 @@ import {
   SvgVisual,
   SvgVisualGroup,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 const SVG_NS = 'http://www.w3.org/2000/svg'
 
@@ -253,7 +253,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * @returns An implementation of the `type` or `null`.
    * @see EdgeStyleBase#lookup
    */
-  lookup(label: ILabel, type: Class<any>): object | null {
+  lookup(label: ILabel, type: Constructor<any>): object | null {
     return this.baseStyle.renderer.getContext(label, this.baseStyle).lookup(type)
   }
 }

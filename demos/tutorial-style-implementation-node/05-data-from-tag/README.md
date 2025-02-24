@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 05 Data from Tag - Tutorial: Node Style Implementation
 
-# Item-specific customizations
+<img src="../../../doc/demo-thumbnails/tutorial-style-implementation-node-data-from-tag.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-node/05-data-from-tag/).
 
 In the last step, we added a property to the style to change the visualization. Now, we want to be even more versatile and change the visualization based on the data of each visualized node.
 

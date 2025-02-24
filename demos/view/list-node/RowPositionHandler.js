@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,31 +38,24 @@ import {
   IPortLocationModelParameter,
   IPositionHandler,
   Point
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * An {@link IPositionHandler} which lets the user change the order of rows by dragging on them.
  * It uses the port's {@link IHandle}s to keep the adjacent edges orthogonal.
  */
 export class RowPositionHandler extends BaseClass(IPositionHandler) {
+  node
+  index
   currentIndex = -1
   originalState = []
   portHandle = new Map()
-
-  /**
-   * @param {!INode} node
-   * @param {number} index
-   */
   constructor(node, index) {
     super()
-    this.index = index
     this.node = node
+    this.index = index
   }
-
   /**
    * The drag has been canceled: restore the original state and clean up.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     const nodeInfo = this.node.tag
@@ -73,18 +66,13 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     }
     nodeInfo.draggingIndex = null
   }
-
   /**
    * The drag has been successfully finished.
    * Update the locations and clean up.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     const nodeInfo = this.node.tag
     this.handleMove(context, originalLocation, newLocation)
-
     const nodeLocationY = this.node.layout.y
     for (let i = 0; i < this.originalState.length; i++) {
       const portMoveInfo = this.originalState[i]
@@ -107,7 +95,6 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
             )
           )
         }
-
         if (!incoming) {
           context.graph.setPortLocationParameter(
             port,
@@ -121,12 +108,8 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     }
     nodeInfo.draggingIndex = null
   }
-
   /**
    * Called during drag: update the locations.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   handleMove(context, originalLocation, newLocation) {
     const style = this.node.style
@@ -134,16 +117,13 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     if (newIndex < 0 || newIndex >= this.node.tag.rows.length || newIndex == this.currentIndex) {
       return
     }
-
     const nodeInfo = this.node.tag
     const rowInfo = nodeInfo.rows[this.currentIndex]
     const ports = getPortForData(this.node, rowInfo)
     const otherInfo = nodeInfo.rows[newIndex]
     const otherPorts = getPortForData(this.node, otherInfo)
-
     nodeInfo.rows[this.currentIndex] = otherInfo
     nodeInfo.rows[newIndex] = rowInfo
-
     ports.forEach((port) => {
       const newMoveInfo = this.portHandle.get(port)
       newMoveInfo.handle.handleMove(
@@ -169,13 +149,11 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     this.currentIndex = newIndex
     nodeInfo.draggingIndex = newIndex
   }
-
   /**
    * Called when the drag gesture is started.
    *
    * Collect all current states and get the port's handles
    * and call initializeDrag for each of them.
-   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
     const nodeInfo = this.node.tag
@@ -189,7 +167,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     for (const p of nodeInfo.rows) {
       const ports = getPortForData(this.node, p)
       ports.forEach((port) => {
-        const handle = port.lookup(IHandle.$class)
+        const handle = port.lookup(IHandle)
         const info = {
           info: p,
           parameter: port.locationParameter,
@@ -202,19 +180,14 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
       })
     }
   }
-
-  /**
-   * @type {!IPoint}
-   */
   get location() {
     return Point.ORIGIN
   }
-
   /**
    * Determines the index of the row that contains the given y-coordinate.
-   * @param {!ListNodeStyle} style the style to query.
-   * @param {number} y the y-coordinate to check.
-   * @returns {number} the index of the row that contains the given y-coordinate or `-1` if there
+   * @param style the style to query.
+   * @param y the y-coordinate to check.
+   * @returns the index of the row that contains the given y-coordinate or `-1` if there
    * is no such row.
    */
   getRowIndex(style, y) {
@@ -222,24 +195,21 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     return style.getRowIndex(this.node, new Point(nl.x + nl.width * 0.5, y))
   }
 }
-
 /**
  * Returns the port for the row identified by the given row information.
- * @param {!INode} node the node whose is queried for a port.
- * @param {!RowInfo} rowInfo the row information that identifies the row whose port is returned.
- * @returns {!IEnumerable.<IPort>}
+ * @param node the node whose is queried for a port.
+ * @param rowInfo the row information that identifies the row whose port is returned.
  */
 export function getPortForData(node, rowInfo) {
   return node.ports.filter((p) => p.tag.rowInfo === rowInfo)
 }
-
 /**
  * Creates a port location parameter for the row with the given index that is anchored at the
  * owner nodes top left or top right corner.
- * @param {number} rowIndex the index of the row to which the port belongs.
- * @param {boolean} incoming if `true` the port will be anchored that the owner node's top left
+ * @param rowIndex the index of the row to which the port belongs.
+ * @param incoming if `true` the port will be anchored that the owner node's top left
  * corner; otherwise it will be anchored at the top right corner.
- * @param {!ListNodeStyle} style the owner node's node style.
+ * @param style the owner node's node style.
  */
 export function createPortLocationParameter(rowIndex, incoming, style) {
   return new FreeNodePortLocationModel().createParameterForRatios(
@@ -247,11 +217,3 @@ export function createPortLocationParameter(rowIndex, incoming, style) {
     [0, style.getRowCenterY(rowIndex)]
   )
 }
-
-/**
- * @typedef {Object} RowMoveInfo
- * @property {RowInfo} info
- * @property {IPortLocationModelParameter} parameter
- * @property {IHandle} handle
- * @property {Point} originalHandleLocation
- */

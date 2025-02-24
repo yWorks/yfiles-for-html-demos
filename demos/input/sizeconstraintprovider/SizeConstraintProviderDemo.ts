@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,44 +37,36 @@ import {
   NodeSizeConstraintProvider,
   Rect,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import LimitedRectangleDescriptor from './LimitedRectangleDescriptor'
+import { LimitingRectangleRenderer } from './LimitingRectangleRenderer'
 import GreenSizeConstraintProvider from './GreenSizeConstraintProvider'
 import BlueSizeConstraintProvider from './BlueSizeConstraintProvider'
-import type { ColorSetName } from 'demo-resources/demo-styles'
-import {
-  applyDemoTheme,
-  createDemoNodeLabelStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
+import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link INodeSizeConstraintProvider} for each node.
  * This callback function is called whenever a node in the graph is queried
- * for its {@link ISizeConstraintProvider}. In this case, the 'node' parameter will be set
+ * for its {@link INodeSizeConstraintProvider}. In this case, the 'node' parameter will be set
  * to that node.
  * @param graph The given graph
  * @param boundaryRectangle The rectangle that limits the node's size.
  */
 function registerSizeConstraintProvider(graph: IGraph, boundaryRectangle: MutableRectangle): void {
-  // one shared instance that will be used by all blue nodes
-  const blueSizeConstraintProvider = new BlueSizeConstraintProvider()
-
-  const nodeDecorator = graph.decorator.nodeDecorator
-  nodeDecorator.sizeConstraintProviderDecorator.setFactory((node) => {
+  const nodeDecorator = graph.decorator.nodes
+  nodeDecorator.sizeConstraintProvider.addFactory((node) => {
     // obtain the tag from the node
     const nodeTag = node.tag as string
-
     // Check if it is a known tag and choose the respective implementation.
     // Fallback to the default behavior otherwise.
     if (nodeTag === 'blue') {
-      return blueSizeConstraintProvider
+      return new BlueSizeConstraintProvider(node)
     } else if (nodeTag === 'green') {
-      return new GreenSizeConstraintProvider()
+      return new GreenSizeConstraintProvider(node)
     } else if (nodeTag === 'orange') {
       return new NodeSizeConstraintProvider(new Size(50, 50), new Size(300, 300), boundaryRectangle)
     }
@@ -86,21 +78,23 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // create a default editor input mode
   graphComponent.inputMode = new GraphEditorInputMode({
     // just for user convenience: disable node, edge creation and clipboard operations,
     allowCreateEdge: false,
     allowCreateNode: false,
     allowClipboardOperations: false,
-    movableItems: GraphItemTypes.NONE
+    movableSelectedItems: GraphItemTypes.NONE
   })
 
   // Create the rectangle that limits the movement of some nodes
   // and add it to the graphComponent.
   const boundaryRectangle = new MutableRectangle(210, 350, 30, 30)
-  graphComponent.highlightGroup.addChild(boundaryRectangle, new LimitedRectangleDescriptor())
+  graphComponent.renderTree.createElement(
+    graphComponent.renderTree.highlightGroup,
+    boundaryRectangle,
+    new LimitingRectangleRenderer()
+  )
 
   const graph = graphComponent.graph
 

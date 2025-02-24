@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,20 +28,17 @@
  ***************************************************************************/
 import {
   AdjacencyGraphBuilder,
-  Class,
   EdgeCreator,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   LayoutExecutor,
-  LayoutOrientation,
   License,
   Size,
-  StringTemplateNodeStyle,
   TreeBuilder
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import TreeBuilderDataJson from './tree-builder-data-json'
 import TreeBuilderDataArray from './tree-builder-data-array'
@@ -49,14 +46,15 @@ import AdjacentBuilderIdDataArray from './adjacent-builder-id-data-array'
 import GraphBuilderData from './graph-builder-data'
 import GraphBuilderWithImplicitGroupsData from './graph-builder-with-grouping-data'
 import { initDataView, updateDataView } from './data-view'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 import { nodeTemplate } from './style-templates'
 
-// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools from removing this dependency which is needed for 'morphLayout'.
-Class.ensure(LayoutExecutor)
+import { LitNodeStyle, type LitNodeStyleRenderFunction } from '@yfiles/demo-utils/LitNodeStyle'
+// @ts-ignore Import via URL
+// eslint-disable-next-line import/no-unresolved
+import { nothing, svg } from 'https://unpkg.com/lit-html@2.8.0?module'
 
 /**
  * Specifier that indicates using a {@link GraphBuilder}.
@@ -98,8 +96,6 @@ async function run(): Promise<void> {
 
   // initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // use the viewer input mode since this demo should not allow interactive graph editing
   graphComponent.inputMode = new GraphViewerInputMode()
 
@@ -126,8 +122,18 @@ function configureGraph(graph: IGraph): void {
   initDemoStyles(graph)
 
   // ... but use a style that supports data binding for normal nodes
-  graph.nodeDefaults.style = new StringTemplateNodeStyle(nodeTemplate)
+  graph.nodeDefaults.style = new LitNodeStyle(createRenderFunction(nodeTemplate))
   graph.nodeDefaults.size = new Size(260, 60)
+}
+
+function createRenderFunction(template: string): LitNodeStyleRenderFunction<any> {
+  return new Function(
+    'const svg = arguments[0]; const nothing = arguments[1]; const renderFunction = ' +
+      '({layout, tag}) => svg`\n' +
+      template +
+      '`' +
+      '\n return renderFunction'
+  )(svg, nothing)
 }
 
 /**
@@ -249,7 +255,7 @@ function createTreeBuilder(graph: IGraph, builderType: string): TreeBuilder {
   updateDataView(nodesSource)
 
   // identifies the property of a node object that contains its child nodes
-  const rootNodesSource = treeBuilder.createRootNodesSource(nodesSource)
+  const rootNodesSource = treeBuilder.createRootNodesSource(nodesSource, null)
   // configure the recursive tree structure
   rootNodesSource.addChildNodesSource((data: any) => data.children, rootNodesSource)
 
@@ -268,7 +274,8 @@ function createAdjacencyGraphBuilder(graph: IGraph, builderType: string): Adjace
 
     // stores the nodes of the graph
     const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(
-      TreeBuilderDataArray.nodesSource
+      TreeBuilderDataArray.nodesSource,
+      null
     )
 
     // configure the successor nodes
@@ -331,12 +338,16 @@ async function arrangeGraph(graphComponent: GraphComponent): Promise<void> {
   // (this is the initial state of the layout animation)
   graphComponent.fitGraphBounds()
 
-  const algorithm = new HierarchicLayout()
-  algorithm.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
+  const algorithm = new HierarchicalLayout()
+  algorithm.layoutOrientation = 'left-to-right'
 
   selectBox.disabled = true
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
+
   // arrange the graph with the chosen layout algorithm
-  await graphComponent.morphLayout(algorithm, '1s')
+  await graphComponent.applyLayoutAnimated(algorithm, '1s')
   selectBox.disabled = false
 }
 

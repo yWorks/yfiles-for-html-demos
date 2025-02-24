@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,7 +30,7 @@ import {
   Color,
   FreeNodePortLocationModel,
   GeneralPath,
-  GeomUtilities,
+  GeometryUtilities,
   ICanvasContext,
   IInputModeContext,
   INode,
@@ -48,7 +48,7 @@ import {
   Size,
   SvgVisual,
   type TaggedSvgVisual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import Sample1EdgeStyle from './Sample1EdgeStyle'
 import { SVGNS, XLINKNS } from './Namespaces'
@@ -297,7 +297,7 @@ export default class Sample1NodeStyle extends NodeStyleBase<Sample1NodeStyleVisu
     const cache = visual.tag
 
     // Create a SimpleEdge which will be used as a dumCustom for the rendering
-    const simpleEdge = new SimpleEdge(null, null)
+    const simpleEdge = new SimpleEdge()
     // Assign the style
     const edgeStyle = new Sample1EdgeStyle()
     edgeStyle.pathThickness = 2
@@ -309,19 +309,13 @@ export default class Sample1NodeStyle extends NodeStyleBase<Sample1NodeStyleVisu
     sourceDumCustomNode.style = node.style
 
     // Set source port to the port of the node using a dumCustom node that is located at the origin.
-    simpleEdge.sourcePort = new SimplePort(
-      sourceDumCustomNode,
-      FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-    )
+    simpleEdge.sourcePort = new SimplePort(sourceDumCustomNode, FreeNodePortLocationModel.CENTER)
 
     // Create a SimpleNode which provides the target port for the edge but won't be drawn itself
     const targetDumCustomNode = new SimpleNode()
 
     // Create port on targetDumCustomNode for the label target
-    simpleEdge.targetPort = new SimplePort(
-      targetDumCustomNode,
-      FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-    )
+    simpleEdge.targetPort = new SimplePort(targetDumCustomNode, FreeNodePortLocationModel.CENTER)
 
     // Render one edge for each label
     for (const labelLocation of cache.labelLocations) {
@@ -344,7 +338,7 @@ export default class Sample1NodeStyle extends NodeStyleBase<Sample1NodeStyleVisu
   private createRenderDataCache(node: INode): NodeRenderDataCache {
     // Remember center points of labels to draw label edges, relative the node's top left corner
     const labelLocations = node.labels.toArray().map((label) => {
-      const center = label.layout.orientedRectangleCenter
+      const center = label.layout.center
       const topLeft = node.layout.topLeft
       return new Point(center.x - topLeft.x, center.y - topLeft.y)
     })
@@ -383,9 +377,7 @@ export default class Sample1NodeStyle extends NodeStyleBase<Sample1NodeStyleVisu
     }
     // check for labels connection lines
     clip = clip.getEnlarged(10)
-    return node.labels.some((label) =>
-      clip.intersectsLine(node.layout.center, label.layout.orientedRectangleCenter)
-    )
+    return node.labels.some((label) => clip.intersectsLine(node.layout.center, label.layout.center))
   }
 
   /**
@@ -394,7 +386,7 @@ export default class Sample1NodeStyle extends NodeStyleBase<Sample1NodeStyleVisu
    * @see Overrides {@link NodeStyleBase.isHit}
    */
   isHit(context: IInputModeContext, location: Point, node: INode): boolean {
-    return GeomUtilities.ellipseContains(node.layout.toRect(), location, context.hitTestRadius)
+    return GeometryUtilities.ellipseContains(node.layout.toRect(), location, context.hitTestRadius)
   }
 
   /**
@@ -416,7 +408,7 @@ export default class Sample1NodeStyle extends NodeStyleBase<Sample1NodeStyleVisu
       return false
     }
 
-    if (outline.intersects(box, eps)) {
+    if (outline.pathIntersects(box, eps)) {
       return true
     }
     if (outline.pathContains(box.topLeft, eps) && outline.pathContains(box.bottomRight, eps)) {
@@ -431,7 +423,7 @@ export default class Sample1NodeStyle extends NodeStyleBase<Sample1NodeStyleVisu
    * @see Overrides {@link NodeStyleBase.isInside}
    */
   isInside(node: INode, location: Point): boolean {
-    return GeomUtilities.ellipseContains(node.layout.toRect(), location, 0)
+    return GeometryUtilities.ellipseContains(node.layout.toRect(), location, 0)
   }
 }
 

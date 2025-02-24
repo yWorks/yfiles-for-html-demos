@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HashMap, IGraph, INode } from 'yfiles'
-
+import { HashMap, IGraph, INode } from '@yfiles/yfiles'
 /**
  * A class that creates random graphs. The size of the graph and other options  may be specified.
  * These options influence the properties of the created graph.
@@ -60,10 +59,8 @@ export default class RandomGraphGenerator {
    * does not contain multiple edges. By default disallowed.
    */
   allowMultipleEdges
-
   /**
    * Creates a new instance of RandomGraphGenerator.
-   * @param {!object} config
    */
   constructor(config) {
     this.nodeCreator = config.nodeCreator || ((graph) => graph.createNode())
@@ -73,10 +70,8 @@ export default class RandomGraphGenerator {
     this.allowCycles = config.$allowCycles || false
     this.allowMultipleEdges = config.$allowMultipleEdges || false
   }
-
   /**
    * Generates a new random graph that obeys the specified settings.
-   * @param {!IGraph} graph
    */
   generate(graph) {
     if (this.allowMultipleEdges) {
@@ -91,27 +86,22 @@ export default class RandomGraphGenerator {
       this.generateSparseGraph(graph)
     }
   }
-
   /**
    * Random graph generator in case multiple edges are allowed.
-   * @param {!IGraph} graph
    */
   generateMultipleGraph(graph) {
     const n = this.nodeCount
     const m = this.edgeCount
     const index = new HashMap()
-
     const deg = new Array(n)
     const nodes = new Array(n)
     for (let i = 0; i < n; i++) {
       nodes[i] = this.createNode(graph)
       index.set(nodes[i], i)
     }
-
     for (let i = 0; i < m; i++) {
       deg[Math.floor(Math.random() * n)]++
     }
-
     for (let i = 0; i < n; i++) {
       const v = nodes[i]
       let d = deg[i]
@@ -124,7 +114,6 @@ export default class RandomGraphGenerator {
         d--
       }
     }
-
     if (!this.allowCycles) {
       graph.edges.forEach((edge) => {
         const sourcePort = edge.sourcePort
@@ -135,26 +124,19 @@ export default class RandomGraphGenerator {
       })
     }
   }
-
   /**
    * Random graph generator for dense graphs.
-   * @param {!IGraph} graph
    */
   generateDenseGraph(graph) {
     graph.clear()
     const nodes = new Array(this.nodeCount)
-
     for (let i = 0; i < this.nodeCount; i++) {
       nodes[i] = this.createNode(graph)
     }
-
     permutate(nodes)
-
     const m = Math.min(this.getMaxEdges(), this.edgeCount)
     const n = this.nodeCount
-
     const adder = this.allowSelfLoops && this.allowCycles ? 0 : 1
-
     const edgeWanted = getBoolArray(this.getMaxEdges(), m)
     for (let i = 0, k = 0; i < n; i++) {
       for (let j = i + adder; j < n; j++, k++) {
@@ -168,41 +150,31 @@ export default class RandomGraphGenerator {
       }
     }
   }
-
   /**
    * Random graph generator for sparse graphs.
-   * @param {!IGraph} graph
    */
   generateSparseGraph(graph) {
     graph.clear()
     const index = new HashMap()
-
     const n = this.nodeCount
-
     const m = Math.min(this.getMaxEdges(), this.edgeCount)
-
     const nodes = new Array(n)
-
     for (let i = 0; i < n; i++) {
       nodes[i] = this.createNode(graph)
       index.set(nodes[i], i)
     }
-
     permutate(nodes)
-
     let count = m
     while (count > 0) {
       const vi = Math.floor(Math.random() * n)
       const v = nodes[vi]
       const w = nodes[Math.floor(Math.random() * n)]
-
       if (graph.getEdge(v, w) || (v === w && (!this.allowSelfLoops || !this.allowCycles))) {
         continue
       }
       graph.createEdge(v, w)
       count--
     }
-
     if (!this.allowCycles) {
       graph.edges.forEach((edge) => {
         const sourcePort = edge.sourcePort
@@ -213,20 +185,15 @@ export default class RandomGraphGenerator {
       })
     }
   }
-
   /**
    * Creates a node
-   * @param {!IGraph} graph
-   * @returns {!INode}
    */
   createNode(graph) {
     return this.nodeCreator(graph)
   }
-
   /**
    * Helper method that returns the maximum number of edges of a graph that still obeys the set structural
    * constraints.
-   * @returns {number}
    */
   getMaxEdges() {
     if (this.allowMultipleEdges) {
@@ -239,10 +206,8 @@ export default class RandomGraphGenerator {
     return maxEdges
   }
 }
-
 /**
  * Permutates the positions of the elements within the given array.
- * @param {!Array} a
  */
 function permutate(a) {
   // forth...
@@ -260,18 +225,12 @@ function permutate(a) {
     a[j] = tmp
   }
 }
-
 /**
  * Returns an array of n unique random integers that lie within the range min (inclusive) and max (exclusive).
  * If max - min &lt; n then null is returned.
- * @param {number} n
- * @param {number} min
- * @param {number} max
- * @returns {?Array.<number>}
  */
 function getUniqueArray(n, min, max) {
   max--
-
   let ret = null
   const l = max - min + 1
   if (l >= n && n > 0) {
@@ -290,20 +249,15 @@ function getUniqueArray(n, min, max) {
   }
   return ret
 }
-
 /**
  * Returns an array of n randomly chosen boolean values of which trueCount of them are true.
  * If the requested numbers of true values is bigger than the number
  * of requested boolean values, an Exception is raised.
- * @param {number} n
- * @param {number} trueCount
- * @returns {!Array.<boolean>}
  */
 function getBoolArray(n, trueCount) {
   if (trueCount > n) {
     throw new Error(`RandomSupport.GetBoolArray( ${n}, ${trueCount} )`)
   }
-
   const a = getUniqueArray(trueCount, 0, n)
   const b = []
   if (a) {

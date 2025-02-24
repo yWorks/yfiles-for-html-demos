@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,19 +27,19 @@
  **
  ***************************************************************************/
 import {
-  EdgeRouterScope,
+  ContextModificationStage,
   GenericLabeling,
-  IDataProvider,
-  IEdgeMap,
   ILayoutAlgorithm,
+  type IMapper,
+  LayoutEdge,
   LayoutGraph,
+  LayoutGraphGrouping,
   LayoutGraphHider,
-  LayoutGroupingSupport,
+  LayoutKeys,
   LayoutStageBase,
-  Maps,
-  StraightLineEdgeRouter,
+  Mapper,
   TreeReductionStage
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * This stage temporarily removes edges that are incident to group nodes.
@@ -58,53 +58,17 @@ import {
  * {@link markedEdgeRouter edge routing algorithm} for those edges.
  */
 export default class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
-  private $considerEdgeLabels: boolean
-  private $edgeSelectionKey: any
-  private $markedEdgeRouter: ILayoutAlgorithm | null
-
-  constructor(placeLabels: boolean) {
-    super()
-    this.$considerEdgeLabels = placeLabels
-    this.$edgeSelectionKey = new StraightLineEdgeRouter().affectedEdgesDpKey
-    this.$markedEdgeRouter = null
-  }
-
   /**
-   * Specifies the key to register a data provider that will be used by the
-   * edge routing algorithm to determine the edges that need to be routed.
-   */
-  get edgeSelectionKey(): any {
-    return this.$edgeSelectionKey
-  }
-
-  set edgeSelectionKey(value: any) {
-    this.$edgeSelectionKey = value
-  }
-
-  /**
-   * Specifies the edge routing algorithm that is applied to the set of marked edges.
-   *
-   * Note that it is required that a suitable edge selection key is specified and the router's scope is
-   * reduced to the affected edges.
-   */
-  get markedEdgeRouter(): ILayoutAlgorithm | null {
-    return this.$markedEdgeRouter
-  }
-
-  set markedEdgeRouter(value: ILayoutAlgorithm | null) {
-    this.$markedEdgeRouter = value
-  }
-
-  /**
-   * Specifies whether or not the stage should place the labels of the edges that
+   * Creates an instance of HandleEdgesBetweenGroupsStage.
+   * @param considerEdgeLabels whether or not the stage should place the labels of the edges that
    * have been temporarily hidden, when these edges will be restored back.
+   * @param markedEdgeRouter the edge routing algorithm that is applied to the set of marked edges
    */
-  get considerEdgeLabels(): boolean {
-    return this.$considerEdgeLabels
-  }
-
-  set considerEdgeLabels(value: boolean) {
-    this.$considerEdgeLabels = value
+  constructor(
+    public considerEdgeLabels: boolean,
+    public markedEdgeRouter: ILayoutAlgorithm | null = null
+  ) {
+    super()
   }
 
   /**
@@ -113,13 +77,17 @@ export default class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
    * exist. Then, it applies the core layout algorithm to the reduced graph.
    * After it produces the result, it re-inserts the previously removed edges and routes them.
    */
-  applyLayout(graph: LayoutGraph): void {
-    const groupingSupport = new LayoutGroupingSupport(graph)
+  protected applyLayoutImpl(graph: LayoutGraph): void {
+    if (!this.coreLayout) {
+      return
+    }
 
-    if (!LayoutGroupingSupport.isGrouped(graph)) {
-      this.applyLayoutCore(graph)
+    const groupingSupport = LayoutGraphGrouping.createReadOnlyView(graph)
+
+    if (!LayoutGraphGrouping.isGrouped(graph)) {
+      this.coreLayout.applyLayout(graph)
     } else {
-      const hiddenEdgesMap = Maps.createHashedEdgeMap()
+      const hiddenEdgesMap = new Mapper<LayoutEdge, boolean>()
 
       const edgeHider = new LayoutGraphHider(graph)
 
@@ -134,7 +102,7 @@ export default class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
         }
       }
 
-      this.applyLayoutCore(graph)
+      this.coreLayout.applyLayout(graph)
 
       if (existHiddenEdges) {
         edgeHider.unhideAll()
@@ -143,29 +111,15 @@ export default class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
         this.routeMarkedEdges(graph, hiddenEdgesMap)
 
         if (this.considerEdgeLabels) {
-          // all labels of hidden edges should be marked
-          const affectedLabelsDpKey = 'affectedLabelsDpKey'
-          const nonTreeLabelsMap = Maps.createHashedDataMap()
-
-          for (const edge of graph.edges) {
-            const ell = graph.getLabelLayout(edge)
-            for (const labelLayout of ell) {
-              nonTreeLabelsMap.set(labelLayout, hiddenEdgesMap.get(edge))
-            }
-          }
-
-          // add selection marker
-          graph.addDataProvider(affectedLabelsDpKey, nonTreeLabelsMap)
-
           // place marked labels
-          const labeling = new GenericLabeling()
-          labeling.placeNodeLabels = false
-          labeling.placeEdgeLabels = true
-          labeling.affectedLabelsDpKey = affectedLabelsDpKey
-          labeling.applyLayout(graph)
-
-          // dispose selection key
-          graph.removeDataProvider(affectedLabelsDpKey)
+          const labeling = new GenericLabeling({
+            scope: 'edge-labels'
+          })
+          const labelingData = labeling.createLayoutData(graph)
+          // all labels of hidden edges should be marked
+          labelingData.scope.edgeLabels = (edgeLabel) =>
+            edgeLabel.owner instanceof LayoutEdge && !!hiddenEdgesMap.get(edgeLabel.owner)
+          graph.applyLayout(labeling, labelingData)
         }
       }
     }
@@ -184,30 +138,15 @@ export default class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
    * @param markedEdgesMap a map that returns `true` for all hidden by the stage edges of
    *        the graph
    */
-  private routeMarkedEdges(graph: LayoutGraph, markedEdgesMap: IEdgeMap): void {
-    const router = this.markedEdgeRouter
-    if (router === null) {
+  private routeMarkedEdges(graph: LayoutGraph, markedEdgesMap: IMapper<LayoutEdge, boolean>): void {
+    if (this.markedEdgeRouter === null) {
       return
     }
 
-    let backupDP: IDataProvider | null = null
-    if (this.edgeSelectionKey) {
-      backupDP = graph.getDataProvider(this.edgeSelectionKey)
-      graph.addDataProvider(this.edgeSelectionKey, markedEdgesMap)
-    }
-    if (router instanceof StraightLineEdgeRouter) {
-      router.scope = EdgeRouterScope.ROUTE_AFFECTED_EDGES
-      router.affectedEdgesDpKey = this.edgeSelectionKey
-    }
+    //temporarily add the selected edges to the layout context
+    const contextStage = new ContextModificationStage(this.markedEdgeRouter)
+    contextStage.addReplacementMap(LayoutKeys.ROUTE_EDGES_DATA_KEY, markedEdgesMap)
 
-    router.applyLayout(graph)
-
-    if (this.edgeSelectionKey) {
-      graph.removeDataProvider(this.edgeSelectionKey)
-
-      if (backupDP != null) {
-        graph.addDataProvider(this.edgeSelectionKey, backupDP)
-      }
-    }
+    contextStage.applyLayout(graph)
   }
 }

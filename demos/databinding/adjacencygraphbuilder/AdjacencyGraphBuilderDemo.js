@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,84 +28,56 @@
  ***************************************************************************/
 import {
   AdjacencyGraphBuilder,
+  EdgeLabelPreferredPlacement,
   GraphComponent,
   GraphViewerInputMode,
-  HierarchicLayout,
-  HierarchicLayoutData,
-  HierarchicLayoutLayeringStrategy,
-  IIncrementalHintsFactory,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   IList,
-  IModelItem,
   INode,
-  LabelPlacements,
-  LabelSideReferences,
-  LayoutMode,
-  License,
-  PreferredPlacementDescriptor,
-  TemplateNodeStyle
-} from 'yfiles'
-import { SchemaComponent } from './SchemaComponent.js'
-import samples from './samples.js'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
-
+  LayoutExecutor,
+  License
+} from '@yfiles/yfiles'
+import { SchemaComponent } from './SchemaComponent'
+import samples from './samples'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 const samplesComboBox = document.querySelector('#samples-combo-box')
-
-/** @type {HierarchicLayout} */
 let layout
-/** @type {HierarchicLayoutData} */
 let layoutData
-/** @type {boolean} */
 let layouting = false
-
-/** @type {GraphComponent} */
 let graphComponent
-/** @type {SchemaComponent} */
 let schemaComponent
-
-/** @type {IList.<INode>} */
 let existingNodes
-
 /**
  * Shows building a graph from business data with class
  * {@link AdjacencyGraphBuilder}.
  * This demo provides a schema graph component for interactive manipulation
  * of the result graph structure and content.
  *
- * In order to visualize the nodes, {@link TemplateNodeStyle} is used. The style's
+ * In order to visualize the nodes, {@link LitNodeStyle} is used. The style's
  * node template can also be changed interactively in order to display arbitrary data
  * of the business data associated with the node.
- * @returns {!Promise}
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function run() {
   License.value = await fetchLicense()
-
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   schemaComponent = new SchemaComponent('schemaGraphComponent', graphComponent.graph, () => {
     // noinspection JSIgnoredPromiseFromCall
     buildGraphFromData(true)
   })
-
   // configure the input mode
   graphComponent.inputMode = new GraphViewerInputMode()
-
   // initialize the layout algorithm used in this demo
   initializeLayout()
-
   initializeSamplesComboBox()
-
   // load the initial data from samples
   // noinspection JSIgnoredPromiseFromCall
   loadSample(samples[0])
-
   // register toolbar and other GUI elements
   initializeUI()
 }
-
 /**
  * Bind various UI elements to the appropriate actions.
  */
@@ -130,18 +102,15 @@ function initializeUI() {
     }
   })
 }
-
 /**
  * Builds the graph from data.
- * @param {boolean} update `true` when the following layout should be incremental, `false`
+ * @param update `true` when the following layout should be incremental, `false`
  *   otherwise
- * @returns {!Promise}
  */
 async function buildGraphFromData(update) {
   if (layouting) {
     return
   }
-
   if (update) {
     // remember existing nodes
     existingNodes = graphComponent.graph.nodes.toList()
@@ -157,52 +126,41 @@ async function buildGraphFromData(update) {
     } catch (e) {
       alert(`${e.message}`)
     }
-    graphComponent.fitGraphBounds()
+    await graphComponent.fitGraphBounds()
   }
-
   await applyLayout(update)
 }
-
 /**
  * Applies the layout.
- * @param {boolean} update `true` when the following layout should be incremental, `false`
+ * @param update `true` when the following layout should be incremental, `false`
  *   otherwise
- * @returns {!Promise}
  */
 async function applyLayout(update) {
   if (layouting) {
     return
   }
-
-  if (update) {
-    // configure from scratch layout
-    layout.layoutMode = LayoutMode.INCREMENTAL
-  } else {
-    layout.layoutMode = LayoutMode.FROM_SCRATCH
-  }
-
+  layout.fromSketchMode = update
   layouting = true
   try {
-    await graphComponent.morphLayout(layout, '1s', layoutData)
+    // Ensure that the LayoutExecutor class is not removed by build optimizers
+    // It is needed for the 'applyLayoutAnimated' method in this demo.
+    LayoutExecutor.ensure()
+    await graphComponent.applyLayoutAnimated(layout, '1s', layoutData)
   } finally {
     layouting = false
   }
 }
-
 /**
  * Loads the given sample data and builds the graph using the {@link SchemaComponent}
- * @param {!object} sample The sample to use for instantiation / initialization
- * @returns {!Promise}
+ * @param sample The sample to use for instantiation / initialization
  */
 async function loadSample(sample) {
   graphComponent.graph.clear()
-
   const sampleClone = JSON.parse(JSON.stringify(sample))
   schemaComponent.loadSample(sampleClone)
   schemaComponent.adjacencyGraphBuilder.buildGraph()
   await applyLayout(false)
 }
-
 /**
  * Initializes the samples combobox with the loaded sample data
  */
@@ -210,39 +168,28 @@ function initializeSamplesComboBox() {
   for (let i = 0; i < samples.length; i++) {
     const option = document.createElement('option')
     option.label = samples[i].name
+    // @ts-ignore The value should be a string, but this seems to work, anyway.
     option.value = samples[i]
     samplesComboBox.appendChild(option)
   }
 }
-
 /**
  * Configures the demo's layout algorithm as well as suitable layout data.
  */
 function initializeLayout() {
   // initialize layout algorithm
-  layout = new HierarchicLayout()
-  layout.orthogonalRouting = true
-  layout.integratedEdgeLabeling = true
-  layout.fromScratchLayeringStrategy = HierarchicLayoutLayeringStrategy.HIERARCHICAL_TOPMOST
-
+  layout = new HierarchicalLayout({
+    fromScratchLayeringStrategy: 'hierarchical-topmost'
+  })
   // initialize layout data
   // configure label placement
-  const preferredPlacementDescriptor = new PreferredPlacementDescriptor({
-    sideOfEdge: LabelPlacements.RIGHT_OF_EDGE,
-    sideReference: LabelSideReferences.ABSOLUTE_WITH_RIGHT_IN_NORTH,
-    distanceToEdge: 5
-  })
-  preferredPlacementDescriptor.freeze()
-
-  layoutData = new HierarchicLayoutData({
-    incrementalHints: (item, hintsFactory) => {
-      if (item instanceof INode && !existingNodes.includes(item)) {
-        return hintsFactory.createLayerIncrementallyHint(item)
-      }
-      return null
-    },
-    edgeLabelPreferredPlacement: preferredPlacementDescriptor
+  layoutData = new HierarchicalLayoutData({
+    edgeLabelPreferredPlacements: new EdgeLabelPreferredPlacement({
+      edgeSide: 'right-of-edge',
+      sideReference: 'absolute-with-right-above',
+      distanceToEdge: 5
+    }),
+    incrementalNodes: (node) => !existingNodes.includes(node)
   })
 }
-
 run().then(finishLoading)

@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+    <title>Layout Grid Demo [yFiles for HTML]</title>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+
+    <style>
+      .option-input {
+        width: 60px;
+        padding-left: 2px;
+        margin-top: 3px;
+      }
+
+      .option label {
+        min-width: 10em;
+        padding-left: 5px;
+        padding-right: 2px;
+        margin-top: 3px;
+      }
+
+      .grid-button-plus {
+        background: url('../../resources/icons/plus-16.svg') no-repeat 0 50%;
+      }
+
+      .grid-button-minus {
+        background: url('../../resources/icons/minus-16.svg') no-repeat 0 50%;
+      }
+
+      .grid-button-minus-whole-width {
+        background: url('../../resources/icons/minus-16.svg') no-repeat 0 50%;
+        grid-column: 1 / -1; /* Stretch the button over all grid columns */
+      }
+
+      .grid-button-minus[disabled] {
+        opacity: 0.6;
+      }
+
+      .option {
+        display: flex;
+        padding-bottom: 1em;
+      }
+
+      .add-delete-panel {
+        display: grid;
+        grid-template-columns: repeat(2, auto);
+        grid-gap: 10px;
+        grid-template-areas: 'addRow deleteRow' 'addColumn deleteColumn' 'deleteEmpty deleteEmpty';
+      }
+
+      #AddRow {
+        grid-area: addRow;
+      }
+
+      #DeleteRow {
+        grid-area: deleteRow;
+      }
+
+      #AddColumn {
+        grid-area: addColumn;
+      }
+
+      #DeleteColumn {
+        grid-area: deleteColumn;
+      }
+
+      #DeleteEmptyRowsColumns {
+        grid-area: deleteEmpty;
+        grid-column: 1 / -1;
+        width: 100%;
+      }
+
+      .grid-button {
+        padding: 3px 0 3px 0;
+        border: 1px solid #888;
+        background-color: #ddd;
+      }
+
+      .grid-button:not([disabled]):hover {
+        background-color: #bbb;
+      }
+
+      .apply-button-container {
+        display: grid;
+        margin-top: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Layout Grid</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="GROUP_SELECTION"></button>
+      <button data-command="UNGROUP_SELECTION"></button>
+
+      <span class="demo-separator"></span>
+
+      <button
+        data-command="GenerateGridRestrictions"
+        style="background-image: url('resources/grid-16.svg')"
+        title="Keep selected nodes in their current grid cell"
+      ></button>
+
+      <button
+        data-command="RemoveRestrictions"
+        class="demo-icon-yIconDelete"
+        title="Remove grid restrictions for selected nodes"
+      ></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="HierarchicalLayout" class="demo-icon-yIconLayoutHierarchic labeled">
+        Hierarchical
+      </button>
+      <button data-command="OrganicLayout" class="demo-icon-yIconLayoutOrganic labeled">
+        Organic
+      </button>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Partition Grid Demo</h1>
+
+        <p>
+          This demo application lets you experience the usage of a <a href="https://docs.yworks.com/yfileshtml/#/api/PartitionGrid" target="_blank">PartitionGrid</a> for
+          hierarchical and organic layout calculations.
+        </p>
+        <p>
+          Nodes are assigned to columns/rows by their fill color (gray nodes are unassigned) and the
+          calculated layout grid is visualized after a layout run to show the effect of the node
+          assignment to the layout.
+        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Click the Hierarchical or Organic button of the toolbar to trigger the corresponding
+            layout algorithm based on the current node assignment. Note that, the Organic layout
+            does not support stretching of a group node if it contains child nodes assigned to
+            different rows or columns. In this case, the Organic layout button will be disabled.
+          </li>
+          <li>
+            Change the layout cell of a (non-gray) node by moving it to a different layout cell. For
+            the gray nodes that do not have currently active restrictions, select the desired ones
+            and press the
+            <img src="resources/grid-16.svg" style="vertical-align: bottom" /> -button from the
+            toolbar to add restrictions based on their current location. Then, move them to other
+            layout cells, if desired. Nodes that are positioned outside the layout grid do not
+            receive a restriction.
+          </li>
+          <li>
+            Add/remove active restrictions to/from the selected nodes, using buttons
+            <img src="resources/grid-16.svg" style="vertical-align: bottom" /> or
+            <img src="../../resources/icons/delete2-16.svg" style="vertical-align: bottom" /> of the
+            toolbar.
+          </li>
+          <li>Configure the layout grid using the settings panel on the right.</li>
+          <li>
+            Remove a row/column from the layout grid, by right-clicking on a cell that belongs to
+            the desired row/column and use the "Delete Row" or "Delete Column" of the settings panel
+            on the right.
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <h2>Partition Grid</h2>
+          <div class="add-delete-panel">
+            <button id="add-row" class="grid-button grid-button-plus">Add Row</button>
+            <button id="delete-row" class="grid-button grid-button-minus" disabled="">
+              Delete Row
+            </button>
+
+            <button id="add-column" class="grid-button grid-button-plus">Add Column</button>
+            <button id="delete-column" class="grid-button grid-button-minus" disabled="">
+              Delete Column
+            </button>
+
+            <button
+              id="delete-empty-rows-columns"
+              class="grid-button grid-button-minus-whole-width"
+            >
+              Delete Empty Rows/Columns
+            </button>
+          </div>
+          <h2>Column Configuration</h2>
+          <div class="option">
+            <label for="leftInset">Left Inset:</label>
+            <input type="number" id="leftInset" min="1" max="200" class="option-input" value="10" />
+          </div>
+
+          <div class="option">
+            <label for="rightInset">Right Inset:</label>
+            <input
+              type="number"
+              id="rightInset"
+              min="1"
+              max="200"
+              class="option-input"
+              value="10"
+            />
+          </div>
+
+          <div class="option">
+            <label for="columnWidth">Min Column Width:</label>
+            <input
+              type="number"
+              id="columnWidth"
+              min="1"
+              max="200"
+              class="option-input"
+              value="50"
+            />
+          </div>
+
+          <div class="option">
+            <input
+              type="checkbox"
+              id="fix-column-order"
+              class="demo-toggle-button labeled"
+              checked=""
+            />
+            <label for="fix-column-order">Fixed Column Order</label>
+          </div>
+
+          <div class="option">
+            <input type="checkbox" id="stretch-group-nodes" class="demo-toggle-button labeled" />
+            <label for="stretch-group-nodes">Stretch Group Nodes</label>
+          </div>
+
+          <h2>Row Configuration</h2>
+
+          <div class="option">
+            <label for="topInset">Top Inset:</label>
+            <input type="number" id="topInset" min="1" max="200" class="option-input" value="10" />
+          </div>
+
+          <div class="option">
+            <label for="bottomInset">Bottom Inset:</label>
+            <input
+              type="number"
+              id="bottomInset"
+              min="1"
+              max="200"
+              class="option-input"
+              value="10"
+            />
+          </div>
+
+          <div class="option">
+            <label for="rowHeight">Min Row Height:</label>
+            <input type="number" id="rowHeight" min="1" max="200" class="option-input" value="50" />
+          </div>
+
+          <div class="apply-button-container">
+            <button id="apply-configuration" class="grid-button">Apply</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="LayoutGridDemo.ts" async></script>
+  </body>
+</html>

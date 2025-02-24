@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@ import {
   GeneralPath,
   GeneralPathNodeStyle,
   HandleInputMode,
-  HandleTypes,
+  HandleType,
   ICanvasContext,
   ICompoundEdit,
   IEnumerable,
@@ -57,7 +57,7 @@ import {
   Stroke,
   type StrokeConvertible,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Creates a {@link GeneralPath} that describes a octagonal shape.
@@ -314,7 +314,7 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
   }
 
   clone(): this {
-    const style = super.memberwiseClone()
+    const style = super.clone()
     style.$path = this.$path.clone()
     style.$pathStyle = this.$pathStyle.clone()
     return style
@@ -323,15 +323,15 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
   /**
    * Returns a set of handles consisting of a handle for each control point in the {@link GeneralPath}.
    */
-  getHandles(context: IInputModeContext, node: INode): IEnumerable<IHandle> {
+  getHandles(node: INode): IEnumerable<IHandle> {
     const cursor = this.$path.createCursor()
     const handles: Array<IHandle> = []
     const coords = [0, 0, 0, 0, 0, 0]
     let index = 0
     while (cursor.moveNext()) {
       const type = cursor.getCurrent(coords)
-      const handleType = HandleTypes.VARIANT1 | HandleTypes.MOVE
-      const innerHandleType = HandleTypes.VARIANT2 | HandleTypes.MOVE
+      const handleType = HandleType.CUSTOM1 | HandleType.MOVE
+      const innerHandleType = HandleType.CUSTOM2 | HandleType.MOVE
       switch (type) {
         case PathType.CLOSE:
           break
@@ -391,7 +391,7 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
  * A {@link IHandle} that allows for changing the path of a {@link EditablePathNodeStyle}.
  */
 export class PathHandle extends BaseClass(IHandle, IPoint) {
-  private readonly $type: HandleTypes
+  private readonly $type: HandleType
   private readonly $node: INode
   private readonly $index: number
   private $x: number
@@ -408,7 +408,7 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
     index: number,
     x: number,
     y: number,
-    type: HandleTypes
+    type: HandleType
   ) {
     super()
     this.$x = x
@@ -561,7 +561,7 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
     return this.$y * height + y
   }
 
-  get type(): HandleTypes {
+  get type(): HandleType {
     return this.$type
   }
 
@@ -571,6 +571,10 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
 
   get location(): IPoint {
     return this
+  }
+
+  get tag(): any {
+    return null
   }
 
   initializeDrag(context: IInputModeContext): void {
@@ -584,7 +588,7 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
       'Change Path',
       [this.$node.style, this.$node],
       (item: INode | INodeStyle) =>
-        item instanceof INode ? item.lookup(IMementoSupport.$class) : EDITABLE_PATH_MEMENTO_SUPPORT
+        item instanceof INode ? item.lookup(IMementoSupport) : EDITABLE_PATH_MEMENTO_SUPPORT
     )
   }
 
@@ -677,8 +681,8 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
 
   dragFinished(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
     this.handleMove(context, originalLocation, newLocation)
-    const finishHandler = (inputMode: object, evt: InputModeEventArgs): void => {
-      ;(inputMode as HandleInputMode).removeDragFinishedListener(finishHandler)
+    const finishHandler = (_evt: InputModeEventArgs, inputMode: HandleInputMode): void => {
+      inputMode.removeEventListener('drag-finished', finishHandler)
 
       // adjust node layout and update the path with the final handle coordinates
       this.$style.normalizePath(this.$node, context.graph!)
@@ -688,7 +692,7 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
       this.edit!.commit()
       this.edit = null
     }
-    ;(context.parentInputMode as HandleInputMode).addDragFinishedListener(finishHandler)
+    ;(context.inputMode as HandleInputMode).addEventListener('drag-finished', finishHandler)
   }
 
   /**
@@ -714,7 +718,7 @@ export function updateHandles(node: INode | null, handleInputMode: HandleInputMo
   handleInputMode.handles.clear()
   if (node) {
     ;(node.style as EditablePathNodeStyle)
-      .getHandles(handleInputMode.inputModeContext!, node)
+      .getHandles(node)
       .forEach((handle) => handleInputMode.handles.add(handle))
   }
 }

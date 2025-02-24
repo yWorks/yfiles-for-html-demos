@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import neo4j from 'neo4j-driver'
-
 /**
  * @yjs:keep = types,Node
  */
@@ -36,37 +35,27 @@ export const Neo4jNode = neo4j.types.Node
  * @yjs:keep = types,Relationship
  */
 export const Neo4jEdge = neo4j.types.Relationship
-
 /**
  * Establishes a connection to a Neo4j database.
- * @param {!string} url The URL to connect to (neo4j:// bolt:// neo4j+s://).
- * @param {!string} databaseName The name of the database.
- * @param {!string} user The username to use.
- * @param {!string} pass The password to use.
- * @returns {!Promise.<Promise.<Result>>}
+ * @param url The URL to connect to (neo4j:// bolt:// neo4j+s://).
+ * @param databaseName The name of the database.
+ * @param user The username to use.
+ * @param pass The password to use.
  */
 export async function connectToDB(url, databaseName, user, pass) {
   // create a new Neo4j driver instance
   const neo4jDriver = neo4j.driver(url, neo4j.auth.basic(user, pass), {
     connectionAcquisitionTimeout: 5000
   })
-
   const runCypherQuery = createCypherQueryRunner(neo4jDriver, databaseName)
-
   try {
     // check connection
     await runCypherQuery('MATCH (n) RETURN n LIMIT 1')
   } catch (e) {
     throw new Error(`Could not connect to Neo4j: ${e}`)
   }
-
   return runCypherQuery
 }
-
-/**
- * @param {*} neo4jDriver
- * @param {!string} databaseName
- */
 function createCypherQueryRunner(neo4jDriver, databaseName) {
   /**
    * Runs the Cypher query.
@@ -88,41 +77,3 @@ function createCypherQueryRunner(neo4jDriver, databaseName) {
     return result
   }
 }
-
-/**
- * @typedef {Object} Node
- * @property {Integer} identity
- * @property {Array.<string>} labels
- * @property {object} properties
- */
-
-/**
- * @typedef {Object} Relationship
- * @property {Integer} identity
- * @property {Integer} start
- * @property {Integer} end
- * @property {string} type
- * @property {object} properties
- */
-
-/**
- * @typedef {Object} Neo4jRecord
- * @property {Array.<string>} keys
- * @property {number} length
- * @property {function} get
- * @property {function} forEach
- */
-
-/**
- * @typedef {Object} Integer
- * @property {number} high
- * @property {number} low
- * @property {function} toInt
- * @property {function} equals
- */
-
-/**
- * @typedef {Object} Result
- * @property {Promise} summary
- * @property {Array.<Neo4jRecord>} records
- */

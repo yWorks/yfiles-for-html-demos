@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,16 +27,16 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   IEnumerable,
   IInputModeContext,
   INode,
   IPortCandidate,
   List,
+  PortCandidate,
   PortCandidateProviderBase,
   PortCandidateValidity
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * This port candidate provider provides port candidates for the
@@ -72,7 +72,7 @@ export default class BluePortCandidateProvider extends PortCandidateProviderBase
     // Create the candidate for each port
     if (graph) {
       this.node.ports.forEach((port) => {
-        const portCandidate = new DefaultPortCandidate(port)
+        const portCandidate = new PortCandidate(port)
         portCandidate.validity =
           graph.degree(port) === 0 ? PortCandidateValidity.VALID : PortCandidateValidity.INVALID
         candidates.add(portCandidate)
@@ -81,10 +81,7 @@ export default class BluePortCandidateProvider extends PortCandidateProviderBase
 
     // If no candidates have been created so far, create a single invalid candidate as fallback
     if (candidates.size === 0) {
-      const item = new DefaultPortCandidate(
-        this.node,
-        FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-      )
+      const item = new PortCandidate(this.node, FreeNodePortLocationModel.CENTER)
       item.validity = PortCandidateValidity.INVALID
       candidates.add(item)
     }

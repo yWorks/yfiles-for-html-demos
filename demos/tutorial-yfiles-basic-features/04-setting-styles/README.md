@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 04 Setting Styles - Tutorial: Basic Features
 
-# Customizing Styles
+<img src="../../../doc/demo-thumbnails/tutorial-basic-features-setting-styles.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/04-setting-styles/).
 
 ## How to influence visual appearance.
 
@@ -43,12 +45,12 @@ graph.edgeDefaults.style = new PolylineEdgeStyle({
 ```
 
 ```
-const defaultLabelStyle = new DefaultLabelStyle({
+const defaultLabelStyle = new LabelStyle({
   font: '12px Tahoma',
   textFill: 'black',
-  backgroundFill: '#8fff',
+  backgroundFill: '#ffffff87',
   shape: 'round-rectangle',
-  insets: [2, 5]
+  padding: [2, 5]
 })
 
 // Set the defined style as the default for both edge and node labels
@@ -78,7 +80,7 @@ graph.createEdge({
 graph.addLabel({
   text: 'New Label',
   owner: node,
-  style: new DefaultLabelStyle({ backgroundFill: '#a6a6c0' })
+  style: new LabelStyle({ backgroundFill: '#a6a6c0' })
 })
 ```
 
@@ -121,10 +123,10 @@ graph.setStyle(edge, edgeStyle)
 This sample shows how to change the styles of labels:
 
 ```
-const labelStyle = new DefaultLabelStyle({
+const labelStyle = new LabelStyle({
   backgroundStroke: '2px #46A8D5',
   backgroundFill: '#b4dbed',
-  insets: [3, 5, 3, 5]
+  padding: [3, 5, 3, 5]
 })
 
 graph.setStyle(label, labelStyle)

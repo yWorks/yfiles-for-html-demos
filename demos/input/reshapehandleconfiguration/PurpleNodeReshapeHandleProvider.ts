@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,16 +29,15 @@
 import {
   EventRecognizers,
   HandlePositions,
-  HandleTypes,
+  HandleType,
   IHandle,
   IInputModeContext,
   INode,
   IReshapeHandler,
   NodeReshapeHandleProvider,
   NodeReshapeHandlerHandle,
-  ReshapeHandlerHandle,
   ReshapePolicy
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * A NodeReshapeHandleProvider for purple nodes that provides different handles for corners and borders.
@@ -56,12 +55,12 @@ export default class PurpleNodeReshapeHandleProvider extends NodeReshapeHandlePr
       // handles at corners shall always keep the aspect ratio
       handle.reshapePolicy = ReshapePolicy.PROJECTION
       handle.ratioReshapeRecognizer = EventRecognizers.ALWAYS
-      handle.type = HandleTypes.RESIZE
+      handle.type = HandleType.RESIZE
     } else {
       // handles at the sides shall ignore the aspect ratio and use another handle visualization
       handle.reshapePolicy = ReshapePolicy.NONE
       handle.ratioReshapeRecognizer = EventRecognizers.NEVER
-      handle.type = HandleTypes.WARP
+      handle.type = HandleType.RESIZE
     }
 
     return handle

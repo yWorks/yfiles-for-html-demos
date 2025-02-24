@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { GraphComponent, GraphEditorInputMode, Size } from 'yfiles'
+import { GraphComponent, GraphEditorInputMode, Size } from '@yfiles/yfiles'
 import { VueComponentNodeStyle } from '@/VueComponentNodeStyle'
 import NodeComponent from '@/components/NodeComponent.vue'
 import { vuetify } from '@/vuetify'

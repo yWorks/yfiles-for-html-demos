@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,47 +28,41 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Color,
-  DefaultLabelStyle,
+  CssFill,
   EdgePathLabelModel,
   EdgeSides,
   GraphClipboard,
   GraphComponent,
   GraphEditorInputMode,
   HashMap,
-  HierarchicLayout,
+  HierarchicalLayout,
   IEdge,
   IGraph,
   IModelItem,
   INode,
-  Insets,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
+  IStripeStyle,
   ITable,
+  LabelStyle,
   LayoutExecutor,
-  LayoutOrientation,
   License,
-  MinimumNodeSizeStage,
   NodeStyleStripeStyleAdapter,
-  OrthogonalEdgeEditingContext,
   ParentNodeDetectionModes,
   Rect,
   RectangleNodeStyle,
   ReparentStripeHandler,
   ShapeNodeStyle,
-  SimplexNodePlacer,
   Size,
-  SolidColorFill,
   Table,
   TableEditorInputMode,
   TableNodeStyle,
-  TimeSpan,
-  VoidStripeStyle
-} from 'yfiles'
+  TimeSpan
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { downloadFile } from 'demo-utils/file-support'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { downloadFile } from '@yfiles/demo-utils/file-support'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
@@ -79,12 +73,8 @@ let graphComponent: GraphComponent
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
-    allowGroupSelection: false,
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext()
+    allowGroupSelection: false
   })
 
   // Enable general undo support
@@ -106,7 +96,7 @@ async function loadGraph(): Promise<void> {
   // then build the graph with the given data set
   buildGraph(graphComponent.graph, graphData)
 
-  // Automatically layout the swimlanes. The HierarchicLayout respects the node to cell assignment based on the
+  // Automatically layout the swimlanes. The HierarchicalLayout respects the node to cell assignment based on the
   // node's center position.
   await runLayout('0s')
   // Finally, clear the undo engine to prevent undoing of the graph creation.
@@ -141,7 +131,7 @@ function configureTableEditing(graphComponent: GraphComponent): void {
 
   // prevent selection of the table node
   graphEditorInputMode.selectablePredicate = (item: IModelItem): boolean => {
-    return !(INode.isInstance(item) && item.lookup(ITable.$class))
+    return !(item instanceof INode && ITable.getTable(item))
   }
 }
 
@@ -168,25 +158,25 @@ function buildGraph(graph: IGraph, graphData: any): void {
 
   // Swimlanes are a special application of Tables, either one row with several columns (i.e. vertical swimlanes), or
   // one column with several rows (i.e. horizontal swimlanes).
-  // In this case we go with the vertical swimlanes. Therefore we create a Table with one row and multiple columns,
+  // In this case we go with the vertical swimlanes. Therefore, we create a Table with one row and multiple columns,
   // depending on the input data.
   const table = new Table()
 
   // Configure the row style, i.e. the container for the swimlanes. In this case, they should not be rendered at all,
   // since we are creating a vertical swimlane. However, in the general case of Tables, we could use a
-  // semi-transparent style here, too create overlapping cell colors.
-  table.rowDefaults.insets = new Insets(0, 10, 0, 0)
-  table.rowDefaults.style = new VoidStripeStyle()
+  // semi-transparent style here to create overlapping cell colors.
+  table.rowDefaults.padding = [10, 0, 0, 0]
+  table.rowDefaults.style = IStripeStyle.VOID_STRIPE_STYLE
 
   // Configure the column style, i.e. the actual swimlanes.
-  table.columnDefaults.insets = new Insets(10, 30, 10, 10)
-  table.columnDefaults.labels.style = new DefaultLabelStyle({
+  table.columnDefaults.padding = [30, 10, 10, 10]
+  table.columnDefaults.labels.style = new LabelStyle({
     backgroundFill: '#e0e0e0',
     backgroundStroke: 'black',
     verticalTextAlignment: 'center',
     horizontalTextAlignment: 'center',
     textSize: 16,
-    insets: [3, 5, 3, 5]
+    padding: [3, 5, 3, 5]
   })
   table.columnDefaults.size = 200
   table.columnDefaults.style = new NodeStyleStripeStyleAdapter(
@@ -251,7 +241,7 @@ function buildGraph(graph: IGraph, graphData: any): void {
         node,
         tableGroupNode,
         table.columns.at(lanes[nodeData.lane])!,
-        table.rows.first()
+        table.rows.first()!
       )
     }
   })
@@ -281,8 +271,8 @@ function writeToJSON(graph: IGraph): any {
   }
 
   // find the table, we assume there is only one
-  const tableNode = graph.nodes.find((node: INode): boolean => !!node.lookup(ITable.$class))
-  const table = tableNode ? tableNode.lookup(ITable.$class) : null
+  const tableNode = graph.nodes.find((node: INode): boolean => !!ITable.getTable(node))
+  const table = tableNode ? ITable.getTable(tableNode) : null
 
   // serialize the nodes with their swimlane information
   const node2id = new HashMap()
@@ -299,10 +289,10 @@ function writeToJSON(graph: IGraph): any {
     const jsonNode = {
       id: i,
       size: [node.layout.width, node.layout.height],
-      fill: colorToHex(((node.style as RectangleNodeStyle).fill! as SolidColorFill).color)
+      fill: ((node.style as RectangleNodeStyle).fill! as CssFill).value
     }
     if (node.labels.size > 0) {
-      ;(jsonNode as any).label = node.labels.first().text
+      ;(jsonNode as any).label = node.labels.first()!.text
     }
     ;(jsonOutput.nodesSource as any).push(jsonNode)
 
@@ -310,13 +300,13 @@ function writeToJSON(graph: IGraph): any {
     if (table) {
       const column = table.findColumn(tableNode!, node.layout.center)
       if (column) {
-        const columnId = `lane${table.findColumn(tableNode!, node.layout.center)!.index}`
+        const columnId = `lane${column.index}`
         ;(jsonNode as any).lane = columnId
         // store new lanes in the json
         if (!jsonOutput.lanesSource.find((lane: any): boolean => lane.id === columnId)) {
           const jsonLane = { id: columnId }
           if (column.labels.size > 0) {
-            ;(jsonNode as any).label = column.labels.first().text
+            ;(jsonNode as any).label = column.labels.first()!.text
           }
           ;(jsonOutput.lanesSource as any).push(jsonLane)
         }
@@ -338,46 +328,24 @@ function writeToJSON(graph: IGraph): any {
 }
 
 /**
- * Helper function that converts a {Color} to a hex color string.
- * @returns hex color
- */
-function colorToHex(color: Color): string {
-  // zero-padding
-  let hexR: string = color.r.toString(16)
-  if (hexR.length < 2) {
-    hexR = `0${hexR}`
-  }
-  let hexG: string = color.g.toString(16)
-  if (hexG.length < 2) {
-    hexG = `0${hexG}`
-  }
-  let hexB: string = color.b.toString(16)
-  if (hexB.length < 2) {
-    hexB = `0${hexB}`
-  }
-  return `#${hexR}${hexG}${hexB}`
-}
-
-/**
- * Runs a {@link HierarchicLayout} on the current graph. The
- * {@link HierarchicLayout} respects the node to cell (or swimlane) assignment by considering the
+ * Runs a {@link HierarchicalLayout} on the current graph. The
+ * {@link HierarchicalLayout} respects the node to cell (or swimlane) assignment by considering the
  * nodes location in relation to the swimlane bounds.
  * @param duration The animation duration of the layout.
  */
 function runLayout(duration: TimeSpan | string): Promise<any> {
-  const layout = new HierarchicLayout()
-  layout.componentLayoutEnabled = false
-  layout.layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM
-  layout.orthogonalRouting = true
-  layout.recursiveGroupLayering = (layout.nodePlacer as SimplexNodePlacer).barycenterMode = true
+  const layout = new HierarchicalLayout({
+    layoutOrientation: 'top-to-bottom',
+    componentLayout: { enabled: true }
+  })
 
   // We use Layout executor convenience method that already sets up the whole layout pipeline correctly
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
-    layout: new MinimumNodeSizeStage(layout),
+    layout,
     // Table layout is enabled by default already...
     configureTableLayout: true,
-    duration,
+    animationDuration: duration,
     animateViewport: true
   })
 
@@ -392,11 +360,11 @@ function runLayout(duration: TimeSpan | string): Promise<any> {
  */
 function initializeGraph(graph: IGraph): void {
   // set styles for this demo
-  initDemoStyles(graph)
+  initDemoStyles(graph, { orthogonalEditing: true })
 
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true

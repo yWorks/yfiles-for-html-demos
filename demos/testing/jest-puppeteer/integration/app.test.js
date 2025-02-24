@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -77,7 +77,9 @@ function isNodeAtLocation(px, py) {
 
 describe('app', () => {
   beforeEach(async () => {
-    await page.goto('http://localhost:3000')
+    const url = process.env.JEST_PUPPETEER_TEST_SERVER_URL || 'http://localhost:3000'
+    console.log(`Navigating to ${url}`)
+    await page.goto(url)
     await page.waitForSelector('.yfiles-canvascomponent')
   })
 
@@ -120,9 +122,10 @@ describe('app', () => {
     expect(await getNodeCount()).toBe(2)
 
     const box = await getGraphComponentBox()
-    await page.mouse.move(box.x + node2Loc.x, box.y + node2Loc.y)
+
+    await page.mouse.move(box.x + node1Loc.x, box.y + node1Loc.y)
     await page.mouse.down()
-    await page.mouse.move(box.x + node1Loc.x, box.y + node1Loc.y, {
+    await page.mouse.move(box.x + node2Loc.x, box.y + node2Loc.y, {
       steps: 5
     })
     await page.mouse.up()
@@ -131,9 +134,9 @@ describe('app', () => {
 
   it('should create bends', async () => {
     const node1Loc = { x: 110, y: 120 }
-    const node2Loc = { x: 210, y: 120 }
+    const node2Loc = { x: 210, y: 100 }
     const bend1Loc = { x: 160, y: 25 }
-    const bend2Loc = { x: 140, y: 225 }
+    const bend2Loc = { x: 180, y: 225 }
 
     expect(await getNodeCount()).toBe(0)
     expect(await getEdgeCount()).toBe(0)
@@ -143,13 +146,15 @@ describe('app', () => {
     expect(await getNodeCount()).toBe(2)
 
     const box = await getGraphComponentBox()
-    await page.mouse.move(box.x + node2Loc.x, box.y + node2Loc.y)
+    await page.mouse.move(box.x + node1Loc.x, box.y + node1Loc.y)
     await page.mouse.down()
-    // move to first bend location
-    await page.mouse.move(box.x + bend1Loc.x, box.y + bend2Loc.y, {
+    // // move to first bend location
+    await page.mouse.move(box.x + bend1Loc.x, box.y + bend1Loc.y, {
       steps: 5
     })
-    // create first bend
+    // // create first bend
+    await page.mouse.up()
+    await page.mouse.down()
     await page.mouse.up()
     // move to second bend location
     await page.mouse.move(box.x + bend2Loc.x, box.y + bend2Loc.y, {
@@ -159,7 +164,7 @@ describe('app', () => {
     await page.mouse.down()
     await page.mouse.up()
     // move to target node
-    await page.mouse.move(box.x + node1Loc.x, box.y + node2Loc.y, {
+    await page.mouse.move(box.x + node2Loc.x, box.y + node2Loc.y, {
       steps: 5
     })
     await page.mouse.down()

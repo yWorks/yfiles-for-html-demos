@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,6 @@
 import {
   AdjacencyGraphBuilder,
   AdjacencyNodesSource,
-  DefaultLabelStyle,
   EdgeCreator,
   FreeNodePortLocationModel,
   FreePortLabelModel,
@@ -43,14 +42,15 @@ import {
   INodeStyle,
   IPort,
   LabelCreator,
+  LabelStyle,
   NodeCreator,
   NodeStylePortStyleAdapter,
   Point,
   type PointConvertible,
   Rect,
   ShapeNodeStyle
-} from 'yfiles'
-import { colorSets } from 'demo-resources/demo-colors'
+} from '@yfiles/yfiles'
+import { colorSets } from '@yfiles/demo-resources/demo-colors'
 
 /*
  This file shows how to configure AdjacencyGraphBuilder to support ports.
@@ -173,16 +173,16 @@ function createNodeStyle(dataItem: NodeData, forPortLabels = false): INodeStyle 
  */
 function createLabelStyle(dataItem: NodeData, forPortLabels = false): ILabelStyle {
   return dataItem && dataItem.color === 'blue'
-    ? new DefaultLabelStyle({
+    ? new LabelStyle({
         textFill: colorSets['demo-lightblue'].text,
         backgroundFill: forPortLabels ? null : colorSets['demo-lightblue'].nodeLabelFill,
-        insets: forPortLabels ? 1 : 5,
+        padding: forPortLabels ? 1 : 5,
         shape: forPortLabels ? 'rectangle' : 'round-rectangle'
       })
-    : new DefaultLabelStyle({
+    : new LabelStyle({
         textFill: colorSets['demo-orange'].text,
         backgroundFill: forPortLabels ? null : colorSets['demo-orange'].nodeLabelFill,
-        insets: forPortLabels ? 1 : 5,
+        padding: forPortLabels ? 1 : 5,
         shape: forPortLabels ? 'rectangle' : 'round-rectangle'
       })
 }
@@ -263,7 +263,7 @@ class PortAwareNodeCreator extends NodeCreator<NodeData> {
         port,
         text,
         this.getParameter(portData),
-        createLabelStyle(port.owner!.tag, true)
+        createLabelStyle(port.owner.tag, true)
       )
     }
   }
@@ -441,28 +441,28 @@ class PortAwareEdgeCreator extends EdgeCreator<NodeData> {
     super.updateEdge(graph, edge, dataItem)
 
     const data = adjacencyGraphBuilder.getDataItem(
-      this.successor ? edge.targetNode! : edge.sourceNode!
+      this.successor ? edge.targetNode : edge.sourceNode
     ) as NodeData
 
     // If there is no ID or the ID is already the current port ID don't update the port.
     // Otherwise, get the first port at the source node which matches the ID.
     const sourcePortId = this.getSourcePortId(data)
     const sourcePort =
-      sourcePortId && sourcePortId !== edge.sourcePort!.tag
-        ? edge.sourcePort!.owner!.ports.find((p) => p.tag === sourcePortId)
+      sourcePortId && sourcePortId !== edge.sourcePort.tag
+        ? edge.sourcePort.owner.ports.find((p) => p.tag === sourcePortId)
         : edge.sourcePort
     // same for the target port
     const targetPortId = this.getTargetPortId(data)
     const targetPort =
-      targetPortId && targetPortId !== edge.targetPort!.tag
-        ? edge.targetPort!.owner!.ports.find((p) => p.tag === targetPortId)
+      targetPortId && targetPortId !== edge.targetPort.tag
+        ? edge.targetPort.owner.ports.find((p) => p.tag === targetPortId)
         : edge.targetPort
     // remember the current source and target ports
-    const oldSource = edge.sourcePort!
-    const oldTarget = edge.targetPort!
+    const oldSource = edge.sourcePort
+    const oldTarget = edge.targetPort
 
     // now set the new ports
-    graph.setEdgePorts(edge, sourcePort ?? edge.sourcePort!, targetPort ?? edge.targetPort!)
+    graph.setEdgePorts(edge, sourcePort ?? edge.sourcePort, targetPort ?? edge.targetPort)
 
     // if the source or target port has been changed and the old port doesn't have a tag:
     // remove it since it has been auto-generated

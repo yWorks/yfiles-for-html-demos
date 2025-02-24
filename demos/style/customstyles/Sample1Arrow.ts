@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -43,7 +43,7 @@ import {
   SvgDefsManager,
   SvgVisual,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { SVGNS } from './Namespaces'
 
 /**
@@ -171,7 +171,7 @@ export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBou
    *   {@link Sample1Arrow.createVisual} method was called.
    * The updated visual.
    * @see {@link Sample1Arrow.createVisual}
-   * @see {@link ICanvasObjectDescriptor}
+   * @see {@link IObjectRenderer}
    * @see {@link CanvasComponent}
    * @see Specified by {@link IVisualCreator.updateVisual}.
    */
@@ -252,6 +252,10 @@ export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBou
     path.close()
     return path
   }
+
+  get cropAtPort(): boolean {
+    return false
+  }
 }
 
 /**
@@ -264,7 +268,7 @@ export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBou
  * the defs elements, those have to implement {@link ISvgDefsCreator} that offers a
  * defined interface to deal with.
  */
-class CustomGradientSupport extends BaseClass<ISvgDefsCreator>(ISvgDefsCreator) {
+class CustomGradientSupport extends BaseClass(ISvgDefsCreator) {
   constructor(public readonly gradient: SVGLinearGradientElement) {
     super()
   }

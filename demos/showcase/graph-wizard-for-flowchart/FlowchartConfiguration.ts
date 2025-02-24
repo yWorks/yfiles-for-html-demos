@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,43 +28,38 @@
  ***************************************************************************/
 import {
   Arrow,
-  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
+  EdgeStyleIndicatorRenderer,
+  EventRecognizers,
   Fill,
   GraphComponent,
   GraphEditorInputMode,
-  GraphFocusIndicatorManager,
   GraphItemTypes,
-  HierarchicLayout,
-  ICommand,
+  HierarchicalLayout,
   IEdge,
   IInputMode,
   ILabel,
   IModelItem,
-  IndicatorEdgeStyleDecorator,
   INode,
+  INodeStyle,
   Insets,
-  InteriorLabelModel,
-  Key,
-  KeyboardInputMode,
+  InteriorNodeLabelModel,
   KeyEventArgs,
-  KeyEventRecognizers,
   KeyEventType,
+  LabelStyle,
   LayoutData,
   LayoutExecutor,
-  LayoutMode,
   LayoutOrientation,
   ModifierKeys,
-  MouseEventRecognizers,
   NinePositionsEdgeLabelModel,
   Point,
   PolylineEdgeStyle,
   Rect,
+  ShowPortCandidates,
   Size,
-  Stroke,
-  VoidNodeStyle
-} from 'yfiles'
+  Stroke
+} from '@yfiles/yfiles'
 
 import type { ColorSet } from './ColorThemes'
 import { ColorThemes } from './ColorThemes'
@@ -138,11 +133,6 @@ export default class FlowchartConfiguration {
     FlowchartNodeType.NetworkMessage
   ]
 
-  /**
-   * A command triggering a {@link runFromScratchLayout from scratch layout}.
-   */
-  public readonly LayoutCommand = ICommand.createCommand('Layout')
-
   private readonly colorTheme: ColorSet[]
 
   private readonly _layoutOrientation: LayoutOrientation
@@ -172,23 +162,25 @@ export default class FlowchartConfiguration {
    * @param graphComponent The graph component to set the defaults to.
    */
   initializeGraphDefaults(graphComponent: GraphComponent): void {
-    graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
-      nodeStyle: VoidNodeStyle.INSTANCE,
-      edgeStyle: new IndicatorEdgeStyleDecorator({
-        wrapped: new PolylineEdgeStyle({
+    graphComponent.graph.decorator.nodes.focusRenderer.hide()
+    graphComponent.graph.decorator.edges.focusRenderer.addConstant(
+      new EdgeStyleIndicatorRenderer({
+        edgeStyle: new PolylineEdgeStyle({
           stroke: '2px gold',
           targetArrow: new Arrow({
             fill: 'gold',
             stroke: null,
-            scale: 2,
+            lengthScale: 2,
+            widthScale: 2,
             type: 'triangle'
           })
         }),
         zoomPolicy: 'world-coordinates'
       })
-    })
+    )
+
     const graph = graphComponent.graph
-    graph.decorator.edgeDecorator.positionHandlerDecorator.hideImplementation()
+    graph.decorator.edges.portHandleProvider.hide()
 
     const colorSet = this.colorTheme[0]
 
@@ -201,11 +193,11 @@ export default class FlowchartConfiguration {
 
     graph.nodeDefaults.size = new Size(100, 80)
     graph.nodeDefaults.shareStyleInstance = false
-    graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
-    graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+    graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
+    graph.nodeDefaults.labels.style = new LabelStyle({
       textFill: colorSet.labelText,
       backgroundFill: colorSet.labelFill,
-      insets: 2
+      padding: 2
     })
     graph.nodeDefaults.labels.shareStyleInstance = false
 
@@ -214,11 +206,12 @@ export default class FlowchartConfiguration {
       targetArrow: new Arrow({
         fill: 'black',
         stroke: null,
-        scale: 2,
+        lengthScale: 2,
+        widthScale: 2,
         type: 'triangle'
       })
     })
-    graph.edgeDefaults.labels.style = new DefaultLabelStyle({
+    graph.edgeDefaults.labels.style = new LabelStyle({
       textFill: colorSet.labelText
     })
     graph.edgeDefaults.labels.layoutParameter = NinePositionsEdgeLabelModel.CENTER_BELOW
@@ -253,15 +246,15 @@ export default class FlowchartConfiguration {
     graph.addLabel(
       startNode,
       'Start',
-      InteriorLabelModel.CENTER,
-      new DefaultLabelStyle({
+      InteriorNodeLabelModel.CENTER,
+      new LabelStyle({
         textFill: colorSet.labelText,
         backgroundFill: colorSet.labelFill,
         textSize: 24,
-        insets: 2
+        padding: 2
       })
     )
-    graphComponent.updateContentRect()
+    graphComponent.updateContentBounds()
     graphComponent.zoomTo(
       new Rect(
         -(graphComponent.innerSize.width - 100) / 2,
@@ -283,61 +276,54 @@ export default class FlowchartConfiguration {
    * Creates an editor input mode that disables many of the default actions and adds a
    * {@link GraphWizardInputMode} with custom actions to create flow charts.
    * @param legendDiv The HTML element containing the legend of the active actions.
+   * @param graphComponent The given graphComponent
    */
-  createInputMode(legendDiv?: HTMLDivElement): IInputMode {
+  createInputMode(graphComponent: GraphComponent, legendDiv?: HTMLDivElement): IInputMode {
     // use a GraphEditorInputMode but disable many of the default actions to use WizardActions instead
     const mode = new GraphEditorInputMode({
       selectableItems: 'none',
       allowCreateNode: false,
       allowCreateBend: false,
       focusableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
-      autoRemoveEmptyLabels: false
+      createEdgeInputMode: {
+        showPortCandidates: ShowPortCandidates.END
+      },
+      editLabelInputMode: {
+        autoRemoveEmptyLabels: false,
+        textEditorInputMode: {
+          // only cancel text editing on key-up event of Escape key
+          // otherwise consecutive label edits could be canceled by a single press of the Escape key
+          cancelRecognizer: EventRecognizers.createKeyEventRecognizer(
+            KeyEventType.DOWN,
+            'Escape',
+            ModifierKeys.NONE
+          ),
+          // when editing a label, clicking on the canvas should commit the label text
+          autoCommitOnFocusLost: true
+        }
+      },
+      marqueeSelectionInputMode: {
+        enabled: false
+      },
+      moveViewportInputMode: {
+        // move viewport by dragging the empty canvas with the mouse
+        beginRecognizer: EventRecognizers.MOUSE_DOWN
+      }
     })
-    mode.marqueeSelectionInputMode.enabled = false
-    mode.navigationInputMode.enabled = false
-    mode.createEdgeInputMode.enabled = false
 
     const wizardMode = new GraphWizardInputMode(legendDiv)
-    mode.moveUnselectedInputMode.enabled = true
-    mode.moveUnselectedInputMode.priority = mode.moveViewportInputMode.priority - 1
-    mode.moveUnselectedInputMode.addDragFinishedListener((_) =>
+    // mode.moveUnselectedItemsInputMode.priority = mode.moveViewportInputMode.priority - 1
+    mode.moveUnselectedItemsInputMode.addEventListener('drag-finished', () =>
       runLayout(wizardMode, this.createLayout(true), this.layoutData!)
     )
-
-    // move viewport by dragging the empty canvas with the mouse
-    mode.moveViewportInputMode.pressedRecognizer = MouseEventRecognizers.LEFT_DRAG
-
-    // only cancel text editing on key-up event of Escape key
-    // otherwise consecutive label edits could be canceled by a single press of the Escape key
-    mode.textEditorInputMode.cancelRecognizer = KeyEventRecognizers.create(
-      KeyEventType.UP,
-      Key.ESCAPE,
-      ModifierKeys.NONE
-    )
-    // when editing a label, clicking on the canvas should commit the label text
-    mode.textEditorInputMode.autoCommitOnFocusLost = true
 
     this.addActions(wizardMode)
     mode.add(wizardMode)
 
-    this.addLayoutCommand(mode.keyboardInputMode)
+    mode.keyboardInputMode.addKeyBinding('l', ModifierKeys.NONE, async () => {
+      await this.runFromScratchLayout(graphComponent)
+    })
     return mode
-  }
-
-  /**
-   * Binds the {@link LayoutCommand} to the {@link runFromScratchLayout} method and the shortcut `L`.
-   * @param keyboardInputMode The mode to add the command binding to.
-   */
-  private addLayoutCommand(keyboardInputMode: KeyboardInputMode) {
-    keyboardInputMode.addCommandBinding(
-      this.LayoutCommand,
-      (command, parameter, target) => {
-        this.runFromScratchLayout(target as GraphComponent)
-        return true
-      },
-      (command, parameter, target) => true
-    )
-    keyboardInputMode.addKeyBinding(Key.L, ModifierKeys.NONE, this.LayoutCommand, 'Apply Layout')
   }
 
   /**
@@ -405,7 +391,7 @@ export default class FlowchartConfiguration {
       'changeType',
       checkAnd([checkNotCreatingEdge, checkForNodeStyle(FlowchartNodeStyle)]),
       handler,
-      [{ key: Key.T }],
+      [{ key: 't' }],
       'Change the node type',
       {
         typeFactory: (item) => this.getFlowchartType(item as INode),
@@ -472,7 +458,7 @@ export default class FlowchartConfiguration {
   private refreshFocusHighlights(mode: GraphWizardInputMode, item: IModelItem): void {
     mode.graphComponent.currentItem = null
     mode.graphComponent.currentItem = item
-    mode.inputModeContext!.canvasComponent!.updateVisual()
+    mode.graphComponent.updateVisual()
   }
 
   /**
@@ -486,7 +472,7 @@ export default class FlowchartConfiguration {
       (mode, source, args) => {
         return this.addTwoChildNodes(mode)
       },
-      [{ key: Key.SPACE, modifier: ModifierKeys.CONTROL }],
+      [{ key: ' ', modifier: ModifierKeys.CONTROL }],
       'Create two children of the decision node',
       {
         type: 'add-button-two-children',
@@ -515,14 +501,14 @@ export default class FlowchartConfiguration {
         const actionSteps = this.createAddNodeWithEdgeSteps(mode, parent, offset)
         return handleMultipleSteps(actionSteps)
       },
-      [{ key: Key.SPACE, modifier: ModifierKeys.NONE }],
+      [{ key: ' ', modifier: ModifierKeys.NONE }],
       '<br/><br/>Create a child node',
       {
         type: 'createSmartChild',
         style: {
           type: 'icon',
           iconPath: 'resources/icons/add-child.svg',
-          backgroundFill: '#00FFFFFF'
+          backgroundFill: '#FFFFFF00'
         },
         tooltip: 'Create a child node'
       }
@@ -622,7 +608,7 @@ export default class FlowchartConfiguration {
         mode.graphComponent.currentItem = newCurrentItem ?? graph.nodes.first()
         return true
       },
-      [{ key: Key.DELETE }, { key: Key.BACK }],
+      [{ key: 'Delete' }, { key: 'Backspace' }],
       '<br/><br/>Remove this item',
       {
         type: 'delete-button',
@@ -640,7 +626,7 @@ export default class FlowchartConfiguration {
     await new LayoutExecutor({
       layout: this.createLayout(false),
       layoutData: this.layoutData,
-      duration: 200,
+      animationDuration: 200,
       animateViewport: false,
       easedAnimation: true,
       graphComponent: graphComponent
@@ -683,7 +669,7 @@ export default class FlowchartConfiguration {
         // initially hide the new node so if an edge label is added, the edge is more prominent
         const child = graph.createNode(
           parent.layout.toRect().getTranslated(childOffset),
-          VoidNodeStyle.INSTANCE
+          INodeStyle.VOID_NODE_STYLE
         )
         const edge = graph.createEdge(parent, child)
 
@@ -718,12 +704,9 @@ export default class FlowchartConfiguration {
     }
     steps.push(step1)
 
-    const parentInputMode = mode.inputModeContext!.parentInputMode
+    const parentInputMode = mode.graphEditorInputMode
     const parentType = this.getFlowchartType(parent)
-    if (
-      FlowchartNodeType.Decision == parentType &&
-      parentInputMode instanceof GraphEditorInputMode
-    ) {
+    if (FlowchartNodeType.Decision == parentType) {
       // only add an edge label when parent was a decision node
       const step2: ActionStep = {
         action: async (inData) => {
@@ -753,7 +736,7 @@ export default class FlowchartConfiguration {
       action: async (inData, wasCanceled) => {
         const { child } = inData as { child: INode }
         if (!wasCanceled) {
-          // child has still a VoidNodeStyle so set the default FlowchartNodeStyle instead
+          // child has still a void node style so set the default FlowchartNodeStyle instead
           mode.graph.setStyle(child, mode.graph.nodeDefaults.getStyleInstance())
         }
         const oldType = (child.style as FlowchartNodeStyle).type
@@ -763,7 +746,7 @@ export default class FlowchartConfiguration {
         )
         if (!success) {
           // picker was canceled, so reset node style to void for previous steps
-          mode.graph.setStyle(child, VoidNodeStyle.INSTANCE)
+          mode.graph.setStyle(child, INodeStyle.VOID_NODE_STYLE)
         }
         return { success, undoData: null, outData: inData }
       },
@@ -774,28 +757,26 @@ export default class FlowchartConfiguration {
     }
     steps.push(step3)
 
-    if (parentInputMode instanceof GraphEditorInputMode) {
-      // edit node label
-      const step4: ActionStep = {
-        action: async (inData) => {
-          const { child, edge } = inData as { child: INode; edge: IEdge }
-          // when label editing was canceled, it returns null
-          const label = await parentInputMode.addLabel(child)
-          if (label != null && label.text.length == 0) {
-            // accept empty label as valid input but remove it from the graph
-            mode.graph.remove(label)
-            return { success: true, undoData: null, outData: edge }
-          }
-          return { success: label != null, undoData: label, outData: edge }
-        },
-        undo: (inData) => {
-          if (inData) {
-            mode.graph.remove(inData as ILabel)
-          }
+    // edit node label
+    const step4: ActionStep = {
+      action: async (inData) => {
+        const { child, edge } = inData as { child: INode; edge: IEdge }
+        // when label editing was canceled, it returns null
+        const label = await parentInputMode.startLabelAddition(child)
+        if (label != null && label.text.length == 0) {
+          // accept empty label as valid input but remove it from the graph
+          mode.graph.remove(label)
+          return { success: true, undoData: null, outData: edge }
+        }
+        return { success: label != null, undoData: label, outData: edge }
+      },
+      undo: (inData) => {
+        if (inData) {
+          mode.graph.remove(inData as ILabel)
         }
       }
-      steps.push(step4)
     }
+    steps.push(step4)
     return steps
   }
 
@@ -813,7 +794,7 @@ export default class FlowchartConfiguration {
       (mode) => true,
       async (mode, item, type) => {
         if (type === 'custom') {
-          const newLabel = await geim.addLabel(edge)
+          const newLabel = await geim.startLabelAddition(edge)
           if (newLabel && newLabel.text.length == 0) {
             // remove empty label but accept it as valid input
             mode.graph.remove(newLabel)
@@ -905,13 +886,12 @@ export default class FlowchartConfiguration {
 }
 
 /**
- * A {@link FlowchartLayout} using an incremental {@link HierarchicLayout}.
+ * A {@link FlowchartLayout} using an incremental {@link HierarchicalLayout}.
  */
 class IncrementalFlowchartLayout extends FlowchartLayout {
-
-  createHierarchicLayout(): HierarchicLayout {
-    const hierarchicLayout = super.createHierarchicLayout()
-    hierarchicLayout.layoutMode = LayoutMode.INCREMENTAL
-    return hierarchicLayout
+  createHierarchicalLayout(): HierarchicalLayout {
+    const hierarchicalLayout = super.createHierarchicalLayout()
+    hierarchicalLayout.fromSketchMode = true
+    return hierarchicalLayout
   }
 }

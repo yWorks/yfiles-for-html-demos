@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,9 +36,9 @@ import {
   IHandleProvider,
   IInputModeContext,
   ILabel,
-  InteriorStretchLabelModel,
-  List
-} from 'yfiles'
+  List,
+  StretchNodeLabelModel
+} from '@yfiles/yfiles'
 
 import LabelRotateHandle from './LabelRotateHandle'
 import LabelResizeHandle from './LabelResizeHandle'
@@ -47,10 +47,7 @@ import LabelResizeHandle from './LabelResizeHandle'
  * A custom {@link IHandleProvider} implementation that returns a {@link LabelResizeHandle} for each
  * label which can be resized and a {@link LabelRotateHandle} for each label which can be rotated.
  */
-export default class LabelHandleProvider
-  extends BaseClass(IHandleProvider)
-  implements IHandleProvider
-{
+export default class LabelHandleProvider extends BaseClass(IHandleProvider) {
   /**
    * Creates a new instance of {@link LabelHandleProvider}.
    * @param label The given label
@@ -68,7 +65,7 @@ export default class LabelHandleProvider
     // return a list of the available handles
     const handles = new List<IHandle>()
     const labelModel = this.label.layoutParameter.model
-    if (labelModel instanceof InteriorStretchLabelModel) {
+    if (labelModel instanceof StretchNodeLabelModel) {
       // Some label models are not resizable at all - don't provide any handles
     } else if (
       labelModel instanceof FreeEdgeLabelModel ||

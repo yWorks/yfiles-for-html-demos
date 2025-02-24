@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,89 +27,71 @@
  **
  ***************************************************************************/
 import {
+  Color,
   Fill,
   GeneralPath,
   INodeStyle,
   NodeStyleBase,
   Rect,
-  SolidColorFill,
   Stroke,
   SvgVisual
-} from 'yfiles'
-
-export /**
- * @readonly
- * @enum {number}
- */
-const FlowchartNodeType = {
-  Process: 'process',
-  Decision: 'decision',
-  Start1: 'start1',
-  Start2: 'start2',
-  Terminator: 'terminator',
-  Cloud: 'cloud',
-  Data: 'data',
-  DirectData: 'directData',
-  Database: 'database',
-  Document: 'document',
-  PredefinedProcess: 'predefinedProcess',
-  StoredData: 'storedData',
-  InternalStorage: 'internalStorage',
-  SequentialData: 'sequentialData',
-  ManualInput: 'manualInput',
-  Card: 'card',
-  PaperType: 'paperType',
-  Delay: 'delay',
-  Display: 'display',
-  ManualOperation: 'manualOperation',
-  Preparation: 'preparation',
-  LoopLimit: 'loopLimit',
-  LoopLimitEnd: 'loopLimitEnd',
-  OnPageReference: 'onPageReference',
-  OffPageReference: 'offPageReference',
-  Annotation: 'annotation',
-  UserMessage: 'userMessage',
-  NetworkMessage: 'networkMessage'
-}
-
-/**
- * @typedef {*} Cache
- */
-
+} from '@yfiles/yfiles'
+export var FlowchartNodeType
+;(function (FlowchartNodeType) {
+  FlowchartNodeType['Process'] = 'process'
+  FlowchartNodeType['Decision'] = 'decision'
+  FlowchartNodeType['Start1'] = 'start1'
+  FlowchartNodeType['Start2'] = 'start2'
+  FlowchartNodeType['Terminator'] = 'terminator'
+  FlowchartNodeType['Cloud'] = 'cloud'
+  FlowchartNodeType['Data'] = 'data'
+  FlowchartNodeType['DirectData'] = 'directData'
+  FlowchartNodeType['Database'] = 'database'
+  FlowchartNodeType['Document'] = 'document'
+  FlowchartNodeType['PredefinedProcess'] = 'predefinedProcess'
+  FlowchartNodeType['StoredData'] = 'storedData'
+  FlowchartNodeType['InternalStorage'] = 'internalStorage'
+  FlowchartNodeType['SequentialData'] = 'sequentialData'
+  FlowchartNodeType['ManualInput'] = 'manualInput'
+  FlowchartNodeType['Card'] = 'card'
+  FlowchartNodeType['PaperType'] = 'paperType'
+  FlowchartNodeType['Delay'] = 'delay'
+  FlowchartNodeType['Display'] = 'display'
+  FlowchartNodeType['ManualOperation'] = 'manualOperation'
+  FlowchartNodeType['Preparation'] = 'preparation'
+  FlowchartNodeType['LoopLimit'] = 'loopLimit'
+  FlowchartNodeType['LoopLimitEnd'] = 'loopLimitEnd'
+  FlowchartNodeType['OnPageReference'] = 'onPageReference'
+  FlowchartNodeType['OffPageReference'] = 'offPageReference'
+  FlowchartNodeType['Annotation'] = 'annotation'
+  FlowchartNodeType['UserMessage'] = 'userMessage'
+  FlowchartNodeType['NetworkMessage'] = 'networkMessage'
+})(FlowchartNodeType || (FlowchartNodeType = {}))
 /**
  * {@link INodeStyle} which draws a flowchart shape according to its type.
  * This style can be customized by changing the properties 'fill' and 'stroke' as well as with a css-stylesheet.
  */
 export class FlowchartNodeStyle extends NodeStyleBase {
+  type
+  fill
+  stroke
+  cssClass
   /**
    * Creates a new instance with the given type.
-   * @param {!FlowchartNodeType} type The element type
-   * @param {!Fill} fill The background fill for this still.
-   * @param {!Stroke} stroke The border stroke for this style.
+   * @param type The element type
+   * @param fill The background fill for this still.
+   * @param stroke The border stroke for this style.
    * @param cssClass The CSS class name for this style.
-   * @param {?string} [cssClass=null]
    */
-  constructor(
-    type,
-    fill = new SolidColorFill(183, 201, 227),
-    stroke = Stroke.BLACK,
-    cssClass = null
-  ) {
+  constructor(type, fill = new Color(183, 201, 227), stroke = Stroke.BLACK, cssClass = null) {
     super()
-    this.cssClass = cssClass
-    this.stroke = stroke
-    this.fill = fill
     this.type = type
+    this.fill = fill
+    this.stroke = stroke
+    this.cssClass = cssClass
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {!SvgVisual}
-   */
   createVisual(context, node) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-
     // add the shape according to the type
     const path = getPath(this.type, node).createSvgPath()
     if (this.cssClass == null) {
@@ -121,7 +103,6 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       Fill.setFill(this.fill, path, context)
     }
     container.appendChild(path)
-
     // add the decoration if there is any for this type
     const decoration = getDecoration(this.type, node, context)
     let decorationPath = null
@@ -130,14 +111,13 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       if (this.cssClass == null) {
         Stroke.setStroke(this.stroke, decorationPath, context)
         if (this.type === 'annotation') {
-          Fill.TRANSPARENT.applyTo(decorationPath, context)
+          Color.TRANSPARENT.applyTo(decorationPath, context)
         } else {
           Fill.setFill(this.fill, decorationPath, context)
         }
       }
       container.appendChild(decorationPath)
     }
-
     // apply the css settings
     if (this.cssClass != null) {
       path.setAttribute('class', this.cssClass)
@@ -151,11 +131,8 @@ export class FlowchartNodeStyle extends NodeStyleBase {
         }
       }
     }
-
     // store relevant data for performance improvement in #updateVisual
-    const svgVisual = new SvgVisual(container)
-
-    svgVisual.cache = {
+    const cache = {
       location: node.layout.topLeft,
       size: node.layout.toSize(),
       type: this.type,
@@ -163,27 +140,16 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       fill: this.fill,
       cssClass: this.cssClass
     }
-
-    return svgVisual
+    return SvgVisual.from(container, cache)
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!Visual} oldVisual
-   * @param {!INode} node
-   * @returns {!Visual}
-   */
   updateVisual(context, oldVisual, node) {
-    const svgVisual = oldVisual
-    const cache = svgVisual.cache
-    const container = svgVisual.svgElement
+    const cache = oldVisual.tag
+    const container = oldVisual.svgElement
     const path = container.firstElementChild
     const decoration = container.childElementCount === 2 ? container.lastElementChild : null
-
     if (cache.type !== this.type) {
       return this.createVisual(context, node)
     }
-
     // update shape and decoration if the position or size of the node has changed,
     // annotations are always updated because the decoration might have changed according to the connected edges
     if (
@@ -199,7 +165,6 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       cache.location = node.layout.topLeft
       cache.size = node.layout.toSize()
     }
-
     // update the stroke if it has changed
     if (cache.stroke !== this.stroke) {
       if (this.cssClass == null) {
@@ -211,7 +176,6 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       }
       cache.stroke = this.stroke
     }
-
     // update the fill if it has changed
     if (cache.fill !== this.fill) {
       if (this.cssClass == null) {
@@ -222,7 +186,6 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       }
       cache.fill = this.fill
     }
-
     // update stroke and fill if the css-class has changed
     if (cache.cssClass !== this.cssClass) {
       if (this.cssClass != null) {
@@ -241,7 +204,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
         Fill.setFill(this.fill, path, context)
         if (decoration) {
           Stroke.setStroke(this.stroke, decoration, context)
-          Fill.TRANSPARENT.applyTo(decoration, context)
+          Color.TRANSPARENT.applyTo(decoration, context)
         }
       } else {
         Stroke.setStroke(this.stroke, path, context)
@@ -253,34 +216,22 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       }
       cache.cssClass = this.cssClass
     }
-
     return oldVisual
   }
-
   /**
    * Returns the bounds of the shape's outline according to the type.
-   * @param {!ICanvasContext} context
-   * @param {!INode} node
-   * @returns {!Rect}
    */
   getBounds(context, node) {
     return getPath(this.type, node).getBounds()
   }
-
   /**
    * Returns the outline of the shape according to the type.
-   * @param {!INode} node
-   * @returns {!GeneralPath}
    */
   getOutline(node) {
     return getPath(this.type, node)
   }
-
   /**
    * Returns whether the given location lies within the shape according to the type.
-   * @param {!INode} node
-   * @param {!Point} location
-   * @returns {boolean}
    */
   isInside(node, location) {
     if (!node.layout.contains(location)) {
@@ -288,27 +239,18 @@ export class FlowchartNodeStyle extends NodeStyleBase {
     }
     return getPath(this.type, node).areaContains(location)
   }
-
   /**
    * Returns whether the given location hits the shape according to the type.
-   * @param {!IInputModeContext} context
-   * @param {!Point} location
-   * @param {!INode} node
-   * @returns {boolean}
    */
   isHit(context, location, node) {
     return (
-      node.layout.toRect().containsWithEps(location, context.hitTestRadius) &&
+      node.layout.toRect().contains(location, context.hitTestRadius) &&
       getPath(this.type, node).areaContains(location)
     )
   }
 }
-
 /**
  * Returns the outline of the shape according to the type
- * @param {!FlowchartNodeType} type
- * @param {!INode} node
- * @returns {!GeneralPath}
  */
 function getPath(type, node) {
   switch (type) {
@@ -371,13 +313,8 @@ function getPath(type, node) {
       return renderUserMessagePath(node)
   }
 }
-
 /**
  * Returns the decorations according to the type
- * @param {!FlowchartNodeType} type
- * @param {!INode} node
- * @param {!IRenderContext} context
- * @returns {?GeneralPath}
  */
 function getDecoration(type, node, context) {
   switch (type) {
@@ -397,19 +334,12 @@ function getDecoration(type, node, context) {
       return renderSequentialDataDecoration(node)
   }
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderCardPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const borderDistance = Math.min(10, Math.min(width, height) * 0.5)
-
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + width, y)
@@ -419,20 +349,13 @@ function renderCardPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderDataPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const inclination = 0.255
   const borderDistance = inclination * Math.min(width, height)
-
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + width, y)
@@ -441,11 +364,6 @@ function renderDataPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderDatabasePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -453,7 +371,6 @@ function renderDatabasePath(node) {
   const height = node.layout.height
   const xOffset = 0.03
   const yOffset = 0.2
-
   const path = new GeneralPath()
   path.moveTo(x, y + yOffset * height)
   path.cubicTo(
@@ -476,11 +393,6 @@ function renderDatabasePath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderDatabaseDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -488,7 +400,6 @@ function renderDatabaseDecoration(node) {
   const height = node.layout.height
   const xOffset = 0.03
   const yOffset = 0.2
-
   const path = new GeneralPath()
   path.moveTo(x + width, y + yOffset * height)
   path.cubicTo(
@@ -501,20 +412,13 @@ function renderDatabaseDecoration(node) {
   )
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderDirectDataPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
-
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + (width - borderDistance), y)
@@ -529,20 +433,13 @@ function renderDirectDataPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderDirectDataDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
-
   const path = new GeneralPath()
   path.moveTo(x + (width - borderDistance), y)
   path.quadTo(
@@ -553,11 +450,6 @@ function renderDirectDataDecoration(node) {
   )
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderCloudPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -568,7 +460,6 @@ function renderCloudPath(node) {
   const xOffset1 = 0.125
   const yOffset1 = 0.25
   const yOffset2 = 0.18
-
   const path = new GeneralPath()
   path.moveTo(x + xOffset1 * width, y + 0.5 * height + asymmetryConstY)
   path.cubicTo(
@@ -622,11 +513,6 @@ function renderCloudPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderDecisionPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -640,31 +526,16 @@ function renderDecisionPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderProcessPath(node) {
   const path = new GeneralPath()
   path.appendRectangle(node.layout, true)
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderStart1Path(node) {
   const path = new GeneralPath()
   path.appendEllipse(node.layout, true)
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderStart2Path(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -673,16 +544,10 @@ function renderStart2Path(node) {
   const diameter = Math.min(height, width)
   const borderDistanceX = Math.max((width - diameter) * 0.5, 0)
   const borderDistanceY = Math.max((height - diameter) * 0.5, 0)
-
   const path = new GeneralPath()
   path.appendEllipse(new Rect(x + borderDistanceX, y + borderDistanceY, diameter, diameter), true)
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderTerminatorPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -691,7 +556,6 @@ function renderTerminatorPath(node) {
   const radius = Math.min(width, height) * 0.5
   const arcX = radius
   const arcY = radius
-
   const path = new GeneralPath()
   path.moveTo(x, y + arcY)
   path.quadTo(x, y, x + arcX, y)
@@ -704,20 +568,13 @@ function renderTerminatorPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderDocumentPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
-
   const path = new GeneralPath()
   path.moveTo(x, y)
   path.lineTo(x + width, y)
@@ -732,29 +589,17 @@ function renderDocumentPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderPredefinedProcessPath(node) {
   const path = new GeneralPath()
   path.appendRectangle(node.layout, true)
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderPredefinedProcessDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const borderDistance = Math.min(10, Math.min(width, height) * 0.5)
-
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + borderDistance, y + height)
@@ -764,20 +609,13 @@ function renderPredefinedProcessDecoration(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderStoredDataPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
-
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + width, y)
@@ -787,29 +625,17 @@ function renderStoredDataPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderInternalStoragePath(node) {
   const path = new GeneralPath()
   path.appendRectangle(node.layout, true)
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderInternalStorageDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const borderDistance = Math.min(10, Math.min(width, height) * 0.5)
-
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + borderDistance, y + height)
@@ -819,11 +645,6 @@ function renderInternalStorageDecoration(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderSequentialDataPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -832,44 +653,29 @@ function renderSequentialDataPath(node) {
   const diameter = Math.min(height, width)
   const borderDistanceX = Math.max((width - diameter) * 0.5, 0)
   const borderDistanceY = Math.max((height - diameter) * 0.5, 0)
-
   const path = new GeneralPath()
   path.appendEllipse(new Rect(x + borderDistanceX, y + borderDistanceY, diameter, diameter), true)
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderSequentialDataDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const diameter = Math.min(height, width)
   const borderDistanceX = Math.max((width - diameter) * 0.5, 0)
   const borderDistanceY = Math.max((height - diameter) * 0.5, 0)
-
   const path = new GeneralPath()
   path.moveTo(x + borderDistanceX + diameter * 0.5, y + borderDistanceY + diameter)
   path.lineTo(x + (width - borderDistanceX), y + borderDistanceY + diameter)
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderManualInputPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const borderDistance = Math.min(10, Math.min(width, height) * 0.5)
-
   const path = new GeneralPath()
   path.moveTo(x, y + borderDistance)
   path.lineTo(x + width, y)
@@ -878,20 +684,13 @@ function renderManualInputPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderPaperTapePath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
-
   const path = new GeneralPath()
   path.moveTo(x, y + borderDistance)
   path.quadTo(x + 0.25 * width, y + 3 * borderDistance, x + 0.5 * width, y + borderDistance)
@@ -907,20 +706,13 @@ function renderPaperTapePath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderDelayPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
-
   const path = new GeneralPath()
   path.moveTo(x, y)
   path.lineTo(x + (width - borderDistance), y)
@@ -934,20 +726,13 @@ function renderDelayPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderDisplayPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
-
   const path = new GeneralPath()
   path.moveTo(x, y + height * 0.5)
   path.quadTo(x + borderDistance, y + borderDistance, x + 4 * borderDistance, y)
@@ -963,19 +748,12 @@ function renderDisplayPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderManualOperationPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const borderDistance = Math.min(10, Math.min(width, height) * 0.5)
-
   const path = new GeneralPath()
   path.moveTo(x, y)
   path.lineTo(x + width, y)
@@ -984,20 +762,13 @@ function renderManualOperationPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderPreparationPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const inclination = 0.25
   const borderDistance = Math.min(inclination * height, inclination * width)
-
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + (width - borderDistance), y)
@@ -1008,19 +779,12 @@ function renderPreparationPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderLoopLimitPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const borderDistance = Math.min(Math.min(10, width * 0.5), height * 0.5)
-
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + (width - borderDistance), y)
@@ -1031,19 +795,12 @@ function renderLoopLimitPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderLoopLimitEndPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
-
   const borderDistance = Math.min(Math.min(10, width * 0.5), height * 0.5)
-
   const path = new GeneralPath()
   path.moveTo(x, y)
   path.lineTo(x + width, y)
@@ -1054,11 +811,6 @@ function renderLoopLimitEndPath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderOnPageReferencePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -1067,16 +819,10 @@ function renderOnPageReferencePath(node) {
   const diameter = Math.min(height, width)
   const borderDistanceX = Math.max((width - diameter) / 2, 0)
   const borderDistanceY = Math.max((height - diameter) / 2, 0)
-
   const path = new GeneralPath()
   path.appendEllipse(new Rect(x + borderDistanceX, y + borderDistanceY, diameter, diameter), true)
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderOffPageReferencePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -1085,7 +831,6 @@ function renderOffPageReferencePath(node) {
   const minLength = Math.min(height, width)
   const borderDistanceX = Math.max((width - minLength) * 0.5, 0)
   const borderDistanceY = Math.max((height - minLength) * 0.5, 0)
-
   const path = new GeneralPath()
   path.moveTo(x + borderDistanceX, y + borderDistanceY)
   path.lineTo(x + minLength + borderDistanceX, y + borderDistanceY)
@@ -1095,25 +840,13 @@ function renderOffPageReferencePath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderAnnotationPath(node) {
   const path = new GeneralPath()
   path.appendRectangle(node.layout, true)
   return path
 }
-
-/**
- * @param {!INode} node
- * @param {!IRenderContext} context
- * @returns {!GeneralPath}
- */
 function renderAnnotationDecoration(node, context) {
   const orientation = determineBracketOrientation(node, context)
-
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
@@ -1130,14 +863,6 @@ function renderAnnotationDecoration(node, context) {
       return createDownBracket(x, y, width, height)
   }
 }
-
-/**
- * @param {number} x
- * @param {number} y
- * @param {number} width
- * @param {number} height
- * @returns {!GeneralPath}
- */
 function createLeftBracket(x, y, width, height) {
   const path = new GeneralPath()
   path.moveTo(x + 0.125 * width, y)
@@ -1146,14 +871,6 @@ function createLeftBracket(x, y, width, height) {
   path.lineTo(x + 0.125 * width, y + height)
   return path
 }
-
-/**
- * @param {number} x
- * @param {number} y
- * @param {number} width
- * @param {number} height
- * @returns {!GeneralPath}
- */
 function createRightBracket(x, y, width, height) {
   const path = new GeneralPath()
   path.moveTo(x + 0.875 * width, y)
@@ -1162,14 +879,6 @@ function createRightBracket(x, y, width, height) {
   path.lineTo(x + 0.875 * width, y + height)
   return path
 }
-
-/**
- * @param {number} x
- * @param {number} y
- * @param {number} width
- * @param {number} height
- * @returns {!GeneralPath}
- */
 function createTopBracket(x, y, width, height) {
   const path = new GeneralPath()
   path.moveTo(x, y + 0.125 * height)
@@ -1178,14 +887,6 @@ function createTopBracket(x, y, width, height) {
   path.lineTo(x + width, y + 0.125 * height)
   return path
 }
-
-/**
- * @param {number} x
- * @param {number} y
- * @param {number} width
- * @param {number} height
- * @returns {!GeneralPath}
- */
 function createDownBracket(x, y, width, height) {
   const path = new GeneralPath()
   path.moveTo(x, y + 0.875 * height)
@@ -1194,7 +895,6 @@ function createDownBracket(x, y, width, height) {
   path.lineTo(x + width, y + 0.875 * height)
   return path
 }
-
 /**
  * Returns a constant representing the orientation/placement of the
  * annotation's bracket. One of
@@ -1203,9 +903,8 @@ function createDownBracket(x, y, width, height) {
  * - right
  * - top
  * - left
- * @param {!INode} node the node
- * @param {!IRenderContext} context the render context
- * @returns {!('left'|'right'|'top'|'down')}
+ * @param node the node
+ * @param context the render context
  */
 function determineBracketOrientation(node, context) {
   const graph = context.canvasComponent.graph
@@ -1214,15 +913,12 @@ function determineBracketOrientation(node, context) {
       const edge =
         graph.inDegree(node) === 1 ? graph.inEdgesAt(node).first() : graph.outEdgesAt(node).first()
       const intersection = getIntersection(edge, node)
-
       if (!intersection) {
         return 'left'
       }
-
       const x = intersection.x
       const y = intersection.y
       const epsilon = 0.1
-
       const minX = node.layout.x
       if (x + epsilon > minX && x - epsilon < minX) {
         return 'left'
@@ -1243,13 +939,9 @@ function determineBracketOrientation(node, context) {
   }
   return 'left'
 }
-
 /**
  * Returns the point where the edge intersects with the node.
  *
- * @param {!IEdge} edge
- * @param {!INode} node
- * @returns {?Point}
  */
 function getIntersection(edge, node) {
   let bends
@@ -1264,26 +956,17 @@ function getIntersection(edge, node) {
     secondPort = edge.sourcePort
     bends = edge.bends.toReversed()
   }
-
   let lastBend = firstPort.location
   let bend = null
   for (const b of bends) {
     bend = b.location.toPoint()
-
     if (!node.layout.contains(bend)) {
       break
     }
-
     lastBend = bend
   }
-
   return node.layout.toRect().findLineIntersection(lastBend, bend ? bend : secondPort.location)
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderUserMessagePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -1291,7 +974,6 @@ function renderUserMessagePath(node) {
   const height = node.layout.height
   const inclination = 0.25
   const borderDistance = Math.min(inclination * height, inclination * width)
-
   const path = new GeneralPath()
   path.moveTo(x, y)
   path.lineTo(x + (width - borderDistance), y)
@@ -1301,11 +983,6 @@ function renderUserMessagePath(node) {
   path.close()
   return path
 }
-
-/**
- * @param {!INode} node
- * @returns {!GeneralPath}
- */
 function renderNetworkMessagePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -1313,7 +990,6 @@ function renderNetworkMessagePath(node) {
   const height = node.layout.height
   const inclination = 0.25
   const borderDistance = Math.min(inclination * height, inclination * width)
-
   const path = new GeneralPath()
   path.moveTo(x, y)
   path.lineTo(x + width, y)

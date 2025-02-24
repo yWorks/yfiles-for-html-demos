@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
-  Class,
+  type Constructor,
   HandleDeserializationEventArgs,
   HandleSerializationEventArgs,
   ILookup,
@@ -38,30 +38,27 @@ import {
   IPortLocationModelParameter,
   IPortOwner,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Symbolic constants for the five supported port locations.
  */
 export enum PortLocation {
   CENTER,
-  NORTH,
-  SOUTH,
-  EAST,
-  WEST
+  TOP,
+  BOTTOM,
+  RIGHT,
+  LEFT
 }
 
 /**
  * Custom implementation of {@link IPortLocationModel} that provides
  * five discrete port locations, one at the node center and one at each side.
  */
-export class CustomNodePortLocationModel
-  extends BaseClass(IPortLocationModel)
-  implements IPortLocationModel
-{
+export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
   /**
    * Creates a new instance of {@link CustomNodePortLocationModel}.
-   * @param inset The inset for port locations NORTH, WEST, SOUTH, and EAST.
+   * @param inset The inset for port locations TOP, LEFT, BOTTOM, and RIGHT.
    */
   constructor(public inset: number = 0) {
     super()
@@ -72,7 +69,7 @@ export class CustomNodePortLocationModel
    * @param type The type for which an instance shall be returned
    */
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T>(type: Class<T>): T | null {
+  lookup<T>(type: Constructor<T>): T | null {
     return null
   }
 
@@ -94,19 +91,19 @@ export class CustomNodePortLocationModel
       switch (modelParameter.location) {
         case PortLocation.CENTER:
           return layout.center
-        case PortLocation.NORTH:
+        case PortLocation.TOP:
           return layout.topLeft.add(layout.topRight).multiply(0.5).add(new Point(0, this.inset))
-        case PortLocation.SOUTH:
+        case PortLocation.BOTTOM:
           return layout.bottomLeft
             .add(layout.bottomRight)
             .multiply(0.5)
             .add(new Point(0, -this.inset))
-        case PortLocation.EAST:
+        case PortLocation.RIGHT:
           return layout.topRight
             .add(layout.bottomRight)
             .multiply(0.5)
             .add(new Point(-this.inset, 0))
-        case PortLocation.WEST:
+        case PortLocation.LEFT:
           return layout.topLeft.add(layout.bottomLeft).multiply(0.5).add(new Point(this.inset, 0))
         default:
           throw new Error('Unknown PortLocation')
@@ -147,9 +144,9 @@ export class CustomNodePortLocationModel
       }
       // map to a location on the side
       if (Math.abs(delta.x) > Math.abs(delta.y)) {
-        return this.createCustomParameter(delta.x > 0 ? PortLocation.EAST : PortLocation.WEST)
+        return this.createCustomParameter(delta.x > 0 ? PortLocation.RIGHT : PortLocation.LEFT)
       }
-      return this.createCustomParameter(delta.y > 0 ? PortLocation.SOUTH : PortLocation.NORTH)
+      return this.createCustomParameter(delta.y > 0 ? PortLocation.BOTTOM : PortLocation.TOP)
     }
     // Just return a fallback  - getLocation will ignore this anyway if the owner is null or not a node.
     return this.createCustomParameter(PortLocation.CENTER)
@@ -165,10 +162,9 @@ export class CustomNodePortLocationModel
 
   /**
    * Provides a lookup context for the given combination of port and parameter.
-   * @param port The port to use in the context
-   * @param locationParameter The parameter to use for the port in the context
+   * @param _port The port to use in the context
    */
-  getContext(port: IPort, locationParameter: IPortLocationModelParameter): ILookup {
+  getContext(_port: IPort): ILookup {
     return ILookup.EMPTY
   }
 }
@@ -179,10 +175,7 @@ export class CustomNodePortLocationModel
  *
  * This implementation just stores one of the symbolic {@link PortLocation} instances.
  */
-export class CustomNodePortLocationModelParameter
-  extends BaseClass(IPortLocationModelParameter)
-  implements IPortLocationModelParameter
-{
+export class CustomNodePortLocationModelParameter extends BaseClass(IPortLocationModelParameter) {
   /**
    * Creates an instance of CustomNodePortLocationModelParameter.
    */
@@ -203,15 +196,6 @@ export class CustomNodePortLocationModelParameter
   }
 
   /**
-   * Determines if this parameter instance may be used to describe ports for the given owner.
-   *
-   * Our model/parameter implementation only makes sense when used for {@link INode}s.
-   */
-  supports(owner: IPortOwner): boolean {
-    return owner instanceof INode
-  }
-
-  /**
    * Creates a clone of this {@link CustomNodePortLocationModelParameter} object.
    */
   clone(): this {
@@ -221,10 +205,9 @@ export class CustomNodePortLocationModelParameter
 
   /**
    * Handles GraphML serialization for this parameter instance.
-   * @param source The source of the event
    * @param args An object that contains the event data
    */
-  static serializationHandler(source: object, args: HandleSerializationEventArgs): void {
+  static serializationHandler(args: HandleSerializationEventArgs): void {
     // only serialize items that are of the specific type
     if (args.item instanceof CustomNodePortLocationModelParameter) {
       const modelParameter = args.item
@@ -243,10 +226,9 @@ export class CustomNodePortLocationModelParameter
 
   /**
    * Handles GraphML deserialization for this parameter instance.
-   * @param source The source of the event
    * @param args An object that contains the event data
    */
-  static deserializationHandler(source: object, args: HandleDeserializationEventArgs): void {
+  static deserializationHandler(args: HandleDeserializationEventArgs): void {
     if (args.xmlNode instanceof Element) {
       const element = args.xmlNode
       if (

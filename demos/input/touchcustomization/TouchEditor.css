@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,21 +33,19 @@
   fill-opacity: 0.04;
 }
 
-.demo-handle {
+.demo-handles {
+  stroke: rgba(255, 255, 255, 0.7);
+  vector-effect: non-scaling-stroke;
+}
+
+.demo-handles [data-handle-type='default'] {
   fill: rgba(0, 0, 0, 0.9);
-  stroke: rgba(255, 255, 255, 0.7);
 }
-.demo-handle.demo-handle-move {
+.demo-handles [data-handle-type='move'] {
   fill: #ab2346;
-  stroke: rgba(255, 255, 255, 0.7);
 }
-.demo-handle.demo-handle-resize {
+.demo-handles [data-handle-type='resize'] {
   fill: #0b7189;
-  stroke: rgba(255, 255, 255, 0.7);
-}
-.demo-handle-move-bend {
-  fill: #621b00;
-  stroke: rgba(255, 255, 255, 0.7);
 }
 
 .demo-dial-menu {
@@ -68,7 +66,7 @@
   opacity: 0.5;
 }
 
-.demo-dial-menu-item.highlighted > path {
+.demo-dial-menu-item:hover:not(.disabled) > path {
   fill: #617984;
 }
 
@@ -133,6 +131,16 @@
   cursor: no-drop;
 }
 
+.yfiles-drag {
+  z-index: 15;
+  opacity: 0.35;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.yfiles-drag.hidden {
+  opacity: 0;
+}
+
 .demo-main__graph-component {
   position: relative;
 }
@@ -160,20 +168,12 @@
   transition:
     visibility 0s linear 0.3s,
     opacity 0.3s ease-in-out;
-  -moz-transition:
-    visibility 0s linear 0.3s,
-    opacity 0.3s ease-in-out;
-  -webkit-transition:
-    visibility 0s linear 0.3s,
-    opacity 0.3s ease-in-out;
 }
 
 .demo-button-visible {
   visibility: visible;
   opacity: 0.9;
   transition: opacity 0.3s ease-in-out;
-  -moz-transition: opacity 0.3s ease-in-out;
-  -webkit-transition: opacity 0.3s ease-in-out;
 }
 
 .demo-button-visible:hover {

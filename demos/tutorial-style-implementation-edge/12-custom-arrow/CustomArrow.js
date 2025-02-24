@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,20 +35,14 @@ import {
   Matrix,
   Point,
   SvgVisual
-} from 'yfiles'
-
-/**
- * @typedef {*} Cache
- */
-
+} from '@yfiles/yfiles'
 export class CustomArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
+  distance
   anchor
   direction
   arrowPath
-
   /**
    * Initializes a new instance of the {@link CustomArrow} class.
-   * @param {number} [distance=1]
    */
   constructor(distance = 1) {
     super()
@@ -57,43 +51,21 @@ export class CustomArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvid
     this.direction = Point.ORIGIN
     this.arrowPath = null
   }
-
-  /**
-   * @type {number}
-   */
   get length() {
     return this.distance * 2
   }
-
-  /**
-   * @type {number}
-   */
   get cropLength() {
     return 1
   }
-
-  /**
-   * @param {!IEdge} edge
-   * @param {boolean} atSource
-   * @param {!Point} anchor
-   * @param {!Point} direction
-   * @returns {!IVisualCreator}
-   */
   getVisualCreator(edge, atSource, anchor, direction) {
     this.anchor = anchor
     this.direction = direction
     return this
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @returns {!SvgVisual}
-   */
   createVisual(context) {
     if (this.arrowPath === null) {
       this.arrowPath = this.createArrowPath(this.distance)
     }
-
     const path = this.arrowPath.createSvgPath()
     path.setAttribute('fill', 'white')
     path.setAttribute('stroke', 'black')
@@ -109,30 +81,21 @@ export class CustomArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvid
         ${this.anchor.y}
       )`
     )
-
     const svgVisual = new SvgVisual(path)
     svgVisual.cache = {
       distance: this.distance
     }
     return svgVisual
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!Visual} oldVisual
-   * @returns {!SvgVisual}
-   */
   updateVisual(context, oldVisual) {
     const svgVisual = oldVisual
     const cache = svgVisual.cache
     const path = svgVisual.svgElement
-
     if (this.distance !== cache.distance) {
       const arrowPath = this.createArrowPath(this.distance)
       path.setAttribute('d', arrowPath.createSvgPathData())
       cache.distance = this.distance
     }
-
     path.setAttribute(
       'transform',
       `matrix(
@@ -146,11 +109,6 @@ export class CustomArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvid
     )
     return svgVisual
   }
-
-  /**
-   * @param {number} dist
-   * @returns {!GeneralPath}
-   */
   createArrowPath(dist) {
     const path = new GeneralPath()
     path.moveTo(new Point(dist * 2 + 1, dist * 0.5))
@@ -160,36 +118,25 @@ export class CustomArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvid
     path.lineTo(new Point(dist * 2 + 1, -dist * 0.5))
     return path
   }
-
-  /**
-   * @param {!IEdge} edge
-   * @param {boolean} atSource
-   * @param {!Point} anchor
-   * @param {!Point} direction
-   * @returns {!IBoundsProvider}
-   */
   getBoundsProvider(edge, atSource, anchor, direction) {
     this.anchor = anchor
     this.direction = direction
     return this
   }
-
-  /**
-   * @param {!ICanvasContext} context
-   * @returns {!Rect}
-   */
   getBounds(context) {
-    return this.createArrowPath(this.distance)
-      .getBounds()
-      .getTransformed(
-        new Matrix(
-          -this.direction.x,
-          -this.direction.y,
-          this.direction.y,
-          -this.direction.x,
-          this.anchor.x,
-          this.anchor.y
-        )
-      )
+    const bounds = this.createArrowPath(this.distance).getBounds()
+    const matrix = new Matrix(
+      -this.direction.x,
+      -this.direction.y,
+      this.direction.y,
+      -this.direction.x,
+      this.anchor.x,
+      this.anchor.y
+    )
+    matrix.scale(this.length, this.length)
+    return matrix.calculateTransformedBounds(bounds)
+  }
+  get cropAtPort() {
+    return false
   }
 }

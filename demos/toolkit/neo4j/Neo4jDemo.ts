@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,51 +29,45 @@
 import {
   Arrow,
   ArrowType,
-  ChainSubstructureStyle,
   Color,
-  CycleSubstructureStyle,
-  DefaultLabelStyle,
   EdgePathLabelModel,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  EdgeStyleIndicatorRenderer,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
-  GraphHighlightIndicatorManager,
   GraphItemTypes,
   GraphViewerInputMode,
   IEdge,
+  ILabelStyle,
   IModelItem,
-  IndicatorEdgeStyleDecorator,
-  IndicatorNodeStyleDecorator,
   INode,
+  LabelStyle,
   LayoutExecutor,
   License,
+  NodeStyleIndicatorRenderer,
   OrganicLayout,
+  OrganicLayoutChainSubstructureStyle,
+  OrganicLayoutCycleSubstructureStyle,
+  OrganicLayoutParallelSubstructureStyle,
   OrganicLayoutStarSubstructureStyle,
   ParallelEdgeRouter,
-  ParallelSubstructureStyle,
   PolylineEdgeStyle,
   ShapeNodeShape,
   ShapeNodeStyle,
   Size,
-  Stroke,
-  VoidLabelStyle
-} from 'yfiles'
+  Stroke
+} from '@yfiles/yfiles'
 
 import * as CodeMirror from 'codemirror'
 import 'codemirror/mode/cypher/cypher'
 import 'codemirror/lib/codemirror.css'
 
-import {
-  applyDemoTheme,
-  createDemoEdgeStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { createGraphBuilder } from './Neo4jGraphBuilder'
-import type { Integer, Neo4jRecord, Node, Relationship, Result } from './Neo4jUtil'
+import type { Neo4jRecord, Node, Relationship, Result } from './Neo4jUtil'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo-page'
 
 let editor: CodeMirror.EditorFromTextArea
 
@@ -110,8 +104,6 @@ async function run(): Promise<void> {
   }
 
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeGraphDefaults()
   initializeHighlighting()
   createInputMode()
@@ -127,18 +119,17 @@ function initializeGraphDefaults(): void {
   graph.nodeDefaults.style = createDemoNodeStyle()
   graph.nodeDefaults.size = new Size(30, 30)
 
-  graph.edgeDefaults.labels.style = new DefaultLabelStyle({
+  graph.edgeDefaults.labels.style = new LabelStyle({
     backgroundFill: 'rgba(255,255,255,0.85)',
     textFill: '#336699'
   })
 
-  const newExteriorLabelModel = new ExteriorLabelModel({ insets: 5 })
-  graph.nodeDefaults.labels.layoutParameter = newExteriorLabelModel.createParameter(
-    ExteriorLabelModelPosition.SOUTH
-  )
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
 
   graph.edgeDefaults.style = createDemoEdgeStyle()
-  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel().createDefaultParameter()
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel().createRatioParameter()
 }
 
 /**
@@ -148,32 +139,30 @@ function initializeHighlighting(): void {
   const orangeRed = Color.ORANGE_RED
   const orangeStroke = new Stroke(orangeRed.r, orangeRed.g, orangeRed.b, 220, 3).freeze()
 
-  const nodeStyleHighlight = new IndicatorNodeStyleDecorator({
-    wrapped: new ShapeNodeStyle({
+  const nodeStyleHighlight = new NodeStyleIndicatorRenderer({
+    nodeStyle: new ShapeNodeStyle({
       shape: ShapeNodeShape.ROUND_RECTANGLE,
       stroke: orangeStroke,
       fill: null
     }),
-    padding: 5
+    margins: 5
   })
 
   const dummyCroppingArrow = new Arrow({
     type: ArrowType.NONE,
     cropLength: 5
   })
-  const edgeStyleHighlight = new IndicatorEdgeStyleDecorator({
-    wrapped: new PolylineEdgeStyle({
+  const edgeStyleHighlight = new EdgeStyleIndicatorRenderer({
+    edgeStyle: new PolylineEdgeStyle({
       stroke: orangeStroke,
       targetArrow: dummyCroppingArrow,
       sourceArrow: dummyCroppingArrow
     })
   })
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    nodeStyle: nodeStyleHighlight,
-    edgeStyle: edgeStyleHighlight
-  })
+  graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(nodeStyleHighlight)
+  graphComponent.graph.decorator.edges.highlightRenderer.addConstant(edgeStyleHighlight)
 
-  graphComponent.addCurrentItemChangedListener(() => onCurrentItemChanged())
+  graphComponent.addEventListener('current-item-changed', () => onCurrentItemChanged())
 }
 
 /**
@@ -189,11 +178,12 @@ function createInputMode(): void {
 
   mode.itemHoverInputMode.enabled = true
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.EDGE | GraphItemTypes.NODE
-  mode.itemHoverInputMode.discardInvalidItems = false
-  mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => onHoveredItemChanged(evt.item))
+  mode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) =>
+    onHoveredItemChanged(evt.item)
+  )
 
   // load more data on double click
-  mode.addItemDoubleClickedListener(async (_, { item }) => {
+  mode.addEventListener('item-double-clicked', async ({ item }) => {
     const result = await runCypherQuery(
       `MATCH (n)-[e]-(m)
        WHERE id(n) = $nodeId
@@ -327,24 +317,24 @@ async function loadGraph(): Promise<void> {
  */
 function onHoveredItemChanged(hoveredItem: IModelItem | null): void {
   // we use the highlight manager of the GraphComponent to highlight related items
-  const manager = graphComponent.highlightIndicatorManager
+  const highlights = graphComponent.highlights
 
   // first remove previous highlights
-  manager.clearHighlights()
+  highlights.clear()
   // then see where we are hovering over, now
   if (!hoveredItem) {
     return
   }
-  manager.addHighlight(hoveredItem)
+  highlights.add(hoveredItem)
   if (hoveredItem instanceof INode) {
     // and if it's a node, we highlight all adjacent edges, too
     graphComponent.graph.edgesAt(hoveredItem).forEach((edge) => {
-      manager.addHighlight(edge)
+      highlights.add(edge)
     })
   } else if (hoveredItem instanceof IEdge) {
     // if it's an edge - we highlight the adjacent nodes
-    manager.addHighlight(hoveredItem.sourceNode!)
-    manager.addHighlight(hoveredItem.targetNode!)
+    highlights.add(hoveredItem.sourceNode)
+    highlights.add(hoveredItem.targetNode)
   }
 }
 
@@ -354,23 +344,21 @@ function onHoveredItemChanged(hoveredItem: IModelItem | null): void {
 async function doLayout(): Promise<void> {
   setUIDisabled(true)
   const organicLayout = new OrganicLayout()
-  organicLayout.chainSubstructureStyle = ChainSubstructureStyle.STRAIGHT_LINE
-  organicLayout.cycleSubstructureStyle = CycleSubstructureStyle.CIRCULAR
-  organicLayout.parallelSubstructureStyle = ParallelSubstructureStyle.STRAIGHT_LINE
+  organicLayout.chainSubstructureStyle = OrganicLayoutChainSubstructureStyle.STRAIGHT_LINE
+  organicLayout.cycleSubstructureStyle = OrganicLayoutCycleSubstructureStyle.CIRCULAR
+  organicLayout.parallelSubstructureStyle = OrganicLayoutParallelSubstructureStyle.STRAIGHT_LINE
   organicLayout.starSubstructureStyle = OrganicLayoutStarSubstructureStyle.CIRCULAR
-  organicLayout.minimumNodeDistance = 60
-  organicLayout.considerNodeLabels = true
-  organicLayout.considerNodeSizes = true
+  organicLayout.defaultMinimumNodeDistance = 60
   organicLayout.deterministic = true
-  organicLayout.nodeEdgeOverlapAvoided = true
+  organicLayout.avoidNodeEdgeOverlap = true
   organicLayout.qualityTimeRatio = 0.8
   ;(organicLayout.parallelEdgeRouter as ParallelEdgeRouter).joinEnds = true
-  ;(organicLayout.parallelEdgeRouter as ParallelEdgeRouter).lineDistance = 15
+  ;(organicLayout.parallelEdgeRouter as ParallelEdgeRouter).edgeDistance = 15
   try {
     await new LayoutExecutor({
       graphComponent,
       layout: organicLayout,
-      duration: '1s',
+      animationDuration: '1s',
       animateViewport: true
     }).start()
   } finally {
@@ -402,7 +390,7 @@ function initializeUI(): void {
     const graph = graphComponent.graph
     const style = showEdgeLabelsCheckbox.checked
       ? graph.edgeDefaults.labels.style
-      : new VoidLabelStyle()
+      : ILabelStyle.VOID_LABEL_STYLE
     for (const label of graph.edgeLabels) {
       graph.setStyle(label, style)
     }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,57 +27,43 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultLabelStyle,
   Font,
-  FontStyle,
-  FontWeight,
   GraphBuilder,
   GraphComponent,
-  GraphFocusIndicatorManager,
   type GraphInputMode,
   GraphItemTypes,
-  GraphSelectionIndicatorManager,
   GraphViewerInputMode,
-  ICanvasObjectDescriptor,
   type IGraph,
   ImageNodeStyle,
-  IndicatorNodeStyleDecorator,
   type INode,
   type INodeStyle,
-  Insets,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
+  LabelStyle,
   License,
+  NodeStyleIndicatorRenderer,
   OrganicLayout,
   Rect,
   ShapeNodeStyle,
   Size,
-  StringTemplateNodeStyle,
-  StyleDecorationZoomPolicy,
-  SvgVisual,
-  VoidNodeStyle
-} from 'yfiles'
+  StyleIndicatorZoomPolicy,
+  SvgVisual
+} from '@yfiles/yfiles'
 import type { CircleInfo } from './apply-layout-callback'
 import { getApplyLayoutCallback } from './apply-layout-callback'
 import { getBuildGraphCallback } from './build-graph-callback'
 import { NeighborhoodType } from './NeighborhoodType'
 import { NeighborhoodView } from '../neighborhood/NeighborhoodView'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './resources/graph-data.json'
-
-// We need to load the 'styles-other' module explicitly to prevent tree-shaking
-// tools from removing it, because it contains styles referenced in the sample GraphML file.
-Class.ensure(StringTemplateNodeStyle)
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   // initialize a GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   graphComponent.inputMode = createInputMode()
 
   // configure a vivid selection indicator and some default styling for graph items
@@ -88,24 +74,22 @@ async function run(): Promise<void> {
 
   // create and configure the NeighborhoodView component
   const neighborhoodView = createNeighborhoodView(graphComponent)
-  applyDemoTheme(neighborhoodView.neighborhoodComponent)
-
   // then build the graph with the given data set
   buildGraph(graphComponent.graph, graphData as unknown as JSONGraph)
 
   graphComponent.graph.applyLayout(
     new OrganicLayout({
-      minimumNodeDistance: 60,
-      nodeEdgeOverlapAvoided: true
+      defaultMinimumNodeDistance: 60,
+      avoidNodeEdgeOverlap: true
     })
   )
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   //pre-select a node to show its neighborhood
   graphComponent.selection.clear()
   const node = graphComponent.graph.nodes.at(0)
   if (node) {
-    graphComponent.selection.setSelected(node, true)
+    graphComponent.selection.add(node)
   }
 
   // wire up the UI elements of this demo
@@ -125,24 +109,21 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   })
 
   nodesSource.nodeCreator.styleProvider = (item): INodeStyle =>
-    new ImageNodeStyle({ image: `./resources/${item.tag}.svg` })
+    new ImageNodeStyle(`./resources/${item.tag}.svg`)
 
   nodesSource.nodeCreator.createLabelBinding((item) => item.label)
 
   nodesSource.nodeCreator.defaults.size = new Size(48, 48)
-  nodesSource.nodeCreator.defaults.labels.style = new DefaultLabelStyle({
-    textFill: '#ff000000',
-    backgroundFill: '#b0ffffff',
-    clipText: false,
+  nodesSource.nodeCreator.defaults.labels.style = new LabelStyle({
+    textFill: '#000000',
+    backgroundFill: '#ffffffb0',
     font: new Font({
       fontFamily: 'Arial',
-      fontSize: 10,
-      fontStyle: FontStyle.NORMAL,
-      fontWeight: FontWeight.NORMAL
+      fontSize: 10
     }),
-    insets: 2
+    padding: 2
   })
-  nodesSource.nodeCreator.defaults.labels.layoutParameter = InteriorLabelModel.SOUTH
+  nodesSource.nodeCreator.defaults.labels.layoutParameter = InteriorNodeLabelModel.BOTTOM
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
@@ -160,7 +141,7 @@ function createNeighborhoodView(graphComponent: GraphComponent): NeighborhoodVie
   let layoutCircleInfo: CircleInfo[] = []
 
   const neighborhoodView = new NeighborhoodView('#neighborhood-graph-component')
-  neighborhoodView.applyNeighborhoodLayout = getApplyLayoutCallback((view, circles) => {
+  neighborhoodView.applyNeighborhoodLayout = getApplyLayoutCallback((_, circles) => {
     layoutCircleInfo = circles
   })
   neighborhoodView.buildNeighborhoodGraph = getBuildGraphCallback(NeighborhoodType.NEIGHBORHOOD, 1)
@@ -168,7 +149,7 @@ function createNeighborhoodView(graphComponent: GraphComponent): NeighborhoodVie
   // mirror navigation in the neighborhood view to the demo's main GraphComponent
   neighborhoodView.clickCallback = (node: INode): void => {
     graphComponent.selection.clear()
-    graphComponent.selection.setSelected(node, true)
+    graphComponent.selection.add(node)
   }
   neighborhoodView.onNeighborhoodUpdated = (view: NeighborhoodView): void => {
     // show the circles on which the neighborhood nodes have been arranged (unless the neighborhood
@@ -190,10 +171,10 @@ function createNeighborhoodView(graphComponent: GraphComponent): NeighborhoodVie
 function fitGraphAndBackground(graphComponent: GraphComponent, circles: CircleInfo[]): void {
   const margin = 5
   if (circles.length > 0) {
-    graphComponent.updateContentRect(new Insets(margin))
+    graphComponent.updateContentBounds(margin)
 
     const strokeRadius = 5
-    let bounds = graphComponent.contentRect
+    let bounds = graphComponent.contentBounds
     for (const info of circles) {
       if (info.radius > 0) {
         const c = info.center
@@ -215,7 +196,7 @@ function fitGraphAndBackground(graphComponent: GraphComponent, circles: CircleIn
       graphComponent.center = bounds.center
     }
   } else {
-    graphComponent.fitGraphBounds(new Insets(margin))
+    void graphComponent.fitGraphBounds(margin)
   }
 }
 
@@ -223,16 +204,17 @@ function fitGraphAndBackground(graphComponent: GraphComponent, circles: CircleIn
  * Adds circle visualizations to the background of the given neighborhood view.
  */
 function updateNeighborhoodBackground(view: NeighborhoodView, circles: CircleInfo[]): void {
-  const group = view.neighborhoodComponent.backgroundGroup
+  const renderTree = view.neighborhoodComponent.renderTree
+  const group = renderTree.backgroundGroup
 
   // remove old circle visuals
   for (let child = group.lastChild; child; child = child.previousSibling) {
-    child.remove()
+    renderTree.remove(child)
   }
 
   // add new circle visuals
   if (circles.length > 0) {
-    group.addChild(createCircleVisual(circles), ICanvasObjectDescriptor.ALWAYS_DIRTY_VISUAL)
+    renderTree.createElement(group, createCircleVisual(circles))
   }
 }
 
@@ -264,23 +246,21 @@ function createCircleVisual(circles: CircleInfo[]): SvgVisual {
  */
 function initializeSelectionIndicator(graphComponent: GraphComponent): void {
   // decorate the nodes with custom highlight styles
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    nodeStyle: new IndicatorNodeStyleDecorator({
+  graphComponent.graph.decorator.nodes.selectionRenderer.addConstant(
+    new NodeStyleIndicatorRenderer({
       // the indicator should be slightly bigger than the node
-      padding: 5,
+      margins: 5,
       // but have a fixed size in the view coordinates
-      zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES,
+      zoomPolicy: StyleIndicatorZoomPolicy.VIEW_COORDINATES,
       // create a vivid selection style
-      wrapped: new ShapeNodeStyle({
+      nodeStyle: new ShapeNodeStyle({
         shape: 'round-rectangle',
         stroke: '3px solid #ff4500',
         fill: 'transparent'
       })
     })
-  })
-  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
+  )
+  graphComponent.graph.decorator.nodes.focusRenderer.hide()
 }
 
 /**

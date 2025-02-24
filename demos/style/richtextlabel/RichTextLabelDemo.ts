@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,33 +28,29 @@
  ***************************************************************************/
 import {
   Arrow,
-  Class,
   Font,
-  FreeEdgeLabelModel,
+  SmartEdgeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicLayout,
-  HierarchicLayoutEdgeLayoutDescriptor,
-  HierarchicLayoutEdgeRoutingStyle,
-  HierarchicLayoutRoutingStyle,
+  HierarchicalLayout,
+  HierarchicalLayoutEdgeDescriptor,
   HorizontalTextAlignment,
   IGraph,
-  InteriorStretchLabelModel,
   LayoutExecutor,
   License,
   MarkupLabelStyle,
-  OrthogonalEdgeEditingContext,
   PolylineEdgeStyle,
   Size,
+  StretchNodeLabelModel,
   TextWrapping
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { RichTextEditorInputMode } from './RichTextEditorInputMode'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
@@ -64,7 +60,7 @@ let graphComponent: GraphComponent
  * The label text shows how to create headings, strong and emphasis text and line breaks,
  * and also how to style those elements using inline CSS.
  * The stylesheet CSS shows how to style label elements using external CSS.
- * The label style uses interactive text wrapping, which means you can resize nodes interactively
+ * The label style uses interactive text wrapping, which means you can resize nodes interactively,
  * and the label text will be wrapped at word boundaries.
  */
 async function run(): Promise<void> {
@@ -72,30 +68,30 @@ async function run(): Promise<void> {
 
   // initialize graph component
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphEditorInputMode({
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext(),
     // provide a WYSIWYG editor for the MarkupLabelStyle
-    textEditorInputMode: new RichTextEditorInputMode()
+    editLabelInputMode: { textEditorInputMode: new RichTextEditorInputMode() }
   })
 
   const graph = graphComponent.graph
   // set the defaults for nodes
   initDemoStyles(graph)
   graph.nodeDefaults.size = new Size(400, 200)
-  graph.nodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.CENTER
-  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+  graph.nodeDefaults.labels.layoutParameter = StretchNodeLabelModel.CENTER
+  graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '5px solid #66a3e0',
     targetArrow: new Arrow({
       stroke: '2px solid #66a3e0',
       fill: '#eee',
-      scale: 2,
-      type: 'circle',
+      lengthScale: 2,
+      widthScale: 2,
+      type: 'ellipse',
       cropLength: 2
-    })
-    // smoothingLength: 30
+    }),
+    smoothingLength: 30,
+    orthogonalEditing: true
   })
 
   // node labels get markup label support
@@ -105,8 +101,8 @@ async function run(): Promise<void> {
     horizontalTextAlignment: HorizontalTextAlignment.CENTER,
     backgroundFill: '#fff',
     backgroundStroke: '3px #66a3e0',
-    wrapping: TextWrapping.WORD_ELLIPSIS,
-    insets: [10, 10]
+    wrapping: TextWrapping.WRAP_WORD_ELLIPSIS,
+    padding: [10, 10]
   })
   graph.edgeDefaults.labels.style = new MarkupLabelStyle({ font: font })
 
@@ -114,18 +110,17 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
-    new HierarchicLayout({
+    new HierarchicalLayout({
       automaticEdgeGrouping: true,
       minimumLayerDistance: 150,
-      edgeLayoutDescriptor: new HierarchicLayoutEdgeLayoutDescriptor({
-        minimumLastSegmentLength: 75,
-        routingStyle: new HierarchicLayoutRoutingStyle(HierarchicLayoutEdgeRoutingStyle.ORTHOGONAL)
+      defaultEdgeDescriptor: new HierarchicalLayoutEdgeDescriptor({
+        minimumLastSegmentLength: 75
       })
     })
   )
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true

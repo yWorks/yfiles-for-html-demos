@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,27 +30,21 @@ import {
   CenterNodesPolicy,
   Class,
   EdgeBundleDescriptor,
-  Enum,
-  FreeNodeLabelModel,
   GenericLabeling,
   GraphComponent,
   ILayoutAlgorithm,
   LayoutData,
-  NodeLabelingPolicy,
+  RadialLayeringStrategy,
   RadialLayout,
   RadialLayoutData,
-  RadialLayoutEdgeRoutingStrategy,
-  RadialLayoutLayeringStrategy,
-  YBoolean,
-  YNumber,
-  YString
-} from 'yfiles'
+  RadialLayoutRoutingStyle,
+  RadialNodeLabelPlacement
+} from '@yfiles/yfiles'
 
 import LayoutConfiguration, {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge,
-  NodeLabelingPolicies
+  LabelPlacementSideOfEdge
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -61,7 +55,22 @@ import {
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from 'demo-resources/demo-option-editor'
+} from '@yfiles/demo-resources/demo-option-editor'
+
+enum EdgeRoutingStrategies {
+  ARC = RadialLayoutRoutingStyle.ARC as number,
+  POLYLINE = RadialLayoutRoutingStyle.POLYLINE as number,
+  CURVED = RadialLayoutRoutingStyle.CURVED as number,
+  RADIAL_POLYLINE = RadialLayoutRoutingStyle.RADIAL_POLYLINE as number,
+  BUNDLED = 4
+}
+
+enum CenterPolicy {
+  DIRECTED = 0,
+  CENTRALITY = 1,
+  WEIGHTED_CENTRALITY = 2,
+  CUSTOM = 3
+}
 
 /**
  * @type {number}
@@ -84,7 +93,217 @@ const SMOOTHNESS_ANGLE_FACTOR = 4
 const RadialLayoutConfig = (Class as any)('RadialLayoutConfig', {
   $extends: LayoutConfiguration,
 
-  $meta: [LabelAttribute('RadialLayout')],
+  _meta: {
+    GeneralGroup: [
+      new LabelAttribute('General'),
+      new OptionGroupAttribute('RootGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    LabelingGroup: [
+      new LabelAttribute('Labeling'),
+      new OptionGroupAttribute('RootGroup', 20),
+      new TypeAttribute(OptionGroup)
+    ],
+    NodePropertiesGroup: [
+      new LabelAttribute('Node Settings'),
+      new OptionGroupAttribute('LabelingGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    EdgePropertiesGroup: [
+      new LabelAttribute('Edge Settings'),
+      new OptionGroupAttribute('LabelingGroup', 20),
+      new TypeAttribute(OptionGroup)
+    ],
+    PreferredPlacementGroup: [
+      new LabelAttribute('Preferred Edge Label Placement'),
+      new OptionGroupAttribute('LabelingGroup', 30),
+      new TypeAttribute(OptionGroup)
+    ],
+    descriptionText: [
+      new OptionGroupAttribute('DescriptionGroup', 10),
+      new ComponentAttribute(Components.HTML_BLOCK),
+      new TypeAttribute(String)
+    ],
+    minimumLayerDistanceItem: [
+      new LabelAttribute(
+        'Minimum Circle Distance',
+        '#/api/RadialLayout#RadialLayout-property-minimumLayerDistance'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 10),
+      new MinMaxAttribute(1, 1000),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumNodeToNodeDistanceItem: [
+      new LabelAttribute(
+        'Minimum Node Distance',
+        '#/api/RadialLayout#RadialLayout-property-minimumNodeDistance'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 20),
+      new MinMaxAttribute(0, 300),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    maximumChildSectorAngleItem: [
+      new LabelAttribute(
+        'Maximum Child Sector Angle',
+        '#/api/RadialLayout#RadialLayout-property-maximumChildSectorAngle'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 30),
+      new MinMaxAttribute(15, 360),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    edgeRoutingStrategyItem: [
+      new LabelAttribute(
+        'Routing Style',
+        '#/api/RadialLayout#RadialLayout-property-edgeRoutingStyle'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 40),
+      new EnumValuesAttribute([
+        ['Straight', EdgeRoutingStrategies.POLYLINE],
+        ['Arc', EdgeRoutingStrategies.ARC],
+        ['Curved', EdgeRoutingStrategies.CURVED],
+        ['Radial Polyline', EdgeRoutingStrategies.RADIAL_POLYLINE],
+        ['Bundled', EdgeRoutingStrategies.BUNDLED]
+      ]),
+      new TypeAttribute(EdgeRoutingStrategies)
+    ],
+    edgeSmoothnessItem: [
+      new LabelAttribute(
+        'Arc Smoothness',
+        '#/api/RadialLayout#RadialLayout-property-minimumBendAngle'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 50),
+      new MinMaxAttribute(MINIMUM_SMOOTHNESS, MAXIMUM_SMOOTHNESS),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    edgeBundlingStrengthItem: [
+      new LabelAttribute(
+        'Bundling Strength',
+        '#/api/EdgeBundling#EdgeBundling-property-bundlingStrength'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 55),
+      new MinMaxAttribute(0, 1.0, 0.01),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    centerStrategyItem: [
+      new LabelAttribute(
+        'Center Allocation Strategy',
+        '#/api/RadialLayout#RadialLayout-property-centerNodesPolicy'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 60),
+      new EnumValuesAttribute([
+        ['Directed', CenterPolicy.DIRECTED],
+        ['Centrality', CenterPolicy.CENTRALITY],
+        ['Weighted Centrality', CenterPolicy.WEIGHTED_CENTRALITY],
+        ['Selected Nodes', CenterPolicy.CUSTOM]
+      ]),
+      new TypeAttribute(CenterPolicy)
+    ],
+    layeringStrategyItem: [
+      new LabelAttribute(
+        'Circle Assignment Strategy',
+        '#/api/RadialLayout#RadialLayout-property-layeringStrategy'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 70),
+      new EnumValuesAttribute([
+        ['Distance From Center', RadialLayeringStrategy.BFS],
+        ['Hierarchical', RadialLayeringStrategy.HIERARCHICAL],
+        ['Dendrogram', RadialLayeringStrategy.DENDROGRAM]
+      ]),
+      new TypeAttribute(RadialLayeringStrategy)
+    ],
+    nodeLabelingStyleItem: [
+      new LabelAttribute(
+        'Node Labeling',
+        '#/api/RadialLayout#RadialLayout-property-nodeLabelPlacement'
+      ),
+      new OptionGroupAttribute('NodePropertiesGroup', 10),
+      new EnumValuesAttribute([
+        ['Ignore Labels', RadialNodeLabelPlacement.IGNORE],
+        ['Consider Labels', RadialNodeLabelPlacement.CONSIDER],
+        ['Generic', RadialNodeLabelPlacement.GENERIC],
+        ['Horizontal', RadialNodeLabelPlacement.HORIZONTAL],
+        ['Ray-like at Leaves', RadialNodeLabelPlacement.RAY_LIKE_LEAVES],
+        ['Ray-like', RadialNodeLabelPlacement.RAY_LIKE]
+      ]),
+      new TypeAttribute(RadialNodeLabelPlacement)
+    ],
+    edgeLabelingItem: [
+      new LabelAttribute(
+        'Edge Labeling',
+        '#/api/RadialLayout#RadialLayout-property-edgeLabelPlacement'
+      ),
+      new OptionGroupAttribute('EdgePropertiesGroup', 10),
+      new TypeAttribute(Boolean)
+    ],
+    reduceAmbiguityItem: [
+      new LabelAttribute(
+        'Reduce Ambiguity',
+        '#/api/LabelingCosts#LabelingCosts-property-ambiguousPlacementCost'
+      ),
+      new OptionGroupAttribute('EdgePropertiesGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    labelPlacementOrientationItem: [
+      new LabelAttribute(
+        'Orientation',
+        '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-angle'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 10),
+      new EnumValuesAttribute([
+        ['Parallel', LabelPlacementOrientation.PARALLEL],
+        ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
+        ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
+        ['Vertical', LabelPlacementOrientation.VERTICAL]
+      ]),
+      new TypeAttribute(LabelPlacementOrientation)
+    ],
+    labelPlacementAlongEdgeItem: [
+      new LabelAttribute(
+        'Along Edge',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-placementAlongEdge'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 20),
+      new EnumValuesAttribute([
+        ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
+        ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
+        ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
+        ['At Target', LabelPlacementAlongEdge.AT_TARGET],
+        ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
+        ['Centered', LabelPlacementAlongEdge.CENTERED]
+      ]),
+      new TypeAttribute(LabelPlacementAlongEdge)
+    ],
+    labelPlacementSideOfEdgeItem: [
+      new LabelAttribute(
+        'Side of Edge',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-edgeSide'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 30),
+      new EnumValuesAttribute([
+        ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
+        ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
+        ['Left', LabelPlacementSideOfEdge.LEFT],
+        ['Right', LabelPlacementSideOfEdge.RIGHT],
+        ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+      ]),
+      new TypeAttribute(LabelPlacementSideOfEdge)
+    ],
+    labelPlacementDistanceItem: [
+      new LabelAttribute(
+        'Distance',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-distanceToEdge'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 40),
+      new MinMaxAttribute(0.0, 40.0),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ]
+  },
 
   /**
    * Setup default values for various configuration parameters.
@@ -95,12 +314,12 @@ const RadialLayoutConfig = (Class as any)('RadialLayoutConfig', {
 
     const layout = new RadialLayout()
 
-    this.centerStrategyItem = CenterNodesPolicy.WEIGHTED_CENTRALITY
-    this.layeringStrategyItem = RadialLayoutLayeringStrategy.BFS
+    this.centerStrategyItem = CenterPolicy.WEIGHTED_CENTRALITY
+    this.layeringStrategyItem = RadialLayeringStrategy.BFS
     this.minimumLayerDistanceItem = layout.minimumLayerDistance | 0
-    this.minimumNodeToNodeDistanceItem = layout.minimumNodeToNodeDistance | 0
-    this.maximumChildSectorSizeItem = layout.maximumChildSectorAngle | 0
-    this.edgeRoutingStrategyItem = RadialLayoutEdgeRoutingStrategy.ARC
+    this.minimumNodeToNodeDistanceItem = layout.minimumNodeDistance | 0
+    this.maximumChildSectorAngleItem = layout.maximumChildSectorAngle | 0
+    this.edgeRoutingStrategyItem = RadialLayoutRoutingStyle.ARC
     this.edgeSmoothnessItem = MAXIMUM_SMOOTHNESS
     this.edgeBundlingStrengthItem = 0.95
 
@@ -111,27 +330,27 @@ const RadialLayoutConfig = (Class as any)('RadialLayoutConfig', {
     this.labelPlacementDistanceItem = 10
     this.title = 'Radial Layout'
 
-    this.nodeLabelingStyleItem = NodeLabelingPolicies.CONSIDER_CURRENT_POSITION
+    this.nodeLabelingStyleItem = layout.nodeLabelPlacement
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @returns The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent: GraphComponent): ILayoutAlgorithm {
     const layout = new RadialLayout()
-    layout.minimumNodeToNodeDistance = this.minimumNodeToNodeDistanceItem
+    layout.minimumNodeDistance = this.minimumNodeToNodeDistanceItem
 
     if (this.edgeRoutingStrategyItem !== EdgeRoutingStrategies.BUNDLED) {
-      layout.edgeRoutingStrategy = this.edgeRoutingStrategyItem
+      layout.edgeRoutingStyle = this.edgeRoutingStrategyItem
     }
     layout.minimumBendAngle =
       1 + (MAXIMUM_SMOOTHNESS - this.edgeSmoothnessItem) * SMOOTHNESS_ANGLE_FACTOR
     layout.minimumLayerDistance = this.minimumLayerDistanceItem
-    layout.maximumChildSectorAngle = this.maximumChildSectorSizeItem
-    layout.centerNodesPolicy = this.centerStrategyItem
+    layout.maximumChildSectorAngle = this.maximumChildSectorAngleItem
+    layout.centerNodesPolicy = this.getCenterNodesPolicy(this.centerStrategyItem)
     layout.layeringStrategy = this.layeringStrategyItem
 
     const ebc = layout.edgeBundling
@@ -141,54 +360,14 @@ const RadialLayoutConfig = (Class as any)('RadialLayoutConfig', {
     })
 
     if (this.edgeLabelingItem) {
-      const labeling = new GenericLabeling()
-      labeling.placeEdgeLabels = true
-      labeling.placeNodeLabels = false
-      labeling.reduceAmbiguity = this.reduceAmbiguityItem
-      layout.labelingEnabled = true
-      layout.labeling = labeling
+      layout.edgeLabelPlacement = 'generic'
+      if (this.reduceAmbiguityItem) {
+        layout.layoutStages.get(GenericLabeling)!.defaultEdgeLabelingCosts.ambiguousPlacementCost =
+          1.0
+      }
     }
 
-    switch (this.nodeLabelingStyleItem) {
-      case NodeLabelingPolicies.NONE:
-        layout.considerNodeLabels = false
-        break
-      case NodeLabelingPolicies.RAYLIKE_LEAVES:
-        layout.integratedNodeLabeling = true
-        layout.nodeLabelingPolicy = NodeLabelingPolicy.RAY_LIKE_LEAVES
-        break
-      case NodeLabelingPolicies.RAYLIKE:
-        layout.integratedNodeLabeling = true
-        layout.nodeLabelingPolicy = NodeLabelingPolicy.RAY_LIKE
-        break
-      case NodeLabelingPolicies.CONSIDER_CURRENT_POSITION:
-        layout.considerNodeLabels = true
-        break
-      case NodeLabelingPolicies.HORIZONTAL:
-        layout.integratedNodeLabeling = true
-        layout.nodeLabelingPolicy = NodeLabelingPolicy.HORIZONTAL
-        break
-      default:
-        layout.considerNodeLabels = false
-        break
-    }
-
-    if (
-      this.nodeLabelingStyleItem === NodeLabelingPolicies.RAYLIKE_LEAVES ||
-      this.nodeLabelingStyleItem === NodeLabelingPolicies.RAYLIKE ||
-      this.nodeLabelingStyleItem === NodeLabelingPolicies.HORIZONTAL
-    ) {
-      graphComponent.graph.nodeLabels.forEach((label) => {
-        graphComponent.graph.setLabelLayoutParameter(
-          label,
-          FreeNodeLabelModel.INSTANCE.findBestParameter(
-            label,
-            FreeNodeLabelModel.INSTANCE,
-            label.layout
-          )
-        )
-      })
-    }
+    layout.nodeLabelPlacement = this.nodeLabelingStyleItem
 
     return layout
   },
@@ -202,9 +381,9 @@ const RadialLayoutConfig = (Class as any)('RadialLayoutConfig', {
     layout: RadialLayout
   ): LayoutData {
     let layoutData
-    if (this.centerStrategyItem === CenterNodesPolicy.CUSTOM) {
+    if (this.centerStrategyItem === CenterPolicy.CUSTOM) {
       layoutData = new RadialLayoutData({
-        centerNodes: (node) => graphComponent.selection.isSelected(node)
+        centerNodes: (node) => graphComponent.selection.includes(node)
       })
     } else {
       layoutData = new RadialLayoutData()
@@ -221,464 +400,133 @@ const RadialLayoutConfig = (Class as any)('RadialLayoutConfig', {
     )
   },
 
-  /** @type {OptionGroup} */
-  GeneralGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('General'),
-        OptionGroupAttribute('RootGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
+  getCenterNodesPolicy(policy: CenterPolicy) {
+    switch (policy) {
+      case CenterPolicy.CENTRALITY:
+        return CenterNodesPolicy.CENTRALITY
+      case CenterPolicy.DIRECTED:
+        return CenterNodesPolicy.DIRECTED
+      case CenterPolicy.WEIGHTED_CENTRALITY:
+      case CenterPolicy.CUSTOM:
+      default:
+        return CenterNodesPolicy.WEIGHTED_CENTRALITY
+    }
   },
 
   /** @type {OptionGroup} */
-  LabelingGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Labeling'),
-        OptionGroupAttribute('RootGroup', 20),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  GeneralGroup: null,
 
   /** @type {OptionGroup} */
-  NodePropertiesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Node Settings'),
-        OptionGroupAttribute('LabelingGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  LabelingGroup: null,
 
   /** @type {OptionGroup} */
-  EdgePropertiesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Edge Settings'),
-        OptionGroupAttribute('LabelingGroup', 20),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  NodePropertiesGroup: null,
 
   /** @type {OptionGroup} */
-  PreferredPlacementGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Preferred Edge Label Placement'),
-        OptionGroupAttribute('LabelingGroup', 30),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  EdgePropertiesGroup: null,
+
+  /** @type {OptionGroup} */
+  PreferredPlacementGroup: null,
 
   /** @type {string} */
   descriptionText: {
-    $meta: function () {
-      return [
-        OptionGroupAttribute('DescriptionGroup', 10),
-        ComponentAttribute(Components.HTML_BLOCK),
-        TypeAttribute(YString.$class)
-      ]
-    },
     get: function () {
       return (
-        '<p>The radial layout style arranges the nodes of a graph on concentric circles. Similar to hierarchic layouts, the overall flow of the graph is nicely visualized.</p>' +
+        '<p>The radial layout style arranges the nodes of a graph on concentric circles. Similar to hierarchical layouts, the overall flow of the graph is nicely visualized.</p>' +
         '<p>This style is well suited for the visualization of directed graphs and tree-like structures.</p>'
       )
     }
   },
 
   /** @type {number} */
-  minimumLayerDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Circle Distance',
-          '#/api/RadialLayout#RadialLayout-property-minimumLayerDistance'
-        ),
-        OptionGroupAttribute('GeneralGroup', 10),
-        MinMaxAttribute().init({
-          min: 1,
-          max: 1000
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 1
-  },
+  minimumLayerDistanceItem: 1,
 
   /** @type {number} */
-  minimumNodeToNodeDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Node Distance',
-          '#/api/RadialLayout#RadialLayout-property-minimumNodeToNodeDistance'
-        ),
-        OptionGroupAttribute('GeneralGroup', 20),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 300
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumNodeToNodeDistanceItem: 0,
 
   /** @type {number} */
-  maximumChildSectorSizeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Maximum Child Sector Size',
-          '#/api/RadialLayout#RadialLayout-property-maximumChildSectorAngle'
-        ),
-        OptionGroupAttribute('GeneralGroup', 30),
-        MinMaxAttribute().init({
-          min: 15,
-          max: 360
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 15
-  },
+  maximumChildSectorAngleItem: 15,
 
-  /** @type {RadialLayoutEdgeRoutingStrategy} */
-  edgeRoutingStrategyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Routing Style',
-          '#/api/RadialLayout#RadialLayout-property-edgeRoutingStrategy'
-        ),
-        OptionGroupAttribute('GeneralGroup', 40),
-        EnumValuesAttribute().init({
-          values: [
-            ['Straight', EdgeRoutingStrategies.POLYLINE],
-            ['Arc', EdgeRoutingStrategies.ARC],
-            ['Curved', EdgeRoutingStrategies.CURVED],
-            ['Radial Polyline', EdgeRoutingStrategies.RADIAL_POLYLINE],
-            ['Bundled', EdgeRoutingStrategies.BUNDLED]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  /** @type {RadialLayoutRoutingStyle} */
+  edgeRoutingStrategyItem: null,
 
   /** @type {number} */
-  edgeSmoothnessItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Arc Smoothness',
-          '#/api/RadialLayout#RadialLayout-property-minimumBendAngle'
-        ),
-        OptionGroupAttribute('GeneralGroup', 50),
-        MinMaxAttribute().init({
-          min: MINIMUM_SMOOTHNESS,
-          max: MAXIMUM_SMOOTHNESS
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: MINIMUM_SMOOTHNESS
-  },
+  edgeSmoothnessItem: MINIMUM_SMOOTHNESS,
 
   /** @type {boolean} */
   shouldDisableEdgeSmoothnessItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
-      return this.edgeRoutingStrategyItem !== RadialLayoutEdgeRoutingStrategy.ARC
+      return this.edgeRoutingStrategyItem !== RadialLayoutRoutingStyle.ARC
     }
   },
 
   /** @type {number} */
-  edgeBundlingStrengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Bundling Strength',
-          '#/api/EdgeBundling#EdgeBundling-property-bundlingStrength'
-        ),
-        OptionGroupAttribute('GeneralGroup', 55),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 1.0,
-          step: 0.01
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 1.0
-  },
+  edgeBundlingStrengthItem: 1.0,
 
   /** @type {boolean} */
   shouldDisableEdgeBundlingStrengthItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return this.edgeRoutingStrategyItem !== EdgeRoutingStrategies.BUNDLED
     }
   },
 
   /** @type {CenterNodesPolicy} */
-  centerStrategyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Center Allocation Strategy',
-          '#/api/RadialLayout#RadialLayout-property-centerNodesPolicy'
-        ),
-        OptionGroupAttribute('GeneralGroup', 60),
-        EnumValuesAttribute().init({
-          values: [
-            ['Directed', CenterNodesPolicy.DIRECTED],
-            ['Centrality', CenterNodesPolicy.CENTRALITY],
-            ['Weighted Centrality', CenterNodesPolicy.WEIGHTED_CENTRALITY],
-            ['Selected Nodes', CenterNodesPolicy.CUSTOM]
-          ]
-        }),
-        TypeAttribute(CenterNodesPolicy.$class)
-      ]
-    },
-    value: null
-  },
+  centerStrategyItem: null,
 
-  /** @type {RadialLayoutLayeringStrategy} */
-  layeringStrategyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Circle Assignment Strategy',
-          '#/api/RadialLayout#RadialLayout-property-layeringStrategy'
-        ),
-        OptionGroupAttribute('GeneralGroup', 70),
-        EnumValuesAttribute().init({
-          values: [
-            ['Distance From Center', RadialLayoutLayeringStrategy.BFS],
-            ['Hierarchic', RadialLayoutLayeringStrategy.HIERARCHICAL],
-            ['Dendrogram', RadialLayoutLayeringStrategy.DENDROGRAM]
-          ]
-        }),
-        TypeAttribute(RadialLayoutLayeringStrategy.$class)
-      ]
-    },
-    value: null
-  },
+  /** @type {RadialLayeringStrategy} */
+  layeringStrategyItem: null,
 
-  /** @type {NodeLabelingPolicies} */
-  nodeLabelingStyleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Node Labeling',
-          '#/api/RadialLayout#RadialLayout-property-nodeLabelingPolicy'
-        ),
-        OptionGroupAttribute('NodePropertiesGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Ignore Labels', NodeLabelingPolicies.NONE],
-            ['Consider Labels', NodeLabelingPolicies.CONSIDER_CURRENT_POSITION],
-            ['Horizontal', NodeLabelingPolicies.HORIZONTAL],
-            ['Ray-like at Leaves', NodeLabelingPolicies.RAYLIKE_LEAVES],
-            ['Ray-like', NodeLabelingPolicies.RAYLIKE]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  /** @type {RadialNodeLabelPlacement} */
+  nodeLabelingStyleItem: null,
 
   /** @type {boolean} */
-  edgeLabelingItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Edge Labeling',
-          '#/api/RadialLayout#MultiStageLayout-property-labelingEnabled'
-        ),
-        OptionGroupAttribute('EdgePropertiesGroup', 10),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  edgeLabelingItem: false,
 
   /** @type {boolean} */
-  reduceAmbiguityItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Reduce Ambiguity',
-          '#/api/GenericLabeling#MISLabelingBase-property-reduceAmbiguity'
-        ),
-        OptionGroupAttribute('EdgePropertiesGroup', 20),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  reduceAmbiguityItem: false,
 
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return !this.edgeLabelingItem
     }
   },
 
   /** @type {LabelPlacementOrientation} */
-  labelPlacementOrientationItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Orientation',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-angle'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Parallel', LabelPlacementOrientation.PARALLEL],
-            ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
-            ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
-            ['Vertical', LabelPlacementOrientation.VERTICAL]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  labelPlacementOrientationItem: null,
 
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return !this.edgeLabelingItem
     }
   },
 
   /** @type {LabelPlacementAlongEdge} */
-  labelPlacementAlongEdgeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Along Edge',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-placeAlongEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 20),
-        EnumValuesAttribute().init({
-          values: [
-            ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
-            ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
-            ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
-            ['At Target', LabelPlacementAlongEdge.AT_TARGET],
-            ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
-            ['Centered', LabelPlacementAlongEdge.CENTERED]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  labelPlacementAlongEdgeItem: null,
 
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return !this.edgeLabelingItem
     }
   },
 
   /** @type {LabelPlacementSideOfEdge} */
-  labelPlacementSideOfEdgeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Side of Edge',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-sideOfEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 30),
-        EnumValuesAttribute().init({
-          values: [
-            ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
-            ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
-            ['Left', LabelPlacementSideOfEdge.LEFT],
-            ['Right', LabelPlacementSideOfEdge.RIGHT],
-            ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  labelPlacementSideOfEdgeItem: null,
 
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return !this.edgeLabelingItem
     }
   },
 
   /** @type {number} */
-  labelPlacementDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Distance',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-distanceToEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 40),
-        MinMaxAttribute().init({
-          min: 0.0,
-          max: 40.0
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  labelPlacementDistanceItem: 0,
 
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return (
         !this.edgeLabelingItem ||
@@ -688,11 +536,3 @@ const RadialLayoutConfig = (Class as any)('RadialLayoutConfig', {
   }
 })
 export default RadialLayoutConfig
-
-enum EdgeRoutingStrategies {
-  ARC = RadialLayoutEdgeRoutingStrategy.ARC as number,
-  POLYLINE = RadialLayoutEdgeRoutingStrategy.POLYLINE as number,
-  CURVED = RadialLayoutEdgeRoutingStrategy.CURVED as number,
-  RADIAL_POLYLINE = RadialLayoutEdgeRoutingStrategy.RADIAL_POLYLINE as number,
-  BUNDLED = 4
-}

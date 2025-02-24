@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,41 +26,37 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, INode, INodeSizeConstraintProvider, Rect, Size } from 'yfiles'
-
+import { BaseClass, INode, INodeSizeConstraintProvider, Rect, Size } from '@yfiles/yfiles'
 /**
  * An {@link INodeSizeConstraintProvider} that prevents shrinking of
  * nodes. Additionally, neither side of the node can become larger than
  * three times its initial size in each resizing operation.
  */
 export default class BlueSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
+  node
+  constructor(node) {
+    super()
+    this.node = node
+  }
   /**
    * Returns the current node size to prevent the shrinking of nodes.
    * @see Specified by {@link INodeSizeConstraintProvider.getMinimumSize}.
-   * @param {!INode} node
-   * @returns {!Size}
    */
-  getMinimumSize(node) {
-    return node.layout.toSize()
+  getMinimumSize() {
+    return this.node.layout.toSize()
   }
-
   /**
    * Returns three times the current node size.
    * @see Specified by {@link INodeSizeConstraintProvider.getMaximumSize}.
-   * @param {!INode} node
-   * @returns {!Size}
    */
-  getMaximumSize(node) {
-    return new Size(node.layout.width * 3, node.layout.height * 3)
+  getMaximumSize() {
+    return new Size(this.node.layout.width * 3, this.node.layout.height * 3)
   }
-
   /**
    * Returns an empty rectangle since this area is not constraint.
    * @see Specified by {@link INodeSizeConstraintProvider.getMinimumEnclosedArea}.
-   * @param {!INode} node
-   * @returns {!Rect}
    */
-  getMinimumEnclosedArea(node) {
+  getMinimumEnclosedArea() {
     return Rect.EMPTY
   }
 }

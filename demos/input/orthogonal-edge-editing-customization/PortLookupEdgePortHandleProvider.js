@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,28 +33,30 @@ import {
   IHandle,
   IInputModeContext,
   INode
-} from 'yfiles'
-import NodeLayoutPortLocationHandle from './NodeLayoutPortLocationHandle.js'
-
+} from '@yfiles/yfiles'
+import NodeLayoutPortLocationHandle from './NodeLayoutPortLocationHandle'
 /**
  * Creates an {@link IEdgePortHandleProvider} that constraints the original
  * port location handle to the layout rectangle of the port's owner node.
  */
 export default class PortLookupEdgePortHandleProvider extends BaseClass(IEdgePortHandleProvider) {
+  edge
+  constructor(edge) {
+    super()
+    this.edge = edge
+  }
   /**
    * Returns a handle that is constrained to the layout rectangle of the
    * port's owner node.
-   * @param {!IInputModeContext} context The context in which the handle will be used
-   * @param {!IEdge} edge The edge for which an handle is needed
-   * @param {boolean} sourceHandle `true` if the handle for the source side/port should be returned,
+   * @param _context The context in which the handle will be used
+   * @param sourceHandle `true` if the handle for the source side/port should be returned,
    * `false` for the target side/port
    * @see Specified by {@link IEdgePortHandleProvider.getHandle}.
-   * @returns {!IHandle}
    */
-  getHandle(context, edge, sourceHandle) {
-    const port = sourceHandle ? edge.sourcePort : edge.targetPort
+  getHandle(_context, sourceHandle) {
+    const port = sourceHandle ? this.edge.sourcePort : this.edge.targetPort
     return port.owner instanceof INode
-      ? new NodeLayoutPortLocationHandle(port.owner, port.lookup(IHandle.$class))
-      : port.lookup(IHandle.$class)
+      ? new NodeLayoutPortLocationHandle(port.owner, port.lookup(IHandle))
+      : port.lookup(IHandle)
   }
 }

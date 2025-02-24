@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,22 +26,19 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BezierEdgeStyle, Neighborhood, TraversalDirection } from 'yfiles'
-import { NeighborhoodType } from './NeighborhoodType.js'
-import { getBuildNeighborhoodCallback } from '../neighborhood/build-graph-callback.js'
-import { createDemoEdgeStyle } from 'demo-resources/demo-styles'
-
+import { BezierEdgeStyle, Neighborhood, TraversalDirection } from '@yfiles/yfiles'
+import { NeighborhoodType } from './NeighborhoodType'
+import { getBuildNeighborhoodCallback } from '../neighborhood/build-graph-callback'
+import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
 /**
  * Returns the "build neighborhood graph" callback that is able to create neighborhood graphs
  * of the given type.
- * @param {!NeighborhoodType} type the type of neighborhood graph to be built by the returned callback.
- * @param {number} distance the maximum graph distance between a start node and its neighbor nodes.
- * @returns {!BuildGraphCallback}
+ * @param type the type of neighborhood graph to be built by the returned callback.
+ * @param distance the maximum graph distance between a start node and its neighbor nodes.
  */
 export function getBuildGraphCallback(type, distance) {
   return (view, nodes, callback) => {
     getBuildNeighborhoodCallback(getTraversalDirection(type), distance)(view, nodes, callback)
-
     const graph = view.neighborhoodGraph
     const edgeStyle = createNeighborhoodEdgeStyle()
     for (const edge of graph.edges) {
@@ -49,12 +46,9 @@ export function getBuildGraphCallback(type, distance) {
     }
   }
 }
-
 /**
  * Maps the given {@link NeighborhoodType} to the corresponding {@link TraversalDirection} that
  * is used by the {@link Neighborhood} algorithm in yFiles.
- * @param {!NeighborhoodType} mode
- * @returns {!TraversalDirection}
  */
 function getTraversalDirection(mode) {
   switch (mode) {
@@ -68,11 +62,9 @@ function getTraversalDirection(mode) {
       return TraversalDirection.UNDIRECTED
   }
 }
-
 /**
  * Creates a {@link BezierEdgeStyle} instance that uses the target arrow and stroke of the
  * default demo edge style.
- * @returns {!IEdgeStyle}
  */
 function createNeighborhoodEdgeStyle() {
   const prototype = createDemoEdgeStyle()

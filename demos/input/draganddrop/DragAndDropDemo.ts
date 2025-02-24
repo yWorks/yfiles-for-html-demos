@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,72 +26,41 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { IGraph } from 'yfiles'
 import {
-  Arrow,
-  ArrowNodeStyle,
-  Class,
-  DefaultLabelStyle,
-  ExteriorLabelModel,
-  FreeEdgeLabelModel,
   FreeNodeLabelModel,
-  FreeNodePortLocationModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphSnapContext,
   GridSnapTypes,
-  GroupNodeLabelModel,
   GroupNodeStyle,
-  HierarchicLayout,
+  HierarchicalLayout,
   IEdge,
+  type IGraph,
+  type ILabel,
   ImageNodeStyle,
   INode,
+  InteriorNodeLabelModel,
   IPort,
   LabelDropInputMode,
+  LabelStyle,
   LayoutExecutor,
   License,
-  ListEnumerable,
   NodeDropInputMode,
-  NodeStylePortStyleAdapter,
-  PolylineEdgeStyle,
   PortDropInputMode,
   Rect,
-  ShapeNodeShape,
-  ShapeNodeStyle,
-  SimpleEdge,
-  SimpleLabel,
-  SimpleNode,
-  SimplePort,
+  ShapePortStyle,
   Size,
-  VoidNodeStyle
-} from 'yfiles'
-
-import { DragAndDropPanel } from 'demo-utils/DragAndDropPanel'
-import type { DragAndDropPanelItem } from './NativeDragAndDropPanel'
-import { NativeDragAndDropPanel } from './NativeDragAndDropPanel'
-import { EdgeDropInputMode } from './EdgeDropInputMode'
-import {
-  applyDemoTheme,
-  createDemoGroupStyle,
-  createDemoNodeStyle,
-  initDemoStyles
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph, JSONNode } from 'demo-utils/json-model'
+  SmartEdgeLabelModel,
+  SnappableItems
+} from '@yfiles/yfiles'
+import { EdgeDropInputMode } from '@yfiles/demo-utils/EdgeDropInputMode'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph, JSONNode } from '@yfiles/demo-utils/json-model'
 import graphData from './resources/graph-data.json'
-
-Class.ensure(Arrow)
-
-/**
- * The panel containing the palette of elements for yFiles drag and drop.
- */
-let dragAndDropPanel: DragAndDropPanel = null!
-/**
- * The panel containing the palette of elements for native drag and drop.
- */
-let nativeDragAndDropPanel: NativeDragAndDropPanel = null!
+import { initializeDnDPanel } from './drag-and-drop'
 
 /**
  *  This demo shows how to enable drag and drop functionality for nodes,
@@ -105,10 +74,8 @@ async function run(): Promise<void> {
 
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeInteraction(graphComponent)
-  initializeDnDPanel(graphComponent)
+  initializeDnDPanel()
 
   // init graph default styles and visual decorators
   const graph = graphComponent.graph
@@ -118,12 +85,15 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
+    new HierarchicalLayout({
+      defaultEdgeDescriptor: { minimumFirstSegmentLength: 25, minimumLastSegmentLength: 25 },
+      minimumLayerDistance: 50
+    })
   )
-  graphComponent.fitGraphBounds()
-  graphComponent.zoom = 2
+  void graphComponent.fitGraphBounds()
+  graphComponent.zoom = 1.5
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
@@ -147,7 +117,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
     item.tag === 'icon' ? new Rect(0, 0, 50, 50) : undefined
   nodesSource.nodeCreator.createLabelBinding({
     text: (data) => data.label,
-    layoutParameter: (_) => ExteriorLabelModel.SOUTH
+    layoutParameter: () => InteriorNodeLabelModel.CENTER
   })
 
   graphBuilder.createEdgesSource({
@@ -160,191 +130,38 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 }
 
 /**
- * Initializes the drag and drop panel.
- */
-function initializeDnDPanel(graphComponent: GraphComponent): void {
-  initializeYFilesDnDPanel()
-  initializeNativeDnDPanel(graphComponent)
-}
-
-/**
- * Creates the yFiles drag and drop panel and populates the visualization of the items that have to be displayed.
- */
-function initializeYFilesDnDPanel(): void {
-  dragAndDropPanel = new DragAndDropPanel(document.getElementById('dnd-panel')!)
-  dragAndDropPanel.maxItemWidth = 160
-  dragAndDropPanel.populatePanel(createDnDPanelItems())
-}
-
-/**
- * Creates the native drag and drop panel and populates the visualization of the items that have to be displayed.
- */
-function initializeNativeDnDPanel(graphComponent: GraphComponent): void {
-  nativeDragAndDropPanel = new NativeDragAndDropPanel(document.getElementById('native-dnd-panel')!)
-  nativeDragAndDropPanel.initialize(
-    createDnDPanelItems(),
-    graphComponent.inputMode as GraphEditorInputMode
-  )
-}
-
-/**
- * Creates the items that provide the visualizations for the drag and drop panels.
- */
-function createDnDPanelItems(): DragAndDropPanelItem<INode | IEdge>[] {
-  const itemContainer: DragAndDropPanelItem<INode | IEdge>[] = []
-
-  // Create some nodes
-  const groupNodeStyle = createDemoGroupStyle({})
-
-  // A label model with insets for the expand/collapse button
-  const groupLabelStyle = new DefaultLabelStyle({
-    textFill: 'white'
-  })
-
-  const groupNode = new SimpleNode({
-    layout: new Rect(0, 0, 80, 80),
-    style: groupNodeStyle
-  })
-
-  const groupLabel = new SimpleLabel({
-    owner: groupNode,
-    text: 'Group Node',
-    layoutParameter: new GroupNodeLabelModel().createTabBackgroundParameter(),
-    style: groupLabelStyle
-  })
-  groupNode.labels = new ListEnumerable([groupLabel])
-  itemContainer.push({ modelItem: groupNode, tooltip: 'Group Node' })
-
-  const demoStyleNode = new SimpleNode({
-    layout: new Rect(0, 0, 60, 40),
-    style: createDemoNodeStyle()
-  })
-  itemContainer.push({ modelItem: demoStyleNode, tooltip: 'Demo Node' })
-
-  const shapeStyleNode = new SimpleNode({
-    layout: new Rect(0, 0, 60, 40),
-    style: new ShapeNodeStyle({
-      shape: ShapeNodeShape.ROUND_RECTANGLE,
-      stroke: 'rgb(255, 140, 0)',
-      fill: 'rgb(255, 140, 0)'
-    })
-  })
-  itemContainer.push({ modelItem: shapeStyleNode, tooltip: 'Shape Node' })
-
-  const arrowNode = new SimpleNode({
-    layout: new Rect(0, 0, 60, 40),
-    style: new ArrowNodeStyle({
-      fill: 'rgb(255, 140, 0)'
-    })
-  })
-  itemContainer.push({ modelItem: arrowNode, tooltip: 'Arrow Node' })
-
-  const imageStyleNode = new SimpleNode({
-    layout: new Rect(0, 0, 60, 60),
-    style: new ImageNodeStyle('resources/y.svg')
-  })
-
-  itemContainer.push({ modelItem: imageStyleNode, tooltip: 'Image Node' })
-
-  const portNode = new SimpleNode({
-    layout: new Rect(0, 0, 5, 5),
-    style: new VoidNodeStyle()
-  })
-
-  const port = new SimplePort({
-    owner: portNode,
-    locationParameter: FreeNodePortLocationModel.NODE_CENTER_ANCHORED,
-    style: new NodeStylePortStyleAdapter(
-      new ShapeNodeStyle({
-        fill: 'darkblue',
-        stroke: 'cornflowerblue',
-        shape: 'ellipse'
-      })
-    )
-  })
-  portNode.tag = port
-  portNode.ports = new ListEnumerable([port])
-  itemContainer.push({ modelItem: portNode, tooltip: 'Port' })
-
-  const labelNode = new SimpleNode({
-    layout: new Rect(0, 0, 5, 5),
-    style: new VoidNodeStyle()
-  })
-
-  const labelStyle = new DefaultLabelStyle({
-    backgroundStroke: 'rgb(101, 152, 204)',
-    backgroundFill: 'white',
-    insets: [3, 5, 3, 5]
-  })
-
-  const label = new SimpleLabel({
-    owner: labelNode,
-    text: 'label',
-    layoutParameter: FreeNodeLabelModel.INSTANCE.createDefaultParameter(),
-    style: labelStyle
-  })
-  label.preferredSize = labelStyle.renderer.getPreferredSize(label, labelStyle)
-  labelNode.tag = label
-  labelNode.labels = new ListEnumerable([label])
-  itemContainer.push({ modelItem: labelNode, tooltip: 'Label' })
-
-  const edge1 = new SimpleEdge({
-    style: new PolylineEdgeStyle({
-      smoothingLength: 100,
-      targetArrow: 'triangle'
-    })
-  })
-  const edge2 = new SimpleEdge({
-    style: new PolylineEdgeStyle({
-      sourceArrow: 'triangle',
-      targetArrow: 'triangle'
-    })
-  })
-  const edge3 = new SimpleEdge({
-    style: new PolylineEdgeStyle({
-      stroke: '2px dashed gray'
-    })
-  })
-
-  itemContainer.push({ modelItem: edge1, tooltip: 'Default' })
-  itemContainer.push({ modelItem: edge2, tooltip: 'Bidirectional' })
-  itemContainer.push({ modelItem: edge3, tooltip: 'Dashed' })
-
-  return itemContainer
-}
-
-/**
  * Initializes the graph.
  * Sets up styles and visual decorations of graph elements.
  */
 function initializeGraph(graph: IGraph): void {
   initDemoStyles(graph)
 
-  graph.nodeDefaults.size = new Size(60, 40)
+  graph.nodeDefaults.size = new Size(80, 40)
   // draw a port with an elliptical shape
-  graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter(
-    new ShapeNodeStyle({
-      fill: 'darkblue',
-      stroke: 'cornflowerblue',
-      shape: 'ellipse'
-    })
-  )
-  const defaultLabelStyle = new DefaultLabelStyle({
-    backgroundStroke: 'rgb(101, 152, 204)',
-    backgroundFill: 'white',
-    insets: [3, 5, 3, 5]
+  graph.nodeDefaults.ports.style = new ShapePortStyle({
+    fill: 'darkblue',
+    stroke: 'cornflowerblue',
+    shape: 'ellipse'
   })
-  graph.nodeDefaults.labels.style = defaultLabelStyle
-  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createDefaultParameter()
-  graph.edgeDefaults.ports.style = new NodeStylePortStyleAdapter(
-    new ShapeNodeStyle({
-      fill: 'darkblue',
-      stroke: 'cornflowerblue',
-      shape: 'ellipse'
-    })
-  )
-  graph.edgeDefaults.labels.style = defaultLabelStyle
-  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+  graph.nodeDefaults.labels.style = new LabelStyle({
+    backgroundFill: '#ffc499',
+    textFill: '#662b00',
+    padding: 5,
+    shape: 'round-rectangle'
+  })
+  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
+  graph.edgeDefaults.ports.style = new ShapePortStyle({
+    fill: 'darkblue',
+    stroke: 'cornflowerblue',
+    shape: 'ellipse'
+  })
+  graph.edgeDefaults.labels.style = new LabelStyle({
+    backgroundFill: '#c2aa99',
+    textFill: '#662b00',
+    padding: 5,
+    shape: 'round-rectangle'
+  })
+  graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
 }
 
 /**
@@ -353,14 +170,11 @@ function initializeGraph(graph: IGraph): void {
 function initializeInteraction(graphComponent: GraphComponent): void {
   // configure the snapping context
   const mode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
     snapContext: new GraphSnapContext({
-      nodeToNodeDistance: 30,
+      snappableItems: SnappableItems.NODE | SnappableItems.EDGE,
+      nodeDistance: 30,
       nodeToEdgeDistance: 20,
-      snapOrthogonalMovement: false,
       snapDistance: 10,
-      snapSegmentsToSnapLines: true,
-      snapBendsToSnapLines: true,
       gridSnapType: GridSnapTypes.ALL
     })
   })
@@ -371,7 +185,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
     showPreview: true,
     // initially disables snapping for the dragged element to existing elements
     snappingEnabled: false,
-    // by default the mode available in GraphEditorInputMode is disabled, so first enable it
+    // by default, the mode available in GraphEditorInputMode is disabled, so first enable it
     enabled: true,
     // nodes that have a GroupNodeStyle assigned have to be created as group nodes
     isGroupNodePredicate: (draggedNode) => draggedNode.style instanceof GroupNodeStyle
@@ -382,10 +196,17 @@ function initializeInteraction(graphComponent: GraphComponent): void {
     showPreview: true,
     snappingEnabled: false,
     enabled: true,
-    useBestMatchingParameter: true,
+    useLocationForParameter: true,
     // allow for nodes and edges to be the new label owner
-    isValidLabelOwnerPredicate: (labelOwner) =>
-      labelOwner instanceof INode || labelOwner instanceof IEdge || labelOwner instanceof IPort
+    isValidLabelOwnerPredicate: (labelOwner, label: ILabel | null) => {
+      // check whether the labelOwner matches the dragged label's owner,
+      // so that a dragged edge-label is only dropped on an edge
+      return (
+        (labelOwner instanceof INode && label?.owner instanceof INode) ||
+        (labelOwner instanceof IEdge && label?.owner instanceof IEdge) ||
+        (labelOwner instanceof IPort && label?.owner instanceof IPort)
+      )
+    }
   })
 
   // create a new PortDropInputMode to configure the drag and drop operation
@@ -393,7 +214,7 @@ function initializeInteraction(graphComponent: GraphComponent): void {
     showPreview: true,
     snappingEnabled: false,
     enabled: true,
-    useBestMatchingParameter: true,
+    useLocationForParameter: true,
     // allow only for nodes to be the new port owner
     isValidPortOwnerPredicate: (portOwner) => portOwner instanceof INode
   })
@@ -408,27 +229,11 @@ function initializeInteraction(graphComponent: GraphComponent): void {
  * Registers event listeners for the snapping checkbox.
  */
 function initializeUI(graphComponent: GraphComponent): void {
-  document
-    .getElementById('preview-snapping-checkbox')!
-    .addEventListener('change', (e) =>
-      updatePreviewSnapping(e.currentTarget as HTMLInputElement, graphComponent)
-    )
-}
-
-/**
- * Enables or disables preview snapping depending on the checkbox value.
- */
-function updatePreviewSnapping(checkbox: HTMLInputElement, graphComponent: GraphComponent): void {
-  const disabledIndicator = document.querySelector<HTMLDivElement>('#disabled-indicator')!
-  const nodeDropInputMode = (graphComponent.inputMode as GraphEditorInputMode).nodeDropInputMode
-
-  if (checkbox.checked) {
-    nodeDropInputMode.snappingEnabled = true
-    disabledIndicator.style.display = 'block'
-  } else {
-    nodeDropInputMode.snappingEnabled = false
-    disabledIndicator.style.display = 'none'
-  }
+  document.getElementById('preview-snapping-checkbox')!.addEventListener('change', (e) => {
+    const inputMode = graphComponent.inputMode as GraphEditorInputMode
+    const nodeDropInputMode = inputMode.nodeDropInputMode
+    nodeDropInputMode.snappingEnabled = (e.currentTarget as HTMLInputElement).checked
+  })
 }
 
 void run().then(finishLoading)

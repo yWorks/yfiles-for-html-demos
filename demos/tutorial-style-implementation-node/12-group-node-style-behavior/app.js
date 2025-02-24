@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,31 +26,23 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FreeNodeLabelModel, GraphComponent, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { FreeNodeLabelModel, GraphComponent, License } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import {
   createSampleGraphGroupNodeStyle2,
   enableGraphEditing,
-  enableGrouping,
   fitGraphBounds,
   initializeTutorialDefaults
-} from '../common.js'
-import { CustomGroupNodeStyle } from './CustomGroupNodeStyle.js'
-
+} from '../common'
+import { CustomGroupNodeStyle } from './CustomGroupNodeStyle'
 License.value = await fetchLicense()
-
 const graphComponent = new GraphComponent('#graphComponent')
-
 initializeTutorialDefaults(graphComponent)
 enableGraphEditing(graphComponent)
-enableGrouping(graphComponent)
-
 graphComponent.graph.groupNodeDefaults.style = new CustomGroupNodeStyle()
 graphComponent.graph.nodeDefaults.labels.layoutParameter =
   FreeNodeLabelModel.INSTANCE.createParameter([0.5, 1], [0, 10], [0.5, 0])
-
 createSampleGraphGroupNodeStyle2(graphComponent.graph)
-
 fitGraphBounds(graphComponent)
 finishLoading()

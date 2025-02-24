@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,134 +28,106 @@
  ***************************************************************************/
 import {
   Arrow,
-  Class,
-  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  EdgeStyleIndicatorRenderer,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  GraphHighlightIndicatorManager,
   GraphInputMode,
   GraphItemTypes,
   GroupNodeStyle,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
-  IndicatorEdgeStyleDecorator,
-  IndicatorNodeStyleDecorator,
+  LabelStyle,
   LayoutExecutor,
   License,
+  NodeStyleIndicatorRenderer,
   PolylineEdgeStyle,
   ShapeNodeStyle,
   Size
-} from 'yfiles'
-
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-
 /**
  * Bootstraps the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   // create graph component
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-  const inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  const inputMode = new GraphEditorInputMode()
   graphComponent.inputMode = inputMode
-
   // configures default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
-
   // enable mouse hover effects for nodes
   configureHoverHighlight(graphComponent, inputMode)
-
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
-
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
-  graphComponent.fitGraphBounds()
-
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
-
 /**
  * Creates nodes and edges according to the given data.
- * @param {!IGraph} graph
- * @param {!JSONGraph} graphData
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-
   graphBuilder.createNodesSource({
     data: graphData.nodeList.filter((item) => !item.isGroup),
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
-
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
-
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
-
   graphBuilder.buildGraph()
 }
-
 /**
  * Registers highlight styles for the nodes and edges of the given graph.
  *
- * @param {!GraphComponent} graphComponent The graphComponent for which highlight styles are specified.
- * @param {!GraphInputMode} inputMode The input mode of the graph component
+ * @param graphComponent The graphComponent for which highlight styles are specified.
+ * @param inputMode The input mode of the graph component
  */
 function configureHoverHighlight(graphComponent, inputMode) {
   // enable hover effects for nodes and edges
   inputMode.itemHoverInputMode.enabled = true
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
-  inputMode.itemHoverInputMode.discardInvalidItems = false
-
   // specify the hover effect: highlight a node or an edge whenever the mouse hovers over the
   // respective node or edge
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener((hoverInput, evt) => {
-    const highlightManager = hoverInput.inputModeContext.canvasComponent.highlightIndicatorManager
-    highlightManager.clearHighlights()
+  inputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
+    const highlights = graphComponent.highlights
+    highlights.clear()
     const item = evt.item
     if (item) {
-      highlightManager.addHighlight(item)
+      highlights.add(item)
     }
   })
-
-  const nodeHighlightingStyle = new IndicatorNodeStyleDecorator({
-    wrapped: new ShapeNodeStyle({
+  const nodeHighlightingStyle = new NodeStyleIndicatorRenderer({
+    nodeStyle: new ShapeNodeStyle({
       shape: 'rectangle',
       stroke: '3px #621B00',
       fill: 'transparent'
     }),
     // the padding from the actual node to its highlight visualization
-    padding: 4
+    margins: 4
   })
-
-  const edgeHighlightStyle = new IndicatorEdgeStyleDecorator({
-    wrapped: new PolylineEdgeStyle({
+  const edgeHighlightStyle = new EdgeStyleIndicatorRenderer({
+    edgeStyle: new PolylineEdgeStyle({
       targetArrow: new Arrow({
         type: 'triangle',
         stroke: '2px rgb(104, 176, 227)',
@@ -164,21 +136,17 @@ function configureHoverHighlight(graphComponent, inputMode) {
       stroke: '3px rgb(104, 176, 227)'
     })
   })
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    nodeStyle: nodeHighlightingStyle,
-    edgeStyle: edgeHighlightStyle
-  })
+  graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(nodeHighlightingStyle)
+  graphComponent.graph.decorator.edges.highlightRenderer.addConstant(edgeHighlightStyle)
 }
-
 /**
  * Initializes the defaults for the styles in this tutorial.
  *
- * @param {!IGraph} graph The graph.
+ * @param graph The graph.
  */
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
   initDemoStyles(graph)
-
   // set the style, label and label parameter for group nodes
   // set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
@@ -186,21 +154,18 @@ function initTutorialDefaults(graph) {
     stroke: '2px solid #b5dcee',
     contentAreaFill: '#b5dcee'
   })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'left',
     textFill: '#eee'
   })
-
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
-
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
-
 run().then(finishLoading)

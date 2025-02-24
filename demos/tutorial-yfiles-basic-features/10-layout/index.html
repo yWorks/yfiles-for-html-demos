@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>10 Layout - Tutorial: Basic Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -167,7 +165,7 @@
                 <div class="paragraph">
                   <p>
                     <button id="layoutButton" class="demo-description__button">
-                      Apply Hierarchic Layout
+                      Apply Hierarchical Layout
                     </button>
                   </p>
                 </div>
@@ -175,7 +173,7 @@
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> layout = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HierarchicLayout</span>()
+                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> layout = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HierarchicalLayout</span>()
 graph.<span class="hljs-title function_">applyLayout</span>(layout)
 
 <span class="hljs-comment">// Fit the graph bounds since they changed for the new layout</span>
@@ -189,10 +187,10 @@ graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code>
                   <p>
                     An automatic layout can also be applied with an animation. In this sample, we
                     use
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-morphLayout" target="_blank">morphLayout</a>
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-applyLayoutAnimated" target="_blank">applyLayoutAnimated</a>
                     to perform the layout, animate it, manage undo and adjust the content rectangle
                     in one call.
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-morphLayout" target="_blank">morphLayout</a>
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-applyLayoutAnimated" target="_blank">applyLayoutAnimated</a>
                     runs asynchronously and returns immediately yielding a Promise that we can await
                     or use to catch errors.
                   </p>
@@ -208,15 +206,13 @@ graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code>
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Here, we reference and thus load the LayoutExecutor class from the &#x27;view-layout-bridge&#x27; module</span>
-<span class="hljs-comment">// explicitly to prevent tree-shaking tools from removing the dependency.</span>
-<span class="hljs-comment">// This is needed for &#x27;morphLayout&#x27; to work.</span>
-<span class="hljs-title class_">Class</span>.<span class="hljs-title function_">ensure</span>(<span class="hljs-title class_">LayoutExecutor</span>) <span class="hljs-comment">// doing this somewhere in your code should suffice</span>
+                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Ensure that the LayoutExecutor class is not removed by build optimizers</span>
+<span class="hljs-comment">// It is needed for the &#x27;applyLayoutAnimated&#x27; method in this demo.</span>
+<span class="hljs-title class_">LayoutExecutor</span>.<span class="hljs-title function_">ensure</span>() <span class="hljs-comment">// doing this somewhere in your code should suffice</span>
 
-<span class="hljs-keyword">await</span> graphComponent.<span class="hljs-title function_">morphLayout</span>({
-  <span class="hljs-attr">layout</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">OrganicLayout</span>({ <span class="hljs-attr">considerNodeSizes</span>: <span class="hljs-literal">true</span> }),
-  <span class="hljs-attr">morphDuration</span>: <span class="hljs-string">&#x27;1s&#x27;</span>,
-  <span class="hljs-attr">easedAnimation</span>: <span class="hljs-literal">true</span>
+<span class="hljs-keyword">await</span> graphComponent.<span class="hljs-title function_">applyLayoutAnimated</span>({
+  <span class="hljs-attr">layout</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">OrganicLayout</span>(),
+  <span class="hljs-attr">animationDuration</span>: <span class="hljs-string">&#x27;1s&#x27;</span>
 })</code></pre>
                   </div>
                 </div>
@@ -227,9 +223,10 @@ graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code>
                         <div class="title">Note</div>
                       </td>
                       <td class="content">
-                        morphLayout is a convenience method that comes with a lot of parameters that
-                        can be used to adjust various aspects of the layout animation. For more
-                        customized scenarios, use class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutor" target="_blank">LayoutExecutor</a>.
+                        applyLayoutAnimated is a convenience method that comes with a lot of
+                        parameters that can be used to adjust various aspects of the layout
+                        animation. For more customized scenarios, use class
+                        <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutor" target="_blank">LayoutExecutor</a>.
                       </td>
                     </tr>
                   </table>

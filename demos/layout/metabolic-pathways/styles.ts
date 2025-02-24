@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,7 @@ import {
   ArrowEdgeStyle,
   ArrowStyleShape,
   ArrowType,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   Font,
   GeneralPath,
   HorizontalTextAlignment,
@@ -46,8 +46,8 @@ import {
   RectangleNodeStyle,
   Size,
   VerticalTextAlignment
-} from 'yfiles'
-import { type ColorSet, colorSets } from 'demo-resources/demo-colors'
+} from '@yfiles/yfiles'
+import { type ColorSet, colorSets } from '@yfiles/demo-resources/demo-colors'
 import { getType, NodeTypes } from './data-types'
 
 /**
@@ -76,10 +76,11 @@ const predefinedColorSets = new Map<NodeTypes, ColorSet>([
  */
 const markupLabelStyle = new MarkupLabelStyle({
   shape: 'round-rectangle',
-  insets: 2,
+  padding: 2,
   verticalTextAlignment: VerticalTextAlignment.CENTER,
   horizontalTextAlignment: HorizontalTextAlignment.CENTER,
-  font: new Font({ fontSize: 14, fontWeight: 'bold', fontFamily: 'Tahoma,sans-serif' })
+  font: new Font({ fontSize: 14, fontWeight: 'bold', fontFamily: 'Tahoma,sans-serif' }),
+  wrapping: 'none'
 })
 
 /**
@@ -120,7 +121,7 @@ export function updateStyles(graph: IGraph): void {
       const label = node.labels.at(0)!
       graph.setStyle(label, markupLabelStyle)
       if (type === NodeTypes.CO_REACTANT || type === NodeTypes.OTHER) {
-        graph.setLabelLayoutParameter(label, ExteriorLabelModel.NORTH)
+        graph.setLabelLayoutParameter(label, ExteriorNodeLabelModel.TOP)
       }
     }
 
@@ -137,9 +138,9 @@ export function updateStyles(graph: IGraph): void {
       return
     }
 
-    const source = edge.sourceNode!
+    const source = edge.sourceNode
     const sourceType = getType(source)
-    const target = edge.targetNode!
+    const target = edge.targetNode
     const targetType = getType(target)
 
     const parallelEdge = graph.getEdge(target, source)
@@ -167,7 +168,7 @@ export function updateStyles(graph: IGraph): void {
  * Returns an arc-edge style for edges attached to co-reactants by calculating the appropriate edge height.
  */
 export function getArcEdgeStyle(graph: IGraph, edge: IEdge): IEdgeStyle {
-  const hasArrow = getType(edge.sourceNode!) !== NodeTypes.CO_REACTANT
+  const hasArrow = getType(edge.sourceNode) !== NodeTypes.CO_REACTANT
   return new ArcEdgeStyle({
     height: getArcHeight(graph, edge),
     stroke: `3px dashed ${edgeStrokeColor}`,
@@ -185,8 +186,8 @@ export function getArcEdgeStyle(graph: IGraph, edge: IEdge): IEdgeStyle {
  * Calculates the height for the arc edge based on the position of its source/target.
  */
 function getArcHeight(graph: IGraph, edge: IEdge): number {
-  const source = edge.sourceNode!
-  const target = edge.targetNode!
+  const source = edge.sourceNode
+  const target = edge.targetNode
 
   const reaction = getType(source) === NodeTypes.REACTION ? source : target
   const coReactants = graph
@@ -202,7 +203,7 @@ function getArcHeight(graph: IGraph, edge: IEdge): number {
  * The node style used for rendering reactions with an image.
  */
 export const reactionNodeStyle = new ImageNodeStyle({
-  image: 'resources/reaction.svg',
+  href: 'resources/reaction.svg',
   aspectRatio: 1,
   normalizedOutline: createReactionNodeOutline()
 })

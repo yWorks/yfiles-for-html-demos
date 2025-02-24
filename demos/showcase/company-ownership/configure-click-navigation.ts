@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,42 +31,31 @@
  * @param item The element that we clicked.
  * @param currentMouseClickLocation The arguments that is used by the event.
  */
-import {
-  type GraphComponent,
-  type IModelItem,
-  type ItemClickedEventArgs,
-  type GraphInputMode,
-  IEdge,
-  ILabel,
-  Point
-} from 'yfiles'
+import { type GraphComponent, type GraphInputMode, IEdge, ILabel, type Point } from '@yfiles/yfiles'
 
-export function addSmartClickNavigation(graphInputMode: GraphInputMode): void {
-  graphInputMode.addItemLeftClickedListener(
-    async (sender: object, event: ItemClickedEventArgs<IModelItem>): Promise<void> => {
-      const graphComponent = graphInputMode.inputModeContext!.canvasComponent as GraphComponent
-      if (!event.handled) {
-        const item = event.item
-        // gets the point where we should zoom in
-        let location
-        if (item instanceof IEdge) {
-          location = getFocusPoint(item, graphComponent)
-        } else if (item instanceof ILabel && item.owner instanceof IEdge) {
-          location = getFocusPoint(item.owner, graphComponent)
-        }
-        if (location) {
-          // zooms to the new location of the mouse
-          const offset = event.location.subtract(graphComponent.viewport.center)
-          await graphComponent.zoomToAnimated(location.subtract(offset), graphComponent.zoom)
-        }
+export function addSmartClickNavigation(graphComponent: GraphComponent): void {
+  const graphInputMode = graphComponent.inputMode as GraphInputMode
+  graphInputMode.addEventListener('item-left-clicked', async (event): Promise<void> => {
+    if (!event.handled) {
+      const item = event.item
+      // gets the point where we should zoom in
+      let location
+      if (item instanceof IEdge) {
+        location = getFocusPoint(item, graphComponent)
+      } else if (item instanceof ILabel && item.owner instanceof IEdge) {
+        location = getFocusPoint(item.owner, graphComponent)
+      }
+      if (location) {
+        // zooms to the new location of the mouse
+        const offset = event.location.subtract(graphComponent.viewport.center)
+        await graphComponent.zoomToAnimated(graphComponent.zoom, location.subtract(offset))
       }
     }
-  )
+  })
 
   function getFocusPoint(item: IEdge, graphComponent: GraphComponent): Point | null {
-    // If the source and the target node are in the view port, then zoom to the middle point of the edge
-    const targetNodeCenter = item.targetNode!.layout.center
-    const sourceNodeCenter = item.sourceNode!.layout.center
+    const targetNodeCenter = item.targetNode.layout.center
+    const sourceNodeCenter = item.sourceNode.layout.center
     const viewport = graphComponent.viewport
     if (viewport.contains(targetNodeCenter) && viewport.contains(sourceNodeCenter)) {
       // Do nothing if both nodes are visible

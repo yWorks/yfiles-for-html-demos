@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,53 +27,52 @@
  **
  ***************************************************************************/
 import {
+  EdgePortCandidates,
   EdgeRouter,
   EdgeRouterData,
-  HierarchicLayout,
-  HierarchicLayoutData,
-  LayoutOrientation,
-  PortConstraint,
-  PortSide
-} from 'yfiles'
-import { disableUIElements, enableUIElements } from 'demo-resources/demo-page'
-
+  HierarchicalLayout,
+  HierarchicalLayoutData,
+  LayoutExecutor
+} from '@yfiles/yfiles'
+import { disableUIElements, enableUIElements } from '@yfiles/demo-resources/demo-page'
 /**
  * Applies the selected layout algorithm.
- * @param {!GraphComponent} graphComponent The GraphComponent where the layout is applied to
- * @param {boolean} clearUndo True if the undo engine should be cleared, false otherwise
+ * @param graphComponent The GraphComponent where the layout is applied to
+ * @param clearUndo True if the undo engine should be cleared, false otherwise
  * @param fitBounds Whether the viewport should be adjusted to fit the graph's bounds
- * @param {boolean} [fitBounds=true]
- * @returns {!Promise}
  */
 export async function runLayout(graphComponent, clearUndo, fitBounds = true) {
   const algorithmSelect = document.querySelector('#algorithm-select-box')
   const selectedIndex = algorithmSelect.selectedIndex
-
   let layout
   let layoutData
-
   if (selectedIndex === 0) {
-    layout = new HierarchicLayout({
-      layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
-      orthogonalRouting: true
+    layout = new HierarchicalLayout({
+      layoutOrientation: 'left-to-right'
     })
-    layoutData = new HierarchicLayoutData({
-      sourcePortConstraints: (_) => PortConstraint.create(PortSide.EAST, true),
-      targetPortConstraints: (_) => PortConstraint.create(PortSide.WEST, true)
-    })
+    const hierarchicalLayoutData = new HierarchicalLayoutData()
+    hierarchicalLayoutData.ports.sourcePortCandidates = new EdgePortCandidates().addFixedCandidate(
+      'right'
+    )
+    hierarchicalLayoutData.ports.targetPortCandidates = new EdgePortCandidates().addFixedCandidate(
+      'left'
+    )
+    layoutData = hierarchicalLayoutData
   } else {
     layout = new EdgeRouter()
-    layoutData = new EdgeRouterData({
-      sourcePortConstraints: (_) => PortConstraint.create(PortSide.EAST, true),
-      targetPortConstraints: (_) => PortConstraint.create(PortSide.WEST, true)
-    })
+    const edgeRouterData = new EdgeRouterData()
+    edgeRouterData.ports.sourcePortCandidates = new EdgePortCandidates().addFixedCandidate('right')
+    edgeRouterData.ports.targetPortCandidates = new EdgePortCandidates().addFixedCandidate('left')
+    layoutData = edgeRouterData
   }
-
   disableUIElements('#algorithm-select-box', '#layout-button')
   try {
-    await graphComponent.morphLayout(layout, '0.5s', layoutData, fitBounds)
+    // Ensure that the LayoutExecutor class is not removed by build optimizers
+    // It is needed for the 'applyLayoutAnimated' method in this demo.
+    LayoutExecutor.ensure()
+    await graphComponent.applyLayoutAnimated(layout, '0.5s', layoutData)
     if (fitBounds) {
-      graphComponent.fitGraphBounds()
+      await graphComponent.fitGraphBounds()
     }
   } finally {
     enableUIElements()

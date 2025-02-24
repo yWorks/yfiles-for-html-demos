@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,34 +26,27 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { TreeBuilder } from 'yfiles'
-import { orgChartData } from './orgchart-data.js'
-
-/**
- * @typedef {Array.<Employee>} OrgChartData
- */
-
+import { TreeBuilder } from '@yfiles/yfiles'
+import { orgChartData } from './orgchart-data'
 /**
  * Creates the sample graph of this demo.
- * @param {!IGraph} graph The graph which will be populated
+ * @param graph The graph which will be populated
  */
 export function buildGraph(graph) {
   const data = orgChartData
   addParentReferences(data[0])
-
   const treeBuilder = new TreeBuilder(graph)
   // configure the root nodes
-  const rootSource = treeBuilder.createRootNodesSource(data)
+  const rootSource = treeBuilder.createRootNodesSource(data, null)
   // configure the recursive structure of the children
   rootSource.addChildNodesSource((dataItem) => dataItem.subordinates, rootSource)
   treeBuilder.buildGraph()
 }
-
 /**
  * Adds a "parent" reference to all subordinates contained in the source data.
  * The parent reference is needed to create the colleague and parent links
  * in the properties-view.
- * @param {!Employee} nodesSourceItem The source data in JSON format
+ * @param nodesSourceItem The source data in JSON format
  */
 function addParentReferences(nodesSourceItem) {
   const subs = nodesSourceItem.subordinates
@@ -65,11 +58,8 @@ function addParentReferences(nodesSourceItem) {
     }
   }
 }
-
 /**
  * Retrieves the Employee from a node's tag.
- * @param {!INode} node
- * @returns {!Employee}
  */
 export function getEmployee(node) {
   return node.tag

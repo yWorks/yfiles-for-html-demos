@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,124 +27,95 @@
  **
  ***************************************************************************/
 import {
-  BalloonLayout,
+  BundledEdgeRouter,
+  BundledEdgeRouterData,
   CircularLayout,
   CircularLayoutData,
-  CircularLayoutStyle,
+  CircularLayoutPartitioningPolicy,
+  Color,
   ConnectedComponents,
   Cursor,
-  CurveFittingLayoutStage,
-  DefaultNodePlacer,
+  CurveFittingStage,
   EdgeBundleDescriptor,
-  EdgeBundlingStage,
-  EdgeBundlingStageData,
+  EdgeStyleIndicatorRenderer,
   FreeNodeLabelModel,
   GenericLabeling,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  GraphSelectionIndicatorManager,
   IEdge,
   IGraph,
   ILayoutAlgorithm,
   IModelItem,
   INode,
   LayoutData,
+  LayoutExecutor,
   License,
   Mapper,
+  NodeStyleIndicatorRenderer,
   OrganicEdgeRouter,
   Point,
   PopulateItemContextMenuEventArgs,
   RadialLayout,
   RadialLayoutData,
+  RadialTreeLayout,
   Rect,
   ResultItemMapping,
+  SingleLayerSubtreePlacer,
   StraightLineEdgeRouter,
   TreeLayout,
-  TreeLayoutEdgeRoutingStyle,
   TreeReductionStage,
-  TreeReductionStageData,
-  VoidEdgeStyle,
-  VoidNodeStyle
-} from 'yfiles'
-
-import { DemoEdgeStyle, DemoNodeStyle, HighlightManager } from './DemoStyles.js'
-import { ContextMenu } from 'demo-utils/ContextMenu'
-import BalloonSampleData from './resources/balloon.js'
-import BccCircularSampleData from './resources/bccCircular.js'
-import CircularSampleData from './resources/circular.js'
-import RadialSampleData from './resources/radial.js'
-import TreeSampleData from './resources/tree.js'
-import RoutingSampleData from './resources/routing.js'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
-
-/**
- * @typedef {Object} NodeData
- * @property {number} id
- * @property {object} layout
- */
-
-/**
- * @typedef {Object} GraphData
- * @property {Array.<object>} nodes
- * @property {Array.<object>} edges
- */
-
+  TreeReductionStageData
+} from '@yfiles/yfiles'
+import { DemoEdgeStyle, DemoNodeStyle } from './DemoStyles'
+import RadialTreeSampleData from './resources/radial-tree'
+import BccCircularSampleData from './resources/bccCircular'
+import CircularSampleData from './resources/circular'
+import RadialSampleData from './resources/radial'
+import TreeSampleData from './resources/tree'
+import RoutingSampleData from './resources/routing'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import {
+  addNavigationButtons,
+  finishLoading,
+  showLoadingIndicator
+} from '@yfiles/demo-resources/demo-page'
 /**
  * The GraphComponent
- * @type {GraphComponent}
  */
 let graphComponent = null
-
 /**
  * Holds the component index for each node.
  * It is necessary for determining in circular layouts the circle id in graphs with more than one
  * connected components.
- * @type {ResultItemMapping.<INode,number>}
  */
-let componentsMap = new ResultItemMapping()
-
+let componentsMap
 /**
  * Holds the edge bundle descriptors for each edge.
  */
 const bundleDescriptorMap = new Mapper()
-
 /**
  * Holds whether an edge has to be bundled or not.
  */
 const bundlesMap = new Mapper()
-
 // inits the UI's elements
 const samplesComboBox = document.querySelector('#sample-combo-box')
 const bundlingStrengthSlider = document.querySelector('#bundling-strength-slider')
 const bundlingStrengthLabel = document.querySelector('#bundling-strength-label')
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // create the input mode
   createInputMode()
-
   // set the default styles
   initializeGraph()
-
   // load the sample graph and run the layout
   await onSampleChanged()
-
   // wire up the UI
   initializeUI()
 }
-
 /**
  * Creates the input mode.
  */
@@ -153,116 +124,77 @@ function createInputMode() {
     focusableItems: GraphItemTypes.NONE,
     showHandleItems: GraphItemTypes.NONE,
     // disable node moving
-    movableItems: GraphItemTypes.NONE,
+    movableSelectedItems: GraphItemTypes.NONE,
     clickHitTestOrder: [GraphItemTypes.NODE, GraphItemTypes.EDGE]
   })
-
   // disallow interactive bend creation
   mode.allowCreateBend = false
-
   // when an item is deleted, calculate the new components and apply the layout
-  mode.addDeletedSelectionListener(async () => {
+  mode.addEventListener('deleted-selection', async () => {
     calculateConnectedComponents()
     await applyLayout()
   })
-
   // when an edge is created, calculate the new components and apply the layout
-  mode.createEdgeInputMode.addEdgeCreatedListener(async () => {
+  mode.createEdgeInputMode.addEventListener('edge-created', async () => {
     calculateConnectedComponents()
     await applyLayout()
   })
-
   // when a node is created, calculate the new components
-  mode.addNodeCreatedListener(() => {
+  mode.addEventListener('node-created', () => {
     calculateConnectedComponents()
   })
-
   // when a drag operation has finished, apply a layout
-  mode.moveInputMode.addDragFinishedListener(async () => {
-    await applyLayout()
-  })
-
+  mode.moveSelectedItemsInputMode.addEventListener('drag-finished', async () => await applyLayout())
+  mode.moveUnselectedItemsInputMode.addEventListener(
+    'drag-finished',
+    async () => await applyLayout()
+  )
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
-  mode.itemHoverInputMode.discardInvalidItems = false
   mode.itemHoverInputMode.hoverCursor = Cursor.POINTER
-  mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+  mode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     const item = evt.item
-    const highlightIndicatorManager = graphComponent.highlightIndicatorManager
-    highlightIndicatorManager.clearHighlights()
+    const highlights = graphComponent.highlights
+    highlights.clear()
     if (item) {
-      highlightIndicatorManager.addHighlight(item)
-      if (INode.isInstance(item)) {
+      if (item instanceof INode) {
         graphComponent.graph.edgesAt(item).forEach((edge) => {
-          highlightIndicatorManager.addHighlight(edge)
+          highlights.add(edge)
+          highlights.add(item !== edge.sourceNode ? edge.sourceNode : edge.targetNode)
         })
-      } else if (IEdge.isInstance(item)) {
-        highlightIndicatorManager.addHighlight(item.sourceNode)
-        highlightIndicatorManager.addHighlight(item.targetNode)
+        highlights.add(item)
+      } else if (item instanceof IEdge) {
+        highlights.add(item)
+        highlights.add(item.sourceNode)
+        highlights.add(item.targetNode)
       }
     }
   })
-
-  // Create a context menu. In this demo, we use our sample context menu implementation but you can use any other
-  // context menu widget as well. See the Context Menu demo for more details about working with context menus.
-  const contextMenu = new ContextMenu(graphComponent)
-
-  // Add event listeners to the various events that open the context menu. These listeners then
-  // call the provided callback function which in turn asks the current ContextMenuInputMode if a
-  // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
-    if (mode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
-      contextMenu.show(location)
-    }
-  })
-
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
-  // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  mode.addPopulateItemContextMenuListener((_, evt) => populateContextMenu(contextMenu, evt))
-
-  // Add a listener that closes the menu when the input mode requests this
-  mode.contextMenuInputMode.addCloseMenuListener(() => {
-    contextMenu.close()
-  })
-
-  // If the context menu closes itself, for example because a menu item was clicked, we must inform the input mode
-  contextMenu.onClosedCallback = () => {
-    mode.contextMenuInputMode.menuClosed()
-  }
-
+  mode.addEventListener('populate-item-context-menu', (evt) => populateContextMenu(evt))
   graphComponent.inputMode = mode
 }
-
 /**
  * Populates the context menu based on the item the mouse hovers over
- * @param {!ContextMenu} contextMenu The context menu.
- * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args The event args.
+ * @param args The event args.
  */
-function populateContextMenu(contextMenu, args) {
-  // The 'showMenu' property is set to true to inform the input mode that we actually want to show a context menu
-  // for this item (or more generally, the location provided by the event args).
-  // If you don't want to show a context menu for some locations, set 'false' in this cases.
-  args.showMenu = true
-
-  contextMenu.clearItems()
-
+function populateContextMenu(args) {
+  if (args.handled) {
+    return
+  }
   // In this demo, we use the following custom hit testing to prefer nodes.
   const hits = graphComponent.graphModelManager.hitElementsAt(args.queryLocation)
-
   // Check whether an edge or a node was hit
   const hit = hits.at(0)
-
-  if (IEdge.isInstance(hit) || INode.isInstance(hit)) {
+  if (hit instanceof IEdge || hit instanceof INode) {
     let selectedEdges
-
-    if (IEdge.isInstance(hit)) {
+    if (hit instanceof IEdge) {
       // update the hit edge and all other possible selected edges
-      selectedEdges = graphComponent.selection.selectedEdges.toArray()
+      selectedEdges = graphComponent.selection.edges.toArray()
       selectedEdges.push(hit)
     } else {
       // update the hit node and all other possible selected nodes and update their adjacent edges
-      const selectedNodes = graphComponent.selection.selectedNodes.toArray()
+      const selectedNodes = graphComponent.selection.nodes.toArray()
       selectedNodes.push(hit)
-
       selectedEdges = []
       selectedNodes.forEach((node) => {
         if (graphComponent.graph.degree(node) > 0) {
@@ -270,39 +202,40 @@ function populateContextMenu(contextMenu, args) {
         }
       })
     }
-
+    const menuItems = []
     const result = countBundledEdges(selectedEdges)
     if (result.countUnbundled > 0) {
-      const text = IEdge.isInstance(hit)
-        ? 'Bundle Selected Edges'
-        : 'Bundle Edges At Selected Nodes'
-      contextMenu.addMenuItem(text, () => updateBundlingForSelectedEdges(selectedEdges, true))
+      const text = hit instanceof IEdge ? 'Bundle Selected Edges' : 'Bundle Edges At Selected Nodes'
+      menuItems.push({
+        label: text,
+        action: () => updateBundlingForSelectedEdges(selectedEdges, true)
+      })
     }
     if (result.countBundled > 0) {
-      const text = IEdge.isInstance(hit)
-        ? 'Un-bundle Selected Edges'
-        : 'Un-bundle Edges At Selected Nodes'
-      contextMenu.addMenuItem(text, () => updateBundlingForSelectedEdges(selectedEdges, false))
+      const text =
+        hit instanceof IEdge ? 'Un-bundle Selected Edges' : 'Un-bundle Edges At Selected Nodes'
+      menuItems.push({
+        label: text,
+        action: () => updateBundlingForSelectedEdges(selectedEdges, false)
+      })
     }
-  } else {
-    args.showMenu = false
+    if (menuItems.length > 0) {
+      args.contextMenu = menuItems
+    }
   }
 }
-
 /**
  * Counts the number of bundled and unbundled edges of a given selection.
- * @param {!Array.<IEdge>} edges The selected edges
- * @returns {!object} The number of bundled and unbundled edges as an object
+ * @param edges The selected edges
+ * @returns The number of bundled and unbundled edges as an object
  */
 function countBundledEdges(edges) {
   let countBundled = 0
   let countUnbundled = 0
-
   edges.forEach((edge) => {
     if (bundlesMap.get(edge)) {
       countBundled++
     }
-
     if (!bundlesMap.get(edge)) {
       countUnbundled++
     }
@@ -312,12 +245,10 @@ function countBundledEdges(edges) {
     countUnbundled
   }
 }
-
 /**
  * Enables or disables the edge bundling for the given edge.
- * @param {!Array.<IEdge>} edges The edges to update
- * @param {boolean} isBundled True if the edges should be bundled, false otherwise
- * @returns {!Promise}
+ * @param edges The edges to update
+ * @param isBundled True if the edges should be bundled, false otherwise
  */
 async function updateBundlingForSelectedEdges(edges, isBundled) {
   edges.forEach((edge) => {
@@ -336,7 +267,6 @@ async function updateBundlingForSelectedEdges(edges, isBundled) {
   })
   await applyLayout()
 }
-
 /**
  * Sets the default styles for the graph elements and initializes the highlight.
  */
@@ -345,33 +275,36 @@ function initializeGraph() {
   // set the node and edge default styles
   graph.nodeDefaults.style = new DemoNodeStyle()
   graph.edgeDefaults.style = new DemoEdgeStyle()
-  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createDefaultParameter()
-
+  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
   // hide the selection indication
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE,
-    edgeStyle: VoidEdgeStyle.INSTANCE
-  })
-
-  // initialize the edge highlight manager
-  graphComponent.highlightIndicatorManager = new HighlightManager()
-
+  graph.decorator.nodes.selectionRenderer.hide()
+  graph.decorator.edges.selectionRenderer.hide()
+  // configure the node/edge highlighting
+  graph.decorator.nodes.highlightRenderer.addConstant(
+    new NodeStyleIndicatorRenderer({
+      nodeStyle: new DemoNodeStyle(Color.RED),
+      zoomPolicy: 'world-coordinates'
+    })
+  )
+  graph.decorator.edges.highlightRenderer.addConstant(
+    new EdgeStyleIndicatorRenderer({
+      edgeStyle: new DemoEdgeStyle(6, Color.RED, Color.GOLD)
+    })
+  )
   // when a node is selected, select also the adjacent edges
-  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+  graphComponent.selection.addEventListener('item-added', (evt) => {
     const item = evt.item
     const selection = graphComponent.selection
-    if (INode.isInstance(item) && evt.itemSelected) {
-      selection.setSelected(item, true)
+    if (item instanceof INode) {
+      selection.add(item)
       graph.edgesAt(item).forEach((edge) => {
-        selection.setSelected(edge, true)
+        selection.add(edge)
       })
     }
   })
 }
-
 /**
  * Called when the selected item in the graph chooser combo box has changed.
- * @returns {!Promise}
  */
 async function onSampleChanged() {
   let sampleData
@@ -386,8 +319,8 @@ async function onSampleChanged() {
     case LayoutAlgorithm.RADIAL:
       sampleData = RadialSampleData
       break
-    case LayoutAlgorithm.BALLOON:
-      sampleData = BalloonSampleData
+    case LayoutAlgorithm.RADIAL_TREE:
+      sampleData = RadialTreeSampleData
       break
     case LayoutAlgorithm.TREE:
       sampleData = TreeSampleData
@@ -399,23 +332,18 @@ async function onSampleChanged() {
   graphComponent.graph.clear()
   // set the UI busy
   await setBusy(true)
-
   // load the graph
   await loadGraph(graphComponent.graph, sampleData)
   await runLayout()
 }
-
 /**
  * Parses the JSON and creates the graph elements.
- * @param {!IGraph} graph The graph to populate with the items.
- * @param {!GraphData} graphData The JSON data
- * @returns {!Promise}
+ * @param graph The graph to populate with the items.
+ * @param graphData The JSON data
  */
 async function loadGraph(graph, graphData) {
   await setBusy(true)
-
   graph.clear()
-
   const builder = new GraphBuilder({
     graph: graph,
     nodes: [
@@ -443,15 +371,12 @@ async function loadGraph(graph, graphData) {
     ]
   })
   graph = builder.buildGraph()
-
   graph.edges.forEach((edge) => {
     bundlesMap.set(edge, true)
   })
-
   // calculate the connected components of the new graph
   calculateConnectedComponents()
 }
-
 /**
  * Runs the layout.
  */
@@ -465,7 +390,6 @@ async function runLayout() {
     case 1: {
       layoutAlgorithm = createCircularLayout(selectedIndex === 0)
       layoutData = new CircularLayoutData({
-        circleIds: new Mapper(),
         edgeBundleDescriptors: bundleDescriptorMap
       })
       break
@@ -479,27 +403,28 @@ async function runLayout() {
     }
     case 3:
     case 4: {
-      layoutAlgorithm = selectedIndex === 3 ? createBalloonLayout() : createTreeLayout()
+      layoutAlgorithm = selectedIndex === 3 ? createRadialTreeLayout() : createTreeLayout()
       layoutData = new TreeReductionStageData({
         edgeBundleDescriptors: bundleDescriptorMap
       })
       break
     }
     case 5: {
-      layoutAlgorithm = createEdgeBundlingStage()
-      layoutData = new EdgeBundlingStageData({
+      layoutAlgorithm = createBundleEdgeRouter()
+      layoutData = new BundledEdgeRouterData({
         edgeBundleDescriptors: bundleDescriptorMap
       })
     }
   }
-
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
   // to apply bezier fitting, append the CurveFittingLayoutStage to the layout algorithm
   // we could also enable the bezier fitting from the edge bundling descriptor but, we would like for this demo to
   // have small error
-  layoutAlgorithm = new CurveFittingLayoutStage({ coreLayout: layoutAlgorithm, maximumError: 1 })
-
+  layoutAlgorithm = new CurveFittingStage({ coreLayout: layoutAlgorithm, maximumError: 1 })
   // run the layout
-  await graphComponent.morphLayout(layoutAlgorithm, '0.0s', layoutData)
+  await graphComponent.applyLayoutAnimated(layoutAlgorithm, '0.0s', layoutData)
   await setBusy(false)
   // if the selected algorithm is circular, change the node style to circular sectors
   if (
@@ -509,98 +434,66 @@ async function runLayout() {
     updateNodeInformation(layoutData)
   }
 }
-
 /**
  * Creates and configures the circular layout algorithm.
- * @param {boolean} singleCycle True if the layout should be single-cycle, false otherwise
- * @returns {!CircularLayout} The configured circular layout algorithm
+ * @param singleCycle True if the layout should be single-cycle, false otherwise
+ * @returns The configured circular layout algorithm
  */
 function createCircularLayout(singleCycle) {
-  const circularLayout = new CircularLayout({
-    labelingEnabled: true
-  })
+  const circularLayout = new CircularLayout()
   if (singleCycle) {
-    circularLayout.layoutStyle = CircularLayoutStyle.SINGLE_CYCLE
-    circularLayout.singleCycleLayout.minimumNodeDistance = 0
+    circularLayout.partitioningPolicy = CircularLayoutPartitioningPolicy.SINGLE_CYCLE
+    circularLayout.partitionDescriptor.minimumNodeDistance = 0
   }
   configureEdgeBundling(circularLayout)
   return circularLayout
 }
-
 /**
  * Creates and configures the radial layout algorithm.
- * @returns {!RadialLayout} The configured radial layout algorithm
+ * @returns The configured radial layout algorithm
  */
 function createRadialLayout() {
-  const radialLayout = new RadialLayout({
-    labelingEnabled: true
-  })
+  const radialLayout = new RadialLayout()
   configureEdgeBundling(radialLayout)
   return radialLayout
 }
-
 /**
- * Creates and configures the balloon layout algorithm.
- * @returns {!BalloonLayout} The configured balloon layout algorithm
+ * Creates and configures the radial tree layout algorithm.
+ * @returns The configured radial tree layout algorithm
  */
-function createBalloonLayout() {
-  const balloonLayout = new BalloonLayout({
-    integratedEdgeLabeling: true,
-    integratedNodeLabeling: true
-  })
-
-  const treeReductionStage = createTreeReductionStage()
-  configureEdgeBundling(treeReductionStage)
-  balloonLayout.prependStage(treeReductionStage)
-  return balloonLayout
+function createRadialTreeLayout() {
+  const radialTreeLayout = new RadialTreeLayout()
+  createTreeReductionStage(radialTreeLayout.treeReductionStage)
+  return radialTreeLayout
 }
-
 /**
  * Creates and configures the tree layout algorithm.
- * @returns {!TreeLayout} The configured tree layout algorithm
+ * @returns The configured tree layout algorithm
  */
 function createTreeLayout() {
-  const treeLayout = new TreeLayout({
-    considerNodeLabels: true,
-    integratedEdgeLabeling: true
-  })
-  treeLayout.defaultNodePlacer.routingStyle = TreeLayoutEdgeRoutingStyle.STRAIGHT
-
-  const treeReductionStage = createTreeReductionStage()
-  configureEdgeBundling(treeReductionStage)
-  treeLayout.prependStage(treeReductionStage)
+  const treeLayout = new TreeLayout()
+  treeLayout.defaultSubtreePlacer.edgeRoutingStyle = 'straight-line'
+  createTreeReductionStage(treeLayout.treeReductionStage)
   return treeLayout
 }
-
 /**
  * Creates and configures the tree reduction stage.
- * @returns {!TreeReductionStage}
  */
-function createTreeReductionStage() {
-  const labelingAlgorithm = new GenericLabeling({
-    affectedLabelsDpKey: 'AFFECTED_LABELS'
-  })
-  return new TreeReductionStage({
-    nonTreeEdgeRouter: new OrganicEdgeRouter(),
-    nonTreeEdgeSelectionKey: OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY,
-    nonTreeEdgeLabelingAlgorithm: labelingAlgorithm,
-    nonTreeEdgeLabelSelectionKey: labelingAlgorithm.affectedLabelsDpKey
-  })
+function createTreeReductionStage(treeReductionStage) {
+  treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
+  configureEdgeBundling(treeReductionStage)
 }
-
 /**
  * Creates and configures the edge bundling stage
- * @returns {!ILayoutAlgorithm}
  */
-function createEdgeBundlingStage() {
-  const edgeBundlingStage = new EdgeBundlingStage(new StraightLineEdgeRouter())
+function createBundleEdgeRouter() {
+  const edgeBundlingStage = new BundledEdgeRouter(new StraightLineEdgeRouter())
   configureEdgeBundling(edgeBundlingStage)
-  return new GenericLabeling({ coreLayout: edgeBundlingStage })
+  return new GenericLabeling({ coreLayout: edgeBundlingStage, scope: 'node-labels' })
 }
-
 /**
  * Configures the edge bundling descriptor.
- * @param {!(EdgeBundlingStage|CircularLayout|RadialLayout|TreeReductionStage)} layoutAlgorithm The layout algorithm to integrate the edge bundling
+ * @param layoutAlgorithm The layout algorithm to integrate the edge bundling
  */
 function configureEdgeBundling(layoutAlgorithm) {
   // we could either enable here the bezier fitting or append the CurveFittingLayoutStage to our layout algorithm
@@ -611,19 +504,17 @@ function configureEdgeBundling(layoutAlgorithm) {
     bundled: true
   })
 }
-
 /**
  * Updates the circle information for each node.
- * @param {!CircularLayoutData} layoutData The current layout data
+ * @param layoutData The current layout data
  */
 function updateNodeInformation(layoutData) {
   const graph = graphComponent.graph
   const circleNodes = new Mapper()
   const circleCenters = new Mapper()
-
   // store the nodes that belong to each circle
   graph.nodes.forEach((node) => {
-    const circleId = layoutData.circleIds.get(node)
+    const circleId = layoutData.circleIdsResult.get(node)
     const componentId = componentsMap.get(node)
     const id = circleId !== null ? `${circleId} ${componentId}` : '-1'
     if (id !== '-1') {
@@ -633,7 +524,6 @@ function updateNodeInformation(layoutData) {
       circleNodes.get(id).push(node)
     }
   })
-
   // calculate the center of each circle
   for (const entry of circleNodes.entries) {
     const circleId = entry.key
@@ -642,11 +532,10 @@ function updateNodeInformation(layoutData) {
       circleCenters.set(circleId, calculateCircleCenter(entryNodes))
     }
   }
-
   // store to the node's tag the circle id, the center of the circle and the nodes that belong to the node's circle
   // this information is needed for the creation of the circular sector node style
   graph.nodes.forEach((node) => {
-    const circleId = layoutData.circleIds.get(node)
+    const circleId = layoutData.circleIdsResult.get(node)
     const componentId = componentsMap.get(node)
     // add to the tag an id consisted of the component to which this node belongs plus the circle id
     const id = circleId !== null ? `${circleId} ${componentId}` : '-1'
@@ -656,20 +545,17 @@ function updateNodeInformation(layoutData) {
       circleNodeSize: circleNodes.get(id)?.length || 0
     }
   })
-
   graphComponent.invalidate()
 }
-
 /**
  * Calculates the coordinates of the circle formed by the given points
- * @param {!Array.<INode>} circleNodes An array containing the 3 points that form the circle
- * @returns {!Point} The coordinates of the center of the circle
+ * @param circleNodes An array containing the 3 points that form the circle
+ * @returns The coordinates of the center of the circle
  */
 function calculateCircleCenter(circleNodes) {
   const p1 = circleNodes[0].layout.center
   const p2 = circleNodes[1].layout.center
   const p3 = circleNodes[2].layout.center
-
   const idet =
     2 * (p1.x * p2.y - p2.x * p1.y - p1.x * p3.y + p3.x * p1.y + p2.x * p3.y - p3.x * p2.y)
   const a = p1.x * p1.x + p1.y * p1.y
@@ -679,7 +565,6 @@ function calculateCircleCenter(circleNodes) {
   const centerY = (a * (p3.x - p2.x) + b * (p1.x - p3.x) + c * (p2.x - p1.x)) / idet
   return new Point(centerX, centerY)
 }
-
 /**
  * Calculates the connected components of the current graph.
  */
@@ -694,13 +579,11 @@ function calculateConnectedComponents() {
     componentsMap = result.nodeComponentIds
   }
 }
-
 /**
  * Wires up the UI.
  */
 function initializeUI() {
   addNavigationButtons(samplesComboBox).addEventListener('change', onSampleChanged)
-
   bundlingStrengthSlider.addEventListener(
     'change',
     async () => {
@@ -710,10 +593,8 @@ function initializeUI() {
     true
   )
 }
-
 /**
  * Configures the busy indicator and runs the layout.
- * @returns {!Promise}
  */
 async function applyLayout() {
   await setBusy(true)
@@ -722,45 +603,36 @@ async function applyLayout() {
     runLayout()
   }, 5)
 }
-
 /**
  * Determines whether the UI is busy or not.
- * @param {boolean} isBusy True if the UI is busy, false otherwise
- * @returns {!Promise}
+ * @param isBusy True if the UI is busy, false otherwise
  */
 async function setBusy(isBusy) {
   graphComponent.inputMode.enabled = !isBusy
   if (isBusy) {
-    graphComponent.div.classList.add('gc-busy')
+    graphComponent.htmlElement.classList.add('gc-busy')
   } else {
-    graphComponent.div.classList.remove('gc-busy')
+    graphComponent.htmlElement.classList.remove('gc-busy')
   }
   setUIDisabled(isBusy)
   await showLoadingIndicator(isBusy)
 }
-
 /**
  * Enables/disables the UI's elements.
- * @param {boolean} disabled True if the UI's elements should be disabled, false otherwise
+ * @param disabled True if the UI's elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
   samplesComboBox.disabled = disabled
-
   bundlingStrengthSlider.disabled = disabled
   bundlingStrengthLabel.disabled = disabled
 }
-
-/**
- * @readonly
- * @enum {number}
- */
-const LayoutAlgorithm = {
-  SINGLE_CYCLE: 0,
-  CIRCULAR: 1,
-  RADIAL: 2,
-  BALLOON: 3,
-  TREE: 4,
-  ROUTER: 5
-}
-
+var LayoutAlgorithm
+;(function (LayoutAlgorithm) {
+  LayoutAlgorithm[(LayoutAlgorithm['SINGLE_CYCLE'] = 0)] = 'SINGLE_CYCLE'
+  LayoutAlgorithm[(LayoutAlgorithm['CIRCULAR'] = 1)] = 'CIRCULAR'
+  LayoutAlgorithm[(LayoutAlgorithm['RADIAL'] = 2)] = 'RADIAL'
+  LayoutAlgorithm[(LayoutAlgorithm['RADIAL_TREE'] = 3)] = 'RADIAL_TREE'
+  LayoutAlgorithm[(LayoutAlgorithm['TREE'] = 4)] = 'TREE'
+  LayoutAlgorithm[(LayoutAlgorithm['ROUTER'] = 5)] = 'ROUTER'
+})(LayoutAlgorithm || (LayoutAlgorithm = {}))
 run().then(finishLoading)

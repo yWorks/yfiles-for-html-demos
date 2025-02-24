@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Network Flows Demo
 
-# Network Flows Demo
+<img src="../../../doc/demo-thumbnails/network-flows.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/analysis/networkflows/).
 
 _Network flow_ algorithms apply to directed networks in which edges have certain capacities and a flow moves from source nodes (i.e., nodes with in-degree 0) to sink nodes (i.e., nodes with out-degree 0).
 

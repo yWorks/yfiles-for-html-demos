@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,25 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @typedef {Object} FullNodeData
- * @property {string} position
- * @property {string} name
- * @property {string} email
- * @property {string} phone
- * @property {string} fax
- * @property {string} businessUnit
- * @property {('unavailable'|'travel'|'busy'|'present')} status
- * @property {string} icon
- * @property {boolean} [assistant]
- * @property {object} layout
- * @property {string} id
- */
-
-/**
- * @typedef {Omit.<FullNodeData,('layout'|'id')>} NodeData
- */
-
 export default {
   nodes: [
     {
@@ -121,7 +102,6 @@ export default {
       assistant: true
     }
   ],
-
   edges: [
     {
       src: '0',

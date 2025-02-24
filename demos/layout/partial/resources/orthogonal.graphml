@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,10 +31,10 @@
 <graphml
     xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd "
     xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0"
-    xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml"
+    xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <key id="d0" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
-  <key id="d1" for="node" attr.type="boolean" attr.name="AffectedNodesDpKey">
+  <key id="d1" for="node" attr.type="boolean" attr.name="yWorks.Layout.Partial.PartialLayout.NodeScopeDataKey">
     <default>false</default>
   </key>
   <key id="d2" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
@@ -46,7 +46,7 @@
   </key>
   <key id="d6" for="node" attr.name="NodeViewState"
        y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState"/>
-  <key id="d7" for="edge" attr.type="boolean" attr.name="AffectedEdgesDpKey">
+  <key id="d7" for="edge" attr.type="boolean" attr.name="yWorks.Layout.Partial.PartialLayout.EdgeScopeDataKey">
     <default>false</default>
   </key>
   <key id="d8" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>

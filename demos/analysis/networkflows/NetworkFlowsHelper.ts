@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,95 +39,16 @@ import {
   INode,
   InputModeBase,
   IReshapeHandleProvider,
-  MouseButtons,
-  MouseEventArgs,
   Point,
-  Rect,
-  UndoUnitBase
-} from 'yfiles'
-import type { MinCutLine } from './DemoStyles'
-
-/**
- * This class provides undo/redo for an operation changing tag data.
- */
-export class TagUndoUnit extends UndoUnitBase {
-  /**
-   * The constructor.
-   * @param undoName Name of the undo operation.
-   * @param redoName Name of the redo operation
-   * @param oldTag The data to restore the previous state
-   * @param newTag The data to restore the next state
-   * @param item The owner of the tag
-   */
-  constructor(
-    undoName: string,
-    redoName: string,
-    private readonly oldTag: any,
-    private readonly newTag: any,
-    private readonly item: IModelItem
-  ) {
-    super(undoName, redoName)
-  }
-
-  /**
-   * Undoes the work that is represented by this unit.
-   */
-  undo(): void {
-    this.item.tag = this.oldTag
-  }
-
-  /**
-   * Redoes the work that is represented by this unit.
-   */
-  redo(): void {
-    this.item.tag = this.newTag
-  }
-}
-
-/**
- * This class provides undo/redo for an operation the min-cut line bounds.
- */
-export class MinCutUndoUnit extends UndoUnitBase {
-  /**
-   * The constructor.
-   * @param undoName Name of the undo operation.
-   * @param redoName Name of the redo operation
-   * @param oldBounds The old min-cut line bounds
-   * @param newBounds The new min-cut line bounds
-   * @param minCutLine The given min-cut line
-   */
-  constructor(
-    undoName: string,
-    redoName: string,
-    private readonly oldBounds: Rect,
-    private readonly newBounds: Rect,
-    private readonly minCutLine: MinCutLine
-  ) {
-    super(undoName, redoName)
-  }
-
-  /**
-   * Undoes the work that is represented by this unit.
-   */
-  undo(): void {
-    this.minCutLine.bounds = this.oldBounds
-  }
-
-  /**
-   * Redoes the work that is represented by this unit.
-   */
-  redo(): void {
-    this.minCutLine.bounds = this.newBounds
-  }
-}
+  PointerButtons,
+  PointerEventArgs,
+  Rect
+} from '@yfiles/yfiles'
 
 /**
  * An {@link IReshapeHandleProvider} that doesn't provide any handles.
  */
-export class EmptyReshapeHandleProvider
-  extends BaseClass(IReshapeHandleProvider)
-  implements IReshapeHandleProvider
-{
+export class EmptyReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
   /**
    * Returns the indicator for no valid position.
    * @param inputModeContext The context for which the handles are queried
@@ -159,15 +80,13 @@ export class EmptyReshapeHandleProvider
 export class NetworkFlowInputMode extends InputModeBase {
   private graphComponent: GraphComponent | null
   private state: string
-  private hitItem: IModelItem | undefined
+  private hitItem: IModelItem | null
   private initialLocation: Point
   private initialCapacity: number
   private initialSupply: number
   private oldTag: any
-  private readonly onMouseMoveListener: (_: GraphComponent, evt: MouseEventArgs) => void
-  private readonly onMouseDownListener: (_: GraphComponent, evt: MouseEventArgs) => void
-  private readonly onMouseUpListener: (_: GraphComponent, evt: MouseEventArgs) => void
-  private readonly onMouseDragListener: (_: GraphComponent, evt: MouseEventArgs) => void
+  private eventListeners = new Map<string, (evt: PointerEventArgs) => void>()
+
   private dragFinishedListener: ((item: IModelItem, oldTag: any) => void) | null
   private dragStartedListener: ((item: IModelItem) => void) | null
 
@@ -175,7 +94,7 @@ export class NetworkFlowInputMode extends InputModeBase {
     super()
     this.graphComponent = null
     this.state = ''
-    this.hitItem = undefined
+    this.hitItem = null
     this.initialLocation = Point.ORIGIN
     this.initialCapacity = 0
     this.initialSupply = 0
@@ -183,11 +102,10 @@ export class NetworkFlowInputMode extends InputModeBase {
     this.dragStartedListener = null
     this.oldTag = null
 
-    // initializes listener functions in order to install/uninstall them
-    this.onMouseMoveListener = (_, evt) => this.onMouseMove(evt.location)
-    this.onMouseDownListener = (_, evt) => this.onMouseDown(evt.location, evt.buttons)
-    this.onMouseUpListener = (_, evt) => this.onMouseUp(evt.location)
-    this.onMouseDragListener = (_, evt) => this.onMouseDrag(evt.location)
+    this.eventListeners.set('pointer-move', (evt) => this.onMouseMove(evt.location))
+    this.eventListeners.set('pointer-down', (evt) => this.onMouseDown(evt.location, evt.buttons))
+    this.eventListeners.set('pointer-up', (evt) => this.onMouseUp(evt.location))
+    this.eventListeners.set('pointer-drag', (evt) => this.onMouseDrag(evt.location))
   }
 
   /**
@@ -198,10 +116,10 @@ export class NetworkFlowInputMode extends InputModeBase {
   install(context: IInputModeContext, controller: ConcurrencyController): void {
     super.install(context, controller)
     this.graphComponent = context.canvasComponent as GraphComponent
-    this.graphComponent.addMouseMoveListener(this.onMouseMoveListener)
-    this.graphComponent.addMouseDownListener(this.onMouseDownListener)
-    this.graphComponent.addMouseUpListener(this.onMouseUpListener)
-    this.graphComponent.addMouseDragListener(this.onMouseDragListener)
+    for (const listener of this.eventListeners) {
+      // @ts-ignore The keys of the eventListeners map match the event listener names
+      this.graphComponent.addEventListener(listener[0], listener[1])
+    }
     this.state = 'start'
   }
 
@@ -228,7 +146,7 @@ export class NetworkFlowInputMode extends InputModeBase {
    */
   isValidHover(location: Point): boolean {
     const hits = this.graphComponent!.graphModelManager.hitTester.enumerateHits(
-      this.inputModeContext!,
+      this.parentInputModeContext!,
       location
     )
 
@@ -246,7 +164,7 @@ export class NetworkFlowInputMode extends InputModeBase {
       return true
     }
     // reset the hitItem if the position is not valid
-    this.hitItem = undefined
+    this.hitItem = null
     return false
   }
 
@@ -255,8 +173,8 @@ export class NetworkFlowInputMode extends InputModeBase {
    * @param location The event location in world coordinates
    * @param buttons The state of the mouse buttons at the time of the event creation
    */
-  onMouseDown(location: Point, buttons: MouseButtons): void {
-    if (this.controller!.active && this.hitItem && buttons === MouseButtons.LEFT) {
+  onMouseDown(location: Point, buttons: PointerButtons): void {
+    if (this.controller!.active && this.hitItem && buttons === PointerButtons.MOUSE_LEFT) {
       this.state = 'down'
       this.initialLocation = location
     }
@@ -329,7 +247,7 @@ export class NetworkFlowInputMode extends InputModeBase {
         this.initialLocation = Point.ORIGIN
         this.initialSupply = 0
         this.initialCapacity = 0
-        this.hitItem = undefined
+        this.hitItem = null
       }
     }
   }
@@ -356,7 +274,7 @@ export class NetworkFlowInputMode extends InputModeBase {
    * Adds a listener that fires an event whenever the dragging of a node/edge has started.
    * @param listener The given listener
    */
-  addDragStartedListener(listener: (item: IModelItem) => void): void {
+  setDragStartedListener(listener: (item: IModelItem) => void): void {
     this.dragStartedListener = listener
   }
 
@@ -376,10 +294,10 @@ export class NetworkFlowInputMode extends InputModeBase {
    */
   uninstall(context: IInputModeContext): void {
     super.uninstall(context)
-    this.graphComponent!.removeMouseMoveListener(this.onMouseMoveListener)
-    this.graphComponent!.removeMouseDownListener(this.onMouseDownListener)
-    this.graphComponent!.removeMouseUpListener(this.onMouseUpListener)
-    this.graphComponent!.removeMouseDragListener(this.onMouseDragListener)
+    for (const listener of this.eventListeners) {
+      // @ts-ignore The keys of the eventListeners map match the event listener names
+      this.graphComponent!.removeEventListener(listener[0], listener[1])
+    }
     this.graphComponent = null
   }
 }

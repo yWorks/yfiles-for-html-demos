@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Grid Snapping - Application Features
 
-# Grid Snapping
+<img src="../../../doc/demo-thumbnails/grid-snapping.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/application-features/grid-snapping/).
 
 This demo shows the [grid snapping](https://docs.yworks.com/yfileshtml/#/dguide/interaction-grid_snapping) feature which enables snapping graph items to grid points. Grid snapping not only works for moving or resizing nodes, but also for creating edges and adding and moving bends.
 

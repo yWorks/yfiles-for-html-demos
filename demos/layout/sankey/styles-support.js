@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,38 +28,33 @@
  ***************************************************************************/
 import {
   BezierEdgeStyle,
-  DefaultLabelStyle,
-  InteriorStretchLabelModel,
+  LabelStyle,
   ShapeNodeStyle,
   Size,
-  SolidColorFill,
+  StretchNodeLabelModel,
   Stroke
-} from 'yfiles'
-import { getPoliticalParty, getVoterShift } from './data-types.js'
-
+} from '@yfiles/yfiles'
+import { getPoliticalParty, getVoterShift } from './data-types'
 /**
  * The colors used for the node/edge visualization.
  * Dark colors will be used for the node visualization and the highlighting of the edges.
  * Light colors will be used for the edge visualization.
  */
 export const colors = [
-  { dark: '#000000', light: '#80000000' },
-  { dark: '#db3a34', light: '#80db3a34' },
-  { dark: '#f0c808', light: '#60f0c808' },
-  { dark: '#56926e', light: '#8056926e' },
-  { dark: '#6c4f77', light: '#806c4f77' },
-  { dark: '#4281a4', light: '#804281a4' },
-  { dark: '#242265', light: '#90242265' },
-  { dark: '#2d4d3a', light: '#902d4d3a' }
+  { dark: '#000000', light: '#00000080' },
+  { dark: '#db3a34', light: '#db3a3480' },
+  { dark: '#f0c808', light: '#f0c80860' },
+  { dark: '#56926e', light: '#56926e80' },
+  { dark: '#6c4f77', light: '#6c4f7780' },
+  { dark: '#4281a4', light: '#4281a480' },
+  { dark: '#242265', light: '#24226590' },
+  { dark: '#2d4d3a', light: '#2d4d3a90' }
 ]
-
 /**
  * Configures the default size and style for nodes, edge labels, and edges.
- * @param {!GraphComponent} graphComponent
  */
 export function initializeDefaultStyles(graphComponent) {
   const graph = graphComponent.graph
-
   // set the default node size
   graph.nodeDefaults.size = new Size(60, 40)
   // set a non-shared style for the nodes, so that each of them gets a color based on the
@@ -68,48 +63,40 @@ export function initializeDefaultStyles(graphComponent) {
   graph.nodeDefaults.style = new ShapeNodeStyle({
     stroke: null
   })
-
   // set the default style for the node labels
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     textFill: 'white',
     font: '16px Arial',
-    wrapping: 'word',
+    wrapping: 'wrap-word',
     verticalTextAlignment: 'center',
     horizontalTextAlignment: 'center'
   })
-
   // use a label model that stretches the label over the full node layout, with small insets
-  graph.nodeDefaults.labels.layoutParameter = new InteriorStretchLabelModel({
-    insets: 3
+  graph.nodeDefaults.labels.layoutParameter = new StretchNodeLabelModel({
+    padding: 3
   }).createParameter('center')
-
   // set a non-shared style for the edge, so that each of them gets a color based on the
   // 'colorId' property stored in its data
   graph.edgeDefaults.shareStyleInstance = false
   graph.edgeDefaults.style = new BezierEdgeStyle()
-
   // set a non-shared style for the labels, so that each of them gets a text color based on the
   // 'colorId' property stored in its owner property
   graph.edgeDefaults.labels.shareStyleInstance = false
-  graph.edgeDefaults.labels.style = new DefaultLabelStyle({
+  graph.edgeDefaults.labels.style = new LabelStyle({
     font: '14px Arial'
   })
-
   // hide handles for edges
-  graph.decorator.edgeDecorator.handleProviderDecorator.hideImplementation()
+  graph.decorator.edges.handleProvider.hide()
   // hide label selection
-  graph.decorator.labelDecorator.selectionDecorator.hideImplementation()
+  graph.decorator.labels.selectionRenderer.hide()
 }
-
 /**
  * Updates the styles of the graph elements.
  * It basically assigns a color to each node based on its label text, stores the given color to the
  * node's data and updates the color of the node and its adjacent edges.
- * @param {!IGraph} graph
  */
 export function updateStyles(graph) {
   const label2color = new Map()
-
   graph.nodeLabels.forEach((label) => {
     const node = label.owner
     // if no colorId is assigned, get one from the demo's colors
@@ -124,56 +111,40 @@ export function updateStyles(graph) {
       // update the node data
       getPoliticalParty(node).colorId = colorId
     }
-
     // update the node's color and its adjacent edges
     updateNodeColor(node, graph)
   })
 }
-
 /**
  * Returns the color used for the given node based on its colorId.
- * @param {!INode} node
- * @returns {!string}
  */
 export function getNodeColor(node) {
   return colors[getPoliticalParty(node).colorId].dark
 }
-
 /**
  * Returns the color used for the given edge based on its colorId.
- * @param {!IEdge} edge
- * @returns {!string}
  */
 export function getEdgeColor(edge) {
   return colors[getVoterShift(edge).colorId].light
 }
-
 /**
  * Returns the color used for the given label based on the colorId of the associated edge.
- * @param {!ILabel} label
- * @returns {!string}
  */
 export function getLabelColor(label) {
   return colors[getVoterShift(label.owner).colorId].dark
 }
-
 /**
  * Updates the color of the given node and its adjacent edges based on the colorId property
  * of its associated data.
- * @param {!INode} node
- * @param {!IGraph} graph
  */
 export function updateNodeColor(node, graph) {
   const style = node.style
   style.fill = getNodeColor(node)
   updateAdjacentEdges(node, graph)
 }
-
 /**
  * Updates the adjacent edges of the given node based on the colorId property
  * of its associated data.
- * @param {!INode} node
- * @param {!IGraph} graph
  */
 export function updateAdjacentEdges(node, graph) {
   const colorDirectionBox = document.querySelector('#colorDirection')
@@ -184,17 +155,15 @@ export function updateAdjacentEdges(node, graph) {
     updateEdgeStyle(edge)
   }
 }
-
 /**
  * Updates the color of the given edge and its associated labels based on the colorId property
  * of its associated data.
- * @param {!IEdge} edge
  */
 export function updateEdgeStyle(edge) {
   const style = edge.style
   style.stroke = new Stroke(getEdgeColor(edge), getVoterShift(edge).thickness)
   edge.labels.forEach((label) => {
     const style = label.style
-    style.textFill = new SolidColorFill(getLabelColor(label))
+    style.textFill = getLabelColor(label)
   })
 }

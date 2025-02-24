@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,87 +29,38 @@
 import {
   EdgeStyleBase,
   GeneralPath,
-  GraphComponent,
   ICanvasContext,
   IEdge,
-  IGraph,
   IInputModeContext,
   IRenderContext,
   Point,
   Rect,
-  SvgVisual,
-  Visual,
-  YObject
-} from 'yfiles'
-import { ChordDiagramLayout } from './ChordDiagramLayout.js'
-
-/**
- * @typedef {Object} EdgeStyleHints
- * @property {Point} circleCenter
- * @property {Point} sourceStart
- * @property {Point} sourceEnd
- * @property {Point} targetStart
- * @property {Point} targetEnd
- */
-
+  SvgVisual
+} from '@yfiles/yfiles'
+import { ChordDiagramLayout } from './ChordDiagramLayout'
 const SVG_NS = 'http://www.w3.org/2000/svg'
 const STROKE_WIDTH = 2
-
 /**
  * A custom edge style that draws the edges of a chord diagram.
  */
 export class ChordEdgeStyle extends EdgeStyleBase {
+  edgeStyleHints
   /**
    * Specifies whether to show the information about the underlying graph
    */
   showStyleHints = false
-
-  /** 
-    opacity of edges if not further specified
-  * @type {number}
-   */
-  static get defaultOpacity() {
-    if (typeof ChordEdgeStyle.$defaultOpacity === 'undefined') {
-      ChordEdgeStyle.$defaultOpacity = 0.8
-    }
-
-    return ChordEdgeStyle.$defaultOpacity
-  }
-
-  /** 
-    opacity of edges if not further specified
-  * @type {number}
-   */
-  static set defaultOpacity(defaultOpacity) {
-    ChordEdgeStyle.$defaultOpacity = defaultOpacity
-  }
-
-  /**
-   * @param {!IGraph} graph
-   */
-  constructor(graph) {
+  // opacity of edges if not further specified
+  static defaultOpacity = 0.8
+  constructor(edgeStyleHints) {
     super()
-    // prepare the style hints that need to be provided by the layout
-    graph.mapperRegistry.createMapper(
-      IEdge.$class,
-      YObject.$class,
-      ChordDiagramLayout.STYLE_HINT_KEY
-    )
+    this.edgeStyleHints = edgeStyleHints
   }
-
   /**
    * Creates the visual appearance of an edge.
-   * @param {!IEdge} edge
-   * @param {*} container
-   * @param {!EdgeRenderDataCache} cache
    */
   render(edge, container, cache) {
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
-
     const center = ChordDiagramLayout.CENTER
     const radius = ChordDiagramLayout.RADIUS
-
     // the arc where the edge touches the node
     const sourceArc =
       ` M ${cache.sourceEnd.x} ${cache.sourceEnd.y}` +
@@ -131,20 +82,16 @@ export class ChordEdgeStyle extends EdgeStyleBase {
       typeof edge.tag.opacity == 'undefined' ? ChordEdgeStyle.defaultOpacity : edge.tag.opacity
     )
     wholePath.setAttribute('fill-rule', 'even-odd')
-
     // construct a linear gradient between the source and target node color and add it to the svg
     const defs = document.createElementNS(SVG_NS, 'defs')
     const gradient = document.createElementNS(SVG_NS, 'linearGradient')
-
-    const color1 = edge.sourcePort?.owner?.tag.color
-    const color2 = edge.targetPort?.owner?.tag.color
-
+    const color1 = edge.sourcePort.owner.tag.color
+    const color2 = edge.targetPort.owner.tag.color
     // stop information for the <linearGradient>
     const stops = [
       { color: color1, offset: '30%' },
       { color: color2, offset: '70%' }
     ]
-
     // appends <stop> elements to the <linearGradient>
     for (let i = 0, length = stops.length; i < length; i++) {
       const stop = document.createElementNS(SVG_NS, 'stop')
@@ -152,7 +99,6 @@ export class ChordEdgeStyle extends EdgeStyleBase {
       stop.setAttribute('stop-color', stops[i].color)
       gradient.appendChild(stop)
     }
-
     // center of the edge at source
     const sourcePoint = new Point(
       (cache.sourceStart.x + cache.sourceEnd.x) / 2,
@@ -163,36 +109,27 @@ export class ChordEdgeStyle extends EdgeStyleBase {
       (cache.targetStart.x + cache.targetEnd.x) / 2,
       (cache.targetStart.y + cache.targetEnd.y) / 2
     )
-
     const deltaY = sourcePoint.y - targetPoint.y
     const deltaX = targetPoint.x - sourcePoint.x
     const result = Math.atan2(deltaY, deltaX)
     let ang = result < 0 ? Math.PI * 2 + result : result
     ang -= Math.PI / 2
-
     // compute the positions as percentages
     const x1 = Math.round(50 + Math.sin(ang) * 50) / 100
     const y1 = Math.round(50 + Math.cos(ang) * 50) / 100
     const x2 = Math.round(50 + Math.sin(ang + Math.PI) * 50) / 100
     const y2 = Math.round(50 + Math.cos(ang + Math.PI) * 50) / 100
-
     gradient.setAttribute('x1', String(x1))
     gradient.setAttribute('x2', String(x2))
     gradient.setAttribute('y1', String(y1))
     gradient.setAttribute('y2', String(y2))
-
     // reference the gradient by its colors
     gradient.id = `Gradient_${color1}_${color2}`
-
     defs.appendChild(gradient)
-
     // set the gradient id to the edge path
     wholePath.setAttribute('fill', `url(#Gradient_${color1}_${color2})`)
-
     container.appendChild(defs)
-
     container.appendChild(wholePath)
-
     // displays information about what information the layoutGraph provided
     if (this.showStyleHints) {
       wholePath.setAttribute('opacity', '0.1')
@@ -210,7 +147,6 @@ export class ChordEdgeStyle extends EdgeStyleBase {
         typeof edge.tag.opacity == 'undefined' ? ChordEdgeStyle.defaultOpacity : edge.tag.opacity
       )
     }
-
     // if the edge is highlighted, display a dotted outline
     if (edge.tag.highlighted) {
       wholePath.setAttribute('opacity', '1')
@@ -218,18 +154,14 @@ export class ChordEdgeStyle extends EdgeStyleBase {
       wholePath.setAttribute('stroke-dasharray', '4')
     }
   }
-
   /**
    * Creates the visualization of an edge in a chord diagram.
-   * @param {!IRenderContext} context
-   * @param {!IEdge} edge
-   * @returns {!SvgVisual}
    */
   createVisual(context, edge) {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
     const g = document.createElementNS(SVG_NS, 'g')
     // Get the necessary data for rendering of the edge
-    const hint = ChordEdgeStyle.getStyleHint(context, edge)
+    const hint = this.getStyleHint(edge)
     const cache = new EdgeRenderDataCache(
       hint.sourceStart,
       hint.sourceEnd,
@@ -242,26 +174,20 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     )
     // Render the edge
     this.render(edge, g, cache)
-    return new SvgVisual(g)
+    // store information with the visual on how we created it
+    return SvgVisual.from(g, cache)
   }
-
   /**
    * It is generally recommended for performance reasons to avoid creating new Visuals and instead
    * update the existing one. Since chord diagrams are generally small, we will make ado
    * with at least checking whether the visualisation for the edge will not change at all and re-create
    * it otherwise.
-   * @param {!IRenderContext} context
-   * @param {!SvgVisual} oldVisual
-   * @param {!IEdge} edge
-   * @returns {?Visual}
    */
   updateVisual(context, oldVisual, edge) {
-    const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
-    const oldCache = container['data-renderDataCache']
-
+    const oldCache = oldVisual.tag
     // create the data for the new visual
-    const hint = ChordEdgeStyle.getStyleHint(context, edge)
+    const hint = this.getStyleHint(edge)
     const newCache = new EdgeRenderDataCache(
       hint.sourceStart,
       hint.sourceEnd,
@@ -272,21 +198,15 @@ export class ChordEdgeStyle extends EdgeStyleBase {
       edge.tag.opacity,
       this.showStyleHints
     )
-
     // if nothing changed, reuse old visual, else rebuild
     return newCache.equals(oldCache) ? oldVisual : this.createVisual(context, edge)
   }
-
   /**
    * Determines if the given location lies on the visualization of an edge in a chord diagram.
-   * @param {!IInputModeContext} context
-   * @param {!Point} location
-   * @param {!IEdge} edge
-   * @returns {boolean}
    */
   isHit(context, location, edge) {
     // approximation of the edge outline by Bézier curves
-    const hint = ChordEdgeStyle.getStyleHint(context, edge)
+    const hint = this.getStyleHint(edge)
     const path = new GeneralPath()
     path.moveTo(hint.sourceStart)
     path.quadTo(edge.sourceNode.layout.center, hint.sourceEnd)
@@ -294,21 +214,15 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     path.quadTo(edge.targetNode.layout.center, hint.targetEnd)
     path.quadTo(hint.circleCenter, hint.sourceStart)
     path.close()
-
     return path.areaContains(location)
   }
-
   /**
    * Determines whether the edge is to be drawn at all. Because the edge visualization differs
    * from the straight line that makes up the 'real' edge, this implementation checks
    * instead if the bounding box of the circle and the viewport overlap.
-   * @param {!ICanvasContext} context
-   * @param {!Rect} rectangle
-   * @param {!IEdge} edge
-   * @returns {boolean}
    */
   isVisible(context, rectangle, edge) {
-    const hint = ChordEdgeStyle.getStyleHint(context, edge)
+    const hint = this.getStyleHint(edge)
     const radius = Math.abs(hint.circleCenter.distanceTo(hint.sourceStart))
     const bounding = new Rect(
       hint.circleCenter.x - radius,
@@ -318,31 +232,30 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     )
     return bounding.intersects(rectangle)
   }
-
   /**
    * Gets the hint object that the layout has provided.
-   * @param {!ICanvasContext} context
-   * @param {!IEdge} edge
-   * @returns {!EdgeStyleHints}
    */
-  static getStyleHint(context, edge) {
-    const graphComponent = context.canvasComponent
-    const mapper = graphComponent.graph.mapperRegistry.getMapper(ChordDiagramLayout.STYLE_HINT_KEY)
-    return mapper.get(edge)
+  getStyleHint(edge) {
+    return (
+      this.edgeStyleHints.get(edge) ?? {
+        circleCenter: Point.ORIGIN,
+        sourceStart: Point.ORIGIN,
+        sourceEnd: Point.ORIGIN,
+        targetStart: Point.ORIGIN,
+        targetEnd: Point.ORIGIN
+      }
+    )
   }
 }
-
 class EdgeRenderDataCache {
-  /**
-   * @param {!Point} sourceStart
-   * @param {!Point} sourceEnd
-   * @param {!Point} targetStart
-   * @param {!Point} targetEnd
-   * @param {!Point} circleCenter
-   * @param {boolean} highlighted
-   * @param {number} opacity
-   * @param {boolean} showStyleHints
-   */
+  sourceStart
+  sourceEnd
+  targetStart
+  targetEnd
+  circleCenter
+  highlighted
+  opacity
+  showStyleHints
   constructor(
     sourceStart,
     sourceEnd,
@@ -353,20 +266,15 @@ class EdgeRenderDataCache {
     opacity,
     showStyleHints
   ) {
-    this.showStyleHints = showStyleHints
-    this.opacity = opacity
-    this.highlighted = highlighted
-    this.circleCenter = circleCenter
-    this.targetEnd = targetEnd
-    this.targetStart = targetStart
-    this.sourceEnd = sourceEnd
     this.sourceStart = sourceStart
+    this.sourceEnd = sourceEnd
+    this.targetStart = targetStart
+    this.targetEnd = targetEnd
+    this.circleCenter = circleCenter
+    this.highlighted = highlighted
+    this.opacity = opacity
+    this.showStyleHints = showStyleHints
   }
-
-  /**
-   * @param {!EdgeRenderDataCache} [other]
-   * @returns {boolean}
-   */
   equals(other) {
     return other == null
       ? false

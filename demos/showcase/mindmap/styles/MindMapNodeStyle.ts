@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,24 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { type INode, type IRenderContext, NodeStyleBase, type Size, SvgVisual } from 'yfiles'
+import {
+  type INode,
+  type IRenderContext,
+  NodeStyleBase,
+  type Size,
+  SvgVisual,
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
 import { getNodeData } from '../data-types'
 
 /**
  * Augment the SvgVisual type with the data used to cache the rendering information.
  */
-declare type CachedElement = SVGElement & {
-  cache?: {
-    size: Size
-    color: string
-  }
+type Cache = {
+  size: Size
+  color: string
 }
+type MindMapNodeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 /**
  * The node style used for the non-root nodes of the mind map.
  * Each node will be represented by a colored line based on its level in the mind map.
  */
-export class MindMapNodeStyle extends NodeStyleBase {
+export class MindMapNodeStyle extends NodeStyleBase<MindMapNodeStyleVisual> {
   /**
    * Creates a new instance of this style using the given class name.
    * @param className The css class attributed to the node.
@@ -56,31 +62,44 @@ export class MindMapNodeStyle extends NodeStyleBase {
    * Creates the visual for this node style.
    * The node will be represented by a colored line.
    */
-  createVisual(renderContext: IRenderContext, node: INode): SvgVisual {
+  createVisual(renderContext: IRenderContext, node: INode): MindMapNodeStyleVisual {
     // create a container element
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-    this.render(renderContext, node, g as CachedElement)
+    this.render(renderContext, node, g)
     // move the container to the node position
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
-    return new SvgVisual(g)
+    // store the data used to create the elements with the container
+    return SvgVisual.from(g, {
+      size: node.layout.toSize(),
+      color: getNodeData(node).color
+    })
   }
 
   /**
    * Updates the node visual.
    * If the size or color of the node has changed, a new visual will be created.
    */
-  updateVisual(renderContext: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
-    const container = oldVisual.svgElement as CachedElement
+  updateVisual(
+    renderContext: IRenderContext,
+    oldVisual: MindMapNodeStyleVisual,
+    node: INode
+  ): MindMapNodeStyleVisual {
+    const container = oldVisual.svgElement
     const nodeData = getNodeData(node)
     const nodeSize = node.layout.toSize()
 
     // check if the data used to create the visualization has changed
-    if (!nodeSize.equals(container.cache!.size) || nodeData.color !== container.cache!.color) {
+    if (!nodeSize.equals(oldVisual.tag.size) || nodeData.color !== oldVisual.tag.color) {
       // remove the old elements and re-render the node
       while (container.firstChild) {
         container.removeChild(container.firstChild)
       }
       this.render(renderContext, node, container)
+      // updates the cached information for the rendering
+      oldVisual.tag = {
+        size: nodeSize,
+        color: nodeData.color
+      }
     }
     // move the container to the node position
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
@@ -88,10 +107,9 @@ export class MindMapNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Creates the line svg element, adds it to the container and updates the cached information
-   * for the rendering.
+   * Creates the line svg element and adds it to the container.
    */
-  render(renderContext: IRenderContext, node: INode, container: CachedElement): void {
+  render(renderContext: IRenderContext, node: INode, container: SVGGElement): void {
     const nodeData = getNodeData(node)
     const color = nodeData.color
     const size = node.layout.toSize()
@@ -105,7 +123,5 @@ export class MindMapNodeStyle extends NodeStyleBase {
     line.setAttribute('stroke', color)
 
     container.appendChild(line)
-    // store the data used to create the elements with the container
-    container.cache = { size, color }
   }
 }

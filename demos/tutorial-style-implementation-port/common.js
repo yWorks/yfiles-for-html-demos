@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,6 @@
 import {
   BaseClass,
   CreateEdgeInputMode,
-  DefaultLabelStyle,
   FreeNodePortLocationModel,
   GraphComponent,
   GraphEditorInputMode,
@@ -39,29 +38,22 @@ import {
   IPort,
   IPortCandidateProvider,
   IVisualCreator,
+  LabelStyle,
   MouseWheelBehaviors,
+  PointerType,
   PolylineEdgeStyle,
   ScrollBarVisibility,
   ShapeNodeStyle,
   SvgVisual
-} from 'yfiles'
-import { CustomPortStyle } from './05-hit-testing/CustomPortStyle.js'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-/**
- * @param {!IGraph} graph
- */
+} from '@yfiles/yfiles'
+import { CustomPortStyle } from './05-hit-testing/CustomPortStyle'
 export function createSimpleGraph(graph) {
   const node1 = graph.createNode()
   const node2 = graph.createNode({
     layout: [100, 200, 30, 30]
   })
-
   graph.createEdge({ source: node1, target: node2 })
 }
-
-/**
- * @param {!IGraph} graph
- */
 export function createSampleGraphColoring(graph) {
   const nodeCount = 20
   const r = 200
@@ -71,7 +63,7 @@ export function createSampleGraphColoring(graph) {
     const node = graph.createNodeAt([x, y])
     graph.addPort({
       owner: node,
-      locationParameter: FreeNodePortLocationModel.NODE_CENTER_ANCHORED
+      locationParameter: FreeNodePortLocationModel.CENTER
     })
   }
   for (let i = 1; i < nodeCount; i++) {
@@ -84,33 +76,28 @@ export function createSampleGraphColoring(graph) {
   const node1 = graph.createNodeAt([-200, -200])
   graph.addPort({
     owner: node1,
-    locationParameter: FreeNodePortLocationModel.NODE_CENTER_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.CENTER,
     tag: { color: '#9e7cb5' }
   })
   const node2 = graph.createNodeAt([200, -200])
   graph.addPort({
     owner: node2,
-    locationParameter: FreeNodePortLocationModel.NODE_CENTER_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.CENTER,
     tag: { color: '#9e7cb5' }
   })
   const node3 = graph.createNodeAt([-200, 200])
   graph.addPort({
     owner: node3,
-    locationParameter: FreeNodePortLocationModel.NODE_CENTER_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.CENTER,
     tag: { color: '#9e7cb5' }
   })
   const node4 = graph.createNodeAt([200, 200])
   graph.addPort({
     owner: node4,
-    locationParameter: FreeNodePortLocationModel.NODE_CENTER_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.CENTER,
     tag: { color: '#9e7cb5' }
   })
 }
-
-/**
- * @param {!IGraph} graph
- * @param {!IPortStyle} oldCustomPortStyle
- */
 export function createSampleGraphIsHit(graph, oldCustomPortStyle) {
   const redNodeStyle = new ShapeNodeStyle({
     shape: 'round-rectangle',
@@ -125,71 +112,45 @@ export function createSampleGraphIsHit(graph, oldCustomPortStyle) {
     layout: [100, 150, 40, 40],
     style: redNodeStyle
   })
-  const port3 = graph.addPort(
-    node3,
-    FreeNodePortLocationModel.NODE_CENTER_ANCHORED,
-    oldCustomPortStyle
-  )
-  const port4 = graph.addPort(
-    node4,
-    FreeNodePortLocationModel.NODE_CENTER_ANCHORED,
-    oldCustomPortStyle
-  )
+  const port3 = graph.addPort(node3, FreeNodePortLocationModel.CENTER, oldCustomPortStyle)
+  const port4 = graph.addPort(node4, FreeNodePortLocationModel.CENTER, oldCustomPortStyle)
   graph.createEdge({ sourcePort: port3, targetPort: port4 })
-
   const node1 = graph.createNode([100, 0, 40, 40])
   const node2 = graph.createNode([200, 150, 40, 40])
-
   graph.createEdge({ source: node1, target: node2 })
 }
-
-/**
- * @param {!IGraph} graph
- */
 export function createSampleGraphEdgeCropping(graph) {
   const node1 = graph.createNode([100, 0, 40, 40])
   const node2 = graph.createNode([100, 80, 40, 40])
-
   addPorts(graph, node1)
   addPorts(graph, node2)
-
   graph.createEdge({
     sourcePort: node1.ports.get(1),
     targetPort: node2.ports.get(0)
   })
 }
-
-/**
- * @param {!IGraph} graph
- * @param {!INode} node
- */
 function addPorts(graph, node) {
   graph.addPort({
     owner: node,
-    locationParameter: FreeNodePortLocationModel.NODE_TOP_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.TOP,
     tag: { color: 'rgba(108,159,68,0.5)' }
   })
   graph.addPort({
     owner: node,
-    locationParameter: FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.BOTTOM,
     tag: { color: 'rgba(108,159,68,0.5)' }
   })
   graph.addPort({
     owner: node,
-    locationParameter: FreeNodePortLocationModel.NODE_RIGHT_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.RIGHT,
     tag: { color: 'rgba(108,159,68,0.5)' }
   })
   graph.addPort({
     owner: node,
-    locationParameter: FreeNodePortLocationModel.NODE_LEFT_ANCHORED,
+    locationParameter: FreeNodePortLocationModel.LEFT,
     tag: { color: 'rgba(108,159,68,0.5)' }
   })
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- * @returns {!GraphEditorInputMode}
- */
 export function enableGraphEditing(graphComponent) {
   const graphEditorInputMode = new GraphEditorInputMode({
     allowAddLabel: false,
@@ -200,28 +161,19 @@ export function enableGraphEditing(graphComponent) {
   })
   graphComponent.inputMode = graphEditorInputMode
   graphComponent.graph.nodeDefaults.ports.autoCleanUp = false
-  graphComponent.graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory((node) =>
+  graphComponent.graph.decorator.nodes.portCandidateProvider.addFactory((node) =>
     IPortCandidateProvider.fromExistingPorts(node)
   )
   return graphEditorInputMode
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- * @param {!GraphEditorInputMode} inputMode
- */
 export function addHoverEffect(graphComponent, inputMode) {
   const itemHoverInputMode = inputMode.itemHoverInputMode
   itemHoverInputMode.hoverItems = GraphItemTypes.PORT
   let hoveredItemHighlight = null
-
   function addHighlight(port) {
-    hoveredItemHighlight = graphComponent.inputModeGroup.addChild(
+    hoveredItemHighlight = graphComponent.renderTree.createElement(
+      graphComponent.renderTree.inputModeGroup,
       new (class extends BaseClass(IVisualCreator) {
-        /**
-         * @param {!IRenderContext} context
-         * @returns {?Visual}
-         */
         createVisual(context) {
           let el
           if (port.style instanceof CustomPortStyle) {
@@ -249,31 +201,28 @@ export function addHoverEffect(graphComponent, inputMode) {
           el.setAttribute('fill-opacity', '0.8')
           return new SvgVisual(el)
         }
-
-        /**
-         * @param {!IRenderContext} context
-         * @param {?Visual} oldVisual
-         * @returns {?Visual}
-         */
         updateVisual(context, oldVisual) {
           return this.createVisual(context)
         }
       })()
     )
   }
-
   function removeHighlight() {
-    hoveredItemHighlight?.remove()
-    hoveredItemHighlight = null
+    if (hoveredItemHighlight) {
+      graphComponent.renderTree.remove(hoveredItemHighlight)
+      hoveredItemHighlight = null
+    }
   }
-
-  itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+  itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     removeHighlight()
     if (evt.item instanceof IPort) {
       addHighlight(evt.item)
     }
   })
-  inputMode.addItemTappedListener((_, evt) => {
+  inputMode.addEventListener('item-clicked', (evt) => {
+    if (evt.pointerType !== PointerType.TOUCH) {
+      return
+    }
     removeHighlight()
     if (evt.item instanceof IPort) {
       addHighlight(evt.item)
@@ -281,28 +230,19 @@ export function addHoverEffect(graphComponent, inputMode) {
     }
   })
 }
-
-/**
- * @param {!string} selector
- * @returns {!GraphComponent}
- */
 export function initializeInlineGraphComponent(selector) {
   const graphComponent = new GraphComponent(selector)
   graphComponent.horizontalScrollBarPolicy = graphComponent.verticalScrollBarPolicy =
-    ScrollBarVisibility.NEVER
-  graphComponent.autoDrag = false
+    ScrollBarVisibility.HIDDEN
+  graphComponent.autoScrollOnBounds = false
   graphComponent.mouseWheelBehavior = MouseWheelBehaviors.NONE
   initializeTutorialDefaults(graphComponent)
   return graphComponent
 }
-
 /**
  * Initializes the default styles for nodes, edges, and labels.
- * @param {!GraphComponent} graphComponent
  */
 export function initializeTutorialDefaults(graphComponent) {
-  applyDemoTheme(graphComponent)
-
   graphComponent.focusIndicatorManager.enabled = false
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -310,32 +250,28 @@ export function initializeTutorialDefaults(graphComponent) {
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     shape: 'round-rectangle',
     textFill: '#042d37',
     backgroundFill: '#9dc6d0',
-    insets: 2,
+    padding: 2,
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
   })
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '1.5px #0b7189',
     targetArrow: '#0b7189 medium triangle'
   })
-
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#111d4a',
-    contentAreaInsets: 10
+    contentAreaPadding: 10
   })
 }
-
 /**
  * Fits the graph into the graph component with a minimum zoom value.
  * The graph will be slightly zoomed in to avoid that small graphs are displayed too small.
- * @param {!GraphComponent} graphComponent
- * @param {number} [minimumZoom=3]
  */
 export function fitGraphBounds(graphComponent, minimumZoom = 3) {
   graphComponent.limitFitContentZoom = false
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
   graphComponent.zoom = Math.min(graphComponent.zoom, minimumZoom)
 }

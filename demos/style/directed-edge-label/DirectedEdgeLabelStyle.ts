@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,10 +36,11 @@ import {
   Matrix,
   Size,
   SvgVisual,
+  type TaggedSvgVisual,
   TextRenderSupport,
   TextWrapping
-} from 'yfiles'
-import { colorSets } from 'demo-resources/demo-styles'
+} from '@yfiles/yfiles'
+import { colorSets } from '@yfiles/demo-resources/demo-styles'
 
 const HORIZONTAL_INSET = 3
 const VERTICAL_INSET = 2
@@ -47,11 +48,16 @@ const ARROW_SIZE = 18
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
 
 /**
+ * Augment the SvgVisual type with the data used to cache the rendering information
+ */
+type DirectedEdgeLabelStyleVisual = TaggedSvgVisual<SVGGElement, LabelRenderDataCache>
+
+/**
  * A label style for edges which renders a flow indicator.
  * The indicator points to the edge's source or target,
  * depending on the 'toSource' setting.
  */
-export class DirectedEdgeLabelStyle extends LabelStyleBase {
+export class DirectedEdgeLabelStyle extends LabelStyleBase<DirectedEdgeLabelStyleVisual> {
   /** Whether the indicator points to the source */
   public toSource = false
   /** The text color */
@@ -81,7 +87,7 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
   /**
    * Creates the visual for a label to be drawn.
    */
-  createVisual(context: IRenderContext, label: ILabel): SvgVisual {
+  createVisual(context: IRenderContext, label: ILabel): DirectedEdgeLabelStyleVisual {
     // Create a 'g' element and uses it as base for the rendering of the label.
     const container = document.createElementNS(SVG_NAMESPACE, 'g')
 
@@ -103,7 +109,8 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, false)
     transform.applyTo(container)
 
-    return new SvgVisual(container)
+    // store information with the visual on how we created it
+    return SvgVisual.from(container, cache)
   }
 
   /**
@@ -117,10 +124,8 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
       // fallback if the label has been removed or is not at an edge
       return ArrowDirection.UP
     }
-    const center = label.layout.orientedRectangleCenter
-    const target = this.toSource
-      ? label.owner.sourcePort?.location
-      : label.owner.targetPort?.location
+    const center = label.layout.center
+    const target = this.toSource ? label.owner.sourcePort.location : label.owner.targetPort.location
     if (!target) {
       // fallback if the edge has been removed
       return ArrowDirection.UP
@@ -140,12 +145,14 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase.updateVisual}
    */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, label: ILabel): SvgVisual {
-    const container = oldVisual.svgElement as SVGElement & {
-      'data-renderDataCache': LabelRenderDataCache
-    }
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: DirectedEdgeLabelStyleVisual,
+    label: ILabel
+  ): DirectedEdgeLabelStyleVisual {
+    const container = oldVisual.svgElement
     // get the data with which the old visual was created
-    const oldCache = container['data-renderDataCache']
+    const oldCache = oldVisual.tag
     // get the data for the new visual
     const newCache = DirectedEdgeLabelStyle.createRenderDataCache(
       context,
@@ -161,6 +168,7 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     if (!newCache.equals(oldCache)) {
       // something changed - re-render the visual
       this.render(container, label.layout, newCache)
+      oldVisual.tag = newCache
     }
     // nothing changed, return the old visual
     // arrange because the layout might have changed
@@ -173,13 +181,10 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
    * Creates the visual appearance of a label.
    */
   private render(
-    container: SVGElement & { 'data-renderDataCache'?: LabelRenderDataCache },
+    container: SVGGElement,
     labelLayout: IOrientedRectangle,
     cache: LabelRenderDataCache
   ): void {
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
-
     // The background rectangle
     let rect: SVGRectElement
     if (container.childElementCount > 0) {

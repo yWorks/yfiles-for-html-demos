@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,50 +39,31 @@ import {
   Point,
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs
-} from 'yfiles'
-import { ContextMenu } from 'demo-utils/ContextMenu'
-
+} from '@yfiles/yfiles'
 export default class ContextMenuSupport {
-  /**
-   * @param {!GraphComponent} graphComponent
-   * @param {!function} runLayout
-   */
+  graphComponent
+  runLayout
   constructor(graphComponent, runLayout) {
-    this.runLayout = runLayout
     this.graphComponent = graphComponent
+    this.runLayout = runLayout
   }
-
   createContextMenu() {
     const inputMode = this.graphComponent.inputMode
-    const contextMenu = new ContextMenu(this.graphComponent)
-    contextMenu.addOpeningEventListeners(this.graphComponent, (location) => {
-      const worldLocation = this.graphComponent.toWorldFromPage(location)
-      const showMenu = inputMode.contextMenuInputMode.shouldOpenMenu(worldLocation)
-      if (showMenu) {
-        contextMenu.show(location)
-      }
-    })
-    inputMode.addPopulateItemContextMenuListener((_, evt) =>
-      this.populateContextMenu(contextMenu, evt)
-    )
-    inputMode.contextMenuInputMode.addCloseMenuListener(() => contextMenu.close())
-    contextMenu.onClosedCallback = () => inputMode.contextMenuInputMode.menuClosed()
+    inputMode.addEventListener('populate-item-context-menu', (evt) => this.populateContextMenu(evt))
   }
-
   /**
    * Adds menu items to the context menu depending on what type of graph element was hit.
-   * @param {!ContextMenu} contextMenu
-   * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args
    */
-  populateContextMenu(contextMenu, args) {
-    contextMenu.clearItems()
-
+  populateContextMenu(args) {
+    if (args.handled) {
+      return
+    }
     const item = args.item
     this.updateSelection(item)
     const graph = this.graphComponent.graph
-    if (IEdge.isInstance(item)) {
-      const selectedEdges = this.graphComponent.selection.selectedEdges.toArray()
-
+    if (item instanceof IEdge) {
+      const selectedEdges = this.graphComponent.selection.edges.toArray()
+      const menuItems = []
       if (
         selectedEdges.length > 1 &&
         selectedEdges.some((edge1) =>
@@ -96,21 +77,22 @@ export default class ContextMenuSupport {
           )
         )
       ) {
-        args.showMenu = true
-        contextMenu.addMenuItem('Align Selected Edges', () =>
-          this.alignSelectedEdges(selectedEdges)
-        )
+        menuItems.push({
+          label: 'Align Selected Edges',
+          action: () => this.alignSelectedEdges(selectedEdges)
+        })
       }
       if (
         selectedEdges.some((edge) => edge.tag && (edge.tag.sourceSplitId || edge.tag.targetSplitId))
       ) {
-        args.showMenu = true
-        contextMenu.addMenuItem('Unalign Selected Edges', () =>
-          this.unalignSelectedEdges(selectedEdges)
-        )
-        contextMenu.addMenuItem('Join Inter-Edges', () =>
-          this.joinInterEdgesAtGroups(selectedEdges)
-        )
+        menuItems.push({
+          label: 'Unalign Selected Edges',
+          action: () => this.unalignSelectedEdges(selectedEdges)
+        })
+        menuItems.push({
+          label: 'Join Inter-Edges',
+          action: () => this.joinInterEdgesAtGroups(selectedEdges)
+        })
       }
       if (
         selectedEdges.some((edge) => {
@@ -123,22 +105,23 @@ export default class ContextMenuSupport {
           )
         })
       ) {
-        args.showMenu = true
-        contextMenu.addMenuItem('Split Inter-Edges', () =>
-          this.splitInterEdgesAtGroups(selectedEdges)
-        )
+        menuItems.push({
+          label: 'Split Inter-Edges',
+          action: () => this.splitInterEdgesAtGroups(selectedEdges)
+        })
+      }
+      if (menuItems.length > 0) {
+        args.contextMenu = menuItems
       }
     } else if (item instanceof INode && graph.isGroupNode(item)) {
-      args.showMenu = true
-      contextMenu.addMenuItem('Split Inter-Edges', () => this.splitInterEdgesAtGroup(item))
-      contextMenu.addMenuItem('Join Inter-Edges', () => this.joinInterEdgesAtGroup(item))
+      args.contextMenu = [
+        { label: 'Split Inter-Edges', action: () => this.splitInterEdgesAtGroup(item) },
+        { label: 'Join Inter-Edges', action: () => this.joinInterEdgesAtGroup(item) }
+      ]
     }
   }
-
   /**
    * Ads the same split ids to the given edges.
-   * @param {!Array.<IEdge>} edges
-   * @returns {!Promise}
    */
   async alignSelectedEdges(edges) {
     const graph = this.graphComponent.graph
@@ -176,29 +159,21 @@ export default class ContextMenuSupport {
         ContextMenuSupport.updateEdgeColor(edge1, color)
       }
     })
-
     await this.runLayout()
   }
-
   /**
    * Updates the color of the edge.
-   * @param {!IEdge} edge
-   * @param {!string} color
    */
   static updateEdgeColor(edge, color) {
     const edgeStyle = edge.style
     edgeStyle.stroke = `3px ${color}`
     edgeStyle.targetArrow = `${color} 1.5 triangle`
   }
-
   /**
    * Removes the edges split ids.
-   * @param {!Array.<IEdge>} edges
-   * @returns {!Promise}
    */
   async unalignSelectedEdges(edges) {
     const graph = this.graphComponent.graph
-
     // unalign predecessor and successor edges that have the same split id but there is no edge to align, anymore
     edges.forEach((edge) => {
       const sourceNode = edge.sourceNode
@@ -240,23 +215,17 @@ export default class ContextMenuSupport {
           }
         })
       }
-
       // unalign the edge
       edge.tag = null
       graph.setStyle(edge, this.graphComponent.graph.edgeDefaults.style.clone())
     })
-
     await this.runLayout()
   }
-
   /**
    * Joins all edges with the same split id as the given edges.
-   * @param {!Array.<IEdge>} edges
-   * @returns {!Promise}
    */
   async joinInterEdgesAtGroups(edges) {
     const graph = this.graphComponent.graph
-
     const visited = []
     edges.forEach((edge) => {
       if (visited.includes(edge)) {
@@ -316,14 +285,10 @@ export default class ContextMenuSupport {
     visited.forEach((edge) => {
       graph.remove(edge)
     })
-
     await this.runLayout()
   }
-
   /**
    * Splits the inter-edges at all groups that they are crossing.
-   * @param {!Array.<IEdge>} interEdges
-   * @returns {!Promise}
    */
   async splitInterEdgesAtGroups(interEdges) {
     const graph = this.graphComponent.graph
@@ -332,7 +297,6 @@ export default class ContextMenuSupport {
         edge.sourceNode,
         edge.targetNode
       )
-
       let splitId
       let color
       if (
@@ -424,14 +388,10 @@ export default class ContextMenuSupport {
       )
       graph.remove(edge)
     })
-
     await this.runLayout()
   }
-
   /**
    * Splits all inter-edges a the given group.
-   * @param {!INode} group
-   * @returns {!Promise}
    */
   async splitInterEdgesAtGroup(group) {
     const graph = this.graphComponent.graph
@@ -449,7 +409,6 @@ export default class ContextMenuSupport {
         )
         .forEach((edge) => interEdges.push(edge))
     })
-
     interEdges.forEach((edge) => {
       let splitId
       let color
@@ -487,16 +446,11 @@ export default class ContextMenuSupport {
       graph.setPortLocation(targetEdge.sourcePort, intersection)
       graph.remove(edge)
     })
-
     await this.runLayout()
   }
-
   /**
    * Finds the intersection point of the given edge and group. This is used for placing the edge ports for a smoother
    * animation when edges are split.
-   * @param {!IEdge} edge
-   * @param {!INode} group
-   * @returns {!Point}
    */
   getIntersection(edge, group) {
     const groupingSupport = this.graphComponent.graph.groupingSupport
@@ -506,7 +460,6 @@ export default class ContextMenuSupport {
     let outer = groupingSupport.isDescendant(edge.sourceNode, group)
       ? edge.targetPort
       : edge.sourcePort
-
     // find the intersecting segment of the edge
     let foundInner = false
     let lastBend = inner
@@ -520,17 +473,13 @@ export default class ContextMenuSupport {
       }
       lastBend = bend
     })
-
     // find the intersection point
     return group.layout
       .toRect()
       .findLineIntersection(inner.location.toPoint(), outer.location.toPoint())
   }
-
   /**
    * Joins all edges with the same split ids that connect to the given group from outside and inside of the group.
-   * @param {!INode} group
-   * @returns {!Promise}
    */
   async joinInterEdgesAtGroup(group) {
     const graph = this.graphComponent.graph
@@ -555,17 +504,10 @@ export default class ContextMenuSupport {
           graph.remove(edge)
         }
       })
-
     await this.runLayout()
   }
-
   /**
    * Creates an edges that is associated with a specific split id and color.
-   * @param {!INode} source
-   * @param {!INode} target
-   * @param {!object} splitId
-   * @param {!string} color
-   * @returns {!IEdge}
    */
   createSplitEdge(source, target, splitId, color) {
     return this.graphComponent.graph.createEdge({
@@ -576,7 +518,8 @@ export default class ContextMenuSupport {
         targetArrow: new Arrow({
           fill: color,
           type: ArrowType.TRIANGLE,
-          scale: 1.5
+          widthScale: 1.5,
+          lengthScale: 1.5
         }),
         smoothingLength: 15
       }),
@@ -587,29 +530,26 @@ export default class ContextMenuSupport {
       }
     })
   }
-
   /**
    * Updates the selection when an item is right-clicked for a context menu.
-   * @param {!(INode|IEdge)} item
    */
   updateSelection(item) {
     const selection = this.graphComponent.selection
     if (!item) {
       selection.clear()
-    } else if (!selection.isSelected(item)) {
+    } else if (!selection.includes(item)) {
       selection.clear()
-      selection.setSelected(item, true)
+      selection.add(item)
     } else {
-      if (IEdge.isInstance(item)) {
-        selection.selectedNodes.clear()
+      if (item instanceof IEdge) {
+        selection.nodes.clear()
       } else {
-        selection.selectedEdges.clear()
+        selection.edges.clear()
       }
-      selection.setSelected(item, true)
+      selection.add(item)
     }
   }
 }
-
 const colors = [
   'forestgreen',
   'mediumvioletred',
@@ -626,12 +566,9 @@ const colors = [
   'orange',
   'mediumslateblue'
 ]
-/** @type {number} */
 let colorIndex = 0
-
 /**
  * Returns the next color.
- * @returns {!string}
  */
 function getColor() {
   const index = colorIndex++ % colors.length

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,15 +37,14 @@ import {
   License,
   Point,
   Size,
-  WebGL2FocusIndicatorManager,
-  WebGL2GraphModelManager,
-  WebGL2HighlightIndicatorManager,
-  WebGL2SelectionIndicatorManager
-} from 'yfiles'
-
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { checkWebGL2Support, finishLoading } from 'demo-resources/demo-page'
-import { preloadWebGL2Styles } from './preload-webgl2-styles.js'
+  WebGLFocusIndicatorManager,
+  WebGLGraphModelManager,
+  WebGLHighlightIndicatorManager,
+  WebGLSelectionIndicatorManager
+} from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { preloadWebglStyles } from './preload-webgl-styles'
 import {
   edgeFocusStyle,
   edgeHighlightStyle,
@@ -56,91 +55,65 @@ import {
   nodeFocusStyle,
   nodeHighlightStyle,
   nodeSelectionStyle,
-  webGL2EdgeStyles,
-  webGL2LabelStyles,
-  webGL2NodeStyles
-} from './webgl2-styles.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-
+  webGLEdgeStyles,
+  webGLLabelStyles,
+  webGLNodeStyles
+} from './webgl-styles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 const webGLLoadingOverlay = document.querySelector('.webgl-loading')
-
 /**
- * A WebGL2GraphModelManager that uses callbacks for graph items to determine their WebGL2 styles.
+ * A WebGLGraphModelManager that uses callbacks for graph items to determine their WebGL styles.
  */
-export class MyWebGL2GraphModelManager extends WebGL2GraphModelManager {
-  /**
-   * @param {!function} nodeStyle
-   * @param {!function} edgeStyle
-   * @param {!function} labelStyle
-   */
+export class MyWebGLGraphModelManager extends WebGLGraphModelManager {
+  nodeStyle
+  edgeStyle
+  labelStyle
   constructor(nodeStyle, edgeStyle, labelStyle) {
     super()
-    this.labelStyle = labelStyle
-    this.edgeStyle = edgeStyle
     this.nodeStyle = nodeStyle
+    this.edgeStyle = edgeStyle
+    this.labelStyle = labelStyle
   }
-  /**
-   * @param {!INode} node
-   */
-  getWebGL2NodeStyle(node) {
+  getWebGLNodeStyle(node) {
     return this.nodeStyle(node)
   }
-
-  /**
-   * @param {!IEdge} edge
-   */
-  getWebGL2EdgeStyle(edge) {
+  getWebGLEdgeStyle(edge) {
     return this.edgeStyle(edge)
   }
-
-  /**
-   * @param {!ILabel} label
-   */
-  getWebGL2LabelStyle(label) {
+  getWebGLLabelStyle(label) {
     return this.labelStyle(label)
   }
 }
-
 /**
  * Bootstraps the demo.
- * @returns {!Promise}
  */
 async function run() {
   if (!checkWebGL2Support()) {
     return
   }
-
   License.value = await fetchLicense()
-
   const graphComponentWithoutPreload = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponentWithoutPreload)
   const graphComponentWithPreload = new GraphComponent('#graphComponentWithPreload')
-  applyDemoTheme(graphComponentWithPreload)
-
   const demoNodeSize = new Size(40, 40)
-
   for (const graphComponent of [graphComponentWithoutPreload, graphComponentWithPreload]) {
     graphComponent.graph.nodeDefaults.size = demoNodeSize
     initDemoStyles(graphComponent.graph)
-
     initializeInteraction(graphComponent)
-
     createGraph(graphComponent.graph)
-    graphComponent.fitGraphBounds()
+    void graphComponent.fitGraphBounds()
   }
-
   document.getElementById('webgl-button').addEventListener('click', async () => {
     // show loading screen
     webGLLoadingOverlay.classList.add('loading')
     // wait for a frame to give the browser a chance to actually render the loading screen
     await new Promise((resolve) => setTimeout(resolve, 0))
-    // set rendering mode to WebGL2 on the component without preload to show the difference
+    // set rendering mode to WebGL on the component without preload to show the difference
     enableWebGLRendering(graphComponentWithoutPreload)
-    // preload all the WebGL2 styles that we want to use
-    await preloadWebGL2Styles(
-      ...webGL2NodeStyles,
-      ...webGL2EdgeStyles,
-      ...webGL2LabelStyles,
+    // preload all the WebGL styles that we want to use
+    await preloadWebglStyles(
+      ...webGLNodeStyles,
+      ...webGLEdgeStyles,
+      ...webGLLabelStyles,
       nodeSelectionStyle,
       nodeFocusStyle,
       nodeHighlightStyle,
@@ -151,55 +124,47 @@ async function run() {
       labelFocusStyle,
       labelHighlightStyle
     )
-    // set rendering mode to WebGL2 only after the preload is finished
+    // set rendering mode to WebGL only after the preload is finished
     // also hide loading screen when remaining shaders are compiled
     enableWebGLRendering(graphComponentWithPreload, () =>
       webGLLoadingOverlay.classList.remove('loading')
     )
   })
 }
-
 /**
- * Enables WebGL2 as the rendering technique.
- * @param {!GraphComponent} graphComponent
- * @param {!function} [afterCompileAction]
+ * Enables WebGL as the rendering technique.
  */
 function enableWebGLRendering(graphComponent, afterCompileAction) {
-  const myWebGL2GraphModelManager = new MyWebGL2GraphModelManager(
-    (node) => webGL2NodeStyles[(node.tag || 0) % webGL2NodeStyles.length],
-    (edge) => webGL2EdgeStyles[(edge.tag || 0) % webGL2EdgeStyles.length],
-    (label) => webGL2LabelStyles[(label.tag || 0) % webGL2LabelStyles.length]
+  const myWebGLGraphModelManager = new MyWebGLGraphModelManager(
+    (node) => webGLNodeStyles[(node.tag || 0) % webGLNodeStyles.length],
+    (edge) => webGLEdgeStyles[(edge.tag || 0) % webGLEdgeStyles.length],
+    (label) => webGLLabelStyles[(label.tag || 0) % webGLLabelStyles.length]
   )
-
   if (afterCompileAction) {
-    myWebGL2GraphModelManager.addShadersCompiledListener(() => {
+    myWebGLGraphModelManager.addEventListener('shaders-compiled', () => {
       afterCompileAction()
-      myWebGL2GraphModelManager.removeShadersCompiledListener(afterCompileAction)
+      myWebGLGraphModelManager.removeEventListener('shaders-compiled', afterCompileAction)
     })
   }
-
-  graphComponent.graphModelManager = myWebGL2GraphModelManager
-
-  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager({
+  graphComponent.graphModelManager = myWebGLGraphModelManager
+  graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager({
     nodeStyle: nodeSelectionStyle,
     edgeStyle: edgeSelectionStyle,
     nodeLabelStyle: labelSelectionStyle
   })
-  graphComponent.focusIndicatorManager = new WebGL2FocusIndicatorManager({
+  graphComponent.focusIndicatorManager = new WebGLFocusIndicatorManager({
     nodeStyle: nodeFocusStyle,
     edgeStyle: edgeFocusStyle,
     nodeLabelStyle: labelFocusStyle
   })
-  graphComponent.highlightIndicatorManager = new WebGL2HighlightIndicatorManager({
+  graphComponent.highlightIndicatorManager = new WebGLHighlightIndicatorManager({
     nodeStyle: nodeHighlightStyle,
     edgeStyle: edgeHighlightStyle,
     nodeLabelStyle: labelHighlightStyle
   })
 }
-
 /**
  * Sets up an InputMode for the GraphComponent
- * @param {!GraphComponent} graphComponent
  */
 function initializeInteraction(graphComponent) {
   const inputMode = new GraphViewerInputMode({
@@ -207,25 +172,21 @@ function initializeInteraction(graphComponent) {
     focusableItems: GraphItemTypes.NONE
   })
   // toggle highlight state on right click
-  inputMode.addItemRightClickedListener((_, { item }) => {
-    const him = graphComponent.highlightIndicatorManager
-    if (him) {
-      const isHighlighted = him.selectionModel?.includes(item)
+  inputMode.addEventListener('item-right-clicked', ({ item }) => {
+    const highlights = graphComponent.highlights
+    if (highlights) {
+      const isHighlighted = highlights.includes(item)
       if (isHighlighted) {
-        him.removeHighlight(item)
+        highlights.remove(item)
       } else {
-        him.addHighlight(item)
+        highlights.add(item)
       }
     }
   })
   graphComponent.inputMode = inputMode
 }
-
 /**
  * Creates a sample graph arranged in a grid
- * @param {!IGraph} graph
- * @param {number} [width=10]
- * @param {number} [height=10]
  */
 function createGraph(graph, width = 10, height = 10) {
   const SIZE = 50
@@ -241,7 +202,6 @@ function createGraph(graph, width = 10, height = 10) {
       })
     }
   }
-
   for (let x = 0; x < width; ++x) {
     for (let y = 0; y < height; ++y) {
       const index = x * width + y
@@ -264,5 +224,4 @@ function createGraph(graph, width = 10, height = 10) {
     }
   }
 }
-
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  BezierEdgeStyle,
   IEdge,
   IGraph,
   IHandle,
@@ -37,10 +38,10 @@ import {
   PortRelocationHandle,
   PortRelocationHandleProvider,
   Visualization
-} from 'yfiles'
-import { FlowEdgeStyle } from './FlowEdgeStyle'
+} from '@yfiles/yfiles'
 import { validatePortTag } from '../FlowNode/FlowNodePort'
 import { getSmoothEdgeControlPoints } from './FlowEdge'
+import { FlowEdgeStyle } from './FlowEdgeStyle'
 
 /**
  * A handle provider that provides port relocation handles that look the same as the handles
@@ -58,7 +59,7 @@ export class FlowPortRelocationHandleProvider extends PortRelocationHandleProvid
     const portRelocationHandle = new FlowPortRelocationHandle(graph, edge, sourcePort)
     portRelocationHandle.showHitPortOwnerCandidatesOnly = false
     portRelocationHandle.addExistingPort = false
-    portRelocationHandle.visualization = Visualization.DUMMY
+    portRelocationHandle.visualization = Visualization.PLACEHOLDER
     return portRelocationHandle
   }
 }
@@ -86,10 +87,13 @@ class FlowPortRelocationHandle extends PortRelocationHandle {
   initializeDrag(context: IInputModeContext): void {
     super.initializeDrag(context)
     this.fixedPort = this.sourceEnd ? this.edge.targetPort : this.edge.sourcePort
-    this.originalBendLocations = this.edge.bends.map(bend => bend.location.toPoint()).toArray()
-    this.getGraph(context)?.setStyle(this.edge, new FlowEdgeStyle('edgeReconnection'))
-    if (this.dummyEdge) {
-      this.dummyEdge.style = new FlowEdgeStyle('edgeReconnection')
+    this.originalBendLocations = this.edge.bends.map((bend) => bend.location.toPoint()).toArray()
+    this.getGraph(context)?.setStyle(
+      this.edge,
+      new FlowEdgeStyle(new BezierEdgeStyle(), 'edgeReconnection')
+    )
+    if (this.previewEdge) {
+      this.previewEdge.style = new FlowEdgeStyle(new BezierEdgeStyle(), 'edgeReconnection')
     }
   }
 
@@ -136,6 +140,6 @@ class FlowPortRelocationHandle extends PortRelocationHandle {
    */
   dragFinished(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
     super.dragFinished(context, originalLocation, newLocation)
-    this.getGraph(context)?.setStyle(this.edge, new FlowEdgeStyle())
+    this.getGraph(context)?.setStyle(this.edge, new FlowEdgeStyle(new BezierEdgeStyle()))
   }
 }

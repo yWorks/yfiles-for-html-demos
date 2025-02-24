@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,13 +31,13 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Events Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="style.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -145,16 +143,6 @@
                   Click Events
                 </label>
               </li>
-              <li data-tooltip="Events dispatched by TapInputMode on touch devices.">
-                <label>
-                  <input
-                    type="checkbox"
-                    data-action="ToggleEvents"
-                    data-event-kind="TapInputMode"
-                  />
-                  Tap Events
-                </label>
-              </li>
               <li data-tooltip="Events dispatched by MoveInputMode when an item was moved.">
                 <label>
                   <input
@@ -190,15 +178,15 @@
                 </label>
               </li>
               <li
-                data-tooltip="Events dispatched by MouseHoverInputMode when an item was hovered for a certain amount of time (e.g. to show a ToolTip)."
+                data-tooltip="Events dispatched by ItemHoverInputMode when an item was hovered for a certain amount of time."
               >
                 <label>
                   <input
                     type="checkbox"
                     data-action="ToggleEvents"
-                    data-event-kind="MouseHoverInputMode"
+                    data-event-kind="ItemHoverInputMode"
                   />
-                  Mouse Hover Events
+                  Item Hover Events
                 </label>
               </li>
               <li data-tooltip="Events dispatched by TextEditorInputMode during Label Editing.">
@@ -253,16 +241,6 @@
                   Item Hover Events
                 </label>
               </li>
-              <li data-tooltip="Events dispatched by MoveLabelInputMode when a label was moved.">
-                <label>
-                  <input
-                    type="checkbox"
-                    data-action="ToggleEvents"
-                    data-event-kind="MoveLabelInputMode"
-                  />
-                  Move Label Events
-                </label>
-              </li>
               <li
                 data-tooltip="Events dispatched by an ItemDropInputMode during a drag and drop gesture."
               >
@@ -273,6 +251,18 @@
                     data-event-kind="ItemDropInputMode"
                   />
                   Drag and Drop Events
+                </label>
+              </li>
+              <li
+                data-tooltip="Events dispatched by an EditLabelInputMode when adding/editing labels."
+              >
+                <label>
+                  <input
+                    type="checkbox"
+                    data-action="ToggleEvents"
+                    data-event-kind="EditLabelInputMode"
+                  />
+                  Label Edit Events
                 </label>
               </li>
             </ul>
@@ -296,24 +286,14 @@
                   Clipboard Events
                 </label>
               </li>
-              <li data-tooltip="Dispatched when the mouse is moved or mouse buttons are pressed.">
+              <li data-tooltip="Dispatched when a pointer is moved or buttons are pressed.">
                 <label>
                   <input
                     type="checkbox"
                     data-action="ToggleEvents"
-                    data-event-kind="GraphComponentMouse"
+                    data-event-kind="GraphComponentPointer"
                   />
-                  Mouse Events
-                </label>
-              </li>
-              <li data-tooltip="Dispatched on touch devices upon touch interaction.">
-                <label>
-                  <input
-                    type="checkbox"
-                    data-action="ToggleEvents"
-                    data-event-kind="GraphComponentTouch"
-                  />
-                  Touch Events
+                  Pointer Events
                 </label>
               </li>
               <li data-tooltip="Dispatched when a key is pressed or released.">
@@ -458,7 +438,8 @@
           <li>Create, delete, move, resize and edit graph items.</li>
           <li>Drag and drop nodes, labels or ports from the palette.</li>
           <li>
-            Move the whole graph within the viewport by dragging the mouse (Ctrl-Drag in Edit Mode).
+            Move the whole graph within the viewport by dragging the mouse (<kbd>Ctrl</kbd>-Drag in
+            Edit Mode).
           </li>
           <li>Select and deselect graph items.</li>
           <li>Expand, collapse, enter and exit group nodes.</li>

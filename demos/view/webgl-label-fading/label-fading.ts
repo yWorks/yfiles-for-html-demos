@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { type GraphComponent, type WebGL2Animation, WebGL2GraphModelManager } from 'yfiles'
+import { type GraphComponent, type WebGLAnimation, WebGLGraphModelManager } from '@yfiles/yfiles'
 
 /**
  * Whether labels are currently faded.
@@ -34,14 +34,18 @@ import { type GraphComponent, type WebGL2Animation, WebGL2GraphModelManager } fr
 let labelsFaded = false
 
 /**
+ * Whether labels are currently animated.
+ */
+let animated = false
+/**
  * Animation used to fade the labels.
  */
-let labelsFadeAnimation: WebGL2Animation | null
+let labelsFadeAnimation: WebGLAnimation | null
 
 /**
  * Fade labels in/out depending on the configured threshold.
  */
-let toggleLabelVisibility: (graphComponent: GraphComponent) => void
+let toggleLabelVisibility: () => void
 
 /**
  * Registers label fading by adding the {@link toggleLabelVisibility} to zoom event of the
@@ -49,10 +53,10 @@ let toggleLabelVisibility: (graphComponent: GraphComponent) => void
  */
 export function registerLabelFading(graphComponent: GraphComponent, labelFadeThreshold: number) {
   if (toggleLabelVisibility) {
-    graphComponent.removeZoomChangedListener(toggleLabelVisibility)
+    graphComponent.removeEventListener('zoom-changed', toggleLabelVisibility)
   }
 
-  toggleLabelVisibility = (graphComponent: GraphComponent) => {
+  toggleLabelVisibility = () => {
     const zoom = graphComponent.zoom
     document.querySelector<HTMLSpanElement>('#current-zoom')!.textContent = `${Math.round(
       zoom * 100
@@ -64,51 +68,55 @@ export function registerLabelFading(graphComponent: GraphComponent, labelFadeThr
     }
   }
 
-  graphComponent.addZoomChangedListener(toggleLabelVisibility)
+  graphComponent.addEventListener('zoom-changed', toggleLabelVisibility)
 
   // trigger it once to apply the current state
-  toggleLabelVisibility(graphComponent)
+  toggleLabelVisibility()
 }
 
 /**
  * Fades out all labels by assigning a fade animation to them and starting it.
  */
 function fadeOutLabels(graphComponent: GraphComponent) {
-  if (labelsFaded || !(graphComponent.graphModelManager instanceof WebGL2GraphModelManager)) {
+  if (
+    (!animated && labelsFaded) ||
+    !(graphComponent.graphModelManager instanceof WebGLGraphModelManager)
+  ) {
     return
   }
-
   const graphModelManager = graphComponent.graphModelManager
-  labelsFaded = true
 
   labelsFadeAnimation = graphModelManager.createFadeAnimation({
     type: 'fade-out',
     timing: '500ms ease'
   })
 
+  animated = true
   graphComponent.graph.labels.forEach((label) => {
     graphModelManager.setAnimations(label, [labelsFadeAnimation!])
   })
-
-  labelsFadeAnimation.start()
+  labelsFadeAnimation?.start().then(() => {
+    labelsFaded = true
+    animated = false
+  })
 }
 
 /**
  * Fades in all labels by stopping the fade animation and subsequently removing it from the labels.
- * Note: When stopping a {@link WebGL2Animation} it runs "backward" and stays at the beginning.
+ * Note: When stopping a {@link WebGLAnimation} it runs "backward" and stays at the beginning.
  */
 function fadeInLabels(graphComponent: GraphComponent) {
-  if (!labelsFaded || !(graphComponent.graphModelManager instanceof WebGL2GraphModelManager)) {
+  if (
+    (!animated && !labelsFaded) ||
+    !(graphComponent.graphModelManager instanceof WebGLGraphModelManager)
+  ) {
     return
   }
 
-  labelsFaded = false
-  const graphModelManager = graphComponent.graphModelManager
-
+  animated = true
   labelsFadeAnimation?.stop().then(() => {
-    graphComponent.graph.labels.forEach((label) => {
-      graphModelManager.setAnimations(label, [])
-    })
+    labelsFaded = false
+    animated = false
   })
 
   labelsFadeAnimation = null

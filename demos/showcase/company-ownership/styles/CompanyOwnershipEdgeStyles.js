@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,15 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EdgeTypeEnum } from '../data-types.js'
+import { EdgeTypeEnum } from '../data-types'
 import {
   Arrow,
-  DefaultLabelStyle,
   EdgePathLabelModel,
   LabelDefaults,
+  LabelStyle,
   PolylineEdgeStyle
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 // configures the style of the edges based on their type
 const smoothingLength = 5
 const typeMap = {
@@ -57,31 +56,25 @@ const typeMap = {
     smoothingLength: 100
   })
 }
-
 /**
  * Returns the edge style for the given edge type.
- * @param {!CompanyRelationshipEdge} edge
- * @returns {!IEdgeStyle}
  */
 export function getEdgeStyle(edge) {
   return typeMap[edge.type]
 }
-
 // configures the style of the edge labels
-export const edgeLabelStyle = new DefaultLabelStyle({
+export const edgeLabelStyle = new LabelStyle({
   backgroundFill: '#D3D7D9',
   backgroundStroke: 'none',
   textFill: '#11232C',
   autoFlip: false,
-  insets: [3, 5, 3, 5],
+  padding: [3, 5, 3, 5],
   shape: 'round-rectangle'
 })
-
 // configures the edge label model parameter
 export const edgeLabelParameter = new EdgePathLabelModel({
   autoRotation: false
 }).createRatioParameter(0.5)
-
 // sets some defaults for the edge labels
 export const edgeLabelDefaults = new LabelDefaults({
   style: edgeLabelStyle,

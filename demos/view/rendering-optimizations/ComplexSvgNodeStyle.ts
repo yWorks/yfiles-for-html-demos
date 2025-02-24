@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,7 @@
 import {
   BaseClass,
   GeneralPath,
-  GeomUtilities,
+  GeometryUtilities,
   ICanvasContext,
   IInputModeContext,
   INode,
@@ -39,8 +39,9 @@ import {
   NodeStyleBase,
   Point,
   Rect,
-  SvgVisual
-} from 'yfiles'
+  SvgVisual,
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
 
 /**
  * This class manages an SVG element in the <defs> element.
@@ -90,6 +91,17 @@ class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
 }
 
 /**
+ * Augment the SvgVisual type with the data used to cache the rendering information
+ */
+type Cache = {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+type ComplexSvgNodeStyleVisual = TaggedSvgVisual<SVGUseElement, Cache>
+
+/**
  * An node style for complex SVG visualizations with an elliptical shape.
  *
  * Due to the complexity of the visualization, this style avoids duplicating all its SVG elements
@@ -102,7 +114,7 @@ class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
  *
  * In the current implementation, the type is given by the node's tag.
  */
-export default class ComplexSvgNodeStyle extends NodeStyleBase {
+export default class ComplexSvgNodeStyle extends NodeStyleBase<ComplexSvgNodeStyleVisual> {
   private static readonly IMAGES = [
     new SimpleSvgDefsCreator(document.querySelector<SVGElement>('#usericon_female1')!),
     new SimpleSvgDefsCreator(document.querySelector<SVGElement>('#usericon_female2')!),
@@ -134,7 +146,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * @see {@link updateVisual}
    * @see {@link ComplexSvgNodeStyle.updateVisual}
    */
-  createVisual(context: IRenderContext, node: INode): SvgVisual {
+  createVisual(context: IRenderContext, node: INode): ComplexSvgNodeStyleVisual {
     const useElement = document.createElementNS('http://www.w3.org/2000/svg', 'use')
 
     // get the defs creator
@@ -150,14 +162,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
     matrix.applyTo(useElement)
 
     // store the information about current node layout so we can efficiently update the element later
-    ;(useElement as any)['data-cache'] = {
-      x,
-      y,
-      width,
-      height
-    }
-
-    return new SvgVisual(useElement)
+    return SvgVisual.from(useElement, { x, y, width, height })
   }
 
   /**
@@ -169,11 +174,15 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * @returns The new or updated visual for the given node.
    * @see {@link ComplexSvgNodeStyle.createVisual}
    */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: ComplexSvgNodeStyleVisual,
+    node: INode
+  ): ComplexSvgNodeStyleVisual {
     const { x, y, width, height } = node.layout
 
     // get the cache we stored in the createVisual method
-    const cache = (oldVisual.svgElement as any)['data-cache']
+    const cache = oldVisual.tag
 
     // update width and height only if necessary
     if (cache.x !== x || cache.y !== y || cache.width !== width || cache.height !== height) {
@@ -223,7 +232,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
     const nodeLayout = node.layout.toRect()
     return (
       nodeLayout.contains(location) &&
-      GeomUtilities.ellipseContains(nodeLayout, location, context.hitTestRadius)
+      GeometryUtilities.ellipseContains(nodeLayout, location, context.hitTestRadius)
     )
   }
 
@@ -244,7 +253,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
     const eps = context.hitTestRadius
 
     const outline = this.getOutline(node)
-    if (outline.intersects(rectangle, eps)) {
+    if (outline.pathIntersects(rectangle, eps)) {
       return true
     }
     if (
@@ -267,7 +276,7 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
     if (!super.isInside(node, location)) {
       return false
     }
-    return GeomUtilities.ellipseContains(node.layout.toRect(), location, 0)
+    return GeometryUtilities.ellipseContains(node.layout.toRect(), location, 0)
   }
 
   /**
@@ -278,6 +287,6 @@ export default class ComplexSvgNodeStyle extends NodeStyleBase {
    * @see Overrides {@link NodeStyleBase.getIntersection}
    */
   getIntersection(node: INode, inner: Point, outer: Point): Point | null {
-    return GeomUtilities.findEllipseLineIntersection(node.layout.toRect(), inner, outer)
+    return GeometryUtilities.getEllipseLineIntersection(node.layout.toRect(), inner, outer)
   }
 }

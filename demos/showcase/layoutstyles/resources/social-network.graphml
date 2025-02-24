@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="int" attr.name="zOrder" y:attr.uri="http://www.yworks.com/xml/yfiles-z-order/1.0/zOrder"/>
 	<key id="d1" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
@@ -68,7 +68,7 @@
 			<sys:String x:Key="5" xmlns:sys="http://www.yworks.com/xml/yfiles-common/markup/primitives/2.0">data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJ1c2VyaWNvbl9mZW1hbGU0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iNzVweCIgaGVpZ2h0PSI3NXB4IiB2aWV3Qm94PSIwIDAgNzUgNzUiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KICA8Y2lyY2xlIGZpbGw9IiNFMERDQkYiIHN0cm9rZT0iI0RCRDZCOSIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBjeD0iMzcuNSIgY3k9IjM3LjUiIHI9IjM3Ii8+DQogIDxyZWN0IHg9IjE4LjQ1IiB5PSIyOS45MiIgZmlsbD0iIzY4NjI1RSIgd2lkdGg9IjM3LjY2IiBoZWlnaHQ9IjI2LjMxIi8+DQogIDxwYXRoIGZpbGw9IiNFQUQ2QkUiIGQ9Ik00Ny4xNyw1Mi41NWgtNS42OXYtNS42N2gtOC4zOXY1LjY3aC02LjUyYy03LjE3LDAtMTMuMDksNS4yNS0xNC4xNywxMi4xMmM2LjYsNi4xLDE1LjQyLDkuODMsMjUuMTEsOS44Mw0KICAgICAgYzkuMTUsMCwxNy41MS0zLjMzLDIzLjk3LTguODJDNjAuODQsNTguMzIsNTQuNjgsNTIuNTUsNDcuMTcsNTIuNTV6Ii8+DQogIDxwYXRoIGZpbGw9IiNFMkNDQjciIGQ9Ik00Ny4xNyw1Mi41NWgtNS42OXYtNS42N0gzNy41djI3LjY0YzkuMTUsMCwxNy41MS0zLjMzLDIzLjk3LTguODJDNjAuODUsNTguMzMsNTQuNjksNTIuNTUsNDcuMTcsNTIuNTV6Ig0KICAvPg0KICA8Y2lyY2xlIG9wYWNpdHk9IjAuMDUiIGN4PSIzNy4yOCIgY3k9IjMzLjg4IiByPSIxNS42MiIvPg0KICA8Y2lyY2xlIGZpbGw9IiNFQUQ2QkUiIGN4PSIzNi44NiIgY3k9IjMyLjU1IiByPSIxNS42MiIvPg0KICA8cGF0aCBmaWxsPSIjRTJDQ0I3IiBkPSJNMzcuMjgsMTYuOTR2MzEuMmM4LjQzLTAuMjIsMTUuMjEtNy4xMSwxNS4yMS0xNS42UzQ1LjcxLDE3LjE3LDM3LjI4LDE2Ljk0eiIvPg0KICA8cGF0aCBmaWxsPSIjODk4MjdEIiBkPSJNNTcuMDEsNTguNjlsLTAuNDQtMzEuMjRjLTEuMjMtOS44MS05LjU5LTE2LjA3LTE5Ljc0LTE2LjA3Yy05LjksMC0xOC4wOSw2LjYtMTkuNjIsMTYuMDdsLTAuNDksMzEuMjQNCiAgICAgIGw4LjIyLDQuOTNjMCwwLDAtMzAuNjksMC0zMC42N2MwLDEuMzMsNS41NS00LjcxLDEyLjEzLTVjOS40NS0wLjQyLDExLjcyLTQuMzYsMTEuNzItNS42OWMwLTAuMDIsMCw0MS4zNSwwLDQxLjM1TDU3LjAxLDU4LjY5eiINCiAgLz4NCiAgPHBhdGggZmlsbD0iIzY4NUY1OCIgZD0iTTU3LjAxLDU4LjY5bC0wLjQ0LTMxLjI0Yy0wLjY2LTUuMzItMy40My05LjU4LTcuNDMtMTIuMzdjLTEuMzEsNS45OC01Ljg3LDEwLjg0LTExLjg1LDEyLjgzdjAuMDQNCiAgICAgIGM5LjI3LTAuNDcsMTEuNTEtNC4zNiwxMS41MS01LjY4YzAtMC4wMiwwLDQxLjM1LDAsNDEuMzVMNTcuMDEsNTguNjl6Ii8+DQogIDxwYXRoIGZpbGw9IiM2REI1NTUiIGQ9Ik00Ny4xNyw1Mi41NWwtOS41MywxNS42MkwyNi41Niw1Mi41NWMtNy4xNywwLTEzLjEsNS4yNi0xNC4xNywxMi4xNGM2LjYsNi4xLDE1LjQyLDkuODQsMjUuMTEsOS44NA0KICAgICAgYzkuMTUsMCwxNy41MS0zLjMzLDIzLjk3LTguODJDNjAuODUsNTguMzMsNTQuNjksNTIuNTUsNDcuMTcsNTIuNTV6Ii8+DQogIDxwYXRoIGZpbGw9IiM0MjlCNDIiIGQ9Ik00Ny4xNyw1Mi41NWwtOS41MywxNS42MmwtMC4xMy0wLjE5djYuNTRjOS4xNSwwLDE3LjUxLTMuMzMsMjMuOTctOC44Mg0KICAgICAgQzYwLjg1LDU4LjMzLDU0LjY5LDUyLjU1LDQ3LjE3LDUyLjU1eiIvPg0KPC9zdmc+DQo=</sys:String>
 			<sys:String x:Key="6" xmlns:sys="http://www.yworks.com/xml/yfiles-common/markup/primitives/2.0">data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJ1c2VyaWNvbl9mZW1hbGUxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iNzVweCIgaGVpZ2h0PSI3NXB4IiB2aWV3Qm94PSIwIDAgNzUgNzUiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KICA8Y2lyY2xlIGZpbGw9IiNDQUVBQ0EiIHN0cm9rZT0iI0M2RTVDNiIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBjeD0iMzcuNSIgY3k9IjM3LjUiIHI9IjM3Ii8+DQogIDxyZWN0IHg9IjE4LjQ1IiB5PSIyOS45MiIgZmlsbD0iI0QxQkY4NiIgd2lkdGg9IjM3LjY2IiBoZWlnaHQ9IjI2LjMxIi8+DQogIDxwYXRoIGZpbGw9IiNFQUQ2QkUiIGQ9Ik00Ny4xNyw1Mi41NWgtMjAuNmMtNy4xNywwLTEzLjA5LDUuMjUtMTQuMTcsMTIuMTJjNi42LDYuMSwxNS40Miw5LjgzLDI1LjExLDkuODMNCiAgICAgIGM5LjE1LDAsMTcuNTEtMy4zMywyMy45Ny04LjgyQzYwLjg0LDU4LjMyLDU0LjY4LDUyLjU1LDQ3LjE3LDUyLjU1eiIvPg0KICA8cmVjdCB4PSIzMy4wOCIgeT0iNDYuODgiIGZpbGw9IiNFQUQ2QkUiIHdpZHRoPSI4LjM5IiBoZWlnaHQ9IjcuOSIvPg0KICA8cGF0aCBmaWxsPSIjMkQ3N0FBIiBkPSJNNDcuMTcsNTIuNTVsLTkuNTMsMTUuNjJMMjYuNTYsNTIuNTVjLTcuMTcsMC0xMy4xLDUuMjYtMTQuMTcsMTIuMTRjNi42LDYuMSwxNS40Miw5Ljg0LDI1LjExLDkuODQNCiAgICAgIGM5LjE1LDAsMTcuNTEtMy4zMywyMy45Ny04LjgyQzYwLjg1LDU4LjMzLDU0LjY5LDUyLjU1LDQ3LjE3LDUyLjU1eiIvPg0KICA8cGF0aCBmaWxsPSIjRTJDQ0I3IiBkPSJNNDcuMTcsNTIuNTVoLTUuNjl2LTUuNjdIMzcuNXYyNy42NGM5LjE1LDAsMTcuNTEtMy4zMywyMy45Ny04LjgyQzYwLjg1LDU4LjMzLDU0LjY5LDUyLjU1LDQ3LjE3LDUyLjU1eiINCiAgLz4NCiAgPHBhdGggZmlsbD0iIzFGNjM5QiIgZD0iTTQ3LjE3LDUyLjU1bC05LjUzLDE1LjYybC0wLjEzLTAuMTl2Ni41NGM5LjE1LDAsMTcuNTEtMy4zMywyMy45Ny04LjgyDQogICAgICBDNjAuODUsNTguMzMsNTQuNjksNTIuNTUsNDcuMTcsNTIuNTV6Ii8+DQogIDxjaXJjbGUgb3BhY2l0eT0iMC4wNSIgY3g9IjM3LjI4IiBjeT0iMzMuODgiIHI9IjE1LjYyIi8+DQogIDxjaXJjbGUgZmlsbD0iI0VBRDZCRSIgY3g9IjM2Ljg2IiBjeT0iMzIuNTUiIHI9IjE1LjYyIi8+DQogIDxwYXRoIGZpbGw9IiNFMkNDQjciIGQ9Ik0zNy4yOCwxNi45NHYzMS4yYzguNDMtMC4yMiwxNS4yMS03LjExLDE1LjIxLTE1LjZTNDUuNzEsMTcuMTcsMzcuMjgsMTYuOTR6Ii8+DQogIDxwYXRoIG9wYWNpdHk9IjAuMSIgZmlsbD0iIzU2NTEzQSIgZD0iTTU3LjAxLDU5LjcybC0wLjQ0LTMxLjI0Yy0xLjIzLTkuODEtOS41OS0xNi4wNy0xOS43NC0xNi4wN2MtOS45LDAtMTguMDksNi42LTE5LjYyLDE2LjA3DQogICAgICBsLTAuNDksMzEuMjRsOS4wNCw1Ljc2YzAsMCwwLTMxLjUxLDAtMzEuNDljMCwxLjMzLDQuNzMtNC43MSwxMS4zMS01YzkuNDUtMC40MiwxMC44OS0zLjU0LDEwLjg5LTQuODdjMC0wLjAyLDAsNDEuMzUsMCw0MS4zNQ0KICAgICAgTDU3LjAxLDU5LjcyeiIvPg0KICA8cGF0aCBmaWxsPSIjRUFEQkEwIiBkPSJNNTcuMDEsNTguNjlsLTAuNDQtMzEuMjRjLTEuMjMtOS44MS05LjU5LTE2LjA3LTE5Ljc0LTE2LjA3Yy05LjksMC0xOC4wOSw2LjYtMTkuNjIsMTYuMDdsLTAuNDksMzEuMjQNCiAgICAgIGw4LjIyLDQuOTNjMCwwLDAtMzAuNjksMC0zMC42N2MwLDEuMzMsNS41NS00LjcxLDEyLjEzLTVjOS40NS0wLjQyLDExLjcyLTQuMzYsMTEuNzItNS42OWMwLTAuMDIsMCw0MS4zNSwwLDQxLjM1TDU3LjAxLDU4LjY5eiINCiAgLz4NCiAgPHBhdGggZmlsbD0iI0RCQzc4RiIgZD0iTTU3LjAxLDU4LjY5bC0wLjQ0LTMxLjI0Yy0wLjY2LTUuMzItMy40My05LjU4LTcuNDMtMTIuMzdjLTEuMzEsNS45OC01Ljg3LDEwLjg0LTExLjg1LDEyLjgzdjAuMDQNCiAgICAgIGM5LjI3LTAuNDcsMTEuNTEtNC4zNiwxMS41MS01LjY4YzAtMC4wMiwwLDQxLjM1LDAsNDEuMzVMNTcuMDEsNTguNjl6Ii8+DQo8L3N2Zz4NCg==</sys:String>
 			<sys:String x:Key="7" xmlns:sys="http://www.yworks.com/xml/yfiles-common/markup/primitives/2.0">data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJ1c2VyaWNvbl9tYWxlMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9Ijc1cHgiIGhlaWdodD0iNzVweCIgdmlld0JveD0iMCAwIDc1IDc1IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCiAgICA8Y2lyY2xlIGZpbGw9IiNFMkRFREUiIHN0cm9rZT0iI0RCRDFEMSIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBjeD0iMzcuNSIgY3k9IjM3LjUiIHI9IjM3Ii8+DQogICAgPHBhdGggZmlsbD0iI0VBRDZCRSIgZD0iTTUxLjgsNTIuMjJoLTUuMzNWMzguMzlIMjguMzh2MTMuODNoLTUuMzNjLTYuMjMsMC0xMS41NSw0LjAxLTEzLjU1LDkuNTcNCiAgICAgIGM2Ljc4LDcuODUsMTYuOCwxMi44MiwyNy45OSwxMi44MmMxMS4xMywwLDIxLjExLTQuOTIsMjcuODktMTIuN0M2My40Miw1Ni4yOCw1OC4wNyw1Mi4yMiw1MS44LDUyLjIyeiIvPg0KICAgIDxwYXRoIGZpbGw9IiNFMkNDQjciIGQ9Ik02NS4zOSw2MS43Yy0yLjAyLTUuNTEtNy4zMi05LjQ4LTEzLjUxLTkuNDhoLTUuMzNWMzguMzlIMzcuNVY3NC42QzQ4LjY2LDc0LjU1LDU4LjY0LDY5LjU2LDY1LjM5LDYxLjd6Ig0KICAgICAgLz4NCiAgICA8cGF0aCBvcGFjaXR5PSIwLjA1IiBkPSJNMzkuMzIsNDguNDRoLTMuOTZjLTYuNiwwLTEyLTUuNC0xMi0xMnYtOC44OWMwLTYuNiw1LjQtMTIsMTItMTJoMy45NmM2LjYsMCwxMiw1LjQsMTIsMTJ2OC44OQ0KICAgICAgQzUxLjMyLDQzLjA0LDQ1LjkyLDQ4LjQ0LDM5LjMyLDQ4LjQ0eiIvPg0KICAgIDxwYXRoIGZpbGw9IiNFQUQ2QkUiIGQ9Ik0zOS40OCw0Ny4yaC0zLjk2Yy02LjYsMC0xMi01LjQtMTItMTJ2LTguODljMC02LjYsNS40LTEyLDEyLTEyaDMuOTZjNi42LDAsMTIsNS40LDEyLDEydjguODkNCiAgICAgIEM1MS40OCw0MS44LDQ2LjA4LDQ3LjIsMzkuNDgsNDcuMnoiLz4NCiAgICA8cGF0aCBmaWxsPSIjRTJDQ0I3IiBkPSJNNDEuNjEsMTQuMzFIMzcuNVY0Ny4yaDQuMTFjNS40MywwLDkuODctNC40NCw5Ljg3LTkuODdWMjQuMThDNTEuNDgsMTguNzUsNDcuMDQsMTQuMzEsNDEuNjEsMTQuMzF6Ii8+DQogICAgPHBhdGggb3BhY2l0eT0iMC4xNSIgZmlsbD0iIzU2NTEzQSIgZD0iTTUxLjcxLDE0LjU2Yy0yLjA5LTMuNzMtNy43My02LjQxLTE0LjM5LTYuNDFzLTEyLjI5LDIuNjgtMTQuMzksNi40MQ0KICAgICAgYy0yLjI5LDIuNS0zLjcsNS44MS0zLjcsOS40NHYzLjIzYzAsMy45NCwxLjY2LDcuNTEsNC4zLDEwLjA3VjI1LjgyYzAtMS4xNSwwLjIxLTIuMjQsMC41Ny0zLjI3YzIuNjQsMi44Nyw3LjU2LDQuODEsMTMuMjEsNC44MQ0KICAgICAgYzMuMDEsMCw2LjYzLTEuMzcsOC45OS0yLjMyYy0wLjU4LTAuNTktMC44My0xLjI3LTAuOTQtMi4zYy0wLjE1LTEuMzgsMS4wMy0yLjQ3LDIuNDctMi40N2MxLjYyLDAsMi45NiwxLjE3LDMuMjMsMi43MQ0KICAgICAgYzAuMjcsMC45LDAuNDMsMS44NSwwLjQzLDIuODN2MTEuMDljMi40Mi0yLjUyLDMuOTItNS45MywzLjkyLTkuNjhWMjRDNTUuNDEsMjAuMzcsNTQsMTcuMDYsNTEuNzEsMTQuNTZ6Ii8+DQogICAgPHBhdGggZmlsbD0iI0I3OEQ2MyIgZD0iTTUxLjcxLDEzLjIzYy0yLjA5LTMuNzMtNy43My02LjQxLTE0LjM5LTYuNDFzLTEyLjI5LDIuNjgtMTQuMzksNi40MWMtMi4yOSwyLjUtMy43LDUuODEtMy43LDkuNDR2NC44Nw0KICAgICAgYzAsMy45NCwxLjY2LDcuNTEsNC4zLDEwLjA3VjI0LjQ5YzAtMS4xNSwwLjIxLTIuMjQsMC41Ny0zLjI3YzIuNjQsMi44Nyw3LjU2LDQuODEsMTMuMjEsNC44MWMzLjAxLDAsNS44LTAuNTUsOC4xNi0xLjQ5DQogICAgICBjLTAuNTgtMC41OS0wLjk0LTEuNC0wLjk0LTIuM2MwLTEuODIsMS40Ny0zLjI5LDMuMjktMy4yOWMxLjYyLDAsMi45NiwxLjE3LDMuMjMsMi43MWMwLjI3LDAuOSwwLjQzLDEuODUsMC40MywyLjgzdjEyLjczDQogICAgICBjMi40Mi0yLjUyLDMuOTItNS45MywzLjkyLTkuNjh2LTQuODdDNTUuNDEsMTkuMDMsNTQsMTUuNzIsNTEuNzEsMTMuMjN6Ii8+DQogICAgPHBhdGggZmlsbD0iI0M0OUE2QyIgZD0iTTM2Ljg1LDE1LjI0YzAtMy4yNywyLjA4LTYuMTUsNS4yNy03Ljk1Yy0xLjQ4LTAuMy0zLjA1LTAuNDgtNC42OS0wLjQ4Yy02LjY1LDAtMTIuMjksMi42OC0xNC4zOSw2LjQxDQogICAgICBjLTIuMjksMi41LTMuNyw1LjgxLTMuNyw5LjQ0djQuODdjMCwzLjk0LDEuNjYsNy41MSw0LjMsMTAuMDdWMjQuNDljMC0xLjE1LDAuMjEtMi4yNCwwLjU3LTMuMjdjMi42NCwyLjg3LDcuNTYsNC44MSwxMy4yMSw0LjgxDQogICAgICBjMi45MiwwLDUuNjMtMC41Miw3Ljk1LTEuNDFjLTAuMDMtMC4wNC0wLjA1LTAuMDgtMC4wOC0wLjEyQzQwLjM3LDIzLjExLDM2Ljg1LDE5LjQ5LDM2Ljg1LDE1LjI0eiIvPg0KICAgIDxwYXRoIGZpbGw9IiM1M0ExQTUiIGQ9Ik01MS44LDUyLjIyaC0wLjk3YzAuMDEsMC4wNywwLjAzLDAuMTQsMC4wMywwLjIxYzAsMi42My02LjAxLDQuNzUtMTMuNDMsNC43NQ0KICAgICAgYy03LjQyLDAtMTMuNDMtMi4xMy0xMy40My00Ljc1YzAtMC4wNywwLjAyLTAuMTQsMC4wMy0wLjIxaC0wLjk3Yy02LjIzLDAtMTEuNTUsNC4wMS0xMy41NSw5LjU3DQogICAgICBjNi43OCw3Ljg1LDE2LjgsMTIuODIsMjcuOTksMTIuODJjMTEuMTMsMCwyMS4xMS00LjkyLDI3Ljg5LTEyLjdDNjMuNDIsNTYuMjgsNTguMDcsNTIuMjIsNTEuOCw1Mi4yMnoiLz4NCiAgICA8cGF0aCBmaWxsPSIjMzc4OTg3IiBkPSJNNTEuODcsNTIuMjJINTAuOWMwLjAxLDAuMDcsMC4wMywwLjE0LDAuMDMsMC4yMWMwLDIuNjMtNi4wMSw0Ljc1LTEzLjQzLDQuNzVjLTAuMDYsMC0wLjEyLDAtMC4xOCwwVjc0LjYNCiAgICAgIGMwLjA2LDAsMC4xMiwwLDAuMTgsMGMxMS4xNiwwLDIxLjE2LTQuOTUsMjcuOTQtMTIuNzZDNjMuNDYsNTYuMjYsNTguMTIsNTIuMjIsNTEuODcsNTIuMjJ6Ii8+DQogIDwvc3ZnPg==</sys:String>
-      <yjs:PolylineEdgeStyle x:Key="8">
+      <yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="8">
         <yjs:PolylineEdgeStyle.stroke>
           <yjs:Stroke fill="#FFCCCCCC" miterLimit="1.45" thickness="2"/>
         </yjs:PolylineEdgeStyle.stroke>
@@ -85,7 +85,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -109,7 +109,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 2}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -243,7 +243,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -282,7 +282,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -326,7 +326,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -380,7 +380,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -394,7 +394,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -408,7 +408,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -422,7 +422,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -436,7 +436,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -450,7 +450,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 5}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 5}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -464,7 +464,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -478,7 +478,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -492,7 +492,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 6}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -506,7 +506,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 6}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -520,7 +520,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -534,7 +534,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 2}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -548,7 +548,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -562,7 +562,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -576,7 +576,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -590,7 +590,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -604,7 +604,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -618,7 +618,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -632,7 +632,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -646,7 +646,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -660,7 +660,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -674,7 +674,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 6}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -688,7 +688,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -707,7 +707,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 7}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 7}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -721,7 +721,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -735,7 +735,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -754,7 +754,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 2}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -768,7 +768,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -787,7 +787,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -806,7 +806,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 6}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -825,7 +825,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 6}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -844,7 +844,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 7}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 7}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -863,7 +863,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -882,7 +882,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -901,7 +901,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 6}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -920,7 +920,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -939,7 +939,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -958,7 +958,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -977,7 +977,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -996,7 +996,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 6}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1015,7 +1015,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1034,7 +1034,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1053,7 +1053,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 6}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1067,7 +1067,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 6}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1081,7 +1081,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1095,7 +1095,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 2}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1109,7 +1109,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1123,7 +1123,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 7}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 7}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1137,7 +1137,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1151,7 +1151,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1165,7 +1165,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 2}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1179,7 +1179,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1193,7 +1193,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1212,7 +1212,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1231,7 +1231,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1245,7 +1245,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1294,7 +1294,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1333,7 +1333,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 7}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 7}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1347,7 +1347,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 6}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1361,7 +1361,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1375,7 +1375,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1389,7 +1389,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1408,7 +1408,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 5}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 5}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1427,7 +1427,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 2}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1441,7 +1441,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 5}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 5}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1460,7 +1460,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1479,7 +1479,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1498,7 +1498,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 6}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1517,7 +1517,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1536,7 +1536,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1555,7 +1555,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 5}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 5}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1614,7 +1614,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1633,7 +1633,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 6}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1652,7 +1652,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1676,7 +1676,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 5}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 5}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1725,7 +1725,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1744,7 +1744,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1778,7 +1778,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1792,7 +1792,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1811,7 +1811,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1870,7 +1870,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1914,7 +1914,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1943,7 +1943,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1967,7 +1967,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -1991,7 +1991,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -2010,7 +2010,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 3}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 3}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -2034,7 +2034,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 7}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 7}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -2063,7 +2063,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 4}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 4}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -2082,7 +2082,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 1}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -2101,7 +2101,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 5}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 5}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -2135,7 +2135,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 6}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">
@@ -2154,7 +2154,7 @@
 				<y:RectD X="0" Y="0" Width="30" Height="30"/>
 			</data>
 			<data key="d7">
-				<yjs:ImageNodeStyle image="{y:GraphMLReference 7}"/>
+				<yjs:ImageNodeStyle href="{y:GraphMLReference 7}"/>
 			</data>
 			<port name="p0">
 				<data key="d16">

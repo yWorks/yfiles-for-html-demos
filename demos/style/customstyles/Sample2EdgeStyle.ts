@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,10 +31,9 @@ import {
   ArrowType,
   BaseClass,
   BridgeManager,
-  Class,
+  type Constructor,
   EdgeStyleBase,
   GeneralPath,
-  GraphMLAttribute,
   IArrow,
   ICanvasContext,
   IEdge,
@@ -48,15 +47,12 @@ import {
   Point,
   Rect,
   SvgVisual,
-  type TaggedSvgVisual,
-  TypeAttribute,
-  YBoolean,
-  YString
-} from 'yfiles'
-import { type ColorSetName, isColorSetName } from 'demo-resources/demo-styles'
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
+import { type ColorSetName, isColorSetName } from '@yfiles/demo-resources/demo-styles'
 import { Sample2Arrow } from './Sample2Arrow'
 import { SVGNS } from './Namespaces'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 
 type EdgeRenderDataCache = {
   path: GeneralPath
@@ -74,8 +70,7 @@ type Sample1EdgeStyleVisual = TaggedSvgVisual<SVGGElement | SVGPathElement, Edge
 export class Sample2EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
   private hiddenArrow: Arrow = new Arrow({
     type: ArrowType.NONE,
-    cropLength: 6,
-    scale: 1
+    cropLength: 6
   })
   private fallbackArrow: Sample2Arrow = new Sample2Arrow()
   private markerDefsSupport: MarkerDefsSupport | null = null
@@ -299,7 +294,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
    * @returns The BridgeManager for the given context instance or null
    */
   getBridgeManager(context: IRenderContext): BridgeManager | null {
-    return context.lookup(BridgeManager.$class)
+    return context.lookup(BridgeManager)
   }
 
   /**
@@ -388,8 +383,8 @@ export class Sample2EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
    * {@link IObstacleProvider} to support bridges.
    * @see Overrides {@link EdgeStyleBase.lookup}
    */
-  lookup(edge: IEdge, type: Class): object {
-    return type === IObstacleProvider.$class
+  lookup(edge: IEdge, type: Constructor<any>): object {
+    return type === IObstacleProvider
       ? new BasicEdgeObstacleProvider(edge)
       : super.lookup(edge, type)
   }
@@ -398,10 +393,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
 /**
  * Manages the arrow markers as SVG definitions.
  */
-export class MarkerDefsSupport
-  extends BaseClass<ISvgDefsCreator>(ISvgDefsCreator)
-  implements ISvgDefsCreator
-{
+export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
   constructor(public cssClass?: string | ColorSetName) {
     super()
   }
@@ -453,10 +445,7 @@ export class MarkerDefsSupport
 /**
  * A custom {@link IObstacleProvider} implementation for {@link Sample2EdgeStyle}.
  */
-class BasicEdgeObstacleProvider
-  extends BaseClass<IObstacleProvider>(IObstacleProvider)
-  implements IObstacleProvider
-{
+class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
   constructor(private edge: IEdge) {
     super()
   }
@@ -497,24 +486,6 @@ export class Sample2EdgeStyleExtension extends MarkupExtension {
 
   set useMarkerArrows(value: boolean) {
     this._useMarkerArrows = value
-  }
-
-  static get $meta(): {
-    cssClass: (GraphMLAttribute | TypeAttribute)[]
-    showTargetArrows: (GraphMLAttribute | TypeAttribute)[]
-    useMarkerArrows: (GraphMLAttribute | TypeAttribute)[]
-  } {
-    return {
-      cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)],
-      showTargetArrows: [
-        GraphMLAttribute().init({ defaultValue: true }),
-        TypeAttribute(YBoolean.$class)
-      ],
-      useMarkerArrows: [
-        GraphMLAttribute().init({ defaultValue: true }),
-        TypeAttribute(YBoolean.$class)
-      ]
-    }
   }
 
   provideValue(serviceProvider: ILookup): Sample2EdgeStyle {

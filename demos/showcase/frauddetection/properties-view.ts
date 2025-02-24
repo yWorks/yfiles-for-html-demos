@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { type GraphComponent, type GraphEditorInputMode, type IModelItem, INode } from 'yfiles'
+import {
+  type GraphComponent,
+  type GraphEditorInputMode,
+  type IModelItem,
+  INode,
+  type ItemEventArgs
+} from '@yfiles/yfiles'
 import { getEntityData, getInfoMap } from './entity-data'
 import { nodeStyleMapping } from './styles/graph-styles'
 
@@ -52,12 +58,17 @@ export function initializePropertiesView(graphComponent: GraphComponent): void {
   toggleNoSelectionVisibility(true)
 
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
-  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+  graphComponent.selection.addEventListener('item-added', (evt: ItemEventArgs<IModelItem>) => {
     clearPropertiesView()
-    updatePropertiesView(evt.item, evt.itemSelected, detailsContainer!)
+    updatePropertiesView(evt.item, true, detailsContainer!)
   })
 
-  inputMode.addCanvasClickedListener(() => {
+  graphComponent.selection.addEventListener('item-removed', (evt: ItemEventArgs<IModelItem>) => {
+    clearPropertiesView()
+    updatePropertiesView(evt.item, false, detailsContainer!)
+  })
+
+  inputMode.addEventListener('canvas-clicked', () => {
     clearPropertiesView()
   })
 }

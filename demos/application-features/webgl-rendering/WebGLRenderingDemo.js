@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,132 +27,108 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   IGraph,
   INode,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
+  LabelStyle,
   License,
   Point,
   Rect,
   Size,
-  WebGL2FocusIndicatorManager,
-  WebGL2GraphModelManager,
-  WebGL2HighlightIndicatorManager,
-  WebGL2SelectionIndicatorManager,
+  WebGLFocusIndicatorManager,
+  WebGLGraphModelManager,
+  WebGLHighlightIndicatorManager,
+  WebGLSelectionIndicatorManager,
   Workarounds
-} from 'yfiles'
-
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { checkWebGL2Support, finishLoading } from 'demo-resources/demo-page'
-
-/** @type {GraphComponent} */
+} from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
 let graphComponent
-
 /**
  * Bootstraps the demo.
- * @returns {!Promise}
  */
 async function run() {
   if (!checkWebGL2Support()) {
     return
   }
-
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
-
   enableWebGLRendering(graphComponent)
   initInteraction(graphComponent)
-
   // create an initial sample graph
   await createGraph(graphComponent.graph)
-  graphComponent.fitGraphBounds()
-
+  await graphComponent.fitGraphBounds()
   // _After_ creating the graph, enable the undo engine
   // This prevents undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
 }
-
 /**
- * Enables WebGL2 as the rendering technique.
- * @param {!GraphComponent} graphComponent
+ * Enables WebGL as the rendering technique.
  */
 function enableWebGLRendering(graphComponent) {
-  graphComponent.graphModelManager = new WebGL2GraphModelManager()
-  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
-  graphComponent.focusIndicatorManager = new WebGL2FocusIndicatorManager()
-  graphComponent.highlightIndicatorManager = new WebGL2HighlightIndicatorManager()
-
+  graphComponent.graphModelManager = new WebGLGraphModelManager()
+  graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager()
+  graphComponent.focusIndicatorManager = new WebGLFocusIndicatorManager()
+  graphComponent.highlightIndicatorManager = new WebGLHighlightIndicatorManager()
   // Optional: precompile the selection shaders
   // This has the effect that the selection is not rendered with a simple fallback style
   // the first time an element is selected, at the cost of initial load time
   Workarounds.precompileWebGLSelectionShaders = true
 }
-
 /**
- * Configures the interaction so that it works nicer with WebGL2.
- * @param {!GraphComponent} graphComponent
+ * Configures the interaction so that it works nicer with WebGL.
  */
 function initInteraction(graphComponent) {
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode()
 }
-
 /**
  * Initializes the defaults for the graph items in this demo.
  *
- * WebGL2 rendering converts the normal yFiles style of each graph item into a corresponding
+ * WebGL rendering converts the normal yFiles style of each graph item into a corresponding
  * WebGL visualization. It's also possible to explicitly specify the WebGL visualization with the
- * {@link WebGL2GraphModelManager}.
+ * {@link WebGLGraphModelManager}.
  *
- * @param {!IGraph} graph The graph.
+ * @param graph The graph.
  */
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
-
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(120, 120)
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'center'
   })
-  graph.groupNodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('north')
+  graph.groupNodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('top')
 }
-
 /**
  * Creates an initial sample graph.
  *
  * @yjs:keep = edgeList
- * @param {!IGraph} graph The graph.
+ * @param graph The graph.
  */
 async function createGraph(graph) {
   // get the lists of data items for the nodes and edges
   const response = await fetch('./resources/hierarchic_2000_2100.json')
   const graphData = await response.json()
-
   const getRandomInt = (upper) => Math.floor(Math.random() * upper)
-
   graph.clear()
   // create a map to store the nodes for edge creation
   const nodeMap = new Map()
-
   // create the nodes
   for (const nodeData of graphData.nodeList) {
     const id = nodeData.id
@@ -162,10 +138,8 @@ async function createGraph(graph) {
       tag: { id, type: getRandomInt(9) }
     })
     nodeMap.set(id, node)
-
     graph.addLabel(node, `Item \u2116 ${graph.nodes.size}\nType: ${node.tag.type}`)
   }
-
   for (const edgeData of graphData.edgeList) {
     // get the source and target node from the mapping
     const sourceNode = nodeMap.get(edgeData.s)
@@ -188,5 +162,4 @@ async function createGraph(graph) {
     }
   }
 }
-
 run().then(finishLoading)

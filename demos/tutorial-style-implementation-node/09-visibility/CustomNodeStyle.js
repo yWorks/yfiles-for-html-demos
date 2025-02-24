@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,71 +26,43 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GeneralPath, NodeStyleBase, Rect, Size, SvgVisual } from 'yfiles'
-
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { GeneralPath, NodeStyleBase, Rect, Size, SvgVisual } from '@yfiles/yfiles'
 const tabWidth = 50
 const tabHeight = 14
-
 export class CustomNodeStyle extends NodeStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {?Visual}
-   */
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
-
     const circleElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     circleElement.cx.baseVal.value = node.layout.width * 0.5
     circleElement.cy.baseVal.value = node.layout.height * 0.5
     circleElement.r.baseVal.value = Math.max(node.layout.width, node.layout.height)
     circleElement.setAttribute('fill', '#0b7189')
     circleElement.setAttribute('fill-opacity', '0.3')
-
     const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     pathElement.setAttribute('d', createPathData(0, 0, width, height))
-
     pathElement.setAttribute('fill', node.tag?.color ?? '#0b7189')
     pathElement.setAttribute('stroke', '#333')
-
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     SvgVisual.setTranslate(g, x, y)
-
     g.append(circleElement)
     g.append(pathElement)
-
     return new SvgVisual(g)
   }
-
-
-  /**
-   * @param {!ICanvasContext} context
-   * @param {!Rect} rectangle
-   * @param {!INode} node
-   * @returns {boolean}
-   */
   isVisible(context, rectangle, node) {
     // consider the circle, which is twice the size of the node
     const circleDiameter = Math.max(node.layout.height, node.layout.width) * 2
     const bounds = Rect.fromCenter(node.layout.center, new Size(circleDiameter, circleDiameter))
     return rectangle.intersects(bounds)
   }
-
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} location
-   * @param {!INode} node
-   * @returns {boolean}
-   */
   isHit(context, location, node) {
     // Check for bounding box
-    if (!node.layout.toRect().containsWithEps(location, context.hitTestRadius)) {
+    if (!node.layout.toRect().contains(location, context.hitTestRadius)) {
       return false
     }
     const { x, y } = location
     const { x: layoutX, y: layoutY } = node.layout
-
     // Check for the upper-right corner, which is empty
     if (
       x > layoutX + tabWidth + context.hitTestRadius &&
@@ -101,11 +73,6 @@ export class CustomNodeStyle extends NodeStyleBase {
     // all other points are either inside the tab or the rest of the node
     return true
   }
-
-  /**
-   * @param {!INode} node
-   * @returns {?GeneralPath}
-   */
   getOutline(node) {
     // Use the node's layout, and enlarge it with half the stroke width
     // to ensure that the arrow ends exactly at the outline
@@ -120,12 +87,6 @@ export class CustomNodeStyle extends NodeStyleBase {
     path.close()
     return path
   }
-
-  /**
-   * @param {!INode} node
-   * @param {!Point} location
-   * @returns {boolean}
-   */
   isInside(node, location) {
     // Check for bounding box
     if (!node.layout.contains(location)) {
@@ -133,7 +94,6 @@ export class CustomNodeStyle extends NodeStyleBase {
     }
     const { x, y } = location
     const { y: ly } = node.layout
-
     // Check for the upper-right corner, which is empty
     if (x > x + tabWidth && y < ly + tabHeight) {
       return false
@@ -143,17 +103,9 @@ export class CustomNodeStyle extends NodeStyleBase {
     return true
   }
 }
-
 /**
  * Creates the path data for the SVG path element.
- * @param {number} x
- * @param {number} y
- * @param {number} width
- * @param {number} height
- * @returns {!string}
  */
 export function createPathData(x, y, width, height) {
-  return `M ${x} ${y} h ${tabWidth} v ${tabHeight} h ${width - tabWidth} v ${
-    height - tabHeight
-  } h ${-width} z`
+  return `M ${x} ${y} h ${tabWidth} v ${tabHeight} h ${width - tabWidth} v ${height - tabHeight} h ${-width} z`
 }

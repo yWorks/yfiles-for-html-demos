@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,81 +26,39 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { NodeStyleBase, SvgVisual } from 'yfiles'
-
+import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 const tabWidth = 50
 const tabHeight = 14
-
-/**
- * Augment the SvgVisual type with the data used to cache the rendering information
- */
-// the values we use to render the graphics
-/**
- * @typedef {Object} Cache
- * @property {number} width
- * @property {number} height
- */
-
-// the type of visual we create and update in CustomNodeStyle
-/**
- * @typedef {TaggedSvgVisual.<SVGPathElement,Cache>} CustomNodeStyleVisual
- */
-
 export class CustomNodeStyle extends NodeStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {!CustomNodeStyleVisual}
-   */
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
-
     const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     // we render the path at 0,0 and translate the visual to it's final location
     pathElement.setAttribute('d', createPathData(0, 0, width, height))
     SvgVisual.setTranslate(pathElement, x, y)
-
     pathElement.setAttribute('fill', '#0b7189')
     pathElement.setAttribute('stroke', '#042d37')
-
     // we use the factory method to create a properly typed SvgVisual
     return SvgVisual.from(pathElement, { width, height })
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!CustomNodeStyleVisual} oldVisual
-   * @param {!INode} node
-   * @returns {!CustomNodeStyleVisual}
-   */
   updateVisual(context, oldVisual, node) {
     const { x, y, width, height } = node.layout
     // get the path element that needs updating from the old visual
     const pathElement = oldVisual.svgElement
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
-
     if (width !== cache.width || height !== cache.height) {
       // update the path data to fit the new width and height
       pathElement.setAttribute('d', createPathData(0, 0, width, height))
       oldVisual.tag = { width, height }
     }
-
     SvgVisual.setTranslate(pathElement, x, y)
     return oldVisual
   }
 }
-
 /**
  * Creates the path data for the SVG path element.
- * @param {number} x
- * @param {number} y
- * @param {number} width
- * @param {number} height
- * @returns {!string}
  */
 export function createPathData(x, y, width, height) {
-  return `M ${x} ${y} h ${tabWidth} v ${tabHeight} h ${width - tabWidth} v ${
-    height - tabHeight
-  } h ${-width} z`
+  return `M ${x} ${y} h ${tabWidth} v ${tabHeight} h ${width - tabWidth} v ${height - tabHeight} h ${-width} z`
 }

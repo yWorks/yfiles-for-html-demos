@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,68 +26,48 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-unnecessary-condition,@typescript-eslint/no-unsafe-argument,@typescript-eslint/no-explicit-any */
 import {
   BaseClass,
-  BfsAlgorithm,
-  CycleAlgorithm,
-  DataProviderBase,
-  DiscreteEdgeLabelLayoutModel,
   DiscreteEdgeLabelPositions,
-  DiscreteNodeLabelLayoutModel,
   DiscreteNodeLabelPositions,
-  EdgeDataType,
-  EdgeList,
+  EdgeDataKey,
+  EdgeLabelCandidates,
+  EdgeLabelPlacement,
+  EdgePortCandidates,
   GenericLabeling,
-  Graph,
-  GraphConnectivity,
-  GraphPartitionManager,
-  GroupingKeys,
-  HierarchicLayout,
-  HierarchicLayoutCore,
-  HierarchicLayoutEdgeLayoutDescriptor,
-  HierarchicLayoutEdgeRoutingStyle,
-  HierarchicLayoutRoutingStyle,
-  IComparer,
-  IDataProvider,
-  IEdgeLabelLayout,
-  ILayerer,
+  GenericLabelingData,
+  HierarchicalLayout,
+  HierarchicalLayoutEdgeDescriptor,
+  HierarchicalLayoutEdgeType,
+  HierarchicalLayoutNodeType,
+  ILayerAssigner,
   ILayoutAlgorithm,
   ILayoutStage,
-  INodeLabelLayout,
-  IPortConstraintOptimizer,
-  IProfitModel,
-  LabelingBase,
-  LayerType,
+  LayoutExecutor,
+  LayoutGraph,
+  LayoutGraphAlgorithms,
   LayoutGraphHider,
-  LayoutGroupingSupport,
+  LayoutGrid,
   LayoutKeys,
   LayoutOrientation,
+  LayoutPortCandidate,
   LayoutStageBase,
-  LineSegment,
   List,
-  Maps,
-  NodeDataType,
-  OrientationLayout,
-  PartitionGrid,
-  PathAlgorithm,
-  PortCalculator,
-  PortCandidate,
-  PortCandidateOptimizer,
-  PortCandidateSet,
-  PortConstraint,
-  PortConstraintKeys,
-  PortConstraintOptimizerBase,
-  PortDirections,
-  PortSide,
-  RankAssignmentAlgorithm,
+  Mapper,
+  NodeDataKey,
+  NodeLabelCandidates,
+  NodePortCandidates,
+  Point,
+  PortCandidateSelector,
+  PortCandidateType,
+  PortSides,
   RemoveCollinearBendsStage,
-  YList,
-  YNodeList,
-  YPoint
-} from 'yfiles'
-
+  RoutingStyleDescriptor,
+  TraversalDirection,
+  YList
+} from '@yfiles/yfiles'
 import {
-  EdgeType,
   getEdgeType,
   isActivity,
   isAnnotation,
@@ -97,26 +77,43 @@ import {
   isRegularEdge,
   isStartEvent,
   isUndefined,
-  NODE_TYPE_DP_KEY
-} from './flowchart-elements.js'
-
-export /**
- * @readonly
- * @enum {number}
- */
-const BranchDirection = {
-  Undefined: 0,
-  WithTheFlow: 1,
-  AgainstTheFlow: 2,
-  LeftInFlow: 4,
-  RightInFlow: 8,
-  Straight: 3,
-  Flatwise: 12
-}
-
+  MultiPageEdgeType,
+  NODE_TYPE_DATA_KEY
+} from './flowchart-elements'
+export var BranchDirection
+;(function (BranchDirection) {
+  /**
+   * An undefined direction for edges.
+   */
+  BranchDirection[(BranchDirection['Undefined'] = 0)] = 'Undefined'
+  /**
+   * A direction in flow for edges.
+   */
+  BranchDirection[(BranchDirection['WithTheFlow'] = 1)] = 'WithTheFlow'
+  /**
+   * A direction against the flow for edges.
+   */
+  BranchDirection[(BranchDirection['AgainstTheFlow'] = 2)] = 'AgainstTheFlow'
+  /**
+   * A direction left in flow for edges.
+   */
+  BranchDirection[(BranchDirection['LeftInFlow'] = 4)] = 'LeftInFlow'
+  /**
+   * A direction right in flow for edges.
+   */
+  BranchDirection[(BranchDirection['RightInFlow'] = 8)] = 'RightInFlow'
+  /**
+   * A straight direction for edges.
+   */
+  BranchDirection[(BranchDirection['Straight'] = 3)] = 'Straight'
+  /**
+   * A direction left or right in flow for edges.
+   */
+  BranchDirection[(BranchDirection['Flatwise'] = 12)] = 'Flatwise' // LeftInFlow | RightInFlow
+})(BranchDirection || (BranchDirection = {}))
 /**
  * An automatic layout algorithm for flowchart diagrams. The different type of elements has to be marked with the
- * DataProvider keys {@link EDGE_TYPE_DP_KEY} and {@link NODE_TYPE_DP_KEY}.
+ * data mapper keys {@link EDGE_TYPE_DATA_KEY} and {@link NODE_TYPE_DATA_KEY}.
  */
 export class FlowchartLayout extends BaseClass(ILayoutAlgorithm) {
   /**
@@ -126,10 +123,10 @@ export class FlowchartLayout extends BaseClass(ILayoutAlgorithm) {
    */
   allowFlatwiseEdges = true
   /**
-   * Specifies the insets defining the distance between graph elements and the border of their
+   * Specifies the padding defining the distance between graph elements and the border of their
    * enclosing swimlanes. Defaults to 10.0
    */
-  laneInsets = 10.0
+  lanePadding = 10.0
   /**
    * Specifies the minimum distance between two node elements. Defaults to 15.0.
    */
@@ -146,35 +143,25 @@ export class FlowchartLayout extends BaseClass(ILayoutAlgorithm) {
    * Specifies the minimum distance between two node elements. Defaults to 30.0.
    */
   minimumNodeDistance = 30.0
-  /**
-   * Specifies the used minimum distance between two pool elements. Defaults to 30.0.
-   */
-  minimumPoolDistance = 30.0
-
   $layoutOrientation
-
   constructor() {
     super()
     this.$layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM
   }
-
   /**
    * Gets the layout orientation.
    * Defaults to {@link LayoutOrientation.TOP_TO_BOTTOM}.
    * @throws {Error} if the specified orientation is not {@link LayoutOrientation.TOP_TO_BOTTOM} or
    * {@link LayoutOrientation.LEFT_TO_RIGHT}.
-   * @type {!LayoutOrientation}
    */
   get layoutOrientation() {
     return this.$layoutOrientation
   }
-
   /**
    * Sets the layout orientation.
    * Defaults to {@link LayoutOrientation.TOP_TO_BOTTOM}.
    * @throws {Error} if the specified orientation is not {@link LayoutOrientation.TOP_TO_BOTTOM} or
    * {@link LayoutOrientation.LEFT_TO_RIGHT}.
-   * @type {!LayoutOrientation}
    */
   set layoutOrientation(value) {
     switch (value) {
@@ -188,126 +175,109 @@ export class FlowchartLayout extends BaseClass(ILayoutAlgorithm) {
       }
     }
   }
-
   /**
    * The main layout routine.
-   * @param {!LayoutGraph} graph The graph to apply the layout to.
+   * @param graph The graph to apply the layout to.
    */
   applyLayout(graph) {
-    if (graph.empty) {
+    if (graph.isEmpty) {
       return
     }
-
-    const grid = PartitionGrid.getPartitionGrid(graph)
+    const grid = LayoutGrid.getLayoutGrid(graph)
     if (grid) {
-      // adjust insets
+      // adjust padding
       grid.columns.forEach((column) => {
-        column.leftInset = this.laneInsets
-        column.rightInset = this.laneInsets
+        column.leftPadding = this.lanePadding
+        column.rightPadding = this.lanePadding
       })
-
       grid.rows.forEach((row) => {
-        row.topInset = this.laneInsets
-        row.bottomInset = this.laneInsets
+        row.topPadding = this.lanePadding
+        row.bottomPadding = this.lanePadding
       })
     }
-
+    // Ensure that the LayoutExecutor class is not removed by build optimizers
+    // It is needed for the 'applyLayoutAnimated' method in this demo.
+    LayoutExecutor.ensure()
     try {
-      const hierarchicLayout = this.createHierarchicLayout()
+      const hierarchicalLayout = this.createHierarchicalLayout()
       const transformerStage = new FlowchartTransformerStage()
-      transformerStage.coreLayout = hierarchicLayout
-      const layerIds = Maps.createHashedNodeMap()
+      transformerStage.coreLayout = hierarchicalLayout
+      const layerIds = new Mapper()
       try {
-        graph.addDataProvider(HierarchicLayout.LAYER_INDEX_DP_KEY, layerIds)
+        graph.context.addItemData(HierarchicalLayout.LAYER_INDEX_RESULT_DATA_KEY, layerIds)
         transformerStage.applyLayout(graph)
       } finally {
-        graph.removeDataProvider(HierarchicLayout.LAYER_INDEX_DP_KEY)
+        graph.context.remove(HierarchicalLayout.LAYER_INDEX_RESULT_DATA_KEY)
       }
-      const edge2LayoutDescriptor = Maps.createHashedEdgeMap()
+      const edge2LayoutDescriptor = new Mapper()
       graph.edges.forEach((edge) => {
         edge2LayoutDescriptor.set(
           edge,
           this.createEdgeLayoutDescriptor(
             edge,
             graph,
-            hierarchicLayout.edgeLayoutDescriptor,
+            hierarchicalLayout.defaultEdgeDescriptor,
             this.isHorizontalOrientation()
           )
         )
       })
       // apply core layout
       try {
-        graph.addDataProvider(FlowchartTransformerStage.LAYER_ID_DP_KEY, layerIds)
-        graph.addDataProvider(
-          HierarchicLayoutCore.EDGE_LAYOUT_DESCRIPTOR_DP_KEY,
+        graph.context.addItemData(FlowchartTransformerStage.LAYER_ID_DATA_KEY, layerIds)
+        graph.context.addItemData(
+          HierarchicalLayout.EDGE_DESCRIPTOR_DATA_KEY,
           edge2LayoutDescriptor
         )
         transformerStage.applyLayout(graph)
-
-        const portCalculator = new PortCalculator()
-        portCalculator.applyLayout(graph)
       } finally {
-        graph.removeDataProvider(FlowchartTransformerStage.LAYER_ID_DP_KEY)
-        graph.removeDataProvider(HierarchicLayoutCore.EDGE_LAYOUT_DESCRIPTOR_DP_KEY)
+        graph.context.remove(FlowchartTransformerStage.LAYER_ID_DATA_KEY)
+        graph.context.remove(HierarchicalLayout.EDGE_DESCRIPTOR_DATA_KEY)
       }
     } finally {
-      // remove key set by the FlowchartPortOptimizer
-      graph.removeDataProvider(FlowchartPortOptimizer.NODE_TO_ALIGN_DP_KEY)
+      // remove key set by the FlowchartPortCandidateSelector
+      graph.context.remove(FlowchartPortCandidateSelector.NODE_TO_ALIGN_DATA_KEY)
     }
     applyLabelPlacement(graph)
   }
-
   /**
-   * Returns a HierarchicLayout instance that is configured to fit this layout's needs.
-   * @returns {!HierarchicLayout}
+   * Returns a HierarchicalLayout instance that is configured to fit this layout's needs.
    */
-  createHierarchicLayout() {
-    const hierarchicLayout = new HierarchicLayout()
-    hierarchicLayout.orthogonalRouting = true
-    hierarchicLayout.recursiveGroupLayering = false
-    hierarchicLayout.componentLayoutEnabled = false
-    hierarchicLayout.minimumLayerDistance = this.minimumNodeDistance
-    hierarchicLayout.nodeToNodeDistance = this.minimumNodeDistance
-    hierarchicLayout.edgeToEdgeDistance = this.minimumEdgeDistance
-    hierarchicLayout.backLoopRouting = false
-    hierarchicLayout.layoutOrientation = this.isHorizontalOrientation()
-      ? LayoutOrientation.LEFT_TO_RIGHT
-      : LayoutOrientation.TOP_TO_BOTTOM
-    hierarchicLayout.integratedEdgeLabeling = false
-    hierarchicLayout.considerNodeLabels = true
-    hierarchicLayout.edgeLayoutDescriptor = new HierarchicLayoutEdgeLayoutDescriptor({
-      minimumDistance: this.minimumEdgeDistance,
-      minimumLength: 15.0,
-      minimumFirstSegmentLength: 15.0,
-      minimumLastSegmentLength: 15.0,
-      routingStyle: new HierarchicLayoutRoutingStyle(HierarchicLayoutEdgeRoutingStyle.ORTHOGONAL)
-    })
-    hierarchicLayout.hierarchicLayoutCore.portConstraintOptimizer = new FlowchartPortOptimizer(
-      this.layoutOrientation
-    )
+  createHierarchicalLayout() {
     const layerer = new FlowchartLayerer()
     layerer.allowFlatwiseDefaultFlow = this.allowFlatwiseEdges
-    hierarchicLayout.fromScratchLayerer = layerer
-    const nodePlacer = hierarchicLayout.nodePlacer
-    nodePlacer.barycenterMode = true
-    nodePlacer.straightenEdges = true
-    return hierarchicLayout
+    return new HierarchicalLayout({
+      groupLayeringPolicy: 'ignore-groups',
+      minimumLayerDistance: this.minimumNodeDistance,
+      nodeDistance: this.minimumNodeDistance,
+      edgeDistance: this.minimumEdgeDistance,
+      layoutOrientation: this.isHorizontalOrientation() ? 'left-to-right' : 'top-to-bottom',
+      edgeLabelPlacement: EdgeLabelPlacement.IGNORE,
+      componentLayout: { enabled: false },
+      defaultEdgeDescriptor: new HierarchicalLayoutEdgeDescriptor({
+        minimumDistance: this.minimumEdgeDistance,
+        minimumLength: 15.0,
+        minimumFirstSegmentLength: 20.0,
+        minimumLastSegmentLength: 20.0,
+        routingStyleDescriptor: new RoutingStyleDescriptor('orthogonal'),
+        backLoopRouting: false
+      }),
+      core: {
+        portCandidateSelector: new FlowchartPortCandidateSelector(),
+        fromScratchLayerAssigner: layerer
+      },
+      coordinateAssigner: {
+        straightenEdges: true
+      }
+    })
   }
-
   /**
    * Creates a descriptor that has a minimum-edge length that is long enough for a proper placement
    * of all the edge's labels.
-   * @param {!Edge} edge
-   * @param {!LayoutGraph} graph
-   * @param {!HierarchicLayoutEdgeLayoutDescriptor} defaultDescriptor
-   * @param {boolean} horizontal
-   * @returns {!HierarchicLayoutEdgeLayoutDescriptor}
    */
   createEdgeLayoutDescriptor(edge, graph, defaultDescriptor, horizontal) {
-    const ell = graph.getLabelLayout(edge)
     let minLength = 0.0
-    ell.forEach((label) => {
-      const labelSize = label.boundingBox
+    edge.labels.forEach((label) => {
+      const labelSize = label.layout.toSize()
       if (isRegularEdge(graph, edge)) {
         minLength += horizontal ? labelSize.width : labelSize.height
       } else {
@@ -315,167 +285,99 @@ export class FlowchartLayout extends BaseClass(ILayoutAlgorithm) {
       }
     })
     // add distance between labels and to the end-nodes
-    if (ell.length > 0) {
-      minLength += this.minimumNodeDistance + (ell.length - 1) * this.minimumLabelDistance
+    if (edge.labels.size > 0) {
+      minLength += this.minimumNodeDistance + (edge.labels.size - 1) * this.minimumLabelDistance
     }
-    return new HierarchicLayoutEdgeLayoutDescriptor({
+    return new HierarchicalLayoutEdgeDescriptor({
       minimumDistance: defaultDescriptor.minimumDistance,
       minimumLength: Math.max(minLength, defaultDescriptor.minimumLength),
       minimumFirstSegmentLength: defaultDescriptor.minimumFirstSegmentLength,
       minimumLastSegmentLength: defaultDescriptor.minimumLastSegmentLength,
-      routingStyle: defaultDescriptor.routingStyle
+      routingStyleDescriptor: defaultDescriptor.routingStyleDescriptor
     })
   }
-
   /**
    * Returns whether the current layout orientation is horizontal.
-   * @returns {boolean}
    */
   isHorizontalOrientation() {
     return this.layoutOrientation === LayoutOrientation.LEFT_TO_RIGHT
   }
-
   /**
-   * {@link IDataProvider} key used to specify the preferred source port direction of an edge.
+   * {@link IMapper} key used to specify the preferred source port direction of an edge.
    * Valid are direction type constants specified in this class.
-   * @type {!string}
    */
-  static get PREFERRED_DIRECTION_DP_KEY() {
-    return 'FlowchartLayout.DIRECTION_DP_KEY'
-  }
-
-  /**
-   * {@link IDataProvider} key used to specify the node and edge labels that
-   * may be placed by the algorithm.
-   * The data provider's {@link IDataProvider.getBoolean getBoolean} method has to return
-   * true for labels that should be placed and false
-   * for all other labels. If no data provider is registered for this key, all
-   * labels are placed by the algorithm.
-   * @type {!string}
-   */
-  static get LABEL_LAYOUT_DP_KEY() {
-    return 'FlowchartLayout.LABEL_LAYOUT_DP_KEY'
-  }
-
+  static PREFERRED_DIRECTION_DATA_KEY = new EdgeDataKey('FlowchartLayout.DIRECTION_DATA_KEY')
   /**
    * Returns whether the data holder represents a flatwise branch.
-   * @param {!IDataProvider} branchTypes
-   * @param {!Edge} dataHolder
-   * @returns {boolean}
    */
   static isFlatwiseBranch(branchTypes, dataHolder) {
-    return branchTypes && FlowchartLayout.isFlatwiseBranchType(branchTypes.getInt(dataHolder))
+    return FlowchartLayout.isFlatwiseBranchType(branchTypes.get(dataHolder))
   }
-
   /**
    * Returns whether the data holder represents a flatwise branch.
-   * @param {!(IDataProvider|Graph)} provider Either a graph which holds a data provider for the preferred direction or the provider itself
-   * @param {!Edge} dataHolder The edge to get the information for
-   * @returns {boolean}
+   * @param mapper Either a graph which holds a data mapper for the preferred direction or the mapper itself
+   * @param dataHolder The edge to get the information for
    */
-  static isStraightBranch(provider, dataHolder) {
-    if (provider instanceof Graph) {
+  static isStraightBranch(mapper, dataHolder) {
+    if (mapper instanceof LayoutGraph) {
       return FlowchartLayout.isStraightBranch(
-        provider.getDataProvider(FlowchartLayout.PREFERRED_DIRECTION_DP_KEY),
+        mapper.context.getItemData(FlowchartLayout.PREFERRED_DIRECTION_DATA_KEY),
         dataHolder
       )
     }
-    return provider && FlowchartLayout.isStraightBranchType(provider.getInt(dataHolder))
+    return mapper && FlowchartLayout.isStraightBranchType(mapper.get(dataHolder))
   }
-
   /**
    * Returns whether the type represents a flatwise branch.
-   * @param {!BranchDirection} type
-   * @returns {boolean}
    */
   static isFlatwiseBranchType(type) {
-    return (type & BranchDirection.Flatwise) !== 0
+    return type !== null && (type & BranchDirection.Flatwise) !== 0
   }
-
   /**
    * Returns whether the type represents a straight branch.
-   * @param {!BranchDirection} type
-   * @returns {boolean}
    */
   static isStraightBranchType(type) {
-    return (type & BranchDirection.Straight) !== 0
+    return type !== null && (type & BranchDirection.Straight) !== 0
   }
-
   /**
-   * Restores the data provider for the given key.
-   * @param {!LayoutGraph} graph
-   * @param {!IDataProvider} dataProvider
-   * @param {*} key
+   * Restores the data mapper for the given key.
    */
-  static restoreDataProvider(graph, dataProvider, key) {
-    graph.removeDataProvider(key)
-    if (dataProvider) {
-      graph.addDataProvider(key, dataProvider)
+  static restoreDataMapper(graph, mapper, key) {
+    graph.context.remove(key)
+    if (mapper) {
+      graph.context.addItemData(key, mapper)
     }
   }
 }
-
 /**
  * Places the labels.
- * @param {!LayoutGraph} graph
  */
 function applyLabelPlacement(graph) {
   const labeling = new GenericLabeling()
-  labeling.affectedLabelsDpKey = FlowchartLayout.LABEL_LAYOUT_DP_KEY
-  labeling.placeNodeLabels = true
-  labeling.placeEdgeLabels = true
-  labeling.profitModel = new FlowchartLabelProfitModel(graph)
-  labeling.customProfitModelRatio = 0.25
+  labeling.scope = 'all'
   labeling.deterministic = true
-  try {
-    graph.addDataProvider(LabelingBase.LABEL_MODEL_DP_KEY, new LabelModelProvider())
-    labeling.applyLayout(graph)
-  } finally {
-    graph.removeDataProvider(LabelingBase.LABEL_MODEL_DP_KEY)
-  }
+  const labelingData = new GenericLabelingData()
+  labelingData.nodeLabelCandidates = new NodeLabelCandidates().addDiscreteCandidates(
+    DiscreteNodeLabelPositions.CENTER
+  )
+  labelingData.edgeLabelCandidates = new EdgeLabelCandidates().addDiscreteCandidates({
+    labelPositions: DiscreteEdgeLabelPositions.SOURCE_HEAD | DiscreteEdgeLabelPositions.SOURCE_TAIL,
+    autoRotation: false
+  })
+  graph.applyLayout(labeling, labelingData)
 }
-
-/**
- * DataProvider which provides discrete label models for node and edge labels.
- */
-class LabelModelProvider extends DataProviderBase {
-  /**
-   * @param {*} dataHolder
-   * @returns {*}
-   */
-  get(dataHolder) {
-    if (dataHolder instanceof INodeLabelLayout) {
-      return new DiscreteNodeLabelLayoutModel(DiscreteNodeLabelPositions.CENTER)
-    } else if (dataHolder instanceof IEdgeLabelLayout) {
-      const labelModel = new DiscreteEdgeLabelLayoutModel(DiscreteEdgeLabelPositions.SIX_POS)
-      labelModel.autoRotation = false
-      return labelModel
-    }
-    return null
-  }
-}
-
 const DUMMY_NODE_SIZE = 2.0
-
-/**
- * @readonly
- * @enum {number}
- */
-const NodeLayerType = {
-  Preceding: 1,
-  Succeeding: 2
-}
-
+var NodeLayerType
+;(function (NodeLayerType) {
+  NodeLayerType[(NodeLayerType['Preceding'] = 1)] = 'Preceding'
+  NodeLayerType[(NodeLayerType['Succeeding'] = 2)] = 'Succeeding'
+})(NodeLayerType || (NodeLayerType = {}))
 /**
  * Transforms the graph for the flowchart layout algorithm and creates related port candidates and edge groupings.
- * This class expects to find a HierarchicLayout in its core layouts. It does its transformation,
+ * This class expects to find a HierarchicalLayout in its core layouts. It does its transformation,
  * invokes the core layout and finally restores the original graph.
  */
 class FlowchartTransformerStage extends LayoutStageBase {
-  northCandidate = PortCandidate.createCandidate(PortDirections.NORTH, 0.0)
-  eastCandidate = PortCandidate.createCandidate(PortDirections.EAST, 0.0)
-  southCandidate = PortCandidate.createCandidate(PortDirections.SOUTH, 0.0)
-  westCandidate = PortCandidate.createCandidate(PortDirections.WEST, 0.0)
   layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM
   sourceGroupIds = null
   targetGroupIds = null
@@ -483,79 +385,50 @@ class FlowchartTransformerStage extends LayoutStageBase {
   targetCandidates = null
   groupingDummiesMap = null
   dummyLayerIds = null
-  groupNodeIdWrapper = null
-
-  /**
-   * @param {!LayoutGraph} graph
-   */
-  applyLayout(graph) {
-    const hierarchicLayout = getHierarchicCoreLayout(this)
-    if (!hierarchicLayout) {
+  applyLayoutImpl(graph) {
+    const hierarchicalLayout = getHierarchicalCoreLayout(this)
+    if (!hierarchicalLayout) {
       return
     }
-    this.layoutOrientation = hierarchicLayout.layoutOrientation
-    if (LayoutGroupingSupport.isGrouped(graph)) {
-      this.groupNodeIdWrapper = new HashedDataProviderWrapper(
-        Maps.createHashMap(),
-        graph.getDataProvider(GroupingKeys.NODE_ID_DP_KEY)
-      )
-      graph.addDataProvider(GroupingKeys.NODE_ID_DP_KEY, this.groupNodeIdWrapper)
-    }
-    // Backup all data provider this class may overwrite
-    const backupNodeIdDP = graph.getDataProvider(LayoutKeys.NODE_ID_DP_KEY)
-    const backupNodePcDP = graph.getDataProvider(PortCandidateSet.NODE_PORT_CANDIDATE_SET_DP_KEY)
-    const backupSourcePcDP = graph.getDataProvider(
-      PortCandidate.SOURCE_PORT_CANDIDATE_COLLECTION_DP_KEY
+    this.layoutOrientation = hierarchicalLayout.layoutOrientation
+    // Backup all data mappers this class may overwrite
+    const context = graph.context
+    const backupNodePcDP = context.getItemData(NodePortCandidates.NODE_PORT_CANDIDATES_DATA_KEY)
+    const backupSourceGroupDP = context.getItemData(LayoutKeys.SOURCE_EDGE_GROUP_ID_DATA_KEY)
+    const backupTargetGroupDP = context.getItemData(LayoutKeys.TARGET_EDGE_GROUP_ID_DATA_KEY)
+    const backupSourcePortCandidatesDP = context.getItemData(
+      EdgePortCandidates.SOURCE_PORT_CANDIDATES_DATA_KEY
     )
-    const backupTargetPcDP = graph.getDataProvider(
-      PortCandidate.TARGET_PORT_CANDIDATE_COLLECTION_DP_KEY
+    const backupTargetPortCandidatesDP = context.getItemData(
+      EdgePortCandidates.TARGET_PORT_CANDIDATES_DATA_KEY
     )
-    const backupSourceGroupDP = graph.getDataProvider(PortConstraintKeys.SOURCE_GROUP_ID_DP_KEY)
-    const backupTargetGroupDP = graph.getDataProvider(PortConstraintKeys.TARGET_GROUP_ID_DP_KEY)
-    const backupSourceConstraintsDP = graph.getDataProvider(
-      PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY
-    )
-    const backupTargetConstraintsDP = graph.getDataProvider(
-      PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY
-    )
-    graph.removeDataProvider(PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY)
-    graph.removeDataProvider(PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY)
-    const provider = new IdProvider()
-    graph.addDataProvider(
-      LayoutKeys.NODE_ID_DP_KEY,
-      new NodeIdDataProvider(backupNodeIdDP, provider)
-    )
+    context.remove(EdgePortCandidates.SOURCE_PORT_CANDIDATES_DATA_KEY)
+    context.remove(EdgePortCandidates.TARGET_PORT_CANDIDATES_DATA_KEY)
     try {
-      // Don't register the new data providers before the configuration is done
+      // Don't register the new data mappers before the configuration is done
       // since the old data might be needed
-      this.sourceCandidates = Maps.createHashedEdgeMap()
-      this.targetCandidates = Maps.createHashedEdgeMap()
+      this.sourceCandidates = new Mapper()
+      this.targetCandidates = new Mapper()
       this.configurePreferredEdgeDirections(graph)
-      if (graph.getDataProvider(PortConstraintKeys.TARGET_GROUP_ID_DP_KEY)) {
-        this.dummyLayerIds = Maps.createHashedNodeMap()
-        this.groupingDummiesMap = Maps.createHashedNodeMap()
-        this.sourceGroupIds = Maps.createHashedEdgeMap()
-        this.targetGroupIds = Maps.createHashedEdgeMap()
+      if (context.getItemData(LayoutKeys.TARGET_EDGE_GROUP_ID_DATA_KEY)) {
+        this.dummyLayerIds = new Mapper()
+        this.groupingDummiesMap = new Mapper()
+        this.sourceGroupIds = new Mapper()
+        this.targetGroupIds = new Mapper()
         this.configureInEdgeGrouping(graph)
-        graph.addDataProvider(
-          FlowchartTransformerStage.GROUPING_NODES_DP_KEY,
+        context.addItemData(
+          FlowchartTransformerStage.GROUPING_NODES_DATA_KEY,
           this.groupingDummiesMap
         )
-        graph.addDataProvider(PortConstraintKeys.SOURCE_GROUP_ID_DP_KEY, this.sourceGroupIds)
-        graph.addDataProvider(PortConstraintKeys.TARGET_GROUP_ID_DP_KEY, this.targetGroupIds)
+        context.addItemData(LayoutKeys.SOURCE_EDGE_GROUP_ID_DATA_KEY, this.sourceGroupIds)
+        context.addItemData(LayoutKeys.TARGET_EDGE_GROUP_ID_DATA_KEY, this.targetGroupIds)
       }
-      graph.removeDataProvider(PortCandidateSet.NODE_PORT_CANDIDATE_SET_DP_KEY)
-      graph.addDataProvider(
-        PortCandidate.SOURCE_PORT_CANDIDATE_COLLECTION_DP_KEY,
-        this.sourceCandidates
-      )
-      graph.addDataProvider(
-        PortCandidate.TARGET_PORT_CANDIDATE_COLLECTION_DP_KEY,
-        this.targetCandidates
-      )
+      context.remove(NodePortCandidates.NODE_PORT_CANDIDATES_DATA_KEY)
+      context.addItemData(EdgePortCandidates.SOURCE_PORT_CANDIDATES_DATA_KEY, this.sourceCandidates)
+      context.addItemData(EdgePortCandidates.TARGET_PORT_CANDIDATES_DATA_KEY, this.targetCandidates)
       // after all preparations are done
       // apply the core layout
-      this.applyLayoutCore(graph)
+      hierarchicalLayout.applyLayout(graph)
     } finally {
       // after the core layout:
       // clean up
@@ -565,70 +438,48 @@ class FlowchartTransformerStage extends LayoutStageBase {
       this.targetCandidates = null
       this.sourceGroupIds = null
       this.targetGroupIds = null
-
-      // restore the original data providers
-      if (this.groupNodeIdWrapper) {
-        FlowchartLayout.restoreDataProvider(
-          graph,
-          this.groupNodeIdWrapper.fallback,
-          GroupingKeys.NODE_ID_DP_KEY
-        )
-        this.groupNodeIdWrapper = null
-      }
-      FlowchartLayout.restoreDataProvider(
+      // restore the original data mappers
+      FlowchartLayout.restoreDataMapper(
         graph,
-        backupSourceConstraintsDP,
-        PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY
+        backupSourcePortCandidatesDP,
+        EdgePortCandidates.SOURCE_PORT_CANDIDATES_DATA_KEY
       )
-      FlowchartLayout.restoreDataProvider(
+      FlowchartLayout.restoreDataMapper(
         graph,
-        backupTargetConstraintsDP,
-        PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY
+        backupTargetPortCandidatesDP,
+        EdgePortCandidates.TARGET_PORT_CANDIDATES_DATA_KEY
       )
-      FlowchartLayout.restoreDataProvider(
+      FlowchartLayout.restoreDataMapper(
         graph,
         backupNodePcDP,
-        PortCandidateSet.NODE_PORT_CANDIDATE_SET_DP_KEY
+        NodePortCandidates.NODE_PORT_CANDIDATES_DATA_KEY
       )
-      FlowchartLayout.restoreDataProvider(
-        graph,
-        backupSourcePcDP,
-        PortCandidate.SOURCE_PORT_CANDIDATE_COLLECTION_DP_KEY
-      )
-      FlowchartLayout.restoreDataProvider(
-        graph,
-        backupTargetPcDP,
-        PortCandidate.TARGET_PORT_CANDIDATE_COLLECTION_DP_KEY
-      )
-      FlowchartLayout.restoreDataProvider(
+      FlowchartLayout.restoreDataMapper(
         graph,
         backupSourceGroupDP,
-        PortConstraintKeys.SOURCE_GROUP_ID_DP_KEY
+        LayoutKeys.SOURCE_EDGE_GROUP_ID_DATA_KEY
       )
-      FlowchartLayout.restoreDataProvider(
+      FlowchartLayout.restoreDataMapper(
         graph,
         backupTargetGroupDP,
-        PortConstraintKeys.TARGET_GROUP_ID_DP_KEY
+        LayoutKeys.TARGET_EDGE_GROUP_ID_DATA_KEY
       )
-      FlowchartLayout.restoreDataProvider(graph, backupNodeIdDP, LayoutKeys.NODE_ID_DP_KEY)
       restoreOriginalGraph(graph)
       removeCollinearBends(graph)
     }
   }
-
   /**
    * Configures the in-edge grouping.
    * @see {@link InEdgeGroupingConfigurator}
-   * @param {!LayoutGraph} graph
    */
   configureInEdgeGrouping(graph) {
-    const hasLayerIds = graph.getDataProvider(FlowchartTransformerStage.LAYER_ID_DP_KEY) !== null
+    const hasLayerIds = !!graph.context.getItemData(FlowchartTransformerStage.LAYER_ID_DATA_KEY)
     const precedingGroupingConfigurator = new InEdgeGroupingConfigurator(this)
     const succeedingGroupingConfigurator = new SucceedingLayersInEdgeGroupingConfigurator(this)
-    const edgesToReverse = new EdgeList()
+    const edgesToReverse = new YList()
     const groupingLists = getGroupingLists(graph)
     groupingLists.forEach((groupingList) => {
-      if (groupingList === null || groupingList.isEmpty()) {
+      if (groupingList === null || groupingList.size === 0) {
         return
       }
       if (hasLayerIds) {
@@ -640,44 +491,37 @@ class FlowchartTransformerStage extends LayoutStageBase {
           edgesToReverse
         )
       } else {
-        const target = groupingList.firstEdge().target
+        const target = groupingList.get(0).target
         groupingList.forEach((edge) => {
           this.targetGroupIds.set(edge, target)
         })
       }
     })
-
     edgesToReverse.forEach((edge) => {
       graph.reverseEdge(edge)
       // Reverse the port candidate data if an original edge was reversed
-      if (
-        this.groupingDummiesMap.getInt(edge.source) === 0 ||
-        this.groupingDummiesMap.getInt(edge.target) === 0
-      ) {
+      if (this.getGroupingType(edge.source) === 0 || this.getGroupingType(edge.target) === 0) {
         const spc = this.sourceCandidates.get(edge)
         this.sourceCandidates.set(edge, this.targetCandidates.get(edge))
         this.targetCandidates.set(edge, spc)
       }
     })
   }
-
   /**
    * Creates the configuration for the preferred edge directions.
    * This method creates source port candidates according
-   * to the directions defined by the data provider for the key {@link FlowchartLayout.PREFERRED_DIRECTION_DP_KEY}.
-   * @param {!LayoutGraph} graph
+   * to the directions defined by the data mapper for the key {@link FlowchartLayout.PREFERRED_DIRECTION_DATA_KEY}.
    */
   configurePreferredEdgeDirections(graph) {
-    const directions = graph.getDataProvider(FlowchartLayout.PREFERRED_DIRECTION_DP_KEY)
+    const directions = graph.context.getItemData(FlowchartLayout.PREFERRED_DIRECTION_DATA_KEY)
     if (!directions) {
       return
     }
     graph.nodes.forEach((node) => {
       let leftCount = 0
       let rightCount = 0
-
       node.outEdges.forEach((edge) => {
-        const dir = directions.getInt(edge)
+        const dir = directions.get(edge) ?? BranchDirection.Undefined
         if (dir === BranchDirection.LeftInFlow) {
           leftCount++
         } else if (dir === BranchDirection.RightInFlow) {
@@ -688,29 +532,26 @@ class FlowchartTransformerStage extends LayoutStageBase {
       if (leftCount <= 1 && rightCount <= 1) {
         return
       }
-
       // If there is more than one edge to the left or right side,
       // set less restrictive candidates to allow nicer images.
       node.outEdges.forEach((edge) => {
-        const dir = directions.getInt(edge)
+        const dir = directions.get(edge)
         if (dir === BranchDirection.LeftInFlow || dir === BranchDirection.RightInFlow) {
           this.sourceCandidates.set(edge, this.getPortCandidateCollection(BranchDirection.Flatwise))
         }
       })
     })
   }
-
   /**
    * Returns the in-edges of the given node grouped by layer.
-   * @returns {!Array.<Array.<EdgeList>>} the in-edges of the given node grouped by layer. the first array
+   * @returns the in-edges of the given node grouped by layer. the first array
    *   contains edges from preceding layers, the second array edges from succeeding layers.
-   * @param {!LayoutGraph} graph
-   * @param {!EdgeList} groupedInEdges
    */
   getInEdgesByLayer(graph, groupedInEdges) {
-    const hasLayerIds = !!graph.getDataProvider(FlowchartTransformerStage.LAYER_ID_DP_KEY)
-    groupedInEdges.sort(new LayerIndexComparer(this, hasLayerIds))
-    const referenceLayer = this.getLayerId(groupedInEdges.firstEdge().target)
+    const hasLayerIds = !!graph.context.getItemData(FlowchartTransformerStage.LAYER_ID_DATA_KEY)
+    const layerIndexComparer = new LayerIndexComparator(this, hasLayerIds)
+    groupedInEdges.sort(layerIndexComparer.compare.bind(layerIndexComparer))
+    const referenceLayer = this.getLayerId(groupedInEdges.get(0).target)
     const precedingLayers = []
     const succeedingLayers = []
     let previousLayer = -1
@@ -718,7 +559,7 @@ class FlowchartTransformerStage extends LayoutStageBase {
       const layer = this.getLayerId(edge.source)
       const layers = layer <= referenceLayer ? precedingLayers : succeedingLayers
       if (layer !== previousLayer) {
-        layers.push(new EdgeList())
+        layers.push(new YList())
         previousLayer = layer
       }
       layers[layers.length - 1].push(edge)
@@ -726,142 +567,116 @@ class FlowchartTransformerStage extends LayoutStageBase {
     succeedingLayers.reverse()
     return [precedingLayers, succeedingLayers]
   }
-
   /**
-   * Returns the layer id for the given node, either from the registered data provider or from the internal dummy node
+   * Returns the layer id for the given node, either from the registered data mapper or from the internal dummy node
    * layer id map.
-   * @param {!YNode} node
-   * @returns {number}
    */
   getLayerId(node) {
-    return this.groupingDummiesMap.getInt(node) !== 0
-      ? this.dummyLayerIds.getInt(node)
-      : node.graph.getDataProvider(FlowchartTransformerStage.LAYER_ID_DP_KEY).getInt(node)
+    return this.getGroupingType(node) !== 0
+      ? this.dummyLayerIds.get(node)
+      : node.graph.context.getItemData(FlowchartTransformerStage.LAYER_ID_DATA_KEY).get(node)
   }
-
   /**
-   * Returns a collection of port candidates for the given direction.
-   * one of the directions constants in {@link FlowchartLayout}.
-   * @returns {!ICollection.<PortCandidate>} a collection of port candidates for the given direction.
-   * @param {!BranchDirection} direction
+   * Returns the grouping type for the given node.
+   */
+  getGroupingType(node) {
+    return this.groupingDummiesMap.get(node) ?? 0
+  }
+  /**
+   * Returns the port candidates for the given direction.
+   * One of the directions constants in {@link FlowchartLayout}.
+   * @returns a collection of port candidates for the given direction.
    */
   getPortCandidateCollection(direction) {
-    const collection = []
+    const edgePortCandidates = new EdgePortCandidates()
     if ((direction & BranchDirection.WithTheFlow) !== 0) {
-      collection.push(this.getPortCandidateSingleton(PortDirections.WITH_THE_FLOW))
+      this.addPortCandidate(edgePortCandidates, PortSides.START_IN_FLOW)
     }
     if ((direction & BranchDirection.AgainstTheFlow) !== 0) {
-      collection.push(this.getPortCandidateSingleton(PortDirections.AGAINST_THE_FLOW))
+      this.addPortCandidate(edgePortCandidates, PortSides.END_IN_FLOW)
     }
     if ((direction & BranchDirection.LeftInFlow) !== 0) {
-      collection.push(this.getPortCandidateSingleton(PortDirections.LEFT_IN_FLOW))
+      this.addPortCandidate(edgePortCandidates, PortSides.LEFT_IN_FLOW)
     }
     if ((direction & BranchDirection.RightInFlow) !== 0) {
-      collection.push(this.getPortCandidateSingleton(PortDirections.RIGHT_IN_FLOW))
+      this.addPortCandidate(edgePortCandidates, PortSides.RIGHT_IN_FLOW)
     }
-    return List.fromArray(collection)
+    return edgePortCandidates
   }
-
   /**
-   * Returns a single candidate for the given direction.
-   * @param {number} direction
-   * @returns {?PortCandidate}
+   * Adds the port candidate for the given direction to the list of port candidates.
    */
-  getPortCandidateSingleton(direction) {
+  addPortCandidate(edgePortCandidates, portSide) {
     switch (
-      FlowchartTransformerStage.getDirectionForLayoutOrientation(this.layoutOrientation, direction)
+      FlowchartTransformerStage.getDirectionForLayoutOrientation(this.layoutOrientation, portSide)
     ) {
-      case PortDirections.NORTH:
-        return this.northCandidate
-      case PortDirections.SOUTH:
-        return this.southCandidate
-      case PortDirections.EAST:
-        return this.eastCandidate
-      case PortDirections.WEST:
-        return this.westCandidate
+      case PortSides.TOP:
+        edgePortCandidates.addFreeCandidate(PortSides.TOP)
+        break
+      case PortSides.BOTTOM:
+        edgePortCandidates.addFreeCandidate(PortSides.BOTTOM)
+        break
+      case PortSides.RIGHT:
+        edgePortCandidates.addFreeCandidate(PortSides.RIGHT)
+        break
+      case PortSides.LEFT:
+        edgePortCandidates.addFreeCandidate(PortSides.LEFT)
+        break
       default:
-        return null
     }
   }
-
   /**
-   * DataProvider key to register layer indices for each node.
-   * @type {!string}
+   * DataMapper key to register layer indices for each node.
    */
-  static get LAYER_ID_DP_KEY() {
-    return 'FlowchartTransformerStage.LAYER_ID_DP_KEY'
-  }
-
+  static LAYER_ID_DATA_KEY = new NodeDataKey('FlowchartTransformerStage.LAYER_ID_DATA_KEY')
   /**
-   * DataProvider key to mark nodes as grouping dummies.
-   * @type {!string}
+   * DataMapper key to mark nodes as grouping dummies.
    */
-  static get GROUPING_NODES_DP_KEY() {
-    return 'FlowchartTransformerStage.GROUPING_NODES_DP_KEY'
-  }
-
+  static GROUPING_NODES_DATA_KEY = new NodeDataKey(
+    'FlowchartTransformerStage.GROUPING_NODES_DATA_KEY'
+  )
   /**
    * Returns whether the given node is a grouping dummy created by this class.
-   * @param {!Graph} graph
-   * @param {!YNode} node
-   * @returns {boolean}
    */
   static isGroupingDummy(graph, node) {
-    const provider = graph.getDataProvider(FlowchartTransformerStage.GROUPING_NODES_DP_KEY)
-    return provider !== null && provider.getInt(node) > 0
+    const mapper = graph.context.getItemData(FlowchartTransformerStage.GROUPING_NODES_DATA_KEY)
+    return mapper !== null && mapper.get(node) > 0
   }
-
   /**
    * Returns the absolute port candidate direction for the given direction with respect to the layout orientation of
    * this layout stage.
-   * @param {number} layoutOrientation
-   * @param {number} direction
-   * @returns {number}
    */
   static getDirectionForLayoutOrientation(layoutOrientation, direction) {
     if (layoutOrientation === LayoutOrientation.TOP_TO_BOTTOM) {
       switch (direction) {
-        case PortDirections.AGAINST_THE_FLOW:
-          return PortDirections.NORTH
-        case PortDirections.WITH_THE_FLOW:
-          return PortDirections.SOUTH
-        case PortDirections.LEFT_IN_FLOW:
-          return PortDirections.EAST
-        case PortDirections.RIGHT_IN_FLOW:
-          return PortDirections.WEST
+        case PortSides.END_IN_FLOW:
+          return PortSides.TOP
+        case PortSides.START_IN_FLOW:
+          return PortSides.BOTTOM
+        case PortSides.LEFT_IN_FLOW:
+          return PortSides.RIGHT
+        case PortSides.RIGHT_IN_FLOW:
+          return PortSides.LEFT
         default:
           return -1
       }
     } else {
       switch (direction) {
-        case PortDirections.AGAINST_THE_FLOW:
-          return PortDirections.WEST
-        case PortDirections.WITH_THE_FLOW:
-          return PortDirections.EAST
-        case PortDirections.LEFT_IN_FLOW:
-          return PortDirections.NORTH
-        case PortDirections.RIGHT_IN_FLOW:
-          return PortDirections.SOUTH
+        case PortSides.END_IN_FLOW:
+          return PortSides.LEFT
+        case PortSides.START_IN_FLOW:
+          return PortSides.RIGHT
+        case PortSides.LEFT_IN_FLOW:
+          return PortSides.TOP
+        case PortSides.RIGHT_IN_FLOW:
+          return PortSides.BOTTOM
         default:
           return -1
       }
     }
   }
-
-  /**
-   * Returns the last element of the given array.
-   * @param {!Array.<EdgeList>} edgeLists
-   * @returns {!EdgeList}
-   */
-  static getLast(edgeLists) {
-    return edgeLists[edgeLists.length - 1]
-  }
-
   /**
    * Returns a new list that contains the elements of c1.addAll(c2).
-   * @param {!ICollection} c1
-   * @param {!ICollection} c2
-   * @returns {!YList}
    */
   static createCombinedList(c1, c2) {
     const yList = new YList(c1)
@@ -869,85 +684,27 @@ class FlowchartTransformerStage extends LayoutStageBase {
     return yList
   }
 }
-
 /**
- * DataProvider which returns the data holder itself for each graph item as an id.
+ * Comparator, which uses the index of the edges' target nodes as an order.
  */
-class IdProvider extends DataProviderBase {
-  /**
-   * @param {*} dataHolder
-   * @returns {*}
-   */
-  get(dataHolder) {
-    return dataHolder
+function edgeIndexComparator(o1, o2) {
+  const index1 = o1.target.index
+  const index2 = o2.target.index
+  if (index1 === index2) {
+    return 0
   }
+  return index1 < index2 ? -1 : 1
 }
-
 /**
- * DataProvider, which returns either the value stored in the backup-provider if it exists
- * or else the value in the provider.
+ * Comparator, which uses the layer index of the edges' source nodes as an order.
  */
-class NodeIdDataProvider extends DataProviderBase {
-  /**
-   * @param {!IDataProvider} backupNodeIdDP
-   * @param {!IdProvider} provider
-   */
-  constructor(backupNodeIdDP, provider) {
-    super()
-    this.provider = provider
-    this.backupNodeIdDP = backupNodeIdDP
-  }
-
-  /**
-   * @param {*} dataHolder
-   * @returns {*}
-   */
-  get(dataHolder) {
-    if (this.backupNodeIdDP && this.backupNodeIdDP.get(dataHolder)) {
-      return this.backupNodeIdDP.get(dataHolder)
-    }
-    return this.provider.get(dataHolder)
-  }
-}
-
-/**
- * Comparer, which uses the index of the edges' target nodes as an order.
- */
-class EdgeIndexComparer extends BaseClass(IComparer) {
-  /**
-   * @param {!Edge} o1
-   * @param {!Edge} o2
-   * @returns {(number)}
-   */
-  compare(o1, o2) {
-    const index1 = o1.target.index
-    const index2 = o2.target.index
-    if (index1 === index2) {
-      return 0
-    }
-    return index1 < index2 ? -1 : 1
-  }
-}
-
-/**
- * Comparer, which uses the layer index of the edges' source nodes as an order.
- */
-class LayerIndexComparer extends BaseClass(IComparer) {
-  /**
-   * @param {!FlowchartTransformerStage} enclosing
-   * @param {boolean} hasLayerIds
-   */
+class LayerIndexComparator {
+  enclosing
+  hasLayerIds
   constructor(enclosing, hasLayerIds) {
-    super()
-    this.hasLayerIds = hasLayerIds
     this.enclosing = enclosing
+    this.hasLayerIds = hasLayerIds
   }
-
-  /**
-   * @param {!Edge} o1
-   * @param {!Edge} o2
-   * @returns {(number)}
-   */
   compare(o1, o2) {
     const n1 = o1.source
     const n2 = o2.source
@@ -957,79 +714,59 @@ class LayerIndexComparer extends BaseClass(IComparer) {
     return 0
   }
 }
-
 /**
  * Creates the grouping dummy structure.
  */
 class InEdgeGroupingConfigurator {
-  /**
-   * @param {!FlowchartTransformerStage} enclosing
-   */
+  enclosing
   constructor(enclosing) {
     this.enclosing = enclosing
   }
-
   /**
    * Creates the complete grouping dummy structure.
    * @see {@link InEdgeGroupingConfigurator.createBus}
    * @see {@link InEdgeGroupingConfigurator.createGrouping}
-   * @param {!Array.<EdgeList>} layers
-   * @param {!LayoutGraph} graph
    */
   applyGrouping(layers, graph) {
     if (layers.length > 0) {
-      const neighborLayerNode = FlowchartTransformerStage.getLast(layers).firstEdge().source
+      const neighborLayerNode = layers[layers.length - 1].get(0).source
       const nonBusEdges = this.createBus(graph, layers)
       if (nonBusEdges.size === 1) {
-        this.handleSingleEdgeGrouping(nonBusEdges.firstEdge(), graph)
+        this.handleSingleEdgeGrouping(nonBusEdges.get(0))
       } else if (nonBusEdges.size > 1) {
         this.createGrouping(nonBusEdges, neighborLayerNode, graph)
       }
     }
   }
-
   /**
    * Returns the grouping type of this class.
    * {@link NodeLayerType.Preceding}.
-   * @returns {!NodeLayerType}
    */
   getGroupingType() {
     return NodeLayerType.Preceding
   }
-
   /**
    * Changes the given edge to the given nodes, and allows subclasses to reverse its direction if required.
-   * @param {!LayoutGraph} graph
-   * @param {!Edge} edge
-   * @param {!YNode} source
-   * @param {!YNode} target
    */
   changeEdge(graph, edge, source, target) {
     graph.changeEdge(edge, source, target)
   }
-
   /**
    * Sets the grouping id of the given edge to the appropriate grouping id data acceptor.
    * By default, these are target group ids.
-   * @param {!Edge} edge
-   * @param {*} id
    */
   setGroupId(edge, id) {
     this.enclosing.targetGroupIds.set(edge, id)
   }
-
   /**
    * Creates a port candidates for an edge connecting two bus dummy nodes.
-   * @param {!Edge} edge
-   * @param {!LayoutGraph} graph
    */
-  createBusPortCandidate(edge, graph) {
+  createBusPortCandidate(edge) {
     this.enclosing.sourceCandidates.set(
       edge,
-      this.createStrongPortCandidate(edge, true, PortDirections.WITH_THE_FLOW, graph)
+      this.createStrongPortCandidate(edge, true, PortSides.START_IN_FLOW)
     )
   }
-
   /**
    * Creates a bus structure to group incoming edges of a single node t.
    * These edges have to come from
@@ -1041,20 +778,19 @@ class InEdgeGroupingConfigurator {
    * less
    * layer or t. For succeeding layers, the direction of the dummy edges is reversed, that is, the edge
    * direction is always from lower layer index to higher layer index.
-   * @param {!LayoutGraph} graph the graph.
-   * @param {!Array.<EdgeList>} layers all relevant edges grouped by source layer and sorted from distant
+   * @param graph the graph.
+   * @param layers all relevant edges grouped by source layer and sorted from distant
    *   layer to near.
-   * @returns {!EdgeList}
    */
   createBus(graph, layers) {
-    const target = layers[0].firstEdge().target
-    const nonSingletonLayerEdges = new EdgeList()
-    const unfinishedEdges = new EdgeList()
+    const target = layers[0].get(0).target
+    const nonSingletonLayerEdges = new YList()
+    const unfinishedEdges = new YList()
     layers.forEach((layer) => {
       // maybe we should also check if a singleton node is connected to too many such buses
-      if (nonSingletonLayerEdges.isEmpty() && layer.size === 1) {
-        const edge = layer.firstEdge()
-        if (unfinishedEdges.isEmpty()) {
+      if (nonSingletonLayerEdges.size === 0 && layer.size === 1) {
+        const edge = layer.get(0)
+        if (unfinishedEdges.size === 0) {
           unfinishedEdges.addLast(edge)
         } else {
           const layerDummy = this.createDummyNode(
@@ -1070,11 +806,10 @@ class InEdgeGroupingConfigurator {
             }
           })
           unfinishedEdges.clear()
-
           // Create a new edge from the dummy to the target
           const e = graph.createEdge(layerDummy, target)
           unfinishedEdges.addLast(e)
-          this.createBusPortCandidate(e, graph)
+          this.createBusPortCandidate(e)
           // Handle this layer's edge
           if (FlowchartLayout.isStraightBranch(graph, edge)) {
             unfinishedEdges.addLast(edge)
@@ -1086,97 +821,75 @@ class InEdgeGroupingConfigurator {
         nonSingletonLayerEdges.addAll(layer)
       }
     })
-    if (!unfinishedEdges.isEmpty()) {
+    if (!(unfinishedEdges.size === 0)) {
       nonSingletonLayerEdges.addAll(unfinishedEdges)
     }
     return nonSingletonLayerEdges
   }
-
   /**
    * Handles the grouping of only one edge.
-   * @param {!Edge} edge
-   * @param {!LayoutGraph} graph
    */
-  handleSingleEdgeGrouping(edge, graph) {
+  handleSingleEdgeGrouping(edge) {
     this.enclosing.targetCandidates.set(
       edge,
-      this.createStrongPortCandidate(edge, false, PortDirections.AGAINST_THE_FLOW, graph)
+      this.createStrongPortCandidate(edge, false, PortSides.END_IN_FLOW)
     )
   }
-
   /**
    * Creates an edge grouping for the given nonBusEdges.
    * Since grouping works best if the sources of all
    * nonBusEdges are in the neighboring layer, this method splits edges from more distant layers by adding dummy nodes
    * in the neighboring layer.
-   * @param {!EdgeList} nonBusEdges
-   * @param {!YNode} neighborLayerNode
-   * @param {!LayoutGraph} graph
    */
   createGrouping(nonBusEdges, neighborLayerNode, graph) {
-    const nodeIds = graph.getDataProvider(LayoutKeys.NODE_ID_DP_KEY)
-    const groupId = nodeIds.get(nonBusEdges.firstEdge().target)
+    const groupId = nonBusEdges.get(0).target
     nonBusEdges.forEach((edge) => {
       this.setGroupId(edge, groupId)
       this.enclosing.targetCandidates.set(
         edge,
-        this.createStrongPortCandidate(edge, false, PortDirections.AGAINST_THE_FLOW, graph)
+        this.createStrongPortCandidate(edge, false, PortSides.END_IN_FLOW)
       )
     })
   }
-
   /**
    * Creates a dummy node, sets its layer Id and registers it in the dummy marker map.
-   * @param {!LayoutGraph} graph
-   * @param {number} groupingType
-   * @param {number} layerId
-   * @returns {!YNode}
    */
   createDummyNode(graph, groupingType, layerId) {
     const dummyNode = graph.createNode()
-    this.enclosing.groupingDummiesMap.setInt(dummyNode, groupingType)
-    this.enclosing.dummyLayerIds.setInt(dummyNode, layerId)
-    if (this.enclosing.groupNodeIdWrapper !== null) {
-      this.enclosing.groupNodeIdWrapper.map.set(dummyNode, dummyNode)
-    }
-    graph.setSize(dummyNode, DUMMY_NODE_SIZE, DUMMY_NODE_SIZE)
+    this.enclosing.groupingDummiesMap.set(dummyNode, groupingType)
+    this.enclosing.dummyLayerIds.set(dummyNode, layerId)
+    dummyNode.layout.width = DUMMY_NODE_SIZE
+    dummyNode.layout.height = DUMMY_NODE_SIZE
     return dummyNode
   }
-
   /**
    * Creates a singleton collection containing one port candidate for the specified end node of the given edge.
-   * @param {!Edge} edge
-   * @param {boolean} source
-   * @param {number} dir
-   * @param {!LayoutGraph} graph
-   * @returns {!Array.<PortCandidate>}
    */
-  createStrongPortCandidate(edge, source, dir, graph) {
-    const nl = graph.getLayout(source ? edge.source : edge.target)
+  createStrongPortCandidate(edge, source, dir) {
+    const nl = source ? edge.source.layout : edge.target.layout
     const direction = FlowchartTransformerStage.getDirectionForLayoutOrientation(
       this.enclosing.layoutOrientation,
       dir
     )
     let point
     switch (direction) {
-      case PortDirections.NORTH:
+      case PortSides.TOP:
       default:
-        point = new YPoint(0.0, -0.5 * nl.height)
+        point = new Point(0.0, -0.5 * nl.height)
         break
-      case PortDirections.SOUTH:
-        point = new YPoint(0.0, 0.5 * nl.height)
+      case PortSides.BOTTOM:
+        point = new Point(0.0, 0.5 * nl.height)
         break
-      case PortDirections.EAST:
-        point = new YPoint(0.5 * nl.width, 0.0)
+      case PortSides.RIGHT:
+        point = new Point(0.5 * nl.width, 0.0)
         break
-      case PortDirections.WEST:
-        point = new YPoint(-0.5 * nl.width, 0.0)
+      case PortSides.LEFT:
+        point = new Point(-0.5 * nl.width, 0.0)
         break
     }
-    return [PortCandidate.createCandidate(point.x, point.y, direction)]
+    return new EdgePortCandidates().addFixedCandidate(direction, new Point(point.x, point.y))
   }
 }
-
 /**
  * An {@link InEdgeGroupingConfigurator} for edges to succeeding layers.
  * Its main difference is the creation of a same layer dummy node.
@@ -1184,7 +897,6 @@ class InEdgeGroupingConfigurator {
  */
 class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigurator {
   edgesToReverse = null
-
   /**
    * Creates the complete grouping dummy structure.
    * This class stores all edges that must be reversed after the
@@ -1192,9 +904,6 @@ class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigura
    * Use this method instead of {@link SucceedingLayersInEdgeGroupingConfigurator.applyGrouping}.
    * @see {@link InEdgeGroupingConfigurator.createBus}
    * @see {@link SucceedingLayersInEdgeGroupingConfigurator.createGrouping}
-   * @param {!Array.<EdgeList>} layers
-   * @param {!LayoutGraph} graph
-   * @param {!EdgeList} edgesToReverse
    */
   applyGroupingWithReversedEdges(layers, graph, edgesToReverse) {
     try {
@@ -1204,12 +913,9 @@ class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigura
       this.edgesToReverse = null
     }
   }
-
   /**
    * This method mustn't be called directly since it omits the required list for edges to reverse.
    * @see Overrides {@link InEdgeGroupingConfigurator.applyGrouping}
-   * @param {!Array.<EdgeList>} layers
-   * @param {!LayoutGraph} graph
    */
   applyGrouping(layers, graph) {
     if (!this.edgesToReverse) {
@@ -1217,84 +923,64 @@ class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigura
     }
     super.applyGrouping(layers, graph)
   }
-
   /**
    * Returns the grouping type of this class.
    * {@link NodeLayerType.Succeeding}.
    * @see Overrides {@link InEdgeGroupingConfigurator.getGroupingType}
-   * @returns {!NodeLayerType}
    */
   getGroupingType() {
     return NodeLayerType.Succeeding
   }
-
   /**
    * Changes the given edge to the given nodes and reverses its direction.
    * @see Overrides {@link InEdgeGroupingConfigurator.changeEdge}
-   * @param {!LayoutGraph} graph
-   * @param {!Edge} edge
-   * @param {!YNode} source
-   * @param {!YNode} target
    */
   changeEdge(graph, edge, source, target) {
     super.changeEdge(graph, edge, source, target)
     this.edgesToReverse.addLast(edge)
   }
-
   /**
    * Sets the grouping id of the given edge to the appropriate grouping id data acceptor.
    * These are source group ids.
    * @see Overrides {@link InEdgeGroupingConfigurator.setGroupId}
-   * @param {!Edge} edge
-   * @param {*} id
    */
   setGroupId(edge, id) {
     this.enclosing.sourceGroupIds.set(edge, id)
   }
-
   /**
    * Creates a port candidate for an edge connecting two bus dummy nodes.
    * @see Overrides {@link InEdgeGroupingConfigurator.createBusPortCandidate}
-   * @param {!Edge} edge
-   * @param {!LayoutGraph} graph
    */
-  createBusPortCandidate(edge, graph) {
+  createBusPortCandidate(edge) {
     this.enclosing.targetCandidates.set(
       edge,
-      this.createStrongPortCandidate(edge, true, PortDirections.AGAINST_THE_FLOW, graph)
+      this.createStrongPortCandidate(edge, true, PortSides.END_IN_FLOW)
     )
   }
-
   /**
-   * Creates a strong North candidate and reverses the edge if it comes from a dummy.
+   * Creates a strong top candidate and reverses the edge if it comes from a dummy.
    * @see Overrides {@link InEdgeGroupingConfigurator.handleSingleEdgeGrouping}
-   * @param {!Edge} edge
-   * @param {!LayoutGraph} graph
    */
-  handleSingleEdgeGrouping(edge, graph) {
-    if (this.enclosing.groupingDummiesMap.getInt(edge.source) > 0) {
+  handleSingleEdgeGrouping(edge) {
+    if (this.enclosing.groupingDummiesMap.get(edge.source) > 0) {
       this.edgesToReverse.addLast(edge)
     }
     this.enclosing.targetCandidates.set(
       edge,
-      this.createStrongPortCandidate(edge, false, PortDirections.AGAINST_THE_FLOW, graph)
+      this.createStrongPortCandidate(edge, false, PortSides.END_IN_FLOW)
     )
   }
-
   /**
    * Creates an edge grouping for the given nonBusEdges.
    * Since grouping works best if the sources of all
    * nonBusEdges are in the neighboring layer, this method splits edges from more distant layers by adding dummy nodes
    * in the neighboring layer.
    * @see Overrides {@link InEdgeGroupingConfigurator.createGrouping}
-   * @param {!EdgeList} nonBusEdges
-   * @param {!YNode} neighborLayerNode
-   * @param {!LayoutGraph} graph
    */
   createGrouping(nonBusEdges, neighborLayerNode, graph) {
     this.prepareForGrouping(nonBusEdges, graph)
-    const target = nonBusEdges.firstEdge().target
-    const groupId = graph.getDataProvider(LayoutKeys.NODE_ID_DP_KEY).get(target)
+    const target = nonBusEdges.get(0).target
+    const groupId = target
     const neighborLayerIndex = this.enclosing.getLayerId(neighborLayerNode)
     nonBusEdges.forEach((edge) => {
       let groupingEdge
@@ -1309,18 +995,15 @@ class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigura
       this.setGroupId(groupingEdge, groupId)
       this.enclosing.sourceCandidates.set(
         groupingEdge,
-        this.createStrongPortCandidate(groupingEdge, false, PortDirections.WITH_THE_FLOW, graph)
+        this.createStrongPortCandidate(groupingEdge, false, PortSides.START_IN_FLOW)
       )
     })
   }
-
   /**
    * Creates a same layer dummy node for nicer grouping.
-   * @param {!EdgeList} nonBusEdges
-   * @param {!LayoutGraph} graph
    */
   prepareForGrouping(nonBusEdges, graph) {
-    const originalTarget = nonBusEdges.firstEdge().target
+    const originalTarget = nonBusEdges.get(0).target
     const target = this.createDummyNode(
       graph,
       this.getGroupingType(),
@@ -1329,151 +1012,97 @@ class SucceedingLayersInEdgeGroupingConfigurator extends InEdgeGroupingConfigura
     const sameLayerEdge = graph.createEdge(originalTarget, target)
     this.enclosing.sourceCandidates.set(
       sameLayerEdge,
-      this.createStrongPortCandidate(sameLayerEdge, true, PortDirections.AGAINST_THE_FLOW, graph)
+      this.createStrongPortCandidate(sameLayerEdge, true, PortSides.END_IN_FLOW)
     )
     nonBusEdges.forEach((edge) => {
       graph.changeEdge(edge, edge.source, target)
     })
   }
 }
-
-/**
- * A two-stage data provider which returns the value of map.get(key) if the key is contained in the given
- * map, and fallback.get(key) otherwise.
- */
-class HashedDataProviderWrapper extends BaseClass(IDataProvider) {
-  /**
-   * @param {!IMap} map
-   * @param {!IDataProvider} fallback
-   */
-  constructor(map, fallback) {
-    super()
-    this.fallback = fallback
-    this.map = map
-  }
-
-  /**
-   * Returns an object value associated with the given data holder.
-   * This method may throw an Error.
-   * @see Specified by {@link IDataProvider.get}.
-   * @param {*} dataHolder
-   * @returns {*}
-   */
-  get(dataHolder) {
-    return this.map.has(dataHolder) ? this.map.get(dataHolder) : this.fallback.get(dataHolder)
-  }
-
-  /**
-   * Returns an integer value associated with the given data holder.
-   * This method may throw an Error.
-   * @see Specified by {@link IDataProvider.getInt}.
-   * @param {*} dataHolder
-   * @returns {number}
-   */
-  getInt(dataHolder) {
-    return this.map.has(dataHolder)
-      ? Number.parseInt(this.map.get(dataHolder))
-      : this.fallback.getInt(dataHolder)
-  }
-
-  /**
-   * Returns a double value associated with the given data holder.
-   * This method may throw an Error.
-   * @see Specified by {@link IDataProvider.getNumber}.
-   * @param {*} dataHolder
-   * @returns {number}
-   */
-  getNumber(dataHolder) {
-    return this.map.has(dataHolder)
-      ? Number.parseFloat(this.map.get(dataHolder))
-      : this.fallback.getNumber(dataHolder)
-  }
-
-  /**
-   * Returns a boolean value associated with the given data holder.
-   * This method may throw an Error.
-   * @see Specified by {@link IDataProvider.getBoolean}.
-   * @param {*} dataHolder
-   * @returns {boolean}
-   */
-  getBoolean(dataHolder) {
-    return this.map.has(dataHolder)
-      ? !!this.map.get(dataHolder)
-      : this.fallback.getBoolean(dataHolder)
-  }
-}
-
 /**
  * Returns an array of edge lists,
  * each of which contains all edges with the same group id and the same target node.
- * @param {!LayoutGraph} graph
- * @returns {!Array.<EdgeList>}
  */
 function getGroupingLists(graph) {
-  const groupIdDP = graph.getDataProvider(PortConstraintKeys.TARGET_GROUP_ID_DP_KEY)
+  const groupIdDP = graph.context.getItemData(LayoutKeys.TARGET_EDGE_GROUP_ID_DATA_KEY)
   // Partition edges according to group id
-  const idToListsMap = Maps.createHashMap()
+  const idToListsMap = new Map()
   graph.edges.forEach((edge) => {
     const id = groupIdDP.get(edge)
     if (id) {
-      if (idToListsMap.has(id)) {
+      if (idToListsMap.get(id)) {
         idToListsMap.get(id).addLast(edge)
       } else {
-        const list = new EdgeList(edge)
+        const list = new YList([edge])
         idToListsMap.set(id, list)
       }
     }
   })
   // Divide the group id partitions according to edge target nodes
   const targetGroupLists = []
-  idToListsMap.values.forEach((groupList) => {
+  for (const groupList of idToListsMap.values()) {
     // Sort the edges according to target nodes such that edges with the same target have consecutive indices
-    groupList.sort(new EdgeIndexComparer())
+    groupList.sort(edgeIndexComparator)
     // Add edges to lists and start a new list whenever a new target is found
     let targetGroupList
     groupList.forEach((edge) => {
-      if (!targetGroupList || !edge.target.equals(targetGroupList.firstEdge().target)) {
-        targetGroupList = new EdgeList()
+      if (!targetGroupList || edge.target !== targetGroupList.get(0).target) {
+        targetGroupList = new YList()
         targetGroupLists.push(targetGroupList)
       }
       targetGroupList.addLast(edge)
     })
-  })
+  }
   return targetGroupLists
 }
-
+function setEdgePath(edge, pathPoints, graph) {
+  edge.resetPath()
+  edge.sourcePortLocation = pathPoints.first()
+  edge.targetPortLocation = pathPoints.last()
+  pathPoints.forEach((pathPoint) => {
+    graph.addBend(edge, pathPoint.x, pathPoint.y)
+  })
+}
+function getPointListForEdge(edge) {
+  return new YList(
+    edge.pathPoints.toArray().map((pathPoint) => new Point(pathPoint.x, pathPoint.y))
+  )
+}
 /**
  * Restores the original graph by changing all edges to their original nodes and removing all dummy nodes.
- * @param {!LayoutGraph} graph
  */
 function restoreOriginalGraph(graph) {
-  const groupingDummiesDP = graph.getDataProvider(FlowchartTransformerStage.GROUPING_NODES_DP_KEY)
+  const groupingDummiesDP = graph.context.getItemData(
+    FlowchartTransformerStage.GROUPING_NODES_DATA_KEY
+  )
   if (groupingDummiesDP === null) {
     return
   }
-  graph.removeDataProvider(FlowchartTransformerStage.GROUPING_NODES_DP_KEY)
-  new YNodeList(graph.getNodeCursor()).forEach((node) => {
+  graph.context.remove(FlowchartTransformerStage.GROUPING_NODES_DATA_KEY)
+  graph.nodes.toArray().forEach((node) => {
     let outPath
-    const groupingDummyId = groupingDummiesDP.getInt(node)
+    const groupingDummyId = groupingDummiesDP.get(node)
     if (groupingDummyId === NodeLayerType.Preceding) {
-      const outEdge = node.firstOutEdge
-      outPath = graph.getPathList(outEdge)
-      outPath.set(0, graph.getCenter(node))
-      new EdgeList(node.getInEdgeCursor()).forEach((edge) => {
-        const inPath = graph.getPathList(edge)
+      const outEdge = node.outEdges.get(0)
+      outPath = getPointListForEdge(outEdge)
+      outPath.unshift(new Point(node.layout.center.x, node.layout.center.y))
+      node.inEdges.forEach((edge) => {
+        const inPath = getPointListForEdge(edge)
         inPath.pop()
         graph.changeEdge(edge, edge.source, outEdge.target)
-        graph.setPath(edge, FlowchartTransformerStage.createCombinedList(inPath, outPath))
+        setEdgePath(edge, FlowchartTransformerStage.createCombinedList(inPath, outPath), graph)
       })
-      graph.removeNode(node)
+      graph.remove(node)
     } else if (groupingDummyId === NodeLayerType.Succeeding) {
-      const inEdge = node.firstInEdge
-      const inEdgeFromOriginal = groupingDummiesDP.getInt(inEdge.source) === 0
-      const inPath = graph.getPathList(inEdge)
-      inPath.set(inPath.size - 1, graph.getCenter(node))
-      new EdgeList(node.getOutEdgeCursor()).forEach((edge) => {
-        const outEdgeFromOriginal = groupingDummiesDP.getInt(edge.target) === 0
-        outPath = graph.getPathList(edge)
+      const inEdge = node.inEdges.get(0)
+      const sourceGroupingType = groupingDummiesDP.get(inEdge.source)
+      const inEdgeFromOriginal = sourceGroupingType === null || sourceGroupingType === 0
+      const inPath = getPointListForEdge(inEdge)
+      inPath.push(new Point(node.layout.center.x, node.layout.center.y))
+      node.outEdges.toArray().forEach((edge) => {
+        const targetGroupingType = groupingDummiesDP.get(edge.target)
+        const outEdgeFromOriginal = targetGroupingType === null || targetGroupingType === 0
+        outPath = getPointListForEdge(edge)
         outPath.shift()
         graph.changeEdge(edge, inEdge.source, edge.target)
         const combinedPath = FlowchartTransformerStage.createCombinedList(inPath, outPath)
@@ -1483,16 +1112,14 @@ function restoreOriginalGraph(graph) {
           combinedPath.reverse()
         }
         makeOrthogonal(combinedPath)
-        graph.setPath(edge, combinedPath)
+        setEdgePath(edge, combinedPath, graph)
       })
-      graph.removeNode(node)
+      graph.remove(node)
     }
   })
 }
-
 /**
  * Fixes the orthogonality first and last segment of the edge path.
- * @param {!YList} combinedPath
  */
 function makeOrthogonal(combinedPath) {
   if (combinedPath.size < 2) {
@@ -1500,250 +1127,216 @@ function makeOrthogonal(combinedPath) {
   }
   const firstCell = combinedPath.firstCell
   const p1 = firstCell.info
-  const p2 = firstCell.succ().info
+  const p2 = firstCell.next.info
   if (!isOrthogonal(p1, p2)) {
     const p3 = makeOrthogonalSegment(p2, p1)
     combinedPath.insertAfter(p3, firstCell)
   }
   const lastCell = combinedPath.lastCell
-  const q1 = lastCell.pred().info
+  const q1 = lastCell.previous.info
   const q2 = lastCell.info
   if (!isOrthogonal(q1, q2)) {
     const q3 = makeOrthogonalSegment(q1, q2)
     combinedPath.insertBefore(q3, lastCell)
   }
 }
-
 /**
  * Fixes the orthogonality the segment between the given points.
- * @param {!YPoint} p1
- * @param {!YPoint} p2
- * @returns {!YPoint}
  */
 function makeOrthogonalSegment(p1, p2) {
   return Math.abs(p1.x - p2.x) < Math.abs(p1.y - p2.y)
-    ? new YPoint(p2.x, p1.y)
-    : new YPoint(p1.x, p2.y)
+    ? new Point(p2.x, p1.y)
+    : new Point(p1.x, p2.y)
 }
-
 /**
  * Checks whether the segment between the given points is orthogonal.
- * @param {!YPoint} p1
- * @param {!YPoint} p2
- * @returns {boolean}
  */
 function isOrthogonal(p1, p2) {
   return Math.abs(p1.x - p2.x) < 0.01 || Math.abs(p1.y - p2.y) < 0.01
 }
-
 /**
  * Removes all collinear bends.
- * @param {!LayoutGraph} graph
  */
 function removeCollinearBends(graph) {
   // do not remove bends of self-loops
   const selfLoopHider = new LayoutGraphHider(graph)
-  selfLoopHider.hideSelfLoops()
+  selfLoopHider.hideEdges(graph.edges.filter((edge) => edge.source === edge.target))
   const collinearBendsStage = new RemoveCollinearBendsStage()
   collinearBendsStage.removeStraightOnly = false
   collinearBendsStage.applyLayout(graph)
   selfLoopHider.unhideAll()
 }
-
 /**
- * Returns the hierarchic layout algorithm that is set as core layout of the given layout stage or null
+ * Returns the hierarchical layout algorithm that is set as core layout of the given layout stage or null
  * if none is set.
- * @param {!ILayoutStage} stage
- * @returns {?HierarchicLayout}
  */
-function getHierarchicCoreLayout(stage) {
+function getHierarchicalCoreLayout(stage) {
   const coreLayout = stage.coreLayout
-  if (coreLayout instanceof HierarchicLayout) {
+  if (coreLayout instanceof HierarchicalLayout) {
     return coreLayout
-  } else if (ILayoutStage.isInstance(coreLayout)) {
-    return getHierarchicCoreLayout(coreLayout)
+  } else if (coreLayout instanceof ILayoutStage) {
+    return getHierarchicalCoreLayout(coreLayout)
   }
   return null
 }
-
-/**
- * @readonly
- * @enum {number}
- */
-const LaneAlignment = {
-  Left: 0,
-  Right: 1
-}
-
-/**
- * @readonly
- * @enum {number}
- */
-const Priority = {
-  Low: 1,
-  Basic: 3,
-  High: 5000
-}
-
+var LaneAlignment
+;(function (LaneAlignment) {
+  LaneAlignment[(LaneAlignment['Left'] = 0)] = 'Left'
+  LaneAlignment[(LaneAlignment['Right'] = 1)] = 'Right'
+})(LaneAlignment || (LaneAlignment = {}))
+var Priority
+;(function (Priority) {
+  Priority[(Priority['Low'] = 1)] = 'Low'
+  Priority[(Priority['Basic'] = 3)] = 'Basic'
+  Priority[(Priority['High'] = 5000)] = 'High'
+})(Priority || (Priority = {}))
 /**
  * ImplicitNumericConversion, ObjectEquality
  */
-class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
+class FlowchartPortCandidateSelector extends PortCandidateSelector {
   alignmentCalculator = new FlowchartAlignmentCalculator()
-  pcListOptimizer = new PortCandidateOptimizer()
-
+  PortCandidateSelector = new PortCandidateSelector()
   /**
-   * Initializes a new FlowchartPortOptimizer instance.
-   * @param {!LayoutOrientation} layoutOrientation Necessary to correctly interpret the values provided by the {@link PortCandidate}s
-   * since the {@link OrientationLayout} is not able to automatically adjust these values.
+   * Assigns new temporary port candidates after the layering information has been determined.
+   * @param graph the input graph
+   * @param layoutContext the context that provides access to information for the graph elements, as well
+   * as the layers to which the nodes are assigned
    */
-  constructor(layoutOrientation) {
-    super()
-    this.layoutOrientation = layoutOrientation
+  selectAfterLayering(graph, layoutContext) {
+    this.PortCandidateSelector.selectAfterLayering(graph, layoutContext)
   }
-
   /**
-   * Assigns new temporary port constraints after the layering information has been determined.
-   * @param {!LayoutGraph} graph the input graph
-   * @param {!ILayers} layers Holds the current layering information
-   * @param {!ILayoutDataProvider} ldp Provides layout related metadata for nodes and edges
-   * @param {!IItemFactory} itemFactory Factory for temporary port constraints
-   * @see {@link IItemFactory.setTemporaryPortConstraint}
-   * @see Specified by {@link IPortConstraintOptimizer.optimizeAfterLayering}.
+   * Assigns new temporary port candidates after the sequence of the nodes has been determined.
+   * @param graph the input graph
+   * @param layoutContext the context that provides access to information for the graph elements, as well
+   * as the layers to which the nodes are assigned
    */
-  optimizeAfterLayering(graph, layers, ldp, itemFactory) {
-    this.pcListOptimizer.optimizeAfterLayering(graph, layers, ldp, itemFactory)
+  selectAfterSequencing(graph, layoutContext) {
+    super.selectAfterSequencing(graph, layoutContext)
+    const edgePriority = new Mapper()
+    const nodeAlignment = new Mapper()
+    this.alignmentCalculator.determineAlignment(graph, layoutContext, nodeAlignment, edgePriority)
+    this.selectPortCandidatesForAlignment(graph, layoutContext, nodeAlignment, edgePriority)
+    selectCandidatesForMessageNodes(graph, layoutContext)
   }
-
   /**
-   * Assigns new temporary port constraints after the sequence of the nodes has been determined.
-   * @param {!LayoutGraph} graph the input graph
-   * @param {!ILayers} layers Holds the current layering information
-   * @param {!ILayoutDataProvider} ldp Provides layout related metadata for nodes and edges
-   * @param {!IItemFactory} itemFactory Factory for temporary port constraints
-   * @see {@link IItemFactory.setTemporaryPortConstraint}
-   * @see Specified by {@link IPortConstraintOptimizer.optimizeAfterSequencing}.
-   */
-  optimizeAfterSequencing(graph, layers, ldp, itemFactory) {
-    super.optimizeAfterSequencing(graph, layers, ldp, itemFactory)
-    const edgePriority = Maps.createHashedEdgeMap()
-    const nodeAlignment = Maps.createHashedNodeMap()
-    this.alignmentCalculator.determineAlignment(graph, ldp, nodeAlignment, edgePriority)
-    this.optimizeForAlignment(graph, ldp, itemFactory, nodeAlignment, edgePriority)
-    optimizeMessageNodes(graph, ldp, itemFactory)
-  }
-
-  /**
-   * Assigns new temporary port constraints to a given node of the graph after the order of the nodes in each layer
+   * Assigns new temporary port candidates to a given node of the graph after the order of the nodes in each layer
    * has been determined.
    *
    * More precisely, it is called after the sequence of the nodes has been determined.
    *
-   * Incoming and outgoing edges are sorted using {@link IComparer} instances which
+   * Incoming and outgoing edges are sorted using comparator functions which
    * define the preferred ordering of the incoming and outgoing edges from left to right.
    *
    * __Note:__ In this phase, it is not allowed to create back-loops, i.e., incoming edges mustn't connect to the
-   * south
-   * (i.e., bottom) side and outgoing edges mustn't connect to the north (i.e., top) side of a node.
-   * @param {!YNode} node the original node to set temporary port constraints
-   * @param {!IComparer.<Edge>} inEdgeOrder Induces the order for incoming edges
-   * @param {!IComparer.<Edge>} outEdgeOrder Induces the order for outgoing edges
-   * @param {!LayoutGraph} graph the input graph
-   * @param {!ILayoutDataProvider} ldp Provides layout related metadata for nodes and edges
-   * @param {!IItemFactory} itemFactory Factory for temporary port constraints
-   * @see {@link PortConstraintOptimizerBase.optimizeAfterSequencing}
+   * bottom
+   * (i.e., bottom) side and outgoing edges mustn't connect to the top side of a node.
+   * @param node the original node to set temporary port candidates
+   * @param inEdgeOrder Induces the order for incoming edges
+   * @param outEdgeOrder Induces the order for outgoing edges
+   * @param graph the input graph
+   * @param layoutContext Provides layout related metadata for nodes and edges
    */
-  optimizeAfterSequencingForSingleNode(node, inEdgeOrder, outEdgeOrder, graph, ldp, itemFactory) {
-    // set EAST or WEST temporary constraints for the same layer edges
+  selectAfterSequencingAtNode(node, inEdgeOrder, outEdgeOrder, graph, layoutContext) {
+    // set left or right temporary port candidates for the same layer edges
     node.edges.forEach((edge) => {
-      if (FlowchartPortOptimizer.isTemporarySameLayerEdge(edge, ldp)) {
-        const preferredSide = FlowchartPortOptimizer.getPreferredSideForTemporarySameLayerEdge(
-          edge,
-          ldp
-        )
-        itemFactory.setTemporaryPortConstraint(
-          edge,
-          node.equals(edge.source),
-          PortConstraint.create(preferredSide)
-        )
+      if (FlowchartPortCandidateSelector.isTemporarySameLayerEdge(edge, layoutContext)) {
+        const preferredSide =
+          FlowchartPortCandidateSelector.getPreferredSideForTemporarySameLayerEdge(
+            edge,
+            layoutContext
+          )
+        const portCandidate = LayoutPortCandidate.createFree(preferredSide)
+        const edgeContext = layoutContext.getEdgeContext(edge)
+        if (node === edge.source) {
+          edgeContext.selectedSourcePortCandidate = portCandidate
+        } else {
+          edgeContext.selectedTargetPortCandidate = portCandidate
+        }
       }
     })
-    // choose final temporary constraint for all non-assigned flatwise edges
-    this.optimizeFlatwiseEdges(node, true, outEdgeOrder, ldp, itemFactory)
-    this.optimizeFlatwiseEdges(node, false, inEdgeOrder, ldp, itemFactory)
+    // choose final temporary port candidates for all non-assigned flatwise edges
+    this.selectPortCandidatesForFlatwiseEdges(node, true, outEdgeOrder, layoutContext)
+    this.selectPortCandidatesForFlatwiseEdges(node, false, inEdgeOrder, layoutContext)
   }
-
   /**
-   * Chooses the final port constraint for all non-assigned flatwise edges.
-   * @param {!YNode} node
-   * @param {boolean} source
-   * @param {!IComparer.<Edge>} edgeOrder
-   * @param {!ILayoutDataProvider} ldp
-   * @param {!IItemFactory} itemFactory
+   * Chooses the final port candidates for all non-assigned flatwise edges.
    */
-  optimizeFlatwiseEdges(node, source, edgeOrder, ldp, itemFactory) {
-    const flatwiseEdges = Maps.createHashSet()
-    const centralEdges = new EdgeList()
+  selectPortCandidatesForFlatwiseEdges(node, source, edgeOrder, layoutContext) {
+    const flatwiseEdges = new Set()
+    const centralEdges = []
     const edges = source ? node.outEdges : node.inEdges
     edges.forEach((edge) => {
-      const edgeData = ldp.getEdgeData(edge)
-      const constraint = source ? edgeData.sourcePortConstraint : edgeData.targetPortConstraint
+      const edgeData = layoutContext.getEdgeContext(edge)
+      const portCandidate = source
+        ? edgeData.selectedSourcePortCandidate
+        : edgeData.selectedTargetPortCandidate
       const candidates = source ? edgeData.sourcePortCandidates : edgeData.targetPortCandidates
-      if (constraint && (constraint.atEast || constraint.atWest)) {
+      if (
+        portCandidate &&
+        (portCandidate.isOnSide(PortSides.RIGHT) || portCandidate.isOnSide(PortSides.LEFT))
+      ) {
         return
       }
-      if (
-        FlowchartPortOptimizer.isFlatwiseCandidateCollection(candidates, this.layoutOrientation)
-      ) {
+      if (FlowchartPortCandidateSelector.isFlatwiseCandidateCollection(candidates)) {
         flatwiseEdges.add(edge)
       } else {
-        centralEdges.add(edge)
+        centralEdges.push(edge)
       }
     })
     if (flatwiseEdges.size === 0) {
       return
     }
-    centralEdges.addAll(flatwiseEdges)
+    const flatwiseEdgesArray = Array.from(flatwiseEdges)
+    centralEdges.push(...flatwiseEdgesArray)
     centralEdges.sort(edgeOrder)
     centralEdges.forEach((edge, i) => {
-      if (flatwiseEdges.some((flatwiseEdge) => flatwiseEdge === edge)) {
-        const side = i < ((centralEdges.size / 2) | 0) ? PortSide.WEST : PortSide.EAST
-        itemFactory.setTemporaryPortConstraint(edge, source, PortConstraint.create(side))
+      if (flatwiseEdgesArray.some((flatwiseEdge) => flatwiseEdge === edge)) {
+        const side = i < ((centralEdges.length / 2) | 0) ? PortSides.LEFT : PortSides.RIGHT
+        const portCandidate = LayoutPortCandidate.createFree(side)
+        const edgeContext = layoutContext.getEdgeContext(edge)
+        if (source) {
+          edgeContext.selectedSourcePortCandidate = portCandidate
+        } else {
+          edgeContext.selectedTargetPortCandidate = portCandidate
+        }
       }
     })
   }
-
   /**
-   * Optimizes port constraints considering nodes that are aligned.
-   * @param {!LayoutGraph} graph
-   * @param {!ILayoutDataProvider} ldp
-   * @param {!IItemFactory} itemFactory
-   * @param {!IDataProvider} node2AlignWith
-   * @param {!IDataProvider} edge2Length
+   * Selects port candidates considering nodes that are aligned.
    */
-  optimizeForAlignment(graph, ldp, itemFactory, node2AlignWith, edge2Length) {
+  selectPortCandidatesForAlignment(graph, layoutContext, node2AlignWith, edge2Length) {
     graph.nodes.forEach((node) => {
-      if (!this.alignmentCalculator.isSpecialNode(graph, node, ldp) || node.degree < 2) {
+      if (!this.alignmentCalculator.isSpecialNode(graph, node, layoutContext) || node.degree < 2) {
         return
       }
-      node.sortOutEdges(new PositionEdgeComparer(false, ldp))
-      node.sortInEdges(new PositionEdgeComparer(true, ldp))
+      const outEdgesPositionEdgeComparer = new PositionEdgeComparator(false, layoutContext)
+      node.sortOutEdges(outEdgesPositionEdgeComparer.compare.bind(outEdgesPositionEdgeComparer))
+      const inEdgesPositionEdgeComparer = new PositionEdgeComparator(true, layoutContext)
+      node.sortInEdges(inEdgesPositionEdgeComparer.compare.bind(inEdgesPositionEdgeComparer))
       const criticalInEdge = getCriticalInEdge(node, node2AlignWith, edge2Length)
       const criticalOutEdge = getCriticalOutEdge(node, node2AlignWith, edge2Length)
       if (criticalInEdge !== null || criticalOutEdge !== null) {
-        optimizeWithCriticalEdges(node, ldp, itemFactory, criticalInEdge, criticalOutEdge)
+        selectPortCandidatesForNodesWithCriticalEdges(
+          node,
+          layoutContext,
+          criticalInEdge,
+          criticalOutEdge
+        )
       } else if (node.degree > 2) {
-        optimizeWithoutCriticalEdges(node, ldp, itemFactory)
+        selectPortCandidatesWithoutCriticalEdges(node, layoutContext)
       }
-      // Parallel edges of the critical edges which have a port constraints at the left or right side must have a
-      // port constraint for the same side at the opposite end, too. Otherwise, such an edge gets many bends and
+      // Parallel edges of the critical edges which have a port candidates at the left or right side must have a
+      // port candidates for the same side at the opposite end, too. Otherwise, such an edge gets many bends and
       // may even destroy the alignment.
       if (criticalInEdge !== null) {
         node.inEdges.forEach((edge) => {
           if (criticalInEdge !== edge && criticalInEdge.source === edge.source) {
-            const pc = ldp.getEdgeData(edge).targetPortConstraint
-            if (FlowchartPortOptimizer.isFlatwisePortConstraint(pc)) {
-              itemFactory.setTemporaryPortConstraint(edge, true, PortConstraint.create(pc.side))
+            const pc = layoutContext.getEdgeContext(edge).selectedTargetPortCandidate
+            if (pc && FlowchartPortCandidateSelector.isFlatwisePortCandidate(pc)) {
+              const edgeContext = layoutContext.getEdgeContext(edge)
+              edgeContext.selectedSourcePortCandidate = LayoutPortCandidate.createFree(pc.side)
             }
           }
         })
@@ -1751,254 +1344,189 @@ class FlowchartPortOptimizer extends PortConstraintOptimizerBase {
       if (criticalOutEdge !== null) {
         node.outEdges.forEach((edge) => {
           if (criticalOutEdge !== edge && criticalOutEdge.target === edge.target) {
-            const pc = ldp.getEdgeData(edge).sourcePortConstraint
-            if (FlowchartPortOptimizer.isFlatwisePortConstraint(pc)) {
-              itemFactory.setTemporaryPortConstraint(edge, true, PortConstraint.create(pc.side))
+            const pc = layoutContext.getEdgeContext(edge).selectedSourcePortCandidate
+            if (pc && FlowchartPortCandidateSelector.isFlatwisePortCandidate(pc)) {
+              const edgeContext = layoutContext.getEdgeContext(edge)
+              edgeContext.selectedSourcePortCandidate = LayoutPortCandidate.createFree(pc.side)
             }
           }
         })
       }
     })
   }
-
   /**
-   * DataProvider key to provide a node alignment.
-   * @type {!string}
+   * DataMapper key to provide a node alignment.
    */
-  static get NODE_TO_ALIGN_DP_KEY() {
-    return 'y.layout.hierarchic.incremental.SimlexNodePlacer.NODE_TO_ALIGN_WITH'
-  }
-
+  static NODE_TO_ALIGN_DATA_KEY = new NodeDataKey(
+    'yWorks.Layout.Hierarchical.CoordinateAssigner.NodeToAlignWithDataKey'
+  )
   /**
    * Checks whether the given edge is a temporarily inserted same layer edge.
-   * @param {!Edge} edge
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {boolean}
    */
-  static isTemporarySameLayerEdge(edge, ldp) {
-    return FlowchartPortOptimizer.isTemporarySameLayerNode(edge.target, ldp)
+  static isTemporarySameLayerEdge(edge, layoutContext) {
+    return FlowchartPortCandidateSelector.isTemporarySameLayerNode(edge.target, layoutContext)
   }
-
   /**
    * Checks whether the given node is a dummy node connected to temporary same layer edges.
-   * @param {!YNode} node
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {boolean}
    */
-  static isTemporarySameLayerNode(node, ldp) {
-    return node.inDegree === 2 && node.outDegree === 0 && ldp.getNodeData(node) === null
+  static isTemporarySameLayerNode(node, layoutContext) {
+    return (
+      node.inDegree === 2 && node.outDegree === 0 && layoutContext.getNodeContext(node) === null
+    )
   }
-
   /**
    * Returns the preferred side where the given same layer edge should connect to it source/target node.
-   * @param {!Edge} edge
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {number}
    */
-  static getPreferredSideForTemporarySameLayerEdge(edge, ldp) {
-    const originalEdge = ldp.getEdgeData(edge).associatedEdge
-    const source = originalEdge.source.equals(edge.source)
-    const sData = ldp.getNodeData(originalEdge.source)
-    const tData = ldp.getNodeData(originalEdge.target)
+  static getPreferredSideForTemporarySameLayerEdge(edge, layoutContext) {
+    const originalEdge = layoutContext.getEdgeContext(edge).associatedEdge
+    const source = originalEdge.source === edge.source
+    const sData = layoutContext.getNodeContext(originalEdge.source)
+    const tData = layoutContext.getNodeContext(originalEdge.target)
     if (sData.position < tData.position) {
-      return source ? PortSide.EAST : PortSide.WEST
+      return source ? PortSides.RIGHT : PortSides.LEFT
     }
-    return !source ? PortSide.EAST : PortSide.WEST
+    return !source ? PortSides.RIGHT : PortSides.LEFT
   }
-
   /**
    * Returns all same layer edges in the graph.
-   * @param {!LayoutGraph} graph
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {!EdgeList}
    */
-  static getAllSameLayerEdges(graph, ldp) {
-    const sameLayerEdges = new EdgeList()
-    const edge2Seen = Maps.createHashedEdgeMap()
+  static getAllSameLayerEdges(graph, layoutContext) {
+    const sameLayerEdges = []
+    const edge2Seen = new Mapper()
     graph.nodes.forEach((node) => {
-      const nData = ldp.getNodeData(node)
-      for (let cell = nData.firstSameLayerEdgeCell; cell !== null; cell = cell.succ()) {
+      const nData = layoutContext.getNodeContext(node)
+      for (let cell = nData.firstSameLayerEdgeCell; cell !== null; cell = cell.next) {
         const sameLayerEdge = cell.info
         const opposite = sameLayerEdge.opposite(node)
-        if (!edge2Seen.getBoolean(sameLayerEdge) && graph.contains(opposite)) {
-          sameLayerEdges.addLast(sameLayerEdge)
-          edge2Seen.setBoolean(sameLayerEdge, true)
+        if (!edge2Seen.get(sameLayerEdge) && graph.contains(opposite)) {
+          sameLayerEdges.push(sameLayerEdge)
+          edge2Seen.set(sameLayerEdge, true)
         }
       }
     })
     return sameLayerEdges
   }
-
   /**
    * Returns all same layer edges connected to the given node.
-   * @param {!YNode} node
-   * @param {boolean} left
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {!EdgeList}
    */
-  static getSameLayerEdges(node, left, ldp) {
-    const nData = ldp.getNodeData(node)
+  static getSameLayerEdges(node, left, layoutContext) {
+    const nData = layoutContext.getNodeContext(node)
     const nPos = nData.position
-    const result = new EdgeList()
-    for (let cell = nData.firstSameLayerEdgeCell; cell !== null; cell = cell.succ()) {
+    const result = []
+    for (let cell = nData.firstSameLayerEdgeCell; cell !== null; cell = cell.next) {
       const sameLayerEdge = cell.info
       const other = sameLayerEdge.opposite(node)
-      const otherPos = ldp.getNodeData(other).position
+      const otherPos = layoutContext.getNodeContext(other).position
       if ((left && otherPos < nPos) || (!left && otherPos > nPos)) {
-        result.addLast(sameLayerEdge)
+        result.push(sameLayerEdge)
       }
     }
     return result
   }
-
   /**
    * Checks whether the given node connects to at least one same layer edge.
-   * @param {!YNode} n
-   * @param {boolean} left
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {boolean}
    */
-  static hasSameLayerEdge(n, left, ldp) {
-    return !FlowchartPortOptimizer.getSameLayerEdges(n, left, ldp).isEmpty()
+  static hasSameLayerEdge(n, left, layoutContext) {
+    return !(FlowchartPortCandidateSelector.getSameLayerEdges(n, left, layoutContext).length === 0)
   }
-
   /**
-   * Checks whether the given port constraint is flatwise (east or west).
-   * @param {!PortConstraint} portConstraint
-   * @returns {boolean}
+   * Checks whether the given port candidate is flatwise (right or left).
    */
-  static isFlatwisePortConstraint(portConstraint) {
-    return portConstraint && (portConstraint.atEast || portConstraint.atWest)
+  static isFlatwisePortCandidate(portCandidate) {
+    return (
+      portCandidate !== null &&
+      (portCandidate.isOnSide(PortSides.LEFT) || portCandidate.isOnSide(PortSides.RIGHT))
+    )
   }
-
   /**
-   * Checks whether the given candidates contain candidates to the east and west.
-   * @param {!ICollection.<PortCandidate>} portCandidates
-   * @param {!LayoutOrientation} layoutOrientation
-   * @returns {boolean}
+   * Checks whether the given candidates contain candidates to the right and left.
    */
-  static isFlatwiseCandidateCollection(portCandidates, layoutOrientation) {
+  static isFlatwiseCandidateCollection(portCandidates) {
     if (!portCandidates) {
       return false
     }
     let containsEast = false
     let containsWest = false
-    portCandidates.forEach((pc) => {
-      const direction = pc.getDirectionForLayoutOrientation(layoutOrientation)
-      if (!containsEast && (PortDirections.EAST & direction) !== 0) {
+    portCandidates.candidates?.forEach((pc) => {
+      if (!containsEast && pc.isOnSide(PortSides.RIGHT)) {
         containsEast = true
       }
-      if (!containsWest && (PortDirections.WEST & direction) !== 0) {
+      if (!containsWest && pc.isOnSide(PortSides.LEFT)) {
         containsWest = true
       }
     })
     return containsEast && containsWest
   }
-
   /**
    * Checks whether the given edge is goes from a higher layer back to a lower layer.
-   * @param {!Edge} edge
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {boolean}
    */
-  static isBackEdge(edge, ldp) {
-    return ldp.getEdgeData(edge).reversed
+  static isBackEdge(edge, layoutContext) {
+    return layoutContext.getEdgeContext(edge).reversed
   }
-
   /**
    * Returns the original edge to the given (dummy) edge. If the edge is already an original edge, it is returned
    * itself.
-   * @param {!Edge} edge
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {!Edge}
    */
-  static getOriginalEdge(edge, ldp) {
-    const sData = ldp.getNodeData(edge.source)
-    if (sData.type === NodeDataType.BEND && sData.associatedEdge !== null) {
+  static getOriginalEdge(edge, layoutContext) {
+    const sData = layoutContext.getNodeContext(edge.source)
+    if (sData.type === HierarchicalLayoutNodeType.BEND && sData.associatedEdge !== null) {
       return sData.associatedEdge
     }
-    const tData = ldp.getNodeData(edge.target)
-    if (tData.type === NodeDataType.BEND && tData.associatedEdge !== null) {
+    const tData = layoutContext.getNodeContext(edge.target)
+    if (tData.type === HierarchicalLayoutNodeType.BEND && tData.associatedEdge !== null) {
       return tData.associatedEdge
     }
     return edge
   }
-
   /**
    * Returns the id of the swimlane to which the given node belongs.
    * If the node is not assigned to any swimlane, -1 is returned.
-   * @param {!YNode} node
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {number}
    */
-  static getSwimlaneId(node, ldp) {
-    const laneDesc = ldp.getNodeData(node).swimLaneDescriptor
-    return laneDesc === null ? -1 : laneDesc.computedLaneIndex
+  static getLaneId(node, layoutContext) {
+    const laneDesc = layoutContext.getNodeContext(node).column
+    return laneDesc === null ? -1 : laneDesc.index
   }
-
   /**
    * Checks whether the source node is assigned to a swimlane right of the target node's swimlane.
-   * @param {!YNode} source
-   * @param {!YNode} target
-   * @param {!ILayoutDataProvider} layoutData
-   * @returns {boolean}
    */
   static isToLeftPartition(source, target, layoutData) {
-    const sourceDesc = layoutData.getNodeData(source).swimLaneDescriptor
-    const targetDesc = layoutData.getNodeData(target).swimLaneDescriptor
+    const sourceDesc = layoutData.getNodeContext(source).column
+    const targetDesc = layoutData.getNodeContext(target).column
     return (
       sourceDesc !== targetDesc &&
       sourceDesc !== null &&
       targetDesc !== null &&
-      sourceDesc.computedLaneIndex > targetDesc.computedLaneIndex
+      sourceDesc.index > targetDesc.index
     )
   }
-
   /**
    * Checks whether the source node is assigned to a swimlane left of the target node's swimlane.
-   * @param {!YNode} source
-   * @param {!YNode} target
-   * @param {!ILayoutDataProvider} layoutData
-   * @returns {boolean}
    */
   static isToRightPartition(source, target, layoutData) {
-    const sourceDesc = layoutData.getNodeData(source).swimLaneDescriptor
-    const targetDesc = layoutData.getNodeData(target).swimLaneDescriptor
+    const sourceDesc = layoutData.getNodeContext(source).column
+    const targetDesc = layoutData.getNodeContext(target).column
     return (
       sourceDesc !== targetDesc &&
       sourceDesc !== null &&
       targetDesc !== null &&
-      sourceDesc.computedLaneIndex < targetDesc.computedLaneIndex
+      sourceDesc.index < targetDesc.index
     )
   }
 }
-
 /**
  * Compare the edges of the same layers based on the end nodes' position of the specified end.
- * Ties are broken by the direction of the port constraints at the specified end, then at the opposite end, where WEST is first
- * and EAST is last. It Can be used, for example, to sort in- or out-edges of a specific node in the typical best way.
+ * Ties are broken by the direction of the port candidates at the specified end, then at the opposite end, where LEFT is first
+ * and RIGHT is last. It Can be used, for example, to sort in- or out-edges of a specific node in the typical best way.
  */
-class PositionEdgeComparer extends BaseClass(IComparer) {
+class PositionEdgeComparator {
+  source
+  layoutContext
   sameLayerNodePositionComparer
-  portConstraintComparer
-
-  /**
-   * @param {boolean} source
-   * @param {!ILayoutDataProvider} ldp
-   */
-  constructor(source, ldp) {
-    super()
-    this.ldp = ldp
+  constructor(source, layoutContext) {
     this.source = source
-    this.sameLayerNodePositionComparer = new SameLayerNodePositionComparer(ldp)
-    this.portConstraintComparer = new SingleSidePortConstraintComparer()
+    this.layoutContext = layoutContext
+    this.sameLayerNodePositionComparer = new SameLayerNodePositionComparer(layoutContext)
   }
-
-  /**
-   * @param {!Edge} e1
-   * @param {!Edge} e2
-   * @returns {(number)}
-   */
   compare(e1, e2) {
     // compare positions at a specified end
     const comparePos = this.sameLayerNodePositionComparer.compare(
@@ -2008,316 +1536,333 @@ class PositionEdgeComparer extends BaseClass(IComparer) {
     if (comparePos !== 0) {
       return comparePos
     }
-    // compare constraints at a specified end
-    const compareConstraints = this.portConstraintComparer.compare(
+    // compare candidates at a specified end
+    const comparePortCandidates = singleSidePortCandidateComparator(
       this.source
-        ? this.ldp.getEdgeData(e1).sourcePortConstraint
-        : this.ldp.getEdgeData(e1).targetPortConstraint,
+        ? this.layoutContext.getEdgeContext(e1).selectedSourcePortCandidate
+        : this.layoutContext.getEdgeContext(e1).selectedTargetPortCandidate,
       this.source
-        ? this.ldp.getEdgeData(e2).sourcePortConstraint
-        : this.ldp.getEdgeData(e2).targetPortConstraint
+        ? this.layoutContext.getEdgeContext(e2).selectedSourcePortCandidate
+        : this.layoutContext.getEdgeContext(e2).selectedTargetPortCandidate
     )
-    if (compareConstraints !== 0) {
-      return compareConstraints
+    if (comparePortCandidates !== 0) {
+      return comparePortCandidates
     }
-    // compare constraints at opposite end
-    return this.portConstraintComparer.compare(
+    // compare port candidates at opposite end
+    return singleSidePortCandidateComparator(
       this.source
-        ? this.ldp.getEdgeData(e1).targetPortConstraint
-        : this.ldp.getEdgeData(e1).sourcePortConstraint,
+        ? this.layoutContext.getEdgeContext(e1).selectedTargetPortCandidate
+        : this.layoutContext.getEdgeContext(e1).selectedSourcePortCandidate,
       this.source
-        ? this.ldp.getEdgeData(e2).targetPortConstraint
-        : this.ldp.getEdgeData(e2).sourcePortConstraint
+        ? this.layoutContext.getEdgeContext(e2).selectedTargetPortCandidate
+        : this.layoutContext.getEdgeContext(e2).selectedSourcePortCandidate
     )
   }
 }
-
 /**
- * Compares port constraints with respect to the upper or lower side of a node, that is WEST is first, EAST is last,
- * and NORTH and SOUTH are neutral elements in the middle.
+ * Compares port candidates with respect to the upper or lower side of a node, that is 'left' is first, 'right' is last,
+ * and 'top' and 'bottom' are neutral elements in the middle.
  */
-class SingleSidePortConstraintComparer extends BaseClass(IComparer) {
-  /**
-   * @param {!PortConstraint} pc1
-   * @param {!PortConstraint} pc2
-   * @returns {(number)}
-   */
-  compare(pc1, pc2) {
-    // we use NORTH as a neutral element since we care only about EST and WEST
-    const b1 = pc1 ? pc1.side : PortSide.NORTH
-    const b2 = pc2 ? pc2.side : PortSide.NORTH
-    if (b1 === b2) {
-      return 0
-    }
-    return b1 === PortSide.WEST || b2 === PortSide.EAST ? -1 : 1
+function singleSidePortCandidateComparator(pc1, pc2) {
+  // we use top as a neutral element since we care only about right and left
+  const b1 = pc1 ? pc1.side : PortSides.TOP
+  const b2 = pc2 ? pc2.side : PortSides.TOP
+  if (b1 === b2) {
+    return 0
   }
+  return b1 === PortSides.LEFT || b2 === PortSides.RIGHT ? -1 : 1
 }
-
 /**
  * Compares nodes in the same layer according to their positions.
  */
-class SameLayerNodePositionComparer extends BaseClass(IComparer) {
-  /**
-   * @param {!ILayoutDataProvider} ldp
-   */
-  constructor(ldp) {
-    super()
-    this.ldp = ldp
-    this.ldp = ldp
+class SameLayerNodePositionComparer {
+  layoutContext
+  constructor(layoutContext) {
+    this.layoutContext = layoutContext
+    this.layoutContext = layoutContext
   }
-
-  /**
-   * @param {!YNode} o1
-   * @param {!YNode} o2
-   * @returns {(number)}
-   */
   compare(o1, o2) {
-    const position1 = this.ldp.getNodeData(o1).position
-    const position2 = this.ldp.getNodeData(o2).position
+    const position1 = this.layoutContext.getNodeContext(o1).position
+    const position2 = this.layoutContext.getNodeContext(o2).position
     if (position1 === position2) {
       return 0
     }
     return position1 < position2 ? -1 : 1
   }
 }
-
 /**
  * Checks whether the given edge either connects to a strong or a flatwise port.
- * @param {!Edge} edge
- * @param {boolean} source
- * @param {!ILayoutDataProvider} ldp
- * @returns {boolean}
  */
-function isAtPreferredPort(edge, source, ldp) {
-  const e = FlowchartPortOptimizer.getOriginalEdge(edge, ldp)
-  const edgeData = ldp.getEdgeData(e)
-  const pc = source ? edgeData.sourcePortConstraint : edgeData.targetPortConstraint
-  return pc !== null && (pc.strong || pc.atEast || pc.atWest)
+function isAtPreferredPort(edge, source, layoutContext) {
+  const e = FlowchartPortCandidateSelector.getOriginalEdge(edge, layoutContext)
+  const edgeData = layoutContext.getEdgeContext(e)
+  const pc = source ? edgeData.selectedSourcePortCandidate : edgeData.selectedTargetPortCandidate
+  return (
+    pc !== null &&
+    (pc.type !== PortCandidateType.FREE ||
+      pc.isOnSide(PortSides.LEFT) ||
+      pc.isOnSide(PortSides.RIGHT))
+  )
 }
-
 /**
- * Optimizes port constraints without considering node alignments (critical edges).
- * @param {!YNode} node
- * @param {!ILayoutDataProvider} ldp
- * @param {!IItemFactory} factory
+ * Selects port candidates without considering node alignments (critical edges).
  */
-function optimizeWithoutCriticalEdges(node, ldp, factory) {
+function selectPortCandidatesWithoutCriticalEdges(node, layoutContext) {
   if (node.outDegree > node.inDegree) {
-    const firstOut = node.firstOutEdge
-    const lastOut = node.lastOutEdge
+    const firstOut = node.outEdges.get(0)
+    const lastOut = node.outEdges.get(node.outEdges.size - 1)
     if (
-      !FlowchartPortOptimizer.hasSameLayerEdge(node, true, ldp) &&
-      !isAtPreferredPort(firstOut, true, ldp) &&
+      !FlowchartPortCandidateSelector.hasSameLayerEdge(node, true, layoutContext) &&
+      !isAtPreferredPort(firstOut, true, layoutContext) &&
       (node.outDegree !== 2 ||
-        !FlowchartPortOptimizer.isToRightPartition(firstOut.source, firstOut.target, ldp) ||
-        FlowchartPortOptimizer.hasSameLayerEdge(node, false, ldp))
+        !FlowchartPortCandidateSelector.isToRightPartition(
+          firstOut.source,
+          firstOut.target,
+          layoutContext
+        ) ||
+        FlowchartPortCandidateSelector.hasSameLayerEdge(node, false, layoutContext))
     ) {
-      factory.setTemporaryPortConstraint(firstOut, true, PortConstraint.create(PortSide.WEST))
+      const edgeContext = layoutContext.getEdgeContext(firstOut)
+      edgeContext.selectedSourcePortCandidate = LayoutPortCandidate.createFree(PortSides.LEFT)
     } else if (
-      !FlowchartPortOptimizer.hasSameLayerEdge(node, false, ldp) &&
-      !isAtPreferredPort(lastOut, true, ldp) &&
+      !FlowchartPortCandidateSelector.hasSameLayerEdge(node, false, layoutContext) &&
+      !isAtPreferredPort(lastOut, true, layoutContext) &&
       (node.outDegree !== 2 ||
-        !FlowchartPortOptimizer.isToLeftPartition(lastOut.source, lastOut.target, ldp))
+        !FlowchartPortCandidateSelector.isToLeftPartition(
+          lastOut.source,
+          lastOut.target,
+          layoutContext
+        ))
     ) {
-      factory.setTemporaryPortConstraint(lastOut, true, PortConstraint.create(PortSide.EAST))
+      const edgeContext = layoutContext.getEdgeContext(lastOut)
+      edgeContext.selectedSourcePortCandidate = LayoutPortCandidate.createFree(PortSides.RIGHT)
     }
   } else {
-    const firstIn = node.firstInEdge
-    const lastIn = node.lastInEdge
+    const firstIn = node.inEdges.get(0)
+    const lastIn = node.inEdges.get(node.inEdges.size - 1)
     if (
-      !FlowchartPortOptimizer.hasSameLayerEdge(node, true, ldp) &&
-      !isAtPreferredPort(firstIn, false, ldp) &&
+      !FlowchartPortCandidateSelector.hasSameLayerEdge(node, true, layoutContext) &&
+      !isAtPreferredPort(firstIn, false, layoutContext) &&
       (node.degree !== 3 ||
-        !FlowchartPortOptimizer.isToRightPartition(firstIn.target, firstIn.source, ldp) ||
-        FlowchartPortOptimizer.hasSameLayerEdge(node, false, ldp))
+        !FlowchartPortCandidateSelector.isToRightPartition(
+          firstIn.target,
+          firstIn.source,
+          layoutContext
+        ) ||
+        FlowchartPortCandidateSelector.hasSameLayerEdge(node, false, layoutContext))
     ) {
-      factory.setTemporaryPortConstraint(firstIn, false, PortConstraint.create(PortSide.WEST))
+      const edgeContext = layoutContext.getEdgeContext(firstIn)
+      edgeContext.selectedTargetPortCandidate = LayoutPortCandidate.createFree(PortSides.LEFT)
     } else if (
-      !FlowchartPortOptimizer.hasSameLayerEdge(node, false, ldp) &&
-      !isAtPreferredPort(lastIn, false, ldp) &&
+      !FlowchartPortCandidateSelector.hasSameLayerEdge(node, false, layoutContext) &&
+      !isAtPreferredPort(lastIn, false, layoutContext) &&
       (node.degree !== 3 ||
-        !FlowchartPortOptimizer.isToLeftPartition(lastIn.target, lastIn.source, ldp))
+        !FlowchartPortCandidateSelector.isToLeftPartition(
+          lastIn.target,
+          lastIn.source,
+          layoutContext
+        ))
     ) {
-      factory.setTemporaryPortConstraint(lastIn, false, PortConstraint.create(PortSide.EAST))
+      const edgeContext = layoutContext.getEdgeContext(lastIn)
+      edgeContext.selectedTargetPortCandidate = LayoutPortCandidate.createFree(PortSides.RIGHT)
     }
   }
 }
-
 /**
- * Optimizes port constraints considering node alignments (critical edges).
- * @param {!YNode} node
- * @param {!ILayoutDataProvider} ldp
- * @param {!IItemFactory} factory
- * @param {?Edge} criticalInEdge
- * @param {?Edge} criticalOutEdge
+ * Selects port candidates considering node alignments (critical edges).
  */
-function optimizeWithCriticalEdges(node, ldp, factory, criticalInEdge, criticalOutEdge) {
-  const firstIn = node.firstInEdge
-  const firstOut = node.firstOutEdge
-  const lastIn = node.lastInEdge
-  const lastOut = node.lastOutEdge
+function selectPortCandidatesForNodesWithCriticalEdges(
+  node,
+  layoutContext,
+  criticalInEdge,
+  criticalOutEdge
+) {
+  const firstIn = node.inEdges.get(0)
+  const firstOut = node.outEdges.get(0)
+  const lastIn = node.inEdges.get(node.inEdges.size - 1)
+  const lastOut = node.outEdges.get(node.outEdges.size - 1)
   if (node.degree === 3 && node.outDegree === 2 && criticalOutEdge === null) {
     // Special case: the only in-edge is critical and there are two free out-edges
     if (
-      (!FlowchartPortOptimizer.isToRightPartition(firstOut.source, firstOut.target, ldp) &&
-        FlowchartPortOptimizer.isBackEdge(firstOut, ldp)) ||
-      FlowchartPortOptimizer.isToLeftPartition(firstOut.source, firstOut.target, ldp)
+      (!FlowchartPortCandidateSelector.isToRightPartition(
+        firstOut.source,
+        firstOut.target,
+        layoutContext
+      ) &&
+        FlowchartPortCandidateSelector.isBackEdge(firstOut, layoutContext)) ||
+      FlowchartPortCandidateSelector.isToLeftPartition(
+        firstOut.source,
+        firstOut.target,
+        layoutContext
+      )
     ) {
-      setOptimizedPortConstraint(firstOut, true, PortSide.WEST, ldp, factory)
+      selectPortCandidate(firstOut, true, PortSides.LEFT, layoutContext)
       if (
-        (!FlowchartPortOptimizer.isToLeftPartition(lastOut.source, lastOut.target, ldp) &&
-          FlowchartPortOptimizer.isBackEdge(lastOut, ldp)) ||
-        FlowchartPortOptimizer.isToRightPartition(lastOut.source, lastOut.target, ldp)
+        (!FlowchartPortCandidateSelector.isToLeftPartition(
+          lastOut.source,
+          lastOut.target,
+          layoutContext
+        ) &&
+          FlowchartPortCandidateSelector.isBackEdge(lastOut, layoutContext)) ||
+        FlowchartPortCandidateSelector.isToRightPartition(
+          lastOut.source,
+          lastOut.target,
+          layoutContext
+        )
       ) {
-        setOptimizedPortConstraint(lastOut, true, PortSide.EAST, ldp, factory)
+        selectPortCandidate(lastOut, true, PortSides.RIGHT, layoutContext)
       }
     } else {
-      setOptimizedPortConstraint(lastOut, true, PortSide.EAST, ldp, factory)
+      selectPortCandidate(lastOut, true, PortSides.RIGHT, layoutContext)
     }
   } else if (node.degree === 3 && node.inDegree === 2 && criticalInEdge === null) {
     // Special case: the only out-edge is critical and there are two free in-edges
     if (
-      (!FlowchartPortOptimizer.isToRightPartition(firstIn.target, firstIn.source, ldp) &&
-        FlowchartPortOptimizer.isBackEdge(firstIn, ldp)) ||
-      FlowchartPortOptimizer.isToLeftPartition(firstIn.target, firstIn.source, ldp)
+      (!FlowchartPortCandidateSelector.isToRightPartition(
+        firstIn.target,
+        firstIn.source,
+        layoutContext
+      ) &&
+        FlowchartPortCandidateSelector.isBackEdge(firstIn, layoutContext)) ||
+      FlowchartPortCandidateSelector.isToLeftPartition(
+        firstIn.target,
+        firstIn.source,
+        layoutContext
+      )
     ) {
-      setOptimizedPortConstraint(firstIn, false, PortSide.WEST, ldp, factory)
+      selectPortCandidate(firstIn, false, PortSides.LEFT, layoutContext)
       if (
-        (!FlowchartPortOptimizer.isToRightPartition(lastIn.target, lastIn.source, ldp) &&
-          FlowchartPortOptimizer.isBackEdge(lastIn, ldp)) ||
-        FlowchartPortOptimizer.isToLeftPartition(lastIn.target, lastIn.source, ldp)
+        (!FlowchartPortCandidateSelector.isToRightPartition(
+          lastIn.target,
+          lastIn.source,
+          layoutContext
+        ) &&
+          FlowchartPortCandidateSelector.isBackEdge(lastIn, layoutContext)) ||
+        FlowchartPortCandidateSelector.isToLeftPartition(
+          lastIn.target,
+          lastIn.source,
+          layoutContext
+        )
       ) {
-        setOptimizedPortConstraint(lastIn, true, PortSide.EAST, ldp, factory)
+        selectPortCandidate(lastIn, false, PortSides.RIGHT, layoutContext)
       }
     } else {
-      setOptimizedPortConstraint(lastIn, true, PortSide.EAST, ldp, factory)
+      selectPortCandidate(lastIn, false, PortSides.RIGHT, layoutContext)
     }
   } else if (
     criticalInEdge === null ||
     (node.outDegree > node.inDegree && criticalOutEdge !== null)
   ) {
-    if (!FlowchartPortOptimizer.hasSameLayerEdge(node, true, ldp)) {
+    if (!FlowchartPortCandidateSelector.hasSameLayerEdge(node, true, layoutContext)) {
       if (firstOut !== criticalOutEdge) {
-        setOptimizedPortConstraint(firstOut, true, PortSide.WEST, ldp, factory)
+        selectPortCandidate(firstOut, true, PortSides.LEFT, layoutContext)
       } else if (firstIn !== null && firstIn !== criticalInEdge && node.inDegree > 1) {
-        setOptimizedPortConstraint(firstIn, false, PortSide.WEST, ldp, factory)
+        selectPortCandidate(firstIn, false, PortSides.LEFT, layoutContext)
       }
     }
-    if (!FlowchartPortOptimizer.hasSameLayerEdge(node, false, ldp)) {
+    if (!FlowchartPortCandidateSelector.hasSameLayerEdge(node, false, layoutContext)) {
       if (lastOut !== criticalOutEdge) {
-        setOptimizedPortConstraint(lastOut, true, PortSide.EAST, ldp, factory)
+        selectPortCandidate(lastOut, true, PortSides.RIGHT, layoutContext)
       } else if (lastIn !== null && lastIn !== criticalInEdge && node.inDegree > 1) {
-        setOptimizedPortConstraint(lastIn, false, PortSide.EAST, ldp, factory)
+        selectPortCandidate(lastIn, false, PortSides.RIGHT, layoutContext)
       }
     }
   } else {
-    if (!FlowchartPortOptimizer.hasSameLayerEdge(node, true, ldp)) {
+    if (!FlowchartPortCandidateSelector.hasSameLayerEdge(node, true, layoutContext)) {
       if (firstIn !== criticalInEdge) {
-        setOptimizedPortConstraint(firstIn, false, PortSide.WEST, ldp, factory)
+        selectPortCandidate(firstIn, false, PortSides.LEFT, layoutContext)
       } else if (firstOut !== null && firstOut !== criticalOutEdge && node.outDegree > 1) {
-        setOptimizedPortConstraint(firstOut, true, PortSide.WEST, ldp, factory)
+        selectPortCandidate(firstOut, true, PortSides.LEFT, layoutContext)
       }
     }
-    if (!FlowchartPortOptimizer.hasSameLayerEdge(node, false, ldp)) {
+    if (!FlowchartPortCandidateSelector.hasSameLayerEdge(node, false, layoutContext)) {
       if (lastIn !== criticalInEdge) {
-        setOptimizedPortConstraint(lastIn, false, PortSide.EAST, ldp, factory)
+        selectPortCandidate(lastIn, false, PortSides.RIGHT, layoutContext)
       } else if (lastOut !== null && lastOut !== criticalOutEdge && node.outDegree > 1) {
-        setOptimizedPortConstraint(lastOut, true, PortSide.EAST, ldp, factory)
+        selectPortCandidate(lastOut, true, PortSides.RIGHT, layoutContext)
       }
     }
   }
 }
-
 /**
- * Sets a temporary port constraint when the given edge doesn't yet connect to a preferred port.
- * @param {!Edge} edge
- * @param {boolean} source
- * @param {number} direction
- * @param {!ILayoutDataProvider} ldp
- * @param {!IItemFactory} factory
+ * Sets a temporary port candidate when the given edge doesn't yet connect to a preferred port.
  */
-function setOptimizedPortConstraint(edge, source, direction, ldp, factory) {
-  if (!isAtPreferredPort(edge, source, ldp)) {
-    factory.setTemporaryPortConstraint(edge, source, PortConstraint.create(direction))
+function selectPortCandidate(edge, source, direction, layoutContext) {
+  if (!isAtPreferredPort(edge, source, layoutContext)) {
+    const edgeContext = layoutContext.getEdgeContext(edge)
+    if (source) {
+      edgeContext.selectedSourcePortCandidate = LayoutPortCandidate.createFree(direction)
+    } else {
+      edgeContext.selectedTargetPortCandidate = LayoutPortCandidate.createFree(direction)
+    }
   }
 }
-
 /**
  * Special handling for messages (always attach them to the side of nodes).
- * @param {!LayoutGraph} graph
- * @param {!ILayoutDataProvider} ldp
- * @param {!IItemFactory} factory
  */
-function optimizeMessageNodes(graph, ldp, factory) {
-  const edges = new EdgeList(graph.getEdgeCursor())
-  edges.splice(FlowchartPortOptimizer.getAllSameLayerEdges(graph, ldp))
+function selectCandidatesForMessageNodes(graph, layoutContext) {
+  const edges = graph.edges.toArray()
+  edges.push(...FlowchartPortCandidateSelector.getAllSameLayerEdges(graph, layoutContext))
   edges.forEach((e) => {
-    const original = FlowchartPortOptimizer.getOriginalEdge(e, ldp)
-    const sourceLaneId = FlowchartPortOptimizer.getSwimlaneId(original.source, ldp)
-    const targetLaneId = FlowchartPortOptimizer.getSwimlaneId(original.target, ldp)
+    const original = FlowchartPortCandidateSelector.getOriginalEdge(e, layoutContext)
+    const sourceLaneId = FlowchartPortCandidateSelector.getLaneId(original.source, layoutContext)
+    const targetLaneId = FlowchartPortCandidateSelector.getLaneId(original.target, layoutContext)
     if (isMessageFlow(graph, e) && sourceLaneId !== targetLaneId) {
-      if (ldp.getNodeData(e.source).type === NodeDataType.NORMAL && isActivity(graph, e.source)) {
-        factory.setTemporaryPortConstraint(
-          e,
-          true,
-          PortConstraint.create(sourceLaneId < targetLaneId ? PortSide.EAST : PortSide.WEST)
+      if (
+        layoutContext.getNodeContext(e.source).type === HierarchicalLayoutNodeType.REGULAR &&
+        isActivity(graph, e.source)
+      ) {
+        const edgeContext = layoutContext.getEdgeContext(e)
+        edgeContext.selectedSourcePortCandidate = LayoutPortCandidate.createFree(
+          sourceLaneId < targetLaneId ? PortSides.RIGHT : PortSides.LEFT
         )
       }
-      if (ldp.getNodeData(e.target).type === NodeDataType.NORMAL && isActivity(graph, e.target)) {
-        factory.setTemporaryPortConstraint(
-          e,
-          false,
-          PortConstraint.create(sourceLaneId < targetLaneId ? PortSide.WEST : PortSide.EAST)
+      if (
+        layoutContext.getNodeContext(e.target).type === HierarchicalLayoutNodeType.REGULAR &&
+        isActivity(graph, e.target)
+      ) {
+        const edgeContext = layoutContext.getEdgeContext(e)
+        edgeContext.selectedTargetPortCandidate = LayoutPortCandidate.createFree(
+          sourceLaneId < targetLaneId ? PortSides.LEFT : PortSides.RIGHT
         )
       }
     }
   })
 }
-
 /**
  * Returns an in-edge for the given node which comes from the node it is aligned with.
  * If several such edges exist,
  * the edge with the highest length is returned.
- * @param {!YNode} node
- * @param {!IDataProvider} node2AlignWith
- * @param {!IDataProvider} edge2Length
- * @returns {?Edge}
  */
 function getCriticalInEdge(node, node2AlignWith, edge2Length) {
   let bestEdge = null
   node.inEdges.forEach((edge) => {
     if (
       node2AlignWith.get(node) === edge.source &&
-      (bestEdge === null || edge2Length.getNumber(bestEdge) < edge2Length.getInt(edge))
+      (bestEdge === null || edge2Length.get(bestEdge) < edge2Length.get(edge))
     ) {
       bestEdge = edge
     }
   })
   return bestEdge
 }
-
 /**
  * Returns an out-edge for the given node which goes to the node it is aligned with.
  * If several such edges exist, the
  * edge with the highest length is returned.
- * @param {!YNode} node
- * @param {!IDataProvider} node2AlignWith
- * @param {!IDataProvider} edge2Length
- * @returns {?Edge}
  */
 function getCriticalOutEdge(node, node2AlignWith, edge2Length) {
   let bestEdge = null
   node.outEdges.forEach((edge) => {
     if (
       node2AlignWith.get(edge.target) === node &&
-      (bestEdge === null || edge2Length.getNumber(bestEdge) < edge2Length.getInt(edge))
+      (bestEdge === null || edge2Length.get(bestEdge) < edge2Length.get(edge))
     ) {
       bestEdge = edge
     }
   })
   return bestEdge
 }
-
 const WEIGHT_DEFAULT_EDGE = 3
 const WEIGHT_DEFAULT_EDGE_IN_SUBPROCESS = 5
 const WEIGHT_MESSAGE_FLOW = 3
@@ -2326,155 +1871,136 @@ const MIN_LENGTH_DEFAULT_EDGE = 1
 const MIN_LENGTH_FLATWISE_BRANCH = 0
 const MIN_LENGTH_MESSAGE_FLOW = 0
 const MIN_LENGTH_ASSOCIATION = 0
-const CYCLE_WEIGHT_BACKEDGE = 1.0
-const CYCLE_WEIGHT_NON_BACKEDGE = 5.0
-
+const CYCLE_WEIGHT_BACK_EDGE = 1.0
+const CYCLE_WEIGHT_NON_BACK_EDGE = 5.0
 /**
  * Customized layering for flowcharts.
  */
-class FlowchartLayerer extends BaseClass(ILayerer) {
+class FlowchartLayerer extends BaseClass(ILayerAssigner) {
   $assignStartNodesToLeftOrTop = false
   $allowFlatwiseDefaultFlow = false
-
   /**
    * Returns whether start nodes are assigned at the top or to the left of the layout.
-   * @type {boolean}
    */
   get assignStartNodesToLeftOrTop() {
     return this.$assignStartNodesToLeftOrTop
   }
-
   /**
    * Sets whether start nodes are assigned at the top or to the left of the layout.
-   * @type {boolean}
    */
   set assignStartNodesToLeftOrTop(value) {
     this.$assignStartNodesToLeftOrTop = value
   }
-
   /**
    * Returns whether a flatwise default flow is allowed.
-   * @type {boolean}
    */
   get allowFlatwiseDefaultFlow() {
     return this.$allowFlatwiseDefaultFlow
   }
-
   /**
    * Sets whether a flatwise default flow is allowed.
-   * @type {boolean}
    */
   set allowFlatwiseDefaultFlow(value) {
     this.$allowFlatwiseDefaultFlow = value
   }
-
-  /**
-   * @param {!LayoutGraph} graph
-   * @param {!ILayers} layers
-   * @param {!ILayoutDataProvider} ldp
-   */
-  assignLayers(graph, layers, ldp) {
+  assignLayers(graph, layoutContext) {
     const reversedEdges = reverseCycles(graph)
     // assign weights/min length to edges
     const hider = new LayoutGraphHider(graph)
-    const minLength = graph.createEdgeMap()
-    const node2Layer = graph.createNodeMap()
-    const weight = graph.createEdgeMap()
+    const minLength = graph.createEdgeDataMap()
+    const node2Layer = graph.createNodeDataMap()
+    const weight = graph.createEdgeDataMap()
     try {
       // transform graph
       const dummies = this.insertDummyEdges(graph, hider, weight, minLength)
       dummies.addLast(this.insertSuperRoot(graph, weight, minLength))
       // assign layers
-      RankAssignmentAlgorithm.simplex(graph, node2Layer, weight, minLength)
+      LayoutGraphAlgorithms.simplexRankAssignment(graph, node2Layer, weight, minLength)
       // undo graph transformation
       dummies.forEach((dummy) => {
-        graph.removeNode(dummy)
+        graph.remove(dummy)
       })
       hider.unhideAll()
       reversedEdges.forEach((edge) => {
         graph.reverseEdge(edge)
       })
-
       // special handling for some single degree nodes (draw the incident edge as the same layer edge)
       graph.nodes.forEach((node) => {
-        if (isDegreeOneNode(node, ldp)) {
-          handleDegreeOneNode(node, graph, node2Layer, ldp)
+        if (isDegreeOneNode(node, layoutContext)) {
+          handleDegreeOneNode(node, graph, node2Layer, layoutContext)
         }
       })
       // build result data structure
+      const layers = layoutContext.layers
       const layerCount = normalize(graph, node2Layer)
       for (let i = 0; i < layerCount; i++) {
-        layers.insert(LayerType.NORMAL, i)
+        layoutContext.insertLayer('regular', i)
       }
       graph.nodes.forEach((node) => {
-        const layer = node2Layer.getInt(node)
-        layers.getLayer(layer).add(node)
+        const layer = node2Layer.get(node)
+        layers.get(layer).add(node)
       })
     } finally {
       // dispose
-      graph.disposeEdgeMap(weight)
-      graph.disposeEdgeMap(minLength)
-      graph.disposeNodeMap(node2Layer)
+      graph.disposeEdgeDataMap(weight)
+      graph.disposeEdgeDataMap(minLength)
+      graph.disposeNodeDataMap(node2Layer)
     }
   }
-
   /**
    * Inserts dummy edges to support the flowchart layering.
-   * @param {!LayoutGraph} graph
-   * @param {!LayoutGraphHider} hider
-   * @param {!IDataAcceptor} weight
-   * @param {!IDataAcceptor} minLength
-   * @returns {!YNodeList}
    */
   insertDummyEdges(graph, hider, weight, minLength) {
-    const nodeTypeSet = graph.getDataProvider(NODE_TYPE_DP_KEY) !== null
-    const parentNodeIdDP = graph.getDataProvider(GroupingKeys.PARENT_NODE_ID_DP_KEY)
-    const preferredDirectionDP = graph.getDataProvider(FlowchartLayout.PREFERRED_DIRECTION_DP_KEY)
-    const groupingNodesDP = graph.getDataProvider(FlowchartTransformerStage.GROUPING_NODES_DP_KEY)
-    const targetGroupIdDP = graph.getDataProvider(PortConstraintKeys.TARGET_GROUP_ID_DP_KEY)
-    const outEdgeBranchTypes = graph.createNodeMap()
+    const nodeTypeSet = graph.context.getItemData(NODE_TYPE_DATA_KEY) !== null
+    const preferredDirectionDP = graph.context.getItemData(
+      FlowchartLayout.PREFERRED_DIRECTION_DATA_KEY
+    )
+    const groupingNodesDP = graph.context.getItemData(
+      FlowchartTransformerStage.GROUPING_NODES_DATA_KEY
+    )
+    const targetGroupIdDP = graph.context.getItemData(LayoutKeys.TARGET_EDGE_GROUP_ID_DATA_KEY)
+    const outEdgeBranchTypes = graph.createNodeDataMap()
     graph.nodes.forEach((node) => {
       let type = 0
       node.outEdges.forEach((edge) => {
-        type |= preferredDirectionDP.getInt(edge)
+        type |= preferredDirectionDP.get(edge)
       })
-      outEdgeBranchTypes.setInt(node, type)
+      outEdgeBranchTypes.set(node, type)
     })
-    const dummies = new YNodeList()
-    const edges = graph.getEdgeArray()
-    edges.forEach((edge) => {
+    const dummies = new YList()
+    graph.edges.forEach((edge) => {
       let dummyEdge2
       let dummyEdge1
       let dummyNode
       switch (getType(graph, edge)) {
-        case EdgeType.MessageFlow: {
+        case MultiPageEdgeType.MessageFlow: {
           dummyNode = graph.createNode()
           dummies.addLast(dummyNode)
           dummyEdge1 = graph.createEdge(edge.source, dummyNode)
-          weight.setInt(dummyEdge1, WEIGHT_MESSAGE_FLOW)
-          minLength.setInt(dummyEdge1, MIN_LENGTH_MESSAGE_FLOW)
+          weight.set(dummyEdge1, WEIGHT_MESSAGE_FLOW)
+          minLength.set(dummyEdge1, MIN_LENGTH_MESSAGE_FLOW)
           dummyEdge2 = graph.createEdge(edge.target, dummyNode)
-          weight.setInt(dummyEdge2, WEIGHT_MESSAGE_FLOW)
-          minLength.setInt(dummyEdge2, MIN_LENGTH_MESSAGE_FLOW)
+          weight.set(dummyEdge2, WEIGHT_MESSAGE_FLOW)
+          minLength.set(dummyEdge2, MIN_LENGTH_MESSAGE_FLOW)
           hider.hide(edge)
           break
         }
-        case EdgeType.Association: {
+        case MultiPageEdgeType.Association: {
           dummyNode = graph.createNode()
           dummies.addLast(dummyNode)
           dummyEdge1 = graph.createEdge(edge.source, dummyNode)
-          weight.setInt(dummyEdge1, WEIGHT_ASSOCIATION)
-          minLength.setInt(dummyEdge1, MIN_LENGTH_ASSOCIATION)
+          weight.set(dummyEdge1, WEIGHT_ASSOCIATION)
+          minLength.set(dummyEdge1, MIN_LENGTH_ASSOCIATION)
           dummyEdge2 = graph.createEdge(edge.target, dummyNode)
-          weight.setInt(dummyEdge2, WEIGHT_ASSOCIATION)
-          minLength.setInt(dummyEdge2, MIN_LENGTH_ASSOCIATION)
+          weight.set(dummyEdge2, WEIGHT_ASSOCIATION)
+          minLength.set(dummyEdge2, MIN_LENGTH_ASSOCIATION)
           hider.hide(edge)
           break
         }
         default: {
-          weight.setInt(
+          weight.set(
             edge,
-            isContainedInSubProcess(edge, graph, parentNodeIdDP, nodeTypeSet)
+            isContainedInSubProcess(edge, graph, nodeTypeSet)
               ? WEIGHT_DEFAULT_EDGE_IN_SUBPROCESS
               : WEIGHT_DEFAULT_EDGE
           )
@@ -2482,18 +2008,18 @@ class FlowchartLayerer extends BaseClass(ILayerer) {
             isFlatwiseConnectorGroupingEdge(groupingNodesDP, edge) &&
             !FlowchartLayout.isStraightBranch(preferredDirectionDP, edge)
           ) {
-            minLength.setInt(edge, MIN_LENGTH_FLATWISE_BRANCH)
+            minLength.set(edge, MIN_LENGTH_FLATWISE_BRANCH)
           } else if (isFirstGroupingEdgeToSucceedingLayers(groupingNodesDP, edge)) {
-            minLength.setInt(edge, MIN_LENGTH_FLATWISE_BRANCH)
+            minLength.set(edge, MIN_LENGTH_FLATWISE_BRANCH)
           } else if (
             !this.$allowFlatwiseDefaultFlow ||
             !FlowchartLayout.isFlatwiseBranch(preferredDirectionDP, edge) ||
-            containsOnlyFlatwise(outEdgeBranchTypes.getInt(edge.target)) ||
+            containsOnlyFlatwise(outEdgeBranchTypes.get(edge.target)) ||
             isValueSet(targetGroupIdDP, edge)
           ) {
-            minLength.setInt(edge, MIN_LENGTH_DEFAULT_EDGE)
+            minLength.set(edge, MIN_LENGTH_DEFAULT_EDGE)
           } else {
-            minLength.setInt(edge, MIN_LENGTH_FLATWISE_BRANCH)
+            minLength.set(edge, MIN_LENGTH_FLATWISE_BRANCH)
           }
           break
         }
@@ -2501,101 +2027,88 @@ class FlowchartLayerer extends BaseClass(ILayerer) {
     })
     return dummies
   }
-
   /**
    * Inserts a super root to guarantee that the graph is connected.
-   * @param {!LayoutGraph} graph
-   * @param {!IDataAcceptor} weight
-   * @param {!IDataAcceptor} minLength
-   * @returns {!YNode}
    */
   insertSuperRoot(graph, weight, minLength) {
     const superRoot = graph.createNode()
     graph.nodes.forEach((node) => {
-      if (!node.equals(superRoot) && node.inDegree === 0) {
-        const dummyEdge = graph.createEdge(superRoot, node)
-        weight.setInt(
-          dummyEdge,
+      if (node !== superRoot && node.inDegree === 0) {
+        const previewEdge = graph.createEdge(superRoot, node)
+        weight.set(
+          previewEdge,
           this.$assignStartNodesToLeftOrTop && isStartEvent(graph, node) ? 100 : 0
         )
-        minLength.setInt(dummyEdge, 0)
+        minLength.set(previewEdge, 0)
       }
     })
     return superRoot
   }
 }
-
 /**
  * Reverses the edges in a circle.
- * @param {!LayoutGraph} graph
- * @returns {!EdgeList}
  */
 function reverseCycles(graph) {
   // we only consider edges of type sequence flow
   const hider = new LayoutGraphHider(graph)
   graph.edges.forEach((e) => {
-    if (getType(graph, e) !== EdgeType.SequenceFlow) {
+    if (getType(graph, e) !== MultiPageEdgeType.SequenceFlow) {
       hider.hide(e)
     }
   })
-  const edge2Weight = graph.createEdgeMap()
-  const cyclingEdges = graph.createEdgeMap()
+  const edge2Weight = graph.createEdgeDataMap()
+  const cyclingEdges = graph.createEdgeDataMap()
   let reversedEdges
   try {
-    // try to identify backedges and assign lower weights to them
-    const coreNodes = new YNodeList()
+    // try to identify back-edges and assign lower weights to them
+    const coreNodes = new YList()
     graph.nodes.forEach((node) => {
       if (node.inDegree === 0) {
         coreNodes.addLast(node)
       }
     })
-    const node2Depth = graph.createNodeMap()
+    const node2Depth = graph.createNodeDataMap()
     try {
-      BfsAlgorithm.getLayers(graph, coreNodes, true, node2Depth)
+      LayoutGraphAlgorithms.bfs(graph, coreNodes, node2Depth, TraversalDirection.BOTH)
       graph.edges.forEach((edge) => {
-        if (node2Depth.getInt(edge.source) > node2Depth.getInt(edge.target)) {
+        if (node2Depth.get(edge.source) > node2Depth.get(edge.target)) {
           // likely to be a back-edge
-          edge2Weight.setNumber(edge, CYCLE_WEIGHT_BACKEDGE)
+          edge2Weight.set(edge, CYCLE_WEIGHT_BACK_EDGE)
         } else {
-          edge2Weight.setNumber(edge, CYCLE_WEIGHT_NON_BACKEDGE)
+          edge2Weight.set(edge, CYCLE_WEIGHT_NON_BACK_EDGE)
         }
       })
     } finally {
-      graph.disposeNodeMap(node2Depth)
+      graph.disposeNodeDataMap(node2Depth)
     }
     // find and remove cycles
-    reversedEdges = new EdgeList()
-    CycleAlgorithm.findCycleEdges(graph, cyclingEdges, edge2Weight)
-
+    reversedEdges = []
+    LayoutGraphAlgorithms.findCycleEdges(graph, cyclingEdges, edge2Weight)
     graph.edges.forEach((e) => {
-      if (cyclingEdges.getBoolean(e)) {
+      if (cyclingEdges.get(e)) {
         graph.reverseEdge(e)
-        reversedEdges.addLast(e)
+        reversedEdges.push(e)
       }
     })
   } finally {
-    graph.disposeEdgeMap(cyclingEdges)
-    graph.disposeEdgeMap(edge2Weight)
+    graph.disposeEdgeDataMap(cyclingEdges)
+    graph.disposeEdgeDataMap(edge2Weight)
     hider.unhideAll()
   }
   return reversedEdges
 }
-
 /**
  * Returns the type of the given edge.
- * @param {!LayoutGraph} graph
- * @param {!Edge} edge
- * @returns {number}
  */
 function getType(graph, edge) {
   if (!isUndefined(graph, edge)) {
     return getEdgeType(graph, edge)
   }
-
   // special handling if constraint incremental layerer calls this layerer
-  const originalEdgeDpKey =
-    'y.layout.hierarchic.incremental.ConstraintIncrementalLayerer.ORIG_EDGES'
-  const edge2OrigEdge = graph.getDataProvider(originalEdgeDpKey)
+  const originalEdgeDataKey = new EdgeDataKey(
+    'y.layout.hierarchical.incremental.ConstraintIncrementalLayerer.ORIG_EDGES'
+  )
+  const edge2OrigEdge = graph.context.getItemData(originalEdgeDataKey)
   if (edge2OrigEdge && edge2OrigEdge.get(edge)) {
     const realEdge = edge2OrigEdge.get(edge)
     if (!isUndefined(realEdge.graph, realEdge)) {
@@ -2603,41 +2116,28 @@ function getType(graph, edge) {
     }
   }
   return isAnnotation(graph, edge.source) || isAnnotation(graph, edge.target)
-    ? EdgeType.Association
-    : EdgeType.SequenceFlow
+    ? MultiPageEdgeType.Association
+    : MultiPageEdgeType.SequenceFlow
 }
-
 /**
  * Checks whether the edge's source and target node are contained in the same group node.
- * @param {!Edge} edge
- * @param {!LayoutGraph} graph
- * @param {!IDataProvider} node2Parent
- * @param {boolean} considerNodeType
- * @returns {boolean}
  */
-function isContainedInSubProcess(edge, graph, node2Parent, considerNodeType) {
-  if (node2Parent === null) {
-    return false
-  }
-  const sourceParent = node2Parent.get(edge.source)
-  const targetParent = node2Parent.get(edge.target)
+function isContainedInSubProcess(edge, graph, considerNodeType) {
+  const sourceParent = graph.getParent(edge.source)
+  const targetParent = graph.getParent(edge.target)
   return (
     sourceParent !== null &&
-    sourceParent.equals(targetParent) &&
+    sourceParent === targetParent &&
     (!considerNodeType || isGroup(graph, sourceParent))
   )
 }
-
 /**
  * Returns whether the given node has a real degree of 1. This doesn't count dummy edges.
- * @param {!YNode} n
- * @param {!ILayoutDataProvider} ldp
- * @returns {boolean}
  */
-function isDegreeOneNode(n, ldp) {
+function isDegreeOneNode(n, layoutContext) {
   let realDegree = 0
-  for (let ec = n.getEdgeCursor(); ec.ok; ec.next()) {
-    if (isNormalEdge(ldp.getEdgeData(ec.edge))) {
+  for (const edge of n.edges) {
+    if (isNormalEdge(layoutContext.getEdgeContext(edge))) {
       realDegree++
       if (realDegree > 1) {
         return false
@@ -2646,19 +2146,17 @@ function isDegreeOneNode(n, ldp) {
   }
   return realDegree === 1
 }
-
+function getLayerDiff(node2Layer, edge) {
+  return (node2Layer.get(edge.source) ?? 0) - (node2Layer.get(edge.target) ?? 0)
+}
 /**
  * Assigns 1-degree nodes to layers.
- * @param {!YNode} node
- * @param {!LayoutGraph} graph
- * @param {!INodeMap} node2Layer
- * @param {!ILayoutDataProvider} ldp
  */
-function handleDegreeOneNode(node, graph, node2Layer, ldp) {
+function handleDegreeOneNode(node, graph, node2Layer, layoutContext) {
   if (!isEvent(graph, node) || isStartEvent(graph, node)) {
     return
   }
-  const realEdge = findIncidentRealEdge(ldp, node)
+  const realEdge = findIncidentRealEdge(layoutContext, node)
   if (realEdge === null) {
     return
   }
@@ -2667,8 +2165,8 @@ function handleDegreeOneNode(node, graph, node2Layer, ldp) {
   let oppositeOutDegree = 0
   let oppositeInDegree = 0
   opposite.outEdges.forEach((edge) => {
-    if (!edge.equals(realEdge) && isNormalEdge(ldp.getEdgeData(edge))) {
-      const layerDiff = node2Layer.getInt(edge.source) - node2Layer.getInt(edge.target)
+    if (edge !== realEdge && isNormalEdge(layoutContext.getEdgeContext(edge))) {
+      const layerDiff = getLayerDiff(node2Layer, edge)
       if (layerDiff > 0) {
         oppositeInDegree++
       } else if (layerDiff === 0) {
@@ -2678,10 +2176,9 @@ function handleDegreeOneNode(node, graph, node2Layer, ldp) {
       }
     }
   })
-
   opposite.inEdges.forEach((edge) => {
-    if (!edge.equals(realEdge) && isNormalEdge(ldp.getEdgeData(edge))) {
-      const layerDiff = node2Layer.getInt(edge.source) - node2Layer.getInt(edge.target)
+    if (edge !== realEdge && isNormalEdge(layoutContext.getEdgeContext(edge))) {
+      const layerDiff = getLayerDiff(node2Layer, edge)
       if (layerDiff > 0) {
         oppositeOutDegree++
       } else if (layerDiff === 0) {
@@ -2691,470 +2188,248 @@ function handleDegreeOneNode(node, graph, node2Layer, ldp) {
       }
     }
   })
-
   if (
-    (realEdge.target.equals(node) &&
+    (realEdge.target === node &&
       sameLayerEdgeCount < 2 &&
       oppositeOutDegree >= 1 &&
       oppositeInDegree <= 2) ||
-    (realEdge.source.equals(node) &&
+    (realEdge.source === node &&
       sameLayerEdgeCount < 2 &&
       oppositeInDegree >= 1 &&
       oppositeOutDegree <= 2)
   ) {
-    node2Layer.setInt(node, node2Layer.getInt(opposite))
+    node2Layer.set(node, node2Layer.get(opposite))
   }
 }
-
 /**
  * Checks whether the given edge is a normal edge and no dummy edge.
- * @param {?IEdgeData} eData
- * @returns {boolean}
  */
 function isNormalEdge(eData) {
-  return eData !== null && eData.type === EdgeDataType.NORMAL
+  return eData !== null && eData.type === HierarchicalLayoutEdgeType.REGULAR
 }
-
 /**
  * Returns the first original edge connected to the given node.
- * @param {!ILayoutDataProvider} ldp
- * @param {!YNode} node
- * @returns {?Edge}
  */
-function findIncidentRealEdge(ldp, node) {
-  for (let ec = node.getEdgeCursor(); ec.ok; ec.next()) {
-    const edge = ec.edge
-    if (isNormalEdge(ldp.getEdgeData(edge))) {
+function findIncidentRealEdge(layoutContext, node) {
+  for (const edge of node.edges) {
+    if (isNormalEdge(layoutContext.getEdgeContext(edge))) {
       return edge
     }
   }
   return null
 }
-
 /**
  * Checks whether the given branch type describes only flatwise directions.
- * @param {!BranchDirection} branchType
- * @returns {boolean}
  */
 function containsOnlyFlatwise(branchType) {
-  return branchType !== 0 && (branchType & BranchDirection.Straight) === 0
+  return (branchType ?? 0) !== 0 && (branchType & BranchDirection.Straight) === 0
 }
-
 /**
  * Checks whether the given edge is a flatwise grouping edge.
- * @param {!IDataProvider} groupingDummies
- * @param {!Edge} edge
- * @returns {boolean}
  */
 function isFlatwiseConnectorGroupingEdge(groupingDummies, edge) {
   return (
     groupingDummies !== null &&
     ((edge.target.inDegree > 1 &&
-      groupingDummies.getInt(edge.source) === 0 &&
-      groupingDummies.getInt(edge.target) === NodeLayerType.Preceding) ||
+      (groupingDummies.get(edge.source) ?? 0) === 0 &&
+      groupingDummies.get(edge.target) === NodeLayerType.Preceding) ||
       (edge.source.outDegree > 1 &&
-        groupingDummies.getInt(edge.target) === 0 &&
-        groupingDummies.getInt(edge.source) === NodeLayerType.Succeeding))
+        (groupingDummies.get(edge.target) ?? 0) === 0 &&
+        groupingDummies.get(edge.source) === NodeLayerType.Succeeding))
   )
 }
-
 /**
  * Checks whether the given edge is the first grouping edge to a succeeding layer.
- * @param {!IDataProvider} groupingDummies
- * @param {!Edge} edge
- * @returns {boolean}
  */
 function isFirstGroupingEdgeToSucceedingLayers(groupingDummies, edge) {
   return (
     groupingDummies !== null &&
-    groupingDummies.getInt(edge.source) === 0 &&
-    groupingDummies.getInt(edge.target) === NodeLayerType.Succeeding
+    (groupingDummies.get(edge.source) ?? 0) === 0 &&
+    groupingDummies.get(edge.target) === NodeLayerType.Succeeding
   )
 }
-
 /**
- * Checks whether the given DataProvider contains a value for the given edge.
- * @param {!IDataProvider} dataProvider
- * @param {!Edge} edge
- * @returns {boolean}
+ * Checks whether the given IMapper contains a value for the given edge.
  */
-function isValueSet(dataProvider, edge) {
-  return dataProvider !== null && dataProvider.get(edge) !== null
+function isValueSet(mapper, edge) {
+  return mapper !== null && mapper.get(edge) !== null
 }
-
 /**
  * Removes empty layers and ensures that the smallest layer has value 0.
- * @param {!Graph} graph
- * @param {!INodeMap} layer
- * @returns {number}
  */
 function normalize(graph, layer) {
-  if (graph.empty) {
+  if (graph.nodes.size === 0) {
     return 0
   }
-  const nodes = graph.getNodeArray()
+  const nodes = graph.nodes.toArray()
   nodes.sort((node1, node2) => {
-    const layer1 = layer.getInt(node1)
-    const layer2 = layer.getInt(node2)
+    const layer1 = layer.get(node1)
+    const layer2 = layer.get(node2)
     if (layer1 === layer2) {
       return 0
     }
     return layer1 < layer2 ? -1 : 1
   })
-  let lastLayer = layer.getInt(nodes[0])
+  let lastLayer = layer.get(nodes[0])
   let realLayer = 0
   for (let i = 0; i < nodes.length; i++) {
-    const currentLayer = layer.getInt(nodes[i])
+    const currentLayer = layer.get(nodes[i])
     if (currentLayer !== lastLayer) {
       realLayer++
       lastLayer = currentLayer
     }
-    layer.setInt(nodes[i], realLayer)
+    layer.set(nodes[i], realLayer)
   }
   return realLayer + 1
 }
-
-const MIN_PREFERRED_PLACEMENT_DISTANCE = 3.0
-const MAX_PREFERRED_PLACEMENT_DISTANCE = 40.0
-
-/**
- * A label-profit model for the {@link FlowchartLayout}.
- */
-class FlowchartLabelProfitModel extends BaseClass(IProfitModel) {
-  label2OriginalBox
-
-  /**
-   * @param {!LayoutGraph} graph
-   */
-  constructor(graph) {
-    super()
-    this.graph = graph
-    this.label2OriginalBox = Maps.createHashMap()
-    graph.nodes.forEach((node) => {
-      const nll = graph.getLabelLayout(node)
-      for (let i = 0; i < nll.length; i++) {
-        const nlm = nll[i].labelModel
-        if (nlm instanceof DiscreteNodeLabelLayoutModel) {
-          this.label2OriginalBox.set(nll[i], nll[i].modelParameter)
-        }
-      }
-    })
-  }
-
-  /**
-   * @param {!LabelCandidate} candidate
-   * @returns {number}
-   */
-  getProfit(candidate) {
-    return IEdgeLabelLayout.isInstance(candidate.owner)
-      ? calcEdgeLabelProfit(this.graph, candidate)
-      : this.calcNodeLabelProfit(candidate)
-  }
-
-  /**
-   * Returns the profit-value for the given node label candidate.
-   * @param {!LabelCandidate} candidate
-   * @returns {number}
-   */
-  calcNodeLabelProfit(candidate) {
-    const nl = candidate.owner
-    if (nl.labelModel instanceof DiscreteNodeLabelLayoutModel) {
-      const pos = Number.parseInt(candidate.modelParameter)
-      const originalPos = Number.parseInt(this.label2OriginalBox.get(nl))
-      if (pos === originalPos) {
-        return 1.0
-      }
-
-      switch (pos) {
-        case DiscreteNodeLabelPositions.NORTH:
-        case DiscreteNodeLabelPositions.SOUTH:
-        case DiscreteNodeLabelPositions.WEST:
-        case DiscreteNodeLabelPositions.EAST:
-          return 0.95
-        case DiscreteNodeLabelPositions.NORTH_EAST:
-        case DiscreteNodeLabelPositions.NORTH_WEST:
-        case DiscreteNodeLabelPositions.SOUTH_EAST:
-        case DiscreteNodeLabelPositions.SOUTH_WEST:
-          return 0.9
-        default:
-          return 0.0
-      }
-    } else {
-      return 0.0
-    }
-  }
-
-  /**
-   * Returns the length of the given path which is a sum of the segments' lengths.
-   * @param {!YPointPath} path
-   * @returns {number}
-   */
-  static calcPathLength(path) {
-    let length = 0.0
-    for (let cur = path.lineSegments(); cur.ok; cur.next()) {
-      length += cur.lineSegment.length()
-    }
-    return length
-  }
-
-  /**
-   * Returns the distance between a rectangle and a point.
-   * @param {!YRectangle} rect
-   * @param {!YPoint} point
-   * @returns {number}
-   */
-  static getDistanceToRect(rect, point) {
-    if (rect.contains(point)) {
-      return 0.0
-    }
-
-    // determine corners of the rectangle
-    const upperLeft = rect.location
-    const lowerLeft = new YPoint(upperLeft.x, upperLeft.y + rect.height)
-    const lowerRight = new YPoint(lowerLeft.x + rect.width, lowerLeft.y)
-    const upperRight = new YPoint(lowerRight.x, upperLeft.y)
-    // determine minDist to one of the four border segments
-    let minDist = Number.MAX_VALUE
-    const rLeftSeg = new LineSegment(upperLeft, lowerLeft)
-    minDist = Math.min(minDist, FlowchartLabelProfitModel.getDistanceToLine(rLeftSeg, point))
-    const rRightSeg = new LineSegment(upperRight, lowerRight)
-    minDist = Math.min(minDist, FlowchartLabelProfitModel.getDistanceToLine(rRightSeg, point))
-    const rTopSeg = new LineSegment(upperLeft, upperRight)
-    minDist = Math.min(minDist, FlowchartLabelProfitModel.getDistanceToLine(rTopSeg, point))
-    const rBottomSeg = new LineSegment(lowerLeft, lowerRight)
-    minDist = Math.min(minDist, FlowchartLabelProfitModel.getDistanceToLine(rBottomSeg, point))
-    return minDist
-  }
-
-  /**
-   * Returns the distance between a line and a point.
-   * @param {!LineSegment} line
-   * @param {!YPoint} point
-   * @returns {number}
-   */
-  static getDistanceToLine(line, point) {
-    const x1 = line.firstEndPoint.x
-    const y1 = line.firstEndPoint.y
-    // adjust vectors relative to first endpoints of line
-    const x2 = line.secondEndPoint.x - x1
-    const y2 = line.secondEndPoint.y - y1
-    let pX = point.x - x1
-    let pY = point.y - y1
-    // calculate distance
-    let projSquaredDist
-    if (pX * x2 + pY * y2 <= 0.0) {
-      projSquaredDist = 0.0
-    } else {
-      pX = x2 - pX
-      pY = y2 - pY
-      const tmp = pX * x2 + pY * y2
-      projSquaredDist = tmp <= 0.0 ? 0.0 : (tmp * tmp) / (x2 * x2 + y2 * y2)
-    }
-    const squaredDist = pX * pX + (pY * pY - projSquaredDist)
-    return squaredDist < 0.0 ? 0.0 : Math.sqrt(squaredDist)
-  }
-}
-
-/**
- * Returns the profit-value for the given edge label candidate.
- * @param {!LayoutGraph} graph
- * @param {!LabelCandidate} candidate
- * @returns {number}
- */
-function calcEdgeLabelProfit(graph, candidate) {
-  const edge = graph.getOwnerEdge(candidate.owner)
-  if (isRegularEdge(graph, edge)) {
-    const eLength = FlowchartLabelProfitModel.calcPathLength(graph.getPath(edge))
-    const maxPreferredPlacementDistance = Math.max(MAX_PREFERRED_PLACEMENT_DISTANCE, eLength * 0.2)
-    const minDistToSource = FlowchartLabelProfitModel.getDistanceToRect(
-      candidate.boundingBox,
-      graph.getSourcePointAbs(edge)
-    )
-    if (minDistToSource > maxPreferredPlacementDistance) {
-      return 0.0
-    } else if (minDistToSource < MIN_PREFERRED_PLACEMENT_DISTANCE) {
-      return 0.5
-    }
-    return 1.0 - minDistToSource / maxPreferredPlacementDistance
-  }
-  return 0.0
-}
-
 /**
  * A calculator for aligning the longest paths in the flowchart diagram.
  */
 class FlowchartAlignmentCalculator {
   layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM
-
-  /**
-   * @param {!LayoutGraph} graph
-   * @param {!ILayoutDataProvider} ldp
-   * @param {!INodeMap} nodeAlignment
-   * @param {!IEdgeMap} edgeLength
-   */
-  determineAlignment(graph, ldp, nodeAlignment, edgeLength) {
-    graph.sortEdges(new PositionEdgeComparer(true, ldp), new PositionEdgeComparer(false, ldp))
-    const edgeIsAlignable = this.determineAlignableEdges(graph, ldp)
-    this.determineEdgeLengths(graph, ldp, edgeIsAlignable, edgeLength)
+  determineAlignment(graph, layoutContext, nodeAlignment, edgeLength) {
+    const sourcePositionEdgeComparer = new PositionEdgeComparator(true, layoutContext)
+    const targetPositionEdgeComparer = new PositionEdgeComparator(false, layoutContext)
+    graph.sortEdges(
+      sourcePositionEdgeComparer.compare.bind(sourcePositionEdgeComparer),
+      targetPositionEdgeComparer.compare.bind(targetPositionEdgeComparer)
+    )
+    const edgeIsAlignable = this.determineAlignableEdges(graph, layoutContext)
+    this.determineEdgeLengths(graph, layoutContext, edgeIsAlignable, edgeLength)
     const edgePriority = determineEdgePriorities(graph, edgeIsAlignable, edgeLength)
     const nodeAlignmentCalculator = new NodeAlignmentCalculator(this.layoutOrientation)
     nodeAlignmentCalculator.calculateAlignment(
       graph,
-      ldp,
+      layoutContext,
       edgeIsAlignable,
       edgePriority,
       nodeAlignment
     )
-    graph.addDataProvider(FlowchartPortOptimizer.NODE_TO_ALIGN_DP_KEY, nodeAlignment)
+    graph.context.addItemData(FlowchartPortCandidateSelector.NODE_TO_ALIGN_DATA_KEY, nodeAlignment)
   }
-
   /**
    * Checks whether the given node is not an annotation or grouping dummy.
-   * @param {!Graph} graph
-   * @param {!YNode} node
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {boolean}
    */
-  isSpecialNode(graph, node, ldp) {
+  isSpecialNode(graph, node, layoutContext) {
     return (
-      ldp.getNodeData(node).type === NodeDataType.NORMAL &&
+      layoutContext.getNodeContext(node).type === HierarchicalLayoutNodeType.REGULAR &&
       !isAnnotation(node.graph, node) &&
       !FlowchartTransformerStage.isGroupingDummy(graph, node)
     )
   }
-
   /**
    * Checks whether the given edge is relevant for the layout direction. Only non-message-flow edges are
    * relevant.
-   * @param {!Graph} graph
-   * @param {!Edge} e
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {boolean}
    */
-  isRelevant(graph, e, ldp) {
-    return !isMessageFlow(graph, FlowchartPortOptimizer.getOriginalEdge(e, ldp))
+  isRelevant(graph, e, layoutContext) {
+    return !isMessageFlow(graph, FlowchartPortCandidateSelector.getOriginalEdge(e, layoutContext))
   }
-
   /**
-   * Returns true if the given edge can be aligned, that is its port constraints aren't flatwise, and its end nodes
+   * Returns true if the given edge can be aligned, that is its port candidates aren't flatwise, and its end nodes
    * aren't in different swimlanes and don't belong to different groups.
-   * @param {!Graph} graph
-   * @param {!ILayoutDataProvider} ldp
-   * @param {!Edge} edge
-   * @returns {boolean}
    */
-  isAlignable(graph, ldp, edge) {
-    const edgeData = ldp.getEdgeData(edge)
-    if (
-      hasFlatwisePortConstraint(edgeData) ||
-      hasFlatwiseCandidateCollection(edgeData, this.layoutOrientation)
-    ) {
+  isAlignable(graph, layoutContext, edge) {
+    const edgeData = layoutContext.getEdgeContext(edge)
+    if (hasFlatwisePortCandidate(edgeData) || hasFlatwiseCandidateCollection(edgeData)) {
       return false
     }
     const source = edge.source
     const target = edge.target
-    const laneId1 = FlowchartPortOptimizer.getSwimlaneId(source, ldp)
-    const laneId2 = FlowchartPortOptimizer.getSwimlaneId(target, ldp)
+    const laneId1 = FlowchartPortCandidateSelector.getLaneId(source, layoutContext)
+    const laneId2 = FlowchartPortCandidateSelector.getLaneId(target, layoutContext)
     if (laneId1 !== -1 && laneId1 !== laneId2) {
       return false
     }
-    const node2Parent = graph.getDataProvider(GroupingKeys.PARENT_NODE_ID_DP_KEY)
-    return (
-      node2Parent === null ||
-      node2Parent.get(source) === null ||
-      node2Parent.get(source).equals(node2Parent.get(target))
-    )
+    const sourceParent = graph.getParent(source)
+    const targetParent = graph.getParent(target)
+    return sourceParent === null || sourceParent === targetParent
   }
-
   /**
    * Collects all edges that are relevant and alignable.
-   * @param {!LayoutGraph} graph
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {!IDataProvider}
    */
-  determineAlignableEdges(
-    graph,
-    /** ILayoutDataProvider */
-    ldp
-  ) {
-    const edgeIsAlignable = Maps.createHashedEdgeMap()
+  determineAlignableEdges(graph, layoutContext) {
+    const edgeIsAlignable = new Map()
     graph.edges.forEach((edge) => {
-      edgeIsAlignable.setBoolean(
+      edgeIsAlignable.set(
         edge,
-        this.isAlignable(graph, ldp, edge) && this.isRelevant(graph, edge, ldp)
+        this.isAlignable(graph, layoutContext, edge) && this.isRelevant(graph, edge, layoutContext)
       )
     })
     return edgeIsAlignable
   }
-
   /**
    * Determines edge lengths such that, in the longest paths, edges are preferred that guarantee
    * a suitable port assignment.
-   * @param {!LayoutGraph} graph
-   * @param {!ILayoutDataProvider} layoutData
-   * @param {!IDataProvider} edgeIsAlignable
-   * @param {!IEdgeMap} edgeLength
    */
   determineEdgeLengths(graph, layoutData, edgeIsAlignable, edgeLength) {
     const ZeroLength = 0
     const BasicDummyEdgeLength = 1
     const BasicEdgeLength = 5
-    const PenaltyLength = BasicEdgeLength + graph.nodeCount
+    const PenaltyLength = BasicEdgeLength + graph.nodes.size
     const HighPenaltyLength = PenaltyLength * 8
     graph.edges.forEach((e) => {
-      if (hasFlatwisePortConstraint(layoutData.getEdgeData(e))) {
-        edgeLength.setInt(e, ZeroLength)
+      if (hasFlatwisePortCandidate(layoutData.getEdgeContext(e))) {
+        edgeLength.set(e, ZeroLength)
       } else if (isRealEdge(e, layoutData)) {
-        edgeLength.setInt(e, BasicEdgeLength)
+        edgeLength.set(e, BasicEdgeLength)
       } else {
-        edgeLength.setInt(e, BasicDummyEdgeLength)
+        edgeLength.set(e, BasicDummyEdgeLength)
       }
     })
     graph.nodes.forEach((node) => {
       let i
       let edges
-      const nodeData = layoutData.getNodeData(node)
+      const nodeData = layoutData.getNodeContext(node)
       const type = nodeData.type
-      if (type === NodeDataType.SOURCE_GROUP_NODE || type === NodeDataType.TARGET_GROUP_NODE) {
+      //ensure that edges at the node are sorted based on the sequence position of the opposite node
+      const comparator = (e1, e2) => {
+        const opp1 = layoutData.getNodeContext(e1.opposite(node))
+        const opp2 = layoutData.getNodeContext(e2.opposite(node))
+        return Math.sign(opp1.position - opp2.position)
+      }
+      node.sortOutEdges(comparator)
+      node.sortInEdges(comparator)
+      if (
+        type === HierarchicalLayoutNodeType.SOURCE_GROUP_NODE ||
+        type === HierarchicalLayoutNodeType.TARGET_GROUP_NODE
+      ) {
         // assign higher length to inner edges
         edges =
-          type === NodeDataType.SOURCE_GROUP_NODE
-            ? new EdgeList(node.getOutEdgeCursor()).toEdgeArray()
-            : new EdgeList(node.getInEdgeCursor()).toEdgeArray()
+          type === HierarchicalLayoutNodeType.SOURCE_GROUP_NODE
+            ? node.outEdges.toArray()
+            : node.inEdges.toArray()
         for (i = 1; i < edges.length - 1; i++) {
-          edgeLength.setInt(edges[i], edgeLength.getInt(edges[i]) + BasicEdgeLength)
+          edgeLength.set(edges[i], edgeLength.get(edges[i]) + BasicEdgeLength)
         }
       }
       if (!this.isSpecialNode(graph, node, layoutData) || node.degree < 3) {
         return
       }
       if (node.outDegree === 2 && node.inDegree === 2) {
-        const firstIn = node.firstInEdge
-        const lastOut = node.lastOutEdge
-        const lastIn = node.lastInEdge
-        const firstOut = node.firstOutEdge
-        const preventFirstIn =
-          !edgeIsAlignable.getBoolean(firstIn) || !edgeIsAlignable.getBoolean(lastOut)
-        const preventFirstOut =
-          !edgeIsAlignable.getBoolean(firstOut) || !edgeIsAlignable.getBoolean(lastIn)
+        const firstIn = node.inEdges.get(0)
+        const firstOut = node.outEdges.get(0)
+        const lastIn = node.inEdges.get(node.inEdges.size - 1)
+        const lastOut = node.outEdges.get(node.outEdges.size - 1)
+        const preventFirstIn = !edgeIsAlignable.get(firstIn) || !edgeIsAlignable.get(lastOut)
+        const preventFirstOut = !edgeIsAlignable.get(firstOut) || !edgeIsAlignable.get(lastIn)
         if (!preventFirstOut || !preventFirstIn) {
           if (preventFirstIn) {
-            edgeLength.setInt(firstIn, ZeroLength)
-            edgeLength.setInt(lastOut, ZeroLength)
+            edgeLength.set(firstIn, ZeroLength)
+            edgeLength.set(lastOut, ZeroLength)
           }
           if (preventFirstOut) {
-            edgeLength.setInt(firstOut, ZeroLength)
-            edgeLength.setInt(lastIn, ZeroLength)
+            edgeLength.set(firstOut, ZeroLength)
+            edgeLength.set(lastIn, ZeroLength)
           }
           if (
-            edgeLength.getInt(firstIn) + edgeLength.getInt(lastOut) >
-            edgeLength.getInt(lastIn) + edgeLength.getInt(firstOut)
+            edgeLength.get(firstIn) + edgeLength.get(lastOut) >
+            edgeLength.get(lastIn) + edgeLength.get(firstOut)
           ) {
-            edgeLength.setInt(firstIn, edgeLength.getInt(firstIn) + HighPenaltyLength)
-            edgeLength.setInt(lastOut, edgeLength.getInt(lastOut) + HighPenaltyLength)
+            edgeLength.set(firstIn, edgeLength.get(firstIn) + HighPenaltyLength)
+            edgeLength.set(lastOut, edgeLength.get(lastOut) + HighPenaltyLength)
           } else {
-            edgeLength.setInt(lastIn, edgeLength.getInt(lastIn) + HighPenaltyLength)
-            edgeLength.setInt(firstOut, edgeLength.getInt(firstOut) + HighPenaltyLength)
+            edgeLength.set(lastIn, edgeLength.get(lastIn) + HighPenaltyLength)
+            edgeLength.set(firstOut, edgeLength.get(firstOut) + HighPenaltyLength)
           }
           return
         }
@@ -3163,98 +2438,93 @@ class FlowchartAlignmentCalculator {
       node.edges.forEach((edge) => {
         if (isStraightBranch(graph, edge, layoutData)) {
           hasStraightBranch = true
-          edgeLength.setInt(edge, edgeLength.getInt(edge) + PenaltyLength)
+          edgeLength.set(edge, edgeLength.get(edge) + PenaltyLength)
         }
       })
       if (!hasStraightBranch) {
-        edges =
-          node.outDegree >= node.inDegree
-            ? new EdgeList(node.getOutEdgeCursor()).toEdgeArray()
-            : new EdgeList(node.getInEdgeCursor()).toEdgeArray()
+        edges = node.outDegree >= node.inDegree ? node.outEdges.toArray() : node.inEdges.toArray()
         // assign high length to inner edges (the two non-inner edges should be attached to the side ports)
         for (i = 1; i < edges.length - 1; i++) {
-          edgeLength.setInt(edges[i], edgeLength.getInt(edges[i]) + PenaltyLength)
+          edgeLength.set(edges[i], edgeLength.get(edges[i]) + PenaltyLength)
         }
       }
     })
   }
 }
-
 /**
  * Calculator for node alignments.
  */
 class NodeAlignmentCalculator {
-  /**
-   * @param {!LayoutOrientation} layoutOrientation
-   */
+  layoutOrientation
   constructor(layoutOrientation) {
     this.layoutOrientation = layoutOrientation
   }
-
   /**
    * Checks whether the current layout orientation is horizontal (i.e. left-to-right)
-   * @returns {boolean}
    */
   isHorizontalOrientation() {
     return this.layoutOrientation === LayoutOrientation.LEFT_TO_RIGHT
   }
-
-  /**
-   * @param {!LayoutGraph} graph
-   * @param {!ILayoutDataProvider} ldp
-   * @param {!IDataProvider} edgeAlignable
-   * @param {!IDataProvider} edgePriority
-   * @param {!IDataAcceptor} nodeAlignment
-   */
-  calculateAlignment(graph, ldp, edgeAlignable, edgePriority, nodeAlignment) {
-    const grid = PartitionGrid.getPartitionGrid(graph)
+  calculateAlignment(graph, layoutContext, edgeAlignable, edgePriority, nodeAlignment) {
+    const grid = LayoutGrid.getLayoutGrid(graph)
     if (grid === null) {
-      this.calculateAlignmentImpl(graph, ldp, edgeAlignable, edgePriority, nodeAlignment)
+      this.calculateAlignmentImpl(graph, layoutContext, edgeAlignable, edgePriority, nodeAlignment)
     } else {
-      const columnPartitionManager = new GraphPartitionManager(graph, new SwimlaneIdProvider(ldp))
+      const graphHider = new LayoutGraphHider(graph)
+      // create graph partitions
+      const partitions = []
+      graph.nodes.forEach((node) => {
+        const layoutGridId = this.getLaneId(node, layoutContext)
+        if (!partitions[layoutGridId]) {
+          partitions[layoutGridId] = new List()
+        }
+        partitions[layoutGridId].push(node)
+      })
       try {
-        columnPartitionManager.hideAll()
+        graphHider.hideAll()
         for (let i = 0; i < grid.columns.size; i++) {
-          columnPartitionManager.displayPartition(i)
-          if (graph.nodeCount > 1) {
-            this.calculateAlignmentImpl(graph, ldp, edgeAlignable, edgePriority, nodeAlignment)
+          graphHider.showOnly(partitions[i])
+          if (graph.nodes.size > 1) {
+            this.calculateAlignmentImpl(
+              graph,
+              layoutContext,
+              edgeAlignable,
+              edgePriority,
+              nodeAlignment
+            )
           }
         }
       } finally {
-        columnPartitionManager.unhideAll()
+        graphHider.unhideAll()
       }
     }
   }
-
-  /**
-   * @param {!LayoutGraph} graph
-   * @param {!ILayoutDataProvider} ldp
-   * @param {!IDataProvider} edgeAlignable
-   * @param {!IDataProvider} edgePriority
-   * @param {!IDataAcceptor} node2AlignWith
-   */
-  calculateAlignmentImpl(graph, ldp, edgeAlignable, edgePriority, node2AlignWith) {
+  getLaneId(dataHolder, layoutContext) {
+    const swimlaneID = FlowchartPortCandidateSelector.getLaneId(dataHolder, layoutContext)
+    return swimlaneID < 0 ? -1 : swimlaneID
+  }
+  calculateAlignmentImpl(graph, layoutContext, edgeAlignable, edgePriority, node2AlignWith) {
     let nRep
     let sRep
     let tRep
-    const node2LaneAlignment = this.createLaneAlignmentMap(graph, ldp)
-    const edgeMinLength = Maps.createHashedEdgeMap()
-    const edgeWeight = Maps.createHashedEdgeMap()
-    const node2NetworkRep = Maps.createHashedNodeMap()
-    const groupNode2BeginRep = Maps.createHashMap()
-    const groupNode2EndRep = Maps.createHashMap()
-    const network = new Graph()
+    const node2LaneAlignment = this.createLaneAlignmentMap(graph, layoutContext)
+    const edgeMinLength = new Mapper()
+    const edgeWeight = new Mapper()
+    const node2NetworkRep = new Map()
+    const groupNode2BeginRep = new Map()
+    const groupNode2EndRep = new Map()
+    const network = new LayoutGraph()
     // create network nodes
     graph.nodes.forEach((node) => {
-      const data = ldp.getNodeData(node)
-      if (data !== null && data.type === NodeDataType.GROUP_BEGIN) {
+      const data = layoutContext.getNodeContext(node)
+      if (data !== null && data.type === HierarchicalLayoutNodeType.GROUP_BEGIN) {
         // all groups begin dummies of the same group node are mapped to the same network node
         nRep = groupNode2BeginRep.get(data.groupNode)
         if (nRep === null) {
           nRep = network.createNode()
           groupNode2BeginRep.set(data.groupNode, nRep)
         }
-      } else if (data !== null && data.type === NodeDataType.GROUP_END) {
+      } else if (data !== null && data.type === HierarchicalLayoutNodeType.GROUP_END) {
         // all group end dummies of the same group node are mapped to the same network node
         nRep = groupNode2EndRep.get(data.groupNode)
         if (nRep === null) {
@@ -3267,49 +2537,50 @@ class NodeAlignmentCalculator {
       node2NetworkRep.set(node, nRep)
     })
     // consider edges
-    const nonAlignableEdges = new EdgeList()
+    const nonAlignableEdges = []
     graph.edges.forEach((e) => {
-      if (e.selfLoop || (isGroupNodeBorder(e.source, ldp) && isGroupNodeBorder(e.target, ldp))) {
+      if (
+        e.selfLoop ||
+        (isGroupNodeBorder(e.source, layoutContext) && isGroupNodeBorder(e.target, layoutContext))
+      ) {
         return
       }
-      if (!edgeAlignable.getBoolean(e)) {
-        nonAlignableEdges.addLast(e)
+      if (!edgeAlignable.get(e)) {
+        nonAlignableEdges.push(e)
         return
       }
       const absNode = network.createNode()
-      const priority = edgePriority.getInt(e)
+      const priority = edgePriority.get(e)
       sRep = node2NetworkRep.get(e.source)
       tRep = node2NetworkRep.get(e.target)
       const sConnector = network.createEdge(sRep, absNode)
-      edgeMinLength.setInt(sConnector, 0)
-      edgeWeight.setInt(sConnector, priority)
+      edgeMinLength.set(sConnector, 0)
+      edgeWeight.set(sConnector, priority)
       const tConnector = network.createEdge(tRep, absNode)
-      edgeMinLength.setInt(tConnector, 0)
-      edgeWeight.setInt(tConnector, priority)
+      edgeMinLength.set(tConnector, 0)
+      edgeWeight.set(tConnector, priority)
     })
-
     // also consider same layer edges
-    for (
-      let ec = FlowchartPortOptimizer.getAllSameLayerEdges(graph, ldp).edges();
-      ec.ok;
-      ec.next()
-    ) {
-      const e = ec.edge
-      if (!e.selfLoop && (!isGroupNodeBorder(e.source, ldp) || !isGroupNodeBorder(e.target, ldp))) {
+    FlowchartPortCandidateSelector.getAllSameLayerEdges(graph, layoutContext).forEach((e) => {
+      if (
+        !e.selfLoop &&
+        (!isGroupNodeBorder(e.source, layoutContext) || !isGroupNodeBorder(e.target, layoutContext))
+      ) {
         sRep = node2NetworkRep.get(e.source)
         tRep = node2NetworkRep.get(e.target)
         const connector =
-          ldp.getNodeData(e.source).position < ldp.getNodeData(e.target).position
+          layoutContext.getNodeContext(e.source).position <
+          layoutContext.getNodeContext(e.target).position
             ? network.createEdge(sRep, tRep)
             : network.createEdge(tRep, sRep)
-        edgeMinLength.setInt(connector, 1)
-        edgeWeight.setInt(connector, Priority.Basic)
+        edgeMinLength.set(connector, 1)
+        edgeWeight.set(connector, Priority.Basic)
       }
-    }
-    const nodes = graph.getNodeArray()
+    })
+    const nodes = graph.nodes.toArray()
     nodes.sort((node1, node2) => {
-      const nd1 = ldp.getNodeData(node1)
-      const nd2 = ldp.getNodeData(node2)
+      const nd1 = layoutContext.getNodeContext(node1)
+      const nd2 = layoutContext.getNodeContext(node2)
       const l1 = nd1.layer
       const l2 = nd2.layer
       if (l1 < l2) {
@@ -3324,119 +2595,120 @@ class NodeAlignmentCalculator {
       }
       return position1 < position2 ? -1 : 1
     })
-
     let last = null
     for (let i = 0; i < nodes.length; i++) {
       const n = nodes[i]
-      if (last !== null && areInSameLayer(last, n, ldp)) {
+      if (last !== null && areInSameLayer(last, n, layoutContext)) {
         nRep = node2NetworkRep.get(n)
         const lastRep = node2NetworkRep.get(last)
-        if (!network.containsEdge(lastRep, nRep)) {
+        if (network.getEdgesBetween(lastRep, nRep).size === 0) {
           const connector = network.createEdge(lastRep, nRep)
           // guarantees that last is placed to the left of n
-          const minLength = calcMinLength(last, n, graph, ldp)
-          edgeMinLength.setInt(connector, minLength)
-          edgeWeight.setInt(connector, 0)
+          const minLength = calcMinLength(last, n, graph, layoutContext)
+          edgeMinLength.set(connector, minLength)
+          edgeWeight.set(connector, 0)
         }
       }
       last = n
     }
     // For each non-alignable edge, we create a connector with min length 1,
     // but only it has no other alignable in-edge.
-    const nonAlignableConnectorMap = Maps.createHashedEdgeMap()
+    const nonAlignableConnectorMap = new Map()
     nonAlignableEdges.forEach((e) => {
-      const hasAlignableInEdge = checkPredicate(e.target.getInEdgeCursor(), edgeAlignable)
+      const hasAlignableInEdge = checkPredicate(e.target.inEdges, edgeAlignable)
       if (hasAlignableInEdge) {
         return
       }
       sRep = node2NetworkRep.get(e.source)
       tRep = node2NetworkRep.get(e.target)
-      const edgeData = ldp.getEdgeData(e)
+      const edgeData = layoutContext.getEdgeContext(e)
       let connector
-      if (hasLeftConstraint(edgeData, true) || hasRightConstraint(edgeData, false)) {
+      if (hasLeftPortCandidate(edgeData, true) || hasRightPortCandidate(edgeData, false)) {
         connector = network.createEdge(tRep, sRep)
-      } else if (hasRightConstraint(edgeData, true) || hasLeftConstraint(edgeData, false)) {
+      } else if (hasRightPortCandidate(edgeData, true) || hasLeftPortCandidate(edgeData, false)) {
         connector = network.createEdge(sRep, tRep)
       } else {
         return
       }
-      nonAlignableConnectorMap.setBoolean(connector, true)
-      edgeMinLength.setInt(connector, 1)
-      edgeWeight.setInt(connector, Priority.Basic)
+      nonAlignableConnectorMap.set(connector, true)
+      edgeMinLength.set(connector, 1)
+      edgeWeight.set(connector, Priority.Basic)
     })
     // Afterward, we ensure that the network is still acyclic.
     for (
-      let cycle = CycleAlgorithm.findCycle(network, true);
-      !cycle.isEmpty();
-      cycle = CycleAlgorithm.findCycle(network, true)
+      let cycle = LayoutGraphAlgorithms.findCycle(network, true);
+      cycle.size !== 0;
+      cycle = LayoutGraphAlgorithms.findCycle(network, true)
     ) {
       let removed = false
-      for (let ec = cycle.edges(); ec.ok && !removed; ec.next()) {
-        const edge = ec.edge
-        if (nonAlignableConnectorMap.getBoolean(edge)) {
-          network.removeEdge(edge)
+      const cycleEdges = cycle.toArray()
+      for (let index = 0; index < cycleEdges.length && !removed; index++) {
+        const cycleEdge = cycleEdges[index]
+        if (nonAlignableConnectorMap.get(cycleEdge)) {
+          network.remove(cycleEdge)
           removed = true
         }
       }
       if (!removed) {
-        network.removeEdge(cycle.firstEdge())
+        network.remove(cycleEdges[0])
       }
     }
     // connect nodes to global source/sink
     const globalSource = network.createNode()
     const globalSink = network.createNode()
-    for (let nc = graph.getNodeCursor(); nc.ok; nc.next()) {
-      const n = nc.node
+    graph.nodes.forEach((n) => {
       nRep = node2NetworkRep.get(n)
-      const nLaneAlignment = node2LaneAlignment.getInt(n)
-      if (!network.containsEdge(nRep, globalSink)) {
+      const nLaneAlignment = node2LaneAlignment.get(n)
+      if (network.getEdgesBetween(nRep, globalSink).size === 0) {
         const globalSinkConnector = network.createEdge(nRep, globalSink)
-        edgeWeight.setInt(
+        edgeWeight.set(
           globalSinkConnector,
           nLaneAlignment === LaneAlignment.Right ? Priority.Low : 0
         )
-        edgeMinLength.setInt(globalSinkConnector, 0)
+        edgeMinLength.set(globalSinkConnector, 0)
       }
-      if (!network.containsEdge(globalSource, nRep)) {
+      if (network.getEdgesBetween(globalSource, nRep).size === 0) {
         const globalSourceConnector = network.createEdge(globalSource, nRep)
-        edgeWeight.setInt(
+        edgeWeight.set(
           globalSourceConnector,
           nLaneAlignment === LaneAlignment.Left ? Priority.Low : 0
         )
-        edgeMinLength.setInt(globalSourceConnector, 0)
+        edgeMinLength.set(globalSourceConnector, 0)
       }
-    }
+    })
     // apply simplex to each connected component of the network
-    const networkNode2AlignmentLayer = Maps.createHashedNodeMap()
-    RankAssignmentAlgorithm.simplex(network, networkNode2AlignmentLayer, edgeWeight, edgeMinLength)
+    const networkNode2AlignmentLayer = new Mapper()
+    LayoutGraphAlgorithms.simplexRankAssignment(
+      network,
+      networkNode2AlignmentLayer,
+      edgeWeight,
+      edgeMinLength
+    )
     // transfer results to original nodes
-    const node2AlignmentLayer = Maps.createHashedNodeMap()
-
-    for (let nc = graph.getNodeCursor(); nc.ok; nc.next()) {
-      const n = nc.node
+    const node2AlignmentLayer = new Map()
+    graph.nodes.forEach((n) => {
       nRep = node2NetworkRep.get(n)
-      node2AlignmentLayer.setNumber(n, networkNode2AlignmentLayer.getInt(nRep))
-    }
+      node2AlignmentLayer.set(n, networkNode2AlignmentLayer.get(nRep))
+    })
     // we do not want to align bend nodes with common nodes except if the (chain of) dummy nodes can be aligned with
     // the corresponding common node
-    const seenBendMap = Maps.createHashedNodeMap()
-    for (let nc = graph.getNodeCursor(); nc.ok; nc.next()) {
-      const n = nc.node
-      if (isBendNode(n, ldp) && !seenBendMap.getBoolean(n)) {
-        adjustAlignmentLayer(n, node2AlignmentLayer, seenBendMap, ldp)
+    const seenBendMap = new Map()
+    graph.nodes.forEach((n) => {
+      if (isBendNode(n, layoutContext) && !seenBendMap.get(n)) {
+        adjustAlignmentLayer(n, node2AlignmentLayer, seenBendMap, layoutContext)
       }
-    }
+    })
     // add alignment constraints
     nodes.sort((node1, node2) => {
-      const al1 = node2AlignmentLayer.getNumber(node1)
-      const al2 = node2AlignmentLayer.getNumber(node2)
+      const al1 = node2AlignmentLayer.get(node1)
+      const al2 = node2AlignmentLayer.get(node2)
       if (al1 < al2) {
         return -1
       } else if (al1 > al2) {
         return 1
       }
-      const layer1 = ldp.getNodeData(node1).layer
-      const layer2 = ldp.getNodeData(node2).layer
+      const layer1 = layoutContext.getNodeContext(node1).layer
+      const layer2 = layoutContext.getNodeContext(node2).layer
       if (layer1 === layer2) {
         return 0
       }
@@ -3445,53 +2717,42 @@ class NodeAlignmentCalculator {
     last = null
     for (let i = 0; i < nodes.length; i++) {
       const n = nodes[i]
-      if (!isGroupNodeBorder(n, ldp) && !isGroupNodeProxy(n, ldp)) {
-        if (
-          last !== null &&
-          node2AlignmentLayer.getNumber(last) === node2AlignmentLayer.getNumber(n)
-        ) {
-          node2AlignWith.set(n, last)
+      if (!isGroupNodeBorder(n, layoutContext) && !isGroupNodeProxy(n, layoutContext)) {
+        if (last !== null && node2AlignmentLayer.get(last) === node2AlignmentLayer.get(n)) {
           // node n should be aligned with last
+          node2AlignWith.set(n, last)
         }
         last = n
       }
     }
   }
-
   /**
    * Creates a node map containing the alignment in swimlanes.
-   * @param {!LayoutGraph} graph
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {!INodeMap}
    */
-  createLaneAlignmentMap(
-    graph,
-    /** ILayoutDataProvider */
-    ldp
-  ) {
-    const node2LaneAlignment = Maps.createHashedNodeMap()
+  createLaneAlignmentMap(graph, layoutContext) {
+    const node2LaneAlignment = new Map()
     graph.nodes.forEach((node) => {
-      node2LaneAlignment.setInt(node, this.getLaneAlignment(node, ldp))
+      node2LaneAlignment.set(node, this.getLaneAlignment(node, layoutContext))
     })
     return node2LaneAlignment
   }
-
   /**
    * Returns the alignment of the given node inside a swimlane.
-   * @param {!YNode} node
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {number}
    */
-  getLaneAlignment(node, ldp) {
+  getLaneAlignment(node, layoutContext) {
     let toLeftCount = 0
     let toRightCount = 0
-    const nEdges = new EdgeList(node.getEdgeCursor())
-    nEdges.splice(FlowchartPortOptimizer.getSameLayerEdges(node, true, ldp))
-    nEdges.splice(FlowchartPortOptimizer.getSameLayerEdges(node, false, ldp))
+    const nEdges = node.edges.toArray()
+    nEdges.push(...FlowchartPortCandidateSelector.getSameLayerEdges(node, true, layoutContext))
+    nEdges.push(...FlowchartPortCandidateSelector.getSameLayerEdges(node, false, layoutContext))
     nEdges.forEach((edge) => {
-      if (FlowchartPortOptimizer.isToLeftPartition(node, edge.opposite(node), ldp)) {
+      if (
+        FlowchartPortCandidateSelector.isToLeftPartition(node, edge.opposite(node), layoutContext)
+      ) {
         toLeftCount++
-      } else if (FlowchartPortOptimizer.isToRightPartition(node, edge.opposite(node), ldp)) {
+      } else if (
+        FlowchartPortCandidateSelector.isToRightPartition(node, edge.opposite(node), layoutContext)
+      ) {
         toRightCount++
       }
     })
@@ -3505,85 +2766,51 @@ class NodeAlignmentCalculator {
     return LaneAlignment.Left
   }
 }
-
-class SwimlaneIdProvider extends DataProviderBase {
-  /**
-   * @param {!ILayoutDataProvider} ldp
-   */
-  constructor(ldp) {
-    super()
-    this.ldp = ldp
-  }
-
-  /**
-   * @param {*} dataHolder
-   * @returns {*}
-   */
-  get(dataHolder) {
-    const swimlaneID = FlowchartPortOptimizer.getSwimlaneId(dataHolder, this.ldp)
-    return swimlaneID < 0 ? dataHolder : swimlaneID
-  }
-}
-
 /**
- * Checks whether the given edge data contains a west constraint.
- * @param {!IEdgeData} edgeData
- * @param {boolean} source
- * @returns {boolean}
+ * Checks whether the given edge data contains a left port candidate.
  */
-function hasLeftConstraint(edgeData, source) {
-  const pc = source ? edgeData.sourcePortConstraint : edgeData.targetPortConstraint
-  return pc !== null && pc.atWest
+function hasLeftPortCandidate(edgeData, source) {
+  const pc = source ? edgeData.selectedSourcePortCandidate : edgeData.selectedTargetPortCandidate
+  return pc !== null && pc.isOnSide(PortSides.LEFT)
 }
-
 /**
- * Checks whether the given edge data contains an east constraint.
- * @param {!IEdgeData} edgeData
- * @param {boolean} source
- * @returns {boolean}
+ * Checks whether the given edge data contains a right port candidate.
  */
-function hasRightConstraint(edgeData, source) {
-  const pc = source ? edgeData.sourcePortConstraint : edgeData.targetPortConstraint
-  return pc !== null && pc.atEast
+function hasRightPortCandidate(edgeData, source) {
+  const pc = source ? edgeData.selectedSourcePortCandidate : edgeData.selectedTargetPortCandidate
+  return pc !== null && pc.isOnSide(PortSides.RIGHT)
 }
-
 /**
  * Calculates the minimum length between the two nodes.
- * @param {!YNode} node1
- * @param {!YNode} node2
- * @param {!LayoutGraph} graph
- * @param {!ILayoutDataProvider} ldp
- * @returns {number}
  */
-function calcMinLength(node1, node2, graph, ldp) {
+function calcMinLength(node1, node2, graph, layoutContext) {
   let n1GroupNode
   let n2GroupNode
-  const node2Parent = graph.getDataProvider(GroupingKeys.PARENT_NODE_ID_DP_KEY)
-  if (isGroupNodeBorder(node1, ldp) && isGroupNodeBorder(node2, ldp)) {
-    n1GroupNode = ldp.getNodeData(node1).groupNode
-    n2GroupNode = ldp.getNodeData(node2).groupNode
+  if (isGroupNodeBorder(node1, layoutContext) && isGroupNodeBorder(node2, layoutContext)) {
+    n1GroupNode = layoutContext.getNodeContext(node1).groupNode
+    n2GroupNode = layoutContext.getNodeContext(node2).groupNode
     if (
       n1GroupNode !== n2GroupNode &&
-      node2Parent.get(node1) !== n2GroupNode &&
-      node2Parent.get(node2) !== n1GroupNode
+      graph.getParent(node1) !== n2GroupNode &&
+      graph.getParent(node2) !== n1GroupNode
     ) {
       return 1
     }
     return 0
-  } else if (isGroupNodeBorder(node1, ldp)) {
-    n1GroupNode = ldp.getNodeData(node1).groupNode
-    n2GroupNode = isGroupNodeProxy(node2, ldp)
-      ? ldp.getNodeData(node2).groupNode
-      : node2Parent.get(node2)
+  } else if (isGroupNodeBorder(node1, layoutContext)) {
+    n1GroupNode = layoutContext.getNodeContext(node1).groupNode
+    n2GroupNode = isGroupNodeProxy(node2, layoutContext)
+      ? layoutContext.getNodeContext(node2).groupNode
+      : graph.getParent(node2)
     if (n2GroupNode === n1GroupNode) {
       return 0
     }
     return 1
-  } else if (isGroupNodeBorder(node2, ldp)) {
-    n1GroupNode = isGroupNodeProxy(node1, ldp)
-      ? ldp.getNodeData(node1).groupNode
-      : node2Parent.get(node1)
-    n2GroupNode = ldp.getNodeData(node2).groupNode
+  } else if (isGroupNodeBorder(node2, layoutContext)) {
+    n1GroupNode = isGroupNodeProxy(node1, layoutContext)
+      ? layoutContext.getNodeContext(node1).groupNode
+      : graph.getParent(node1)
+    n2GroupNode = layoutContext.getNodeContext(node2).groupNode
     if (n1GroupNode === n2GroupNode) {
       return 0
     }
@@ -3591,214 +2818,164 @@ function calcMinLength(node1, node2, graph, ldp) {
   }
   return 1
 }
-
 /**
  * Adjusts dummy layers that contain dummies for alignment.
- * @param {!YNode} dummy
- * @param {!INodeMap} node2AlignmentLayer
- * @param {!IDataAcceptor} seenBendMap
- * @param {!ILayoutDataProvider} ldp
  */
-function adjustAlignmentLayer(dummy, node2AlignmentLayer, seenBendMap, ldp) {
-  const dummyAlignmentLayer = node2AlignmentLayer.getNumber(dummy)
-  const seenDummyNodes = new YNodeList(dummy)
+function adjustAlignmentLayer(dummy, node2AlignmentLayer, seenBendMap, layoutContext) {
+  const dummyAlignmentLayer = node2AlignmentLayer.get(dummy)
+  const seenDummyNodes = [dummy]
   let alignsWithCommonNode = false
-  let inEdge = dummy.firstInEdge
+  let inEdge = dummy.inEdges.get(0)
   while (
     inEdge !== null &&
-    isBendNode(inEdge.source, ldp) &&
-    dummyAlignmentLayer === node2AlignmentLayer.getNumber(inEdge.source)
+    isBendNode(inEdge.source, layoutContext) &&
+    dummyAlignmentLayer === node2AlignmentLayer.get(inEdge.source)
   ) {
-    seenDummyNodes.addLast(inEdge.source)
-    inEdge = inEdge.source.firstInEdge
+    seenDummyNodes.push(inEdge.source)
+    inEdge = inEdge.source.inEdges.get(0)
   }
-  if (inEdge !== null && !isBendNode(inEdge.source, ldp)) {
-    alignsWithCommonNode = dummyAlignmentLayer === node2AlignmentLayer.getNumber(inEdge.source)
+  if (inEdge !== null && !isBendNode(inEdge.source, layoutContext)) {
+    alignsWithCommonNode = dummyAlignmentLayer === node2AlignmentLayer.get(inEdge.source)
   }
-  let outEdge = dummy.firstOutEdge
+  let outEdge = dummy.outEdges.get(0)
   while (
     outEdge !== null &&
-    isBendNode(outEdge.target, ldp) &&
-    dummyAlignmentLayer === node2AlignmentLayer.getNumber(outEdge.target)
+    isBendNode(outEdge.target, layoutContext) &&
+    dummyAlignmentLayer === node2AlignmentLayer.get(outEdge.target)
   ) {
-    seenDummyNodes.addLast(outEdge.target)
-    outEdge = outEdge.target.firstOutEdge
+    seenDummyNodes.push(outEdge.target)
+    outEdge = outEdge.target.outEdges.get(0)
   }
-  if (!alignsWithCommonNode && outEdge !== null && !isBendNode(outEdge.target, ldp)) {
-    alignsWithCommonNode = dummyAlignmentLayer === node2AlignmentLayer.getNumber(outEdge.target)
+  if (!alignsWithCommonNode && outEdge !== null && !isBendNode(outEdge.target, layoutContext)) {
+    alignsWithCommonNode = dummyAlignmentLayer === node2AlignmentLayer.get(outEdge.target)
   }
-  for (let nc = seenDummyNodes.nodes(); nc.ok; nc.next()) {
-    seenBendMap.setBoolean(nc.node, true)
+  seenDummyNodes.forEach((dummyNode) => {
+    seenBendMap.set(dummyNode, true)
     if (!alignsWithCommonNode) {
-      node2AlignmentLayer.setNumber(nc.node, dummyAlignmentLayer - 0.5)
       // assign dummy nodes to a separate layer
+      node2AlignmentLayer.set(dummyNode, dummyAlignmentLayer - 0.5)
     }
-  }
+  })
 }
-
 /**
- * Checks whether the predicate evaluates to 'true' for at least one of the elements in the cursor.
- * @param {!ICursor} cursor
- * @param {!IDataProvider} predicate
- * @returns {boolean}
+ * Checks whether the predicate evaluates to 'true' for at least one of the elements in the list.
  */
-function checkPredicate(cursor, predicate) {
-  for (cursor.toFirst(); cursor.ok; cursor.next()) {
-    if (predicate.getBoolean(cursor.current)) {
-      return true
-    }
-  }
-  return false
+function checkPredicate(list, predicate) {
+  return list.some((entry) => predicate.get(entry) === true)
 }
-
 /**
  * Checks whether the given nodes belong to the same layer.
- * @param {!YNode} node1
- * @param {!YNode} node2
- * @param {!ILayoutDataProvider} ldp
- * @returns {boolean}
  */
-function areInSameLayer(node1, node2, ldp) {
-  return ldp.getNodeData(node1).layer === ldp.getNodeData(node2).layer
+function areInSameLayer(node1, node2, layoutContext) {
+  return layoutContext.getNodeContext(node1).layer === layoutContext.getNodeContext(node2).layer
 }
-
 /**
  * Checks whether the given node represents a bend.
- * @param {!YNode} node
- * @param {!ILayoutDataProvider} ldp
- * @returns {boolean}
  */
-function isBendNode(node, ldp) {
-  const data = ldp.getNodeData(node)
-  return data !== null && data.type === NodeDataType.BEND
+function isBendNode(node, layoutContext) {
+  const data = layoutContext.getNodeContext(node)
+  return data !== null && data.type === HierarchicalLayoutNodeType.BEND
 }
-
 /**
  * Checks whether the given node represents the border of a group node.
- * @param {!YNode} node
- * @param {!ILayoutDataProvider} ldp
- * @returns {boolean}
  */
-function isGroupNodeBorder(node, ldp) {
-  const data = ldp.getNodeData(node)
+function isGroupNodeBorder(node, layoutContext) {
+  const data = layoutContext.getNodeContext(node)
   return (
     data !== null &&
-    (data.type === NodeDataType.GROUP_BEGIN || data.type === NodeDataType.GROUP_END)
+    (data.type === HierarchicalLayoutNodeType.GROUP_BEGIN ||
+      data.type === HierarchicalLayoutNodeType.GROUP_END)
   )
 }
-
 /**
  * Checks whether the given node is a proxy for edges at group nodes.
- * @param {!YNode} node
- * @param {!ILayoutDataProvider} ldp
- * @returns {boolean}
  */
-function isGroupNodeProxy(node, ldp) {
-  const data = ldp.getNodeData(node)
-  return data !== null && data.type === NodeDataType.PROXY_FOR_EDGE_AT_GROUP
+function isGroupNodeProxy(node, layoutContext) {
+  const data = layoutContext.getNodeContext(node)
+  return data !== null && data.type === HierarchicalLayoutNodeType.PROXY_FOR_EDGE_AT_GROUP
 }
-
 /**
  * Checks whether the given edge is between normal nodes.
- * @param {!Edge} edge
- * @param {!ILayoutDataProvider} layoutData
- * @returns {boolean}
  */
 function isRealEdge(edge, layoutData) {
   return (
-    layoutData.getNodeData(edge.source).type === NodeDataType.NORMAL &&
-    layoutData.getNodeData(edge.target).type === NodeDataType.NORMAL
+    layoutData.getNodeContext(edge.source).type === HierarchicalLayoutNodeType.REGULAR &&
+    layoutData.getNodeContext(edge.target).type === HierarchicalLayoutNodeType.REGULAR
   )
 }
-
 /**
  * Checks whether the given edge's direction is straight.
- * @param {!LayoutGraph} graph
- * @param {!Edge} edge
- * @param {!ILayoutDataProvider} ldp
- * @returns {boolean}
  */
-function isStraightBranch(graph, edge, ldp) {
-  return FlowchartLayout.isStraightBranch(graph, FlowchartPortOptimizer.getOriginalEdge(edge, ldp))
+function isStraightBranch(graph, edge, layoutContext) {
+  return FlowchartLayout.isStraightBranch(
+    graph,
+    FlowchartPortCandidateSelector.getOriginalEdge(edge, layoutContext)
+  )
 }
-
 /**
  * Determines the priorities of the edges. Edges in longer paths get a higher priority.
- * @param {!LayoutGraph} graph
- * @param {!IDataProvider} edgeIsAlignable
- * @param {!IDataProvider} edgeLength
- * @returns {!IDataProvider}
  */
 function determineEdgePriorities(graph, edgeIsAlignable, edgeLength) {
-  const edgePriority = Maps.createHashedEdgeMap()
+  const edgePriority = new Map()
   const hider = new LayoutGraphHider(graph)
   try {
     // hide irrelevant edges
     graph.edges.forEach((edge) => {
-      edgePriority.setInt(edge, Priority.Basic)
-      if (!edgeIsAlignable.getBoolean(edge)) {
+      edgePriority.set(edge, Priority.Basic)
+      if (!edgeIsAlignable.get(edge)) {
         hider.hide(edge)
       }
     })
     // for each connected component, we iteratively find the longest path that is used as a critical path
-    const node2CompId = Maps.createHashedNodeMap()
-    const compCount = GraphConnectivity.connectedComponents(graph, node2CompId)
-    const gpm = new GraphPartitionManager(graph, node2CompId)
+    const node2CompId = new Mapper()
+    LayoutGraphAlgorithms.connectedComponents(graph, node2CompId)
+    const components = LayoutGraphAlgorithms.connectedComponents(graph, node2CompId)
+    const graphHider = new LayoutGraphHider(graph)
     try {
-      gpm.hideAll()
+      graphHider.hideAll()
       // biome-ignore lint/correctness/noUnreachable: Seems to be an incorrect warning
-      for (let i = 0; i < compCount; i++) {
-        gpm.displayPartition(i)
+      for (let i = 0; i < components.length; i++) {
+        graphHider.showOnly(components[i], true)
         const localHider = new LayoutGraphHider(graph)
         try {
-          let path = PathAlgorithm.findLongestPath(graph, edgeLength)
-          while (!path.isEmpty()) {
-            for (let ec = path.edges(); ec.ok; ec.next()) {
-              edgePriority.setInt(ec.edge, Priority.High)
-            }
-            localHider.hide(PathAlgorithm.constructNodePath(path))
-            path = PathAlgorithm.findLongestPath(graph, edgeLength)
+          let path = LayoutGraphAlgorithms.longestPath(graph, edgeLength)
+          while (path.size !== 0) {
+            path.forEach((edge) => {
+              edgePriority.set(edge, Priority.High)
+              if (graph.contains(edge.source)) {
+                localHider.hide(edge.source)
+              }
+              localHider.hide(edge.target)
+            })
+            path = LayoutGraphAlgorithms.longestPath(graph, edgeLength)
           }
         } finally {
           localHider.unhideAll()
         }
       }
     } finally {
-      gpm.unhideAll()
+      graphHider.unhideAll()
     }
   } finally {
     hider.unhideAll()
   }
   return edgePriority
 }
-
 /**
- * Checks whether the given edge data contains a flatwise port constraint at a source and/or target.
- * @param {!IEdgeData} edgeData
- * @returns {boolean}
+ * Checks whether the given edge data contains a flatwise port candidate at a source and/or target.
  */
-function hasFlatwisePortConstraint(edgeData) {
+function hasFlatwisePortCandidate(edgeData) {
   return (
-    FlowchartPortOptimizer.isFlatwisePortConstraint(edgeData.sourcePortConstraint) ||
-    FlowchartPortOptimizer.isFlatwisePortConstraint(edgeData.targetPortConstraint)
+    FlowchartPortCandidateSelector.isFlatwisePortCandidate(edgeData.selectedSourcePortCandidate) ||
+    FlowchartPortCandidateSelector.isFlatwisePortCandidate(edgeData.selectedTargetPortCandidate)
   )
 }
-
 /**
  * Checks whether the given edge data contains flatwise port candidates at a source and/or target.
- * @param {!IEdgeData} edgeData
- * @param {!LayoutOrientation} layoutOrientation
- * @returns {boolean}
  */
-function hasFlatwiseCandidateCollection(edgeData, layoutOrientation) {
+function hasFlatwiseCandidateCollection(edgeData) {
   return (
-    FlowchartPortOptimizer.isFlatwiseCandidateCollection(
-      edgeData.sourcePortCandidates,
-      layoutOrientation
-    ) ||
-    FlowchartPortOptimizer.isFlatwiseCandidateCollection(
-      edgeData.targetPortCandidates,
-      layoutOrientation
-    )
+    FlowchartPortCandidateSelector.isFlatwiseCandidateCollection(edgeData.sourcePortCandidates) ||
+    FlowchartPortCandidateSelector.isFlatwiseCandidateCollection(edgeData.targetPortCandidates)
   )
 }

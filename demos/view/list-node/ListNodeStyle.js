@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,8 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultPortCandidate,
   Fill,
   IEnumerable,
   IInputModeContext,
@@ -41,31 +39,15 @@ import {
   NodeSizeConstraintProvider,
   NodeStyleBase,
   Point,
+  PortCandidate,
   PortCandidateProviderBase,
   PortCandidateValidity,
   Rect,
   Size,
   Stroke,
-  SvgVisual,
-  Visual
-} from 'yfiles'
-
+  SvgVisual
+} from '@yfiles/yfiles'
 const SVGNS = 'http://www.w3.org/2000/svg'
-
-/**
- * @typedef {Object} RenderState
- * @property {Size} nodeSize
- * @property {Fill} backgroundFill
- * @property {Fill} borderFill
- * @property {Stroke} lineStroke
- * @property {number} numRows
- * @property {number} draggingIndex
- */
-
-/**
- * @typedef {*} SVGGElementWithRenderState
- */
-
 /**
  * A node style with a header and a thick border and row separators.
  * Note that the row contents are not rendered. These are rendered as ports and port labels.
@@ -76,17 +58,12 @@ export class ListNodeStyle extends NodeStyleBase {
   backgroundFill = Fill.from('#9CC5CF')
   highlightFill = Fill.from('#6aa7b0')
   lineStroke = Stroke.WHITE
-
   headerHeight = 20
   rowHeight = 20
-
   /**
    * Create a new visual for the node.
    * Creates a SvgElement and a <g> element and delegates to {@link render}
    * to create the group's children.
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {?Visual}
    */
   createVisual(context, node) {
     const nodeSize = node.layout.toSize()
@@ -94,24 +71,24 @@ export class ListNodeStyle extends NodeStyleBase {
     const nodeInfo = node.tag
     this.render(g, nodeSize, nodeInfo, context)
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
-    return new SvgVisual(g)
+    // store the current state in cache
+    const cache = {
+      nodeSize: nodeSize,
+      backgroundFill: this.backgroundFill,
+      borderFill: this.borderFill,
+      lineStroke: this.lineStroke,
+      numRows: nodeInfo.rows.length,
+      draggingIndex: nodeInfo.draggingIndex
+    }
+    return SvgVisual.from(g, cache)
   }
-
   /**
    * Updates an already created visual.
-   * @param {!IRenderContext} context
-   * @param {!Visual} oldVisual
-   * @param {!INode} node
-   * @returns {?Visual}
    */
   updateVisual(context, oldVisual, node) {
-    if (!(oldVisual instanceof SvgVisual && oldVisual.svgElement instanceof SVGGElement)) {
-      // The visual is not as expected: create a new one
-      return this.createVisual(context, node)
-    }
     const g = oldVisual.svgElement
     // test whether the node has to be re-rendered
-    const cache = g['data-renderDataCache']
+    const cache = oldVisual.tag
     const nodeSize = node.layout.toSize()
     const nodeInfo = node.tag
     if (
@@ -129,29 +106,23 @@ export class ListNodeStyle extends NodeStyleBase {
         g.removeChild(g.lastChild)
       }
       this.render(g, nodeSize, nodeInfo, context)
+      oldVisual.tag = {
+        nodeSize: nodeSize,
+        backgroundFill: this.backgroundFill,
+        borderFill: this.borderFill,
+        lineStroke: this.lineStroke,
+        numRows: nodeInfo.rows.length,
+        draggingIndex: nodeInfo.draggingIndex
+      }
     }
     // set the new position
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
     return oldVisual
   }
-
   /**
    * The actual render method: adds child elements to the given <g> element.
-   * @param {!SVGGElementWithRenderState} g
-   * @param {!Size} nodeSize
-   * @param {!NodeInfo} nodeInfo
-   * @param {!IRenderContext} context
    */
   render(g, nodeSize, nodeInfo, context) {
-    // append the current state to the <g> element
-    g['data-renderDataCache'] = {
-      nodeSize: nodeSize,
-      backgroundFill: this.backgroundFill,
-      borderFill: this.borderFill,
-      lineStroke: this.lineStroke,
-      numRows: nodeInfo.rows.length,
-      draggingIndex: nodeInfo.draggingIndex
-    }
     // draw the rect with a thick border
     const borderThickness = 4
     const borderStroke = new Stroke({
@@ -167,18 +138,15 @@ export class ListNodeStyle extends NodeStyleBase {
     borderStroke.applyTo(border, context)
     this.backgroundFill.applyTo(border, context)
     g.appendChild(border)
-
     if (nodeSize.height < this.headerHeight) {
       return g
     }
-
     // render a header which is used as background for the label
     const header = document.createElementNS(SVGNS, 'rect')
     header.width.baseVal.value = nodeSize.width
     header.height.baseVal.value = this.headerHeight
     this.borderFill.applyTo(header, context)
     g.appendChild(header)
-
     const borderInset = borderThickness / 2
     for (let i = 0; i < nodeInfo.rows.length; i++) {
       const y = this.headerHeight + this.rowHeight * i
@@ -203,22 +171,17 @@ export class ListNodeStyle extends NodeStyleBase {
         g.appendChild(line)
       }
     }
-
     return g
   }
-
   /**
    * Modify the node's lookup to provide special interaction behavior.
-   * @param {!INode} node
-   * @param {!Class} type
-   * @returns {*}
    */
   lookup(node, type) {
-    if (type === IPortCandidateProvider.$class) {
+    if (type === IPortCandidateProvider) {
       // return a special PortCandidateProvider which provides existing and free ports
       return new ExistingAndFreePortCandidateProvider(node)
     }
-    if (type === INodeSizeConstraintProvider.$class) {
+    if (type === INodeSizeConstraintProvider) {
       // limit the size
       const minimumHeight = this.getMinimumHeight(node)
       return new NodeSizeConstraintProvider([100, minimumHeight], Size.INFINITE, Rect.EMPTY)
@@ -226,12 +189,9 @@ export class ListNodeStyle extends NodeStyleBase {
     // return the defaults for all other types
     return super.lookup(node, type)
   }
-
   /**
    * Calculates the index of the row at the given location.
-   * @returns {number} the index of the row at the given location or `-1` if there is no such row.
-   * @param {!INode} node
-   * @param {!Point} location
+   * @returns the index of the row at the given location or `-1` if there is no such row.
    */
   getRowIndex(node, location) {
     const layout = node.layout
@@ -247,12 +207,10 @@ export class ListNodeStyle extends NodeStyleBase {
     const index = ((y - this.headerHeight) / this.rowHeight) | 0
     return index < node.tag.rows.length ? index : -1
   }
-
   /**
    * Determines if the given location lies inside the header visualization of the given node.
-   * @param {!INode} node the node whose header is queried.
-   * @param {!Point} location the location to check.
-   * @returns {boolean}
+   * @param node the node whose header is queried.
+   * @param location the location to check.
    */
   isHeaderHit(node, location) {
     const nl = node.layout
@@ -265,111 +223,81 @@ export class ListNodeStyle extends NodeStyleBase {
       location.y <= ny + this.headerHeight
     )
   }
-
   /**
    * Returns the relative y-coordinate of the center of the row at the given row index.
-   * @param {number} rowIndex the index of the row whose center coordinate is calculated.
-   * @returns {number}
+   * @param rowIndex the index of the row whose center coordinate is calculated.
    */
   getRowCenterY(rowIndex) {
     return this.headerHeight + this.rowHeight / 2 + rowIndex * this.rowHeight
   }
-
-  /**
-   * @param {!INode} node
-   * @returns {number}
-   */
   getMinimumHeight(node) {
     return this.headerHeight + node.tag.rows.length * this.rowHeight
   }
 }
-
 /**
  * An {@link IPortCandidateProvider} which returns candidates for all existing and free ports.
  */
 class ExistingAndFreePortCandidateProvider extends PortCandidateProviderBase {
+  node
   /**
    * Creates a new instance.
-   * @param {!INode} node The given node.
+   * @param node The given node.
    */
   constructor(node) {
     super()
     this.node = node
   }
-
   /**
    * Returns possible source port candidates for edge creation.
-   * @param {!IInputModeContext} context
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getAllSourcePortCandidates(context) {
     return this.getPortCandidatesFor(context, false)
   }
-
   /**
    * Returns possible target port candidates for edge creation.
-   * @param {!IInputModeContext} context
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getAllTargetPortCandidates(context) {
     return this.getPortCandidatesFor(context, true)
   }
-
   /**
    * Returns possible source port candidates for a newly created edge which starts at target
-   * @param {!IInputModeContext} context
-   * @param {!IPortCandidate} target
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getSourcePortCandidates(context, target) {
     return this.getPortCandidatesFor(context, false)
   }
-
   /**
    * Returns possible target port candidates for a newly created edge which starts at source
-   * @param {!IInputModeContext} context
-   * @param {!IPortCandidate} source
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getTargetPortCandidates(context, source) {
     return this.getPortCandidatesFor(context, true)
   }
-
   /**
    * Default implementation of the abstract base class. Not used for edge creation.
-   * @param {!IInputModeContext} context
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getPortCandidates(context) {
     return this.getPortCandidatesFor(context, false)
   }
-
   /**
    * Returns a list that contains a port candidate for each of the node's
    * ports. Each candidate has the same location as the port. If a port
    * already has a connected edge, its port candidate is marked as invalid.
    * Also, it only returns candidates for in-ports for incoming edges (target port candidates)
    * and out-ports for source port candidates, respectively.
-   * @param {!IInputModeContext} context
-   * @param {boolean} incoming
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getPortCandidatesFor(context, incoming) {
     const candidates = new List()
     const graph = context.graph
-
     // Create the candidate for each port
     if (graph) {
       this.node.ports
         .filter((port) => port.tag.incoming === incoming)
         .forEach((port) => {
-          const portCandidate = new DefaultPortCandidate(port)
+          const portCandidate = new PortCandidate(port)
           portCandidate.validity =
             graph.degree(port) === 0 ? PortCandidateValidity.VALID : PortCandidateValidity.INVALID
           candidates.add(portCandidate)
         })
     }
-
     return candidates
   }
 }

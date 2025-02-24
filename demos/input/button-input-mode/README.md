@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Button Input Mode Demo
 
-# Button Input Mode Demo
+<img src="../../../doc/demo-thumbnails/button-input-mode.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/input/button-input-mode/).
 
 This demo shows how to use a custom input mode to add temporary buttons to model items.  
 The buttons can be individually styled and placed and trigger an action on click or drag.
@@ -25,7 +27,7 @@ The buttons can be individually styled and placed and trigger an action on click
   - _Hover_ is the default behavior that displays the buttons for an item when hovering over it.
   - _Current item_ displays the buttons for the [current item](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-property-currentItem) of the _GraphComponent_.
   - _RightClick_ displays the buttons on right-clicking a model item.
-- Press the _TAB_ key while the _GraphComponent_ is focused to set a focus to the first button and cycle through all buttons.  
-  A focused button can be triggered using the _ENTER_ or _SPACE_ key.
+- Press the Tab key while the _GraphComponent_ is focused to set a focus to the first button and cycle through all buttons.  
+  A focused button can be triggered using the Enter or Space key.
 
 See the sources for details.

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,13 +33,13 @@ import {
   BaseClass,
   ClickEventArgs,
   Cursor,
-  HandleTypes,
+  HandleType,
   IHandle,
   IInputModeContext,
   INode,
   IPoint,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { ArrowNodeStyleAngleHandle } from './ArrowNodeStyleAngleHandle'
 
 /**
@@ -133,10 +133,17 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
   }
 
   /**
-   * Returns {@link HandleTypes.SHEAR} as handle type that determines the visualization of the handle.
+   * Returns {@link HandleType.CUSTOM4} as handle type that determines the visualization of the handle.
    */
-  get type(): HandleTypes {
-    return HandleTypes.SHEAR
+  get type(): HandleType {
+    return HandleType.CUSTOM4
+  }
+
+  /**
+   * Returns an optional tag object associated with the handle.
+   */
+  get tag(): any {
+    return null
   }
 
   /**

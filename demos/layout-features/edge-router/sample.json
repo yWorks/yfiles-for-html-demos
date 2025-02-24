@@ -483,14 +483,14 @@
       "target": 1,
       "tag": 0,
       "stroke": "2.5px #01BAFF",
-      "targetArrow": "default"
+      "targetArrow": "stealth"
     },
     {
       "id": 1,
       "source": 1,
       "target": 2,
       "tag": 1,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "1.25px #77776E"
     },
     {
@@ -498,7 +498,7 @@
       "source": 4,
       "target": 12,
       "tag": 2,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "1.25px #77776E"
     },
     {
@@ -506,7 +506,7 @@
       "source": 7,
       "target": 8,
       "tag": 3,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "1.25px #77776E"
     },
     {
@@ -514,7 +514,7 @@
       "source": 11,
       "target": 9,
       "tag": 4,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "1.25px #77776E"
     },
     {
@@ -522,7 +522,7 @@
       "source": 11,
       "target": 4,
       "tag": 5,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "1.25px #77776E"
     },
     {
@@ -530,7 +530,7 @@
       "source": 4,
       "target": 5,
       "tag": 6,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "1.25px #77776E"
     },
     {
@@ -539,14 +539,14 @@
       "target": 6,
       "tag": 7,
       "stroke": "2.5px #E011A4",
-      "targetArrow": "default"
+      "targetArrow": "stealth"
     },
     {
       "id": 8,
       "source": 9,
       "target": 13,
       "tag": 8,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "1.25px #77776E"
     },
     {
@@ -554,7 +554,7 @@
       "source": 9,
       "target": 2,
       "tag": 9,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "1.25px #77776E"
     },
     {
@@ -563,7 +563,7 @@
       "target": 6,
       "tag": 10,
       "stroke": "2.5px #E011A4",
-      "targetArrow": "default"
+      "targetArrow": "stealth"
     },
     {
       "id": 11,
@@ -571,7 +571,7 @@
       "target": 5,
       "tag": 11,
       "stroke": "2.5px #01BAFF",
-      "targetArrow": "default"
+      "targetArrow": "stealth"
     },
     {
       "id": 12,
@@ -579,14 +579,14 @@
       "target": 1,
       "tag": 12,
       "stroke": "2.5px #01BAFF",
-      "targetArrow": "default"
+      "targetArrow": "stealth"
     },
     {
       "id": 13,
       "source": 8,
       "target": 12,
       "tag": 13,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "1.25px #77776E"
     },
     {
@@ -594,7 +594,7 @@
       "source": 5,
       "target": 7,
       "tag": 14,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "1.25px #77776E"
     },
     {
@@ -603,7 +603,7 @@
       "target": 14,
       "tag": 15,
       "stroke": "2.5px #F26419",
-      "targetArrow": "default"
+      "targetArrow": "stealth"
     },
     {
       "id": 16,
@@ -611,7 +611,7 @@
       "target": 15,
       "tag": 16,
       "stroke": "2.5px #F26419",
-      "targetArrow": "default"
+      "targetArrow": "stealth"
     },
     {
       "id": 17,
@@ -619,7 +619,7 @@
       "target": 16,
       "tag": 17,
       "stroke": "2.5px #F26419",
-      "targetArrow": "default"
+      "targetArrow": "stealth"
     },
     {
       "id": 18,
@@ -627,7 +627,7 @@
       "target": 17,
       "tag": 18,
       "stroke": "2.5px #F26419",
-      "targetArrow": "default"
+      "targetArrow": "stealth"
     },
     {
       "id": 19,
@@ -635,7 +635,7 @@
       "target": 18,
       "tag": 19,
       "stroke": "2.5px #F26419",
-      "targetArrow": "default"
+      "targetArrow": "stealth"
     }
   ]
 }

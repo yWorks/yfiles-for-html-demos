@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,22 +28,18 @@
  ***************************************************************************/
 import { HeatData } from './process-visualization/HeatData'
 import {
-  Class,
   GraphComponent,
-  HierarchicLayout,
-  HierarchicLayoutEdgeLayoutDescriptor,
-  HierarchicLayoutEdgeRoutingStyle,
-  HierarchicLayoutRoutingStyle,
+  HierarchicalLayout,
   type IEdge,
   IEnumerable,
   type INode,
   LayoutExecutor
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import type { Event, EventLog } from './event-log-types'
 
-// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for 'applyLayout'.
-Class.ensure(LayoutExecutor)
+// Ensure that the LayoutExecutor class is not removed by build optimizers
+// It is needed for the 'applyLayoutAnimated' method in this demo.
+LayoutExecutor.ensure()
 
 /**
  * Type that describes one step in the process.
@@ -156,17 +152,15 @@ export function extractGraph(eventLog: EventLog, graphComponent: GraphComponent)
     })
 
   // apply an automatic layout to position the steps and transitions
-  graph.applyLayout(getHierarchicLayout())
+  graph.applyLayout(getHierarchicalLayout())
   graphComponent.fitGraphBounds()
 }
 
 /**
- * Returns a hierarchic layout with curved edges.
+ * Returns a hierarchical layout with curved edges.
  */
-function getHierarchicLayout() {
-  return new HierarchicLayout({
-    edgeLayoutDescriptor: new HierarchicLayoutEdgeLayoutDescriptor({
-      routingStyle: new HierarchicLayoutRoutingStyle(HierarchicLayoutEdgeRoutingStyle.CURVED)
-    })
-  })
+function getHierarchicalLayout() {
+  const hierarchicalLayout = new HierarchicalLayout()
+  hierarchicalLayout.defaultEdgeDescriptor.routingStyleDescriptor.defaultRoutingStyle = 'curved'
+  return hierarchicalLayout
 }

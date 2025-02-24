@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,55 +26,38 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { StringTemplateNodeStyle, TemplateNodeStyle } from 'yfiles'
 import { predefinedColorSets } from './CompanyOwnershipNodeStyles'
-import { colorSets } from 'demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { LitNodeStyle, type LitNodeStyleProps } from '@yfiles/demo-utils/LitNodeStyle'
+
+// @ts-ignore Import via URL
+import { svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import type { Company } from '../data-types'
 
 // creates the template style for the nodes
-export const tableNodeStyle = new StringTemplateNodeStyle(`<g>
-  <rect fill="#a4aeb3" width="{TemplateBinding width}" height="{TemplateBinding height}" x="1" y="1"/>
-  <rect fill="#f0f0f0" stroke="#a4aeb3" width="{TemplateBinding width}" height="{TemplateBinding height}"/>
-  <rect width="{TemplateBinding width}" height="3" fill="{Binding nodeType, Converter=templateNodeConverters.typeColorConverter}"/>
+export const tableNodeStyle = new LitNodeStyle(
+  ({ layout, tag }: LitNodeStyleProps<Company>): SVGElement => svg`<g>
+  <rect fill="#a4aeb3" width=${layout.width} height=${layout.height} x="1" y="1"/>
+  <rect fill="#f0f0f0" stroke="#a4aeb3" width=${layout.width} height=${layout.height}/>
+  <rect width=${layout.width} height="3" fill=${colorSets[predefinedColorSets.get(tag.nodeType) || 'demo-palette-51'].fill || 'white'}/>
   <g style="font-family: Roboto,sans-serif; fill: #444; font-size: 12px;">
-    <text transform="translate(8 20)" style="font-size: 14px; text-align: center; fill: #336699" data-content="{Binding name}"/>
+    <text transform="translate(8 20)" style="font-size: 14px; text-align: center; fill: #336699">${tag.name}</text>
     <rect transform="translate(8 24)" width="164" height="1" fill="#336699"/>
 
     <text transform="translate(8 40)">Type</text>
-    <text transform="translate(110 40)" data-content="{Binding nodeType}"/>
+    <text transform="translate(110 40)">${tag.nodeType}</text>
 
     <text transform="translate(8 55)">Jurisdiction</text>
-    <text transform="translate(110 55)" data-content="{Binding jurisdiction}"/>
+    <text transform="translate(110 55)">${tag.jurisdiction}</text>
 
     <text transform="translate(8 70)">Tax Status</text>
-    <text transform="translate(110 70)" data-content="{Binding taxStatus, Converter=templateNodeConverters.valueConverter}"/>
+    <text transform="translate(110 70)">${tag.taxStatus ?? '---'}</text>
 
     <text transform="translate(8 85)">Currency</text>
-    <text transform="translate(110 85)" data-content="{Binding currency, Converter=templateNodeConverters.valueConverter}"/>
+    <text transform="translate(110 85)">${tag.currency ?? '---'}</text>
 
     <text transform="translate(8 100)">Units</text>
-    <text transform="translate(110 100)" data-content="{Binding units, Converter=templateNodeConverters.valueConverter}"/>
+    <text transform="translate(110 100)">${tag.units ?? '---'}</text>
   </g>
-</g>`)
-
-type TemplateNodeStyleConverters = {
-  templateNodeConverters: {
-    typeColorConverter: (val: string) => string
-    valueConverter: (val: string) => string
-  }
-}
-/**
- * Initializes the converters needed for creating the template node style.
- */
-export function initializeConverters(): void {
-  ;(TemplateNodeStyle.CONVERTERS as TemplateNodeStyleConverters).templateNodeConverters = {
-    // converter function for the background color of nodes
-    typeColorConverter: (value: string): string => {
-      return colorSets[predefinedColorSets.get(value) || 'demo-palette-51'].fill || 'white'
-    },
-
-    // converter function for reading the values of the node attributes
-    valueConverter: (value: string): string => {
-      return value || '---'
-    }
-  }
-}
+</g>`
+)

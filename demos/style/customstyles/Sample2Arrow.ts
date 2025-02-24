@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,6 @@
 import {
   BaseClass,
   GeneralPath,
-  GraphMLAttribute,
   IArrow,
   IBoundsProvider,
   IEdge,
@@ -40,23 +39,14 @@ import {
   Point,
   Rect,
   SvgVisual,
-  TypeAttribute,
-  Visual,
-  YString
-} from 'yfiles'
-import { type ColorSetName, isColorSetName } from 'demo-resources/demo-styles'
+  Visual
+} from '@yfiles/yfiles'
+import { type ColorSetName, isColorSetName } from '@yfiles/demo-resources/demo-styles'
 
 /**
  * A custom demo arrow style whose colors match the given well-known CSS rule.
  */
-export class Sample2Arrow
-  extends BaseClass<IArrow, IVisualCreator, IBoundsProvider>(
-    IArrow,
-    IVisualCreator,
-    IBoundsProvider
-  )
-  implements IArrow, IVisualCreator, IBoundsProvider
-{
+export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   private anchor: Point = null!
   private direction: Point = null!
   private arrowFigure: GeneralPath | null = null
@@ -170,7 +160,7 @@ export class Sample2Arrow
    *  `oldVisual`, if this instance modified the visual, or a new visual that should replace the
    * existing one in the canvas object visual tree.
    * @see {@link Sample2Arrow.createVisual}
-   * @see {@link ICanvasObjectDescriptor}
+   * @see {@link IObjectRenderer}
    * @see {@link CanvasComponent}
    * @see Specified by {@link IVisualCreator.updateVisual}.
    */
@@ -197,6 +187,10 @@ export class Sample2Arrow
   getBounds(ctx: IRenderContext): Rect {
     return new Rect(this.anchor.x - 8, this.anchor.y - 8, 32, 32)
   }
+
+  get cropAtPort(): boolean {
+    return false
+  }
 }
 
 export class Sample2ArrowExtension extends MarkupExtension {
@@ -208,12 +202,6 @@ export class Sample2ArrowExtension extends MarkupExtension {
 
   set cssClass(value: string) {
     this._cssClass = value
-  }
-
-  static get $meta(): { cssClass: (GraphMLAttribute | TypeAttribute)[] } {
-    return {
-      cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)]
-    }
   }
 
   provideValue(serviceProvider: ILookup): Sample2Arrow {

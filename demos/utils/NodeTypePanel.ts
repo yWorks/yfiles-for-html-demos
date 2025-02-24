@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,15 +27,15 @@
  **
  ***************************************************************************/
 import {
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
+  ExteriorNodeLabelModelPosition,
   GraphComponent,
   ILabelModelParameter,
   INode,
   Point,
   SimpleLabel,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can display arbitrary information
@@ -95,14 +95,14 @@ export default class NodeTypePanel {
    */
   registerListeners(): void {
     // Adds listener for viewport changes
-    this.graphComponent.addViewportChangedListener(() => {
+    this.graphComponent.addEventListener('viewport-changed', () => {
       if (this.currentItems && this.currentItems.length > 0) {
         this.dirty = true
       }
     })
 
     // Adds listener for updates of the visual tree
-    this.graphComponent.addUpdatedVisualListener(() => {
+    this.graphComponent.addEventListener('updated-visual', () => {
       if (this.currentItems && this.currentItems.length > 0 && this.dirty) {
         this.dirty = false
         this.updateLocation()
@@ -196,18 +196,16 @@ export default class NodeTypePanel {
     const height = this.div.offsetHeight
     const zoom = this.graphComponent.zoom
 
-    const labelModelParameter = new ExteriorLabelModel({ insets: [20, 0, 0, 0] }).createParameter(
-      ExteriorLabelModelPosition.NORTH
-    )
+    const labelModelParameter = new ExteriorNodeLabelModel({
+      margins: [20, 0, 0, 0]
+    }).createParameter(ExteriorNodeLabelModelPosition.TOP)
     const dummyLabel = new SimpleLabel(this.currentItems[0], '', labelModelParameter)
-    if (labelModelParameter.supports(dummyLabel)) {
-      dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
-      const { anchorX, anchorY } = labelModelParameter.model.getGeometry(
-        dummyLabel,
-        labelModelParameter
-      )
-      this.setLocation(anchorX, anchorY - height / zoom)
-    }
+    dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
+    const { anchorX, anchorY } = labelModelParameter.model.getGeometry(
+      dummyLabel,
+      labelModelParameter
+    )
+    this.setLocation(anchorX, anchorY - height / zoom)
   }
 
   /**
@@ -215,7 +213,7 @@ export default class NodeTypePanel {
    */
   setLocation(x: number, y: number): void {
     // Calculate the view coordinates since we have to place the div in the regular HTML coordinate space
-    const viewPoint = this.graphComponent.toViewCoordinates(new Point(x, y))
+    const viewPoint = this.graphComponent.worldToViewCoordinates(new Point(x, y))
     this.div.style.left = `${viewPoint.x}px`
     this.div.style.top = `${viewPoint.y}px`
   }

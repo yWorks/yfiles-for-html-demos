@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,33 +26,19 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { LabelStyleBase, Size, SvgVisual } from 'yfiles'
-
+import { LabelStyleBase, Size, SvgVisual } from '@yfiles/yfiles'
 export class CustomLabelStyle extends LabelStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @returns {?Visual}
-   */
   createVisual(context, label) {
     // create an SVG text element that displays the label text
     const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text')
     textElement.textContent = label.text
-
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(textElement)
-
     // move the text down by the label height
     textElement.setAttribute('dy', String(label.layout.height))
-
     return new SvgVisual(textElement)
   }
-
-  /**
-   * @param {!ILabel} label
-   * @returns {!Size}
-   */
   getPreferredSize(label) {
     return new Size(80, 14)
   }

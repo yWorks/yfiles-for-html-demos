@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,10 +27,10 @@
  **
  ***************************************************************************/
 import {
+  Color,
   EdgeRouter,
   EdgeRouterBusDescriptor,
   EdgeRouterData,
-  EdgeRouterScope,
   Fill,
   GraphBuilder,
   GraphComponent,
@@ -39,16 +39,15 @@ import {
   GraphSnapContext,
   IEdge,
   IGraph,
+  LayoutExecutor,
   License,
-  OrthogonalEdgeEditingContext,
   PolylineEdgeStyle,
-  SolidColorFill,
   Stroke
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import SampleData from './resources/SampleData'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Provides different color fills for new edge busses in this demo.
@@ -66,7 +65,7 @@ class ColorUtil {
       const r = Math.floor(Math.random() * 150)
       const g = Math.floor(Math.random() * 150)
       const b = Math.floor(Math.random() * 150)
-      this.fills.push(new SolidColorFill(r, g, b))
+      this.fills.push(Fill.from(new Color(r, g, b)))
     }
 
     return this.fills[this.index++]
@@ -126,15 +125,13 @@ async function run(): Promise<void> {
   initializeUI()
 
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   configureUserInteraction(graphComponent)
 
   configureGraph(graphComponent.graph)
 
   loadGraph(graphComponent.graph)
 
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   await routeEdges()
 }
@@ -150,9 +147,6 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
   mode.allowCreateEdge = false
   // restrict marquee selection to nodes
   mode.marqueeSelectableItems = GraphItemTypes.NODE
-  // since EdgeRouter creates and works with orthogonal edge routes,
-  // ensure interactive edge editing will keep edges orthogonal
-  mode.orthogonalEdgeEditingContext = new OrthogonalEdgeEditingContext()
   // disable interactive node resizing
   mode.showHandleItems = GraphItemTypes.BEND | GraphItemTypes.EDGE
   // turn on default snapping for graph elements
@@ -246,7 +240,7 @@ async function routeEdgesCore(edgesToRoute: IEdge[] | null): Promise<void> {
   if (edgesToRoute && edgesToRoute.length > 0) {
     // affected edges are all the edges created in the last connectNodes action
     // mark those edges for routing ...
-    layoutData.affectedEdges = edgesToRoute
+    layoutData.scope.edges = edgesToRoute
     // ... and assign those edges to a new edge bus
     layoutData.buses.add(new EdgeRouterBusDescriptor({ multipleBackboneSegments: false })).items =
       edgesToRoute
@@ -257,7 +251,7 @@ async function routeEdgesCore(edgesToRoute: IEdge[] | null): Promise<void> {
     for (const fill of colorUtil.usedFills()) {
       layoutData.buses.add(
         new EdgeRouterBusDescriptor({ multipleBackboneSegments: false })
-      ).delegate = (edge) => {
+      ).predicate = (edge) => {
         const edgeFill = (edge.style as PolylineEdgeStyle).stroke!.fill
         return fill.hasSameValue(edgeFill)
       }
@@ -266,13 +260,13 @@ async function routeEdgesCore(edgesToRoute: IEdge[] | null): Promise<void> {
 
   // the algorithm used for edge routing
   const algorithm = new EdgeRouter()
-  algorithm.scope =
-    edgesToRoute && edgesToRoute.length > 0
-      ? EdgeRouterScope.ROUTE_AFFECTED_EDGES
-      : EdgeRouterScope.ROUTE_ALL_EDGES
+
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
 
   // calculate the new edge routes and apply the result in an animated fashion
-  await graphComponent.morphLayout({ layout: algorithm, layoutData: layoutData })
+  await graphComponent.applyLayoutAnimated({ layout: algorithm, layoutData: layoutData })
 }
 
 /**
@@ -284,7 +278,7 @@ async function connectNodes() {
   const edgesToRoute: IEdge[] = []
 
   // determine the currently selected nodes
-  const nodes = graphComponent.selection.selectedNodes.toArray()
+  const nodes = graphComponent.selection.nodes.toArray()
   const n = nodes.length
   if (n < 1) {
     return
@@ -308,7 +302,12 @@ async function connectNodes() {
  * Creates a new edge style with an as-to-now unused color fill.
  */
 function newEdgeStyle(): PolylineEdgeStyle {
-  return new PolylineEdgeStyle({ stroke: new Stroke(colorUtil.nextFill(), 2) })
+  return new PolylineEdgeStyle({
+    stroke: new Stroke(colorUtil.nextFill(), 2),
+    // since EdgeRouter creates and works with orthogonal edge routes,
+    // ensure interactive edge editing will keep edges orthogonal
+    orthogonalEditing: true
+  })
 }
 
 /**

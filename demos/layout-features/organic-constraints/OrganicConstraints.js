@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,48 +26,40 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { OrganicLayout, OrganicLayoutData } from 'yfiles'
-
+import { OrganicLayout, OrganicLayoutData } from '@yfiles/yfiles'
 /**
  * Demonstrates how to configure constraints for the {@link OrganicLayout} algorithm.
- * @param {!IGraph} graph the graph to be laid out
- * @returns {!object}
+ * @param graph the graph to be laid out
  */
 export function createFeatureLayoutConfiguration(graph) {
   // force some nodes in the sample graph to lie on a circle
   const layoutData = new OrganicLayoutData()
-  layoutData.constraints.addEllipse(false, 1.0).delegate = placeOnCircle
-
+  layoutData.constraints.addEllipse(false, 1.0).predicate = placeOnCircle
   return {
     layout: new OrganicLayout({
       deterministic: true,
-      preferredEdgeLength: 80,
-      minimumNodeDistance: 30
+      defaultPreferredEdgeLength: 80,
+      defaultMinimumNodeDistance: 30
     }),
     layoutData
   }
 }
-
 /**
  * Determines if the placement of the given node should be constrained.
- * @param {!INode} node
- * @returns {boolean}
  */
 function placeOnCircle(node) {
   return node.tag.type === 1
 }
-
 /**
  * Demonstrates how to configure the {@link OrganicLayout} algorithm without any constraints.
- * @param {!IGraph} graph the graph to be laid out
- * @returns {!object}
+ * @param graph the graph to be laid out
  */
 export function createDefaultLayoutConfiguration(graph) {
   return {
     layout: new OrganicLayout({
       deterministic: true,
-      preferredEdgeLength: 80,
-      minimumNodeDistance: 30
+      defaultPreferredEdgeLength: 80,
+      defaultMinimumNodeDistance: 30
     }),
     layoutData: new OrganicLayoutData()
   }

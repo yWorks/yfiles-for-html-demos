@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport" />
+
     <title>Logic Gates Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -52,7 +52,6 @@
         opacity: 0.35;
       }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -96,7 +95,7 @@
       <span class="demo-separator"></span>
 
       <select id="algorithm-select-box" title="Select a layout algorithm">
-        <option>Hierarchic Layout</option>
+        <option>Hierarchical Layout</option>
         <option>Edge Router</option>
       </select>
 
@@ -135,10 +134,7 @@
         <p>
           Each node has specific ports: incoming edges connect only to the left side of the target
           node, while outgoing edges go to the right side of the source node.
-          <a href="https://docs.yworks.com/yfileshtml/#/api/PortConstraint" target="_blank">PortConstraint</a>
-          and
-          <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" target="_blank">PortCandidate</a>
-          are used for this purpose.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutPortCandidate" target="_blank">LayoutPortCandidate</a> is used for this purpose.
         </p>
 
         <h2>Graph Creation</h2>
@@ -154,7 +150,7 @@
           <li>
             Hover over a node to see available input (reddish color) and output (bluish color) ports
           </li>
-          <li>Re-assign a connection by dragging the endpoint of the edge.</li>
+          <li>Reassign a connection by selecting the edge and dragging its endpoint.</li>
           <li>The ports remain unchanged when applying the selected layout algorithm.</li>
         </ul>
       </div>

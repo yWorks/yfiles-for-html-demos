@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,6 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* import the yFiles stylesheet in a layer to make overriding styles easier */
+@import '@yfiles/yfiles/yfiles.css' layer(yfiles);
+
 /* Graph Components */
 .demo-main__graph-component #graphComponent {
   background-color: #3c4253;
@@ -53,10 +56,10 @@
 .yfiles-handle {
   color: #e8cb87;
 }
-.yfiles-handle-north.yfiles-handle-east,
-.yfiles-handle-north.yfiles-handle-west,
-.yfiles-handle-south.yfiles-handle-east,
-.yfiles-handle-south.yfiles-handle-west {
+.yfiles-handle-top.yfiles-handle-right,
+.yfiles-handle-top.yfiles-handle-left,
+.yfiles-handle-bottom.yfiles-handle-right,
+.yfiles-handle-bottom.yfiles-handle-left {
   color: #b96069;
 }
 
@@ -100,9 +103,6 @@
   stroke: #85be8a;
   stroke-linejoin: round;
 }
-.yfiles-node-highlight-middle-template {
-  stroke: #3c4253;
-}
 
 /* Label Candidates */
 .yfiles-label-position-highlight-template {
@@ -113,96 +113,46 @@
 }
 
 /* Port Candidates */
-.yfiles-port-candidate-template.yfiles-valid .yfiles-outer-rect {
+.yfiles-port-candidate-template.yfiles-valid {
   fill: #85be8a;
-}
-.yfiles-port-candidate-template.yfiles-valid .yfiles-inner-rect {
-  fill: #85be8a;
-}
-.yfiles-port-candidate-template.yfiles-valid .yfiles-corner-path {
-  stroke: transparent;
 }
 
-/* Snap-Lines */
-.yfiles-snap-line {
+/* Snap References */
+.yfiles-snap-reference {
   stroke: #e8cb87;
   stroke-width: 2px;
 }
 
 /* Scrollbars */
-.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal,
-.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal div,
-.yfiles-canvascomponent
-  .yfiles-scrollbar
-  .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal {
-  height: 10px;
-}
-.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical,
-.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical div,
-.yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical {
-  width: 10px;
+.yfiles-canvascomponent {
+  --yfiles-scrollbar-vertical-size: 10px;
+  --yfiles-scrollbar-horizontal-size: 10px;
 }
 
-.yfiles-canvascomponent
-  .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical
-  .yfiles-scrollbar-slider {
+.yfiles-scrollbar-vertical .yfiles-scrollbar-slider {
   width: 8px;
 }
-
-.yfiles-canvascomponent
-  .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal
-  .yfiles-scrollbar-slider {
+.yfiles-scrollbar-horizontal .yfiles-scrollbar-slider {
   height: 8px;
 }
-.yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical {
-  top: 10px;
-  bottom: 10px;
-}
-
-.yfiles-canvascomponent
-  .yfiles-scrollbar
-  .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal {
-  left: 10px;
-  right: 10px;
-}
-
-.yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-slider-content {
+.yfiles-scrollbar .yfiles-scrollbar-slider {
   background-color: #282e40;
-  opacity: 1;
 }
-.yfiles-canvascomponent
-  .yfiles-scrollbar.yfiles-scrollbar-dynamic.yfiles-scrollbar-horizontal:hover
-  .yfiles-scrollbar-slider,
-.yfiles-canvascomponent
-  .yfiles-scrollbar.yfiles-scrollbar-dynamic.yfiles-scrollbar-horizontal:active
-  .yfiles-scrollbar-slider {
-  bottom: 1px;
-}
-
-.yfiles-canvascomponent
-  .yfiles-scrollbar.yfiles-scrollbar-dynamic.yfiles-scrollbar-vertical:hover
-  .yfiles-scrollbar-slider,
-.yfiles-canvascomponent
-  .yfiles-scrollbar.yfiles-scrollbar-dynamic.yfiles-scrollbar-vertical:active
-  .yfiles-scrollbar-slider {
-  right: 1px;
-}
-.yfiles-canvascomponent .yfiles-scrollbar .yfiles-button {
-  width: 10px;
-  height: 10px;
+.yfiles-scrollbar .yfiles-button {
+  flex-basis: 10px;
   background-size: contain;
 }
 
-.yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-left {
+.yfiles-scrollbar .yfiles-button.yfiles-button-left {
   background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxMCI+PHBhdGggZD0iTTUgNSBMMTAgMSBMMTAgOSBaIi8+PC9zdmc+DQo=);
 }
-.yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-right {
+.yfiles-scrollbar .yfiles-button.yfiles-button-right {
   background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxMCI+PHBhdGggZD0iTTUgMSBMMTAgNSBMNSA5IFoiLz48L3N2Zz4NCg==);
 }
-.yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-down {
+.yfiles-scrollbar .yfiles-button.yfiles-button-down {
   background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxNSI+PHBhdGggZD0iTTEgNSBMOSA1IEw1IDEwIFoiLz48L3N2Zz4NCg==);
 }
-.yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-up {
+.yfiles-scrollbar .yfiles-button.yfiles-button-up {
   background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxNSI+PHBhdGggZD0iTTEgMTAgTDUgNSBMOSAxMCBaIi8+PC9zdmc+DQo=);
 }
 
@@ -246,18 +196,18 @@
     transform: scale(1);
   }
 }
-.yfiles-canvascomponent .yfiles-labeleditbox-container {
+.yfiles-labeleditbox-container {
   background-color: #282e40;
   border-color: #85a1c2;
 }
 
-.yfiles-canvascomponent .yfiles-labeleditbox {
+.yfiles-labeleditbox {
   font-family: sans-serif;
   font-size: 12pt;
   color: lightgrey;
 }
 
-.yfiles-canvascomponent .yfiles-labeleditbox::selection {
+.yfiles-labeleditbox::selection {
   background: #85a1c2;
   color: #fff;
 }

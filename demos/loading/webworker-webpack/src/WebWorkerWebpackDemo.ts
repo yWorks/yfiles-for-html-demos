@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,45 +26,37 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import 'demo-resources/style/loading-demo.css'
+import '@yfiles/demo-resources/style/loading-demo.css'
 
 import {
+  Command,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicLayoutData,
-  ICommand,
+  HierarchicalLayoutData,
   IEdge,
-  LayoutDescriptor,
+  Insets,
+  type LayoutDescriptor,
   LayoutExecutorAsync,
   License,
-  NodeHalo,
   WaitInputMode
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import licenseData from './license.json'
 import {
   createGroupedSampleGraph,
   initializeBasicDemoStyles,
   initializeFolding
-} from 'utils/sample-graph'
+} from '@yfiles/demo-utils/sample-graph'
 
 License.value = licenseData
 
 let graphComponent: GraphComponent
 let executor: LayoutExecutorAsync | null
-let worker: Worker
+let worker = new Worker(new URL('./WorkerLayout.ts', import.meta.url))
 
 const layoutButton = document.querySelector<HTMLButtonElement>('#layoutBtn')!
 
 function run() {
-  // @ts-ignore
-  worker = new Worker(new URL('./WorkerLayout.ts', import.meta.url))
-  worker.onmessage = (e: any) => {
-    if (e.data === 'ready') {
-      runWebWorkerLayout(true)
-    }
-  }
-
   graphComponent = new GraphComponent('graphComponent')
 
   // initialize styles as well as graph
@@ -72,41 +64,32 @@ function run() {
   initializeFolding(graphComponent)
   initializeBasicDemoStyles(graphComponent.graph)
   createGroupedSampleGraph(graphComponent.graph)
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   // bind the demo buttons to their actions
   initializeUI()
 
-  showLoading()
+  runWebWorkerLayout().then(() => {
+    graphComponent.graph.undoEngine!.clear()
+  })
 }
 
 /**
  * Runs the web worker layout task.
- * @param clearUndo Specifies whether the undo queue should be cleared after the layout
- * calculation. This is set to `true` if this method is called directly after
- * loading a new sample graph.
  */
-async function runWebWorkerLayout(clearUndo: boolean): Promise<void> {
+async function runWebWorkerLayout(): Promise<void> {
   const layoutData = createLayoutData()
   const layoutDescriptor = createLayoutDescriptor()
 
   showLoading()
 
-  // helper function that performs the actual message passing to the web worker
-  function webWorkerMessageHandler(data: unknown): Promise<any> {
-    return new Promise((resolve) => {
-      worker.onmessage = (e: any) => resolve(e.data)
-      worker.postMessage(data)
-    })
-  }
-
   // create an asynchronous layout executor that calculates a layout on the worker
   executor = new LayoutExecutorAsync({
-    messageHandler: webWorkerMessageHandler,
+    messageHandler: LayoutExecutorAsync.createWebWorkerMessageHandler(worker),
     graphComponent,
     layoutDescriptor,
     layoutData,
-    duration: '1s',
+    animationDuration: '1s',
     animateViewport: true,
     easedAnimation: true
   })
@@ -114,10 +97,6 @@ async function runWebWorkerLayout(clearUndo: boolean): Promise<void> {
   // run the Web Worker layout
   await executor.start()
   executor = null
-
-  if (clearUndo) {
-    graphComponent.graph.undoEngine!.clear()
-  }
 
   hideLoading()
 }
@@ -139,11 +118,9 @@ async function cancelWebWorkerLayout() {
  */
 function createLayoutDescriptor(): LayoutDescriptor {
   return {
-    name: 'HierarchicLayout',
+    name: 'HierarchicalLayout',
     properties: {
-      nodeToNodeDistance: 50,
-      considerNodeLabels: true,
-      integratedEdgeLabeling: true
+      nodeDistance: 50
     }
   }
 }
@@ -152,8 +129,8 @@ function createLayoutDescriptor(): LayoutDescriptor {
  * Creates the layout data that is used to execute the layout.
  */
 function createLayoutData() {
-  return new HierarchicLayoutData({
-    nodeHalos: () => NodeHalo.create(10),
+  return new HierarchicalLayoutData({
+    nodeMargins: () => new Insets(10),
     targetGroupIds: (edge: IEdge) => edge.targetNode
   })
 }
@@ -167,7 +144,7 @@ function showLoading() {
   if (statusElement) {
     statusElement.style.setProperty('visibility', 'visible', '')
   }
-  const waitMode = graphComponent.lookup(WaitInputMode.$class) as WaitInputMode
+  const waitMode = graphComponent.lookup(WaitInputMode) as WaitInputMode
   if (waitMode !== null && !waitMode.waiting) {
     if (waitMode.canStartWaiting()) {
       waitMode.waiting = true
@@ -184,36 +161,38 @@ function hideLoading() {
   if (statusElement !== null) {
     statusElement.style.setProperty('visibility', 'hidden', '')
   }
-  const waitMode = graphComponent.lookup(WaitInputMode.$class) as WaitInputMode
+  const waitMode = graphComponent.lookup(WaitInputMode) as WaitInputMode
   if (waitMode !== null) {
     waitMode.waiting = false
   }
 }
 
 /**
- * Helper function to register ICommands at HTML elements.
+ * Helper function to register Commands at HTML elements.
  */
-function bindCommand(selector: string, command: any, target: any, parameter?: any): void {
+function bindCommand(
+  selector: string,
+  command: any,
+  targetCanvas: GraphComponent,
+  parameter?: any
+): void {
   const element = document.querySelector(selector)
   if (arguments.length < 4) {
     parameter = null
-    if (arguments.length < 3) {
-      target = null
-    }
   }
   if (!element) {
     return
   }
-  command.addCanExecuteChangedListener(() => {
-    if (command.canExecute(parameter, target)) {
+  targetCanvas.addEventListener('can-execute-changed', () => {
+    if (targetCanvas.canExecuteCommand(command, parameter)) {
       element.removeAttribute('disabled')
     } else {
       element.setAttribute('disabled', 'disabled')
     }
   })
   element.addEventListener('click', () => {
-    if (command.canExecute(parameter, target)) {
-      command.execute(parameter, target)
+    if (targetCanvas.canExecuteCommand(command, parameter)) {
+      targetCanvas.executeCommand(command, parameter)
     }
   })
 }
@@ -223,21 +202,37 @@ function bindCommand(selector: string, command: any, target: any, parameter?: an
  * toolbar buttons, during the creation of this application.
  */
 function initializeUI() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
+  bindCommand("button[data-command='ZoomIn']", Command.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", Command.DECREASE_ZOOM, graphComponent)
+  document
+    .querySelector("button[data-command='FitContent']")!
+    .addEventListener('click', async () => {
+      await graphComponent.fitGraphBounds()
+    })
+  bindCommand("button[data-command='ZoomOriginal']", Command.ZOOM, graphComponent, 1.0)
+  const undoEngine = graphComponent.graph.undoEngine
+  // todo enable/disable undo/redo
+  document.querySelector("button[data-command='Undo']")!.addEventListener('click', () => {
+    if (undoEngine?.canUndo()) {
+      undoEngine?.undo()
+    }
+  })
+
+  document.querySelector("button[data-command='Redo']")!.addEventListener('click', () => {
+    if (undoEngine?.canRedo()) {
+      undoEngine?.redo()
+    }
+  })
+
   document
     .querySelector("button[data-command='WebWorkerLayout']")!
-    .addEventListener('click', () => {
-      runWebWorkerLayout(false)
+    .addEventListener('click', async () => {
+      await runWebWorkerLayout()
     })
 
-  const element = document.querySelector("div[data-command='cancelLayout']")!
-  element.addEventListener('click', async (): Promise<void> => cancelWebWorkerLayout())
+  document
+    .querySelector('#cancel-layout')!
+    .addEventListener('click', async (): Promise<void> => cancelWebWorkerLayout())
 }
 
-// noinspection JSIgnoredPromiseFromCall
 run()

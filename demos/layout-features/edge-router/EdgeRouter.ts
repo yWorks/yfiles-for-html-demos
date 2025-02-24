@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,20 +27,15 @@
  **
  ***************************************************************************/
 import {
+  EdgePortCandidates,
   EdgeRouter,
   EdgeRouterData,
-  EdgeRouterEdgeRoutingStyle,
-  EdgeRouterScope,
-  Grid,
-  ICollection,
   IEdge,
   IGraph,
   ILayoutAlgorithm,
   LayoutData,
-  List,
-  PortCandidate,
-  PortDirections
-} from 'yfiles'
+  PortSides
+} from '@yfiles/yfiles'
 
 /**
  * Demonstrates various settings of the {@link EdgeRouter} algorithm.
@@ -56,18 +51,17 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
   const layoutData = new EdgeRouterData()
 
   // define distance in pixels that edges should keep to other edges
-  router.defaultEdgeLayoutDescriptor.minimumEdgeToEdgeDistance = 5
+  router.defaultEdgeDescriptor.minimumEdgeDistance = 5
 
   // minimum length of the first and last segments
-  router.defaultEdgeLayoutDescriptor.minimumFirstSegmentLength = 15
-  router.defaultEdgeLayoutDescriptor.minimumLastSegmentLength = 15
+  router.defaultEdgeDescriptor.minimumFirstSegmentLength = 15
+  router.defaultEdgeDescriptor.minimumLastSegmentLength = 15
 
   // set minimum distance that edges need to keep from nodes
   router.minimumNodeToEdgeDistance = 5
 
-  // make the router aware of fixed node and edge labels (i.e. it tries to avoid overlaps with them)
-  router.considerEdgeLabels = true
-  router.considerNodeLabels = true
+  // make the router aware of fixed edge labels (i.e. it tries to avoid overlaps with them)
+  router.edgeLabelPlacement = 'consider-unaffected-edge-labels'
 
   // the algorithm's scope is restricted such that some edges are not routed (red edges)
   configureRouterScope(graph, router, layoutData)
@@ -81,14 +75,14 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
 
   // configure port candidates (restrict ports to specific sides) for some edges
   // (edges at node 5 and node 7 in the example graph)
-  configurePortCandidates(graph, router, layoutData)
+  configurePortCandidates(layoutData)
 
   // define that the edge routes must be on a grid with a spacing of 10 pixels
-  router.grid = new Grid(0, 0, 10)
+  router.gridSpacing = 10
 
   // limit the time which the algorithm should use - when it is up, the process tries to finish
   // as fast as possible, falling back to more simple solutions and lower quality routes
-  router.maximumDuration = 5000
+  router.stopDuration = '5s'
 
   return { layout: router, layoutData }
 }
@@ -97,11 +91,8 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
  * Configure the {@link EdgeRouter} to only route a specific set of affected edges.
  */
 function configureRouterScope(graph: IGraph, router: EdgeRouter, data: EdgeRouterData): void {
-  // use scope 'affected' edges meaning that we must define a set of edges that are affected
-  router.scope = EdgeRouterScope.ROUTE_AFFECTED_EDGES
-
   // define the set of edges that should be routed by using a delegate function
-  data.affectedEdges.delegate = (edge) => shouldRouteEdge(edge)
+  data.scope.edges = (edge) => shouldRouteEdge(edge)
 }
 
 function shouldRouteEdge(e: IEdge) {
@@ -122,15 +113,15 @@ function configureRoutingStyle(
   router: EdgeRouter,
   layoutData: EdgeRouterData
 ): void {
-  // the default style - configured on the defaultEdgeLayoutDescriptor instance - is orthogonal
-  const defaultDescriptor = router.defaultEdgeLayoutDescriptor
-  defaultDescriptor.routingStyle = EdgeRouterEdgeRoutingStyle.ORTHOGONAL
+  // the default style - configured on the defaultEdgeDescriptor instance - is orthogonal
+  const defaultDescriptor = router.defaultEdgeDescriptor
+  defaultDescriptor.routingStyle = 'orthogonal'
 
   // configure some edges to get an octilinear routing style (blue edges in the example graph)
   // copy the current default descriptor and change the routingStyle property on the copied instance
   const octilinearDescriptor = defaultDescriptor.createCopy()
-  octilinearDescriptor.routingStyle = EdgeRouterEdgeRoutingStyle.OCTILINEAR
-  layoutData.edgeLayoutDescriptors.delegate = (edge) =>
+  octilinearDescriptor.routingStyle = 'octilinear'
+  layoutData.edgeDescriptors = (edge) =>
     routeOctilinear(edge) ? octilinearDescriptor : defaultDescriptor
 }
 
@@ -143,29 +134,19 @@ function routeOctilinear(edge: IEdge) {
  */
 function configureEdgeGrouping(graph: IGraph, router: EdgeRouter, layoutData: EdgeRouterData) {
   const groupId = 'goldenGroup'
-  layoutData.targetGroupIds.delegate = (edge) => (edge.tag === 10 || edge.tag == 7 ? groupId : null)
+  layoutData.targetGroupIds = (edge: IEdge) => (edge.tag === 10 || edge.tag == 7 ? groupId : null)
 }
 
 /**
  * Defines port candidates for edges at specific nodes.
  */
-function configurePortCandidates(graph: IGraph, router: EdgeRouter, layoutData: EdgeRouterData) {
-  layoutData.sourcePortCandidates = (edge: IEdge): ICollection<PortCandidate> | null => {
-    if (edge.sourceNode!.tag === 5 || edge.sourceNode!.tag === 7) {
-      return new List([
-        PortCandidate.createCandidate(PortDirections.EAST),
-        PortCandidate.createCandidate(PortDirections.WEST)
-      ])
-    }
-    return null
-  }
-  layoutData.targetPortCandidates = (edge: IEdge): ICollection<PortCandidate> | null => {
-    if (edge.targetNode!.tag === 5 || edge.targetNode!.tag === 7) {
-      return new List([
-        PortCandidate.createCandidate(PortDirections.EAST),
-        PortCandidate.createCandidate(PortDirections.WEST)
-      ])
-    }
-    return null
-  }
+function configurePortCandidates(layoutData: EdgeRouterData) {
+  layoutData.ports.sourcePortCandidates = (edge) =>
+    edge.sourceNode.tag === 5 || edge.sourceNode.tag === 7
+      ? new EdgePortCandidates().addFreeCandidate(PortSides.RIGHT).addFreeCandidate(PortSides.LEFT)
+      : null
+  layoutData.ports.targetPortCandidates = (edge) =>
+    edge.targetNode.tag === 5 || edge.targetNode.tag === 7
+      ? new EdgePortCandidates().addFreeCandidate(PortSides.RIGHT).addFreeCandidate(PortSides.LEFT)
+      : null
 }

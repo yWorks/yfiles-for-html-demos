@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,12 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { INode } from 'yfiles'
+import type { INode } from '@yfiles/yfiles'
 
 /**
  * Describes the type of nodes used in this demo.
  */
-export enum NodeType {
+export enum MultiPageNodeType {
   /**
    * The nodes that represent the points on image.
    */
@@ -57,7 +57,7 @@ export type PointData = {
   /**
    * The type of the node, i.e., point or label node.
    */
-  type?: NodeType
+  type?: MultiPageNodeType
 }
 
 /**
@@ -71,5 +71,5 @@ export function getPointData(node: INode): PointData {
  * Returns whether the given node represents a label node.
  */
 export function isLabel(node: INode): boolean {
-  return getPointData(node).type === NodeType.LABEL
+  return getPointData(node).type === MultiPageNodeType.LABEL
 }

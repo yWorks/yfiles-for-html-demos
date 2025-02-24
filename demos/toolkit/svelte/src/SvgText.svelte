@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { FontStyleStringValues, FontWeightStringValues, TextWrappingStringValues } from 'yfiles'
-  import { Font, Size, TextMeasurePolicy, TextRenderSupport, TextWrapping } from 'yfiles'
+  import type { FontStyleStringValues, FontWeightStringValues, TextWrappingStringValues } from '@yfiles/yfiles'
+  import { Font, Size, TextMeasurePolicy, TextRenderSupport, TextWrapping } from '@yfiles/yfiles'
 
   export let maxWidth = -1
   export let maxHeight = -1
@@ -9,7 +9,7 @@
   export let text = ''
   export let rtl = false
   export let fontFamily = 'serif'
-  export let textWrapping: TextWrappingStringValues = 'word'
+  export let textWrapping: TextWrappingStringValues = 'wrap-word'
   export let fontSize = 12
   export let fontStyle: FontStyleStringValues = 'normal'
   export let fontWeight: FontWeightStringValues = 'normal'

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,18 +27,20 @@
  **
  ***************************************************************************/
 import type { Activity } from './resources/data-model'
-import type { CanvasComponent, GraphComponent, Point } from 'yfiles'
+import type { CanvasComponent, GraphComponent, Point } from '@yfiles/yfiles'
 import { GanttTimestamp, getTaskColor, getTaskForId, getTotalActivityDuration } from './gantt-utils'
 
 export function showInfo(text: string, location: Point, canvasComponent: CanvasComponent): void {
   const info = document.querySelector<HTMLDivElement>('#info')!
-  const pageLocation = canvasComponent.toPageFromView(canvasComponent.toViewCoordinates(location))
+  const pageLocation = canvasComponent.viewToPageCoordinates(
+    canvasComponent.worldToViewCoordinates(location)
+  )
   info.textContent = text
   info.classList.remove('hidden')
 
   const width = info.clientWidth
   const height = info.clientHeight
-  const gcViewBox = canvasComponent.div.getBoundingClientRect()
+  const gcViewBox = canvasComponent.htmlElement.getBoundingClientRect()
 
   info.style.left = `${Math.max(
     gcViewBox.x,
@@ -60,8 +62,8 @@ export function showActivityInfo(
   graphComponent: GraphComponent
 ): void {
   const width = 400
-  const viewLocation = graphComponent.toViewCoordinates(location)
-  const pageLocation = graphComponent.toPageFromView(viewLocation)
+  const viewLocation = graphComponent.worldToViewCoordinates(location)
+  const pageLocation = graphComponent.viewToPageCoordinates(viewLocation)
 
   const formatted = (isoString: string): string => {
     return new GanttTimestamp(isoString).format()
@@ -97,7 +99,7 @@ export function showActivityInfo(
   nodeInfo.style.border = `3px solid ${getTaskColor(getTaskForId(activity.taskId))}`
   nodeInfo.classList.remove('hidden')
 
-  const gcViewBox = graphComponent.div.getBoundingClientRect()
+  const gcViewBox = graphComponent.htmlElement.getBoundingClientRect()
   const xPosition = Math.max(
     gcViewBox.x,
     Math.min(pageLocation.x - width * 0.5, gcViewBox.x + gcViewBox.width - width)

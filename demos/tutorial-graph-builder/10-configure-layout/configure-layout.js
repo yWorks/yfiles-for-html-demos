@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,22 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @typedef {Object} NodeLayoutData
- * @property {string} id
- * @property {object} layout
- */
-/**
- * @typedef {Object} EdgeLayoutData
- * @property {string} sourceId
- * @property {string} targetId
- * @property {Array.<object>} bends
- */
-
-/**
- * @param {!GraphBuilder} graphBuilder
- * @returns {!NodesSource.<NodeLayoutData>}
- */
 export function configureNodeLayoutWithProvider(graphBuilder) {
   const nodeData = [
     {
@@ -57,19 +41,12 @@ export function configureNodeLayoutWithProvider(graphBuilder) {
       layout: { x: 75, y: 95, width: 30, height: 30 }
     }
   ]
-
   // create the node using the id property
   const nodeSource = graphBuilder.createNodesSource(nodeData, 'id')
   // configure the layout provider that returns the layout information
   nodeSource.nodeCreator.layoutProvider = (data) => data.layout
-
   return nodeSource
 }
-
-/**
- * @param {!GraphBuilder} graphBuilder
- * @returns {!EdgesSource.<EdgeLayoutData>}
- */
 export function configureBends(graphBuilder) {
   const edgeData = [
     {
@@ -89,18 +66,12 @@ export function configureBends(graphBuilder) {
       ]
     }
   ]
-
   // create the edges using the sourceId/targetId
   const edgeSources = graphBuilder.createEdgesSource(edgeData, 'sourceId', 'targetId', 'id')
   // configure the bend provider to return the location of each bend point
   edgeSources.edgeCreator.bendsProvider = (data) => data.bends
   return edgeSources
 }
-
-/**
- * @param {!GraphBuilder} graphBuilder
- * @returns {!NodesSource.<object>}
- */
 export function configureNodeLayoutWithBinding(graphBuilder) {
   const nodeData = [
     { id: '03', locationY: 20 },
@@ -108,12 +79,10 @@ export function configureNodeLayoutWithBinding(graphBuilder) {
   ]
   // create the node using the id property
   const nodeSources = graphBuilder.createNodesSource(nodeData, 'id')
-
   // create some binding for the x, y, width and height properties of the layout
   nodeSources.nodeCreator.layoutBindings.addBinding('x', () => 250)
   nodeSources.nodeCreator.layoutBindings.addBinding('y', (data) => data.locationY)
   nodeSources.nodeCreator.layoutBindings.addBinding('width', () => 50)
   nodeSources.nodeCreator.layoutBindings.addBinding('height', () => 30)
-
   return nodeSources
 }

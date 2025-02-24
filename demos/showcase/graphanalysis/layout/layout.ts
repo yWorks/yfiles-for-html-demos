@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,19 +27,17 @@
  **
  ***************************************************************************/
 import {
-  ComponentArrangementStyles,
-  type ComponentLayout,
-  GenericLabeling,
+  ComponentArrangementStyle,
+  EdgeLabelPreferredPlacement,
+  GenericLabelingData,
   type GraphComponent,
   type ILayoutAlgorithm,
   type INode,
-  LabelingData,
   type LayoutData,
   OrganicLayout,
   OrganicLayoutData,
-  OrganicLayoutScope,
-  PreferredPlacementDescriptor
-} from 'yfiles'
+  OrganicScope
+} from '@yfiles/yfiles'
 import { setUIDisabled } from '../ui/ui-utils'
 import { CentralityStage } from './CentralityStage'
 
@@ -57,7 +55,7 @@ export async function runLayout(
   const { layout, layoutData } = getOrganicLayoutConfiguration(affectedNodes)
 
   setUIDisabled(true, graphComponent)
-  await graphComponent.morphLayout(layout, animated ? '0.5s' : '0s', layoutData)
+  await graphComponent.applyLayoutAnimated(layout, animated ? '0.5s' : '0s', layoutData)
   setUIDisabled(false, graphComponent)
 }
 
@@ -71,33 +69,36 @@ function getOrganicLayoutConfiguration(affectedNodes?: INode[] | undefined): {
 } {
   const organicLayout: OrganicLayout = new OrganicLayout({
     deterministic: true,
-    considerNodeSizes: true,
-    scope: affectedNodes ? OrganicLayoutScope.MAINLY_SUBSET : OrganicLayoutScope.ALL,
-    labelingEnabled: true,
-    labeling: new GenericLabeling({
-      placeEdgeLabels: true,
-      placeNodeLabels: false,
+    componentLayout: {
+      style: ComponentArrangementStyle.TRY_KEEP_CENTERS
+    },
+    genericLabeling: {
+      enabled: true,
+      scope: 'edge-labels',
       deterministic: true
-    })
+    }
   })
-  ;(organicLayout.componentLayout as ComponentLayout).style =
-    ComponentArrangementStyles.NONE | ComponentArrangementStyles.MODIFIER_NO_OVERLAP
-
-  organicLayout.prependStage(new CentralityStage(organicLayout))
+  organicLayout.layoutStages.prepend(new CentralityStage(organicLayout))
 
   const organicLayoutData = new OrganicLayoutData({
     preferredEdgeLengths: (edge) =>
       edge.labels.reduce((width, label) => {
         return Math.max(label.layout.width + 50, width)
       }, 100),
-    minimumNodeDistances: 30,
-    affectedNodes: affectedNodes
+    minimumNodeDistances: 30
   })
+  if (affectedNodes) {
+    organicLayoutData.scope.scopeModes = (node) => {
+      return affectedNodes.includes(node)
+        ? OrganicScope.INCLUDE_EXTENDED_NEIGHBORHOOD
+        : OrganicScope.FIXED
+    }
+  }
 
-  const labelingData = new LabelingData({
-    edgeLabelPreferredPlacement: (label): PreferredPlacementDescriptor => {
-      return new PreferredPlacementDescriptor({
-        sideOfEdge: label.tag === 'centrality' ? 'on-edge' : 'left-of-edge',
+  const labelingData = new GenericLabelingData({
+    edgeLabelPreferredPlacements: (label): EdgeLabelPreferredPlacement => {
+      return new EdgeLabelPreferredPlacement({
+        edgeSide: label.tag === 'centrality' ? 'on-edge' : 'left-of-edge',
         distanceToEdge: 5
       })
     }

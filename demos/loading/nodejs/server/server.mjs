@@ -1,17 +1,17 @@
 import fs from 'node:fs'
 
-import { LayoutExecutorAsyncWorker, License, HierarchicLayout, DefaultGraph } from 'yfiles'
+import { Graph, HierarchicalLayout, LayoutExecutorAsyncWorker, License } from '@yfiles/yfiles'
 import express from 'express'
 
 const licenseData = JSON.parse(fs.readFileSync('../../../../lib/license.json', 'utf8'))
 License.value = licenseData
 
 function applyLayout(graph) {
-  // apply an HierarchicLayout on the input graph
-  const layout = new HierarchicLayout({
-    nodeToNodeDistance: 50,
-    considerNodeLabels: true,
-    integratedEdgeLabeling: true
+  // apply an HierarchicalLayout on the input graph
+  const layout = new HierarchicalLayout({
+    nodeDistance: 50,
+    nodeLabelPlacement: 'consider',
+    edgeLabelPlacement: 'integrated'
   })
   return layout.applyLayout(graph)
 }
@@ -46,13 +46,13 @@ app.post('/layout', async (req, res) => {
 
   const data = req.body
 
-  // The LayoutExecutorAsyncWorker can be hooked up with messages from the LayoutExecutorAsync
+  // The LayoutExecutorAsyncWorker can process messages from the LayoutExecutorAsync
   const executor = new LayoutExecutorAsyncWorker(applyLayout)
 
   // run the LayoutExecutorAsyncWorker on the input data
   try {
     const result = await executor.process(data)
-    // return the data of the layouted graph to the main thread
+    // respond with the data of the resulting graph
     res.write(JSON.stringify(result))
   } catch (e) {
     res.write(JSON.stringify(e))
@@ -62,7 +62,7 @@ app.post('/layout', async (req, res) => {
 })
 
 function checkLicense() {
-  const g = new DefaultGraph()
+  const g = new Graph()
   g.createNode()
   return g.nodes.size > 0
 }

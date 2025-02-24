@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,22 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @typedef {Object} ErrorDialogOptions
- * @property {string} title
- * @property {string} message
- */
-
-/**
- * @typedef {Object} DialogElements
- * @property {HTMLElement} dialog
- * @property {HTMLButtonElement} dismissButton
- */
-
-/**
- * @param {!ErrorDialogOptions} undefined
- * @returns {!DialogElements}
- */
 function createErrorDialog({ title, message }) {
   const htmlString = `
     <div class="demo-dialog-anchor demo-dialog-anchor--error">
@@ -56,7 +40,6 @@ function createErrorDialog({ title, message }) {
   `
   const parser = new DOMParser()
   const dialog = parser.parseFromString(htmlString, 'text/html').body.firstChild
-
   if (dialog instanceof HTMLElement) {
     const dismissButton = dialog.querySelector('button')
     if (!(dismissButton instanceof HTMLButtonElement)) {
@@ -67,10 +50,6 @@ function createErrorDialog({ title, message }) {
     throw new Error('Could not create error dialog')
   }
 }
-
-/**
- * @param {!ErrorDialogOptions} options
- */
 export function showErrorDialog(options) {
   const { dialog, dismissButton } = createErrorDialog(options)
   document.body.appendChild(dialog)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,20 +28,19 @@
  ***************************************************************************/
 import {
   CompositeLabelModel,
-  DefaultGraph,
-  DefaultPortCandidate,
+  CompositeLabelModelParameter,
   EditLabelHelper,
   EventRecognizers,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   FoldingManager,
   FreeNodeLabelModel,
   FreeNodePortLocationModel,
+  Graph,
   GraphClipboard,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
-  GraphMLSupport,
   GraphOverviewComponent,
   GraphSnapContext,
   IEdge,
@@ -53,46 +52,41 @@ import {
   IModelItem,
   INode,
   Insets,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   IPort,
   IPortCandidateProvider,
-  IPortStyle,
   IRow,
+  IStripeStyle,
   ITable,
   LayoutExecutor,
   License,
-  MinimumNodeSizeStage,
   NodeDropInputMode,
-  OrthogonalEdgeEditingContext,
-  OrthogonalEdgeEditingPolicy,
   ParentNodeDetectionModes,
   Point,
   PopulateItemContextMenuEventArgs,
+  PortCandidate,
   PortCandidateValidity,
   Rect,
   ReparentNodeHandler,
   ReparentStripeHandler,
   Size,
   SmartEdgeLabelModel,
-  StorageLocation,
+  SnappableItems,
   StripeSubregionTypes,
   StripeTypes,
   Table,
-  TableEditorInputMode,
-  VoidStripeStyle,
-  YObject
-} from 'yfiles'
+  TableEditorInputMode
+} from '@yfiles/yfiles'
 
-import { ContextMenu } from 'demo-utils/ContextMenu'
 import BpmnLayoutData from './BpmnLayoutData'
-import BpmnLayout from './BpmnLayout'
+import { BpmnLayout } from './BpmnLayout'
 import PopupSupport from './BpmnPopupSupport'
 import BpmnView, {
   ActivityNodeStyle,
   AnnotationLabelStyle,
   AnnotationNodeStyle,
   BpmnEdgeStyle,
-  BpmnHandleSerializationListener,
+  BpmnEdgeType,
   BpmnNodeStyle,
   BpmnPortCandidateProvider,
   BpmnReshapeHandleProvider,
@@ -102,7 +96,6 @@ import BpmnView, {
   ConversationType,
   DataObjectNodeStyle,
   DataStoreNodeStyle,
-  EdgeType,
   EventNodeStyle,
   EventPortStyle,
   GatewayNodeStyle,
@@ -112,16 +105,17 @@ import BpmnView, {
   Participant,
   PoolHeaderLabelModel,
   PoolNodeStyle,
+  registerBpmnTypeInformation,
   YFILES_BPMN_NS,
   YFILES_BPMN_PREFIX
 } from './bpmn-view'
-import { DragAndDropPanel } from 'demo-utils/DragAndDropPanel'
+import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
 import { BpmnDiParser } from './bpmn-di'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { configureTwoPointerPanning } from 'demo-utils/configure-two-pointer-panning'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { saveGraphML } from '@yfiles/demo-utils/graphml-support'
+import { openFile } from '@yfiles/demo-utils/file-support'
 
 let graphComponent: GraphComponent
 
@@ -135,11 +129,6 @@ let tableEditorInputMode: TableEditorInputMode
  * calculations.
  */
 let layoutIsRunning = false
-
-/**
- * The context menu that provides all options for the different BPMN styles.
- */
-let contextMenu: ContextMenu
 
 /**
  * A helper class that facilitates using popups that show the properties of the BPMN nodes.
@@ -159,8 +148,7 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize UI elements
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-  const overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
+  new GraphOverviewComponent('overviewComponent', graphComponent)
 
   // load the folding and style modules and initialize the GraphComponent
   initializeGraphComponent()
@@ -175,27 +163,23 @@ async function run(): Promise<void> {
   stylePanel.populatePanel(createStylePanelNodes())
 
   // initialize (de-)serialization for load/save commands
-  const graphmlSupport = new GraphMLSupport({
-    graphComponent,
-    // configure to load and save to the file system
-    storageLocation: StorageLocation.FILE_SYSTEM
-  })
+  const graphMLIOHandler = new GraphMLIOHandler()
 
   // register the current BPMN styles with the GraphMLIOHandler
-  graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(YFILES_BPMN_NS, BpmnView)
-  graphmlSupport.graphMLIOHandler.addNamespace(YFILES_BPMN_NS, YFILES_BPMN_PREFIX)
-  graphmlSupport.graphMLIOHandler.addHandleSerializationListener(BpmnHandleSerializationListener)
+  graphMLIOHandler.addXamlNamespaceMapping(YFILES_BPMN_NS, BpmnView)
+  graphMLIOHandler.addNamespace(YFILES_BPMN_NS, YFILES_BPMN_PREFIX)
+  registerBpmnTypeInformation(graphMLIOHandler)
 
   // load initial graph
   await createGraphMLIOHandler().readFromURL(graphComponent.graph, 'resources/business.graphml')
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
   graphComponent.graph.undoEngine!.clear()
 
   // initialize UI elements and interaction for the popups
-  popupSupport = new PopupSupport(graphComponent, contextMenu)
+  popupSupport = new PopupSupport(graphComponent)
 
   // bind input elements to their functionality
-  initializeUI()
+  initializeUI(graphMLIOHandler)
 }
 
 function initializeGraphComponent(): void {
@@ -208,10 +192,10 @@ function initializeGraphComponent(): void {
   graphComponent.clipboard = graphClipboard
 
   const decorator = graphComponent.graph.decorator
-  decorator.nodeDecorator.editLabelHelperDecorator.setFactory((node) => {
+  decorator.nodes.editLabelHelper.addFactory((node) => {
     const style = node.style as BpmnNodeStyle
-    if (style.lookup && style.lookup(node, IEditLabelHelper.$class)) {
-      return style.lookup(node, IEditLabelHelper.$class) as IEditLabelHelper
+    if (style.lookup && style.lookup(node, IEditLabelHelper)) {
+      return style.lookup(node, IEditLabelHelper) as IEditLabelHelper
     }
     return new AdditionalEditLabelHelper()
   })
@@ -219,19 +203,13 @@ function initializeGraphComponent(): void {
 
 function initializeInputMode(): void {
   const graphSnapContext = new GraphSnapContext({
-    snapSegmentsToSnapLines: true,
-    edgeToEdgeDistance: 10,
+    snappableItems: SnappableItems.NODE | SnappableItems.EDGE | SnappableItems.LABEL,
+    edgeDistance: 10,
     nodeToEdgeDistance: 15,
-    nodeToNodeDistance: 20,
-    snapPortAdjacentSegments: true,
-    snapBendsToSnapLines: true,
-    snapBendAdjacentSegments: true
+    nodeDistance: 20
   })
 
   const graphEditorInputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext(),
-    orthogonalBendRemoval: OrthogonalEdgeEditingPolicy.ALWAYS,
     allowEditLabelOnDoubleClick: false,
     allowCreateNode: false,
     clickHitTestOrder: [
@@ -253,15 +231,13 @@ function initializeInputMode(): void {
     snapContext: graphSnapContext
   })
 
-  graphEditorInputMode.createEdgeInputMode.orthogonalEdgeCreation =
-    OrthogonalEdgeEditingPolicy.ALWAYS
   graphEditorInputMode.createEdgeInputMode.useHitItemsCandidatesOnly = true
 
   const nodeDropInputMode = new NoNestedTablesDropInputMode()
   nodeDropInputMode.showPreview = true
   nodeDropInputMode.enabled = true
   nodeDropInputMode.isGroupNodePredicate = (draggedNode: INode): boolean =>
-    !!draggedNode.lookup(ITable.$class) || draggedNode.tag === 'GroupNode'
+    !!ITable.getTable(draggedNode) || draggedNode.tag === 'GroupNode'
   graphEditorInputMode.nodeDropInputMode = nodeDropInputMode
 
   const noTableReparentNodeHandler = new NoTableReparentNodeHandler()
@@ -274,14 +250,16 @@ function initializeInputMode(): void {
   graphEditorInputMode.marqueeSelectionInputMode.enabled = false
 
   // show the popup for the double-clicked item that has been mapped to the item's style earlier
-  graphEditorInputMode.addItemDoubleClickedListener((_, evt) => {
+  graphEditorInputMode.addEventListener('item-double-clicked', (evt) => {
     popupSupport.showPropertyPopup(evt.item)
     evt.handled = true
   })
 
   // hide the popups on double clicks on the GraphComponent's background.
-  graphEditorInputMode.clickInputMode.addDoubleClickedListener(() => {
-    popupSupport.hidePropertyPopup()
+  graphEditorInputMode.clickInputMode.addEventListener('clicked', (evt) => {
+    if (evt.clickCount == 2) {
+      popupSupport.hidePropertyPopup()
+    }
   })
 
   // Create a new TableEditorInputMode instance which also allows drag and drop
@@ -326,28 +304,28 @@ function enableFolding(): void {
   // set default styles and label model parameter
   foldedGraph.graph.groupNodeDefaults.style = new BpmnGroupNodeStyle()
   const bpmnEdgeStyle = new BpmnEdgeStyle()
-  bpmnEdgeStyle.type = EdgeType.SEQUENCE_FLOW
+  bpmnEdgeStyle.type = BpmnEdgeType.SEQUENCE_FLOW
   graphComponent.graph.edgeDefaults.style = bpmnEdgeStyle
   graphComponent.graph.edgeDefaults.shareStyleInstance = false
   graphComponent.graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel({
     angle: 0,
     autoRotation: false
-  }).createDefaultParameter()
+  }).createParameterFromSource(0)
 
-  // for nodes we use a CompositeLabelModel that combines label placements inside and outside of the node
+  // for nodes, we use a CompositeLabelModel that combines label placements inside and outside of the node
   const compositeLabelModel = new CompositeLabelModel()
-  compositeLabelModel.labelModels.add(new InteriorLabelModel())
-  compositeLabelModel.labelModels.add(new ExteriorLabelModel({ insets: 10 }))
-  graphComponent.graph.nodeDefaults.labels.layoutParameter =
-    compositeLabelModel.createDefaultParameter()
+  compositeLabelModel.addModel(new ExteriorNodeLabelModel({ margins: 10 }))
+  graphComponent.graph.nodeDefaults.labels.layoutParameter = compositeLabelModel.addModel(
+    InteriorNodeLabelModel.CENTER
+  ) as CompositeLabelModelParameter
 
-  manager.masterGraph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory((node) => {
-    if (node.lookup(ITable.$class)) {
+  manager.masterGraph.decorator.nodes.portCandidateProvider.addFactory((node) => {
+    if (ITable.getTable(node)) {
       // Pool only have a dynamic PortCandidate
       return IPortCandidateProvider.fromCandidates([
-        new DefaultPortCandidate({
+        new PortCandidate({
           owner: node,
-          locationParameter: FreeNodePortLocationModel.NODE_CENTER_ANCHORED,
+          locationParameter: FreeNodePortLocationModel.CENTER,
           validity: PortCandidateValidity.DYNAMIC
         })
       ])
@@ -359,13 +337,13 @@ function enableFolding(): void {
 
   // use handles that preserve the aspect ratio of the node while reshaping for nodes with
   // GatewayNodeStyle, EventNodeStyle and ConversationNodeStyle
-  graphComponent.graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setImplementationWrapper(
+  graphComponent.graph.decorator.nodes.reshapeHandleProvider.addWrapperFactory(
     (node, delegateProvider) => new BpmnReshapeHandleProvider(delegateProvider, node)
   )
 
   // allow reconnecting of edges
-  manager.masterGraph.decorator.edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setImplementation(
-    IEdgeReconnectionPortCandidateProvider.ALL_NODE_AND_EDGE_CANDIDATES
+  manager.masterGraph.decorator.edges.reconnectionPortCandidateProvider.addFactory(
+    IEdgeReconnectionPortCandidateProvider.fromAllNodeAndEdgeCandidates
   )
 
   // enable undo operations
@@ -379,7 +357,7 @@ function enableFolding(): void {
  */
 function createGraphMLIOHandler() {
   const graphmlHandler = new GraphMLIOHandler()
-  // enable serialization of the BPMN types - without namespace mappings, serialization will fail
+  // register default namespace mappings for the BPMN module
 
   // support older BPMN style versions (mainly for demo usage)
   graphmlHandler.addXamlNamespaceMapping('http://www.yworks.com/xml/yfiles-bpmn/1.0', BpmnView)
@@ -393,6 +371,7 @@ function createGraphMLIOHandler() {
   )
   graphmlHandler.addXamlNamespaceMapping(YFILES_BPMN_NS, BpmnView)
   graphmlHandler.addNamespace(YFILES_BPMN_NS, YFILES_BPMN_PREFIX)
+  registerBpmnTypeInformation(graphmlHandler)
   return graphmlHandler
 }
 
@@ -461,13 +440,13 @@ async function onLayoutButtonClicked(): Promise<void> {
 
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
-    layout: new MinimumNodeSizeStage(bpmnLayout),
+    layout: bpmnLayout,
     layoutData: bpmnLayoutData.create(
       graphComponent.graph,
       graphComponent.selection,
       bpmnLayout.scope
     ),
-    duration: '0.5s',
+    animationDuration: '0.5s',
     animateViewport: true
   })
   layoutExecutor.tableLayoutConfigurator.horizontalLayout = true
@@ -483,7 +462,7 @@ async function onLayoutButtonClicked(): Promise<void> {
 /**
  * Binds the toolbar elements to listeners to be able to react to interactive changes.
  */
-function initializeUI(): void {
+function initializeUI(graphMLIOHandler: GraphMLIOHandler): void {
   document.getElementById('new-button')!.addEventListener('click', () => {
     popupSupport.hidePropertyPopup()
     graphComponent.graph.clear()
@@ -497,41 +476,38 @@ function initializeUI(): void {
   // initialize commands for the item popups that are used to change the item's style properties
   popupSupport.registerPopupCommands()
 
-  const fileInput = document.querySelector<HTMLInputElement>('#file-input')!
-  if (fileInput) {
-    fileInput.addEventListener('change', onFileSelected)
-  }
+  document
+    .querySelector<HTMLInputElement>('#open-file-button')!
+    .addEventListener('click', async () => {
+      const { content, filename } = await openFile()
+      await readFile(content, filename)
+    })
+
+  document.querySelector<HTMLInputElement>('#save-button')!.addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'BpmnEditor.graphml', graphMLIOHandler)
+  })
 }
 
 /**
- * Opens a BPMN or GraphML file that was selected via file chooser.
- * @param e A file changed event containing the selected file to open.
+ * reads BPMN or GraphML file content depending on type
  */
-function onFileSelected(e: Event): void {
-  const files = (e.target as HTMLInputElement).files
-  if (files && files.length === 1) {
-    const file = files[0]
-    // check if the selected file is a BPMN or GraphML file
-    const isBPMN = file.name.toLowerCase().endsWith('.bpmn')
-    const isGraphML = file.name.toLowerCase().endsWith('.graphml')
-    if (isBPMN || isGraphML) {
-      const reader = new FileReader()
-      reader.onload = async (ev) => {
-        // get the file content that shall be parsed by a BpmnDiParser or a GraphMLIOHandler
-        const content = ev.target!.result as string
-        if (isBPMN) {
-          const bpmnDiParser = new BpmnDiParser()
-          await bpmnDiParser.load(graphComponent.graph, content)
-        } else {
-          const graphmlHandler = createGraphMLIOHandler()
-          await graphmlHandler.readFromGraphMLText(graphComponent.graph, content)
-        }
-        graphComponent.fitGraphBounds()
-        graphComponent.graph.undoEngine!.clear()
-        setUIDisabled(false)
-      }
-      reader.readAsText(file)
+async function readFile(content: string, filename: string): Promise<void> {
+  // check if the selected file is a BPMN or GraphML file
+  const isBPMN = filename.toLowerCase().endsWith('.bpmn')
+  const isGraphML = filename.toLowerCase().endsWith('.graphml')
+  if (isBPMN || isGraphML) {
+    if (isBPMN) {
+      const bpmnDiParser = new BpmnDiParser()
+      await bpmnDiParser.load(graphComponent.graph, content)
+    } else {
+      const graphmlHandler = createGraphMLIOHandler()
+      await graphmlHandler.readFromGraphMLText(graphComponent.graph, content)
     }
+    graphComponent.graph.undoEngine!.clear()
+    setUIDisabled(false)
+    void graphComponent.fitGraphBounds()
+  } else {
+    window.alert('Please select either a BPMN or a GraphML file!')
   }
 }
 
@@ -544,34 +520,10 @@ function initializeContextMenu(): void {
   // Show context menus for ports, nodes and edges
   inputMode.contextMenuItems = GraphItemTypes.PORT | GraphItemTypes.NODE | GraphItemTypes.EDGE
 
-  // Create a context menu. In this demo, we use our sample context menu implementation but you can use any other
-  // context menu widget as well. See the Context Menu demo for more details about working with context menus.
-  contextMenu = new ContextMenu(graphComponent)
-
-  // Add event listeners to the various events that open the context menu. These listeners then
-  // call the provided callback function which in turn asks the current ContextMenuInputMode if a
-  // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, (location: Point) => {
-    if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
-      contextMenu.show(location)
-    }
-  })
-
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
-  // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  inputMode.addPopulateItemContextMenuListener((_, evt) => {
-    onPopulateItemContextMenu(contextMenu, evt)
+  inputMode.addEventListener('populate-item-context-menu', (evt) => {
+    onPopulateItemContextMenu(evt)
   })
-
-  // Add a listener that closes the menu when the input mode request this
-  inputMode.contextMenuInputMode.addCloseMenuListener(() => {
-    contextMenu.close()
-  })
-
-  // If the context menu closes itself, for example because a menu item was clicked, we must inform the input mode
-  contextMenu.onClosedCallback = (): void => {
-    inputMode.contextMenuInputMode.menuClosed()
-  }
 }
 
 /**
@@ -588,84 +540,100 @@ function setUIDisabled(disabled: boolean): void {
 /**
  * Adds options to the context menu according to the item for which it is displayed.
  * This is called when the context menu is about to show.
- * @param itemContextMenu the context menu to which the options are added.
  * @param event The event data.
  */
-function onPopulateItemContextMenu(
-  itemContextMenu: ContextMenu,
-  event: PopulateItemContextMenuEventArgs<IModelItem>
-): void {
-  // clear items from a previous context menu appearance
-  itemContextMenu.clearItems()
+function onPopulateItemContextMenu(event: PopulateItemContextMenuEventArgs<IModelItem>): void {
+  if (event.handled) {
+    return
+  }
 
   if (event.item instanceof INode) {
     const node = event.item
+
+    const menuItems: ({ label: string; action: () => void } | 'separator')[] = []
+
     // Add an annotation label to the node and start editing its text
-    itemContextMenu.addMenuItem('Add Annotation Label', () => {
-      const origin = Point.ORIGIN
-      const modelParameter = FreeNodeLabelModel.INSTANCE.createParameter(
-        origin,
-        new Point(node.layout.width * 0.75, -50),
-        origin,
-        origin,
-        0
-      )
-      const label = graphComponent.graph.addLabel(
-        node,
-        '',
-        modelParameter,
-        new AnnotationLabelStyle()
-      )
-      ;(graphComponent.inputMode as GraphEditorInputMode).editLabel(label)
+    menuItems.push({
+      label: 'Add Annotation Label',
+      action: () => {
+        const origin = Point.ORIGIN
+        const modelParameter = FreeNodeLabelModel.INSTANCE.createParameter(
+          origin,
+          new Point(node.layout.width * 0.75, -50),
+          origin,
+          origin,
+          0
+        )
+        const label = graphComponent.graph.addLabel(
+          node,
+          '',
+          modelParameter,
+          new AnnotationLabelStyle()
+        )
+        ;(graphComponent.inputMode as GraphEditorInputMode).editLabelInputMode.startLabelEditing(
+          label
+        )
+      }
     })
 
-    // If it is an Choreography node...
+    // If it is a Choreography node...
     if (node.style instanceof ChoreographyNodeStyle) {
       const choreographyNodeStyle = node.style
-      itemContextMenu.addSeparator()
+      menuItems.push('separator')
       // ... check if a participant was right-clicked
       const participant = choreographyNodeStyle.getParticipant(node, event.queryLocation)
       if (participant) {
         // and if so, offer to remove it
-        itemContextMenu.addMenuItem('Remove Participant', () => {
-          if (!choreographyNodeStyle.topParticipants.remove(participant)) {
-            choreographyNodeStyle.bottomParticipants.remove(participant)
+        menuItems.push({
+          label: 'Remove Participant',
+          action: () => {
+            if (!choreographyNodeStyle.topParticipants.remove(participant)) {
+              choreographyNodeStyle.bottomParticipants.remove(participant)
+            }
+            graphComponent.invalidate()
+            graphComponent.focus()
           }
-          graphComponent.invalidate()
-          graphComponent.focus()
         })
         // or toggle its Multi-Instance flag
-        itemContextMenu.addMenuItem('Toggle Participant Multi-Instance', () => {
-          participant.multiInstance = !participant.multiInstance
-          graphComponent.invalidate()
-          graphComponent.focus()
+        menuItems.push({
+          label: 'Toggle Participant Multi-Instance',
+          action: () => {
+            participant.multiInstance = !participant.multiInstance
+            graphComponent.invalidate()
+            graphComponent.focus()
+          }
         })
       } else {
         // if no participant was clicked, a new one can be added to the top or bottom participants
-        itemContextMenu.addMenuItem('Add Participant at Top', () => {
-          choreographyNodeStyle.topParticipants.add(new Participant())
-          graphComponent.invalidate()
-          graphComponent.focus()
+        menuItems.push({
+          label: 'Add Participant at Top',
+          action: () => {
+            choreographyNodeStyle.topParticipants.add(new Participant())
+            graphComponent.invalidate()
+            graphComponent.focus()
+          }
         })
-        itemContextMenu.addMenuItem('Add Participant at Bottom', () => {
-          choreographyNodeStyle.bottomParticipants.add(new Participant())
-          graphComponent.invalidate()
-          graphComponent.focus()
+        menuItems.push({
+          label: 'Add Participant at Bottom',
+          action: () => {
+            choreographyNodeStyle.bottomParticipants.add(new Participant())
+            graphComponent.invalidate()
+            graphComponent.focus()
+          }
         })
       }
     }
 
     // If it is an Activity node...
     if (node.style instanceof ActivityNodeStyle) {
-      itemContextMenu.addSeparator()
+      menuItems.push('separator')
       // allow to add a Boundary Event as port that uses an EventPortStyle
-      itemContextMenu.addMenuItem('Add Boundary Event', () => {
-        graphComponent.graph.addPort(
-          node,
-          FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED,
-          new EventPortStyle()
-        )
-        graphComponent.focus()
+      menuItems.push({
+        label: 'Add Boundary Event',
+        action: () => {
+          graphComponent.graph.addPort(node, FreeNodePortLocationModel.BOTTOM, new EventPortStyle())
+          graphComponent.focus()
+        }
       })
     }
 
@@ -679,19 +647,43 @@ function onPopulateItemContextMenu(
       // ... allow to increase or decrease the row header size
       const stripe = stripeDescriptor.stripe
       const table = stripe.table!
-      const insets = stripe.insets
-      const defaultInsets = table.rowDefaults.insets
+      const insets = stripe.totalPadding
+      const defaultInsets = table.rowDefaults.padding
 
       if (insets.left > defaultInsets.left) {
-        itemContextMenu.addMenuItem('Reduce header size', () => {
-          // by reducing the header size of one of the rows, the size of the table insets might change
-          const insetsBefore = table.accumulatedInsets
-          table.setStripeInsets(
+        menuItems.push({
+          label: 'Reduce header size',
+          action: () => {
+            // by reducing the header size of one of the rows, the size of the table insets might change
+            const insetsBefore = table.accumulatedPadding
+            table.setStripePadding(
+              stripe,
+              new Insets(insets.top, insets.right, insets.bottom, insets.left - defaultInsets.left)
+            )
+            const insetsAfter = table.accumulatedPadding
+            // if the table insets have changed, the bounds of the pool node have to be adjusted as well
+            const diff = insetsBefore.left - insetsAfter.left
+            graphComponent.graph.setNodeLayout(
+              node,
+              new Rect(
+                node.layout.x + diff,
+                node.layout.y,
+                node.layout.width - diff,
+                node.layout.height
+              )
+            )
+          }
+        })
+      }
+      menuItems.push({
+        label: 'Increase header size',
+        action: () => {
+          const insetsBefore = table.accumulatedPadding
+          table.setStripePadding(
             stripe,
-            new Insets(insets.left - defaultInsets.left, insets.top, insets.right, insets.bottom)
+            new Insets(insets.top, insets.right, insets.bottom, insets.left + defaultInsets.left)
           )
-          const insetsAfter = table.accumulatedInsets
-          // if the table insets have changed, the bounds of the pool node have to be adjusted as well
+          const insetsAfter = table.accumulatedPadding
           const diff = insetsBefore.left - insetsAfter.left
           graphComponent.graph.setNodeLayout(
             node,
@@ -702,82 +694,72 @@ function onPopulateItemContextMenu(
               node.layout.height
             )
           )
-        })
-      }
-      itemContextMenu.addMenuItem('Increase header size', () => {
-        const insetsBefore = table.accumulatedInsets
-        table.setStripeInsets(
-          stripe,
-          new Insets(insets.left + defaultInsets.left, insets.top, insets.right, insets.bottom)
-        )
-        const insetsAfter = table.accumulatedInsets
-        const diff = insetsBefore.left - insetsAfter.left
-        graphComponent.graph.setNodeLayout(
-          node,
-          new Rect(
-            node.layout.x + diff,
-            node.layout.y,
-            node.layout.width - diff,
-            node.layout.height
-          )
-        )
+        }
       })
     }
 
     // we add an entry to open the style property popup
-    itemContextMenu.addSeparator()
-    itemContextMenu.addMenuItem('Edit Node Style Properties', () => {
-      popupSupport.showPropertyPopup(node)
-    })
-
-    // we don't want to be queried again if there are more items at this location
-    event.showMenu = true
-  } else if (event.item instanceof IEdge) {
-    // For edges a label with a Message Icon may be added
-    const modelParameter = new SmartEdgeLabelModel().createDefaultParameter()
-    itemContextMenu.addMenuItem('Add Message Icon Label', () => {
-      if (event.item instanceof IEdge) {
-        graphComponent.graph.addLabel(
-          event.item,
-          '',
-          modelParameter,
-          new MessageLabelStyle(),
-          new Size(20, 14)
-        )
-        graphComponent.focus()
+    menuItems.push('separator')
+    menuItems.push({
+      label: 'Edit Node Style Properties',
+      action: () => {
+        popupSupport.showPropertyPopup(node)
       }
     })
 
-    // we add an entry to open the style property popup
-    itemContextMenu.addSeparator()
-    itemContextMenu.addMenuItem('Edit Edge Style Properties', () => {
-      popupSupport.showPropertyPopup(event.item!)
-    })
+    event.contextMenu = menuItems
+  } else if (event.item instanceof IEdge) {
+    // For edges a label with a Message Icon may be added
+    const modelParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
+    event.contextMenu = [
+      {
+        label: 'Add Message Icon Label',
+        action: () => {
+          if (event.item instanceof IEdge) {
+            graphComponent.graph.addLabel(
+              event.item,
+              '',
+              modelParameter,
+              new MessageLabelStyle(),
+              new Size(20, 14)
+            )
+            graphComponent.focus()
+          }
+        }
+      },
+      'separator',
 
-    // we don't want to be queried again if there are more items at this location
-    event.showMenu = true
+      // we add an entry to open the style property popup
+      {
+        label: 'Edit Edge Style Properties',
+        action: () => {
+          popupSupport.showPropertyPopup(event.item!)
+        }
+      }
+    ]
   } else if (event.item instanceof IPort) {
     const port = event.item
-    if (popupSupport.hasPropertyPopup((port.style as IPortStyle & YObject).getClass())) {
-      itemContextMenu.addMenuItem('Edit Port Style Properties', () => {
-        popupSupport.showPropertyPopup(port)
-      })
-      event.showMenu = true
+    if (popupSupport.hasPropertyPopup(port.style.constructor)) {
+      event.contextMenu = [
+        {
+          label: 'Edit Port Style Properties',
+          action: () => {
+            popupSupport.showPropertyPopup(port)
+          }
+        }
+      ]
     }
   }
 }
 
 /**
  * Custom {@link NodeDropInputMode} that disallows to create a table node inside of a group node
- * (especially inside of another table node).
+ * (especially inside another table node).
  */
 class NoNestedTablesDropInputMode extends NodeDropInputMode {
   getDropTarget(dragLocation: Point): IModelItem | null {
-    // Ok, this node has a table associated -> disallow dragging it into a group node.
-    if (this.draggedItem!.lookup(ITable.$class)) {
-      return null
-    }
-    return super.getDropTarget(dragLocation)!
+    // If this node has a table associated, disallow dragging it into a group node.
+    return ITable.getTable(this.draggedItem!) ? null : super.getDropTarget(dragLocation)!
   }
 }
 
@@ -787,7 +769,7 @@ class NoNestedTablesDropInputMode extends NodeDropInputMode {
 class NoTableReparentNodeHandler extends ReparentNodeHandler {
   isValidParent(context: IInputModeContext, node: INode, newParent: INode): boolean {
     // table nodes shall not become child nodes
-    return !node.lookup(ITable.$class) && super.isValidParent(context, node, newParent)
+    return !ITable.getTable(node) && super.isValidParent(context, node, newParent)
   }
 }
 
@@ -797,30 +779,30 @@ class NoTableReparentNodeHandler extends ReparentNodeHandler {
  */
 function createStylePanelNodes(): INode[] {
   // Create a new Graph in which the palette nodes live
-  const nodeContainer = new DefaultGraph()
+  const nodeContainer = new Graph()
 
   // Create the sample node for the pool
   const poolNodeStyle = new PoolNodeStyle(false)
   const poolNode = nodeContainer.createNodeAt(Point.ORIGIN, poolNodeStyle)
   const poolTable = poolNodeStyle.tableNodeStyle.table
-  poolTable.columnDefaults.insets = Insets.EMPTY
+  poolTable.columnDefaults.padding = Insets.EMPTY
   poolTable.createGrid(1, 1)
   // Use twice the default width for this sample column (looks nicer in the preview...)
-  const column = poolTable.rootColumn.childColumns.first()
+  const column = poolTable.rootColumn.childColumns.first()!
   poolTable.setSize(column, column.actualSize * 2)
   nodeContainer.setNodeLayout(poolNode, poolTable.layout.toRect())
   nodeContainer.addLabel(poolNode, 'Pool', PoolHeaderLabelModel.WEST)
 
   const rowPoolNodeStyle = new PoolNodeStyle(false)
   const rowNode = nodeContainer.createNodeAt(Point.ORIGIN, rowPoolNodeStyle)
-  const rowTable = rowNode.lookup(ITable.$class)!
+  const rowTable = ITable.getTable(rowNode)!
   const rowSampleRow = rowTable.createRow(100)
   const rowSampleColumn = rowTable.createColumn({
     width: 200,
-    style: VoidStripeStyle.INSTANCE
+    style: IStripeStyle.VOID_STRIPE_STYLE
   })
-  rowTable.setStripeInsets(rowSampleColumn, Insets.EMPTY)
-  rowTable.insets = Insets.EMPTY
+  rowTable.setStripePadding(rowSampleColumn, Insets.EMPTY)
+  rowTable.padding = Insets.EMPTY
   rowTable.addLabel(rowSampleRow, 'Row')
   nodeContainer.setNodeLayout(rowNode, rowTable.layout.toRect())
   // Set the first row as tag so the NodeDragComponent knows that a row and not a complete pool node shall be
@@ -872,26 +854,26 @@ function createStylePanelNodes(): INode[] {
 }
 
 const parameters = [
-  InteriorLabelModel.CENTER,
-  ExteriorLabelModel.EAST,
-  ExteriorLabelModel.NORTH,
-  ExteriorLabelModel.WEST,
-  ExteriorLabelModel.SOUTH,
-  ExteriorLabelModel.NORTH_EAST,
-  ExteriorLabelModel.NORTH_WEST,
-  ExteriorLabelModel.SOUTH_EAST,
-  ExteriorLabelModel.SOUTH_WEST
+  InteriorNodeLabelModel.CENTER,
+  ExteriorNodeLabelModel.RIGHT,
+  ExteriorNodeLabelModel.TOP,
+  ExteriorNodeLabelModel.LEFT,
+  ExteriorNodeLabelModel.BOTTOM,
+  ExteriorNodeLabelModel.TOP_RIGHT,
+  ExteriorNodeLabelModel.TOP_LEFT,
+  ExteriorNodeLabelModel.BOTTOM_RIGHT,
+  ExteriorNodeLabelModel.BOTTOM_LEFT
 ]
 
 /**
  * This class customizes the label editing for nodes that consist of more than one labels. The
  * first label is placed in the center of the node, while the others according to the parameters
- * defined by the ExteriorLabelModel.
+ * defined by the ExteriorNodeLabelModel.
  */
 class AdditionalEditLabelHelper extends EditLabelHelper {
   getLabelParameter(context: IInputModeContext, owner: ILabelOwner): ILabelModelParameter {
     if ((owner as INode).style instanceof BpmnGroupNodeStyle) {
-      return InteriorLabelModel.NORTH
+      return InteriorNodeLabelModel.TOP
     }
     // eslint-disable-next-line arrow-body-style
     const validParameters = parameters.filter((parameter) =>
@@ -900,7 +882,7 @@ class AdditionalEditLabelHelper extends EditLabelHelper {
         return !parameter.model.getGeometry(label, parameter).bounds.intersects(bounds)
       })
     )
-    return validParameters[0] || InteriorLabelModel.CENTER
+    return validParameters[0] || InteriorNodeLabelModel.CENTER
   }
 }
 

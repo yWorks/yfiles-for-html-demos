@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,11 +35,11 @@ import {
   spanningTreeSample,
   substructuresCliquesSample,
   substructuresCyclesSample
-} from '../samples/samples.js'
+} from '../samples/samples'
 import {
   calculateMinimumSpanningTree,
   minimumSpanningTreeDescription
-} from './minimum-spanning-tree.js'
+} from './minimum-spanning-tree'
 import {
   biconnectedComponentsDescription,
   calculateBiconnectedComponents,
@@ -51,8 +51,8 @@ import {
   kCoreComponentsDescription,
   reachabilityDescription,
   stronglyConnectedComponentsDescription
-} from './connectivity.js'
-import { calculateCycles, cyclesDescription } from './cycles.js'
+} from './connectivity'
+import { calculateCycles, cyclesDescription } from './cycles'
 import {
   calculateClosenessCentrality,
   calculateDegreeCentrality,
@@ -68,8 +68,8 @@ import {
   nodeEdgeBetweennessCentralityDescription,
   pageRankDescription,
   weightCentralityDescription
-} from './centrality.js'
-import { getCurrentAlgorithm, useDirectedEdges, useUniformEdgeWeights } from '../ui/ui-utils.js'
+} from './centrality'
+import { getCurrentAlgorithm, useDirectedEdges, useUniformEdgeWeights } from '../ui/ui-utils'
 import {
   calculateChainSubstructures,
   calculateCliqueSubstructures,
@@ -81,82 +81,45 @@ import {
   cycleSubstructuresDescription,
   starSubstructuresDescription,
   treeSubstructuresDescription
-} from './substructures.js'
-import { copyAndReplaceTag, getTag, resetResult, resetType } from '../demo-types.js'
+} from './substructures'
+import { copyAndReplaceTag, getTag, resetResult, resetType } from '../demo-types'
 import {
   allChainsDescription,
   allPathsDescription,
   calculateAllChains,
   calculateAllPaths,
+  calculatedKShortestPaths,
   calculatedShortestPaths,
   calculateSingleSourceShortestPaths,
+  kShortestPathsDescription,
   shortestPathsDescription,
   singleSourceShortestPathsDescription
-} from './paths.js'
-
-/**
- * The sample data for this demo consist of adjacency lists.
- * @typedef {Array.<Array.<number>>} SampleData
- */
-
-/**
- * Type containing all the information needed to calculate and display the results.
- * It also stores the according sample graph and a description.
- * @typedef {Object} Algorithm
- * @property {string} name
- * @property {boolean} [directed]
- * @property {boolean} supportsDirectedness
- * @property {boolean} supportsEdgeWeights
- * @property {boolean} [needsStartNodes]
- * @property {boolean} [needsEndNodes]
- * @property {SampleData} sample
- * @property {function} apply
- * @property {string} description
- */
-
-/**
- * Type containing the configuration properties for an analysis algorithm.
- * The values are derived from the graph and the toolbar.
- * @typedef {Object} AlgorithmConfig
- * @property {boolean} directed
- * @property {Map.<IEdge,number>} edgeWeights
- * @property {Array.<INode>} [startNodes]
- * @property {Array.<INode>} [endNodes]
- */
-
+} from './paths'
 /**
  * Resets the node types.
- * @param {!IGraph} graph
  */
 export function resetTypes(graph) {
   graph.nodes.forEach((node) => {
     resetType(node)
   })
 }
-
 /**
  * Applies the current algorithm with the correct configuration to the given graph.
- * @param {!IGraph} graph
  */
 export function applyAlgorithm(graph) {
   resetGraph(graph)
-
   const currentAlgorithm = getCurrentAlgorithm()
-
   currentAlgorithm.apply(graph, {
     directed: useDirectedEdges(),
     edgeWeights: getEdgeWeights(graph),
     startNodes: getStartNodes(graph),
     endNodes: getEndNodes(graph)
   })
-
   graph.invalidateDisplays()
 }
-
 /**
  * Resets the results of the previous algorithm.
  * Removes all result-labels and resets the tag.
- * @param {!IGraph} graph
  */
 export function resetGraph(graph) {
   graph.nodes.forEach((node) => {
@@ -173,7 +136,6 @@ export function resetGraph(graph) {
       graph.remove(label)
     })
 }
-
 /**
  * A set of graph analysis algorithms.
  */
@@ -182,6 +144,7 @@ export const algorithms = {
     name: 'Minimum Spanning Tree',
     supportsDirectedness: false,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: spanningTreeSample,
     apply: calculateMinimumSpanningTree,
     description: minimumSpanningTreeDescription
@@ -190,6 +153,7 @@ export const algorithms = {
     name: 'Connected Components',
     supportsDirectedness: false,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: connectivitySample,
     apply: calculateConnectedComponents,
     description: connectedComponentsDescription
@@ -198,15 +162,17 @@ export const algorithms = {
     name: 'Biconnected Components',
     supportsDirectedness: false,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: connectivitySample,
     apply: calculateBiconnectedComponents,
     description: biconnectedComponentsDescription
   },
   'strongly-connected-components': {
     name: 'Strongly Connected Components',
-    directed: true,
-    supportsDirectedness: false,
+    directedOnly: true,
+    supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: true, supportsEdgeWeights: false },
     sample: connectivitySample,
     apply: calculateStronglyConnectedComponents,
     description: stronglyConnectedComponentsDescription
@@ -215,6 +181,7 @@ export const algorithms = {
     name: 'Reachability',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: true, supportsEdgeWeights: false },
     needsStartNodes: true,
     sample: connectivitySample,
     apply: calculateReachableNodes,
@@ -224,6 +191,7 @@ export const algorithms = {
     name: 'k-Core Components',
     supportsDirectedness: false,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: kCoreSample,
     apply: calculateKCoreComponents,
     description: kCoreComponentsDescription
@@ -232,16 +200,30 @@ export const algorithms = {
     name: 'Shortest Paths',
     supportsDirectedness: true,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     needsStartNodes: true,
     needsEndNodes: true,
     sample: pathsSample,
     apply: calculatedShortestPaths,
     description: shortestPathsDescription
   },
+  'k-shortest-paths': {
+    name: 'k-Shortest Paths',
+    directedOnly: true,
+    supportsDirectedness: true,
+    supportsEdgeWeights: true,
+    defaultSettings: { directed: true, supportsEdgeWeights: false },
+    needsStartNodes: true,
+    needsEndNodes: true,
+    sample: substructuresCliquesSample,
+    apply: calculatedKShortestPaths,
+    description: kShortestPathsDescription
+  },
   'all-paths': {
     name: 'All Paths',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     needsStartNodes: true,
     needsEndNodes: true,
     sample: pathsSample,
@@ -252,6 +234,7 @@ export const algorithms = {
     name: 'All Chains',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: pathsSample,
     apply: calculateAllChains,
     description: allChainsDescription
@@ -260,6 +243,7 @@ export const algorithms = {
     name: 'Single Source Shortest Paths',
     supportsDirectedness: true,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     needsStartNodes: true,
     sample: pathsSample,
     apply: calculateSingleSourceShortestPaths,
@@ -269,6 +253,7 @@ export const algorithms = {
     name: 'Cycles',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: cycleSample,
     apply: calculateCycles,
     description: cyclesDescription
@@ -277,6 +262,7 @@ export const algorithms = {
     name: 'Degree Centrality',
     supportsDirectedness: false,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculateDegreeCentrality,
     description: degreeCentralityDescription
@@ -285,6 +271,7 @@ export const algorithms = {
     name: 'Weight Centrality',
     supportsDirectedness: false,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculateWeightCentrality,
     description: weightCentralityDescription
@@ -293,6 +280,7 @@ export const algorithms = {
     name: 'Graph Centrality',
     supportsDirectedness: true,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculateGraphCentrality,
     description: graphCentralityDescription
@@ -301,6 +289,7 @@ export const algorithms = {
     name: 'Node Edge Betweenness Centrality',
     supportsDirectedness: true,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculateNodeEdgeBetweennessCentrality,
     description: nodeEdgeBetweennessCentralityDescription
@@ -309,6 +298,7 @@ export const algorithms = {
     name: 'Closeness Centrality',
     supportsDirectedness: true,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculateClosenessCentrality,
     description: closenessCentralityDescription
@@ -317,6 +307,7 @@ export const algorithms = {
     name: 'Eigenvector Centrality',
     supportsDirectedness: true,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculateEigenvectorCentrality,
     description: eigenvectorCentralityDescription
@@ -325,6 +316,7 @@ export const algorithms = {
     name: 'Page Rank',
     supportsDirectedness: false,
     supportsEdgeWeights: true,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: centralitySample,
     apply: calculatePageRankCentrality,
     description: pageRankDescription
@@ -333,6 +325,7 @@ export const algorithms = {
     name: 'Substructures Chains',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: substructuresCyclesSample,
     apply: calculateChainSubstructures,
     description: chainsSubstructuresDescription
@@ -341,6 +334,7 @@ export const algorithms = {
     name: 'Substructures Cycles',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: substructuresCyclesSample,
     apply: calculateCycleSubstructures,
     description: cycleSubstructuresDescription
@@ -349,6 +343,7 @@ export const algorithms = {
     name: 'Substructures Stars',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: substructuresCyclesSample,
     apply: calculateStarSubstructures,
     description: starSubstructuresDescription
@@ -357,6 +352,7 @@ export const algorithms = {
     name: 'Substructures Trees',
     supportsDirectedness: true,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: substructuresCyclesSample,
     apply: calculateTreeSubstructures,
     description: treeSubstructuresDescription
@@ -365,16 +361,14 @@ export const algorithms = {
     name: 'Substructures Cliques',
     supportsDirectedness: false,
     supportsEdgeWeights: false,
+    defaultSettings: { directed: false, supportsEdgeWeights: false },
     sample: substructuresCliquesSample,
     apply: calculateCliqueSubstructures,
     description: cliquesSubstructuresDescription
   }
 }
-
 /**
  * Returns a map containing a weight value for each edge.
- * @param {!IGraph} graph
- * @returns {!Map.<IEdge,number>}
  */
 function getEdgeWeights(graph) {
   const weights = new Map()
@@ -394,11 +388,8 @@ function getEdgeWeights(graph) {
   })
   return weights
 }
-
 /**
  * Retrieves all nodes that are marked as start nodes.
- * @param {!IGraph} graph
- * @returns {!Array.<INode>}
  */
 function getStartNodes(graph) {
   const currentAlgorithm = getCurrentAlgorithm()
@@ -406,8 +397,7 @@ function getStartNodes(graph) {
   if (!needsStartNodes || graph.nodes.size === 0) {
     return []
   }
-
-  const startNodes = graph.nodes.filter((node) => getTag(node).type === 'start').toArray()
+  const startNodes = graph.nodes.filter((node) => getTag(node)?.type === 'start').toArray()
   if (startNodes.length === 0) {
     const startNode = graph.nodes.first()
     const tag = copyAndReplaceTag(startNode)
@@ -416,11 +406,8 @@ function getStartNodes(graph) {
   }
   return startNodes
 }
-
 /**
  * Retrieves all nodes that are marked as end nodes.
- * @param {!IGraph} graph
- * @returns {!Array.<INode>}
  */
 function getEndNodes(graph) {
   const currentAlgorithm = getCurrentAlgorithm()
@@ -428,8 +415,7 @@ function getEndNodes(graph) {
   if (!needsEndNodes || graph.nodes.size === 0) {
     return []
   }
-
-  const endNodes = graph.nodes.filter((node) => getTag(node).type === 'end').toArray()
+  const endNodes = graph.nodes.filter((node) => getTag(node)?.type === 'end').toArray()
   if (endNodes.length === 0) {
     const endNode = graph.nodes.last()
     const tag = copyAndReplaceTag(endNode)
@@ -438,20 +424,14 @@ function getEndNodes(graph) {
   }
   return endNodes
 }
-
 /**
  * Marks the item by adding the component to its tag.
- * @param {!(INode|IEdge)} item
- * @param {number} [componentId=0]
  */
 export function markItem(item, componentId = 0) {
   setComponent(item, componentId)
 }
-
 /**
  * Adds the component to the item's tag.
- * @param {!(INode|IEdge)} item
- * @param {number} componentId
  */
 export function setComponent(item, componentId) {
   const tag = copyAndReplaceTag(item)
@@ -460,22 +440,16 @@ export function setComponent(item, componentId) {
     components.push(componentId)
   }
 }
-
 /**
  * Sets the centrality value on the item's tag.
- * @param {!(INode|IEdge)} item
- * @param {number} centrality
  */
 export function setCentrality(item, centrality) {
   const tag = copyAndReplaceTag(item)
   tag.centrality = centrality
   tag.gradient = centrality
 }
-
 /**
  * Sets the gradient value on the item's tag.
- * @param {!(INode|IEdge)} item
- * @param {number} gradient
  */
 export function setGradient(item, gradient) {
   const tag = copyAndReplaceTag(item)

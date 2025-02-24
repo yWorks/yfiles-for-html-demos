@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,7 +35,7 @@ export enum NeighborhoodType {
    * The neighbors of a given node are all connected nodes. The direction of the edges connecting
    * neighbor nodes to the given node does not matter.
    * The union of all predecessor nodes and all successor nodes.
-   * For a graph distance of 1, mode NEIGHBORHOOD yields the same result as mode {@link BOTH}.
+   * For a graph distance of 1, mode {@link NEIGHBORHOOD} yields the same result as mode {@link BOTH}.
    */
   NEIGHBORHOOD,
   /**
@@ -48,7 +48,7 @@ export enum NeighborhoodType {
   SUCCESSORS,
   /**
    * The union of all predecessor nodes and all successor nodes.
-   * For a graph distance of 1, mode BOTH yields the same result as mode {@link NEIGHBORHOOD}.
+   * For a graph distance of 1, mode {@link BOTH} yields the same result as mode {@link NEIGHBORHOOD}.
    */
   BOTH
 }

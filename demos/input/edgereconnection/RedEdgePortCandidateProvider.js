@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,16 +28,15 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DefaultPortCandidate,
   IEdge,
   IEdgeReconnectionPortCandidateProvider,
   IEnumerable,
   IInputModeContext,
   IListEnumerable,
   IPortCandidate,
-  List
-} from 'yfiles'
-
+  List,
+  PortCandidate
+} from '@yfiles/yfiles'
 /**
  * An {@link IEdgeReconnectionPortCandidateProvider} that uses candidates with a
  * dynamic NodeScaled port location model. It allows moving ports to any
@@ -47,33 +46,28 @@ export default class RedEdgePortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider
 ) {
   edge
-
   /**
    * Creates a new instance of {@link RedEdgePortCandidateProvider}.
-   * @param {!IEdge} edge The given edge
+   * @param edge The given edge
    */
   constructor(edge) {
     super()
     this.edge = edge
   }
-
   /**
    * Returns only the current port as candidate, thus effectively disabling relocation.
-   * @param {!IInputModeContext} context The context for which the candidates should be provided
+   * @param context The context for which the candidates should be provided
    * @see Specified by {@link IEdgeReconnectionPortCandidateProvider.getSourcePortCandidates}.
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getSourcePortCandidates(context) {
     const candidates = new List()
-    candidates.add(new DefaultPortCandidate(this.edge.sourcePort))
+    candidates.add(new PortCandidate(this.edge.sourcePort))
     return candidates
   }
-
   /**
    * Returns no candidates, thus effectively disabling relocation.
-   * @param {!IInputModeContext} context The context for which the candidates should be provided
+   * @param context The context for which the candidates should be provided
    * @see Specified by {@link IEdgeReconnectionPortCandidateProvider.getTargetPortCandidates}.
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getTargetPortCandidates(context) {
     return IListEnumerable.EMPTY

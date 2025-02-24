@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,46 +27,26 @@
  **
  ***************************************************************************/
 /**
- * A proper type for the data stored in the `tag` property of nodes and edges.
- * @typedef {Object} Tag
- * @property {number} [centrality]
- * @property {Array.<number>} components
- * @property {number} [highlightedComponent]
- * @property {('start'|'end')} [type]
- * @property {number} [gradient]
- */
-
-/**
  * Creates a copy of the given item's current tag and replaces the given item's tag with the copy.
- * @param {!IModelItem} item
- * @returns {!Tag}
  */
 export function copyAndReplaceTag(item) {
   const oldTag = getTag(item)
-
   const newTag = { ...oldTag }
   newTag.components = []
   for (const component of oldTag.components) {
     newTag.components.push(component)
   }
-
   item.tag = newTag
-
   return newTag
 }
-
 /**
- * Retrieves the item's tag as a properly-typed object.
- * @param {!IModelItem} item
- * @returns {!Tag}
+ * Retrieves the item's tag as a properly typed object.
  */
 export function getTag(item) {
   return item.tag
 }
-
 /**
  * Resets the components, centrality value, and the gradient value on the tag.
- * @param {!IModelItem} item
  */
 export function resetResult(item) {
   const tag = copyAndReplaceTag(item)
@@ -74,10 +54,8 @@ export function resetResult(item) {
   delete tag.centrality
   delete tag.gradient
 }
-
 /**
  * Resets the type on the tag.
- * @param {!IModelItem} item
  */
 export function resetType(item) {
   const tag = copyAndReplaceTag(item)

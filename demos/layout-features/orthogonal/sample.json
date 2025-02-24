@@ -11,7 +11,7 @@
       "tag": 0,
       "labels": [
         {
-          "text": "Halo",
+          "text": "Insets",
           "anchorX": 187.5,
           "anchorY": 267,
           "upX": 0,
@@ -648,7 +648,7 @@
       "id": 2,
       "source": 0,
       "target": 2,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "3px #01BAFF",
       "tag": { "directed": true }
     },
@@ -674,7 +674,7 @@
       "id": 6,
       "source": 19,
       "target": 13,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "3px #01BAFF",
       "tag": { "directed": true }
     },
@@ -695,7 +695,7 @@
       "id": 9,
       "source": 13,
       "target": 17,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "3px #01BAFF",
       "tag": { "directed": true }
     },
@@ -703,7 +703,7 @@
       "id": 10,
       "source": 2,
       "target": 15,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "3px #01BAFF",
       "tag": { "directed": true }
     },
@@ -736,7 +736,7 @@
       "id": 15,
       "source": 17,
       "target": 5,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "3px #01BAFF",
       "tag": { "directed": true }
     },
@@ -763,7 +763,7 @@
       "id": 19,
       "source": 5,
       "target": 9,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "3px #01BAFF",
       "tag": { "directed": true }
     },
@@ -771,7 +771,7 @@
       "id": 20,
       "source": 9,
       "target": 0,
-      "targetArrow": "default",
+      "targetArrow": "stealth",
       "stroke": "3px #01BAFF",
       "tag": { "directed": true }
     },

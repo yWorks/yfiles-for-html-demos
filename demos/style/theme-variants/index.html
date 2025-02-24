@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,21 +31,39 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Theme Variants Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
     <style>
+      #graphComponents .yfiles-canvascomponent {
+        /* use interactive slider values */
+        --yfiles-theme-primary: inherit;
+        --yfiles-theme-secondary: inherit;
+        --yfiles-theme-background: inherit;
+        --yfiles-theme-scale: inherit;
+        --yfiles-theme-handle-offset: inherit;
+        --yfiles-theme-indicator-offset: inherit;
+        flex: 1 0 49%;
+        /* add borders */
+        .yfiles-rendertreepanel:nth-child(1),
+        .yfiles-rendertreepanel:nth-child(2) {
+          border-bottom: 2px solid #ebeef0;
+        }
+        .yfiles-rendertreepanel:nth-child(1),
+        .yfiles-rendertreepanel:nth-child(3) {
+          border-right: 2px solid #ebeef0;
+        }
+      }
+
       #graphComponents {
-        position: absolute;
         inset: 0;
         display: flex;
         flex-wrap: wrap;
-      }
-
-      #graphComponents div {
-        flex: 0 0 50%;
+        width: 100%;
       }
 
       .demo-page__toolbar .color-button {
@@ -63,8 +79,11 @@
       .demo-page__toolbar .color-button:active {
         border: 1px inset;
       }
+
+      label {
+        display: flex;
+      }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -93,15 +112,34 @@
       <div class="demo-separator"></div>
       <label>
         Scale:
+        <input title="Theme Scale" type="range" id="scale-slider" min="0.5" max="4" step="0.1" />
+        <span id="scale-label"></span>
+      </label>
+      <div class="demo-separator"></div>
+      <label>
+        Handle Offset:
         <input
-          title="Theme Scale"
+          title="Handle Offset"
           type="range"
-          id="scale-slider"
-          min="1"
-          max="4"
+          id="handle-offset-slider"
+          min="-1"
+          max="5"
           step="0.5"
-          value="1"
         />
+        <span id="handle-offset-label"></span>
+      </label>
+      <div class="demo-separator"></div>
+      <label>
+        Indicator Offset:
+        <input
+          title="Indicator Offset"
+          type="range"
+          id="indicator-offset-slider"
+          min="-1"
+          max="5"
+          step="0.5"
+        />
+        <span id="indicator-offset-label"></span>
       </label>
       <div class="demo-separator"></div>
     </div>
@@ -125,17 +163,20 @@
           <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_view_theming" target="_blank">themes</a> simultaneously.
         </p>
 
-        <p>Each graph component uses a different theme variant:</p>
+        <p>
+          Each graph component uses a different<br />
+          <code>--yfiles-theme-variant</code>:
+        </p>
 
         <dl>
           <dt>Top-left</dt>
-          <dd><a href="https://docs.yworks.com/yfileshtml/#/api/ThemeVariant#SIMPLE_ROUND" target="_blank">Simple round</a></dd>
+          <dd><code>round</code></dd>
           <dt>Top-right</dt>
-          <dd><a href="https://docs.yworks.com/yfileshtml/#/api/ThemeVariant#SIMPLE_SQUARE" target="_blank">Simple square</a></dd>
+          <dd><code>round-hatched</code></dd>
           <dt>Bottom-left</dt>
-          <dd><a href="https://docs.yworks.com/yfileshtml/#/api/ThemeVariant#CLASSIC" target="_blank">Classic with non-default colors</a></dd>
+          <dd><code>square</code></dd>
           <dt>Bottom-right</dt>
-          <dd><a href="https://docs.yworks.com/yfileshtml/#/api/ThemeVariant#CLASSIC" target="_blank">Classic with default colors</a></dd>
+          <dd><code>square-hatched</code></dd>
         </dl>
 
         <h2>Things to Try</h2>

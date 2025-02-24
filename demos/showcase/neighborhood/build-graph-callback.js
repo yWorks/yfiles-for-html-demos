@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,57 +26,52 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphCopier, IEdge, IModelItem, INode, Neighborhood, TraversalDirection } from 'yfiles'
-import { NeighborhoodType } from './NeighborhoodType.js'
-
+import {
+  GraphCopier,
+  IEdge,
+  IModelItem,
+  INode,
+  Neighborhood,
+  TraversalDirection
+} from '@yfiles/yfiles'
+import { NeighborhoodType } from './NeighborhoodType'
 /**
  * Returns the "build neighborhood graph" callback that is able to create neighborhood graphs
  * of the given type.
- * @param {!NeighborhoodType} type the type of neighborhood graph to be built by the returned callback.
- * @param {number} distance the maximum graph distance between a start node and its neighbor nodes.
- * @returns {!BuildGraphCallback}
+ * @param type the type of neighborhood graph to be built by the returned callback.
+ * @param distance the maximum graph distance between a start node and its neighbor nodes.
  */
 export function getBuildGraphCallback(type, distance) {
   return NeighborhoodType.FOLDER_CONTENTS === type
     ? getBuildFolderContentsCallback()
     : getBuildNeighborhoodCallback(getTraversalDirection(type), distance)
 }
-
 /**
  * Returns a "build neighborhood graph" callback that creates a graph with copies of the child
  * nodes of group nodes and folder nodes (i.e. collapsed group nodes).
- * @returns {!BuildGraphCallback}
  */
 export function getBuildFolderContentsCallback() {
   return (view, nodes, callback) => buildFolderContents(view, nodes, callback)
 }
-
 /**
  * Returns a "build neighborhood graph" callback that creates a graph with copies of the neighbor
  * nodes that satisfy the given traversal direction and the given maximum graph distance.
- * @param {!TraversalDirection} direction the traversal direction that determines how to collect neighbor nodes.
- * @param {number} distance the maximum graph distance between a start node and its neighbor nodes.
- * @returns {!BuildGraphCallback}
+ * @param direction the traversal direction that determines how to collect neighbor nodes.
+ * @param distance the maximum graph distance between a start node and its neighbor nodes.
  */
 export function getBuildNeighborhoodCallback(direction, distance) {
   return (view, nodes, callback) => buildNeighborhood(view, nodes, callback, direction, distance)
 }
-
 /**
  * Copies the child nodes of group nodes and folder nodes in the given source nodes set
  * to the given neighborhood view's neighborhood graph.
- * @param {!NeighborhoodView} view
- * @param {!Array.<INode>} selectedSourceNodes
- * @param {!function} elementCopiedCallback
  */
-function buildFolderContents(view, selectedSourceNodes, elementCopiedCallback) {
+function buildFolderContents(view, selectedSourceNodes, itemCopiedCallback) {
   const nodesToCopy = new Set()
-
   const foldingView = view.sourceGraph.foldingView
   if (!foldingView) {
     throw new Error('FOLDER_CONTENTS mode only works on a folding enabled graph.')
   }
-
   // Get descendants of root nodes.
   const masterGraph = foldingView.manager.masterGraph
   const groupingSupport = masterGraph.groupingSupport
@@ -85,14 +80,12 @@ function buildFolderContents(view, selectedSourceNodes, elementCopiedCallback) {
       nodesToCopy.add(descendant)
     })
   })
-
   // Use GraphCopier to copy the nodes inside the neighborhood into the NeighborhoodComponent's graph.
-  // Include only edges that are descendants of the same root node.
   const graphCopier = new GraphCopier()
   graphCopier.copy({
     sourceGraph: masterGraph,
     targetGraph: view.neighborhoodGraph,
-    filter: (item) => {
+    copyPredicate: (item) => {
       if (item instanceof IEdge) {
         // filter intra-component edges
         return !!selectedSourceNodes.find(
@@ -103,57 +96,38 @@ function buildFolderContents(view, selectedSourceNodes, elementCopiedCallback) {
       }
       return !(item instanceof INode) || nodesToCopy.has(item)
     },
-    elementCopiedCallback
+    itemCopiedCallback
   })
 }
-
 /**
  * Copies the neighbor nodes of the given source nodes to the given neighborhood view's neighborhood graph.
- * @param {!NeighborhoodView} view
- * @param {!Array.<INode>} selectedSourceNodes
- * @param {!function} elementCopiedCallback
- * @param {!TraversalDirection} direction
- * @param {number} maxDistance
  */
-function buildNeighborhood(
-  view,
-  selectedSourceNodes,
-  elementCopiedCallback,
-  direction,
-  maxDistance
-) {
+function buildNeighborhood(view, selectedSourceNodes, itemCopiedCallback, direction, maxDistance) {
   const sourceGraph = view.sourceGraph
   const nodesToCopy = new Set()
-
   for (const node of selectedSourceNodes) {
     nodesToCopy.add(node)
   }
-
   const result = new Neighborhood({
     startNodes: selectedSourceNodes,
     maximumDistance: maxDistance,
     traversalDirection: direction
   }).run(sourceGraph)
-
   for (const node of result.neighbors) {
     nodesToCopy.add(node)
   }
-
   // Use GraphCopier to copy the nodes inside the neighborhood into the NeighborhoodComponent's graph.
   const graphCopier = new GraphCopier()
   graphCopier.copy({
     sourceGraph: sourceGraph,
     targetGraph: view.neighborhoodGraph,
-    filter: (item) => !(item instanceof INode) || nodesToCopy.has(item),
-    elementCopiedCallback
+    copyPredicate: (item) => !(item instanceof INode) || nodesToCopy.has(item),
+    itemCopiedCallback
   })
 }
-
 /**
  * Maps the given {@link NeighborhoodType} to the corresponding {@link TraversalDirection} that
  * is used by the {@link Neighborhood} algorithm in yFiles.
- * @param {!NeighborhoodType} type
- * @returns {!TraversalDirection}
  */
 function getTraversalDirection(type) {
   switch (type) {

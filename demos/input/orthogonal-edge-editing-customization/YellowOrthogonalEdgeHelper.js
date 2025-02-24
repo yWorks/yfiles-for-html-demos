@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IShapeGeometry, OrthogonalEdgeHelper, Point } from 'yfiles'
-
+import { IShapeGeometry, OrthogonalEdgeHelper, Point } from '@yfiles/yfiles'
 /**
  * Creates one new bend if the first or last segment of an edge is moved.
  * If the old first (last) segment was a horizontal segment, the new first (last) segment will be
@@ -39,66 +38,57 @@ export default class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
    * Stores if a new bend has been added when moving a segment of an orthogonal edge.
    */
   bendAddedState = BendAddedState.None
-
+  constructor(edge) {
+    super(edge)
+  }
   /**
    * Prevents edge ports from being moved.
    * As a side effect, this method adds a new bend at the source or target end of the edge.
-   * @param {!IInputModeContext} inputModeContext The input mode context in which the segment is edited.
-   * @param {!IEdge} edge The edge to inspect.
-   * @param {boolean} sourceEnd `true` if the source end of the edge is queried and `false` otherwise.
-   * @returns {boolean}
+   * @param inputModeContext The input mode context in which the segment is edited.
+   * @param sourceEnd `true` if the source end of the edge is queried and `false` otherwise.
    */
-  shouldMoveEndImplicitly(inputModeContext, edge, sourceEnd) {
+  shouldMoveEndImplicitly(inputModeContext, sourceEnd) {
     if (sourceEnd) {
       this.bendAddedState = BendAddedState.AtSource
-      inputModeContext.graph.addBend(edge, edge.sourcePort.location, BendAddedState.AtSource)
+      inputModeContext.graph.addBend(
+        this.edge,
+        this.edge.sourcePort.location,
+        BendAddedState.AtSource
+      )
     } else {
       this.bendAddedState = BendAddedState.AtTarget
-      inputModeContext.graph.addBend(edge, edge.targetPort.location, BendAddedState.AtTarget)
+      inputModeContext.graph.addBend(
+        this.edge,
+        this.edge.targetPort.location,
+        BendAddedState.AtTarget
+      )
     }
-
     return false
   }
-
-  /**
-   * @param {!IInputModeContext} inputModeContext
-   * @param {!IGraph} graph
-   * @param {!IEdge} edge
-   */
-  cleanUpEdge(inputModeContext, graph, edge) {
-    this.cleanUpEdgeImpl(graph, edge)
-    super.cleanUpEdge(inputModeContext, graph, edge)
+  cleanUpEdge(inputModeContext, graph) {
+    this.cleanUpEdgeImpl(graph)
+    super.cleanUpEdge(inputModeContext, graph)
   }
-
-  /**
-   * @param {!IGraph} graph
-   * @param {!IEdge} edge
-   */
-  cleanUpEdgeImpl(graph, edge) {
+  cleanUpEdgeImpl(graph) {
     const bendAddedState = this.bendAddedState
     this.bendAddedState = BendAddedState.None
-
-    if (bendAddedState == BendAddedState.None || edge.bends.size < 1) {
+    if (bendAddedState == BendAddedState.None || this.edge.bends.size < 1) {
       return
     }
-
-    cleanUpEdgeEnd(graph, edge, bendAddedState)
+    cleanUpEdgeEnd(graph, this.edge, bendAddedState)
   }
 }
-
 /**
  * Removes unnecessary bends inside the source or target node of the given edge, if
  * {@link #shouldMoveEndImplicitly} added a new bend at that end of the edge in the first place.
- * @param {!IGraph} graph The graph to use for modifying the edge instance.
- * @param {!IEdge} edge The edge whose path needs to be cleaned up.
- * @param {!()} bendAddedState Specifies which end of the given edge has to be cleaned up.
+ * @param graph The graph to use for modifying the edge instance.
+ * @param edge The edge whose path needs to be cleaned up.
+ * @param bendAddedState Specifies which end of the given edge has to be cleaned up.
  */
 function cleanUpEdgeEnd(graph, edge, bendAddedState) {
   const atSource = bendAddedState == BendAddedState.AtSource
-
   const port = atSource ? edge.sourcePort : edge.targetPort
-  const geometry = port.owner.lookup(IShapeGeometry.$class)
-
+  const geometry = port.owner.lookup(IShapeGeometry)
   // remove all bend inside the respective node
   const bends = edge.bends
   while (bends.size > 0) {
@@ -109,18 +99,15 @@ function cleanUpEdgeEnd(graph, edge, bendAddedState) {
       break
     }
   }
-
   const portLocation = port.location.toPoint()
   const portX = portLocation.x
   const portY = portLocation.y
-
   const otherLocation =
     bends.size > 0
       ? (atSource ? bends.first() : bends.last()).location.toPoint()
       : (atSource ? edge.targetPort : edge.sourcePort).location
   const otherX = otherLocation.x
   const otherY = otherLocation.y
-
   // ensure the first (last) two segments are orthogonal segments
   if (portX !== otherX && portY !== otherY) {
     const candidate = new Point(otherX, portY)
@@ -131,17 +118,14 @@ function cleanUpEdgeEnd(graph, edge, bendAddedState) {
     }
   }
 }
-
 /**
  * Important: Do not change the numeric values of {@link #AtSource} and {@link #AtTarget}.
  * Changing the numeric values will break the `addBend` logic in
  * {@link YellowOrthogonalEdgeHelper#shouldMoveEndImplicitly} and {@link #cleanUpEdgeEnd}.
- 
-* @readonly
- * @enum {number}
-*/
-const BendAddedState = {
-  None: -2,
-  AtTarget: -1,
-  AtSource: 0
-}
+ */
+var BendAddedState
+;(function (BendAddedState) {
+  BendAddedState[(BendAddedState['None'] = -2)] = 'None'
+  BendAddedState[(BendAddedState['AtTarget'] = -1)] = 'AtTarget'
+  BendAddedState[(BendAddedState['AtSource'] = 0)] = 'AtSource'
+})(BendAddedState || (BendAddedState = {}))

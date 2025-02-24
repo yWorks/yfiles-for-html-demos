@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # React JSX Component Style Demo
 
-# React JSX Component Style Demo
+<img src="../../../doc/demo-thumbnails/react-template-node-style.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/style/react-template-node-style/).
 
 This demo presents the React Component node and label style that leverages JSX and the powerful data binding features of the [React framework](https://reactjs.org/).
 
@@ -26,6 +28,6 @@ Select nodes or labels in the view and inspect their templates and tag values in
 ## Related Demos
 
 - [Template Styles Demo](../../style/templatestyles/)
-- [String Template Node Style Demo](../../style/string-template-node-style/)
+- [Template Node Style Demo](../../style/template-node-style/)
 - [Vue Template Node Style Demo](../../../demos-ts/style/vue-template-node-style/)
 - [Lit Template Node Style Demo](../../style/lit-template-node-style/)

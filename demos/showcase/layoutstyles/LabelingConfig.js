@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,22 +28,17 @@
  ***************************************************************************/
 import {
   Class,
-  Enum,
   FreeEdgeLabelModel,
   GenericLabeling,
+  GenericLabelingData,
   GraphComponent,
-  ILabelLayoutDpKey,
   ILabelModelParameterFinder,
   ILayoutAlgorithm,
-  LabelingData,
+  LabelingCosts,
+  LabelingOptimizationStrategy,
   LayoutData,
-  OptimizationStrategy,
-  SimpleProfitModel,
-  YBoolean,
-  YNumber,
-  YString
-} from 'yfiles'
-
+  RecursiveGroupLayout
+} from '@yfiles/yfiles'
 import {
   ComponentAttribute,
   Components,
@@ -53,89 +48,196 @@ import {
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from 'demo-resources/demo-option-editor'
+} from '@yfiles/demo-resources/demo-option-editor'
 import LayoutConfiguration, {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
   LabelPlacementSideOfEdge
-} from './LayoutConfiguration.js'
-
-const SELECTED_LABELS_KEY = new ILabelLayoutDpKey(YBoolean.$class, null, 'SelectedLabels')
-
+} from './LayoutConfiguration'
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 const LabelingConfig = Class('LabelingConfig', {
   $extends: LayoutConfiguration,
-
-  $meta: [LabelAttribute('Labeling')],
-
+  _meta: {
+    GeneralGroup: [
+      new LabelAttribute('General'),
+      new OptionGroupAttribute('RootGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    QualityGroup: [
+      new LabelAttribute('Quality'),
+      new OptionGroupAttribute('RootGroup', 20),
+      new TypeAttribute(OptionGroup)
+    ],
+    PreferredPlacementGroup: [
+      new LabelAttribute('Preferred Edge Label Placement'),
+      new OptionGroupAttribute('RootGroup', 30),
+      new TypeAttribute(OptionGroup)
+    ],
+    descriptionText: [
+      new OptionGroupAttribute('DescriptionGroup', 10),
+      new ComponentAttribute(Components.HTML_BLOCK),
+      new TypeAttribute(String)
+    ],
+    placeNodeLabelsItem: [
+      new LabelAttribute(
+        'Place Node Labels',
+        '#/api/GenericLabeling#GenericLabeling-property-scope'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 10),
+      new TypeAttribute(Boolean)
+    ],
+    placeEdgeLabelsItem: [
+      new LabelAttribute(
+        'Place Edge Labels',
+        '#/api/GenericLabeling#GenericLabeling-property-scope'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    considerSelectedFeaturesOnlyItem: [
+      new LabelAttribute(
+        'Consider Selected Features Only',
+        '#/api/GenericLabelingData#GenericLabelingData-property-scope'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 30),
+      new TypeAttribute(Boolean)
+    ],
+    optimizationStrategyItem: [
+      new LabelAttribute('Reduce Overlaps', '#/api/LabelingOptimizationStrategy'),
+      new OptionGroupAttribute('QualityGroup', 40),
+      new EnumValuesAttribute([
+        ['Balanced', LabelingOptimizationStrategy.BALANCED],
+        ['With Nodes', LabelingOptimizationStrategy.NODE_OVERLAPS],
+        ['Between Labels', LabelingOptimizationStrategy.LABEL_OVERLAPS],
+        ['With Edges', LabelingOptimizationStrategy.EDGE_OVERLAPS],
+        ['Layout Grid Overlap', LabelingOptimizationStrategy.LAYOUT_GRID_VIOLATIONS],
+        ["Don't optimize", null]
+      ]),
+      new TypeAttribute(LabelingOptimizationStrategy)
+    ],
+    reduceAmbiguityItem: [
+      new LabelAttribute(
+        'Reduce Ambiguity',
+        '#/api/LabelingCosts#LabelingCosts-property-ambiguousPlacementCost'
+      ),
+      new OptionGroupAttribute('QualityGroup', 50),
+      new TypeAttribute(Boolean)
+    ],
+    labelPlacementOrientationItem: [
+      new LabelAttribute(
+        'Orientation',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-angle'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 10),
+      new EnumValuesAttribute([
+        ['Parallel', LabelPlacementOrientation.PARALLEL],
+        ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
+        ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
+        ['Vertical', LabelPlacementOrientation.VERTICAL]
+      ]),
+      new TypeAttribute(LabelPlacementOrientation)
+    ],
+    labelPlacementAlongEdgeItem: [
+      new LabelAttribute(
+        'Along Edge',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-placementAlongEdge'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 20),
+      new EnumValuesAttribute([
+        ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
+        ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
+        ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
+        ['At Target', LabelPlacementAlongEdge.AT_TARGET],
+        ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
+        ['Centered', LabelPlacementAlongEdge.CENTERED]
+      ]),
+      new TypeAttribute(LabelPlacementAlongEdge)
+    ],
+    labelPlacementSideOfEdgeItem: [
+      new LabelAttribute(
+        'Side of Edge',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-edgeSide'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 30),
+      new EnumValuesAttribute([
+        ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
+        ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
+        ['Left', LabelPlacementSideOfEdge.LEFT],
+        ['Right', LabelPlacementSideOfEdge.RIGHT],
+        ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+      ]),
+      new TypeAttribute(LabelPlacementSideOfEdge)
+    ],
+    labelPlacementDistanceItem: [
+      new LabelAttribute(
+        'Distance',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-distanceToEdge'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 40),
+      new MinMaxAttribute(0.0, 40.0),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ]
+  },
   /**
    * Setup default values for various configuration parameters.
    */
   constructor: function () {
+    // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
     this.placeNodeLabelsItem = true
     this.placeEdgeLabelsItem = true
     this.considerSelectedFeaturesOnlyItem = false
-
-    this.optimizationStrategyItem = OptimizationStrategy.BALANCED
-
-    this.allowNodeOverlapsItem = false
-    this.allowEdgeOverlapsItem = true
+    this.optimizationStrategyItem = LabelingOptimizationStrategy.BALANCED
     this.reduceAmbiguityItem = true
-
     this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
     this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
     this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
     this.labelPlacementDistanceItem = 10.0
-    this.title = 'Generic Labeling'
+    this.title = 'Labeling'
   },
-
   /**
-   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @returns The configured layout.
    */
   createConfiguredLayout: function (graphComponent) {
+    if (!this.placeEdgeLabelsItem && !this.placeNodeLabelsItem) {
+      return RecursiveGroupLayout.FIX_CONTENT_LAYOUT
+    }
     const labeling = new GenericLabeling()
-    labeling.autoFlipping = true
-    labeling.optimizationStrategy = this.optimizationStrategyItem
-    if (labeling.optimizationStrategy === OptimizationStrategy.NONE) {
-      labeling.profitModel = new SimpleProfitModel()
+    const labelingPenalties = new LabelingCosts(
+      this.optimizationStrategyItem ?? LabelingOptimizationStrategy.BALANCED
+    )
+    labeling.defaultEdgeLabelingCosts = labelingPenalties
+    labeling.defaultNodeLabelingCosts = labelingPenalties
+    if (this.placeNodeLabelsItem && this.placeEdgeLabelsItem) {
+      labeling.scope = 'all'
+    } else {
+      labeling.scope = this.placeEdgeLabelsItem ? 'edge-labels' : 'node-labels'
     }
-
-    labeling.removeNodeOverlaps = !this.allowNodeOverlapsItem
-    labeling.removeEdgeOverlaps = !this.allowEdgeOverlapsItem
-    labeling.placeEdgeLabels = this.placeEdgeLabelsItem
-    labeling.placeNodeLabels = this.placeNodeLabelsItem
-    labeling.reduceAmbiguity = this.reduceAmbiguityItem
-
-    const selectionOnly = this.considerSelectedFeaturesOnlyItem
-    labeling.affectedLabelsDpKey = null
-
-    if (graphComponent.selection !== null && selectionOnly) {
-      labeling.affectedLabelsDpKey = SELECTED_LABELS_KEY
+    if (this.reduceAmbiguityItem) {
+      labeling.defaultNodeLabelingCosts.ambiguousPlacementCost = 1.0
+      labeling.defaultEdgeLabelingCosts.ambiguousPlacementCost = 1.0
     }
-
     return labeling
   },
-
   /**
    * Creates and configures the layout data.
    * @returns The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
-    const layoutData = new LabelingData()
-
+    const layoutData = new GenericLabelingData()
     const selection = graphComponent.selection
-    if (selection !== null) {
-      layoutData.affectedLabels.dpKey = SELECTED_LABELS_KEY
-      layoutData.affectedLabels.delegate = (label) =>
-        selection.isSelected(label) || selection.isSelected(label.owner)
+    if (selection !== null && this.considerSelectedFeaturesOnlyItem) {
+      layoutData.scope.nodeLabels = (label) =>
+        selection.includes(label) || selection.includes(label.owner)
+      layoutData.scope.edgeLabels = (label) =>
+        selection.includes(label) || selection.includes(label.owner)
     }
-
     if (this.placeEdgeLabelsItem) {
       this.setupEdgeLabelModels(graphComponent)
       return layoutData.combineWith(
@@ -148,300 +250,59 @@ const LabelingConfig = Class('LabelingConfig', {
         )
       )
     }
-
     return layoutData
   },
-
   setupEdgeLabelModels: function (graphComponent) {
     const model = new FreeEdgeLabelModel()
-
     const selectionOnly = this.considerSelectedFeaturesOnlyItem
     const placeEdgeLabels = this.placeEdgeLabelsItem
     if (!placeEdgeLabels) {
       return
     }
-
-    const parameterFinder = model.lookup(ILabelModelParameterFinder.$class)
     const graph = graphComponent.graph
     for (const label of graph.edgeLabels) {
+      const parameterFinder = model.getContext(label).lookup(ILabelModelParameterFinder)
       if (selectionOnly) {
-        if (graphComponent.selection.isSelected(label)) {
-          graph.setLabelLayoutParameter(
-            label,
-            parameterFinder.findBestParameter(label, model, label.layout)
-          )
+        if (graphComponent.selection.includes(label)) {
+          graph.setLabelLayoutParameter(label, parameterFinder.findBestParameter(label.layout))
         }
       } else {
-        graph.setLabelLayoutParameter(
-          label,
-          parameterFinder.findBestParameter(label, model, label.layout)
-        )
+        graph.setLabelLayoutParameter(label, parameterFinder.findBestParameter(label.layout))
       }
     }
   },
-
   /** @type {OptionGroup} */
-  GeneralGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('General'),
-        OptionGroupAttribute('RootGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  GeneralGroup: null,
   /** @type {OptionGroup} */
-  QualityGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Quality'),
-        OptionGroupAttribute('RootGroup', 20),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  QualityGroup: null,
   /** @type {OptionGroup} */
-  PreferredPlacementGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Preferred Edge Label Placement'),
-        OptionGroupAttribute('RootGroup', 30),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  PreferredPlacementGroup: null,
   /** @type {string} */
   descriptionText: {
-    $meta: function () {
-      return [
-        OptionGroupAttribute('DescriptionGroup', 10),
-        ComponentAttribute(Components.HTML_BLOCK),
-        TypeAttribute(YString.$class)
-      ]
-    },
     get: function () {
       return "<p style='margin-top:0'>This algorithm finds good positions for the labels of nodes and edges. Typically, a label should be placed near the item it belongs to and it should not overlap with other labels. Optionally, overlaps with nodes and edges can be avoided as well.</p>"
     }
   },
-
   /** @type {boolean} */
-  placeNodeLabelsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Place Node Labels',
-          '#/api/GenericLabeling#LabelingBase-property-placeNodeLabels'
-        ),
-        OptionGroupAttribute('GeneralGroup', 10),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  placeNodeLabelsItem: false,
   /** @type {boolean} */
-  placeEdgeLabelsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Place Edge Labels',
-          '#/api/GenericLabeling#LabelingBase-property-placeEdgeLabels'
-        ),
-        OptionGroupAttribute('GeneralGroup', 20),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  placeEdgeLabelsItem: false,
   /** @type {boolean} */
-  considerSelectedFeaturesOnlyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Consider Selected Features Only',
-          '#/api/GenericLabeling#LabelingBase-property-affectedLabelsDpKey'
-        ),
-        OptionGroupAttribute('GeneralGroup', 30),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  considerSelectedFeaturesOnlyItem: false,
+  /** @type {LabelingOptimizationStrategy} */
+  optimizationStrategyItem: null,
   /** @type {boolean} */
-  allowNodeOverlapsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Allow Node Overlaps',
-          '#/api/GenericLabeling#MISLabelingBase-property-removeNodeOverlaps'
-        ),
-        OptionGroupAttribute('QualityGroup', 10),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
-  /** @type {boolean} */
-  allowEdgeOverlapsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Allow Edge Overlaps',
-          '#/api/GenericLabeling#MISLabelingBase-property-removeEdgeOverlaps'
-        ),
-        OptionGroupAttribute('QualityGroup', 20),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
-  /** @type {OptimizationStrategy} */
-  optimizationStrategyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Reduce overlaps',
-          '#/api/GenericLabeling#MISLabelingBase-property-optimizationStrategy'
-        ),
-        OptionGroupAttribute('QualityGroup', 40),
-        EnumValuesAttribute().init({
-          values: [
-            ['Balanced', OptimizationStrategy.BALANCED],
-            ['With Nodes', OptimizationStrategy.NODE_OVERLAP],
-            ['Between Labels', OptimizationStrategy.LABEL_OVERLAP],
-            ['With Edges', OptimizationStrategy.EDGE_OVERLAP],
-            ['Partition Grid Overlap', OptimizationStrategy.PARTITION_GRID_OVERLAP],
-            ["Don't optimize", OptimizationStrategy.NONE]
-          ]
-        }),
-        TypeAttribute(OptimizationStrategy.$class)
-      ]
-    },
-    value: null
-  },
-
-  /** @type {boolean} */
-  reduceAmbiguityItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Reduce Ambiguity',
-          '#/api/GenericLabeling#MISLabelingBase-property-reduceAmbiguity'
-        ),
-        OptionGroupAttribute('QualityGroup', 50),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  reduceAmbiguityItem: false,
   /** @type {LabelPlacementOrientation} */
-  labelPlacementOrientationItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Orientation',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-angle'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Parallel', LabelPlacementOrientation.PARALLEL],
-            ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
-            ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
-            ['Vertical', LabelPlacementOrientation.VERTICAL]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
-
+  labelPlacementOrientationItem: null,
   /** @type {LabelPlacementAlongEdge} */
-  labelPlacementAlongEdgeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Along Edge',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-placeAlongEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 20),
-        EnumValuesAttribute().init({
-          values: [
-            ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
-            ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
-            ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
-            ['At Target', LabelPlacementAlongEdge.AT_TARGET],
-            ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
-            ['Centered', LabelPlacementAlongEdge.CENTERED]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
-
+  labelPlacementAlongEdgeItem: null,
   /** @type {LabelPlacementSideOfEdge} */
-  labelPlacementSideOfEdgeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Side of Edge',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-sideOfEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 30),
-        EnumValuesAttribute().init({
-          values: [
-            ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
-            ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
-            ['Left', LabelPlacementSideOfEdge.LEFT],
-            ['Right', LabelPlacementSideOfEdge.RIGHT],
-            ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
-
+  labelPlacementSideOfEdgeItem: null,
   /** @type {number} */
-  labelPlacementDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Distance',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-distanceToEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 40),
-        MinMaxAttribute().init({
-          min: 0.0,
-          max: 40.0
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
-
+  labelPlacementDistanceItem: 0,
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function () {
       return this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
     }

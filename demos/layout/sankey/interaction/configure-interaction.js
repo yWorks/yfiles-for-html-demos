@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,42 +26,37 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphEditorInputMode, GraphItemTypes, IEdge, MouseEventRecognizers } from 'yfiles'
-import { runLayout, updateStylesAndLayout } from '../sankey-layout.js'
-import { getThickness, updateEdgeThickness } from '../edge-thickness.js'
-
+import { EventRecognizers, GraphEditorInputMode, GraphItemTypes, IEdge } from '@yfiles/yfiles'
+import { runLayout, updateStylesAndLayout } from '../sankey-layout'
+import { getThickness, updateEdgeThickness } from '../edge-thickness'
 /**
  * Precompiled Regex matcher used to allow only labels with positive numbers as text.
  */
 const validationPattern = new RegExp('^(0*[1-9][0-9]*(\\.[0-9]+)?|0+\\.[0-9]*[1-9][0-9]*)$')
-
 /**
  * Initializes and customizes the input mode for this demo.
  * Various options must be set to custom values to ensure desired behaviour.
- * @param {!GraphComponent} graphComponent
  */
 export function configureInteraction(graphComponent) {
   const mode = new GraphEditorInputMode({
     selectableItems: GraphItemTypes.LABEL,
     deletableItems: GraphItemTypes.NONE,
     focusableItems: GraphItemTypes.NONE,
-    movableItems: GraphItemTypes.NODE,
+    movableSelectedItems: GraphItemTypes.NODE,
     clickableItems: GraphItemTypes.NODE | GraphItemTypes.LABEL,
     contextMenuItems: GraphItemTypes.NODE,
     allowCreateEdge: false,
     allowCreateNode: false,
-    allowAddLabel: false,
-    autoRemoveEmptyLabels: false
+    allowAddLabel: false
   })
-
   // validate the label text before the label is added so that only positive numbers are allowed as text
-  mode.addValidateLabelTextListener((_, evt) => {
+  const editLabelInputMode = mode.editLabelInputMode
+  editLabelInputMode.addEventListener('validate-label-text', (evt) => {
     if (evt.label.owner instanceof IEdge) {
-      evt.cancel = !validationPattern.test(evt.newText)
+      evt.validatedText = validationPattern.test(evt.newText) ? evt.newText : null
     }
   })
-
-  mode.addLabelTextChangedListener(async (_, evt) => {
+  editLabelInputMode.addEventListener('label-edited', async (evt) => {
     const label = evt.item
     if (label.owner instanceof IEdge) {
       // calculate the new thickness from the label text and update the edge's data
@@ -70,25 +65,18 @@ export function configureInteraction(graphComponent) {
       await updateStylesAndLayout(graphComponent, true)
     }
   })
-
+  editLabelInputMode.autoRemoveEmptyLabels = false
   allowMovingUnselectedNodes(mode, graphComponent)
-
   graphComponent.inputMode = mode
 }
-
 /**
  * Allows the movement of nodes even if they are not selected.
- * @param {!GraphEditorInputMode} mode
- * @param {!GraphComponent} graphComponent
  */
 function allowMovingUnselectedNodes(mode, graphComponent) {
-  mode.moveUnselectedInputMode.enabled = true
-  mode.moveInputMode.enabled = false
-  mode.moveUnselectedInputMode.addDragFinishedListener(async () => {
+  mode.moveSelectedItemsInputMode.enabled = false
+  mode.moveUnselectedItemsInputMode.addEventListener('drag-finished', async () => {
     await runLayout(graphComponent, true)
   })
-
   mode.marqueeSelectionInputMode.enabled = false
-  mode.moveViewportInputMode.pressedRecognizer = MouseEventRecognizers.LEFT_DOWN
-  mode.moveUnselectedInputMode.priority = mode.moveViewportInputMode.priority - 1
+  mode.moveViewportInputMode.beginRecognizer = EventRecognizers.MOUSE_DOWN
 }

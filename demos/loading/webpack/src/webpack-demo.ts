@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,23 +26,22 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import 'demo-resources/style/loading-demo.css'
+import '@yfiles/demo-resources/style/loading-demo.css'
 
 import {
-  Class,
+  Command,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicLayout,
-  ICommand,
+  HierarchicalLayout,
   LayoutExecutor,
   License
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import {
   createGroupedSampleGraph,
   initializeBasicDemoStyles,
   initializeFolding
-} from 'utils/sample-graph'
+} from '@yfiles/demo-utils/sample-graph'
 
 import licenseData from './license.json'
 
@@ -60,18 +59,18 @@ createGroupedSampleGraph(graphComponent.graph)
 registerCommands()
 
 layout().then(() => {
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 })
 
-// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for 'morphLayout'.
-Class.ensure(LayoutExecutor)
+// Ensure that the LayoutExecutor class is not removed by build optimizers
+// It is needed for the 'applyLayoutAnimated' method in this demo.
+LayoutExecutor.ensure()
 
 function layout() {
-  const layoutAlgorithm = new HierarchicLayout({
+  const layoutAlgorithm = new HierarchicalLayout({
     layoutOrientation: 'top-to-bottom'
   })
-  return graphComponent.morphLayout(layoutAlgorithm, '2s')
+  return graphComponent.applyLayoutAnimated(layoutAlgorithm, '2s')
 }
 
 /**
@@ -79,18 +78,18 @@ function layout() {
  */
 function registerCommands() {
   document.getElementById('zoom-in-btn')!.addEventListener('click', () => {
-    ICommand.INCREASE_ZOOM.execute(null, graphComponent)
+    graphComponent.executeCommand(Command.INCREASE_ZOOM)
   })
   document.getElementById('zoom-out-btn')!.addEventListener('click', () => {
-    ICommand.DECREASE_ZOOM.execute(null, graphComponent)
+    graphComponent.executeCommand(Command.DECREASE_ZOOM)
   })
   document.getElementById('reset-zoom-btn')!.addEventListener('click', () => {
-    ICommand.ZOOM.execute(1, graphComponent)
+    graphComponent.executeCommand(Command.ZOOM, 1)
   })
-  document.getElementById('fit-zoom-btn')!.addEventListener('click', () => {
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+  document.getElementById('fit-zoom-btn')!.addEventListener('click', async () => {
+    await graphComponent.fitGraphBounds()
   })
-  document.getElementById('apply-layout-btn')!.addEventListener('click', () => {
-    layout()
+  document.getElementById('apply-layout-btn')!.addEventListener('click', async () => {
+    await layout()
   })
 }

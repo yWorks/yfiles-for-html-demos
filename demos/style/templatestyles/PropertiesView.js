@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,20 +30,16 @@
  * Helper class for showing properties of a node in the OrgChart.
  */
 export default class PropertiesView {
+  element
   /**
    * Creates a new PropertiesView
-   * @param {!Element} element The DOM element that will be filled with the properties.
+   * @param element The DOM element that will be filled with the properties.
    */
   constructor(element) {
     this.element = element
   }
-
-  /**
-   * @param {!INode} node
-   */
   showProperties(node) {
     this.clear()
-
     // When the graph is created from the source data by class TreeSource,
     // the source data for each node is attached to the node as its tag.
     if (node == null || node.tag == null) {
@@ -57,12 +53,10 @@ export default class PropertiesView {
     const nameElement = createElement('h2', employee.name)
     nameElement.style.display = 'inline-block'
     heading.appendChild(nameElement)
-
     const nameInput = document.createElement('input')
     nameInput.value = employee.name
     nameInput.style.display = 'none'
     heading.appendChild(nameInput)
-
     const editButton = document.createElement('button')
     editButton.setAttribute('class', 'demo-edit-name-button')
     editButton.setAttribute('title', 'Click to Edit')
@@ -70,15 +64,12 @@ export default class PropertiesView {
     editButton.style.right = '0'
     heading.appendChild(editButton)
     heading.appendChild(createElement('div', employee.position))
-
     this.addNameEventListeners(employee, nameElement, nameInput, editButton)
-
     const icon = document.createElement('img')
     icon.setAttribute('width', '50')
     icon.setAttribute('height', '50')
     icon.setAttribute('src', `./resources/${employee.icon}.svg`)
     heading.appendChild(icon)
-
     // Display the individual properties
     const table = document.createElement('table')
     this.element.appendChild(table)
@@ -117,20 +108,12 @@ export default class PropertiesView {
     statusTd.appendChild(statusSelect)
     statusSelect.value = employee.status.toLowerCase()
   }
-
-  /**
-   * @param {*} employee
-   * @param {!HTMLElement} nameElement
-   * @param {!HTMLInputElement} nameInput
-   * @param {!HTMLButtonElement} editButton
-   */
   addNameEventListeners(employee, nameElement, nameInput, editButton) {
     editButton.addEventListener('click', () => {
       nameElement.style.display = 'none'
       nameInput.style.display = 'inline-block'
       nameInput.focus()
     })
-
     const cancelNameEdit = () => {
       nameInput.value = employee.name = nameElement.textContent
       // notify the template style binding engine of the property change
@@ -138,8 +121,7 @@ export default class PropertiesView {
       nameInput.style.display = 'none'
       nameElement.style.display = 'inline-block'
     }
-
-    nameInput.addEventListener('keypress', (evt) => {
+    nameInput.addEventListener('keydown', (evt) => {
       const newName = nameInput.value
       employee.name = newName
       // notify the template style binding engine of the property change
@@ -152,30 +134,20 @@ export default class PropertiesView {
         cancelNameEdit()
       }
     })
-
     nameInput.addEventListener('blur', () => cancelNameEdit())
   }
-
   clear() {
     this.element.innerHTML = ''
   }
 }
-
 /**
  * Creates a DOM element with the specified text content
- * @param {!string} tagName
- * @param {!string} textContent
- * @returns {!HTMLElement}
  */
 function createElement(tagName, textContent) {
   const element = document.createElement(tagName)
   element.textContent = textContent
   return element
 }
-
-/**
- * @returns {!HTMLSelectElement}
- */
 function createStatusSelect() {
   const select = document.createElement('select')
   createStatusOption(select, 'Present')
@@ -183,11 +155,6 @@ function createStatusSelect() {
   createStatusOption(select, 'Unavailable')
   return select
 }
-
-/**
- * @param {!HTMLSelectElement} select
- * @param {!string} val
- */
 function createStatusOption(select, val) {
   const option = document.createElement('option')
   option.setAttribute('value', val.toLowerCase())

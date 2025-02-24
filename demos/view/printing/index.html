@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,13 +31,13 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Printing Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="./option-panel/option-panel.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
 
     <style>
       /* Load custom fonts for the custom-fonts sample graph. */
@@ -172,27 +170,51 @@
                 type="checkbox"
                 name="useTilePrinting"
               />
-              <label for="tileWidth" class="settings-label-row5">Tile Width</label>
+              <label for="skipEmptyTiles" class="settings-label-row5">Skip Empty Tiles</label>
               <input
+                disabled
                 class="settings-editor-row5"
+                id="skipEmptyTiles"
+                type="checkbox"
+                name="skipEmptyTiles"
+              />
+              <label for="fitToTile" class="settings-label-row6">Fit To Tile</label>
+              <input
+                disabled
+                class="settings-editor-row6"
+                id="fitToTile"
+                type="checkbox"
+                name="fitToTile"
+              />
+              <label for="paperSize" class="settings-label-row7">Paper size</label>
+              <select disabled class="settings-editor-row7" id="paperSize">
+                <option value="a4">A4</option>
+                <option value="letter">Letter</option>
+                <option value="custom">Custom</option>
+              </select>
+              <label for="tileWidth" class="settings-label-row8">Tile Width</label>
+              <input
+                disabled
+                class="settings-editor-row8"
                 id="tileWidth"
                 data-name="inputTileWidth"
                 name="tileWidth"
                 type="number"
                 min="10"
-                value="595"
+                value="794"
               />
-              <label for="tileHeight" class="settings-label-row6">Tile Height</label>
+              <label for="tileHeight" class="settings-label-row9">Tile Height</label>
               <input
-                class="settings-editor-row6"
+                disabled
+                class="settings-editor-row9"
                 id="tileHeight"
                 data-name="inputTileHeight"
                 name="tileHeight"
                 type="number"
                 min="10"
-                value="842"
+                value="1123"
               />
-              <button class="settings-editor-row7 flat-button" id="print-button">Print</button>
+              <button class="settings-editor-row10 flat-button" id="print-button">Print</button>
             </div>
           </div>
         </div>

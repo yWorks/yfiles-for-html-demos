@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,33 +33,28 @@ import {
   BezierEdgePathLabelModel,
   BezierEdgeSegmentLabelModel,
   BezierEdgeStyle,
-  DefaultLabelStyle,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  GraphMLSupport,
   HorizontalTextAlignment,
   IBend,
-  IEdge,
   IHandle,
   IInputMode,
   ILabelModelParameter,
+  LabelStyle,
   License,
   ShapeNodeShape,
-  ShapeNodeStyle,
-  StorageLocation
-} from 'yfiles'
+  ShapeNodeStyle
+} from '@yfiles/yfiles'
 import { BezierGraphEditorInputMode } from './BezierGraphEditorInputMode'
 import { InnerControlPointHandle, OuterControlPointHandle } from './BezierHandles'
 import { BezierBendCreator } from './BezierBendCreator'
 import { BezierEdgeHandleProvider } from './BezierEdgeHandleProvider'
-import { BezierSelectionIndicatorInstaller } from './BezierSelectionIndicatorInstaller'
+import { BezierSelectionStyle } from './BezierSelectionStyle'
 import { BezierCreateEdgeInputMode } from './BezierCreateEdgeInputMode'
 import { SampleCircle, SampleLabels } from './resources/SampleGraphs'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent = null!
 
@@ -88,14 +83,7 @@ const bezierEdgeStyle: BezierEdgeStyle = new BezierEdgeStyle({
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   graphComponent.inputMode = createEditorMode()
-
-  // eslint-disable-next-line no-new
-  new GraphMLSupport({
-    graphComponent,
-    storageLocation: StorageLocation.FILE_SYSTEM
-  })
 
   initializeGraph()
 
@@ -126,13 +114,13 @@ function initializeGraph(): void {
     stroke: null
   })
   graph.edgeDefaults.style = bezierEdgeStyle
-  graph.edgeDefaults.labels.style = new DefaultLabelStyle({
+  graph.edgeDefaults.labels.style = new LabelStyle({
     backgroundFill: '#FFFFFF',
     backgroundStroke: '#FFA500',
-    insets: 3,
+    padding: 3,
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
   })
-  graph.edgeDefaults.labels.layoutParameter = bezierPathLabelModel.createDefaultParameter()
+  graph.edgeDefaults.labels.layoutParameter = bezierPathLabelModel.createParameter(0.5)
 
   loadSample(SampleCircle)
 
@@ -141,19 +129,19 @@ function initializeGraph(): void {
 
 function registerBezierDecorators(): void {
   const graph = graphComponent.graph
-  graph.decorator.bendDecorator.handleDecorator.hideImplementation(
+  graph.decorator.bends.handle.hide(
     (b) =>
       !config.enableEditing &&
-      b.owner!.style instanceof BezierEdgeStyle &&
-      b.owner!.bends.size % 3 === 2
+      b.owner.style instanceof BezierEdgeStyle &&
+      b.owner.bends.size % 3 === 2
   )
 
-  graph.decorator.bendDecorator.handleDecorator.setImplementationWrapper(
+  graph.decorator.bends.handle.addWrapperFactory(
     (b) =>
       config.enableEditing &&
       config.smoothSegments &&
-      b.owner!.style instanceof BezierEdgeStyle &&
-      b.owner!.bends.size % 3 === 2,
+      b.owner.style instanceof BezierEdgeStyle &&
+      b.owner.bends.size % 3 === 2,
     (b: IBend | null, h: IHandle | null) => {
       const index = b!.index
       switch (index % 3) {
@@ -170,20 +158,21 @@ function registerBezierDecorators(): void {
   )
 
   // Override the default for bezier edges
-  graph.decorator.edgeDecorator.bendCreatorDecorator.setImplementation(
-    (edge: IEdge) => config.enableEditing && edge.style instanceof BezierEdgeStyle,
-    new BezierBendCreator()
+  graph.decorator.edges.bendCreator.addWrapperFactory(
+    (edge) => config.enableEditing && edge.style instanceof BezierEdgeStyle,
+    (edge, originalBendCreator) =>
+      originalBendCreator != null ? new BezierBendCreator(edge, originalBendCreator) : null
   )
 
   // And always show bend handles
-  graph.decorator.edgeDecorator.handleProviderDecorator.setImplementationWrapper(
+  graph.decorator.edges.handleProvider.addWrapperFactory(
     (edge) => config.enableEditing && edge.style instanceof BezierEdgeStyle,
     (edge, coreImpl) => new BezierEdgeHandleProvider(edge!, coreImpl!)
   )
 
-  graph.decorator.edgeDecorator.selectionDecorator.setImplementationWrapper(
+  graph.decorator.edges.selectionRenderer.addWrapperFactory(
     (e) => e.style instanceof BezierEdgeStyle,
-    (e, coreImpl) => new BezierSelectionIndicatorInstaller(coreImpl)
+    (_, coreImpl) => new BezierSelectionStyle(coreImpl!)
   )
 
   // since removing bends also affects our handles, we need to let the input mode
@@ -192,8 +181,8 @@ function registerBezierDecorators(): void {
     ;(graphComponent.inputMode as GraphEditorInputMode).requeryHandles()
   }
 
-  graph.addBendRemovedListener(requeryHandles)
-  graph.addBendAddedListener(requeryHandles)
+  graph.addEventListener('bend-removed', requeryHandles)
+  graph.addEventListener('bend-added', requeryHandles)
 }
 
 function loadSample(sample: any): void {
@@ -241,7 +230,7 @@ function loadSample(sample: any): void {
     }
   })
 
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   graph.undoEngine?.clear()
 }

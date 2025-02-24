@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
 	</key>
@@ -55,11 +55,11 @@
 	<key id="d13" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
 	<data key="d13">
 		<y:SharedData>
-			<yjs:DefaultLabelStyle x:Key="1" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" textFill="BLACK">
-				<yjs:DefaultLabelStyle.font>
+			<yjs:LabelStyle x:Key="1" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" textFill="BLACK">
+				<yjs:LabelStyle.font>
 					<yjs:Font fontSize="12"/>
-				</yjs:DefaultLabelStyle.font>
-			</yjs:DefaultLabelStyle>
+				</yjs:LabelStyle.font>
+			</yjs:LabelStyle>
 			<bpmn:AlternatingLeafStripeStyle x:Key="2">
 				<bpmn:AlternatingLeafStripeStyle.evenLeafDescriptor>
 					<bpmn:StripeDescriptor backgroundFill="#FFC4D7ED" insetFill="#FFE0E0E0"/>
@@ -74,20 +74,20 @@
 			<yjs:ShapeNodeStyle x:Key="3" fill="#00FFFFFF"/>
 			<bpmn:BpmnEdgeStyle x:Key="4"/>
 			<yjs:ShapeNodeStyle x:Key="5" fill="#FFE0E0E0"/>
-			<y:StripeDefaults x:Key="6" Insets="20,0,0,0" Style="{y:GraphMLReference 2}">
-				<y:StripeDefaults.Labels>
-					<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 1}" ShareStyleInstance="true"/>
-				</y:StripeDefaults.Labels>
-			</y:StripeDefaults>
-			<y:StripeDefaults x:Key="7" Insets="0,20,0,0">
-				<y:StripeDefaults.Labels>
-					<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" Style="{y:GraphMLReference 1}" ShareStyleInstance="true"/>
-				</y:StripeDefaults.Labels>
-				<y:StripeDefaults.Style>
+			<yx:StripeDefaults x:Key="6" Padding="20,0,0,0" Style="{y:GraphMLReference 2}">
+				<yx:StripeDefaults.Labels>
+					<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 1}" ShareStyleInstance="true"/>
+				</yx:StripeDefaults.Labels>
+			</yx:StripeDefaults>
+			<yx:StripeDefaults x:Key="7" Padding="0,20,0,0">
+				<yx:StripeDefaults.Labels>
+					<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static yx:StretchStripeLabelModel.Top}" Style="{y:GraphMLReference 1}" ShareStyleInstance="true"/>
+				</yx:StripeDefaults.Labels>
+				<yx:StripeDefaults.Style>
 					<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 3}"/>
-				</y:StripeDefaults.Style>
-			</y:StripeDefaults>
-			<y:InteriorLabelModel x:Key="8"/>
+				</yx:StripeDefaults.Style>
+			</yx:StripeDefaults>
+			<yx:InteriorNodeLabelModel x:Key="8"/>
 			<bpmn:BpmnEdgeStyle x:Key="9" type="MESSAGE_FLOW"/>
 		</y:SharedData>
 	</data>
@@ -107,18 +107,18 @@
 				<bpmn:PoolNodeStyle>
 					<yjs:TableNodeStyle tableRenderingOrder="ROWS_FIRST" backgroundStyle="{y:GraphMLReference 5}">
 						<yjs:TableNodeStyle.table>
-							<y:Table Insets="30,0,0,0" RowDefaults="{y:GraphMLReference 6}" ColumnDefaults="{y:GraphMLReference 7}">
-								<y:Table.Rows>
-									<y:Row MinimumSize="10" Size="110" Insets="20,0,0,0" Style="{y:GraphMLReference 2}"/>
-								</y:Table.Rows>
-								<y:Table.Columns>
-									<y:Column MinimumSize="10" Size="1830.072622826678">
-										<y:Column.Style>
+							<yx:Table Padding="30,0,0,0" RowDefaults="{y:GraphMLReference 6}" ColumnDefaults="{y:GraphMLReference 7}">
+								<yx:Table.Rows>
+									<yx:Row MinimumSize="10" Size="110" Padding="20,0,0,0" Style="{y:GraphMLReference 2}"/>
+								</yx:Table.Rows>
+								<yx:Table.Columns>
+									<yx:Column MinimumSize="10" Size="1830.072622826678">
+										<yx:Column.Style>
 											<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 3}"/>
-										</y:Column.Style>
-									</y:Column>
-								</y:Table.Columns>
-							</y:Table>
+										</yx:Column.Style>
+									</yx:Column>
+								</yx:Table.Columns>
+							</yx:Table>
 						</yjs:TableNodeStyle.table>
 					</yjs:TableNodeStyle>
 				</bpmn:PoolNodeStyle>
@@ -133,11 +133,11 @@ Constraint
 Analysis
 Request]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="West">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Left">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -167,11 +167,11 @@ Request]]></y:Label.Text>
 Constraint
 Analysis]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="East">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Right">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -201,7 +201,7 @@ Analysis]]></y:Label.Text>
 Constraint
 Analysis]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -250,32 +250,32 @@ Analysis]]></y:Label.Text>
 				<bpmn:PoolNodeStyle>
 					<yjs:TableNodeStyle tableRenderingOrder="ROWS_FIRST" backgroundStyle="{y:GraphMLReference 5}">
 						<yjs:TableNodeStyle.table>
-							<y:Table Insets="30,0,0,0" RowDefaults="{y:GraphMLReference 6}" ColumnDefaults="{y:GraphMLReference 7}">
-								<y:Table.Rows>
-									<y:Row MinimumSize="10" Size="160" Insets="50,0,0,0" Style="{y:GraphMLReference 2}">
-										<y:Row.Labels>
-											<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 1}">
+							<yx:Table Padding="30,0,0,0" RowDefaults="{y:GraphMLReference 6}" ColumnDefaults="{y:GraphMLReference 7}">
+								<yx:Table.Rows>
+									<yx:Row MinimumSize="10" Size="160" Padding="50,0,0,0" Style="{y:GraphMLReference 2}">
+										<yx:Row.Labels>
+											<y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 1}">
 												<y:Label.Text><![CDATA[Planning Department]]></y:Label.Text>
 											</y:Label>
-										</y:Row.Labels>
-									</y:Row>
-									<y:Row MinimumSize="10" Size="115" Insets="50,0,0,0" Style="{y:GraphMLReference 2}">
-										<y:Row.Labels>
-											<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 1}">
+										</yx:Row.Labels>
+									</yx:Row>
+									<yx:Row MinimumSize="10" Size="115" Padding="50,0,0,0" Style="{y:GraphMLReference 2}">
+										<yx:Row.Labels>
+											<y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 1}">
 												<y:Label.Text><![CDATA[Administration
 Contact]]></y:Label.Text>
 											</y:Label>
-										</y:Row.Labels>
-									</y:Row>
-								</y:Table.Rows>
-								<y:Table.Columns>
-									<y:Column MinimumSize="10" Size="1800.072622826678">
-										<y:Column.Style>
+										</yx:Row.Labels>
+									</yx:Row>
+								</yx:Table.Rows>
+								<yx:Table.Columns>
+									<yx:Column MinimumSize="10" Size="1800.072622826678">
+										<yx:Column.Style>
 											<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 3}"/>
-										</y:Column.Style>
-									</y:Column>
-								</y:Table.Columns>
-							</y:Table>
+										</yx:Column.Style>
+									</yx:Column>
+								</yx:Table.Columns>
+							</yx:Table>
 						</yjs:TableNodeStyle.table>
 					</yjs:TableNodeStyle>
 				</bpmn:PoolNodeStyle>
@@ -288,11 +288,11 @@ Contact]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Receive
 Request]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="West">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Left">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -322,11 +322,11 @@ Request]]></y:Label.Text>
 Constraint
 Analysis]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="West">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Left">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -356,11 +356,11 @@ Analysis]]></y:Label.Text>
 Constraint
 Analysis]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="NorthEast">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="TopRight">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -390,11 +390,11 @@ Analysis]]></y:Label.Text>
 Estimate/
 Study]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="East">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Right">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -422,11 +422,11 @@ Study]]></y:Label.Text>
 							<y:Label Style="{y:GraphMLReference 1}">
 								<y:Label.Text><![CDATA[Type of Study]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="South">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Bottom">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -484,7 +484,7 @@ Study]]></y:Label.Text>
 Budget
 Estimate]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -514,7 +514,7 @@ Estimate]]></y:Label.Text>
 Feasibility
 Study]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -543,7 +543,7 @@ Study]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Valid
 Request]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -595,11 +595,11 @@ Request]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Feasibility
 Study]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:FreeEdgeLabelModelParameter Ratio="0.15567567567567528" Distance="-34.408044313990146" Angle="6.123233995736766e-17">
-										<y:FreeEdgeLabelModelParameter.Model>
-											<y:FreeEdgeLabelModel/>
-										</y:FreeEdgeLabelModelParameter.Model>
-									</y:FreeEdgeLabelModelParameter>
+									<yx:FreeEdgeLabelModelParameter Ratio="0.15567567567567528" Distance="-34.408044313990146" Angle="6.123233995736766e-17">
+										<yx:FreeEdgeLabelModelParameter.Model>
+											<yx:FreeEdgeLabelModel/>
+										</yx:FreeEdgeLabelModelParameter.Model>
+									</yx:FreeEdgeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -620,11 +620,11 @@ Study]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Budget
 Estimate]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:FreeEdgeLabelModelParameter Ratio="0.21806729918609669" Distance="-16">
-										<y:FreeEdgeLabelModelParameter.Model>
-											<y:FreeEdgeLabelModel/>
-										</y:FreeEdgeLabelModelParameter.Model>
-									</y:FreeEdgeLabelModelParameter>
+									<yx:FreeEdgeLabelModelParameter Ratio="0.21806729918609669" Distance="-16">
+										<yx:FreeEdgeLabelModelParameter.Model>
+											<yx:FreeEdgeLabelModel/>
+										</yx:FreeEdgeLabelModelParameter.Model>
+									</yx:FreeEdgeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -675,18 +675,18 @@ Estimate]]></y:Label.Text>
 				<bpmn:PoolNodeStyle>
 					<yjs:TableNodeStyle tableRenderingOrder="ROWS_FIRST" backgroundStyle="{y:GraphMLReference 5}">
 						<yjs:TableNodeStyle.table>
-							<y:Table Insets="30,0,0,0" RowDefaults="{y:GraphMLReference 6}" ColumnDefaults="{y:GraphMLReference 7}">
-								<y:Table.Rows>
-									<y:Row MinimumSize="10" Size="304" Insets="20,0,0,0" Style="{y:GraphMLReference 2}"/>
-								</y:Table.Rows>
-								<y:Table.Columns>
-									<y:Column MinimumSize="10" Size="1830.072622826678">
-										<y:Column.Style>
+							<yx:Table Padding="30,0,0,0" RowDefaults="{y:GraphMLReference 6}" ColumnDefaults="{y:GraphMLReference 7}">
+								<yx:Table.Rows>
+									<yx:Row MinimumSize="10" Size="304" Padding="20,0,0,0" Style="{y:GraphMLReference 2}"/>
+								</yx:Table.Rows>
+								<yx:Table.Columns>
+									<yx:Column MinimumSize="10" Size="1830.072622826678">
+										<yx:Column.Style>
 											<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 3}"/>
-										</y:Column.Style>
-									</y:Column>
-								</y:Table.Columns>
-							</y:Table>
+										</yx:Column.Style>
+									</yx:Column>
+								</yx:Table.Columns>
+							</yx:Table>
 						</yjs:TableNodeStyle.table>
 					</yjs:TableNodeStyle>
 				</bpmn:PoolNodeStyle>
@@ -698,11 +698,11 @@ Estimate]]></y:Label.Text>
 							<y:Label Style="{y:GraphMLReference 1}">
 								<y:Label.Text>Start</y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="West">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Left">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -732,11 +732,11 @@ Estimate]]></y:Label.Text>
 Estimate/
 Study]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="West">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Left">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -765,11 +765,11 @@ Study]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Send
 Request]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="NorthWest">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="TopLeft">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -802,11 +802,11 @@ Request]]></y:Label.Text>
 							<y:Label Style="{y:GraphMLReference 1}">
 								<y:Label.Text>End</y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="East">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Right">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -830,11 +830,11 @@ Request]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Project
 Stopped]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="East">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Right">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -863,11 +863,11 @@ Stopped]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Budget Estimate/
 Feasibility Study]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="South">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Bottom">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -900,11 +900,11 @@ Feasibility Study]]></y:Label.Text>
 							<y:Label Style="{y:GraphMLReference 1}">
 								<y:Label.Text>Continue?</y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="North">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Top">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -939,11 +939,11 @@ Feasibility Study]]></y:Label.Text>
 for
 Project]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="South">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Bottom">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -977,7 +977,7 @@ Project]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Provide
 Information]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -1007,7 +1007,7 @@ Information]]></y:Label.Text>
 Estimate/
 Feasibility Study]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -1037,7 +1037,7 @@ Feasibility Study]]></y:Label.Text>
 Estimate/
 Feasibility Study]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -1066,7 +1066,7 @@ Feasibility Study]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Abandon
 Project]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -1096,7 +1096,7 @@ Project]]></y:Label.Text>
 Planning
 Permission]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 8}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -1134,11 +1134,11 @@ Permission]]></y:Label.Text>
 							<y:Label Style="{y:GraphMLReference 1}">
 								<y:Label.Text>Yes</y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:FreeEdgeLabelModelParameter Ratio="-0.017570047285582948" Distance="-16.318351859710653" Angle="-1.5707963267948966">
-										<y:FreeEdgeLabelModelParameter.Model>
-											<y:FreeEdgeLabelModel/>
-										</y:FreeEdgeLabelModelParameter.Model>
-									</y:FreeEdgeLabelModelParameter>
+									<yx:FreeEdgeLabelModelParameter Ratio="-0.017570047285582948" Distance="-16.318351859710653" Angle="-1.5707963267948966">
+										<yx:FreeEdgeLabelModelParameter.Model>
+											<yx:FreeEdgeLabelModel/>
+										</yx:FreeEdgeLabelModelParameter.Model>
+									</yx:FreeEdgeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -1163,11 +1163,11 @@ Permission]]></y:Label.Text>
 							<y:Label Style="{y:GraphMLReference 1}">
 								<y:Label.Text>Yes</y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:FreeEdgeLabelModelParameter Ratio="-0.031624548736462005" Distance="-10.694443376519146" Angle="1.5707963267948968">
-										<y:FreeEdgeLabelModelParameter.Model>
-											<y:FreeEdgeLabelModel/>
-										</y:FreeEdgeLabelModelParameter.Model>
-									</y:FreeEdgeLabelModelParameter>
+									<yx:FreeEdgeLabelModelParameter Ratio="-0.031624548736462005" Distance="-10.694443376519146" Angle="1.5707963267948968">
+										<yx:FreeEdgeLabelModelParameter.Model>
+											<yx:FreeEdgeLabelModel/>
+										</yx:FreeEdgeLabelModelParameter.Model>
+									</yx:FreeEdgeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -1192,11 +1192,11 @@ Permission]]></y:Label.Text>
 							<y:Label Style="{y:GraphMLReference 1}">
 								<y:Label.Text>No</y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:FreeEdgeLabelModelParameter Ratio="0.012559664266455753" Distance="-6.477872900631082">
-										<y:FreeEdgeLabelModelParameter.Model>
-											<y:FreeEdgeLabelModel/>
-										</y:FreeEdgeLabelModelParameter.Model>
-									</y:FreeEdgeLabelModelParameter>
+									<yx:FreeEdgeLabelModelParameter Ratio="0.012559664266455753" Distance="-6.477872900631082">
+										<yx:FreeEdgeLabelModelParameter.Model>
+											<yx:FreeEdgeLabelModel/>
+										</yx:FreeEdgeLabelModelParameter.Model>
+									</yx:FreeEdgeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -1227,11 +1227,11 @@ Permission]]></y:Label.Text>
 							<y:Label Style="{y:GraphMLReference 1}">
 								<y:Label.Text>No</y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:FreeEdgeLabelModelParameter Ratio="-0.051803278688524135" Distance="-11.337447019414594" Angle="-1.5707963267948966">
-										<y:FreeEdgeLabelModelParameter.Model>
-											<y:FreeEdgeLabelModel/>
-										</y:FreeEdgeLabelModelParameter.Model>
-									</y:FreeEdgeLabelModelParameter>
+									<yx:FreeEdgeLabelModelParameter Ratio="-0.051803278688524135" Distance="-11.337447019414594" Angle="-1.5707963267948966">
+										<yx:FreeEdgeLabelModelParameter.Model>
+											<yx:FreeEdgeLabelModel/>
+										</yx:FreeEdgeLabelModelParameter.Model>
+									</yx:FreeEdgeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -1261,11 +1261,11 @@ Permission]]></y:Label.Text>
 							<y:Label Style="{y:GraphMLReference 1}">
 								<y:Label.Text>Yes</y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:FreeEdgeLabelModelParameter Ratio="0.006557377049180246" Distance="-12.163503593625128" Angle="6.123233995736766e-17">
-										<y:FreeEdgeLabelModelParameter.Model>
-											<y:FreeEdgeLabelModel/>
-										</y:FreeEdgeLabelModelParameter.Model>
-									</y:FreeEdgeLabelModelParameter>
+									<yx:FreeEdgeLabelModelParameter Ratio="0.006557377049180246" Distance="-12.163503593625128" Angle="6.123233995736766e-17">
+										<yx:FreeEdgeLabelModelParameter.Model>
+											<yx:FreeEdgeLabelModel/>
+										</yx:FreeEdgeLabelModelParameter.Model>
+									</yx:FreeEdgeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -1292,11 +1292,11 @@ Permission]]></y:Label.Text>
 							<y:Label Style="{y:GraphMLReference 1}">
 								<y:Label.Text>No</y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:FreeEdgeLabelModelParameter Ratio="0.009250019890899975" Distance="-7">
-										<y:FreeEdgeLabelModelParameter.Model>
-											<y:FreeEdgeLabelModel/>
-										</y:FreeEdgeLabelModelParameter.Model>
-									</y:FreeEdgeLabelModelParameter>
+									<yx:FreeEdgeLabelModelParameter Ratio="0.009250019890899975" Distance="-7">
+										<yx:FreeEdgeLabelModelParameter.Model>
+											<yx:FreeEdgeLabelModel/>
+										</yx:FreeEdgeLabelModelParameter.Model>
+									</yx:FreeEdgeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -1333,11 +1333,11 @@ Permission]]></y:Label.Text>
 					<y:Label Style="{y:GraphMLReference 1}">
 						<y:Label.Text><![CDATA[Not Valid]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:FreeEdgeLabelModelParameter Angle="1.5707963267948968">
-								<y:FreeEdgeLabelModelParameter.Model>
-									<y:FreeEdgeLabelModel/>
-								</y:FreeEdgeLabelModelParameter.Model>
-							</y:FreeEdgeLabelModelParameter>
+							<yx:FreeEdgeLabelModelParameter Angle="1.5707963267948968">
+								<yx:FreeEdgeLabelModelParameter.Model>
+									<yx:FreeEdgeLabelModel/>
+								</yx:FreeEdgeLabelModelParameter.Model>
+							</yx:FreeEdgeLabelModelParameter>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>

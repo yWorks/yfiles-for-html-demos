@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,14 +27,14 @@
  **
  ***************************************************************************/
 import {
-  Class,
   Color,
+  type Constructor,
   GeneralPath,
   GraphComponent,
   IGroupBoundsCalculator,
+  IGroupPaddingProvider,
   IInputModeContext,
   INode,
-  INodeInsetsProvider,
   INodeSizeConstraintProvider,
   Insets,
   IRenderContext,
@@ -46,7 +46,7 @@ import {
   Size,
   SvgVisual,
   type TaggedSvgVisual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { SVGNS } from './Namespaces'
 
 /** bounds of the "tab" */
@@ -175,14 +175,14 @@ export default class Sample1GroupNodeStyle extends NodeStyleBase<Sample1GroupNod
    * Overridden to customize the behavior of this style with respect to certain user interaction.
    * @see Overrides {@link NodeStyleBase.lookup}
    */
-  lookup(node: INode, type: Class): object {
+  lookup(node: INode, type: Constructor<any>): object {
     // A group bounds calculator that calculates bounds that encompass the
     // children of a group and all the children's labels.
-    if (type === IGroupBoundsCalculator.$class) {
+    if (type === IGroupBoundsCalculator) {
       // use a custom group bounds calculator that takes labels into account
-      return IGroupBoundsCalculator.create((graph, groupNode) => {
+      return IGroupBoundsCalculator.create((graph) => {
         let bounds: Rect = Rect.EMPTY
-        const children = graph.getChildren(groupNode)
+        const children = graph.getChildren(node)
         children.forEach((child) => {
           bounds = Rect.add(bounds, child.layout.toRect())
           child.labels.forEach((label) => {
@@ -190,23 +190,21 @@ export default class Sample1GroupNodeStyle extends NodeStyleBase<Sample1GroupNod
           })
         })
 
-        const insetsProvider = groupNode.lookup(INodeInsetsProvider.$class) as INodeInsetsProvider
-        return insetsProvider === null
-          ? bounds
-          : bounds.getEnlarged(insetsProvider.getInsets(groupNode))
+        const paddingProvider = node.lookup(IGroupPaddingProvider) as IGroupPaddingProvider
+        return paddingProvider === null ? bounds : bounds.getEnlarged(paddingProvider.getPadding())
       })
     }
 
-    // Determines the insets used for the group contents.
-    if (type === INodeInsetsProvider.$class) {
-      // use a custom insets provider that reserves space for the tab and the toggle button
-      return INodeInsetsProvider.create(
-        () => new Insets(6, TAB_H + 6, CORNER_SIZE - 1, CORNER_SIZE - 1)
+    // Determines the paddings used for the group contents.
+    if (type === IGroupPaddingProvider) {
+      // use a custom padding provider that reserves space for the tab and the toggle button
+      return IGroupPaddingProvider.create(
+        () => new Insets(TAB_H + 6, CORNER_SIZE - 1, CORNER_SIZE - 1, 6)
       )
     }
 
     // Determines the minimum and maximum node size.
-    if (type === INodeSizeConstraintProvider.$class) {
+    if (type === INodeSizeConstraintProvider) {
       // use a custom size constraint provider to make sure that the tab
       // and the toggle button are always visible
       return INodeSizeConstraintProvider.create({
@@ -240,12 +238,12 @@ export default class Sample1GroupNodeStyle extends NodeStyleBase<Sample1GroupNod
       node.layout.height - TAB_H
     )
     // check main node rect
-    if (rect.containsWithEps(location, context.hitTestRadius)) {
+    if (rect.contains(location, context.hitTestRadius)) {
       return true
     }
     // check tab
     const width = displayTextInTab(node.layout.width) ? TAB_W : SMALL_TAB_W
-    return new Rect(node.layout.x, node.layout.y, width, TAB_H).containsWithEps(
+    return new Rect(node.layout.x, node.layout.y, width, TAB_H).contains(
       location,
       context.hitTestRadius
     )

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,10 +27,9 @@
  **
  ***************************************************************************/
 import {
-  Class,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GeneralPath,
   GraphBuilder,
   GraphComponent,
@@ -40,7 +39,7 @@ import {
   GroupNodeStyleTabPosition,
   HandleInputMode,
   HandlePositions,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   IHandle,
   IHitTestable,
@@ -52,16 +51,16 @@ import {
   ObservableCollection,
   Point,
   RectangleHandle,
-  RectangleIndicatorInstaller,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import PositionHandler from './PositionHandler'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
+import { RectangleRenderer } from '../../utils/RectangleRenderer'
 
 /**
  * Application Features - Application Features Base
@@ -83,8 +82,6 @@ let exportRect: MutableRectangle = null!
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // create the input Mode and the rectangular indicator
   initializeInputModes()
 
@@ -95,11 +92,9 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
@@ -138,21 +133,18 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
  */
 function initializeInputModes(): void {
   // Create a GraphEditorInputMode instance
-  const editMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  const editMode = new GraphEditorInputMode()
   // and install the edit mode into the canvas.
   graphComponent.inputMode = editMode
 
   // create the model for the export rectangle
   exportRect = new MutableRectangle(-30, -30, 240, 240)
 
-  // visualize it
-  const installer = new RectangleIndicatorInstaller(exportRect)
-  installer.addCanvasObject(
-    graphComponent.createRenderContext(),
-    graphComponent.backgroundGroup,
-    exportRect
+  // ... visualize it in the canvas, ...
+  graphComponent.renderTree.createElement(
+    graphComponent.renderTree.highlightGroup,
+    exportRect,
+    new RectangleRenderer()
   )
 
   addExportRectInputModes(editMode)
@@ -171,10 +163,10 @@ function addExportRectInputModes(inputMode: GraphInputMode): void {
 
   // now the handles
   const newDefaultCollectionModel = new ObservableCollection<IHandle>()
-  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.NORTH_EAST, exportRect))
-  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.NORTH_WEST, exportRect))
-  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.SOUTH_EAST, exportRect))
-  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.SOUTH_WEST, exportRect))
+  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.TOP_RIGHT, exportRect))
+  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.TOP_LEFT, exportRect))
+  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.BOTTOM_RIGHT, exportRect))
+  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.BOTTOM_LEFT, exportRect))
   exportHandleInputMode.handles = newDefaultCollectionModel
 
   // create a mode that allows for dragging the export rectangle at the sides
@@ -207,9 +199,9 @@ function initializeGraph(graph: IGraph): void {
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
 
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true

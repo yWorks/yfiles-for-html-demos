@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   IEnumerable,
   IInputModeContext,
@@ -35,8 +34,9 @@ import {
   IPortCandidate,
   IPortLocationModelParameter,
   List,
+  PortCandidate,
   PortCandidateProviderBase
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * This port candidate provider provides port candidates at each side and in the center of a node.
@@ -57,15 +57,15 @@ export default class NodePortCandidateProvider extends PortCandidateProviderBase
    */
   getPortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
     const candidates = new List<IPortCandidate>()
-    candidates.add(this.newCandidate(FreeNodePortLocationModel.NODE_CENTER_ANCHORED))
-    candidates.add(this.newCandidate(FreeNodePortLocationModel.NODE_LEFT_ANCHORED))
-    candidates.add(this.newCandidate(FreeNodePortLocationModel.NODE_TOP_ANCHORED))
-    candidates.add(this.newCandidate(FreeNodePortLocationModel.NODE_RIGHT_ANCHORED))
-    candidates.add(this.newCandidate(FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED))
+    candidates.add(this.newCandidate(FreeNodePortLocationModel.CENTER))
+    candidates.add(this.newCandidate(FreeNodePortLocationModel.LEFT))
+    candidates.add(this.newCandidate(FreeNodePortLocationModel.TOP))
+    candidates.add(this.newCandidate(FreeNodePortLocationModel.RIGHT))
+    candidates.add(this.newCandidate(FreeNodePortLocationModel.BOTTOM))
     return candidates
   }
 
   private newCandidate(parameter: IPortLocationModelParameter): IPortCandidate {
-    return new DefaultPortCandidate(this.node, parameter)
+    return new PortCandidate(this.node, parameter)
   }
 }

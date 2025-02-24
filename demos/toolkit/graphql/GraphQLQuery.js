@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,12 +27,8 @@
  **
  ***************************************************************************/
 const url = 'http://localhost:4244/graphql'
-
 /**
  * Executes a GraphQL query to the GraphQL endpoint.
- * @param {!string} query
- * @param {!object} variables
- * @returns {!Promise}
  */
 export async function graphQLQuery(query, variables = {}) {
   const response = await fetch(url, {
@@ -43,6 +39,5 @@ export async function graphQLQuery(query, variables = {}) {
     },
     body: JSON.stringify({ query, variables })
   })
-
   return response.json()
 }

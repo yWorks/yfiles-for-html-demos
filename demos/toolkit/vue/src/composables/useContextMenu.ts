@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,18 +28,17 @@
  ***************************************************************************/
 import { onMounted, reactive, toRef, watch } from 'vue'
 import {
+  Command,
   GraphComponent,
   GraphEditorInputMode,
   GraphViewerInputMode,
-  ICommand,
   IEdge,
   IModelItem,
   INode,
   Point,
   PopulateItemContextMenuEventArgs,
   Rect
-} from 'yfiles'
-import { BrowserDetection } from 'demo-utils/BrowserDetection.ts'
+} from '@yfiles/yfiles'
 
 export type MenuItem = { title: string; action: () => void }
 export type Location = { x: number; y: number }
@@ -53,7 +52,6 @@ export function useContextMenu(getGraphComponent: () => GraphComponent) {
   })
 
   let graphComponent: GraphComponent
-  let inputMode: GraphEditorInputMode | GraphViewerInputMode
   onMounted(() => {
     graphComponent = getGraphComponent()
     register(graphComponent.inputMode as GraphViewerInputMode | GraphEditorInputMode)
@@ -70,33 +68,25 @@ export function useContextMenu(getGraphComponent: () => GraphComponent) {
    * Registers the context menu on the current input mode.
    */
   function register(inputMode: GraphEditorInputMode | GraphViewerInputMode): void {
-    addOpeningEventListeners(graphComponent, (location) => {
-      const worldLocation = graphComponent.toWorldFromPage(location)
-      const displayMenu = inputMode.contextMenuInputMode.shouldOpenMenu(worldLocation)
-      if (displayMenu) {
-        open(location)
-      }
-    })
-
-    inputMode.contextMenuInputMode.addPopulateMenuListener((_, evt) => {
-      evt.showMenu = true
-    })
-
-    inputMode.addPopulateItemContextMenuListener(
-      (
-        sender: GraphEditorInputMode | GraphViewerInputMode,
-        args: PopulateItemContextMenuEventArgs<IModelItem>
-      ) => {
-        if (args.item) {
+    inputMode.addEventListener(
+      'populate-item-context-menu',
+      (evt: PopulateItemContextMenuEventArgs<IModelItem>) => {
+        if (evt.item) {
+          evt.showMenu = true
+          open(
+            graphComponent.viewToPageCoordinates(
+              graphComponent.worldToViewCoordinates(evt.queryLocation)
+            )
+          )
           // select the item
           graphComponent.selection.clear()
-          graphComponent.selection.setSelected(args.item, true)
+          graphComponent.selection.add(evt.item)
         }
-        populate(args.item)
+        populate(evt.item)
       }
     )
 
-    inputMode.contextMenuInputMode.addCloseMenuListener(() => hide())
+    inputMode.contextMenuInputMode.addEventListener('menu-closed', () => hide())
   }
 
   /**
@@ -106,7 +96,7 @@ export function useContextMenu(getGraphComponent: () => GraphComponent) {
     function getBounds(item: INode | IEdge) {
       return item instanceof INode
         ? item.layout.toRect()
-        : Rect.add(item.sourceNode!.layout.toRect(), item.targetNode!.layout.toRect())
+        : Rect.add(item.sourceNode.layout.toRect(), item.targetNode.layout.toRect())
     }
 
     const contextMenuItems = []
@@ -117,7 +107,7 @@ export function useContextMenu(getGraphComponent: () => GraphComponent) {
           // center the item in the viewport
           let targetBounds = getBounds(item)
           targetBounds = targetBounds.getEnlarged(50 / graphComponent.zoom)
-          ICommand.ZOOM.execute(targetBounds, graphComponent)
+          graphComponent.executeCommand(Command.ZOOM, targetBounds)
         }
       })
     }
@@ -135,65 +125,7 @@ export function useContextMenu(getGraphComponent: () => GraphComponent) {
 
   function close(): void {
     const inputMode = graphComponent.inputMode as GraphEditorInputMode | GraphViewerInputMode
-    inputMode.contextMenuInputMode.menuClosed()
-  }
-
-  function addOpeningEventListeners(
-    graphComponent: GraphComponent,
-    openingCallback: (location: Point) => void
-  ): void {
-    const componentDiv = graphComponent.div
-
-    const contextMenuListener = (evt: MouseEvent) => {
-      evt.preventDefault()
-      if (data.display) {
-        // might be open already because of the long press listener
-        return
-      }
-      openingCallback(new Point(evt.pageX, evt.pageY))
-    }
-
-    // Listen for the contextmenu event
-    // Note: On Linux based systems (e.g. Ubuntu), the contextmenu event is fired on mouse down
-    // which triggers the ContextMenuInputMode before the ClickInputMode. Therefore handling the
-    // event, will prevent the ItemRightClicked event from firing.
-    // For more information, see https://docs.yworks.com/yfileshtml/#/kb/article/780/
-    componentDiv.addEventListener('contextmenu', contextMenuListener, false)
-
-    if (BrowserDetection.safariVersion > 0 || BrowserDetection.iOSVersion > 0) {
-      // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
-      let contextMenuTimer: number
-      graphComponent.addTouchDownListener((sender, args) => {
-        contextMenuTimer = setTimeout(() => {
-          openingCallback(
-            graphComponent.toPageFromView(graphComponent.toViewCoordinates(args.location))
-          )
-        }, 500)
-      })
-
-      graphComponent.addTouchUpListener(() => {
-        clearTimeout(contextMenuTimer)
-      })
-    }
-
-    // Listen to the context menu key to make it work in Chrome
-    componentDiv.addEventListener('keyup', (evt) => {
-      if (evt.key === 'ContextMenu') {
-        evt.preventDefault()
-        openingCallback(getCenterInPage(componentDiv))
-      }
-    })
-  }
-
-  function getCenterInPage(element: HTMLElement): Point {
-    let left = element.clientWidth / 2.0
-    let top = element.clientHeight / 2.0
-    while (element.offsetParent) {
-      left += element.offsetLeft
-      top += element.offsetTop
-      element = element.offsetParent as HTMLElement
-    }
-    return new Point(left, top)
+    inputMode.contextMenuInputMode.closeMenu()
   }
 
   return {

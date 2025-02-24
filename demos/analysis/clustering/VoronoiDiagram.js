@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,28 +27,22 @@
  **
  ***************************************************************************/
 import {
-  Edge,
   GeneralPath,
-  Geom,
-  Graph,
   HashMap,
-  IEdgeMap,
   IEnumerable,
-  INodeMap,
+  IMapper,
+  LayoutEdge,
+  LayoutGraph,
+  LayoutGraphAlgorithms,
+  LayoutNode,
   LineSegment,
   List,
-  Maps,
+  Mapper,
   Point,
-  Rect,
-  TriangulationAlgorithm,
-  YNode,
-  YPoint,
-  YRectangle,
-  YVector
-} from 'yfiles'
-
+  Rect
+} from '@yfiles/yfiles'
 /**
- * Creates a Voronoi diagram from a Delauney triangulation.
+ * Creates a Voronoi diagram from a Delaunay triangulation.
  * The result is returned as a sequence of {@link GeneralPath} instances that define Voronoi faces.
  * This class is built upon the concepts of triangulations, planar embedding, and faces and assumes
  * that the user is familiar with these concepts.
@@ -57,38 +51,31 @@ export class VoronoiDiagram {
   centroids
   boundingBox
   voronoiFaces
-
   /**
    * Creates a new instance of Voronoi diagram.
-   * @param {!IEnumerable.<Point>} centroids
-   * @param {!Rect} boundingBox
    */
   constructor(centroids, boundingBox) {
     this.centroids = centroids
     // calculate the content rect so that we can bound the Voronoi diagram
-    this.boundingBox = boundingBox.toYRectangle()
+    this.boundingBox = boundingBox
     this.voronoiFaces = []
     this.createVoronoiDiagram()
   }
-
   /**
    * Creates the Voronoi graph.
    */
   createVoronoiDiagram() {
-    // create the delauney triangulation and get the created faces
-    const delauney = this.createDelauneyTriangulation()
-    const faces = delauney.faces
-    const delauneyCoordinates = delauney.delauneyCoordinates
-    const edge2Face = delauney.edge2Face
-
+    // create the Delaunay triangulation and get the created faces
+    const delaunay = this.createDelaunayTriangulation()
+    const faces = delaunay.faces
+    const delaunayCoordinates = delaunay.delaunayCoordinates
+    const edge2Face = delaunay.edge2Face
     // create the voronoiGraph
-    const voronoiGraph = new Graph()
+    const voronoiGraph = new LayoutGraph()
     // holds the voronoi node coordinates
-    const voronoiNodeCoordinates = voronoiGraph.createNodeMap()
-
+    const voronoiNodeCoordinates = voronoiGraph.createNodeDataMap()
     const closestEdgesMap = new HashMap()
     let outerFace = null
-
     const existOnlyTwoFaces = faces.size === 2
     let externalFaceFound = false
     faces.forEach((face) => {
@@ -100,7 +87,6 @@ export class VoronoiDiagram {
           circumcenter,
           voronoiNodeCoordinates
         )
-
         // find the edge that is closer to the circumcenter
         // this is necessary to calculate afterwards the direction of the vertical lines
         const faceEdges = face.edges
@@ -110,18 +96,12 @@ export class VoronoiDiagram {
           const edge = faceEdges[i]
           const edgeSource = voronoiNodeCoordinates.get(edge.source)
           const edgeTarget = voronoiNodeCoordinates.get(edge.target)
-
-          const distance = Geom.distanceToLineSegment(
-            circumcenter.x,
-            circumcenter.y,
-            edgeSource.x,
-            edgeSource.y,
-            edgeTarget.x,
-            edgeTarget.y
-          )
-          if (distance < minDist) {
-            minDist = distance
-            closestEdge = edge
+          if (edgeSource && edgeTarget) {
+            const distance = circumcenter.distanceToSegment(edgeSource, edgeTarget)
+            if (distance < minDist) {
+              minDist = distance
+              closestEdge = edge
+            }
           }
         }
         closestEdgesMap.set(face, closestEdge)
@@ -131,7 +111,6 @@ export class VoronoiDiagram {
         externalFaceFound = true
       }
     })
-
     const edges = outerFace != null ? outerFace.edges : []
     const outerFaceEdges = new Set(edges)
     const visitedEdges = new Set()
@@ -139,12 +118,11 @@ export class VoronoiDiagram {
       if (!face.outer || (existOnlyTwoFaces && face.circumcenter)) {
         const circumcenter = face.circumcenter
         face.edges.forEach((edge) => {
-          const oppositeEdge = edge.target.getEdge(edge.source)
+          const oppositeEdge = edge.target.outEdges.find((e) => e.target === edge.source)
           if (!visitedEdges.has(edge) && !visitedEdges.has(oppositeEdge)) {
             visitedEdges.add(edge)
-            const sourceCenter = delauneyCoordinates.get(edge.source)
-            const targetCenter = delauneyCoordinates.get(edge.target)
-
+            const sourceCenter = delaunayCoordinates.get(edge.source)
+            const targetCenter = delaunayCoordinates.get(edge.target)
             // The Voronoi edges are drawn as follows:
             // (i) if the face edge is an outerFace edge, we calculate the perpendicular vector to this edge from the
             // circumcenter (enlarge it enough so that it reaches the boundary and calculate the intersection point
@@ -152,21 +130,19 @@ export class VoronoiDiagram {
             // of the triangle, we connect the two Voronoi nodes of the two involved faces - again we may have to
             // enlarge somehow the edge if this does not reach the boundary
             if (outerFaceEdges.has(edge) || outerFaceEdges.has(oppositeEdge)) {
-              const v = new YVector(targetCenter, sourceCenter)
-
+              const v = new Point(targetCenter.x - sourceCenter.x, targetCenter.y - sourceCenter.y)
               // find the orthonormal vector
-              let orthonormal = YVector.orthoNormal(v)
-              orthonormal.scale(5000)
-
+              let orthonormal = new Point(-v.y / v.vectorLength, v.x / v.vectorLength)
+              orthonormal = orthonormal.multiply(5000)
               // now we have to define the orthonormal vector's direction
               // we create a line-segment from the orthonormal and check if it intersects the triangle
-              let point = YVector.add(circumcenter, orthonormal)
+              let point = circumcenter.add(orthonormal)
               const edgeSegment = new LineSegment(sourceCenter, targetCenter)
               const bisectorSegment = new LineSegment(point, circumcenter)
               const intersection = LineSegment.getIntersection(edgeSegment, bisectorSegment)
               // the circumcenter is internal and the line-segment does not intersect with the edge, we have to rotate
               if (face.isCircumcenterInternal(circumcenter) && !intersection) {
-                orthonormal = orthonormal.rotate(Math.PI)
+                orthonormal = rotate(orthonormal, Math.PI)
               } else if (!face.isCircumcenterInternal(circumcenter)) {
                 // the circumcenter is not internal and there exists an intersection and the vertical line
                 // corresponds to the closest edge, or there exists not intersection but the vertical line does not
@@ -175,11 +151,10 @@ export class VoronoiDiagram {
                   (intersection && closestEdgesMap.get(face) === edge) ||
                   (!intersection && closestEdgesMap.get(face) !== edge)
                 ) {
-                  orthonormal = orthonormal.rotate(Math.PI)
+                  orthonormal = rotate(orthonormal, Math.PI)
                 }
               }
-              point = YVector.add(circumcenter, orthonormal)
-
+              point = circumcenter.add(orthonormal)
               // calculate a new segment between the newly calculated point and the circumcenter and calculate the
               // intersection with the boundary
               if (this.boundingBox.contains(circumcenter)) {
@@ -212,7 +187,6 @@ export class VoronoiDiagram {
                     p = this.enlargeSegment(point, circumcenter)
                   }
                 }
-
                 // then we take the two intersections... there must be two since one is the intersection with the
                 // closest boundary and the second with its parallel one
                 const lineSegment = new LineSegment(circumcenter, p)
@@ -237,12 +211,10 @@ export class VoronoiDiagram {
               const face2 = incidentFaces[1]
               const center1 = face1.circumcenter
               const center2 = face2.circumcenter
-
               // since the edge is not an outerFace edge there always exist two faces, so we can create a segment
               let lineSegment = new LineSegment(center1, center2)
               const containsSource = this.boundingBox.contains(center1)
               const containsTarget = this.boundingBox.contains(center2)
-
               let newEdgeSource = face1.voronoiNode
               let newEdgeTarget = face2.voronoiNode
               if (containsSource && containsTarget) {
@@ -253,7 +225,6 @@ export class VoronoiDiagram {
                 // e.g. two points are both on the left or on the right of the rectangle
                 let p1 = center1
                 let p2 = center2
-
                 const x1 = this.boundingBox.x
                 const x2 = x1 + this.boundingBox.width
                 const y1 = this.boundingBox.y
@@ -263,7 +234,6 @@ export class VoronoiDiagram {
                   (p1.y <= y1 && p2.y <= y1) ||
                   (p1.x >= x2 && p2.x >= x2) ||
                   (p1.y >= y2 && p2.y >= y2)
-
                 if (!bothAtTheSameSide) {
                   if (!containsSource) {
                     p1 = this.enlargeSegment(center2, center1)
@@ -271,7 +241,6 @@ export class VoronoiDiagram {
                   if (!containsTarget) {
                     p2 = this.enlargeSegment(center1, center2)
                   }
-
                   lineSegment = new LineSegment(p1, p2)
                   const intersectionPoints = this.calculateIntersectionPoints(lineSegment)
                   if (!containsSource) {
@@ -281,7 +250,6 @@ export class VoronoiDiagram {
                       voronoiNodeCoordinates
                     )
                   }
-
                   if (!containsTarget) {
                     newEdgeTarget = this.createVoronoiNode(
                       voronoiGraph,
@@ -295,14 +263,12 @@ export class VoronoiDiagram {
                 } else {
                   // create a node for the one that is closer to the boundary
                   const rect = this.boundingBox.toRect()
-                  const isP1CloserToBoundary =
-                    rect.distanceTo(p1.toPoint()) < rect.distanceTo(p2.toPoint())
+                  const isP1CloserToBoundary = distanceToRect(p1, rect) < distanceToRect(p2, rect)
                   if (isP1CloserToBoundary) {
                     p1 = this.enlargeSegment(center2, center1)
                   } else {
                     p2 = this.enlargeSegment(center1, center2)
                   }
-
                   lineSegment = new LineSegment(p1, p2)
                   const intersectionPoints = this.calculateIntersectionPoints(lineSegment)
                   if (intersectionPoints.length > 0) {
@@ -319,18 +285,15 @@ export class VoronoiDiagram {
         })
       }
     })
-
     // add the boundary nodes - needed mostly for coloring the Voronoi parts
     const x = this.boundingBox.x
     const y = this.boundingBox.y
     const width = this.boundingBox.width
     const height = this.boundingBox.height
-
-    this.createVoronoiNode(voronoiGraph, new YPoint(x, y), voronoiNodeCoordinates)
-    this.createVoronoiNode(voronoiGraph, new YPoint(x + width, y), voronoiNodeCoordinates)
-    this.createVoronoiNode(voronoiGraph, new YPoint(x + width, y + height), voronoiNodeCoordinates)
-    this.createVoronoiNode(voronoiGraph, new YPoint(x, y + height), voronoiNodeCoordinates)
-
+    this.createVoronoiNode(voronoiGraph, new Point(x, y), voronoiNodeCoordinates)
+    this.createVoronoiNode(voronoiGraph, new Point(x + width, y), voronoiNodeCoordinates)
+    this.createVoronoiNode(voronoiGraph, new Point(x + width, y + height), voronoiNodeCoordinates)
+    this.createVoronoiNode(voronoiGraph, new Point(x, y + height), voronoiNodeCoordinates)
     // determine which nodes of the graph belong to the boundary so that we connect the consecutive ones and create
     // the Voronoi areas
     const boundaryNodes = []
@@ -339,23 +302,19 @@ export class VoronoiDiagram {
         boundaryNodes.push(node)
       }
     })
-
     // sort the nodes around the boundary so that we add edges between these nodes
-    const center = new YPoint(x + width * 0.5, y + height * 0.5)
+    const center = new Point(x + width * 0.5, y + height * 0.5)
     boundaryNodes.sort((n1, n2) => {
       const p1 = voronoiNodeCoordinates.get(n1)
       const p2 = voronoiNodeCoordinates.get(n2)
       let angle1 = Math.atan2(p1.y - center.y, p1.x - center.x)
       let angle2 = Math.atan2(p2.y - center.y, p2.x - center.x)
-
       if (angle1 < 0) {
         angle1 += 2 * Math.PI
       }
-
       if (angle2 < 0) {
         angle2 += 2 * Math.PI
       }
-
       // For counter-clockwise, just reverse the signs of the return values
       if (angle1 < angle2) {
         return 1
@@ -364,7 +323,6 @@ export class VoronoiDiagram {
       }
       return 0
     })
-
     // create the edges between consecutive boundary nodes and store them
     const boundaryEdges = []
     for (let i = 0; i < boundaryNodes.length; i++) {
@@ -378,69 +336,60 @@ export class VoronoiDiagram {
         boundaryEdges.push(edge)
       }
     }
-
     // remove nodes that might lie on the exterior of the graph's bounding box, these can occur only if a
     // circumcenter lies on the exterior of the bounding box after the triangulation
     voronoiGraph.nodes.toArray().forEach((node) => {
       if (node.degree === 0) {
-        voronoiGraph.removeNode(node)
+        voronoiGraph.remove(node)
       }
     })
-
     // calculate the Voronoi faces
     this.calculateVoronoiFaces(voronoiGraph, voronoiNodeCoordinates, boundaryEdges)
   }
-
   /**
-   * Creates the delauney triangulation and returns an object containing information about the created faces.
-   * @returns {!object}
+   * Creates the delaunay triangulation and returns an object containing information about the created faces.
    */
-  createDelauneyTriangulation() {
-    // generate the delauney triangulation - the nodes of the delauney graph are the center of the clusters
-    const delauneyGraph = new Graph()
-    // holds the coordinates of each delauney node
-    const pointData = delauneyGraph.createNodeMap()
-    // holds the reversed edge for each delauney edge
-    const revMap = delauneyGraph.createEdgeMap()
-
-    // fill the pointData with the coordinates of the nodes of the delauney graph
+  createDelaunayTriangulation() {
+    // generate the Delaunay triangulation - the nodes of the delaunay graph are the center of the clusters
+    const delaunayGraph = new LayoutGraph()
+    // holds the coordinates of each delaunay node
+    const pointData = new Mapper()
+    // holds the reversed edge for each delaunay edge
+    const revMap = new Mapper()
+    // fill the pointData with the coordinates of the nodes of the delaunay graph
     this.centroids.forEach((centroid) => {
-      const center = delauneyGraph.createNode()
-      pointData.set(center, new YPoint(centroid.x, centroid.y))
+      const center = delaunayGraph.createNode()
+      pointData.set(center, new Point(centroid.x, centroid.y))
     })
-
-    // create the delauney triangulation
-    const outerFaceEdge = TriangulationAlgorithm.calcDelauneyTriangulation(
-      delauneyGraph,
+    // create the delaunay triangulation
+    const outerFaceEdge = LayoutGraphAlgorithms.delaunayTriangulation(
+      delaunayGraph,
       pointData,
       revMap
     )
-
     // calculate the faces of the triangulation
-    const edge2Face = Maps.createHashedEdgeMap()
-    const faces = this.calculateDelauneyFaces(delauneyGraph, revMap, pointData, edge2Face)
-
+    const edge2Face = new Mapper()
+    const faces = this.calculateDelaunayFaces(delaunayGraph, revMap, pointData, edge2Face)
     // mark outer face edges
     this.calculateOuterFace(outerFaceEdge, revMap, edge2Face)
     return {
       faces,
-      delauneyCoordinates: pointData,
+      delaunayCoordinates: pointData,
       edge2Face
     }
   }
-
   /**
    * Calculates the faces of the given graph.
-   * @param {!Graph} graph The input graph
-   * @param {!IEdgeMap} reversedEdgesMap An edge map that holds for each edge the corresponding
+   * @param graph The input graph
+   * @param reversedEdgesMap An edge map that holds for each edge the corresponding
    * reversed edge
-   * @param {!INodeMap} coordinatesMap A node map that holds for each node the corresponding node
+   * @param coordinatesMap A node map that holds for each node the corresponding node
    * coordinates
-   * @param {!IEdgeMap} edge2face An edge map that holds for each edge the face(s) to which the edge
+   * @param edge2face An edge map that holds for each edge the face(s) to which the edge
    * belongs
-   * @returns {!IEnumerable.<VoronoiFace>} The faces of the given graph as list
+   * @returns The faces of the given graph as list
    */
-  calculateDelauneyFaces(graph, reversedEdgesMap, coordinatesMap, edge2face) {
+  calculateDelaunayFaces(graph, reversedEdgesMap, coordinatesMap, edge2face) {
     const mark = []
     const faceList = new List()
     graph.edges.forEach((edge) => {
@@ -450,7 +399,6 @@ export class VoronoiDiagram {
         face.nodeCoordinates = coordinatesMap
       }
     })
-
     faceList.forEach((face) => {
       face.edges.forEach((edge) => {
         this.addEdgeToFace(edge, face, edge2face)
@@ -459,13 +407,12 @@ export class VoronoiDiagram {
     })
     return faceList
   }
-
   /**
    * Calculates the outer face, starting from a given outer face edge.
-   * @param {!Edge} outerFaceEdge An edge of the outer face to start
-   * @param {!IEdgeMap} reversedEdgesMap An edge map that holds for each edge the corresponding
+   * @param outerFaceEdge An edge of the outer face to start
+   * @param reversedEdgesMap An edge map that holds for each edge the corresponding
    * reversed edge belongs
-   * @param {!IEdgeMap} edge2face An edge map that holds for each edge the face(s) to which the
+   * @param edge2face An edge map that holds for each edge the face(s) to which the
    * edge belongs
    */
   calculateOuterFace(outerFaceEdge, reversedEdgesMap, edge2face) {
@@ -476,8 +423,7 @@ export class VoronoiDiagram {
       outerFaceEdges.add(eOut)
       outerFaceEdges.add(reversedEdgesMap.get(eOut))
     } while (outerFaceEdge !== eOut)
-
-    // define the outer face, it is the face that contains the edge returned by the delauney triangulation
+    // define the outer face, it is the face that contains the edge returned by the Delaunay triangulation
     const outerEdgeFaces = edge2face.get(outerFaceEdge)
     let outerFace = null
     for (let j = 0; j < outerEdgeFaces.length; j++) {
@@ -500,14 +446,12 @@ export class VoronoiDiagram {
       }
     }
   }
-
   /**
    * Creates a new face starting from the given edge.
-   * @param {!Edge} edge The edge to start
-   * @param {!Array.<boolean>} mark Holds the edges that have already been visited
-   * @param {!IEdgeMap} reversedEdgesMap An edge map that holds for each edge the corresponding
+   * @param edge The edge to start
+   * @param mark Holds the edges that have already been visited
+   * @param reversedEdgesMap An edge map that holds for each edge the corresponding
    * reversed edge
-   * @returns {!VoronoiFace}
    */
   createFace(edge, mark, reversedEdgesMap) {
     const face = new VoronoiFace()
@@ -516,7 +460,6 @@ export class VoronoiDiagram {
     while (ok) {
       face.addEdge(edge)
       mark[edge.index] = true
-
       // select the next outgoing edge in counterclockwise direction
       const nextEdge = this.cyclicNextEdge(edge, reversedEdgesMap)
       if (mark[nextEdge.index]) {
@@ -528,12 +471,11 @@ export class VoronoiDiagram {
     }
     return face
   }
-
   /**
    * Adds an edge to the given face.
-   * @param {!Edge} edge The given edge
-   * @param {!VoronoiFace} face The face to which the edge belongs
-   * @param {!IEdgeMap} edge2face An edge map that holds for each edge the face(s) to which the edge
+   * @param edge The given edge
+   * @param face The face to which the edge belongs
+   * @param edge2face An edge map that holds for each edge the face(s) to which the edge
    * belongs
    */
   addEdgeToFace(edge, face, edge2face) {
@@ -545,75 +487,56 @@ export class VoronoiDiagram {
       faces.push(face)
     }
   }
-
   /**
    * Returns the next edge in the face.
-   * @param {!Edge} edge The given edge
-   * @param {!IEdgeMap} reversedEdgesMap An edge map that holds for each edge the corresponding
+   * @param edge The given edge
+   * @param reversedEdgesMap An edge map that holds for each edge the corresponding
    * reversed edge
-   * @returns {!Edge} The next edge in the face
+   * @returns The next edge in the face
    */
   cyclicNextEdge(edge, reversedEdgesMap) {
     const reversedEdge = reversedEdgesMap.get(edge)
-    const result = reversedEdge.prevOutEdge
-    return result === null ? reversedEdge.source.lastOutEdge : result
+    const outEdges = reversedEdge.source.outEdges
+    const index = outEdges.indexOf(reversedEdge) - 1
+    return outEdges.size > 0 && index >= 0 ? outEdges.at(index) : outEdges.last()
   }
-
-  /**
-   * Returns the previous edge in the face.
-   * @param {!Edge} edge The given edge
-   * @param {!IEdgeMap} reversedEdgesMap An edge map that holds for each edge the corresponding
-   * reversed edge
-   * @returns {!Edge} The previous edge in the face
-   */
-  cyclicPrevEdge(edge, reversedEdgesMap) {
-    let tmp = edge.nextOutEdge
-    if (tmp === null) {
-      tmp = edge.source.firstOutEdge
-    }
-    return reversedEdgesMap.get(tmp)
-  }
-
   /**
    * Creates a Voronoi node.
-   * @param {!Graph} voronoiGraph The Voronoi graph
-   * @param {!YPoint} coordinates The node coordinates
-   * @param {!INodeMap} voronoiNodeCoordinates Holds the coordinates of the nodes of the Voronoi
+   * @param voronoiGraph The Voronoi graph
+   * @param coordinates The node coordinates
+   * @param voronoiNodeCoordinates Holds the coordinates of the nodes of the Voronoi
    * graph
-   * @returns {!YNode}
    */
   createVoronoiNode(voronoiGraph, coordinates, voronoiNodeCoordinates) {
     const voronoiNode = voronoiGraph.createNode()
     voronoiNodeCoordinates.set(voronoiNode, coordinates)
     return voronoiNode
   }
-
   /**
    * Creates an edge between the two given nodes if the edge does not already exist in the graph.
-   * @param {!Graph} voronoiGraph The voronoi diagram
-   * @param {!YNode} source The source of the edge
-   * @param {!YNode} target The target of the edge
-   * @returns {?Edge}
+   * @param voronoiGraph The voronoi diagram
+   * @param source The source of the edge
+   * @param target The target of the edge
    */
   createEdge(voronoiGraph, source, target) {
-    if (!voronoiGraph.containsEdge(source, target) && !voronoiGraph.containsEdge(target, source)) {
+    const e1 = voronoiGraph.edges.find((edge) => edge.source === source && edge.target === target)
+    const e2 = voronoiGraph.edges.find((edge) => edge.source === target && edge.target === source)
+    if (!e1 && !e2) {
       return voronoiGraph.createEdge(source, target)
     }
     return null
   }
-
   /**
    * Calculates the faces of the Voronoi graph.
-   * @param {!Graph} voronoiGraph The Voronoi graph
-   * @param {!INodeMap} voronoiNodeCoordinates Holds the coordinates of the nodes of the Voronoi
+   * @param voronoiGraph The Voronoi graph
+   * @param voronoiNodeCoordinates Holds the coordinates of the nodes of the Voronoi
    * graph
-   * @param {!Array.<Edge>} boundaryEdges An array containing the edges that belong to the boundary
+   * @param boundaryEdges An array containing the edges that belong to the boundary
    */
   calculateVoronoiFaces(voronoiGraph, voronoiNodeCoordinates, boundaryEdges) {
     const darts = []
     const node2Darts = new HashMap()
     const boundaryEdgesSet = new Set(boundaryEdges)
-
     // for each edge segment, we create two darts, one for each direction s -> t and t -> s
     let index = -1
     voronoiGraph.edges.forEach((edge) => {
@@ -623,22 +546,18 @@ export class VoronoiDiagram {
       darts.push(dart1)
       const dart2 = new VoronoiDart(target, source, edge, index++)
       darts.push(dart2)
-
       // store the dart to its origin node's list
       if (!node2Darts.get(source)) {
         node2Darts.set(source, [])
       }
       node2Darts.get(source)?.push(dart1)
-
       if (!node2Darts.get(target)) {
         node2Darts.set(target, [])
       }
       node2Darts.get(target)?.push(dart2)
-
       dart1.reversed = dart2
       dart2.reversed = dart1
     })
-
     // for each dart, we calculate the angle that creates with the x-axis in counter-clockwise order
     darts.forEach((dart) => {
       const sourceCenter = voronoiNodeCoordinates.get(dart.source)
@@ -646,7 +565,6 @@ export class VoronoiDiagram {
       const angle = Math.atan2(sourceCenter.y - targetCenter.y, sourceCenter.x - targetCenter.x)
       dart.angle = angle > 0 ? angle : 2 * Math.PI + angle
     })
-
     // we sort the darts around their origin based on the angle the form with the x-axis
     voronoiGraph.nodes.forEach((node) => {
       const nodeDarts = node2Darts.get(node)
@@ -665,7 +583,6 @@ export class VoronoiDiagram {
         }
       }
     })
-
     // we iterate over the darts to create the faces
     const faces = []
     darts.forEach((dart) => {
@@ -694,7 +611,6 @@ export class VoronoiDiagram {
         }
       }
     })
-
     // we create the general paths that form the geometric face
     const voronoiFaces = []
     faces.forEach((face) => {
@@ -713,64 +629,56 @@ export class VoronoiDiagram {
         voronoiFaces.push(facePath)
       }
     })
-
     this.voronoiFaces = voronoiFaces
   }
-
   /**
    * Calculates the intersections between the bounding box and a line segment.
-   * @param {!LineSegment} lineSegment The given line segment
-   * @returns {!Array.<YPoint>} An array containing the intersections between a rectangle and a line segment
+   * @param lineSegment The given line segment
+   * @returns An array containing the intersections between a rectangle and a line segment
    */
   calculateIntersectionPoints(lineSegment) {
-    const v1 = new YPoint(this.boundingBox.x, this.boundingBox.y)
-    const v2 = new YPoint(this.boundingBox.x + this.boundingBox.width, this.boundingBox.y)
-    const v3 = new YPoint(
+    const v1 = new Point(this.boundingBox.x, this.boundingBox.y)
+    const v2 = new Point(this.boundingBox.x + this.boundingBox.width, this.boundingBox.y)
+    const v3 = new Point(
       this.boundingBox.x + this.boundingBox.width,
       this.boundingBox.y + this.boundingBox.height
     )
-    const v4 = new YPoint(this.boundingBox.x, this.boundingBox.y + this.boundingBox.height)
-
+    const v4 = new Point(this.boundingBox.x, this.boundingBox.y + this.boundingBox.height)
     const intersections = []
     let intersectionPoint = LineSegment.getIntersection(lineSegment, new LineSegment(v1, v2))
     if (intersectionPoint) {
       intersections.push(intersectionPoint)
     }
-
     intersectionPoint = LineSegment.getIntersection(lineSegment, new LineSegment(v2, v3))
     if (intersectionPoint) {
       intersections.push(intersectionPoint)
     }
-
     intersectionPoint = LineSegment.getIntersection(lineSegment, new LineSegment(v3, v4))
     if (intersectionPoint) {
       intersections.push(intersectionPoint)
     }
-
     intersectionPoint = LineSegment.getIntersection(lineSegment, new LineSegment(v4, v1))
     if (intersectionPoint) {
       intersections.push(intersectionPoint)
     }
     return intersections
   }
-
   /**
    * Enlarges the segment formed by the two given points from the side of the second point.
-   * @param {!YPoint} p1 The first point of the line segment
-   * @param {!YPoint} p2 The second point of the line segment
-   * @returns {!YPoint} A new point from the side of the second point
+   * @param p1 The first point of the line segment
+   * @param p2 The second point of the line segment
+   * @returns A new point from the side of the second point
    */
   enlargeSegment(p1, p2) {
     const alpha = Math.atan2(p1.y - p2.y, p1.x - p2.x)
     const x = p2.x - 100000 * Math.cos(alpha)
     const y = p2.y - 100000 * Math.sin(alpha)
-    return new YPoint(x, y)
+    return new Point(x, y)
   }
-
   /**
    * Checks whether this point belongs on the bounding box.
-   * @param {!YPoint} point The point to check
-   * @returns {boolean} True if the point belongs on the boundary, false otherwise
+   * @param point The point to check
+   * @returns True if the point belongs on the boundary, false otherwise
    */
   belongsToBoundary(point) {
     return (
@@ -781,7 +689,6 @@ export class VoronoiDiagram {
     )
   }
 }
-
 /**
  * This class represents a dart used for calculating the faces of a given graph drawing. For each edge there exist
  * two darts, one that represents the edge in its original direction (i.e., from source to target) and one that
@@ -792,7 +699,6 @@ class VoronoiDart {
   target
   associatedEdge
   index
-
   /**
    * The next dart in counter-clockwise order.
    */
@@ -809,13 +715,8 @@ class VoronoiDart {
    * The angle formed by this dart in counter-clockwise order.
    */
   angle = 0
-
   /**
    * Creates a new instance of Dart.
-   * @param {!YNode} source
-   * @param {!YNode} target
-   * @param {!Edge} associatedEdge
-   * @param {number} index
    */
   constructor(source, target, associatedEdge, index) {
     this.source = source
@@ -824,7 +725,6 @@ class VoronoiDart {
     this.index = index
   }
 }
-
 /**
  * This class models a triangular face.
  */
@@ -833,51 +733,41 @@ class VoronoiFace {
    * The central Voronoi node of the face.
    */
   voronoiNode = null
-
   /**
    * The edges of this face.
    */
   edges = []
-
   vertices = []
-
   /**
    * The circumcenter of the face.
    */
   circumcenter = null
-
   /**
    * The node map containing the coordinates of the nodes of the faces.
    */
-  nodeCoordinates = Maps.createHashedNodeMap()
-
+  nodeCoordinates = new Mapper()
   /**
    * Whether this face is the outer face.
    */
   outer = false
-
   /**
    * Adds the given edges to the list of edges of the given face.
-   * @param {!Edge} edge The edge to add
+   * @param edge The edge to add
    */
   addEdge(edge) {
     this.edges.push(edge)
     const source = edge.source
     const target = edge.target
-
     if (this.vertices.indexOf(source) < 0) {
       this.vertices.push(source)
     }
-
     if (this.vertices.indexOf(target) < 0) {
       this.vertices.push(target)
     }
   }
-
   /**
    * Returns the center of the circle that is defined by the three vertices of this face.
    * May only be called only for triangular faces.
-   * @returns {!YPoint}
    */
   calculateCircumcenter() {
     if (!this.circumcenter) {
@@ -885,7 +775,6 @@ class VoronoiFace {
     }
     return this.circumcenter
   }
-
   /**
    * Calculates the center of the circle that is defined by the three vertices of this face.
    * May only be called for triangular faces.
@@ -894,11 +783,9 @@ class VoronoiFace {
     if (this.edges.length > 3 || this.vertices.length < 3) {
       throw new Error('Cannot calculate circumcenter for non-triangular faces.')
     }
-
     const p1 = this.nodeCoordinates.get(this.vertices[0])
     const p2 = this.nodeCoordinates.get(this.vertices[1])
     const p3 = this.nodeCoordinates.get(this.vertices[2])
-
     const det =
       2 * (p1.x * p2.y - p2.x * p1.y - p1.x * p3.y + p3.x * p1.y + p2.x * p3.y - p3.x * p2.y)
     const a = p1.x * p1.x + p1.y * p1.y
@@ -906,14 +793,12 @@ class VoronoiFace {
     const c = p3.x * p3.x + p3.y * p3.y
     const centerX = (a * (p2.y - p3.y) + b * (p3.y - p1.y) + c * (p1.y - p2.y)) / det
     const centerY = (a * (p3.x - p2.x) + b * (p1.x - p3.x) + c * (p2.x - p1.x)) / det
-    this.circumcenter = new YPoint(centerX, centerY)
+    this.circumcenter = new Point(centerX, centerY)
   }
-
   /**
    * Determines whether the circumcenter of the triangle lies in the interior of the triangular face.
-   * @returns {boolean} True if the circumcenter of the triangle lies in the interior of the triangular face, false
+   * @returns True if the circumcenter of the triangle lies in the interior of the triangular face, false
    * otherwise
-   * @param {!YPoint} circumcenter
    */
   isCircumcenterInternal(circumcenter) {
     const p1 = this.nodeCoordinates.get(this.vertices[0])
@@ -922,17 +807,24 @@ class VoronoiFace {
     const b1 = this.sign(circumcenter, p1, p2) < 0
     const b2 = this.sign(circumcenter, p2, p3) < 0
     const b3 = this.sign(circumcenter, p3, p1) < 0
-
     return b1 === b2 && b2 === b3
   }
-
-  /**
-   * @param {!YPoint} p1
-   * @param {!YPoint} p2
-   * @param {!YPoint} p3
-   * @returns {number}
-   */
   sign(p1, p2, p3) {
     return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y)
   }
+}
+function rotate(p, angle) {
+  const rotatedX = Math.cos(angle) * p.x - Math.sin(angle) * p.y
+  const rotatedY = Math.sin(angle) * p.x + Math.cos(angle) * p.y
+  return new Point(rotatedX, rotatedY)
+}
+function distanceToRect(p, rect) {
+  return rect.contains(p)
+    ? 0.0
+    : Math.min(
+        p.distanceToSegment(rect.topRight, rect.topLeft),
+        p.distanceToSegment(rect.topLeft, rect.bottomLeft),
+        p.distanceToSegment(rect.bottomLeft, rect.bottomRight),
+        p.distanceToSegment(rect.bottomRight, rect.topRight)
+      )
 }

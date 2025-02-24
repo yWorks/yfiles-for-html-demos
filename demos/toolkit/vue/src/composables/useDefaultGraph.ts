@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,14 +28,13 @@
  ***************************************************************************/
 import {
   Arrow,
-  DefaultLabelStyle,
   GraphComponent,
-  Insets,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
+  LabelStyle,
   PolylineEdgeStyle,
   Rect,
   ShapeNodeStyle
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { onMounted } from 'vue'
 
 export function useDefaultGraph(getGraphComponent: () => GraphComponent) {
@@ -58,16 +57,16 @@ export function useDefaultGraph(getGraphComponent: () => GraphComponent) {
       stroke: '#662F01',
       shape: 'round-rectangle'
     })
-    graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+    graph.nodeDefaults.labels.style = new LabelStyle({
       textSize: 12,
       horizontalTextAlignment: 'center',
       verticalTextAlignment: 'center',
-      wrapping: 'word',
+      wrapping: 'wrap-word',
       textFill: '#662F01',
       backgroundFill: '#FFC398',
-      insets: new Insets(2)
+      padding: 2
     })
-    graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+    graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
 
     // configure the style of the edges
     graph.edgeDefaults.style = new PolylineEdgeStyle({

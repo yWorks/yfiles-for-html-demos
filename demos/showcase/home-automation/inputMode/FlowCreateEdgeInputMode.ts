@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,18 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, CreateEdgeInputMode, InputModeEventArgs, Point } from 'yfiles'
+import { CreateEdgeInputMode, InputModeEventArgs, Point } from '@yfiles/yfiles'
 import { getSmoothEdgeControlPoints } from '../FlowEdge/FlowEdge'
 import { validatePortTag } from '../FlowNode/FlowNodePort'
 
-export class FlowCreateEdgeInputMode extends BaseClass(CreateEdgeInputMode) {
+export class FlowCreateEdgeInputMode extends CreateEdgeInputMode {
   protected onMoved(evt: InputModeEventArgs) {
     super.onMoved(evt)
 
-    const dummyEdge = this.dummyEdge
-    const dummyEdgeGraph = this.dummyEdgeGraph
+    const previewEdge = this.previewEdge
+    const previewGraph = this.previewGraph
 
-    const portTag = dummyEdge.sourcePort?.tag
+    const portTag = previewEdge.sourcePort.tag
     if (!validatePortTag(portTag)) {
       return
     }
@@ -48,7 +48,7 @@ export class FlowCreateEdgeInputMode extends BaseClass(CreateEdgeInputMode) {
       fromSide: portTag.side
     })
 
-    dummyEdgeGraph.clearBends(dummyEdge)
-    dummyEdgeGraph.addBends(dummyEdge, bends)
+    previewGraph.clearBends(previewEdge)
+    previewGraph.addBends(previewEdge, bends)
   }
 }

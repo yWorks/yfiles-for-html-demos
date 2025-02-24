@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,28 +27,28 @@
  **
  ***************************************************************************/
 import {
-  type Edge,
-  GenericLabeling,
+  EdgeLabelPreferredPlacement,
+  EdgePortCandidates,
   type GraphComponent,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   type IEdge,
   type IEnumerable,
   type IGraph,
   type ILayoutAlgorithm,
   type IModelItem,
   INode,
-  LabelPlacements,
+  LabelAlongEdgePlacements,
+  type LayoutEdge,
+  LayoutExecutor,
   type LayoutGraph,
-  LayoutMode,
+  type LayoutNode,
   LayoutOrientation,
+  type LayoutPortCandidate,
   LayoutStageBase,
-  PortConstraint,
-  PortSide,
-  PreferredPlacementDescriptor,
-  type SimplexNodePlacer,
-  type YNode
-} from 'yfiles'
+  Point,
+  PortCandidateType
+} from '@yfiles/yfiles'
 import { getVoterShift } from './data-types'
 import { normalizeThickness } from './edge-thickness'
 import { updateStyles } from './styles-support'
@@ -71,7 +71,7 @@ export async function updateStylesAndLayout(
 }
 
 /**
- * Runs the hierarchic layout to create the sankey diagram.
+ * Runs the hierarchical layout to create the sankey diagram.
  * @param graphComponent The given graphComponent
  * @param fromSketchMode True if the layout should run in incremental mode, false otherwise
  */
@@ -80,83 +80,91 @@ export async function runLayout(
   fromSketchMode: boolean
 ): Promise<void> {
   // configure the layout algorithm
-  const layout = createHierarchicLayout(fromSketchMode)
-  const layoutData = createHierarchicLayoutData(graphComponent.graph, fromSketchMode)
+  const layout = createHierarchicalLayout(fromSketchMode)
+  const layoutData = createHierarchicalLayoutData(graphComponent.graph, fromSketchMode)
+
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
 
   // run the layout and animate the result
-  await graphComponent.morphLayout(layout, '0.5s', layoutData)
+  await graphComponent.applyLayoutAnimated(layout, '0.5s', layoutData)
 }
 
 /**
- * Configures the hierarchic layout algorithm for the Sankey visualization.
+ * Configures the hierarchical layout algorithm for the Sankey visualization.
  * @param fromSketchMode True if the layout should run n incremental mode, false otherwise
  */
-function createHierarchicLayout(fromSketchMode: boolean): HierarchicLayout {
-  const hierarchicLayout = new HierarchicLayout({
-    layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
-    layoutMode: fromSketchMode ? LayoutMode.INCREMENTAL : LayoutMode.FROM_SCRATCH,
-    nodeToNodeDistance: 30,
-    backLoopRouting: true
+function createHierarchicalLayout(fromSketchMode: boolean): HierarchicalLayout {
+  const hierarchicalLayout = new HierarchicalLayout({
+    layoutOrientation: 'left-to-right',
+    fromSketchMode,
+    nodeDistance: 30,
+    // configure the generic labeling algorithm which produces more compact results
+    edgeLabelPlacement: 'generic',
+    defaultEdgeDescriptor: {
+      minimumFirstSegmentLength: 80,
+      minimumLastSegmentLength: 80,
+      backLoopRouting: true
+    },
+    defaultNodeDescriptor: {
+      // a port border gap ratio of zero means that ports can be placed directly
+      // on the corners of the nodes
+      borderToPortGapRatio: 1
+    },
+    coordinateAssigner: {
+      // disable further reducing from bends
+      bendReduction: false
+    }
   })
-  hierarchicLayout.edgeLayoutDescriptor.minimumFirstSegmentLength = 80
-  hierarchicLayout.edgeLayoutDescriptor.minimumLastSegmentLength = 80
-  // disable further reducing from bends
-  ;(hierarchicLayout.nodePlacer as SimplexNodePlacer).bendReduction = false
-
-  // a port border gap ratio of zero means that ports can be placed directly
-  // on the corners of the nodes
-  const portBorderRatio = 1
-  hierarchicLayout.nodeLayoutDescriptor.portBorderGapRatios = portBorderRatio
-  // configure the generic labeling algorithm which produces more compact results
-  hierarchicLayout.labeling = new GenericLabeling({
-    reduceAmbiguity: false,
-    placeNodeLabels: false,
-    placeEdgeLabels: true,
-    deterministic: true
-  })
-  hierarchicLayout.labelingEnabled = true
 
   // for Sankey diagrams, the nodes should be adjusted to the
   // incoming/outgoing flow (enlarged if necessary) -> use NodeResizingStage for that purpose
-  const nodeResizingStage = new NodeResizingStage(hierarchicLayout)
-  nodeResizingStage.layoutOrientation = hierarchicLayout.layoutOrientation
-  nodeResizingStage.portBorderGapRatio = portBorderRatio
-  hierarchicLayout.prependStage(nodeResizingStage)
+  const nodeResizingStage = new NodeResizingStage(hierarchicalLayout)
+  nodeResizingStage.layoutOrientation = hierarchicalLayout.layoutOrientation
+  nodeResizingStage.portBorderGapRatio = 1
+  hierarchicalLayout.layoutStages.prepend(nodeResizingStage)
 
-  return hierarchicLayout
+  return hierarchicalLayout
 }
 
 /**
- * Configures the hierarchic layout data for the Sankey visualization
- * @returns The configured hierarchic Layout data object
+ * Configures the hierarchical layout data for the Sankey visualization
+ * @returns The configured hierarchical Layout data object
  */
-function createHierarchicLayoutData(graph: IGraph, fromSketchMode: boolean): HierarchicLayoutData {
+function createHierarchicalLayoutData(
+  graph: IGraph,
+  fromSketchMode: boolean
+): HierarchicalLayoutData {
   // create the layout data
-  const hierarchicLayoutData = new HierarchicLayoutData({
+  const hierarchicalLayoutData = new HierarchicalLayoutData({
     // maps each edge with its thickness so that the layout algorithm takes the edge
     // thickness under consideration
     edgeThickness: (edge: IEdge): number => getVoterShift(edge).thickness ?? 1,
-    // since orientation is LEFT_TO_RIGHT, we add port constraints so that the edges
-    // leave the source node at its right side and enter the target node at its left side
-    sourcePortConstraints: (): PortConstraint => PortConstraint.create(PortSide.EAST, false)!,
-    targetPortConstraints: (): PortConstraint => PortConstraint.create(PortSide.WEST, false)!,
     // edge labels should be placed near the source node, if possible
-    edgeLabelPreferredPlacement: new PreferredPlacementDescriptor({
-      placeAlongEdge: LabelPlacements.AT_SOURCE
-    })
+    edgeLabelPreferredPlacements: new EdgeLabelPreferredPlacement({
+      placementAlongEdge: LabelAlongEdgePlacements.AT_SOURCE
+    }),
+    ports: {
+      // since orientation is LEFT_TO_RIGHT, we add port candidates so that the edges
+      // leave the source node at its right side and enter the target node at its left side
+      sourcePortCandidates: new EdgePortCandidates().addFreeCandidate('right'),
+      targetPortCandidates: new EdgePortCandidates().addFreeCandidate('left')
+    }
   })
+
   if (!fromSketchMode) {
     // In this demo, the nodes are ordered in the layers based on their size to show how the party
     // strength gets modified along the elections.
     // From this ordering the non-voters are excluded and are placed at the bottom of the layer
-    hierarchicLayoutData.sequenceConstraints.itemComparables = (item: IModelItem): number =>
+    hierarchicalLayoutData.sequenceConstraints.itemComparables = (item: IModelItem): number =>
       item instanceof INode && !isNonVoter(item)
         ? graph
             .edgesAt(item)
             .reduce((acc: number, edge: IEdge) => acc + getVoterShift(edge).thickness!, 0)
         : 0
   }
-  return hierarchicLayoutData
+  return hierarchicalLayoutData
 }
 
 /**
@@ -234,13 +242,17 @@ class NodeResizingStage extends LayoutStageBase {
    * Applies the layout to the given graph.
    * @param graph The given graph
    */
-  applyLayout(graph: LayoutGraph): void {
-    graph.nodes.forEach((node: YNode): void => {
+  protected applyLayoutImpl(graph: LayoutGraph): void {
+    if (!this.coreLayout) {
+      return
+    }
+
+    graph.nodes.forEach((node: LayoutNode): void => {
       this.adjustNodeSize(node, graph)
     })
 
     // run the core layout
-    this.applyLayoutCore(graph)
+    this.coreLayout.applyLayout(graph)
   }
 
   /**
@@ -248,7 +260,7 @@ class NodeResizingStage extends LayoutStageBase {
    * @param node The given node
    * @param graph The given graph
    */
-  adjustNodeSize(node: YNode, graph: LayoutGraph): void {
+  adjustNodeSize(node: LayoutNode, graph: LayoutGraph): void {
     let width = 60
     let height = 40
 
@@ -267,28 +279,35 @@ class NodeResizingStage extends LayoutStageBase {
       height = Math.max(height, rightEdgeSpace)
     }
 
-    // adjust size for edges with strong port constraints
-    const edgeThicknessDP = graph.getDataProvider(HierarchicLayout.EDGE_THICKNESS_DP_KEY)
+    // adjust size for edges with strong port candidates
+    const edgeThicknessDP = graph.context.getItemData(HierarchicalLayout.EDGE_THICKNESS_DATA_KEY)
     if (edgeThicknessDP !== null) {
-      node.edges.forEach((edge: Edge): void => {
-        const thickness = edgeThicknessDP.getNumber(edge)
+      node.edges.forEach((edge: LayoutEdge): void => {
+        const thickness = edgeThicknessDP.get(edge)!
 
-        const spc = PortConstraint.getSPC(graph, edge)
-        if (edge.source === node && spc !== null && spc.strong) {
-          const sourcePoint = graph.getSourcePointRel(edge)
+        const spc = this.getFirstPortCandidate(edge, true)
+        if (edge.source === node && spc && spc.type !== PortCandidateType.FREE) {
+          const sourcePoint = new Point(
+            edge.source.layout.center.x - edge.sourcePortLocation.x,
+            edge.source.layout.center.y - edge.sourcePortLocation.y
+          )
           width = Math.max(width, Math.abs(sourcePoint.x) * 2 + thickness)
           height = Math.max(height, Math.abs(sourcePoint.y) * 2 + thickness)
         }
 
-        const tpc = PortConstraint.getTPC(graph, edge)
-        if (edge.target === node && tpc !== null && tpc.strong) {
-          const targetPoint = graph.getTargetPointRel(edge)
+        const tpc = this.getFirstPortCandidate(edge, false)
+        if (edge.target === node && tpc && tpc.type !== PortCandidateType.FREE) {
+          const targetPoint = new Point(
+            edge.target.layout.center.x - edge.targetPortLocation.x,
+            edge.target.layout.center.y - edge.targetPortLocation.y
+          )
           width = Math.max(width, Math.abs(targetPoint.x) * 2 + thickness)
           height = Math.max(height, Math.abs(targetPoint.y) * 2 + thickness)
         }
       })
     }
-    graph.setSize(node, width, height)
+    node.layout.width = width
+    node.layout.height = height
   }
 
   /**
@@ -297,15 +316,27 @@ class NodeResizingStage extends LayoutStageBase {
    * @param edges The edges to calculate the space for
    * @param graph The given graph
    */
-  calcRequiredSpace(edges: IEnumerable<Edge>, graph: LayoutGraph): number {
-    const edgeThicknessDP = graph.getDataProvider(HierarchicLayout.EDGE_THICKNESS_DP_KEY)
+  calcRequiredSpace(edges: IEnumerable<LayoutEdge>, graph: LayoutGraph): number {
+    const edgeThicknessDP = graph.context.getItemData(HierarchicalLayout.EDGE_THICKNESS_DATA_KEY)
     return (
       edges.reduce((acc, edge) => {
-        return acc + (edgeThicknessDP === null ? 0 : edgeThicknessDP.getNumber(edge))
+        return acc + (edgeThicknessDP === null ? 0 : edgeThicknessDP.get(edge)!)
       }, 0) +
       (edges.size - 1) * this.minimumPortDistance +
       2 * this.portBorderGapRatio * this.minimumPortDistance
     )
+  }
+
+  /**
+   * Returns the first port candidate for the given edge, if exists.
+   */
+  getFirstPortCandidate(e: LayoutEdge, atSource: boolean): LayoutPortCandidate | null {
+    const dp = e.graph!.context.getItemData(
+      atSource
+        ? EdgePortCandidates.SOURCE_PORT_CANDIDATES_DATA_KEY
+        : EdgePortCandidates.TARGET_PORT_CANDIDATES_DATA_KEY
+    )
+    return dp?.get(e)?.candidates.at(0) ?? null
   }
 }
 

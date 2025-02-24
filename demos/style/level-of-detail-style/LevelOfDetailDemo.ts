@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,19 +35,19 @@ import {
   License,
   Point,
   PolylineEdgeStyle,
-  Size,
-  StringTemplateNodeStyle
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 
 import LevelOfDetailNodeStyle from './LevelOfDetailNodeStyle'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import {
-  detailNodeStyleTemplate,
-  intermediateNodeStyleTemplate,
-  overviewNodeStyleTemplate
+  detailNodeStyleTemplateSource,
+  intermediateNodeStyleTemplateSource,
+  overviewNodeStyleTemplateSource
 } from './style-templates'
+import { createLitNodeStyleFromSource } from '@yfiles/demo-utils/LitNodeStyle'
 
 let graphComponent: GraphComponent
 
@@ -65,8 +65,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize input Mode
   graphComponent.inputMode = new GraphViewerInputMode()
 
@@ -94,9 +92,9 @@ function initTutorialDefaults(graph: IGraph): void {
 
   // set styles, sizes and locations specific for this tutorial
   levelOfDetailNodeStyle = new LevelOfDetailNodeStyle(
-    new StringTemplateNodeStyle(detailNodeStyleTemplate),
-    new StringTemplateNodeStyle(intermediateNodeStyleTemplate),
-    new StringTemplateNodeStyle(overviewNodeStyleTemplate)
+    createLitNodeStyleFromSource(detailNodeStyleTemplateSource),
+    createLitNodeStyleFromSource(intermediateNodeStyleTemplateSource),
+    createLitNodeStyleFromSource(overviewNodeStyleTemplateSource)
   )
   graph.nodeDefaults.style = levelOfDetailNodeStyle
   graph.nodeDefaults.size = new Size(285, 100)
@@ -111,7 +109,7 @@ function initTutorialDefaults(graph: IGraph): void {
  */
 function updateDetailLevelIndicator(): void {
   let zoomLevelChangedTimer: any
-  graphComponent.addZoomChangedListener((): void => {
+  graphComponent.addEventListener('zoom-changed', (): void => {
     // update the zoom level display after 200ms
     if (zoomLevelChangedTimer >= 0) {
       return

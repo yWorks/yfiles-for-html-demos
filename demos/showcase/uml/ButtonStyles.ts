@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   Font,
   FreeNodePortLocationModel,
   HorizontalTextAlignment,
@@ -37,6 +36,7 @@ import {
   ILabelStyle,
   INode,
   IRenderContext,
+  LabelStyle,
   LabelStyleBase,
   Rect,
   SimpleEdge,
@@ -47,14 +47,14 @@ import {
   SvgVisualGroup,
   TextRenderSupport,
   VerticalTextAlignment
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import type { UMLClassModel } from './UMLClassModel'
 
 const font = new Font({
   fontFamily: 'monospace',
   fontSize: 18
 })
-const factoryStyle = new DefaultLabelStyle({
+const factoryStyle = new LabelStyle({
   backgroundStroke: '#607D8B',
   backgroundFill: '#FFF',
   font: font,
@@ -151,7 +151,7 @@ export class RelationButtonStyle extends LabelStyleBase {
 }
 
 function createBackgroundStyle(): ILabelStyle {
-  return new DefaultLabelStyle({
+  return new LabelStyle({
     backgroundFill: 'white',
     backgroundStroke: '#607D8B',
     shape: 'pill'
@@ -159,7 +159,7 @@ function createBackgroundStyle(): ILabelStyle {
 }
 
 function createSimpleEdge(src: INode, tgt: INode): IEdge {
-  const sp = new SimplePort(src, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
-  const tp = new SimplePort(tgt, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
+  const sp = new SimplePort(src, FreeNodePortLocationModel.CENTER)
+  const tp = new SimplePort(tgt, FreeNodePortLocationModel.CENTER)
   return new SimpleEdge(sp, tp)
 }

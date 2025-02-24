@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Organic Layout with Constraints - Layout Features
 
-# Organic Layout with Constraints
+<img src="../../../doc/demo-thumbnails/layout-organic-constraints.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/layout-features/organic-constraints/).
 
 This demo shows how to use supplemental layout data to enforce [placement constraints](https://docs.yworks.com/yfileshtml/#/api/OrganicConstraintData) when using the [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) algorithm.
 

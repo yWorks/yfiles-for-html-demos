@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -54,9 +54,6 @@
   padding-top: 0.5em;
   overflow: hidden;
   text-transform: uppercase;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -72,9 +69,6 @@
   overflow: hidden;
   float: left;
   cursor: pointer;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -87,27 +81,16 @@
 }
 
 .option-ui-tab .tabContainer:not(:active) {
-  -webkit-transition: background-color 0.66s ease-in 0s;
-  -moz-transition: background-color 0.66s ease-in 0s;
   transition: background-color 0.66s ease-in 0s;
 }
 
 .option-ui-tab .tab-content {
   text-align: center;
-  -webkit-transition:
-    opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0s,
-    color 0.1s cubic-bezier(0.4, 0, 1, 1) 0s;
-  -moz-transition:
-    opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0s,
-    color 0.1s cubic-bezier(0.4, 0, 1, 1) 0s;
   transition:
     opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0s,
     color 0.1s cubic-bezier(0.4, 0, 1, 1) 0s;
   cursor: default;
   pointer-events: none;
-  -ms-user-select: initial;
-  -moz-user-select: initial;
-  -webkit-user-select: initial;
   user-select: initial;
 }
 
@@ -118,12 +101,6 @@
   left: 0;
   width: 0;
   background-color: #efefef;
-  -webkit-transition:
-    width 0.15s ease-in-out 0.18s,
-    left 0.15s ease-in-out 0.18s;
-  -moz-transition:
-    width 0.15s ease-in-out 0.18s,
-    left 0.15s ease-in-out 0.18s;
   transition:
     width 0.15s ease-in-out 0.18s,
     left 0.15s ease-in-out 0.18s;
@@ -136,9 +113,6 @@
 .option-ui-tabbar + .option-ui-shadow {
   height: 6px;
   box-shadow: inset 0 5px 6px -3px rgba(0, 0, 0, 0.25);
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -238,9 +212,6 @@ form.option-ui-combobox div.combobox-container label {
   padding-top: 0.5em;
   overflow: hidden;
   text-transform: uppercase;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -273,9 +244,6 @@ form.option-ui-combobox div.combobox-container label {
 .option-ui-dropdown + .option-ui-shadow {
   height: 6px;
   box-shadow: inset 0 5px 6px -3px rgba(0, 0, 0, 0.25);
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -304,7 +272,7 @@ form.option-ui-slider input[type='number'] {
 
 input[type='range'] {
   padding: 0;
-  -webkit-appearance: none;
+  appearance: none;
   height: 20px;
 }
 
@@ -316,7 +284,7 @@ input[type='range']::-webkit-slider-runnable-track {
 }
 
 input[type='range']::-webkit-slider-thumb {
-  -webkit-appearance: none;
+  appearance: none;
   border: none;
   height: 14px;
   width: 14px;
@@ -349,33 +317,6 @@ input[type='range']:-moz-focusring {
   outline-offset: -1px;
 }
 
-input[type='range']::-ms-track {
-  height: 2px;
-  background: 0 0;
-  border-color: transparent;
-  border-width: 6px 0;
-  color: transparent;
-}
-
-input[type='range']::-ms-fill-lower {
-  background: #38434f;
-  border-radius: 10px;
-}
-
-input[type='range']::-ms-fill-upper {
-  background: #38434f;
-  border-radius: 10px;
-}
-
-input[type='range']::-ms-thumb {
-  border: none;
-  height: 14px;
-  width: 14px;
-  border-radius: 50%;
-  background: #29323c;
-  margin-top: 0px;
-}
-
 form.option-ui-spinner input[type='number'] {
   width: 5em;
 }
@@ -394,10 +335,6 @@ form.option-ui-spinner div.spinner-container label {
 
 .noselect {
   -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
 }
 

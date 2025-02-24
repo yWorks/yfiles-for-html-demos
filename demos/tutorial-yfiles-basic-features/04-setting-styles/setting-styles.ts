@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,18 +27,16 @@
  **
  ***************************************************************************/
 import {
-  Arrow,
-  BridgeEdgeStyle,
-  DefaultLabelStyle,
   type IGraph,
   ImageNodeStyle,
+  LabelStyle,
   Point,
   PolylineEdgeStyle,
   RectangleCornerStyle,
   RectangleNodeStyle,
   ShapeNodeStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Set up default styles for graph elements.
@@ -65,12 +63,12 @@ export function setDefaultStyles(graph: IGraph): void {
   })
 
   // Create a label style using Tahoma as the label font and a black text color
-  const defaultLabelStyle = new DefaultLabelStyle({
+  const defaultLabelStyle = new LabelStyle({
     font: '12px Tahoma',
     textFill: 'black',
-    backgroundFill: '#8fff',
+    backgroundFill: '#ffffff87',
     shape: 'round-rectangle',
-    insets: [2, 5]
+    padding: [2, 5]
   })
 
   // Set the defined style as the default for both edge and node labels
@@ -80,7 +78,7 @@ export function setDefaultStyles(graph: IGraph): void {
 
 /**
  * Creates a node, an edge and a label using specific styles,
- * i.e. styles different from the defaults.
+ * i.e., styles different from the defaults.
  */
 export function createGraphItemsWithStyles(graph: IGraph) {
   const sourceNode = graph.nodes.get(0)
@@ -100,7 +98,7 @@ export function createGraphItemsWithStyles(graph: IGraph) {
   graph.addLabel({
     text: 'New Label',
     owner: node,
-    style: new DefaultLabelStyle({ backgroundFill: '#a6a6c0' })
+    style: new LabelStyle({ backgroundFill: '#a6a6c0' })
   })
 }
 
@@ -123,10 +121,10 @@ export function setStyles(graph: IGraph) {
   graph.setStyle(edge, edgeStyle)
 
   // Creates a different style for the label with black text and a red border
-  const labelStyle = new DefaultLabelStyle({
+  const labelStyle = new LabelStyle({
     backgroundStroke: '2px #46A8D5',
     backgroundFill: '#b4dbed',
-    insets: [3, 5, 3, 5]
+    padding: [3, 5, 3, 5]
   })
 
   graph.setStyle(label, labelStyle)

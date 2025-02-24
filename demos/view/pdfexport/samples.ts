@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,25 +26,25 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { colorSets, createDemoNodeStyle } from 'demo-resources/demo-styles'
+import { colorSets, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import {
+  Arrow,
+  ArrowType,
   BezierEdgeStyle,
-  DefaultLabelStyle,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
   Font,
   type GraphComponent,
-  IArrow,
   type IGraph,
   ImageNodeStyle,
+  LabelStyle,
   Point,
   PolylineEdgeStyle,
   Rect,
-  ShapeNodeStyle,
-  StringTemplateNodeStyle
-} from 'yfiles'
+  ShapeNodeStyle
+} from '@yfiles/yfiles'
 import ImageSwitch from './resources/switch.svg'
 import ImageWorkstation from './resources/workstation.svg'
+import { DelayedNodeStyle } from './delayed-node-style'
 
 export type Tag = {
   type?: string
@@ -58,6 +58,7 @@ export async function createSampleGraph(graphComponent: GraphComponent): Promise
   addCustomFontSample(graphComponent.graph)
   addCssStyleSample(graphComponent.graph)
   addBezierEdgesSample(graphComponent.graph)
+  addDelayedSample(graphComponent.graph)
 }
 
 /**
@@ -65,25 +66,25 @@ export async function createSampleGraph(graphComponent: GraphComponent): Promise
  */
 async function addNetworkSample(graph: IGraph): Promise<void> {
   const edgeStyle = new PolylineEdgeStyle({
-    targetArrow: IArrow.DEFAULT
+    targetArrow: new Arrow(ArrowType.STEALTH)
   })
 
   const imageSwitch = ImageSwitch as string
   const imageWorkstation = ImageWorkstation as string
   const switchStyle = new ImageNodeStyle({
-    image: imageSwitch,
+    href: imageSwitch,
     // determine the intrinsic aspect ratio of the image
     aspectRatio: await ImageNodeStyle.getAspectRatio(imageSwitch)
   })
   const workstationStyle = new ImageNodeStyle({
-    image: imageWorkstation,
+    href: imageWorkstation,
     // determine the intrinsic aspect ratio of the image
     aspectRatio: await ImageNodeStyle.getAspectRatio(imageWorkstation)
   })
 
-  const labelModel = new ExteriorLabelModel()
-  const southLabelPosition = labelModel.createParameter(ExteriorLabelModelPosition.SOUTH)
-  const northLabelPosition = labelModel.createParameter(ExteriorLabelModelPosition.NORTH)
+  const labelModel = new ExteriorNodeLabelModel()
+  const bottomLabelPosition = labelModel.createParameter('bottom')
+  const topLabelPosition = labelModel.createParameter('top')
 
   // create sample nodes
   const n1 = graph.createNode([150, 0, 60, 40], switchStyle, { type: 'switch' })
@@ -99,11 +100,11 @@ async function addNetworkSample(graph: IGraph): Promise<void> {
   graph.createEdge(n1, n5, edgeStyle)
 
   // create sample labels
-  graph.addLabel(n1, 'Switch', northLabelPosition)
-  graph.addLabel(n2, 'Workstation 1', southLabelPosition)
-  graph.addLabel(n3, 'Workstation 2', southLabelPosition)
-  graph.addLabel(n4, 'Workstation 3', southLabelPosition)
-  graph.addLabel(n5, 'Workstation 4', southLabelPosition)
+  graph.addLabel(n1, 'Switch', topLabelPosition)
+  graph.addLabel(n2, 'Workstation 1', bottomLabelPosition)
+  graph.addLabel(n3, 'Workstation 2', bottomLabelPosition)
+  graph.addLabel(n4, 'Workstation 3', bottomLabelPosition)
+  graph.addLabel(n5, 'Workstation 4', bottomLabelPosition)
 }
 
 /**
@@ -113,7 +114,7 @@ async function addNetworkSample(graph: IGraph): Promise<void> {
 function addCustomFontSample(graph: IGraph): void {
   const nodeStyle = new ShapeNodeStyle({ fill: 'orange' })
 
-  const labelModel = new ExteriorLabelModel({ insets: 10 })
+  const labelModel = new ExteriorNodeLabelModel({ margins: 10 })
 
   graph.createNode({
     style: nodeStyle,
@@ -121,13 +122,13 @@ function addCustomFontSample(graph: IGraph): void {
     labels: [
       {
         text: 'Кирилица',
-        style: new DefaultLabelStyle({
+        style: new LabelStyle({
           font: new Font({
             fontFamily: 'Prata',
             fontSize: 16
           })
         }),
-        layoutParameter: labelModel.createParameter(ExteriorLabelModelPosition.SOUTH)
+        layoutParameter: labelModel.createParameter('bottom')
       }
     ]
   })
@@ -138,33 +139,46 @@ function addCustomFontSample(graph: IGraph): void {
     labels: [
       {
         text: '平仮名',
-        style: new DefaultLabelStyle({
+        style: new LabelStyle({
           font: new Font({
             fontFamily: 'Kosugi',
             fontSize: 16
           })
         }),
-        layoutParameter: labelModel.createParameter(ExteriorLabelModelPosition.SOUTH)
+        layoutParameter: labelModel.createParameter('bottom')
       }
     ]
   })
 }
 
 /**
- * Adds sample nodes represented by yFiles' {@link StringTemplateNodeStyle}.
+ * Adds sample nodes styled with CSS.
  */
 function addCssStyleSample(graph: IGraph): void {
-  const nodeStyle = new StringTemplateNodeStyle(
-    '<rect class="{Binding css}" fill="none" stroke="black" ' +
-      'width="{TemplateBinding width}" height="{TemplateBinding height}">' +
-      '</rect>'
+  graph.createNode(
+    new Rect(10, 350, 40, 40),
+    new ShapeNodeStyle({ cssClass: 'demo-palette-23-node' })
   )
-  graph.createNode(new Rect(10, 350, 40, 40), nodeStyle, { css: 'demo-palette-23-node' })
-  graph.createNode(new Rect(110, 350, 40, 40), nodeStyle, { css: 'demo-palette-25-node' })
-  graph.createNode(new Rect(210, 350, 40, 40), nodeStyle, { css: 'demo-palette-21-node' })
-  graph.createNode(new Rect(10, 450, 40, 40), nodeStyle, { css: 'demo-palette-23-node' })
-  graph.createNode(new Rect(110, 450, 40, 40), nodeStyle, { css: 'demo-palette-25-node' })
-  graph.createNode(new Rect(210, 450, 40, 40), nodeStyle, { css: 'demo-palette-21-node' })
+  graph.createNode(
+    new Rect(110, 350, 40, 40),
+    new ShapeNodeStyle({ cssClass: 'demo-palette-25-node' })
+  )
+  graph.createNode(
+    new Rect(210, 350, 40, 40),
+    new ShapeNodeStyle({ cssClass: 'demo-palette-21-node' })
+  )
+  graph.createNode(
+    new Rect(10, 450, 40, 40),
+    new ShapeNodeStyle({ cssClass: 'demo-palette-23-node' })
+  )
+  graph.createNode(
+    new Rect(110, 450, 40, 40),
+    new ShapeNodeStyle({ cssClass: 'demo-palette-25-node' })
+  )
+  graph.createNode(
+    new Rect(210, 450, 40, 40),
+    new ShapeNodeStyle({ cssClass: 'demo-palette-21-node' })
+  )
 }
 
 /**
@@ -181,41 +195,50 @@ function addBezierEdgesSample(graph: IGraph): void {
   const node5 = graph.createNode([230, 680, 30, 110], nodeStyle)
 
   const edge1 = graph.createEdge({ source: node1, target: node4, bends: [], style: edgeStyle })
-  graph.setPortLocation(edge1.sourcePort!, new Point(30, 565))
-  graph.setPortLocation(edge1.targetPort!, new Point(230, 565))
+  graph.setPortLocation(edge1.sourcePort, new Point(30, 565))
+  graph.setPortLocation(edge1.targetPort, new Point(230, 565))
   const edge2 = graph.createEdge({
     source: node1,
     target: node5,
     bends: [new Point(80, 595), new Point(180, 695)],
     style: edgeStyle
   })
-  graph.setPortLocation(edge2.sourcePort!, new Point(30, 595))
-  graph.setPortLocation(edge2.targetPort!, new Point(230, 695))
+  graph.setPortLocation(edge2.sourcePort, new Point(30, 595))
+  graph.setPortLocation(edge2.targetPort, new Point(230, 695))
   const edge3 = graph.createEdge({
     source: node2,
     target: node4,
     bends: [new Point(80, 700), new Point(180, 605)],
     style: edgeStyle
   })
-  graph.setPortLocation(edge3.sourcePort!, new Point(30, 700))
-  graph.setPortLocation(edge3.targetPort!, new Point(230, 605))
+  graph.setPortLocation(edge3.sourcePort, new Point(30, 700))
+  graph.setPortLocation(edge3.targetPort, new Point(230, 605))
   const edge4 = graph.createEdge({
     source: node2,
     target: node5,
     bends: [new Point(80, 640), new Point(180, 735)],
     style: edgeStyle
   })
-  graph.setPortLocation(edge4.sourcePort!, new Point(30, 640))
-  graph.setPortLocation(edge4.targetPort!, new Point(230, 735))
+  graph.setPortLocation(edge4.sourcePort, new Point(30, 640))
+  graph.setPortLocation(edge4.targetPort, new Point(230, 735))
   const edge5 = graph.createEdge({
     source: node3,
     target: node4,
     bends: [new Point(80, 745), new Point(180, 645)],
     style: edgeStyle
   })
-  graph.setPortLocation(edge5.sourcePort!, new Point(30, 745))
-  graph.setPortLocation(edge5.targetPort!, new Point(230, 645))
+  graph.setPortLocation(edge5.sourcePort, new Point(30, 745))
+  graph.setPortLocation(edge5.targetPort, new Point(230, 645))
   const edge6 = graph.createEdge({ source: node3, target: node5, bends: [], style: edgeStyle })
-  graph.setPortLocation(edge6.sourcePort!, new Point(30, 775))
-  graph.setPortLocation(edge6.targetPort!, new Point(230, 775))
+  graph.setPortLocation(edge6.sourcePort, new Point(30, 775))
+  graph.setPortLocation(edge6.targetPort, new Point(230, 775))
+}
+
+function addDelayedSample(graph: IGraph): void {
+  for (let i = 0; i < 5; i++) {
+    graph.createNode({
+      layout: [300, 350 + 50 * i, 50, 50],
+      style: new DelayedNodeStyle()
+    })
+  }
 }

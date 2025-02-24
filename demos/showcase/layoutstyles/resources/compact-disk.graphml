@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle2="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle2="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="int" attr.name="zOrder" y:attr.uri="http://www.yworks.com/xml/yfiles-z-order/1.0/zOrder"/>
 	<key id="d1" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
@@ -61,8 +61,8 @@
 	<key id="d19" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
 	<data key="d19">
 		<y:SharedData>
-			<y:InteriorLabelModel x:Key="1"/>
-			<y:InteriorLabelModelParameter x:Key="2" Position="Center" Model="{y:GraphMLReference 1}"/>
+			<yx:InteriorNodeLabelModel x:Key="1"/>
+			<yx:InteriorNodeLabelModelParameter x:Key="2" Position="Center" Model="{y:GraphMLReference 1}"/>
 		</y:SharedData>
 	</data>
 	<graph id="G" edgedefault="directed">
@@ -74,11 +74,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>0</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -98,11 +98,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>1</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -122,11 +122,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>2</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -146,11 +146,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>3</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -170,11 +170,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>4</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -194,11 +194,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>5</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -218,11 +218,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>6</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -242,11 +242,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>7</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -266,11 +266,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>8</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -290,11 +290,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>9</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -314,11 +314,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>10</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -338,11 +338,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>11</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -362,11 +362,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>12</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -386,11 +386,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>13</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -410,11 +410,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>14</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -434,11 +434,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>15</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -458,11 +458,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>16</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -482,11 +482,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>17</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -506,11 +506,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>18</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -530,11 +530,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>19</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -554,11 +554,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>20</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -578,11 +578,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>21</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -602,11 +602,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>22</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -626,11 +626,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>23</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -650,11 +650,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>24</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -674,11 +674,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>25</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -698,11 +698,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>26</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -722,11 +722,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>27</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -746,11 +746,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>28</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -770,11 +770,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>29</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -794,11 +794,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>30</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -818,11 +818,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>31</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -842,11 +842,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>32</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -866,11 +866,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>33</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -890,11 +890,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>34</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -914,11 +914,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>35</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -938,11 +938,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>36</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -962,11 +962,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>37</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -986,11 +986,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>38</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1010,11 +1010,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>39</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1034,11 +1034,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>40</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1058,11 +1058,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>41</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1082,11 +1082,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>42</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1106,11 +1106,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>43</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1130,11 +1130,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>44</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1154,11 +1154,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>45</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1178,11 +1178,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>46</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1202,11 +1202,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>47</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1226,11 +1226,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>48</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1250,11 +1250,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>49</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1274,11 +1274,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>50</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1298,11 +1298,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>51</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1322,11 +1322,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>52</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1346,11 +1346,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>53</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1370,11 +1370,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>54</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1394,11 +1394,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>55</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1418,11 +1418,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>56</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1442,11 +1442,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>57</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1466,11 +1466,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>58</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1490,11 +1490,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>59</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1514,11 +1514,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>60</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1538,11 +1538,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>61</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1562,11 +1562,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>62</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1586,11 +1586,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>63</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1610,11 +1610,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>64</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1634,11 +1634,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>65</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1658,11 +1658,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>66</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1682,11 +1682,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>67</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1706,11 +1706,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>68</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1730,11 +1730,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>69</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1754,11 +1754,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>70</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1778,11 +1778,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>71</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1802,11 +1802,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>72</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1826,11 +1826,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>73</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1850,11 +1850,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>74</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1874,11 +1874,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>75</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1898,11 +1898,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>76</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1922,11 +1922,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>77</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1946,11 +1946,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>78</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1970,11 +1970,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>79</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -1994,11 +1994,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>80</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2018,11 +2018,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>81</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2042,11 +2042,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>82</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2066,11 +2066,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>83</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2090,11 +2090,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>84</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2114,11 +2114,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>85</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2138,11 +2138,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>86</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2162,11 +2162,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>87</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2186,11 +2186,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>88</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2210,11 +2210,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>89</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2234,11 +2234,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>90</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2258,11 +2258,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>91</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2282,11 +2282,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>92</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2306,11 +2306,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>93</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2330,11 +2330,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>94</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2354,11 +2354,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>95</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2378,11 +2378,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>96</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2402,11 +2402,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>97</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2426,11 +2426,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>98</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2450,11 +2450,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>99</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2474,11 +2474,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>100</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2498,11 +2498,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>101</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2522,11 +2522,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>102</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2546,11 +2546,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>103</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2570,11 +2570,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>104</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2594,11 +2594,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>105</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2618,11 +2618,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>106</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2642,11 +2642,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>107</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2666,11 +2666,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>108</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2690,11 +2690,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>109</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2714,11 +2714,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>110</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2738,11 +2738,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>111</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2762,11 +2762,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>112</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2786,11 +2786,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>113</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2810,11 +2810,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>114</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2834,11 +2834,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>115</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2858,11 +2858,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>116</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2882,11 +2882,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>117</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2906,11 +2906,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>118</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2930,11 +2930,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>119</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2954,11 +2954,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>120</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -2978,11 +2978,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>121</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3002,11 +3002,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>122</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3026,11 +3026,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>123</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3050,11 +3050,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>124</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3074,11 +3074,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>125</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3098,11 +3098,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>126</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3122,11 +3122,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>127</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3146,11 +3146,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>128</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3170,11 +3170,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>129</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3194,11 +3194,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>130</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3218,11 +3218,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>131</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3242,11 +3242,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>132</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3266,11 +3266,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>133</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3290,11 +3290,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>134</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3314,11 +3314,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>135</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3338,11 +3338,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>136</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3362,11 +3362,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>137</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3386,11 +3386,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>138</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3410,11 +3410,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>139</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3434,11 +3434,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>140</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3458,11 +3458,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>141</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3482,11 +3482,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>142</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3506,11 +3506,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>143</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3530,11 +3530,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>144</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3554,11 +3554,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>145</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3578,11 +3578,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>146</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3602,11 +3602,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>147</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3626,11 +3626,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>148</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3650,11 +3650,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>149</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3674,11 +3674,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>150</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3698,11 +3698,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>151</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3722,11 +3722,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>152</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3746,11 +3746,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>153</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3770,11 +3770,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>154</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3794,11 +3794,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>155</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3818,11 +3818,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>156</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3842,11 +3842,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>157</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3866,11 +3866,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>158</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3890,11 +3890,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>159</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3914,11 +3914,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>160</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3938,11 +3938,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>161</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3962,11 +3962,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>162</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -3986,11 +3986,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>163</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4010,11 +4010,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>164</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4034,11 +4034,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>165</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4058,11 +4058,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>166</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4082,11 +4082,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>167</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4106,11 +4106,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>168</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4130,11 +4130,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>169</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4154,11 +4154,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>170</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4178,11 +4178,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>171</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4202,11 +4202,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>172</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4226,11 +4226,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>173</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4250,11 +4250,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>174</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4274,11 +4274,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>175</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4298,11 +4298,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>176</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4322,11 +4322,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>177</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4346,11 +4346,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>178</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4370,11 +4370,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>179</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4394,11 +4394,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>180</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4418,11 +4418,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>181</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4442,11 +4442,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>182</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4466,11 +4466,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>183</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4490,11 +4490,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>184</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4514,11 +4514,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>185</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4538,11 +4538,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>186</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4562,11 +4562,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>187</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4586,11 +4586,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>188</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4610,11 +4610,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>189</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4634,11 +4634,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>190</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4658,11 +4658,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>191</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4682,11 +4682,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>192</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4706,11 +4706,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>193</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4730,11 +4730,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>194</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4754,11 +4754,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>195</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4778,11 +4778,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>196</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4802,11 +4802,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>197</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4826,11 +4826,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>198</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
@@ -4850,11 +4850,11 @@
 					<y:Label LayoutParameter="{y:GraphMLReference 2}">
 						<y:Label.Text>199</y:Label.Text>
 						<y:Label.Style>
-							<yjs:DefaultLabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
-								<yjs:DefaultLabelStyle.font>
+							<yjs:LabelStyle backgroundFill="#FFC0D9B4" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" backgroundStroke="#FFC0D9B4" autoFlip="true" textFill="#FF27401B">
+								<yjs:LabelStyle.font>
 									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
+								</yjs:LabelStyle.font>
+							</yjs:LabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>

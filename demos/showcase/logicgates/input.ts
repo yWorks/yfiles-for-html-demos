@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,11 +34,10 @@ import {
   GraphSnapContext,
   INode,
   NodeDropInputMode,
-  OrthogonalEdgeEditingContext,
   SimpleNode
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getNodeHighlightInfo } from './NodeHighlightInfo'
-import { configureTwoPointerPanning } from 'demo-utils/configure-two-pointer-panning'
+import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
 import { runLayout } from './logicgates-layout'
 
 /**
@@ -47,25 +46,28 @@ import { runLayout } from './logicgates-layout'
  */
 export function createInputMode(graphComponent: GraphComponent): void {
   const mode = new GraphEditorInputMode({
-    // Enable orthogonal edge editing
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext(),
     // enable snapping for easier orthogonal edge editing
-    snapContext: new GraphSnapContext({
-      enabled: true
-    }),
+    snapContext: new GraphSnapContext(),
     // don't allow nodes to be created using a mouse click
     allowCreateNode: false,
     // disable node resizing
-    showHandleItems: GraphItemTypes.ALL & ~GraphItemTypes.NODE
+    showHandleItems: GraphItemTypes.ALL & ~GraphItemTypes.NODE,
+    // don't allow moving unselected items
+    moveUnselectedItemsInputMode: { enabled: false }
   })
 
   // allow reversed edge creation depending on what kind of port the drag starts
   mode.createEdgeInputMode.edgeDirectionPolicy = EdgeDirectionPolicy.DETERMINE_FROM_PORT_CANDIDATES
+  // allow edge creation by dragging from anywhere on a node instead of only from port candidates
+  mode.createEdgeInputMode.startOverCandidateOnly = false
+  mode.createEdgeInputMode.priority = 45
+  mode.moveSelectedItemsInputMode.priority = 40
+
   // layout the graph on edge creation if auto-layout is checked
 
   const autoLayout = document.querySelector<HTMLInputElement>('#auto-layout-checkbox')!
 
-  mode.createEdgeInputMode.addEdgeCreatedListener(() => {
+  mode.createEdgeInputMode.addEventListener('edge-created', () => {
     if (autoLayout.checked) {
       // wait for next frame to make sure the gesture has completely finished
       setTimeout(() => {
@@ -74,7 +76,7 @@ export function createInputMode(graphComponent: GraphComponent): void {
     }
   })
 
-  mode.addEdgePortsChangedListener(() => {
+  mode.addEventListener('edge-ports-changed', () => {
     if (autoLayout.checked) {
       // wait for next frame to make sure the gesture has completely finished
       setTimeout(() => {
@@ -89,11 +91,8 @@ export function createInputMode(graphComponent: GraphComponent): void {
 
   // set the items to be reported
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
-  // if there are other items (most importantly labels) in front of edges or nodes
-  // they should be discarded, rather than be reported as "null"
-  mode.itemHoverInputMode.discardInvalidItems = false
   // whenever the currently hovered item changes call our method
-  mode.itemHoverInputMode.addHoveredItemChangedListener((_, { item, oldItem }) => {
+  mode.itemHoverInputMode.addEventListener('hovered-item-changed', ({ item, oldItem }) => {
     if (oldItem instanceof INode) {
       const highlightInfo = getNodeHighlightInfo(oldItem)
       highlightInfo.sourceHighlight = false

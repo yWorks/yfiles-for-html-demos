@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,21 +29,16 @@
 import {
   Class,
   CompactDiskLayout,
-  Enum,
   FreeNodeLabelModel,
   GraphComponent,
   ILayoutAlgorithm,
   LayoutData,
-  NodeLabelingPolicy,
   OrganicLayout,
+  RadialNodeLabelPlacement,
   RecursiveGroupLayout,
-  RecursiveGroupLayoutData,
-  YBoolean,
-  YNumber,
-  YString
-} from 'yfiles'
-
-import LayoutConfiguration, { NodeLabelingPolicies } from './LayoutConfiguration.js'
+  RecursiveGroupLayoutData
+} from '@yfiles/yfiles'
+import LayoutConfiguration from './LayoutConfiguration'
 import {
   ComponentAttribute,
   Components,
@@ -53,28 +48,87 @@ import {
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from 'demo-resources/demo-option-editor'
-
+} from '@yfiles/demo-resources/demo-option-editor'
+var GroupLayout
+;(function (GroupLayout) {
+  GroupLayout[(GroupLayout['NONE'] = 0)] = 'NONE'
+  GroupLayout[(GroupLayout['RECURSIVE'] = 1)] = 'RECURSIVE'
+})(GroupLayout || (GroupLayout = {}))
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
   $extends: LayoutConfiguration,
-
-  $meta: [LabelAttribute('CompactDiskLayout')],
-
+  _meta: {
+    generalGroup: [
+      new LabelAttribute('General'),
+      new OptionGroupAttribute('RootGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    labelingGroup: [
+      new LabelAttribute('Labeling'),
+      new OptionGroupAttribute('RootGroup', 20),
+      new TypeAttribute(OptionGroup)
+    ],
+    descriptionText: [
+      new OptionGroupAttribute('descriptionGroup', 10),
+      new ComponentAttribute(Components.HTML_BLOCK),
+      new TypeAttribute(String)
+    ],
+    useDrawingAsSketchItem: [
+      new LabelAttribute(
+        'Use Drawing as Sketch',
+        '#/api/CompactDiskLayout#CompactDiskLayout-property-fromSketchMode'
+      ),
+      new OptionGroupAttribute('generalGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    minimumNodeDistanceItem: [
+      new LabelAttribute(
+        'Minimum Node Distance',
+        '#/api/CompactDiskLayout#CompactDiskLayout-property-minimumNodeDistance'
+      ),
+      new MinMaxAttribute(0, 100),
+      new OptionGroupAttribute('generalGroup', 30),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    layoutGroupsItem: [
+      new LabelAttribute('Layout Groups', '#/api/RecursiveGroupLayout'),
+      new OptionGroupAttribute('generalGroup', 40),
+      new EnumValuesAttribute([
+        ['Ignore Groups', GroupLayout.NONE],
+        ['Layout Recursively', GroupLayout.RECURSIVE]
+      ]),
+      new TypeAttribute(GroupLayout)
+    ],
+    nodeLabelingStyleItem: [
+      new LabelAttribute(
+        'Node Labeling',
+        '#/api/CompactDiskLayout#CompactDiskLayout-property-nodeLabelPlacement'
+      ),
+      new OptionGroupAttribute('labelingGroup', 10),
+      new EnumValuesAttribute([
+        ['Ignore Labels', RadialNodeLabelPlacement.IGNORE],
+        ['Consider Labels', RadialNodeLabelPlacement.CONSIDER],
+        ['Generic', RadialNodeLabelPlacement.GENERIC],
+        ['Horizontal', RadialNodeLabelPlacement.HORIZONTAL],
+        ['Ray-like at Leaves', RadialNodeLabelPlacement.RAY_LIKE_LEAVES],
+        ['Ray-like', RadialNodeLabelPlacement.RAY_LIKE]
+      ]),
+      new TypeAttribute(RadialNodeLabelPlacement)
+    ]
+  },
   constructor: function () {
+    // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
     const layout = new CompactDiskLayout()
-
     this.useDrawingAsSketchItem = layout.fromSketchMode
     this.minimumNodeDistanceItem = layout.minimumNodeDistance
-    this.nodeLabelingStyleItem = NodeLabelingPolicies.NONE
+    this.nodeLabelingStyleItem = layout.nodeLabelPlacement
     this.layoutGroupsItem = GroupLayout.NONE
-
     this.title = 'Compact Disk Layout'
   },
-
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the configuration on.
@@ -91,17 +145,15 @@ const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
       return new RecursiveGroupLayout({
         coreLayout: new OrganicLayout({
           deterministic: true,
-          nodeOverlapsAllowed: false,
-          minimumNodeDistance: this.minimumNodeDistanceItem
+          allowNodeOverlaps: false,
+          defaultMinimumNodeDistance: this.minimumNodeDistanceItem
         }),
         fromSketchMode: this.useDrawingAsSketchItem
       })
     }
-
     // just use plain CompactDiskLayout
     return this.createCompactDiskLayout(graphComponent)
   },
-
   /**
    * Creates and configures the layout data.
    * @returns The configured layout data.
@@ -115,178 +167,45 @@ const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
     }
     return undefined
   },
-
   /**
    * Creates and configures the actual compact disk layout algorithm.
    * @returns The configured compact disk layout.
    */
   createCompactDiskLayout: function (graphComponent) {
     const layout = new CompactDiskLayout()
-
     layout.fromSketchMode = this.useDrawingAsSketchItem
-
     layout.minimumNodeDistance = this.minimumNodeDistanceItem
-
-    switch (this.nodeLabelingStyleItem) {
-      case NodeLabelingPolicies.NONE:
-        layout.considerNodeLabels = false
-        break
-      case NodeLabelingPolicies.RAYLIKE_LEAVES:
-        layout.integratedNodeLabeling = true
-        layout.nodeLabelingPolicy = NodeLabelingPolicy.RAY_LIKE_LEAVES
-        break
-      case NodeLabelingPolicies.CONSIDER_CURRENT_POSITION:
-        layout.considerNodeLabels = true
-        break
-      case NodeLabelingPolicies.HORIZONTAL:
-        layout.integratedNodeLabeling = true
-        layout.nodeLabelingPolicy = NodeLabelingPolicy.HORIZONTAL
-        break
-      default:
-        layout.considerNodeLabels = false
-        break
-    }
-
+    layout.nodeLabelPlacement = this.nodeLabelingStyleItem
     if (
-      this.nodeLabelingStyleItem === NodeLabelingPolicies.RAYLIKE_LEAVES ||
-      this.nodeLabelingStyleItem === NodeLabelingPolicies.HORIZONTAL
+      this.nodeLabelingStyleItem !== RadialNodeLabelPlacement.IGNORE &&
+      this.nodeLabelingStyleItem !== RadialNodeLabelPlacement.CONSIDER
     ) {
       graphComponent.graph.nodeLabels.forEach((label) => {
         graphComponent.graph.setLabelLayoutParameter(
           label,
-          FreeNodeLabelModel.INSTANCE.findBestParameter(
-            label,
-            FreeNodeLabelModel.INSTANCE,
-            label.layout
-          )
+          FreeNodeLabelModel.INSTANCE.findBestParameter(label, label.layout)
         )
       })
     }
-
     return layout
   },
-
   /** @type {OptionGroup} */
-  generalGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('General'),
-        OptionGroupAttribute('RootGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  generalGroup: null,
   /** @type {OptionGroup} */
-  labelingGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Labeling'),
-        OptionGroupAttribute('RootGroup', 20),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
+  labelingGroup: null,
   /** @type {string} */
   descriptionText: {
-    $meta: function () {
-      return [
-        OptionGroupAttribute('descriptionGroup', 10),
-        ComponentAttribute(Components.HTML_BLOCK),
-        TypeAttribute(YString.$class)
-      ]
-    },
     get: function () {
       return "<p>The nodes are arranged on a disk such that the disk's radius is minimized.</p><p>The layout mostly optimizes the dense placement of the nodes, while edges play a minor role. Hence, the compact disk layout is mostly suitable for graphs with small components whose loosely connected nodes should be grouped and packed in a small area.</p>"
     }
   },
-
   /** @type {boolean} */
-  useDrawingAsSketchItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Use Drawing as Sketch',
-          '#/api/CompactDiskLayout#CompactDiskLayout-property-fromSketchMode'
-        ),
-        OptionGroupAttribute('generalGroup', 20),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
-
+  useDrawingAsSketchItem: false,
   /** @type {number} */
-  minimumNodeDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Node Distance',
-          '#/api/CompactDiskLayout#CompactDiskLayout-property-minimumNodeDistance'
-        ),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        OptionGroupAttribute('generalGroup', 30),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
-
+  minimumNodeDistanceItem: 0,
   /** @type {GroupLayout} */
-  layoutGroupsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Layout Groups', '#/api/RecursiveGroupLayout'),
-        OptionGroupAttribute('generalGroup', 40),
-        EnumValuesAttribute().init({
-          values: [
-            ['Ignore Groups', GroupLayout.NONE],
-            ['Layout Recursively', GroupLayout.RECURSIVE]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
-
-  /** @type {NodeLabelingPolicies} */
-  nodeLabelingStyleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Node Labeling',
-          '#/api/CompactDiskLayout#CompactDiskLayout-property-nodeLabelingPolicy'
-        ),
-        OptionGroupAttribute('labelingGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Ignore Labels', NodeLabelingPolicies.NONE],
-            ['Consider Labels', NodeLabelingPolicies.CONSIDER_CURRENT_POSITION],
-            ['Horizontal', NodeLabelingPolicies.HORIZONTAL],
-            ['Ray-like at Leaves', NodeLabelingPolicies.RAYLIKE_LEAVES]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  }
+  layoutGroupsItem: null,
+  /** @type {RadialNodeLabelPlacement} */
+  nodeLabelingStyleItem: null
 })
 export default CompactDiskLayoutConfig
-
-/**
- * @readonly
- * @enum {number}
- */
-const GroupLayout = {
-  NONE: 0,
-  RECURSIVE: 1
-}

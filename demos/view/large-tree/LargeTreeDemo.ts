@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,46 +27,50 @@
  **
  ***************************************************************************/
 import {
-  BalloonLayout,
-  FixNodeLayoutData,
-  FixNodeLayoutStage,
   GraphComponent,
   GraphViewerInputMode,
   IAnimation,
   IGraph,
   ILayoutAlgorithm,
   INode,
+  LayoutAnchoringPolicy,
+  LayoutAnchoringStage,
+  LayoutAnchoringStageData,
   LayoutData,
   LayoutExecutor,
   License,
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
   Point,
+  RadialTreeLayout,
   Rect,
   SequentialLayout,
-  SubgraphLayout,
-  SubgraphLayoutData,
-  WebGL2Animation,
-  WebGL2GraphModelManager,
-  WebGL2PolylineEdgeStyle,
-  WebGL2SelectionIndicatorManager,
-  WebGL2ShapeNodeStyle
-} from 'yfiles'
+  SubgraphLayoutStage,
+  SubgraphLayoutStageData,
+  WebGLAnimation,
+  WebGLGraphModelManager,
+  WebGLPolylineEdgeStyle,
+  WebGLSelectionIndicatorManager,
+  WebGLShapeNodeStyle
+} from '@yfiles/yfiles'
 
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { checkWebGL2Support, finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import {
+  checkWebGL2Support,
+  finishLoading,
+  showLoadingIndicator
+} from '@yfiles/demo-resources/demo-page'
 
 /**
- * The current number of tree layers. Also the starting value for the demo
+ * The current number of tree layers. Also, the starting value for the demo.
  */
 let currentLayers = 3
 
-const nodeStyles: WebGL2ShapeNodeStyle[] = []
-let webGL2EdgeStyle: WebGL2PolylineEdgeStyle
+const nodeStyles: WebGLShapeNodeStyle[] = []
+let webGLEdgeStyle: WebGLPolylineEdgeStyle
 
 /**
- * Configures the maximum graph size reachable with layer additions
+ * Configures the maximum graph size reachable with layer additions.
  */
 const maxGraphSize = 250_000
 
@@ -77,35 +81,33 @@ async function run(): Promise<void> {
 
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   graphComponent.inputMode = new GraphViewerInputMode()
 
   initializeStyleDefaults()
   enableWebGLRendering(graphComponent)
   initializeInputElements(graphComponent)
 
-  createGraph(graphComponent, currentLayers)
+  await createGraph(graphComponent, currentLayers)
   initializeUI(graphComponent)
 }
 
 /**
- * Initializes the WebGL2 node and edge styles
+ * Initializes the WebGL node and edge styles
  */
 function initializeStyleDefaults(): void {
   ;['#242265', '#01baff', '#f26419', '#fdca40'].forEach((color) => {
-    nodeStyles.push(new WebGL2ShapeNodeStyle('round-rectangle', color, '#0000'))
+    nodeStyles.push(new WebGLShapeNodeStyle('round-rectangle', color, '#0000'))
   })
 
-  webGL2EdgeStyle = new WebGL2PolylineEdgeStyle({ targetArrow: 'triangle-small' })
+  webGLEdgeStyle = new WebGLPolylineEdgeStyle({ targetArrow: 'triangle-small' })
 }
 
 /**
  * Enables WebGL as the rendering technique
  */
 function enableWebGLRendering(graphComponent: GraphComponent): void {
-  graphComponent.graphModelManager = new WebGL2GraphModelManager()
-  graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
+  graphComponent.graphModelManager = new WebGLGraphModelManager()
+  graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager()
 }
 
 /**
@@ -176,14 +178,14 @@ function initializeUI(graphComponent: GraphComponent): void {
  */
 async function createGraph(graphComponent: GraphComponent, layers: number): Promise<void> {
   const graph = graphComponent.graph
-  const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
+  const gmm = graphComponent.graphModelManager as WebGLGraphModelManager
   const childCount = Number(document.querySelector<HTMLInputElement>('#childCountInput')!.value)
 
   setUIDisabled(true)
   const queue: INode[] = []
   const rootNode = createTreeNode(graph, 0, queue, Point.ORIGIN)
   graph.setNodeLayout(rootNode, Rect.fromCenter(graphComponent.viewport.center, rootNode.layout))
-  gmm.setStyle(rootNode, nodeStyles[0])
+  graph.setStyle(rootNode, nodeStyles[0])
 
   const fadeInAnimation = gmm.createFadeAnimation({
     type: 'fade-out',
@@ -219,7 +221,7 @@ async function addLayer(graphComponent: GraphComponent): Promise<void> {
       queue.push(node)
     })
 
-  const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
+  const gmm = graphComponent.graphModelManager as WebGLGraphModelManager
   const fadeInAnimation = gmm.createFadeAnimation({
     type: 'fade-out',
     timing: '1s ease reverse'
@@ -256,20 +258,20 @@ function extendTree(
   maxLayer: number,
   childCount: number,
   queue: INode[],
-  fadeInAnimation: WebGL2Animation
+  fadeInAnimation: WebGLAnimation
 ): void {
   const graph = graphComponent.graph
-  const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
+  const gmm = graphComponent.graphModelManager as WebGLGraphModelManager
 
   while (queue[0].tag.layer < maxLayer) {
     const source = queue.shift()!
     const newLayer = (source.tag.layer as number) + 1
     for (let i = 0; i < childCount; i++) {
       const newNode = createTreeNode(graph, newLayer, queue, source.layout.center)
-      gmm.setStyle(newNode, nodeStyles[newLayer % nodeStyles.length])
+      graph.setStyle(newNode, nodeStyles[newLayer % nodeStyles.length])
       gmm.setAnimations(newNode, [fadeInAnimation])
       const edge = graph.createEdge(source, newNode)
-      gmm.setStyle(edge, webGL2EdgeStyle)
+      graph.setStyle(edge, webGLEdgeStyle)
       gmm.setAnimations(edge, [fadeInAnimation])
     }
   }
@@ -290,20 +292,20 @@ function createTreeNode(graph: IGraph, layer: number, queue: INode[], center: Po
  */
 async function runExtendLayout(
   graphComponent: GraphComponent,
-  fadeInAnimation: WebGL2Animation
+  fadeInAnimation: WebGLAnimation
 ): Promise<void> {
-  const coreLayout = new BalloonLayout()
+  const coreLayout = new RadialTreeLayout()
   if (shouldReduceEdgeLength(graphComponent.graph)) {
     coreLayout.minimumEdgeLength = 0
   }
 
-  const graph = graphComponent.graph
-
-  const fixedNodeData = new FixNodeLayoutData({
-    fixedNodes: graph.nodes.find((n) => graph.inDegree(n) == 0)!
+  const fixedNodeData = new LayoutAnchoringStageData({
+    nodeAnchoringPolicies: (node) =>
+      graphComponent.graph.inDegree(node) == 0
+        ? LayoutAnchoringPolicy.CENTER
+        : LayoutAnchoringPolicy.NONE
   })
-  const layout = new FixNodeLayoutStage(coreLayout)
-
+  const layout = new LayoutAnchoringStage(coreLayout)
   await applyLayout(graphComponent, layout, fixedNodeData, fadeInAnimation, fadeInAnimation)
 }
 
@@ -339,7 +341,7 @@ async function removeLayer(graphComponent: GraphComponent): Promise<void> {
 
 /**
  * Removes nodes from the tree, animating them onto their parent nodes before removal
- * using the {@link PlaceNodesAtBarycenterStage}
+ * using the {@link PlaceNodesAtBarycenterStage}.
  *
  * @param graphComponent the graph component
  * @param removeNodes the nodes to remove
@@ -348,24 +350,20 @@ async function reduceTree(graphComponent: GraphComponent, removeNodes: INode[]):
   const graph = graphComponent.graph
 
   const barycenterData = new PlaceNodesAtBarycenterStageData({ affectedNodes: removeNodes })
-  const subgraphData = new SubgraphLayoutData({
+  const subgraphData = new SubgraphLayoutStageData({
     subgraphNodes: (node) => !removeNodes.includes(node)
   })
 
   const barycenterStage = new PlaceNodesAtBarycenterStage()
-  const subgraphLayout = new SubgraphLayout({ affectedNodesDpKey: '__SUBGRAPH_LAYOUT_KEY' })
+  const radialTreeLayout = new RadialTreeLayout()
+  const subgraphLayout = radialTreeLayout.layoutStages.get(SubgraphLayoutStage)!
+  subgraphLayout.enabled = true
 
-  const balloonLayout = new BalloonLayout({
-    subgraphLayoutEnabled: true,
-    subgraphLayout
-  })
   if (shouldReduceEdgeLength(graphComponent.graph)) {
-    balloonLayout.minimumEdgeLength = 0
+    radialTreeLayout.minimumEdgeLength = 0
   }
 
-  const layout = new SequentialLayout({ layouts: [balloonLayout, barycenterStage] })
-
-  const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
+  const gmm = graphComponent.graphModelManager as WebGLGraphModelManager
   const nodeFadeOutAnimation = gmm.createFadeAnimation({
     type: 'fade-out',
     timing: '1s ease'
@@ -383,7 +381,7 @@ async function reduceTree(graphComponent: GraphComponent, removeNodes: INode[]):
 
   await applyLayout(
     graphComponent,
-    layout,
+    new SequentialLayout(radialTreeLayout, barycenterStage),
     barycenterData.combineWith(subgraphData),
     nodeFadeOutAnimation,
     edgeFadeOutAnimation
@@ -395,7 +393,7 @@ async function reduceTree(graphComponent: GraphComponent, removeNodes: INode[]):
 }
 
 /**
- * Determines if {@link BalloonLayout} should route edges as short as possible to produce the most
+ * Determines if {@link RadialTreeLayout} should route edges as short as possible to produce the most
  * compact arrangement possible.
  * @param graph the graph to be arranged.
  */
@@ -404,11 +402,11 @@ function shouldReduceEdgeLength(graph: IGraph): boolean {
 }
 
 /**
- * Cleans up all WebGL2 animations, as only a limited number of set animations are allowed
+ * Cleans up all WebGL animations, as only a limited number of set animations are allowed
  */
 function cleanupAnimations(graphComponent: GraphComponent): void {
   const graph = graphComponent.graph
-  const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
+  const gmm = graphComponent.graphModelManager as WebGLGraphModelManager
   graph.nodes.forEach((node) => {
     gmm.setAnimations(node, [])
   })
@@ -424,17 +422,17 @@ async function applyLayout(
   graphComponent: GraphComponent,
   layout: ILayoutAlgorithm,
   layoutData: LayoutData,
-  nodeFadeOutAnimation: WebGL2Animation,
-  edgeFadeOutAnimation: WebGL2Animation
+  nodeFadeOutAnimation: WebGLAnimation,
+  edgeFadeOutAnimation: WebGLAnimation
 ): Promise<void> {
   const executor = new AnimatedLayoutExecutor({
     graphComponent,
     layout: layout,
     layoutData: layoutData,
-    duration: '1s',
+    animationDuration: '1s',
     allowUserInteraction: false,
     animateViewport: true,
-    targetBoundsInsets: 100
+    targetBoundsPadding: 100
   })
 
   executor.nodeAnimation = nodeFadeOutAnimation
@@ -449,12 +447,12 @@ async function applyLayout(
  * Customized layout executor that adds webgl animations for nodes and edges
  */
 class AnimatedLayoutExecutor extends LayoutExecutor {
-  public edgeAnimation!: WebGL2Animation
-  public nodeAnimation!: WebGL2Animation
+  public edgeAnimation!: WebGLAnimation
+  public nodeAnimation!: WebGLAnimation
 
   protected createAnimation(): IAnimation {
     let finalAnimation: IAnimation
-    const animations = [this.createMorphAnimation(), this.nodeAnimation, this.edgeAnimation]
+    const animations = [this.createLayoutAnimation(), this.nodeAnimation, this.edgeAnimation]
     if (this.animateViewport) {
       animations.push(this.createViewportAnimation(this.getTargetBounds()))
     }

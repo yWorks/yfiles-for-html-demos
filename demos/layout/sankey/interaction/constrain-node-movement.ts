@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,7 +35,7 @@ import {
   type IPoint,
   IPositionHandler,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Constrains the node movement only along the layer to which it belongs, i.e., the node can be moved
@@ -44,8 +44,8 @@ import {
 export function allowOnlyVerticalNodeMovement(graph: IGraph): void {
   // set a constrained handler that will allow the movement of the nodes only on the layer to which
   // they belong
-  graph.decorator.nodeDecorator.positionHandlerDecorator.setImplementationWrapper(
-    (node: INode | null, handler: IPositionHandler | null): ConstrainedPositionHandler => {
+  graph.decorator.nodes.positionHandler.addWrapperFactory(
+    (_node: INode | null, handler: IPositionHandler | null): ConstrainedPositionHandler => {
       return new ConstrainedPositionHandler(handler)
     }
   )

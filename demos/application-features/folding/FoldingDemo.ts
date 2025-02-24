@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,30 +27,29 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultGraph,
-  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   FoldingManager,
+  Graph,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GroupNodeLabelModel,
   GroupNodeStyle,
-  HierarchicLayout,
+  HierarchicalLayout,
   IFoldingView,
   IGraph,
+  LabelStyle,
   LayoutExecutor,
   License,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
@@ -62,11 +61,7 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode()
 
   // enable folding for the graph
   const foldingView = enableFolding()
@@ -81,11 +76,9 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData as unknown as JSONGraph)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   foldingView.manager.masterGraph.undoEngineEnabled = true
@@ -125,7 +118,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
  * @returns The folding view that manages the folded graph.
  */
 function enableFolding(): IFoldingView {
-  const masterGraph = new DefaultGraph()
+  const masterGraph = new Graph()
 
   // set default styles for newly created graph elements
   initializeGraph(masterGraph)
@@ -157,22 +150,21 @@ function initializeGraph(graph: IGraph): void {
     stroke: '2px solid #242265',
     cornerRadius: 8,
     tabWidth: 70,
-    contentAreaInsets: 8,
+    contentAreaPadding: 8,
     hitTransparentContentArea: true
   })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'right',
     textFill: '#fff'
   })
-  graph.groupNodeDefaults.labels.layoutParameter =
-    new GroupNodeLabelModel().createDefaultParameter()
+  graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
 
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
 
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true

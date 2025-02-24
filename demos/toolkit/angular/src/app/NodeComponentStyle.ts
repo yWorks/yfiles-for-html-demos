@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,7 @@
 import { ApplicationRef, ComponentFactoryResolver, Injector, NgZone } from '@angular/core'
 import { NodeComponent } from './node.component'
 import { Person } from './person'
-import { INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } from 'yfiles'
+import { INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } from '@yfiles/yfiles'
 
 export class NodeComponentStyle extends NodeStyleBase {
   constructor(
@@ -67,9 +67,9 @@ export class NodeComponentStyle extends NodeStyleBase {
         const listener = () => {
           this.appRef.detachView(compRef.hostView)
           compRef.destroy()
-          context.canvasComponent!.removeUpdatedVisualListener(listener)
+          context.canvasComponent!.removeEventListener('updated-visual', listener)
         }
-        context.canvasComponent!.addUpdatedVisualListener(listener)
+        context.canvasComponent!.addEventListener('updated-visual', listener)
         return null
       }
     )
@@ -80,7 +80,10 @@ export class NodeComponentStyle extends NodeStyleBase {
     if (oldVisual && oldVisual.svgElement) {
       const g = oldVisual.svgElement
       g.setAttribute('transform', 'translate(' + node.layout.x + ' ' + node.layout.y + ')')
-      ;(g as any)['data-compRef'].instance.zoom = renderContext.zoom
+      this.zone.run(() => {
+        // run inside the zone so Angular will update the NodeComponent
+        ;(g as any)['data-compRef'].instance.zoom = renderContext.zoom
+      })
       return oldVisual
     }
     return this.createVisual(renderContext, node)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,10 +32,11 @@ import {
   CanvasComponent,
   Font,
   GraphComponent,
-  HierarchicNestingPolicy,
+  HierarchicalNestingPolicy,
   IAnimation,
   IEdgeStyle,
   INode,
+  INodeStyle,
   IPoint,
   IRenderContext,
   IVisualCreator,
@@ -47,10 +48,8 @@ import {
   SvgVisual,
   TextRenderSupport,
   TimeSpan,
-  Visual,
-  VoidNodeStyle
-} from 'yfiles'
-
+  Visual
+} from '@yfiles/yfiles'
 import {
   createAggregationStyle,
   createAssociationStyle,
@@ -58,28 +57,17 @@ import {
   createDirectedAssociationStyle,
   createGeneralizationStyle,
   createRealizationStyle
-} from './UMLEdgeStyleFactory.js'
-
+} from './UMLEdgeStyleFactory'
 /**
  * Provides the visuals of the edge creation buttons.
  */
 export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
-  /** @type {Array.<SVGElement>} */
-  static get buttons() {
-    return ButtonVisualCreator.$buttons
-  }
-
-  /** @type {Array.<SVGElement>} */
-  static set buttons(buttons) {
-    ButtonVisualCreator.$buttons = buttons
-  }
-
+  node
+  static buttons
   renderer
   animator
-
   /**
    * The provided edge creation buttons.
-   * @type {!Array.<IEdgeStyle>}
    */
   static get edgeCreationButtons() {
     return [
@@ -91,11 +79,10 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
       createAssociationStyle()
     ]
   }
-
   /**
    * Creates the visual creator for the edge creation buttons.
-   * @param {!INode} node The node for which the buttons should be created.
-   * @param {!GraphComponent} graphComponent The graph component in which the node resides.
+   * @param node The node for which the buttons should be created.
+   * @param graphComponent The graph component in which the node resides.
    */
   constructor(node, graphComponent) {
     super()
@@ -106,19 +93,15 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     this.animator.allowUserInteraction = true
     ButtonVisualCreator.buttons = []
   }
-
   /**
-   * @param {!IRenderContext} ctx The context that describes where the visual will be used.
-   * @returns {!Visual}
+   * @param ctx The context that describes where the visual will be used.
    */
   createVisual(ctx) {
     // save the button elements to conveniently use them for hit testing
     ButtonVisualCreator.buttons = []
-
     // the context button container
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     container.setAttribute('class', 'context-button')
-
     // create the edge creation buttons
     let first = -60
     const step = 40
@@ -142,7 +125,6 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     const layout = this.node.layout
     const topRight = layout.topRight
     SvgVisual.setTranslate(container, topRight.x, topRight.y)
-
     // add interface/abstract toggle buttons
     const interfaceButton = this.renderer.renderTextButton('I')
     SvgVisual.setTranslate(interfaceButton, layout.x - topRight.x, layout.y - topRight.y - 25)
@@ -150,7 +132,6 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     SvgVisual.setTranslate(abstractButton, layout.x - topRight.x + 25, layout.y - topRight.y - 25)
     container.appendChild(interfaceButton)
     container.appendChild(abstractButton)
-
     // visualize the button state
     const model = this.node.style.model
     if (model.stereotype === 'interface') {
@@ -159,58 +140,47 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     if (model.constraint === 'abstract') {
       abstractButton.setAttribute('class', 'abstract-toggle toggled')
     }
-
     // we fade the buttons via CSS
     container.setAttribute('opacity', '0')
     setTimeout(() => {
       container.setAttribute('opacity', '1')
     }, 0)
-
     // we animate the position 'manually' because doing it via CSS causes animation artifacts
     animations.forEach((animation) => {
       this.animator.animate(animation)
     })
-
-    // store the button state to update them if needed
     container['data-renderDataCache'] = {
       width: layout.width,
       height: layout.height,
       interfaceToggle: model.stereotype,
       constraintToggle: model.constraint
     }
-
     return new SvgVisual(container)
   }
-
   /**
-   * @param {!IRenderContext} ctx The context that describes where the visual will be used in.
-   * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the
+   * @param ctx The context that describes where the visual will be used in.
+   * @param oldVisual The visual instance that had been returned the last time the
    *   {@link IVisualCreator.createVisual} method was called on this instance.
-   * @returns {!Visual}
    */
   updateVisual(ctx, oldVisual) {
     const layout = this.node.layout
     const topRight = layout.topRight
     const svgElement = oldVisual.svgElement
     const cache = svgElement['data-renderDataCache']
-
     // update the container layout
     SvgVisual.setTranslate(svgElement, topRight.x, topRight.y)
-
     // maybe update the toggle buttons
     const interfaceButton = svgElement.childNodes[svgElement.childNodes.length - 2]
     const abstractButton = svgElement.childNodes[svgElement.childNodes.length - 1]
     if (!interfaceButton || !abstractButton) {
       this.createVisual(ctx)
     }
-
     if (cache.width !== layout.width || cache.height !== layout.height) {
       SvgVisual.setTranslate(interfaceButton, layout.x - topRight.x, layout.y - topRight.y - 25)
       SvgVisual.setTranslate(abstractButton, layout.x - topRight.x + 25, layout.y - topRight.y - 25)
       cache.width = layout.width
       cache.height = layout.height
     }
-
     // update the button state if they have changed
     const model = this.node.style.model
     if (cache.interfaceToggle !== model.stereotype) {
@@ -227,21 +197,19 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
       )
       cache.constraintToggle = model.constraint
     }
-
     return oldVisual
   }
-
   /**
    * Helper method to get the edge style of the edge creation button if there is a button at the given location.
-   * @param {!CanvasComponent} canvasComponent The canvas component in which the node resides.
-   * @param {!INode} node The node who should be checked for a button.
-   * @param {!IPoint} location The world location to check for a button.
-   * @returns {?IEdgeStyle} The edge style if there is a button at the given location, otherwise null.
+   * @param canvasComponent The canvas component in which the node resides.
+   * @param node The node who should be checked for a button.
+   * @param location The world location to check for a button.
+   * @returns The edge style if there is a button at the given location, otherwise null.
    */
   static getStyleButtonAt(canvasComponent, node, location) {
     for (let i = 0; i < ButtonVisualCreator.buttons.length; i++) {
       const boundingRect = ButtonVisualCreator.buttons[i].getBoundingClientRect()
-      const worldTopLeft = canvasComponent.toWorldFromPage(
+      const worldTopLeft = canvasComponent.pageToWorldCoordinates(
         new Point(boundingRect.left, boundingRect.top)
       )
       if (
@@ -255,12 +223,11 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     }
     return null
   }
-
   /**
    * Helper method to get the context button at the given location.
-   * @param {!INode} node The node who should be checked for a button.
-   * @param {!IPoint} location The world location to check for a button.
-   * @returns {?string} The context button at the given or null.
+   * @param node The node who should be checked for a button.
+   * @param location The world location to check for a button.
+   * @returns The context button at the given or null.
    */
   static getContextButtonAt(node, location) {
     const layout = node.layout
@@ -283,32 +250,24 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     return null
   }
 }
-
 /**
  * Executes the button fan out animation.
  */
 class ButtonAnimation extends BaseClass(IAnimation) {
-  /**
-   * @param {!SVGElement} rotationElement
-   * @param {number} finishAngle
-   * @param {!SVGElement} translationElement
-   */
+  rotationElement
+  finishAngle
+  translationElement
   constructor(rotationElement, finishAngle, translationElement) {
     super()
-    this.translationElement = translationElement
-    this.finishAngle = finishAngle
     this.rotationElement = rotationElement
+    this.finishAngle = finishAngle
+    this.translationElement = translationElement
   }
-
-  /**
-   * @type {!TimeSpan}
-   */
   get preferredDuration() {
     return TimeSpan.fromMilliseconds(200)
   }
-
   /**
-   * @param {number} time - the animation time [0,1]
+   * @param time - the animation time [0,1]
    */
   animate(time) {
     this.rotationElement.setAttribute(
@@ -317,28 +276,19 @@ class ButtonAnimation extends BaseClass(IAnimation) {
     )
     this.translationElement.setAttribute('transform', `translate(${time * 50} 0)`)
   }
-
   cleanUp() {}
-
   initialize() {}
 }
-
 /**
  * Helper class that creates a round button visual containing a given edge style visualization.
  */
 class ButtonIconRenderer {
   gc
-
   constructor() {
     this.gc = new GraphComponent()
-    this.gc.graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NONE
+    this.gc.graphModelManager.hierarchicalNestingPolicy = HierarchicalNestingPolicy.NONE
     this.gc.graphModelManager.edgeGroup.above(this.gc.graphModelManager.nodeGroup)
   }
-
-  /**
-   * @param {!IEdgeStyle} edgeStyle
-   * @returns {!Element}
-   */
   renderButton(edgeStyle) {
     const graph = this.gc.graph
     graph.clear()
@@ -348,17 +298,12 @@ class ButtonIconRenderer {
       shape: ShapeNodeShape.ELLIPSE
     })
     graph.createNode(new Rect(-15, -15, 30, 30), style)
-    const src = graph.createNode(new Rect(-10, 0, 1, 1), VoidNodeStyle.INSTANCE)
-    const tgt = graph.createNode(new Rect(10, 0, 1, 1), VoidNodeStyle.INSTANCE)
+    const src = graph.createNode(new Rect(-10, 0, 1, 1), INodeStyle.VOID_NODE_STYLE)
+    const tgt = graph.createNode(new Rect(10, 0, 1, 1), INodeStyle.VOID_NODE_STYLE)
     graph.createEdge(src, tgt, edgeStyle)
     const svgExport = new SvgExport(new Rect(-18, -18, 36, 36))
     return svgExport.exportSvg(this.gc)
   }
-
-  /**
-   * @param {!string} text
-   * @returns {!SVGGElement}
-   */
   renderTextButton(text) {
     const textSize = TextRenderSupport.measureText(
       text,

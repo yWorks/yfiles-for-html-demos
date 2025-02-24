@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,7 +40,7 @@ import {
   NodeStyleBase,
   Point,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * A very basic high-performance node style implementation that uses HTML5 Canvas rendering.
@@ -68,10 +68,10 @@ class NodeRenderVisual extends HtmlCanvasVisual {
   }
 
   /**
-   * Draw a rectangle with a solid orange fill.
+   * Draws a rectangle with a solid orange fill.
    * @see Overrides {@link HtmlCanvasVisual.paint}
    */
-  paint(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
+  render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
     ctx.fillStyle = '#FF6C00'
     const l = this.layout
     ctx.fillRect(l.x, l.y, l.width, l.height)
@@ -86,8 +86,8 @@ export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
   createVisual(renderContext: IRenderContext, edge: IEdge): EdgeRenderVisual {
     return new EdgeRenderVisual(
       edge.bends,
-      edge.sourcePort!.dynamicLocation,
-      edge.targetPort!.dynamicLocation
+      edge.sourcePort.dynamicLocation,
+      edge.targetPort.dynamicLocation
     )
   }
 
@@ -98,8 +98,8 @@ export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
     }
 
     // but we exclude hits on the source and target node
-    const s = edge.sourceNode!
-    const t = edge.targetNode!
+    const s = edge.sourceNode
+    const t = edge.targetNode
     return (
       !s.style.renderer.getHitTestable(s, s.style).isHit(context, location) &&
       !t.style.renderer.getHitTestable(t, t.style).isHit(context, location)
@@ -123,7 +123,7 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
     super()
   }
 
-  paint(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
+  render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
     // simply draw a blue line from the source port location via all bends to the target port location
     ctx.strokeStyle = '#662b00'
     ctx.lineWidth = 1.5

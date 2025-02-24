@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { INode, IRenderContext, TaggedSvgVisual } from 'yfiles'
-import { GraphComponent, NodeStyleBase, SvgVisual, Visual, VisualCachingPolicy } from 'yfiles'
+import type { INode, IRenderContext, TaggedSvgVisual } from '@yfiles/yfiles'
+import {
+  GraphComponent,
+  NodeStyleBase,
+  SvgVisual,
+  Visual,
+  VisualCachingPolicy
+} from '@yfiles/yfiles'
 
-import { type Root, createRoot } from 'react-dom/client'
-import { type FunctionComponent, type ComponentClass, createElement } from 'react'
+import { createRoot, type Root } from 'react-dom/client'
+import { type ComponentClass, createElement, type FunctionComponent } from 'react'
+
 type RenderType<TTag> = FunctionComponent<TTag> | ComponentClass<TTag>
 
 /**
@@ -132,7 +139,7 @@ export class ReactComponentSvgNodeStyle<TTag> extends NodeStyleBase<ReactStyleSv
       height: node.layout.height,
       selected:
         context.canvasComponent instanceof GraphComponent &&
-        context.canvasComponent.selection.selectedNodes.isSelected(node),
+        context.canvasComponent.selection.nodes.includes(node),
       detail: context.zoom < 0.5 ? 'low' : 'high',
       tag: this.tagProvider(context, node)
     }

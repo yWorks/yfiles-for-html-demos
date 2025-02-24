@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph } from 'yfiles'
+import { IGraph } from '@yfiles/yfiles'
 import { NodeData, type SerializableNodeData } from './NodeData'
 import { EdgeData, type SerializableEdgeData } from './EdgeData'
 
@@ -59,16 +59,16 @@ export class GraphData {
     const edges = graph.edges
       .toArray()
       .map(
-        edge =>
+        (edge) =>
           [
             edge,
-            nodes.findIndex(node => node === edge.sourceNode),
-            nodes.findIndex(node => node === edge.targetNode)
+            nodes.findIndex((node) => node === edge.sourceNode),
+            nodes.findIndex((node) => node === edge.targetNode)
           ] as const
       )
 
     const nodeDataItems = nodes.map(NodeData.fromGraphItem)
-    const edgeDataItems = edges.map(edge => EdgeData.fromGraphItem(...edge))
+    const edgeDataItems = edges.map((edge) => EdgeData.fromGraphItem(...edge))
     return new GraphData({ nodeDataItems, edgeDataItems })
   }
 
@@ -104,8 +104,8 @@ export class GraphData {
    */
   applyToGraph(graph: IGraph): void {
     graph.clear()
-    const nodes = this.nodeDataItems.map(n => n.createGraphItem(graph))
-    this.edgeDataItems.forEach(e => e.createGraphItem(graph, ...e.matchPorts(nodes)))
+    const nodes = this.nodeDataItems.map((n) => n.createGraphItem(graph))
+    this.edgeDataItems.forEach((e) => e.createGraphItem(graph, ...e.matchPorts(nodes)))
   }
 
   /**
@@ -113,8 +113,8 @@ export class GraphData {
    */
   toJSON(): string {
     const data: SerializableGraphData = {
-      nodes: this.nodeDataItems.map(n => n.toJSONData()),
-      edges: this.edgeDataItems.map(e => e.toJSONData())
+      nodes: this.nodeDataItems.map((n) => n.toJSONData()),
+      edges: this.edgeDataItems.map((e) => e.toJSONData())
     }
     return JSON.stringify(data, null, 2)
   }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -43,7 +43,7 @@ import {
   SvgVisual,
   TimeSpan,
   type Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import type { Connection } from './model/Connection'
 import { convertLoadToColor } from './model/Device'
 
@@ -184,12 +184,12 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
    * @see Overrides {@link EdgeStyleBase.isVisible}
    */
   isVisible(canvasContext: ICanvasContext, clip: Rect, edge: IEdge): boolean {
-    const sourcePortLocation = edge.sourcePort!.location
+    const sourcePortLocation = edge.sourcePort.location
     if (clip.contains(sourcePortLocation)) {
       return true
     }
 
-    const targetPortLocation = edge.targetPort!.location
+    const targetPortLocation = edge.targetPort.location
     return clip.intersectsLine(sourcePortLocation, targetPortLocation)
   }
 
@@ -201,11 +201,11 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
    */
   getPath(edge: IEdge): GeneralPath {
     const path = new GeneralPath()
-    path.moveTo(edge.sourcePort!.location)
+    path.moveTo(edge.sourcePort.location)
     edge.bends.forEach((bend: IBend): void => {
       path.lineTo(bend.location)
     })
-    path.lineTo(edge.targetPort!.location)
+    path.lineTo(edge.targetPort.location)
     return this.cropPath(edge, IArrow.NONE, IArrow.NONE, path)!
   }
 

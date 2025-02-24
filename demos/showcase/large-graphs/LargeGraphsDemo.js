@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,56 +35,39 @@ import {
   IReshapeHandler,
   License,
   NodeReshapeHandleProvider
-} from 'yfiles'
-
-import RenderingTypesManager from './RenderingTypesManager.js'
-
+} from '@yfiles/yfiles'
+import RenderingTypesManager from './RenderingTypesManager'
 import {
-  HierarchicDemoConfiguration,
+  HierarchicalDemoConfiguration,
   OrganicDemoConfiguration
-} from './LargeGraphDemoConfiguration.js'
-import OrgChartDemoConfiguration from './OrgChartDemoConfiguration.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
+} from './LargeGraphDemoConfiguration'
+import OrgChartDemoConfiguration from './OrgChartDemoConfiguration'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   addNavigationButtons,
   addOptions,
   checkWebGL2Support,
   finishLoading
-} from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
-/** @type {RenderingTypesManager} */
+} from '@yfiles/demo-resources/demo-page'
 let renderingTypesManager = null
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   if (!checkWebGL2Support()) {
     return
   }
-
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   configureInteraction(graphComponent)
   initToolbar(graphComponent)
-
-  await loadGraph(graphComponent, new HierarchicDemoConfiguration())
-
+  await loadGraph(graphComponent, new HierarchicalDemoConfiguration())
   initGraphInformationUI(graphComponent)
   initRenderingInformationUI(graphComponent)
 }
-
 /**
  * Loads the graph using the specified {@link DemoConfiguration} and initializes
  * the {@link RenderingTypesManager}.
- * @param {!GraphComponent} graphComponent
- * @param {!DemoConfiguration} config
  */
 async function loadGraph(graphComponent, config) {
   const graph = graphComponent.graph
-
   if (renderingTypesManager) {
     /**
      * A RenderingTypesManager was instantiated already, which means we are switching from
@@ -95,7 +78,6 @@ async function loadGraph(graphComponent, config) {
     renderingTypesManager.dispose()
     graph.clear()
   }
-
   await config.initializeStyleDefaults(graph)
   const svgThresholdSelect = document.querySelector('#svgThreshold')
   const newIndex = Array.from(svgThresholdSelect.options).findIndex(
@@ -106,159 +88,123 @@ async function loadGraph(graphComponent, config) {
     graphComponent,
     config.svgThreshold,
     config.nodeStyleProvider,
-    config.webGL2NodeStyleProvider,
     config.edgeStyleProvider,
-    config.webGL2EdgeStyleProvider,
     config.nodeCreator
   )
-
   await config.loadGraph(graphComponent)
-
-  renderingTypesManager.initializeWebGL2NodeStyles()
-
-  graphComponent.fitGraphBounds()
-
+  void graphComponent.fitGraphBounds()
   renderingTypesManager.registerZoomChangedListener()
   renderingTypesManager.registerItemCreatedListeners()
-
   graph.undoEngineEnabled = true
   if (graph.undoEngine) {
     graph.undoEngine.clear()
   }
-
   initRenderingInformationUI(graphComponent)
 }
-
 /**
  * Configures the interaction options with the graph
- * @param {!GraphComponent} graphComponent
  */
 function configureInteraction(graphComponent) {
   graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
     allowClipboardOperations: true
   })
-
   // Disable moving of individual edge segments
-  graphComponent.graph.decorator.edgeDecorator.positionHandlerDecorator.hideImplementation()
-
-  graphComponent.graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory((node) => {
+  graphComponent.graph.decorator.edges.positionHandler.hide()
+  graphComponent.graph.decorator.nodes.reshapeHandleProvider.addFactory((node) => {
     const keepAspectRatio = new NodeReshapeHandleProvider(
       node,
-      node.lookup(IReshapeHandler.$class),
+      node.lookup(IReshapeHandler),
       HandlePositions.BORDER
     )
     keepAspectRatio.ratioReshapeRecognizer = EventRecognizers.ALWAYS
     return keepAspectRatio
   })
 }
-
 /**
  * Registers listeners to the graph component's input mode
  * that trigger the update of the graph information on the
  * left-hand side of the demo
- * @param {!GraphComponent} graphComponent
  */
 function initGraphInformationUI(graphComponent) {
   const inputMode = graphComponent.inputMode
-
   const updateGraphInformationListener = () => {
     updateGraphInformation(graphComponent.graph)
   }
-
-  inputMode.addNodeCreatedListener(updateGraphInformationListener)
-  inputMode.createEdgeInputMode.addEdgeCreatedListener(updateGraphInformationListener)
-  inputMode.addDeletedItemListener(updateGraphInformationListener)
-
+  inputMode.addEventListener('node-created', updateGraphInformationListener)
+  inputMode.createEdgeInputMode.addEventListener('edge-created', updateGraphInformationListener)
+  inputMode.addEventListener('deleted-item', updateGraphInformationListener)
   updateGraphInformation(graphComponent.graph)
 }
-
-/**
- * @param {!IGraph} graph
- */
 function updateGraphInformation(graph) {
   document.querySelector('#numberNodes').textContent = String(graph.nodes.size)
   document.querySelector('#numberEdges').textContent = String(graph.edges.size)
 }
-
 /**
  * Initializes the UI elements that display information about the current rendering type
  * and zoom level.
- * @param {!GraphComponent} graphComponent
  */
 function initRenderingInformationUI(graphComponent) {
-  graphComponent.addZoomChangedListener((graphComponent) => {
+  graphComponent.addEventListener('zoom-changed', (_, graphComponent) => {
     updateRenderingInformationUI(graphComponent)
   })
   updateRenderingInformationUI(graphComponent)
-
   // Show a popup when the rendering type changes
-  renderingTypesManager.addRenderingTypeChangedListener((newMode) => {
+  renderingTypesManager.setRenderingTypeChangedListener((newMode) => {
     const thresholdPercent = Math.floor(renderingTypesManager.svgThreshold * 100)
     const renderingInfoPopup = document.querySelector('#renderingInfoPopup')
     renderingInfoPopup.textContent =
       newMode === 'SVG'
         ? `SVG rendering at zoom above ${thresholdPercent}%`
-        : `WebGL2 rendering at zoom below ${thresholdPercent}%`
+        : `WebGL rendering at zoom below ${thresholdPercent}%`
     renderingInfoPopup.className = 'visible'
     setTimeout(() => {
       renderingInfoPopup.className = ''
     }, 3000)
   })
 }
-
 /**
  * Updates the display of zoom and rendering type on the left-hand side of the demo
- * @param {!GraphComponent} graphComponent
  */
 function updateRenderingInformationUI(graphComponent) {
   const zoomPercent = Math.floor(graphComponent.zoom * 100)
   document.querySelector('#zoomLevel').textContent = zoomPercent.toString()
   document.querySelector('#renderType').textContent = renderingTypesManager.currentRenderingType
 }
-
-/**
- * @param {boolean} disabled
- */
 function setUIDisabled(disabled) {
   const popup = document.querySelector('#loadingPopup')
   popup.className = disabled ? 'visible' : ''
-
   document.querySelector('#sampleSelection').disabled = disabled
   document.querySelector('#svgThreshold').disabled = disabled
   return new Promise((resolve) => setTimeout(resolve, 0))
 }
-
 /**
  * Wires up the toolbar UI elements
- * @param {!GraphComponent} graphComponent
  */
 function initToolbar(graphComponent) {
   const sampleSelect = document.querySelector('#sampleSelection')
-  addOptions(sampleSelect, 'Hierarchic', 'Organic', 'OrgChart')
+  addOptions(sampleSelect, 'Hierarchical', 'Organic', 'OrgChart')
   sampleSelect.addEventListener('change', async (e) => {
     await setUIDisabled(true)
     sampleSelect.disabled = true
-    const hierarchicOrganicDescription = document.querySelector('#hierarchicOrganic')
+    const hierarchicalOrganicDescription = document.querySelector('#hierarchicalOrganic')
     const orgChartDescription = document.querySelector('#orgChart')
-
     const select = e.target
     document.querySelector('#sampleName').innerText = select.value
     switch (select.value) {
-      case 'Hierarchic': {
-        hierarchicOrganicDescription.style.display = 'block'
+      case 'Hierarchical': {
+        hierarchicalOrganicDescription.style.display = 'block'
         orgChartDescription.style.display = 'none'
-        await loadGraph(graphComponent, new HierarchicDemoConfiguration())
+        await loadGraph(graphComponent, new HierarchicalDemoConfiguration())
         break
       }
       case 'Organic': {
-        hierarchicOrganicDescription.style.display = 'block'
+        hierarchicalOrganicDescription.style.display = 'block'
         orgChartDescription.style.display = 'none'
         await loadGraph(graphComponent, new OrganicDemoConfiguration())
         break
       }
       case 'OrgChart': {
-        hierarchicOrganicDescription.style.display = 'none'
+        hierarchicalOrganicDescription.style.display = 'none'
         orgChartDescription.style.display = 'block'
         await loadGraph(graphComponent, new OrgChartDemoConfiguration())
         break
@@ -272,7 +218,6 @@ function initToolbar(graphComponent) {
     await setUIDisabled(false)
   })
   addNavigationButtons(sampleSelect)
-
   const svgThresholdSelect = document.querySelector('#svgThreshold')
   addOptions(
     svgThresholdSelect,
@@ -289,5 +234,4 @@ function initToolbar(graphComponent) {
   })
   addNavigationButtons(svgThresholdSelect, false)
 }
-
 run().then(finishLoading)

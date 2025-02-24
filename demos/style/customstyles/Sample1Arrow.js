@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -43,9 +43,8 @@ import {
   SvgDefsManager,
   SvgVisual,
   Visual
-} from 'yfiles'
-import { SVGNS } from './Namespaces.js'
-
+} from '@yfiles/yfiles'
+import { SVGNS } from './Namespaces'
 /**
  * A demo IArrow implementation that renders the arrow as a custom filled shape.
  */
@@ -55,41 +54,35 @@ export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBou
   thickness = 2.0
   arrowThickness = 0
   arrowFigure = null
-
   /**
    * Returns the length of the arrow, i.e. the distance from the arrow's tip to
    * the position where the visual representation of the edge's path should begin.
    * Value: Always returns 7
    * @see Specified by {@link IArrow.length}.
-   * @type {number}
    */
   get length() {
     return 7
   }
-
   /**
    * Gets the cropping length associated with this instance.
    * Value: Always returns 1
    * This value is used by {@link IEdgeStyle}s to let the
    * edge appear to end shortly before its actual target.
    * @see Specified by {@link IArrow.cropLength}.
-   * @type {number}
    */
   get cropLength() {
     return 1
   }
-
   /**
    * Gets an {@link IVisualCreator} implementation that will create
    * the {@link IVisualCreator} for this arrow
    * at the given location using the given direction for the given edge.
-   * @param {!IEdge} edge the edge this arrow belongs to
-   * @param {boolean} atSource whether this will be the source arrow
-   * @param {!Point} anchor the anchor point for the tip of the arrow
-   * @param {!Point} direction the direction the arrow is pointing in
+   * @param edge the edge this arrow belongs to
+   * @param atSource whether this will be the source arrow
+   * @param anchor the anchor point for the tip of the arrow
+   * @param direction the direction the arrow is pointing in
    * Itself as a flyweight.
    * @see Specified by {@link IArrow.getVisualCreator}.
-   * @returns {!IVisualCreator}
    */
   getVisualCreator(edge, atSource, anchor, direction) {
     this.configureThickness(edge)
@@ -97,21 +90,19 @@ export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBou
     this.direction = direction
     return this
   }
-
   /**
    * Gets an {@link IBoundsProvider} implementation that can yield
    * this arrow's bounds if painted at the given location using the
    * given direction for the given edge.
-   * @param {!IEdge} edge the edge this arrow belongs to
-   * @param {boolean} atSource whether this will be the source arrow
-   * @param {!Point} anchor the anchor point for the tip of the arrow
-   * @param {!Point} direction the direction the arrow is pointing in
+   * @param edge the edge this arrow belongs to
+   * @param atSource whether this will be the source arrow
+   * @param anchor the anchor point for the tip of the arrow
+   * @param direction the direction the arrow is pointing in
    * an implementation of the {@link IBoundsProvider} interface that can
    * subsequently be used to query the bounds. Clients will always call
    * this method before using the implementation and may not cache the instance returned.
    * This allows for applying the flyweight design pattern to implementations.
    * @see Specified by {@link IArrow.getBoundsProvider}.
-   * @returns {!IBoundsProvider}
    */
   getBoundsProvider(edge, atSource, anchor, direction) {
     this.arrowThickness = this.getThickness(edge.style)
@@ -119,55 +110,44 @@ export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBou
     this.direction = direction
     return this
   }
-
   /**
    * Creates the visual for the arrow.
-   * @param {!IRenderContext} ctx The context that contains the information needed to create the visual.
+   * @param ctx The context that contains the information needed to create the visual.
    * The arrow visual.
    * @see Specified by {@link IVisualCreator.createVisual}.
-   * @returns {!SvgVisual}
    */
   createVisual(ctx) {
     // create a new path to draw the arrow
     if (this.arrowFigure === null) {
       this.arrowFigure = Sample1Arrow.newArrowPath(this.arrowThickness)
     }
-
     const path = this.arrowFigure.createSvgPath()
-
     // add the gradient to the global defs section if necessary and returns the id
     const gradientId = ctx.getDefsId(GRADIENT)
     path.setAttribute('fill', `url(#${gradientId})`)
-
     // Remember thickness for update
     path['data-renderDataCache'] = this.arrowThickness
-
     // rotate the arrow and move it to correct position
     path.setAttribute(
       'transform',
-      `matrix(${-this.direction.x} ${-this.direction.y} ${this.direction.y} ${-this.direction.x} ${
-        this.anchor.x
-      } ${this.anchor.y})`
+      `matrix(${-this.direction.x} ${-this.direction.y} ${this.direction.y} ${-this.direction.x} ${this.anchor.x} ${this.anchor.y})`
     )
-
     return new SvgVisual(path)
   }
-
   /**
    * This method updates or replaces a previously created {@link Visual}.
    * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
    * to {@link Sample1Arrow.createVisual}. Implementations may update the `oldVisual`
    * and return that same reference, or create a new visual and return the new instance or `null`.
-   * @param {!IRenderContext} ctx The context that contains the information needed to create the visual.
-   * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the
+   * @param ctx The context that contains the information needed to create the visual.
+   * @param oldVisual The visual instance that had been returned the last time the
    *   {@link Sample1Arrow.createVisual} method was called.
    * The updated visual.
    * @see {@link Sample1Arrow.createVisual}
-   * @see {@link ICanvasObjectDescriptor}
+   * @see {@link IObjectRenderer}
    * @see {@link CanvasComponent}
    * @see Specified by {@link IVisualCreator.updateVisual}.
-   * @returns {!SvgVisual}
    */
   updateVisual(ctx, oldVisual) {
     const path = oldVisual.svgElement
@@ -178,21 +158,15 @@ export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBou
       // re-render arrow
       return this.createVisual(ctx)
     }
-
     path.setAttribute(
       'transform',
-      `matrix(${-this.direction.x} ${-this.direction.y} ${this.direction.y} ${-this.direction.x} ${
-        this.anchor.x
-      } ${this.anchor.y})`
+      `matrix(${-this.direction.x} ${-this.direction.y} ${this.direction.y} ${-this.direction.x} ${this.anchor.x} ${this.anchor.y})`
     )
     return oldVisual
   }
-
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
    * @see Specified by {@link IBoundsProvider.getBounds}.
-   * @param {!ICanvasContext} context
-   * @returns {!Rect}
    */
   getBounds(context) {
     return new Rect(
@@ -202,26 +176,19 @@ export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBou
       16 + this.arrowThickness * 2
     )
   }
-
   /**
    * Configures the thickness to use for the next visual creation.
-   * @param {!IEdge} edge The edge to read the thickness from.
+   * @param edge The edge to read the thickness from.
    */
   configureThickness(edge) {
     // determine the edge's thickness
     const oldThickness = this.arrowThickness
     this.arrowThickness = this.getThickness(edge.style)
-
     // see if the old arrow figure needs to be invalidated...
     if (this.arrowThickness !== oldThickness) {
       this.arrowFigure = null
     }
   }
-
-  /**
-   * @param {*} style
-   * @returns {number}
-   */
   getThickness(style) {
     if (typeof style.pathThickness !== 'undefined') {
       return style.pathThickness
@@ -229,11 +196,6 @@ export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBou
       return this.thickness
     }
   }
-
-  /**
-   * @param {number} thickness
-   * @returns {!GeneralPath}
-   */
   static newArrowPath(thickness) {
     const path = new GeneralPath()
     path.moveTo(new Point(7, -thickness * 0.5))
@@ -256,8 +218,10 @@ export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBou
     path.close()
     return path
   }
+  get cropAtPort() {
+    return false
+  }
 }
-
 /**
  * This class is needed in order to support automatic cleanup of the global defs section.
  * The SVG specification requires gradient elements to be put into a defs section. The
@@ -269,44 +233,20 @@ export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBou
  * defined interface to deal with.
  */
 class CustomGradientSupport extends BaseClass(ISvgDefsCreator) {
-  /**
-   * @param {!SVGLinearGradientElement} gradient
-   */
+  gradient
   constructor(gradient) {
     super()
     this.gradient = gradient
   }
-
-  /**
-   * @param {!ICanvasContext} context
-   * @returns {!SVGElement}
-   */
   createDefsElement(context) {
     return this.gradient
   }
-
-  /**
-   * @param {!ICanvasContext} context
-   * @param {!Node} node
-   * @param {!string} id
-   * @returns {boolean}
-   */
   accept(context, node, id) {
     return node instanceof Element && node.getAttribute('fill') === `url(#${id})`
   }
-
-  /**
-   * @param {!ICanvasContext} context
-   * @param {!SVGElement} oldElement
-   */
   updateDefsElement(context, oldElement) {}
 }
-
 const GRADIENT = createGradient()
-
-/**
- * @returns {!CustomGradientSupport}
- */
 function createGradient() {
   // initialize gradient
   const linearGradient = document.createElementNS(SVGNS, 'linearGradient')
@@ -330,7 +270,6 @@ function createGradient() {
   stop3.setAttribute('stop-opacity', '1')
   stop3.setAttribute('offset', '1')
   linearGradient.appendChild(stop3)
-
   // initialize gradient support
   // This mechanism is needed to allow sharing of gradient instances between
   // multiple svg elements, as well as automatic cleanup of the global defs section.

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,67 +26,34 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  FreeNodePortLocationModel,
-  GraphItemTypes,
-  IPort,
-  Size,
-  StringTemplatePortStyle
-} from 'yfiles'
-
-// Elements stored in the 'global' defs section are copied to the main SVG's defs section
-// and can be referenced in the templates. In this case, this happens via converters.
-const portStyleTemplate =
-  '<g id="PortStyleTemplate">\n' +
-  '  <g class="port">\n' +
-  '    <ellipse rx="8" ry="8"/>\n' +
-  '    <line x1="-6" y1="0" x2="6" y2="0" class="port-icon"></line>\n' +
-  '    <line x1="0" y1="-1" x2="0" y2="1"\n' +
-  '      class="{TemplateBinding styleTag, Converter=companyOwnershipConverters.portIconStateConverter}"></line>\n' +
-  '  </g>\n' +
-  '</g>\n'
-
-/**
- * @typedef {Object} PortStyleTag
- * @property {boolean} [collapsed]
- * @property {boolean} [collapsible]
- * @property {function} [action]
- */
-
-/**
- * @typedef {Object} CompanyOwnershipConverters
- * @property {object} companyOwnershipConverters
- */
-
+import { FreeNodePortLocationModel, GraphItemTypes, IPort, Size } from '@yfiles/yfiles'
+import { CollapseExpandPortStyle } from '../orgchart/graph-style/CollapseExpandPortStyle'
 /**
  * This class is responsible for the implementation of the toggled ports.
  */
 export default class TogglePortButtonSupport {
-  constructor() {
-    // initialize converter
-    StringTemplatePortStyle.CONVERTERS.companyOwnershipConverters = {
-      portIconStateConverter: (val) =>
-        'port-icon ' + (val.collapsed ?? false ? 'port-icon-expand' : 'port-icon-collapse')
-    }
-  }
-
   /**
    * Adds the ports on the given node.
-   * @param {!IGraph} graph The given graph
-   * @param {!INode} node The given node
-   * @param {!IPortLocationModelParameter} locationParameter The location of the port
-   * @param {!function} action The action to bind with this port
+   * @param graph The given graph
+   * @param node The given node
+   * @param locationParameter The location of the port
+   * @param action The action to bind with this port
    */
-  addPort(graph, node, locationParameter = FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED, action) {
-    const style = new StringTemplatePortStyle(portStyleTemplate)
-    style.renderSize = new Size(20, 20)
-    style.styleTag = { collapsed: false, collapsible: true, action }
-    graph.addPort({ owner: node, style, locationParameter: locationParameter })
+  addPort(graph, node, locationParameter = FreeNodePortLocationModel.BOTTOM, action) {
+    const style = new CollapseExpandPortStyle(
+      new Size(20, 20),
+      (port) => port.tag.collapsed ?? false
+    )
+    graph.addPort({
+      owner: node,
+      style,
+      locationParameter: locationParameter,
+      tag: { collapsed: false, collapsible: true, action }
+    })
   }
-
   /**
    * Initializes the input mode and the click listener for the port items.
-   * @param {!GraphInputMode} graphInputMode The given input mode
+   * @param graphInputMode The given input mode
    */
   initializeInputMode(graphInputMode) {
     graphInputMode.clickableItems = graphInputMode.clickableItems | GraphItemTypes.PORT
@@ -95,20 +62,17 @@ export default class TogglePortButtonSupport {
       GraphItemTypes.NODE,
       GraphItemTypes.ALL
     ]
-
-    graphInputMode.addItemClickedListener((_, evt) => {
+    graphInputMode.addEventListener('item-clicked', (evt) => {
       if (!(evt.item instanceof IPort)) {
         return
       }
       const port = evt.item
-      if (port instanceof IPort && port.style instanceof StringTemplatePortStyle) {
-        const styleTag = port.style.styleTag
-        const collapsed = styleTag.collapsed ?? false
-        port.style.styleTag = { ...styleTag, collapsed: !collapsed }
-        evt.handled = true
-        graphInputMode.graph.invalidateDisplays()
-        styleTag.action?.(!collapsed)
-      }
+      const styleTag = port.tag
+      const collapsed = styleTag.collapsed ?? false
+      port.tag = { ...styleTag, collapsed: !collapsed }
+      evt.handled = true
+      graphInputMode.graph.invalidateDisplays()
+      styleTag.action?.(!collapsed)
     })
   }
 }

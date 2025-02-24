@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,33 +26,22 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ComponentLayout, HierarchicLayout, INode } from 'yfiles'
-import { NeighborhoodType } from './NeighborhoodType.js'
-
+import { ComponentLayout, HierarchicalLayout, INode } from '@yfiles/yfiles'
+import { NeighborhoodType } from './NeighborhoodType'
 /**
  * Returns the layout callback suitable for neighborhood graphs of the given type.
- * @param {!NeighborhoodType} neighborhoodType the type of neighborhood graph to be arranged by the returned callback.
- * @returns {!ApplyLayoutCallback}
+ * @param neighborhoodType the type of neighborhood graph to be arranged by the returned callback.
  */
 export function getApplyLayoutCallback(neighborhoodType) {
   return neighborhoodType === NeighborhoodType.FOLDER_CONTENTS
     ? (view, nodes) => applyComponentLayout(view, nodes)
-    : (view) => applyHierarchicLayout(view)
+    : (view) => applyHierarchicalLayout(view)
 }
-
-/**
- * @param {!NeighborhoodView} view
- * @param {!Array.<INode>} selectedViewNodes
- */
 function applyComponentLayout(view, selectedViewNodes) {
   if (selectedViewNodes.length > 1) {
     view.neighborhoodGraph.applyLayout(new ComponentLayout())
   }
 }
-
-/**
- * @param {!NeighborhoodView} view
- */
-function applyHierarchicLayout(view) {
-  view.neighborhoodGraph.applyLayout(new HierarchicLayout())
+function applyHierarchicalLayout(view) {
+  view.neighborhoodGraph.applyLayout(new HierarchicalLayout())
 }

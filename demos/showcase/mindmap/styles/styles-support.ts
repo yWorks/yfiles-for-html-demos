@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   type GraphComponent,
   IconLabelStyle,
   type IEdgeStyle,
@@ -35,15 +34,16 @@ import {
   type ILabelStyle,
   type INode,
   type INodeStyle,
+  LabelStyle,
   ShapeNodeStyle
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getSubtree } from '../subtrees'
 import { getDepth, type NodeData } from '../data-types'
 import { CollapseDecorator } from './CollapseDecorator'
 import { MindMapNodeStyle } from './MindMapNodeStyle'
 import { MindMapEdgeStyle } from './MindMapEdgeStyle'
-import { MindMapIconLabelStyleRenderer } from './MindMapIconLabelStyleRenderer'
-import { TagChangeUndoUnit } from '../interaction/TagChangeUndoUnit'
+import { MindMapIconLabelStyle } from './MindMapIconLabelStyle'
+import { createTagChangeUndoUnit } from '../interaction/TagChangeUndoUnit'
 
 /**
  * The array of node styles used for nodes at different depths.
@@ -74,20 +74,27 @@ export function initializeStyles(): void {
   ]
   edgeStyles = [new MindMapEdgeStyle(25, 8), new MindMapEdgeStyle(8, 3), new MindMapEdgeStyle(4, 3)]
   labelStyles = [
-    new IconLabelStyle({
-      wrapped: new DefaultLabelStyle({
-        font: '30px Arial'
-      }),
-      renderer: new MindMapIconLabelStyleRenderer()
-    }),
-    new IconLabelStyle({
-      wrapped: new DefaultLabelStyle({ font: '18px Arial' }),
-      renderer: new MindMapIconLabelStyleRenderer()
-    }),
-    new IconLabelStyle({
-      wrapped: new DefaultLabelStyle({ font: '16px Arial' }),
-      renderer: new MindMapIconLabelStyleRenderer()
-    })
+    new MindMapIconLabelStyle(
+      new IconLabelStyle({
+        wrappedStyle: new LabelStyle({
+          font: '30px Arial'
+        })
+      })
+    ),
+    new MindMapIconLabelStyle(
+      new IconLabelStyle({
+        wrappedStyle: new LabelStyle({
+          font: '18px Arial'
+        })
+      })
+    ),
+    new MindMapIconLabelStyle(
+      new IconLabelStyle({
+        wrappedStyle: new LabelStyle({
+          font: '16px Arial'
+        })
+      })
+    )
   ]
 }
 
@@ -100,7 +107,7 @@ export function updateStyles(subtreeRoot: INode, fullGraph: IGraph): void {
 
   subtreeNodes.forEach((node) => {
     const depth = getDepth(node)
-    const label = node.labels.first()
+    const label = node.labels.first()!
     const nodeStyle = getNodeStyle(depth)
     const labelStyle = getLabelStyle(depth)
     fullGraph.setStyle(node, nodeStyle)
@@ -108,7 +115,7 @@ export function updateStyles(subtreeRoot: INode, fullGraph: IGraph): void {
   })
 
   subtreeEdges.forEach((edge) => {
-    const depth = getDepth(edge.sourceNode!)
+    const depth = getDepth(edge.sourceNode)
     const edgeStyle = getEdgeStyle(depth)
     fullGraph.setStyle(edge, edgeStyle)
   })
@@ -154,7 +161,7 @@ export function setNodeColor(node: INode, color: string, graphComponent: GraphCo
 
   // create a custom undo unit
   graphComponent.graph.undoEngine!.addUnit(
-    new TagChangeUndoUnit('Change Color', 'Change Color', oldData, newData, node)
+    createTagChangeUndoUnit('Change Color', oldData, newData, node)
   )
   graphComponent.invalidate()
 }

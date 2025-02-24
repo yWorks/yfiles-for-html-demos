@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 11 Adding Arrows - Tutorial: Edge Style Implementation
 
-# Adding arrows
+<img src="../../../doc/demo-thumbnails/tutorial-style-implementation-edge-adding-arrows.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-edge/11-adding-arrows/).
 
 Arrows are a decorative element that can be added to both ends of an edge to indicate its direction. They commonly take the form of arrowheads.
 
@@ -24,8 +26,8 @@ In this step, we want to give our edge style the ability to render arrows. To do
 ```
 constructor(
   public distance = 1,
-  public sourceArrow = IArrow.NONE,
-  public targetArrow = IArrow.NONE
+  public sourceArrow: IArrow = IArrow.NONE,
+  public targetArrow: IArrow = IArrow.NONE
 ) {
   super()
 }
@@ -35,7 +37,7 @@ Now, we can specify the desired arrows when creating an edge style. For this we 
 
 ```
 const style = new CustomEdgeStyle(2)
-style.sourceArrow = IArrow.TRIANGLE
+style.sourceArrow = new Arrow(ArrowType.TRIANGLE)
 ```
 
 In `createVisual`, we add the arrows to our visualization using the method [addArrows](https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#EdgeStyleBase-method-addArrows) from the base class EdgeStyleBase. For this purpose, we create an own SVG group `arrows`. The addArrows method adds the arrows to this group. Finally, this group is added to the group with the other edge visualization elements.

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,4 +27,5 @@
  **
  ***************************************************************************/
 // This example uses the single-import Preact version from HTML served from esm.sh
+// @ts-ignore - We have no proper types for preact, here
 export * from 'https://esm.sh/htm@3.1.1/preact/standalone'

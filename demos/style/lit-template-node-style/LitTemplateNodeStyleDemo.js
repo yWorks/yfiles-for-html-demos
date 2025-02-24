@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,58 +37,39 @@ import 'codemirror/addon/lint/json-lint'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/addon/dialog/dialog.css'
 import 'codemirror/addon/lint/lint.css'
-
 import {
   GraphBuilder,
   GraphComponent,
   GraphMLIOHandler,
-  GraphMLSupport,
   GraphViewerInputMode,
   IArrow,
   License,
   PolylineEdgeStyle,
   Rect,
-  Size,
-  StorageLocation
-} from 'yfiles'
-
-import SampleData from './resources/sample.js'
-import { createLitNodeStyleFromSource, LitNodeStyle } from './LitNodeStyle.js'
-import { registerLitNodeStyleSerialization } from './LitNodeStyleMarkupExtension.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
-/** @type {GraphComponent} */
+  Size
+} from '@yfiles/yfiles'
+import SampleData from './resources/sample'
+import { createLitNodeStyleFromSource, LitNodeStyle } from './LitNodeStyle'
+import { registerLitNodeStyleSerialization } from './LitNodeStyleMarkupExtension'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 let graphComponent
-
 let renderFunctionSourceTextArea
-
 let tagTextArea
-
-/** @type {GraphMLSupport} */
-let graphMLSupport
-
 /**
  * Runs the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   graphComponent.inputMode = new GraphViewerInputMode()
-
   // initialize demo
   initializeTextAreas()
   initializeStyles()
-  initializeIO()
   loadSampleGraph()
   initializeUI()
 }
-
 /**
  * Initializes text areas to use CodeMirror and to update when the selection in the graph has
  * changed.
@@ -109,51 +90,47 @@ function initializeTextAreas() {
     gutters: ['CodeMirror-lint-markers'],
     lint: true
   })
-
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
-
-  graphComponent.selection.addItemSelectionChangedListener(() => {
-    const selectedNode = graphComponent.selection.selectedNodes.at(0)
-    if (selectedNode) {
-      if (selectedNode.style instanceof LitNodeStyle) {
-        renderFunctionSourceTextArea.setOption('readOnly', false)
-        renderFunctionSourceTextArea.setValue(selectedNode.style.renderFunction.toString())
-      } else {
-        renderFunctionSourceTextArea.setOption('readOnly', true)
-        renderFunctionSourceTextArea.setValue(
-          'Style is not an instance of LitNodeStyle with attached sources.'
-        )
-      }
-      tagTextArea.setOption('readOnly', false)
-      tagTextArea.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
-      document.querySelector('#apply-template-button').disabled = false
-      document.querySelector('#apply-tag-button').disabled = false
+  graphComponent.selection.addEventListener('item-added', () => {
+    const selectedNode = graphComponent.selection.nodes.at(0)
+    if (selectedNode.style instanceof LitNodeStyle) {
+      renderFunctionSourceTextArea.setOption('readOnly', false)
+      renderFunctionSourceTextArea.setValue(selectedNode.style.renderFunction.toString())
     } else {
-      renderFunctionSourceTextArea.setOption('readOnly', 'nocursor')
-      tagTextArea.setOption('readOnly', 'nocursor')
-      renderFunctionSourceTextArea.setValue('Select a node to edit its template.')
-      tagTextArea.setValue('Select a node to edit its tag.')
-      document.querySelector('#apply-template-button').disabled = true
-      document.querySelector('#apply-tag-button').disabled = true
+      renderFunctionSourceTextArea.setOption('readOnly', true)
+      renderFunctionSourceTextArea.setValue(
+        'Style is not an instance of LitNodeStyle with attached sources.'
+      )
     }
+    tagTextArea.setOption('readOnly', false)
+    tagTextArea.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
+    document.querySelector('#apply-template-button').disabled = false
+    document.querySelector('#apply-tag-button').disabled = false
+  })
+  graphComponent.selection.addEventListener('item-removed', () => {
+    renderFunctionSourceTextArea.setOption('readOnly', 'nocursor')
+    tagTextArea.setOption('readOnly', 'nocursor')
+    renderFunctionSourceTextArea.setValue('Select a node to edit its template.')
+    tagTextArea.setValue('Select a node to edit its tag.')
+    document.querySelector('#apply-template-button').disabled = true
+    document.querySelector('#apply-tag-button').disabled = true
   })
 }
-
 /**
  * Initializes the default styles for the graph. By default, org-chart nodes are used.
  */
 function initializeStyles() {
   const graph = graphComponent.graph
   graph.nodeDefaults.style = createLitNodeStyleFromSource(
-    '({layout, tag, selected, detail}) => svg`\n' +
+    '({layout, tag, selected, zoom}) => svg`\n' +
       '<g>\n' +
       '<rect fill="#c0c0c0" width=${layout.width} height=${layout.height} x="2" y="2"></rect>\n' +
       '<rect fill="white" stroke="#C0C0C0" width=${layout.width} height=${layout.height}></rect>\n' +
       "<rect width=${layout.width} height=\"2\" fill=${{present:'#55B757', busy:'#E7527C',travel:'#9945E9', unavailable:'#8D8F91'}[tag.status]}></rect>\n" +
       '<rect fill="transparent" stroke=${selected ? \'#FF6C00\' : \'transparent\'} stroke-width="3" width=${layout.width-3} height=${layout.height-3} x="1.5" y="1.5"></rect>\n' +
-      "${detail == 'high' ? svg`\n" +
+      '${zoom >= 0.5 ? svg`\n' +
       '  <image href=${\'./resources/\' + tag.icon + \'.svg\'} x="15" y="10" width="63.75" height="63.75"></image>\n' +
       '  <image href=${\'./resources/\' + tag.status + \'_icon.svg\'} x="25" y="80" height="15" width="60"></image>\n' +
       '  <g style="font-family: Roboto,sans-serif; fill: #444" width="185">\n' +
@@ -172,32 +149,22 @@ function initializeStyles() {
       '</g>\n' +
       '`'
   )
-
   graph.nodeDefaults.size = new Size(290, 100)
   graph.nodeDefaults.shareStyleInstance = false
-
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '2px rgb(170, 170, 170)',
     targetArrow: IArrow.NONE
   })
 }
-
 /**
  * Initializes GraphML writing and reading for files containing LitNodeStyle.
  */
 function initializeIO() {
   const graphmlHandler = new GraphMLIOHandler()
-
   // we want to be able to write and store LitNodeStyles in GraphML
   registerLitNodeStyleSerialization(graphmlHandler)
-
-  graphMLSupport = new GraphMLSupport({
-    graphComponent,
-    graphMLIOHandler: graphmlHandler,
-    storageLocation: StorageLocation.FILE_SYSTEM
-  })
+  return graphmlHandler
 }
-
 /**
  * Loads the sample graph.
  */
@@ -215,24 +182,19 @@ function loadSampleGraph() {
   })
   graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt').edgeCreator.bendsProvider = (e) =>
     e.bends
-
   const graph = graphBuilder.buildGraph()
-  graphComponent.fitGraphBounds(30)
-
+  void graphComponent.fitGraphBounds(30)
   // select one node to initialize the text box with some sample data
-  graphComponent.selection.setSelected(graph.nodes.last(), true)
+  graphComponent.selection.add(graph.nodes.last())
 }
-
 /**
  * Wires up the UI. Buttons are linked with their respective actions.
  */
 function initializeUI() {
-  const openButton = document.querySelector("button[data-command='OPEN']")
-  openButton.setAttribute('data-command-registered', 'true')
-  openButton.setAttribute('title', 'Open a GraphML file')
-  openButton.addEventListener('click', async () => {
+  const graphMLIOHandler = initializeIO()
+  document.querySelector('#open-file-button').addEventListener('click', async () => {
     try {
-      await graphMLSupport.openFile(graphComponent.graph)
+      await openGraphML(graphComponent, graphMLIOHandler)
       graphComponent.fitGraphBounds()
     } catch (ignored) {
       alert(
@@ -241,9 +203,11 @@ function initializeUI() {
       graphComponent.graph.clear()
     }
   })
-
+  document.querySelector('#save-button').addEventListener('click', async () => {
+    saveGraphML(graphComponent, 'litTemplateNodeStyle.graphml', graphMLIOHandler)
+  })
   document.querySelector('#apply-template-button').addEventListener('click', () => {
-    if (graphComponent.selection.selectedNodes.size === 0) {
+    if (graphComponent.selection.nodes.size === 0) {
       return
     }
     const renderFunctionSource = renderFunctionSourceTextArea.getValue()
@@ -251,13 +215,11 @@ function initializeUI() {
       // check if style is valid
       const style = createLitNodeStyleFromSource(renderFunctionSource)
       style.renderer
-        .getVisualCreator(graphComponent.selection.selectedNodes.first(), style)
+        .getVisualCreator(graphComponent.selection.nodes.first(), style)
         .createVisual(graphComponent.createRenderContext())
-
-      graphComponent.selection.selectedNodes.forEach((node) => {
+      graphComponent.selection.nodes.forEach((node) => {
         graphComponent.graph.setStyle(node, style)
       })
-
       document.getElementById('template-text-area-error').classList.remove('open-error')
     } catch (err) {
       const errorArea = document.getElementById('template-text-area-error')
@@ -266,10 +228,9 @@ function initializeUI() {
       errorArea.classList.add('open-error')
     }
   })
-
   document.querySelector('#apply-tag-button').addEventListener('click', () => {
     const errorArea = document.getElementById('tag-text-area-error')
-    graphComponent.selection.selectedNodes.forEach((node) => {
+    graphComponent.selection.nodes.forEach((node) => {
       try {
         node.tag = JSON.parse(tagTextArea.getValue())
         errorArea.classList.remove('open-error')
@@ -280,8 +241,6 @@ function initializeUI() {
     })
     graphComponent.invalidate()
   })
-
   document.querySelector('#reload').addEventListener('click', loadSampleGraph)
 }
-
 run().then(finishLoading)

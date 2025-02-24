@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,23 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Theming - Application Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="./theme.css" />
 
-    <script src="../../resources/filesystem-warning.js"></script>
+    <style>
+      .visible-style-tag {
+        display: inline-block;
+        box-sizing: border-box;
+        width: 100%;
+        border: 1px solid gray;
+        font-size: 0.8rem;
+      }
+    </style>
   </head>
   <body>
     <header class="demo-header">
@@ -96,26 +105,29 @@
         <h1>Theming</h1>
 
         <p>
-          This demo shows how to define a custom <a href="https://docs.yworks.com/yfileshtml/#/api/Theme" target="_blank">Theme</a> for the graph component. A
-          theme affects the color and look of the input handles (e.g. the handles to resize nodes),
-          the marquee, the snap-lines, label position candidates, the graph overview marquee and
-          also the indicators to select, highlight or focus items. The
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_view_theming" target="_blank">Theming</a> section of the Developers Guide
-          explains the effects of a custom Theme in detail.
+          This demo shows how to define a custom theme for the graph component by changing the
+          <code>--yfiles-theme</code> CSS variables. A theme affects the color and look of the input
+          handles (e.g. the handles to resize nodes), the marquee, the snap-lines, label position
+          candidates, the graph overview marquee and also the indicators to select, highlight or
+          focus items. The <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_view_theming" target="_blank">Theming</a> section of the
+          Developers Guide explains the effects of a custom Theme in detail.
         </p>
 
         <p>
-          The custom theme in this demo uses a <em>round</em> <a href="https://docs.yworks.com/yfileshtml/#/api/ThemeVariant" target="_blank">ThemeVariant</a> and a
-          scale of <em>2</em> to increase the size of the handles. The primary color is almost
-          white, the secondary color and background color are orange-like.
+          The custom theme in this demo uses a <em>round</em> theme variant and a scale of
+          <em>2</em> to increase the size of the handles. The primary color is almost white, the
+          secondary color and background color are orange-like.
         </p>
-
-        <p>
-          This demo also shows how to implement a simple switch between a <em>light</em> and
-          <em>dark</em> application mode. The styles of the graph items are not affected by the
-          theme. If you want to adapt the visualization of the graph items to the selected theme,
-          then you can do that as shown here when switching between light and dark mode.
-        </p>
+        <p style="margin-bottom: 0">This is done by setting the following CSS variables:</p>
+        <pre class="visible-style-tag">
+.yfiles-canvascomponent {
+  --yfiles-theme-primary: #fcfdfe;
+  --yfiles-theme-secondary: #f69454;
+  --yfiles-theme-background: #ee693f;
+  --yfiles-theme-variant: round;
+  --yfiles-theme-scale: 2;
+}        </pre
+        >
 
         <h2>Things to Try</h2>
         <ul>
@@ -129,15 +141,13 @@
             theme.
           </li>
           <li>
-            Note that the background color of the graph overview component on the top left is
+            Note that the viewport rectangle of the graph overview component on the top left is
             defined by the color of the custom theme as well.
           </li>
           <li>
-            Switch between light and dark mode by using the toolbar buttons. Note that the theme is
-            not affected by the mode. When switching, the coloring of graph items is changed and the
-            background color of the graph component is changed by adding a <em>CSS</em> class. Of
-            course, in real-world applications, more elements could change appearance via
-            <em>CSS</em>.
+            Switch between light and dark mode by using the toolbar buttons. When switching, the
+            coloring of graph items is changed and the background color of the graph component is
+            changed by adding a <em>CSS</em> class.
           </li>
         </ul>
 

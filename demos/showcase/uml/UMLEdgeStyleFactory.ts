@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,22 +26,23 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Arrow, ArrowType, DashStyle, Fill, PolylineEdgeStyle, Stroke } from 'yfiles'
+import { Arrow, ArrowType, Color, DashStyle, PolylineEdgeStyle, Stroke } from '@yfiles/yfiles'
 
 /**
  * Static helpers class to create UML styles and provide methods to check for certain styles.
  */
 export function createAssociationStyle(): PolylineEdgeStyle {
-  return new PolylineEdgeStyle()
+  return new PolylineEdgeStyle({ orthogonalEditing: true })
 }
 
 export function createDirectedAssociationStyle(): PolylineEdgeStyle {
   return new PolylineEdgeStyle({
     targetArrow: new Arrow({
       stroke: Stroke.BLACK,
-      fill: Fill.BLACK,
-      type: ArrowType.DEFAULT
-    })
+      fill: Color.BLACK,
+      type: ArrowType.STEALTH
+    }),
+    orthogonalEditing: true
   })
 }
 
@@ -52,9 +53,10 @@ export function createRealizationStyle(): PolylineEdgeStyle {
     }),
     sourceArrow: new Arrow({
       stroke: Stroke.BLACK,
-      fill: Fill.WHITE,
+      fill: Color.WHITE,
       type: ArrowType.TRIANGLE
-    })
+    }),
+    orthogonalEditing: true
   })
 }
 
@@ -62,9 +64,10 @@ export function createGeneralizationStyle(): PolylineEdgeStyle {
   return new PolylineEdgeStyle({
     sourceArrow: new Arrow({
       stroke: Stroke.BLACK,
-      fill: Fill.WHITE,
+      fill: Color.WHITE,
       type: ArrowType.TRIANGLE
-    })
+    }),
+    orthogonalEditing: true
   })
 }
 
@@ -72,9 +75,10 @@ export function createAggregationStyle(): PolylineEdgeStyle {
   return new PolylineEdgeStyle({
     sourceArrow: new Arrow({
       stroke: Stroke.BLACK,
-      fill: Fill.WHITE,
+      fill: Color.WHITE,
       type: ArrowType.DIAMOND
-    })
+    }),
+    orthogonalEditing: true
   })
 }
 
@@ -85,9 +89,10 @@ export function createDependencyStyle(): PolylineEdgeStyle {
     }),
     targetArrow: new Arrow({
       stroke: Stroke.BLACK,
-      fill: Fill.BLACK,
-      type: ArrowType.DEFAULT
-    })
+      fill: Color.BLACK,
+      type: ArrowType.STEALTH
+    }),
+    orthogonalEditing: true
   })
 }
 

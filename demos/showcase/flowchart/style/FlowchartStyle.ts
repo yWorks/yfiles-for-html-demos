@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Color,
   Fill,
   GeneralPath,
   type GraphComponent,
@@ -43,11 +44,10 @@ import {
   type Point,
   Rect,
   type Size,
-  SolidColorFill,
   Stroke,
   SvgVisual,
-  type Visual
-} from 'yfiles'
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
 
 export enum FlowchartNodeType {
   Process = 'process',
@@ -80,22 +80,21 @@ export enum FlowchartNodeType {
   NetworkMessage = 'networkMessage'
 }
 
-type Cache = SvgVisual & {
-  cache?: {
-    location: Point
-    size: Size
-    type: FlowchartNodeType
-    stroke: Stroke
-    fill: Fill
-    cssClass: string | null
-  }
+type Cache = {
+  location: Point
+  size: Size
+  type: FlowchartNodeType
+  stroke: Stroke
+  fill: Fill
+  cssClass: string | null
 }
+type FlowchartNodeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 /**
  * {@link INodeStyle} which draws a flowchart shape according to its type.
  * This style can be customized by changing the properties 'fill' and 'stroke' as well as with a css-stylesheet.
  */
-export class FlowchartNodeStyle extends NodeStyleBase {
+export class FlowchartNodeStyle extends NodeStyleBase<FlowchartNodeStyleVisual> {
   /**
    * Creates a new instance with the given type.
    * @param type The element type
@@ -105,14 +104,14 @@ export class FlowchartNodeStyle extends NodeStyleBase {
    */
   constructor(
     public type: FlowchartNodeType,
-    public fill: Fill = new SolidColorFill(183, 201, 227),
+    public fill: Fill = new Color(183, 201, 227),
     public stroke: Stroke = Stroke.BLACK,
     public cssClass: string | null = null
   ) {
     super()
   }
 
-  createVisual(context: IRenderContext, node: INode): SvgVisual {
+  createVisual(context: IRenderContext, node: INode): FlowchartNodeStyleVisual {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     // add the shape according to the type
@@ -135,7 +134,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       if (this.cssClass == null) {
         Stroke.setStroke(this.stroke, decorationPath, context)
         if (this.type === 'annotation') {
-          Fill.TRANSPARENT.applyTo(decorationPath, context)
+          Color.TRANSPARENT.applyTo(decorationPath, context)
         } else {
           Fill.setFill(this.fill, decorationPath, context)
         }
@@ -158,9 +157,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
     }
 
     // store relevant data for performance improvement in #updateVisual
-    const svgVisual: Cache = new SvgVisual(container)
-
-    svgVisual.cache = {
+    const cache = {
       location: node.layout.topLeft,
       size: node.layout.toSize(),
       type: this.type,
@@ -169,13 +166,16 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       cssClass: this.cssClass
     }
 
-    return svgVisual
+    return SvgVisual.from(container, cache)
   }
 
-  updateVisual(context: IRenderContext, oldVisual: Visual, node: INode): Visual {
-    const svgVisual = oldVisual as SvgVisual & Cache
-    const cache = svgVisual.cache!
-    const container = svgVisual.svgElement
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: FlowchartNodeStyleVisual,
+    node: INode
+  ): FlowchartNodeStyleVisual {
+    const cache = oldVisual.tag
+    const container = oldVisual.svgElement
     const path = container.firstElementChild as SVGPathElement
     const decoration =
       container.childElementCount === 2 ? (container.lastElementChild as SVGElement) : null
@@ -241,7 +241,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
         Fill.setFill(this.fill, path, context)
         if (decoration) {
           Stroke.setStroke(this.stroke, decoration, context)
-          Fill.TRANSPARENT.applyTo(decoration, context)
+          Color.TRANSPARENT.applyTo(decoration, context)
         }
       } else {
         Stroke.setStroke(this.stroke, path, context)
@@ -286,7 +286,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
    */
   isHit(context: IInputModeContext, location: Point, node: INode): boolean {
     return (
-      node.layout.toRect().containsWithEps(location, context.hitTestRadius) &&
+      node.layout.toRect().contains(location, context.hitTestRadius) &&
       getPath(this.type, node).areaContains(location)
     )
   }
@@ -1042,7 +1042,9 @@ function determineBracketOrientation(
   if (graph.contains(node)) {
     if (graph.degree(node) === 1) {
       const edge =
-        graph.inDegree(node) === 1 ? graph.inEdgesAt(node).first() : graph.outEdgesAt(node).first()
+        graph.inDegree(node) === 1
+          ? graph.inEdgesAt(node).first()!
+          : graph.outEdgesAt(node).first()!
       const intersection = getIntersection(edge, node)
 
       if (!intersection) {
@@ -1083,12 +1085,12 @@ function getIntersection(edge: IEdge, node: INode): Point | null {
   let firstPort: IPort
   let secondPort: IPort
   if (edge.sourceNode === node) {
-    firstPort = edge.sourcePort!
-    secondPort = edge.targetPort!
+    firstPort = edge.sourcePort
+    secondPort = edge.targetPort
     bends = edge.bends
   } else {
-    firstPort = edge.targetPort!
-    secondPort = edge.sourcePort!
+    firstPort = edge.targetPort
+    secondPort = edge.sourcePort
     bends = edge.bends.toReversed()
   }
 

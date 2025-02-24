@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,118 +27,52 @@
  **
  ***************************************************************************/
 /**
- * Data format that is used to build a mind map in this demo.
- * It contains information about nodes and edges.
- * @typedef {Object} MindMapData
- * @property {Array.<Concept>} concepts
- * @property {Array.<Connection>} connections
- */
-
-/**
- * Type that describes the format of the input node data in this mind map demo.
- * It is used for building the graph structure and adding labels to the nodes.
- * @typedef {Object} Concept
- * @property {number} id
- * @property {string} text
- */
-
-/**
- * Type that describes the format of the input edge data in this mind map demo.
- * It is used for building the graph structure, creating the edges and associating them with a type.
- * @typedef {Object} Connection
- * @property {number} from
- * @property {number} to
- * @property {('association'|'cross-reference')} type
- */
-
-/**
- * Type of data associated with a node.
- * It contains information that is used for the node visualization and interaction with the graph.
- * @typedef {Object} NodeData
- * @property {number} depth
- * @property {boolean} left
- * @property {boolean} collapsed
- * @property {string} color
- * @property {number} stateIcon
- */
-
-/**
- * Type of data associated with an edge.
- * It contains information that is used for the edge visualization and layout.
- * @typedef {Object} EdgeData
- * @property {('association'|'cross-reference')} type
- */
-
-/**
  * Returns the data stored in the node's tag.
- * @param {!INode} node
- * @returns {!NodeData}
  */
 export function getNodeData(node) {
   return node.tag
 }
-
 /**
  * Sets the data to store in the node's tag.
- * @param {!INode} node
- * @param {!NodeData} nodeData
  */
 export function setNodeData(node, nodeData) {
   node.tag = nodeData
 }
-
 /**
  * Returns the data stored in the edge's tag.
- * @param {!IEdge} edge
- * @returns {?EdgeData}
  */
 export function getEdgeData(edge) {
   return edge.tag
 }
-
 /**
  * Returns whether an edge is a cross-reference edge.
- * @param {!IEdge} edge
- * @returns {boolean}
  */
 export function isCrossReference(edge) {
   const edgeData = getEdgeData(edge)
   return edgeData?.type === 'cross-reference'
 }
-
 /**
  * Returns whether a node is collapsed.
- * @param {!INode} node
- * @returns {boolean}
  */
 export function isCollapsed(node) {
   const nodeData = getNodeData(node)
   return nodeData.collapsed
 }
-
 /**
  * Returns whether a node is on the left of the root.
- * @param {!INode} node
- * @returns {boolean}
  */
 export function isLeft(node) {
   const nodeData = getNodeData(node)
   return nodeData.left
 }
-
 /**
  * Returns whether a node is the root node.
- * @param {!INode} node
- * @returns {boolean}
  */
 export function isRoot(node) {
   return getDepth(node) === 0
 }
-
 /**
  * Returns the subtree-depth of a node.
- * @param {!INode} node
- * @returns {number}
  */
 export function getDepth(node) {
   const nodeData = getNodeData(node)

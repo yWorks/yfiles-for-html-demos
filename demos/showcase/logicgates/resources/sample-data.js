@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,12 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @typedef {Object} LogicGateData
- * @property {Array.<NodeData>} gates
- * @property {Array.<EdgeData>} connections
- */
-
 export const sampleData = {
   gates: [
     { id: '1', type: 'and' },
@@ -39,14 +33,11 @@ export const sampleData = {
     { id: '3', type: 'nand' },
     { id: '4', type: 'not' },
     { id: '5', type: 'and' },
-
     { id: '6', type: 'nor' },
     { id: '7', type: 'or' },
     { id: '8', type: 'xor' },
-
     { id: '9', type: 'not' },
     { id: '10', type: 'xnor' },
-
     { id: '11', type: 'and' },
     { id: '12', type: 'not' }
   ],

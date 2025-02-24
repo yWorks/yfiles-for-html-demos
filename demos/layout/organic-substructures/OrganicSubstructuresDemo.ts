@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,51 +27,39 @@
  **
  ***************************************************************************/
 import {
-  ChainSubstructureStyle,
-  Class,
-  CycleSubstructureStyle,
-  DefaultGraph,
+  Graph,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
-  ICommand,
   IGraph,
-  ImageNodeStyle,
+  IGroupPaddingProvider,
   INode,
-  INodeInsetsProvider,
   Insets,
+  LayoutExecutor,
   License,
   OrganicLayout,
+  OrganicLayoutChainSubstructureStyle,
+  OrganicLayoutCycleSubstructureStyle,
   OrganicLayoutData,
   OrganicLayoutGroupSubstructureScope,
+  OrganicLayoutParallelSubstructureStyle,
   OrganicLayoutStarSubstructureStyle,
   OrganicLayoutTreeSubstructureStyle,
-  ParallelSubstructureStyle,
-  RadialLayout,
   ShapeNodeStyle,
-  Size,
-  TreeLayout
-} from 'yfiles'
-import NodeTypePanel from 'demo-utils/NodeTypePanel'
-import type { ColorSetName } from 'demo-resources/demo-styles'
+  Size
+} from '@yfiles/yfiles'
+import NodeTypePanel from '@yfiles/demo-utils/NodeTypePanel'
+import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
 import {
-  applyDemoTheme,
   colorSets,
   createDemoEdgeStyle,
   createDemoNodeStyle,
   createDemoShapeNodeStyle,
   initDemoStyles
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, addOptions, finishLoading } from 'demo-resources/demo-page'
-
-// We need to load the 'styles-other' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for loading all library styles.
-Class.ensure(ImageNodeStyle)
-// For the tree substructures we also need modules 'layout-tree' and 'layout-radial'
-Class.ensure(TreeLayout)
-Class.ensure(RadialLayout)
+} from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * The color sets for the eight different node types.
@@ -99,8 +87,6 @@ let allowNodeTypeChange = true
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // enable interactive editing
   graphComponent.inputMode = new GraphEditorInputMode({
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
@@ -147,52 +133,56 @@ async function runLayout(animate: boolean): Promise<void> {
  */
 async function runLayoutCore(animate: boolean): Promise<void> {
   // configure the organic layout algorithm
-  const algorithm = new OrganicLayout()
+  const layout = new OrganicLayout()
 
   const currentSample = document.querySelector<HTMLInputElement>(`#sample-combo-box`)!.value
 
   //configure some basic settings
-  algorithm.deterministic = true
-  algorithm.minimumNodeDistance = currentSample === 'groups' ? 0 : 20
-  algorithm.preferredEdgeLength = 60
+  layout.deterministic = true
+  layout.defaultMinimumNodeDistance = currentSample === 'groups' ? 0 : 70
+  layout.defaultPreferredEdgeLength = 60
 
   // configure substructure styles (cycles, chains, parallel structures, star, tree)
-  algorithm.cycleSubstructureStyle = getCycleStyle()
-  algorithm.chainSubstructureStyle = getChainStyle()
-  algorithm.parallelSubstructureStyle = getParallelStyle()
-  algorithm.starSubstructureStyle = getStarStyle()
-  algorithm.treeSubstructureStyle = getTreeStyle()
-  algorithm.groupSubstructureScope = getGroupSubstructureScope()
+  layout.cycleSubstructureStyle = getCycleStyle()
+  layout.chainSubstructureStyle = getChainStyle()
+  layout.parallelSubstructureStyle = getParallelStyle()
+  layout.starSubstructureStyle = getStarStyle()
+  layout.treeSubstructureStyle = getTreeStyle()
+  layout.groupSubstructureScope = getGroupSubstructureScope()
 
   //configure type separation for parallel and star substructures
   const separateParallel = document.querySelector<HTMLInputElement>(`#separate-parallel`)!
-  algorithm.parallelSubstructureTypeSeparation = separateParallel.checked
+  layout.parallelSubstructureTypeSeparation = separateParallel.checked
   const separateStar = document.querySelector<HTMLInputElement>(`#separate-star`)!
-  algorithm.starSubstructureTypeSeparation = separateStar.checked
+  layout.starSubstructureTypeSeparation = separateStar.checked
 
   // configure data-driven features for the organic layout algorithm by using OrganicLayoutData
   const layoutData = new OrganicLayoutData()
 
   if (document.querySelector<HTMLInputElement>(`#use-edge-grouping`)!.checked) {
     // if desired, define edge grouping on the organic layout data
-    layoutData.sourceGroupIds.constant = 'groupAll'
-    layoutData.targetGroupIds.constant = 'groupAll'
+    layoutData.substructureSourceGroupIds = 'groupAll'
+    layoutData.substructureTargetGroupIds = 'groupAll'
   }
 
   if (document.querySelector<HTMLInputElement>(`#consider-node-types`)!.checked) {
     // if types should be considered define a delegate on the respective layout data property
     // that queries the type from the node's tag
-    layoutData.nodeTypes.delegate = getNodeType
+    layoutData.nodeTypes = getNodeType
   }
+
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
 
   // runs the layout algorithm and applies the result...
   if (animate) {
     //... with a morph animation
-    await graphComponent.morphLayout(algorithm, null, layoutData)
+    await graphComponent.applyLayoutAnimated({ layout, layoutData })
   } else {
     //... without an animation
-    graphComponent.graph.applyLayout(algorithm, layoutData)
-    graphComponent.fitGraphBounds()
+    graphComponent.graph.applyLayout(layout, layoutData)
+    await graphComponent.fitGraphBounds()
   }
 }
 
@@ -206,28 +196,28 @@ function getNodeType(node: INode): number {
 /**
  * Determines the desired cycle substructure style for layout calculations from the settings UI.
  */
-function getCycleStyle(): CycleSubstructureStyle {
+function getCycleStyle(): OrganicLayoutCycleSubstructureStyle {
   switch (getSelectedValue('cycleStyle')) {
     case 'CIRCULAR':
-      return CycleSubstructureStyle.CIRCULAR
+      return OrganicLayoutCycleSubstructureStyle.CIRCULAR
     default:
-      return CycleSubstructureStyle.NONE
+      return OrganicLayoutCycleSubstructureStyle.NONE
   }
 }
 
 /**
  * Determines the desired chain substructure style for layout calculations from the settings UI.
  */
-function getChainStyle(): ChainSubstructureStyle {
+function getChainStyle(): OrganicLayoutChainSubstructureStyle {
   switch (getSelectedValue('chainStyle')) {
     case 'RECTANGULAR':
-      return ChainSubstructureStyle.RECTANGULAR
+      return OrganicLayoutChainSubstructureStyle.RECTANGULAR
     case 'STRAIGHT_LINE':
-      return ChainSubstructureStyle.STRAIGHT_LINE
+      return OrganicLayoutChainSubstructureStyle.STRAIGHT_LINE
     case 'DISK':
-      return ChainSubstructureStyle.DISK
+      return OrganicLayoutChainSubstructureStyle.DISK
     default:
-      return ChainSubstructureStyle.NONE
+      return OrganicLayoutChainSubstructureStyle.NONE
   }
 }
 
@@ -237,13 +227,13 @@ function getChainStyle(): ChainSubstructureStyle {
 function getParallelStyle() {
   switch (getSelectedValue('parallelStyle')) {
     case 'RADIAL':
-      return ParallelSubstructureStyle.RADIAL
+      return OrganicLayoutParallelSubstructureStyle.RADIAL
     case 'RECTANGULAR':
-      return ParallelSubstructureStyle.RECTANGULAR
+      return OrganicLayoutParallelSubstructureStyle.RECTANGULAR
     case 'STRAIGHT_LINE':
-      return ParallelSubstructureStyle.STRAIGHT_LINE
+      return OrganicLayoutParallelSubstructureStyle.STRAIGHT_LINE
     default:
-      return ParallelSubstructureStyle.NONE
+      return OrganicLayoutParallelSubstructureStyle.NONE
   }
 }
 
@@ -268,8 +258,8 @@ function getStarStyle(): OrganicLayoutStarSubstructureStyle {
  */
 function getTreeStyle(): OrganicLayoutTreeSubstructureStyle {
   switch (getSelectedValue('treeStyle')) {
-    case 'BALLOON':
-      return OrganicLayoutTreeSubstructureStyle.BALLOON
+    case 'RADIAL_TREE':
+      return OrganicLayoutTreeSubstructureStyle.RADIAL_TREE
     case 'RADIAL':
       return OrganicLayoutTreeSubstructureStyle.RADIAL
     case 'ORIENTED':
@@ -306,9 +296,9 @@ function configureGraph(graph: IGraph): void {
   graph.nodeDefaults.style = createDemoNodeStyle(nodeTypeColors[0])
   graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementation(
+  graph.decorator.nodes.groupPaddingProvider.addConstant(
     (node) => graph.isGroupNode(node),
-    INodeInsetsProvider.create(() => new Insets(40))
+    IGroupPaddingProvider.create(() => new Insets(40))
   )
 
   graph.edgeDefaults.style = createDemoEdgeStyle({ showTargetArrow: false })
@@ -324,10 +314,11 @@ function initializeTypePanel(graphComponent: GraphComponent): void {
   typePanel.typeChanged = () => runLayout(true)
 
   // update the nodes whose types will be changed on selection change events
-  graphComponent.selection.addItemSelectionChangedListener(
+  graphComponent.selection.addEventListener(
+    'item-added',
     () =>
       (typePanel.currentItems = allowNodeTypeChange
-        ? graphComponent.selection.selectedNodes
+        ? graphComponent.selection.nodes
             .filter((n) => !graphComponent.graph.isGroupNode(n))
             .toArray()
         : null)
@@ -356,7 +347,7 @@ function setNodeType(node: INode, type: number): void {
 async function loadSample(sample: string): Promise<void> {
   disableUI(true)
   try {
-    const newGraph = new DefaultGraph()
+    const newGraph = new Graph()
     // configures default styles for newly created graph elements
     configureGraph(newGraph)
 
@@ -384,13 +375,13 @@ async function loadSample(sample: string): Promise<void> {
     inputMode.allowCreateEdge = allowItemCreation
     inputMode.allowDuplicate = allowItemCreation
     inputMode.allowClipboardOperations = allowItemCreation
-    inputMode.moveInputMode.enabled = allowItemModification
+    inputMode.moveSelectedItemsInputMode.enabled = allowItemModification
     inputMode.deletableItems = allowItemCreation ? GraphItemTypes.ALL : GraphItemTypes.NONE
     inputMode.showHandleItems = allowItemModification ? GraphItemTypes.ALL : GraphItemTypes.NONE
 
     if (allowItemCreation) {
       // update the default node style depending on the style of the first node
-      const refStyle = newGraph.nodes.first().style
+      const refStyle = newGraph.nodes.first()?.style
       if (refStyle instanceof ShapeNodeStyle) {
         newGraph.nodeDefaults.style = createDemoShapeNodeStyle(refStyle.shape, nodeTypeColors[0])
       }
@@ -404,10 +395,6 @@ async function loadSample(sample: string): Promise<void> {
 
     // enable undo/redo
     newGraph.undoEngineEnabled = true
-
-    // tell the demo's commands to update their state, i.e.
-    // this ensures that the undo/redo toolbar controls get the correct enabled/disabled state
-    ICommand.invalidateRequerySuggested()
   } finally {
     disableUI(false)
   }

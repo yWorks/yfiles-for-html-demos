@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Font, FontWeight, GeneralPath, Point, TextRenderSupport } from 'yfiles'
-import { getNodeHighlightInfo } from '../NodeHighlightInfo.js'
+import { Font, GeneralPath, Point, TextRenderSupport } from '@yfiles/yfiles'
+import { getNodeHighlightInfo } from '../NodeHighlightInfo'
 import {
   appendEllipse,
   createPath,
@@ -35,96 +35,65 @@ import {
   GateNodeStyle,
   getPointOnCurve,
   setAttribute
-} from './GateNodeStyle.js'
-import { LogicGateType } from '../LogicGateType.js'
-
+} from './GateNodeStyle'
+import { LogicGateType } from '../LogicGateType'
 /**
  * Node style implementation which renders an AND or NAND gate.
  */
 export class AndGateNodeStyle extends GateNodeStyle {
+  fillColor
+  strokeColor
+  labelColor
   /**
    * Creates a new instance of AndGateNodeStyle
-   * @param {boolean} negated
-   * @param {!string} fillColor
-   * @param {!string} strokeColor
-   * @param {!string} labelColor
    */
   constructor(negated, fillColor, strokeColor, labelColor) {
     super(negated ? LogicGateType.NAND : LogicGateType.AND)
-    this.labelColor = labelColor
-    this.strokeColor = strokeColor
     this.fillColor = fillColor
+    this.strokeColor = strokeColor
+    this.labelColor = labelColor
   }
-
   /**
    * Creates the Svg elements and adds them to the container.
-   * @param {!CacheOwnerElement} container The svg element
-   * @param {!Cache} cache The render-data cache object
-   * @param {!INode} node The given node
+   * @param container The svg element
+   * @param cache The render-data cache object
+   * @param node The given node
    */
   render(container, cache, node) {
     // store information with the visual on how we created it
     container['data-cache'] = cache
-
     // the size of node
     const size = cache.size
     const width = size.width
     const height = size.height
-
     const isNegated = this.gateType === LogicGateType.NAND
-
     const x1 = width * 0.15
     const x2 = width * 0.6
     const y1 = height * 0.25
     const y2 = height * 0.5
     const y3 = height * 0.75
-
     const firstPoint = new Point(x2, 0)
     const endPoint = new Point(x2, height)
     const c1 = new Point(firstPoint.x + width * 0.3, firstPoint.y + height * 0.1)
     const c2 = new Point(endPoint.x + width * 0.3, endPoint.y - height * 0.1)
     const extremaX = getPointOnCurve(0.5, firstPoint, endPoint, c1, c2)
-
     this.renderMainPart(container, x1, x2, height, c1, c2, endPoint)
     this.renderOutputPort(isNegated, extremaX, width, y2, node, container)
     this.renderInputPorts(y1, x1, y3, node, container)
-
     if (isNegated) {
       appendEllipse(container, extremaX + width * 0.03, height * 0.5, width * 0.03, width * 0.03)
     }
-
     this.renderLabel(node, isNegated, container)
   }
-
-  /**
-   * @param {!Element} container
-   * @param {number} x1
-   * @param {number} x2
-   * @param {number} height
-   * @param {!IPoint} c1
-   * @param {!IPoint} c2
-   * @param {!IPoint} endPoint
-   */
   renderMainPart(container, x1, x2, height, c1, c2, endPoint) {
     const generalPath = new GeneralPath()
     generalPath.moveTo(new Point(x1, 0))
     generalPath.lineTo(new Point(x2, 0))
-
     generalPath.cubicTo(c1, c2, endPoint)
-
     generalPath.lineTo(new Point(x1, height))
     generalPath.close()
     createPath(container, generalPath, this.fillColor, this.strokeColor)
   }
-
-  /**
-   * @param {boolean} isNegated
-   * @param {number} extremaX
-   * @param {number} width
-   * @param {number} y2
-   * @param {!INode} node
-   * @param {!Element} container
-   */
   renderOutputPort(isNegated, extremaX, width, y2, node, container) {
     const outputPortPath = new GeneralPath()
     outputPortPath.moveTo(new Point(isNegated ? extremaX + 2 * width * 0.03 : extremaX, y2))
@@ -134,14 +103,6 @@ export class AndGateNodeStyle extends GateNodeStyle {
       : 'black'
     createPath(container, outputPortPath, 'none', outputStroke)
   }
-
-  /**
-   * @param {number} y1
-   * @param {number} x1
-   * @param {number} y3
-   * @param {!INode} node
-   * @param {!Element} container
-   */
   renderInputPorts(y1, x1, y3, node, container) {
     const inputPortPath = new GeneralPath()
     inputPortPath.moveTo(new Point(0, y1))
@@ -153,12 +114,6 @@ export class AndGateNodeStyle extends GateNodeStyle {
       : 'black'
     createPath(container, inputPortPath, 'none', inputStroke)
   }
-
-  /**
-   * @param {!INode} node
-   * @param {boolean} isNegated
-   * @param {!Element} container
-   */
   renderLabel(node, isNegated, container) {
     const fontSize = Math.floor(node.layout.height * 0.25)
     const textContent = isNegated ? 'NAND' : 'AND'
@@ -168,12 +123,11 @@ export class AndGateNodeStyle extends GateNodeStyle {
       new Font({
         fontFamily: 'Arial',
         fontSize,
-        fontWeight: FontWeight.BOLD
+        fontWeight: 'bold'
       })
     )
     setAttribute(text, 'x', (node.layout.width - textSize.width) * 0.45)
     setAttribute(text, 'y', (node.layout.height - textSize.height) * 0.8)
-
     container.appendChild(text)
   }
 }

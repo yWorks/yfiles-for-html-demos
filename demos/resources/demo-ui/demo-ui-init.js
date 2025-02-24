@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,27 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Workarounds } from 'yfiles'
-import { registerErrorDialog } from '../demo-error.js'
-import { BrowserDetection } from './BrowserDetection.js'
-
+import { registerErrorDialog } from '../demo-error'
 if (document.readyState !== 'loading') {
   initializeDemoUI()
 } else {
   addEventListener('DOMContentLoaded', initializeDemoUI)
 }
-
 /**
  * Creates some HTML elements of the demo UI.
  */
 function initializeDemoUI() {
   registerErrorDialog()
-  enableWorkarounds()
-}
-
-function enableWorkarounds() {
-  // Workaround for bogus mouse events on iOS 13, seems to be fixed in iOS 15
-  if (BrowserDetection.iOSVersion >= 13 && BrowserDetection.iOSVersion < 15) {
-    Workarounds.wk203237 = 100
-  }
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Class,
   FoldingManager,
   GraphComponent,
   GraphViewerInputMode,
@@ -36,19 +35,19 @@ import {
   ScrollBarVisibility,
   ShapeNodeStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import { DeepZoomGroupNodeStyle } from './DeepZoomGroupNodeStyle'
 import { fitContent, initializeDeepZoom, zoomToOriginal } from './deep-zoom-update'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { loadSampleGraph } from './model/load-sample-graph'
 import { applyDeepZoomLayout } from './deep-zoom-layout'
-import { createDemoShapeNodeStyle } from 'demo-resources/demo-styles'
+import { createDemoShapeNodeStyle } from '@yfiles/demo-resources/demo-styles'
 
-// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for 'applyLayout'.
-Class.ensure(LayoutExecutor)
+// Ensure that the LayoutExecutor class is not removed by build optimizers
+// It is needed for the 'applyLayoutAnimated' method in this demo.
+LayoutExecutor.ensure()
 
 /**
  * Bootstraps the demo.
@@ -58,8 +57,8 @@ async function run(): Promise<void> {
   const graphComponent = new GraphComponent('graphComponent')
 
   // hide the scrollbars
-  graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.NEVER
-  graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.NEVER
+  graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.HIDDEN
+  graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.HIDDEN
 
   initializeGraphStyles(graphComponent)
   await loadSampleGraph(graphComponent)
@@ -78,7 +77,7 @@ async function run(): Promise<void> {
   // attach a viewport listener that adjusts the viewport and visible graph depending on zoom level
   initializeDeepZoom(graphComponent)
 
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 }
 
 /**

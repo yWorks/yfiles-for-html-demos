@@ -1,21 +1,23 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Logic Gates Demo
 
-# Logic Gates Demo
+<img src="../../../doc/demo-thumbnails/logic-gates.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/showcase/logicgates/).
 
 This demo showcases yFiles for HTML to visualize a digital system with logic gates.
 
-Each node has specific ports: incoming edges connect only to the left side of the target node, while outgoing edges go to the right side of the source node. [PortConstraint](https://docs.yworks.com/yfileshtml/#/api/PortConstraint) and [PortCandidate](https://docs.yworks.com/yfileshtml/#/api/PortCandidate) are used for this purpose.
+Each node has specific ports: incoming edges connect only to the left side of the target node, while outgoing edges go to the right side of the source node. [LayoutPortCandidate](https://docs.yworks.com/yfileshtml/#/api/LayoutPortCandidate) is used for this purpose.
 
 ## Graph Creation
 
@@ -26,5 +28,5 @@ A [Port-aware Graph Builder Demo](../../databinding/port-aware-graph-builder/) i
 - Drag nodes from the palette and connect them with edges.
 - Create a new edge: this highlights the possible end ports with green color.
 - Hover over a node to see available input (reddish color) and output (bluish color) ports
-- Re-assign a connection by dragging the endpoint of the edge.
+- Reassign a connection by selecting the edge and dragging its endpoint.
 - The ports remain unchanged when applying the selected layout algorithm.

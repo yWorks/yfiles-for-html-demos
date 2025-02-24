@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphComponent,
-  License,
-  NodeStylePortStyleAdapter,
-  ShapeNodeStyle,
-  Size
-} from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { GraphComponent, License, ShapePortStyle, Size } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   createSimpleGraph,
   enableGraphEditing,
@@ -43,7 +37,7 @@ import {
 } from '../common'
 import { CustomEdgeStyle as OldCustomEdgeStyle } from '../01-create-a-polyline/CustomEdgeStyle'
 
-import { finishLoading } from 'demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { CustomEdgeStyle } from './CustomEdgeStyle'
 import { initializeInlineGraphComponent } from '../../tutorial-style-implementation-node/common'
 
@@ -59,15 +53,13 @@ fitGraphBounds(graphComponent)
 
 const oldState = initializeInlineGraphComponent('#old-state')
 oldState.graph.edgeDefaults.style = new OldCustomEdgeStyle()
-const portStyle = new NodeStylePortStyleAdapter(
-  new ShapeNodeStyle({
-    shape: 'ellipse',
-    fill: 'gray'
-  })
-)
+const portStyle = new ShapePortStyle({
+  shape: 'ellipse',
+  fill: 'gray'
+})
 portStyle.renderSize = new Size(5, 5)
 oldState.graph.nodeDefaults.ports.style = portStyle
 createSimpleGraph(oldState, false)
-oldState.zoomTo(oldState.graph.nodes.first().layout.toRect().getEnlarged(10))
+oldState.zoomTo(oldState.graph.nodes.first()!.layout.toRect().getEnlarged(10))
 
 finishLoading()

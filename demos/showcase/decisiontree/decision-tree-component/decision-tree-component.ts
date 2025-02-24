@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,8 +28,13 @@
  ***************************************************************************/
 import DecisionTree from './DecisionTree'
 import { getRootNode, readSampleGraph, setAsRootNode } from '../editor-component/editor-component'
-import { type GraphComponent, type GraphEditorInputMode, ICommand, type IGraph } from 'yfiles'
-import { addNavigationButtons } from 'demo-resources/demo-page'
+import {
+  Command,
+  type GraphComponent,
+  type GraphEditorInputMode,
+  type IGraph
+} from '@yfiles/yfiles'
+import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
 import './decision-tree.css'
 
 let decisionTree: DecisionTree | null
@@ -43,10 +48,16 @@ export function initializeDecisionTreeComponent(graphComponent: GraphComponent):
   document.querySelector<HTMLButtonElement>('#restart')!.addEventListener('click', () => {
     showDecisionTree(graphComponent.graph)
   })
-  bindCommand('INCREASE_ZOOM_DECISION_TREE', ICommand.INCREASE_ZOOM)
-  bindCommand('DECREASE_ZOOM_DECISION_TREE', ICommand.DECREASE_ZOOM)
-  bindCommand('FIT_GRAPH_BOUNDS_DECISION_TREE', ICommand.FIT_GRAPH_BOUNDS)
-  bindCommand('ZOOM_ORIGINAL_DECISION_TREE', ICommand.ZOOM, 1)
+  bindCommand('INCREASE_ZOOM_DECISION_TREE', Command.INCREASE_ZOOM)
+  bindCommand('DECREASE_ZOOM_DECISION_TREE', Command.DECREASE_ZOOM)
+
+  document
+    .querySelector<HTMLButtonElement>("button[data-command='FIT_GRAPH_BOUNDS']")!
+    .addEventListener('click', async () => {
+      await graphComponent.fitGraphBounds()
+    })
+
+  bindCommand('ZOOM_ORIGINAL_DECISION_TREE', Command.ZOOM, 1)
 
   // add the sample graphs
   const samples = document.querySelector<HTMLSelectElement>('#samples')!
@@ -78,7 +89,7 @@ export function showDecisionTree(graph: IGraph): void {
       setLayoutRunning,
       setLayoutRunning
     )
-  } catch (error) {
+  } catch {
     alert(
       'No suitable root node found. The root node is a node with no incoming edges, if not specified explicitly.'
     )
@@ -114,12 +125,12 @@ function setLayoutRunning(running: boolean, graphComponent: GraphComponent): voi
  * Binds the given command and command parameter to the {@link HTMLButtonElement} that matches the
  * given <code>data-command</code> name in the decision tree's toolbar.
  */
-function bindCommand(name: string, command: ICommand, parameter: number | null = null): void {
+function bindCommand(name: string, command: Command, parameter: number | null = null): void {
   document
     .querySelector<HTMLButtonElement>(`#decision-tree-toolbar button[data-command='${name}']`)!
     .addEventListener('click', () => {
       if (decisionTree) {
-        command.execute(parameter, decisionTree.graphComponent)
+        decisionTree.graphComponent.executeCommand(command, parameter)
       }
     })
 }

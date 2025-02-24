@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,8 +27,7 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultPortCandidate,
+  type Constructor,
   Fill,
   IEnumerable,
   IInputModeContext,
@@ -41,14 +40,15 @@ import {
   NodeSizeConstraintProvider,
   NodeStyleBase,
   Point,
+  PortCandidate,
   PortCandidateProviderBase,
   PortCandidateValidity,
   Rect,
   Size,
   Stroke,
   SvgVisual,
-  Visual
-} from 'yfiles'
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
 import type { NodeInfo } from './ListNodeDemo'
 
 const SVGNS = 'http://www.w3.org/2000/svg'
@@ -62,14 +62,14 @@ type RenderState = {
   draggingIndex: number | null
 }
 
-type SVGGElementWithRenderState = SVGGElement & { 'data-renderDataCache': RenderState }
+type ListNodeStyleVisual = TaggedSvgVisual<SVGGElement, RenderState>
 
 /**
  * A node style with a header and a thick border and row separators.
  * Note that the row contents are not rendered. These are rendered as ports and port labels.
  * Also note that the header text is also rendered as node label.
  */
-export class ListNodeStyle extends NodeStyleBase {
+export class ListNodeStyle extends NodeStyleBase<ListNodeStyleVisual> {
   private readonly borderFill = Fill.from('#2C4B52')
   private readonly backgroundFill = Fill.from('#9CC5CF')
   private readonly highlightFill = Fill.from('#6aa7b0')
@@ -83,26 +83,35 @@ export class ListNodeStyle extends NodeStyleBase {
    * Creates a SvgElement and a <g> element and delegates to {@link render}
    * to create the group's children.
    */
-  protected createVisual(context: IRenderContext, node: INode): Visual | null {
+  protected createVisual(context: IRenderContext, node: INode): ListNodeStyleVisual {
     const nodeSize = node.layout.toSize()
-    const g = document.createElementNS(SVGNS, 'g') as SVGGElementWithRenderState
+    const g = document.createElementNS(SVGNS, 'g')
     const nodeInfo = node.tag as NodeInfo
     this.render(g, nodeSize, nodeInfo, context)
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
-    return new SvgVisual(g)
+    // store the current state in cache
+    const cache: RenderState = {
+      nodeSize: nodeSize,
+      backgroundFill: this.backgroundFill,
+      borderFill: this.borderFill,
+      lineStroke: this.lineStroke,
+      numRows: nodeInfo.rows.length,
+      draggingIndex: nodeInfo.draggingIndex
+    }
+    return SvgVisual.from(g, cache)
   }
 
   /**
    * Updates an already created visual.
    */
-  protected updateVisual(context: IRenderContext, oldVisual: Visual, node: INode): Visual | null {
-    if (!(oldVisual instanceof SvgVisual && oldVisual.svgElement instanceof SVGGElement)) {
-      // The visual is not as expected: create a new one
-      return this.createVisual(context, node)
-    }
-    const g = oldVisual.svgElement as SVGGElementWithRenderState
+  protected updateVisual(
+    context: IRenderContext,
+    oldVisual: ListNodeStyleVisual,
+    node: INode
+  ): ListNodeStyleVisual {
+    const g = oldVisual.svgElement
     // test whether the node has to be re-rendered
-    const cache = g['data-renderDataCache']
+    const cache = oldVisual.tag
     const nodeSize = node.layout.toSize()
     const nodeInfo = node.tag as NodeInfo
     if (
@@ -120,6 +129,14 @@ export class ListNodeStyle extends NodeStyleBase {
         g.removeChild(g.lastChild!)
       }
       this.render(g, nodeSize, nodeInfo, context)
+      oldVisual.tag = {
+        nodeSize: nodeSize,
+        backgroundFill: this.backgroundFill,
+        borderFill: this.borderFill,
+        lineStroke: this.lineStroke,
+        numRows: nodeInfo.rows.length,
+        draggingIndex: nodeInfo.draggingIndex
+      }
     }
     // set the new position
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
@@ -129,21 +146,7 @@ export class ListNodeStyle extends NodeStyleBase {
   /**
    * The actual render method: adds child elements to the given <g> element.
    */
-  private render(
-    g: SVGGElementWithRenderState,
-    nodeSize: Size,
-    nodeInfo: NodeInfo,
-    context: IRenderContext
-  ) {
-    // append the current state to the <g> element
-    g['data-renderDataCache'] = {
-      nodeSize: nodeSize,
-      backgroundFill: this.backgroundFill,
-      borderFill: this.borderFill,
-      lineStroke: this.lineStroke,
-      numRows: nodeInfo.rows.length,
-      draggingIndex: nodeInfo.draggingIndex
-    }
+  private render(g: SVGGElement, nodeSize: Size, nodeInfo: NodeInfo, context: IRenderContext) {
     // draw the rect with a thick border
     const borderThickness = 4
     const borderStroke = new Stroke({
@@ -202,12 +205,12 @@ export class ListNodeStyle extends NodeStyleBase {
   /**
    * Modify the node's lookup to provide special interaction behavior.
    */
-  protected lookup(node: INode, type: Class): any {
-    if (type === IPortCandidateProvider.$class) {
+  protected lookup(node: INode, type: Constructor<any>): any {
+    if (type === IPortCandidateProvider) {
       // return a special PortCandidateProvider which provides existing and free ports
       return new ExistingAndFreePortCandidateProvider(node)
     }
-    if (type === INodeSizeConstraintProvider.$class) {
+    if (type === INodeSizeConstraintProvider) {
       // limit the size
       const minimumHeight = this.getMinimumHeight(node)
       return new NodeSizeConstraintProvider([100, minimumHeight], Size.INFINITE, Rect.EMPTY)
@@ -337,7 +340,7 @@ class ExistingAndFreePortCandidateProvider extends PortCandidateProviderBase {
       this.node.ports
         .filter((port) => port.tag.incoming === incoming)
         .forEach((port) => {
-          const portCandidate = new DefaultPortCandidate(port)
+          const portCandidate = new PortCandidate(port)
           portCandidate.validity =
             graph.degree(port) === 0 ? PortCandidateValidity.VALID : PortCandidateValidity.INVALID
           candidates.add(portCandidate)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,14 +27,13 @@
  **
  ***************************************************************************/
 import {
-  Class,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   IEdge,
   IGraph,
   ILabel,
@@ -43,67 +42,45 @@ import {
   License,
   ModifierKeys,
   Size
-} from 'yfiles'
-
-import LinkItemHoverInputMode from './LinkItemHoverInputMode.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/yfiles'
+import LinkItemHoverInputMode from './LinkItemHoverInputMode'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-
-/** @type {GraphComponent} */
 let graphComponent
-
 /**
  * Bootstraps the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
-  const inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  const inputMode = new GraphEditorInputMode()
   graphComponent.inputMode = inputMode
-
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
-
   // then build the graph with the given data set
   buildGraph(graphComponent.graph, graphData)
-
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
-    new HierarchicLayout({
-      orthogonalRouting: true,
-      minimumLayerDistance: 35,
-      considerNodeLabels: true
+    new HierarchicalLayout({
+      minimumLayerDistance: 35
     })
   )
-  graphComponent.fitGraphBounds()
-
+  await graphComponent.fitGraphBounds()
   // Finally, enable the undo engine. This prevents undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
-
   // the click listener for labels that represent external links
   initializeLinkListener()
-
   // an optional custom ItemHoverInputMode which highlights clickable links by underlining the text
   inputMode.add(new LinkItemHoverInputMode())
 }
-
 /**
  * Creates nodes and edges from to the given data.
- * @param {!IGraph} graph
- * @param {!JSONGraph} graphData
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-
   graphBuilder
     .createNodesSource({
       data: graphData.nodeList.filter((item) => !item.isGroup),
@@ -111,36 +88,31 @@ function buildGraph(graph, graphData) {
       parentId: (item) => item.parentId
     })
     .nodeCreator.createLabelBinding((item) => item.label)
-
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
-
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
-
   graphBuilder.buildGraph()
 }
-
 function initializeLinkListener() {
-  graphComponent.inputMode.addItemLeftClickedListener((_, evt) => {
+  graphComponent.inputMode.addEventListener('item-left-clicked', (evt) => {
     if (evt.modifiers !== ModifierKeys.CONTROL) {
       // this listener should only handle CTRL+click to open external links
       return
     }
     const clickedItem = evt.item
     let url = ''
-
-    if (ILabel.isInstance(clickedItem)) {
+    if (clickedItem instanceof ILabel) {
       const label = clickedItem
       url = label.text.startsWith('www.') || label.text.startsWith('http') ? label.text : ''
-    } else if (INode.isInstance(clickedItem) || IEdge.isInstance(clickedItem)) {
+    } else if (clickedItem instanceof INode || clickedItem instanceof IEdge) {
       // if a node or edge was clicked, we see whether it has any label that resembles a link
       clickedItem.labels.forEach((label) => {
         const text = label.text
@@ -149,32 +121,28 @@ function initializeLinkListener() {
         }
       })
     }
-
     if (url) {
       window.open(url.startsWith('http') ? url : `https://${url}`, '_blank')
       evt.handled = true
     }
   })
 }
-
 /**
  * Initializes the defaults for the styling in this demo.
  *
- * @param {!IGraph} graph The graph.
+ * @param graph The graph.
  */
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
-
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
-
 run().then(finishLoading)

@@ -1,39 +1,38 @@
 {
-  "name": "angular-cli-demo-for-yfiles-for-html",
+  "name": "@yfiles/angular-cli-demo-for-yfiles-for-html",
   "version": "1.0.0",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
-    "ng": "ng",
-    "start": "node --max_old_space_size=6144 node_modules/@angular/cli/bin/ng serve",
-    "watch": "node --max_old_space_size=6144 node_modules/@angular/cli/bin/ng build --watch --configuration development",
-    "build": "node --max_old_space_size=6144 node_modules/@angular/cli/bin/ng build --base-href ./"
+    "start": "ng serve",
+    "watch": "ng build --watch --configuration development",
+    "build": "ng build --base-href ./"
   },
   "dependencies": {
-    "@angular/common": "~17.0.4",
-    "@angular/compiler": "~17.0.4",
-    "@angular/core": "~17.0.4",
-    "@angular/forms": "~17.0.4",
-    "@angular/platform-browser": "~17.0.4",
-    "@angular/platform-browser-dynamic": "~17.0.4",
-    "demo-resources": "../../resources",
+    "@angular/common": "~18.2.8",
+    "@angular/compiler": "~18.2.8",
+    "@angular/core": "~18.2.8",
+    "@angular/forms": "~18.2.8",
+    "@angular/platform-browser": "~18.2.8",
+    "@angular/platform-browser-dynamic": "~18.2.8",
+    "@yfiles/demo-resources": "../../resources",
     "rxjs": "~7.8.1",
-    "tslib": "^2.6.2",
-    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz",
-    "zone.js": "~0.14.2"
+    "tslib": "^2.8.0",
+    "zone.js": "~0.14.10",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "~17.0.0",
-    "@angular-devkit/build-angular": "~17.0.3",
-    "@angular/cli": "~17.0.3",
-    "@angular/compiler-cli": "~17.0.4",
-    "@angular/language-service": "~17.0.4",
-    "@babel/core": "^7.23.3",
-    "@babel/preset-env": "^7.23.3",
-    "@babel/preset-typescript": "^7.23.3",
+    "@angular-builders/custom-webpack": "~18.0.0",
+    "@angular-devkit/build-angular": "~18.2.9",
+    "@angular/cli": "~18.2.9",
+    "@angular/compiler-cli": "~18.2.8",
+    "@angular/language-service": "~18.2.8",
+    "@babel/core": "^7.25.9",
+    "@babel/preset-env": "^7.25.9",
+    "@babel/preset-typescript": "^7.25.9",
     "@yworks/optimizer": "^1.8.2",
-    "fs-extra": "^11.1.1",
-    "typescript": "~5.2.2"
+    "fs-extra": "^11.2.0",
+    "typescript": "~5.4.5"
   }
 }

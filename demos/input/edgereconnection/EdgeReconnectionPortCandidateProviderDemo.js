@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,43 +30,37 @@ import {
   FreeNodePortLocationModel,
   GraphComponent,
   GraphEditorInputMode,
+  GraphItemTypes,
   IEdgeReconnectionPortCandidateProvider,
   IGraph,
   INode,
   IPortCandidateProvider,
   License,
-  NodeStylePortStyleAdapter,
   Point,
   PortCandidateValidity,
   Rect,
-  ShapeNodeStyle
-} from 'yfiles'
-import {
-  applyDemoTheme,
-  createDemoEdgeStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import GreenEdgePortCandidateProvider from './GreenEdgePortCandidateProvider.js'
-import BlueEdgePortCandidateProvider from './BlueEdgePortCandidateProvider.js'
-import OrangeEdgePortCandidateProvider from './OrangeEdgePortCandidateProvider.js'
-import RedEdgePortCandidateProvider from './RedEdgePortCandidateProvider.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
+  ShapePortStyle
+} from '@yfiles/yfiles'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import GreenEdgePortCandidateProvider from './GreenEdgePortCandidateProvider'
+import BlueEdgePortCandidateProvider from './BlueEdgePortCandidateProvider'
+import OrangeEdgePortCandidateProvider from './OrangeEdgePortCandidateProvider'
+import RedEdgePortCandidateProvider from './RedEdgePortCandidateProvider'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link IEdgeReconnectionPortCandidateProvider} for each node.
  * This callback function is called whenever a node in the graph is queried
- * for its {@link IEdgePortCandidateProvider}. In this case, the 'node'
+ * for its {@link IEdgeReconnectionPortCandidateProvider}. In this case, the 'node'
  * parameter will be set to that node.
- * @param {!IGraph} graph The given graph
+ * @param graph The given graph
  */
 function registerEdgePortCandidateProvider(graph) {
-  const edgeDecorator = graph.decorator.edgeDecorator
-  edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setFactory((edge) => {
+  const edgeDecorator = graph.decorator.edges
+  edgeDecorator.reconnectionPortCandidateProvider.addFactory((edge) => {
     // obtain the tag from the edge
     const edgeTag = edge.tag
-
     // Check if it is a known tag and choose the respective implementation
     if (typeof edgeTag !== 'string') {
       return null
@@ -83,62 +77,48 @@ function registerEdgePortCandidateProvider(graph) {
     return null
   })
 }
-
 /**
  * Called after this application has been set up by the demo framework.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
-
   // Disable automatic cleanup of unconnected ports since some nodes have a predefined set of ports
   graph.nodeDefaults.ports.autoCleanUp = false
-
   // Create a default editor input mode
   const graphEditorInputMode = new GraphEditorInputMode({
     // Just for user convenience: disable node/edge creation and clipboard operations
     allowCreateEdge: false,
     allowCreateNode: false,
-    allowClipboardOperations: false
+    allowClipboardOperations: false,
+    selectableItems: GraphItemTypes.ALL & ~GraphItemTypes.PORT
   })
   // and enable the undo feature.
   graph.undoEngineEnabled = true
-
   // Finally, set the input mode to the graph component.
   graphComponent.inputMode = graphEditorInputMode
-
   // Set a port style that makes the pre-defined ports visible
-  graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter(
-    new ShapeNodeStyle({
-      shape: 'ellipse'
-    })
-  )
-
+  graph.nodeDefaults.ports.style = new ShapePortStyle({
+    shape: 'ellipse'
+  })
   registerEdgePortCandidateProvider(graph)
-
   createSampleGraph(graphComponent)
-  graphComponent.updateContentRect()
+  graphComponent.updateContentBounds()
 }
-
 /**
  * Creates the sample graph of this demo.
- * @param {!GraphComponent} graphComponent The given graphComponent
+ * @param graphComponent The given graphComponent
  */
 function createSampleGraph(graphComponent) {
   const graph = graphComponent.graph
-  const blackPortStyle = new NodeStylePortStyleAdapter(
-    new ShapeNodeStyle({
-      shape: 'ellipse'
-    })
-  )
+  const blackPortStyle = new ShapePortStyle({
+    shape: 'ellipse'
+  })
   createSubgraph(graph, 'demo-red', 'red', 0)
   createSubgraph(graph, 'demo-orange', 'orange', 200)
   createSubgraph(graph, 'demo-green', 'green', 600)
-
   // the blue nodes have some additional ports besides the ones used by the edge
   const nodes = createSubgraph(graph, 'demo-lightblue', 'blue', 400)
   graph.addPort(
@@ -151,7 +131,6 @@ function createSampleGraph(graphComponent) {
     FreeNodePortLocationModel.INSTANCE.createParameterForRatios(new Point(1.0, 0.8)),
     blackPortStyle
   )
-
   const candidateProvider = IPortCandidateProvider.fromShapeGeometry(nodes[2], 0, 0.25, 0.5, 0.75)
   candidateProvider.style = blackPortStyle
   const candidates = candidateProvider.getAllSourcePortCandidates(graphComponent.inputModeContext)
@@ -160,29 +139,23 @@ function createSampleGraph(graphComponent) {
       portCandidate.createPort(graphComponent.inputModeContext)
     }
   })
-
   // clear undo after initial graph loading
   graph.undoEngine.clear()
 }
-
 /**
  * Creates new graph items in the given graph using the given color set.
- * @param {!IGraph} graph The graph instance in which to create sample items.
- * @param {!ColorSetName} colorSet The color set to use for the new sample items.
- * @param {!string} tag The tag for new nodes created by this method.
- * @param {number} yOffset An y-coordinate offset for new nodes created by this method.
- * @returns {!Array.<INode>}
+ * @param graph The graph instance in which to create sample items.
+ * @param colorSet The color set to use for the new sample items.
+ * @param tag The tag for new nodes created by this method.
+ * @param yOffset An y-coordinate offset for new nodes created by this method.
  */
 function createSubgraph(graph, colorSet, tag, yOffset) {
   const nodeStyle = createDemoNodeStyle(colorSet)
-
   const n1 = graph.createNode(new Rect(100, 100 + yOffset, 60, 60), nodeStyle, tag)
   const n2 = graph.createNode(new Rect(500, 100 + yOffset, 60, 60), nodeStyle, tag)
   const n3 = graph.createNode(new Rect(300, 160 + yOffset, 60, 60), nodeStyle, tag)
-
   const edgeStyle = createDemoEdgeStyle({ colorSetName: colorSet, showTargetArrow: false })
   graph.createEdge(n1, n2, edgeStyle, tag)
   return [n1, n2, n3]
 }
-
 run().then(finishLoading)

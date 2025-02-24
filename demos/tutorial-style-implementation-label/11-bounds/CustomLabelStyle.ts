@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import {
   Font,
   type ICanvasContext,
@@ -44,7 +43,7 @@ import {
   SvgVisual,
   type TaggedSvgVisual,
   TextRenderSupport
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 const font: Font = new Font({
   fontFamily: 'Arial',
@@ -174,7 +173,7 @@ export class CustomLabelStyle extends LabelStyleBase<CustomLabelStyleVisual> {
   ): boolean {
     const labelLayout = label.layout
     // first check if the label layout is hit
-    if (labelLayout.hits(location, context.hitTestRadius)) {
+    if (labelLayout.contains(location, context.hitTestRadius)) {
       return true
     }
     // if the layout is not hit, we have to check the tail triangle.
@@ -195,9 +194,7 @@ export class CustomLabelStyle extends LabelStyleBase<CustomLabelStyleVisual> {
 
     // check the rectangular tail bounds
     const tailBounds = new Rect(0, 0, tailWidth, tailHeight)
-    if (
-      !tailBounds.containsWithEps(transformedLocation, context.hitTestRadius)
-    ) {
+    if (!tailBounds.contains(transformedLocation, context.hitTestRadius)) {
       return false
     }
 

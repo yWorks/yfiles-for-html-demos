@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,18 +27,17 @@
  **
  ***************************************************************************/
 import {
+  EdgePortCandidates,
   EdgeRouter,
   EdgeRouterData,
   type GraphComponent,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   type ILayoutAlgorithm,
   type LayoutData,
-  LayoutOrientation,
-  PortConstraint,
-  PortSide
-} from 'yfiles'
-import { disableUIElements, enableUIElements } from 'demo-resources/demo-page'
+  LayoutExecutor
+} from '@yfiles/yfiles'
+import { disableUIElements, enableUIElements } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Applies the selected layout algorithm.
@@ -58,27 +57,34 @@ export async function runLayout(
   let layoutData: LayoutData
 
   if (selectedIndex === 0) {
-    layout = new HierarchicLayout({
-      layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
-      orthogonalRouting: true
+    layout = new HierarchicalLayout({
+      layoutOrientation: 'left-to-right'
     })
-    layoutData = new HierarchicLayoutData({
-      sourcePortConstraints: (_) => PortConstraint.create(PortSide.EAST, true),
-      targetPortConstraints: (_) => PortConstraint.create(PortSide.WEST, true)
-    })
+    const hierarchicalLayoutData = new HierarchicalLayoutData()
+    hierarchicalLayoutData.ports.sourcePortCandidates = new EdgePortCandidates().addFixedCandidate(
+      'right'
+    )
+    hierarchicalLayoutData.ports.targetPortCandidates = new EdgePortCandidates().addFixedCandidate(
+      'left'
+    )
+    layoutData = hierarchicalLayoutData
   } else {
     layout = new EdgeRouter()
-    layoutData = new EdgeRouterData({
-      sourcePortConstraints: (_) => PortConstraint.create(PortSide.EAST, true),
-      targetPortConstraints: (_) => PortConstraint.create(PortSide.WEST, true)
-    })
+    const edgeRouterData = new EdgeRouterData()
+    edgeRouterData.ports.sourcePortCandidates = new EdgePortCandidates().addFixedCandidate('right')
+    edgeRouterData.ports.targetPortCandidates = new EdgePortCandidates().addFixedCandidate('left')
+    layoutData = edgeRouterData
   }
 
   disableUIElements('#algorithm-select-box', '#layout-button')
   try {
-    await graphComponent.morphLayout(layout, '0.5s', layoutData, fitBounds)
+    // Ensure that the LayoutExecutor class is not removed by build optimizers
+    // It is needed for the 'applyLayoutAnimated' method in this demo.
+    LayoutExecutor.ensure()
+
+    await graphComponent.applyLayoutAnimated(layout, '0.5s', layoutData)
     if (fitBounds) {
-      graphComponent.fitGraphBounds()
+      await graphComponent.fitGraphBounds()
     }
   } finally {
     enableUIElements()

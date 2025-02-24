@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,16 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  CenterNodesPolicy,
-  type INode,
-  Mapper,
-  Point,
-  RadialLayout,
-  RadialLayoutData,
-  RadialLayoutEdgeRoutingStrategy,
-  type RadialLayoutNodeInfo
-} from 'yfiles'
+import { Point, RadialLayout, RadialLayoutData } from '@yfiles/yfiles'
 import type { ApplyLayoutCallback, NeighborhoodView } from '../neighborhood/NeighborhoodView'
 
 export type CircleInfo = {
@@ -52,20 +43,15 @@ export function getApplyLayoutCallback(
   onDone: (view: NeighborhoodView, circles: CircleInfo[]) => void
 ): ApplyLayoutCallback {
   return (view, nodes) => {
-    const nodeInfos = new Mapper<INode, RadialLayoutNodeInfo>()
-
     // arrange the nodes in the neighborhood graph on concentric circles
-    view.neighborhoodGraph.applyLayout(
-      new RadialLayout({
-        centerNodesPolicy: CenterNodesPolicy.CUSTOM,
-        createControlPoints: true,
-        edgeRoutingStrategy: RadialLayoutEdgeRoutingStrategy.ARC
-      }),
-      new RadialLayoutData({
-        centerNodes: nodes,
-        nodeInfos
-      })
-    )
+    const radialLayout = new RadialLayout({
+      createControlPoints: true,
+      edgeRoutingStyle: 'arc'
+    })
+    const radialLayoutData = new RadialLayoutData({
+      centerNodes: nodes
+    })
+    view.neighborhoodGraph.applyLayout(radialLayout, radialLayoutData)
 
     // collect the geometry of the calculated circles
     const indices = new Set<number>()
@@ -75,7 +61,7 @@ export function getApplyLayoutCallback(
       index: number
     }[] = []
     for (const node of view.neighborhoodGraph.nodes) {
-      const info = nodeInfos.get(node)
+      const info = radialLayoutData.nodePlacementsResult.get(node)
       if (info) {
         if (!indices.has(info.circleIndex) && info.radius > 0) {
           indices.add(info.circleIndex)

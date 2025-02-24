@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,35 +26,28 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, IGraph, INode, License, Rect } from 'yfiles'
-import DemoReparentNodeHandler from './DemoReparentNodeHandler.js'
+import { GraphComponent, GraphEditorInputMode, IGraph, INode, License, Rect } from '@yfiles/yfiles'
+import DemoReparentNodeHandler from './DemoReparentNodeHandler'
 import {
-  applyDemoTheme,
   createDemoGroupLabelStyle,
   createDemoGroupStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * Runs the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
-
   // create a default editor input mode and configure it
   const graphEditorInputMode = new GraphEditorInputMode({
     // assign the custom reparent handler of this demo
     reparentNodeHandler: new DemoReparentNodeHandler(),
-    allowGroupingOperations: true,
     // Just for user convenience: disable edge creation, ...
     allowCreateEdge: false,
     // ... node creation, and ...
@@ -64,22 +57,17 @@ async function run() {
     // ... clipboard operations
     allowClipboardOperations: false
   })
-
   // enable the undo feature.
   graph.undoEngineEnabled = true
-
   // initialize the default style of the nodes and edges
   initDemoStyles(graph)
-
   // Finally, assign the configured input mode to the graph component.
   graphComponent.inputMode = graphEditorInputMode
-
   createSampleGraph(graph)
 }
-
 /**
  * Creates the demo's sample graph.
- * @param {!IGraph} graph The graph to populate
+ * @param graph The graph to populate
  */
 function createSampleGraph(graph) {
   // create some group nodes ...
@@ -87,40 +75,33 @@ function createSampleGraph(graph) {
   const group2 = createGroupNode(graph, 160, 130, 'demo-lightblue', 'blue', 'Only Blue Children')
   const greenGroup = createGroupNode(graph, 100, 350, 'demo-green', 'green', 'Only Green Children')
   createGroupNode(graph, 400, 350, 'demo-green', 'green', 'Only Green Children')
-
   // ... and some regular nodes
   const blueNodeStyle = createDemoNodeStyle('demo-lightblue')
   const greenNodeStyle = createDemoNodeStyle('demo-green')
   const redNodeStyle = createDemoNodeStyle('demo-red')
-
   const blueNode = graph.createNode(new Rect(110, 130, 30, 30), blueNodeStyle, 'blue')
   const greenNode = graph.createNode(new Rect(130, 380, 30, 30), greenNodeStyle, 'green')
   graph.createNode(new Rect(400, 100, 30, 30), redNodeStyle, 'red')
   graph.createNode(new Rect(500, 100, 30, 30), greenNodeStyle, 'green')
   graph.createNode(new Rect(400, 200, 30, 30), blueNodeStyle, 'blue')
   graph.createNode(new Rect(500, 200, 30, 30), redNodeStyle, 'red')
-
   graph.groupNodes(group1, [blueNode, group2])
   graph.groupNodes(greenGroup, [greenNode])
-
   // ensure that the outer blue group completely contains its inner group
   graph.setNodeLayout(group1, new Rect(100, 100, 200, 150))
   // uncomment the following line to adjust the bounds of the outer blue group automatically
   // graph.adjustGroupNodeLayout(group1);
-
   // clear undo after initial graph creation
   graph.undoEngine.clear()
 }
-
 /**
  * Creates a group node for the sample graph with a specific styling.
- * @param {!IGraph} graph The given graph
- * @param {number} x The node's x-coordinate
- * @param {number} y The node's y-coordinate
- * @param {!ColorSetName} colorSet The color set that defines the node's styling
- * @param {!string} tag The tag to identify the reparent handler
- * @param {!string} labelText The node's label text
- * @returns {!INode}
+ * @param graph The given graph
+ * @param x The node's x-coordinate
+ * @param y The node's y-coordinate
+ * @param colorSet The color set that defines the node's styling
+ * @param tag The tag to identify the reparent handler
+ * @param labelText The node's label text
  */
 function createGroupNode(graph, x, y, colorSet, tag, labelText) {
   const groupNode = graph.createGroupNode({
@@ -129,8 +110,6 @@ function createGroupNode(graph, x, y, colorSet, tag, labelText) {
     tag: tag
   })
   graph.addLabel({ owner: groupNode, text: labelText, style: createDemoGroupLabelStyle(colorSet) })
-
   return groupNode
 }
-
 run().then(finishLoading)

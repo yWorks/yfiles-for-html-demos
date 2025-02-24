@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,146 +26,99 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+// This file provides type constants and corresponding isXYZType() methods for Flowchart symbols.
+// These constants and methods are used by FlowchartLayout and its associated classes to identify
+// specific types of nodes and handle them appropriately.
+import { EdgeDataKey, NodeDataKey } from '@yfiles/yfiles'
 /**
- * {@link IDataProvider} key used to specify the flowchart-specific type of each node.
+ * {@link IMapper} key used to specify the flowchart-specific type of each node.
  * Valid are all node type constants specified below.
  */
-export const NODE_TYPE_DP_KEY = 'FlowchartLayout.NODE_TYPE_DP_KEY'
-
+export const NODE_TYPE_DATA_KEY = new NodeDataKey('FlowchartLayout.NODE_TYPE_DATA_KEY')
 /**
- * {@link IDataProvider} key used to specify the flowchart-specific type of each edge.
+ * {@link IMapper} key used to specify the flowchart-specific type of each edge.
  * Valid are all edge type constants specified below.
  */
-export const EDGE_TYPE_DP_KEY = 'FlowchartLayout.EDGE_TYPE_DP_KEY'
-
-export /**
- * @readonly
- * @enum {number}
- */
-const NodeType = {
-  Invalid: 0,
-  Event: 1,
-  StartEvent: 7,
-  EndEvent: 9,
-  Decision: 2,
-  Process: 3,
-  Group: 8,
-  Annotation: 10,
-  Pool: 12,
-  Data: 11
-}
-
-export /**
- * @readonly
- * @enum {number}
- */
-const EdgeType = {
-  Invalid: 0,
-  SequenceFlow: 4,
-  MessageFlow: 5,
-  Association: 6
-}
-
+export const EDGE_TYPE_DATA_KEY = new EdgeDataKey('FlowchartLayout.EDGE_TYPE_DATA_KEY')
+export var MultiPageNodeType
+;(function (MultiPageNodeType) {
+  MultiPageNodeType[(MultiPageNodeType['Invalid'] = 0)] = 'Invalid'
+  MultiPageNodeType[(MultiPageNodeType['Event'] = 1)] = 'Event'
+  MultiPageNodeType[(MultiPageNodeType['StartEvent'] = 7)] = 'StartEvent'
+  MultiPageNodeType[(MultiPageNodeType['EndEvent'] = 9)] = 'EndEvent'
+  MultiPageNodeType[(MultiPageNodeType['Decision'] = 2)] = 'Decision'
+  MultiPageNodeType[(MultiPageNodeType['Process'] = 3)] = 'Process'
+  MultiPageNodeType[(MultiPageNodeType['Group'] = 8)] = 'Group'
+  MultiPageNodeType[(MultiPageNodeType['Annotation'] = 10)] = 'Annotation'
+  MultiPageNodeType[(MultiPageNodeType['Pool'] = 12)] = 'Pool'
+  MultiPageNodeType[(MultiPageNodeType['Data'] = 11)] = 'Data'
+})(MultiPageNodeType || (MultiPageNodeType = {}))
+export var MultiPageEdgeType
+;(function (MultiPageEdgeType) {
+  MultiPageEdgeType[(MultiPageEdgeType['Invalid'] = 0)] = 'Invalid'
+  MultiPageEdgeType[(MultiPageEdgeType['SequenceFlow'] = 4)] = 'SequenceFlow'
+  MultiPageEdgeType[(MultiPageEdgeType['MessageFlow'] = 5)] = 'MessageFlow'
+  MultiPageEdgeType[(MultiPageEdgeType['Association'] = 6)] = 'Association'
+})(MultiPageEdgeType || (MultiPageEdgeType = {}))
 /**
  * Returns true for activity nodes.
  * For Flowcharts, these are Process, Data, and Group. For BPMN, these are Task and
  * Sub-Process.
- * @param {!Graph} graph
- * @param {!YNode} node
- * @returns {boolean}
  */
 export function isActivity(graph, node) {
   const type = getNodeType(graph, node)
-  return type === NodeType.Process || type === NodeType.Data || type === NodeType.Group
+  return (
+    type === MultiPageNodeType.Process ||
+    type === MultiPageNodeType.Data ||
+    type === MultiPageNodeType.Group
+  )
 }
-
 /**
  * Returns true for group nodes.
  * For BPMN, this is Sub-Process.
- * @param {!Graph} graph
- * @param {!YNode} node
- * @returns {boolean}
  */
 export function isGroup(graph, node) {
-  return getNodeType(graph, node) === NodeType.Group
+  return getNodeType(graph, node) === MultiPageNodeType.Group
 }
-
 /**
  * Returns true for annotation nodes.
- * @param {!Graph} graph
- * @param {!YNode} node
- * @returns {boolean}
  */
 export function isAnnotation(graph, node) {
-  return getNodeType(graph, node) === NodeType.Annotation
+  return getNodeType(graph, node) === MultiPageNodeType.Annotation
 }
-
 /**
  * Returns true for event nodes.
  * For Flowchart, these are start and terminator, delay, display, manual operation and
  * preparation. For BPMN, these are start, end and other events.
- * @param {!Graph} graph
- * @param {!YNode} node
- * @returns {boolean}
  */
 export function isEvent(graph, node) {
   const type = getNodeType(graph, node)
-  return type === NodeType.StartEvent || type === NodeType.Event || type === NodeType.EndEvent
+  return (
+    type === MultiPageNodeType.StartEvent ||
+    type === MultiPageNodeType.Event ||
+    type === MultiPageNodeType.EndEvent
+  )
 }
-
 /**
  * Returns true for start event nodes.
- * @param {!Graph} graph
- * @param {!YNode} node
- * @returns {boolean}
  */
 export function isStartEvent(graph, node) {
-  return getNodeType(graph, node) === NodeType.StartEvent
+  return getNodeType(graph, node) === MultiPageNodeType.StartEvent
 }
-
-/**
- * @param {!Graph} graph
- * @param {!Edge} edge
- * @returns {boolean}
- */
 export function isUndefined(graph, edge) {
-  return getEdgeType(graph, edge) === EdgeType.Invalid
+  return getEdgeType(graph, edge) === MultiPageEdgeType.Invalid
 }
-
-/**
- * @param {!Graph} graph
- * @param {!Edge} edge
- * @returns {boolean}
- */
 export function isRegularEdge(graph, edge) {
-  return getEdgeType(graph, edge) === EdgeType.SequenceFlow
+  return getEdgeType(graph, edge) === MultiPageEdgeType.SequenceFlow
 }
-
-/**
- * @param {!Graph} graph
- * @param {!Edge} edge
- * @returns {boolean}
- */
 export function isMessageFlow(graph, edge) {
-  return getEdgeType(graph, edge) === EdgeType.MessageFlow
+  return getEdgeType(graph, edge) === MultiPageEdgeType.MessageFlow
 }
-
-/**
- * @param {!Graph} graph
- * @param {!Edge} edge
- * @returns {number}
- */
 export function getEdgeType(graph, edge) {
-  const dataProvider = graph.getDataProvider(EDGE_TYPE_DP_KEY)
-  return dataProvider === null ? EdgeType.Invalid : dataProvider.getInt(edge)
+  const edgeTypeDataMap = graph.context.getItemData(EDGE_TYPE_DATA_KEY)
+  return edgeTypeDataMap === null ? MultiPageEdgeType.Invalid : edgeTypeDataMap.get(edge)
 }
-
-/**
- * @param {!Graph} graph
- * @param {!YNode} node
- * @returns {number}
- */
 function getNodeType(graph, node) {
-  const dataProvider = graph.getDataProvider(NODE_TYPE_DP_KEY)
-  return dataProvider === null ? NodeType.Invalid : dataProvider.getInt(node)
+  const nodeTypeDataMap = graph.context.getItemData(NODE_TYPE_DATA_KEY)
+  return nodeTypeDataMap === null ? MultiPageNodeType.Invalid : nodeTypeDataMap.get(node)
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,6 @@
   right: 0;
   height: 100px;
   margin-top: -50px;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   background-color: rgba(255, 255, 255, 0.5);
   color: #646464;
@@ -248,10 +247,6 @@ legend {
 }
 .background-highlight {
   background-color: rgba(255, 255, 255, 0.6);
-  -webkit-animation: highlight 2s;
-  -moz-animation: highlight 2s;
-  -ms-animation: highlight 2s;
-  -o-animation: highlight 2s;
   animation: highlight 2s;
 }
 .styleSample {
@@ -283,38 +278,6 @@ legend {
   background-color: #ff6c00;
 }
 
-@-webkit-keyframes highlight {
-  from {
-    background-color: rgb(255, 212, 0);
-  }
-  to {
-    background-color: rgba(255, 255, 255, 0.6);
-  }
-}
-@-moz-keyframes highlight {
-  from {
-    background-color: rgb(255, 212, 0);
-  }
-  to {
-    background-color: rgba(255, 255, 255, 0.6);
-  }
-}
-@-ms-keyframes highlight {
-  from {
-    background-color: rgb(255, 212, 0);
-  }
-  to {
-    background-color: rgba(255, 255, 255, 0.6);
-  }
-}
-@-o-keyframes highlight {
-  from {
-    background-color: rgb(255, 212, 0);
-  }
-  to {
-    background-color: rgba(255, 255, 255, 0.6);
-  }
-}
 @keyframes highlight {
   from {
     background-color: rgb(255, 212, 0);

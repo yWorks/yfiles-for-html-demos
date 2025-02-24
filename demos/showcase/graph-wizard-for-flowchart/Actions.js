@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,34 +27,32 @@
  **
  ***************************************************************************/
 import {
-  Color,
-  DefaultLabelStyle,
-  DefaultPortCandidate,
+  CssFill,
   Fill,
-  FixNodeLayoutData,
-  FixNodeLayoutStage,
   FreeNodePortLocationModel,
-  GivenCoordinatesStage,
-  GivenCoordinatesStageData,
-  GraphEditorInputMode,
+  GivenCoordinatesLayout,
+  GivenCoordinatesLayoutData,
   IEdge,
   ILabelOwner,
   ILayoutAlgorithm,
   INode,
   INodeStyle,
-  Key,
   KeyEventArgs,
+  LabelStyle,
+  LayoutAnchoringPolicy,
+  LayoutAnchoringStage,
+  LayoutAnchoringStageData,
   LayoutData,
   LayoutExecutor,
   Mapper,
   ModifierKeys,
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
+  PortCandidate,
   Rect,
-  Size,
-  SolidColorFill
-} from 'yfiles'
-import WizardAction from './WizardAction.js'
+  Size
+} from '@yfiles/yfiles'
+import WizardAction from './WizardAction'
 import {
   checkAnd,
   checkCreatingEdge,
@@ -62,23 +60,19 @@ import {
   checkForNode,
   checkNotCreatingEdge,
   checkOr
-} from './Preconditions.js'
-
-import { GraphWizardInputMode, WizardEventArgs } from './GraphWizardInputMode.js'
-
+} from './Preconditions'
+import { GraphWizardInputMode, WizardEventArgs } from './GraphWizardInputMode'
 /**
  * Creates a {@link WizardAction} that navigates to the next {@INode node} in the direction of
  * the pressed arrow key.
- * @returns {!WizardAction}
  */
 export function createSmartNavigate() {
   return new WizardAction(
     'navigate',
-    (mode) => true,
+    () => true,
     (mode, item, type, args) => {
       const graph = mode.graph
       const key = args.key
-
       let target = null
       if (item instanceof IEdge) {
         const edge = item
@@ -90,16 +84,16 @@ export function createSmartNavigate() {
         const dxTarget = edge.targetNode.layout.center.x - center.x
         const dyTarget = edge.targetNode.layout.center.y - center.y
         switch (key) {
-          case Key.ARROW_DOWN:
+          case 'ArrowDown':
             target = dySource < dyTarget ? edge.targetNode : edge.sourceNode
             break
-          case Key.ARROW_LEFT:
+          case 'ArrowLeft':
             target = dxSource > dxTarget ? edge.targetNode : edge.sourceNode
             break
-          case Key.ARROW_UP:
+          case 'ArrowUp':
             target = dySource > dyTarget ? edge.targetNode : edge.sourceNode
             break
-          case Key.ARROW_RIGHT:
+          case 'ArrowRight':
             target = dxSource < dxTarget ? edge.targetNode : edge.sourceNode
             break
         }
@@ -107,32 +101,30 @@ export function createSmartNavigate() {
         const center = item.layout.center
         const condition = function (dx, dy) {
           switch (key) {
-            case Key.ARROW_DOWN:
+            case 'ArrowDown':
               return dy < 0 && Math.abs(dy) >= Math.abs(dx)
-            case Key.ARROW_UP:
+            case 'ArrowUp':
               return dy > 0 && Math.abs(dy) >= Math.abs(dx)
-            case Key.ARROW_LEFT:
+            case 'ArrowLeft':
               return dx > 0 && Math.abs(dx) >= Math.abs(dy)
-            case Key.ARROW_RIGHT:
+            case 'ArrowRight':
             default:
               return dx < 0 && Math.abs(dx) >= Math.abs(dy)
           }
         }
-
         const condition2 = function (dx, dy) {
           switch (key) {
-            case Key.ARROW_DOWN:
+            case 'ArrowDown':
               return dy < 0
-            case Key.ARROW_UP:
+            case 'ArrowUp':
               return dy > 0
-            case Key.ARROW_LEFT:
+            case 'ArrowLeft':
               return dx > 0
-            case Key.ARROW_RIGHT:
+            case 'ArrowRight':
             default:
               return dx < 0
           }
         }
-
         // check for connected hits in 90°
         let children = graph
           .outEdgesAt(item)
@@ -145,7 +137,6 @@ export function createSmartNavigate() {
             return condition(dx, dy)
           })
           .toArray()
-
         // check for unconnected hits in 90°
         if (children.length === 0) {
           children = graph.nodes
@@ -157,7 +148,6 @@ export function createSmartNavigate() {
             })
             .toArray()
         }
-
         // check for connected hits in general direction
         if (children.length === 0) {
           children = graph
@@ -172,7 +162,6 @@ export function createSmartNavigate() {
             })
             .toArray()
         }
-
         // check for unconnected hits in general direction
         if (children.length === 0) {
           children = graph.nodes
@@ -184,20 +173,18 @@ export function createSmartNavigate() {
             })
             .toArray()
         }
-
         const childScores = children.map((child) => {
           const childCenter = child.layout.center
           const dx = Math.abs(center.x - childCenter.x)
           const dy = Math.abs(center.y - childCenter.y)
-
           let angle = 0
           switch (key) {
-            case Key.ARROW_DOWN:
-            case Key.ARROW_UP:
+            case 'ArrowDown':
+            case 'ArrowUp':
               angle = Math.atan2(dx, dy) + 1
               return angle * dy
-            case Key.ARROW_LEFT:
-            case Key.ARROW_RIGHT:
+            case 'ArrowLeft':
+            case 'ArrowRight':
             default:
               angle = Math.atan2(dy, dx) + 1
               return angle * dx
@@ -213,20 +200,24 @@ export function createSmartNavigate() {
       } else {
         // no current item => select the one closest to the center of the viewport
         const center = mode.graphComponent.viewport.center
-        target = mode.graph.nodes.orderBy((node) => center.distanceTo(node.layout.center)).at(0)
+        target = mode.graph.nodes
+          .toSorted((a, b) =>
+            Math.sign(center.distanceTo(a.layout.center) - center.distanceTo(b.layout.center))
+          )
+          .at(0)
       }
       if (target) {
         mode.graphComponent.currentItem = target
         if (mode.createEdgeMode.isCreationInProgress) {
-          mode.createEdgeMode.targetPortCandidate = new DefaultPortCandidate(target)
+          mode.createEdgeMode.endPortCandidate = new PortCandidate(target)
         }
       }
     },
     [
-      { key: Key.ARROW_DOWN, modifier: ModifierKeys.NONE },
-      { key: Key.ARROW_UP, modifier: ModifierKeys.NONE },
-      { key: Key.ARROW_LEFT, modifier: ModifierKeys.NONE },
-      { key: Key.ARROW_RIGHT, modifier: ModifierKeys.NONE }
+      { key: 'ArrowDown', modifier: ModifierKeys.NONE },
+      { key: 'ArrowUp', modifier: ModifierKeys.NONE },
+      { key: 'ArrowLeft', modifier: ModifierKeys.NONE },
+      { key: 'ArrowRight', modifier: ModifierKeys.NONE }
     ],
     'Navigate between the nodes',
     null,
@@ -234,12 +225,10 @@ export function createSmartNavigate() {
     true
   )
 }
-
 /**
  * Creates a {@link WizardAction} that navigates to the next incoming or outgoing edge relative to the
  * {@link GraphWizardInputMode.currentItem current item}.
- * @param {!('NextOutgoing'|'NextIncoming')} direction Whether the next outgoing or incoming edge should be navigated to.
- * @returns {!WizardAction}
+ * @param direction Whether the next outgoing or incoming edge should be navigated to.
  */
 export function createSmartNavigateEdge(direction) {
   return new WizardAction(
@@ -291,13 +280,13 @@ export function createSmartNavigateEdge(direction) {
       if (target) {
         mode.graphComponent.currentItem = target
         if (mode.createEdgeMode.isCreationInProgress) {
-          mode.createEdgeMode.targetPortCandidate = new DefaultPortCandidate(target)
+          mode.createEdgeMode.endPortCandidate = new PortCandidate(target)
         }
       }
     },
     [
       {
-        key: direction === 'NextIncoming' ? Key.ARROW_DOWN : Key.ARROW_UP,
+        key: direction === 'NextIncoming' ? 'ArrowDown' : 'ArrowUp',
         modifier: ModifierKeys.CONTROL
       }
     ],
@@ -309,28 +298,28 @@ export function createSmartNavigateEdge(direction) {
     true
   )
 }
-
 /**
  * Creates a {@link WizardAction} that starts label editing when `F2` or `F6+CTRL` is pressed.
- * @returns {!WizardAction}
  */
 export function createEditLabel() {
   const buttonType = 'edit-label-button'
-
   return new WizardAction(
     buttonType,
     checkAnd([checkNotCreatingEdge, checkOr([checkForNode, checkForEdge])]),
     async (inputMode, item, type, args) => {
-      const geim = inputMode.inputModeContext.parentInputMode
+      const geim = inputMode.graphEditorInputMode
+      const labelOwner = item
       const editPromise =
-        item.labels.size === 0 ? geim.addLabel(item) : geim.editLabel(item.labels.first())
+        labelOwner.labels.size === 0
+          ? geim.editLabelInputMode.startLabelAddition(labelOwner)
+          : geim.editLabelInputMode.startLabelEditing(labelOwner.labels.first())
       const editedLabel = await editPromise
       if (editedLabel) {
         inputMode.graphComponent.currentItem = item
       }
       return editedLabel != null
     },
-    [{ key: Key.F2 }, { key: Key.F6, modifier: ModifierKeys.CONTROL }],
+    [{ key: 'F2' }, { key: 'F6', modifier: ModifierKeys.CONTROL }],
     '<br/><br/>Edit the label',
     {
       type: buttonType,
@@ -339,16 +328,14 @@ export function createEditLabel() {
     }
   )
 }
-
 /**
  * Creates a {@link WizardAction} that changes the {@link ColorSet} of the
  * {@link GraphWizardInputMode.currentItem current node}.
  *
- * @param {!PreCondition} preCondition The pre-condition checking if the color set may be changed for the current item.
- * @param {!Array.<ColorSet>} colorTheme The {@link ColorSet color sets} to choose from.
- * @param {!function} getItemFill A callback returning the fill of the current node.
- * @param {!function} setStyleColors A callback setting the fill and outline color to the given style.
- * @returns {!WizardAction}
+ * @param preCondition The pre-condition checking if the color set may be changed for the current item.
+ * @param colorTheme The {@link ColorSet color sets} to choose from.
+ * @param getItemFill A callback returning the fill of the current node.
+ * @param setStyleColors A callback setting the fill and outline color to the given style.
  */
 export function createChangeNodeColorSet(preCondition, colorTheme, getItemFill, setStyleColors) {
   const pickerButtons = []
@@ -360,13 +347,11 @@ export function createChangeNodeColorSet(preCondition, colorTheme, getItemFill, 
   }
   const itemToColorSetIndex = (node) => {
     const fill = getItemFill(node)
-    if (fill instanceof SolidColorFill) {
-      const fillString = colorToHexString(fill.color)
-      return colorTheme.findIndex((colorSet) => colorSet.fill === fillString)
+    if (fill instanceof CssFill) {
+      return colorTheme.findIndex((colorSet) => colorSet.fill === fill.value)
     }
     return 0
   }
-
   return new WizardAction(
     'changeColorSet',
     preCondition,
@@ -391,9 +376,9 @@ export function createChangeNodeColorSet(preCondition, colorTheme, getItemFill, 
         style.backgroundFill = colorSet.labelFill
         mode.graph.setStyle(label, style)
       })
-      mode.inputModeContext.canvasComponent.updateVisual()
+      mode.graphComponent.updateVisual()
     },
-    [{ key: Key.C }],
+    [{ key: 'c' }],
     'Change the node color',
     {
       typeFactory: (item) => String(itemToColorSetIndex(item)),
@@ -406,26 +391,22 @@ export function createChangeNodeColorSet(preCondition, colorTheme, getItemFill, 
     }
   )
 }
-
 /**
  * Creates a {@link WizardAction} that starts interactive edge creation.
  * @param helpText An optional help text replacing the default one.
  * @param buttonOptions Optional {@link ButtonOptions} replacing the default ones.
- * @param {!string} [helpText]
- * @param {!ButtonOptions} [buttonOptions]
- * @returns {!WizardAction}
  */
 export function createStartEdgeCreation(helpText, buttonOptions) {
   return new WizardAction(
     'startEdgeCreation',
     checkAnd([checkNotCreatingEdge, checkForNode, (mode) => mode.graph.nodes.size > 1]),
     (mode, item) => {
-      mode.createEdgeMode.doStartEdgeCreation(
-        new DefaultPortCandidate(item, FreeNodePortLocationModel.NODE_CENTER_ANCHORED),
+      mode.createEdgeMode.startEdgeCreation(
+        new PortCandidate(item, FreeNodePortLocationModel.CENTER),
         item.layout.center
       )
     },
-    [{ key: Key.R }],
+    [{ key: 'r' }],
     helpText || 'Create a cross reference',
     buttonOptions || {
       type: 'add-non-tree-edge-button',
@@ -436,12 +417,8 @@ export function createStartEdgeCreation(helpText, buttonOptions) {
     true
   )
 }
-
 /**
  * Creates a {@link WizardAction} that ends an interactive edge creation gesture.
- * @param {!function} [layoutProvider]
- * @param {!function} [layoutDataProvider]
- * @returns {!WizardAction}
  */
 export function createEndEdgeCreation(layoutProvider, layoutDataProvider) {
   return new WizardAction(
@@ -455,30 +432,25 @@ export function createEndEdgeCreation(layoutProvider, layoutDataProvider) {
         if (layoutProvider && layoutDataProvider) {
           await runLayout(mode, layoutProvider(), layoutDataProvider())
         }
-        mode.graphComponent.currentItem = mode.graph.edges.last().targetNode
+        mode.graphComponent.currentItem = mode.graph.edges.last()?.targetNode ?? null
         return true
       }
     },
-    [{ key: Key.ENTER }],
+    [{ key: 'Enter' }],
     'Set edge target',
     undefined,
     (data, args) => args instanceof WizardEventArgs
   )
 }
-
 /**
  * Runs an animated layout calculation that considers newly added and removed nodes and keeps the
  * location of fixed nodes.
- * @param {!GraphWizardInputMode} mode The current {@link GraphWizardInputMode}.
- * @param {!ILayoutAlgorithm} layout The base layout to apply.
- * @param {!LayoutData} layoutData The layout data for the base layout.
+ * @param mode The current {@link GraphWizardInputMode}.
+ * @param layout The base layout to apply.
+ * @param layoutData The layout data for the base layout.
  * @param fixNodes The nodes whose location shall kept fixed.
  * @param newNodes The newly created nodes.
  * @param deletedNodes The deleted nodes.
- * @param {!Array.<INode>} [fixNodes]
- * @param {!Array.<INode>} [newNodes]
- * @param {!Array.<INode>} [deletedNodes]
- * @returns {!Promise}
  */
 export function runLayout(mode, layout, layoutData, fixNodes, newNodes, deletedNodes) {
   const oldNodeSizes = new Mapper()
@@ -489,35 +461,25 @@ export function runLayout(mode, layout, layoutData, fixNodes, newNodes, deletedN
       graph.setNodeLayout(node, new Rect(node.layout.center, Size.ZERO))
     })
   }
-  const allLayouts = new FixNodeLayoutStage(
-    new PlaceNodesAtBarycenterStage(new GivenCoordinatesStage(layout))
+  const allLayouts = new LayoutAnchoringStage(
+    new PlaceNodesAtBarycenterStage(new GivenCoordinatesLayout(layout))
   )
+  const fixNodesSet = new Set(fixNodes)
   const allLayoutData = layoutData
-    .combineWith(new FixNodeLayoutData({ fixedNodes: fixNodes }))
+    .combineWith(
+      new LayoutAnchoringStageData({
+        nodeAnchoringPolicies: (node) =>
+          fixNodesSet.has(node) ? LayoutAnchoringPolicy.CENTER : LayoutAnchoringPolicy.NONE
+      })
+    )
     .combineWith(new PlaceNodesAtBarycenterStageData({ affectedNodes: deletedNodes }))
-    .combineWith(new GivenCoordinatesStageData({ nodeSizes: oldNodeSizes }))
+    .combineWith(new GivenCoordinatesLayoutData({ nodeSizes: oldNodeSizes }))
   return new LayoutExecutor({
     layout: allLayouts,
     layoutData: allLayoutData,
-    duration: 200,
+    animationDuration: 200,
     animateViewport: false,
     easedAnimation: true,
     graphComponent: mode.graphComponent
   }).start()
-}
-
-/**
- * @param {!Color} c
- * @returns {!string}
- */
-export function colorToHexString(c) {
-  return '#' + (toHexString(c.r) + toHexString(c.g) + toHexString(c.b)).toUpperCase()
-}
-
-/**
- * @param {number} value
- * @returns {!string}
- */
-function toHexString(value) {
-  return (value < 16 ? '0' : '') + value.toString(16)
 }

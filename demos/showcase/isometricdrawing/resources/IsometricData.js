@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-const groupColor = { r: 0.3, g: 0.4, b: 1, a: 0.5 }
+const groupColor = { r: 153, g: 193, b: 255, a: 127 }
 const sizes = {
   Tablet: { width: 40, depth: 20, height: 20 },
   Server: { width: 40, depth: 60, height: 60 },
@@ -42,208 +42,208 @@ export default {
   nodesSource: [
     {
       id: 'tablet1',
-      color: { r: 1, g: 0.6, b: 0, a: 1 },
+      color: { r: 255, g: 153, b: 0, a: 255 },
       label: 'Tablet',
       group: 'development',
       ...sizes.Tablet
     },
     {
       id: 'tablet2',
-      color: { r: 1, g: 0.6, b: 0, a: 1 },
+      color: { r: 255, g: 153, b: 0, a: 255 },
       label: 'Tablet',
       group: 'sales',
       ...sizes.Tablet
     },
     {
       id: 'tablet3',
-      color: { r: 1, g: 0.6, b: 0, a: 1 },
+      color: { r: 255, g: 153, b: 0, a: 255 },
       label: 'Tablet',
       group: 'sales',
       ...sizes.Tablet
     },
     {
       id: 'tablet4',
-      color: { r: 1, g: 0.6, b: 0, a: 1 },
+      color: { r: 255, g: 153, b: 0, a: 255 },
       label: 'Tablet',
       group: 'it',
       ...sizes.Tablet
     },
     {
       id: 'server1',
-      color: { r: 0.6, g: 0.2, b: 1, a: 1 },
+      color: { r: 153, g: 51, b: 255, a: 255 },
       label: 'Server',
       group: 'development',
       ...sizes.Server
     },
     {
       id: 'server2',
-      color: { r: 0.6, g: 0.2, b: 1, a: 1 },
+      color: { r: 153, g: 51, b: 255, a: 255 },
       label: 'Server',
       group: 'it',
       ...sizes.Server
     },
     {
       id: 'pc1',
-      color: { r: 0.6, g: 0.8, b: 0, a: 1 },
+      color: { r: 153, g: 204, b: 0, a: 255 },
       label: 'PC',
       group: 'development',
       ...sizes.PC
     },
     {
       id: 'pc2',
-      color: { r: 0.6, g: 0.8, b: 0, a: 1 },
+      color: { r: 153, g: 204, b: 0, a: 255 },
       label: 'PC',
       group: 'development',
       ...sizes.PC
     },
     {
       id: 'pc3',
-      color: { r: 0.6, g: 0.8, b: 0, a: 1 },
+      color: { r: 153, g: 204, b: 0, a: 255 },
       label: 'PC',
       group: 'development',
       ...sizes.PC
     },
     {
       id: 'pc4',
-      color: { r: 0.6, g: 0.8, b: 0, a: 1 },
+      color: { r: 153, g: 204, b: 0, a: 255 },
       label: 'PC',
       group: 'development',
       ...sizes.PC
     },
     {
       id: 'pc5',
-      color: { r: 0.6, g: 0.8, b: 0, a: 1 },
+      color: { r: 153, g: 204, b: 0, a: 255 },
       label: 'PC',
       group: 'management',
       ...sizes.PC
     },
     {
       id: 'pc6',
-      color: { r: 0.6, g: 0.8, b: 0, a: 1 },
+      color: { r: 153, g: 204, b: 0, a: 255 },
       label: 'PC',
       group: 'management',
       ...sizes.PC
     },
     {
       id: 'pc7',
-      color: { r: 0.6, g: 0.8, b: 0, a: 1 },
+      color: { r: 153, g: 204, b: 0, a: 255 },
       label: 'PC',
       group: 'management',
       ...sizes.PC
     },
     {
       id: 'pc8',
-      color: { r: 0.6, g: 0.8, b: 0, a: 1 },
+      color: { r: 153, g: 204, b: 0, a: 255 },
       label: 'PC',
       group: 'production',
       ...sizes.PC
     },
     {
       id: 'pc9',
-      color: { r: 0.6, g: 0.8, b: 0, a: 1 },
+      color: { r: 153, g: 204, b: 0, a: 255 },
       label: 'PC',
       group: 'production',
       ...sizes.PC
     },
     {
       id: 'pc10',
-      color: { r: 0.6, g: 0.8, b: 0, a: 1 },
+      color: { r: 153, g: 204, b: 0, a: 255 },
       label: 'PC',
       group: 'it',
       ...sizes.PC
     },
     {
       id: 'pc11',
-      color: { r: 0.6, g: 0.8, b: 0, a: 1 },
+      color: { r: 153, g: 204, b: 0, a: 255 },
       label: 'PC',
       group: 'it',
       ...sizes.PC
     },
     {
       id: 'laptop1',
-      color: { r: 0, g: 0.8, b: 1, a: 1 },
+      color: { r: 0, g: 204, b: 255, a: 255 },
       label: 'Laptop',
       group: 'development',
       ...sizes.Laptop
     },
     {
       id: 'laptop2',
-      color: { r: 0, g: 0.8, b: 1, a: 1 },
+      color: { r: 0, g: 204, b: 255, a: 255 },
       label: 'Laptop',
       group: 'development',
       ...sizes.Laptop
     },
     {
       id: 'laptop3',
-      color: { r: 0, g: 0.8, b: 1, a: 1 },
+      color: { r: 0, g: 204, b: 255, a: 255 },
       label: 'Laptop',
       group: 'sales',
       ...sizes.Laptop
     },
     {
       id: 'laptop4',
-      color: { r: 0, g: 0.8, b: 1, a: 1 },
+      color: { r: 0, g: 204, b: 255, a: 255 },
       label: 'Laptop',
       group: 'sales',
       ...sizes.Laptop
     },
     {
       id: 'laptop5',
-      color: { r: 0, g: 0.8, b: 1, a: 1 },
+      color: { r: 0, g: 204, b: 255, a: 255 },
       label: 'Laptop',
       group: 'it',
       ...sizes.Laptop
     },
     {
       id: 'db',
-      color: { r: 0.6, g: 0.2, b: 1, a: 1 },
+      color: { r: 153, g: 51, b: 255, a: 255 },
       label: 'DB',
       group: 'it',
       ...sizes.DB
     },
     {
       id: 'hub1',
-      color: { r: 0.7529411764705882, g: 0.7529411764705882, b: 0.7529411764705882, a: 1 },
+      color: { r: 191, g: 191, b: 191, a: 255 },
       label: 'Hub',
       group: 'development',
       ...sizes.Hub
     },
     {
       id: 'hub2',
-      color: { r: 0.7529411764705882, g: 0.7529411764705882, b: 0.7529411764705882, a: 1 },
+      color: { r: 191, g: 191, b: 191, a: 255 },
       label: 'Hub',
       group: 'management',
       ...sizes.Hub
     },
     {
       id: 'hub3',
-      color: { r: 0.7529411764705882, g: 0.7529411764705882, b: 0.7529411764705882, a: 1 },
+      color: { r: 191, g: 191, b: 191, a: 255 },
       label: 'Hub',
       group: 'production',
       ...sizes.Hub
     },
     {
       id: 'hub4',
-      color: { r: 0.7529411764705882, g: 0.7529411764705882, b: 0.7529411764705882, a: 1 },
+      color: { r: 191, g: 191, b: 191, a: 255 },
       label: 'Hub',
       group: 'sales',
       ...sizes.Hub
     },
     {
       id: 'hub5',
-      color: { r: 0.7529411764705882, g: 0.7529411764705882, b: 0.7529411764705882, a: 1 },
+      color: { r: 191, g: 191, b: 191, a: 255 },
       label: 'Hub',
       group: 'it',
       ...sizes.Hub
     },
-    { id: 'switch', color: { r: 1, g: 0.4, b: 0, a: 1 }, label: 'Switch', ...sizes.Switch },
+    { id: 'switch', color: { r: 255, g: 102, b: 0, a: 255 }, label: 'Switch', ...sizes.Switch },
     {
       id: 'gateway',
-      color: { r: 0.6, g: 0.2, b: 1, a: 1 },
+      color: { r: 153, g: 51, b: 255, a: 255 },
       label: 'Gateway',
       ...sizes.Gateway
     },
-    { id: 'firewall', color: { r: 1, g: 0, b: 0, a: 1 }, label: 'Firewall', ...sizes.Firewall }
+    { id: 'firewall', color: { r: 255, g: 0, b: 0, a: 255 }, label: 'Firewall', ...sizes.Firewall }
   ],
   edgesSource: [
     { from: 'server1', to: 'hub1' },

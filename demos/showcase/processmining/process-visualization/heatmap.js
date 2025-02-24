@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,10 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HtmlCanvasVisual, ICanvasObjectDescriptor, IEdge, INode, IVisualCreator } from 'yfiles'
-
+import { HtmlCanvasVisual, IEdge, INode, IVisualCreator } from '@yfiles/yfiles'
 const heatScale = 0.5
-
 /**
  * A visual that renders the heat map highlighting the nodes and edges with
  * a lot of events at the same time.
@@ -38,29 +36,20 @@ export class HeatmapBackground extends HtmlCanvasVisual {
   getHeat
   backBufferCanvas = null
   backBufferContext = null
-
-  /**
-   * @param {!function} getHeat
-   */
   constructor(getHeat) {
     super()
     this.getHeat = getHeat || (() => 1)
   }
-
   /**
    * Renders the heat map on a canvas.
-   * @param {!IRenderContext} renderContext
-   * @param {!CanvasRenderingContext2D} ctx
    */
-  paint(renderContext, ctx) {
+  render(renderContext, ctx) {
     ctx.save()
     ctx.setTransform(1, 0, 0, 1, 0, 0)
-
     const { width, height } = ctx.canvas
-
+    const devicePixelRatio = renderContext.canvasComponent.devicePixelRatio
     let canvas = this.backBufferCanvas
     let backBufferContext
-
     if (!canvas || canvas.width !== width || canvas.height !== height) {
       canvas = document.createElement('canvas')
       canvas.setAttribute('width', String(width))
@@ -70,23 +59,13 @@ export class HeatmapBackground extends HtmlCanvasVisual {
       this.backBufferContext = backBufferContext
     } else {
       backBufferContext = this.backBufferContext
-      backBufferContext.clearRect(0, 0, width, height)
+      backBufferContext.clearRect(0, 0, width / devicePixelRatio, height / devicePixelRatio)
     }
-
     const scale = renderContext.zoom * heatScale
-
-    backBufferContext.setTransform(
-      renderContext.canvasComponent.devicePixelRatio,
-      0,
-      0,
-      renderContext.canvasComponent.devicePixelRatio,
-      0,
-      0
-    )
-
+    backBufferContext.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
     let lastFillStyleHeat = -1
     for (const node of renderContext.canvasComponent.graph.nodes) {
-      const center = renderContext.toViewCoordinates(node.layout.center)
+      const center = renderContext.worldToViewCoordinates(node.layout.center)
       const heat = this.getHeat(node)
       if (heat > 0) {
         if (heat !== lastFillStyleHeat) {
@@ -95,7 +74,6 @@ export class HeatmapBackground extends HtmlCanvasVisual {
         }
         const w = Math.max(100, node.layout.width * 1.5)
         const h = Math.max(100, node.layout.height * 1.5)
-
         backBufferContext.beginPath()
         backBufferContext.ellipse(center.x, center.y, w * scale, h * scale, 0, 0, Math.PI * 2)
         backBufferContext.fill()
@@ -112,36 +90,30 @@ export class HeatmapBackground extends HtmlCanvasVisual {
           lastStrokeStyleHeat = heat
         }
         const path = edge.style.renderer.getPathGeometry(edge, edge.style).getPath().flatten(1)
-
         backBufferContext.beginPath()
         const cursor = path.createCursor()
         if (cursor.moveNext()) {
-          const point = renderContext.toViewCoordinates(cursor.currentEndPoint)
+          const point = renderContext.worldToViewCoordinates(cursor.currentEndPoint)
           backBufferContext.moveTo(point.x, point.y)
           while (cursor.moveNext()) {
-            const point = renderContext.toViewCoordinates(cursor.currentEndPoint)
+            const point = renderContext.worldToViewCoordinates(cursor.currentEndPoint)
             backBufferContext.lineTo(point.x, point.y)
           }
           backBufferContext.stroke()
         }
       }
     }
-
     ctx.filter = 'url(#heatmap)'
     ctx.drawImage(canvas, 0, 0)
     ctx.restore()
   }
 }
-
-/** @type {HTMLDivElement} */
 let installedDivElement = null
-
 /**
  * Creates a heatmap visualization which displays the heat values for all nodes and edges
  * as a color map in the background.
- * @param {!GraphComponent} graphComponent the graph component to which the heatmap is added
- * @param {!function} getHeat the heat function which provides the heat values for the graph elements
- * @returns {!ICanvasObject}
+ * @param graphComponent the graph component to which the heatmap is added
+ * @param getHeat the heat function which provides the heat values for the graph elements
  */
 export function addHeatmap(graphComponent, getHeat) {
   if (!installedDivElement || !document.body.contains(installedDivElement)) {
@@ -177,7 +149,8 @@ export function addHeatmap(graphComponent, getHeat) {
 `
     document.body.appendChild(installedDivElement)
   }
-  return graphComponent.backgroundGroup.addChild(
+  return graphComponent.renderTree.createElement(
+    graphComponent.renderTree.backgroundGroup,
     IVisualCreator.create({
       createVisual() {
         return new HeatmapBackground(getHeat)
@@ -185,7 +158,6 @@ export function addHeatmap(graphComponent, getHeat) {
       updateVisual(context, oldVisual) {
         return oldVisual
       }
-    }),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    })
   )
 }

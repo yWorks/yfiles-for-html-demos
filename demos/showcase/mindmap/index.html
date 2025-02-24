@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,13 +31,13 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Mind Map Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="resources/mindmapstyle.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -93,8 +91,8 @@
           showing relations between items.
         </p>
         <p>
-          The layout is calculated by the tree layout algorithm, and makes use of port constraints
-          and special node placers.
+          The layout is calculated by the tree layout algorithm, and makes use of port candidates
+          and special subtree placers.
         </p>
 
         <h2>Navigation</h2>
@@ -104,7 +102,7 @@
           <li>
             Click the collapse or expand button
             <img src="resources/icons/arrow-right.svg" />
-            or press the '+' or '-' key to collapse or expand a node's subtree.
+            or press the <kbd>+</kbd> or <kbd>-</kbd> key to collapse or expand a node's subtree.
           </li>
           <li>
             Please note that the maximum zoom factor as well as the scrollable area are limited.
@@ -118,7 +116,7 @@
             Click a node and use the node menu to modify its state icon and color. Also, create
             children, cross-reference edges or remove the node.
           </li>
-          <li>Edit a node label with a double click or press 'F2' on a selected node.</li>
+          <li>Edit a node label with a double click or press <kbd>F2</kbd> on a selected node.</li>
         </ul>
 
         <h2>Modifying the Mind Map Structure</h2>
@@ -127,9 +125,9 @@
           <li>Change a node's parent by dragging the selected node near other nodes.</li>
           <li>Drag a node far away from the mind map to delete the node and its subtree.</li>
           <li>Change the order in a subtree by dragging a node below or above its siblings.</li>
-          <li>Press 'Return' to add a sibling to a selected node.</li>
-          <li>Add a child to a selected node by pressing 'Insert'.</li>
-          <li>Remove a selected node and its subtree with the 'Delete' key.</li>
+          <li>Press <kbd>Enter</kbd> to add a sibling to a selected node.</li>
+          <li>Add a child to a selected node by pressing <kbd>Insert</kbd>.</li>
+          <li>Remove a selected node and its subtree with the <kbd>Delete</kbd> key.</li>
         </ul>
 
         <h2>Cross-Reference Edges</h2>
@@ -138,8 +136,8 @@
           <li>Finish the edge creation by clicking another node or cancel with a right-click.</li>
           <li>Click a cross-reference edge to select it.</li>
           <li>
-            Double click a cross-reference edge or press 'F2' to add a label or to edit an existing
-            label.
+            Double-click a cross-reference edge or press <kbd>F2</kbd> to add a label or to edit an
+            existing label.
           </li>
           <li>Drag the height handle of a selected cross-reference edge to change its height.</li>
         </ul>

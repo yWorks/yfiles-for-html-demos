@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,56 +26,29 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { AlignmentStageAlignmentPolicy, BaseClass, IVisualCreator, SvgVisual } from 'yfiles'
-
+import { AlignmentStageAlignmentPolicy, BaseClass, IVisualCreator, SvgVisual } from '@yfiles/yfiles'
 const INSIDE_COLOR = 'lightgray'
 const DEFAULT_COLOR = '#f0f0f0'
-
-/**
- * Stores the minimum and maximum x-coordinate for a snap column or the minimum and maximum
- * y-coordinate for a snap row.
- * @typedef {Object} Range
- * @property {number} min
- * @property {number} max
- */
-
-/**
- * Stores the coordinates of the currently highlighted column and/or row.
- * @typedef {Object} RenderDataCache
- * @property {Range} highlightColumn
- * @property {Range} highlightRow
- */
-
-/**
- * Specifies the contract for storing and accessing the visualization's render data cache.
- * @typedef {*} RootGroup
- */
-
 /**
  * Shows the areas in a graph component into which a node has to be dropped to trigger a
  * re-alignment of the nodes in the graph of said graph component.
  */
 export class SnapDistanceVisualCreator extends BaseClass(IVisualCreator) {
   initialized = false
-
   snapColumns = []
   snapRows = []
   highlightColumn = { min: 0, max: 0 }
   highlightRow = { min: 0, max: 0 }
-
   /**
    * Creates a visualization of snap columns and snap rows during a Drag and Drop drag gesture.
    * If a node is dragged from the palette and subsequently dropped into the graph component,
    * the nodes in the graph will be re-aligned if and only if the center of the dropped node is
    * inside one of the snap columns and/or snap rows.
-   * @param {!IRenderContext} context
-   * @returns {?SvgVisual}
    */
   createVisual(context) {
     if (!this.initialized) {
       return null
     }
-
     // the viewport's y-coordinate and height are used as vertical bounds for the visualization of
     // snap columns
     // the viewport's x-coordinate and width are used as horizontal bounds for the visualization of
@@ -83,33 +56,25 @@ export class SnapDistanceVisualCreator extends BaseClass(IVisualCreator) {
     // the viewport is slightly enlarged to ensure that the snap columns and snap rows are drawn across
     // the whole visible area of the graph component
     const vp = context.canvasComponent.viewport.getEnlarged(4)
-
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-
     for (const range of this.snapColumns) {
       g.appendChild(createRect(range.min, vp.y, range.max - range.min, vp.height, DEFAULT_COLOR))
     }
-
     for (const range of this.snapRows) {
       g.appendChild(createRect(vp.x, range.min, vp.width, range.max - range.min, DEFAULT_COLOR))
     }
-
     // placeholder rectangle for highlighting the snap column that contains the node center
     g.appendChild(createRect(0, vp.y, 0, vp.height, 'none'))
     // placeholder rectangle for highlighting the snap row that contains the node center
     g.appendChild(createRect(vp.x, 0, vp.width, 0, 'none'))
-
     updateHighlight(g, this.highlightColumn, true)
     updateHighlight(g, this.highlightRow, false)
-
     g['data-renderDataCache'] = {
       highlightColumn: this.highlightColumn,
       highlightRow: this.highlightRow
     }
-
     return new SvgVisual(g)
   }
-
   /**
    * Updates the visualization of snap columns and snap rows for a new node center.
    * This method only changes which of the snap columns and snap rows are highlighted because
@@ -118,15 +83,11 @@ export class SnapDistanceVisualCreator extends BaseClass(IVisualCreator) {
    * while the snap columns and snap rows are shown. This assumption holds because the snap columns
    * and snap rows are only shown during a Drag and Drop drag gesture that does not trigger
    * automatic scrolling/panning.
-   * @param {!IRenderContext} context
-   * @param {?SvgVisual} oldVisual
-   * @returns {?SvgVisual}
    */
   updateVisual(context, oldVisual) {
     if (!this.initialized) {
       return null
     }
-
     if (oldVisual) {
       const container = oldVisual.svgElement
       const cache = container['data-renderDataCache']
@@ -141,14 +102,11 @@ export class SnapDistanceVisualCreator extends BaseClass(IVisualCreator) {
           updateHighlight(container, highlightRow, false)
           cache.highlightRow = highlightRow
         }
-
         return oldVisual
       }
     }
-
     return this.createVisual(context)
   }
-
   /**
    * Clears the internal state of this creator.
    * <p>
@@ -163,7 +121,6 @@ export class SnapDistanceVisualCreator extends BaseClass(IVisualCreator) {
     this.highlightRow = { min: 0, max: 0 }
     this.initialized = false
   }
-
   /**
    * Initializes the internal state of this creator.
    * <p>
@@ -174,13 +131,9 @@ export class SnapDistanceVisualCreator extends BaseClass(IVisualCreator) {
    * This method calculates the snap columns and the snap rows for the graph of the given graph
    * component.
    * </p>
-   * @param {!GraphComponent} graphComponent
-   * @param {!IPoint} nodeCenter
-   * @param {!LayoutSettings} layoutSettings
    */
   initialize(graphComponent, nodeCenter, layoutSettings) {
     this.initialized = true
-
     const { snapColumns, snapRows } = collectSnapRanges(
       graphComponent.createRenderContext(),
       graphComponent.graph,
@@ -189,30 +142,23 @@ export class SnapDistanceVisualCreator extends BaseClass(IVisualCreator) {
     )
     this.snapColumns = snapColumns
     this.snapRows = snapRows
-
     this.updateNodeCenter(nodeCenter)
   }
-
   /**
    * Updates the internal state of this creator for a new node center.
    * The node center determines which snap column and/or snap row will be highlighted because
    * the node center is inside the respective column and/or row.
-   * @param {!IPoint} nodeCenter
-   * @returns {boolean}
    */
   updateNodeCenter(nodeCenter) {
     const oldHighlightColumn = this.highlightColumn
     this.highlightColumn = findHighlightRange(this.snapColumns, nodeCenter.x)
     const sameColumns = sameRange(oldHighlightColumn, this.highlightColumn)
-
     const oldHighlightRow = this.highlightRow
     this.highlightRow = findHighlightRange(this.snapRows, nodeCenter.y)
     const sameRows = sameRange(oldHighlightRow, this.highlightRow)
-
     return !sameColumns || !sameRows
   }
 }
-
 /**
  * Calculates snap columns and snap rows for the given graph.
  * For each node in the graph, the x-coordinate of the node's center defines a snap column
@@ -222,59 +168,44 @@ export class SnapDistanceVisualCreator extends BaseClass(IVisualCreator) {
  * Overlapping snap columns are merged into a single column that is the union of the overlapping
  * columns.
  * Overlapping snap rows are merged in the same manner.
- * @param {!IRenderContext} context
- * @param {!IGraph} graph
- * @param {!AlignmentStageAlignmentPolicy} alignmentPolicy
- * @param {number} snapDistance
- * @returns {!object}
  */
 function collectSnapRanges(context, graph, alignmentPolicy, snapDistance) {
   const collectColumns =
-    AlignmentStageAlignmentPolicy.SNAP_X_Y === alignmentPolicy ||
+    AlignmentStageAlignmentPolicy.SNAP_XY === alignmentPolicy ||
     AlignmentStageAlignmentPolicy.SNAP_X === alignmentPolicy
   const columns = []
   const knownCenterX = new Set()
-
   const collectRows =
-    AlignmentStageAlignmentPolicy.SNAP_X_Y === alignmentPolicy ||
+    AlignmentStageAlignmentPolicy.SNAP_XY === alignmentPolicy ||
     AlignmentStageAlignmentPolicy.SNAP_Y === alignmentPolicy
   const rows = []
   const knownCenterY = new Set()
-
   for (const node of graph.nodes) {
     const nodeBounds = node.style.renderer.getBoundsProvider(node, node.style).getBounds(context)
-
     const nodeCenterX = nodeBounds.centerX
     if (collectColumns && !knownCenterX.has(nodeCenterX)) {
       knownCenterX.add(nodeCenterX)
       columns.push({ min: nodeCenterX - snapDistance, max: nodeCenterX + snapDistance })
     }
-
     const nodeCenterY = nodeBounds.centerY
     if (collectRows && !knownCenterY.has(nodeCenterY)) {
       knownCenterY.add(nodeCenterY)
       rows.push({ min: nodeCenterY - snapDistance, max: nodeCenterY + snapDistance })
     }
   }
-
   return { snapColumns: mergeSnapRanges(columns), snapRows: mergeSnapRanges(rows) }
 }
-
 /**
  * Merges overlapping snap columns or snap rows by replacing the overlapping columns/rows with
  * a single column/row that is the union of the overlapping columns/rows.
- * @param {!Array.<Range>} ranges
- * @returns {!Array.<Range>}
  */
 function mergeSnapRanges(ranges) {
   if (ranges.length < 2) {
     return ranges
   }
-
   ranges.sort((r1, r2) => {
     const min1 = r1.min
     const min2 = r2.min
-
     if (min1 < min2) {
       return -1
     } else if (min1 > min2) {
@@ -282,13 +213,10 @@ function mergeSnapRanges(ranges) {
     }
     return 0
   })
-
   const min = ranges[0].min
-
   // the initial value for the last range is just a sentinel value that prevents a merge for the
   // first range item
   let last = { min: min - 4, max: min - 4 }
-
   const merged = []
   for (const range of ranges) {
     if (Math.abs(range.max - last.max) < 0.1) {
@@ -299,17 +227,12 @@ function mergeSnapRanges(ranges) {
       last = range
     }
   }
-
   return merged
 }
-
 /**
  * Returns the range that contains the given value.
  * If several overlapping ranges contain the value, this method will return the union of those
  * ranges.
- * @param {!Array.<Range>} ranges
- * @param {number} value
- * @returns {!Range}
  */
 function findHighlightRange(ranges, value) {
   const result = { min: 0, max: 0 }
@@ -328,24 +251,14 @@ function findHighlightRange(ranges, value) {
   }
   return result
 }
-
 /**
  * Determines if the given ranges are equal.
- * @param {!Range} range1
- * @param {!Range} range2
- * @returns {boolean}
  */
 function sameRange(range1, range2) {
   return range1.min === range2.min && range1.max === range2.max
 }
 /**
  * Creates an SVG rect element with the given geometry and fill color.
- * @param {number} x
- * @param {number} y
- * @param {number} width
- * @param {number} height
- * @param {!string} fill
- * @returns {!SVGElement}
  */
 function createRect(x, y, width, height, fill) {
   const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -357,12 +270,8 @@ function createRect(x, y, width, height, fill) {
   rect.setAttribute('stroke', 'none')
   return rect
 }
-
 /**
  * Updates the highlighted snap column or snap row in the given root container.
- * @param {!Element} container
- * @param {!Range} highlightRange
- * @param {boolean} columns
  */
 function updateHighlight(container, highlightRange, columns) {
   const rect = container.children.item(container.childElementCount + (columns ? -2 : -1))
@@ -373,14 +282,8 @@ function updateHighlight(container, highlightRange, columns) {
     updateHighlightImpl(rect, 0, 0, 'none', columns)
   }
 }
-
 /**
  * Updates the given SVG rect element's geometry and fill color.
- * @param {!Element} rect
- * @param {number} coordinate
- * @param {number} size
- * @param {!string} fill
- * @param {boolean} columns
  */
 function updateHighlightImpl(rect, coordinate, size, fill, columns) {
   rect.setAttribute(columns ? 'x' : 'y', `${coordinate}`)

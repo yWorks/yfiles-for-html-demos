@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,6 +35,7 @@ interface DemoToolbarProps {
   fitContent(): void
   zoomIn(): void
   zoomOut(): void
+  exportSvg(): void
   searchChange(e: ChangeEvent<HTMLInputElement>): void
 }
 
@@ -51,6 +52,7 @@ export default function DemoToolbar(props: DemoToolbarProps) {
       />
       <button className="demo-icon-yIconZoomOut" title="Zoom Out" onClick={props.zoomOut} />
       <button className="demo-icon-yIconZoomFit" title="Fit Diagram" onClick={props.fitContent} />
+      <button className="demo-icon-yIconExportImage" title="Export SVG" onClick={props.exportSvg} />
       <input className="search" placeholder="Search Nodes" onChange={props.searchChange} />
     </div>
   )

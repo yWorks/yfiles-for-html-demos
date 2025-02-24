@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { IModelItem } from 'yfiles'
+import type { IModelItem } from '@yfiles/yfiles'
 
 /**
  * A proper type for the data stored in the `tag` property of nodes and edges.
@@ -59,7 +59,7 @@ export type Tag = {
  * Creates a copy of the given item's current tag and replaces the given item's tag with the copy.
  */
 export function copyAndReplaceTag(item: IModelItem): Tag {
-  const oldTag = getTag(item)
+  const oldTag = getTag(item)!
 
   const newTag: Tag = { ...oldTag }
   newTag.components = []
@@ -73,9 +73,9 @@ export function copyAndReplaceTag(item: IModelItem): Tag {
 }
 
 /**
- * Retrieves the item's tag as a properly-typed object.
+ * Retrieves the item's tag as a properly typed object.
  */
-export function getTag(item: IModelItem): Tag {
+export function getTag(item: IModelItem): Tag | null {
   return item.tag as Tag
 }
 

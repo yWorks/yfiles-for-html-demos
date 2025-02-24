@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,44 +27,45 @@
  **
  ***************************************************************************/
 import {
-  AspectRatioNodePlacer,
-  BusNodePlacer,
-  ChildPlacement,
+  AspectRatioSubtreePlacer,
+  BusSubtreePlacer,
   Class,
-  CompactNodePlacer,
-  ComponentArrangementStyles,
-  DefaultNodePlacer,
-  DefaultTreeLayoutPortAssignment,
-  DelegatingNodePlacer,
-  DendrogramNodePlacer,
-  DoubleLineNodePlacer,
+  CompactSubtreePlacer,
+  ComponentArrangementStyle,
+  DendrogramSubtreePlacer,
+  DoubleLayerSubtreePlacer,
   EdgeBundleDescriptor,
+  EdgeLabelPlacement,
+  EdgePortCandidates,
   EdgeRouter,
-  EdgeRouterScope,
-  Enum,
   GenericLabeling,
   GraphComponent,
-  GridNodePlacer,
-  IGraph,
   ILayoutAlgorithm,
-  LayeredNodePlacer,
+  type INode,
   LayoutData,
   LayoutOrientation,
-  LeftRightNodePlacer,
+  LeftRightSubtreePlacer,
+  LevelAlignedSubtreePlacer,
   Mapper,
+  MultiLayerSubtreePlacer,
+  MultiLayerSubtreePlacerRootAlignment,
+  MultiParentDescriptor,
+  NodeLabelPlacement,
   OrganicEdgeRouter,
-  RootAlignment,
-  RootNodeAlignment,
-  RotatableNodePlacerMatrix,
-  SimpleNodePlacer,
+  PortSides,
+  SingleLayerSubtreePlacer,
+  SingleLayerSubtreePlacerRootAlignment,
+  SingleSplitSubtreePlacer,
+  StraightLineEdgeRouter,
+  SubgraphLayoutStage,
+  SubtreeRootAlignment,
+  SubtreeTransform,
   TreeLayout,
   TreeLayoutData,
+  TreeLayoutPortAssigner,
   TreeLayoutPortAssignmentMode,
-  TreeReductionStage,
-  YBoolean,
-  YNumber,
-  YString
-} from 'yfiles'
+  TreeReductionStage
+} from '@yfiles/yfiles'
 
 import {
   ComponentAttribute,
@@ -75,14 +76,51 @@ import {
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from 'demo-resources/demo-option-editor'
+} from '@yfiles/demo-resources/demo-option-editor'
 import LayoutConfiguration, {
-  EdgeLabeling,
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
   LabelPlacementSideOfEdge
 } from './LayoutConfiguration'
 import HandleEdgesBetweenGroupsStage from './HandleEdgesBetweenGroupsStage'
+
+enum RoutingStyle {
+  ORTHOGONAL,
+  ORGANIC,
+  STRAIGHT_LINE,
+  BUNDLED
+}
+
+export enum SubtreePlacer {
+  SINGLE_LAYER,
+  BUS,
+  DOUBLE_LAYER,
+  LEFT_RIGHT,
+  LEVEL_ALIGNED,
+  ASPECT_RATIO,
+  DENDROGRAM,
+  MULTI_LAYER,
+  COMPACT,
+  HV,
+  SINGLE_SPLIT_LAYERED
+}
+
+enum TreeRootAlignment {
+  CENTER,
+  MEDIAN,
+  LEFT,
+  LEADING,
+  RIGHT,
+  TRAILING
+}
+
+enum PortAssignment {
+  CENTER,
+  DISTRIBUTED_TOP,
+  DISTRIBUTED_BOTTOM,
+  DISTRIBUTED_LEFT,
+  DISTRIBUTED_RIGHT
+}
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -90,7 +128,273 @@ import HandleEdgesBetweenGroupsStage from './HandleEdgesBetweenGroupsStage'
 const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
   $extends: LayoutConfiguration,
 
-  $meta: [LabelAttribute('TreeLayout')],
+  _meta: {
+    GeneralGroup: [
+      new LabelAttribute('General'),
+      new OptionGroupAttribute('RootGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    SubtreePlacerGroup: [
+      new LabelAttribute('Subtree Placer'),
+      new OptionGroupAttribute('RootGroup', 20),
+      new TypeAttribute(OptionGroup)
+    ],
+    EdgesGroup: [
+      new LabelAttribute('Edges'),
+      new OptionGroupAttribute('RootGroup', 30),
+      new TypeAttribute(OptionGroup)
+    ],
+    NonTreeEdgesGroup: [
+      new LabelAttribute('Non-Tree Edges'),
+      new OptionGroupAttribute('EdgesGroup', 20),
+      new TypeAttribute(OptionGroup)
+    ],
+    LabelingGroup: [
+      new LabelAttribute('Labeling'),
+      new OptionGroupAttribute('RootGroup', 40),
+      new TypeAttribute(OptionGroup)
+    ],
+    NodePropertiesGroup: [
+      new LabelAttribute('Node Settings'),
+      new OptionGroupAttribute('LabelingGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    EdgePropertiesGroup: [
+      new LabelAttribute('Edge Settings'),
+      new OptionGroupAttribute('LabelingGroup', 20),
+      new TypeAttribute(OptionGroup)
+    ],
+    PreferredPlacementGroup: [
+      new LabelAttribute('Preferred Edge Label Placement'),
+      new OptionGroupAttribute('LabelingGroup', 30),
+      new TypeAttribute(OptionGroup)
+    ],
+    descriptionText: [
+      new OptionGroupAttribute('DescriptionGroup', 10),
+      new ComponentAttribute(Components.HTML_BLOCK),
+      new TypeAttribute(String)
+    ],
+    defaultLayoutOrientationItem: [
+      new LabelAttribute('Orientation', '#/api/TreeLayout#TreeLayout-property-layoutOrientation'),
+      new OptionGroupAttribute('GeneralGroup', 5),
+      new EnumValuesAttribute([
+        ['Top to Bottom', LayoutOrientation.TOP_TO_BOTTOM],
+        ['Bottom to Top', LayoutOrientation.BOTTOM_TO_TOP],
+        ['Left to Right', LayoutOrientation.LEFT_TO_RIGHT],
+        ['Right to Left', LayoutOrientation.RIGHT_TO_LEFT]
+      ]),
+      new TypeAttribute(LayoutOrientation)
+    ],
+    actOnSelectionOnlyItem: [
+      new LabelAttribute(
+        'Act on Selection Only',
+        '#/api/SubgraphLayoutStage#LayoutStageBase-property-enabled'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 10),
+      new TypeAttribute(Boolean)
+    ],
+    nodeLabelingItem: [
+      new OptionGroupAttribute('NodePropertiesGroup', 10),
+      new LabelAttribute(
+        'Node Labeling',
+        '#/api/TreeLayout#TreeLayout-property-nodeLabelPlacement'
+      ),
+      new EnumValuesAttribute([
+        ['Consider', NodeLabelPlacement.CONSIDER],
+        ['Generic', NodeLabelPlacement.GENERIC],
+        ['Ignore', NodeLabelPlacement.IGNORE]
+      ]),
+      new TypeAttribute(NodeLabelPlacement)
+    ],
+    subtreePlacerItem: [
+      new LabelAttribute(
+        'Subtree Placer',
+        '#/api/TreeLayout#TreeLayout-property-defaultSubtreePlacer'
+      ),
+      new OptionGroupAttribute('SubtreePlacerGroup', 10),
+      new EnumValuesAttribute([
+        ['Single Layer', SubtreePlacer.SINGLE_LAYER],
+        ['Compact', SubtreePlacer.COMPACT],
+        ['Bus', SubtreePlacer.BUS],
+        ['Double Layer', SubtreePlacer.DOUBLE_LAYER],
+        ['Left-Right', SubtreePlacer.LEFT_RIGHT],
+        ['Level-Aligned', SubtreePlacer.LEVEL_ALIGNED],
+        ['Aspect Ratio', SubtreePlacer.ASPECT_RATIO],
+        ['Dendrogram', SubtreePlacer.DENDROGRAM],
+        ['Multi-Layer', SubtreePlacer.MULTI_LAYER],
+        ['Horizontal-Vertical', SubtreePlacer.HV],
+        ['Single Split Layered', SubtreePlacer.SINGLE_SPLIT_LAYERED]
+      ]),
+      new TypeAttribute(SubtreePlacer)
+    ],
+    spacingItem: [
+      new LabelAttribute(
+        'Spacing',
+        '#/api/SingleLayerSubtreePlacer#SingleLayerSubtreePlacer-property-horizontalDistance'
+      ),
+      new OptionGroupAttribute('SubtreePlacerGroup', 20),
+      new MinMaxAttribute(0, 500),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    rootAlignmentItem: [
+      new LabelAttribute(
+        'Root Alignment',
+        '#/api/SingleLayerSubtreePlacer#SingleLayerSubtreePlacer-property-rootAlignment'
+      ),
+      new OptionGroupAttribute('SubtreePlacerGroup', 30),
+      new EnumValuesAttribute([
+        ['Center', TreeRootAlignment.CENTER],
+        ['Median', TreeRootAlignment.MEDIAN],
+        ['Left', TreeRootAlignment.LEFT],
+        ['Leading', TreeRootAlignment.LEADING],
+        ['Right', TreeRootAlignment.RIGHT],
+        ['Trailing', TreeRootAlignment.TRAILING]
+      ]),
+      new TypeAttribute(TreeRootAlignment)
+    ],
+    alignPortsItem: [
+      new LabelAttribute(
+        'Align Ports',
+        '#/api/SingleLayerSubtreePlacer#SingleLayerSubtreePlacer-property-alignPorts'
+      ),
+      new OptionGroupAttribute('SubtreePlacerGroup', 40),
+      new TypeAttribute(Boolean)
+    ],
+    subtreePlacerAspectRatioItem: [
+      new LabelAttribute(
+        'Aspect Ratio',
+        '#/api/AspectRatioSubtreePlacer#AspectRatioSubtreePlacer-property-aspectRatio'
+      ),
+      new OptionGroupAttribute('SubtreePlacerGroup', 50),
+      new MinMaxAttribute(0.1, 4, 0.1),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    allowMultiParentsItem: [
+      new LabelAttribute(
+        'Allow Multi-Parents',
+        '#/api/TreeLayout#TreeLayout-property-allowMultiParent'
+      ),
+      new OptionGroupAttribute('SubtreePlacerGroup', 60),
+      new TypeAttribute(Boolean)
+    ],
+    routingStyleForNonTreeEdgesItem: [
+      new LabelAttribute(
+        'Routing Style for Non-Tree Edges',
+        '#/api/TreeReductionStage#TreeReductionStage-property-nonTreeEdgeRouter'
+      ),
+      new OptionGroupAttribute('NonTreeEdgesGroup', 10),
+      new EnumValuesAttribute([
+        ['Orthogonal', RoutingStyle.ORTHOGONAL],
+        ['Organic', RoutingStyle.ORGANIC],
+        ['Straight-Line', RoutingStyle.STRAIGHT_LINE],
+        ['Bundled', RoutingStyle.BUNDLED]
+      ]),
+      new TypeAttribute(RoutingStyle)
+    ],
+    edgeBundlingStrengthItem: [
+      new LabelAttribute(
+        'Bundling Strength',
+        '#/api/EdgeBundling#EdgeBundling-property-bundlingStrength'
+      ),
+      new OptionGroupAttribute('NonTreeEdgesGroup', 20),
+      new MinMaxAttribute(0, 1.0, 0.01),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    portAssignmentItem: [
+      new LabelAttribute(
+        'Port Assignment',
+        '#/api/TreeLayoutData#TreeLayoutData-property-portAssigners'
+      ),
+      new OptionGroupAttribute('EdgesGroup', 10),
+      new EnumValuesAttribute([
+        ['None', PortAssignment.CENTER],
+        ['Distributed Top', PortAssignment.DISTRIBUTED_TOP],
+        ['Distributed Bottom', PortAssignment.DISTRIBUTED_BOTTOM],
+        ['Distributed Left', PortAssignment.DISTRIBUTED_LEFT],
+        ['Distributed Right', PortAssignment.DISTRIBUTED_RIGHT]
+      ]),
+      new TypeAttribute(PortAssignment)
+    ],
+    edgeLabelingItem: [
+      new LabelAttribute(
+        'Edge Labeling',
+        '#/api/TreeLayout#TreeLayout-property-edgeLabelPlacement'
+      ),
+      new OptionGroupAttribute('EdgePropertiesGroup', 10),
+      new EnumValuesAttribute([
+        ['Ignore', EdgeLabelPlacement.IGNORE],
+        ['Integrated', EdgeLabelPlacement.INTEGRATED],
+        ['Generic', EdgeLabelPlacement.GENERIC]
+      ]),
+      new TypeAttribute(EdgeLabelPlacement)
+    ],
+    reduceAmbiguityItem: [
+      new LabelAttribute(
+        'Reduce Ambiguity',
+        '#/api/LabelingCosts#LabelingCosts-property-ambiguousPlacementCost'
+      ),
+      new OptionGroupAttribute('EdgePropertiesGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    labelPlacementOrientationItem: [
+      new LabelAttribute(
+        'Orientation',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-angle'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 10),
+      new EnumValuesAttribute([
+        ['Parallel', LabelPlacementOrientation.PARALLEL],
+        ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
+        ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
+        ['Vertical', LabelPlacementOrientation.VERTICAL]
+      ]),
+      new TypeAttribute(LabelPlacementOrientation)
+    ],
+    labelPlacementAlongEdgeItem: [
+      new LabelAttribute(
+        'Along Edge',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-placementAlongEdge'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 20),
+      new EnumValuesAttribute([
+        ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
+        ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
+        ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
+        ['At Target', LabelPlacementAlongEdge.AT_TARGET],
+        ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
+        ['Centered', LabelPlacementAlongEdge.CENTERED]
+      ]),
+      new TypeAttribute(LabelPlacementAlongEdge)
+    ],
+    labelPlacementSideOfEdgeItem: [
+      new LabelAttribute(
+        'Side of Edge',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-edgeSide'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 30),
+      new EnumValuesAttribute([
+        ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
+        ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
+        ['Left', LabelPlacementSideOfEdge.LEFT],
+        ['Right', LabelPlacementSideOfEdge.RIGHT],
+        ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+      ]),
+      new TypeAttribute(LabelPlacementSideOfEdge)
+    ],
+    labelPlacementDistanceItem: [
+      new LabelAttribute(
+        'Distance',
+        '#/api/EdgeLabelPreferredPlacement#EdgeLabelPreferredPlacement-property-distanceToEdge'
+      ),
+      new OptionGroupAttribute('PreferredPlacementGroup', 40),
+      new MinMaxAttribute(0.0, 40.0),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ]
+  },
 
   /**
    * Setup default values for various configuration parameters.
@@ -99,7 +403,7 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
     // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
 
-    const aspectRatioNodePlacer = new AspectRatioNodePlacer()
+    const aspectRatioSubtreePlacer = new AspectRatioSubtreePlacer()
 
     this.routingStyleForNonTreeEdgesItem = RoutingStyle.ORTHOGONAL
     this.edgeBundlingStrengthItem = 0.95
@@ -107,19 +411,19 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
 
     this.defaultLayoutOrientationItem = LayoutOrientation.TOP_TO_BOTTOM
 
-    this.considerNodeLabelsItem = false
+    this.nodeLabelingItem = NodeLabelPlacement.CONSIDER
 
-    this.nodePlacerItem = TreeNodePlacer.DEFAULT
+    this.subtreePlacerItem = SubtreePlacer.SINGLE_LAYER
 
-    this.spacingItem = 20
+    this.spacingItem = 30
     this.rootAlignmentItem = TreeRootAlignment.CENTER
     this.alignPortsItem = false
     this.allowMultiParentsItem = false
-    this.portAssignmentItem = TreeLayoutPortAssignmentMode.NONE
+    this.portAssignmentItem = PortAssignment.CENTER
 
-    this.nodePlacerAspectRatioItem = aspectRatioNodePlacer.aspectRatio
+    this.subtreePlacerAspectRatioItem = aspectRatioSubtreePlacer.aspectRatio
 
-    this.edgeLabelingItem = EdgeLabeling.NONE
+    this.edgeLabelingItem = EdgeLabelPlacement.INTEGRATED
     this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
     this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
     this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
@@ -128,48 +432,36 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
-   * @param graphComponent The {@link GraphComponent} to apply the
-   *   configuration on.
+   * Creates and configures a layout.
+   * @param graphComponent The {@link GraphComponent} to apply the configuration on.
    * @returns The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent: GraphComponent): ILayoutAlgorithm {
-    let layout
+    const layout: TreeLayout =
+      this.subtreePlacerItem !== SubtreePlacer.HV ? this.configureDefaultLayout() : new TreeLayout()
 
-    if (this.nodePlacerItem !== TreeNodePlacer.HV) {
-      layout = this.configureDefaultLayout()
-    } else {
-      // use a default TreeLayout to show the 'Horizontal-Vertical' style
-      layout = new TreeLayout()
-    }
+    layout.parallelEdgeRouter.enabled = false
+    layout.componentLayout.style = ComponentArrangementStyle.MULTI_ROWS
 
-    layout.parallelEdgeRouterEnabled = false
-    layout.componentLayout.style = ComponentArrangementStyles.MULTI_ROWS
-    layout.subgraphLayoutEnabled = this.actOnSelectionOnlyItem
+    const subgraphLayout = layout.layoutStages.get(SubgraphLayoutStage)!
+    subgraphLayout.enabled = this.actOnSelectionOnlyItem
 
-    layout.prependStage(this.createTreeReductionStage())
+    this.configureTreeReductionStage(layout.treeReductionStage)
 
-    const placeLabels =
-      this.edgeLabelingItem === EdgeLabeling.INTEGRATED ||
-      this.edgeLabelingItem === EdgeLabeling.GENERIC
+    const placeLabels = this.edgeLabelingItem !== EdgeLabelPlacement.IGNORE
 
     // required to prevent WrongGraphStructure exception which may be thrown by TreeLayout if there are edges
     // between group nodes
-    layout.prependStage(new HandleEdgesBetweenGroupsStage(placeLabels))
+    layout.layoutStages.prepend(new HandleEdgesBetweenGroupsStage(placeLabels))
 
-    layout.considerNodeLabels = this.considerNodeLabelsItem
-
-    if (this.edgeLabelingItem === EdgeLabeling.GENERIC) {
-      layout.integratedEdgeLabeling = false
-
-      const labeling = new GenericLabeling()
-      labeling.placeEdgeLabels = true
-      labeling.placeNodeLabels = false
-      labeling.reduceAmbiguity = this.reduceAmbiguityItem
-      layout.labelingEnabled = true
-      layout.labeling = labeling
-    } else if (this.edgeLabelingItem === EdgeLabeling.INTEGRATED) {
-      layout.integratedEdgeLabeling = true
+    layout.nodeLabelPlacement = this.nodeLabelingItem
+    layout.edgeLabelPlacement = this.edgeLabelingItem
+    if (this.edgeLabelingItem === EdgeLabelPlacement.GENERIC) {
+      const labeling = layout.layoutStages.get(GenericLabeling)!
+      labeling.scope = 'edge-labels'
+      if (this.reduceAmbiguityItem) {
+        labeling.defaultEdgeLabelingCosts.ambiguousPlacementCost = 1.0
+      }
     }
 
     return layout
@@ -180,13 +472,17 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
     layout: TreeLayout
   ): LayoutData {
     const layoutData =
-      this.nodePlacerItem === TreeNodePlacer.HV
+      this.subtreePlacerItem === SubtreePlacer.HV
         ? this.createLayoutDataHorizontalVertical(graphComponent)
-        : this.nodePlacerItem === TreeNodePlacer.DELEGATING_LAYERED
-          ? this.createLayoutDataDelegatingPlacer(graphComponent)
+        : this.subtreePlacerItem === SubtreePlacer.SINGLE_SPLIT_LAYERED
+          ? this.createLayoutDataSingleSplitPlacer(graphComponent)
           : this.createLayoutDataTree(graphComponent, layout)
 
-    return layoutData.combineWith(
+    if (this.portAssignmentItem !== PortAssignment.CENTER) {
+      layoutData.ports.sourcePortCandidates = this.createPortCandidate(this.portAssignmentItem)
+    }
+
+    let resultData = layoutData.combineWith(
       this.createLabelingLayoutData(
         graphComponent.graph,
         this.labelPlacementAlongEdgeItem,
@@ -195,12 +491,16 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
         this.labelPlacementDistanceItem
       )
     )
+    if (this.actOnSelectionOnlyItem) {
+      resultData = resultData.combineWith(this.createSubgraphLayoutData(graphComponent))
+    }
+    return resultData
   },
 
   createLayoutDataTree: function (graphComponent: GraphComponent, layout: TreeLayout): LayoutData {
     const graph = graphComponent.graph
     return new TreeLayoutData({
-      gridNodePlacerRowIndices: (node) => {
+      multiLayerSubtreePlacerLayerIndices: (node: INode) => {
         const predecessors = graph.predecessors(node)
         const parent = predecessors.at(0)
         if (parent) {
@@ -209,7 +509,7 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
         }
         return 0
       },
-      leftRightNodePlacerLeftNodes: (node) => {
+      leftRightSubtreePlacerLeftNodes: (node) => {
         const predecessors = graph.predecessors(node)
         const parent = predecessors.at(0)
         if (parent) {
@@ -218,25 +518,28 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
         }
         return false
       },
-      compactNodePlacerStrategyMementos: new Mapper(),
+      compactSubtreePlacerStrategyMementos: new Mapper(),
       assistantNodes: (node) => {
         return node.tag ? node.tag.assistant : null
-      }
+      },
+      multiParentDescriptors: new MultiParentDescriptor({
+        minimumBusDistance: 20
+      })
     })
   },
 
   createLayoutDataHorizontalVertical: function (graphComponent: GraphComponent): TreeLayoutData {
     return new TreeLayoutData({
-      nodePlacers: (node) => {
+      subtreePlacers: (node) => {
         // children of selected nodes should be placed vertical and to the right of their child nodes, while
         // the children of non-selected horizontal downwards
-        const childPlacement = graphComponent.selection.isSelected(node)
-          ? ChildPlacement.VERTICAL_TO_RIGHT
-          : ChildPlacement.HORIZONTAL_DOWNWARD
+        const subtreeTransform = graphComponent.selection.includes(node)
+          ? SubtreeTransform.ROTATE_LEFT_FLIP_Y
+          : SubtreeTransform.NONE
 
-        return new DefaultNodePlacer({
-          childPlacement: childPlacement,
-          rootAlignment: RootAlignment.LEADING_ON_BUS,
+        return new SingleLayerSubtreePlacer({
+          transformation: subtreeTransform,
+          rootAlignment: SingleLayerSubtreePlacerRootAlignment.LEADING_ON_BUS,
           verticalDistance: this.spacingItem,
           horizontalDistance: this.spacingItem,
           alignPorts: this.alignPortsItem
@@ -245,12 +548,18 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
     })
   },
 
-  createLayoutDataDelegatingPlacer: function (graphComponent: GraphComponent): TreeLayoutData {
+  createLayoutDataSingleSplitPlacer: function (graphComponent: GraphComponent): TreeLayoutData {
     const graph = graphComponent.graph
+    if (graph.nodes.size == 0) {
+      return new TreeLayoutData()
+    }
     //half the subtrees are delegated to the left placer and half to the right placer
     const leftNodes = new Set()
-    const root = graph.nodes.find((node) => graph.inDegree(node) === 0)!
+    let root = graph.nodes.find((node) => graph.inDegree(node) === 0) ?? graph.nodes.at(0)!
     let left = true
+    const seenNodes = new Set<INode>()
+    seenNodes.add(root)
+
     for (const successor of graph.successors(root)) {
       const stack = [successor]
       while (stack.length > 0) {
@@ -259,313 +568,266 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
           leftNodes.add(child)
         } // else: right node
         //push successors on stack -> whole subtree is either left or right
-        stack.push(...graph.successors(child).toArray())
+        graph.successors(child).forEach((succSucc) => {
+          if (!seenNodes.has(succSucc)) {
+            stack.push(succSucc)
+            seenNodes.add(succSucc)
+          }
+        })
       }
       left = !left
     }
-    const layoutData = new TreeLayoutData({
-      delegatingNodePlacerPrimaryNodes: (node) => leftNodes.has(node),
-      // tells the layout which node placer to use for a node
-      nodePlacers: (node) => {
+    return new TreeLayoutData({
+      singleSplitSubtreePlacerPrimaryNodes: (node) => leftNodes.has(node),
+      // tells the layout which subtree placer to use for a node
+      subtreePlacers: (node) => {
         if (node === root) {
-          return this.delegatingRootPlacer
+          return this.singleSplitRootPlacer
         }
         if (leftNodes.has(node)) {
-          return this.delegatingLeftPlacer
+          return this.singleSplitLeftPlacer
         }
-        return this.delegatingRightPlacer
-      }
+        return this.singleSplitRightPlacer
+      },
+      treeRoot: { item: root }
     })
-    layoutData.treeRoot.item = root
-    return layoutData
   },
 
   /**
    * Configures the tree reduction stage that will handle edges that do not belong to the tree.
    */
-  createTreeReductionStage: function (): TreeReductionStage {
-    // configures tree reduction stage and non-tree edge routing
-    const reductionStage = new TreeReductionStage()
-    if (this.edgeLabelingItem === EdgeLabeling.INTEGRATED) {
-      reductionStage.nonTreeEdgeLabelingAlgorithm = new GenericLabeling()
+  configureTreeReductionStage: function (treeReductionStage: TreeReductionStage): void {
+    if (this.edgeLabelingItem === EdgeLabelPlacement.INTEGRATED) {
+      treeReductionStage.nonTreeEdgeLabeling = new GenericLabeling()
     }
-    reductionStage.multiParentAllowed =
-      (this.nodePlacerItem === TreeNodePlacer.DEFAULT ||
-        this.nodePlacerItem === TreeNodePlacer.BUS ||
-        this.nodePlacerItem === TreeNodePlacer.LEFT_RIGHT ||
-        this.nodePlacerItem === TreeNodePlacer.DENDROGRAM) &&
+    treeReductionStage.allowMultiParent =
+      (this.subtreePlacerItem === SubtreePlacer.SINGLE_LAYER ||
+        this.subtreePlacerItem === SubtreePlacer.BUS ||
+        this.subtreePlacerItem === SubtreePlacer.LEFT_RIGHT ||
+        this.subtreePlacerItem === SubtreePlacer.DENDROGRAM) &&
       this.allowMultiParentsItem
 
     if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.ORGANIC) {
-      reductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
-      reductionStage.nonTreeEdgeSelectionKey = OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
+      treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
     } else if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.ORTHOGONAL) {
-      const edgeRouter = new EdgeRouter()
-      edgeRouter.rerouting = true
-      edgeRouter.scope = EdgeRouterScope.ROUTE_AFFECTED_EDGES
-      reductionStage.nonTreeEdgeRouter = edgeRouter
-      reductionStage.nonTreeEdgeSelectionKey = edgeRouter.affectedEdgesDpKey
-    } else if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.STRAIGHTLINE) {
-      reductionStage.nonTreeEdgeRouter = reductionStage.createStraightLineRouter()
+      treeReductionStage.nonTreeEdgeRouter = new EdgeRouter({
+        rerouting: true,
+        defaultEdgeDescriptor: { minimumLastSegmentLength: 20 }
+      })
+    } else if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.STRAIGHT_LINE) {
+      treeReductionStage.nonTreeEdgeRouter = new StraightLineEdgeRouter()
     } else if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.BUNDLED) {
-      const ebc = reductionStage.edgeBundling
+      const ebc = treeReductionStage.edgeBundling
       ebc.bundlingStrength = this.edgeBundlingStrengthItem
       ebc.defaultBundleDescriptor = new EdgeBundleDescriptor({ bundled: true })
     }
-    return reductionStage
   },
 
   /**
    * Configures the default tree layout algorithm.
    */
   configureDefaultLayout: function (): TreeLayout {
-    const isDefaultNodePlacer = this.nodePlacerItem === TreeNodePlacer.DEFAULT
-    const isAspectRatioNodePlacer = this.nodePlacerItem === TreeNodePlacer.ASPECT_RATIO
+    const isDefaultSubtreePlacer = this.subtreePlacerItem === SubtreePlacer.SINGLE_LAYER
 
-    const layout = new TreeLayout()
-    layout.layoutOrientation = isAspectRatioNodePlacer
-      ? LayoutOrientation.TOP_TO_BOTTOM
-      : this.defaultLayoutOrientationItem
+    const layout = new TreeLayout({
+      layoutOrientation:
+        this.subtreePlacerItem === SubtreePlacer.ASPECT_RATIO
+          ? LayoutOrientation.TOP_TO_BOTTOM
+          : this.defaultLayoutOrientationItem
+    })
 
     const spacing = this.spacingItem
 
-    let rootAlignment
+    let rootAlignment:
+      | SingleLayerSubtreePlacerRootAlignment
+      | SubtreeRootAlignment
+      | MultiLayerSubtreePlacerRootAlignment = SingleLayerSubtreePlacerRootAlignment.CENTER
     switch (this.rootAlignmentItem) {
       default:
       case TreeRootAlignment.CENTER:
-        rootAlignment = isDefaultNodePlacer ? RootAlignment.CENTER : RootNodeAlignment.CENTER
+        rootAlignment = isDefaultSubtreePlacer
+          ? SingleLayerSubtreePlacerRootAlignment.CENTER
+          : SubtreeRootAlignment.CENTER
         break
       case TreeRootAlignment.MEDIAN:
-        rootAlignment = isDefaultNodePlacer ? RootAlignment.MEDIAN : RootNodeAlignment.MEDIAN
+        rootAlignment = isDefaultSubtreePlacer
+          ? SingleLayerSubtreePlacerRootAlignment.MEDIAN
+          : SubtreeRootAlignment.MEDIAN
         break
       case TreeRootAlignment.LEFT:
-        rootAlignment = isDefaultNodePlacer ? RootAlignment.LEADING : RootNodeAlignment.LEFT
+        rootAlignment = isDefaultSubtreePlacer
+          ? SingleLayerSubtreePlacerRootAlignment.LEFT
+          : SubtreeRootAlignment.LEFT
         break
       case TreeRootAlignment.LEADING:
-        rootAlignment = isDefaultNodePlacer
-          ? RootAlignment.LEADING_OFFSET
-          : RootNodeAlignment.LEADING
+        rootAlignment = isDefaultSubtreePlacer
+          ? SingleLayerSubtreePlacerRootAlignment.LEADING
+          : SubtreeRootAlignment.LEADING
         break
       case TreeRootAlignment.RIGHT:
-        rootAlignment = isDefaultNodePlacer ? RootAlignment.TRAILING : RootNodeAlignment.RIGHT
+        rootAlignment = isDefaultSubtreePlacer
+          ? SingleLayerSubtreePlacerRootAlignment.RIGHT
+          : SubtreeRootAlignment.RIGHT
         break
       case TreeRootAlignment.TRAILING:
-        rootAlignment = isDefaultNodePlacer
-          ? RootAlignment.TRAILING_OFFSET
-          : RootNodeAlignment.TRAILING
+        rootAlignment = isDefaultSubtreePlacer
+          ? SingleLayerSubtreePlacerRootAlignment.TRAILING
+          : SubtreeRootAlignment.TRAILING
         break
     }
 
-    const aspectRatio = this.nodePlacerAspectRatioItem
+    const aspectRatio = this.subtreePlacerAspectRatioItem
     const allowMultiParents = this.allowMultiParentsItem
 
-    switch (this.nodePlacerItem) {
+    switch (this.subtreePlacerItem) {
       default:
-      case TreeNodePlacer.DEFAULT:
-        layout.defaultNodePlacer = new DefaultNodePlacer({
+      case SubtreePlacer.SINGLE_LAYER:
+        const singleLayerSubtreePlacer = new SingleLayerSubtreePlacer({
           horizontalDistance: spacing,
           verticalDistance: spacing,
-          rootAlignment: rootAlignment as RootAlignment,
+          rootAlignment: rootAlignment as SingleLayerSubtreePlacerRootAlignment,
           alignPorts: this.alignPortsItem
         })
-        layout.multiParentAllowed = allowMultiParents
+        if (this.portAssignmentItem !== PortAssignment.CENTER) {
+          singleLayerSubtreePlacer.minimumChannelSegmentDistance = 5
+        }
+        layout.defaultSubtreePlacer = singleLayerSubtreePlacer
+        layout.allowMultiParent = allowMultiParents
         break
-      case TreeNodePlacer.SIMPLE:
-        layout.defaultNodePlacer = new SimpleNodePlacer({
+      case SubtreePlacer.BUS:
+        layout.defaultSubtreePlacer = new BusSubtreePlacer({
+          spacing
+        })
+        layout.allowMultiParent = allowMultiParents
+        break
+      case SubtreePlacer.DOUBLE_LAYER:
+        layout.defaultSubtreePlacer = new DoubleLayerSubtreePlacer({
           spacing,
-          rootAlignment: rootAlignment as RootNodeAlignment,
+          rootAlignment: rootAlignment as SubtreeRootAlignment,
           alignPorts: this.alignPortsItem
         })
         break
-      case TreeNodePlacer.BUS:
-        layout.defaultNodePlacer = new BusNodePlacer({
-          spacing,
-          alignPorts: this.alignPortsItem
-        })
-        layout.multiParentAllowed = allowMultiParents
-        break
-      case TreeNodePlacer.DOUBLE_LINE:
-        layout.defaultNodePlacer = new DoubleLineNodePlacer({
-          spacing,
-          rootAlignment: rootAlignment as RootNodeAlignment,
-          alignPorts: this.alignPortsItem
-        })
-        break
-      case TreeNodePlacer.LEFT_RIGHT:
-        layout.defaultNodePlacer = new LeftRightNodePlacer({
+      case SubtreePlacer.LEFT_RIGHT:
+        layout.defaultSubtreePlacer = new LeftRightSubtreePlacer({
           spacing,
           alignPorts: this.alignPortsItem
         })
-        layout.multiParentAllowed = allowMultiParents
+        layout.allowMultiParent = allowMultiParents
         break
-      case TreeNodePlacer.LAYERED:
-        layout.defaultNodePlacer = new LayeredNodePlacer({
-          spacing,
-          layerSpacing: spacing,
-          rootAlignment: rootAlignment as RootNodeAlignment,
-          alignPorts: this.alignPortsItem
-        })
+      case SubtreePlacer.LEVEL_ALIGNED:
+        const levelAlignedSubtreePlacer = new LevelAlignedSubtreePlacer()
+        levelAlignedSubtreePlacer.spacing = spacing
+        levelAlignedSubtreePlacer.layerSpacing = spacing
+        levelAlignedSubtreePlacer.rootAlignment = rootAlignment as SubtreeRootAlignment
+        levelAlignedSubtreePlacer.alignPorts = this.alignPortsItem
+        layout.defaultSubtreePlacer = levelAlignedSubtreePlacer
         break
-      case TreeNodePlacer.ASPECT_RATIO:
-        layout.defaultNodePlacer = new AspectRatioNodePlacer({
+      case SubtreePlacer.ASPECT_RATIO:
+        layout.defaultSubtreePlacer = new AspectRatioSubtreePlacer({
           horizontalDistance: spacing,
           verticalDistance: spacing,
           aspectRatio
         })
         break
-      case TreeNodePlacer.DENDROGRAM:
-        layout.defaultNodePlacer = new DendrogramNodePlacer({
+      case SubtreePlacer.DENDROGRAM:
+        layout.defaultSubtreePlacer = new DendrogramSubtreePlacer({
           minimumRootDistance: spacing,
           minimumSubtreeDistance: spacing
         })
-        layout.multiParentAllowed = allowMultiParents
+        layout.allowMultiParent = allowMultiParents
         break
-      case TreeNodePlacer.GRID:
-        layout.defaultNodePlacer = new GridNodePlacer({
+      case SubtreePlacer.MULTI_LAYER:
+        layout.defaultSubtreePlacer = new MultiLayerSubtreePlacer({
           spacing,
-          rootAlignment: rootAlignment as RootNodeAlignment,
-          alignPorts: this.alignPortsItem
+          rootAlignment: rootAlignment as unknown as MultiLayerSubtreePlacerRootAlignment
         })
         break
-      case TreeNodePlacer.COMPACT:
-        layout.defaultNodePlacer = new CompactNodePlacer({
+      case SubtreePlacer.COMPACT:
+        layout.defaultSubtreePlacer = new CompactSubtreePlacer({
           horizontalDistance: spacing,
           verticalDistance: spacing,
           preferredAspectRatio: aspectRatio
         })
         break
-      case TreeNodePlacer.DELEGATING_LAYERED:
-        this.delegatingLeftPlacer = new LayeredNodePlacer({
-          modificationMatrix: RotatableNodePlacerMatrix.ROT270,
-          id: RotatableNodePlacerMatrix.ROT270,
-          verticalAlignment: 0,
-          routingStyle: 'orthogonal',
-          spacing,
-          layerSpacing: spacing,
-          rootAlignment: rootAlignment as RootNodeAlignment,
-          alignPorts: this.alignPortsItem
-        })
+      case SubtreePlacer.SINGLE_SPLIT_LAYERED:
+        const rightLevelAlignedSubtreePlacer = new LevelAlignedSubtreePlacer(
+          SubtreeTransform.ROTATE_RIGHT
+        )
+        rightLevelAlignedSubtreePlacer.transformation = SubtreeTransform.ROTATE_RIGHT
+        rightLevelAlignedSubtreePlacer.verticalAlignment = 0
+        rightLevelAlignedSubtreePlacer.edgeRoutingStyle = 'orthogonal'
+        rightLevelAlignedSubtreePlacer.spacing = spacing
+        rightLevelAlignedSubtreePlacer.layerSpacing = spacing
+        rightLevelAlignedSubtreePlacer.rootAlignment = rootAlignment as SubtreeRootAlignment
+        rightLevelAlignedSubtreePlacer.alignPorts = this.alignPortsItem
+        this.singleSplitLeftPlacer = rightLevelAlignedSubtreePlacer
 
-        this.delegatingRightPlacer = new LayeredNodePlacer({
-          modificationMatrix: RotatableNodePlacerMatrix.ROT90,
-          id: RotatableNodePlacerMatrix.ROT90,
-          verticalAlignment: 0,
-          routingStyle: 'orthogonal',
-          layerSpacing: spacing,
-          rootAlignment: rootAlignment as RootNodeAlignment,
-          alignPorts: this.alignPortsItem
-        })
+        const leftLevelAlignedSubtreePlacer = new LevelAlignedSubtreePlacer(
+          SubtreeTransform.ROTATE_LEFT
+        )
+        leftLevelAlignedSubtreePlacer.transformation = SubtreeTransform.ROTATE_LEFT
+        leftLevelAlignedSubtreePlacer.verticalAlignment = 0
+        leftLevelAlignedSubtreePlacer.edgeRoutingStyle = 'orthogonal'
+        leftLevelAlignedSubtreePlacer.layerSpacing = spacing
+        leftLevelAlignedSubtreePlacer.rootAlignment = rootAlignment as SubtreeRootAlignment
+        leftLevelAlignedSubtreePlacer.alignPorts = this.alignPortsItem
+        this.singleSplitRightPlacer = leftLevelAlignedSubtreePlacer
 
-        this.delegatingRootPlacer = new DelegatingNodePlacer({
-          modificationMatrix: RotatableNodePlacerMatrix.DEFAULT,
-          primaryPlacer: this.delegatingLeftPlacer,
-          secondaryPlacer: this.delegatingRightPlacer,
-          alignPorts: this.alignPortsItem
-        })
+        this.singleSplitRootPlacer = new SingleSplitSubtreePlacer(
+          this.singleSplitLeftPlacer,
+          this.singleSplitRightPlacer
+        )
         break
     }
 
-    layout.defaultPortAssignment = new DefaultTreeLayoutPortAssignment(this.portAssignmentItem)
-    layout.groupingSupported = true
+    layout.defaultPortAssigner = new TreeLayoutPortAssigner(
+      this.portAssignmentItem === PortAssignment.CENTER
+        ? TreeLayoutPortAssignmentMode.CENTER
+        : TreeLayoutPortAssignmentMode.DISTRIBUTED
+    )
 
     return layout
   },
 
-  /** @type {OptionGroup} */
-  GeneralGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('General'),
-        OptionGroupAttribute('RootGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
+  createPortCandidate(portAssignment: PortAssignment): EdgePortCandidates {
+    switch (portAssignment) {
+      default:
+      case PortAssignment.CENTER:
+        throw new Error('Center cannot be translated to port side')
+      case PortAssignment.DISTRIBUTED_TOP:
+        return new EdgePortCandidates().addFreeCandidate(PortSides.TOP)
+      case PortAssignment.DISTRIBUTED_BOTTOM:
+        return new EdgePortCandidates().addFreeCandidate(PortSides.BOTTOM)
+      case PortAssignment.DISTRIBUTED_LEFT:
+        return new EdgePortCandidates().addFreeCandidate(PortSides.LEFT)
+      case PortAssignment.DISTRIBUTED_RIGHT:
+        return new EdgePortCandidates().addFreeCandidate(PortSides.RIGHT)
+    }
   },
 
   /** @type {OptionGroup} */
-  NodePlacerGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Node Placer'),
-        OptionGroupAttribute('RootGroup', 20),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  GeneralGroup: null,
 
   /** @type {OptionGroup} */
-  EdgesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Edges'),
-        OptionGroupAttribute('RootGroup', 30),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  SubtreePlacerGroup: null,
 
   /** @type {OptionGroup} */
-  NonTreeEdgesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Non-Tree Edges'),
-        OptionGroupAttribute('EdgesGroup', 20),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  EdgesGroup: null,
 
   /** @type {OptionGroup} */
-  LabelingGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Labeling'),
-        OptionGroupAttribute('RootGroup', 40),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  NonTreeEdgesGroup: null,
 
   /** @type {OptionGroup} */
-  NodePropertiesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Node Settings'),
-        OptionGroupAttribute('LabelingGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  LabelingGroup: null,
 
   /** @type {OptionGroup} */
-  EdgePropertiesGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Edge Settings'),
-        OptionGroupAttribute('LabelingGroup', 20),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  NodePropertiesGroup: null,
 
   /** @type {OptionGroup} */
-  PreferredPlacementGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Preferred Edge Label Placement'),
-        OptionGroupAttribute('LabelingGroup', 30),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  EdgePropertiesGroup: null,
+
+  /** @type {OptionGroup} */
+  PreferredPlacementGroup: null,
 
   /**
    * Gets the description text.
@@ -573,13 +835,6 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
    * @type {string}
    */
   descriptionText: {
-    $meta: function () {
-      return [
-        OptionGroupAttribute('DescriptionGroup', 10),
-        ComponentAttribute(Components.HTML_BLOCK),
-        TypeAttribute(YString.$class)
-      ]
-    },
     get: function (): string {
       return (
         '<p>The various flavors of the tree layout styles are great for highlighting child-parent relationships in graphs that form one or more trees, ' +
@@ -596,190 +851,57 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
   },
 
   /** @type {LayoutOrientation} */
-  defaultLayoutOrientationItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Orientation',
-          '#/api/TreeLayout#MultiStageLayout-property-layoutOrientation'
-        ),
-        OptionGroupAttribute('GeneralGroup', 5),
-        EnumValuesAttribute().init({
-          values: [
-            ['Top to Bottom', LayoutOrientation.TOP_TO_BOTTOM],
-            ['Bottom to Top', LayoutOrientation.BOTTOM_TO_TOP],
-            ['Left to Right', LayoutOrientation.LEFT_TO_RIGHT],
-            ['Right to Left', LayoutOrientation.RIGHT_TO_LEFT]
-          ]
-        }),
-        TypeAttribute(LayoutOrientation.$class)
-      ]
-    },
-    value: null
-  },
+  defaultLayoutOrientationItem: null,
 
   /** @type {boolean} */
   shouldDisableDefaultLayoutOrientationItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return (
-        this.nodePlacerItem === TreeNodePlacer.ASPECT_RATIO ||
-        this.nodePlacerItem === TreeNodePlacer.COMPACT
+        this.subtreePlacerItem === SubtreePlacer.ASPECT_RATIO ||
+        this.subtreePlacerItem === SubtreePlacer.COMPACT
       )
     }
   },
 
   /** @type {boolean} */
-  actOnSelectionOnlyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Act on Selection Only',
-          '#/api/TreeLayout#MultiStageLayout-property-subgraphLayoutEnabled'
-        ),
-        OptionGroupAttribute('GeneralGroup', 10),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  actOnSelectionOnlyItem: false,
 
-  /** @type {boolean} */
-  considerNodeLabelsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Consider Node Labels',
-          '#/api/TreeLayout#TreeLayout-property-considerNodeLabels'
-        ),
-        OptionGroupAttribute('NodePropertiesGroup', 10),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  /** @type {NodeLabelPlacement} */
+  nodeLabelingItem: null,
 
-  /** @type {TreeNodePlacer} */
-  nodePlacerItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Node Placer', '#/api/TreeLayout#TreeLayout-property-defaultNodePlacer'),
-        OptionGroupAttribute('NodePlacerGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Default', TreeNodePlacer.DEFAULT],
-            ['Simple', TreeNodePlacer.SIMPLE],
-            ['Compact', TreeNodePlacer.COMPACT],
-            ['Bus', TreeNodePlacer.BUS],
-            ['Double-Line', TreeNodePlacer.DOUBLE_LINE],
-            ['Left-Right', TreeNodePlacer.LEFT_RIGHT],
-            ['Layered', TreeNodePlacer.LAYERED],
-            ['Aspect Ratio', TreeNodePlacer.ASPECT_RATIO],
-            ['Dendrogram', TreeNodePlacer.DENDROGRAM],
-            ['Grid', TreeNodePlacer.GRID],
-            ['Horizontal-Vertical', TreeNodePlacer.HV],
-            ['Delegating & Layered', TreeNodePlacer.DELEGATING_LAYERED]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  /** @type {SubtreePlacer} */
+  subtreePlacerItem: null,
 
   /** @type {number} */
-  spacingItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Spacing',
-          '#/api/DefaultNodePlacer#DefaultNodePlacer-property-horizontalDistance'
-        ),
-        OptionGroupAttribute('NodePlacerGroup', 20),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 500
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  spacingItem: 0,
 
   /** @type {TreeRootAlignment} */
-  rootAlignmentItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Root Alignment',
-          '#/api/DefaultNodePlacer#DefaultNodePlacer-property-rootAlignment'
-        ),
-        OptionGroupAttribute('NodePlacerGroup', 30),
-        EnumValuesAttribute().init({
-          values: [
-            ['Center', TreeRootAlignment.CENTER],
-            ['Median', TreeRootAlignment.MEDIAN],
-            ['Left', TreeRootAlignment.LEFT],
-            ['Leading', TreeRootAlignment.LEADING],
-            ['Right', TreeRootAlignment.RIGHT],
-            ['Trailing', TreeRootAlignment.TRAILING]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  rootAlignmentItem: null,
 
   /** @type {boolean} */
   shouldDisableRootAlignmentItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return (
-        this.nodePlacerItem === TreeNodePlacer.ASPECT_RATIO ||
-        this.nodePlacerItem === TreeNodePlacer.BUS ||
-        this.nodePlacerItem === TreeNodePlacer.DENDROGRAM ||
-        this.nodePlacerItem === TreeNodePlacer.COMPACT
+        this.subtreePlacerItem === SubtreePlacer.ASPECT_RATIO ||
+        this.subtreePlacerItem === SubtreePlacer.BUS ||
+        this.subtreePlacerItem === SubtreePlacer.DENDROGRAM ||
+        this.subtreePlacerItem === SubtreePlacer.COMPACT
       )
     }
   },
 
   /** @type {boolean} */
-  alignPortsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Align Ports',
-          '#/api/RotatableNodePlacerBase#RotatableNodePlacerBase-property-alignPorts'
-        ),
-        OptionGroupAttribute('NodePlacerGroup', 40),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  alignPortsItem: false,
 
   /** @type {boolean} */
   shouldDisableAlignPortsItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return (
-        (this.nodePlacerItem !== TreeNodePlacer.DEFAULT &&
-          this.nodePlacerItem !== TreeNodePlacer.SIMPLE &&
-          this.nodePlacerItem !== TreeNodePlacer.BUS &&
-          this.nodePlacerItem !== TreeNodePlacer.DOUBLE_LINE &&
-          this.nodePlacerItem !== TreeNodePlacer.LEFT_RIGHT &&
-          this.nodePlacerItem !== TreeNodePlacer.LAYERED &&
-          this.nodePlacerItem !== TreeNodePlacer.GRID &&
-          this.nodePlacerItem !== TreeNodePlacer.DELEGATING_LAYERED &&
-          this.nodePlacerItem !== TreeNodePlacer.HV) ||
+        (this.subtreePlacerItem !== SubtreePlacer.SINGLE_LAYER &&
+          this.subtreePlacerItem !== SubtreePlacer.DOUBLE_LAYER &&
+          this.subtreePlacerItem !== SubtreePlacer.LEFT_RIGHT &&
+          this.subtreePlacerItem !== SubtreePlacer.SINGLE_SPLIT_LAYERED &&
+          this.subtreePlacerItem !== SubtreePlacer.HV) ||
         (this.rootAlignmentItem !== TreeRootAlignment.CENTER &&
           this.rootAlignmentItem !== TreeRootAlignment.MEDIAN &&
           this.rootAlignmentItem !== TreeRootAlignment.LEFT &&
@@ -789,373 +911,124 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
   },
 
   /** @type {number} */
-  nodePlacerAspectRatioItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Aspect Ratio',
-          '#/api/AspectRatioNodePlacer#AspectRatioNodePlacer-property-aspectRatio'
-        ),
-        OptionGroupAttribute('NodePlacerGroup', 50),
-        MinMaxAttribute().init({
-          min: 0.1,
-          max: 4,
-          step: 0.1
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0.1
-  },
+  subtreePlacerAspectRatioItem: 0.1,
 
   /** @type {boolean} */
-  shouldDisableNodePlacerAspectRatioItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
+  shouldDisableSubtreePlacerAspectRatioItem: <any>{
     get: function (): boolean {
       return (
-        this.nodePlacerItem !== TreeNodePlacer.ASPECT_RATIO &&
-        this.nodePlacerItem !== TreeNodePlacer.COMPACT
+        this.subtreePlacerItem !== SubtreePlacer.ASPECT_RATIO &&
+        this.subtreePlacerItem !== SubtreePlacer.COMPACT
       )
     }
   },
 
   /** @type {boolean} */
-  allowMultiParentsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Allow Multi-Parents',
-          '#/api/TreeLayout#TreeLayout-property-multiParentAllowed'
-        ),
-        OptionGroupAttribute('NodePlacerGroup', 60),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  allowMultiParentsItem: false,
 
   /** @type {boolean} */
   shouldDisableAllowMultiParentsItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return (
-        this.nodePlacerItem !== TreeNodePlacer.DEFAULT &&
-        this.nodePlacerItem !== TreeNodePlacer.DENDROGRAM &&
-        this.nodePlacerItem !== TreeNodePlacer.BUS &&
-        this.nodePlacerItem !== TreeNodePlacer.LEFT_RIGHT
+        this.subtreePlacerItem !== SubtreePlacer.SINGLE_LAYER &&
+        this.subtreePlacerItem !== SubtreePlacer.DENDROGRAM &&
+        this.subtreePlacerItem !== SubtreePlacer.BUS &&
+        this.subtreePlacerItem !== SubtreePlacer.LEFT_RIGHT
       )
     }
   },
 
   /** @type {RoutingStyle} */
-  routingStyleForNonTreeEdgesItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Routing Style for Non-Tree Edges',
-          '#/api/TreeReductionStage#TreeReductionStage-property-nonTreeEdgeRouter'
-        ),
-        OptionGroupAttribute('NonTreeEdgesGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Orthogonal', RoutingStyle.ORTHOGONAL],
-            ['Organic', RoutingStyle.ORGANIC],
-            ['Straight-Line', RoutingStyle.STRAIGHTLINE],
-            ['Bundled', RoutingStyle.BUNDLED]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  routingStyleForNonTreeEdgesItem: null,
 
   /** @type {number} */
-  edgeBundlingStrengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Bundling Strength',
-          '#/api/EdgeBundling#EdgeBundling-property-bundlingStrength'
-        ),
-        OptionGroupAttribute('NonTreeEdgesGroup', 20),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 1.0,
-          step: 0.01
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 1.0
-  },
+  edgeBundlingStrengthItem: 1.0,
 
   /** @type {boolean} */
   shouldDisableEdgeBundlingStrengthItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return this.routingStyleForNonTreeEdgesItem !== RoutingStyle.BUNDLED
     }
   },
 
   /** @type {TreeLayoutPortAssignmentMode} */
-  portAssignmentItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Port Assignment',
-          '#/api/TreeLayout#TreeLayout-property-defaultPortAssignment'
-        ),
-        OptionGroupAttribute('EdgesGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['None', TreeLayoutPortAssignmentMode.NONE],
-            ['Distributed North', TreeLayoutPortAssignmentMode.DISTRIBUTED_NORTH],
-            ['Distributed South', TreeLayoutPortAssignmentMode.DISTRIBUTED_SOUTH],
-            ['Distributed East', TreeLayoutPortAssignmentMode.DISTRIBUTED_EAST],
-            ['Distributed West', TreeLayoutPortAssignmentMode.DISTRIBUTED_WEST]
-          ]
-        }),
-        TypeAttribute(TreeLayoutPortAssignmentMode.$class)
-      ]
-    },
-    value: null
-  },
+  portAssignmentItem: null,
 
   /**
-   * @type {EdgeLabeling}
+   * @type {EdgeLabelPlacement}
    */
   $edgeLabelingItem: null,
 
-  /** @type {EdgeLabeling} */
+  /** @type {EdgeLabelPlacement} */
   edgeLabelingItem: <any>{
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Edge Labeling',
-          '#/api/TreeLayout#MultiStageLayout-property-labelingEnabled'
-        ),
-        OptionGroupAttribute('EdgePropertiesGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['None', EdgeLabeling.NONE],
-            ['Integrated', EdgeLabeling.INTEGRATED],
-            ['Generic', EdgeLabeling.GENERIC]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    get: function (): EdgeLabeling {
+    get: function (): EdgeLabelPlacement {
       return this.$edgeLabelingItem
     },
-    set: function (value: EdgeLabeling) {
+    set: function (value: EdgeLabelPlacement) {
       this.$edgeLabelingItem = value
-      if (value === EdgeLabeling.INTEGRATED) {
-        this.labelPlacementOrientationItem = LabelPlacementOrientation.PARALLEL
-        this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.AT_TARGET
-        this.labelPlacementDistanceItem = 0
-      }
+      this.labelPlacementOrientationItem =
+        value === EdgeLabelPlacement.INTEGRATED
+          ? LabelPlacementOrientation.PARALLEL
+          : LabelPlacementOrientation.HORIZONTAL
+      this.labelPlacementAlongEdgeItem =
+        value === EdgeLabelPlacement.INTEGRATED
+          ? LabelPlacementAlongEdge.AT_TARGET
+          : LabelPlacementAlongEdge.CENTERED
+      this.labelPlacementDistanceItem = value === EdgeLabelPlacement.INTEGRATED ? 0 : 10
     }
   },
 
   /** @type {boolean} */
-  reduceAmbiguityItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Reduce Ambiguity',
-          '#/api/GenericLabeling#MISLabelingBase-property-reduceAmbiguity'
-        ),
-        OptionGroupAttribute('EdgePropertiesGroup', 20),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  reduceAmbiguityItem: false,
 
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
-      return this.edgeLabelingItem !== EdgeLabeling.GENERIC
+      return this.edgeLabelingItem !== EdgeLabelPlacement.GENERIC
     }
   },
 
   /** @type {LabelPlacementOrientation} */
-  labelPlacementOrientationItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Orientation',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-angle'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Parallel', LabelPlacementOrientation.PARALLEL],
-            ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
-            ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
-            ['Vertical', LabelPlacementOrientation.VERTICAL]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  labelPlacementOrientationItem: null,
 
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
-      return this.edgeLabelingItem === EdgeLabeling.NONE
+      return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
   },
 
   /** @type {LabelPlacementAlongEdge} */
-  labelPlacementAlongEdgeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Along Edge',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-placeAlongEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 20),
-        EnumValuesAttribute().init({
-          values: [
-            ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
-            ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
-            ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
-            ['At Target', LabelPlacementAlongEdge.AT_TARGET],
-            ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
-            ['Centered', LabelPlacementAlongEdge.CENTERED]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  labelPlacementAlongEdgeItem: null,
 
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
-      return this.edgeLabelingItem === EdgeLabeling.NONE
+      return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
   },
 
   /** @type {LabelPlacementSideOfEdge} */
-  labelPlacementSideOfEdgeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Side of Edge',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-sideOfEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 30),
-        EnumValuesAttribute().init({
-          values: [
-            ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
-            ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
-            ['Left', LabelPlacementSideOfEdge.LEFT],
-            ['Right', LabelPlacementSideOfEdge.RIGHT],
-            ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  labelPlacementSideOfEdgeItem: null,
 
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
-      return this.edgeLabelingItem === EdgeLabeling.NONE
+      return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
   },
 
   /** @type {number} */
-  labelPlacementDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Distance',
-          '#/api/PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-distanceToEdge'
-        ),
-        OptionGroupAttribute('PreferredPlacementGroup', 40),
-        MinMaxAttribute().init({
-          min: 0.0,
-          max: 40.0
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  labelPlacementDistanceItem: 0,
 
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return (
-        this.edgeLabelingItem === EdgeLabeling.NONE ||
+        this.edgeLabelingItem === EdgeLabelPlacement.IGNORE ||
         this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
       )
     }
   }
 })
 export default TreeLayoutConfig
-
-enum RoutingStyle {
-  ORTHOGONAL,
-  ORGANIC,
-  STRAIGHTLINE,
-  BUNDLED
-}
-
-export enum TreeNodePlacer {
-  DEFAULT,
-  SIMPLE,
-  BUS,
-  DOUBLE_LINE,
-  LEFT_RIGHT,
-  LAYERED,
-  ASPECT_RATIO,
-  DENDROGRAM,
-  GRID,
-  COMPACT,
-  HV,
-  DELEGATING_LAYERED
-}
-
-enum TreeRootAlignment {
-  CENTER,
-  MEDIAN,
-  LEFT,
-  LEADING,
-  RIGHT,
-  TRAILING
-}

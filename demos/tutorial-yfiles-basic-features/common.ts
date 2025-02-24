@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,9 +28,8 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  DefaultLabelStyle,
-  EdgeStyleDecorationInstaller,
-  ExteriorLabelModel,
+  EdgeStyleIndicatorRenderer,
+  ExteriorNodeLabelModel,
   FreeNodePortLocationModel,
   GraphBuilder,
   type GraphComponent,
@@ -39,18 +38,16 @@ import {
   GroupNodeStyle,
   HorizontalTextAlignment,
   IGraph,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
+  LabelStyle,
   type NodesSource,
-  NodeStyleDecorationInstaller,
+  NodeStyleIndicatorRenderer,
   Point,
   PolylineEdgeStyle,
   Rect,
-  RectangleCornerStyle,
-  RectangleNodeStyle,
   ShapeNodeStyle,
   SmartEdgeLabelModel
-} from 'yfiles'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+} from '@yfiles/yfiles'
 import {
   graphDataAnalysis,
   graphDataLayout,
@@ -77,11 +74,11 @@ export function configureStyles(nodesSources: NodesSource<any>[]): void {
       fill: nodeFills[index % nodeFills.length],
       stroke: nodeStrokes[index % nodeStrokes.length]
     })
-    nodesSource.nodeCreator.defaults.labels.style = new DefaultLabelStyle({
+    nodesSource.nodeCreator.defaults.labels.style = new LabelStyle({
       shape: 'round-rectangle',
       textFill: labelTextColors[index % labelTextColors.length],
       backgroundFill: labelFills[index % labelFills.length],
-      insets: 2
+      padding: 2
     })
   })
 }
@@ -92,7 +89,6 @@ export function configureStyles(nodesSources: NodesSource<any>[]): void {
 export function initializeTutorialDefaults(
   graphComponent: GraphComponent
 ): void {
-  applyDemoTheme(graphComponent)
   graphComponent.focusIndicatorManager.enabled = false
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -100,11 +96,11 @@ export function initializeTutorialDefaults(
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     shape: 'round-rectangle',
     textFill: '#042d37',
     backgroundFill: '#9dc6d0',
-    insets: 2,
+    padding: 2,
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
   })
   graph.edgeDefaults.style = new PolylineEdgeStyle({
@@ -114,16 +110,16 @@ export function initializeTutorialDefaults(
 
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#111d4a',
-    contentAreaInsets: 10
+    contentAreaPadding: 10
   })
 
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'left',
     textFill: 'white'
   })
 
   graph.groupNodeDefaults.labels.layoutParameter =
-    new GroupNodeLabelModel().createDefaultParameter()
+    new GroupNodeLabelModel().createTabParameter()
 }
 
 /**
@@ -153,10 +149,7 @@ export function createSampleGraph(graph: IGraph) {
 
   graph.addBend(edge2, new Point(260, 30))
 
-  const port1AtNode1 = graph.addPort(
-    node1,
-    FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-  )
+  const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.CENTER)
 
   const port1AtNode3 = graph.addPortAt(
     node3,
@@ -182,10 +175,7 @@ export function createSampleGraphLabelPlacement(graph: IGraph) {
 
   graph.addBend(edge2, new Point(260, 30))
 
-  const port1AtNode1 = graph.addPort(
-    node1,
-    FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-  )
+  const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.CENTER)
 
   const port1AtNode3 = graph.addPortAt(
     node3,
@@ -216,10 +206,7 @@ export function createSampleGraphViewport(graph: IGraph) {
 
   graph.addBend(edgeWithBend, new Point(260, 30))
 
-  const port1AtNode1 = graph.addPort(
-    node1,
-    FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-  )
+  const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.CENTER)
 
   const port1AtNode3 = graph.addPortAt(
     node3,
@@ -236,7 +223,7 @@ export function createSampleGraphViewport(graph: IGraph) {
   graph.addLabel(
     graph.createNodeAt(new Point(-500, -500)),
     'Outside initial viewport',
-    ExteriorLabelModel.SOUTH
+    ExteriorNodeLabelModel.BOTTOM
   )
 }
 
@@ -311,7 +298,7 @@ export function setDefaultLabelLayoutParameters(graph: IGraph): void {
   // Let's keep the default.  Here is how to set it manually
 
   // Place node labels in the node center
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+  graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
 
   // Use a rotated layout for edge labels
   graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel({
@@ -324,25 +311,27 @@ export function configureInteraction(
 ): GraphEditorInputMode {
   // Create a new GraphEditorInputMode instance and register it as the main
   // input mode for the graphComponent
-  const graphEditorInputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  const graphEditorInputMode = new GraphEditorInputMode()
   graphComponent.inputMode = graphEditorInputMode
   return graphEditorInputMode
 }
 
 export function configureHighlights(graphComponent: GraphComponent): void {
-  graphComponent.selection.addItemSelectionChangedListener(() =>
-    graphComponent.highlightIndicatorManager.clearHighlights()
+  graphComponent.selection.addEventListener('item-added', () =>
+    graphComponent.highlights.clear()
   )
 
-  graphComponent.graph.decorator.nodeDecorator.highlightDecorator.setImplementation(
-    new NodeStyleDecorationInstaller({
+  graphComponent.selection.addEventListener('item-removed', () =>
+    graphComponent.highlights.clear()
+  )
+
+  graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(
+    new NodeStyleIndicatorRenderer({
       nodeStyle: new ShapeNodeStyle({ stroke: '3px orange', fill: 'none' })
     })
   )
-  graphComponent.graph.decorator.edgeDecorator.highlightDecorator.setImplementation(
-    new EdgeStyleDecorationInstaller({
+  graphComponent.graph.decorator.edges.highlightRenderer.addConstant(
+    new EdgeStyleIndicatorRenderer({
       edgeStyle: new PolylineEdgeStyle({
         stroke: '3px orange'
       })

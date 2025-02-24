@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,30 +30,22 @@
  * This file provides functions to {@link openStorageItem open} and {@link saveStorageItem save}
  * text in the browser's storage.
  */
-
 /**
  * The Web Storage to use, one of Window.localStorage or Window.sessionStorage.
  */
 export const currentStorage = window.localStorage
-
 /**
  * Gets the value of the item with the given {@link key} from storage.
- * @param {!string} key
- * @returns {!string}
  */
 export function openStorageItem(key) {
   const item = currentStorage.getItem(key)
   if (item == null) {
     throw new Error(`No item found in storage for key ${key}`)
   }
-
   return item
 }
-
 /**
  * Sets the given {@link value} with the given {@link key} to storage.
- * @param {!string} key
- * @param {!string} value
  */
 export function saveStorageItem(key, value) {
   currentStorage.setItem(key, value)

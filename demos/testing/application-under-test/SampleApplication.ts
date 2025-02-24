@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, License, Rect } from 'yfiles'
-import { finishLoading } from 'demo-resources/demo-ui/finish-loading'
+import { GraphComponent, License, Rect } from '@yfiles/yfiles'
+import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
 
 async function run() {
   const response = await fetch(new URL('../../../lib/license.json', import.meta.url).toString())
@@ -47,7 +47,7 @@ async function run() {
   // bind the createEdge function to the demo's single button
   document
     .querySelector('#create-edge')!
-    .addEventListener('click', () => graph.createEdge(graph.nodes.first(), graph.nodes.last()))
+    .addEventListener('click', () => graph.createEdge(graph.nodes.first()!, graph.nodes.last()!))
 }
 
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,29 +28,24 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DataProviders,
-  GivenLayersLayerer,
-  HierarchicLayout,
+  HierarchicalLayout,
   ILayoutAlgorithm,
   LayoutGraph,
-  LayoutGraphUtilities,
-  Maps,
-  NodeOrderAlgorithm,
-  YPoint
-} from 'yfiles'
-
+  LayoutGraphAlgorithms,
+  Point
+} from '@yfiles/yfiles'
 /**
  * Arranges graphs in a manner that is suitable for arc diagrams.
  *
- * I.e. nodes are placed from left to right on a horizontal line and edges are routed as "arcs"
- * from source node center to target node center.
+ * I.e., nodes are placed from left to right on a horizontal line and edges are routed as "arcs"
+ * from the source's node center to the target's node center.
  *
- * The actual left-to-right order of nodes may be {@link NodeOrder.AS_IS as is}, in
+ * The actual left-to-right order of nodes may be {@link NodeOrder.FROM_SKETCH from sketch}, in
  * {@link NodeOrder.TOPOLOGICAL topological sort order}, or such that
  * {@link NodeOrder.MINIMIZE_CROSSINGS the number of edge crossings is minimized}.
  *
  * Edges may be routed such that their bends are control points for cubic bezier curves that
- * approximate semi circles. Alternatively, edges may be routed with a single bend such that
+ * approximate semicircles. Alternatively, edges may be routed with a single bend such that
  * source node center, target node center, and bend location define a unique semi circle.
  *
  * @see {@link nodeOrder}
@@ -64,7 +59,7 @@ export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
   /**
    * Specifies if edge path bends should be calculated as cubic bezier control points.
    * If this property is set to `true`, edges are routed in such a way that their
-   * bends are control points for cubic bezier curves that approximate semi circles.
+   * bends are control points for cubic bezier curves that approximate semi-circles.
    * If this property is set to `false`, edges are routed with a single bend such that
    * source node center, target node center, and bend location define a unique semi circle.
    */
@@ -73,169 +68,146 @@ export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
    * Specifies the left-to-right order of nodes.
    * @see {@link NodeOrder}
    */
-  nodeOrder = NodeOrder.AS_IS
-
+  nodeOrder = NodeOrder.FROM_SKETCH
   /**
    * Arranges the given graph.
-   * @param {!LayoutGraph} graph the graph to be arranged.
+   * @param graph the graph to be arranged.
    */
   applyLayout(graph) {
-    if (graph.nodeCount > 0) {
+    if (graph.nodes.size > 0) {
       this.placeNodes(graph)
     }
-
-    if (graph.edgeCount > 0) {
+    if (graph.edges.size > 0) {
       this.routeEdges(graph)
     }
   }
-
   /**
    * Places the nodes of the given graph on a horizontal line from left to right.
    * The order in which the nodes are placed is determined by property {@link nodeOrder}.
-   * @param {!LayoutGraph} graph the graph to be arranged.
+   * @param graph the graph to be arranged.
    */
   placeNodes(graph) {
-    let maxW = graph.getWidth(graph.nodes.first())
+    let maxW = graph.nodes.first().layout.width
     for (const node of graph.nodes) {
-      maxW = Math.max(maxW, graph.getWidth(node))
+      maxW = Math.max(maxW, node.layout.width)
     }
-
     const dist = maxW + this.minimumNodeDistance
     const order = calculateNodeOrder(graph, this.nodeOrder)
     for (const node of graph.nodes) {
       const pos = order[node.index]
-      graph.setCenter(node, new YPoint(pos * dist, 0))
+      node.layout.center = new Point(pos * dist, 0)
     }
   }
-
   /**
    * Routes the edges in the given graph.
-   * @param {!LayoutGraph} graph the graph to be arranged.
+   * @param graph the graph to be arranged.
    */
   routeEdges(graph) {
     const bezier = this.createBezierControlPoints
     const bezierFactor = (4 * (Math.sqrt(2) - 1)) / 3
-
     for (const edge of graph.edges) {
-      LayoutGraphUtilities.resetPath(graph, edge, true)
-
+      edge.resetPath()
       if (edge.selfLoop) {
         continue
       }
-
       const src = edge.source
       const tgt = edge.target
-
-      const cxSrc = graph.getCenterX(src)
-      const cxTgt = graph.getCenterX(tgt)
+      const cxSrc = src.layout.centerX
+      const cxTgt = tgt.layout.centerX
       const cxCircle = (cxSrc + cxTgt) * 0.5
       const radius = cxCircle - Math.min(cxSrc, cxTgt)
-
       if (bezier) {
         const sign = cxSrc > cxTgt ? -1 : 1
-
         const d = radius * bezierFactor
-        const el = graph.getLayout(edge)
-        el.addPoint(cxSrc, -d)
-        el.addPoint(cxCircle - sign * d, -radius)
-        el.addPoint(cxCircle, -radius)
-        el.addPoint(cxCircle + sign * d, -radius)
-        el.addPoint(cxTgt, -d)
+        graph.addBend(edge, cxSrc, -d)
+        graph.addBend(edge, cxCircle - sign * d, -radius)
+        graph.addBend(edge, cxCircle, -radius)
+        graph.addBend(edge, cxCircle + sign * d, -radius)
+        graph.addBend(edge, cxTgt, -d)
       } else {
-        graph.getLayout(edge).addPoint(cxCircle, -radius)
+        graph.addBend(edge, cxCircle, -radius)
       }
     }
   }
 }
-
 /**
  * Calculates the left-to-right order of nodes for the given graph according to the given node order
  * policy.
- * @param {!LayoutGraph} graph the graph to be arranged.
- * @param {!NodeOrder} nodeOrderPolicy the node order policy that determines the calculated order.
- * @returns {!Array.<number>}
+ * @param graph the graph to be arranged.
+ * @param nodeOrderPolicy the node order policy that determines the calculated order.
  */
 function calculateNodeOrder(graph, nodeOrderPolicy) {
-  const order = new Array(graph.nodeCount)
-
+  const order = new Array(graph.nodes.size)
   switch (nodeOrderPolicy) {
     case NodeOrder.MINIMIZE_CROSSINGS:
       minimizeCrossings(graph, order)
       break
     case NodeOrder.TOPOLOGICAL:
-      if (!NodeOrderAlgorithm.topological(graph, order)) {
-        fill(order)
-      }
+      const topologicalNodeOrder = LayoutGraphAlgorithms.topologicalNodeOrder(graph)
+      graph.nodes.forEach((node, index) => {
+        order[index] = topologicalNodeOrder.indexOf(node)
+      })
       break
     default:
-      // AS_IS
+      // From sketch
       fill(order)
       break
   }
-
   return order
 }
-
 /**
  * Fills the given array with numbers from `0` to `array.length - 1`
  * in ascending order.
- * @param {!Array.<number>} order the array to fill.
+ * @param order the array to fill.
  */
 function fill(order) {
   for (let i = 0, n = order.length; i < n; ++i) {
     order[i] = i
   }
 }
-
 /**
  * Calculate a node order with few crossings for the given graph.
- * This implementation leverages {@link HierarchicLayout}'s sequencing phase towards this end.
- * Note, crossing minimization is an NP-hard problem. For this reason, {@link HierarchicLayout}
+ * This implementation leverages {@link HierarchicalLayout}'s sequencing phase towards this end.
+ * Note, crossing minimization is an NP-hard problem. For this reason, {@link HierarchicalLayout}
  * uses an approximation when calculating a sequence.
- * @param {!LayoutGraph} graph the graph for which a node order is calculated.
- * @param {!Array.<number>} order the array to store the new node order for the given graph.
+ * @param graph the graph for which a node order is calculated.
+ * @param order the array to store the new node order for the given graph.
  */
 function minimizeCrossings(graph, order) {
-  const keyLayers = GivenLayersLayerer.LAYER_ID_DP_KEY
-  const oldLayerIds = graph.getDataProvider(keyLayers)
-  graph.addDataProvider(keyLayers, DataProviders.createConstantDataProvider(0))
-
-  const keySequence = HierarchicLayout.SEQUENCE_INDEX_DP_KEY
-  const oldSequenceIndices = graph.getDataProvider(keySequence)
-  graph.addDataProvider(keySequence, Maps.createIndexNodeMapForInt(order))
-
-  try {
-    // run hierarchic layout's sequencing phase to calculate a node order with few crossings
-    const algorithm = new HierarchicLayout()
-    algorithm.fromScratchLayerer = new GivenLayersLayerer()
-    algorithm.stopAfterSequencing = true
-    algorithm.applyLayout(graph)
-  } finally {
-    // restore original sequence index ID data provider
-    if (oldSequenceIndices) {
-      graph.addDataProvider(keySequence, oldSequenceIndices)
-    } else {
-      graph.removeDataProvider(keySequence)
+  // run hierarchical layout's sequencing phase to calculate a node order with few crossings
+  const hierarchicalLayout = new HierarchicalLayout({
+    fromScratchLayeringStrategy: 'user-defined',
+    core: {
+      stopAfterSequencing: false
     }
-
-    // restore original layer ID data provider
-    if (oldLayerIds) {
-      graph.addDataProvider(keyLayers, oldLayerIds)
-    } else {
-      graph.removeDataProvider(keyLayers)
-    }
-  }
+  })
+  const hierarchicalLayoutData = hierarchicalLayout.createLayoutData(graph)
+  hierarchicalLayoutData.givenLayersIndices = () => 0
+  graph.applyLayout(hierarchicalLayout, hierarchicalLayoutData)
+  // write the node sequence to the order array
+  graph.nodes.forEach((node, index) => {
+    order[index] = hierarchicalLayoutData.sequenceIndicesResult.get(node)
+  })
 }
-
 /**
  * Specifies policies for calculating the node order in an arc diagram.
  */
-export /**
- * @readonly
- * @enum {number}
- */
-const NodeOrder = {
-  AS_IS: 0,
-  MINIMIZE_CROSSINGS: 1,
-  TOPOLOGICAL: 2
-}
+export var NodeOrder
+;(function (NodeOrder) {
+  /**
+   * Nodes will be placed from left to right in the order they were created in the graph.
+   */
+  NodeOrder[(NodeOrder['FROM_SKETCH'] = 0)] = 'FROM_SKETCH'
+  /**
+   * Nodes will be placed from left to right such that the number of crossings between edges is
+   * reduced as much as possible.
+   */
+  NodeOrder[(NodeOrder['MINIMIZE_CROSSINGS'] = 1)] = 'MINIMIZE_CROSSINGS'
+  /**
+   * If the graph is acyclic, nodes will be placed from left to right in the order calculated
+   * by a topological sorting.
+   * If the graph is not acyclic, nodes will be placed from left to right in the order they were
+   * created in the graph.
+   */
+  NodeOrder[(NodeOrder['TOPOLOGICAL'] = 2)] = 'TOPOLOGICAL'
+})(NodeOrder || (NodeOrder = {}))

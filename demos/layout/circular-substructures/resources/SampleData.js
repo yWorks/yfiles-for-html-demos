@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,19 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * The type of the nodes used for the layout
- * @typedef {Object} NodeType
- * @property {number} type
- */
-
-/**
- * The type of the input data for nodes and edges
- * @typedef {Object} DataType
- * @property {Array.<object>} nodes
- * @property {Array.<object>} edges
- */
-
 // sample 1
 export const singleStar = {
   nodes: [
@@ -174,7 +161,6 @@ export const singleStar = {
     { source: 23, target: 13 }
   ]
 }
-
 // sample 2
 export const multipleStars = {
   nodes: [

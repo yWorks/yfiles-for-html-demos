@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,13 +31,13 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Drag and Drop Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="resources/drag-and-drop-demo.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -92,17 +90,7 @@
         <p>
           This demo shows how to enable drag and drop functionality for nodes using the classes
           <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode" target="_blank">NodeDropInputMode</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/LabelDropInputMode" target="_blank">LabelDropInputMode</a> and
-          <a href="https://docs.yworks.com/yfileshtml/#/api/PortDropInputMode" target="_blank">PortDropInputMode</a>. The demo features two drag and drop panels: the left
-          one uses yFiles drag and drop and the right one uses the browser-native drag and drop.
-        </p>
-
-        <p>
-          The difference between the two mechanisms is the way a drag is started. The left panel
-          starts a drag with e.g. <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode#startDrag" target="_blank">NodeDropInputMode.startDrag</a>. The right panel uses
-          the native "dragstart" event to start a drag. The drop input modes are able to react to
-          the native drag events. Unfortunately, snapping is not supported for elements dragged from
-          this palette. Note that the right palette only works with mouse events. Native drag and
-          drop currently cannot handle touch or pen events.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/PortDropInputMode" target="_blank">PortDropInputMode</a>.
         </p>
 
         <p>
@@ -112,21 +100,22 @@
 
         <h2>Things to Try</h2>
         <ul>
-          <li>Drag a node from the palette panels onto the canvas to create a new node.</li>
+          <li>Drag a node from the palette panel onto the canvas to create a new node.</li>
           <li>
-            Drag a port or label from the palette panels onto a node/edge to create a new
-            label/port.
+            Drag a port or label from the palette panel onto a node/edge to create a new label/port.
           </li>
-          <li>Drag an item near a node to see snapping guide lines.</li>
+          <li>Drag an item near a node to see snapping guidelines.</li>
           <li>
             Drag a node over a group node to see group node highlighting.
             <br />
-            Additionally hold the 'Shift' key, if this node is not dragged from the palette panel.
+            Additionally, hold the <kbd>Ctrl</kbd> key, if this node is not dragged from the palette
+            panel.
           </li>
           <li>
             Drop a node over a group node to place it inside the group.
             <br />
-            If this node is not dragged from the palette panel, additionally hold the 'Shift' key.
+            If this node is not dragged from the palette panel, additionally hold the
+            <kbd>Ctrl</kbd> key.
           </li>
           <li>
             Drag an edge from the palette onto another node in the canvas to start edge creation
@@ -155,26 +144,17 @@
             <a href="../../input/custom-drag-and-drop/" target="_blank">Custom Drag and Drop Demo</a>
           </li>
           <li>
-            <a href="../../application-features/drag-and-drop/" target="_blank">Simple Drag And Drop Demo</a>
+            <a href="" target="_blank">application-features-drag-and-drop</a>
           </li>
         </ul>
       </div>
     </aside>
     <div class="demo-page__main">
-      <div id="dnd-panel" class="demo-dnd-panel demo-dnd-panel--left">
-        <span class="demo-dnd-panel__header">yFiles Drag and Drop</span>
-      </div>
-
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
 
-      <div id="native-dnd-panel" class="demo-dnd-panel demo-dnd-panel--right">
-        <span class="demo-dnd-panel__header">Native Drag and Drop</span>
-        <div id="disabled-indicator" class="disabled-indicator">
-          Snapping is not supported for Native Drag and Drop
-        </div>
-      </div>
+      <div id="dnd-panel" class="demo-dnd-panel demo-dnd-panel--right"></div>
     </div>
     <script type="module" crossorigin="anonymous" src="DragAndDropDemo.ts" async></script>
   </body>

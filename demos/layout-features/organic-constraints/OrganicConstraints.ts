@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,7 @@ import {
   type LayoutData,
   OrganicLayout,
   OrganicLayoutData
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Demonstrates how to configure constraints for the {@link OrganicLayout} algorithm.
@@ -45,13 +45,13 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
 } {
   // force some nodes in the sample graph to lie on a circle
   const layoutData = new OrganicLayoutData()
-  layoutData.constraints.addEllipse(false, 1.0).delegate = placeOnCircle
+  layoutData.constraints.addEllipse(false, 1.0).predicate = placeOnCircle
 
   return {
     layout: new OrganicLayout({
       deterministic: true,
-      preferredEdgeLength: 80,
-      minimumNodeDistance: 30
+      defaultPreferredEdgeLength: 80,
+      defaultMinimumNodeDistance: 30
     }),
     layoutData
   }
@@ -75,8 +75,8 @@ export function createDefaultLayoutConfiguration(graph: IGraph): {
   return {
     layout: new OrganicLayout({
       deterministic: true,
-      preferredEdgeLength: 80,
-      minimumNodeDistance: 30
+      defaultPreferredEdgeLength: 80,
+      defaultMinimumNodeDistance: 30
     }),
     layoutData: new OrganicLayoutData()
   }

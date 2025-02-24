@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -41,126 +41,88 @@ import {
   IReparentNodeHandler,
   Point,
   WaitInputMode
-} from 'yfiles'
-import { LayoutHelper } from './LayoutHelper.js'
-
+} from '@yfiles/yfiles'
+import { LayoutHelper } from './LayoutHelper'
 export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
   /**
    * The node we are currently moving.
    */
   node = null
-
   /**
    * The original {@link IPositionHandler}.
    */
   handler = null
-
   /**
    * Creates space at the new location.
    */
   layoutHelper = null
-
   /**
    * To check whether re-parenting is taking place.
    */
   reparentHandler = null
-
   timeoutHandle
-
-  /**
-   * @param {!INode} node
-   * @param {!IPositionHandler} handler
-   */
   constructor(node, handler) {
     super()
     this.node = node
     this.handler = handler
     this.timeoutHandle = null
   }
-
-  /**
-   * @type {!IPoint}
-   */
   get location() {
     return this.handler.location
   }
-
   /**
    * The node is upon to be dragged.
-   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
-    this.reparentHandler = context.lookup(IReparentNodeHandler.$class)
+    this.reparentHandler = context.lookup(IReparentNodeHandler)
     this.layoutHelper = new LayoutHelper(context.canvasComponent, this.node)
     this.layoutHelper.initializeLayout()
     this.handler.initializeDrag(context)
   }
-
   /**
    * The node is dragged.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
    */
   handleMove(context, originalLocation, newLocation) {
     this.clearTimeout()
-
     this.handler.handleMove(context, originalLocation, newLocation)
-
     if (!this.reparentHandler || !this.reparentHandler.isReparentGesture(context, this.node)) {
-      this.timeoutHandle = setTimeout(() => {
-        this.layoutHelper.runLayout()
+      this.timeoutHandle = setTimeout(async () => {
+        await this.layoutHelper.runLayout()
       }, 50)
     }
   }
-
   /**
    * The drag is canceled.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @returns {!Promise}
    */
   async cancelDrag(context, originalLocation) {
     this.clearTimeout()
     this.handler.cancelDrag(context, originalLocation)
-
-    const waitInputMode = context.lookup(WaitInputMode.$class)
+    const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
       // disable user interaction while the cancel layout is running
       waitInputMode.waiting = true
     }
-
     await this.layoutHelper.cancelLayout()
-
     if (waitInputMode) {
       waitInputMode.waiting = false
     }
   }
-
   /**
    * The drag is finished.
-   * @param {!IInputModeContext} context
-   * @param {!Point} originalLocation
-   * @param {!Point} newLocation
-   * @returns {!Promise}
    */
   async dragFinished(context, originalLocation, newLocation) {
     this.clearTimeout()
     this.handler.dragFinished(context, originalLocation, newLocation)
-
-    const waitInputMode = context.lookup(WaitInputMode.$class)
+    const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
       // disable user interaction while the finish layout is running
       waitInputMode.waiting = true
     }
-
     await this.layoutHelper.finishLayout()
-
     if (waitInputMode) {
       waitInputMode.waiting = false
     }
   }
-
   clearTimeout() {
     if (this.timeoutHandle !== null) {
       clearTimeout(this.timeoutHandle)

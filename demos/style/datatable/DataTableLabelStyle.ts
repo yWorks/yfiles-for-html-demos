@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HtmlVisual, ILabel, IRenderContext, LabelStyleBase, Size } from 'yfiles'
+import { HtmlVisual, ILabel, IRenderContext, LabelStyleBase, Size } from '@yfiles/yfiles'
 import { DataTableRenderSupport, RenderDataCache } from './DataTableRenderSupport'
 import type { UserData } from './UserDataFactory'
 
@@ -45,7 +45,7 @@ export default class DataTableLabelStyle extends LabelStyleBase {
     // This implementation creates a 'g' element and uses it for the rendering of the label.
     const divElement = document.createElement('div')
     // Get the necessary data for rendering of the label
-    const cache = new RenderDataCache(label.owner!.tag)
+    const cache = new RenderDataCache(label.owner.tag)
 
     // Render the label
     this.renderSupport.render(divElement, cache, 'data-table-label')
@@ -68,7 +68,7 @@ export default class DataTableLabelStyle extends LabelStyleBase {
     // Get the data with which the oldvisual was created
     const oldCache = container['data-renderDataCache']!
     // Get the data for the new visual
-    const newCache = new RenderDataCache(label.owner!.tag)
+    const newCache = new RenderDataCache(label.owner.tag)
 
     if (!newCache.equals(oldCache)) {
       // The data changed, create a new visual
@@ -90,7 +90,7 @@ export default class DataTableLabelStyle extends LabelStyleBase {
    */
   getPreferredSize(label: ILabel): Size {
     return DataTableRenderSupport.calculateTableSize(
-      label.owner!.tag as UserData,
+      label.owner.tag as UserData,
       'data-table-label'
     )
   }

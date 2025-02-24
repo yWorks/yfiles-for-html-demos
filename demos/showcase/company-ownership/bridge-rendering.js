@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BridgeManager, GraphObstacleProvider } from 'yfiles'
-
+import { BridgeManager, GraphObstacleProvider } from '@yfiles/yfiles'
 /**
  * Creates and configures the BridgeManager.
- * @param {!GraphComponent} graphComponent The given graphComponent
+ * @param graphComponent The given graphComponent
  */
 export function enableBridgeRendering(graphComponent) {
   new BridgeManager({

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,15 +39,14 @@ import {
   FreeEdgeLabelModel,
   type GraphComponent,
   type GraphEditorInputMode,
-  type IGraph,
-  ShapeNodeStyle
-} from 'yfiles'
+  type IGraph
+} from '@yfiles/yfiles'
 import { runLayout } from '../layout/layout'
 import type { Tag } from '../demo-types'
 import { updateDescriptionText } from './algorithm-description'
 import { updateGraphInformation } from './graph-structure-information'
-import { addNavigationButtons } from 'demo-resources/demo-page'
-import { TagColoredShapeNodeStyleRenderer } from '../styles'
+import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
+import { TagColoredShapeNodeStyle } from '../styles'
 
 const sampleComboBox = document.querySelector<HTMLSelectElement>('#samples')!
 const algorithmComboBox = document.querySelector<HTMLSelectElement>('#algorithms')!
@@ -76,7 +75,11 @@ export function useUniformEdgeWeights(): boolean {
  */
 export function useDirectedEdges(): boolean {
   const currentAlgorithm = getCurrentAlgorithm()
-  return currentAlgorithm.supportsDirectedness && directionComboBox.value === 'directed'
+  if (currentAlgorithm.directedOnly) {
+    return true
+  } else {
+    return currentAlgorithm.supportsDirectedness && directionComboBox.value === 'directed'
+  }
 }
 
 /**
@@ -86,10 +89,10 @@ export function useDirectedEdges(): boolean {
 export function initializeToolbar(graphComponent: GraphComponent): void {
   const graph = graphComponent.graph
 
-  clearButton.addEventListener('click', () => {
+  clearButton.addEventListener('click', async () => {
     graph.clear()
     graph.undoEngine!.clear()
-    graphComponent.fitGraphBounds()
+    await graphComponent.fitGraphBounds()
     updateGraphInformation(graphComponent)
   })
 
@@ -120,7 +123,10 @@ export function initializeToolbar(graphComponent: GraphComponent): void {
     { key: 'directed', name: 'Directed' }
   ])
   directionComboBox.disabled = true
-  directionComboBox.addEventListener('change', () => applyAlgorithm(graph))
+  directionComboBox.addEventListener('change', async () => {
+    applyAlgorithm(graph)
+    await runLayout(graphComponent, true)
+  })
 
   fillComboBox(uniformEdgeWeightsComboBox, [
     { key: 'uniform', name: 'Uniform Edge Weights' },
@@ -134,7 +140,7 @@ export function initializeToolbar(graphComponent: GraphComponent): void {
       generateWeightLabels(graph)
     }
     applyAlgorithm(graph)
-    await runLayout(graphComponent)
+    await runLayout(graphComponent, true)
   })
 
   layoutButton.addEventListener('click', async () => {
@@ -165,6 +171,11 @@ export async function switchSample(graphComponent: GraphComponent): Promise<void
 
   const graph = graphComponent.graph
   const currentAlgorithm = getCurrentAlgorithm()
+  uniformEdgeWeightsComboBox.selectedIndex = !currentAlgorithm.defaultSettings.supportsEdgeWeights
+    ? 0
+    : 1
+  directionComboBox.selectedIndex = !currentAlgorithm.defaultSettings.directed ? 0 : 1
+
   loadGraph(graph, currentAlgorithm.sample)
 
   updateDescriptionText()
@@ -187,12 +198,9 @@ function loadGraph(graph: IGraph, sample: SampleData): void {
   graph.clear()
   const graphBuilder = new AdjacencyGraphBuilder(graph)
   // create the nodes
-  const nodesSource = graphBuilder.createNodesSource(sample, (item, index: number) => index)
+  const nodesSource = graphBuilder.createNodesSource(sample, (_, index: number) => index)
   // set a default elliptical shape for the nodes
-  nodesSource.nodeCreator.defaults.style = new ShapeNodeStyle({
-    shape: 'ellipse',
-    renderer: new TagColoredShapeNodeStyleRenderer()
-  })
+  nodesSource.nodeCreator.defaults.style = new TagColoredShapeNodeStyle()
   // add an array to each node's tag to store the component to which it belongs
   nodesSource.nodeCreator.tagProvider = (): Tag => ({ components: [] })
 
@@ -242,7 +250,12 @@ export function setUIDisabled(disabled: boolean, graphComponent: GraphComponent)
   if (!disabled) {
     const currentAlgorithm = getCurrentAlgorithm()
     uniformEdgeWeightsComboBox.disabled = !currentAlgorithm.supportsEdgeWeights
-    directionComboBox.disabled = !currentAlgorithm.supportsDirectedness
+    if (currentAlgorithm.directedOnly) {
+      directionComboBox.value = 'directed'
+      directionComboBox.disabled = true
+    } else {
+      directionComboBox.disabled = !currentAlgorithm.supportsDirectedness
+    }
   }
 }
 
@@ -267,7 +280,7 @@ function generateWeightLabels(graph: IGraph): void {
       owner: edge,
       // select a weight from 1 to 20
       text: String(Math.floor(Math.random() * 20 + 1)),
-      layoutParameter: FreeEdgeLabelModel.INSTANCE.createDefaultParameter(),
+      layoutParameter: FreeEdgeLabelModel.INSTANCE.createParameter(),
       tag: 'weight'
     })
   })

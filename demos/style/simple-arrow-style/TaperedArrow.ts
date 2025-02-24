@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
+  Color,
   Fill,
   IArrow,
   IBoundsProvider,
@@ -43,15 +44,12 @@ import {
   Rect,
   SvgVisual,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * An arrow that appears like the edge tapers to a point.
  */
-export class TaperedArrow
-  extends BaseClass(IArrow, IVisualCreator, IBoundsProvider)
-  implements IArrow, IVisualCreator, IBoundsProvider
-{
+export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   // these variables hold the state for the flyweight pattern
   // they are populated in getVisualCreator and used in the implementations of the IVisualCreator interface.
   private anchor: Point = Point.ORIGIN
@@ -81,7 +79,7 @@ export class TaperedArrow
    * @param length The length of the arrow
    * @param fill The color of the arrow
    */
-  constructor(width = 2, length = 0, fill: Fill = Fill.BLACK) {
+  constructor(width = 2, length = 0, fill: Fill = Color.BLACK) {
     super()
     this._width = width
     this._length = length
@@ -163,7 +161,7 @@ export class TaperedArrow
    * Re-renders the arrow using the old visual for performance reasons.
    * @param context The context that contains the information needed to create the visual.
    * @param oldVisual The visual instance that had been returned the last time the
-   *   {@link MySimpleArrow.createVisual} method was called.
+   *   {@link TaperedArrow.createVisual} method was called.
    * @returns The updated visual.
    * @see Specified by {@link IVisualCreator.updateVisual}.
    */
@@ -176,7 +174,7 @@ export class TaperedArrow
 
     const cache = (oldVisual as any)['render-data-cache']
     // check if fill changed
-    if (!this.fill.equals(cache)) {
+    if (this.fill !== cache) {
       // fill changed - update the path and the cache
       Fill.setFill(this.fill, path, context)
       ;(oldVisual as any)['render-data-cache'] = this.fill
@@ -197,16 +195,16 @@ export class TaperedArrow
    * @param context The context to calculate the bounds for.
    */
   getBounds(context: ICanvasContext): Rect {
-    return this.bounds.getTransformed(
-      new Matrix(
-        this.direction.x,
-        this.direction.y,
-        -this.direction.y,
-        this.direction.x,
-        this.anchor.x,
-        this.anchor.y
-      )
+    const matrix = new Matrix(
+      this.direction.x,
+      this.direction.y,
+      -this.direction.y,
+      this.direction.x,
+      this.anchor.x,
+      this.anchor.y
     )
+    matrix.scale(this.length, this.length)
+    return matrix.calculateTransformedBounds(this.bounds)
   }
 
   /**
@@ -255,6 +253,10 @@ export class TaperedArrow
     this.direction = direction
     return this
   }
+
+  get cropAtPort(): boolean {
+    return false
+  }
 }
 
 /**
@@ -263,7 +265,7 @@ export class TaperedArrow
 export class TaperedArrowExtension extends MarkupExtension {
   private _width = 2
   private _length = 0
-  private _fill: Fill = Fill.BLACK
+  private _fill: Fill = Color.BLACK
 
   get width(): number {
     return this._width
@@ -299,5 +301,13 @@ export class TaperedArrowExtension extends MarkupExtension {
     arrow.length = this.length
     arrow.fill = this.fill
     return arrow
+  }
+
+  static create(item: TaperedArrow): TaperedArrowExtension {
+    const markupExtension = new TaperedArrowExtension()
+    markupExtension.width = item.width
+    markupExtension.length = item.length
+    markupExtension.fill = item.fill
+    return markupExtension
   }
 }

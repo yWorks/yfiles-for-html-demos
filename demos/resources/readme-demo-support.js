@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -46,15 +46,6 @@
   const demos = demoData.filter((demo) => !demo.hidden)
 
   const accordionItems = []
-
-  if (isTsReadme) {
-    // Thumbnails are only in /demos-js/ directory
-    demos.forEach((demo) => {
-      if (demo.thumbnailPath != null) {
-        demo.thumbnailPath = '../demos-js/' + demo.thumbnailPath
-      }
-    })
-  }
 
   demos.forEach((item) => {
     item.availableInPackage =
@@ -280,12 +271,12 @@
 
   const demoGrid = document.getElementById('non-tutorial-grid')
   const tutBasicFeaturesGrid = document.getElementById('tutorial-basic-features-grid')
-  const tutCustomNodeStyleGrid = document.getElementById('tutorial-node-style-implementation-grid')
+  const tutCustomNodeStyleGrid = document.getElementById('tutorial-style-implementation-node-grid')
   const tutCustomLabelStyleGrid = document.getElementById(
-    'tutorial-label-style-implementation-grid'
+    'tutorial-style-implementation-label-grid'
   )
-  const tutCustomEdgeStyleGrid = document.getElementById('tutorial-edge-style-implementation-grid')
-  const tutCustomPortStyleGrid = document.getElementById('tutorial-port-style-implementation-grid')
+  const tutCustomEdgeStyleGrid = document.getElementById('tutorial-style-implementation-edge-grid')
+  const tutCustomPortStyleGrid = document.getElementById('tutorial-style-implementation-port-grid')
   const tutGraphBuilderGrid = document.getElementById('tutorial-graph-builder-grid')
   const searchBox = document.querySelector('#search')
   const noSearchResultsElement = document.querySelector('#no-search-results')
@@ -302,13 +293,13 @@
     const gridItem = createGridItem(demo, index)
     if (demo.category === 'tutorial-basic-features') {
       tutBasicFeaturesGrid.appendChild(gridItem)
-    } else if (demo.category === 'tutorial-node-style-implementation') {
+    } else if (demo.category === 'tutorial-style-implementation-node') {
       tutCustomNodeStyleGrid.appendChild(gridItem)
-    } else if (demo.category === 'tutorial-label-style-implementation') {
+    } else if (demo.category === 'tutorial-style-implementation-label') {
       tutCustomLabelStyleGrid.appendChild(gridItem)
-    } else if (demo.category === 'tutorial-edge-style-implementation') {
+    } else if (demo.category === 'tutorial-style-implementation-edge') {
       tutCustomEdgeStyleGrid.appendChild(gridItem)
-    } else if (demo.category === 'tutorial-port-style-implementation') {
+    } else if (demo.category === 'tutorial-style-implementation-port') {
       tutCustomPortStyleGrid.appendChild(gridItem)
     } else if (demo.category === 'tutorial-graph-builder') {
       tutGraphBuilderGrid.appendChild(gridItem)

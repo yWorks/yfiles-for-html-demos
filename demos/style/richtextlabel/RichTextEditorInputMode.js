@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,38 +26,31 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { MarkupLabelStyle, TextEditorInputMode } from 'yfiles'
+import { MarkupLabelStyle, TextEditorInputMode } from '@yfiles/yfiles'
 import Quill from 'quill'
-
 // Quill snow theme
 import 'quill/dist/quill.snow.css'
-
 /**
  * A custom {@link TextEditorInputMode} which utilizes Quill to provide a WYSIWYG text editor that
  * allows to easily create labels with the {@link MarkupLabelStyle}.
  */
 export class RichTextEditorInputMode extends TextEditorInputMode {
   quill
-
   /**
    * Wire up Quill with the {@link TextEditorInputMode.editorText}.
    * @yjs:keep = root
-   * @type {!string}
    */
   get editorText() {
     return this.quill.getSemanticHTML()
   }
-
   /**
    * Wire up Quill with the {@link TextEditorInputMode.editorText}.
    * @yjs:keep = root
-   * @type {!string}
    */
   set editorText(value) {
     this.quill.setContents([])
     this.quill.root.innerHTML = value
   }
-
   /**
    * Creates a new instance of the {@link RichTextEditorInputMode} which utilizes Quill to provide a WYSIWYG text editor that
    * allows to easily create labels with the {@link MarkupLabelStyle}.
@@ -66,11 +59,27 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
   constructor() {
     const container = RichTextEditorInputMode.initializeQuillContainer()
     super(container)
-
     // initialize Quill in the editor container
     this.quill = new Quill(container.firstElementChild, {
       theme: 'snow',
       modules: {
+        keyboard: {
+          bindings: {
+            cancelEdit: {
+              key: 'Escape',
+              handler: () => {
+                this.cancel()
+              }
+            },
+            stopEdit: {
+              key: 'Enter',
+              shortKey: true,
+              handler: () => {
+                this.tryStop()
+              }
+            }
+          }
+        },
         toolbar: {
           container: [
             [{ header: [1, 2, 3, 4, 5, false] }],
@@ -81,11 +90,9 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
         }
       }
     })
-
     // edits should not be discarded when the editor is closed due to focus lost
     this.autoCommitOnFocusLost = true
   }
-
   /**
    * Select the content in the Quill editor when the editor is opened.
    */
@@ -93,10 +100,8 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
     super.installTextBox()
     setTimeout(() => this.quill.setSelection(0, Number.POSITIVE_INFINITY), 0)
   }
-
   /**
    * Initializes an {@link HTMLDivElement} in which Quill can be
-   * @returns {!HTMLDivElement}
    */
   static initializeQuillContainer() {
     const container = document.createElement('div')
@@ -105,9 +110,6 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
     container.style.maxWidth = '800px'
     container.tabIndex = -1
     container.appendChild(document.createElement('div'))
-
-    // stop propagation on the events of the editor container, otherwise the GraphComponent gains
-    // focus when clicking elements in the editor and thus close the editor box.
     ;[
       'mousedown',
       'mouseup',

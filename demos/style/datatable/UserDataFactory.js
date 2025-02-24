@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 // This file contains a generator for random user data objects for this demo.
-
 const FIRST_NAMES = [
   'Alexander',
   'Amy',
@@ -42,7 +41,6 @@ const FIRST_NAMES = [
   'Thomas',
   'Valerie'
 ]
-
 const FAMILY_NAMES = [
   'Burns',
   'Burnett',
@@ -54,18 +52,7 @@ const FAMILY_NAMES = [
   'Newland',
   'Roberts'
 ]
-
 const UNITS = ['Development', 'Management', 'Marketing', 'R&D', 'Sales']
-
-/**
- * @typedef {Object} UserData
- * @property {string} name
- * @property {string} unit
- * @property {string} email
- * @property {string} phone
- * @property {string} fax
- */
-
 export default function createNewRandomUserData() {
   const firstName = FIRST_NAMES[getRandomInt(FIRST_NAMES.length)]
   const familyName = FAMILY_NAMES[getRandomInt(FAMILY_NAMES.length)]
@@ -78,11 +65,8 @@ export default function createNewRandomUserData() {
     fax: `555-${phoneNumber + 1}`
   }
 }
-
 /**
  * Returns a random integer.
- * @param {number} upper
- * @returns {number}
  */
 function getRandomInt(upper) {
   return Math.floor(Math.random() * upper)

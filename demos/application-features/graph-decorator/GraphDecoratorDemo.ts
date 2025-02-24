@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,29 +27,28 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GroupNodeStyle,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   INode,
   IPortCandidateProvider,
+  LabelStyle,
   LayoutExecutor,
   License,
   NodeDecorator,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
@@ -61,11 +60,7 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode()
 
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
@@ -73,11 +68,9 @@ async function run(): Promise<void> {
   // then build the graph with the given data set
   buildGraph(graphComponent.graph, graphData)
 
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
@@ -115,7 +108,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 }
 
 /**
- * Configures custom port candidates by utilizing the portCandidateProviderDecorator of the {@link NodeDecorator}.
+ * Configures custom port candidates by utilizing the portCandidateProvider of the {@link NodeDecorator}.
  */
 function configurePortCandidateProvider(graph: IGraph): void {
   // Don't remove unoccupied ports.
@@ -126,11 +119,11 @@ function configurePortCandidateProvider(graph: IGraph): void {
   // functionality to model items from a graph instance.
   const decorator = graph.decorator
 
-  // Here, we obtain the nodeDecorator.portCandidateProviderDecorator
+  // Here, we obtain the nodeDecorator.portCandidateProvider
   // to access the lookup decorator that handles ports candidates at nodes.
   // Basically this means that if any INode instance in the graph is queried for
   // the IPortCandidateProvider interface, the query will be handled by our code below.
-  const portCandidateProviderDecorator = decorator.nodeDecorator.portCandidateProviderDecorator
+  const portCandidateProvider = decorator.nodes.portCandidateProvider
 
   // One way to decorate the graph is to use the factory design pattern.
   // For each INode in the graph that will be queried for the IPortCandidateProvider interface, the below
@@ -142,13 +135,17 @@ function configurePortCandidateProvider(graph: IGraph): void {
   // IPortCandidateProvider.fromExistingPorts provides port candidates at the locations of already existing ports.
   // IPortCandidateProvider.fromNodeCenter provides a single port candidate at the center of the node.
   // IPortCandidateProvider.fromShapeGeometry provides several port candidates based on the shape of the node's style.
-  portCandidateProviderDecorator.setFactory(
+  portCandidateProvider.addFactory(
     (node: INode): IPortCandidateProvider =>
-      IPortCandidateProvider.combine([
-        IPortCandidateProvider.fromExistingPorts(node),
-        IPortCandidateProvider.fromNodeCenter(node),
-        IPortCandidateProvider.fromShapeGeometry(node, 0.5)
-      ])
+      IPortCandidateProvider.combine(
+        graph.isGroupNode(node)
+          ? [IPortCandidateProvider.fromShapeGeometry(node, 0.5)]
+          : [
+              IPortCandidateProvider.fromExistingPorts(node),
+              IPortCandidateProvider.fromNodeCenter(node),
+              IPortCandidateProvider.fromShapeGeometry(node, 0.5)
+            ]
+      )
   )
 }
 
@@ -159,7 +156,7 @@ function configurePortCandidateProvider(graph: IGraph): void {
  */
 function initializeGraph(graph: IGraph): void {
   // set styles for this demo
-  initDemoStyles(graph)
+  initDemoStyles(graph, { orthogonalEditing: true })
 
   // set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
@@ -167,7 +164,7 @@ function initializeGraph(graph: IGraph): void {
     stroke: '2px solid #b5dcee',
     contentAreaFill: '#b5dcee'
   })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'left',
     textFill: '#eee'
   })
@@ -175,9 +172,9 @@ function initializeGraph(graph: IGraph): void {
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
 
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true

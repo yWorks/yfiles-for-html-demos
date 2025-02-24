@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,11 +32,15 @@ import {
   DragSource,
   GraphComponent,
   IEdge,
+  IEdgeStyle,
   ILabel,
+  ILabelOwner,
   IListEnumerable,
   IModelItem,
   INode,
+  INodeStyle,
   IPort,
+  IPortStyle,
   IStripe,
   LabelDropInputMode,
   ListEnumerable,
@@ -46,10 +50,9 @@ import {
   Rect,
   SimpleNode,
   StripeDropInputMode,
-  SvgExport,
-  VoidNodeStyle,
-  yfiles
-} from 'yfiles'
+  SvgExport
+} from '@yfiles/yfiles'
+import { EdgeDropInputMode } from './EdgeDropInputMode'
 
 export type DragAndDropPanelItem<T extends IModelItem> = T | { modelItem: T; tooltip?: string }
 
@@ -79,52 +82,66 @@ export class DragAndDropPanel {
   /**
    * Adds the provided items to this panel.
    */
-  populatePanel(items: Iterable<DragAndDropPanelItem<INode | IEdge>>): void {
+  populatePanel(items: Iterable<DragAndDropPanelItem<INode | IEdge | ILabel | IPort>>): void {
     // Convert the nodes into plain visualizations
     const graphComponent = new GraphComponent()
     for (const item of items) {
-      const modelItem = item instanceof INode || item instanceof IEdge ? item : item.modelItem
-      const visual =
-        modelItem instanceof INode
-          ? this.createNodeVisual(modelItem, graphComponent)
-          : this.createEdgeVisual(modelItem, graphComponent)
-      this.addStartDragListeners(modelItem, visual)
+      const modelItem =
+        item instanceof INode ||
+        item instanceof IEdge ||
+        item instanceof ILabel ||
+        item instanceof IPort
+          ? item
+          : item.modelItem
+
+      let visual: HTMLDivElement
+      if (modelItem instanceof INode) {
+        visual = this.createNodeVisual(modelItem, graphComponent)
+      } else if (modelItem instanceof IEdge) {
+        visual = this.createEdgeVisual(modelItem, graphComponent)
+      } else if (modelItem instanceof ILabel) {
+        visual = this.createLabelVisual(modelItem, graphComponent)
+      } else {
+        visual = this.createPortVisual(modelItem, graphComponent)
+      }
+      this.setStartDragListeners(modelItem, visual)
       this.div.appendChild(visual)
     }
   }
 
   private beginDrag(element: HTMLElement, data: unknown): void {
-    const dragSource = this.startDrag(element, data)
+    const dragPreviewElement = createDragPreviewElement(element)
+    const dragSource = this.startDrag(element, dragPreviewElement, data)
 
     // let the GraphComponent handle the preview rendering if possible
     if (dragSource) {
-      dragSource.addQueryContinueDragListener((_, evt) => {
+      dragSource.addEventListener('query-continue-drag', (evt) => {
         if (evt.dropTarget === null) {
-          createDragPreviewElement(element).classList.remove('hidden')
+          dragPreviewElement.classList.remove('hidden')
         } else {
-          createDragPreviewElement(element).classList.add('hidden')
+          dragPreviewElement.classList.add('hidden')
         }
       })
     }
   }
 
-  private startDrag(element: HTMLElement, data: unknown) {
+  private startDrag(element: HTMLElement, dragPreviewElement: HTMLElement, data: unknown) {
     if (data instanceof INode) {
       return NodeDropInputMode.startDrag(
         element,
         data,
         DragDropEffects.ALL,
         true,
-        createDragPreviewElement(element)
+        dragPreviewElement
       )
     }
     if (data instanceof IEdge) {
       const dragSource = new DragSource(element)
       void dragSource.startDrag(
-        new DragDropItem(IEdge.$class.name, data),
+        new DragDropItem(EdgeDropInputMode.DEFAULT_TRANSFER_TYPE, data),
         DragDropEffects.ALL,
         true,
-        createDragPreviewElement(element)
+        dragPreviewElement
       )
       return dragSource
     }
@@ -134,7 +151,7 @@ export class DragAndDropPanel {
         data,
         DragDropEffects.ALL,
         true,
-        createDragPreviewElement(element)
+        dragPreviewElement
       )
     }
     if (data instanceof IPort) {
@@ -143,7 +160,7 @@ export class DragAndDropPanel {
         data,
         DragDropEffects.ALL,
         true,
-        createDragPreviewElement(element)
+        dragPreviewElement
       )
     }
     if (data instanceof IStripe) {
@@ -152,7 +169,7 @@ export class DragAndDropPanel {
         data,
         DragDropEffects.ALL,
         true,
-        createDragPreviewElement(element)
+        dragPreviewElement
       )
     }
   }
@@ -181,9 +198,6 @@ export class DragAndDropPanel {
         label.tag
       )
     })
-    originalNode.ports.forEach((port) => {
-      graph.addPort(node, port.locationParameter, port.style, port.tag)
-    })
 
     return this.exportAndWrap(
       graphComponent,
@@ -203,8 +217,8 @@ export class DragAndDropPanel {
 
     const originalEdge = original instanceof IEdge ? original : original.modelItem
 
-    const n1 = graph.createNode(new Rect(0, 10, 0, 0), VoidNodeStyle.INSTANCE)
-    const n2 = graph.createNode(new Rect(50, 40, 0, 0), VoidNodeStyle.INSTANCE)
+    const n1 = graph.createNode(new Rect(0, 10, 0, 0), INodeStyle.VOID_NODE_STYLE)
+    const n2 = graph.createNode(new Rect(50, 40, 0, 0), INodeStyle.VOID_NODE_STYLE)
     const edge = graph.createEdge(n1, n2, originalEdge.style)
     graph.addBend(edge, new Point(25, 10))
     graph.addBend(edge, new Point(25, 40))
@@ -216,16 +230,86 @@ export class DragAndDropPanel {
   }
 
   /**
+   * Creates an element that contains the visualization of the given label.
+   */
+  private createLabelVisual(
+    original: DragAndDropPanelItem<ILabel>,
+    graphComponent: GraphComponent
+  ): HTMLDivElement {
+    const graph = graphComponent.graph
+    graph.clear()
+
+    const originalLabel = original instanceof ILabel ? original : original.modelItem
+
+    const node = graph.createNode(new Rect(0, 10, 0, 0), INodeStyle.VOID_NODE_STYLE)
+
+    let labelOwner: ILabelOwner
+    if (originalLabel.owner instanceof IPort) {
+      labelOwner = graph.addPort({
+        owner: node,
+        style: IPortStyle.VOID_PORT_STYLE
+      })
+    } else if (originalLabel.owner instanceof IEdge) {
+      labelOwner = graph.createEdge(node, node, IEdgeStyle.VOID_EDGE_STYLE)
+    } else {
+      labelOwner = node
+    }
+
+    graph.addLabel(
+      labelOwner,
+      originalLabel.text,
+      originalLabel.layoutParameter,
+      originalLabel.style,
+      originalLabel.preferredSize,
+      originalLabel.tag
+    )
+
+    return this.exportAndWrap(
+      graphComponent,
+      original instanceof ILabel ? undefined : original.tooltip
+    )
+  }
+
+  /**
+   * Creates an element that contains the visualization of the given port.
+   */
+  private createPortVisual(
+    original: DragAndDropPanelItem<IPort>,
+    graphComponent: GraphComponent
+  ): HTMLDivElement {
+    const graph = graphComponent.graph
+    graph.clear()
+
+    const originalPort = original instanceof IPort ? original : original.modelItem
+
+    const node = graph.createNode(new Rect(0, 10, 0, 0), INodeStyle.VOID_NODE_STYLE)
+    const portOwner =
+      originalPort.owner instanceof IEdge
+        ? graph.createEdge(node, node, IEdgeStyle.VOID_EDGE_STYLE)
+        : node
+
+    graph.addPort({
+      owner: portOwner,
+      style: originalPort.style
+    })
+
+    return this.exportAndWrap(
+      graphComponent,
+      original instanceof IPort ? undefined : original.tooltip
+    )
+  }
+
+  /**
    * Exports and wraps the original visualization in an HTML element.
    */
   private exportAndWrap(graphComponent: GraphComponent, tooltip?: string): HTMLDivElement {
-    graphComponent.updateContentRect(10)
+    graphComponent.updateContentBounds(10)
     const exporter = new SvgExport({
-      worldBounds: graphComponent.contentRect
+      worldBounds: graphComponent.contentBounds
     })
 
     exporter.scale = exporter.calculateScaleForWidth(
-      Math.min(this.maxItemWidth, graphComponent.contentRect.width)
+      Math.min(this.maxItemWidth, graphComponent.contentBounds.width)
     )
     const visual = exporter.exportSvg(graphComponent)
 
@@ -244,12 +328,10 @@ export class DragAndDropPanel {
   /**
    * Adds mousedown and pointer down listeners to the given element that starts the drag operation.
    */
-  private addStartDragListeners(item: INode | IEdge, element: HTMLElement): void {
+  private setStartDragListeners(item: INode | IEdge | ILabel | IPort, element: HTMLElement): void {
     // the actual drag operation
     const doDragOperation = () => {
-      // Ensure that the following code still works, even when the view-table module isn't loaded
-      const IStripe = (yfiles as any).graph.IStripe
-      if (IStripe && item.tag instanceof IStripe) {
+      if (item.tag instanceof IStripe) {
         // If the dummy node has a stripe as its tag, we use the stripe directly
         // This allows StripeDropInputMode to take over
         this.beginDrag(element, item.tag)
@@ -257,7 +339,11 @@ export class DragAndDropPanel {
         this.beginDrag(element, item.tag)
       } else if (item instanceof IEdge) {
         this.beginDrag(element, item)
-      } /*if (item instanceof INode)*/ else {
+      } else if (item instanceof ILabel) {
+        this.beginDrag(element, item)
+      } else if (item instanceof IPort) {
+        this.beginDrag(element, item)
+      } else {
         // Otherwise, we just use the node itself and let (hopefully) NodeDropInputMode take over
         const simpleNode = new SimpleNode()
         simpleNode.layout = item.layout
@@ -272,32 +358,13 @@ export class DragAndDropPanel {
     }
 
     element.addEventListener(
-      'mousedown',
+      'pointerdown',
       (evt) => {
         if (evt.button !== 0) {
           return
         }
         doDragOperation()
         evt.preventDefault()
-      },
-      false
-    )
-
-    const touchStartListener = (evt: Event): void => {
-      doDragOperation()
-      evt.preventDefault()
-    }
-
-    if (window.PointerEvent === undefined) {
-      element.addEventListener('touchstart', touchStartListener, { passive: false })
-      return
-    }
-    element.addEventListener(
-      'pointerdown',
-      (evt) => {
-        if (evt.pointerType === 'touch' || evt.pointerType === 'pen') {
-          touchStartListener(evt)
-        }
       },
       true
     )

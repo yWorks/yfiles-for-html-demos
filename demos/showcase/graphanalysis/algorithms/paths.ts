@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,10 +30,11 @@ import {
   AllPairsShortestPaths,
   Chains,
   type IGraph,
+  KShortestPaths,
   Paths,
   ShortestPath,
   SingleSourceShortestPaths
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import type { AlgorithmConfig } from './algorithms'
 import { markItem, setComponent, setGradient } from './algorithms'
 
@@ -91,6 +92,57 @@ export function calculatedShortestPaths(graph: IGraph, config: AlgorithmConfig):
       })
     })
   }
+}
+
+/**
+ * Description of the algorithm which determines the k shortest paths between nodes.
+ */
+export const kShortestPathsDescription = `
+  <p>This part of the demo highlights the <em>k shortest path</em> between nodes that can be
+  marked using the <em>Context Menu</em>. The <em>k value</em> is set to 3 for this sample.</p>
+  <p>The paths are ranked by their total cost. This ranking is shown in the labels of the nodes.
+  Costs are specified in the <em>edge labels</em> when the <em>Non-uniform Edge Weights</em>
+  option is selected. Otherwise, the <em>Uniform costs</em> option treats all edges equally.</p>
+  <p>Currently, the k-shortest path algorithm only supports <em>directed</em> graphs. It may return
+  fewer than k paths if there are no more distinct paths between the nodes. As the <em>simplePaths</em>
+   parameter is set to be true, only paths where no node is repeated are returned.</p>`
+
+/**
+ * Calculates the k shortest paths between start and end nodes.
+ */
+export function calculatedKShortestPaths(graph: IGraph, config: AlgorithmConfig): void {
+  // make sure there are startNodes and endNodes
+  const startNodes = config.startNodes
+  const endNodes = config.endNodes
+  if (!startNodes || !endNodes || (startNodes.length === 0 && endNodes.length === 0)) {
+    return
+  }
+
+  // run k-shortest path algorithm to obtain the k shortest paths
+  const result = new KShortestPaths({
+    costs: config.edgeWeights,
+    k: 3,
+    simplePaths: true,
+    sink: endNodes[0],
+    source: startNodes[0]
+  }).run(graph)
+
+  // iterate through the k shortest paths
+  result.paths.forEach((path, pathIndex) => {
+    // mark all nodes on this path
+    path.nodes.forEach((node) => {
+      markItem(node, pathIndex)
+      // add the path ranking as node label
+      if (node.labels.size === 0) {
+        graph.addLabel({ owner: node, text: String(pathIndex + 1) })
+      }
+    })
+
+    // mark all edges on this path
+    path.edges.forEach((edge) => {
+      markItem(edge, pathIndex)
+    })
+  })
 }
 
 /**
@@ -195,10 +247,7 @@ export function calculateSingleSourceShortestPaths(graph: IGraph, config: Algori
   const distances = result.distances
   const predecessors = result.predecessors
   result.paths
-    .orderBy(
-      (path) => path.nodes.size,
-      (p1, p2) => p1 - p2
-    )
+    .toSorted((p1, p2) => p1.nodes.size - p2.nodes.size)
     .forEach((path, pathIndex) => {
       path.nodes.forEach((node) => {
         const distance = distances.get(node)! / longestPathLength

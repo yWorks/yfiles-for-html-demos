@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,65 +27,52 @@
  **
  ***************************************************************************/
 import {
-  ComponentArrangementStyles,
+  ComponentArrangementStyle,
   ComponentLayout,
   FilteredGraphWrapper,
   GraphComponent,
   GraphViewerInputMode,
   IGraph,
-  InteriorLabelModel,
+  INodeStyle,
+  InteriorNodeLabelModel,
+  LayoutExecutor,
   License,
-  VoidNodeStyle,
-  YDimension
-} from 'yfiles'
-import TextData from './TextData.js'
+  Size
+} from '@yfiles/yfiles'
+import TextData from './TextData'
 import {
   AssignNodeSizesStage,
   buildTagCloud,
   createAssignNodeSizeStageLayoutData,
   updateTagCloud
-} from './TagCloudHelper.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
+} from './TagCloudHelper'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 // The minimum frequency of the words to be shown in the tag cloud visualization
-/** @type {number} */
 let minFrequency = 80
-
 /**
  * Runs the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // restrict user interaction to panning (and zooming)
   graphComponent.inputMode = new GraphViewerInputMode()
-
   // add support for temporarily hiding nodes
-  // (i.e. hiding the "words" with frequency less than the desired minimum frequency)
+  // (i.e., hiding the "words" with frequency less than the desired minimum frequency)
   configureFiltering(graphComponent)
-
   // initialize default node style and default node label positions
   initializeGraph(graphComponent.graph)
-
   // builds the tag cloud graph
   buildTagCloud(graphComponent.graph, TextData, minFrequency)
-
   // run the layout
   await runLayout(graphComponent)
-
   // wire up the UI
   initializeUI(graphComponent)
 }
-
 /**
  * Configures filtering for the graph of the given graph component.
- * @param {!GraphComponent} graphComponent the demo's main graph view.
+ * @param graphComponent the demo's main graph view.
  */
 function configureFiltering(graphComponent) {
   // only nodes with frequency greater than or equal to the minimum frequency will be visible.
@@ -95,19 +82,16 @@ function configureFiltering(graphComponent) {
     () => false
   )
 }
-
 /**
  * Sets the default node style as well as the default node label position.
- * @param {!IGraph} graph the graph for which default settings are configured.
+ * @param graph the graph for which default settings are configured.
  */
 function initializeGraph(graph) {
-  graph.nodeDefaults.style = VoidNodeStyle.INSTANCE
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.NORTH
+  graph.nodeDefaults.style = INodeStyle.VOID_NODE_STYLE
 }
-
 /**
  * Updates the graph in the given graph component for the current minimum frequency.
- * @param {!GraphComponent} graphComponent the demo's main graph view.
+ * @param graphComponent the demo's main graph view.
  */
 function updateFilteredGraph(graphComponent) {
   const filteredGraph = graphComponent.graph
@@ -115,12 +99,10 @@ function updateFilteredGraph(graphComponent) {
   updateTagCloud(filteredGraph.wrappedGraph, TextData, minFrequency)
   filteredGraph.nodePredicateChanged()
 }
-
 /**
  * Runs component layout to calculate new positions for nodes.
  * Since the demo's tag cloud graph has no edges, each node is a single component in itself.
- * @param {!GraphComponent} graphComponent the demo's main graph view.
- * @returns {!Promise}
+ * @param graphComponent the demo's main graph view.
  */
 async function runLayout(graphComponent) {
   disableUI(true)
@@ -128,10 +110,10 @@ async function runLayout(graphComponent) {
   switch (document.querySelector('#layoutStyle').selectedIndex) {
     default:
     case 0:
-      style = ComponentArrangementStyles.PACKED_COMPACT_CIRCLE
+      style = ComponentArrangementStyle.PACKED_CIRCLE
       break
     case 1:
-      style = ComponentArrangementStyles.PACKED_COMPACT_RECTANGLE
+      style = ComponentArrangementStyle.PACKED_RECTANGLE
       break
   }
   // configure the component layout and use the AssignNodeSizesStage that will change the size of the
@@ -141,44 +123,40 @@ async function runLayout(graphComponent) {
     style,
     componentSpacing: 0,
     gridSpacing: 0,
-    considerLabels: false,
-    preferredSize: new YDimension(400, 200)
+    nodeLabelPlacement: 'ignore',
+    preferredSize: new Size(400, 250)
   })
-
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
   // create the layout data that will pass the information about the node sizes to the
   // AssignNodeSizesStage
   const layoutData = createAssignNodeSizeStageLayoutData()
-  await graphComponent.morphLayout(componentLayout, '0.8s', layoutData)
+  await graphComponent.applyLayoutAnimated(componentLayout, '0.8s', layoutData)
   disableUI(false)
 }
-
 /**
  * Binds actions to the demo's UI controls.
- * @param {!GraphComponent} graphComponent the demo's main graph view.
+ * @param graphComponent the demo's main graph view.
  */
 function initializeUI(graphComponent) {
   document.querySelector('#layoutStyle').addEventListener('change', async () => {
     await runLayout(graphComponent)
   })
-
   document.querySelector('#frequencySlider').addEventListener('change', async () => {
     document.querySelector('#frequencySliderLabel').textContent = String(getMinFrequencyValue())
     updateFilteredGraph(graphComponent)
     await runLayout(graphComponent)
   })
 }
-
 function getMinFrequencyValue() {
   return parseInt(document.querySelector('#frequencySlider').value)
 }
-
 /**
  * Helper function to disable UI during layout animation.
- * @param {boolean} disable
  */
 function disableUI(disable) {
   document.querySelector('#layoutStyle').disabled = disable
   document.querySelector('#frequencySlider').disabled = disable
 }
-
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,23 +32,20 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  GraphSelectionIndicatorManager,
   HandlePositions,
   IGraph,
   INode,
-  Insets,
   IReshapeHandler,
   License,
   NodeReshapeHandleProvider,
   Point,
   Rect,
-  Size,
-  VoidNodeStyle
-} from 'yfiles'
-import { applyDemoTheme, colorSets, createDemoNodeLabelStyle } from 'demo-resources/demo-styles'
+  Size
+} from '@yfiles/yfiles'
+import { colorSets, createDemoNodeLabelStyle } from '@yfiles/demo-resources/demo-styles'
 import ArrowNodeStyleHandleProvider from './ArrowNodeStyleHandleProvider'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Runs this demo.
@@ -57,15 +54,13 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeGraph(graphComponent.graph)
 
   initializeInteraction(graphComponent)
 
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
-  graphComponent.selection.setSelected(graphComponent.graph.nodes.first(), true)
+  graphComponent.selection.add(graphComponent.graph.nodes.first()!)
 }
 
 /**
@@ -88,7 +83,7 @@ function initializeGraph(graph: IGraph): void {
   })
   const defaultLabelStyle = createDemoNodeLabelStyle('demo-palette-13')
   defaultLabelStyle.textSize = 16
-  defaultLabelStyle.insets = new Insets(10, 8, 10, 8)
+  defaultLabelStyle.padding = [8, 10, 8, 10]
 
   graph.nodeDefaults.style = arrowStyle
   graph.nodeDefaults.size = new Size(200, 100)
@@ -112,36 +107,34 @@ function initializeInteraction(graphComponent: GraphComponent): void {
   graphComponent.inputMode = inputMode
 
   // add a label to newly created node that shows the current style settings
-  inputMode.addNodeCreatedListener((_, evt) => {
+  inputMode.addEventListener('node-created', (evt) => {
     const node = evt.item
     graphComponent.graph.addLabel(node, styleToText(node.style as ArrowNodeStyle))
   })
 
   const graph = graphComponent.graph
-  const nodeDecorator = graph.decorator.nodeDecorator
+  const nodeDecorator = graph.decorator.nodes
 
   // add handles that enable the user to change the angle and shaft ratio of an arrow node style
-  nodeDecorator.handleProviderDecorator.setImplementationWrapper(
+  nodeDecorator.handleProvider.addWrapperFactory(
     (n) => n.style instanceof ArrowNodeStyle,
     (node, delegateProvider) =>
       new ArrowNodeStyleHandleProvider(node!, () => updateLabel(graph, node!), delegateProvider)
   )
 
-  // only provide reshape handles for the east, south and south-east sides, so they don't clash with
+  // only provide reshape handles for the right, bottom and bottom-right sides, so they don't clash with
   // the custom handles
-  nodeDecorator.reshapeHandleProviderDecorator.setFactory(
+  nodeDecorator.reshapeHandleProvider.addFactory(
     (node) =>
       new NodeReshapeHandleProvider(
         node,
-        node.lookup(IReshapeHandler.$class)!,
-        HandlePositions.EAST | HandlePositions.SOUTH | HandlePositions.SOUTH_EAST
+        node.lookup(IReshapeHandler)!,
+        HandlePositions.RIGHT | HandlePositions.BOTTOM | HandlePositions.BOTTOM_RIGHT
       )
   )
 
   // don't show the selection decoration to make the above handles more visible
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
+  graphComponent.graph.decorator.nodes.selectionRenderer.hide()
 }
 
 /**

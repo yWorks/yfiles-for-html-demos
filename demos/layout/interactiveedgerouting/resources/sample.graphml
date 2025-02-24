@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:x0="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:x0="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
     <default>true</default>
   </key>
@@ -57,12 +57,12 @@
   <data key="d14">
     <y:SharedData>
       <yjs:Font x:Key="1" fontSize="12" fontFamily="'Arial'"/>
-      <y:GroupNodeLabelModelParameter PlaceOnTab="false" x:Key="2">
-        <y:GroupNodeLabelModelParameter.Model>
-          <y:GroupNodeLabelModel/>
-        </y:GroupNodeLabelModelParameter.Model>
-      </y:GroupNodeLabelModelParameter>
-      <yjs:PolylineEdgeStyle x:Key="3">
+      <yx:GroupNodeLabelModelParameter PlaceOnTab="false" x:Key="2">
+        <yx:GroupNodeLabelModelParameter.Model>
+          <yx:GroupNodeLabelModel/>
+        </yx:GroupNodeLabelModelParameter.Model>
+      </yx:GroupNodeLabelModelParameter>
+      <yjs:PolylineEdgeStyle x:Key="3" orthogonalEditing="true">
         <yjs:PolylineEdgeStyle.stroke>
           <yjs:Stroke fill="#FF662b00" lineCap="SQUARE" lineJoin="ROUND">
             <yjs:Stroke.dashStyle>
@@ -147,7 +147,7 @@
     <node id="n3">
       <data key="d1">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
             <y:Label.Text><![CDATA[Move
 me]]></y:Label.Text>
           </y:Label>
@@ -190,7 +190,7 @@ me]]></y:Label.Text>
     <node id="n5">
       <data key="d1">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+          <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
             <y:Label.Text><![CDATA[Resize
 me]]></y:Label.Text>
           </y:Label>
@@ -290,10 +290,10 @@ me]]></y:Label.Text>
         <y:ViewState>
           <y:FolderNodeState x:Key="c|view" Layout="21.5,338.5,138,141.5">
             <y:FolderNodeState.Labels>
-              <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}">
+              <y:Label LayoutParameter="{x:Static yx:InteriorNodeLabelModel.Center}">
                 <y:Label.Text><![CDATA[Open me]]></y:Label.Text>
                 <y:Label.Style>
-                  <yjs:DefaultLabelStyle font="{y:GraphMLReference 1}" textFill="#FF323232"/>
+                  <yjs:LabelStyle font="{y:GraphMLReference 1}" textFill="#FF323232"/>
                 </y:Label.Style>
               </y:Label>
             </y:FolderNodeState.Labels>
@@ -399,7 +399,7 @@ me]]></y:Label.Text>
           <y:Label LayoutParameter="{y:GraphMLReference 2}">
             <y:Label.Text><![CDATA[Close me]]></y:Label.Text>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle wrapping="CHARACTER_ELLIPSIS" font="{y:GraphMLReference 1}" textFill="WHITE"/>
+              <yjs:LabelStyle wrapping="WRAP_CHARACTER_ELLIPSIS" font="{y:GraphMLReference 1}" textFill="WHITE"/>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -602,11 +602,11 @@ me]]></y:Label.Text>
             <y:Label.Text><![CDATA[Move a
 node here]]></y:Label.Text>
             <y:Label.LayoutParameter>
-              <y:SmartEdgeLabelModelParameter>
-                <y:SmartEdgeLabelModelParameter.Model>
-                  <y:SmartEdgeLabelModel AutoRotation="false"/>
-                </y:SmartEdgeLabelModelParameter.Model>
-              </y:SmartEdgeLabelModelParameter>
+              <yx:SmartEdgeLabelModelParameter>
+                <yx:SmartEdgeLabelModelParameter.Model>
+                  <yx:SmartEdgeLabelModel AutoRotation="false"/>
+                </yx:SmartEdgeLabelModelParameter.Model>
+              </yx:SmartEdgeLabelModelParameter>
             </y:Label.LayoutParameter>
           </y:Label>
         </x:List>

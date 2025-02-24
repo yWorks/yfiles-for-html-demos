@@ -1,19 +1,21 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Sankey Demo
 
-# Sankey Demo
+<img src="../../../doc/demo-thumbnails/sankey-diagram.webp" alt="demo-thumbnail" height="320"/>
 
-Sankey diagrams are used for visualizing flow information in which the thickness of the edges is proportional to the flow quantity. Such diagrams can be produced by means of the hierarchic layout algorithm (see [HierarchicLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout)).
+[You can also run this demo online](https://www.yworks.com/demos/layout/sankey/).
+
+Sankey diagrams are used for visualizing flow information in which the thickness of the edges is proportional to the flow quantity. Such diagrams can be produced by means of the hierarchical layout algorithm (see [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout)).
 
 The example diagram shows a voters' migration flow between different political parties over the course of four elections (each column represents an election). The flow is depicted from left to right.
 

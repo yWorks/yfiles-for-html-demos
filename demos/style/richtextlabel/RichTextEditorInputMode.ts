@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { MarkupLabelStyle, TextEditorInputMode } from 'yfiles'
+import { MarkupLabelStyle, TextEditorInputMode } from '@yfiles/yfiles'
 import Quill from 'quill'
 
 // Quill snow theme
@@ -69,6 +69,23 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
     this.quill = new Quill(container.firstElementChild as HTMLElement, {
       theme: 'snow',
       modules: {
+        keyboard: {
+          bindings: {
+            cancelEdit: {
+              key: 'Escape',
+              handler: () => {
+                this.cancel()
+              }
+            },
+            stopEdit: {
+              key: 'Enter',
+              shortKey: true,
+              handler: () => {
+                this.tryStop()
+              }
+            }
+          }
+        },
         toolbar: {
           container: [
             [{ header: [1, 2, 3, 4, 5, false] }],
@@ -79,7 +96,6 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
         }
       }
     })
-
     // edits should not be discarded when the editor is closed due to focus lost
     this.autoCommitOnFocusLost = true
   }

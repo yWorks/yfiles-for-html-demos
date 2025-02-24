@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,7 +35,7 @@ import {
   type IRenderContext,
   IVisualCreator,
   SvgVisual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import type { LayoutSettings } from './configure-layout'
 
 const INSIDE_COLOR = 'lightgray'
@@ -233,13 +233,13 @@ function collectSnapRanges(
   snapDistance: number
 ): { snapColumns: Range[]; snapRows: Range[] } {
   const collectColumns =
-    AlignmentStageAlignmentPolicy.SNAP_X_Y === alignmentPolicy ||
+    AlignmentStageAlignmentPolicy.SNAP_XY === alignmentPolicy ||
     AlignmentStageAlignmentPolicy.SNAP_X === alignmentPolicy
   const columns = []
   const knownCenterX = new Set()
 
   const collectRows =
-    AlignmentStageAlignmentPolicy.SNAP_X_Y === alignmentPolicy ||
+    AlignmentStageAlignmentPolicy.SNAP_XY === alignmentPolicy ||
     AlignmentStageAlignmentPolicy.SNAP_Y === alignmentPolicy
   const rows = []
   const knownCenterY = new Set()
@@ -333,6 +333,7 @@ function findHighlightRange(ranges: Range[], value: number): Range {
 function sameRange(range1: Range, range2: Range): boolean {
   return range1.min === range2.min && range1.max === range2.max
 }
+
 /**
  * Creates an SVG rect element with the given geometry and fill color.
  */

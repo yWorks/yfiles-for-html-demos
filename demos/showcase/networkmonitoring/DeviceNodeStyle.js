@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,47 +26,35 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GeneralPath, GeomUtilities, NodeStyleBase, SvgVisual } from 'yfiles'
-import { convertLoadToColor, DeviceKind } from './model/Device.js'
-
+import { GeneralPath, GeometryUtilities, NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
+import { convertLoadToColor, DeviceKind } from './model/Device'
 /**
  * A node style that visualizes the devices of a network.
  * It renders the icon according to the device kind and adds the 'failed' icon if necessary.
  */
 export class DeviceNodeStyle extends NodeStyleBase {
+  dataProvider
+  imageProvider
   /**
    * Creates a new instance of NetworkMonitoringNodeStyle.
-   * @param {!function} dataProvider
-   * @param {!function} imageProvider
    */
   constructor(dataProvider, imageProvider) {
     super()
-    this.imageProvider = imageProvider
     this.dataProvider = dataProvider
+    this.imageProvider = imageProvider
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {!SvgVisual}
-   */
   createVisual(context, node) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-
     const device = this.dataProvider(node)
-
     // create the image that represents the node type
     const image = document.createElementNS('http://www.w3.org/2000/svg', 'image')
     container.appendChild(image)
-
     image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', this.imageProvider(device))
     image.setAttribute('width', String(node.layout.width * 0.6))
     image.setAttribute('height', String(node.layout.height * 0.6))
-
     const dxImage = node.layout.width * 0.2
     const dyImage = node.layout.height * 0.2
     image.setAttribute('transform', `translate(${dxImage} ${dyImage})`)
-
     // visualize enabled and failed status
     const isDeviceWorking = device.enabled && !device.failed
     if (isDeviceWorking) {
@@ -75,54 +63,38 @@ export class DeviceNodeStyle extends NodeStyleBase {
       container.style.setProperty('cursor', 'pointer')
       image.setAttribute('class', 'disabled')
     }
-
     // add the ellipse indicating the current load
     container.appendChild(createLoadIndicator(device))
-
     // add the 'failed' icon, if necessary
     if (device.failed) {
       container.appendChild(createExclamationMark())
     }
-
     // set the location
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
-
     // cache the node's properties
-    container.renderData = {
+    const renderData = {
       enabled: device.enabled,
       failed: device.failed,
       load: device.load
     }
-
-    return new SvgVisual(container)
+    return SvgVisual.from(container, renderData)
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!SvgVisual} oldVisual
-   * @param {!INode} node
-   * @returns {!SvgVisual}
-   */
   updateVisual(context, oldVisual, node) {
     const device = node.tag
     const container = oldVisual.svgElement
-    const oldData = container.renderData
-
+    const oldData = oldVisual.tag
     // update the image
     const wasNodeWorking = oldData.enabled && oldData.failed
     const isNodeWorking = device.enabled && device.failed
-
     if (isNodeWorking !== wasNodeWorking) {
       const image = container.childNodes.item(0)
       image.setAttribute('class', isNodeWorking ? 'enabled' : 'disabled')
     }
-
     // update the load indicator
     if (dataChanged(oldData, device)) {
       const loadIndicator = container.childNodes.item(1)
       updateLoadIndicator(device, loadIndicator)
     }
-
     // update the 'failed' icon
     if (oldData.failed !== device.failed) {
       if (device.failed) {
@@ -133,97 +105,57 @@ export class DeviceNodeStyle extends NodeStyleBase {
         removeExclamationMark(container)
       }
     }
-
     // cache the node's properties
-    container.renderData = {
+    oldVisual.tag = {
       enabled: device.enabled,
       failed: device.failed,
       load: device.load
     }
-
     // make sure that the location is up-to-date
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
     return oldVisual
   }
-
   /**
    * Gets the outline of the node, which is an elliptic shape in this case.
-   * @param {!INode} node
-   * @returns {!GeneralPath}
    */
   getOutline(node) {
     const outline = new GeneralPath()
     outline.appendEllipse(node.layout, false)
     return outline
   }
-
   /**
    * Gets the intersection of a line with the visual representation of the node.
    * This method is implemented explicitly to optimize the performance for elliptic shape.
-   * @param {!INode} node
-   * @param {!Point} inner
-   * @param {!Point} outer
-   * @returns {?Point}
    */
   getIntersection(node, inner, outer) {
-    return GeomUtilities.findEllipseLineIntersection(node.layout.toRect(), inner, outer)
+    return GeometryUtilities.getEllipseLineIntersection(node.layout.toRect(), inner, outer)
   }
-
   /**
    * Determines whether the provided point is inside the visual bounds of the node.
    * This method is implemented explicitly to optimize the performance for elliptic shape.
-   * @param {!INode} node
-   * @param {!Point} point
-   * @returns {boolean}
    */
   isInside(node, point) {
-    return GeomUtilities.ellipseContains(node.layout.toRect(), point, 0)
+    return GeometryUtilities.ellipseContains(node.layout.toRect(), point, 0)
   }
-
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
    * This method is implemented explicitly to optimize the performance for elliptic shape.
-   * @param {!IInputModeContext} canvasContext
-   * @param {!Point} location
-   * @param {!INode} node
-   * @returns {boolean}
    */
   isHit(canvasContext, location, node) {
-    return GeomUtilities.ellipseContains(
+    return GeometryUtilities.ellipseContains(
       node.layout.toRect(),
       location,
       canvasContext.hitTestRadius
     )
   }
 }
-
-/**
- * @typedef {Object} RenderData
- * @property {boolean} enabled
- * @property {boolean} failed
- * @property {number} load
- */
-
-/**
- * @typedef {Object} RenderDataHolder
- * @property {RenderData} renderData
- */
-
-/**
- * @param {!RenderData} data1
- * @param {!RenderData} data2
- * @returns {boolean}
- */
 function dataChanged(data1, data2) {
   return Object.entries(data1).some(([key, value]) => {
     return value !== data2[key]
   })
 }
-
 /**
  * Create a load indicator element.
- * @param {!Device} device
- * @returns {!SVGElement}
  */
 function createLoadIndicator(device) {
   const loadIndicator = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
@@ -234,23 +166,17 @@ function createLoadIndicator(device) {
   loadIndicator.setAttribute('stroke-width', '2')
   loadIndicator.setAttribute('stroke', '#FFF')
   loadIndicator.setAttribute('fill', convertLoadToColor(device.load, 1))
-
   // place the indicator individually for each node type
   loadIndicator.setAttribute('transform', getIndicatorTranslation(device))
-
   // hide the indicator if the node is failed or disabled
   const isDeviceWorking = device.enabled && !device.failed
   if (!isDeviceWorking) {
     loadIndicator.setAttribute('display', 'none')
   }
-
   return loadIndicator
 }
-
 /**
  * Updates the visibility and color of the load indicator.
- * @param {!Device} device
- * @param {!SVGElement} loadIndicator
  */
 function updateLoadIndicator(device, loadIndicator) {
   const isDeviceWorking = device.enabled && !device.failed
@@ -261,10 +187,8 @@ function updateLoadIndicator(device, loadIndicator) {
     loadIndicator.setAttribute('fill', convertLoadToColor(device.load, 1))
   }
 }
-
 /**
  * Create an exclamation mark icon element.
- * @returns {!SVGElement}
  */
 function createExclamationMark() {
   const imageElement = document.createElementNS('http://www.w3.org/2000/svg', 'image')
@@ -277,10 +201,8 @@ function createExclamationMark() {
   imageElement.setAttribute('data-exclamation-mark', 'true')
   return imageElement
 }
-
 /**
  * Removes the 'failed' icon from the given g element.
- * @param {!SVGGElement} container
  */
 function removeExclamationMark(container) {
   for (const child of container.children) {
@@ -290,11 +212,6 @@ function removeExclamationMark(container) {
     }
   }
 }
-
-/**
- * @param {!Device} device
- * @returns {!string}
- */
 function getIndicatorTranslation(device) {
   switch (device.kind) {
     case DeviceKind.WORKSTATION:

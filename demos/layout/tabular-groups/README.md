@@ -1,19 +1,21 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Tabular Groups Demo
 
-# Hierarchic Layout with Tabular Groups
+<img src="../../../doc/demo-thumbnails/tabular-groups.webp" alt="demo-thumbnail" height="320"/>
 
-This demo shows how to configure the [tabular groups](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutData#tabularGroups) feature of the [Hierarchic Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout).
+[You can also run this demo online](https://www.yworks.com/demos/layout/tabular-groups/).
+
+This demo shows how to configure the [tabular groups](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#tabularGroups) feature of the [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
 
 Children of a _tabular group_ are placed in a compact tabular fashion, on the same hierarchical layer next to each other. A left-to-right layout orientation like in this demo results in child nodes being placed in a column-like way, one above the other.
 
@@ -24,5 +26,5 @@ In this demo, all groups are unconditionally treated as tabular groups. Nested t
 ### Things to try
 
 - Browse the provided **sample graphs**.
-- **Enable and disable** the tabular groups feature using the toolbar button and observe the difference to the default hierarchic arrangement.
+- **Enable and disable** the tabular groups feature using the toolbar button and observe the difference to the default hierarchical arrangement.
 - See the effect of the **sorting** and **child distance** options. Note that if sorting by label text is enabled, the result may contain more edge crossings, because the order cannot be freely optimized.

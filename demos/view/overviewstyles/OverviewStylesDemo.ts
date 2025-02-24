@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,42 +27,35 @@
  **
  ***************************************************************************/
 import {
+  CompactSubtreePlacer,
   Font,
-  FreeEdgeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphOverviewComponent,
-  GraphOverviewSvgVisualCreator,
   GraphViewerInputMode,
-  Class,
-  IGraph,
-  InteriorStretchLabelModel,
+  type IGraph,
+  LayoutExecutor,
   License,
   LineCap,
   OverviewInputMode,
   PolylineEdgeStyle,
-  RenderModes,
   ShowFocusPolicy,
   Size,
-  StringTemplateNodeStyle,
+  StretchNodeLabelModel,
   Stroke,
-  TreeLayout,
-  WebGL2GraphModelManager,
-  WebGL2GraphOverviewVisualCreator,
-  CompactNodePlacer,
-  LayoutExecutor
-} from 'yfiles'
-import OverviewCanvasVisualCreator from './OverviewCanvasVisualCreator'
+  TreeLayout
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
-import { OverviewWebGL2VisualCreator } from './OverviewWebGL2VisualCreator'
-import { detailNodeStyleTemplate, overviewNodeStyle } from './style-templates'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 import type { JSONGraph } from '../../utils/json-model'
-import HtmlLabelStyle from '../../style/html-label-style/HtmlLabelStyle'
+import { HtmlLabelStyle } from './HtmlLabelStyle'
 import graphData from './graph-data.json'
+import { OverviewCanvasRenderer } from './OverviewCanvasRenderer'
+import { OverviewSvgRenderer } from './OverviewSvgRenderer'
+import { detailNodeStyleTemplate, overviewNodeStyleTemplate } from './style-templates'
+import { createLitNodeStyleFromSource } from '../../utils/LitNodeStyle'
 
 /**
  * The GraphComponent
@@ -80,7 +73,7 @@ let overviewComponent: GraphOverviewComponent
  */
 let overviewGraphComponent: GraphComponent
 
-const overViewStyleBox = document.querySelector<HTMLSelectElement>('#graph-chooser-box')!
+const overviewStyleBox = document.querySelector<HTMLSelectElement>('#graph-chooser-box')!
 
 /**
  * Runs the demo.
@@ -88,8 +81,6 @@ const overViewStyleBox = document.querySelector<HTMLSelectElement>('#graph-choos
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   graphComponent.focusIndicatorManager.showFocusPolicy = ShowFocusPolicy.ALWAYS
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
@@ -98,29 +89,25 @@ async function run(): Promise<void> {
 
   overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
 
-  // initialize the overview graph with the graph overview svg visual creator
-  overviewComponent.graphVisualCreator = getOverviewSvgVisualCreator()
+  // initialize the overview graph with SVG rendering
+  overviewComponent.graphOverviewRenderer = new OverviewSvgRenderer()
 
   // initialize the overview graph that uses the same GraphComponent styles.
   // If you want the overview to use the same styles as the GraphComponent, you can use a GraphComponent to display the overview.
   overviewGraphComponent = new GraphComponent('overviewGraphComponent')
-  applyDemoTheme(overviewGraphComponent)
   overviewGraphComponent.inputMode = new OverviewInputMode({
     canvasComponent: graphComponent
   })
 
-  initializeConverters()
-
   // Apply default styling
   const graph = graphComponent.graph
   initDemoStyles(graph)
-  graph.nodeDefaults.style = new StringTemplateNodeStyle({ svgContent: detailNodeStyleTemplate })
+  graph.nodeDefaults.style = createLitNodeStyleFromSource(detailNodeStyleTemplate)
+  graph.nodeDefaults.size = new Size(285, 115)
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: new Stroke({ fill: '#FFAAAAAA', lineCap: LineCap.SQUARE, thickness: 2 })
   })
-  graph.nodeDefaults.size = new Size(285, 100)
-  graph.nodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.CENTER
-  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+  graph.nodeDefaults.labels.layoutParameter = new StretchNodeLabelModel().createParameter('center')
   graphComponent.focusIndicatorManager.enabled = false
 
   // Labels get the HTML label style
@@ -132,24 +119,20 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData as unknown as JSONGraph)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
     new TreeLayout({
-      defaultNodePlacer: new CompactNodePlacer()
+      defaultSubtreePlacer: new CompactSubtreePlacer()
     })
   )
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 
   initializeUI()
 
-  // disable WebGL parts of the demo if unsupported
-  probeWebGLSupport()
-  probeWebGL2Support()
-
-  const initialStyle = overViewStyleBox.value
+  const initialStyle = overviewStyleBox.value
   overviewStyling(initialStyle)
 }
 
@@ -172,34 +155,33 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 
   graphBuilder.buildGraph()
 }
+
 /**
  * Styles the overview graph.
  * @param styleType The type of the styling selected with the combobox.
  */
 function overviewStyling(styleType: string): void {
   switch (styleType) {
-    case 'GraphOverviewSvgVisualCreator':
-      overviewComponent.renderMode = RenderModes.SVG
-      // creates the style to the overview using the svg visual creator
-      overviewComponent.graphVisualCreator = getOverviewSvgVisualCreator()
+    case 'SvgOverviewRenderer':
+      const overviewSvgRenderer = new OverviewSvgRenderer()
+      overviewSvgRenderer.nodeStyle = (_) => createLitNodeStyleFromSource(overviewNodeStyleTemplate)
+      overviewComponent.graphOverviewRenderer = overviewSvgRenderer
 
       // updates the overview component then show the overview graph
-      overviewComponent.updateVisualAsync().then(() => {
+      void overviewComponent.updateVisualAsync().then(() => {
         // hide the overview graph that uses the GraphComponent styles and show the overview graph that uses the canvas, SVG or WebGL creator
-        overviewGraphComponent.div.style.display = 'none'
-        overviewComponent.div.style.display = 'block'
+        overviewGraphComponent.htmlElement.classList.add('hide-component')
+        overviewComponent.htmlElement.classList.remove('hide-component')
       })
       break
-    case 'GraphOverviewCanvasVisualCreator':
-      overviewComponent.renderMode = RenderModes.CANVAS
-      // creates the style to the overview using the canvas visual creator
-      overviewComponent.graphVisualCreator = new OverviewCanvasVisualCreator(graphComponent.graph)
+    case 'CanvasOverviewRenderer':
+      overviewComponent.graphOverviewRenderer = new OverviewCanvasRenderer()
 
       // updates the overview component then show the overview graph
-      overviewComponent.updateVisualAsync().then(() => {
+      void overviewComponent.updateVisualAsync().then(() => {
         // hides the overview graph that uses the GraphComponent styles and show the overview graph that uses the canvas, SVG or WebGL creator
-        overviewGraphComponent.div.style.display = 'none'
-        overviewComponent.div.style.display = 'block'
+        overviewGraphComponent.htmlElement.classList.add('hide-component')
+        overviewComponent.htmlElement.classList.remove('hide-component')
       })
       break
     case 'OverviewInputMode':
@@ -207,140 +189,25 @@ function overviewStyling(styleType: string): void {
       overviewGraphComponent.graph = graphComponent.graph
 
       // updates the overview component then show the overview graph
-      overviewGraphComponent.updateVisualAsync().then(() => {
+      void overviewGraphComponent.updateVisualAsync().then(() => {
         // hides the overview graph that uses the canvas or Svg visual creator and show the overview graph that uses the GraphComponent styles
-        overviewGraphComponent.div.style.display = 'block'
-        overviewComponent.div.style.display = 'none'
-        overviewGraphComponent.fitGraphBounds()
-      })
-      break
-    case 'GraphOverviewWebGLVisualCreator':
-      overviewComponent.renderMode = RenderModes.WEB_GL
-
-      // updates the overview component then show the overview graph
-      overviewComponent.updateVisualAsync().then(() => {
-        // hide the overview graph that uses the GraphComponent styles and show the overview graph that uses the canvas, SVG or WebGL visual creator
-        overviewGraphComponent.div.style.display = 'none'
-        overviewComponent.div.style.display = 'block'
-      })
-      break
-    case 'WebGL2GraphOverviewVisualCreator':
-      Class.ensure(WebGL2GraphModelManager)
-      overviewComponent.renderMode = RenderModes.WEB_GL2
-      overviewComponent.graphVisualCreator = getWebGL2GraphOverviewVisualCreator()
-
-      // updates the overview component then show the overview graph
-      overviewComponent.updateVisualAsync().then(() => {
-        // hide the overview graph that uses the GraphComponent styles and show the overview graph that uses the canvas, SVG or WebGL visual creator
-        overviewGraphComponent.div.style.display = 'none'
-        overviewComponent.div.style.display = 'block'
+        overviewComponent.htmlElement.classList.add('hide-component')
+        overviewGraphComponent.htmlElement.classList.remove('hide-component')
+        void overviewGraphComponent.fitGraphBounds()
       })
       break
   }
 }
 
-/**
- * Creates the visual creator that uses SVG rendering.
- * @returns The visual creator that uses SVG rendering.
- */
-function getOverviewSvgVisualCreator(): GraphOverviewSvgVisualCreator {
-  const overviewSvgVisualCreator = new GraphOverviewSvgVisualCreator(graphComponent.graph)
-  overviewSvgVisualCreator.nodeStyle = new StringTemplateNodeStyle(overviewNodeStyle)
-  overviewSvgVisualCreator.edgeStyle = new PolylineEdgeStyle({ stroke: '#336699' })
-  return overviewSvgVisualCreator
-}
-/**
- * Creates the visual creator that uses WebGL2 rendering.
- * @returns The visual creator that uses WebGL2 rendering.
- */
-function getWebGL2GraphOverviewVisualCreator(): WebGL2GraphOverviewVisualCreator {
-  return new OverviewWebGL2VisualCreator(graphComponent.graph)
-}
 /**
  * Registers the actions for the GUI elements, typically the
  * toolbar buttons, during the creation of this application.
  */
 function initializeUI(): void {
-  addNavigationButtons(overViewStyleBox).addEventListener('change', (evt) => {
+  addNavigationButtons(overviewStyleBox).addEventListener('change', (evt) => {
     const selectedValue = (evt.target as HTMLSelectElement).value
     overviewStyling(selectedValue as string)
   })
 }
 
-/**
- * Disables WebGL rendering option if unsupported by client.
- */
-function probeWebGLSupport() {
-  if (!BrowserDetection.webGL) {
-    // remove WebGL option if not supported by client
-    document.querySelector<HTMLElement>('.no-webgl-support')!.style.display = 'block'
-    const webGLOption = overViewStyleBox.querySelector<HTMLOptionElement>(
-      "option[value='GraphOverviewWebGLVisualCreator']"
-    )!
-    overViewStyleBox.removeChild(webGLOption)
-  }
-}
-
-/**
- * Disables WebGL rendering option if unsupported by client.
- */
-function probeWebGL2Support() {
-  if (!BrowserDetection.webGL2) {
-    // remove WebGL option if not supported by client
-    document.querySelector<HTMLElement>('.no-webgl-support[data-webgl2]')!.style.display = 'block'
-    const webGLOption = overViewStyleBox.querySelector<HTMLOptionElement>(
-      "option[value='WebGL2GraphOverviewVisualCreator']"
-    )!
-    overViewStyleBox.removeChild(webGLOption)
-  }
-}
-
-/**
- * Initializes the converters for the bindings of the template node styles.
- */
-function initializeConverters(): void {
-  StringTemplateNodeStyle.CONVERTERS.orgChartConverters = {
-    overviewConverter: (value: any): string => {
-      if (typeof value === 'string' && value.length > 0) {
-        return value.replace(/^(.)(\S*)(.*)/, '$1.$3')
-      }
-      return ''
-    },
-    // converter function that may convert a name to an abbreviated name
-    lineBreakConverter: (value: any, firstLine: string): string => {
-      if (typeof value === 'string') {
-        let copy = value
-        while (copy.length > 20 && copy.indexOf(' ') > -1) {
-          copy = copy.substring(0, copy.lastIndexOf(' '))
-        }
-        if (firstLine === 'true') {
-          return copy
-        }
-        return value.substring(copy.length)
-      }
-      return ''
-    },
-    // converter function that adds a hash to a given string and - if present - appends the parameter to it
-    addHashConverter: (value: any, parameter: any): any => {
-      if (typeof value === 'string') {
-        if (typeof parameter === 'string') {
-          return `#${value}${parameter}`
-        }
-        return `#${value}`
-      }
-      return value
-    },
-    // converter function that returns a color according to the employee's status
-    colorConverter: (value: string): string =>
-      (
-        ({
-          busy: '#AB2346',
-          present: '#76B041',
-          travel: '#A367DC',
-          unavailable: '#C1C1C1'
-        }) as Record<string, string>
-      )[value] || '#C1C1C1'
-  }
-}
-
-run().then(finishLoading)
+void run().then(finishLoading)

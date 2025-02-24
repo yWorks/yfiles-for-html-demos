@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Enum,
   FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
@@ -36,87 +35,68 @@ import {
   License,
   ShapeNodeShape,
   ShapeNodeStyle
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 import {
-  applyDemoTheme,
   colorSets,
   createDemoEdgeStyle,
   createDemoNodeLabelStyle,
   initDemoStyles
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * Runs the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   initializeStyleDefaults(graphComponent.graph)
-
   // Create and configure nodes using shape node style
   createSampleNodes(graphComponent.graph)
-
   configureInteraction(graphComponent)
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
   initializeUI(graphComponent)
 }
-
 /**
  * Creates several nodes for each {@link ShapeNodeShape} value.
- * @param {!IGraph} graph The graph to add the nodes to.
+ * @param graph The graph to add the nodes to.
  */
 function createSampleNodes(graph) {
   // Create the various shape samples
-  const rectangularShapes = [
+  const shapes = [
     ShapeNodeShape.RECTANGLE,
     ShapeNodeShape.ROUND_RECTANGLE,
-    ShapeNodeShape.PILL
+    ShapeNodeShape.PILL,
+    ShapeNodeShape.ELLIPSE
   ]
-  const ellipticalShapes = [ShapeNodeShape.ELLIPSE]
-  const skewedShapes = [
-    ShapeNodeShape.DIAMOND,
-    ShapeNodeShape.SHEARED_RECTANGLE,
-    ShapeNodeShape.SHEARED_RECTANGLE2,
-    ShapeNodeShape.TRAPEZ,
-    ShapeNodeShape.TRAPEZ2
-  ]
-  const arrowShapes = [ShapeNodeShape.FAT_ARROW, ShapeNodeShape.FAT_ARROW2]
-  const polygonalShapes = [
+  const triangles = [
     ShapeNodeShape.TRIANGLE,
-    ShapeNodeShape.TRIANGLE2,
+    ShapeNodeShape.TRIANGLE_POINTING_RIGHT,
+    ShapeNodeShape.TRIANGLE_POINTING_DOWN,
+    ShapeNodeShape.TRIANGLE_POINTING_LEFT
+  ]
+  const polygons = [
+    ShapeNodeShape.DIAMOND,
+    ShapeNodeShape.PENTAGON,
     ShapeNodeShape.HEXAGON,
-    ShapeNodeShape.HEXAGON2,
+    ShapeNodeShape.HEXAGON_STANDING,
     ShapeNodeShape.OCTAGON
   ]
-  const starShapes = [
-    ShapeNodeShape.STAR5,
-    ShapeNodeShape.STAR5_UP,
-    ShapeNodeShape.STAR6,
-    ShapeNodeShape.STAR8
-  ]
-  createShapeSamples(rectangularShapes, 0, graph)
-
-  createShapeSamples(ellipticalShapes.concat(arrowShapes), 1, graph)
-  createShapeSamples(skewedShapes, 2, graph)
-  createShapeSamples(polygonalShapes, 3, graph)
-  createShapeSamples(starShapes, 4, graph)
+  const stars = [ShapeNodeShape.STAR5, ShapeNodeShape.STAR6, ShapeNodeShape.STAR8]
+  createShapeSamples(shapes, 0, graph)
+  createShapeSamples(triangles, 1, graph)
+  createShapeSamples(polygons, 2, graph)
+  createShapeSamples(stars, 3, graph)
 }
-
 /**
  * Creates sample nodes for the given shapes.
- * @param {!Array.<ShapeNodeShape>} shapes The shapes to use.
- * @param {number} column The column index of the nodes.
- * @param {!IGraph} graph The graph to add the nodes to.
+ * @param shapes The shapes to use.
+ * @param column The column index of the nodes.
+ * @param graph The graph to add the nodes to.
  */
 function createShapeSamples(shapes, column, graph) {
   const size1 = 45
   const size2 = 90
-
   // Define colors for distinguishing the three different aspect ratios used below
   const fill1 = colorSets['demo-palette-54'].fill
   const fill2 = colorSets['demo-palette-56'].fill
@@ -124,7 +104,6 @@ function createShapeSamples(shapes, column, graph) {
   const stroke1 = colorSets['demo-palette-54'].stroke
   const stroke2 = colorSets['demo-palette-56'].stroke
   const stroke3 = colorSets['demo-palette-510'].stroke
-
   for (let i = 0; i < shapes.length; i++) {
     // Create a green node with aspect ratio 1:1
     const n1 = graph.createNode({
@@ -135,8 +114,7 @@ function createShapeSamples(shapes, column, graph) {
         stroke: stroke1
       })
     })
-
-    // Create a blue node wit haspect ratio 2:1
+    // Create a blue node with aspect ratio 2:1
     const n2 = graph.createNode({
       layout: [column * 350 + 100 - size2 / 2, i * 200 - size1 / 2, size2, size1],
       style: new ShapeNodeStyle({
@@ -144,9 +122,8 @@ function createShapeSamples(shapes, column, graph) {
         fill: fill2,
         stroke: stroke2
       }),
-      labels: [Enum.getName(ShapeNodeShape.$class, shapes[i])]
+      labels: [ShapeNodeShape[shapes[i]]]
     })
-
     // Create a yellow node with aspect ratio 1:2
     const n3 = graph.createNode({
       layout: [column * 350 + 200 - size1 / 2, i * 200 - size2 / 2, size1, size2],
@@ -156,19 +133,15 @@ function createShapeSamples(shapes, column, graph) {
         stroke: stroke3
       })
     })
-
     graph.createEdge(n1, n2)
     graph.createEdge(n2, n3)
   }
 }
-
 /**
  * Initializes the style defaults for labels and edges.
- * @param {!IGraph} graph
  */
 function initializeStyleDefaults(graph) {
   initDemoStyles(graph)
-
   // All node labels share the same style and label model parameter
   const labelStyle = createDemoNodeLabelStyle('demo-palette-58')
   labelStyle.font = '24px Arial'
@@ -178,14 +151,11 @@ function initializeStyleDefaults(graph) {
     layoutOffset: [0, -50],
     labelRatio: [0.5, 0.5]
   })
-
   // Edges share the same style as well, they are not important in this demo
   graph.edgeDefaults.style = createDemoEdgeStyle({ colorSetName: 'demo-palette-56' })
 }
-
 /**
  * Configures the interactive behavior for this demo.
- * @param {!GraphComponent} graphComponent
  */
 function configureInteraction(graphComponent) {
   graphComponent.inputMode = new GraphEditorInputMode({
@@ -197,13 +167,11 @@ function configureInteraction(graphComponent) {
     allowAddLabel: false,
     allowEditLabel: false,
     deletableItems: GraphItemTypes.NONE,
-    movableItems: GraphItemTypes.NODE
+    movableSelectedItems: GraphItemTypes.NODE
   })
 }
-
 /**
  * Binds actions to the demo's UI controls.
- * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
   const aspectRatioToggle = document.querySelector('#intrinsic-aspect-ratio-button')
@@ -215,12 +183,10 @@ function initializeUI(graphComponent) {
       const shapeNodeStyle = node.style
       shapeNodeStyle.keepIntrinsicAspectRatio = keepAspectRatio
     }
-
     // Force the graph component to repaint itself
     // This ensures the visual effects of changing ShapeNodeStyle's keep-intrinsic-aspect-ratio
     // behavior is immediately visible
     graphComponent.invalidate()
   })
 }
-
 run().then(finishLoading)

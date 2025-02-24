@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,12 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ICanvasContext, ISvgDefsCreator, Matrix } from 'yfiles'
-import { SVGNS } from './Namespaces.js'
-
-/**
- * @returns {!SVGLinearGradientElement}
- */
+import { ICanvasContext, ISvgDefsCreator, Matrix } from '@yfiles/yfiles'
+import { SVGNS } from './Namespaces'
 function createGradient() {
   const gradient = document.createElementNS(SVGNS, 'linearGradient')
   gradient.setAttribute('x1', '0')
@@ -51,37 +47,26 @@ function createGradient() {
   gradient.appendChild(stop1)
   gradient.appendChild(stop2)
   gradient.appendChild(stop3)
-
   // set gradient units to userSpaceOnUse in order to be interpreted globally
   gradient.setAttribute('gradientUnits', 'userSpaceOnUse')
-
   return gradient
 }
-
 // create the gradient element
 const gradient = createGradient()
-
 const defsCreator = ISvgDefsCreator.create({
   createDefsElement: (context) => gradient,
-
   accept: (context, node, id) =>
     node instanceof Element &&
     node.localName === 'path' &&
     node.hasAttribute('stroke') &&
     node.getAttribute('stroke') === `url(#${id})`,
-
   updateDefsElement: (context, oldElement) => {}
 })
-
-/** @type {number} */
 let animationFrameId = -1
-
 const startGradientAnimation = () => {
   let offset = 0
   const ANIMATION_SPEED = 0.05
-
   let previousTime = null
-
   const frameRequestCallback = (timestamp) => {
     // calculate the time since the last animation frame
     if (previousTime == null) {
@@ -109,7 +94,6 @@ const startGradientAnimation = () => {
   // start the animation
   animationFrameId = window.requestAnimationFrame(frameRequestCallback)
 }
-
 export default {
   applyToElement: (context, element) => {
     const gradientId = context.getDefsId(defsCreator)

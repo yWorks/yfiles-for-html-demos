@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { GraphComponent, IFoldingView, IGraph, INode, Rect } from 'yfiles'
+import type { GraphComponent, IFoldingView, IGraph, INode, Rect } from '@yfiles/yfiles'
 
 const CONTENT_RECT_MARGINS = 50
 
@@ -39,7 +39,7 @@ const CONTENT_RECT_MARGINS = 50
  * is deferred.
  */
 export function initializeDeepZoom(graphComponent: GraphComponent): void {
-  graphComponent.addViewportChangedListener(updateDeepZoomOnViewportChanged)
+  graphComponent.addEventListener('viewport-changed', updateDeepZoomOnViewportChanged)
 }
 
 /**
@@ -55,12 +55,12 @@ export function zoomToOriginal(graphComponent: GraphComponent): void {
  */
 export function fitContent(graphComponent: GraphComponent): void {
   graphComponent.graph.foldingView!.localRoot = null
-  graphComponent.fitContent()
+  void graphComponent.fitContent()
 }
 
 // mutex that ensures viewport modifications occur one at time
 let changing = false
-function updateDeepZoomOnViewportChanged(graphComponent: GraphComponent): void {
+function updateDeepZoomOnViewportChanged(_evt: unknown, graphComponent: GraphComponent): void {
   if (changing) {
     return
   }
@@ -93,7 +93,7 @@ function updateGraphComponentOnViewportChange(graphComponent: GraphComponent): v
     // If no such node exists check whether the whole graph is contained in the
     // viewport and whether a local root has been set. In this case, the graph
     // is being zoomed out, and the parent needs to be made visible again.
-    const graphBounds = graphComponent.contentRect
+    const graphBounds = graphComponent.contentBounds
     if (foldingView.localRoot !== null && encloses(viewport, graphBounds)) {
       exitGroup(graphComponent, masterGraph, foldingView, graphBounds, foldingView.localRoot)
     }
@@ -143,13 +143,13 @@ function enterGroup(
   groupNode: INode
 ): void {
   const groupLayout = groupNode.layout
-  const groupNodeCenterInView = graphComponent.toViewCoordinates(groupLayout.center)
+  const groupNodeCenterInView = graphComponent.worldToViewCoordinates(groupLayout.center)
 
   // Setting the local root to this group node effectively removes nodes higher up
   // in the hierarchy from the view graph.
   setLocalRoot(graphComponent, foldingView, foldingView.getMasterItem(groupNode))
 
-  const graphBounds = graphComponent.contentRect
+  const graphBounds = graphComponent.contentBounds
   // match the zoom factor of how large the group node contents appeared to
   // the actual size of the contents
   const oldScale = Math.min(
@@ -161,7 +161,7 @@ function enterGroup(
 
   // Modify the viewPoint as well so that the center of the group node into which we have zoomed in
   // coincides with the center of the graph we are now presenting as the group nodes contents.
-  const graphCenterInView = graphComponent.toViewCoordinates(graphBounds.center)
+  const graphCenterInView = graphComponent.worldToViewCoordinates(graphBounds.center)
   const delta = graphCenterInView.subtract(groupNodeCenterInView).multiply(1 / graphComponent.zoom)
   graphComponent.viewPoint = graphComponent.viewPoint.add(delta)
 }
@@ -182,7 +182,7 @@ function exitGroup(
   graphBounds: Rect,
   oldRoot: INode
 ): void {
-  const graphCenterInView = graphComponent.toViewCoordinates(graphBounds.center)
+  const graphCenterInView = graphComponent.worldToViewCoordinates(graphBounds.center)
 
   const oldZoom = graphComponent.zoom
 
@@ -200,7 +200,7 @@ function exitGroup(
 
   // likewise, adjust the viewPoint so that the center of the groups' contents
   // coincide with the center of the group node
-  const groupNodeCenterInView = graphComponent.toViewCoordinates(groupLayout.center)
+  const groupNodeCenterInView = graphComponent.worldToViewCoordinates(groupLayout.center)
   const delta = groupNodeCenterInView.subtract(graphCenterInView).multiply(1 / graphComponent.zoom)
   graphComponent.viewPoint = graphComponent.viewPoint.add(delta)
 }
@@ -215,7 +215,7 @@ function setLocalRoot(
 ): void {
   foldingView.localRoot = newRoot
   // after programmatically changing the graph, the content rect has to be updated manually
-  graphComponent.updateContentRect({ margins: CONTENT_RECT_MARGINS })
+  graphComponent.updateContentBounds({ margins: CONTENT_RECT_MARGINS })
 }
 
 function limitMinimumZoom(graphComponent: GraphComponent, foldingView: IFoldingView): void {
@@ -225,7 +225,7 @@ function limitMinimumZoom(graphComponent: GraphComponent, foldingView: IFoldingV
     graphComponent.minimumZoom = 0.0000001
   } else {
     // no local root, so we're maximally zoomed out
-    graphComponent.minimumZoom = 1
+    graphComponent.minimumZoom = 0.3
   }
 }
 

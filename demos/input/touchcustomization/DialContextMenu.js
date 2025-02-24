@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,37 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, IModelItem, Point } from 'yfiles'
-
+import { GraphComponent, GraphEditorInputMode, IModelItem, Point } from '@yfiles/yfiles'
 const innerRadius = 30
 const outerRadius = 100
 const spacing = 2
 const titleOffset = 15
-
-/**
- * @typedef {Object} MenuItem
- * @property {function} callback
- * @property {string} icon
- * @property {string} title
- * @property {boolean} disabled
- * @property {SVGElement} element
- */
-
-/**
- * @param {!Array.<MenuItem>} items
- * @param {!Point} location
- * @returns {!SVGElement}
- */
-function createMenu(items, location) {
+export function createDialContextMenu(items, location, graphComponent, graphItem) {
   const n = items.length
   const pi2 = Math.PI * 2
-
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-
   // temporarily add the svg to the body so the elements can be measured
   const tempParent = document.body
   tempParent.appendChild(svg)
-
   svg.addEventListener('contextmenu', (e) => e.preventDefault())
   svg.setAttribute('class', 'demo-dial-menu')
   svg.setAttribute('width', `${outerRadius}`)
@@ -67,16 +48,13 @@ function createMenu(items, location) {
   svg.style.position = 'absolute'
   svg.style.overflow = 'visible'
   svg.style.zIndex = '999999'
-
   const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
   const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
   svg.appendChild(g)
   svg.appendChild(defs)
-
   const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath')
   clipPath.setAttribute('id', 'dial-menu-clip')
   defs.appendChild(clipPath)
-
   // create the svg elements for each item
   items.forEach((item, i) => {
     const itemContainer = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -84,14 +62,10 @@ function createMenu(items, location) {
       'class',
       item.disabled ? 'demo-dial-menu-item disabled' : 'demo-dial-menu-item'
     )
-
     g.appendChild(itemContainer)
-
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     itemContainer.appendChild(path)
-
     let middleAngle = Math.PI
-
     if (items.length === 1) {
       // full-circle menu has to be treated differently
       const d = `M 0 ${innerRadius} A ${innerRadius} ${innerRadius} 0 1 0 0 ${-innerRadius} A ${innerRadius} ${innerRadius} 0 1 0 0 ${innerRadius}
@@ -102,7 +76,6 @@ function createMenu(items, location) {
       const leftAngle = (i * pi2) / n
       const rightAngle = (i * pi2) / n + pi2 / n
       middleAngle = (leftAngle + rightAngle) * 0.5
-
       const innerLeftPoint = new Point(
         Math.sin(leftAngle) * innerRadius,
         -Math.cos(leftAngle) * innerRadius
@@ -119,14 +92,11 @@ function createMenu(items, location) {
         Math.sin(rightAngle) * outerRadius,
         -Math.cos(rightAngle) * outerRadius
       )
-
       const d = `M ${innerLeftPoint.x} ${innerLeftPoint.y} L ${outerLeftPoint.x} ${outerLeftPoint.y} A ${outerRadius} ${outerRadius} 0 0 1 ${outerRightPoint.x} ${outerRightPoint.y} L ${innerRightPoint.x} ${innerRightPoint.y} A ${innerRadius} ${innerRadius} 0 0 0 ${innerLeftPoint.x} ${innerLeftPoint.y}`
       path.setAttribute('d', d)
       path.setAttribute('clip-path', 'url(#dial-menu-clip)')
-
       // create path clip
       const clipElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-
       const leftVector = outerLeftPoint.subtract(innerLeftPoint)
       const leftVectorOrthogonalNormalized = new Point(-leftVector.y, leftVector.x).normalized
       const rightVector = outerRightPoint.subtract(innerRightPoint)
@@ -140,7 +110,6 @@ function createMenu(items, location) {
       clipElement.setAttribute('fill', 'none')
       clipPath.appendChild(clipElement)
     }
-
     if (item.icon) {
       const icon = document.createElementNS('http://www.w3.org/2000/svg', 'image')
       icon.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', item.icon)
@@ -149,41 +118,32 @@ function createMenu(items, location) {
       const position = (outerRadius + innerRadius) / 2
       icon.setAttribute(
         'transform',
-        `translate(${-16 + Math.sin(middleAngle) * position}, ${
-          -16 - Math.cos(middleAngle) * position
-        })`
+        `translate(${-16 + Math.sin(middleAngle) * position}, ${-16 - Math.cos(middleAngle) * position})`
       )
       icon.setAttribute('class', 'demo-dial-icon')
       itemContainer.appendChild(icon)
     }
-
     if (item.title) {
       const textContainer = document.createElementNS('http://www.w3.org/2000/svg', 'g')
       textContainer.setAttribute('class', 'demo-dial-title')
       itemContainer.appendChild(textContainer)
-
       const padding = 5
-
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
       text.innerHTML = item.title
       text.setAttribute('transform', `translate(${padding} ${padding})`)
       text.setAttribute('dy', '1em')
       textContainer.appendChild(text)
-
       const titleBounds = text.getBBox()
       const w = titleBounds.width + padding + padding
       const h = titleBounds.height + padding + padding
-
       const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
       rect.setAttribute('width', `${w}`)
       rect.setAttribute('height', `${h}`)
       textContainer.insertBefore(rect, text)
-
       let textLocation = new Point(
         Math.sin(middleAngle) * (outerRadius + titleOffset),
         -(Math.cos(middleAngle) * (outerRadius + titleOffset)) - h * 0.5
       )
-
       const eps = Math.PI / 180
       if (
         (middleAngle > Math.PI - eps && middleAngle < Math.PI + eps) ||
@@ -194,299 +154,23 @@ function createMenu(items, location) {
       } else if (middleAngle > Math.PI) {
         textLocation = new Point(textLocation.x - w, textLocation.y)
       }
-
       textContainer.setAttribute('transform', `translate(${textLocation.x} ${textLocation.y})`)
     }
-
-    item.element = itemContainer
-  })
-
-  g.setAttribute('transform', `translate(${location.x} ${location.y})`)
-
-  tempParent.removeChild(svg)
-
-  return svg
-}
-
-/** @type {SVGElement} */
-let hoveredItem = null
-
-/** @type {function} */
-let touchMoveListener = null
-/** @type {function} */
-let touchEndListener = null
-/** @type {function} */
-let mouseMoveListener = null
-/** @type {function} */
-let mouseUpListener = null
-
-/**
- * @param {!Array.<MenuItem>} items
- * @param {!Point} location
- * @param {!DialContextMenu} contextMenu
- */
-function addEventListeners(items, location, contextMenu) {
-  function updateHover(eventLocation) {
-    const index = getItemIndex(location, eventLocation, items.length)
-    let item = null
-    if (index >= 0 && index < Number.POSITIVE_INFINITY) {
-      item = items[index].element
-    }
-    if (hoveredItem !== item) {
-      if (hoveredItem) {
-        hoveredItem.classList.remove('highlighted')
-      }
-      hoveredItem = item
-    }
-    if (item && !item.classList.contains('disabled')) {
-      item.classList.add('highlighted')
-    }
-  }
-
-  function endGesture(eventLocation) {
-    const index = getItemIndex(location, eventLocation, items.length)
-    if (index < 0) {
-      return
-    }
-    if (index < Number.POSITIVE_INFINITY) {
-      const item = items[index]
-      if (!item.disabled && typeof item.callback === 'function') {
-        const graphComponent = contextMenu.graphComponent
-        const worldLocation = graphComponent.toWorldCoordinates(
-          graphComponent.toViewFromPage(location)
-        )
-        item.callback(worldLocation, contextMenu.graphItem)
-      }
-    }
-    removeEventListeners()
-    contextMenu.close()
-  }
-
-  touchMoveListener = (evt) => {
-    const touch = evt.changedTouches.item(0)
-    updateHover(new Point(touch.pageX, touch.pageY))
-  }
-  touchEndListener = (evt) => {
-    const touch = evt.changedTouches.item(0)
-    endGesture(new Point(touch.pageX, touch.pageY))
-  }
-  mouseMoveListener = (evt) => {
-    evt.preventDefault()
-    updateHover(new Point(evt.pageX, evt.pageY))
-  }
-  mouseUpListener = (evt) => {
-    evt.preventDefault()
-    endGesture(new Point(evt.pageX, evt.pageY))
-  }
-
-  document.addEventListener('touchstart', touchMoveListener, true)
-  document.addEventListener('touchmove', touchMoveListener, true)
-  document.addEventListener('touchend', touchEndListener, true)
-
-  document.addEventListener('mousedown', mouseMoveListener)
-  document.addEventListener('mousemove', mouseMoveListener)
-  document.addEventListener('mouseup', mouseUpListener)
-}
-
-function removeEventListeners() {
-  document.removeEventListener('touchstart', touchMoveListener, true)
-  document.removeEventListener('touchmove', touchMoveListener, true)
-  document.removeEventListener('touchend', touchEndListener, true)
-
-  document.removeEventListener('mousedown', mouseMoveListener)
-  document.removeEventListener('mousemove', mouseMoveListener)
-  document.removeEventListener('mouseup', mouseUpListener)
-}
-
-/**
- * Gets the item index.
- * @param {!Point} menuLocation The location of the menu
- * @param {!Point} eventLocation The location of the event
- * @param {number} itemCount The number of menu items
- * @returns {number} Returns the index of the item at the given location; -1 if the location is inside the
- *   innerRadius, Number.POSITIVE_INFINITY if the location is outside the outerRadius.
- */
-function getItemIndex(menuLocation, eventLocation, itemCount) {
-  if (itemCount === 0) {
-    return Number.POSITIVE_INFINITY
-  }
-  const delta = eventLocation.subtract(menuLocation)
-  const vectorLength = delta.vectorLength
-  if (vectorLength < innerRadius) {
-    return -1
-  } else if (vectorLength > outerRadius + 5) {
-    return Number.POSITIVE_INFINITY
-  }
-  const pi2 = 2 * Math.PI
-  const alpha = (Math.atan2(delta.y, delta.x) + Math.PI * 0.5 + pi2) % pi2
-  const beta = pi2 / itemCount
-
-  return (alpha / beta) | 0
-}
-
-/**
- * A context menu implementation that is optimized for touch input.
- * The context menu items are arranged as a ring around the event location.
- */
-export default class DialContextMenu {
-  $items = []
-  $graphItem = null
-  $closeCallback = null
-  $menuElement = null
-  isOpen = false
-
-  /**
-   * Creates a new instance.
-   * @param {!GraphComponent} graphComponent The GraphComponent to use the context menu in.
-   */
-  constructor(graphComponent) {
-    this.graphComponent = graphComponent
-  }
-
-  /**
-   * Gets the context menu items
-   * @type {!Array.<MenuItem>}
-   */
-  get items() {
-    return this.$items
-  }
-
-  /**
-   * Gets the graph item that is associated with the context menu.
-   * @type {?IModelItem}
-   */
-  get graphItem() {
-    return this.$graphItem
-  }
-
-  /**
-   * Sets the graph item that is associated with the context menu.
-   * @type {?IModelItem}
-   */
-  set graphItem(value) {
-    this.$graphItem = value
-  }
-
-  /**
-   * Clears the context menu items.
-   */
-  clearItems() {
-    this.$items = []
-  }
-
-  /**
-   * Sets the callback that is executed when the context menu closes
-   * @param {!function} callback
-   */
-  setOnCloseCallback(callback) {
-    this.$closeCallback = callback
-  }
-
-  /**
-   * Adds an item to the context menu. Returns 'this', so this function can be chained.
-   * @param {!function} clickCallback The function to execute when the item has been clicked
-   * @param  [icon] The item icon
-   * @param  [title] The item title
-   * @param  [disabled] Whether the item is disabled
-   * @param {!string} icon
-   * @param {!string} title
-   * @param {boolean} disabled
-   * @returns {!DialContextMenu}
-   */
-  addContextMenuItem(clickCallback, icon, title, disabled) {
-    this.items.push({
-      callback: clickCallback,
-      icon,
-      title,
-      disabled,
-      element: null
-    })
-    return this
-  }
-
-  /**
-   * Shows the context menu at the given location with the specified parent element
-   * @param {!Point} location The location in which the context menu should open
-   * @param {!Element} parentElement The parent element of the context menu
-   */
-  show(location, parentElement) {
-    this.close()
-    const el = createMenu(this.items, location)
-    addEventListeners(this.items, location, this)
-    parentElement.appendChild(el)
-    this.$menuElement = el
-    this.isOpen = true
-  }
-
-  /**
-   * Closes the context menu.
-   */
-  close() {
-    const el = this.$menuElement
-    if (el && el.parentNode) {
-      removeEventListeners()
-      el.parentNode.removeChild(el)
-      this.$menuElement = null
-      if (this.$closeCallback) {
-        this.$closeCallback()
-        this.$closeCallback = null
-      }
-    }
-    this.isOpen = false
-  }
-
-  /**
-   * Adds event listeners for events that should show a context menu.
-   * Besides the obvious `contextmenu` event, we listen for the Context Menu key since it is
-   * not handled correctly in Chrome. In other browsers, when the Context Menu key is pressed,
-   * the correct `contextmenu` event is fired but the event location is not meaningful.
-   * In this case, we set a better location, centered on the given element.
-   * @param {!GraphComponent} graphComponent
-   * @param {!function} openCallback
-   */
-  addEventListeners(graphComponent, openCallback) {
-    const parent = graphComponent.div // The element on which we listen for contextmenu events.
-    const contextMenuListener = (evt) => {
-      evt.preventDefault()
-      if (this.isOpen) {
-        // might be open already because of the longpress listener
-        return
-      }
-      openCallback(new Point(evt.pageX, evt.pageY))
-    }
-
-    const contextMenuKeyListener = (evt) => {
-      if (evt.key === 'ContextMenu') {
-        evt.preventDefault()
-        openCallback(getCenterInPage(parent))
-      }
-    }
-
-    // Listen for the contextmenu event as well as for the GraphComponent's TouchLongPress event to make it work
-    // consistently for the different devices and input types.
-    parent.addEventListener('contextmenu', contextMenuListener, false)
-    if (graphComponent) {
-      graphComponent.addTouchLongPressListener((_, evt) => {
-        openCallback(graphComponent.toPageFromView(graphComponent.toViewCoordinates(evt.location)))
+    if (!item.disabled && typeof item.callback === 'function') {
+      itemContainer.addEventListener('click', (_) => {
+        item.callback(location, graphItem)
+        graphComponent.inputMode.contextMenuInputMode.closeMenu()
+      })
+      itemContainer.addEventListener('touch', (_) => {
+        item.callback(location, graphItem)
+        graphComponent.inputMode.contextMenuInputMode.closeMenu()
       })
     }
-    // Additionally, register to the context menu key to make it work in Chrome.
-    parent.addEventListener('keyup', contextMenuKeyListener, false)
-  }
-}
-
-/**
- * Calculates the location of the center of the given element in absolute coordinates relative to the body element.
- * @param {!HTMLElement} element
- * @returns {!Point}
- */
-function getCenterInPage(element) {
-  let left = element.clientWidth / 2.0
-  let top = element.clientHeight / 2.0
-  while (element.offsetParent) {
-    left += element.offsetLeft
-    top += element.offsetTop
-    element = element.offsetParent
-  }
-  return new Point(left, top)
+    item.element = itemContainer
+  })
+  tempParent.removeChild(svg)
+  const container = document.createElement('div')
+  container.setAttribute('transform', `translate(${location.x} ${location.y})`)
+  container.appendChild(svg)
+  return container
 }

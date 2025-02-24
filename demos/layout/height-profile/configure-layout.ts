@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,13 +27,12 @@
  **
  ***************************************************************************/
 import {
+  ConstraintOrientation,
   type IGraph,
   OrganicLayout,
-  OrganicLayoutConstraintOrientation,
-  OrganicLayoutData,
-  OrganicLayoutScope
-} from 'yfiles'
-import { getWayPoint, NodeType } from './resources/TrekkingData'
+  OrganicLayoutData
+} from '@yfiles/yfiles'
+import { getWayPoint, MultiPageNodeType } from './resources/TrekkingData'
 import { SCALED_MAX_Y } from './scale-data'
 
 /**
@@ -51,36 +50,34 @@ export function configureLayout(graph: IGraph): {
   // layout algorithm
   const organicLayout = new OrganicLayout({
     deterministic: true,
-    minimumNodeDistance: 15,
-    preferredEdgeLength: 20,
-    scope: OrganicLayoutScope.SUBSET
+    defaultMinimumNodeDistance: 15,
+    defaultPreferredEdgeLength: 20
   })
 
   // mark the label nodes as affected so that they are arranged by the layout algorithm
   const organicLayoutData = new OrganicLayoutData({
-    affectedNodes: (node) => getWayPoint(node)?.type === NodeType.LABEL
+    scope: {
+      nodes: graph.nodes.filter((node) => getWayPoint(node)?.type === MultiPageNodeType.LABEL)
+    }
   })
 
   // create a constraint for each waypoint-label node pair that forces the algorithm to
   // place the label nodes above their associated waypoints
   const constraints = organicLayoutData.constraints
   for (const edge of graph.edges) {
-    const waypoint = edge.sourceNode!
-    const labelNode = edge.targetNode!
+    const waypoint = edge.sourceNode
+    const labelNode = edge.targetNode
 
     // create a constraint that will place each label node above its associated waypoint
     const { firstSet, secondSet } = constraints.addSeparationConstraint(
-      OrganicLayoutConstraintOrientation.VERTICAL,
+      ConstraintOrientation.VERTICAL,
       0
     )
     firstSet.items = [labelNode]
     secondSet.items = [waypoint]
 
     // create a constraint that will vertically align each waypoint with the associated label node
-    constraints.addAlignmentConstraint(OrganicLayoutConstraintOrientation.VERTICAL).items = [
-      labelNode,
-      waypoint
-    ]
+    constraints.addAlignmentConstraint(ConstraintOrientation.VERTICAL).items = [labelNode, waypoint]
 
     // create a constraint that will place the label of the first waypoint (if this coincides with
     // the y-Axis) above the y-Axis

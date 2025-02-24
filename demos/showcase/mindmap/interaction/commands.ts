@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,8 +34,8 @@ import {
   type ILabelStyle,
   type INode,
   type INodeStyle,
-  Key
-} from 'yfiles'
+  ModifierKeys
+} from '@yfiles/yfiles'
 import { isInLayout, layoutTree } from '../mind-map-layout'
 import {
   getDepth,
@@ -45,7 +45,7 @@ import {
   isRoot,
   setNodeData
 } from '../data-types'
-import { TagChangeUndoUnit } from './TagChangeUndoUnit'
+import { createTagChangeUndoUnit } from './TagChangeUndoUnit'
 import { getEdgeStyle, getLabelStyle, getNodeStyle } from '../styles/styles-support'
 import { hidePopup } from '../node-popup-toolbar'
 import {
@@ -66,9 +66,8 @@ export function initializeCommands(graphComponent: GraphComponent): void {
   const keyboardInputMode = inputMode.keyboardInputMode
 
   // create a child node when INSERT is pressed
-  keyboardInputMode.addKeyBinding({
-    key: Key.INSERT,
-    execute: (_) => {
+  keyboardInputMode.addKeyBinding('Insert', ModifierKeys.NONE, () => {
+    if (canExecuteCreateChild(graphComponent)) {
       const currentItem = graphComponent.currentItem
       if (currentItem) {
         const depth = getDepth(currentItem as INode)
@@ -79,40 +78,34 @@ export function initializeCommands(graphComponent: GraphComponent): void {
           graphComponent
         )
       }
-      return true
-    },
-    canExecute: (_) => canExecuteCreateChild(graphComponent)
+    }
   })
 
   // remove a child node when DELETE is pressed
-  keyboardInputMode.addKeyBinding({
-    key: Key.DELETE,
-    execute: (_) => {
+  keyboardInputMode.addKeyBinding('Delete', ModifierKeys.NONE, () => {
+    if (canExecuteDeleteItem(graphComponent)) {
       hidePopup(graphComponent)
       void executeDeleteItem(graphComponent)
-      return true
-    },
-    canExecute: (_) => canExecuteDeleteItem(graphComponent)
+    }
   })
 
   // expand the subtree when ADD is pressed
-  keyboardInputMode.addKeyBinding({
-    key: Key.ADD,
-    execute: (_) => executeExpandNode(graphComponent),
-    canExecute: (_) => canExecuteExpandNode(graphComponent)
+  keyboardInputMode.addKeyBinding('+', ModifierKeys.NONE, () => {
+    if (canExecuteExpandNode(graphComponent)) {
+      executeExpandNode(graphComponent)
+    }
   })
 
   // collapse the subtree when SUBTRACT is pressed
-  keyboardInputMode.addKeyBinding({
-    key: Key.SUBTRACT,
-    execute: (_) => executeCollapseNode(graphComponent),
-    canExecute: (_) => canExecuteCollapseNode(graphComponent)
+  keyboardInputMode.addKeyBinding('-', ModifierKeys.NONE, () => {
+    if (canExecuteCollapseNode(graphComponent)) {
+      executeCollapseNode(graphComponent)
+    }
   })
 
   // create a sibling node when ENTER is pressed
-  keyboardInputMode.addKeyBinding({
-    key: Key.ENTER,
-    execute: (_) => {
+  keyboardInputMode.addKeyBinding('Enter', ModifierKeys.NONE, () => {
+    if (canExecuteCreateSibling(graphComponent)) {
       const currentItem = graphComponent.currentItem
       if (currentItem) {
         const depth = getDepth(currentItem as INode)
@@ -123,9 +116,7 @@ export function initializeCommands(graphComponent: GraphComponent): void {
           graphComponent
         )
       }
-      return true
-    },
-    canExecute: (_) => canExecuteCreateSibling(graphComponent)
+    }
   })
 }
 
@@ -138,7 +129,7 @@ export function canExecuteToggleCollapseState(
   graphComponent: GraphComponent,
   node?: INode
 ): boolean {
-  return !isInLayout() && (!!node || graphComponent.selection.selectedNodes.size > 0)
+  return !isInLayout() && (!!node || graphComponent.selection.nodes.size > 0)
 }
 
 /**
@@ -150,7 +141,7 @@ export function canExecuteToggleCollapseState(
  */
 export function executeToggleCollapseState(graphComponent: GraphComponent, node?: INode): boolean {
   if (!node) {
-    node = graphComponent.selection.selectedNodes.at(0)!
+    node = graphComponent.selection.nodes.at(0)!
   }
   void collapseNode(node, !isCollapsed(node), graphComponent)
   return true
@@ -242,7 +233,7 @@ export async function executeCreateChild(
     // open label editor after the child node is created
     const inputMode = graphComponent.inputMode as GraphEditorInputMode | null
     if (inputMode && node.labels.size > 0) {
-      void inputMode.editLabel(node.labels.get(0))
+      void inputMode.editLabelInputMode.startLabelEditing(node.labels.at(0)!)
     }
 
     compoundEdit.commit()
@@ -259,8 +250,8 @@ export async function executeCreateChild(
  */
 function canExecuteDeleteItem(graphComponent: GraphComponent): boolean {
   const selection = graphComponent.selection
-  const edge = selection.selectedEdges.at(0)
-  const node = selection.selectedNodes.at(0)
+  const edge = selection.edges.at(0)
+  const node = selection.nodes.at(0)
 
   return !isInLayout() && ((!!edge && isCrossReference(edge)) || (!!node && !isRoot(node)))
 }
@@ -271,7 +262,7 @@ function canExecuteDeleteItem(graphComponent: GraphComponent): boolean {
  * @see canExecuteDeleteItem
  */
 export async function executeDeleteItem(graphComponent: GraphComponent): Promise<boolean> {
-  const edge = graphComponent.selection.selectedEdges.at(0)
+  const edge = graphComponent.selection.edges.at(0)
 
   const compoundEdit = graphComponent.graph.beginEdit('DeleteItem', 'DeleteItem')
 
@@ -281,7 +272,7 @@ export async function executeDeleteItem(graphComponent: GraphComponent): Promise
     compoundEdit.commit()
   }
 
-  const node = graphComponent.selection.selectedNodes.at(0)
+  const node = graphComponent.selection.nodes.at(0)
   if (node) {
     removeSubtree(getFullGraph(graphComponent), node)
     await layoutTree(graphComponent)
@@ -296,7 +287,7 @@ export async function executeDeleteItem(graphComponent: GraphComponent): Promise
  * @see executeExpandNode
  */
 function canExecuteExpandNode(graphComponent: GraphComponent): boolean {
-  const node = graphComponent.selection.selectedNodes.at(0)
+  const node = graphComponent.selection.nodes.at(0)
   return !!node && isCollapsed(node) && !isInLayout()
 }
 
@@ -306,7 +297,7 @@ function canExecuteExpandNode(graphComponent: GraphComponent): boolean {
  * @see canExecuteExpandNode
  */
 function executeExpandNode(graphComponent: GraphComponent): boolean {
-  const node = graphComponent.selection.selectedNodes.at(0)
+  const node = graphComponent.selection.nodes.at(0)
   if (node) {
     void collapseNode(node, false, graphComponent)
     return true
@@ -320,7 +311,7 @@ function executeExpandNode(graphComponent: GraphComponent): boolean {
  * @see executeCollapseNode
  */
 function canExecuteCollapseNode(graphComponent: GraphComponent): boolean {
-  const node = graphComponent.selection.selectedNodes.at(0)
+  const node = graphComponent.selection.nodes.at(0)
   return !!node && !isCollapsed(node) && !isInLayout()
 }
 
@@ -330,7 +321,7 @@ function canExecuteCollapseNode(graphComponent: GraphComponent): boolean {
  * @see canExecuteCollapseNode
  */
 function executeCollapseNode(graphComponent: GraphComponent): boolean {
-  const node = graphComponent.selection.selectedNodes.at(0)
+  const node = graphComponent.selection.nodes.at(0)
   if (node) {
     void collapseNode(node, true, graphComponent)
     return true
@@ -345,7 +336,7 @@ function executeCollapseNode(graphComponent: GraphComponent): boolean {
  * @see executeCreateSibling
  */
 function canExecuteCreateSibling(graphComponent: GraphComponent): boolean {
-  const node = graphComponent.selection.selectedNodes.at(0)
+  const node = graphComponent.selection.nodes.at(0)
   return !!node && !isRoot(node) && !isInLayout()
 }
 
@@ -360,7 +351,7 @@ async function executeCreateSibling(
   labelStyle: ILabelStyle,
   graphComponent: GraphComponent
 ): Promise<boolean> {
-  const node = graphComponent.selection.selectedNodes.first()
+  const node = graphComponent.selection.nodes.first()!
   const nodeData = getNodeData(node)
   const fullGraph = getFullGraph(graphComponent)
 
@@ -376,7 +367,7 @@ async function executeCreateSibling(
 
     // open label editor after the sibling is created
     if (graphComponent.inputMode instanceof GraphEditorInputMode && sibling.labels.size > 0) {
-      void graphComponent.inputMode.editLabel(sibling.labels.get(0))
+      void graphComponent.inputMode.editLabelInputMode.startLabelEditing(sibling.labels.get(0))
     }
 
     compoundEdit.commit()
@@ -417,7 +408,7 @@ function setStateLabel(node: INode, stateIconIndex: number, graphComponent: Grap
   // create a custom undo unit
   const filteredGraph = graphComponent.graph as FilteredGraphWrapper
   filteredGraph.undoEngine!.addUnit(
-    new TagChangeUndoUnit('Set State Label', 'Set State Label', oldData, newData, node)
+    createTagChangeUndoUnit('Set State Label', oldData, newData, node)
   )
 
   const fullGraph = getFullGraph(graphComponent)

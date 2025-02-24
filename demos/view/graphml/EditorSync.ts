@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,17 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  HashMap,
-  IEdge,
-  IGraph,
-  IGraphElementIdProvider,
-  ILabelOwner,
-  IModelItem,
-  INode,
-  ParseEventArgs,
-  WriteEventArgs
-} from 'yfiles'
+import { HashMap, IGraph, ILabelOwner, IModelItem, ParseEventArgs } from '@yfiles/yfiles'
 import type { Editor, Position, TextMarker } from 'codemirror'
 import * as CodeMirror from 'codemirror'
 import 'codemirror/lib/codemirror.css'
@@ -51,7 +41,7 @@ import 'codemirror/addon/search/searchcursor'
  * @yjs:keep = setValue,getValue
  */
 export class EditorSync {
-  private readonly itemToIdMap: HashMap<IModelItem, string> = new HashMap()
+  public readonly itemToIdMap: HashMap<IModelItem, string> = new HashMap()
   private readonly itemToMarkerMap: HashMap<IModelItem, TextMarker<any>> = new HashMap()
   private readonly markerToItemMap: HashMap<TextMarker<any>, IModelItem> = new HashMap()
   private readonly contentChanged: () => void
@@ -85,7 +75,7 @@ export class EditorSync {
   /**
    * Dispatched when the GraphML representation of a graph item has been selected in the editor.
    */
-  addItemSelectedListener(listener: (evt: { item: IModelItem }) => void): void {
+  setItemSelectedListener(listener: (evt: { item: IModelItem }) => void): void {
     this.itemSelectedListener = listener
   }
 
@@ -150,50 +140,6 @@ export class EditorSync {
     this.setMarkers()
     // clear text in output area
     setOutput('')
-  }
-
-  /**
-   * We need to extract the (internal) GraphML IDs for nodes and edges during parsing and writing,
-   * so we can identify the corresponding GraphML snippets later.
-   */
-  onWriting(args: WriteEventArgs): void {
-    this.itemToIdMap.clear()
-    const idProvider = args.context.lookup(
-      IGraphElementIdProvider.$class
-    ) as IGraphElementIdProvider
-
-    args.context.writeEvents.addNodeWrittenListener((_, evt) => {
-      const node = evt.item
-      const nodeId = idProvider.getNodeId(evt.context, node)
-      this.itemToIdMap.set(node, nodeId)
-    })
-
-    args.context.writeEvents.addEdgeWrittenListener((_, evt) => {
-      const edge = evt.item
-      const edgeId = idProvider.getEdgeId(evt.context, edge)
-      this.itemToIdMap.set(edge, edgeId)
-    })
-  }
-
-  /**
-   * Called when parsing of a document is about to begin.
-   */
-  onParsing(args: ParseEventArgs): void {
-    this.itemToIdMap.clear()
-
-    args.context.parseEvents.addNodeParsedListener((_, evt) => {
-      const xmlElement = evt.element!
-      const node = evt.context.getCurrent(INode.$class)
-      const id = xmlElement.getAttribute('id')
-      this.itemToIdMap.set(node, id)
-    })
-
-    args.context.parseEvents.addEdgeParsedListener((_, evt) => {
-      const xmlElement = evt.element!
-      const edge = evt.context.getCurrent(IEdge.$class)
-      const id = xmlElement.getAttribute('id')
-      this.itemToIdMap.set(edge, id)
-    })
   }
 
   /**

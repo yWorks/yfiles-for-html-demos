@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Partial Layout Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -57,7 +57,6 @@
         align-self: center;
       }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -97,7 +96,7 @@
       <span class="demo-separator"></span>
 
       <select id="select-sample" title="Choose from predefined samples">
-        <option value="hierarchic">Scenario: Hierarchic</option>
+        <option value="hierarchical">Scenario: Hierarchical</option>
         <option value="orthogonal">Scenario: Orthogonal</option>
         <option value="organic">Scenario: Organic</option>
         <option value="circular">Scenario: Circular</option>
@@ -106,7 +105,7 @@
 
       <span class="demo-separator"></span>
 
-      <button id="layout" title="Run Hierarchic Layout" class="demo-icon-yIconLayout labeled">
+      <button id="layout" title="Run Hierarchical Layout" class="demo-icon-yIconLayout labeled">
         Layout
       </button>
     </div>
@@ -153,10 +152,10 @@
           partial layout click on the play button.
         </p>
         <p>
-          Different scenarios for hierarchic, orthogonal, organic or circular layout are available.
-          A scenario includes a graph arranged with the corresponding layout style and some new
-          graph elements that shall be placed by <em>PartialLayout</em>. In addition suitable
-          configuration options are preset.
+          Different scenarios for hierarchical, orthogonal, organic or circular layout are
+          available. A scenario includes a graph arranged with the corresponding layout style and
+          some new graph elements that shall be placed by <em>PartialLayout</em>. In addition
+          suitable configuration options are preset.
         </p>
       </div>
     </aside>
@@ -175,7 +174,7 @@
             </select>
             <label for="subgraph-layout" class="option-label">Subgraph Layout</label>
             <select id="subgraph-layout" class="option-element">
-              <option value="hierarchic">Hierarchic</option>
+              <option value="hierarchical">Hierarchical</option>
               <option value="orthogonal">Orthogonal</option>
               <option value="organic">Organic</option>
               <option value="circular">Circular</option>
@@ -189,7 +188,7 @@
             <select id="edge-routing-style" class="option-element">
               <option value="automatic">Automatic</option>
               <option value="orthogonal">Orthogonal</option>
-              <option value="straightline">Straightline</option>
+              <option value="straight-line">Straight-line</option>
               <option value="organic">Organic</option>
               <option value="octilinear">Octilinear</option>
             </select>
@@ -220,8 +219,8 @@
             </dd>
             <dt><b>Subgraph Layout</b></dt>
             <dd>
-              The layout algorithm to apply to subgraph components: hierarchic, orthogonal, organic
-              or circular. Furthermore, the components can remain <em>Unchanged</em>.
+              The layout algorithm to apply to subgraph components: hierarchical, orthogonal,
+              organic or circular. Furthermore, the components can remain <em>Unchanged</em>.
             </dd>
             <dt><b>Subgraph Positioning Strategy</b></dt>
             <dd>

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,9 +28,7 @@
  ***************************************************************************/
 import {
   Arrow,
-  Class,
-  DefaultLabelStyle,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
@@ -38,29 +36,27 @@ import {
   GraphSnapContext,
   GroupNodeLabelModel,
   GroupNodeStyle,
-  HierarchicLayout,
+  HierarchicalLayout,
   HorizontalTextAlignment,
   IGraph,
-  Insets,
   LabelShape,
-  LabelSnapContext,
+  LabelStyle,
   LayoutExecutor,
   License,
   NinePositionsEdgeLabelModel,
   PolylineEdgeStyle,
   RectangleNodeStyle,
-  ScrollBarVisibility,
   Size,
-  Theme,
   VerticalTextAlignment
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
+let graphOverviewComponent: GraphOverviewComponent
 
 type Mode = 'light' | 'dark'
 
@@ -71,16 +67,14 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   // initialize a graph component with a custom theme
-  initializeGraphComponentWithTheme()
+  graphComponent = new GraphComponent('#graphComponent')
 
   // initialize a GraphOverviewComponent
-  new GraphOverviewComponent('overviewComponent', graphComponent)
+  graphOverviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
 
   // configure input mode, snapping and undo-engine
   graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
-    snapContext: new GraphSnapContext(),
-    labelSnapContext: new LabelSnapContext()
+    snapContext: new GraphSnapContext()
   })
 
   // configures default styles for newly created graph elements
@@ -90,14 +84,12 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 50 })
-  )
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 50 }))
+  await graphComponent.fitGraphBounds()
 
   // initial selection of a single node to make the handles visible
-  graphComponent.selection.setSelected(graphComponent.graph.nodes.at(2)!, true)
+  graphComponent.selection.add(graphComponent.graph.nodes.at(2)!)
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
@@ -138,32 +130,12 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 }
 
 /**
- * Initializes a new graph component with a custom theme.
- */
-function initializeGraphComponentWithTheme(): void {
-  // Define the theme, consisting of a general variant, a scale and the colors
-  // (see the documentation for more details).
-  // This theme and its colors remain the same for the light and the dark mode of this demo,
-  // which could in practice be the case if theme colors are, e.g., based on corporate design colors.
-  const theme = new Theme({
-    variant: 'simple-round',
-    scale: 2,
-    primaryColor: '#FCFDFE',
-    secondaryColor: '#F69454',
-    backgroundColor: '#EE693F'
-  })
-  graphComponent = new GraphComponent({ selector: '#graphComponent', theme })
-
-  graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
-  graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.AS_NEEDED_DYNAMIC
-}
-
-/**
  * Switches between the light and dark mode of this demo application.
  */
 function enableMode(mode: Mode) {
-  const backgroundColor = mode === 'dark' ? '#3c4253' : '#fff'
-  graphComponent.div.style.backgroundColor = backgroundColor
+  const isDarkMode = mode === 'dark'
+  const backgroundColor = isDarkMode ? '#3c4253' : '#fff'
+  graphComponent.htmlElement.style.backgroundColor = backgroundColor
 
   // change the content area color of the group nodes
   const groupNodeStyle = graphComponent.graph.groupNodeDefaults.style as GroupNodeStyle
@@ -171,14 +143,23 @@ function enableMode(mode: Mode) {
 
   // change the stroke and target arrow color of the edges to a color which is
   // offers good visibility on the background
-  const stroke = mode === 'dark' ? '#FCFDFE' : '#605003'
+  const color = isDarkMode ? '#FCFDFE' : '#605003'
   const edgeStyle = graphComponent.graph.edgeDefaults.style as PolylineEdgeStyle
-  edgeStyle.stroke = `1.5px ${stroke}`
+  edgeStyle.stroke = `1.5px ${color}`
   edgeStyle.targetArrow = new Arrow({
-    color: stroke,
-    stroke: stroke,
+    fill: color,
+    stroke: color,
     type: 'triangle'
   })
+
+  // update CSS variables
+  if (isDarkMode) {
+    graphComponent.htmlElement.classList.add('dark')
+    graphOverviewComponent.htmlElement.classList.add('dark')
+  } else {
+    graphComponent.htmlElement.classList.remove('dark')
+    graphOverviewComponent.htmlElement.classList.remove('dark')
+  }
 
   // indicate that the component needs to be updated
   graphComponent.invalidate()
@@ -206,20 +187,20 @@ function initializeGraph(graph: IGraph): void {
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: defaultNodeColor,
     stroke: `2px solid ${defaultNodeColor}`,
-    contentAreaInsets: 15
+    contentAreaPadding: 15
   })
 
   // define default label styles for node, group nodes and edges
-  const nodeLabelStyle = new DefaultLabelStyle()
+  const nodeLabelStyle = new LabelStyle()
   nodeLabelStyle.shape = LabelShape.ROUND_RECTANGLE
   nodeLabelStyle.backgroundFill = '#f9e99c'
   nodeLabelStyle.textFill = '#605003'
   nodeLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
   nodeLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
-  nodeLabelStyle.insets = new Insets(4, 2, 4, 1)
+  nodeLabelStyle.padding = [2, 4, 1, 4]
   graph.nodeDefaults.labels.style = nodeLabelStyle
 
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     verticalTextAlignment: 'center',
     textFill: 'white'
   })
@@ -230,10 +211,12 @@ function initializeGraph(graph: IGraph): void {
 
   // set sizes and label locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
-  graph.edgeDefaults.labels.layoutParameter = NinePositionsEdgeLabelModel.TARGET_ABOVE
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
+  graph.edgeDefaults.labels.layoutParameter = new NinePositionsEdgeLabelModel().createParameter(
+    'target-above'
+  )
   graph.groupNodeDefaults.labels.layoutParameter =
     new GroupNodeLabelModel().createTabBackgroundParameter()
 

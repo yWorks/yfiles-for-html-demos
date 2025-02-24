@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,19 +27,19 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   EdgePathLabelModel,
   type EdgesSource,
   type GraphBuilder,
   IconLabelStyle,
   type ILabelModelParameter,
   type ILabelStyle,
-  InteriorLabelModel,
-  InteriorStretchLabelModel,
+  InteriorNodeLabelModel,
   type LabelCreator,
+  LabelStyle,
   type NodesSource,
-  Size
-} from 'yfiles'
+  Size,
+  StretchNodeLabelModel
+} from '@yfiles/yfiles'
 import type { ConnectionData, EntityData } from '../DataTypes'
 
 export function configureNodeLabelParameter(
@@ -47,19 +47,19 @@ export function configureNodeLabelParameter(
 ): void {
   // position the label on the top of the node
   nameLabelCreator.layoutParameterProvider = (): ILabelModelParameter =>
-    InteriorStretchLabelModel.NORTH
+    StretchNodeLabelModel.TOP
 }
 
 export function configureDefaultPlacement(
   typeLabelCreator: LabelCreator<EntityData>
 ): void {
-  typeLabelCreator.defaults.layoutParameter = InteriorLabelModel.CENTER
+  typeLabelCreator.defaults.layoutParameter = InteriorNodeLabelModel.CENTER
 }
 
 export function configureLabelDefaultStyles(
   nameLabelCreator: LabelCreator<EntityData>
 ): void {
-  nameLabelCreator.defaults.style = new DefaultLabelStyle({
+  nameLabelCreator.defaults.style = new LabelStyle({
     horizontalTextAlignment: 'center'
   })
 }
@@ -84,16 +84,16 @@ export function configureLabelStylingWithProvider(
   // create a provider that will assign a new style, based on the type property
   nameLabelCreator.styleProvider = (data): ILabelStyle => {
     if (data.type === 'Corporation') {
-      return new DefaultLabelStyle({
+      return new LabelStyle({
         backgroundFill: orange,
         horizontalTextAlignment: 'center'
       })
     } else {
       return new IconLabelStyle({
-        icon,
+        href: icon,
         iconSize: new Size(14, 14),
-        iconPlacement: InteriorLabelModel.WEST,
-        wrapped: new DefaultLabelStyle({
+        iconPlacement: InteriorNodeLabelModel.LEFT,
+        wrappedStyle: new LabelStyle({
           backgroundFill: pink,
           horizontalTextAlignment: 'center'
         })
@@ -125,7 +125,7 @@ export function configureEdgeLabels(
 ): void {
   // bind the label text data and add some more text information
   const edgeLabelCreator = edgesSource.edgeCreator.createLabelBinding((data) =>
-    data.ownership ?? 0 ? `Owns ${data.ownership}%` : ''
+    (data.ownership ?? 0) ? `Owns ${data.ownership}%` : ''
   )
   const red = '#ab2346'
   const grey = '#1a3442'
@@ -133,7 +133,7 @@ export function configureEdgeLabels(
   edgeLabelCreator.layoutParameterProvider = (): ILabelModelParameter =>
     new EdgePathLabelModel({
       autoRotation: false
-    }).createDefaultParameter()
+    }).createRatioParameter()
 
   // configure its style
   edgeLabelCreator.defaults.shareStyleInstance = false
@@ -141,6 +141,7 @@ export function configureEdgeLabels(
     return (data.ownership ?? 0) > 50 ? red : grey
   })
 }
+
 export function createNodesSource(
   graphBuilder: GraphBuilder
 ): NodesSource<EntityData> {

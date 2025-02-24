@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>04 Setting Styles - Tutorial: Basic Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -197,12 +195,12 @@ graph.<span class="hljs-property">nodeDefaults</span>.<span class="hljs-property
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> defaultLabelStyle = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultLabelStyle</span>({
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> defaultLabelStyle = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LabelStyle</span>({
   <span class="hljs-attr">font</span>: <span class="hljs-string">&#x27;12px Tahoma&#x27;</span>,
   <span class="hljs-attr">textFill</span>: <span class="hljs-string">&#x27;black&#x27;</span>,
-  <span class="hljs-attr">backgroundFill</span>: <span class="hljs-string">&#x27;#8fff&#x27;</span>,
+  <span class="hljs-attr">backgroundFill</span>: <span class="hljs-string">&#x27;#ffffff87&#x27;</span>,
   <span class="hljs-attr">shape</span>: <span class="hljs-string">&#x27;round-rectangle&#x27;</span>,
-  <span class="hljs-attr">insets</span>: [<span class="hljs-number">2</span>, <span class="hljs-number">5</span>]
+  <span class="hljs-attr">padding</span>: [<span class="hljs-number">2</span>, <span class="hljs-number">5</span>]
 })
 
 <span class="hljs-comment">// Set the defined style as the default for both edge and node labels</span>
@@ -247,7 +245,7 @@ graph.<span class="hljs-title function_">createEdge</span>({
 graph.<span class="hljs-title function_">addLabel</span>({
   <span class="hljs-attr">text</span>: <span class="hljs-string">&#x27;New Label&#x27;</span>,
   <span class="hljs-attr">owner</span>: node,
-  <span class="hljs-attr">style</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultLabelStyle</span>({ <span class="hljs-attr">backgroundFill</span>: <span class="hljs-string">&#x27;#a6a6c0&#x27;</span> })
+  <span class="hljs-attr">style</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">LabelStyle</span>({ <span class="hljs-attr">backgroundFill</span>: <span class="hljs-string">&#x27;#a6a6c0&#x27;</span> })
 })</code></pre>
                 </div>
               </div>
@@ -314,10 +312,10 @@ graph.<span class="hljs-title function_">setStyle</span>(edge, edgeStyle)</code>
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> labelStyle = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultLabelStyle</span>({
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> labelStyle = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LabelStyle</span>({
   <span class="hljs-attr">backgroundStroke</span>: <span class="hljs-string">&#x27;2px #46A8D5&#x27;</span>,
   <span class="hljs-attr">backgroundFill</span>: <span class="hljs-string">&#x27;#b4dbed&#x27;</span>,
-  <span class="hljs-attr">insets</span>: [<span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>]
+  <span class="hljs-attr">padding</span>: [<span class="hljs-number">3</span>, <span class="hljs-number">5</span>, <span class="hljs-number">3</span>, <span class="hljs-number">5</span>]
 })
 
 graph.<span class="hljs-title function_">setStyle</span>(label, labelStyle)</code></pre>

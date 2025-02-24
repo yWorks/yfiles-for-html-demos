@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DefaultBendCreator,
   GeneralPath,
   IBend,
   IBendCreator,
@@ -37,24 +36,22 @@ import {
   IInputModeContext,
   IListEnumerable,
   IPoint,
-  Point,
-  UndoUnitBase
-} from 'yfiles'
-
+  IUndoUnit,
+  Point
+} from '@yfiles/yfiles'
 /**
  * Custom bend creator for bezier edges
  * This implementation always creates collinear triples of bends since the bezier edge model expects this.
  * In addition, the new bends and the neighboring bends are positioned so that the curve shape stays constant.
  */
 export class BezierBendCreator extends BaseClass(IBendCreator) {
-  /**
-   * Fallback for bend creation if the existing model is not consistent
-   * @type {!IBendCreator}
-   */
-  static get fallBackCreator() {
-    return new DefaultBendCreator()
+  edge
+  originalBendCreator
+  constructor(edge, originalBendCreator) {
+    super()
+    this.edge = edge
+    this.originalBendCreator = originalBendCreator
   }
-
   /**
    * If the existing number of bends is 2 mod 3 (i.e. the bends are consistent with
    * what the bezier style expects),
@@ -62,33 +59,31 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
    * in a way that the shape of the curve is not changed initially and returns the middle bend.
    * If there are no bends at all, it creates a triple plus two initial and final control bends, all of them collinear.
    * Otherwise, the fallback bend creator is used to create a bend with its default strategy.
-   * @param {!IInputModeContext} context the input mode context
-   * @param {!IGraph} graph the graph
-   * @param {!IEdge} edge the edge
-   * @param {!Point} location the bend location
-   * @returns {number} The index of middle bend of a control point triple if such a triple was created,
+   * @param context the input mode context
+   * @param graph the graph
+   * @param location the bend location
+   * @returns The index of middle bend of a control point triple if such a triple was created,
    * or the index of the newly created single bend.
    */
-  createBend(context, graph, edge, location) {
-    switch (edge.bends.size) {
+  createBend(context, graph, location) {
+    switch (this.edge.bends.size) {
       case 0: {
-        const spl = edge.sourcePort.location
-        const tpl = edge.targetPort.location
-
+        const spl = this.edge.sourcePort.location
+        const tpl = this.edge.targetPort.location
         // a single linear segment... we just insert 5 collinear bends adjusted to the angle of the linear segment,
         // approximately evenly spaced
         graph.addBend(
-          edge,
+          this.edge,
           location
             .subtract(spl)
             .multiply(1 / 4)
             .add(spl),
           0
         )
-        graph.addBend(edge, location.subtract(location.subtract(spl).multiply(1 / 4)), 1)
-        graph.addBend(edge, location, 2)
+        graph.addBend(this.edge, location.subtract(location.subtract(spl).multiply(1 / 4)), 1)
+        graph.addBend(this.edge, location, 2)
         graph.addBend(
-          edge,
+          this.edge,
           location
             .subtract(spl)
             .multiply(1 / 4)
@@ -96,7 +91,7 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
           3
         )
         graph.addBend(
-          edge,
+          this.edge,
           location.add(
             tpl
               .subtract(location)
@@ -109,23 +104,20 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
       }
       case 1:
         // Use the default strategy to insert a single bend at the correct index
-        return BezierBendCreator.fallBackCreator.createBend(context, graph, edge, location)
+        return this.originalBendCreator.createBend(context, graph, location)
       default: {
-        const pathPoints = IEdge.getPathPoints(edge)
+        const pathPoints = IEdge.getPathPoints(this.edge)
         if (pathPoints.size % 3 === 1) {
           // Consistent number of existing points
           // Try to insert a smooth bend
           // I.e. a triple of three collinear bends and adjust the neighbor bends
-
           // Various quality measures and counters
           let segmentIndex = 0
           let pathCounter = 0
           let bestDistanceSqr = Number.POSITIVE_INFINITY
           let bestRatio = Number.NaN
-
           // The index of the segment where we want to create the bend in the end
           let bestIndex = -1
-
           // Find the best segment
           while (pathCounter + 3 < pathPoints.size) {
             // Get the control points defining the current segment
@@ -143,7 +135,6 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
             const fragment = new GeneralPath(2)
             fragment.moveTo(cp0)
             fragment.cubicTo(cp1, cp2, cp3)
-
             // Try to find the projection onto the fragment
             const ratio = fragment.getProjection(location, 0)
             if (ratio) {
@@ -168,8 +159,7 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
           if (bestIndex !== -1) {
             // Actually found a segment
             // For the drag, we want to move the middle bend
-            return BezierBendCreator.createBends(graph, edge, bestIndex, bestRatio, pathPoints)
-              .index
+            return this.createBends(graph, bestIndex, bestRatio, pathPoints).index
           }
           // No best segment found (for whatever reason) - we don't want to create a bend so that we don't mess up anything
           return -1
@@ -177,31 +167,27 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
           // No consistent number of bends - just insert a single bend
           // We could also see whether we actually would have a cubic segment on the path, and treat that differently
           // However, why bother - just create the edge with a correct number of points instead
-          return BezierBendCreator.fallBackCreator.createBend(context, graph, edge, location)
+          return this.originalBendCreator.createBend(context, graph, location)
         }
       }
     }
   }
-
   /**
    * Create a triple of control bends and adjust the neighboring bends
-   * @param {!IGraph} graph The graph where the bends are created
-   * @param {!IEdge} edge The edge where the bends are created
-   * @param {number} segmentIndex The segment index
-   * @param {number} ratio The ratio on the segment
-   * @param {!IListEnumerable.<IPoint>} pathPoints The existing control points
-   * @returns {!IBend} The middle bend of a control point triple
+   * @param graph The graph where the bends are created
+   * @param segmentIndex The segment index
+   * @param ratio The ratio on the segment
+   * @param pathPoints The existing control points
+   * @returns The middle bend of a control point triple
    */
-  static createBends(graph, edge, segmentIndex, ratio, pathPoints) {
+  createBends(graph, segmentIndex, ratio, pathPoints) {
     // Create 3 bends and adjust the neighbors
     // The first bend we need to touch is at startIndex
     const startIndex = segmentIndex * 3
-
     // This holds the new coordinates left and right of the split point
     // We don't actually need all of them, but this keeps the algorithm more straightforward.
     const left = new Array(4)
     const right = new Array(4)
-
     // Determine the new control points to cleanly split the curve
     BezierBendCreator.getCubicSplitPoints(
       ratio,
@@ -214,17 +200,14 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
       left,
       right
     )
-
     // Previous control point - does always exist as a bend, given our precondition
-    const previousBend = edge.bends.get(startIndex)
+    const previousBend = this.edge.bends.get(startIndex)
     // Next control point - also always exists given the precondition for bend counts (i.e. there have to be at least two)
-    const nextBend = edge.bends.get(startIndex + 1)
-
+    const nextBend = this.edge.bends.get(startIndex + 1)
     // We create the three new bends between previous bend and next bend and adjust these two.
     // We don't have to adjust more bends, since we just have a cubic curve.
     let bendToMove
     const engine = graph.undoEngine
-
     // Wrap everything into a single compound edit, so that everything can be undone in a single unit
     const edit = graph.beginEdit('Create Bezier Bend', 'Create Bezier Bend')
     try {
@@ -236,13 +219,11 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
         // Add unit to engine
         engine.addUnit(new BendLocationUndoUnit(graph, previousBend, oldLocation))
       }
-
       // Insert the new triple, using the values from left and right in order
-      graph.addBend(edge, left[2], startIndex + 1)
-      bendToMove = graph.addBend(edge, left[3], startIndex + 2)
+      graph.addBend(this.edge, left[2], startIndex + 1)
+      bendToMove = graph.addBend(this.edge, left[3], startIndex + 2)
       // right[0] == left[3], so right[1] is the next new control point
-      graph.addBend(edge, right[1], startIndex + 3)
-
+      graph.addBend(this.edge, right[1], startIndex + 3)
       // Adjust the next bend
       oldLocation = nextBend.location.toPoint()
       graph.setBendLocation(nextBend, right[2])
@@ -256,64 +237,59 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
       edit.cancel()
       throw new Error('Bend creation failed21')
     }
-
     return bendToMove
   }
-
   /**
    * For an array of `controlPoints` defining a cubic segment
    * and a given `ratio` on the segment, populate the `left`
    * and `right` arrays with new control points so that the cubic can be
    * split smoothly at the `ratio`.
-   * @param {number} ratio
-   * @param {!Array.<Point>} controlPoints
-   * @param {!Array.<Point>} left
-   * @param {!Array.<Point>} right
    */
   static getCubicSplitPoints(ratio, controlPoints, left, right) {
     // Determine the new control points
     // Based on de Casteljau's algorithm, but iterations unrolled, since we have a fixed curve order
     const c11 = controlPoints[1].multiply(1 - ratio).add(controlPoints[2].multiply(ratio))
-
     left[0] = controlPoints[0]
     right[3] = controlPoints[3]
     left[1] = left[0].multiply(1 - ratio).add(controlPoints[1].multiply(ratio))
     right[2] = controlPoints[2].multiply(1 - ratio).add(right[3].multiply(ratio))
-
     left[2] = left[1].multiply(1 - ratio).add(c11.multiply(ratio))
     right[1] = c11.multiply(1 - ratio).add(right[2].multiply(ratio))
-
     right[0] = left[3] = left[2].multiply(1 - ratio).add(right[1].multiply(ratio))
   }
 }
-
 /**
  * Custom undo unit for bend location changes
  */
-class BendLocationUndoUnit extends UndoUnitBase {
+class BendLocationUndoUnit extends BaseClass(IUndoUnit) {
   oldValue
   graph
   bend
   newValue
-
-  /**
-   * @param {!IGraph} graph
-   * @param {!IBend} bend
-   * @param {!Point} oldValue
-   */
   constructor(graph, bend, oldValue) {
-    super('Set bend location')
+    super()
     this.graph = graph
     this.bend = bend
     this.oldValue = oldValue
     this.newValue = bend.location.toPoint()
   }
-
+  get undoName() {
+    return 'Set bend location'
+  }
+  get redoName() {
+    return 'Set bend location'
+  }
   undo() {
     this.graph.setBendLocation(this.bend, this.oldValue)
   }
-
   redo() {
     this.graph.setBendLocation(this.bend, this.newValue)
   }
+  tryMergeUnit(unit) {
+    return false
+  }
+  tryReplaceUnit(unit) {
+    return false
+  }
+  dispose() {}
 }

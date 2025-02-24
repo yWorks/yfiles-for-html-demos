@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,51 +27,36 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  LabelStyle,
   License,
   PolylineEdgeStyle,
   Rect
-} from 'yfiles'
-import SampleData from './D3ChartNodesData.js'
-import D3ChartNodeStyle from './D3ChartNodeStyle.js'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/** @type {GraphComponent} */
+} from '@yfiles/yfiles'
+import SampleData from './D3ChartNodesData'
+import D3ChartNodeStyle from './D3ChartNodeStyle'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 let graphComponent
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
-
   // create a new graph component
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // load an initial graph
   loadSampleGraph()
-
   // initialize the input mode
   const graphEditorInputMode = new GraphEditorInputMode()
-  graphEditorInputMode.addNodeCreatedListener((_, evt) => {
+  graphEditorInputMode.addEventListener('node-created', (evt) => {
     // put random data in tag of created node
     evt.item.tag = createRandomSparklineData()
   })
   graphComponent.inputMode = graphEditorInputMode
-
   // set an interval to randomly change the sparkline data of some nodes
   setInterval(modifyData, 500)
 }
-
 /**
  * Continuously modifies the node data used as the input for the
  * sparkline visualization to simulate updating data from a server.
@@ -85,15 +70,12 @@ function modifyData() {
   // make the graphComponent repaint it's content
   graphComponent.invalidate()
 }
-
 /**
  * Creates an array with random data.
- * @returns {!Array.<number>}
  */
 function createRandomSparklineData() {
   return Array.from({ length: 10 + Math.floor(Math.random() * 5) }, () => Math.random() * 10 + 1)
 }
-
 /**
  * Creates the initial sample graph.
  */
@@ -102,16 +84,14 @@ function loadSampleGraph() {
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new D3ChartNodeStyle()
   graph.nodeDefaults.size = [100, 50]
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 3
-  }).createParameter(ExteriorLabelModelPosition.NORTH)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 3
+  }).createParameter('top')
+  graph.nodeDefaults.labels.style = new LabelStyle({
     backgroundFill: 'rgba(255, 255, 255, 0.6)',
-    insets: [2, 3, 2, 3]
+    padding: [2, 3, 2, 3]
   })
-
   graph.edgeDefaults.style = new PolylineEdgeStyle()
-
   const defaultNodeSize = graphComponent.graph.nodeDefaults.size
   const builder = new GraphBuilder(graphComponent.graph)
   builder.createNodesSource({
@@ -123,10 +103,7 @@ function loadSampleGraph() {
     tag: () => createRandomSparklineData()
   })
   builder.createEdgesSource(SampleData.edges, 'source', 'target', 'id')
-
   builder.buildGraph()
-
   graphComponent.fitGraphBounds()
 }
-
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,47 +27,37 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   IEnumerable,
   IListEnumerable,
+  PortCandidate,
   PortCandidateProviderBase
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * A port candidate provider that returns just a single port candidate at the top of the node.
  */
 export class GroupNodePortCandidateProvider extends PortCandidateProviderBase {
-  /**
-   * @param {!INode} node
-   */
+  node
   constructor(node) {
     super()
     this.node = node
   }
-
   /**
    * Returns a single port candidate at the top of the node.
-   * @param {!IInputModeContext} context
-   * @param {!IPortCandidate} source
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
-  getTargetPortCandidates(context, source) {
+  getTargetPortCandidates(_context, _source) {
     return IEnumerable.from([
-      new DefaultPortCandidate({
+      new PortCandidate({
         owner: this.node,
-        locationParameter: FreeNodePortLocationModel.NODE_TOP_ANCHORED,
+        locationParameter: FreeNodePortLocationModel.TOP,
         validity: 'valid'
       })
     ])
   }
-
   /**
    * Returns an empty list.
-   * @param {!IInputModeContext} context
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
-  getPortCandidates(context) {
+  getPortCandidates(_context) {
     return IListEnumerable.EMPTY
   }
 }

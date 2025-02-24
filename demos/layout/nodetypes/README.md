@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Node Types Demo
 
-# Node Types Demo
+<img src="../../../doc/demo-thumbnails/node-types.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/layout/nodetypes/).
 
 This demo shows how different layout algorithms handle nodes that are associated with some specific types, see the Developer's Guide section on [Layout with Custom Node Types](https://docs.yworks.com/yfileshtml/#/dguide/node_types). In this example application, nodes with same color are considered to be of the same type.
 

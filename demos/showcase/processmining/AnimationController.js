@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,38 +26,36 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Animator, GraphComponent, TimeSpan } from 'yfiles'
-
+import { Animator, GraphComponent, TimeSpan } from '@yfiles/yfiles'
 /**
  * This controller manages the animation of the heatmap and process items.
  * It handles the state of the animation and updates the progress via a callback function.
  */
 export class AnimationController {
+  graphComponent
+  maxTime
   animator
   running
   setProgress
-
   /**
    * Creates a new Animation controller.
-   * @param {!GraphComponent} graphComponent the graph component to which the animation belongs
-   * @param {!TimeSpan} maxTime the maximum time that the animation can take
-   * @param {!function} progressCallback a callback function to report the progress back
+   * @param graphComponent the graph component to which the animation belongs
+   * @param maxTime the maximum time that the animation can take
+   * @param progressCallback a callback function to report the progress back
    */
   constructor(graphComponent, maxTime, progressCallback) {
-    this.maxTime = maxTime
     this.graphComponent = graphComponent
+    this.maxTime = maxTime
     this.running = false
     this.setProgress = progressCallback
     this.animator = new Animator({
-      canvas: graphComponent,
+      canvasComponent: graphComponent,
       allowUserInteraction: true,
       autoInvalidation: true
     })
   }
-
   /**
    * Starts the animation.
-   * @returns {!Promise}
    */
   async runAnimation() {
     if (!this.running) {
@@ -65,10 +63,8 @@ export class AnimationController {
       this.running = false
     }
   }
-
   /**
    * Restarts the animation.
-   * @returns {!Promise}
    */
   async restartAnimation() {
     if (this.animator) {
@@ -78,7 +74,6 @@ export class AnimationController {
     this.running = false
     await this.runAnimation()
   }
-
   /**
    * Pauses the animation.
    */

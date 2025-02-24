@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,16 +27,16 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
+  Color,
+  CssFill,
   Fill,
   FreeNodeLabelModel,
   FreeNodePortLocationModel,
-  GraphComponent,
   GraphEditorInputMode,
   INode,
   Point,
-  SolidColorFill
-} from 'yfiles'
+  PortCandidate
+} from '@yfiles/yfiles'
 import type {
   ButtonInputMode,
   QueryButtonsEvent
@@ -52,25 +52,25 @@ import {
 import { ExtensibilityButtonStyle, RelationButtonStyle } from './ButtonStyles'
 import type { UMLNodeStyle } from './UMLNodeStyle'
 
-const DEFAULT_FILL = new SolidColorFill(0x60, 0x7d, 0x8b)
+const DEFAULT_FILL = new CssFill('#607d8b')
 
 export function createExtensibilityButtons(
   sender: ButtonInputMode,
   event: QueryButtonsEvent,
   style: UMLNodeStyle
 ): void {
-  const graphComponent = sender.inputModeContext!.canvasComponent as GraphComponent
+  const graphComponent = sender.graphComponent
   const buttonStyle = new ExtensibilityButtonStyle()
   const buttonSize = buttonStyle.getButtonSize()
   const paramFactory = new FreeNodeLabelModel()
   event.addButton({
-    onAction: (button) => {
+    onAction: () => {
       const model = style.model
       const isInterface = model.stereotype === 'interface'
       model.stereotype = isInterface ? '' : 'interface'
       model.constraint = ''
       model.modify()
-      style.fill = isInterface ? DEFAULT_FILL : Fill.SEA_GREEN
+      style.fill = Fill.from(isInterface ? DEFAULT_FILL : Color.SEA_GREEN)
       graphComponent.invalidate()
     },
     layoutParameter: paramFactory.createParameter({
@@ -85,13 +85,13 @@ export function createExtensibilityButtons(
     text: 'I'
   })
   event.addButton({
-    onAction: (button) => {
+    onAction: () => {
       const model = style.model
       const isAbstract = model.constraint === 'abstract'
       model.constraint = isAbstract ? '' : 'abstract'
       model.stereotype = ''
       model.modify()
-      style.fill = isAbstract ? DEFAULT_FILL : Fill.CRIMSON
+      style.fill = Fill.from(isAbstract ? DEFAULT_FILL : Color.CRIMSON)
       graphComponent.invalidate()
     },
     layoutParameter: paramFactory.createParameter({
@@ -125,8 +125,8 @@ export function createEdgeCreationButtons(sender: ButtonInputMode, event: QueryB
     const buttonStyle = new RelationButtonStyle(style)
     const buttonSize = buttonStyle.getButtonSize()
     event.addButton({
-      onAction: (button) => {
-        const graphComponent = sender.inputModeContext!.canvasComponent as GraphComponent
+      onAction: () => {
+        const graphComponent = sender.graphComponent
         graphComponent.selection.clear()
         graphComponent.currentItem = null
         const createEdgeInputMode = (graphComponent.inputMode as GraphEditorInputMode)
@@ -134,17 +134,14 @@ export function createEdgeCreationButtons(sender: ButtonInputMode, event: QueryB
 
         // initialize dummy edge
         const umlEdgeType = style
-        const dummyEdgeGraph = createEdgeInputMode.dummyEdgeGraph
-        const dummyEdge = createEdgeInputMode.dummyEdge
-        dummyEdgeGraph.setStyle(dummyEdge, umlEdgeType)
-        dummyEdgeGraph.edgeDefaults.style = umlEdgeType
+        const previewGraph = createEdgeInputMode.previewGraph
+        const previewEdge = createEdgeInputMode.previewEdge
+        previewGraph.setStyle(previewEdge, umlEdgeType)
+        previewGraph.edgeDefaults.style = umlEdgeType
 
         // start edge creation and hide buttons until the edge is finished
-        createEdgeInputMode.doStartEdgeCreation(
-          new DefaultPortCandidate(
-            event.owner as INode,
-            FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-          )
+        createEdgeInputMode.startEdgeCreation(
+          new PortCandidate(event.owner as INode, FreeNodePortLocationModel.CENTER)
         )
       },
       layoutParameter: paramFactory.createParameter({

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,15 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import {
   Animator,
   BaseClass,
-  DefaultLabelStyle,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
-  FreeEdgeLabelModel,
+  ExteriorNodeLabelModel,
+  SmartEdgeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -43,71 +39,68 @@ import {
   IAnimation,
   type IBoundsProvider,
   type ICanvasContext,
-  type ICanvasObject,
-  ICanvasObjectDescriptor,
   type IGraph,
   IHitTestable,
   type IInputModeContext,
   ILabel,
   type INode,
+  IObjectRenderer,
   type IRenderContext,
+  type IRenderTreeElement,
   IVisibilityTestable,
   IVisualCreator,
+  LabelStyle,
   LabelStyleBase,
   MouseWheelBehaviors,
   Point,
+  PointerType,
   PolylineEdgeStyle,
   type Rect,
   ScrollBarVisibility,
   ShapeNodeStyle,
-  SizeChangedDetectionMode,
   SvgVisual,
   type Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { createBackgroundShapeData } from './09-hit-testing/CustomLabelStyle'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 export function initializeLabelModel(graphComponent: GraphComponent): void {
   graphComponent.graph.edgeDefaults.labels.layoutParameter =
-    new FreeEdgeLabelModel({
-      edgeRelativeAngle: true
-    }).createEdgeAnchored({
-      distance: -15
+    new SmartEdgeLabelModel().createParameterFromSource({
+      segmentIndex: 0,
+      distance: -5
     })
   graphComponent.graph.nodeDefaults.labels.layoutParameter =
-    new ExteriorLabelModel({
-      insets: 5
-    }).createParameter(ExteriorLabelModelPosition.NORTH)
+    new ExteriorNodeLabelModel({
+      margins: 5
+    }).createParameter('top')
 }
 
 export function initializeLabelModelHitTest(
   graphComponent: GraphComponent
 ): void {
   graphComponent.graph.edgeDefaults.labels.layoutParameter =
-    new FreeEdgeLabelModel({
-      edgeRelativeAngle: true
-    }).createEdgeAnchored({
-      distance: -30
+    new SmartEdgeLabelModel().createParameterFromSource({
+      segmentIndex: 0,
+      distance: -20
     })
   graphComponent.graph.nodeDefaults.labels.layoutParameter =
-    new ExteriorLabelModel({
-      insets: 20
-    }).createParameter(ExteriorLabelModelPosition.NORTH)
+    new ExteriorNodeLabelModel({
+      margins: 20
+    }).createParameter('top')
 }
 
 export function initializeLabelModelVisibility(
   graphComponent: GraphComponent
 ): void {
   graphComponent.graph.edgeDefaults.labels.layoutParameter =
-    new FreeEdgeLabelModel({
-      edgeRelativeAngle: true
-    }).createEdgeAnchored({
-      distance: -60
+    new SmartEdgeLabelModel().createParameterFromSource({
+      segmentIndex: 0,
+      distance: -50
     })
   graphComponent.graph.nodeDefaults.labels.layoutParameter =
-    new ExteriorLabelModel({
-      insets: 50
-    }).createParameter(ExteriorLabelModelPosition.NORTH)
+    new ExteriorNodeLabelModel({
+      margins: 50
+    }).createParameter('top')
 }
 
 export function createSimpleGraph(graph: IGraph): void {
@@ -240,10 +233,11 @@ export function addHoverEffect(
 ): void {
   const itemHoverInputMode = inputMode.itemHoverInputMode
   itemHoverInputMode.hoverItems = GraphItemTypes.LABEL
-  let hoveredItemHighlight: ICanvasObject | null = null
+  let hoveredItemHighlight: IRenderTreeElement | null = null
 
   function addHighlight(label: ILabel): void {
-    hoveredItemHighlight = graphComponent.inputModeGroup.addChild(
+    hoveredItemHighlight = graphComponent.renderTree.createElement(
+      graphComponent.renderTree.inputModeGroup,
       new (class extends BaseClass(IVisualCreator) {
         createVisual(context: IRenderContext): Visual | null {
           let el: SVGElement
@@ -277,17 +271,22 @@ export function addHoverEffect(
   }
 
   function removeHighlight(): void {
-    hoveredItemHighlight?.remove()
-    hoveredItemHighlight = null
+    if (hoveredItemHighlight) {
+      graphComponent.renderTree.remove(hoveredItemHighlight)
+      hoveredItemHighlight = null
+    }
   }
 
-  itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+  itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     removeHighlight()
     if (evt.item) {
       addHighlight(evt.item as ILabel)
     }
   })
-  inputMode.addItemTappedListener((_, evt) => {
+  inputMode.addEventListener('item-clicked', (evt) => {
+    if (evt.pointerType !== PointerType.TOUCH) {
+      return
+    }
     removeHighlight()
     if (evt.item instanceof ILabel) {
       addHighlight(evt.item as ILabel)
@@ -302,9 +301,7 @@ function getTag(label: ILabel): Tag {
   return label.tag as Tag
 }
 
-export class IsHitLabelStyleDescriptor extends BaseClass(
-  ICanvasObjectDescriptor
-) {
+export class IsHitLabelStyleRenderer extends BaseClass(IObjectRenderer) {
   getBoundsProvider(label: ILabel): IBoundsProvider {
     return label.style.renderer.getBoundsProvider(label, label.style)
   }
@@ -315,7 +312,7 @@ export class IsHitLabelStyleDescriptor extends BaseClass(
       ? label.style.renderer.getHitTestable(label, label.style)
       : new (class extends BaseClass(IHitTestable) {
           isHit(context: IInputModeContext, location: Point): boolean {
-            return label.layout.hits(location, context.hitTestRadius)
+            return label.layout.contains(location, context.hitTestRadius)
           }
         })()
   }
@@ -327,15 +324,9 @@ export class IsHitLabelStyleDescriptor extends BaseClass(
   getVisualCreator(label: ILabel): IVisualCreator {
     return label.style.renderer.getVisualCreator(label, label.style)
   }
-
-  isDirty(context: ICanvasContext, canvasObject: ICanvasObject): boolean {
-    return true
-  }
 }
 
-export class IsVisibleLabelStyleDescriptor extends BaseClass(
-  ICanvasObjectDescriptor
-) {
+export class IsVisibleLabelStyleRenderer extends BaseClass(IObjectRenderer) {
   getBoundsProvider(label: ILabel): IBoundsProvider {
     return label.style.renderer.getBoundsProvider(label, label.style)
   }
@@ -358,15 +349,10 @@ export class IsVisibleLabelStyleDescriptor extends BaseClass(
   getVisualCreator(label: ILabel): IVisualCreator {
     return label.style.renderer.getVisualCreator(label, label.style)
   }
-
-  isDirty(context: ICanvasContext, canvasObject: ICanvasObject): boolean {
-    return true
-  }
 }
 
 export function startNodeAnimation(graphComponent: GraphComponent): void {
-  graphComponent.sizeChangedDetection = SizeChangedDetectionMode.TIMER
-  graphComponent.addSizeChangedListener((_) => {
+  graphComponent.addEventListener('size-changed', () => {
     setTimeout(() => {
       setAnimationStartPoint(graphComponent)
       void animate()
@@ -374,6 +360,7 @@ export function startNodeAnimation(graphComponent: GraphComponent): void {
   })
 
   const animator = new Animator(graphComponent)
+
   async function animate(): Promise<void> {
     await animateNodes(
       animator,
@@ -415,19 +402,20 @@ function animateNodes(
 }
 
 function setAnimationStartPoint(graphComponent: GraphComponent): void {
-  const contentRect = graphComponent.contentRect
+  const contentRect = graphComponent.contentBounds
   graphComponent.viewPoint = new Point(
     contentRect.centerX - graphComponent.viewport.width * 0.5,
     contentRect.bottomLeft.y
   )
 }
+
 export function initializeInlineGraphComponent(
   selector: string
 ): GraphComponent {
   const graphComponent = new GraphComponent(selector)
   graphComponent.horizontalScrollBarPolicy =
-    graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.NEVER
-  graphComponent.autoDrag = false
+    graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.HIDDEN
+  graphComponent.autoScrollOnBounds = false
   graphComponent.mouseWheelBehavior = MouseWheelBehaviors.NONE
   initializeTutorialDefaults(graphComponent)
   return graphComponent
@@ -477,8 +465,6 @@ export class BoundsVisual extends BaseClass(IVisualCreator) {
 export function initializeTutorialDefaults(
   graphComponent: GraphComponent
 ): void {
-  applyDemoTheme(graphComponent)
-
   graphComponent.focusIndicatorManager.enabled = false
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -486,11 +472,11 @@ export function initializeTutorialDefaults(
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     shape: 'round-rectangle',
     textFill: '#042d37',
     backgroundFill: '#9dc6d0',
-    insets: 2,
+    padding: 2,
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
   })
   graph.edgeDefaults.style = new PolylineEdgeStyle({
@@ -500,7 +486,7 @@ export function initializeTutorialDefaults(
 
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#111d4a',
-    contentAreaInsets: 10
+    contentAreaPadding: 10
   })
 }
 
@@ -508,11 +494,11 @@ export function initializeTutorialDefaults(
  * Fits the graph into the graph component with a minimum zoom value.
  * The graph will be slightly zoomed in to avoid that small graphs are displayed too small.
  */
-export function fitGraphBounds(
+export async function fitGraphBounds(
   graphComponent: GraphComponent,
   minimumZoom = 3
-): void {
+): Promise<void> {
   graphComponent.limitFitContentZoom = false
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
   graphComponent.zoom = Math.min(graphComponent.zoom, minimumZoom)
 }

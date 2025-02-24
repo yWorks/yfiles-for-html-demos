@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Restricted Editing Demo
 
-# Restricted Editing Demo
+<img src="../../../doc/demo-thumbnails/restricted-editing.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/input/restricted-editing/).
 
 This demos shows how to restrict interactive editing while still using [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) for its non-editing features like, e.g., click-selecting items.
 
@@ -33,7 +35,7 @@ All interactive editing operations are disabled, i.e., it is not possible to int
 
 Moving Items
 
-Interactive editing is disabled except for moving items, i.e., it is possible to move selected nodes, edges, or bends to new positions.
+Interactive editing is disabled except for moving items, i.e., it is possible to move nodes, edges, or bends to new positions.
 
 All
 

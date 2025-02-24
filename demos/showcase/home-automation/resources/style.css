@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-
 .sidebar-slim {
   position: relative;
   display: flex;
@@ -107,19 +106,19 @@
   align-items: center;
   gap: 4px;
   border-radius: 8px;
-  border: 1px solid #D5D7D8;
-  background: #FFF;
+  border: 1px solid #d5d7d8;
+  background: #fff;
 }
 .tags-explorer-list-input:focus {
-  outline: #2F80ED solid 2px;
+  outline: #2f80ed solid 2px;
 }
 
 .tags-explorer-list-input:disabled {
-  background: #D5D7D8;
+  background: #d5d7d8;
 }
 
 .tags-explorer-list-item__invalid .tags-explorer-list-input {
-  border: #CB1414 1px solid;
+  border: #cb1414 1px solid;
 }
 
 .sidebar {
@@ -142,15 +141,15 @@
   top: 0;
   bottom: 0;
   left: 0;
-  content: "";
+  content: '';
   width: 4px;
   border-radius: 100px;
-  background: #CB1414;
+  background: #cb1414;
 }
 
 .tooltip h4 {
   margin: 4px;
-  color: #2E2E2E;
+  color: #2e2e2e;
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
@@ -159,7 +158,7 @@
 
 .tooltip ul {
   margin: 4px;
-  color: #2E2E2E;
+  color: #2e2e2e;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -168,8 +167,8 @@
 
 .yfiles-tooltip {
   border-radius: 12px;
-  border: 1px solid #D5D7D8;
-  background: #FFF;
+  border: 1px solid #d5d7d8;
+  background: #fff;
   /* light shadow */
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
   display: inline-flex;
@@ -179,6 +178,10 @@
   gap: 8px;
 }
 
+.yfiles-context-menu {
+  border-radius: 12px;
+}
+
 .flow-context-menu {
   display: inline-flex;
   padding: 12px;
@@ -186,8 +189,8 @@
   align-items: flex-start;
   gap: 8px;
   border-radius: 12px;
-  border: 1px solid #D5D7D8;
-  background: #FFF;
+  border: 1px solid #d5d7d8;
+  background: #fff;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
   top: 0;
   left: 0;
@@ -196,17 +199,8 @@
   min-width: 186px;
   width: auto;
   user-select: none;
-  opacity: 0;
-  /* the context menu is faded in */
-  transition: opacity 0.2s ease-in;
 }
-.flow-context-menu--visible {
-  opacity: 1;
-}
-.flow-context-menu--clone {
-  pointer-events: none;
-  transition: opacity 0.2s ease-out;
-}
+
 .flow-context-menu__item {
   position: relative;
   display: flex;
@@ -215,11 +209,11 @@
   min-width: fit-content;
   width: 100%;
   padding: 8px 12px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   cursor: pointer;
   border: none;
   border-radius: 8px;
-  color: #2E2E2E;
+  color: #2e2e2e;
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
@@ -232,19 +226,19 @@
 }
 
 .flow-context-menu__item-disabled {
-  background: #FFFFFF;
+  background: #ffffff;
   opacity: 32%;
 }
 .flow-context-menu__item:hover {
-  background-color: #EBEBEB !important;
+  background-color: #ebebeb !important;
 }
 .flow-context-menu__item:focus {
-  outline: solid #EBEBEB 1px;
+  outline: solid #ebebeb 1px;
 }
 .flow-context-menu__separator {
   width: 100%;
   height: 1px;
-  background-color: #D5D7D8;
+  background-color: #d5d7d8;
 }
 .flow-context-menu:last-child {
   border-bottom: none;

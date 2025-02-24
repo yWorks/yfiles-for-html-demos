@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { Component, createRef, RefObject } from 'react'
-import { Font, Size, TextRenderSupport, TextWrapping } from 'yfiles'
+import { Font, Size, TextRenderSupport, TextWrapping } from '@yfiles/yfiles'
 
 type SvgTextProps = {
   text: string
@@ -57,7 +57,7 @@ export default class SvgText extends Component<SvgTextProps> {
       text,
       Font.from(font ?? 'normal 12px sans-serif'),
       new Size(maxWidth ?? Number.MAX_VALUE, maxHeight ?? Number.MAX_VALUE),
-      TextWrapping.WORD_ELLIPSIS
+      TextWrapping.WRAP_WORD_ELLIPSIS
     )
   }
 
@@ -84,7 +84,7 @@ export default class SvgText extends Component<SvgTextProps> {
         text,
         Font.from(font ?? 'normal 12px sans-serif'),
         new Size(maxWidth ?? Number.MAX_VALUE, maxHeight ?? Number.MAX_VALUE),
-        TextWrapping.WORD_ELLIPSIS
+        TextWrapping.WRAP_WORD_ELLIPSIS
       )
     }
   }

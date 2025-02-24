@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,9 +36,13 @@ import {
   GraphBuilder,
   NodesSource,
   PolylineEdgeStyle,
-  StringTemplateNodeStyle,
   Stroke
-} from 'yfiles'
+} from '@yfiles/yfiles'
+
+import { LitNodeStyle, type LitNodeStyleRenderFunction } from '@yfiles/demo-utils/LitNodeStyle'
+// @ts-ignore Import via URL
+// eslint-disable-next-line import/no-unresolved
+import { nothing, svg } from 'https://unpkg.com/lit-html@2.8.0?module'
 
 /**
  * Abstract base class for node and edge source definitions
@@ -144,13 +148,23 @@ export class NodesSourceDefinitionBuilderConnector extends SourceDefinitionBuild
       this.nodesSource.idProvider = null
     }
     try {
-      this.nodesSource.nodeCreator.defaults.style = new StringTemplateNodeStyle(
-        this.sourceDefinition.template
+      this.nodesSource.nodeCreator.defaults.style = new LitNodeStyle(
+        this.createRenderFunction(this.sourceDefinition.template)
       )
     } catch (e) {
       throw new Error(`Evaluating the template failed: ${e as Error}`)
     }
     this.graphBuilder.setData(this.nodesSource, parseData(this.sourceDefinition.data))
+  }
+
+  createRenderFunction(template: string): LitNodeStyleRenderFunction<any> {
+    return new Function(
+      'const svg = arguments[0]; const nothing = arguments[1]; const renderFunction = ' +
+        '({layout, tag, selected, zoom}) => svg`\n' +
+        template +
+        '`' +
+        '\n return renderFunction'
+    )(svg, nothing)
   }
 
   reset(): void {
@@ -289,10 +303,10 @@ export class SourcesFactory {
     const definition =
       nodesSourceDefinition || SourcesFactory.createDefaultNodesSourceDefinition(sourceName)
 
-    const nodesSource = this.graphBuilder.createNodesSource<any>([], null)
+    const nodesSource = this.graphBuilder.createNodesSource<any>([], '')
 
     const nodeCreator = nodesSource.nodeCreator
-    nodeCreator.addNodeUpdatedListener((_, evt) => {
+    nodeCreator.addEventListener('node-updated', (evt) => {
       nodeCreator.updateTag(evt.graph, evt.item, evt.dataItem)
       evt.graph.setStyle(evt.item, nodeCreator.defaults.style)
     })
@@ -329,14 +343,14 @@ export class SourcesFactory {
     const edgeCreator = edgesSource.edgeCreator
     edgeCreator.defaults.style = new PolylineEdgeStyle({
       stroke: '1.5px #662b00',
-      targetArrow: new Arrow({ color: '#662b00', type: 'triangle' })
+      targetArrow: new Arrow({ fill: '#662b00', type: 'triangle' })
     })
     edgeCreator.defaults.shareStyleInstance = false
     edgeCreator.styleBindings.addBinding('stroke', (edgeDataItem) =>
       definition.strokeProvider ? definition.strokeProvider(edgeDataItem) : '#662b00'
     )
 
-    edgeCreator.addEdgeUpdatedListener((_, evt) => {
+    edgeCreator.addEventListener('edge-updated', (evt) => {
       edgeCreator.applyStyleBindings(evt.graph, evt.item, evt.dataItem)
       edgeCreator.updateLabels(evt.graph, evt.item, evt.dataItem)
     })

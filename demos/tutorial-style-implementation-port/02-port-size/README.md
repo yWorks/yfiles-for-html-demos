@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 02 Port Size - Tutorial: Port Style Implementation
 
-# Configuring the port size
+<img src="../../../doc/demo-thumbnails/tutorial-style-implementation-port-port-size.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-port/02-port-size/).
 
 Unlike nodes, ports do not possess an intrinsic size. A port is defined merely by a point. The port style can define how large the port should be rendered. In the previous step, we used fix values that resulted in a circle with a diameter of 6. In this sample, we will add a property to the port style that allows us to customize the size of the circle.
 
@@ -54,7 +56,7 @@ const smallPortStyle = new CustomPortStyle(4)
 
 graph.addPort({
   owner: owner,
-  locationParameter: FreeNodePortLocationModel.NODE_CENTER_ANCHORED,
+  locationParameter: FreeNodePortLocationModel.CENTER,
   style: smallPortStyle
 })
 ```

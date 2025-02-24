@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,140 +26,116 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/unbound-method */
 import {
-  DefaultPortCandidate,
   GraphComponent,
   GraphEditorInputMode,
-  GraphMLSupport,
+  GraphMLIOHandler,
   IGraph,
   INode,
   IPortCandidateProvider,
   License,
-  NodeStylePortStyleAdapter,
+  PortCandidate,
   PortsHandleProvider,
   Rect,
-  ShapeNodeStyle,
-  Size,
-  StorageLocation
-} from 'yfiles'
+  ShapePortStyle,
+  Size
+} from '@yfiles/yfiles'
 import {
   CustomNodePortLocationModel,
   CustomNodePortLocationModelParameter,
   PortLocation
-} from './CustomNodePortLocationModel.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/** @type {GraphComponent} */
+} from './CustomNodePortLocationModel'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 let graphComponent = null
-
 /**
  * This demo shows how to create and use a custom port model.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   // initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode()
-
   // initialize the graph
   initializeGraph(graphComponent.graph)
-
   // center the graph in the graph component
-  graphComponent.fitGraphBounds()
-
+  void graphComponent.fitGraphBounds()
   // for selected nodes show the handles
-  graphComponent.graph.decorator.nodeDecorator.handleProviderDecorator.setFactory(
+  graphComponent.graph.decorator.nodes.handleProvider.addFactory(
     (node) => new PortsHandleProvider(node)
   )
-
   // for nodes add a custom port candidate provider implementation which uses our model
-  graphComponent.graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
-    getPortCandidateProvider
-  )
-
+  graphComponent.graph.decorator.nodes.portCandidateProvider.addFactory(getPortCandidateProvider)
   // enable the graphml support
   enableGraphML()
 }
-
 /**
  * Callback used by the decorator in {@link CreateEditorMode}.
- * @param {!INode} forNode
- * @returns {!IPortCandidateProvider}
  */
 function getPortCandidateProvider(forNode) {
   const model = new CustomNodePortLocationModel(10)
   // noinspection JSCheckFunctionSignatures
   return IPortCandidateProvider.fromCandidates([
-    new DefaultPortCandidate(forNode, model.createCustomParameter(PortLocation.CENTER)),
-    new DefaultPortCandidate(forNode, model.createCustomParameter(PortLocation.NORTH)),
-    new DefaultPortCandidate(forNode, model.createCustomParameter(PortLocation.EAST)),
-    new DefaultPortCandidate(forNode, model.createCustomParameter(PortLocation.SOUTH)),
-    new DefaultPortCandidate(forNode, model.createCustomParameter(PortLocation.WEST))
+    new PortCandidate(forNode, model.createCustomParameter(PortLocation.CENTER)),
+    new PortCandidate(forNode, model.createCustomParameter(PortLocation.TOP)),
+    new PortCandidate(forNode, model.createCustomParameter(PortLocation.RIGHT)),
+    new PortCandidate(forNode, model.createCustomParameter(PortLocation.BOTTOM)),
+    new PortCandidate(forNode, model.createCustomParameter(PortLocation.LEFT))
   ])
 }
-
 /**
  * Enables loading and saving the graph from/to GraphML.
  */
 function enableGraphML() {
-  // create a new GraphMLSupport instance that handles save and load operations
-  const gs = new GraphMLSupport({
-    graphComponent,
-    // configure loading and saving from/to the file system
-    storageLocation: StorageLocation.FILE_SYSTEM
-  })
-
-  gs.graphMLIOHandler.addHandleSerializationListener(
+  // create a new graphMLIOHandler instance that handles save and load operations
+  const graphMLIOHandler = new GraphMLIOHandler()
+  graphMLIOHandler.addEventListener(
+    'handle-serialization',
     CustomNodePortLocationModelParameter.serializationHandler
   )
-  gs.graphMLIOHandler.addHandleDeserializationListener(
+  graphMLIOHandler.addEventListener(
+    'handle-deserialization',
     CustomNodePortLocationModelParameter.deserializationHandler
   )
+  document.querySelector('#open-file-button').addEventListener('click', async () => {
+    await openGraphML(graphComponent, graphMLIOHandler)
+  })
+  document.querySelector('#save-button').addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'customPortLocationModel.graphml', graphMLIOHandler)
+  })
 }
-
 /**
  * Sets a custom node port model parameter instance for newly created node ports in the graph,
  * creates example nodes with ports using the the custom model and an edge to connect the ports.
- * @param {!IGraph} graph
  */
 function initializeGraph(graph) {
   // set the defaults for nodes
   initDemoStyles(graph)
-
   // set the default port location parameter (and thus implicitly the model as well)
   graph.nodeDefaults.ports.locationParameter =
     new CustomNodePortLocationModel().createCustomParameter(PortLocation.CENTER)
-
   // set the default port style and size for this demo
-  const shapeNodeStyle = new ShapeNodeStyle({
+  graph.nodeDefaults.ports.style = new ShapePortStyle({
     shape: 'ellipse',
     fill: '#224556',
-    stroke: null
-  })
-  graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter({
-    nodeStyle: shapeNodeStyle,
+    stroke: null,
     renderSize: [10, 10]
   })
   graph.nodeDefaults.size = new Size(100, 100)
-
   const source = graph.createNode(new Rect(90, 90, 100, 100))
   const target = graph.createNode(new Rect(250, 90, 100, 100))
-
   // creates a port using the default declared above
   const sourcePort = graph.addPort(source)
   // creates a port using a custom model introduce
   const targetPort = graph.addPort(
     target,
-    new CustomNodePortLocationModel(10).createCustomParameter(PortLocation.NORTH)
+    new CustomNodePortLocationModel(10).createCustomParameter(PortLocation.TOP)
   )
-
   // create an edge
   graph.createEdge(sourcePort, targetPort)
 }
-
 run().then(finishLoading)

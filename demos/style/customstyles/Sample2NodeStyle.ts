@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,18 +27,15 @@
  **
  ***************************************************************************/
 import {
-  GraphMLAttribute,
   ILookup,
   INode,
   IRenderContext,
   MarkupExtension,
   NodeStyleBase,
   SvgVisual,
-  type TaggedSvgVisual,
-  TypeAttribute,
-  YString
-} from 'yfiles'
-import { type ColorSetName, isColorSetName } from 'demo-resources/demo-styles'
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
+import { type ColorSetName, isColorSetName } from '@yfiles/demo-resources/demo-styles'
 
 type Sample2NodeStyleCache = {
   width: number
@@ -140,12 +137,6 @@ export class Sample2NodeStyleExtension extends MarkupExtension {
 
   set cssClass(value: string) {
     this._cssClass = value
-  }
-
-  static get $meta(): { cssClass: (GraphMLAttribute | TypeAttribute)[] } {
-    return {
-      cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)]
-    }
   }
 
   provideValue(serviceProvider: ILookup): Sample2NodeStyle {

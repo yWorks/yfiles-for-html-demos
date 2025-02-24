@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,15 +30,15 @@ import {
   IEdge,
   IGraph,
   ILayoutAlgorithm,
+  Insets,
   LayoutData,
   LayoutOrientation,
-  NodeHalo,
   OrthogonalLayout,
   OrthogonalLayoutData,
-  OrthogonalLayoutStyle,
-  SubstructureOrientation,
-  TreeLayoutStyle
-} from 'yfiles'
+  OrthogonalLayoutMode,
+  OrthogonalLayoutTreeSubstructureStyle,
+  SubstructureOrientation
+} from '@yfiles/yfiles'
 
 /**
  * Demonstrates basic configuration for the {@link OrthogonalLayout}.
@@ -55,7 +55,7 @@ export function createLayoutConfiguration(graph: IGraph): {
   // there exist other styles that allow the layout to resize the nodes according to the number
   // and position of their neighbors to reduce the overall number of bends.
   // However, note that this may be incompatible with other settings such as node halos.
-  layout.layoutStyle = OrthogonalLayoutStyle.NORMAL
+  layout.layoutMode = OrthogonalLayoutMode.STRICT
 
   // nodes and edges are laid out on a virtual grid, so that nodes are placed on grid points and edges run along the grid lines.
   // Modifying the size of these grid cells contracts or expands the graph
@@ -65,15 +65,12 @@ export function createLayoutConfiguration(graph: IGraph): {
   // uniform port assignment of edges incident to the same node side.
   layout.uniformPortAssignment = false
 
-  // enable consideration of node labels to avoid overlaps between labels and other elements
-  layout.considerNodeLabels = true
-
   // enable the tree substructure style to arrange sub-trees using a different special placement
   // algorithm - in this case a tree arrangement with a left-to-right arrangement is chosen
-  layout.treeStyle = TreeLayoutStyle.COMPACT
-  layout.treeOrientation = SubstructureOrientation.LEFT_TO_RIGHT
+  layout.treeSubstructureStyle = OrthogonalLayoutTreeSubstructureStyle.COMPACT
+  layout.treeSubstructureOrientation = SubstructureOrientation.LEFT_TO_RIGHT
   // trees starting with a size of 6 are detected as trees - smaller ones are ignored
-  layout.treeSize = 6
+  layout.treeSubstructureSize = 6
 
   // while the above configuration modifies the layout in general, the corresponding layoutData
   // holds configuration about specific graph items.
@@ -82,17 +79,16 @@ export function createLayoutConfiguration(graph: IGraph): {
 
   // define some edges to be directed: they must flow in the direction of the main layout
   // orientation - in this example we select a top-to-bottom orientation
-  layoutData.directedEdges.delegate = (edge) => isDirectedEdge(edge)
+  layoutData.edgeDirectedness = (edge) => (isDirectedEdge(edge) ? 1 : 0)
   layout.layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM
 
   // increasing the bend cost for an edge causes the layout algorithm to prefer not creating bends
   // there (in favor of bending other edges instead) - in the example we want that the directed
   // edges are not bended if possible
-  layoutData.edgeBendCosts.delegate = (edge) => (isDirectedEdge(edge) ? 4 : 1)
+  layoutData.edgeBendCosts = (edge) => (isDirectedEdge(edge) ? 4 : 1)
 
   // node halos are reserving additional space around nodes.
-  layoutData.nodeHalos.delegate = (node) =>
-    node.labels.get(0).text === 'Halo' ? NodeHalo.create(50) : NodeHalo.create(0)
+  layoutData.nodeMargins = (node) => new Insets(node.labels.get(0).text === 'Insets' ? 50 : 0)
 
   return { layoutAlgorithm: layout, layoutData: layoutData }
 }

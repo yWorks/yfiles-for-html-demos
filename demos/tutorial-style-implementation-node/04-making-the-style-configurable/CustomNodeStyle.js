@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,99 +26,54 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { NodeStyleBase, SvgVisual } from 'yfiles'
-
+import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 const tabWidth = 50
 const tabHeight = 14
-
-/**
- * Augment the SvgVisual type with the data used to cache the rendering information
- */
-// the values we use to render the graphics
-/**
- * @typedef {Object} Cache
- * @property {number} width
- * @property {number} height
- * @property {string} fillColor
- */
-
-/**
- * @typedef {TaggedSvgVisual.<SVGPathElement,Cache>} CustomNodeStyleVisual
- */
-
 export class CustomNodeStyle extends NodeStyleBase {
+  fillColor
   /**
    * Creates a new instance of this style using the given fill color.
    * @param fillColor The color used to fill nodes.
-   * @param {!string} [fillColor]
    */
   constructor(fillColor) {
     super()
     this.fillColor = fillColor
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {!CustomNodeStyleVisual}
-   */
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
-
     const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     pathElement.setAttribute('d', createPathData(0, 0, width, height))
-
     const fillColor = this.fillColor ?? '#0b7189'
     pathElement.setAttribute('fill', fillColor)
     pathElement.setAttribute('stroke', '#333')
-
     SvgVisual.setTranslate(pathElement, x, y)
-
     return SvgVisual.from(pathElement, { width, height, fillColor })
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!CustomNodeStyleVisual} oldVisual
-   * @param {!INode} node
-   * @returns {!CustomNodeStyleVisual}
-   */
   updateVisual(context, oldVisual, node) {
     const { x, y, width, height } = node.layout
     // get the path element that needs updating from the old visual
     const pathElement = oldVisual.svgElement
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
-
     const fillColor = this.fillColor ?? '#0b7189'
     if (fillColor !== cache.fillColor) {
       cache.fillColor = fillColor
       // update the fill color
       pathElement.setAttribute('fill', fillColor)
     }
-
     if (width !== cache.width || height !== cache.height) {
       // update the path data to fit the new width and height
       pathElement.setAttribute('d', createPathData(0, 0, width, height))
       cache.width = width
       cache.height = height
     }
-
     SvgVisual.setTranslate(pathElement, x, y)
     return oldVisual
   }
 }
-
 /**
  * Creates the path data for the SVG path element.
- * @param {number} x
- * @param {number} y
- * @param {number} width
- * @param {number} height
- * @returns {!string}
  */
 export function createPathData(x, y, width, height) {
-  return `M ${x} ${y} h ${tabWidth} v ${tabHeight} h ${width - tabWidth} v ${
-    height - tabHeight
-  } h ${-width} z`
+  return `M ${x} ${y} h ${tabWidth} v ${tabHeight} h ${width - tabWidth} v ${height - tabHeight} h ${-width} z`
 }

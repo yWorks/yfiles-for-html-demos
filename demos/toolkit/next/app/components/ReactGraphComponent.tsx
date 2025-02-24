@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,7 @@ import { ContextMenuComponent } from './ContextMenuComponent'
 import { ReactGraphOverviewComponent } from './GraphOverviewComponent'
 import { GraphData } from '@/app/page'
 import React, { useMemo, useState } from 'react'
-import { ICommand } from 'yfiles'
+import { Command } from '@yfiles/yfiles'
 import DemoToolbar from './DemoToolbar'
 import { LayoutSupport } from '@/app/utils/LayoutSupport'
 import { useTooltips } from '@/app/utils/use-tooltips'
@@ -65,10 +65,10 @@ export function ReactGraphComponent({ graphData, onResetData }: ReactGraphCompon
       <div className="toolbar">
         <DemoToolbar
           resetData={onResetData}
-          zoomIn={() => ICommand.INCREASE_ZOOM.execute(null, graphComponent)}
-          zoomOut={() => ICommand.DECREASE_ZOOM.execute(null, graphComponent)}
-          resetZoom={() => ICommand.ZOOM.execute(1.0, graphComponent)}
-          fitContent={() => ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)}
+          zoomIn={() => graphComponent.executeCommand(Command.INCREASE_ZOOM)}
+          zoomOut={() => graphComponent.executeCommand(Command.DECREASE_ZOOM)}
+          resetZoom={() => graphComponent.executeCommand(Command.ZOOM, 1)}
+          fitContent={() => void graphComponent.fitGraphBounds()}
           searchChange={(evt) => setSearchQuery(evt.target.value)}
         />
       </div>

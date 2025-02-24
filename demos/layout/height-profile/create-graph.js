@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,49 +26,69 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { getMax, SCALED_MAX_X, SCALED_MAX_Y, scalePoint } from './scale-data.js'
-import { nodeData, NodeType } from './resources/TrekkingData.js'
-import { labelNodeSize, leaderEdgeStyle, templateString } from './styles.js'
-import { Rect, StringTemplateNodeStyle } from 'yfiles'
-
+import { getMax, SCALED_MAX_X, SCALED_MAX_Y, scalePoint } from './scale-data'
+import { MultiPageNodeType, nodeData } from './resources/TrekkingData'
+import { getIcon, labelNodeSize, leaderEdgeStyle } from './styles'
+import {
+  IconLabelStyle,
+  InteriorNodeLabelModel,
+  LabelStyle,
+  Rect,
+  ShapeNodeShape,
+  ShapeNodeStyle,
+  Size
+} from '@yfiles/yfiles'
 /**
  * Creates the graph from the trekking dataset.
  * For each data item in the dataset, a waypoint node and an associated label node is created.
- * @param {!GraphComponent} graphComponent
  */
 export function initializeGraph(graphComponent) {
   const graph = graphComponent.graph
-
   // use the default node size as size for waypoint nodes
   const { width, height } = graph.nodeDefaults.size
-
   // get the min/max values from the dataset to be able to scale the data
   const { maxX, maxY } = getMax(nodeData.trail)
-
   for (const data of nodeData.waypoints) {
     const xPos = scalePoint(data.x, maxX, SCALED_MAX_X)
     const yPos = -scalePoint(data.y, maxY, SCALED_MAX_Y)
-
     const waypoint = graph.createNode({
       layout: new Rect(xPos - width * 0.5, yPos - height * 0.5, width, height),
-      tag: { ...data, type: NodeType.WAYPOINT }
+      tag: { ...data, type: MultiPageNodeType.WAYPOINT }
     })
-
     // create the label node and define its tag based on the tag of the associated waypoint
     const labelNode = graph.createNode({
-      tag: { ...data, type: NodeType.LABEL },
+      tag: { ...data, type: MultiPageNodeType.LABEL },
       layout: new Rect(0, 0, labelNodeSize.width, labelNodeSize.height)
     })
-
     // set the style of the label node and ...
     graph.setStyle(
       labelNode,
-      new StringTemplateNodeStyle({
-        svgContent: templateString,
-        styleTag: { ...data, type: NodeType.LABEL }
-      })
+      new ShapeNodeStyle({ shape: ShapeNodeShape.ROUND_RECTANGLE, fill: '#ffffff66', stroke: null })
     )
-
+    graph.addLabel(labelNode, `${data.y} m`, InteriorNodeLabelModel.BOTTOM)
+    const icon = getIcon(data)
+    if (icon) {
+      graph.addLabel(
+        labelNode,
+        '',
+        InteriorNodeLabelModel.TOP,
+        new IconLabelStyle({
+          href: icon,
+          iconPlacement: InteriorNodeLabelModel.TOP,
+          iconSize:
+            data.category === 'yWorks'
+              ? new Size(labelNodeSize.width * 0.6, labelNodeSize.height * 0.6)
+              : new Size(labelNodeSize.height * 0.6, labelNodeSize.height * 0.6)
+        })
+      )
+    } else {
+      graph.addLabel(
+        labelNode,
+        data.name,
+        InteriorNodeLabelModel.TOP,
+        new LabelStyle({ font: '16px sans-serif', textFill: '#336699' })
+      )
+    }
     // ... create an edge between the waypoint and the label node
     graph.createEdge(waypoint, labelNode, leaderEdgeStyle)
   }

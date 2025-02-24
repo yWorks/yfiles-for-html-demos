@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,29 +26,25 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, License } from 'yfiles'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { createSampleGraph } from './samples.js'
-import { initializeExportRectangle } from './export-rectangle/export-rectangle.js'
-import { initializeToggleWebGl2RenderingButton } from './webgl-support.js'
+import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createSampleGraph } from './samples'
+import { initializeExportRectangle } from './export-rectangle/export-rectangle'
+import { initializeToggleWebGlRenderingButton } from './webgl-support'
 import './option-panel/option-panel.css'
-import { initializeOptionPanel } from './option-panel/option-panel.js'
-import { initializeExportDialog, showExportDialog } from './export-dialog/export-dialog.js'
-import { initializeServerSideExport } from './server-side-export.js'
-import { exportPdfServerSide, NODE_SERVER_URL } from './pdf-export-server-side.js'
-import { exportPdfClientSide } from './pdf-export-client-side.js'
-import { retainAspectRatio } from './aspect-ratio.js'
-import { downloadFile } from 'demo-utils/file-support'
-import { loadExternalFonts } from './load-external-fonts.js'
-
-/**
- * @returns {!Promise}
- */
+import { initializeOptionPanel } from './option-panel/option-panel'
+import { initializeExportDialog, showExportDialog } from './export-dialog/export-dialog'
+import { initializeServerSideExport } from './server-side-export'
+import { exportPdfServerSide, NODE_SERVER_URL } from './pdf-export-server-side'
+import { exportPdfClientSide } from './pdf-export-client-side'
+import { retainAspectRatio } from './aspect-ratio'
+import { downloadFile } from '@yfiles/demo-utils/file-support'
+import { loadExternalFonts } from './load-external-fonts'
+import { DelayedNodeStyle } from './delayed-node-style'
 async function run() {
   License.value = await fetchLicense()
-
   if (window.location.protocol === 'file:') {
     alert(
       'This demo features image export with inlined images. ' +
@@ -56,23 +52,20 @@ async function run() {
         'Please start the demo from a web server.'
     )
   }
-
   // initialize the main graph component
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
-  applyDemoTheme(graphComponent)
   initDemoStyles(graphComponent.graph)
   retainAspectRatio(graphComponent.graph)
-
   const exportRect = initializeExportRectangle(graphComponent)
-
   let pdf = ''
-
   initializeOptionPanel(async (options) => {
     const rect = options.useExportRectangle ? exportRect.toRect() : undefined
-
     if (options.serverExport) {
-      await exportPdfServerSide(graphComponent, options.scale, options.margin, rect)
+      await exportPdfServerSide(graphComponent, options.scale, options.margin, rect, () =>
+        // wait for styles to finish rendering
+        Promise.all(DelayedNodeStyle.pendingPromises)
+      )
     } else {
       const { pdfData, previewElement } = await exportPdfClientSide(
         graphComponent,
@@ -80,32 +73,30 @@ async function run() {
         options.margin,
         options.paperSize,
         rect,
-        await loadExternalFonts()
+        await loadExternalFonts(),
+        () =>
+          // wait for styles to finish rendering
+          Promise.all(DelayedNodeStyle.pendingPromises)
       )
       pdf = pdfData
       showExportDialog(previewElement)
     }
   })
-
   initializeExportDialog('Client-side PDF Export', () => {
     try {
       downloadFile(pdf, 'graph.pdf')
-    } catch (e) {
+    } catch {
       alert(
         'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
       )
     }
   })
-
   // initialize server-side export in a non-blocking way
   initializeServerSideExport(NODE_SERVER_URL)
-
   // wire up the button to toggle webgl rendering
-  initializeToggleWebGl2RenderingButton(graphComponent)
-
+  initializeToggleWebGlRenderingButton(graphComponent)
   // create a sample graph
   await createSampleGraph(graphComponent)
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 }
-
 void run().then(finishLoading)

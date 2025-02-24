@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Clear Rectangle Area Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -78,13 +76,13 @@
 
       <!-- combo-box for sample graphs -->
       <select title="Sample graph" id="sample-graph-combobox">
-        <option value="hierarchic">Hierarchic</option>
+        <option value="hierarchical">Hierarchical</option>
         <option value="grouping">Grouping</option>
         <option value="organic">Organic</option>
         <option value="circular">Circular</option>
         <option value="tree">Tree</option>
-        <option value="balloon">Balloon</option>
-        <option value="seriesparallel">Series-Parallel</option>
+        <option value="radialTree">Radial Tree</option>
+        <option value="seriesParallel">Series-Parallel</option>
         <option value="components">Components</option>
       </select>
 
@@ -194,9 +192,9 @@
           <li>Select another strategy for assigning nodes to components.</li>
           <li>Change the setting whether orthogonal edges should be considered or not.</li>
           <li>
-            Hold down the Shift key while dragging to freeze the current graph layout. If you new
-            release the Shift key when the mouse is hovering a group node, the rectangular area
-            within the group node is kept free.
+            Hold down the <kbd>Shift</kbd> key while dragging to freeze the current graph layout. If
+            you now release the <kbd>Shift</kbd> key when the mouse is hovering a group node, the
+            rectangular area within the group node is kept free.
           </li>
         </ul>
       </div>

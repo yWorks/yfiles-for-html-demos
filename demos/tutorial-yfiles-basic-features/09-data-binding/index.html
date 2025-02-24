@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>09 Data Binding - Tutorial: Basic Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -181,7 +179,7 @@ graph.<span class="hljs-title function_">createNode</span>({ <span class="hljs-a
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">graph.<span class="hljs-title function_">addNodeCreatedListener</span>((_, evt): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
+                  ><code class="language-javascript" data-lang="javascript">graph.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;node-created&#x27;</span>, (evt): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
   <span class="hljs-comment">// Store the current time as node creation time</span>
   <span class="hljs-keyword">const</span> node = evt.<span class="hljs-property">item</span>
   <span class="hljs-comment">// if there is no tag associated with the node, already, add one</span>
@@ -209,7 +207,7 @@ graph.<span class="hljs-title function_">createNode</span>({ <span class="hljs-a
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">graphEditorInputMode.<span class="hljs-title function_">addNodeCreatedListener</span>((_, evt): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
+                  ><code class="language-javascript" data-lang="javascript">graphEditorInputMode.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;node-created&#x27;</span>, (evt): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
   <span class="hljs-comment">// Store the current time as node creation time</span>
   <span class="hljs-keyword">const</span> node = evt.<span class="hljs-property">item</span>
   node.<span class="hljs-property">tag</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()
@@ -233,7 +231,14 @@ graph.<span class="hljs-title function_">createNode</span>({ <span class="hljs-a
                   <pre
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Set the tooltip content</span>
-evt.<span class="hljs-property">toolTip</span> = node.<span class="hljs-property">tag</span> ? node.<span class="hljs-property">tag</span>.<span class="hljs-title function_">toLocaleString</span>() : <span class="hljs-string">&#x27;Not set&#x27;</span></code></pre>
+evt.<span class="hljs-property">toolTip</span> =
+  <span class="hljs-string">&#x27;Created: &#x27;</span> +
+  (node.<span class="hljs-property">tag</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Date</span>
+    ? <span class="hljs-keyword">new</span> <span class="hljs-title class_">Intl</span>.<span class="hljs-title class_">RelativeTimeFormat</span>().<span class="hljs-title function_">format</span>(
+        node.<span class="hljs-property">tag</span>.<span class="hljs-title function_">getTime</span>() - <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>().<span class="hljs-title function_">getTime</span>(),
+        <span class="hljs-string">&#x27;seconds&#x27;</span>
+      )
+    : <span class="hljs-string">&#x27;Who knows?&#x27;</span>)</code></pre>
                 </div>
               </div>
               <div class="admonitionblock note">
@@ -245,7 +250,7 @@ evt.<span class="hljs-property">toolTip</span> = node.<span class="hljs-property
                     <td class="content">
                       Since this demo focuses on storing the data, the tooltip and context menu code
                       is not explained in detail. See the
-                      <a href="../../application-features/tooltips/" target="_blank">Tooltips Demo</a> and the
+                      <a href="" target="_blank">application-features-tooltips</a> and the
                       <a href="../../input/contextmenu/" target="_blank">Context Menu Demo</a> for more information.
                     </td>
                   </tr>

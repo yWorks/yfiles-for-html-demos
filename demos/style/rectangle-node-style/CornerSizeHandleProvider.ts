@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,12 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { ICanvasObject } from 'yfiles'
 import {
   BaseClass,
   ClickEventArgs,
   Cursor,
-  HandleTypes,
+  HandleType,
   IEnumerable,
   IHandle,
   IHandleProvider,
@@ -39,13 +38,14 @@ import {
   INode,
   IPoint,
   IRenderContext,
+  type IRenderTreeElement,
   IVisualCreator,
   Point,
   RectangleCorners,
   RectangleNodeStyle,
   SvgVisual,
   SvgVisualGroup
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * An {@link IHandleProvider} for nodes using a {@link RectangleNodeStyle} that provides
@@ -91,7 +91,7 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
   private readonly style: RectangleNodeStyle
   private initialCornerSize = 0
   private currentCornerSize = 0
-  private cornerRectCanvasObject: ICanvasObject | null = null
+  private cornerRectRenderTreeElement: IRenderTreeElement | null = null
 
   /**
    * Initializes a new instance for the given node.
@@ -109,13 +109,20 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
   }
 
   /** Returns the handle's type. This is merely a visual difference, not a semantic one. */
-  get type(): HandleTypes {
-    return HandleTypes.DEFAULT | HandleTypes.VARIANT2
+  get type(): HandleType {
+    return HandleType.MOVE2
   }
 
   /** Returns the desired mouse pointer when interacting with the handle. */
   get cursor(): Cursor {
     return Cursor.NS_RESIZE
+  }
+
+  /**
+   * Gets an optional tag object associated with the handle.
+   */
+  get tag(): any {
+    return null
   }
 
   /**
@@ -127,7 +134,10 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
   initializeDrag(context: IInputModeContext): void {
     this.initialCornerSize = this.getCornerSize()
     this.currentCornerSize = this.initialCornerSize
-    this.cornerRectCanvasObject = context.canvasComponent!.inputModeGroup.addChild(this)
+    this.cornerRectRenderTreeElement = context.canvasComponent!.renderTree.createElement(
+      context.canvasComponent!.renderTree.inputModeGroup,
+      this
+    )
   }
 
   /**
@@ -158,7 +168,9 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
    */
   dragFinished(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
     this.setCornerSize(this.currentCornerSize)
-    this.cornerRectCanvasObject?.remove()
+    if (this.cornerRectRenderTreeElement) {
+      context.canvasComponent?.renderTree.remove(this.cornerRectRenderTreeElement)
+    }
   }
 
   /**
@@ -169,7 +181,9 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
    */
   cancelDrag(context: IInputModeContext, originalLocation: Point): void {
     this.setCornerSize(this.initialCornerSize)
-    this.cornerRectCanvasObject?.remove()
+    if (this.cornerRectRenderTreeElement) {
+      context.canvasComponent?.renderTree.remove(this.cornerRectRenderTreeElement)
+    }
   }
 
   /**
@@ -262,7 +276,7 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
     const rectVisual = group.children.get(0)
     const rect = rectVisual.svgElement as SVGRectElement
 
-    const topLeftView = context.toViewCoordinates(this.node.layout.topLeft)
+    const topLeftView = context.worldToViewCoordinates(this.node.layout.topLeft)
     const cornerSizeView = this.getCornerSize() * context.zoom
     rect.x.baseVal.value = topLeftView.x
     rect.y.baseVal.value = topLeftView.y

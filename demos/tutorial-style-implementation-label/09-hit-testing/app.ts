@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphItemTypes, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { GraphComponent, GraphItemTypes, License } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   addHoverEffect,
   createSampleGraphHitTesting,
@@ -35,11 +35,11 @@ import {
   fitGraphBounds,
   initializeLabelModelHitTest,
   initializeTutorialDefaults,
-  IsHitLabelStyleDescriptor
+  IsHitLabelStyleRenderer
 } from '../common'
 import { CustomLabelStyle } from './CustomLabelStyle'
 
-import { finishLoading } from 'demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 License.value = await fetchLicense()
 
@@ -48,10 +48,10 @@ const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 initializeLabelModelHitTest(graphComponent)
 
-graphComponent.graphModelManager.nodeLabelDescriptor =
-  new IsHitLabelStyleDescriptor()
-graphComponent.graphModelManager.edgeLabelDescriptor =
-  new IsHitLabelStyleDescriptor()
+graphComponent.graphModelManager.nodeLabelRenderer =
+  new IsHitLabelStyleRenderer()
+graphComponent.graphModelManager.edgeLabelRenderer =
+  new IsHitLabelStyleRenderer()
 
 const graph = graphComponent.graph
 graph.nodeDefaults.labels.style = new CustomLabelStyle()
@@ -63,6 +63,6 @@ const graphEditorInputMode = enableGraphEditing(graphComponent)
 graphEditorInputMode.selectableItems = GraphItemTypes.NONE
 addHoverEffect(graphComponent, graphEditorInputMode)
 
-fitGraphBounds(graphComponent)
+await fitGraphBounds(graphComponent)
 
 finishLoading()

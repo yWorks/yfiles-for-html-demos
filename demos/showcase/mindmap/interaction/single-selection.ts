@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,14 +27,14 @@
  **
  ***************************************************************************/
 import {
+  Command,
   EventRecognizers,
   type GraphComponent,
   type GraphEditorInputMode,
   type GraphInputMode,
   GraphItemTypes,
-  ICommand,
   IModelItem
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Disables the selection of multiple graph items using mouse/keyboard gestures.
@@ -50,20 +50,20 @@ export function useSingleSelection(graphComponent: GraphComponent): void {
   mode.multiSelectionRecognizer = EventRecognizers.NEVER
 
   // deactivate commands that can lead to multi selection
-  mode.availableCommands.remove(ICommand.TOGGLE_ITEM_SELECTION)
-  mode.availableCommands.remove(ICommand.SELECT_ALL)
+  mode.availableCommands.remove(Command.TOGGLE_ITEM_SELECTION)
+  mode.availableCommands.remove(Command.SELECT_ALL)
 
   // deactivate commands that can extend the selection
-  mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_LEFT)
-  mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_UP)
-  mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_DOWN)
-  mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_RIGHT)
+  mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_LEFT)
+  mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_UP)
+  mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_DOWN)
+  mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_RIGHT)
 
   // add custom binding for toggle item selection
   mode.keyboardInputMode.addCommandBinding(
-    ICommand.TOGGLE_ITEM_SELECTION,
-    (command, parameter) => toggleItemSelectionExecuted(graphComponent, parameter),
-    (command, parameter) => toggleItemSelectionCanExecute(graphComponent, parameter)
+    Command.TOGGLE_ITEM_SELECTION,
+    (parameter) => toggleItemSelectionExecuted(graphComponent, parameter),
+    (parameter) => toggleItemSelectionCanExecute(graphComponent, parameter)
   )
 }
 
@@ -97,7 +97,7 @@ function toggleItemSelectionExecuted(graphComponent: GraphComponent, parameter: 
     return false
   }
 
-  const isSelected = inputMode.graphSelection.isSelected(modelItem)
+  const isSelected = inputMode.graphSelection.includes(modelItem)
   if (isSelected) {
     // the item is selected and needs to be unselected - just clear the selection
     inputMode.graphSelection.clear()

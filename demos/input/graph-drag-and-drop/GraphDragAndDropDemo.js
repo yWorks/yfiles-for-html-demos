@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,11 +29,11 @@
 /* eslint-disable jsdoc/check-param-names */
 import {
   CanvasComponent,
-  DefaultGraph,
   DragDropEffects,
   EdgePathLabelModel,
   EdgeSides,
   FoldingManager,
+  Graph,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
@@ -41,47 +41,30 @@ import {
   GridSnapTypes,
   IGraph,
   ILabelModelParameter,
-  Insets,
   License,
+  SnappableItems,
   SvgExport
-} from 'yfiles'
-import { GraphDropInputMode } from './GraphDropInputMode.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/** @type {GraphComponent} */
+} from '@yfiles/yfiles'
+import { GraphDropInputMode } from './GraphDropInputMode'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 let graphComponent
-
-/** @type {GraphDropInputMode} */
 let graphDropInputMode
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
-
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // enable the option to expand and collapse group nodes
-  const masterGraph = new DefaultGraph()
+  const masterGraph = new Graph()
   const manager = new FoldingManager(masterGraph)
   graphComponent.graph = manager.createFoldingView().graph
-
   // enable undo support
   masterGraph.undoEngineEnabled = true
-
   initializeInputModes()
-
   initDemoStyles(graphComponent.graph, { foldingEnabled: true })
-
   await initializePalette()
-
   initializeUI()
 }
-
 /**
  * Registers the {@link GraphEditorInputMode} as the {@link CanvasComponent.inputMode}
  * and initializes the input mode for dropping graphs.
@@ -89,35 +72,27 @@ async function run() {
 function initializeInputModes() {
   // configure graph editor with snapping enabled
   const graphEditorInputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
     snapContext: new GraphSnapContext({
-      nodeToNodeDistance: 30,
+      snappableItems: SnappableItems.NODE | SnappableItems.EDGE,
+      nodeDistance: 30,
       nodeToEdgeDistance: 20,
-      snapOrthogonalMovement: false,
       snapDistance: 10,
-      snapSegmentsToSnapLines: true,
-      snapBendsToSnapLines: true,
       gridSnapType: GridSnapTypes.ALL
     })
   })
-
   // add the input mode to drop graphs
   graphDropInputMode = new GraphDropInputMode()
   graphDropInputMode.snappingEnabled = true
   graphDropInputMode.showPreview = true
   graphDropInputMode.allowFolderNodeAsParent = false
   graphEditorInputMode.add(graphDropInputMode)
-
   graphComponent.inputMode = graphEditorInputMode
 }
-
 /**
  * Populates the palette with the graphs stored in the 'resources' folder.
- * @returns {!Promise}
  */
 async function initializePalette() {
   const palette = document.getElementById('palette')
-
   // load the graphs to drag from a JSON file
   const response = await fetch('./resources/graphs.json')
   if (response.ok) {
@@ -130,25 +105,19 @@ async function initializePalette() {
     })
   }
 }
-
 /**
  * Creates an HTML element that visualizes the given graph in the drag and drop panel.
- * @param {!IGraph} graph
- * @returns {!HTMLElement}
  */
 function createPaletteEntry(graph) {
   // create an image that visualizes the graph
   const paletteImage = document.createElement('img')
   paletteImage.setAttribute('src', toSvg(graph))
-
   // create a div element that holds the image of the graph
   const paletteEntry = document.createElement('div')
   paletteEntry.appendChild(paletteImage)
-
   const startDrag = () => {
     const dragPreview = document.createElement('div')
     dragPreview.appendChild(paletteImage.cloneNode(true))
-
     // start the drop input mode when a drag from the palette begins
     const dragSource = GraphDropInputMode.startDrag(
       paletteEntry,
@@ -157,8 +126,7 @@ function createPaletteEntry(graph) {
       true,
       dragPreview
     )
-
-    dragSource.addQueryContinueDragListener((src, evt) => {
+    dragSource.addEventListener('query-continue-drag', (evt) => {
       // hide the preview if there is currently to valid drop target
       if (evt.dropTarget) {
         dragPreview.classList.add('hidden')
@@ -167,68 +135,27 @@ function createPaletteEntry(graph) {
       }
     })
   }
-
-  // listen for mouse drag events
+  // listen for pointer events
   paletteEntry.addEventListener(
-    'mousedown',
+    'pointerdown',
     (event) => {
       startDrag()
       event.preventDefault()
     },
     false
   )
-
-  // listen for touch drag events
-  paletteEntry.addEventListener(
-    'touchstart',
-    (event) => {
-      startDrag()
-      event.preventDefault()
-    },
-    { passive: false }
-  )
-
   return paletteEntry
 }
-
-/**
- * @typedef {Object} NodeData
- * @property {number} id
- * @property {object} layout
- * @property {string} label
- * @property {number} [parent]
- */
-
-/**
- * @typedef {Object} EdgeData
- * @property {number} id
- * @property {number} source
- * @property {number} target
- * @property {object} label
- * @property {Array.<object>} [bends]
- */
-
-/**
- * @typedef {Object} GraphData
- * @property {Array.<NodeData>} nodes
- * @property {Array.<NodeData>} groups
- * @property {Array.<EdgeData>} edges
- */
-
 /**
  * Builds a graph from the given graph data.
  * @yjs:keep = nodes,edges
- * @param {!GraphData} graphData
- * @returns {!IGraph}
  */
 function toGraph(graphData) {
   // enable the option to expand and collapse group nodes
-  const masterGraph = new DefaultGraph()
+  const masterGraph = new Graph()
   const manager = new FoldingManager(masterGraph)
   const graph = manager.createFoldingView().graph
-
   initDemoStyles(graph, { foldingEnabled: true })
-
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
     data: graphData.nodes,
@@ -251,16 +178,12 @@ function toGraph(graphData) {
     labels: [{ text: 'label.text', layoutParameter: createLabelParameter }],
     bends: 'bends'
   })
-
   return builder.buildGraph()
 }
-
 /**
  * Creates an edge label parameter for placing a label along the path of an edge.
  * @param ratio The ratio at which to place the label at the edge path. A ratio of 0.0 will place
  * the label at the source side of the edge path, a ratio of 1.0 at the target side. The default is 0.5.
- * @param {!object} undefined
- * @returns {!ILabelModelParameter}
  */
 function createLabelParameter({ label: { ratio = 0.5 } }) {
   return new EdgePathLabelModel().createRatioParameter({
@@ -268,24 +191,19 @@ function createLabelParameter({ label: { ratio = 0.5 } }) {
     sideOfEdge: EdgeSides.ABOVE_EDGE
   })
 }
-
 /**
  * Creates an SVG image for the given graph.
- * @param {!IGraph} graph
- * @returns {!string}
  */
 function toSvg(graph) {
   const exportComponent = new GraphComponent()
   exportComponent.graph = graph
-  exportComponent.updateContentRect(new Insets(5))
-
-  const svgExport = new SvgExport(exportComponent.contentRect)
+  exportComponent.updateContentBounds(5)
+  const svgExport = new SvgExport(exportComponent.contentBounds)
   svgExport.scale = 0.5
   const svg = svgExport.exportSvg(exportComponent)
   const svgString = SvgExport.exportSvgString(svg)
   return SvgExport.encodeSvgDataUrl(svgString)
 }
-
 /**
  * Registers actions for the demo-specific items in the toolbar.
  */
@@ -293,7 +211,6 @@ function initializeUI() {
   const previewButton = document.querySelector('#show-preview')
   const snappingButton = document.querySelector('#enable-snapping')
   const folderButton = document.querySelector('#folders-as-parents')
-
   // button to enable or disable the preview shown during the drag and drop operation
   previewButton.addEventListener('click', () => {
     graphDropInputMode.showPreview = previewButton.checked
@@ -301,7 +218,6 @@ function initializeUI() {
       snappingButton.click()
     }
   })
-
   // button to enable or disable the snapping during the drag and drop operation
   snappingButton.addEventListener('click', () => {
     graphDropInputMode.snappingEnabled = snappingButton.checked
@@ -309,11 +225,9 @@ function initializeUI() {
       previewButton.click()
     }
   })
-
   // button to allow or disable dropping of graphs on folder nodes
   folderButton.addEventListener('click', () => {
     graphDropInputMode.allowFolderNodeAsParent = folderButton.checked
   })
 }
-
 run().then(finishLoading)

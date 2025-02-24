@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,58 +28,47 @@
  ***************************************************************************/
 import {
   EdgePathLabelModel,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
-  Insets,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   License,
   PolylineEdgeStyle
-} from 'yfiles'
-import GraphData from './resources/GraphData.js'
-import { calculateCriticalPathEdges, runLayout } from './CriticalPathHelper.js'
-import { applyDemoTheme, createDemoNodeStyle, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from '@yfiles/yfiles'
+import GraphData from './resources/GraphData'
+import { calculateCriticalPathEdges, runLayout } from './CriticalPathHelper'
+import { createDemoNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * Runs this demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphViewerInputMode()
-
   initializeGraph(graphComponent)
   loadSampleGraph(graphComponent)
-
   // calculates the critical path and shows the results
   await calculateCriticalPathAndShowResult(graphComponent)
 }
-
 /**
  * Calculates the critical paths and shows the result.
- * @param {!GraphComponent} graphComponent The given graphComponent
+ * @param graphComponent The given graphComponent
  */
 async function calculateCriticalPathAndShowResult(graphComponent) {
   // runs the algorithms and marks the important nodes and edges using their tags
   calculateCriticalPathEdges(graphComponent)
-
   // changes the styles of the critical path edges and critical nodes
   showResult(graphComponent)
-
   // run the layout algorithm
   await runLayout(graphComponent)
 }
-
 /**
  * Changes the styles of the critical path edges and critical nodes based on the result of the rank
  * assignment algorithm.
- * @param {!GraphComponent} graphComponent The given graphComponent
+ * @param graphComponent The given graphComponent
  */
 function showResult(graphComponent) {
   const graph = graphComponent.graph
@@ -101,11 +90,9 @@ function showResult(graphComponent) {
   criticalNodeStyle.stroke = '2px #F26419'
   const startNodeStyle = createDemoNodeStyle('demo-palette-402')
   const finishNodeStyle = createDemoNodeStyle('demo-palette-403')
-
   graph.edges.forEach((edge) => {
     const sourceNode = edge.sourceNode
     const targetNode = edge.targetNode
-
     if (edge.tag.critical) {
       // change the style of the critical edge
       graph.setStyle(edge, criticalStyle)
@@ -119,7 +106,6 @@ function showResult(graphComponent) {
         graph.setStyle(edge, slackStyle)
       }
     }
-
     // change the style of the lowest/highest nodes and add the label to the last node with the total
     // time needed to complete the project
     if (sourceNode.tag.lowestNode) {
@@ -129,34 +115,29 @@ function showResult(graphComponent) {
       graph.addLabel(
         targetNode,
         `Total: ${targetNode.tag.layerId}d`,
-        new ExteriorLabelModel({ insets: new Insets(5) }).createParameter(
-          ExteriorLabelModelPosition.NORTH
-        )
+        new ExteriorNodeLabelModel({ margins: 5 }).createParameter('top')
       )
     }
   })
 }
-
 /**
  * Initializes the styles for the graph elements.
- * @param {!GraphComponent} graphComponent The given graphComponent
+ * @param graphComponent The given graphComponent
  */
 function initializeGraph(graphComponent) {
   const graph = graphComponent.graph
-
   // configure node/edge style defaults
   initDemoStyles(graph, { theme: 'demo-palette-58' })
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: new Insets(5)
-  }).createParameter(ExteriorLabelModelPosition.SOUTH)
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 3
-  }).createDefaultParameter()
+  }).createRatioParameter()
 }
-
 /**
  * Loads the sample graph.
- * @param {!GraphComponent} graphComponent The given graphComponent
+ * @param graphComponent The given graphComponent
  */
 function loadSampleGraph(graphComponent) {
   const graph = graphComponent.graph
@@ -168,7 +149,6 @@ function loadSampleGraph(graphComponent) {
     layout: 'layout',
     labels: ['label']
   })
-
   builder.createEdgesSource({
     data: GraphData.edges,
     id: 'id',
@@ -177,15 +157,12 @@ function loadSampleGraph(graphComponent) {
     tag: 'tag',
     labels: ['label']
   })
-
   builder.buildGraph()
-
   // we add a label that shows the duration of each task
   graph.nodes.forEach((node) => {
     if (node.labels.get(0).text !== 'START' && node.labels.get(0).text !== 'FINISH') {
-      graph.addLabel(node, `${node.tag.duration} d`, InteriorLabelModel.CENTER)
+      graph.addLabel(node, `${node.tag.duration} d`, InteriorNodeLabelModel.CENTER)
     }
   })
 }
-
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { GraphComponent, INode, IRenderContext, ITagOwner, TaggedSvgVisual } from 'yfiles'
-import { NodeStyleBase, SvgVisual } from 'yfiles'
+import type {
+  GraphComponent,
+  INode,
+  IRenderContext,
+  ITagOwner,
+  TaggedSvgVisual
+} from '@yfiles/yfiles'
+import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 import { render } from 'solid-js/web'
-import { batch } from 'solid-js'
 import type { Component } from 'solid-js'
+import { batch } from 'solid-js'
 import type { SetStoreFunction } from 'solid-js/store'
 import { createStore } from 'solid-js/store'
 
@@ -69,7 +75,7 @@ export class SolidComponentSvgNodeStyle<T = unknown> extends NodeStyleBase<
     const [store, setStore] = createStore({
       layout: { width: nodeLayout.width, height: nodeLayout.height },
       tag: this.getTag(node, context),
-      selected: (context.canvasComponent as GraphComponent).selection.selectedNodes.isSelected(node)
+      selected: (context.canvasComponent as GraphComponent).selection.nodes.includes(node)
     } as SolidComponentNodeStyleProps<T>)
 
     render(() => this.renderFunction(store), gElement)
@@ -92,7 +98,7 @@ export class SolidComponentSvgNodeStyle<T = unknown> extends NodeStyleBase<
       setStore('tag', this.getTag(node, context))
       setStore(
         'selected',
-        (context.canvasComponent as GraphComponent).selection.selectedNodes.isSelected(node)
+        (context.canvasComponent as GraphComponent).selection.nodes.includes(node)
       )
     })
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,19 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, IGraph, INode, IPort, Point } from 'yfiles'
-
-/**
- * @typedef {Object} SerializableEdgeData
- * @property {Array.<Array.<number>>} bends
- * @property {number} sourceNodeIndex
- * @property {number} targetNodeIndex
- */
-
-/**
- * @typedef {SerializableEdgeData} EdgeDataOptions
- */
-
+import { IEdge, IGraph, INode, IPort, Point } from '@yfiles/yfiles'
 /**
  * A simple, minimal data structure that can be used for storing a FlowEdge in JSON
  * and then re-create it in the graph.
@@ -47,34 +35,23 @@ export class EdgeData {
   bends
   sourceNodeIndex
   targetNodeIndex
-
   /**
    * Creates EdgeData from an actual edge
-   * @param {!IEdge} edge
-   * @param {number} sourceNodeIndex
-   * @param {number} targetNodeIndex
-   * @returns {!EdgeData}
    */
   static fromGraphItem(edge, sourceNodeIndex, targetNodeIndex) {
     const bends = edge.bends.toArray().map((bend) => [bend.location.x, bend.location.y])
     return new EdgeData({ bends, sourceNodeIndex, targetNodeIndex })
   }
-
   /**
    * Converts an arbitrary piece of data to EdgeData after validation.
-   * @param {!unknown} data
-   * @returns {!EdgeData}
    */
   static fromJSONData(data) {
     EdgeData.validate(data)
     return new EdgeData(data)
   }
-
   /**
    * Checks if an arbitrary piece of data (as it comes from a JSON source)
    * conforms to the format required by EdgeData.
-   * @param {!unknown} data
-   * @returns {!EdgeDataOptions}
    */
   static validate(data) {
     const bendsAreValid = data.bends.every(
@@ -91,25 +68,17 @@ export class EdgeData {
     }
     throw new Error('Malformed edge data')
   }
-
-  /**
-   * @param {!EdgeDataOptions} undefined
-   */
   constructor({ bends, sourceNodeIndex, targetNodeIndex }) {
     this.bends = bends
     this.sourceNodeIndex = sourceNodeIndex
     this.targetNodeIndex = targetNodeIndex
   }
-
   /**
    * Matches the intended source and target ports based on the source and target node indices.
-   * @param {!Array.<INode>} nodes
-   * @returns {!Array.<IPort>}
    */
   matchPorts(nodes) {
     const sourceNode = nodes[this.sourceNodeIndex]
     const targetNode = nodes[this.targetNodeIndex]
-
     const sourcePort = sourceNode.ports.find((p) => p.tag.side === 'right')
     const targetPort = targetNode.ports.find((p) => p.tag.side === 'left')
     if (!sourcePort || !targetPort) {
@@ -117,22 +86,15 @@ export class EdgeData {
     }
     return [sourcePort, targetPort]
   }
-
   /**
    * Converts node data to an actual graph node.
-   * @param {!IGraph} graph
-   * @param {!IPort} sourcePort
-   * @param {!IPort} targetPort
-   * @returns {!IEdge}
    */
   createGraphItem(graph, sourcePort, targetPort) {
     const bends = this.bends.map((b) => new Point(...b))
     return graph.createEdge({ sourcePort, targetPort, bends })
   }
-
   /**
    * Converts node data to a serializable format.
-   * @returns {!SerializableEdgeData}
    */
   toJSONData() {
     return {

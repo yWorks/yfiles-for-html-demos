@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,23 +27,24 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
   GroupNodeStyle,
-  InteriorLabelModel,
-  InteriorStretchLabelModel,
+  InteriorNodeLabelModel,
+  LabelStyle,
+  LayoutExecutor,
   License,
-  RectangleNodeStyle
-} from 'yfiles'
+  RectangleNodeStyle,
+  StretchNodeLabelModel
+} from '@yfiles/yfiles'
 import {
-  createDefaultHierarchicLayout,
-  createTabularGroupsHierarchicLayout
+  createDefaultHierarchicalLayout,
+  createTabularGroupsHierarchicalLayout
 } from './HierarchicLayoutTabularGroups'
-import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 const sortingToggle = document.querySelector<HTMLInputElement>('#sorting-toggle')!
 const tabularGroupsToggle = document.querySelector<HTMLInputElement>('#tabular-groups-toggle')!
@@ -64,30 +65,32 @@ async function run(): Promise<void> {
 
   //basic graph component configuration
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphViewerInputMode()
 
   // load the sample graph and run the layout
   await loadSampleGraph()
-  await runHierarchicLayoutWithTabularGroups()
+  await runHierarchicalLayoutWithTabularGroups()
 
   // bind actions to the buttons in the toolbar
   initializeUI()
 }
 
 /**
- * Runs a {@link HierarchicLayout} configured with tabular groups on the graph.
+ * Runs a {@link HierarchicalLayout} configured with tabular groups on the graph.
  */
-async function runHierarchicLayoutWithTabularGroups() {
-  // create the configured hierarchic layout with the tabular groups feature
-  const { layout, layoutData } = createTabularGroupsHierarchicLayout(
-    graphComponent.graph,
+async function runHierarchicalLayoutWithTabularGroups() {
+  // create the configured hierarchical layout with the tabular groups feature
+  const { layout, layoutData } = createTabularGroupsHierarchicalLayout(
     sortingToggle.checked,
     parseInt(distanceSlider.value)
   )
 
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
+
   // ... and apply it to the graph
-  await graphComponent.morphLayout(layout, '0.5s', layoutData)
+  await graphComponent.applyLayoutAnimated(layout, '0.5s', layoutData)
 }
 
 /**
@@ -137,7 +140,7 @@ async function loadSampleGraph(): Promise<void> {
   ).labelCreator
   nodeLabelCreator.textProvider = (data: any) => data.text
   nodeLabelCreator.layoutParameterProvider = () =>
-    isSimple ? InteriorLabelModel.CENTER : InteriorLabelModel.WEST
+    isSimple ? InteriorNodeLabelModel.CENTER : InteriorNodeLabelModel.LEFT
 
   const groupCreator = groupSource.nodeCreator
   groupCreator.styleProvider = (data: any) => {
@@ -149,12 +152,12 @@ async function loadSampleGraph(): Promise<void> {
           contentAreaFill: 'white',
           tabSlope: 0.5,
           drawShadow: false,
-          contentAreaInsets: 8,
+          contentAreaPadding: 8,
           tabPosition: 'top-leading',
           stroke: `1px ${colorSets['demo-palette-56']}`,
           tabHeight: 20,
           tabWidth: 80,
-          tabInset: 2
+          tabPadding: 2
         })
   }
 
@@ -163,7 +166,7 @@ async function loadSampleGraph(): Promise<void> {
     (data: any) => data.labels || []
   ).labelCreator
   groupLabelCreator.textProvider = (data: any) => data.text
-  groupLabelCreator.layoutParameterProvider = () => InteriorStretchLabelModel.NORTH
+  groupLabelCreator.layoutParameterProvider = () => StretchNodeLabelModel.TOP
 
   // define source for creation of edges
   builder.createEdgesSource({
@@ -203,10 +206,10 @@ function initializeGraph() {
     cornerSize: 3.5
   })
 
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     backgroundFill: '#E7E8D9',
     shape: 'round-rectangle',
-    insets: [2, 4, 2, 4]
+    padding: [2, 4, 2, 4]
   })
 
   // customize the group node style and its label for this demo to get nice tabular groups
@@ -217,25 +220,24 @@ function initializeGraph() {
     contentAreaFill: 'white',
     tabSlope: 0.5,
     drawShadow: true,
-    contentAreaInsets: 8,
+    contentAreaPadding: 8,
     tabPosition: 'top-leading',
     stroke: `1px ${colorSets[groupTheme]}`,
     tabHeight: 20,
     tabWidth: 80,
-    tabInset: 2
+    tabPadding: 2
   })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     verticalTextAlignment: 'center',
     horizontalTextAlignment: 'left',
-    clipText: false,
-    wrapping: 'character-ellipsis',
+    wrapping: 'wrap-character-ellipsis',
     textFill: 'white',
-    insets: 4
+    padding: 4
   })
 
   // customize the node label background color based on the selected sample
   const isSimple = sampleComboBox.value === 'simple'
-  const nodeLabelStyle = graph.nodeDefaults.labels.style as DefaultLabelStyle
+  const nodeLabelStyle = graph.nodeDefaults.labels.style as LabelStyle
   nodeLabelStyle.backgroundFill = isSimple ? nodeLabelStyle.backgroundFill : null
 }
 
@@ -247,16 +249,13 @@ function initializeUI(): void {
     .querySelector<HTMLInputElement>('#tabular-groups-toggle')!
     .addEventListener('click', async () => {
       if (tabularGroupsToggle.checked) {
-        // run the hierarchic layout with the tabular groups feature
+        // run the hierarchical layout with the tabular groups feature
         sortingToggle.disabled = false
         distanceSlider.disabled = false
-        await runHierarchicLayoutWithTabularGroups()
+        await runHierarchicalLayoutWithTabularGroups()
       } else {
-        // run hierarchic layout without tabular groups
-        await graphComponent.morphLayout(
-          createDefaultHierarchicLayout(graphComponent.graph),
-          '0.5s'
-        )
+        // run hierarchical layout without tabular groups
+        await graphComponent.applyLayoutAnimated(createDefaultHierarchicalLayout(), '0.5s')
         sortingToggle.disabled = true
         distanceSlider.disabled = true
       }
@@ -264,7 +263,7 @@ function initializeUI(): void {
 
   document
     .querySelector<HTMLInputElement>('#sorting-toggle')!
-    .addEventListener('click', runHierarchicLayoutWithTabularGroups)
+    .addEventListener('click', runHierarchicalLayoutWithTabularGroups)
 
   addNavigationButtons(
     document.querySelector<HTMLSelectElement>('#sample-combo-box')!
@@ -280,7 +279,7 @@ function initializeUI(): void {
 
     // load new sample and arrange with tabular groups feature
     await loadSampleGraph()
-    await runHierarchicLayoutWithTabularGroups()
+    await runHierarchicalLayoutWithTabularGroups()
 
     // enable toolbar ui elements
     sortingToggle.disabled = false
@@ -292,7 +291,7 @@ function initializeUI(): void {
     .querySelector<HTMLInputElement>('#child-distance-slider')!
     .addEventListener('change', async (evt) => {
       distanceLabel.textContent = (evt.target as HTMLInputElement).value
-      await runHierarchicLayoutWithTabularGroups()
+      await runHierarchicalLayoutWithTabularGroups()
     })
 }
 

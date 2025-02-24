@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IRenderContext, IVisualCreator, SvgVisual } from 'yfiles'
+import { BaseClass, IRenderContext, IVisualCreator, SvgVisual } from '@yfiles/yfiles'
 
 export default class RectangleVisualCreator extends BaseClass(IVisualCreator) {
   /**
@@ -49,7 +49,7 @@ export default class RectangleVisualCreator extends BaseClass(IVisualCreator) {
    * return {Visual} The visual for the background
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual): SvgVisual {
-    const rect = context.canvasComponent!.contentRect.getEnlarged(20)
+    const rect = context.canvasComponent!.contentBounds.getEnlarged(20)
     const rectangle = oldVisual.svgElement
     rectangle.setAttribute('x', rect.x.toString())
     rectangle.setAttribute('y', rect.y.toString())

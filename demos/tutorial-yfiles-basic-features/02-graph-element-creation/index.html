@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>02 Creating Graph Elements - Tutorial: Basic Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -230,10 +228,7 @@
                   <pre
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Create a port in the center of the node layout</span>
-<span class="hljs-keyword">const</span> port1AtNode1 = graph.<span class="hljs-title function_">addPort</span>(
-  node1,
-  <span class="hljs-title class_">FreeNodePortLocationModel</span>.<span class="hljs-property">NODE_CENTER_ANCHORED</span>
-)
+<span class="hljs-keyword">const</span> port1AtNode1 = graph.<span class="hljs-title function_">addPort</span>(node1, <span class="hljs-title class_">FreeNodePortLocationModel</span>.<span class="hljs-property">CENTER</span>)
 
 <span class="hljs-comment">// Create a port at the middle of the left border</span>
 <span class="hljs-comment">// The location is interpreted as absolute coordinates</span>

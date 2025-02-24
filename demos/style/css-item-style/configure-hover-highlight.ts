@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@ import {
   type IModelItem,
   INode,
   type INodeStyle
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 const cssHovering = 'hovering'
 const cssLabelHidden = 'invisible'
@@ -86,8 +86,7 @@ export function configureHoverHighlight(
   mode: GraphInputMode
 ): void {
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
-  mode.itemHoverInputMode.discardInvalidItems = false
-  mode.itemHoverInputMode.addHoveredItemChangedListener((_, { item, oldItem }) => {
+  mode.itemHoverInputMode.addEventListener('hovered-item-changed', ({ item, oldItem }) => {
     // the promise for both highlightItem calls can be ignored because it is merely a visual update
     void highlightItem(graphComponent, oldItem, false)
     void highlightItem(graphComponent, item, true)

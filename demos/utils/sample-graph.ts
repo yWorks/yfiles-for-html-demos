@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,8 +31,7 @@
  * and give it a bit of styling.
  */
 import {
-  DefaultFolderNodeConverter,
-  DefaultLabelStyle,
+  FolderNodeConverter,
   FoldingManager,
   FreeEdgeLabelModel,
   GraphComponent,
@@ -41,15 +40,14 @@ import {
   IGraph,
   ILabelOwner,
   IList,
-  Insets,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   LabelShape,
+  LabelStyle,
   PolylineEdgeStyle,
   ShapeNodeShape,
   ShapeNodeStyle,
-  Size,
   VerticalTextAlignment
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Creates a sample graph with grouping.
@@ -636,9 +634,9 @@ function generateItemLabels(graph: IGraph, items: IList<ILabelOwner>) {
 export function initializeFolding(graphComponent: GraphComponent) {
   // Configure folding
   const manager = new FoldingManager()
-  const folderNodeConverter = new DefaultFolderNodeConverter()
-  folderNodeConverter.folderNodeSize = new Size(150, 100)
-  manager.folderNodeConverter = folderNodeConverter
+  manager.folderNodeConverter = new FolderNodeConverter({
+    folderNodeDefaults: { size: [150, 180] }
+  })
 
   const foldingView = manager.createFoldingView()
   foldingView.enqueueNavigationalUndoUnits = true
@@ -677,12 +675,12 @@ export function initializeBasicDemoStyles(graph: IGraph): void {
     folderIcon: 'plus',
     tabFill: colorSet2.nodeLabelFill,
     stroke: `2px solid ${colorSet2.fill}`,
-    contentAreaInsets: 20,
+    contentAreaPadding: 20,
     tabBackgroundFill: colorSet2.fill,
     tabPosition: 'top-trailing',
     tabWidth: 30,
     tabHeight: 20,
-    tabInset: 3,
+    tabPadding: 3,
     iconOffset: 2,
     iconSize: 14,
     iconForegroundFill: colorSet2.fill,
@@ -696,17 +694,17 @@ export function initializeBasicDemoStyles(graph: IGraph): void {
   })
 
   // set label defaults
-  const defaultLabelStyle = new DefaultLabelStyle({
+  const defaultLabelStyle = new LabelStyle({
     shape: LabelShape.ROUND_RECTANGLE,
     backgroundFill: colorSet.nodeLabelFill,
     textFill: colorSet.text,
     verticalTextAlignment: VerticalTextAlignment.CENTER,
     horizontalTextAlignment: HorizontalTextAlignment.CENTER,
-    insets: new Insets(4, 2, 4, 1)
+    padding: [2, 4, 1, 4]
   })
 
   graph.nodeDefaults.labels.style = defaultLabelStyle
   graph.edgeDefaults.labels.style = defaultLabelStyle
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
-  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+  graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
+  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createParameter()
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,11 +31,11 @@ import {
   type GraphEditorInputMode,
   GraphItemTypes,
   INode,
-  NodeStyleDecorationInstaller,
+  NodeStyleIndicatorRenderer,
   ShapeNodeStyle,
-  StyleDecorationZoomPolicy
-} from 'yfiles'
-import { getWayPoint, NodeType } from './resources/TrekkingData'
+  StyleIndicatorZoomPolicy
+} from '@yfiles/yfiles'
+import { getWayPoint, MultiPageNodeType } from './resources/TrekkingData'
 import { addIconDescription, removeIconDescription } from './draw-icon-description'
 
 /**
@@ -44,35 +44,34 @@ import { addIconDescription, removeIconDescription } from './draw-icon-descripti
  */
 export function configureHighlight(graphComponent: GraphComponent): void {
   // defines the highlight style for the nodes based on their type
-  graphComponent.graph.decorator.nodeDecorator.highlightDecorator.setFactory(
+  graphComponent.graph.decorator.nodes.highlightRenderer.addFactory(
     (node) =>
-      new NodeStyleDecorationInstaller({
+      new NodeStyleIndicatorRenderer({
         nodeStyle: new ShapeNodeStyle({
           fill: 'transparent',
           stroke: '1px solid #662b00',
-          shape: getWayPoint(node)?.type === NodeType.LABEL ? 'round-rectangle' : 'ellipse'
+          shape: getWayPoint(node)?.type === MultiPageNodeType.LABEL ? 'round-rectangle' : 'ellipse'
         }),
         margins: 2,
-        zoomPolicy: StyleDecorationZoomPolicy.MIXED
+        zoomPolicy: StyleIndicatorZoomPolicy.MIXED
       })
   )
 
   // configures hover input mode to highlight hovered nodes and to show the icon associated to
   // the hovered node
-  const highlightManager = graphComponent.highlightIndicatorManager
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
   inputMode.itemHoverInputMode.enabled = true
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
-  inputMode.itemHoverInputMode.discardInvalidItems = false
-  inputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+  inputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     const hoveredItem = evt.item
     // clear previous highlights and remove the description icon if there was one
-    highlightManager.clearHighlights()
-    removeIconDescription()
+    const highlights = graphComponent.highlights
+    highlights.clear()
+    removeIconDescription(graphComponent)
 
     if (hoveredItem instanceof INode) {
       // highlight the node and show its description icon if there is one
-      highlightManager.addHighlight(hoveredItem)
+      highlights.add(hoveredItem)
       addIconDescription(graphComponent, hoveredItem)
     }
   })

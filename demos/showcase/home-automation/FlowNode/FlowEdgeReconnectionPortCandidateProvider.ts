@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,21 +27,20 @@
  **
  ***************************************************************************/
 import {
-  List,
   BaseClass,
-  IEnumerable,
-  IPortCandidate,
-  IInputModeContext,
-  IEdgeReconnectionPortCandidateProvider,
   IEdge,
-  DefaultPortCandidate,
+  IEdgeReconnectionPortCandidateProvider,
+  IEnumerable,
+  IInputModeContext,
+  IPortCandidate,
+  List,
+  PortCandidate,
   PortCandidateValidity
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-export class FlowEdgeReconnectionPortCandidateProvider
-  extends BaseClass<IEdgeReconnectionPortCandidateProvider>(IEdgeReconnectionPortCandidateProvider)
-  implements IEdgeReconnectionPortCandidateProvider
-{
+export class FlowEdgeReconnectionPortCandidateProvider extends BaseClass(
+  IEdgeReconnectionPortCandidateProvider
+) {
   private edge: IEdge
 
   constructor(edge: IEdge) {
@@ -58,21 +57,21 @@ export class FlowEdgeReconnectionPortCandidateProvider
 
     graph.ports
       // Exclude right-side port on the edge's source node:
-      .filter(port => port.owner !== edge.targetNode)
+      .filter((port) => port.owner !== edge.targetNode)
       // Exclude any right-side ports
-      .filter(port => port.tag.side !== 'left')
+      .filter((port) => port.tag.side !== 'left')
       // Exclude source ports that the edge's target node already connects to:
       .filter(
-        port =>
+        (port) =>
           !graph.edges.some(
-            otherEdge =>
+            (otherEdge) =>
               otherEdge !== edge &&
               otherEdge.targetPort === edge.targetPort &&
               otherEdge.sourcePort === port
           )
       )
-      .forEach(port => {
-        const portCandidate = new DefaultPortCandidate(port)
+      .forEach((port) => {
+        const portCandidate = new PortCandidate(port)
         portCandidate.validity = PortCandidateValidity.VALID
         candidates.add(portCandidate)
       })
@@ -89,21 +88,21 @@ export class FlowEdgeReconnectionPortCandidateProvider
 
     graph.ports
       // Exclude left-side port on the edge's source node:
-      .filter(port => port.owner !== edge.sourceNode)
+      .filter((port) => port.owner !== edge.sourceNode)
       // Exclude any right-side ports
-      .filter(port => port.tag.side !== 'right')
+      .filter((port) => port.tag.side !== 'right')
       // Exclude target ports that the edge's source node already connects to:
       .filter(
-        port =>
+        (port) =>
           !graph.edges.some(
-            otherEdge =>
+            (otherEdge) =>
               otherEdge !== edge &&
               otherEdge.sourcePort === edge.sourcePort &&
               otherEdge.targetPort === port
           )
       )
-      .forEach(port => {
-        const portCandidate = new DefaultPortCandidate(port)
+      .forEach((port) => {
+        const portCandidate = new PortCandidate(port)
         portCandidate.validity = PortCandidateValidity.VALID
         candidates.add(portCandidate)
       })

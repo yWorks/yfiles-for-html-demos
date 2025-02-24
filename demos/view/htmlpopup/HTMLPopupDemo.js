@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,83 +27,63 @@
  **
  ***************************************************************************/
 import {
-  Class,
   EdgePathLabelModel,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphItemTypes,
-  GraphMLSupport,
   GraphViewerInputMode,
-  ICommand,
   IEdge,
   ImageNodeStyle,
   INode,
-  Key,
   License,
   ModifierKeys,
   Point,
-  StorageLocation
-} from 'yfiles'
-
-import HTMLPopupSupport from './HTMLPopupSupport.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
+  PolylineEdgeStyle
+} from '@yfiles/yfiles'
+import { HTMLPopupSupport } from './HTMLPopupSupport'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import graphData from './resources/graph-data.json'
 /**
  * Runs the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeInputMode(graphComponent)
-
   initializePopups(graphComponent)
-
-  readSampleGraph(graphComponent)
+  buildGraph(graphComponent)
 }
-
 /**
  * Creates the pop-ups for nodes and edges and adds the event listeners that show and hide these pop-ups.
  *
  * Since we want to show only one pop-up at any time, we bind it to the current item of the graph component.
- * @param {!GraphComponent} graphComponent
  */
 function initializePopups(graphComponent) {
   // Creates a label model parameter that is used to position the node pop-up
-  const nodeLabelModel = new ExteriorLabelModel({ insets: 10 })
-
+  const nodeLabelModel = new ExteriorNodeLabelModel({ margins: 10 })
   // Creates the pop-up for the node pop-up template
   const nodePopup = new HTMLPopupSupport(
     graphComponent,
     getDiv('#nodePopupContent'),
-    nodeLabelModel.createParameter(ExteriorLabelModelPosition.NORTH)
+    nodeLabelModel.createParameter('top')
   )
-
   // Creates the edge pop-up for the edge pop-up template with a suitable label model parameter
   // We use the EdgePathLabelModel for the edge pop-up
   const edgeLabelModel = new EdgePathLabelModel({ autoRotation: false })
-
   // Creates the pop-up for the edge pop-up template
   const edgePopup = new HTMLPopupSupport(
     graphComponent,
     getDiv('#edgePopupContent'),
-    edgeLabelModel.createDefaultParameter()
+    edgeLabelModel.createRatioParameter()
   )
-
   // The following works with both GraphEditorInputMode and GraphViewerInputMode
   const inputMode = graphComponent.inputMode
-
   // The pop-up is shown for the currentItem thus nodes and edges should be focusable
   inputMode.focusableItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
-
   // Register a listener that shows the pop-up for the currentItem
-  graphComponent.addCurrentItemChangedListener((_, evt) => {
+  graphComponent.addEventListener('current-item-changed', () => {
     const item = graphComponent.currentItem
     if (item instanceof INode) {
       // update data in node pop-up
@@ -122,41 +102,27 @@ function initializePopups(graphComponent) {
       edgePopup.currentItem = null
     }
   })
-
   // On clicks on empty space, set currentItem to `null` to hide the pop-ups
-  inputMode.addCanvasClickedListener((_, evt) => {
+  inputMode.addEventListener('canvas-clicked', () => {
     graphComponent.currentItem = null
   })
-
   // On press of the ESCAPE key, set currentItem to `null` to hide the pop-ups
-  inputMode.keyboardInputMode.addKeyBinding(
-    Key.ESCAPE,
-    ModifierKeys.NONE,
-    (command, parameter, source) => {
-      source.currentItem = null
-      return true
-    }
-  )
+  inputMode.keyboardInputMode.addKeyBinding('Escape', ModifierKeys.NONE, () => {
+    graphComponent.currentItem = null
+  })
 }
-
 /**
  * Returns the HTMLDivElement with the given ID.
- * @param {!string} id
- * @returns {!HTMLDivElement}
  */
 function getDiv(id) {
   return document.querySelector(id)
 }
-
 /**
  * Updates the node pop-up content with the elements from the node's tag.
- * @param {!HTMLPopupSupport.<INode>} nodePopup
- * @param {!INode} node
  */
 function updateNodePopupContent(nodePopup, node) {
   // get business data from node tag
   const data = node.tag
-
   // get all divs in the pop-up
   const divs = nodePopup.div.getElementsByTagName('div')
   for (let i = 0; i < divs.length; i++) {
@@ -171,17 +137,13 @@ function updateNodePopupContent(nodePopup, node) {
   const img = nodePopup.div.getElementsByTagName('img').item(0)
   img.setAttribute('src', `resources/${data.icon}.svg`)
 }
-
 /**
  * Updates the edge pop-up content with the elements from the edge's tag.
- * @param {!HTMLPopupSupport.<IEdge>} edgePopup
- * @param {!IEdge} edge
  */
 function updateEdgePopupContent(edgePopup, edge) {
   // get business data from node tags
   const sourceData = edge.sourcePort.owner.tag
   const targetData = edge.targetPort.owner.tag
-
   // get all divs in the pop-up
   const divs = edgePopup.div.getElementsByTagName('div')
   for (let i = 0; i < divs.length; i++) {
@@ -197,30 +159,30 @@ function updateEdgePopupContent(edgePopup, edge) {
     }
   }
 }
-
-// We load the 'styles-other' module explicitly to prevent tree-shaking tools from removing this
-// dependency which is needed for loading all library styles.
-Class.ensure(ImageNodeStyle)
-
 /**
- * Reads the source graph from a graphml file.
- * @param {!GraphComponent} graphComponent
- * @returns {!Promise}
+ * Iterates through the given data set and creates nodes and edges according to the given data.
  */
-async function readSampleGraph(graphComponent) {
-  // Enables the graphml support
-  const gs = new GraphMLSupport({
-    graphComponent,
-    // configure to load and save to the file system
-    storageLocation: StorageLocation.FILE_SYSTEM
+function buildGraph(graphComponent) {
+  const graphBuilder = new GraphBuilder(graphComponent.graph)
+  const nodesSource = graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: (item) => item.id,
+    layout: (item) => item.layout,
+    tag: (item) => item.tag
   })
-  await gs.graphMLIOHandler.readFromURL(graphComponent.graph, 'resources/sample.graphml')
-  graphComponent.fitGraphBounds()
+  nodesSource.nodeCreator.styleProvider = (item) =>
+    new ImageNodeStyle(`./resources/${item.tag.icon}.svg`)
+  const edgeSource = graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
+  })
+  edgeSource.edgeCreator.defaults.style = new PolylineEdgeStyle({ targetArrow: 'none' })
+  graphBuilder.buildGraph()
+  void graphComponent.fitGraphBounds()
 }
-
 /**
  * Creates a viewer input mode for the graphComponent of this demo.
- * @param {!GraphComponent} graphComponent
  */
 function initializeInputMode(graphComponent) {
   const mode = new GraphViewerInputMode({
@@ -228,9 +190,8 @@ function initializeInputMode(graphComponent) {
     selectableItems: GraphItemTypes.NONE,
     marqueeSelectableItems: GraphItemTypes.NONE
   })
-
-  mode.mouseHoverInputMode.toolTipLocationOffset = new Point(10, 10)
-  mode.addQueryItemToolTipListener((_, evt) => {
+  mode.toolTipInputMode.toolTipLocationOffset = new Point(10, 10)
+  mode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.item instanceof INode && !evt.handled) {
       const nodeName = evt.item.tag.name
       if (nodeName) {
@@ -239,8 +200,6 @@ function initializeInputMode(graphComponent) {
       }
     }
   })
-
   graphComponent.inputMode = mode
 }
-
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 /**
  * Creates the sample nodes for this tutorial step
- * @param {!IGraph} graph
  */
 export function createNodes(graph) {
   graph.createNode({
@@ -41,7 +40,6 @@ export function createNodes(graph) {
     tag: { color: '#9e7cb5', showBadge: true },
     labels: ['Purple with badge']
   })
-
   graph.createNode({
     layout: [70, 150, 100, 70],
     labels: ['Without tag']

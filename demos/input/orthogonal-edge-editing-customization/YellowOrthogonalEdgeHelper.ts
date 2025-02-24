@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { IEdge, IGraph, IInputModeContext } from 'yfiles'
-import { IShapeGeometry, OrthogonalEdgeHelper, Point } from 'yfiles'
+import type { IEdge, IGraph, IInputModeContext } from '@yfiles/yfiles'
+import { IShapeGeometry, OrthogonalEdgeHelper, Point } from '@yfiles/yfiles'
 
 /**
  * Creates one new bend if the first or last segment of an edge is moved.
@@ -41,43 +41,50 @@ export default class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
    */
   private bendAddedState = BendAddedState.None
 
+  constructor(edge: IEdge) {
+    super(edge)
+  }
+
   /**
    * Prevents edge ports from being moved.
    * As a side effect, this method adds a new bend at the source or target end of the edge.
    * @param inputModeContext The input mode context in which the segment is edited.
-   * @param edge The edge to inspect.
    * @param sourceEnd `true` if the source end of the edge is queried and `false` otherwise.
    */
-  shouldMoveEndImplicitly(
-    inputModeContext: IInputModeContext,
-    edge: IEdge,
-    sourceEnd: boolean
-  ): boolean {
+  shouldMoveEndImplicitly(inputModeContext: IInputModeContext, sourceEnd: boolean): boolean {
     if (sourceEnd) {
       this.bendAddedState = BendAddedState.AtSource
-      inputModeContext.graph!.addBend(edge, edge.sourcePort!.location, BendAddedState.AtSource)
+      inputModeContext.graph!.addBend(
+        this.edge,
+        this.edge.sourcePort.location,
+        BendAddedState.AtSource
+      )
     } else {
       this.bendAddedState = BendAddedState.AtTarget
-      inputModeContext.graph!.addBend(edge, edge.targetPort!.location, BendAddedState.AtTarget)
+      inputModeContext.graph!.addBend(
+        this.edge,
+        this.edge.targetPort.location,
+        BendAddedState.AtTarget
+      )
     }
 
     return false
   }
 
-  cleanUpEdge(inputModeContext: IInputModeContext, graph: IGraph, edge: IEdge): void {
-    this.cleanUpEdgeImpl(graph, edge)
-    super.cleanUpEdge(inputModeContext, graph, edge)
+  cleanUpEdge(inputModeContext: IInputModeContext, graph: IGraph): void {
+    this.cleanUpEdgeImpl(graph)
+    super.cleanUpEdge(inputModeContext, graph)
   }
 
-  private cleanUpEdgeImpl(graph: IGraph, edge: IEdge): void {
+  private cleanUpEdgeImpl(graph: IGraph): void {
     const bendAddedState = this.bendAddedState
     this.bendAddedState = BendAddedState.None
 
-    if (bendAddedState == BendAddedState.None || edge.bends.size < 1) {
+    if (bendAddedState == BendAddedState.None || this.edge.bends.size < 1) {
       return
     }
 
-    cleanUpEdgeEnd(graph, edge, bendAddedState)
+    cleanUpEdgeEnd(graph, this.edge, bendAddedState)
   }
 }
 
@@ -95,15 +102,15 @@ function cleanUpEdgeEnd(
 ): void {
   const atSource = bendAddedState == BendAddedState.AtSource
 
-  const port = atSource ? edge.sourcePort! : edge.targetPort!
-  const geometry = port.owner!.lookup(IShapeGeometry.$class)!
+  const port = atSource ? edge.sourcePort : edge.targetPort
+  const geometry = port.owner.lookup(IShapeGeometry)!
 
   // remove all bend inside the respective node
   const bends = edge.bends
   while (bends.size > 0) {
     const bend = atSource ? bends.first() : bends.last()
-    if (geometry.isInside(bend.location.toPoint())) {
-      graph.remove(bend)
+    if (geometry.isInside(bend!.location.toPoint())) {
+      graph.remove(bend!)
     } else {
       break
     }
@@ -115,8 +122,8 @@ function cleanUpEdgeEnd(
 
   const otherLocation: Point =
     bends.size > 0
-      ? (atSource ? bends.first() : bends.last()).location.toPoint()
-      : (atSource ? edge.targetPort! : edge.sourcePort!).location
+      ? (atSource ? bends.first() : bends.last())!.location.toPoint()
+      : (atSource ? edge.targetPort : edge.sourcePort).location
   const otherX = otherLocation.x
   const otherY = otherLocation.y
 

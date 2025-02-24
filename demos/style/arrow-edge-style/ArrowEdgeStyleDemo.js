@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,6 @@
 import {
   ArrowEdgeStyle,
   ArrowStyleShape,
-  Enum,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
@@ -37,12 +36,11 @@ import {
   IEdge,
   IGraph,
   License
-} from 'yfiles'
-import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
-import { SampleGraph } from './resources/SampleGraph.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from '@yfiles/yfiles'
+import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { SampleGraph } from './resources/SampleGraph'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 const basicShape = document.querySelector('#basic-shape')
 const thicknessRange = document.querySelector('#thickness-range')
 const thicknessRangeLabel = document.querySelector('#thickness-label')
@@ -54,17 +52,10 @@ const croppingRange = document.querySelector('#cropping-range')
 const croppingLabel = document.querySelector('#cropping-label')
 const propertiesPanel = document.querySelector('.demo-form-block')
 const infoMessage = document.querySelector('.info-message')
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
-
   const graphEditorInputMode = new GraphEditorInputMode({
     marqueeSelectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE
   })
@@ -73,7 +64,6 @@ async function run() {
   // bends for existing edges that use it, so we just need to disable it for edge creation.
   graphEditorInputMode.createEdgeInputMode.allowCreateBend = false
   graphComponent.inputMode = graphEditorInputMode
-
   // Initialize style defaults
   initDemoStyles(graph, {
     theme: { node: 'demo-palette-58' },
@@ -81,19 +71,14 @@ async function run() {
   })
   graph.edgeDefaults.style = getStyleForOptionsPanel()
   graph.edgeDefaults.shareStyleInstance = false
-
   // Create the sample graph
   createSampleGraph(graph)
-
   // Initialize the toolbar and style properties user interface
   initializeUI(graphComponent)
-
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
-
 /**
  * Creates a sample graph with different style settings.
- * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
   const builder = new GraphBuilder(graph)
@@ -111,11 +96,8 @@ function createSampleGraph(graph) {
   })
   builder.buildGraph()
 }
-
 /**
  * Creates an {@link ArrowEdgeStyle} for the current settings of the options panel.
- * @param {!object} [options]
- * @returns {!ArrowEdgeStyle}
  */
 function getStyleForOptionsPanel(options) {
   // Get the settings for the style from the options panel
@@ -125,7 +107,6 @@ function getStyleForOptionsPanel(options) {
   const angle = options?.angle ?? parseFloat(angleRange.value)
   const shaftRatio = options?.shaftRatio ?? parseFloat(shaftRatioRange.value)
   const cropping = parseFloat(croppingRange.value)
-
   // Create the ArrowEdgeStyle with the specified settings
   return new ArrowEdgeStyle({
     fill: colorSets[color].fill,
@@ -138,10 +119,8 @@ function getStyleForOptionsPanel(options) {
     targetCropping: cropping
   })
 }
-
 /**
  * Binds actions to the toolbar and style property editor.
- * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
   basicShape.addEventListener('change', () => {
@@ -150,27 +129,23 @@ function initializeUI(graphComponent) {
     applyStyleSetting(graphComponent, (style) => (style.shape = shape))
     shaftRatioRange.disabled = value === 'PARALLELOGRAM' || value === 'TRAPEZOID'
   })
-
   thicknessRange.addEventListener('input', () => {
     const thickness = parseFloat(thicknessRange.value)
     applyStyleSetting(graphComponent, (style) => (style.thickness = thickness))
     thicknessRangeLabel.innerText = thickness.toFixed(0)
   })
-
   angleRange.addEventListener('input', () => {
     const value = angleRange.value
     const angle = toRadians(parseFloat(value))
     applyStyleSetting(graphComponent, (style) => (style.angle = angle))
     angleLabel.innerText = value
   })
-
   shaftRatioRange.addEventListener('input', () => {
     const value = shaftRatioRange.value
     const shaftRatio = parseFloat(value)
     applyStyleSetting(graphComponent, (style) => (style.shaftRatio = shaftRatio))
     shaftRatioLabel.innerText = value
   })
-
   croppingRange.addEventListener('input', () => {
     const value = croppingRange.value
     const cropping = parseFloat(value)
@@ -178,62 +153,56 @@ function initializeUI(graphComponent) {
     applyStyleSetting(graphComponent, (style) => (style.targetCropping = cropping))
     croppingLabel.innerText = value
   })
-
   // adjust option panel when the selection has been changed
-  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+  graphComponent.selection.addEventListener('item-added', (evt) => {
     if (evt.item instanceof IEdge && evt.item.style instanceof ArrowEdgeStyle) {
       adjustOptionPanel(graphComponent, evt.item)
       graphComponent.graph.edgeDefaults.style = getStyleForOptionsPanel()
     }
   })
 }
-
 /**
  * Applies changes in the option panel to the selected edges and the default style.
- * @param {!GraphComponent} graphComponent The component that displays the graph.
- * @param {!function} adjustStyle A callback that gets each style to change.
+ * @param graphComponent The component that displays the graph.
+ * @param adjustStyle A callback that gets each style to change.
  */
 function applyStyleSetting(graphComponent, adjustStyle) {
   const graph = graphComponent.graph
-
-  graphComponent.selection.selectedEdges.forEach((edge) => {
+  graphComponent.selection.edges.forEach((edge) => {
     const style = edge.style
     if (style instanceof ArrowEdgeStyle) {
       adjustStyle(style)
     }
   })
-
   // adjust also the default style applied to newly created nodes
   adjustStyle(graph.edgeDefaults.style)
   graphComponent.invalidate()
 }
-
 /**
  * Adjusts the option panel to show the style settings of a newly selected edge.
- * @param {!GraphComponent} graphComponent The graphComponent where the node lives.
- * @param {!IEdge} edge The edge whose setting should be shown.
+ * @param graphComponent The graphComponent where the node lives.
+ * @param edge The edge whose setting should be shown.
  */
 function adjustOptionPanel(graphComponent, edge) {
   const style = edge.style
-  const shape = Enum.getName(ArrowStyleShape.$class, style.shape)
+  const shape = ArrowStyleShape[style.shape]
   const thickness = style.thickness.toFixed(0)
   const angle = String(toDegrees(style.angle).toFixed(0))
   const shaftRatio = String(style.shaftRatio)
   const cropping = String(style.sourceCropping)
   // if no element is selected, disable the options panel
-  const disabled = !graphComponent.selection.isSelected(edge)
+  const disabled = !graphComponent.selection.includes(edge)
   updatePanelState(style, shape, thickness, angle, shaftRatio, cropping, disabled)
 }
-
 /**
  * Updates the current state of the options panel with the given values
- * @param {!ArrowEdgeStyle} style The style to abe applied.
- * @param {!string} shape The shape to be applied.
- * @param {!string} thickness The thickness to be applied.
- * @param {!string} angle The angle to be applied.
- * @param {!string} shaftRatio The shaft ration to be applied.
- * @param {!string} cropping The cropping length of the edge
- * @param {boolean} disabled True if the panel should be disabled, false otherwise
+ * @param style The style to abe applied.
+ * @param shape The shape to be applied.
+ * @param thickness The thickness to be applied.
+ * @param angle The angle to be applied.
+ * @param shaftRatio The shaft ration to be applied.
+ * @param cropping The cropping length of the edge
+ * @param disabled True if the panel should be disabled, false otherwise
  */
 function updatePanelState(style, shape, thickness, angle, shaftRatio, cropping, disabled) {
   basicShape.value = shape
@@ -243,7 +212,6 @@ function updatePanelState(style, shape, thickness, angle, shaftRatio, cropping, 
   thicknessRangeLabel.innerText = thickness
   angleRange.value = angle
   angleRange.disabled = disabled
-
   angleRange.min =
     style.shaftRatio === 1 ||
     style.shape === ArrowStyleShape.PARALLELOGRAM ||
@@ -256,30 +224,22 @@ function updatePanelState(style, shape, thickness, angle, shaftRatio, cropping, 
     disabled ??
     (style.shape === ArrowStyleShape.PARALLELOGRAM || style.shape === ArrowStyleShape.TRAPEZOID)
   shaftRatioLabel.innerText = shaftRatio
-
   croppingRange.value = cropping
   croppingRange.disabled = disabled
   croppingLabel.innerText = cropping
   propertiesPanel.style.display = disabled ? 'none' : 'inline-block'
   infoMessage.style.display = disabled ? 'inline-block' : 'none'
 }
-
 /**
  * Returns the given angle in degrees.
- * @param {number} radians
- * @returns {number}
  */
 function toDegrees(radians) {
   return (radians * 180) / Math.PI
 }
-
 /**
  * Returns the given angle in radians.
- * @param {number} degrees
- * @returns {number}
  */
 function toRadians(degrees) {
   return (degrees / 180) * Math.PI
 }
-
 run().then(finishLoading)

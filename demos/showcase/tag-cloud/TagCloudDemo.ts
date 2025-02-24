@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,17 +27,18 @@
  **
  ***************************************************************************/
 import {
-  ComponentArrangementStyles,
+  ComponentArrangementStyle,
   ComponentLayout,
   FilteredGraphWrapper,
   GraphComponent,
   GraphViewerInputMode,
   IGraph,
-  InteriorLabelModel,
+  INodeStyle,
+  InteriorNodeLabelModel,
+  LayoutExecutor,
   License,
-  VoidNodeStyle,
-  YDimension
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 import TextData from './TextData'
 import {
   AssignNodeSizesStage,
@@ -45,9 +46,8 @@ import {
   createAssignNodeSizeStageLayoutData,
   updateTagCloud
 } from './TagCloudHelper'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 // The minimum frequency of the words to be shown in the tag cloud visualization
 let minFrequency = 80
@@ -59,13 +59,11 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // restrict user interaction to panning (and zooming)
   graphComponent.inputMode = new GraphViewerInputMode()
 
   // add support for temporarily hiding nodes
-  // (i.e. hiding the "words" with frequency less than the desired minimum frequency)
+  // (i.e., hiding the "words" with frequency less than the desired minimum frequency)
   configureFiltering(graphComponent)
 
   // initialize default node style and default node label positions
@@ -99,8 +97,7 @@ function configureFiltering(graphComponent: GraphComponent): void {
  * @param graph the graph for which default settings are configured.
  */
 function initializeGraph(graph: IGraph): void {
-  graph.nodeDefaults.style = VoidNodeStyle.INSTANCE
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.NORTH
+  graph.nodeDefaults.style = INodeStyle.VOID_NODE_STYLE
 }
 
 /**
@@ -125,10 +122,10 @@ async function runLayout(graphComponent: GraphComponent): Promise<void> {
   switch (document.querySelector<HTMLSelectElement>('#layoutStyle')!.selectedIndex) {
     default:
     case 0:
-      style = ComponentArrangementStyles.PACKED_COMPACT_CIRCLE
+      style = ComponentArrangementStyle.PACKED_CIRCLE
       break
     case 1:
-      style = ComponentArrangementStyles.PACKED_COMPACT_RECTANGLE
+      style = ComponentArrangementStyle.PACKED_RECTANGLE
       break
   }
   // configure the component layout and use the AssignNodeSizesStage that will change the size of the
@@ -138,14 +135,18 @@ async function runLayout(graphComponent: GraphComponent): Promise<void> {
     style,
     componentSpacing: 0,
     gridSpacing: 0,
-    considerLabels: false,
-    preferredSize: new YDimension(400, 200)
+    nodeLabelPlacement: 'ignore',
+    preferredSize: new Size(400, 250)
   })
+
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
 
   // create the layout data that will pass the information about the node sizes to the
   // AssignNodeSizesStage
   const layoutData = createAssignNodeSizeStageLayoutData()
-  await graphComponent.morphLayout(componentLayout, '0.8s', layoutData)
+  await graphComponent.applyLayoutAnimated(componentLayout, '0.8s', layoutData)
   disableUI(false)
 }
 

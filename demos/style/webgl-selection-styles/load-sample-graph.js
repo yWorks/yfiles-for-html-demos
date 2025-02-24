@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,205 +27,180 @@
  **
  ***************************************************************************/
 import {
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
-  WebGL2ArcEdgeStyle,
-  WebGL2ArrowType,
-  WebGL2BridgeEdgeStyle,
-  WebGL2DefaultLabelStyle,
-  WebGL2LabelShape,
-  WebGL2PolylineEdgeStyle,
-  WebGL2ShapeNodeShape,
-  WebGL2ShapeNodeStyle
-} from 'yfiles'
-
+  ExteriorNodeLabelModel,
+  WebGLArcEdgeStyle,
+  WebGLArrowType,
+  WebGLBridgeEdgeStyle,
+  WebGLLabelShape,
+  WebGLLabelStyle,
+  WebGLPolylineEdgeStyle,
+  WebGLShapeNodeShape,
+  WebGLShapeNodeStyle
+} from '@yfiles/yfiles'
 /**
  * Creates an initial sample graph.
- * @param {!GraphComponent} graphComponent
  */
-export function createGraph(graphComponent) {
-  const graph = graphComponent.graph
-  const gmm = graphComponent.graphModelManager
-
-  const polylineEdgeStyle = new WebGL2PolylineEdgeStyle({
+export function createGraph(graph) {
+  const polylineEdgeStyle = new WebGLPolylineEdgeStyle({
     stroke: '2px gray',
-    targetArrow: WebGL2ArrowType.TRIANGLE_LARGE
+    targetArrow: WebGLArrowType.TRIANGLE_LARGE
   })
-
   const n1 = graph.createNode([0, 0, 100, 100])
-  gmm.setStyle(
+  graph.setStyle(
     n1,
-    new WebGL2ShapeNodeStyle({
-      shape: WebGL2ShapeNodeShape.ROUND_RECTANGLE,
+    new WebGLShapeNodeStyle({
+      shape: WebGLShapeNodeShape.ROUND_RECTANGLE,
       stroke: 'transparent',
       fill: 'lightgray'
     })
   )
-
   const nl1 = graph.addLabel(
     n1,
     'node 1',
-    new ExteriorLabelModel({ insets: 20 }).createParameter(ExteriorLabelModelPosition.SOUTH)
+    new ExteriorNodeLabelModel({ margins: 20 }).createParameter('bottom')
   )
-  gmm.setStyle(
+  graph.setStyle(
     nl1,
-    new WebGL2DefaultLabelStyle({
-      shape: WebGL2LabelShape.ROUND_RECTANGLE,
+    new WebGLLabelStyle({
+      shape: WebGLLabelShape.ROUND_RECTANGLE,
       backgroundColor: 'lightgray',
-      insets: 10
+      padding: 10
     })
   )
-
   const n2 = graph.createNode([300, 0, 100, 100])
-  gmm.setStyle(
+  graph.setStyle(
     n2,
-    new WebGL2ShapeNodeStyle({
-      shape: WebGL2ShapeNodeShape.TRIANGLE,
+    new WebGLShapeNodeStyle({
+      shape: WebGLShapeNodeShape.TRIANGLE,
       stroke: 'transparent',
       fill: 'lightgray'
     })
   )
-
   const e1 = graph.createEdge(n1, n2)
-  gmm.setStyle(
+  graph.setStyle(
     e1,
-    new WebGL2ArcEdgeStyle({
+    new WebGLArcEdgeStyle({
       height: 60,
       stroke: '2px gray',
-      targetArrow: WebGL2ArrowType.TRIANGLE_LARGE
+      targetArrow: WebGLArrowType.TRIANGLE_LARGE
     })
   )
-
   const n3 = graph.createNode([475, 300, 150, 100])
-  gmm.setStyle(
+  graph.setStyle(
     n3,
-    new WebGL2ShapeNodeStyle({
-      shape: WebGL2ShapeNodeShape.PILL,
+    new WebGLShapeNodeStyle({
+      shape: WebGLShapeNodeShape.PILL,
       stroke: 'transparent',
       fill: 'lightgray'
     })
   )
-
   const nl2 = graph.addLabel(
     n3,
     'node 3',
-    new ExteriorLabelModel({ insets: 20 }).createParameter(ExteriorLabelModelPosition.WEST)
+    new ExteriorNodeLabelModel({ margins: 20 }).createParameter('left')
   )
-  gmm.setStyle(
+  graph.setStyle(
     nl2,
-    new WebGL2DefaultLabelStyle({
-      shape: WebGL2LabelShape.PILL,
+    new WebGLLabelStyle({
+      shape: WebGLLabelShape.PILL,
       backgroundColor: 'lightgray',
-      insets: 10
+      padding: 10
     })
   )
-
   const e2 = graph.createEdge(n2, n3)
-  gmm.setStyle(e2, polylineEdgeStyle)
-
+  graph.setStyle(e2, polylineEdgeStyle)
   const el1 = graph.addLabel(e2, 'edge 2')
-  gmm.setStyle(
+  graph.setStyle(
     el1,
-    new WebGL2DefaultLabelStyle({
-      shape: WebGL2LabelShape.ROUND_RECTANGLE,
+    new WebGLLabelStyle({
+      shape: WebGLLabelShape.ROUND_RECTANGLE,
       backgroundColor: 'lightgray',
-      insets: 10
+      padding: 10
     })
   )
-
   const n4 = graph.createNode([275, 600, 150, 100])
-  gmm.setStyle(
+  graph.setStyle(
     n4,
-    new WebGL2ShapeNodeStyle({
-      shape: WebGL2ShapeNodeShape.ELLIPSE,
+    new WebGLShapeNodeStyle({
+      shape: WebGLShapeNodeShape.ELLIPSE,
       stroke: 'transparent',
       fill: 'lightgray'
     })
   )
-
   const e3 = graph.createEdge(n3, n4)
-  gmm.setStyle(e3, polylineEdgeStyle)
-
+  graph.setStyle(e3, polylineEdgeStyle)
   const el2 = graph.addLabel(e3, 'edge 3')
-  gmm.setStyle(
+  graph.setStyle(
     el2,
-    new WebGL2DefaultLabelStyle({
-      shape: WebGL2LabelShape.PILL,
+    new WebGLLabelStyle({
+      shape: WebGLLabelShape.PILL,
       backgroundColor: 'lightgray',
-      insets: 10
+      padding: 10
     })
   )
-
   const n5 = graph.createNode([0, 600, 100, 100])
-  gmm.setStyle(
+  graph.setStyle(
     n5,
-    new WebGL2ShapeNodeStyle({
-      shape: WebGL2ShapeNodeShape.OCTAGON,
+    new WebGLShapeNodeStyle({
+      shape: WebGLShapeNodeShape.OCTAGON,
       stroke: 'transparent',
       fill: 'lightgray'
     })
   )
-
   const e4 = graph.createEdge(n4, n5)
-  gmm.setStyle(
+  graph.setStyle(
     e4,
-    new WebGL2BridgeEdgeStyle({
+    new WebGLBridgeEdgeStyle({
       height: -80,
       fanLength: 100,
       stroke: '2px gray',
-      targetArrow: WebGL2ArrowType.TRIANGLE_LARGE
+      targetArrow: WebGLArrowType.TRIANGLE_LARGE
     })
   )
-
   const n6 = graph.createNode([-150, 300, 100, 100])
-  gmm.setStyle(
+  graph.setStyle(
     n6,
-    new WebGL2ShapeNodeStyle({
-      shape: WebGL2ShapeNodeShape.RECTANGLE,
+    new WebGLShapeNodeStyle({
+      shape: WebGLShapeNodeShape.RECTANGLE,
       stroke: 'transparent',
       fill: 'lightgray'
     })
   )
-
   const e5 = graph.createEdge(n5, n6)
-  gmm.setStyle(e5, polylineEdgeStyle)
-
+  graph.setStyle(e5, polylineEdgeStyle)
   const el3 = graph.addLabel(e5, 'edge 5')
-  gmm.setStyle(
+  graph.setStyle(
     el3,
-    new WebGL2DefaultLabelStyle({
-      shape: WebGL2LabelShape.RECTANGLE,
+    new WebGLLabelStyle({
+      shape: WebGLLabelShape.RECTANGLE,
       backgroundColor: 'lightgray',
-      insets: 10
+      padding: 10
     })
   )
-
   const n7 = graph.createNode([150, 300, 100, 100])
-  gmm.setStyle(
+  graph.setStyle(
     n7,
-    new WebGL2ShapeNodeStyle({
-      shape: WebGL2ShapeNodeShape.HEXAGON,
+    new WebGLShapeNodeStyle({
+      shape: WebGLShapeNodeShape.HEXAGON,
       stroke: 'transparent',
       fill: 'lightgray'
     })
   )
-
   const nl3 = graph.addLabel(
     n7,
     'node 7',
-    new ExteriorLabelModel({ insets: 20 }).createParameter(ExteriorLabelModelPosition.SOUTH)
+    new ExteriorNodeLabelModel({ margins: 20 }).createParameter('bottom')
   )
-  gmm.setStyle(
+  graph.setStyle(
     nl3,
-    new WebGL2DefaultLabelStyle({
-      shape: WebGL2LabelShape.RECTANGLE,
+    new WebGLLabelStyle({
+      shape: WebGLLabelShape.RECTANGLE,
       backgroundColor: 'lightgray',
-      insets: 10
+      padding: 10
     })
   )
-
   const e6 = graph.createEdge(n6, n7)
   graph.addBend(e6, [25, 300])
   graph.addBend(e6, [75, 400])
-  gmm.setStyle(e6, polylineEdgeStyle)
+  graph.setStyle(e6, polylineEdgeStyle)
 }

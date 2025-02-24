@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,32 +27,27 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   Font,
   GenericLayoutData,
   IGraph,
   INode,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
+  LabelStyle,
   LayoutGraph,
   LayoutStageBase,
+  NodeDataKey,
   Size,
-  SolidColorFill,
   TextMeasurePolicy,
   TextRenderSupport
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 // The maximum desired font size for the Tag Cloud
 const MAX_FONT = 500
-
 // The minimum desired font size for the Tag Cloud
 const MIN_FONT = 20
-
 // A constant that will determine the upper outliers
 const TOP_OUTLIER_FILTER = 20
-
 // A constant that will determine the bottom outliers
 const BOTTOM_OUTLIER_FILTER = 5
-
 // The colors of the words in the Tag Cloud
 const colors = [
   '#c1c1c1',
@@ -65,40 +60,35 @@ const colors = [
   '#4281a4',
   '#242265'
 ]
-
 /**
  * Builds the graph based on the given object that holds the frequency of each word.
- * @param {!IGraph} graph The tag cloud graph
- * @param {!Array.<object>} wordFrequency Holds the frequency of each word in the tag cloud
- * @param {number} minFrequency The minimum frequency for a word to be shown in the tag cloud visualization
+ * @param graph The tag cloud graph
+ * @param wordFrequency Holds the frequency of each word in the tag cloud
+ * @param minFrequency The minimum frequency for a word to be shown in the tag cloud visualization
  */
 export function buildTagCloud(graph, wordFrequency, minFrequency) {
   const sizeAndColor = determineFontSizeAndColor(wordFrequency)
-
   for (const pair of wordFrequency) {
     const frequency = pair.frequency
     const fontSize = sizeAndColor[frequency].fontSize
     const fontColor = sizeAndColor[frequency].fontColor
-
     // for each word, create a node and add its text as label
     const word = pair.keyword
     const node = graph.createNode({ tag: pair })
-    graph.addLabel(node, word, InteriorLabelModel.CENTER)
+    graph.addLabel(node, word, InteriorNodeLabelModel.CENTER)
     if (frequency >= minFrequency) {
       updateNodeLabel(graph, node, fontSize, fontColor)
     }
   }
 }
-
 /**
  * Updates the given graph for minimum frequency changes.
- * @param {!IGraph} graph The tag cloud graph
- * @param {!Array.<object>} wordFrequency Holds the frequency of each word in the tag cloud
- * @param {number} minFrequency The minimum frequency for a word to be shown in the tag cloud visualization
+ * @param graph The tag cloud graph
+ * @param wordFrequency Holds the frequency of each word in the tag cloud
+ * @param minFrequency The minimum frequency for a word to be shown in the tag cloud visualization
  */
 export function updateTagCloud(graph, wordFrequency, minFrequency) {
   const sizeAndColor = determineFontSizeAndColor(wordFrequency)
-
   for (const node of graph.nodes) {
     const frequency = node.tag.frequency
     const fontSize = sizeAndColor[frequency].fontSize
@@ -108,30 +98,27 @@ export function updateTagCloud(graph, wordFrequency, minFrequency) {
     }
   }
 }
-
 /**
  * Updates font size and the font color for the label of the given node.
- * @param {!IGraph} graph The tag cloud graph
- * @param {!INode} node The node to update
- * @param {number} fontSize The new font size for the given label
- * @param {!string} fontColor The new font color for the given label
+ * @param graph The tag cloud graph
+ * @param node The node to update
+ * @param fontSize The new font size for the given label
+ * @param fontColor The new font color for the given label
  */
 function updateNodeLabel(graph, node, fontSize, fontColor) {
   // set the desired font size and font color to the label of the node
   graph.setStyle(
     node.labels.get(0),
-    new DefaultLabelStyle({
+    new LabelStyle({
       font: new Font({ fontSize: fontSize }),
-      textFill: new SolidColorFill(fontColor)
+      textFill: fontColor
     })
   )
 }
-
 /**
  * Determines the font size and font color of a word based on its frequency.
  * More frequent words will be visualized with larger fonts.
- * @param {!Array.<object>} wordFrequency Holds the frequency of each word in the tag cloud
- * @returns {!object}
+ * @param wordFrequency Holds the frequency of each word in the tag cloud
  */
 function determineFontSizeAndColor(wordFrequency) {
   // sort the words based on their frequency - needed to find possible outliers
@@ -144,26 +131,20 @@ function determineFontSizeAndColor(wordFrequency) {
       return 0
     }
   })
-
   // find the interquartile range (IQR) that is the difference between the Q3=75th and Q1=25th
   // percentiles in the data - needed to find possible outliers
   const range = findInterquartileRange(wordFrequency)
-
   // calculate the min and max value without considering possible outliers
   const extrema = findMinMaxFrequency(wordFrequency, range.q1, range.q3)
   const fontSizeScale = (MAX_FONT - MIN_FONT) / extrema.diff
   const colorScale = (MAX_FONT - MIN_FONT) / colors.length
-
   const result = {}
-
   let lastTopFont = MAX_FONT
-
   for (const pair of wordFrequency) {
     const frequency = pair.frequency
     if (!result[frequency]) {
       let fontColor
       let fontSize
-
       // determine the font size and font color based on the frequency of each word
       // possible top und bottom outliers will considered differently
       if (isBottomOutlier(frequency, range.q1, range.q3)) {
@@ -178,49 +159,42 @@ function determineFontSizeAndColor(wordFrequency) {
         // linear normalization
         const fontRange = (frequency - extrema.min) * fontSizeScale
         fontSize = MIN_FONT + fontRange
-
         const colorIndex = Math.min(Math.floor(fontRange / colorScale), colors.length - 1)
         fontColor = colors[colorIndex]
       }
       result[frequency] = { fontColor, fontSize }
     }
   }
-
   return result
 }
-
 /**
  * Determines whether a value is a top outlier.
  * A value is a top outlier if is greater than the Q3 + (Q3 - Q1) * TOP_OUTLIER_FILTER,
  * where Q1, Q3 are the 25th and 75th percentiles in the data.
  * Normally, TOP_OUTLIER_FILTER equals to 1.5 but it can be adjusted based on the data.
- * @param {number} value The frequency value to be examined
- * @param {number} q1 The value of the 25th percentile
- * @param {number} q3 The value of the 75th percentile
- * @returns {boolean}
+ * @param value The frequency value to be examined
+ * @param q1 The value of the 25th percentile
+ * @param q3 The value of the 75th percentile
  */
 function isTopOutlier(value, q1, q3) {
   return value > q3 + (q3 - q1) * TOP_OUTLIER_FILTER
 }
-
 /**
  * Determines whether a value is a bottom outlier.
  * A value is a bottom outlier if is less than the Q1 - (Q3 - Q1) * BOTTOM_OUTLIER_FILTER,
  * where Q1, Q3 are the 25th and 75th percentiles of the data.
  * Normally, BOTTOM_OUTLIER_FILTER equals to 1.5 but it can be adjusted based on the data.
- * @param {number} value The frequency value to be examined
- * @param {number} q1 The value of the lower quartile (25th percentile)
- * @param {number} q3 The value of the upper quartile (75th percentile)
- * @returns {boolean}
+ * @param value The frequency value to be examined
+ * @param q1 The value of the lower quartile (25th percentile)
+ * @param q3 The value of the upper quartile (75th percentile)
  */
 function isBottomOutlier(value, q1, q3) {
   return value < q1 - (q3 - q1) * BOTTOM_OUTLIER_FILTER
 }
-
 /**
  * Calculates the Q1=25th and Q3=75th percentiles of the data.
- * @param {!Array.<object>} wordFrequency Holds the frequency of each word in the tag cloud
- * @returns {!object} The values of the lower quartile q1 and the upper quartile q3
+ * @param wordFrequency Holds the frequency of each word in the tag cloud
+ * @returns The values of the lower quartile q1 and the upper quartile q3
  */
 function findInterquartileRange(wordFrequency) {
   let q1
@@ -235,19 +209,17 @@ function findInterquartileRange(wordFrequency) {
   }
   return { q1, q3 }
 }
-
 /**
  * Calculates the minimum and maximum frequency values of the data without considering possible top
  * and bottom outliers.
- * @param {!Array.<object>} wordFrequency Holds the frequency of each word in the tag cloud
- * @param {number} q1 The value of the lower quartile (25th percentile)
- * @param {number} q3 The value of the upper quartile (75th percentile)
- * @returns {!object} The minimum, maximum, and difference of the two aforementioned values
+ * @param wordFrequency Holds the frequency of each word in the tag cloud
+ * @param q1 The value of the lower quartile (25th percentile)
+ * @param q3 The value of the upper quartile (75th percentile)
+ * @returns The minimum, maximum, and difference of the two aforementioned values
  */
 function findMinMaxFrequency(wordFrequency, q1, q3) {
   let min = Number.MAX_VALUE
   let max = -Number.MAX_VALUE
-
   for (const pair of wordFrequency) {
     const frequency = pair.frequency
     if (!isBottomOutlier(frequency, q1, q3) && !isTopOutlier(frequency, q1, q3)) {
@@ -255,44 +227,29 @@ function findMinMaxFrequency(wordFrequency, q1, q3) {
       max = Math.max(max, frequency)
     }
   }
-
   return { min, max, diff: min !== max ? max - min : 1 }
 }
-
 /**
  * A layout stage that assign to the new size to the nodes of the tag cloud. This stage is needed
  * in order to animate the result of the layout algorithm when different threshold values are selected.
  */
 export class AssignNodeSizesStage extends LayoutStageBase {
-  /** @type {string} */
-  static get NODE_SIZE_DP_KEY() {
-    if (typeof AssignNodeSizesStage.$NODE_SIZE_DP_KEY === 'undefined') {
-      AssignNodeSizesStage.$NODE_SIZE_DP_KEY = 'AssignNodeSizesStage.NODE_SIZE_DP_KEY'
-    }
-
-    return AssignNodeSizesStage.$NODE_SIZE_DP_KEY
-  }
-
-  /**
-   * @param {!LayoutGraph} graph
-   */
-  applyLayout(graph) {
-    const dp = graph.getDataProvider(AssignNodeSizesStage.NODE_SIZE_DP_KEY)
-    if (dp === null) {
+  static NODE_SIZE_DATA_KEY = new NodeDataKey('AssignNodeSizesStage.NODE_SIZE_DATA_KEY')
+  applyLayoutImpl(graph) {
+    const dp = graph.context.getItemData(AssignNodeSizesStage.NODE_SIZE_DATA_KEY)
+    if (dp == null) {
       // If no provider is registered, there is nothing to do
       return
     }
-
     // assign the new size to the nodes
     graph.nodes.forEach((node) => {
       const size = dp.get(node)
       if (size) {
-        graph.setSize(node, size.width, size.height)
+        node.layout.size = size
       }
     })
   }
 }
-
 /**
  * Creates the layout data object needed for the AssignNodeSizesStage.
  * For each tag cloud node, the label size has to be calculated based on which the node size
@@ -301,10 +258,9 @@ export class AssignNodeSizesStage extends LayoutStageBase {
 export function createAssignNodeSizeStageLayoutData() {
   // use the GenericLayoutData to pass the information about the node sizes to the AssignNodeSizesStage
   const layoutData = new GenericLayoutData()
-  layoutData.addNodeItemMapping(AssignNodeSizesStage.NODE_SIZE_DP_KEY, (node) => {
+  layoutData.addItemMapping(AssignNodeSizesStage.NODE_SIZE_DATA_KEY).mapperFunction = (node) => {
     const label = node.labels.get(0)
     const style = label.style
-
     // calculate the desired render size for the label and...
     const labelRenderSize = TextRenderSupport.measureText({
       text: label.text,
@@ -315,6 +271,6 @@ export function createAssignNodeSizeStageLayoutData() {
     // since words in a tag cloud are usually very close to each other or even overlap, the node
     // is assigned a height that is slightly smaller than its associated label's height
     return new Size(labelRenderSize.width, labelRenderSize.height * 0.79)
-  })
+  }
   return layoutData
 }

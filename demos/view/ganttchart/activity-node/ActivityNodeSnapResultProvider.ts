@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { CollectSnapResultsEventArgs, GraphSnapContext, INode, Rect } from 'yfiles'
-import { NodeSnapResultProvider, Point } from 'yfiles'
+import type {
+  CollectSnapResultsEventArgs,
+  GraphSnapContext,
+  INode,
+  Rect,
+  SnapGrid
+} from '@yfiles/yfiles'
+import { NodeSnapResultProvider, Point } from '@yfiles/yfiles'
 import { getLeadWidth } from '../gantt-utils'
 import { getActivity } from '../resources/data-model'
 
@@ -41,11 +47,12 @@ export class ActivityNodeSnapResultProvider extends NodeSnapResultProvider {
   collectGridSnapResults(
     context: GraphSnapContext,
     args: CollectSnapResultsEventArgs,
+    snapGrid: SnapGrid,
     suggestedLayout: Rect,
     node: INode
   ): void {
     const activityStart = suggestedLayout.topLeft.add(new Point(getLeadWidth(getActivity(node)), 0))
     // snap to left side of node
-    this.addGridSnapResult(context, args, activityStart, node)
+    this.collectGridSnapResult(context, args, snapGrid, activityStart, node)
   }
 }

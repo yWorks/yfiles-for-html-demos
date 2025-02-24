@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -42,7 +42,7 @@ import {
   SvgVisual,
   SvgVisualGroup,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * This node style decorator adds a circle with a native click listener representing a button.
@@ -87,8 +87,11 @@ export default class NodeStyleDecorator extends NodeStyleBase {
 
     // register a native click listener on the SVG element
     button.addEventListener('click', showToast)
-    // the input mode should not handle any event on the the button where we registered a native click listener
-    button.addEventListener('mousedown', (e: MouseEvent): void => e.preventDefault())
+    // pointerdown causes the capturing of subsequent pointer events, thus we need to disable
+    // pointerdown on the current element such that the native click event is triggered furthermore
+    // this causes the input mode should to not handle any event on the button where we registered
+    // a native click listener
+    button.addEventListener('pointerdown', (e) => e.preventDefault())
 
     const decorationVisual = new SvgVisual(button)
 

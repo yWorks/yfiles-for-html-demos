@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,22 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph } from 'yfiles'
-import { NodeData } from './NodeData.js'
-import { EdgeData } from './EdgeData.js'
-
-/**
- * @typedef {Object} SerializableGraphData
- * @property {Array.<SerializableNodeData>} nodes
- * @property {Array.<SerializableEdgeData>} edges
- */
-
-/**
- * @typedef {Object} GraphDataOptions
- * @property {Array.<NodeData>} nodeDataItems
- * @property {Array.<EdgeData>} edgeDataItems
- */
-
+import { IGraph } from '@yfiles/yfiles'
+import { NodeData } from './NodeData'
+import { EdgeData } from './EdgeData'
 /**
  * A simple, minimal data structure that can be used for exporting Graph data
  * and re-creating the Graph.
@@ -49,17 +36,13 @@ import { EdgeData } from './EdgeData.js'
 export class GraphData {
   nodeDataItems
   edgeDataItems
-
   /**
    * Creates GraphData from an actual node. We exclude the validator function,
    * if present as it cannot be serialized, and it will be automatically set
    * on node re-creation anyway.
-   * @param {!IGraph} graph
-   * @returns {!GraphData}
    */
   static fromGraph(graph) {
     const nodes = graph.nodes.toArray()
-
     const edges = graph.edges
       .toArray()
       .map((edge) => [
@@ -67,30 +50,22 @@ export class GraphData {
         nodes.findIndex((node) => node === edge.sourceNode),
         nodes.findIndex((node) => node === edge.targetNode)
       ])
-
     const nodeDataItems = nodes.map(NodeData.fromGraphItem)
     const edgeDataItems = edges.map((edge) => EdgeData.fromGraphItem(...edge))
     return new GraphData({ nodeDataItems, edgeDataItems })
   }
-
   /**
    * Converts an arbitrary piece of data to GraphData after validation.
-   * @param {!unknown} data
-   * @returns {!GraphData}
    */
   static fromJSONData(data) {
     this.validate(data)
-
     const nodeDataItems = data.nodes.map(NodeData.fromJSONData)
     const edgeDataItems = data.edges.map(EdgeData.fromJSONData)
     return new GraphData({ nodeDataItems, edgeDataItems })
   }
-
   /**
    * Checks if an arbitrary piece of data (as it comes from a JSON source)
    * conforms to the format required by GraphData.
-   * @param {!unknown} data
-   * @returns {!SerializableGraphData}
    */
   static validate(data) {
     if (data) {
@@ -98,28 +73,20 @@ export class GraphData {
     }
     throw new Error('Malformed graph data')
   }
-
-  /**
-   * @param {!GraphDataOptions} undefined
-   */
   constructor({ nodeDataItems, edgeDataItems }) {
     this.nodeDataItems = nodeDataItems
     this.edgeDataItems = edgeDataItems
   }
-
   /**
    * Applies data to the actual Graph after clearing it.
-   * @param {!IGraph} graph
    */
   applyToGraph(graph) {
     graph.clear()
     const nodes = this.nodeDataItems.map((n) => n.createGraphItem(graph))
     this.edgeDataItems.forEach((e) => e.createGraphItem(graph, ...e.matchPorts(nodes)))
   }
-
   /**
    * Converts GraphData to a JSON string.
-   * @returns {!string}
    */
   toJSON() {
     const data = {

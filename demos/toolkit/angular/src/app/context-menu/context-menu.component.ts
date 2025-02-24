@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,22 +27,10 @@
  **
  ***************************************************************************/
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core'
-import { GraphComponent, GraphInputMode } from 'yfiles'
+import { GraphComponent, GraphInputMode } from '@yfiles/yfiles'
 import { GraphComponentService } from '../services/graph-component.service'
-import { BrowserDetection } from '../../utils/BrowserDetection'
 
 export type ContextMenuAction = { title: string; action: () => void }
-
-function getCenterInPage(element: HTMLElement): { x: number; y: number } {
-  let left = element.clientWidth / 2.0
-  let top = element.clientHeight / 2.0
-  while (element.offsetParent) {
-    left += element.offsetLeft
-    top += element.offsetTop
-    element = element.offsetParent as HTMLElement
-  }
-  return { x: left, y: top }
-}
 
 @Component({
   selector: 'app-context-menu',
@@ -67,34 +55,29 @@ export class ContextMenuComponent implements AfterViewInit {
 
   private register(graphComponent: GraphComponent): void {
     this.inputMode = graphComponent.inputMode as GraphInputMode
-    this.addOpeningEventListeners(graphComponent, (location) => {
-      const worldLocation = graphComponent.toWorldFromPage(location)
-      const showMenu = this.inputMode.contextMenuInputMode.shouldOpenMenu(worldLocation)
-      if (showMenu) {
-        this.openMenu(location)
-      }
-    })
 
-    this.inputMode.contextMenuInputMode.addPopulateMenuListener((_, evt) => {
-      evt.showMenu = true
-    })
-
-    this.inputMode.addPopulateItemContextMenuListener((_, evt) => {
+    this.inputMode.addEventListener('populate-item-context-menu', (evt) => {
       if (evt.item) {
+        evt.showMenu = true
+        this.openMenu(
+          graphComponent.viewToPageCoordinates(
+            graphComponent.worldToViewCoordinates(evt.queryLocation)
+          )
+        )
         // select the item
         graphComponent.selection.clear()
-        graphComponent.selection.setSelected(evt.item, true)
+        graphComponent.selection.add(evt.item)
         // emit the populate event
         this.populateContextMenu.emit(evt.item)
       }
     })
-    this.inputMode.contextMenuInputMode.addCloseMenuListener(() => this.hide())
+    this.inputMode.contextMenuInputMode.addEventListener('menu-closed', () => this.hide())
   }
 
   hide(): void {
     this.showMenu = false
     if (this.inputMode) {
-      this.inputMode.contextMenuInputMode.menuClosed()
+      this.inputMode.contextMenuInputMode.closeMenu()
     }
   }
 
@@ -102,51 +85,6 @@ export class ContextMenuComponent implements AfterViewInit {
     this.showMenu = true
     this.positionX = location.x
     this.positionY = location.y
-  }
-
-  private addOpeningEventListeners(
-    graphComponent: GraphComponent,
-    openingCallback: ({ x, y }: { x: number; y: number }) => void
-  ): void {
-    const componentDiv = graphComponent.div
-    const contextMenuListener = (evt: MouseEvent) => {
-      evt.preventDefault()
-      if (this.showMenu) {
-        // might be open already because of the long-press listener
-        return
-      }
-      openingCallback({ x: evt.pageX, y: evt.pageY })
-    }
-
-    // Listen for the contextmenu event
-    // Note: On Linux based systems (e.g. Ubuntu), the contextmenu event is fired on mouse down
-    // which triggers the ContextMenuInputMode before the ClickInputMode. Therefore handling the
-    // event, will prevent the ItemRightClicked event from firing.
-    // For more information, see https://docs.yworks.com/yfileshtml/#/kb/article/780/
-    componentDiv.addEventListener('contextmenu', contextMenuListener, false)
-
-    if (BrowserDetection.safariVersion > 0 || BrowserDetection.iOSVersion > 0) {
-      // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
-      let contextMenuTimer: ReturnType<typeof setTimeout> | undefined
-      graphComponent.addTouchDownListener((_, evt) => {
-        contextMenuTimer = setTimeout(() => {
-          openingCallback(
-            graphComponent.toPageFromView(graphComponent.toViewCoordinates(evt.location))
-          )
-        }, 500)
-      })
-      graphComponent.addTouchUpListener(() => {
-        clearTimeout(contextMenuTimer!)
-      })
-    }
-
-    // Listen to the context menu key to make it work in Chrome
-    componentDiv.addEventListener('keyup', (evt) => {
-      if (evt.key === 'ContextMenu') {
-        evt.preventDefault()
-        openingCallback(getCenterInPage(componentDiv))
-      }
-    })
   }
 
   runAction(action: () => void): void {

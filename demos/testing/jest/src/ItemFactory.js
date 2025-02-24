@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Rect } from 'yfiles'
+import { Rect } from '@yfiles/yfiles'
 
 /**
  * Creates a node at the provided location.
@@ -40,14 +40,15 @@ export function createNode(graph, x, y) {
 }
 
 /**
- * Creates an edge between the first two selected nodes in selection.
+ * Creates an edge between source and target.
  * @param {IGraph} graph
- * @param {IGraphSelection} selection
+ * @param {INode} source
+ * @param {INode} target
  * @returns {null|IEdge}
  */
-export function createEdge(graph, selection) {
-  if (selection.selectedNodes.size >= 2) {
-    return graph.createEdge(selection.selectedNodes.at(0), selection.selectedNodes.at(1))
+export function createEdge(graph, source, target) {
+  if (source && target) {
+    return graph.createEdge(source, target)
   } else {
     return null
   }

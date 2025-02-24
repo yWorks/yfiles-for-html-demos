@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,51 +29,42 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Arrow,
-  Class,
   Cursor,
-  DefaultLabelStyle,
   EdgeSegmentLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   FreeNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  HierarchicLayout,
+  HierarchicalLayout,
   IBend,
-  ICommand,
+  IconLabelStyle,
   IEdge,
   IGraph,
   ILabel,
   INode,
+  InteriorNodeLabelModel,
+  LabelStyle,
   LayoutExecutor,
   License,
   Point,
   PolylineEdgeStyle,
+  resources,
+  ShapeNodeShape,
   ShapeNodeStyle,
-  Size,
-  StringTemplateLabelStyle
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 
 import { ButtonInputMode, ButtonTrigger, QueryButtonsEvent } from './ButtonInputMode'
 import { OffsetLabelModelWrapper } from './OffsetLabelModelWrapper'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import cutIcon from '@yfiles/demo-resources/icons/cut2-16.svg'
 
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-import type { JSONGraph } from 'demo-utils/json-model'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
-
-const BUTTON_OUT_VALUE = 'button'
-const BUTTON_OVER_VALUE = 'button hovered'
-export const HOVER_PROPERTY = 'classNames'
-
-const ARROW_LABEL_STYLE = new StringTemplateLabelStyle({
-  svgContent: `<path d="M 15,0 L30,15 L0,15 Z" class="{Binding ${HOVER_PROPERTY}}"/>`,
-  autoFlip: false
-})
 
 let graphComponent: GraphComponent
 let buttonInputMode: ButtonInputMode
@@ -85,7 +76,7 @@ function createButtonInputMode(): ButtonInputMode {
   buttonInputMode = new ButtonInputMode()
 
   // the QueryButtonsEvent is dispatched for an owning IModelItem when buttons shall be displayed for it
-  buttonInputMode.addQueryButtonsListener((_, queryEvent) => {
+  buttonInputMode.setQueryButtonsListener((queryEvent) => {
     if (queryEvent.owner instanceof INode) {
       // for nodes we add four arrow buttons around it that create a node and an edge between 'owner' and the new node
       addNodeArrowButton(
@@ -118,14 +109,17 @@ function createButtonInputMode(): ButtonInputMode {
       // for labels, we add a button that triggers label text editing
       queryEvent.addButton({
         text: 'Edit',
-        layoutParameter: ExteriorLabelModel.NORTH_EAST,
-        onAction: () => ICommand.EDIT_LABEL.execute(queryEvent.owner, graphComponent),
+        layoutParameter: ExteriorNodeLabelModel.TOP_RIGHT,
+        onAction: () =>
+          (graphComponent.inputMode as GraphEditorInputMode).startLabelEditing(
+            queryEvent.owner as ILabel
+          ),
         tooltip: 'Edit label text'
       })
     } else if (queryEvent.owner instanceof IBend) {
       // for bends, we add a button that splits the edge at the bend location
       queryEvent.addButton({
-        icon: 'demo-resources/icons/cut2-16.svg',
+        icon: cutIcon,
         layoutParameter: FreeNodeLabelModel.INSTANCE.createParameter({
           angle: -Math.PI * 0.75,
           labelRatio: [0.5, 0],
@@ -160,30 +154,27 @@ function addNodeArrowButton(
   tooltip: string
 ) {
   const tag: any = {}
-  tag[HOVER_PROPERTY] = BUTTON_OUT_VALUE
-  StringTemplateLabelStyle.makeObservable(tag)
 
   queryEvent.addButton({
-    style: ARROW_LABEL_STYLE,
+    style: new IconLabelStyle({
+      backgroundShape: ShapeNodeShape.TRIANGLE,
+      iconSize: new Size(30, 15),
+      autoFlip: false,
+      backgroundFill: 'white',
+      iconPlacement: InteriorNodeLabelModel.CENTER,
+      cssClass: 'input-button'
+    }),
     size: new Size(30, 15),
     layoutParameter: FreeNodeLabelModel.INSTANCE.createParameter({
       angle,
       labelRatio: [0.5, 1],
-      labelOffset: [0, 5],
+      labelOffset: [0, 15],
       layoutRatio: layoutRatio,
       layoutOffset: [0, 0]
     }),
     onAction: () => createNodeAndEdge(queryEvent.owner as INode, nodeCreationOffset),
     cursor: cursor,
     tag: tag,
-    onHoverOver: () => {
-      tag[HOVER_PROPERTY] = BUTTON_OVER_VALUE
-      tag.firePropertyChanged(HOVER_PROPERTY)
-    },
-    onHoverOut: () => {
-      tag[HOVER_PROPERTY] = BUTTON_OUT_VALUE
-      tag.firePropertyChanged(HOVER_PROPERTY)
-    },
     tooltip: 'Create node ' + tooltip
   })
 }
@@ -217,7 +208,7 @@ function addEdgeColorButton(queryEvent: QueryButtonsEvent, fill: string, offset:
   )
 
   queryEvent.addButton({
-    style: new DefaultLabelStyle({
+    style: new LabelStyle({
       autoFlip: false,
       backgroundFill: fill,
       shape: 'rectangle'
@@ -242,8 +233,8 @@ function splitEdgeAt(bend: IBend) {
   const graph = graphComponent.graph
   const edge = bend.owner
   const newNode = graph.createNodeAt(bend.location)
-  const edge1 = graph.createEdge(edge!.sourcePort!, graph.addPort(newNode))
-  const edge2 = graph.createEdge(graph.addPort(newNode), edge!.targetPort!)
+  const edge1 = graph.createEdge(edge.sourcePort, graph.addPort(newNode))
+  const edge2 = graph.createEdge(graph.addPort(newNode), edge!.targetPort)
   const splitIndex = edge?.bends.indexOf(bend) || 0
   edge?.bends.forEach((b, index) => {
     if (index < splitIndex) {
@@ -268,14 +259,14 @@ function initGraphDefaults(): void {
     stroke: '1.5px #304F52'
   })
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word-ellipsis',
+    wrapping: 'wrap-word-ellipsis',
     textFill: '#11353A',
     backgroundFill: '#A1CACF',
-    insets: 2
+    padding: 2
   })
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
+  graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.BOTTOM
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '1.5px #363020',
     targetArrow: new Arrow({ fill: '#363020', type: 'triangle' })
@@ -316,17 +307,10 @@ function onButtonTriggerChanged() {
  */
 async function run(): Promise<void> {
   License.value = await fetchLicense()
-  // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-  const graphEditorInputMode = new GraphEditorInputMode({
-    focusableItems: GraphItemTypes.ALL
-  })
 
-  // add an input mode that adds buttons to nodes, edges, bends and labels
-  graphEditorInputMode.add(createButtonInputMode())
-
-  graphComponent.inputMode = graphEditorInputMode
+  // initializes the input mode
+  initializeInteraction()
 
   // configures default styles for newly created graph elements
   initGraphDefaults()
@@ -335,22 +319,41 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
-    new HierarchicLayout({
-      orthogonalRouting: true,
+    new HierarchicalLayout({
       minimumLayerDistance: 100,
       nodeToEdgeDistance: 100,
-      nodeToNodeDistance: 100
+      nodeDistance: 100
     })
   )
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 
   // bind the toolbar buttons to their actions
   initializeUI()
+}
+
+/**
+ * Initializes the input mode, i.e., configures the key gestures and adds the custom ButtonInputMode.
+ */
+function initializeInteraction(): void {
+  // remove the ENTER key from label editing
+  resources.invariant.EditLabelKey = 'F2'
+
+  // initialize graph component
+  const graphEditorInputMode = new GraphEditorInputMode({
+    focusableItems: GraphItemTypes.ALL,
+    // disable edit on typing to not edit label with SPACE key
+    allowEditLabelOnTyping: false
+  })
+
+  // add an input mode that adds buttons to nodes, edges, bends and labels
+  graphEditorInputMode.add(createButtonInputMode())
+
+  graphComponent.inputMode = graphEditorInputMode
 }
 
 /**

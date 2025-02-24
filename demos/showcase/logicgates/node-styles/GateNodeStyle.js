@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,76 +26,22 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { NodeStyleBase, SvgVisual } from 'yfiles'
-import { getNodeHighlightInfo } from '../NodeHighlightInfo.js'
-
+import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
+import { getNodeHighlightInfo } from '../NodeHighlightInfo'
 /**
  * The base class for the logic gate node style. This handles the create
  * and update of the node visuals.
  */
 export class GateNodeStyle extends NodeStyleBase {
-  /** 
-    color for input pins
-  * @type {'#E01A4F'}
-   */
-  static get IN_COLOR() {
-    if (typeof GateNodeStyle.$IN_COLOR === 'undefined') {
-      GateNodeStyle.$IN_COLOR = '#E01A4F'
-    }
-
-    return GateNodeStyle.$IN_COLOR
-  }
-
-  /** 
-    color for input pins
-  * @type {'#E01A4F'}
-   */
-  static set IN_COLOR(IN_COLOR) {
-    GateNodeStyle.$IN_COLOR = IN_COLOR
-  }
-
-  /** 
-    color for output pins
-  * @type {'#01BAFF'}
-   */
-  static get OUT_COLOR() {
-    if (typeof GateNodeStyle.$OUT_COLOR === 'undefined') {
-      GateNodeStyle.$OUT_COLOR = '#01BAFF'
-    }
-
-    return GateNodeStyle.$OUT_COLOR
-  }
-
-  /** 
-    color for output pins
-  * @type {'#01BAFF'}
-   */
-  static set OUT_COLOR(OUT_COLOR) {
-    GateNodeStyle.$OUT_COLOR = OUT_COLOR
-  }
-
-  /**
-   * @param {!LogicGateType} gateType
-   */
+  gateType
+  // color for input pins
+  static IN_COLOR = '#E01A4F'
+  // color for output pins
+  static OUT_COLOR = '#01BAFF'
   constructor(gateType) {
     super()
     this.gateType = gateType
   }
-
-  /**
-   * @param {!Element} container
-   * @param {!Cache} cache
-   * @param {!INode} node
-   */
-  render(container, cache, node) {
-    throw new Error('abstract function call')
-  }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {!SvgVisual}
-   */
   createVisual(context, node) {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -107,14 +53,12 @@ export class GateNodeStyle extends NodeStyleBase {
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
     return new SvgVisual(g)
   }
-
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @param {!IRenderContext} context The render context
-   * @param {!Visual} oldVisual The old visual
-   * @param {!INode} node The node to which this style instance is assigned
+   * @param context The render context
+   * @param oldVisual The old visual
+   * @param node The node to which this style instance is assigned
    * @see Overrides {@link NodeStyleBase.updateVisual}
-   * @returns {!Visual}
    */
   updateVisual(context, oldVisual, node) {
     if (!(oldVisual instanceof SvgVisual)) {
@@ -125,7 +69,6 @@ export class GateNodeStyle extends NodeStyleBase {
     const oldCache = container['data-cache']
     // get the data for the new visual
     const newCache = createRenderDataCache(node)
-
     // check if something changed except for the location of the node
     if (!newCache.equals(oldCache)) {
       // something changed - re-render the visual
@@ -139,23 +82,10 @@ export class GateNodeStyle extends NodeStyleBase {
     return oldVisual
   }
 }
-
-/**
- * @typedef {*} CacheOwnerElement
- */
-
-/**
- * @typedef {Object} Cache
- * @property {Size} size
- * @property {boolean} sourceHighlight
- * @property {boolean} targetHighlight
- * @property {function} equals
- */
-
 /**
  * Creates an object containing all necessary data to create a visual for the node.
- * @param {!INode} node The node to which this style instance is assigned.
- * @returns {!Cache} The render data cache object
+ * @param node The node to which this style instance is assigned.
+ * @returns The render data cache object
  */
 export function createRenderDataCache(node) {
   return {
@@ -172,15 +102,14 @@ export function createRenderDataCache(node) {
     }
   }
 }
-
 /**
  * Calculates a point on the Bézier cubic curve based on the given t value.
- * @param {number} t The parametric value t in [0,1]
- * @param {!Point} firstPoint The first point of the curve
- * @param {!Point} endPoint The end point of the curve
- * @param {!Point} c1 The first control point of the curve
- * @param {!Point} c2 The second control point of the curve
- * @returns {number} The calculated point the cubic Bézier curve
+ * @param t The parametric value t in [0,1]
+ * @param firstPoint The first point of the curve
+ * @param endPoint The end point of the curve
+ * @param c1 The first control point of the curve
+ * @param c2 The second control point of the curve
+ * @returns The calculated point the cubic Bézier curve
  */
 export function getPointOnCurve(t, firstPoint, endPoint, c1, c2) {
   return (
@@ -190,14 +119,13 @@ export function getPointOnCurve(t, firstPoint, endPoint, c1, c2) {
     t * t * t * endPoint.x
   )
 }
-
 /**
  * Creates an SVG ellipse and appends it to the given container element.
- * @param {!Element} container The SVG element to append the ellipse to
- * @param {number} cx The x coordinate of the center of the ellipse
- * @param {number} cy The y coordinate of the center of the ellipse
- * @param {number} rx The horizontal radius
- * @param {number} ry The vertical radius
+ * @param container The SVG element to append the ellipse to
+ * @param cx The x coordinate of the center of the ellipse
+ * @param cy The y coordinate of the center of the ellipse
+ * @param rx The horizontal radius
+ * @param ry The vertical radius
  */
 export function appendEllipse(container, cx, cy, rx, ry) {
   const ellipse = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
@@ -210,15 +138,12 @@ export function appendEllipse(container, cx, cy, rx, ry) {
   setAttribute(ellipse, 'stroke-width', '2')
   container.appendChild(ellipse)
 }
-
 /**
  * Creates a svg path from the given general path and appends it to the given container element.
- * @param {!Element} container The svg element to append the path to
- * @param {!GeneralPath} generalPath The given general path
+ * @param container The svg element to append the path to
+ * @param generalPath The given general path
  * @param fill The fill for this path
  * @param stroke The stroke for this path
- * @param {!string} [fill]
- * @param {!string} [stroke]
  */
 export function createPath(container, generalPath, fill, stroke) {
   const path = generalPath.createSvgPath()
@@ -228,31 +153,23 @@ export function createPath(container, generalPath, fill, stroke) {
   setAttribute(path, 'stroke-linejoin', 'round')
   container.appendChild(path)
 }
-
 /**
  * Creates a svg text element with the given content and font size.
- * @param {!string} textContent The text content
- * @param {number} fontSize The font size
- * @param {!string} color The text color
- * @returns {!Element} The created text element
+ * @param textContent The text content
+ * @param fontSize The font size
+ * @param color The text color
+ * @returns The created text element
  */
 export function createText(textContent, fontSize, color) {
   const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
   text.textContent = textContent
   setAttribute(text, 'font-family', 'Arial')
   setAttribute(text, 'fill', color)
-
   setAttribute(text, 'font-size', `${fontSize}px`)
   setAttribute(text, 'font-family', 'Arial')
   setAttribute(text, 'font-weight', 'bold')
   return text
 }
-
-/**
- * @param {!Element} element
- * @param {!string} name
- * @param {!(number|string)} value
- */
 export function setAttribute(element, name, value) {
   element.setAttribute(name, value.toString())
 }

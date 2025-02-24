@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,51 +31,48 @@ import {
   ArrowType,
   BezierEdgeStyle,
   Color,
-  EdgeStyleDecorationInstaller,
+  EdgeStyleIndicatorRenderer,
   FoldingManager,
   GraphComponent,
-  GraphHighlightIndicatorManager,
-  GraphInputMode,
+  GraphEditorInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
-  GraphMLSupport,
   GraphOverviewComponent,
   GraphViewerInputMode,
-  ICommand,
   IEdge,
   IGraph,
   IInputModeContext,
-  IMapper,
   IModelItem,
-  IndicatorNodeStyleDecorator,
   INode,
+  ItemClickedEventArgs,
   License,
   Mapper,
-  ModifierKeys,
+  NodeStyleIndicatorRenderer,
   Point,
   PolylineEdgeStyle,
-  PopulateItemContextMenuEventArgs,
   ShapeNodeShape,
   ShapeNodeStyle,
-  StorageLocation,
   Stroke,
-  StyleDecorationZoomPolicy,
-  TemplateNodeStyle,
-  YString
-} from 'yfiles'
+  StyleIndicatorZoomPolicy
+} from '@yfiles/yfiles'
 
-import { GraphSearch } from 'demo-utils/GraphSearch'
+import { GraphSearch } from '@yfiles/demo-utils/GraphSearch'
 import FastCanvasStyles from './FastCanvasStyles'
-import { ContextMenu } from 'demo-utils/ContextMenu'
-import { applyDemoTheme, DemoStyleOverviewPaintable } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { DemoStyleOverviewRenderer } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { openGraphML } from '../../utils/graphml-support'
+import { registerTemplateStyleSerialization } from '@yfiles/demo-utils/template-styles/MarkupExtensions'
+import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/StringTemplateNodeStyle'
 
 let graphComponent: GraphComponent
 
 let overviewComponent: GraphOverviewComponent
 
 let graphDescriptionMapper: Mapper<IGraph, string>
+let descriptionMapper: Mapper<INode, string>
+let tooltipMapper: Mapper<INode, string>
+let urlMapper: Mapper<INode, string>
 
 /**
  * Holds the graph search object functionality.
@@ -95,19 +92,10 @@ async function run(): Promise<void> {
 
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
-
-  // bind toolbar functionality
-  initializeUI()
-
-  // initializes converters for org chart style
-  initConverters()
 
   // initialize the graph component
   initializeGraphComponent()
-  // enable GraphML support
-  enableGraphML()
 
   // add the graph functionality
   initializeGraphSearch()
@@ -129,14 +117,15 @@ async function run(): Promise<void> {
     option.value = sample
     graphChooserBox.add(option)
   }
-
+  // bind toolbar functionality
+  initializeUI()
+  //bind converters of the template node styles.
+  initializeConverters()
   // load the first graph
-  readSampleGraph()
+  void readSampleGraph()
   // reset the node info view
   onCurrentItemChanged()
 
-  // initialize the GraphViewerInputMode which is available in 'yfiles/view-component'
-  // and does not require 'yfiles/view-editor' in contrast to GraphEditorInputMode
   initializeInputMode()
 }
 
@@ -150,19 +139,15 @@ function initializeGraphComponent(): void {
   initializeHighlightStyles()
 
   // set style for the overview control
-  overviewComponent.graphVisualCreator = new DemoStyleOverviewPaintable(graphComponent.graph)
+  overviewComponent.graphOverviewRenderer = new DemoStyleOverviewRenderer()
 
-  // we register and create mappers for nodes and the graph to hold information about
-  // the tooltips, descriptions, and associated urls
-  const masterRegistry = graphComponent.graph.foldingView!.manager.masterGraph.mapperRegistry
-  masterRegistry.createMapper(INode.$class, YString.$class, 'ToolTip')
-  masterRegistry.createMapper(INode.$class, YString.$class, 'Description')
-  masterRegistry.createMapper(INode.$class, YString.$class, 'Url')
-  masterRegistry.createMapper(IGraph.$class, YString.$class, 'GraphDescription')
   graphDescriptionMapper = new Mapper()
+  descriptionMapper = new Mapper()
+  tooltipMapper = new Mapper()
+  urlMapper = new Mapper()
 
   // whenever the currentItem property on the graph changes, we want to get notified...
-  graphComponent.addCurrentItemChangedListener(onCurrentItemChanged)
+  graphComponent.addEventListener('current-item-changed', onCurrentItemChanged)
 }
 
 /**
@@ -181,17 +166,15 @@ function initializeHighlightStyles(): void {
     fill: null
   })
 
-  const nodeStyleHighlight = new IndicatorNodeStyleDecorator({
-    wrapped: highlightShape,
+  const nodeStyleHighlight = new NodeStyleIndicatorRenderer({
+    nodeStyle: highlightShape,
     // that should be slightly larger than the real node
-    padding: 5,
+    margins: 5,
     // but have a fixed size in the view coordinates
-    zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
+    zoomPolicy: StyleIndicatorZoomPolicy.VIEW_COORDINATES
   })
 
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    nodeStyle: nodeStyleHighlight
-  })
+  graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(nodeStyleHighlight)
 
   // a similar style for the edges, however, cropped by the highlight's insets
   const dummyCroppingArrow = new Arrow({
@@ -204,9 +187,9 @@ function initializeHighlightStyles(): void {
     targetArrow: dummyCroppingArrow,
     sourceArrow: dummyCroppingArrow
   })
-  const edgeStyleHighlight = new EdgeStyleDecorationInstaller({
+  const edgeStyleHighlight = new EdgeStyleIndicatorRenderer({
     edgeStyle,
-    zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
+    zoomPolicy: StyleIndicatorZoomPolicy.VIEW_COORDINATES
   })
 
   const bezierEdgeStyle = new BezierEdgeStyle({
@@ -214,12 +197,12 @@ function initializeHighlightStyles(): void {
     targetArrow: dummyCroppingArrow,
     sourceArrow: dummyCroppingArrow
   })
-  const bezierEdgeStyleHighlight = new EdgeStyleDecorationInstaller({
+  const bezierEdgeStyleHighlight = new EdgeStyleIndicatorRenderer({
     edgeStyle: bezierEdgeStyle,
-    zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
+    zoomPolicy: StyleIndicatorZoomPolicy.VIEW_COORDINATES
   })
 
-  graphComponent.graph.decorator.edgeDecorator.highlightDecorator.setFactory((edge) =>
+  graphComponent.graph.decorator.edges.highlightRenderer.addFactory((edge) =>
     edge.style instanceof BezierEdgeStyle ? bezierEdgeStyleHighlight : edgeStyleHighlight
   )
 }
@@ -259,80 +242,35 @@ function initializeInputMode(): void {
   graphViewerInputMode.itemHoverInputMode.enabled = true
   // set the items to be reported
   graphViewerInputMode.itemHoverInputMode.hoverItems = GraphItemTypes.EDGE | GraphItemTypes.NODE
-  // if there are other items (most importantly labels) in front of edges or nodes
-  // they should be discarded, rather than be reported as "null"
-  graphViewerInputMode.itemHoverInputMode.discardInvalidItems = false
   // whenever the currently hovered item changes call our method
-  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, evt) =>
+  graphViewerInputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) =>
     onHoveredItemChanged(evt.item)
   )
 
   // when the mouse hovers for a longer time over an item we may optionally display a
   // tooltip. Use this callback for querying the tooltip contents.
-  graphViewerInputMode.addQueryItemToolTipListener((sender, evt) => {
+  graphViewerInputMode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.item) {
       evt.toolTip = onQueryItemToolTip(evt.item)
     }
   })
   // slightly offset the tooltip so that it does not interfere with the mouse
-  graphViewerInputMode.mouseHoverInputMode.toolTipLocationOffset = new Point(0, 10)
+  graphViewerInputMode.toolTipInputMode.toolTipLocationOffset = new Point(0, 10)
   // we show the tooltip for a very long time...
-  graphViewerInputMode.mouseHoverInputMode.duration = '10s'
+  graphViewerInputMode.toolTipInputMode.duration = '10s'
 
   // if we click on an item we want to perform a custom action, so register a callback
-  graphViewerInputMode.addItemClickedListener((sender, evt) => onItemClicked(evt.item))
+  graphViewerInputMode.addEventListener('item-clicked', (evt) => onItemClicked(evt))
 
   // also if someone clicked on an empty area we want to perform a custom group action
-  graphViewerInputMode.clickInputMode.addClickedListener((sender, args) => {
+  graphViewerInputMode.clickInputMode.addEventListener('clicked', (args) => {
     // if the user pressed a modifier key during the click...
-    if (
-      (args.modifiers & (ModifierKeys.SHIFT | ModifierKeys.CONTROL)) ===
-      (ModifierKeys.SHIFT | ModifierKeys.CONTROL)
-    ) {
+    if (args.shiftKey || args.ctrlKey) {
       onClickInputModeOnClicked(args.context, args.location)
     }
   })
 
-  initializeContextMenu(graphViewerInputMode)
-
   graphComponent.inputMode = graphViewerInputMode
-}
-
-/**
- * Initialize the context menu.
- */
-function initializeContextMenu(inputMode: GraphInputMode): void {
-  // we tell the input mode that we want to get context menus on nodes
-  inputMode.contextMenuItems = GraphItemTypes.NODE
-
-  // Create a context menu. In this demo, we use our sample context menu implementation but you can use any other
-  // context menu widget as well. See the Context Menu demo for more details about working with context menus.
-  const contextMenu = new ContextMenu(graphComponent)
-
-  // Add event listeners to the various events that open the context menu. These listeners then
-  // call the provided callback function which in turn asks the current ContextMenuInputMode if a
-  // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
-    if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
-      contextMenu.show(location)
-    }
-  })
-
-  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
-  // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  inputMode.addPopulateItemContextMenuListener((sender, args) =>
-    populateContextMenu(contextMenu, args)
-  )
-
-  // Add a listener that closes the menu when the input mode requests this
-  inputMode.contextMenuInputMode.addCloseMenuListener(() => {
-    contextMenu.close()
-  })
-
-  // If the context menu closes itself, for example because a menu item was clicked, we must inform the input mode
-  contextMenu.onClosedCallback = (): void => {
-    inputMode.contextMenuInputMode.menuClosed()
-  }
 }
 
 /**
@@ -342,51 +280,25 @@ function initializeContextMenu(inputMode: GraphInputMode): void {
  */
 function onHoveredItemChanged(item: IModelItem | null): void {
   // we use the highlight manager of the GraphComponent to highlight related items
-  const manager = graphComponent.highlightIndicatorManager
+  const highlights = graphComponent.highlights
 
   // first remove previous highlights
-  manager.clearHighlights()
+  highlights.clear()
   // then see where we are hovering over, now
   if (item == null) {
     return
   }
-  manager.addHighlight(item)
+  highlights.add(item)
   if (item instanceof INode) {
     // and if it's a node, we highlight all adjacent edges, too
-    for (const edge of graphComponent.graph.edgesAt(item)) {
-      manager.addHighlight(edge)
+    for (const edge of graphComponent.graph.edgesAt(item).toArray()) {
+      highlights.add(edge)
     }
   } else if (item instanceof IEdge) {
     // if it's an edge - we highlight the adjacent nodes
-    manager.addHighlight(item.sourceNode!)
-    manager.addHighlight(item.targetNode!)
+    highlights.add(item.sourceNode)
+    highlights.add(item.targetNode)
   }
-}
-
-/**
- * Helper function to populate the context menu.
- */
-function populateContextMenu(
-  contextMenu: ContextMenu,
-  e: PopulateItemContextMenuEventArgs<IModelItem>
-): void {
-  if (!(e.item instanceof INode)) {
-    return
-  }
-
-  const url = getUrl(e.item)
-  if (!url) {
-    return
-  }
-
-  contextMenu.clearItems()
-  // if the selected item is a node and has an URL mapped to it:
-  // create a context menu item to open the link
-  contextMenu.addMenuItem('Open External Link', () => {
-    window.open(url, '_blank')
-  })
-  // we don't want to be queried again if there are more items at this location
-  e.showMenu = true
 }
 
 /**
@@ -398,8 +310,10 @@ function onClickInputModeOnClicked(context: IInputModeContext, location: Point):
   // we check if there was something at the provided location..
   if (graphComponent.graphModelManager.hitTester.enumerateHits(context, location).size === 0) {
     // and if there wasn't we try to exit the current group in case we are inside a folder node
-    if (ICommand.EXIT_GROUP.canExecute(null, graphComponent)) {
-      ICommand.EXIT_GROUP.execute(null, graphComponent)
+    const navigationInputMode = (graphComponent.inputMode as GraphEditorInputMode)
+      .navigationInputMode
+    if (graphComponent.graph.foldingView && navigationInputMode.allowExitGroup) {
+      navigationInputMode.exitGroup()
     }
   }
 }
@@ -428,7 +342,7 @@ function onCurrentItemChanged(): void {
   if (currentItem instanceof INode) {
     // for nodes display the label and the values of the mappers for description and URLs..
     const node = currentItem
-    nodeInfo.innerHTML = node.labels.size > 0 ? node.labels.first().text : 'Empty'
+    nodeInfo.innerHTML = node.labels.size > 0 ? node.labels.first()!.text : 'Empty'
     const content = getDescription(node)
     nodeInfoDescription.innerHTML = content ? content : 'Empty'
     const url = getUrl(node)
@@ -445,19 +359,18 @@ function onCurrentItemChanged(): void {
 
 /**
  * If an item has been clicked, we can execute a custom command.
- * @param item The item that it has been clicked
+ * @param event The item clicked event
  */
-function onItemClicked(item: IModelItem): void {
+function onItemClicked({ item, shiftKey, ctrlKey }: ItemClickedEventArgs<IModelItem>): void {
   if (item instanceof INode) {
     // we adjust the currentItem property
     graphComponent.currentItem = item
     // if the shift and control key had been pressed, we enter the group node if possible
-    if (
-      (graphComponent.lastMouseEvent.modifiers & (ModifierKeys.SHIFT | ModifierKeys.CONTROL)) ===
-      (ModifierKeys.SHIFT | ModifierKeys.CONTROL)
-    ) {
-      if (ICommand.ENTER_GROUP.canExecute(item, graphComponent)) {
-        ICommand.ENTER_GROUP.execute(item, graphComponent)
+    if (shiftKey && ctrlKey) {
+      const navigationInputMode = (graphComponent.inputMode as GraphEditorInputMode)
+        .navigationInputMode
+      if (graphComponent.graph.foldingView && navigationInputMode.allowEnterGroup) {
+        navigationInputMode.enterGroup(item)
       }
     }
   }
@@ -506,7 +419,7 @@ async function readSampleGraph() {
   // then load the graph
   await createGraphMLIOHandler().readFromURL(graphComponent.graph, fileName)
   // when done - fit the bounds
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
   // and update the graph description pane
   const desc = graphDescriptionMapper.get(graphComponent.graph.foldingView!.manager.masterGraph)
   graphDescription.innerHTML = desc !== null ? desc : ''
@@ -515,32 +428,27 @@ async function readSampleGraph() {
 }
 
 /**
- * Gets the value associated to the given node for the given key.
- */
-function getMappedValue(node: INode, key: string): string | null {
-  const mapper: IMapper<INode, string> | null = graphComponent.graph.mapperRegistry.getMapper(key)
-  return mapper ? mapper.get(node) : null
-}
-
-/**
  * Gets the description for the given node.
  */
 function getDescription(node: INode): string | null {
-  return getMappedValue(node, 'Description')
+  const masterNode = graphComponent.graph.foldingView!.getMasterItem(node) as INode
+  return descriptionMapper.get(masterNode)
 }
 
 /**
  * Gets the tool tip text for the given node.
  */
 function getToolTip(node: INode): string | null {
-  return getMappedValue(node, 'ToolTip')
+  const masterNode = graphComponent.graph.foldingView!.getMasterItem(node) as INode
+  return tooltipMapper.get(masterNode)
 }
 
 /**
  * Gets the external resource location for the given node.
  */
 function getUrl(node: INode): string | null {
-  return getMappedValue(node, 'Url')
+  const masterNode = graphComponent.graph.foldingView!.getMasterItem(node) as INode
+  return urlMapper.get(masterNode)
 }
 
 /**
@@ -548,20 +456,16 @@ function getUrl(node: INode): string | null {
  */
 function createGraphMLIOHandler(): GraphMLIOHandler {
   const ioHandler = new GraphMLIOHandler()
+  registerTemplateStyleSerialization(ioHandler)
   // enable support for fast style implementations
   ioHandler.addXamlNamespaceMapping('http://www.yworks.com/yfilesHTML/demos/', FastCanvasStyles)
   // we also want to populate the mappers for "Description", "ToolTip", and "Url"
-  ioHandler.addRegistryInputMapper(INode.$class, YString.$class, 'Description')
-  ioHandler.addRegistryInputMapper(INode.$class, YString.$class, 'ToolTip')
-  ioHandler.addRegistryInputMapper(INode.$class, YString.$class, 'Url')
+  ioHandler.addInputMapper(INode, String, 'Description', descriptionMapper)
+  ioHandler.addInputMapper(INode, String, 'ToolTip', tooltipMapper)
+  ioHandler.addInputMapper(INode, String, 'Url', urlMapper)
   graphDescriptionMapper.clear()
   // as well as the description of the graph
-  ioHandler.addInputMapper(
-    IGraph.$class,
-    YString.$class,
-    'GraphDescription',
-    graphDescriptionMapper
-  )
+  ioHandler.addInputMapper(IGraph, String, 'GraphDescription', graphDescriptionMapper)
   return ioHandler
 }
 
@@ -570,13 +474,13 @@ function createGraphMLIOHandler(): GraphMLIOHandler {
  */
 function initializeGraphSearch(): void {
   graphSearch = new CustomGraphSearch(graphComponent)
-  graphSearch.highlightStyle = new IndicatorNodeStyleDecorator({
-    wrapped: new ShapeNodeStyle({
+  graphSearch.highlightRenderer = new NodeStyleIndicatorRenderer({
+    nodeStyle: new ShapeNodeStyle({
       shape: ShapeNodeShape.ROUND_RECTANGLE,
       stroke: '3px limegreen',
       fill: null
     }),
-    padding: 5
+    margins: 10
   })
   GraphSearch.registerEventListener(searchBox, graphSearch)
 }
@@ -585,20 +489,12 @@ function initializeGraphSearch(): void {
  * Registers actions to the toolbar elements.
  */
 function initializeUI(): void {
+  document
+    .querySelector<HTMLInputElement>('#open-file-button')!
+    .addEventListener('click', async () => {
+      await openGraphML(graphComponent)
+    })
   addNavigationButtons(graphChooserBox).addEventListener('change', readSampleGraph)
-}
-
-/**
- * Enables loading the graph to GraphML.
- */
-function enableGraphML(): void {
-  // create a new GraphMLSupport instance that handles save and load operations
-  const gs = new GraphMLSupport({
-    graphComponent,
-    // configure to load and save to the file system
-    storageLocation: StorageLocation.FILE_SYSTEM
-  })
-  gs.graphMLIOHandler = createGraphMLIOHandler()
 }
 
 /**
@@ -611,22 +507,42 @@ function setUIDisabled(disabled: boolean): void {
 }
 
 /**
- * Initializes the converters for org chart styles.
+ * Initializes the converters for the bindings of the template node styles.
  */
-function initConverters(): void {
-  TemplateNodeStyle.CONVERTERS.orgchartconverters = {
-    linebreakconverter: (value: any, firstline: any): string => {
-      if (typeof value === 'string') {
-        let copy: string = value
-        while (copy.length > 20 && copy.indexOf(' ') > -1) {
-          copy = copy.substring(0, copy.lastIndexOf(' '))
-        }
-        if (firstline === 'true') {
-          return copy
-        }
-        return value.substring(copy.length)
+function initializeConverters(): void {
+  const colors = {
+    present: '#76b041',
+    busy: '#ab2346',
+    travel: '#a367dc',
+    unavailable: '#c1c1c1'
+  }
+
+  StringTemplateNodeStyle.CONVERTERS.demoConverters = {
+    // converter function for the background color of nodes
+    statusColorConverter: (value: keyof typeof colors) => colors[value] || 'white',
+
+    // converter function for the border color nodes
+    selectedStrokeConverter: (value: any) => {
+      if (typeof value === 'boolean') {
+        return value ? '#ff6c00' : 'rgba(0,0,0,0)'
       }
-      return ''
+      return '#FFF'
+    },
+
+    // converter function that adds the numbers given as value and parameter
+    addConverter: (value: string, parameter: any) => {
+      if (typeof parameter === 'string') {
+        return String(Number(value) + Number(parameter))
+      }
+      return value
+    },
+
+    // converter function that converts the given string to a valid path
+    pathConverter: (value: any) => {
+      if (typeof value === 'string') {
+        return `./resources/${value}.svg`
+      }
+      return value
     }
   }
 }

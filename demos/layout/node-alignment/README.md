@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Node Alignment Demo
 
-# Node Alignment Demo
+<img src="../../../doc/demo-thumbnails/node-alignment.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/layout/node-alignment/).
 
 This demo shows how to automatically align nodes in rows and columns using the [AlignmentStage](https://docs.yworks.com/yfileshtml/#/api/AlignmentStage) layout algorithm.
 

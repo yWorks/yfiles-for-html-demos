@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,7 @@
 'use client'
 import React, { useEffect, useRef } from 'react'
 import './GraphOverviewComponent.css'
-import { GraphComponent, GraphOverviewComponent } from 'yfiles'
+import { GraphComponent, GraphOverviewComponent } from '@yfiles/yfiles'
 
 interface ReactGraphOverviewComponentProps {
   graphComponent: GraphComponent
@@ -41,9 +41,9 @@ export function ReactGraphOverviewComponent({ graphComponent }: ReactGraphOvervi
   useEffect(() => {
     const overviewParent = overviewElement.current!
     const overviewComponent = new GraphOverviewComponent(graphComponent)
-    overviewParent.appendChild(overviewComponent.div)
+    overviewParent.appendChild(overviewComponent.htmlElement)
     return () => {
-      overviewParent.removeChild(overviewComponent.div)
+      overviewParent.removeChild(overviewComponent.htmlElement)
       overviewComponent.cleanUp()
     }
   }, [graphComponent])

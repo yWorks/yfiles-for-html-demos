@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,11 +35,8 @@ import {
   INode,
   INodeStyle,
   Point,
-  Rect,
-  WebGL2IconNodeStyle,
-  WebGL2PolylineEdgeStyle,
-  WebGL2ShapeNodeStyle
-} from 'yfiles'
+  Rect
+} from '@yfiles/yfiles'
 
 /**
  * Aggregates providers, configuration, graph generation etc. for one demo configuration
@@ -51,7 +48,7 @@ export abstract class DemoConfiguration {
   abstract graphResourcePath: string
 
   /**
-   * The zoom threshold to switch between WebGL2 and SVG rendering
+   * The zoom threshold to switch between WebGL and SVG rendering
    */
   abstract svgThreshold: number
 
@@ -64,19 +61,6 @@ export abstract class DemoConfiguration {
    * Provides an {@link IEdgeStyle} for SVG rendering
    */
   abstract edgeStyleProvider: (edge: IEdge, graph: IGraph) => IEdgeStyle
-
-  /**
-   * Provides a {@link WebGL2ShapeNodeStyle} or {@link WebGL2IconNodeStyle} for WebGL2 rendering
-   */
-  abstract webGL2NodeStyleProvider: (
-    node: INode,
-    graph: IGraph
-  ) => WebGL2ShapeNodeStyle | WebGL2IconNodeStyle
-
-  /**
-   * Provides a {@link WebGL2PolylineEdgeStyle} for WebGL2 rendering
-   */
-  abstract webGL2EdgeStyleProvider: (edge: IEdge, graph: IGraph) => WebGL2PolylineEdgeStyle
 
   /**
    * Creates a new node.
@@ -131,6 +115,7 @@ export abstract class DemoConfiguration {
       const l = nodeData.l
       const layout = new Rect(l.x, l.y, l.w, l.h)
       const node = this.createNode(graph, id, layout, nodeData)
+      graph.setStyle(node, this.nodeStyleProvider(node, graph))
 
       nodeMap.set(id, node)
     }
@@ -147,8 +132,11 @@ export abstract class DemoConfiguration {
         edgeData.tp != null ? Point.from(edgeData.tp) : targetNode.layout.center
       const sourcePort = graph.addPortAt(sourceNode, sourcePortLocation)
       const targetPort = graph.addPortAt(targetNode, targetPortLocation)
+
       // create the edge
       const edge = graph.createEdge(sourcePort, targetPort)
+      graph.setStyle(edge, this.edgeStyleProvider(edge, graph))
+
       // add the bends
       if (edgeData.b != null) {
         const bendData = edgeData.b as { x: number; y: number }[]

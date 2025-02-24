@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,75 +30,75 @@ export const krebsCycleData = {
   nodes: [
     {
       id: 0,
-      label: '<span style="font-size: 18px">Pyruvate</span>',
+      label: '<span style="font-size: 19px">Pyruvate</span>',
       tag: { type: 'PRODUCT', vAlign: 1 }
     },
     {
       id: 1,
-      label: '<span style="font-size: 18px">Acetyl CoA</span>',
+      label: '<span style="font-size: 19px">Acetyl CoA</span>',
       tag: { type: 'REACTANT', vAlign: 3 }
     },
     {
       id: 2,
-      label: '<span style="font-size: 18px">Oxaloacetate</span>',
+      label: '<span style="font-size: 19px">Oxaloacetate</span>',
       tag: { type: 'REACTANT', circle: true }
     },
     {
       id: 3,
-      label: '<span style="font-size: 18px">Citrate</span>',
+      label: '<span style="font-size: 19px">Citrate</span>',
       tag: { type: 'REACTANT', circle: true }
     },
     {
       id: 4,
-      label: '<span style="font-size: 18px">Malate</span>',
+      label: '<span style="font-size: 19px">Malate</span>',
       tag: { type: 'REACTANT', circle: true }
     },
     {
       id: 5,
-      label: '<span style="font-size: 18px">Fumarate</span>',
+      label: '<span style="font-size: 19px">Fumarate</span>',
       tag: { type: 'REACTANT', circle: true }
     },
     {
       id: 6,
-      label: '<span style="font-size: 18px">Succinate</span>',
+      label: '<span style="font-size: 19px">Succinate</span>',
       tag: { type: 'REACTANT', circle: true }
     },
     {
       id: 7,
-      label: '<span style="font-size: 18px">Succinyl CoA</span>',
+      label: '<span style="font-size: 19px">Succinyl CoA</span>',
       tag: { type: 'REACTANT', circle: true, vAlign: 5 }
     },
     {
       id: 8,
-      label: '<span style="font-size: 18px">a-Ketoglutarate</span>',
+      label: '<span style="font-size: 19px">a-Ketoglutarate</span>',
       tag: { type: 'REACTANT', circle: true }
     },
     {
       id: 9,
-      label: '<span style="font-size: 18px">D-Isocitrate</span>',
+      label: '<span style="font-size: 19px">D-Isocitrate</span>',
       tag: { type: 'REACTANT', circle: true }
     },
     {
       id: 10,
-      label: '<span style="font-size: 18px">Cis-Aconitase</span>',
+      label: '<span style="font-size: 19px">Cis-Aconitase</span>',
       tag: { type: 'REACTANT', circle: true }
     },
     { id: 11, tag: { type: 'REACTION', vAlign: 2 } },
     {
       id: 12,
       label:
-        '<span style="font-size: 18px"><span style="color:#ab2346; font-weight:bolder">CoA</span>-SH + NAD<sup>+</sup></span>',
+        '<span style="font-size: 19px"><span style="color:#ab2346; font-weight:bolder">CoA</span>-SH + NAD<sup>+</sup></span>',
       tag: { type: 'CO_REACTANT' }
     },
     {
       id: 13,
       label:
-        '<span style="font-size: 18px">CO<sub>2</sub> + NADH<sup>+</sup> + H<sup>+</sup></span>',
+        '<span style="font-size: 19px">CO<sub>2</sub> + NADH<sup>+</sup> + H<sup>+</sup></span>',
       tag: { type: 'CO_REACTANT' }
     },
     {
       id: 14,
-      label: '<span style="font-size: 18px">Pyruvate<br>dehydrogenase</span>',
+      label: '<span style="font-size: 19px">Pyruvate<br>dehydrogenase</span>',
       tag: { type: 'ENZYME' }
     },
     { id: 16, tag: { type: 'REACTION' } },
@@ -111,115 +111,115 @@ export const krebsCycleData = {
     { id: 23, tag: { type: 'REACTION' } },
     {
       id: 24,
-      label: '<span style="font-size: 18px">NAD<sup>+</sup></span>',
+      label: '<span style="font-size: 19px">NAD<sup>+</sup></span>',
       tag: { type: 'CO_REACTANT' }
     },
     {
       id: 25,
-      label: '<span style="font-size: 18px">NADH<sup>+</sup> + H<sup>+</sup></span>',
+      label: '<span style="font-size: 19px">NADH<sup>+</sup> + H<sup>+</sup></span>',
       tag: { type: 'CO_REACTANT' }
     },
     {
       id: 26,
-      label: '<span style="font-size: 18px">Malate<br>dehydrogenase</span>',
+      label: '<span style="font-size: 19px">Malate<br>dehydrogenase</span>',
       tag: { type: 'ENZYME' }
     },
     {
       id: 27,
-      label: '<span style="font-size: 18px">H<sub>2</sub>O</span>',
+      label: '<span style="font-size: 19px">H<sub>2</sub>O</span>',
       tag: { type: 'OTHER' }
     },
-    { id: 28, label: '<span style="font-size: 18px">Fumarase</span>', tag: { type: 'ENZYME' } },
+    { id: 28, label: '<span style="font-size: 19px">Fumarase</span>', tag: { type: 'ENZYME' } },
     {
       id: 29,
-      label: '<span style="font-size: 18px">Succinate<br>dehydrogenase</span>',
+      label: '<span style="font-size: 19px">Succinate<br>dehydrogenase</span>',
       tag: { type: 'ENZYME' }
     },
     {
       id: 30,
-      label: '<span style="font-size: 18px">GDP + Pi</span>',
+      label: '<span style="font-size: 19px">GDP + Pi</span>',
       tag: { type: 'CO_REACTANT' }
     },
     {
       id: 31,
       label:
-        '<span style="font-size: 18px"><span style="color:#ab2346; font-weight:bolder">CoA</span>-SH</span> + GDP</span',
+        '<span style="font-size: 19px"><span style="color:#ab2346; font-weight:bolder">CoA</span>-SH</span> + GDP</span',
       tag: { type: 'CO_REACTANT' }
     },
     {
       id: 32,
-      label: '<span style="font-size: 18px">Succinate<br>thiokinase</span>',
+      label: '<span style="font-size: 20px">Succinate<br>thiokinase</span>',
       tag: { type: 'ENZYME' }
     },
     {
       id: 33,
       label:
-        '<span style="font-size: 18px">NAD<sup>+</sup> + <span style="color:#ab2346; font-weight:bolder">CoA</span>-SH</span>',
+        '<span style="font-size: 20px">NAD<sup>+</sup> + <span style="color:#ab2346; font-weight:bolder">CoA</span>-SH</span>',
       tag: { type: 'CO_REACTANT' }
     },
     {
       id: 34,
       label:
-        '<span style="font-size: 18px">NADH<sup>+</sup> + H<sup>+</sup> + CO<sub>2</sub></span>',
+        '<span style="font-size: 20px">NADH<sup>+</sup> + H<sup>+</sup> + CO<sub>2</sub></span>',
       tag: { type: 'CO_REACTANT' }
     },
     {
       id: 36,
-      label: '<span style="font-size: 18px">NAD<sup>+</sup></span>',
+      label: '<span style="font-size: 20px">NAD<sup>+</sup></span>',
       tag: { type: 'CO_REACTANT' }
     },
     {
       id: 37,
-      label: '<span style="font-size: 18px">NADH<sup>+</sup> + H<sup>+</sup></span>',
+      label: '<span style="font-size: 20px">NADH<sup>+</sup> + H<sup>+</sup></span>',
       tag: { type: 'CO_REACTANT' }
     },
     {
       id: 38,
-      label: '<span style="font-size: 18px">CO<sub>2</sub></span>',
+      label: '<span style="font-size: 20px">CO<sub>2</sub></span>',
       tag: { type: 'OTHER' }
     },
     {
       id: 39,
-      label: '<span style="font-size: 18px">a-ketoglutarate<br>dehydrogenase</span>',
+      label: '<span style="font-size: 19px">a-ketoglutarate<br>dehydrogenase</span>',
       tag: { type: 'ENZYME' }
     },
     {
       id: 40,
-      label: '<span style="font-size: 18px">Isocitrate<br>dehydrogenase</span>',
+      label: '<span style="font-size: 19px">Isocitrate<br>dehydrogenase</span>',
       tag: { type: 'ENZYME' }
     },
-    { id: 41, label: '<span style="font-size: 18px">Aconitase</span>', tag: { type: 'ENZYME' } },
+    { id: 41, label: '<span style="font-size: 19px">Aconitase</span>', tag: { type: 'ENZYME' } },
     {
       id: 42,
-      label: '<span style="font-size: 18px">H<sub>2</sub>O</span>',
+      label: '<span style="font-size: 20px">H<sub>2</sub>O</span>',
       tag: { type: 'OTHER' }
     },
-    { id: 43, label: '<span style="font-size: 18px">Aconitase</span>', tag: { type: 'ENZYME' } },
+    { id: 43, label: '<span style="font-size: 19px">Aconitase</span>', tag: { type: 'ENZYME' } },
     {
       id: 44,
-      label: '<span style="font-size: 18px">H<sub>2</sub>O</span>',
+      label: '<span style="font-size: 20px">H<sub>2</sub>O</span>',
       tag: { type: 'OTHER' }
     },
     {
       id: 45,
-      label: '<span style="font-size: 18px">Citrate<br>synthase</span>',
+      label: '<span style="font-size: 19px">Citrate<br>synthase</span>',
       tag: { type: 'ENZYME' }
     },
     {
       id: 46,
       label:
-        '<span style="font-size: 18px"><span style="color:#ab2346; font-weight:bolder;" >CoA</span>-SH</span>',
+        '<span style="font-size: 20px"><span style="color:#ab2346; font-weight:bolder;" >CoA</span>-SH</span>',
       tag: { type: 'OTHER' }
     },
-    { id: 47, label: '<span style="font-size: 18px">FAD</span>', tag: { type: 'CO_REACTANT' } },
+    { id: 47, label: '<span style="font-size: 19px">FAD</span>', tag: { type: 'CO_REACTANT' } },
     {
       id: 48,
-      label: '<span style="font-size: 18px">FADH<sub>2</sub></span>',
+      label: '<span style="font-size: 19px">FADH<sub>2</sub></span>',
       tag: { type: 'CO_REACTANT' }
     },
     {
       id: 49,
-      label: '<span style="font-size: 18px">H<sub>2</sub>O</span>',
+      label: '<span style="font-size: 20px">H<sub>2</sub>O</span>',
       tag: { type: 'OTHER' }
     },
     { id: 50, tag: { type: 'REACTION', vAlign: 4 } }

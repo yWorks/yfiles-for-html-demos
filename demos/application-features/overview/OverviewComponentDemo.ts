@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,23 +27,22 @@
  **
  ***************************************************************************/
 import {
-  Class,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphOverviewComponent,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   LayoutExecutor,
   License,
   Point,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 /**
@@ -61,8 +60,6 @@ async function run(): Promise<void> {
 
   // initialize the GraphComponent
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   /////////////////////// overview component ///////////////////////
 
   // initialize the GraphOverviewComponent
@@ -70,7 +67,7 @@ async function run(): Promise<void> {
 
   // This code toggles the visibility of the overview.
   // Developers who want to keep the overview component always visible don't need this
-  const overviewContainer = overviewComponent.div.parentElement!
+  const overviewContainer = overviewComponent.htmlElement.parentElement!
   const overviewHeader = overviewContainer.querySelector('.demo-overlay__header')!
   overviewHeader.addEventListener('click', () => {
     overviewContainer.classList.toggle('collapsed')
@@ -79,9 +76,7 @@ async function run(): Promise<void> {
   //////////////////////////////////////////////////////////////////
 
   // configure user interaction
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode()
 
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
@@ -90,11 +85,9 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
 
   // add some nodes outside the visible area
   // to demonstrate the overview's viewport indicator
@@ -102,7 +95,7 @@ async function run(): Promise<void> {
   graphComponent.graph.createNodeAt(new Point(1000, -1000))
   graphComponent.graph.createNodeAt(new Point(-1000, 1000))
   graphComponent.graph.createNodeAt(new Point(1000, 1000))
-  graphComponent.updateContentRect()
+  graphComponent.updateContentBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true

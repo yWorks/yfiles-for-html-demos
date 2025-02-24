@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
   IEnumerable,
   IInputModeContext,
   IListEnumerable,
@@ -35,10 +34,10 @@ import {
   IPortCandidate,
   IPortCandidateProvider,
   List,
+  PortCandidate,
   PortCandidateProviderBase,
   PortCandidateValidity
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * This port candidate provider only allows connections from green nodes.
  * To achieve this, this class returns different port candidates for source
@@ -46,24 +45,21 @@ import {
  */
 export default class GreenPortCandidateProvider extends PortCandidateProviderBase {
   node
-
   /**
    * Creates a new instance of {@link GreenPortCandidateProvider}.
-   * @param {!INode} node The given node.
+   * @param node The given node.
    */
   constructor(node) {
     super()
     this.node = node
   }
-
   /**
    * Returns a central port candidate if the owner node of the source
    * candidate is green, and an empty list otherwise.
-   * @param {!IInputModeContext} context The context for which the candidates should be provided
-   * @param {!IPortCandidate} source The opposite port candidate
+   * @param context The context for which the candidates should be provided
+   * @param source The opposite port candidate
    * @see Overrides {@link PortCandidateProviderBase.getTargetPortCandidates}
    * @see Specified by {@link IPortCandidateProvider.getTargetPortCandidates}.
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getTargetPortCandidates(context, source) {
     // Check if the source node is green
@@ -75,7 +71,6 @@ export default class GreenPortCandidateProvider extends PortCandidateProviderBas
     }
     return IListEnumerable.EMPTY
   }
-
   /**
    * Returns a list that contains a port candidate for each of the node's
    * ports. Each candidate has the same location as the port. If a port
@@ -83,26 +78,23 @@ export default class GreenPortCandidateProvider extends PortCandidateProviderBas
    * Note that the variants of getPortCandidates for target ports are all
    * implemented by this class. Therefore, this method is only used for
    * source ports.
-   * @param {!IInputModeContext} context The context for which the candidates should be provided
+   * @param context The context for which the candidates should be provided
    * @see Overrides {@link PortCandidateProviderBase.getPortCandidates}
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getPortCandidates(context) {
     const candidates = new List()
     let hasValid = false
     const graph = context.graph
-
     if (graph) {
       // Create a port candidate for each free port on the node
       this.node.ports.forEach((port) => {
-        const portCandidate = new DefaultPortCandidate(port)
+        const portCandidate = new PortCandidate(port)
         const valid = graph.degree(port) === 0
         hasValid = hasValid || valid
         portCandidate.validity = valid ? PortCandidateValidity.VALID : PortCandidateValidity.INVALID
         candidates.add(portCandidate)
       })
     }
-
     // If no valid candidates have been created so far, use the ShapeGeometryPortCandidateProvider as fallback.
     // This provides a candidate in the middle of each of the four sides of the node.
     if (!hasValid) {
@@ -110,7 +102,6 @@ export default class GreenPortCandidateProvider extends PortCandidateProviderBas
         IPortCandidateProvider.fromShapeGeometry(this.node, 0.5).getAllSourcePortCandidates(context)
       )
     }
-
     return candidates
   }
 }

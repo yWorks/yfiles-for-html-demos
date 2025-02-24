@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,16 +27,16 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   IEnumerable,
   IInputModeContext,
   INode,
   IPortCandidate,
   List,
+  PortCandidate,
   PortCandidateProviderBase,
   PortCandidateValidity
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * This port candidate provider does not allow edges to start/end at a particular node.
@@ -65,10 +65,7 @@ export default class RedPortCandidateProvider extends PortCandidateProviderBase 
    */
   getPortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
     const candidates = new List<IPortCandidate>()
-    const portCandidate = new DefaultPortCandidate(
-      this.node,
-      FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-    )
+    const portCandidate = new PortCandidate(this.node, FreeNodePortLocationModel.CENTER)
     portCandidate.validity = PortCandidateValidity.INVALID
     candidates.add(portCandidate)
     return candidates

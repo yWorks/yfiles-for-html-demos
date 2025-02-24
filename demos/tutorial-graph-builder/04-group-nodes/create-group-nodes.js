@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @param {!GraphBuilder} graphBuilder
- */
 export function createGroupNodes(graphBuilder) {
   const nodeData = [
     { id: 'item0' },
@@ -37,13 +34,11 @@ export function createGroupNodes(graphBuilder) {
     { id: 'group0' },
     { id: 'group1', parentId: 'group0' }
   ]
-
   const nodesSource = graphBuilder.createNodesSource({
     data: nodeData.filter((item) => item.id.startsWith('item')),
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
-
   const groupNodesSource = graphBuilder.createGroupNodesSource({
     data: nodeData.filter((item) => item.id.startsWith('group')),
     id: (item) => item.id,

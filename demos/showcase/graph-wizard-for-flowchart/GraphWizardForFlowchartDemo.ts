@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { DefaultGraph, GraphComponent, LayoutOrientation, License } from 'yfiles'
+import { Graph, GraphComponent, LayoutOrientation, License } from '@yfiles/yfiles'
 
 import FlowchartConfiguration from './FlowchartConfiguration'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { bindYFilesCommand, finishLoading } from 'demo-resources/demo-page'
-import { enableGraphmlSupport } from '../flowchart/style/enable-graphml-support'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { generateGraphMLIOHandler } from '../flowchart/style/generate-graphMLIO-handler'
+import { saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent: GraphComponent
 
@@ -53,12 +52,8 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   legendDiv = document.querySelector<HTMLDivElement>('#legend')!
   configuration = new FlowchartConfiguration(layoutOrientation)
-
-  // enable save/load options
-  enableGraphmlSupport(graphComponent)
 
   // register actions for the toolbar
   initializeUI()
@@ -70,13 +65,13 @@ async function run(): Promise<void> {
 }
 
 function setUpNewDiagram(): void {
-  graphComponent.graph = new DefaultGraph()
+  graphComponent.graph = new Graph()
 
-  // initialize the default styling, highlightin,g etc. for graph items
+  // initialize the default styling, highlighting,g etc. for graph items
   configuration.initializeGraphDefaults(graphComponent)
 
   // initialize the input mode including adding the flowchart actions to the GraphWizardInputMode
-  graphComponent.inputMode = configuration.createInputMode(legendDiv)
+  graphComponent.inputMode = configuration.createInputMode(graphComponent, legendDiv)
 
   // setup the initial diagram
   configuration.initializeDiagram(graphComponent)
@@ -86,13 +81,13 @@ function setUpNewDiagram(): void {
 
 function initializeUI(): void {
   document.querySelector('#new')!.addEventListener('click', setUpNewDiagram)
-  bindYFilesCommand(
-    "button[data-command='NewLayout']",
-    configuration.LayoutCommand,
-    graphComponent,
-    null,
-    'Calculate full layout'
-  )
+  document.querySelector('#layout-button')!.addEventListener('click', async () => {
+    await configuration.runFromScratchLayout(graphComponent)
+  })
+  const graphMLIOHandler = generateGraphMLIOHandler()
+  document.querySelector<HTMLInputElement>('#save-button')!.addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'flowchart.graphml', graphMLIOHandler)
+  })
 }
 
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
+  Color,
   Fill,
   IArrow,
   IBoundsProvider,
@@ -43,8 +44,7 @@ import {
   Rect,
   SvgVisual,
   Visual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * An arrow that appears like the edge tapers to a point.
  */
@@ -53,82 +53,62 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   // they are populated in getVisualCreator and used in the implementations of the IVisualCreator interface.
   anchor = Point.ORIGIN
   direction = Point.ORIGIN
-
   // the un-rotated bounds of the arrow
   bounds = null
   // backing field properties width, length
   _width
   _length
-
   // The shape of the arrow's path.
   // We draw in a normalized coordinate system where the edge is horizontal and meets the target at (0,0)
   // The path is just a simple triangle with length and width 1 - the actual adjustment is done by simply scaling everything later.
   // We create a tiny overlap between the edge and the arrow by painting a fraction over the edge.
   // This avoids anti-aliasing artifacts where the edge meets the arrow.
   _pathShape = 'M -1.1,-0.5 L -1,-0.5 L 0,0 L -1,0.5 L -1.1,0.5 Z'
-
   /**
    * The fill of this arrow
    */
   fill
-
   /**
    * Initializes a new instance of the {@link TaperedArrow} class.
    * @param width The width of the arrow
    * @param length The length of the arrow
-   * @param {!Fill} fill The color of the arrow
-   * @param {number} [width=2]
-   * @param {number} [length=0]
+   * @param fill The color of the arrow
    */
-  constructor(width = 2, length = 0, fill = Fill.BLACK) {
+  constructor(width = 2, length = 0, fill = Color.BLACK) {
     super()
     this._width = width
     this._length = length
     this.updateBounds()
     this.fill = fill
   }
-
   /**
    * Returns the length of the arrow, i.e. the distance from the arrow's tip to
    * the position where the visual representation of the edge's path should begin.
    * @see Specified by {@link IArrow.length}.
-   * @type {number}
    */
   get length() {
     return this._length
   }
-
-  /**
-   * @type {number}
-   */
   set length(value) {
     this._length = value
     this.updateBounds()
   }
-
   /**
    * Returns the thickness of the arrow.
-   * @type {number}
    */
   get width() {
     return this._width
   }
-
-  /**
-   * @type {number}
-   */
   set width(value) {
     this._width = value
     this.updateBounds()
   }
-
   /**
    * Calculates the bounds for the current values of length and width.
    */
   updateBounds() {
     this.bounds = new Rect(-this._length, -this._width / 2, this._width, this._width)
   }
-
   /**
    * Gets the cropping length associated with this instance.
    * Value: Always returns 0
@@ -139,39 +119,32 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   get cropLength() {
     return 0
   }
-
   /**
    * Creates the visual for the arrow.
-   * @param {!IRenderContext} context The context that contains the information needed to create the visual.
-   * @returns {?Visual} The arrow visual.
+   * @param context The context that contains the information needed to create the visual.
+   * @returns The arrow visual.
    * @see Specified by {@link IVisualCreator.createVisual}.
    */
   createVisual(context) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path.setAttribute('d', this._pathShape)
-
     // set the fill of the path
     Fill.setFill(this.fill, path, context)
-
     // scale and arrange the path to the correct position
     path.setAttribute(
       'transform',
-      `matrix(${this.direction.x} ${this.direction.y} ${-this.direction.y} ${this.direction.x} ${
-        this.anchor.x
-      } ${this.anchor.y}) scale(${this.length},${this.width})`
+      `matrix(${this.direction.x} ${this.direction.y} ${-this.direction.y} ${this.direction.x} ${this.anchor.x} ${this.anchor.y}) scale(${this.length},${this.width})`
     )
-
     const visual = new SvgVisual(path)
     visual['render-data-cache'] = this.fill
     return visual
   }
-
   /**
    * Re-renders the arrow using the old visual for performance reasons.
-   * @param {!IRenderContext} context The context that contains the information needed to create the visual.
-   * @param {?Visual} oldVisual The visual instance that had been returned the last time the
-   *   {@link MySimpleArrow.createVisual} method was called.
-   * @returns {?Visual} The updated visual.
+   * @param context The context that contains the information needed to create the visual.
+   * @param oldVisual The visual instance that had been returned the last time the
+   *   {@link TaperedArrow.createVisual} method was called.
+   * @returns The updated visual.
    * @see Specified by {@link IVisualCreator.updateVisual}.
    */
   updateVisual(context, oldVisual) {
@@ -180,137 +153,103 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
       // no path element exists, re-create the visual from scratch
       return this.createVisual(context)
     }
-
     const cache = oldVisual['render-data-cache']
     // check if fill changed
-    if (!this.fill.equals(cache)) {
+    if (this.fill !== cache) {
       // fill changed - update the path and the cache
       Fill.setFill(this.fill, path, context)
       oldVisual['render-data-cache'] = this.fill
     }
-
     // otherwise just scale and re-arrange and transform the arrow path to the right location
     path.setAttribute(
       'transform',
-      `matrix(${this.direction.x} ${this.direction.y} ${-this.direction.y} ${this.direction.x} ${
-        this.anchor.x
-      } ${this.anchor.y}) scale(${this.length},${this.width})`
+      `matrix(${this.direction.x} ${this.direction.y} ${-this.direction.y} ${this.direction.x} ${this.anchor.x} ${this.anchor.y}) scale(${this.length},${this.width})`
     )
     return oldVisual
   }
-
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
-   * @param {!ICanvasContext} context The context to calculate the bounds for.
-   * @returns {!Rect}
+   * @param context The context to calculate the bounds for.
    */
   getBounds(context) {
-    return this.bounds.getTransformed(
-      new Matrix(
-        this.direction.x,
-        this.direction.y,
-        -this.direction.y,
-        this.direction.x,
-        this.anchor.x,
-        this.anchor.y
-      )
+    const matrix = new Matrix(
+      this.direction.x,
+      this.direction.y,
+      -this.direction.y,
+      this.direction.x,
+      this.anchor.x,
+      this.anchor.y
     )
+    matrix.scale(this.length, this.length)
+    return matrix.calculateTransformedBounds(this.bounds)
   }
-
   /**
    * Gets an {@link IBoundsProvider} implementation that can yield
    * this arrow's bounds if painted at the given location using the
    * given direction for the given edge.
-   * @param {!IEdge} edge the edge this arrow belongs to
-   * @param {boolean} atSource whether this will be the source arrow
-   * @param {!Point} anchor the anchor point for the tip of the arrow
-   * @param {!Point} directionVector the direction the arrow is pointing in
+   * @param edge the edge this arrow belongs to
+   * @param atSource whether this will be the source arrow
+   * @param anchor the anchor point for the tip of the arrow
+   * @param directionVector the direction the arrow is pointing in
    * an implementation of the {@link IBoundsProvider} interface that can
    * subsequently be used to query the bounds. Clients will always call
    * this method before using the implementation and may not cache the instance returned.
    * This allows for applying the flyweight design pattern to implementations.
    * @see Specified by {@link IArrow.getBoundsProvider}.
-   * @returns {!IBoundsProvider}
    */
   getBoundsProvider(edge, atSource, anchor, directionVector) {
     this.anchor = anchor
     this.direction = directionVector
     return this
   }
-
   /**
    * Gets an {@link IVisualCreator} implementation that will create
    * the {@link IVisualCreator} for this arrow
    * at the given location using the given direction for the given edge.
-   * @param {!IEdge} edge the edge this arrow belongs to
-   * @param {boolean} atSource whether this will be the source arrow
-   * @param {!Point} anchor the anchor point for the tip of the arrow
-   * @param {!Point} direction the direction the arrow is pointing in
+   * @param edge the edge this arrow belongs to
+   * @param atSource whether this will be the source arrow
+   * @param anchor the anchor point for the tip of the arrow
+   * @param direction the direction the arrow is pointing in
    * Itself as a flyweight.
    * @see Specified by {@link IArrow.getVisualCreator}.
-   * @returns {!IVisualCreator}
    */
   getVisualCreator(edge, atSource, anchor, direction) {
     this.anchor = anchor
     this.direction = direction
     return this
   }
+  get cropAtPort() {
+    return false
+  }
 }
-
 /**
  * A markup extension class used for (de-)serializing the custom arrow style to GraphML.
  */
 export class TaperedArrowExtension extends MarkupExtension {
   _width = 2
   _length = 0
-  _fill = Fill.BLACK
-
-  /**
-   * @type {number}
-   */
+  _fill = Color.BLACK
   get width() {
     return this._width
   }
-
-  /**
-   * @type {number}
-   */
   set width(value) {
     this._width = value
   }
-
-  /**
-   * @type {number}
-   */
   get length() {
     return this._length
   }
-
-  /**
-   * @type {number}
-   */
   set length(value) {
     this._length = value
   }
-
-  /**
-   * @type {!Fill}
-   */
   get fill() {
     return this._fill
   }
-
-  /**
-   * @type {!Fill}
-   */
   set fill(value) {
     this._fill = value
   }
-
   /**
    * Returns an object that is set as the value of the target property for this markup extension.
-   * @param {!ILookup} serviceProvider The object that provides services for the markup extension
-   * @returns {!TaperedArrow}
+   * @param serviceProvider The object that provides services for the markup extension
    */
   provideValue(serviceProvider) {
     const arrow = new TaperedArrow()
@@ -318,5 +257,12 @@ export class TaperedArrowExtension extends MarkupExtension {
     arrow.length = this.length
     arrow.fill = this.fill
     return arrow
+  }
+  static create(item) {
+    const markupExtension = new TaperedArrowExtension()
+    markupExtension.width = item.width
+    markupExtension.length = item.length
+    markupExtension.fill = item.fill
+    return markupExtension
   }
 }

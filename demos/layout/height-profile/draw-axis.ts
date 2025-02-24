@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,14 +32,13 @@ import {
   type GraphComponent,
   IBoundsProvider,
   type ICanvasContext,
-  ICanvasObjectDescriptor,
   type IRenderContext,
   IVisualCreator,
   Rect,
   SvgVisual,
   TextRenderSupport,
   type Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getMax, SCALED_MAX_X, SCALED_MAX_Y } from './scale-data'
 import type { Waypoint } from './resources/TrekkingData'
 
@@ -48,9 +47,10 @@ import type { Waypoint } from './resources/TrekkingData'
  * component.
  */
 export function drawAxis(graphComponent: GraphComponent, trail: Waypoint[]): void {
-  const axisGroup = graphComponent.contentGroup.addGroup()
+  const renderTree = graphComponent.renderTree
+  const axisGroup = renderTree.createGroup(renderTree.contentGroup)
   axisGroup.toBack()
-  axisGroup.addChild(new AxisVisual(trail), ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE)
+  renderTree.createElement(axisGroup, new AxisVisual(trail))
 }
 
 /**

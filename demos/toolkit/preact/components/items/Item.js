@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,21 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { h, html } from '../../preact-loader.js'
-
-/**
- * @typedef {Object} Props
- * @property {number} index
- * @property {DataItem} data
- * @property {function} toggleState
- * @property {function} removeDataItem
- */
-
+// @ts-ignore - We have no proper types for preact, here
+import { html } from '../../preact-loader'
 export default (props) => html`
   <div class="item">
     <div class="item-row item-head">
       <h3>Item ${props.data.id}</h3>
-      <button class="remove-button" onClick=${() => props.removeDataItem(props.index)}>
+      <button
+        class="remove-button"
+        onClick=${() => props.removeDataItem(props.index)}
+        disabled=${props.disabled}
+      >
         remove
       </button>
     </div>
@@ -50,6 +46,7 @@ export default (props) => html`
         type="checkbox"
         checked=${props.data.state}
         onChange=${() => props.toggleState(props.index)}
+        disabled=${props.disabled}
       />
     </div>
   </div>

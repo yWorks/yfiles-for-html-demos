@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Edge Label Placement Demo
 
-# Edge Label Placement Demo
+<img src="../../../doc/demo-thumbnails/edge-label-placement.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/layout/edgelabelplacement/).
 
 This demo shows how to place edge labels at the preferred location with a labeling algorithm and the [PreferredPlacementDescriptor](https://docs.yworks.com/yfileshtml/#/api/PreferredPlacementDescriptor) type.
 
@@ -29,7 +31,7 @@ The distance between the edge and the closest label corner.
 
 ### Placement Along Edge
 
-Whether the label should be placed near the source or target node, centered between source and target or anywhere. Placement at source port or at target port is only supported by hierarchic layout. In all other cases, it is replaced by at source/at target respectively.
+Whether the label should be placed near the source or target node, centered between source and target or anywhere. Placement at source port or at target port is only supported by hierarchical layout. In all other cases, it is replaced by at source/at target respectively.
 
 ### Side of Edge
 

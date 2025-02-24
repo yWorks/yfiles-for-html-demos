@@ -1,5 +1,5 @@
 {
-  "name": "@vitest/example-playwright",
+  "name": "@yfiles/vitest-demo-for-yfiles-for-html",
   "private": true,
   "scripts": {
     "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json', 'src/license.json')\" || echo To run this demo, please add a license.json to the src/ folder.",
@@ -9,14 +9,14 @@
     "test-ui": "vite build && vitest --ui"
   },
   "dependencies": {
-    "demo-resources": "../../resources",
-    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz"
+    "@yfiles/demo-resources": "../../resources",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.1",
-    "@vitest/ui": "^0.34.6",
-    "playwright": "^1.40.1",
-    "vite": "^5.0.4",
-    "vitest": "^0.34.6"
+    "@playwright/test": "^1.48.1",
+    "@vitest/ui": "^2.1.3",
+    "playwright": "^1.48.1",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.3"
   }
 }

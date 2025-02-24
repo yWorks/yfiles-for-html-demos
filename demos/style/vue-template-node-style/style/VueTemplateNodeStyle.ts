@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,25 +27,44 @@
  **
  ***************************************************************************/
 // @ts-nocheck
-import type { TaggedSvgVisual } from 'yfiles'
 import {
   Font,
   FontStyle,
-  FontWeight,
   GraphComponent,
+  type GraphMLIOHandler,
   INode,
   IRenderContext,
   NodeStyleBase,
   Size,
   SvgDefsManager,
   SvgVisual,
-  TextDecoration,
+  type TaggedSvgVisual,
+  TextDecorations,
   TextRenderSupport,
   TextWrapping
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
+import '@yfiles/demo-resources/style/demo.css'
 import type { App, Component, ComponentPublicInstance } from 'vue'
 import { createApp, customRef, defineComponent, markRaw, type Ref } from 'vue'
+
+export function addVueTemplateNodeStyleInformation(graphmlHandler: GraphMLIOHandler) {
+  // enable serialization of the Vue template node style - without a namespace mapping, serialization will fail
+  graphmlHandler.addNamespace(
+    'http://www.yworks.com/demos/yfiles-vue-node-style/3.0',
+    'VueTemplateNodeStyle'
+  )
+
+  graphmlHandler.addTypeInformation(VueTemplateNodeStyle, {
+    name: 'VueTemplateNodeStyle',
+    xmlNamespace: 'http://www.yworks.com/demos/yfiles-vue-node-style/3.0',
+    contentProperty: 'template',
+    properties: {
+      template: { type: String, default: '' },
+      styleTag: { type: Object, default: null }
+    }
+  })
+}
 
 type State<TTag = any> = {
   layout: NodeLayout
@@ -92,13 +111,10 @@ class ObservedContext<TTag> {
     store.set('tag', node.tag)
     store.set(
       'highlighted',
-      graphComponent.highlightIndicatorManager.selectionModel?.isSelected(node) ?? false
+      graphComponent.highlightIndicatorManager.items?.includes(node) ?? false
     )
     store.set('focused', graphComponent.focusIndicatorManager.focusedItem === node)
-    store.set(
-      'selected',
-      graphComponent.selectionIndicatorManager.selectionModel?.isSelected(node) ?? false
-    )
+    store.set('selected', graphComponent.selectionIndicatorManager.items?.includes(node) ?? false)
     const { x, y, width, height } = node.layout
     store.set('layout', { x, y, width, height })
   }
@@ -132,13 +148,13 @@ class ObservedContext<TTag> {
       }
     }
     if (store.isTracking('selected')) {
-      const newValue = graphComponent.selection.selectedNodes.isSelected(node)
+      const newValue = graphComponent.selection.nodes.includes(node)
       if (newValue !== store.getValue('selected')) {
         store.set('selected', newValue)
       }
     }
     if (store.isTracking('highlighted')) {
-      const newValue = graphComponent.highlightIndicatorManager.selectionModel!.isSelected(node)
+      const newValue = graphComponent.highlights.includes(node)
       if (newValue !== store.getValue('highlighted')) {
         store.set('highlighted', newValue)
       }
@@ -277,7 +293,7 @@ export class VueTemplateNodeStyle<TTag = any> extends NodeStyleBase<VueVisual<TT
 
   /**
    * Updates the visual by returning the old visual, as Vue handles updating the component.
-   * @see Overrides {@link LabelStyleBase.updateVisual}
+   * @see Overrides {@link NodeStyleBase.updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: VueVisual<TTag>, node: INode): VueVisual<TTag> {
     SvgVisual.setTranslate(oldVisual.svgElement, node.layout.x, node.layout.y)
@@ -327,9 +343,9 @@ export function initializeDesignerVueComponents(app: App): void {
     const fontSettings: {
       fontFamily?: string
       fontSize?: number
-      fontWeight?: FontWeight
+      fontWeight?: string | number
       fontStyle?: FontStyle
-      textDecoration?: TextDecoration
+      textDecoration?: TextDecorations
       lineSpacing?: number
     } = {}
     if (typeof fontFamily !== 'undefined') {
@@ -342,7 +358,7 @@ export function initializeDesignerVueComponents(app: App): void {
       fontSettings.fontStyle = Number(fontStyle)
     }
     if (typeof fontWeight !== 'undefined') {
-      fontSettings.fontWeight = Number(fontWeight)
+      fontSettings.fontWeight = String(fontWeight)
     }
     if (typeof textDecoration !== 'undefined') {
       fontSettings.textDecoration = Number(textDecoration)
@@ -351,15 +367,19 @@ export function initializeDesignerVueComponents(app: App): void {
       fontSettings.lineSpacing = Number(lineSpacing)
     }
     const font = new Font(fontSettings)
-    let textWrapping: TextWrapping = TextWrapping.CHARACTER_ELLIPSIS
+    let textWrapping: TextWrapping = TextWrapping.WRAP_CHARACTER_ELLIPSIS
 
     if (typeof wrapping !== 'undefined' && wrapping !== null) {
       switch (Number(wrapping)) {
-        case TextWrapping.CHARACTER_ELLIPSIS:
-        case TextWrapping.CHARACTER:
         case TextWrapping.NONE:
-        case TextWrapping.WORD:
-        case TextWrapping.WORD_ELLIPSIS:
+        case TextWrapping.TRIM_CHARACTER_ELLIPSIS:
+        case TextWrapping.TRIM_CHARACTER:
+        case TextWrapping.TRIM_WORD:
+        case TextWrapping.TRIM_WORD_ELLIPSIS:
+        case TextWrapping.WRAP_CHARACTER_ELLIPSIS:
+        case TextWrapping.WRAP_CHARACTER:
+        case TextWrapping.WRAP_WORD:
+        case TextWrapping.WRAP_WORD_ELLIPSIS:
           textWrapping = Number(wrapping)
           break
         default:
@@ -376,7 +396,7 @@ export function initializeDesignerVueComponents(app: App): void {
     }
 
     // do the text wrapping
-    // This sample uses the strategy CHARACTER_ELLIPSIS. You can use any other setting.
+    // This sample uses the strategy WRAP_CHARACTER_ELLIPSIS. You can use any other setting.
     TextRenderSupport.addText(textElement, text, font, new Size(Number(w), Number(h)), textWrapping)
 
     return textElement
@@ -502,7 +522,7 @@ export function initializeDesignerVueComponents(app: App): void {
       },
       wrapping: {
         type: [String, Number],
-        default: TextWrapping.CHARACTER_ELLIPSIS,
+        default: TextWrapping.WRAP_CHARACTER_ELLIPSIS,
         required: false
       },
       transform: {

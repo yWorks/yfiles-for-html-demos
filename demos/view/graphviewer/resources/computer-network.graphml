@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,583 +28,415 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml
-  xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd "
-  xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0"
-  xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0"
-  xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <key id="d0" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
-  <key id="d1" for="node" attr.type="string" attr.name="Url"/>
-  <key id="d2" for="node" attr.type="string" attr.name="ToolTip"/>
-  <key id="d3" for="node" attr.type="string" attr.name="Description"/>
-  <key id="d4" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
-  <key id="d5" for="node" attr.name="NodeGeometry"
-       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
-  <key id="d6" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
-  <key id="d7" for="node" attr.type="boolean" attr.name="Expanded"
-       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
-    <default>true</default>
-  </key>
-  <key id="d8" for="node" attr.name="NodeViewState"
-       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState"/>
-  <key id="d9" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
-  <key id="d10" for="edge" attr.name="EdgeGeometry"
-       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
-  <key id="d11" for="edge" attr.name="EdgeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
-  <key id="d12" for="edge" attr.name="EdgeViewState"
-       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState"/>
-  <key id="d13" for="graph" attr.type="string" attr.name="GraphDescription"/>
-  <key id="d14" for="port" attr.name="PortLocationParameter"
-       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
-    <default>
-      <x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored" />
-    </default>
-  </key>
-  <key id="d15" for="port" attr.name="PortStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
-    <default>
-      <x:Static Member="y:VoidPortStyle.Instance" />
-    </default>
-  </key>
-  <key id="d16" for="port" attr.name="PortViewState"
-       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/PortViewState"/>
-  <key id="d17" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
-  <data key="d17">
-    <y:SharedData>
-      <yjs:DefaultLabelStyle x:Key="1" clipText="false"/>
-	  <yjs:StringTemplateNodeStyle x:Key="2"><![CDATA[
-		  <use xlink:href="#workstation" width="{TemplateBinding width}" height="{TemplateBinding height}"></use>
-		  <defs>
-<svg id="workstation" xmlns="http://www.w3.org/2000/svg" viewBox="3 7 65 60">
-  <path fill="#afafaf" d="M54.6 59.5c.2.5-.1.8-.6.8H3.9c-.5 0-.6-.3-.2-.6l8-7.2c.4-.3 1.1-.6 1.6-.6h37.3c.5 0 1.1.4 1.3.8l2.7 6.8z"/>
-  <path d="M54.6 59.5c.2.5-.1.8-.6.8H3.9c-.5 0-.6-.3-.2-.6l8-7.2c.4-.3 1.1-.6 1.6-.6h37.3c.5 0 1.1.4 1.3.8l2.7 6.8z" fill="none" stroke="#8d8d8d" stroke-width=".25" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"/>
-  <path fill="#6e6e6e" d="M35.4 58.1c0 .3-.2.5-.5.5H7.3c-.3 0-.3-.1-.1-.3l5.6-5.2c.2-.2.5-.3.8-.3H35c.3 0 .5.2.5.5l-.1 4.8zm8.6.1c.1.2.4.4.6.4h7.5c.3 0 .4-.2.3-.4l-2-4.9c-.1-.2-.4-.4-.6-.4h-7.2c-.3 0-.4.2-.3.4l1.7 4.9zm-7.8-.1c0 .3.2.5.5.5h6.1c.3 0 .4-.2.3-.4l-.2-.4c-.1-.2-.4-.4-.6-.4h-1c-.3 0-.5-.2-.6-.4v-.1c-.1-.2-.3-.4-.6-.4h-1.3c-.3 0-.4.2-.4.5v.1c0 .3-.2.5-.4.5h-1.3c-.3 0-.5.2-.5.5zm0-3.5c0 .3.2.5.5.5h4.8c.3 0 .4-.2.3-.4l-.4-1.3c-.1-.2-.3-.4-.6-.4h-4.2c-.3 0-.5.2-.5.5.1-.2.1 1.1.1 1.1zm14.2-6.5c0 1-6.8 1.4-12.4 1.4-3.9 0-10.9-.3-11.4-1.3v1.7c0 .7 4.8 1.2 11.4 1.2s12.4-.6 12.4-1.4v-1.6z"/>
-  <path d="M38.5 46.9c6.6 0 11.9.6 11.9 1.3s-5.3 1.4-11.9 1.4c-6.7 0-11.9-.7-11.9-1.4s5.3-1.3 11.9-1.3z" fill="gray"/>
-  <path fill="#6e6e6e" d="M41 48.5s-1.5.1-2.5.1-2.5-.1-2.5-.1v-9.8h5v9.8z"/>
-  <path fill="#6e6e6e" d="M12.8 9.7c0-1.1.9-2 2-2H63a2 2 0 0 1 2 2v30.1a2 2 0 0 1-2 2H14.8a2 2 0 0 1-2-2V9.7z"/>
-  <path d="M12.8 9.7c0-1.1.9-2 2-2H63a2 2 0 0 1 2 2v30.1a2 2 0 0 1-2 2H14.8a2 2 0 0 1-2-2V9.7z" fill="none" stroke="#666" stroke-width=".24" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"/>
-  <path fill="#afafaf" d="M13.8 10.7c0-1.1.9-2 2-2h46.4a2 2 0 0 1 2 2v27.8a2 2 0 0 1-2 2H15.8a2 2 0 0 1-2-2V10.7z"/>
-  <path d="M14.4 11.2c0-1.1.9-2 2-2h45.3a2 2 0 0 1 2 2v26.9a2 2 0 0 1-2 2H16.4a2 2 0 0 1-2-2V11.2z" fill="#61ace0"/>
-  <path d="M62.1 54.2c-.2-.1-.4-.3-.7-.5.2.1.5.3.7.5z" fill="#c9c9c9"/>
-  <path fill="#afafaf" d="M62.1 54.2h.2c.6-.1 1.3-.2 2.2-.1 2 1.5 3.8 4.6 1.2 5.8-2 .9-3.5.8-4.7-.5-.6-.7-1.2-1.5-1.7-2.3.2-1.2.9-2.5 2.8-2.9z"/>
-  <path fill="#afafaf" d="M59.3 57.1c-.9-1.4-1.4-2.9-.7-3.5.2-.2.5-.4.9-.6.6.1 1.3.3 1.9.7.3.2.5.4.7.5-1.9.4-2.6 1.7-2.8 2.9z"/>
-  <path fill="#afafaf" d="M59.5 53c1.4-.6 3.3-.3 5 1l.1.1c-.9-.1-1.8 0-2.4.1-.1-.1-.8-.4-.7-.4-.7-.5-1.4-.8-2-.8z"/>
-  <path fill="none" stroke="#717171" stroke-width=".11" stroke-linecap="round" d="M59.5 53c1.4-.6 3.3-.3 5 1l.1.1c2 1.5 3.8 4.6 1.2 5.8-2 .9-3.5.8-4.7-.5-.6-.7-1.2-1.5-1.7-2.3-.9-1.4-1.4-2.9-.7-3.5.2-.3.4-.5.8-.6z"/>
-  <path fill="none" stroke="#717171" stroke-width=".11" stroke-linecap="round" d="M62.1 54.2c.1 0 .2 0 .3-.1.6-.1 1.3-.2 2.2-.1m-5.3 3.1c.3-1.1.9-2.5 2.8-2.9m-.7-.5c-.6-.3-1.3-.6-1.9-.7m2.6 1.2c-.2-.2-.4-.3-.7-.5"/>
-  <path d="M61.6 53.5c.4.3.4.5.5.6-.1 0-.2 0-.3.1-.4-.4-1-.7-1-.7.2-.2.6-.1.8 0z" fill="#4d4d4d"/>
-</svg>
-</defs>
-		  ]]>
-      </yjs:StringTemplateNodeStyle>
-	  <yjs:StringTemplateNodeStyle x:Key="3"><![CDATA[
-		  <use xlink:href="#printer" width="{TemplateBinding width}" height="{TemplateBinding height}"></use>
-		  <defs>
-<svg id="printer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 57 47">
-  <path fill="#afafaf" d="M48.4 21.1c.2 1.3-.8 2.4-2.2 2.4H10.7c-1.4 0-2.3-1.1-2.2-2.4L10 9.7a2.9 2.9 0 0 1 2.8-2.4h31.5c1.4 0 2.6 1.1 2.8 2.4l1.3 11.4z"/>
-  <path d="M42.1 1.6c-.5-1.3-28 .4-28.9-1s0 21 0 21h29.9s-.6-18.7-1-20z" fill="#efefef"/>
-  <path fill="#afafaf" d="M51.8 40.7c-.1-.1-.3-.2-.5-.2H4.6c-.2 0-.4.1-.5.2l-2.5 2.7c-.1.1-.1.3 0 .5l1.7 2.8c.1.2.3.3.5.3h48.7c.2 0 .4-.1.5-.3l1.7-2.8c.1-.1.1-.4-.1-.5l-2.8-2.7z"/>
-  <path d="M56.6 39c0 1.4-1.1 2.5-2.5 2.5H2.9C1.5 41.5.4 40.4.4 39V23.7c0-1.4 1.1-2.5 2.5-2.5h51.2c1.4 0 2.5 1.1 2.5 2.5V39z" fill="#6e6e6e"/>
-  <path d="M51.8 38c0 1.4-1 2.5-2.2 2.5H7.5c-1.2 0-2.2-1.1-2.2-2.5V23.7h46.5V38z" fill="#5dace2"/>
-  <path d="M54.3 24h2.3v.9h-2.3zm0 2h2.3v.9h-2.3z" fill="#c8ff00" stroke="#717171" stroke-width=".12" stroke-miterlimit="10"/>
-  <path d="M5.2 23.7v-2.4m46.6 2.4v-2.4" fill="none" stroke="#afafaf" stroke-width=".2" stroke-miterlimit="10"/>
-  <path fill="none" stroke="#afafaf" stroke-width=".19" stroke-miterlimit="10" d="M51.8 23.7H5.2"/>
-</svg>
-</defs>
-		  ]]>
-      </yjs:StringTemplateNodeStyle>
-	  <yjs:StringTemplateNodeStyle x:Key="4"><![CDATA[
-		  <use xlink:href="#scanner" width="{TemplateBinding width}" height="{TemplateBinding height}"></use>
-		  <defs>
-<svg id="scanner" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 40">
-  <path d="M5.6 5.2l10.9 10H35c9.6 0 16.5.2 18.2 0l10.7-9.8C67.7 2.1 67 1 60.5 1H9.1C2.4 1 2.4 2 5.6 5.2z" fill="#afafaf"/>
-  <path d="M67.9 27.2L56.4 16.4c-.8-.8-3.3-1.2-4.7-1.3 0 0-5.1-.4-16.9-.4-9.6 0-17.3.4-17.3.4-1.4.1-3.8.5-4.7 1.2L2 26.7c-1.3 1.1-2 1.7-2 2.5v6.4c0 1.4 1.1 2.6 2.5 2.7 0 0 12.7 1 32 1 19.9 0 32-1 32-1 1.4-.1 2.5-1.3 2.5-2.7v-6.8c0-1.1-1.1-1.6-1.1-1.6zm-34.6-1.6h-.1.1z" fill="#c6c6c6"/>
-  <path d="M34.3 33.6c6.9 0 12.6-2.2 12.6-4.9 0 0-3.4-.6-12.3-.6-8.6 0-12.8.6-12.8.6-.1 2.7 5.5 4.9 12.5 4.9z" opacity=".6" fill="#afafaf" stroke="#848484" stroke-width=".25" stroke-miterlimit="10"/>
-  <path d="M64.5 27.2l-10.1-10c-1-.9-2.2-1.2-4.4-1.2 0 0-4.6-.3-15.3-.3C26 15.6 19 16 19 16c-2.9.1-3.6.5-4.3 1.1L5 27l59.5.2z" fill="#61ace0"/>
-  <path fill="#c8ff00" stroke="#717171" stroke-width=".11" stroke-miterlimit="10" d="M64.5 30.5H69v2.3h-4.5z"/>
-</svg>
-</defs>
-		  ]]>
-      </yjs:StringTemplateNodeStyle>
-	  <yjs:StringTemplateNodeStyle x:Key="5"><![CDATA[
-		  <use xlink:href="#switch" width="{TemplateBinding width}" height="{TemplateBinding height}"></use>
-		  <defs>
-<svg id="switch" xmlns="http://www.w3.org/2000/svg" height="30" width="70">
-  <path d="M67.6 10.4l-.1-.1-11.1-7.9C55.2 1.5 53.1.7 51.7.5c0 0-5.1-.5-16.9-.5-9.6 0-17.3.6-17.3.6-1.4.1-3.5.9-4.7 1.8L2 10.1c-1.1.5-2 2-2 3.7v9c0 2 1.1 3.7 2.5 3.9 0 0 12.7 1.5 32 1.5 19.9 0 32-1.5 32-1.5 1.4-.2 2.5-1.9 2.5-3.9v-9c0-1.4-.6-2.7-1.4-3.4zM35 8.5h-.3.3zm-1.7 0h-.1.1z" fill="#6e6e6e"/>
-  <path stroke-miterlimit="10" d="M62.8 13.5c-.6-.3-18.2-.3-28.3-.3-8.2 0-27.8.1-27.8.1-1 .4-1.7 1.7-1.7 3.2v5.6c0 1.7 1 3.2 2.1 3.3 0 0 10.8.7 27.4.7 17 0 27.4-.7 27.4-.7 1.2-.1 2.1-1.6 2.1-3.3v-5.6c0-1.3-.6-2.7-1.2-3z" fill="#5dace2" stroke="#afafaf" stroke-width=".5"/>
-  <g stroke-miterlimit="10">
-    <path d="M66.4 15.6h2.8v1.6h-2.8z" fill="#c8ff00" stroke="#717171" stroke-width=".06"/>
-    <path d="M49.3 15.5h-6.8v7.1h2v1h2.8l-.1-1h2.1zm-11.5 0H31v7.1h2v1h2.8l-.1-1h2.1zm-11.5 0h-6.8v7.1h2v1h2.7v-1h2.1zm-11.5 0H8v7.1h2v1h2.7v-1h2.1zm46 0H54v7.1h2v1h2.8l-.1-1h2.1z" fill="#4d4d4d" stroke="#d9f1ff" stroke-width=".37"/>
-  </g>
-</svg>
-</defs>
-		  ]]>
-      </yjs:StringTemplateNodeStyle>
-	  <yjs:StringTemplateNodeStyle x:Key="7"><![CDATA[
-		  <use xlink:href="#wlan" width="{TemplateBinding width}" height="{TemplateBinding height}"></use>
-		  <defs>
-<svg id="wlan" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 70">
-  <path fill="#9cd7ff" d="M9.6 45.9C8 42.4 7.2 38.6 7.2 34.6c0-15.2 12.3-27.5 27.5-27.5a27.48 27.48 0 0 1 25.1 38.7l4.4 2C66 43.7 67 39.3 67 34.5A32.4 32.4 0 0 0 34.6 2.1C16.8 2.2 2.3 16.7 2.3 34.6c0 4.7 1 9.2 2.8 13.3l4.5-2z"/>
-  <path fill="#9cd7ff" d="M18.4 41.8a17.84 17.84 0 0 1 16.3-25 17.84 17.84 0 0 1 16.3 25l4.4 2c1.3-2.8 2-5.9 2-9.2 0-12.5-10.2-22.7-22.7-22.7S12 22.1 12 34.6c0 3.3.7 6.4 2 9.2l4.4-2z"/>
-  <path fill="#9cd7ff" d="M27.2 37.7a8.15 8.15 0 0 1 7.5-11.2c4.5 0 8.1 3.6 8.1 8.1 0 1.1-.2 2.2-.6 3.1l4.4 2a12.97 12.97 0 0 0-11.9-18.2 12.97 12.97 0 0 0-11.9 18.2l4.4-2z"/>
-  <path fill="#afafaf" d="M21.5 52.2c0 .6-.5 1.2-1.2 1.2h-.1c-.6 0-1.2-.5-1.2-1.2V22.4c0-.6.5-1.2 1.2-1.2h.1c.6 0 1.2.5 1.2 1.2v29.8zm29.4 0c0 .6-.5 1.2-1.2 1.2h-.1c-.6 0-1.2-.5-1.2-1.2V22.4c0-.6.5-1.2 1.2-1.2h.1c.6 0 1.2.5 1.2 1.2v29.8z"/>
-  <path fill="#afafaf" d="M66.2 56.6c-.1 0-.1 0-.1-.1l-10.4-5.2c-1.2-.6-3.2-1.1-4.4-1.2 0 0-4.8-.4-15.9-.4-9.1 0-16.4.4-16.4.4-1.3.1-3.3.6-4.5 1.2l-10.1 5c-1.1.3-1.9 1.3-1.9 2.4v5.9c0 1.3 1.1 2.4 2.3 2.5 0 0 12 1 30.2 1 18.8 0 30.2-1 30.2-1 1.3-.1 2.3-1.3 2.3-2.6v-5.9c0-.7-.5-1.6-1.3-2zm-30.8-1.3h-.3.3zm-1.5 0h-.1.1z"/>
-  <path d="M51.6 56.6c0-.1 0-.1 0 0L46 50.8c-.6-.6-1.7-1.1-2.4-1.2 0 0-2.6-.4-8.5-.4-4.8 0-8.7.4-8.7.4-.7.1-1.8.6-2.4 1.2l-5.4 5.5c-.6.3-1 1.3-1 2.4v6.7c0 1.3.6 2.4 1.3 2.5 0 0 6.4 1 16.1 1 10 0 16.1-1 16.1-1 .7-.1 1.3-1.3 1.3-2.6v-6.7c-.1-.7-.4-1.6-.8-2zm-16.4-1.3h-.1.1zm-.8 0z" fill="#5dace2"/>
-  <path d="M65 59.9h2.6V61H65zm-25.8 2.6h4v2.3h-4zm-6.3.2h4L37 65h-4zm-6.2-.2h4l.1 2.3h-4zm18.7-.3h4l.1 2.3h-4zm-24.9 0h4l.1 2.3h-4.1z" fill="#c8ff00" stroke="#717171" stroke-width=".06" stroke-miterlimit="10"/>
-</svg>
-</defs>
-		  ]]>
-      </yjs:StringTemplateNodeStyle>
-	  <yjs:StringTemplateNodeStyle x:Key="8"><![CDATA[
-		  <use xlink:href="#server" width="{TemplateBinding width}" height="{TemplateBinding height}"></use>
-		  <defs>
-<svg id="server" xmlns="http://www.w3.org/2000/svg" height="55.65" width="35.1">
-  <path d="M0 .97h35v53.7H0z" fill="#515151"/>
-  <path d="M5.5.97c7.9-1.3 16-1.3 24 0v53.7c-7.9 1.3-16 1.3-24 0V.98z" fill="#c6c6c6"/>
-  <path d="M5.5 14.68h24v40c-7.9 1.3-16 1.3-24 0v-40z" fill="#515151"/>
-  <path d="M5.5 4.78c8-.6 16-.6 24 0v8.1h-24v-8.1z" opacity=".43" fill="#afafaf"/>
-  <path d="M5.5 4.78c8-.6 16-.6 24 0v8.1h-24v-8.1z" opacity=".43" fill="#4d4d4d"/>
-  <path d="M6.5 5.78l3.4-.2v1.1l-3.4.1z" stroke-miterlimit="10" opacity=".43" fill="#565656" stroke="#4d4d4d" stroke-width=".01"/>
-  <path stroke-miterlimit="10" d="M31.3 2.58H35v1.5h-3.7zm0 3.2H35v1.5h-3.7z" fill="#c8ff00" stroke="#717171" stroke-width=".19"/>
-  <path d="M5.5 14.88v39.7c7.9 1.3 16 1.3 23.9 0v-39.7H5.5zm22.9 3.8h-2.2v-2.9h2.2v2.9zm-12 23.8v-2.9h2.2v2.9h-2.2zm2.2 1.1v2.9h-2.2v-2.9h2.2zm0-15.8v2.9h-2.2v-2.9h2.2zm-2.2-1.1v-2.9h2.2v2.9h-2.2zm0 7.9v-2.9h2.2v2.9h-2.2zm2.2 1.1v2.9h-2.2v-2.9h2.2zm-3.3-5h-2.2v-2.9h2.2v2.9zm0 1v2.9h-2.2v-2.9h2.2zm0 4v2.9c-.7 0-1.5 0-2.2-.1v-2.9c.7.1 1.5.1 2.2.1zm0 3.9v2.9c-.7 0-1.5 0-2.2-.1v-2.9c.7.1 1.5.1 2.2.1zm4.3 0c.7 0 1.5 0 2.2-.1v2.9c-.7 0-1.5.1-2.2.1v-2.9zm0-1v-2.9h2.2v2.9c-.7-.1-1.4 0-2.2 0zm0-4v-2.9h2.2v2.9h-2.2zm0-3.9v-2.9h2.2v2.9c-.7-.1-1.4-.1-2.2 0zm0-4v-2.9h2.2v2.9h-2.2zm0-3.9v-2.9h2.2v2.9h-2.2zm-1 0h-2.2v-2.9h2.2v2.9zm-3.3 0h-2.2v-2.9h2.2v2.9zm0 1v2.9h-2.2v-2.9h2.2zm-3.3 2.9c-.7 0-1.5 0-2.2-.1v-2.8H12v2.9zm0 1v2.9c-.7 0-1.5 0-2.2-.1v-2.9c.8.1 1.5.1 2.2.1zm0 4v2.9c-.7 0-1.5-.1-2.2-.1v-2.9c.8 0 1.5 0 2.2.1zm0 3.9v2.9c-.7 0-1.5-.1-2.2-.1v-2.9c.7 0 1.5.1 2.2.1zm0 3.9v2.9c-.7 0-1.5-.1-2.2-.1v-2.9c.7.1 1.5.1 2.2.1zm0 4v2.9c-.7 0-1.5-.1-2.2-.1v-2.8c.7-.1 1.5-.1 2.2 0zm1.1 0c.7 0 1.5.1 2.2.1v2.9c-.7 0-1.5 0-2.2-.1v-2.9zm2.2 4v2.9c-.7 0-1.5 0-2.2-.1v-2.9c.7.1 1.5.1 2.2.1zm1.1 0h2.2v2.9h-2.2v-2.9zm3.2 0c.7 0 1.5 0 2.2-.1v2.9c-.7 0-1.5.1-2.2.1v-2.9zm0-1v-2.9c.7 0 1.5 0 2.2-.1v2.9c-.7 0-1.4 0-2.2.1zm3.3-3c.7 0 1.5-.1 2.2-.1v2.8c-.7.1-1.5.1-2.2.2v-2.9zm0-1.1v-2.9c.7 0 1.5-.1 2.2-.1v2.9c-.7 0-1.4.1-2.2.1zm0-3.9v-2.9c.7 0 1.5-.1 2.2-.1v2.9c-.7 0-1.4 0-2.2.1zm0-4v-2.9c.7 0 1.5-.1 2.2-.1v2.9c-.7.1-1.5.1-2.2.1zm0-3.9v-2.9c.7 0 1.5 0 2.2-.1v2.9c-.7.1-1.5.1-2.2.1zm0-3.9v-2.9h2.2v2.8c-.7 0-1.5 0-2.2.1zm0-4v-2.9h2.2v2.9h-2.2zm0-3.9v-2.9h2.2v2.9h-2.2zm-1 0h-2.2v-2.9h2.2v2.9zm-3.3 0h-2.2v-2.9h2.2v2.9zm-3.3 0h-2.2v-2.9h2.2v2.9zm-3.3 0H9.8v-2.9H12v2.9zm0 1.1v2.9H9.8v-2.9H12zm-3.2 2.8c-.7 0-1.5 0-2.2-.1v-2.8h2.2v2.9zm0 1v2.8c-.7 0-1.5-.1-2.2-.1v-2.8c.7.1 1.4.1 2.2.1zm0 3.9v2.8c-.7 0-1.5-.1-2.2-.1v-2.8c.7.1 1.4.1 2.2.1zm0 3.9v2.9c-.7 0-1.5-.1-2.2-.1v-2.8h2.2zm0 3.9v2.9c-.7-.1-1.5-.1-2.2-.2v-2.8c.7.1 1.4.1 2.2.1zm0 4v2.9c-.7-.1-1.5-.1-2.2-.2v-2.8c.7-.1 1.4 0 2.2.1zm0 3.9v2.8c-.7-.1-1.5-.1-2.2-.2v-2.8c.7 0 1.4.1 2.2.2zm0 3.8v2.9l-2.2-.3v-2.8c.7.1 1.4.2 2.2.2zm1 .1c.7.1 1.5.1 2.2.2v2.9c-.7 0-1.5-.1-2.2-.2v-2.9zm2.2 4.1v2.9c-.7-.1-1.5-.1-2.2-.2v-2.9c.7.1 1.5.2 2.2.2zm1.1.1c.7 0 1.5.1 2.2.1v2.9c-.7 0-1.5-.1-2.2-.1v-2.9zm3.3.1h2.2v2.9h-2.2v-2.9zm3.2 0c.7 0 1.5 0 2.2-.1v2.9c-.7 0-1.5.1-2.2.1v-2.9zm3.3-.2c.7 0 1.5-.1 2.2-.2v2.9c-.7.1-1.5.1-2.2.2v-2.9zm0-1v-2.9c.7 0 1.5-.1 2.2-.2v2.9c-.7.1-1.4.1-2.2.2zm3.3-3.2c.7-.1 1.5-.1 2.2-.2v2.8l-2.2.3v-2.9zm0-1v-2.8c.7-.1 1.5-.1 2.2-.2v2.8c-.7.1-1.5.1-2.2.2zm0-3.9v-2.8c.7-.1 1.5-.1 2.2-.2v2.8c-.7.1-1.5.1-2.2.2zm0-3.9v-2.9c.7 0 1.5-.1 2.2-.1v2.8c-.7.1-1.5.1-2.2.2zm0-3.9v-2.9c.7 0 1.5-.1 2.2-.1v2.8c-.7.1-1.5.1-2.2.2zm0-3.9v-2.8c.7 0 1.5-.1 2.2-.1v2.8c-.7 0-1.5 0-2.2.1zm0-3.9v-2.8c.7 0 1.5 0 2.2-.1v2.8c-.7 0-1.5 0-2.2.1zm0-3.9v-2.9h2.2v2.8c-.7 0-1.5.1-2.2.1zm-17.4-6.8v2.9H6.6v-2.8c.7-.1 1.4-.1 2.2-.1zm-2.3 34.9l2.2.3v2.9l-2.2-.3v-2.9zm19.7 3.1v-2.9l2.2-.3v2.8c-.7.2-1.5.3-2.2.4z" fill="#c6c6c6"/>
-</svg>
-</defs>
-		  ]]>
-      </yjs:StringTemplateNodeStyle>
-      <yjs:PolylineEdgeStyle x:Key="6"/>
-    </y:SharedData>
-  </data>
-  <graph id="G" edgedefault="directed">
-    <data key="d13">
-      <![CDATA[A computer network. The nodes use vector graphics (SVG) and thus look good at any zoom level.]]></data>
-    <node id="n0">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.East}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>oschi</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="92.9236229354389" Y="369.225479733243" Width="65" Height="53"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="2"/>
-      </data>
-      <port name="p0"/>
-      <port name="p1"/>
-    </node>
-    <node id="n1">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.North}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>scanner</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="354.437088665155" Y="0" Width="70" Height="40"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="4"/>
-      </data>
-      <port name="p0"/>
-    </node>
-    <node id="n2">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.West}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>router</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="295.760289295285" Y="290.480133558016" Width="67" Height="68"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="7"/>
-      </data>
-      <port name="p0"/>
-      <port name="p1"/>
-      <port name="p2"/>
-      <port name="p3"/>
-      <port name="p4"/>
-      <port name="p5"/>
-      <port name="p6"/>
-    </node>
-    <node id="n3">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.West}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>klotz</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="197.293152919321" Y="93.3375866849531" Width="36" Height="57"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="8"/>
-      </data>
-      <port name="p0"/>
-    </node>
-    <node id="n4">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.West}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>brummer</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="197.293152919321" Y="485.368991618822" Width="65" Height="53"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="2"/>
-      </data>
-      <port name="p0"/>
-    </node>
-    <node id="n5">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.West}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>schnucki</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="391.950326329632" Y="89.4124305811281" Width="65" Height="53"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="2"/>
-      </data>
-      <port name="p0"/>
-      <port name="p1"/>
-      <port name="p2"/>
-    </node>
-    <node id="n6">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>power</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="92.9236229354389" Y="209.481098570532" Width="65" Height="53"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="2"/>
-      </data>
-      <port name="p0"/>
-    </node>
-    <node id="n7">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.East}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>color</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="475.021025302329" Y="56.6980400265257" Width="57" Height="47"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="3"/>
-      </data>
-      <port name="p0"/>
-    </node>
-    <node id="n8">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>deskjet</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="0" Y="402.553245666992" Width="57" Height="47"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="3"/>
-      </data>
-      <port name="p0"/>
-    </node>
-    <node id="n9">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.East}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>laser</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="819.95478996064" Y="255.900512355808" Width="57" Height="47"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="3"/>
-      </data>
-      <port name="p0"/>
-    </node>
-    <node id="n10">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>scanner</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="532.061722092516" Y="245.306869090935" Width="70" Height="40"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="4"/>
-      </data>
-      <port name="p0"/>
-    </node>
-    <node id="n11">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.East}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>switch</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="666.168010270713" Y="356.723285496665" Width="71" Height="30"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="5"/>
-      </data>
-      <port name="p0"/>
-      <port name="p1"/>
-      <port name="p2"/>
-      <port name="p3"/>
-      <port name="p4"/>
-    </node>
-    <node id="n12">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.East}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>trumm</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="745.860482407589" Y="306.907266832146" Width="65" Height="53"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="2"/>
-      </data>
-      <port name="p0"/>
-      <port name="p1"/>
-    </node>
-    <node id="n13">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>garelli</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="724.222433447613" Y="427.899402125502" Width="65" Height="53"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="2"/>
-      </data>
-      <port name="p0"/>
-    </node>
-    <node id="n14">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.East}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>brocken</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="627.214638946266" Y="274.806397763051" Width="65" Height="53"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="2"/>
-      </data>
-      <port name="p0"/>
-      <port name="p1"/>
-      <port name="p2"/>
-    </node>
-    <node id="n15">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.East}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>kreidler</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="601.804829528857" Y="416.888851892642" Width="65" Height="53"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="2"/>
-      </data>
-      <port name="p0"/>
-      <port name="p1"/>
-    </node>
-    <node id="n16">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.North}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>phaser</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="650.489042656594" Y="184.564510362038" Width="57" Height="47"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="3"/>
-      </data>
-      <port name="p0"/>
-    </node>
-    <node id="n17">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.North}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>phaser</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="527.04721306259" Y="479.525472152388" Width="57" Height="47"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="3"/>
-      </data>
-      <port name="p0"/>
-    </node>
-    <node id="n18">
-      <data key="d4">
-        <x:List>
-            <y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.West}" Style="{y:GraphMLReference 1}"
-                     >
-              <y:Label.Text>protz</y:Label.Text>
-            </y:Label>
-        </x:List>
-      </data>
-      <data key="d5">
-        <y:RectD X="352.40272707875" Y="503.350486168846" Width="65" Height="53"/>
-      </data>
-      <data key="d6">
-        <y:GraphMLReference ResourceKey="2"/>
-      </data>
-      <port name="p0"/>
-    </node>
-    <edge id="e0" source="n2" target="n0" sourceport="p0" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e1" source="n2" target="n6" sourceport="p1" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e2" source="n2" target="n5" sourceport="p2" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e3" source="n2" target="n4" sourceport="p3" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e4" source="n2" target="n3" sourceport="p4" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e5" source="n0" target="n8" sourceport="p1" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e6" source="n5" target="n7" sourceport="p1" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e7" source="n5" target="n1" sourceport="p2" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e8" source="n11" target="n15" sourceport="p0" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e9" source="n11" target="n14" sourceport="p1" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e10" source="n11" target="n13" sourceport="p2" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e11" source="n11" target="n12" sourceport="p3" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e12" source="n12" target="n9" sourceport="p1" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e13" source="n14" target="n16" sourceport="p1" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e14" source="n14" target="n10" sourceport="p2" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e15" source="n2" target="n11" sourceport="p5" targetport="p4">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e16" source="n15" target="n17" sourceport="p1" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-    <edge id="e17" source="n2" target="n18" sourceport="p6" targetport="p0">
-      <data key="d11">
-        <y:GraphMLReference ResourceKey="6"/>
-      </data>
-    </edge>
-  </graph>
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
+		<default>true</default>
+	</key>
+	<key id="d1" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
+	<key id="d2" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
+	<key id="d3" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
+	<key id="d4" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
+	<key id="d5" for="node" attr.name="NodeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState"/>
+	<key id="d6" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
+	<key id="d7" for="edge" attr.name="EdgeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
+	<key id="d8" for="edge" attr.name="EdgeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
+	<key id="d9" for="edge" attr.name="EdgeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState"/>
+	<key id="d10" for="port" attr.name="PortLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLabels"/>
+	<key id="d11" for="port" attr.name="PortLocationParameter" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
+		<default>
+      <x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored"/>
+		</default>
+	</key>
+	<key id="d12" for="port" attr.name="PortStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
+		<default>
+      <x:Static Member="y:VoidPortStyle.Instance"/>
+		</default>
+	</key>
+	<key id="d13" for="port" attr.name="PortViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/PortViewState"/>
+	<key id="d14" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
+	<data key="d14">
+		<y:SharedData>
+			<yjs:LabelStyle x:Key="1" wrapping="NONE">
+				<yjs:LabelStyle.font>
+					<yjs:Font fontSize="12" lineSpacing="0.2"/>
+				</yjs:LabelStyle.font>
+			</yjs:LabelStyle>
+			<yjs:PolylineEdgeStyle x:Key="2" targetArrow="None" sourceArrow="None"/>
+		</y:SharedData>
+	</data>
+	<graph id="G" edgedefault="directed">
+		<node id="n0">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="oschi" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Right}" Style="{y:GraphMLReference 1}" PreferredSize="29,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="92.9236229354389" Y="369.225479733243" Width="65" Height="53"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/workstation.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+		</node>
+		<node id="n1">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="scanner" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Top}" Style="{y:GraphMLReference 1}" PreferredSize="43,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="354.437088665155" Y="0" Width="70" Height="40"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/scanner.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n2">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="router" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Left}" Style="{y:GraphMLReference 1}" PreferredSize="32,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="295.760289295285" Y="290.480133558016" Width="67" Height="68"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/wlan.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+			<port name="p4"/>
+			<port name="p5"/>
+			<port name="p6"/>
+		</node>
+		<node id="n3">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="klotz" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Left}" Style="{y:GraphMLReference 1}" PreferredSize="25,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="197.293152919321" Y="93.3375866849531" Width="36" Height="57"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/server.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n4">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="brummer" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Left}" Style="{y:GraphMLReference 1}" PreferredSize="49,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="197.293152919321" Y="485.368991618822" Width="65" Height="53"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/workstation.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n5">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="schnucki" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Left}" Style="{y:GraphMLReference 1}" PreferredSize="47,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="391.950326329632" Y="89.4124305811281" Width="65" Height="53"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/workstation.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+		</node>
+		<node id="n6">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="power" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="33,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="92.9236229354389" Y="209.481098570532" Width="65" Height="53"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/workstation.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n7">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="color" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Right}" Style="{y:GraphMLReference 1}" PreferredSize="27,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="475.021025302329" Y="56.6980400265257" Width="57" Height="47"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/printer.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n8">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="deskjet" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="39,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="0" Y="402.553245666992" Width="57" Height="47"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/printer.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n9">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="laser" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Right}" Style="{y:GraphMLReference 1}" PreferredSize="27,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="819.95478996064" Y="255.900512355808" Width="57" Height="47"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/printer.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n10">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="scanner" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="43,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="532.061722092516" Y="245.306869090935" Width="70" Height="40"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/scanner.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n11">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="switch" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Right}" Style="{y:GraphMLReference 1}" PreferredSize="34,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="666.168010270713" Y="356.723285496665" Width="71" Height="20"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/switch.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+			<port name="p4"/>
+		</node>
+		<node id="n12">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="trumm" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Right}" Style="{y:GraphMLReference 1}" PreferredSize="35,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="745.860482407589" Y="306.907266832146" Width="65" Height="53"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/workstation.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+		</node>
+		<node id="n13">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="garelli" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="33,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="724.222433447613" Y="427.899402125502" Width="65" Height="53"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/workstation.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n14">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="brocken" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Right}" Style="{y:GraphMLReference 1}" PreferredSize="43,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="627.214638946266" Y="274.806397763051" Width="65" Height="53"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/workstation.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+		</node>
+		<node id="n15">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="kreidler" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Right}" Style="{y:GraphMLReference 1}" PreferredSize="40,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="601.804829528857" Y="416.888851892642" Width="65" Height="53"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/workstation.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+		</node>
+		<node id="n16">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="phaser" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Top}" Style="{y:GraphMLReference 1}" PreferredSize="37,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="650.489042656594" Y="184.564510362038" Width="57" Height="47"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/printer.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n17">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="phaser" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Top}" Style="{y:GraphMLReference 1}" PreferredSize="37,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="527.04721306259" Y="479.525472152388" Width="57" Height="47"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/printer.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n18">
+			<data key="d1">
+				<x:List>
+					<y:Label Text="protz" LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Left}" Style="{y:GraphMLReference 1}" PreferredSize="27,14"/>
+				</x:List>
+			</data>
+			<data key="d2">
+				<y:RectD X="352.40272707875" Y="503.350486168846" Width="65" Height="53"/>
+			</data>
+			<data key="d4">
+				<yjs:ImageNodeStyle href="./resources/workstation.svg" backgroundShape="RECTANGLE"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<edge id="e0" source="n2" target="n0" sourceport="p0" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e1" source="n2" target="n6" sourceport="p1" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e2" source="n2" target="n5" sourceport="p2" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e3" source="n2" target="n4" sourceport="p3" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e4" source="n2" target="n3" sourceport="p4" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e5" source="n0" target="n8" sourceport="p1" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e6" source="n5" target="n7" sourceport="p1" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e7" source="n5" target="n1" sourceport="p2" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e8" source="n11" target="n15" sourceport="p0" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e9" source="n11" target="n14" sourceport="p1" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e10" source="n11" target="n13" sourceport="p2" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e11" source="n11" target="n12" sourceport="p3" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e12" source="n12" target="n9" sourceport="p1" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e13" source="n14" target="n16" sourceport="p1" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e14" source="n14" target="n10" sourceport="p2" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e15" source="n2" target="n11" sourceport="p5" targetport="p4">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e16" source="n15" target="n17" sourceport="p1" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e17" source="n2" target="n18" sourceport="p6" targetport="p0">
+			<data key="d8">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+	</graph>
 </graphml>
-

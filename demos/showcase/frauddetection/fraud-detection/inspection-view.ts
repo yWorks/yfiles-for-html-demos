@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,28 +32,23 @@ import {
   GraphComponent,
   GraphCopier,
   GraphEditorInputMode,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   IEdge,
   type IGraph,
-  type ILayoutAlgorithm,
   type IModelItem,
   INode,
-  type LayoutGraph,
-  LayoutStageBase,
-  Mapper,
   OrganicLayout,
   OrganicLayoutData,
-  OrganicLayoutScope,
-  PortCalculator,
-  Rect,
-  YBoolean,
-  type YPoint
-} from 'yfiles'
+  OrganicScope,
+  PlaceNodesAtBarycenterStage,
+  PlaceNodesAtBarycenterStageData,
+  Rect
+} from '@yfiles/yfiles'
 
 import { type Entity, getEntityData, getNode, getTimeEntry, isFraud } from '../entity-data'
 import { getComponentIdx, getComponentNodes } from './fraud-components'
-import Timeline from '../timeline/Timeline'
+import { Timeline } from '../timeline/Timeline'
 import { clearPropertiesView, initializePropertiesView } from '../properties-view'
 import { enableTooltips } from '../entity-tooltip'
 import { initializeHighlights } from '../initialize-highlights'
@@ -65,64 +60,75 @@ let fraudDetectionTimeline: Timeline<Entity>
 let filteredGraph: FilteredGraphWrapper
 let incrementalNodes: INode[] = []
 let graphChanged = false
-let layoutFromScratch = true
-const nodesAdded = new Mapper<INode, boolean>()
 let componentIndex = -1
 
-function getLayoutStyle(): 'organic' | 'hierarchic' {
+function getLayoutStyle(): 'organic' | 'hierarchical' {
   const bankFraud = document.querySelector<HTMLSelectElement>('#samples')!.value === 'bank-fraud'
-  return bankFraud ? 'organic' : 'hierarchic'
+  return bankFraud ? 'organic' : 'hierarchical'
 }
 
 /**
  * Runs the layout.
  */
-async function runLayout(fromScratch: boolean): Promise<void> {
+async function runLayout(incremental = false): Promise<void> {
+  if (!incremental) {
+    void fraudDetectionComponent.fitGraphBounds()
+  }
+
   if (getLayoutStyle() === 'organic') {
-    const layout = new OrganicLayout()
-    layout.deterministic = true
-    layout.scope = fromScratch ? OrganicLayoutScope.ALL : OrganicLayoutScope.MAINLY_SUBSET
-    layout.considerNodeSizes = true
-    layout.nodeEdgeOverlapAvoided = true
-
-    if (!fromScratch) {
-      layout.appendStage(new InitialPositionsStage(layout))
-    }
-
-    const organicLayoutData = new OrganicLayoutData({
-      affectedNodes: incrementalNodes
+    const layout = new OrganicLayout({
+      deterministic: true,
+      avoidNodeEdgeOverlap: true
     })
 
-    // apply layout
-    const graph = fraudDetectionComponent.graph
-    graph.mapperRegistry.addMapper(INode.$class, YBoolean.$class, 'NODES_ADDED', nodesAdded!)
-    graph.applyLayout(layout, organicLayoutData)
-    graph.mapperRegistry.removeMapper('NODES_ADDED')
+    if (incremental) {
+      // move the new nodes between their neighbors before the actual layout for a smooth animation
+      const layoutData = new PlaceNodesAtBarycenterStageData({
+        affectedNodes: (node) => incrementalNodes.includes(node)
+      })
+      const initialLayout = new PlaceNodesAtBarycenterStage()
+      fraudDetectionComponent.graph.applyLayout(initialLayout, layoutData)
+    }
+
+    // run the actual layout algorithm
+    const organicLayoutData = new OrganicLayoutData()
+    if (incremental) {
+      organicLayoutData.scope.scopeModes = (node) =>
+        incrementalNodes.includes(node)
+          ? OrganicScope.INCLUDE_EXTENDED_NEIGHBORHOOD
+          : OrganicScope.FIXED
+    }
+
+    await fraudDetectionComponent.applyLayoutAnimated({
+      layout: layout,
+      layoutData: organicLayoutData
+    })
   } else {
-    const layout = new HierarchicLayout({
+    const layout = new HierarchicalLayout({
       layoutOrientation: 'bottom-to-top',
-      orthogonalRouting: false,
-      layoutMode: fromScratch ? 'from-scratch' : 'incremental'
+      fromSketchMode: incremental,
+      defaultEdgeDescriptor: {
+        routingStyleDescriptor: {
+          defaultRoutingStyle: 'octilinear'
+        }
+      }
     })
 
-    const hierarchicLayoutData = new HierarchicLayoutData()
-    if (!fromScratch) {
-      hierarchicLayoutData.incrementalHints.incrementalLayeringNodes = incrementalNodes
+    const hierarchicalLayoutData = new HierarchicalLayoutData()
+    if (incremental) {
+      hierarchicalLayoutData.incrementalNodes = incrementalNodes
     }
 
-    layout.prependStage(new PortCalculator())
-
-    // apply layout
-    await fraudDetectionComponent.morphLayout(layout, '1s', hierarchicLayoutData)
+    await fraudDetectionComponent.applyLayoutAnimated({
+      layout: layout,
+      layoutData: hierarchicalLayoutData
+    })
   }
 
-  if (layoutFromScratch) {
-    fraudDetectionComponent.fitGraphBounds()
-  }
-  layoutFromScratch = false
+  void fraudDetectionComponent.fitGraphBounds()
+
   incrementalNodes.length = 0
   graphChanged = false
-  nodesAdded!.clear()
 }
 
 /**
@@ -143,26 +149,26 @@ function initializeInputMode(): void {
     focusableItems: 'none',
     showHandleItems: 'none',
     deletableItems: 'none',
-    movableItems: 'none'
+    movableSelectedItems: 'none',
+    movableUnselectedItems: 'none'
   })
   inputMode.marqueeSelectionInputMode.enabled = false
-  inputMode.moveUnselectedInputMode.enabled = true
 
-  inputMode.addDeletingSelectionListener((_, evt) => {
+  inputMode.addEventListener('deleting-selection', (evt) => {
     const selection = evt.selection
     for (const item of selection) {
       if (item instanceof INode) {
         filteredGraph.edgesAt(item, AdjacencyTypes.ALL).forEach((edge) => {
-          if (!selection.isSelected(edge.opposite(item))) {
+          if (!selection.includes(edge.opposite(item))) {
             incrementalNodes.push(edge.opposite(item) as INode)
           }
         })
       } else if (item instanceof IEdge) {
-        if (!selection.isSelected(item.sourceNode!)) {
-          incrementalNodes.push(item.sourceNode!)
+        if (!selection.includes(item.sourceNode)) {
+          incrementalNodes.push(item.sourceNode)
         }
-        if (!selection.isSelected(item.targetNode!)) {
-          incrementalNodes.push(item.targetNode!)
+        if (!selection.includes(item.targetNode)) {
+          incrementalNodes.push(item.targetNode)
         }
       }
     }
@@ -177,16 +183,14 @@ function initializeInputMode(): void {
  * Copies to the fraud detection component graph only the part of the input graph that belongs to the investigated
  * component.
  */
-function copyGraph(graph: IGraph, componentNodes: Set<INode>): void {
+function copyGraph(graph: IGraph, componentNodes: INode[]): void {
   const graphCopier = new GraphCopier()
-  graphCopier.copy(
-    graph,
-    (item) =>
-      !INode.isInstance(item) ||
-      (componentNodes.has(item) && getEntityData(item).type !== 'Bank Branch'),
-    fraudDetectionComponent.graph,
-    null
-  )
+  graphCopier.copy(graph, fraudDetectionComponent.graph, (item) => {
+    return (
+      !(item instanceof INode) ||
+      (componentNodes.includes(item) && getEntityData(item).type !== 'Bank Branch')
+    )
+  })
 }
 
 /**
@@ -195,21 +199,21 @@ function copyGraph(graph: IGraph, componentNodes: Set<INode>): void {
 function initializeTimelineComponent(): void {
   fraudDetectionTimeline = new Timeline('fraud-detection-timeline-component', getTimeEntry)
   fraudDetectionTimeline.items = fraudDetectionComponent.graph.nodes.map(getEntityData).toArray()
-  fraudDetectionTimeline.addBarHoverListener((nodes) => {
-    const highlightManager = fraudDetectionComponent.highlightIndicatorManager
-    highlightManager.clearHighlights()
+  fraudDetectionTimeline.setBarHoverListener((nodes) => {
+    const highlights = fraudDetectionComponent.highlights
+    highlights.clear()
 
     const selected = new Set(nodes.map((node) => node.id))
 
     fraudDetectionComponent.graph.nodes.forEach((node) => {
       const entity = getEntityData(node)
       if (selected.has(entity.id)) {
-        highlightManager.addHighlight(node)
+        highlights.add(node)
       }
     })
   })
 
-  fraudDetectionTimeline.addBarSelectListener((nodes) => {
+  fraudDetectionTimeline.setBarSelectListener((nodes) => {
     fraudDetectionComponent.selection.clear()
     if (nodes.length > 0) {
       let minX: number = Number.POSITIVE_INFINITY
@@ -220,7 +224,7 @@ function initializeTimelineComponent(): void {
         .map((node) => getNode(fraudDetectionComponent.graph, node))
         .filter((node) => filteredGraph.contains(node))
         .forEach((node) => {
-          fraudDetectionComponent.selection.setSelected(node!, true)
+          fraudDetectionComponent.selection.add(node!)
           const { x, y, width, height } = node!.layout
           minX = Math.min(minX, x)
           maxX = Math.max(maxX, x + width)
@@ -237,11 +241,11 @@ function initializeTimelineComponent(): void {
       }
     }
   })
-  fraudDetectionTimeline.addFilterChangedListener(() => {
+  fraudDetectionTimeline.setFilterChangedListener(() => {
     filteredGraph.nodePredicateChanged()
 
     if (incrementalNodes.length > 0 || graphChanged) {
-      void runLayout(layoutFromScratch)
+      void runLayout(true)
     }
   })
 }
@@ -277,15 +281,14 @@ function initializeGraph(graph: IGraph): void {
   })
   fraudDetectionComponent.graph = filteredGraph
 
-  filteredGraph.addNodeCreatedListener((_, evt) => {
+  filteredGraph.addEventListener('node-created', (evt) => {
     const node = evt.item
     incrementalNodes.push(node)
-    nodesAdded.set(node, true)
   })
 
-  filteredGraph.addEdgeCreatedListener((_, evt) => {
-    const sourceNode = evt.item.sourceNode!
-    const targetNode = evt.item.targetNode!
+  filteredGraph.addEventListener('edge-created', (evt) => {
+    const sourceNode = evt.item.sourceNode
+    const targetNode = evt.item.targetNode
     if (!incrementalNodes.includes(sourceNode)) {
       incrementalNodes.push(sourceNode)
     }
@@ -294,9 +297,9 @@ function initializeGraph(graph: IGraph): void {
     }
   })
 
-  filteredGraph.addEdgeRemovedListener((_, evt) => {
-    const sourceNode = evt.item.sourceNode!
-    const targetNode = evt.item.targetNode!
+  filteredGraph.addEventListener('edge-removed', (evt) => {
+    const sourceNode = evt.item.sourceNode
+    const targetNode = evt.item.targetNode
     if (!incrementalNodes.includes(sourceNode)) {
       incrementalNodes.push(sourceNode)
     }
@@ -305,13 +308,12 @@ function initializeGraph(graph: IGraph): void {
     }
   })
 
-  filteredGraph.addNodeRemovedListener(() => {
+  filteredGraph.addEventListener('node-removed', () => {
     graphChanged = true
   })
 
   incrementalNodes = []
   graphChanged = false
-  layoutFromScratch = true
 }
 
 /**
@@ -325,8 +327,8 @@ function initializeFraudToolbarButtons(): void {
     document.getElementById('layout-button')!.addEventListener(
       'click',
       () => {
-        void runLayout(true)
-        fraudDetectionComponent.fitGraphBounds()
+        void runLayout(false)
+        void fraudDetectionComponent.fitGraphBounds()
       },
       true
     )
@@ -353,7 +355,6 @@ export function openFraudDetectionView(compIndex: number, graphComponent: GraphC
 
   closeFraudDetectionView()
 
-  const componentNodes = new Set(getComponentNodes(compIndex))
   componentIndex = compIndex
 
   // create the fraud detection component div
@@ -364,8 +365,8 @@ export function openFraudDetectionView(compIndex: number, graphComponent: GraphC
     '#fraud-detection-timeline-component'
   )!
   const fraudDetectionLayoutButton = document.querySelector<HTMLButtonElement>('#layout-button')!
-  fraudDetectionViewDiv.insertBefore(fraudDetectionComponent.div, fraudDetectionTimeline)
-  fraudDetectionComponent.div.id = 'fraud-detection-component'
+  fraudDetectionViewDiv.insertBefore(fraudDetectionComponent.htmlElement, fraudDetectionTimeline)
+  fraudDetectionComponent.htmlElement.id = 'fraud-detection-component'
 
   // display the component
   fraudDetectionViewDiv.classList.add('fraud-detection-view--visible')
@@ -378,10 +379,13 @@ export function openFraudDetectionView(compIndex: number, graphComponent: GraphC
   enableTooltips(fraudDetectionComponent)
   initializePropertiesView(fraudDetectionComponent)
 
-  copyGraph((graphComponent.graph as FilteredGraphWrapper).wrappedGraph!, componentNodes)
+  copyGraph(
+    (graphComponent.graph as FilteredGraphWrapper).wrappedGraph!,
+    getComponentNodes(compIndex)
+  )
   initializeTimelineComponent()
   initializeGraph(fraudDetectionComponent.graph)
-  void fraudDetectionComponent.fitGraphBounds({ animated: true })
+  void runLayout()
 }
 
 export function openInspectionViewForItem(item: IModelItem, graphComponent: GraphComponent): void {
@@ -391,7 +395,7 @@ export function openInspectionViewForItem(item: IModelItem, graphComponent: Grap
     }
   } else if (item instanceof IEdge) {
     if (isFraud(item)) {
-      openFraudDetectionView(getComponentIdx(item.sourceNode!), graphComponent)
+      openFraudDetectionView(getComponentIdx(item.sourceNode), graphComponent)
     }
   }
 }
@@ -426,50 +430,8 @@ export function closeFraudDetectionView(): void {
       animation.stopAnimation()
     }
   }
+  incrementalNodes = []
   componentIndex = -1
   clearPropertiesView()
   toggleMainViewActionsVisibility(true)
-}
-
-/**
- * This stage is responsible for placing the new nodes that are inserted to the graph at the position of the first
- * neighbor that is already placed.
- */
-class InitialPositionsStage extends LayoutStageBase {
-
-  /**
-   * Applies the layout
-   * @param graph The graph to be laid out.
-   */
-  applyLayout(graph: LayoutGraph): void {
-    const nodesAdded = graph.getDataProvider('NODES_ADDED')!
-
-    graph.nodes.forEach((node) => {
-      if (nodesAdded.getBoolean(node)) {
-        const visited = new Set()
-        const stack = [node]
-        let coordinates: YPoint | null = null
-        while (stack.length > 0) {
-          const stackNode = stack.pop()!
-          if (nodesAdded.getBoolean(node) && !visited.has(stackNode)) {
-            for (const edge of stackNode.inEdges) {
-              const opposite = edge.opposite(stackNode)
-              if (!nodesAdded.getBoolean(opposite)) {
-                coordinates = graph.getCenter(opposite)
-              } else {
-                stack.push(opposite)
-              }
-            }
-            visited.add(stackNode)
-          }
-
-          if (coordinates != null) {
-            graph.setCenter(node, coordinates)
-            stack.length = 0
-          }
-        }
-      }
-    })
-    this.applyLayoutCore(graph)
-  }
 }

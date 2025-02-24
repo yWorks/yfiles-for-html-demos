@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -244,7 +244,7 @@ export default [
   { keyword: 'references', frequency: 59 },
   { keyword: 'published', frequency: 59 },
   { keyword: 'respective', frequency: 60 },
-  { keyword: 'balloon', frequency: 60 },
+  { keyword: 'radial tree', frequency: 60 },
   { keyword: 'controls', frequency: 60 },
   { keyword: 'sketch', frequency: 60 },
   { keyword: 'base', frequency: 60 },
@@ -321,7 +321,7 @@ export default [
   { keyword: 'static', frequency: 84 },
   { keyword: 'allow', frequency: 85 },
   { keyword: 'single', frequency: 87 },
-  { keyword: 'hierarchic', frequency: 87 },
+  { keyword: 'hierarchical', frequency: 87 },
   { keyword: 'free', frequency: 87 },
   { keyword: 'adjust', frequency: 88 },
   { keyword: 'routing', frequency: 88 },
@@ -567,7 +567,7 @@ export default [
   { keyword: 'diagram', frequency: 1518 },
   { keyword: 'sources', frequency: 1700 },
   { keyword: 'algorithms', frequency: 1760 },
-  { keyword: 'create', frequency: 1800 },
+  { keyword: 'create', frequency: 1450 },
   { keyword: 'data', frequency: 1956 },
   { keyword: 'graph', frequency: 2163 },
   { keyword: 'yFiles', frequency: 4748 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,38 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, License, ScrollBarVisibility } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { GraphComponent, License, ScrollBarVisibility } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   createSampleGraphVisibility,
   initializeLabelModelVisibility,
   initializeTutorialDefaults,
-  IsVisibleLabelStyleDescriptor,
+  IsVisibleLabelStyleRenderer,
   startNodeAnimation
-} from '../common.js'
-import { CustomLabelStyle } from './CustomLabelStyle.js'
-
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from '../common'
+import { CustomLabelStyle } from './CustomLabelStyle'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 License.value = await fetchLicense()
-
 const graphComponent = new GraphComponent('#graphComponent')
 graphComponent.zoom = 3
-
 initializeTutorialDefaults(graphComponent)
 initializeLabelModelVisibility(graphComponent)
 graphComponent.horizontalScrollBarPolicy = graphComponent.verticalScrollBarPolicy =
-  ScrollBarVisibility.NEVER
-
-graphComponent.graphModelManager.nodeLabelDescriptor = new IsVisibleLabelStyleDescriptor()
-graphComponent.graphModelManager.edgeLabelDescriptor = new IsVisibleLabelStyleDescriptor()
-
+  ScrollBarVisibility.HIDDEN
+graphComponent.graphModelManager.nodeLabelRenderer = new IsVisibleLabelStyleRenderer()
+graphComponent.graphModelManager.edgeLabelRenderer = new IsVisibleLabelStyleRenderer()
 const graph = graphComponent.graph
 graph.nodeDefaults.labels.style = new CustomLabelStyle()
 graph.edgeDefaults.labels.style = new CustomLabelStyle()
-
 createSampleGraphVisibility(graph, graphComponent.viewport)
-graphComponent.updateContentRect()
-
+graphComponent.updateContentBounds()
 startNodeAnimation(graphComponent)
 finishLoading()

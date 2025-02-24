@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Rendering Order Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -105,12 +103,12 @@
           well as layer policies for labels and ports.
         </p>
 
-        <h3>Hierarchic Nesting</h3>
+        <h3>Hierarchical Nesting</h3>
         <p>
           Each item type is assigned to a specific canvas object group. These groups have a default
           rendering order from back to front. See
           <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_view-z_order" target="_blank">The Z-order of Graph Elements</a> for more
-          information about the different <a href="https://docs.yworks.com/yfileshtml/#/api/ICanvasObjectGroup" target="_blank">ICanvasObjectGroup</a>s and their default
+          information about the different <a href="https://docs.yworks.com/yfileshtml/#/api/IRenderTreeGroup" target="_blank">IRenderTreeGroup</a>s and their default
           rendering order.
         </p>
         <p>

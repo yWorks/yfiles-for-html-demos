@@ -1,19 +1,21 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Layout Styles Demo
 
-# Layout Styles Demo
+<img src="../../../doc/demo-thumbnails/layout-styles.webp" alt="demo-thumbnail" height="320"/>
 
-This demo showcases the most used layout algorithms of yFiles, including hierarchic, organic, orthogonal, tree, circular, balloon, and several edge routing styles.
+[You can also run this demo online](https://www.yworks.com/demos/showcase/layoutstyles/).
+
+This demo showcases the most used layout algorithms of yFiles, including hierarchical, organic, orthogonal, tree, circular, radial tree, and several edge routing styles.
 
 The configuration panel provides access to the settings of each algorithm. Typically, an algorithm allows even more options in code.
 

@@ -18,7 +18,7 @@ const props = defineProps(['color', 'content', 'zoom', 'image', 'name', 'moreUrl
     <v-card-actions class="mt-auto">
       <v-btn icon="mdi-heart" density="compact"></v-btn>
       <v-btn icon="mdi-share-variant" density="compact"></v-btn>
-      <!-- anchors need a @click.stop directive so that the GraphComponent doesn't prevent the link from working -->
+      <!-- anchors need a @click.stop, @pointerdown.stop directive so that the GraphComponent doesn't prevent the link from working -->
       <v-btn
         v-if="moreUrl"
         append-icon="mdi-open-in-new"
@@ -27,6 +27,7 @@ const props = defineProps(['color', 'content', 'zoom', 'image', 'name', 'moreUrl
         :href="moreUrl"
         target="_blank"
         @click.stop
+        @pointerdown.stop
       >
         Learn more
       </v-btn>

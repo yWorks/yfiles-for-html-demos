@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,43 +26,31 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GeneralPath, GeomUtilities, NodeStyleBase, SvgVisual } from 'yfiles'
-import { getEntityData } from '../entity-data.js'
-import { nodeStyleMapping } from './graph-styles.js'
-
-/**
- * @typedef {*} CachingSvgVisual
- */
-
+import { GeneralPath, GeometryUtilities, NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
+import { getEntityData, isFraud } from '../entity-data'
+import { nodeStyleMapping } from './graph-styles'
 /**
  * A simple node style that visualizes a circular node with an icon.
  */
 export class EntityNodeStyle extends NodeStyleBase {
   /**
    * Creates the visual for a circular node with an icon.
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {!SvgVisual}
    */
-  createVisual(context, node) {
+  createVisual(_context, node) {
     const { x, y, width, height } = node.layout
     const halfWidth = width * 0.5
     const halfHeight = height * 0.5
-
     const entity = getEntityData(node)
-
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-
     // create circular base
     const ellipse = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     ellipse.setAttribute('cx', String(halfWidth))
     ellipse.setAttribute('cy', String(halfHeight))
     ellipse.setAttribute('rx', String(halfWidth))
     ellipse.setAttribute('ry', String(halfHeight))
-    ellipse.setAttribute('stroke-width', '2')
+    ellipse.setAttribute('stroke-width', isFraud(node) ? '3' : '2')
     this.updateStrokeAndFill(ellipse, entity)
     g.appendChild(ellipse)
-
     // add image
     const iconWidth = width * 0.6
     const iconHeight = height * 0.6
@@ -77,71 +65,50 @@ export class EntityNodeStyle extends NodeStyleBase {
     image.setAttribute('x', String(halfWidth - iconWidth * 0.5))
     image.setAttribute('y', String(halfHeight - iconHeight * 0.5))
     g.appendChild(image)
-
     // set the location
     SvgVisual.setTranslate(g, x, y)
-
-    const svgVisual = new SvgVisual(g)
     // store information with the visual on how we created it
-    svgVisual.cache = { fraud: entity.fraud ?? false }
-    return svgVisual
+    return SvgVisual.from(g, { fraud: entity.fraud ?? false })
   }
-
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @param {!IRenderContext} context
-   * @param {!SvgVisual} oldVisual
-   * @param {!INode} node
-   * @returns {!SvgVisual}
    */
-  updateVisual(context, oldVisual, node) {
-    const oldSvgVisual = oldVisual
+  updateVisual(_context, oldVisual, node) {
     // get relevant data that might have changed
-    const oldCache = oldSvgVisual.cache
-
-    const g = oldSvgVisual.svgElement
+    const oldCache = oldVisual.tag
+    const g = oldVisual.svgElement
     const entity = getEntityData(node)
     // update node color depending on the fraud state
-    if (entity.fraud !== oldCache?.fraud) {
+    if (entity.fraud !== oldCache.fraud) {
       this.updateStrokeAndFill(g.firstElementChild, entity)
     }
-
     // update location
     const { x, y } = node.layout
     SvgVisual.setTranslate(g, x, y)
-    oldSvgVisual.cache = { fraud: entity.fraud ?? false }
-    return oldSvgVisual
+    oldVisual.tag = { fraud: entity.fraud ?? false }
+    return oldVisual
   }
-
   /**
    * Gets the outline of the node, an ellipse in this case.
    * This allows the correct intersection calculation for edge paths, among others.
-   * @param {!INode} node
-   * @returns {!GeneralPath}
    */
   getOutline(node) {
     const outline = new GeneralPath()
     outline.appendEllipse(node.layout.toRect(), false)
     return outline
   }
-
   /**
    * Checks if a point hits the node's bounds. Considers HitTestRadius.
-   * @param {!ICanvasContext} canvasContext
-   * @param {!Point} point
-   * @param {!INode} node
-   * @returns {boolean}
    */
   isHit(canvasContext, point, node) {
-    return GeomUtilities.ellipseContains(node.layout.toRect(), point, canvasContext.hitTestRadius)
+    return GeometryUtilities.ellipseContains(
+      node.layout.toRect(),
+      point,
+      canvasContext.hitTestRadius
+    )
   }
-
   /**
    * Checks if a node is inside a certain box. Considers HitTestRadius.
-   * @param {!IInputModeContext} context
-   * @param {!Rect} box
-   * @param {!INode} node
-   * @returns {boolean}
    */
   isInBox(context, box, node) {
     // early exit if not even the bounds are contained in the box
@@ -151,7 +118,7 @@ export class EntityNodeStyle extends NodeStyleBase {
     const eps = context.hitTestRadius
     const outline = this.getOutline(node)
     if (
-      outline.intersects(box, eps) ||
+      outline.pathIntersects(box, eps) ||
       (outline.pathContains(box.topLeft, eps) && outline.pathContains(box.bottomRight, eps))
     ) {
       return true
@@ -160,26 +127,19 @@ export class EntityNodeStyle extends NodeStyleBase {
       box.contains(node.layout.toRect().topLeft) && box.contains(node.layout.toRect().bottomRight)
     )
   }
-
   /**
    * Exact geometric check whether a point lies inside the circular node.
-   * @param {!INode} node
-   * @param {!Point} point
-   * @returns {boolean}
    */
   isInside(node, point) {
-    return GeomUtilities.ellipseContains(node.layout.toRect(), point, 0)
+    return GeometryUtilities.ellipseContains(node.layout.toRect(), point, 0)
   }
-
   /**
    * Updates the stroke and fill of the given element based on the type the associated node.
-   * @param {!SVGEllipseElement} ellipse
-   * @param {!Entity} entity
    */
   updateStrokeAndFill(ellipse, entity) {
     const type = entity.type
     const style = nodeStyleMapping[type]
     ellipse.setAttribute('fill', entity.fraud ?? false ? '#ff6c00' : style.fill)
-    ellipse.setAttribute('stroke', entity.fraud ?? false ? '#ff6c00' : style.stroke)
+    ellipse.setAttribute('stroke', entity.fraud ?? false ? 'slateblue' : style.stroke)
   }
 }

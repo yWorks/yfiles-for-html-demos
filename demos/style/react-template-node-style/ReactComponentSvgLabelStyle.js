@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,53 +33,18 @@ import {
   SvgVisual,
   Visual,
   VisualCachingPolicy
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 import { createRoot } from 'react-dom/client'
 import { createElement } from 'react'
-
-/**
- * Helper for the ReactComponentHtmlNodeStyle to factor out the props retrieval per label
- * @typedef {function} TagProvider
- */
-
 /**
  * The default implementation just uses the props from the tag of the item to be rendered.
  * @param context
  * @param node
  */
 const defaultTagProvider = (context, node) => node.tag
-
-/**
- * The interface of the props passed to the SVG react component for rendering the label contents.
- * @typedef {Object} ReactComponentSvgLabelStyleProps
- * @property {number} width
- * @property {number} height
- * @property {boolean} selected
- * @property {string} text
- * @property {('low'|'high')} detail
- * @property {TTag} tag
- */
-
-/**
- * @typedef {Object} Cache
- * @property {ReactComponentSvgLabelStyleProps.<TTag>} props
- * @property {Root} root
- */
-
-/**
- * Utility type for type-safe implementation of the Visual that stores the props
- * it has been created for along with the React Root.
- * @typedef {TaggedSvgVisual.<SVGGElement,Cache.<TTag>>} ReactStyleSvgVisual
- */
-
 /**
  * Helper method that will be used by the below style to release React resources when the
  * label gets removed from the yFiles scene graph.
- * @param {!IRenderContext} context
- * @param {!Visual} removedVisual
- * @param {boolean} dispose
- * @returns {?Visual}
  */
 function unmountReact(context, removedVisual, dispose) {
   const visual = removedVisual
@@ -97,11 +62,6 @@ function unmountReact(context, removedVisual, dispose) {
   }
   return null
 }
-
-/**
- * @typedef {*} RenderType
- */
-
 /**
  * A simple ILabelStyle implementation that uses React Components/render functions
  * for rendering label visualizations using SVG
@@ -123,27 +83,21 @@ function unmountReact(context, removedVisual, dispose) {
  * ```
  */
 export class ReactComponentSvgLabelStyle extends LabelStyleBase {
+  type
+  tagProvider
   size
-
   /**
    * Creates a new instance
-   * @param {!RenderType.<TTag>} type the React component rendering the SVG content
-   * @param {!TagProvider.<TTag>} tagProvider the optional provider function that provides the "tag" in the props.
+   * @param type the React component rendering the SVG content
+   * @param tagProvider the optional provider function that provides the "tag" in the props.
    * By default, this will use the node's tag.
-   * @param {!(Size|SizeConvertible)} size
    */
   constructor(type, size, tagProvider = defaultTagProvider) {
     super()
-    this.tagProvider = tagProvider
     this.type = type
+    this.tagProvider = tagProvider
     this.size = Size.from(size)
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @returns {!ReactComponentSvgLabelStyleProps.<TTag>}
-   */
   createProps(context, label) {
     const layout = label.layout
     return {
@@ -151,18 +105,12 @@ export class ReactComponentSvgLabelStyle extends LabelStyleBase {
       height: layout.height,
       selected:
         context.canvasComponent instanceof GraphComponent &&
-        context.canvasComponent.selection.selectedLabels.isSelected(label),
+        context.canvasComponent.selection.labels.includes(label),
       text: label.text,
       detail: context.zoom < 0.5 ? 'low' : 'high',
       tag: this.tagProvider(context, label)
     }
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @returns {!ReactStyleSvgVisual.<TTag>}
-   */
   createVisual(context, label) {
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const props = this.createProps(context, label)
@@ -175,16 +123,8 @@ export class ReactComponentSvgLabelStyle extends LabelStyleBase {
     LabelStyleBase.createLayoutTransform(context, label.layout, true).applyTo(gElement)
     return svgVisual
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ReactStyleSvgVisual.<TTag>} oldVisual
-   * @param {!ILabel} label
-   * @returns {!ReactStyleSvgVisual.<TTag>}
-   */
   updateVisual(context, oldVisual, label) {
     const newProps = this.createProps(context, label)
-
     const cache = oldVisual.tag
     const oldProps = cache.props
     if (
@@ -201,12 +141,7 @@ export class ReactComponentSvgLabelStyle extends LabelStyleBase {
     LabelStyleBase.createLayoutTransform(context, label.layout, true).applyTo(oldVisual.svgElement)
     return oldVisual
   }
-
-  /**
-   * @param {!ILabel} label
-   * @returns {!Size}
-   */
   getPreferredSize(label) {
-    return Size.from(this.size)
+    return this.size
   }
 }

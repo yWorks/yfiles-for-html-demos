@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { GraphComponent, INodeStyle, Size } from 'yfiles'
-import Vue2NodeStyle from 'demo-utils/Vue2NodeStyle'
+import type { GraphComponent, INodeStyle, Size } from '@yfiles/yfiles'
+import { createLitNodeStyleFromSource } from '@yfiles/demo-utils/LitNodeStyle'
 
 /**
  * Creates a new {@link Vue2NodeStyle} with a template that shows more details on higher
@@ -37,7 +37,7 @@ export function createOrgChartNodeStyle(
   graphComponent: GraphComponent,
   nodeSize: Size
 ): INodeStyle {
-  const nodeStyle = new Vue2NodeStyle(nodeStyleTemplate)
+  const nodeStyle = createLitNodeStyleFromSource(nodeStyleTemplate)
 
   // create the drop shadow element only once
   const defsElement = graphComponent.svgDefsManager.defs
@@ -48,45 +48,61 @@ export function createOrgChartNodeStyle(
   return nodeStyle
 }
 
-const nodeStyleTemplate = `<g>
-<use href='#node-dropshadow' x='-10' y='-5'></use>
-<rect fill='#FFFFFF' stroke='#C0C0C0' :width='layout.width' :height='layout.height'></rect>
-<rect v-if="tag.status === 'present'" :width='layout.width' :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill='#76b041' class='node-background'></rect>
-<rect v-else-if="tag.status === 'busy'" :width='layout.width' :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill='#ab2346' class='node-background'></rect>
-<rect v-else-if="tag.status === 'travel'" :width='layout.width' :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill='#a367dc' class='node-background'></rect>
-<rect v-else-if="tag.status === 'unavailable' || tag.status == null" :width='layout.width' :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill='#c1c1c1' class='node-background'></rect>
-<rect :class="{ hoverable: true, 'yfiles-highlighted': highlighted, 'yfiles-focused': focused }" fill='none' stroke-width='3'
-  :width='layout.width+3' :height='layout.height+3' x='-1.5' y='-1.5'></rect>
-<!--the template for detailNodeStyle-->
-<template v-if='zoom >= 0.7'>
-  <image :xlink:href="'./resources/' + tag.icon + '.svg'" x='15' y='10' width='63.75' height='63.75'></image>
-  <image :xlink:href="'./resources/' + tag.status + '_icon.svg'" x='25' y='80' height='15' width='60'></image>
-  <g style='font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444'>
-    <text transform='translate(100 25)' style='font-size:16px; fill:#336699'>{{tag.name}}</text>
-    <!-- use the Vue2NodeStyle svg-text template which supports wrapping -->
-    <svg-text x='100' y='35' :width='layout.width - 140' :content='tag.position?.toUpperCase()' :line-spacing='0.2' font-size='10' font-family='Roboto,sans-serif' :wrapping='3'></svg-text>
-    <text transform='translate(100 72)' >{{tag.email}}</text>
-    <text transform='translate(100 88)' >{{tag.phone}}</text>
-    <text transform='translate(170 88)' >{{tag.fax}}</text>
+const nodeStyleTemplate = `({ layout, tag, selected, zoom }) => {
+  function formatPosition(position, maxLength) {
+    if (!position || position.length <= maxLength) {
+      return [position?.toUpperCase() || ''];
+    }
+    let truncated = position.slice(0, maxLength);
+    let lastSpaceIndex = truncated.lastIndexOf(' ');
+    if (lastSpaceIndex !== -1) {
+      return [
+        truncated.slice(0, lastSpaceIndex).toUpperCase(),
+        position.slice(lastSpaceIndex + 1).toUpperCase()
+      ];
+    }
+    return [position.toUpperCase()];
+  }
+  return svg\`
+  <g>
+    <use href="#node-dropshadow" x="-10" y="-5"></use>
+    <rect fill="#FFFFFF" stroke="#C0C0C0" width="$\{layout.width}" height="$\{layout.height}"></rect>
+    <rect
+      width="$\{layout.width}"
+      height="\${zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'}"
+      fill='$\{tag.status === "present" ? "#76b041" :
+    tag.status === "busy" ? "#ab2346" :
+      tag.status === "travel" ? "#a367dc" : "#c1c1c1"}'
+      class="node-background"></rect>
+    <rect class='\${selected ? "yfiles-highlighted yfiles-focused" : ""}'
+      fill='none' stroke-width='3'
+      width='\${layout.width + 3}' height='\${layout.height + 3}' x='-1.5' y='-1.5'></rect>
+    <!-- Detail View -->
+    \${zoom >= 0.7 ? svg\`
+      <image href="./resources/\${tag.icon}.svg" x='15' y='10' width='63.75' height='63.75'></image>
+      <image href="./resources/\${tag.status}_icon.svg" x='25' y='80' height='15' width='60'></image>
+      <g style='font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444'>
+        <text transform='translate(100 25)' style='font-size:16px; fill:#336699'>\${tag.name}</text>
+        \${formatPosition(tag.position, 30).map((line, i) => svg\`<text x='100' y='\${i*15+45}' font-size='10' font-family='Roboto,sans-serif'>\${line}</text>\`)}
+        <text transform='translate(100 72)'>\${tag.email}</text>
+        <text transform='translate(100 88)'>\${tag.phone}</text>
+        <text transform='translate(170 88)'>\${tag.fax}</text>
+      </g>
+    \` :  zoom >= 0.4 ? svg\`
+      <!-- Intermediate View -->
+      <image href="./resources/\${tag.icon}.svg" x='15' y='20' width='56.25' height='56.25'/>
+      <g style='font-size:15px; font-family:Roboto,sans-serif; fill:#444' width='185'>
+        <text transform='translate(75 40)' style='font-size:26px; font-family:Roboto,sans-serif; fill:#336699'>\${tag.name}</text>
+        \${formatPosition(tag.position, 22).map((line, i) => svg\`<text x='75' y='\${i*20+65}' font-size='15' font-family='Roboto,sans-serif'>\${line}</text>\`)}
+      </g>
+    \` :  svg\`
+      <!-- Overview View -->
+      <text transform='translate(30 50)' style='font-size:40px; font-family:Roboto,sans-serif; fill:#fff; dominant-baseline: central;'>
+        \${tag.name.replace(/^(.)(\\S*)(.*)/, "$1.$3")}
+      </text>
+    \`}
   </g>
-</template>
-<!--the template for intermediateNodeStyle-->
-<template v-else-if='zoom >= 0.4'>
-  <image :xlink:href="'./resources/' + tag.icon + '.svg'" x='15' y='20' width='56.25' height='56.25'/>
-  <g style='font-size:15px; font-family:Roboto,sans-serif; fill:#444' width='185'>
-    <text transform='translate(75 40)' style='font-size:26px; font-family:Roboto,sans-serif; fill:#336699'>{{tag.name}}</text>
-    <!-- use the Vue2NodeStyle svg-text template which supports wrapping -->
-    <svg-text x='75' y='50' :width='layout.width - 85' :content='tag.position?.toUpperCase()' :line-spacing='0.2' font-size='15' font-family='Roboto,sans-serif' :wrapping='3'></svg-text>
-  </g>
-</template>
-<!--the template for overviewNodeStyle-->
-<template v-else>
-  <!--converts a name to an abbreviated name-->
-  <text transform='translate(30 50)' style='font-size:40px; font-family:Roboto,sans-serif; fill:#fff; dominant-baseline: central;'>
-    {{tag.name.replace(/^(.)(\\S*)(.*)/, '$1.$3')}}
-  </text>
-</template>
-</g>`
+\`}`
 
 /**
  * Creates the drop shadow element for the nodes.

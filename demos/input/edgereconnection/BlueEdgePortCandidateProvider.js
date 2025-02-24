@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,15 +28,14 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   IEdgeReconnectionPortCandidateProvider,
   IEnumerable,
   IInputModeContext,
   IPortCandidate,
-  List
-} from 'yfiles'
-
+  List,
+  PortCandidate
+} from '@yfiles/yfiles'
 /**
  * An {@link IEdgeReconnectionPortCandidateProvider} that allows moving ports to
  * any other existing port on any node.
@@ -46,9 +45,8 @@ export default class BlueEdgePortCandidateProvider extends BaseClass(
 ) {
   /**
    * Returns candidates for the locations of all existing ports at all nodes.
-   * @param {!IInputModeContext} context The context for which the candidates should be provided
+   * @param context The context for which the candidates should be provided
    * @see Specified by {@link IEdgeReconnectionPortCandidateProvider.getSourcePortCandidates}.
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getSourcePortCandidates(context) {
     const result = new List()
@@ -58,7 +56,7 @@ export default class BlueEdgePortCandidateProvider extends BaseClass(
         node.ports.forEach((port) => {
           // don't reuse the existing ports, but create new ones at the same location
           result.add(
-            new DefaultPortCandidate(
+            new PortCandidate(
               node,
               FreeNodePortLocationModel.INSTANCE.createParameter(node, port.location)
             )
@@ -68,12 +66,10 @@ export default class BlueEdgePortCandidateProvider extends BaseClass(
     }
     return result
   }
-
   /**
    * Returns candidates for the locations of all existing ports at all nodes.
-   * @param {!IInputModeContext} context The context for which the candidates should be provided
+   * @param context The context for which the candidates should be provided
    * @see Specified by {@link IEdgeReconnectionPortCandidateProvider.getTargetPortCandidates}.
-   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getTargetPortCandidates(context) {
     const result = new List()
@@ -82,7 +78,7 @@ export default class BlueEdgePortCandidateProvider extends BaseClass(
       graph.nodes.forEach((node) => {
         node.ports.forEach((port) => {
           // reuse the existing port - the edge will be connected to the very same port after reconnection
-          result.add(new DefaultPortCandidate(port))
+          result.add(new PortCandidate(port))
         })
       })
     }

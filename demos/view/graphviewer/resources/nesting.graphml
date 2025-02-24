@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml">
 	<key id="d0" for="node" attr.type="string" attr.name="Url"/>
 	<key id="d1" for="node" attr.type="string" attr.name="ToolTip"/>
 	<key id="d2" for="node" attr.type="string" attr.name="Description"/>
@@ -60,24 +60,22 @@
 	<data key="d12">
 		<y:SharedData>
 			<yjs:Color x:Key="1" r="135" g="206" a="255" b="250"/>
-			<y:GenericLabelModelParameter x:Key="2">
-				<y:GenericLabelModelParameter.Model>
-					<y:GenericLabelModel>
-						<y:GenericLabelModel.Parameters>
-							<x:Static Member="y:InteriorLabelModel.Center"/>
-							<x:Static Member="y:ExteriorLabelModel.North"/>
-							<x:Static Member="y:ExteriorLabelModel.South"/>
-							<x:Static Member="y:InteriorStretchLabelModel.East"/>
-							<x:Static Member="y:InteriorStretchLabelModel.West"/>
-						</y:GenericLabelModel.Parameters>
-					</y:GenericLabelModel>
-				</y:GenericLabelModelParameter.Model>
-			</y:GenericLabelModelParameter>
-			<yjs:DefaultLabelStyle x:Key="3" verticalTextAlignment="CENTER" textFill="#ff323232" horizontalTextAlignment="CENTER" clipText="false">
-				<yjs:DefaultLabelStyle.font>
-					<yjs:Font fontSize="10" fontStyle="NORMAL" fontFamily="Arial" fontWeight="NORMAL"/>
-				</yjs:DefaultLabelStyle.font>
-			</yjs:DefaultLabelStyle>
+			<yx:CompositeLabelModelParameter x:Key="2" Parameter="{x:Static yx:InteriorNodeLabelModel.Center}">
+				<yx:CompositeLabelModelParameter.Model>
+					<yx:CompositeLabelModel>
+						<yx:CompositeLabelModelParameterPair Parameter="{x:Static yx:InteriorNodeLabelModel.Center}"/>
+						<yx:CompositeLabelModelParameterPair Parameter="{x:Static yx:InteriorNodeLabelModel.Right}"/>
+						<yx:CompositeLabelModelParameterPair Parameter="{x:Static yx:InteriorNodeLabelModel.Left}"/>
+						<yx:CompositeLabelModelParameterPair Parameter="{x:Static yx:ExteriorNodeLabelModel.Top}"/>
+						<yx:CompositeLabelModelParameterPair Parameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}"/>
+					</yx:CompositeLabelModel>
+				</yx:CompositeLabelModelParameter.Model>
+			</yx:CompositeLabelModelParameter>
+			<yjs:LabelStyle x:Key="3" verticalTextAlignment="CENTER" textFill="#ff323232" horizontalTextAlignment="CENTER" wrapping="NONE">
+				<yjs:LabelStyle.font>
+					<yjs:Font fontSize="10" fontStyle="NORMAL" fontFamily="Arial" fontWeight="normal"/>
+				</yjs:LabelStyle.font>
+			</yjs:LabelStyle>
       <yjs:ShapeNodeStyle x:Key="4" fill="#FFFF6C00" shape="ROUND_RECTANGLE">
         <yjs:ShapeNodeStyle.stroke>
           <yjs:Stroke fill="#FF662B00" lineCap="SQUARE" thickness="1.5"/>
@@ -88,21 +86,21 @@
           <yjs:Stroke fill="#FF662B00" lineCap="SQUARE" thickness="1.5"/>
         </yjs:PolylineEdgeStyle.stroke>
         <yjs:PolylineEdgeStyle.targetArrow>
-          <yjs:Arrow type="TRIANGLE" scale="0.75" fill="#FF662B00"/>
+          <yjs:Arrow type="TRIANGLE" lengthScale="0.75" widthScale="0.75" fill="#FF662B00"/>
         </yjs:PolylineEdgeStyle.targetArrow>
       </yjs:PolylineEdgeStyle>
-			<y:InteriorStretchLabelModel x:Key="6" Insets="4, 4, 18, 4"/>
-			<yjs:DefaultLabelStyle x:Key="7" textFill="#ffffffff"/>
-			<yjs:GroupNodeStyle x:Key="8" tabWidth="30" tabHeight="20" tabInset="3" tabPosition="TOP_TRAILING" groupIcon="MINUS" iconForegroundFill="#FF0B7189" iconOffset="2" tabBackgroundFill="#FF0B7189" tabFill="#FF9DC6D0" hitTransparentContentArea="true">
+			<yx:StretchNodeLabelModel x:Key="6" Margins="4, 4, 18, 4"/>
+			<yjs:LabelStyle x:Key="7" textFill="#ffffffff"/>
+			<yjs:GroupNodeStyle x:Key="8" tabWidth="30" tabHeight="20" tabPadding="3" tabPosition="TOP_TRAILING" groupIcon="MINUS" iconForegroundFill="#FF0B7189" iconOffset="2" tabBackgroundFill="#FF0B7189" tabFill="#FF9DC6D0" hitTransparentContentArea="true">
          <yjs:GroupNodeStyle.stroke>
            <yjs:Stroke fill="#FF0B7189" lineCap="SQUARE" thickness="2"/>
          </yjs:GroupNodeStyle.stroke>
        </yjs:GroupNodeStyle>
-      <y:GroupNodeLabelModelParameter PlaceOnTab="false" x:Key="9">
-        <y:GroupNodeLabelModelParameter.Model>
-          <y:GroupNodeLabelModel/>
-        </y:GroupNodeLabelModelParameter.Model>
-      </y:GroupNodeLabelModelParameter>
+      <yx:GroupNodeLabelModelParameter PlaceOnTab="false" x:Key="9">
+        <yx:GroupNodeLabelModelParameter.Model>
+          <yx:GroupNodeLabelModel/>
+        </yx:GroupNodeLabelModelParameter.Model>
+      </yx:GroupNodeLabelModelParameter>
 		</y:SharedData>
 	</data>
 	<graph id="G" edgedefault="directed">

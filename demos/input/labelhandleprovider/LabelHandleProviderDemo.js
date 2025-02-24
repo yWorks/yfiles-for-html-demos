@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,101 +27,64 @@
  **
  ***************************************************************************/
 import {
+  CompositeLabelModel,
   EdgeSegmentLabelModel,
   FreeEdgeLabelModel,
   FreeLabelModel,
   FreeNodeLabelModel,
-  GenericLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   ILabel,
-  InteriorLabelModel,
-  LabelStyleDecorationInstaller,
+  LabelStyleIndicatorRenderer,
   License,
   Size,
-  StringTemplateLabelStyle,
-  TemplateLabelStyle,
-  Visualization
-} from 'yfiles'
-
-import LabelHandleProvider from './LabelHandleProvider.js'
-import {
-  applyDemoTheme,
-  createDemoNodeLabelStyle,
-  initDemoStyles
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/** @type {GraphComponent} */
+  StyleIndicatorZoomPolicy
+} from '@yfiles/yfiles'
+import LabelHandleProvider from './LabelHandleProvider'
+import { createDemoNodeLabelStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { InteriorNodeLabelModel } from '@yfiles/yfiles/yfiles'
+import { RotatableLabelSelectionStyle } from './RotatableLabelSelectionStyle'
 let graphComponent
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeGraph()
-
   initializeInputMode()
 }
-
 /**
  * Sets the default styles and creates the graph.
  */
 function initializeGraph() {
   const graph = graphComponent.graph
-
   // add a custom handle provider for labels
-  graph.decorator.labelDecorator.handleProviderDecorator.setFactory(getLabelHandleProvider)
-  // for rotatable labels: modify the selection visualization to indicate that this label can be rotated
-  const templateString = `<g>
-           <rect fill="none" stroke-width="3" stroke="lightgray" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
-           <line x1="{TemplateBinding width, Converter=demoBindings.halfConverter}" y1="0" x2="{TemplateBinding width, Converter=demoBindings.halfConverter}" y2="-15" stroke-width="{TemplateBinding isUpsideDown, Converter=demoBindings.showUpsideHandle}" stroke="lightgray"></line>
-           <line x1="{TemplateBinding width, Converter=demoBindings.halfConverter}" y1="{TemplateBinding height}" x2="{TemplateBinding width, Converter=demoBindings.halfConverter}" y2="{TemplateBinding height, Converter=demoBindings.flippedHandlePosition}" stroke-width="{TemplateBinding isUpsideDown, Converter=demoBindings.showFlippedHandle}" stroke="lightgray"></line>
-           <circle r="4" stroke="black" stroke-width="1" fill="none" cx="{TemplateBinding width, Converter=demoBindings.halfConverter}" cy="{TemplateBinding height, Converter=demoBindings.halfConverter}"></circle>
-         </g>`
-
-  TemplateLabelStyle.CONVERTERS.demoBindings = {
-    halfConverter: (value) => value * 0.5,
-    flippedHandlePosition: (height) => height + 15,
-    showUpsideHandle: (isUpsideDown) => (isUpsideDown ? '0' : '3'),
-    showFlippedHandle: (isUpsideDown) => (isUpsideDown ? '3' : '0')
-  }
-  const templateLabelStyle = new StringTemplateLabelStyle(templateString)
-
-  const labelDecorationInstaller = new LabelStyleDecorationInstaller({
-    labelStyle: templateLabelStyle
+  graph.decorator.labels.handleProvider.addFactory(getLabelHandleProvider)
+  const labelDecorationRenderer = new LabelStyleIndicatorRenderer({
+    labelStyle: new RotatableLabelSelectionStyle(),
+    zoomPolicy: StyleIndicatorZoomPolicy.WORLD_COORDINATES
   })
-
-  graphComponent.graph.decorator.labelDecorator.selectionDecorator.setImplementation(
+  graphComponent.graph.decorator.labels.selectionRenderer.addConstant(
     (label) =>
       label.layoutParameter.model instanceof FreeNodeLabelModel ||
       label.layoutParameter.model instanceof FreeEdgeLabelModel ||
       label.layoutParameter.model instanceof FreeLabelModel,
-    labelDecorationInstaller
+    labelDecorationRenderer
   )
-
   initDemoStyles(graph)
   graphComponent.graph.nodeDefaults.size = new Size(100, 50)
-
   // Our resize logic does not work together with all label models resp. label model parameters
   // for simplicity, we just use a centered label for nodes
-  graph.nodeDefaults.labels.layoutParameter = new GenericLabelModel(
-    InteriorLabelModel.CENTER
-  ).createDefaultParameter()
-
+  const compositeLabelModel = new CompositeLabelModel()
+  compositeLabelModel.addParameter(InteriorNodeLabelModel.CENTER)
+  graph.nodeDefaults.labels.layoutParameter = compositeLabelModel.parameters.at(0)
   const labelModel = new EdgeSegmentLabelModel({ distance: 10 })
   graph.edgeDefaults.labels.layoutParameter = labelModel.createParameterFromSource(
     0,
     0.5,
     'right-of-edge'
   )
-
   // create sample graph
   const n1 = graph.createNodeAt({
     location: [100, 100],
@@ -144,18 +107,15 @@ function initializeGraph() {
     target: n1,
     labels: ['Rotated Edge Label']
   })
-
   graphComponent.fitGraphBounds()
 }
-
 /**
  * Returns the LabelHandleProvider for the given label.
- * @param {!ILabel} label The given label
+ * @param label The given label
  */
 function getLabelHandleProvider(label) {
   return new LabelHandleProvider(label)
 }
-
 /**
  * Initializes the input mode.
  */
@@ -172,17 +132,11 @@ function initializeInputMode() {
       GraphItemTypes.ALL
     ]
   })
-
   // add a label to each created node
-  mode.addNodeCreatedListener((_, evt) => {
+  mode.addEventListener('node-created', (evt) => {
     const graph = graphComponent.graph
     graph.addLabel(evt.item, `Node ${graph.nodes.size}`)
   })
-
-  // the handles should be moved together with the ghost visualization of the label
-  mode.moveLabelInputMode.visualization = Visualization.LIVE
-
   graphComponent.inputMode = mode
 }
-
 run().then(finishLoading)

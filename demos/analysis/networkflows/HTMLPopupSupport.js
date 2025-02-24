@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,8 +35,7 @@ import {
   Point,
   SimpleLabel,
   Size
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can
  * display arbitrary information about a {@link IModelItem graph item}.
@@ -46,36 +45,31 @@ import {
  * parameter} to determine the position of the pop-up.
  */
 export default class HTMLPopupSupport {
+  graphComponent
+  div
+  labelModelParameter
   _currentItem
   dirty
-
   /**
    * Constructor that takes the graphComponent, the container div element and an ILabelModelParameter
    * to determine the relative position of the popup.
-   * @param {!GraphComponent} graphComponent
-   * @param {!HTMLElement} div
-   * @param {!ILabelModelParameter} labelModelParameter
    */
   constructor(graphComponent, div, labelModelParameter) {
-    this.labelModelParameter = labelModelParameter
-    this.div = div
     this.graphComponent = graphComponent
+    this.div = div
+    this.labelModelParameter = labelModelParameter
     this._currentItem = null
     this.dirty = false
-
     // make the popup invisible
     div.style.opacity = '0'
     div.style.display = 'none'
-
     this.registerListeners()
   }
-
   /**
    * Sets the {@link IModelItem item} to display information for.
    * Setting this property to a value other than null shows the pop-up.
    * Setting the property to null hides the pop-up.
    * @param value The current graph item
-   * @type {?IModelItem}
    */
   set currentItem(value) {
     if (value === this._currentItem) {
@@ -88,29 +82,25 @@ export default class HTMLPopupSupport {
       this.hide()
     }
   }
-
   /**
    * Gets the {@link IModelItem item} to display information for.
    * @returns The current graph item
-   * @type {?IModelItem}
    */
   get currentItem() {
     return this._currentItem
   }
-
   /**
    * Registers viewport, node bounds changes and visual tree listeners to the given graphComponent.
    */
   registerListeners() {
     // Adds listener for viewport changes
-    this.graphComponent.addViewportChangedListener((_, evt) => {
+    this.graphComponent.addEventListener('viewport-changed', () => {
       if (this.currentItem) {
         this.dirty = true
       }
     })
-
     // Adds listeners for node bounds changes
-    this.graphComponent.graph.addNodeLayoutChangedListener((_, node, oldLayout) => {
+    this.graphComponent.graph.addEventListener('node-layout-changed', (node, _oldLayout) => {
       if (
         ((this.currentItem && this.currentItem === node) || this.currentItem instanceof IEdge) &&
         (node === this.currentItem.sourcePort.owner || node === this.currentItem.targetPort.owner)
@@ -118,16 +108,14 @@ export default class HTMLPopupSupport {
         this.dirty = true
       }
     })
-
     // Adds listener for updates of the visual tree
-    this.graphComponent.addUpdatedVisualListener((_, evt) => {
+    this.graphComponent.addEventListener('updated-visual', () => {
       if (this.currentItem && this.dirty) {
         this.dirty = false
         this.updateLocation()
       }
     })
   }
-
   /**
    * Makes this pop-up visible.
    */
@@ -136,7 +124,6 @@ export default class HTMLPopupSupport {
     setTimeout(() => (this.div.style.opacity = '1'), 0)
     this.updateLocation()
   }
-
   /**
    * Hides this pop-up.
    */
@@ -153,10 +140,9 @@ export default class HTMLPopupSupport {
     this.div.style.opacity = '0'
     this.div.style.display = 'none'
   }
-
   /**
    * Changes the location of this pop-up to the location calculated by the
-   * {@link HTMLPopupSupport.labelModelParameter}. Currently, this implementation does not support rotated pop-ups.
+   * {@link labelModelParameter}. Currently, this implementation does not support rotated pop-ups.
    */
   updateLocation() {
     if (!this.currentItem && !this.labelModelParameter) {
@@ -165,26 +151,22 @@ export default class HTMLPopupSupport {
     const width = this.div.clientWidth
     const height = this.div.clientHeight
     const zoom = this.graphComponent.zoom
-
     const dummyLabel = new SimpleLabel(this.currentItem, '', this.labelModelParameter)
-    if (this.labelModelParameter.supports(dummyLabel)) {
-      dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
-      const newLayout = this.labelModelParameter.model.getGeometry(
-        dummyLabel,
-        this.labelModelParameter
-      )
-      this.setLocation(newLayout.anchorX, newLayout.anchorY - (height + 10) / zoom)
-    }
+    dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
+    const newLayout = this.labelModelParameter.model.getGeometry(
+      dummyLabel,
+      this.labelModelParameter
+    )
+    this.setLocation(newLayout.anchorX, newLayout.anchorY - (height + 10) / zoom)
   }
-
   /**
    * Sets the location of this pop-up to the given world coordinates.
-   * @param {number} x The target x-coordinate of the pop-up.
-   * @param {number} y The target y-coordinate of the pop-up.
+   * @param x The target x-coordinate of the pop-up.
+   * @param y The target y-coordinate of the pop-up.
    */
   setLocation(x, y) {
     // Calculate the view coordinates since we have to place the div in the regular HTML coordinate space
-    const viewPoint = this.graphComponent.toViewCoordinates(new Point(x, y))
+    const viewPoint = this.graphComponent.worldToViewCoordinates(new Point(x, y))
     this.div.style.setProperty('transform', `translate(${viewPoint.x}px, ${viewPoint.y}px)`)
   }
 }

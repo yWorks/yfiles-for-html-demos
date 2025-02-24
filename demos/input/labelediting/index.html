@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Label Editing Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -44,9 +44,11 @@
         color: slategray;
         border: 1px solid darkblue;
       }
-    </style>
 
-    <script src="../../resources/filesystem-warning.js"></script>
+      .yfiles-canvascomponent .yfiles-labeleditbox-container.invalid {
+        background-color: lightpink;
+      }
+    </style>
   </head>
   <body>
     <header class="demo-header">
@@ -109,12 +111,15 @@
             Edit a selected label by pressing <kbd>F2</kbd>. If no label exists, a new one will be
             added.
           </li>
-          <li>Add an additional label to a selected graph item by pressing <kbd>Shift+F2</kbd>.</li>
+          <li>
+            Add an additional label to a selected graph item by pressing <kbd>Shift</kbd> +
+            <kbd>F2</kbd>.
+          </li>
           <li>
             Select multiple items (labels and/or label owners) and try to add or edit them by
             pressing
-            <kbd>Shift+F2</kbd> or <kbd>F2</kbd>, resp. Note that by default, if both labels and
-            other items are selected, editing a label is preferred.
+            <kbd>Shift</kbd> + <kbd>F2</kbd> or <kbd>F2</kbd>, resp. Note that by default, if both
+            labels and other items are selected, editing a label is preferred.
           </li>
         </ul>
 

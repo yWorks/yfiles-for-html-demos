@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,112 +29,85 @@
 import {
   Arrow,
   ArrowType,
-  BaseClass,
-  EdgeStyleDecorationInstaller,
   GeneralPath,
   IArrow,
-  IEdgeStyle,
-  IHighlightIndicatorInstaller,
-  PathBasedEdgeStyleRenderer,
+  PathEdgeStyleBase,
   Point,
   Stroke
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * An edge style that draws an edge in an orthogonal fashion.
  * All existing bends of the edge are ignored.
  */
-export class RoutingEdgeStyle extends BaseClass(IEdgeStyle) {
+export class RoutingEdgeStyle extends PathEdgeStyleBase {
+  outSegmentLength
+  inSegmentLength
+  stroke
+  /**
+   * The distance on the y-axis between the source port and the horizontal middle segment.
+   * This only has an effect when the source location is right of the target location.
+   */
+  middleSegmentOffset = 32
+  /** The amount of corner rounding */
+  smoothing = 10
+  /** The source arrow. */
+  sourceArrow = IArrow.NONE
+  /** The target arrow. */
+  targetArrow
   /**
    * Creates a new instance of RoutingEdgeStyle.
-   * @param {number} outSegmentLength The length of the horizontal segment that connects to the source node.
-   * @param {number} inSegmentLength The length of the horizontal segment that connects to the target node.
-   * @param {!Stroke} stroke The edge stroke.
+   * @param outSegmentLength The length of the horizontal segment that connects to the source node.
+   * @param inSegmentLength The length of the horizontal segment that connects to the target node.
+   * @param stroke The edge stroke.
    */
   constructor(outSegmentLength, inSegmentLength, stroke = new Stroke(100, 100, 100, 255, 2)) {
     super()
-    this.stroke = stroke
-    this.inSegmentLength = inSegmentLength
     this.outSegmentLength = outSegmentLength
+    this.inSegmentLength = inSegmentLength
+    this.stroke = stroke
     this.sourceArrow = IArrow.NONE
     this.targetArrow = new Arrow({
       fill: stroke.fill,
       type: ArrowType.TRIANGLE
     })
   }
-
-  /**
-   * The distance on the y-axis between the source port and the horizontal middle segment.
-   * This only has an effect when the source location is right of the target location.
-   */
-  middleSegmentOffset = 32
-
-  /** The amount of corner rounding */
-  smoothing = 10
-
-  /** The source arrow. */
-  sourceArrow = IArrow.NONE
-
-  /** The target arrow. */
-  targetArrow
-
-  /**
-   * @type {!IEdgeStyleRenderer}
-   */
-  get renderer() {
-    return new RoutingEdgeStyleRenderer()
-  }
-
-  /**
-   * @returns {*}
-   */
-  clone() {
-    return new RoutingEdgeStyle(this.outSegmentLength, this.inSegmentLength, this.stroke)
-  }
-}
-
-/**
- * Responsible for drawing the edge path using the given {@link RoutingEdgeStyle}.
- */
-class RoutingEdgeStyleRenderer extends PathBasedEdgeStyleRenderer {
-  constructor() {
-    super(RoutingEdgeStyle.$class)
-  }
-
-  /**
-   * Creates the orthogonal edge-path.
-   * @returns {!GeneralPath}
-   */
-  createPath() {
+  getPath(edge) {
     // create a new GeneralPath with the edge points
     const generalPath = new GeneralPath()
-    const points = this.getEdgePoints(this.edge)
+    const points = this.getEdgePoints(edge)
     generalPath.moveTo(points[0])
     for (const item of points) {
       generalPath.lineTo(item)
     }
-    return generalPath
+    return PathEdgeStyleBase.cropPath(edge, generalPath, this.sourceArrow, this.targetArrow)
   }
-
+  getSmoothingLength(edge) {
+    return this.smoothing
+  }
+  getSourceArrow(edge) {
+    return this.sourceArrow
+  }
+  getTargetArrow(edge) {
+    return this.targetArrow
+  }
+  getStroke(edge) {
+    return this.stroke
+  }
   /**
    * Calculates the points that define the edge path.
    * If the source and target are in the same row, it draws a straight-line,
    * i.e., only the source/target locations are needed.
    * Otherwise, we have to calculate some bend-points.
-   * @param {!IEdge} edge
-   * @returns {!Array.<Point>}
    */
   getEdgePoints(edge) {
     const sourcePoint = edge.sourcePort.location
     const targetPoint = edge.targetPort.location
     const points = []
     points.push(sourcePoint)
-
     // the source location with the x-offset
-    const sourceX = sourcePoint.x + this.style.outSegmentLength
+    const sourceX = sourcePoint.x + this.outSegmentLength
     // the target location with the x-offset
-    const targetX = targetPoint.x - this.style.inSegmentLength
-
+    const targetX = targetPoint.x - this.inSegmentLength
     if (sourceX <= targetX) {
       // the source is left of target and not in the same row, add two bends
       if (sourcePoint.y !== targetPoint.y) {
@@ -146,89 +119,14 @@ class RoutingEdgeStyleRenderer extends PathBasedEdgeStyleRenderer {
       // get the y-coordinate of the vertical middle segment
       const middleSegmentY =
         sourcePoint.y <= targetPoint.y
-          ? sourcePoint.y + this.style.middleSegmentOffset
-          : sourcePoint.y - this.style.middleSegmentOffset
+          ? sourcePoint.y + this.middleSegmentOffset
+          : sourcePoint.y - this.middleSegmentOffset
       points.push(new Point(sourceX, sourcePoint.y))
       points.push(new Point(sourceX, middleSegmentY))
       points.push(new Point(targetX, middleSegmentY))
       points.push(new Point(targetX, targetPoint.y))
     }
-
     points.push(targetPoint)
     return points
-  }
-
-  /**
-   * Returns the tangent on this path at the given ratio.
-   * @param {number} ratio
-   * @returns {?Tangent}
-   */
-  getTangent(ratio) {
-    return this.getPath().getTangent(ratio)
-  }
-
-  /**
-   * Returns the tangent on this path instance at the segment and segment ratio.
-   * @param {number} segmentIndex
-   * @param {number} ratio
-   * @returns {?Tangent}
-   */
-  getTangentForSegment(segmentIndex, ratio) {
-    return this.getPath().getTangentForSegment(segmentIndex, ratio)
-  }
-
-  /**
-   * Returns the segment count which is the number of edge points -1.
-   * @returns {number}
-   */
-  getSegmentCount() {
-    // the segment count is the number of edge points - 1
-    const p = this.getEdgePoints(this.edge)
-    return p.length - 1
-  }
-
-  /**
-   * Returns the target arrow.
-   * @returns {!IArrow}
-   */
-  getTargetArrow() {
-    return this.style.targetArrow
-  }
-
-  /**
-   * Returns the source arrow.
-   * @returns {!IArrow}
-   */
-  getSourceArrow() {
-    return this.style.sourceArrow
-  }
-
-  /**
-   * Returns the pen used by style.
-   * @returns {!Stroke}
-   */
-  getStroke() {
-    return this.style.stroke
-  }
-
-  /**
-   * Returns the smoothing length used by style.
-   * @returns {number}
-   */
-  getSmoothingLength() {
-    return this.style.smoothing
-  }
-
-  /**
-   * Returns an instance that implements the given type or null if no such instance is available.
-   * @param {!Class} type
-   * @returns {*}
-   */
-  lookup(type) {
-    if (type === IHighlightIndicatorInstaller.$class) {
-      const edgeStyle = new RoutingEdgeStyle(20, 20, new Stroke('goldenrod', 3))
-      return new EdgeStyleDecorationInstaller({ edgeStyle })
-    }
-    return super.lookup.call(this, type)
   }
 }

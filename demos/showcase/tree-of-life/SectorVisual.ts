@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,20 +29,20 @@
 import {
   BaseClass,
   Color,
-  Geom,
-  GeomUtilities,
+  GeometryUtilities,
   IGraph,
   IMapper,
   INode,
   IRenderContext,
   IVisualCreator,
   Point,
-  RadialLayoutNodeInfo,
+  RadialLayoutNodePlacementResult,
   Rect,
   Size,
   SvgVisual,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
+import { toRadians } from '../../utils/LegacyGeometryUtilities'
 
 type Sector = {
   startAngle: number
@@ -57,10 +57,7 @@ type RenderDataCache = { sectors: Sector[]; highlightedSector: Sector | undefine
 /**
  * An {@link IVisualCreator} that manages and renders the sectors.
  */
-export default class SectorVisual
-  extends BaseClass<IVisualCreator>(IVisualCreator)
-  implements IVisualCreator
-{
+export default class SectorVisual extends BaseClass(IVisualCreator) {
   private readonly highlightColor = '#e01a4f'
 
   private center = Point.ORIGIN
@@ -71,7 +68,10 @@ export default class SectorVisual
   /**
    * Updates the sector drawing using the sector information from the layout algorithm.
    */
-  updateSectors(graph: IGraph, sectorMapper?: IMapper<INode, RadialLayoutNodeInfo>): void {
+  updateSectors(
+    graph: IGraph,
+    sectorMapper?: IMapper<INode, RadialLayoutNodePlacementResult>
+  ): void {
     if (!sectorMapper) {
       this.sectors = []
       return
@@ -104,11 +104,11 @@ export default class SectorVisual
     this.sectors = graph
       .successors(root)
       .toArray()
-      .filter((child) => sectorMapper.get(child) instanceof RadialLayoutNodeInfo)
+      .filter((child) => sectorMapper.get(child) instanceof RadialLayoutNodePlacementResult)
       .map((child, i) => {
-        const info = sectorMapper.get(child) as RadialLayoutNodeInfo
-        const startAngle = normalizeAngle(Geom.toRadians(info.sectorStart))
-        const endAngle = normalizeAngle(Geom.toRadians(info.sectorStart + info.sectorSize))
+        const info = sectorMapper.get(child) as RadialLayoutNodePlacementResult
+        const startAngle = normalizeAngle(toRadians(info.sectorStart))
+        const endAngle = normalizeAngle(toRadians(info.sectorStart + info.sectorSize))
         const color = Color.from(child.tag.color)
         const alpha = color.equals(lastColor || null) ? (i % 2 === 0 ? 0.1 : 0.2) : 0.1
         lastColor = color
@@ -208,10 +208,10 @@ export default class SectorVisual
           'd',
           `
           M ${this.center.x},${this.center.y}
-          L ${Math.cos(sector.endAngle) * this.radius},${-Math.sin(sector.endAngle) * this.radius}
+          L ${Math.cos(sector.startAngle) * this.radius},${Math.sin(sector.startAngle) * this.radius}
           A ${this.radius},${this.radius},${sector.endAngle < sector.startAngle ? 1 : 0},
-            ${sectorAngle > Math.PI ? 1 : 0},1,${Math.cos(sector.startAngle) * this.radius},
-            ${-Math.sin(sector.startAngle) * this.radius}
+            ${sectorAngle > Math.PI ? 1 : 0},1,${Math.cos(sector.endAngle) * this.radius},
+            ${Math.sin(sector.endAngle) * this.radius}
           Z`
         )
         sectorPath.style.fill = sector.color
@@ -254,7 +254,7 @@ export default class SectorVisual
     }
 
     // location is outside the circle
-    const isInCircle = GeomUtilities.ellipseContains(bounds, location, 0)
+    const isInCircle = GeometryUtilities.ellipseContains(bounds, location, 0)
     if (!isInCircle) {
       return
     }
@@ -300,7 +300,7 @@ function isAngleBetween(angle: number, startAngle: number, endAngle: number) {
  */
 function getAngle(location: Point, origin: Point): number {
   const delta = location.subtract(origin)
-  const angle = Math.atan2(-delta.y, delta.x)
+  const angle = -Math.atan2(-delta.y, delta.x)
   return normalizeAngle(angle)
 }
 
@@ -308,11 +308,5 @@ function getAngle(location: Point, origin: Point): number {
  * Normalizes the angle to a value between 0 and 2 * PI.
  */
 function normalizeAngle(angle: number): number {
-  while (angle < 0) {
-    angle += Math.PI * 2
-  }
-  while (angle >= Math.PI * 2) {
-    angle -= Math.PI * 2
-  }
-  return angle
+  return (angle + 2 * Math.PI) % (2 * Math.PI)
 }

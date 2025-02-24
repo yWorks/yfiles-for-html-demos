@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,20 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @typedef {Object} NodeData
- * @property {number} id
- * @property {object} layout
- * @property {object} tag
- */
-
-/**
- * @typedef {Object} SampleData
- * @property {Array.<NodeData>} nodeList
- * @property {Array.<object>} edgeList
- */
-
-export const HierarchicSampleData = {
+export const HierarchicalSampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: { type: 2 } },
     { id: 1, layout: { width: 40, height: 40 }, tag: { type: 2 } },
@@ -118,7 +105,6 @@ export const HierarchicSampleData = {
     { source: 9, target: 34 }
   ]
 }
-
 export const OrganicSampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: { type: 2 } },
@@ -308,7 +294,6 @@ export const OrganicSampleData = {
     { source: 40, target: 38 }
   ]
 }
-
 export const TreeSampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: { type: 0 } },
@@ -406,7 +391,6 @@ export const TreeSampleData = {
     { source: 15, target: 45 }
   ]
 }
-
 export const CircularSampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: { type: 2 } },
@@ -502,7 +486,6 @@ export const CircularSampleData = {
     { source: 27, target: 22 }
   ]
 }
-
 export const ComponentSampleData = {
   nodeList: [
     { id: 0, layout: { x: 62, y: 215, width: 40, height: 40 }, tag: { type: 0 } },
@@ -574,7 +557,6 @@ export const ComponentSampleData = {
     { source: 32, target: 36 }
   ]
 }
-
 export const CompactDiskSampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: { type: 2 } },
@@ -780,8 +762,7 @@ export const CompactDiskSampleData = {
   ],
   edgeList: []
 }
-
-export const BalloonSampleData = {
+export const RadialTreeSampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: null },
     { id: 1, layout: { width: 40, height: 40 }, tag: null },
@@ -900,7 +881,6 @@ export const BalloonSampleData = {
     { source: 7, target: 56 }
   ]
 }
-
 export const RadialSampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: null },

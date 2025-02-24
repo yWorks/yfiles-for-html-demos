@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,41 +30,37 @@ import {
   FreeNodePortLocationModel,
   GraphComponent,
   GraphEditorInputMode,
+  GraphItemTypes,
   IEdgeReconnectionPortCandidateProvider,
   IGraph,
   INode,
   IPortCandidateProvider,
   License,
-  NodeStylePortStyleAdapter,
   Point,
   PortCandidateValidity,
   Rect,
-  ShapeNodeStyle
-} from 'yfiles'
-import type { ColorSetName } from 'demo-resources/demo-styles'
-import {
-  applyDemoTheme,
-  createDemoEdgeStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
+  ShapePortStyle
+} from '@yfiles/yfiles'
+import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import GreenEdgePortCandidateProvider from './GreenEdgePortCandidateProvider'
 import BlueEdgePortCandidateProvider from './BlueEdgePortCandidateProvider'
 import OrangeEdgePortCandidateProvider from './OrangeEdgePortCandidateProvider'
 import RedEdgePortCandidateProvider from './RedEdgePortCandidateProvider'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link IEdgeReconnectionPortCandidateProvider} for each node.
  * This callback function is called whenever a node in the graph is queried
- * for its {@link IEdgePortCandidateProvider}. In this case, the 'node'
+ * for its {@link IEdgeReconnectionPortCandidateProvider}. In this case, the 'node'
  * parameter will be set to that node.
  * @param graph The given graph
  */
 function registerEdgePortCandidateProvider(graph: IGraph): void {
-  const edgeDecorator = graph.decorator.edgeDecorator
-  edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setFactory((edge) => {
+  const edgeDecorator = graph.decorator.edges
+  edgeDecorator.reconnectionPortCandidateProvider.addFactory((edge) => {
     // obtain the tag from the edge
     const edgeTag = edge.tag
 
@@ -92,7 +88,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // Disable automatic cleanup of unconnected ports since some nodes have a predefined set of ports
@@ -103,7 +98,8 @@ async function run(): Promise<void> {
     // Just for user convenience: disable node/edge creation and clipboard operations
     allowCreateEdge: false,
     allowCreateNode: false,
-    allowClipboardOperations: false
+    allowClipboardOperations: false,
+    selectableItems: GraphItemTypes.ALL & ~GraphItemTypes.PORT
   })
   // and enable the undo feature.
   graph.undoEngineEnabled = true
@@ -112,16 +108,14 @@ async function run(): Promise<void> {
   graphComponent.inputMode = graphEditorInputMode
 
   // Set a port style that makes the pre-defined ports visible
-  graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter(
-    new ShapeNodeStyle({
-      shape: 'ellipse'
-    })
-  )
+  graph.nodeDefaults.ports.style = new ShapePortStyle({
+    shape: 'ellipse'
+  })
 
   registerEdgePortCandidateProvider(graph)
 
   createSampleGraph(graphComponent)
-  graphComponent.updateContentRect()
+  graphComponent.updateContentBounds()
 }
 
 /**
@@ -130,11 +124,9 @@ async function run(): Promise<void> {
  */
 function createSampleGraph(graphComponent: GraphComponent): void {
   const graph = graphComponent.graph
-  const blackPortStyle = new NodeStylePortStyleAdapter(
-    new ShapeNodeStyle({
-      shape: 'ellipse'
-    })
-  )
+  const blackPortStyle = new ShapePortStyle({
+    shape: 'ellipse'
+  })
   createSubgraph(graph, 'demo-red', 'red', 0)
   createSubgraph(graph, 'demo-orange', 'orange', 200)
   createSubgraph(graph, 'demo-green', 'green', 600)

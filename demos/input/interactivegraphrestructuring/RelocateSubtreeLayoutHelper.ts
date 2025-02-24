@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,32 +30,30 @@ import {
   ClearAreaLayout,
   ClearAreaLayoutData,
   ClearAreaStrategy,
-  ComponentAssignmentStrategy,
   CompositeLayoutData,
-  EdgeRouterScope,
+  EdgePortCandidates,
   FillAreaLayout,
   FillAreaLayoutData,
   FilteredGraphWrapper,
-  GivenCoordinatesStage,
-  GivenCoordinatesStageData,
+  GivenCoordinatesLayout,
+  GivenCoordinatesLayoutData,
   GraphComponent,
   IAnimation,
   IBend,
-  ICanvasObject,
   IEdge,
   ILayoutAlgorithm,
   INode,
   IPoint,
+  IRenderTreeElement,
   LayoutData,
   LayoutExecutor,
   List,
   Mapper,
   PartialLayoutOrientation,
-  PortCandidate,
-  PortDirections,
+  PortSides,
   StraightLineEdgeRouter,
   TimeSpan
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import Subtree from './Subtree'
 
 /**
@@ -75,13 +73,13 @@ export default class RelocateSubtreeLayoutHelper {
   /**
    * The graph layout copy on which the new layout is calculated while the subtree is moving.
    */
-  private resetToWorkingGraphStageData!: GivenCoordinatesStageData
+  private resetToWorkingGraphStageData!: GivenCoordinatesLayoutData
 
   /**
    * The graph layout copy that stores the original layout before the subtree has been moved.
    * This copy is used to restore the graph when the drag is canceled.
    */
-  private resetToOriginalGraphStageData!: GivenCoordinatesStageData
+  private resetToOriginalGraphStageData!: GivenCoordinatesLayoutData
 
   /**
    * The subgraph that is dragged.
@@ -92,7 +90,7 @@ export default class RelocateSubtreeLayoutHelper {
    * The canvas object of the edge connecting the subtree with the rest of the graph.
    * This edge is hidden while the subtree is dragged.
    */
-  private canvasObjectEdge!: ICanvasObject
+  private renderTreeElementEdge!: IRenderTreeElement
 
   /**
    * Sibling subtrees that should not be modified by the layout.
@@ -137,7 +135,7 @@ export default class RelocateSubtreeLayoutHelper {
       this.layoutPending = true
       return
     }
-    this.runLayoutCore()
+    void this.runLayoutCore()
   }
 
   private async runLayoutCore(): Promise<void> {
@@ -186,9 +184,9 @@ export default class RelocateSubtreeLayoutHelper {
    * Called before the layout run starts.
    */
   private onLayoutStarting(): void {
-    const highlightIndicatorManager = this.graphComponent.highlightIndicatorManager
+    const highlights = this.graphComponent.highlights
     if (this.initializing) {
-      this.resetToOriginalGraphStageData = this.createGivenCoordinatesStageData(
+      this.resetToOriginalGraphStageData = this.createGivenCoordinatesLayoutData(
         () => true,
         () => true
       )
@@ -196,14 +194,14 @@ export default class RelocateSubtreeLayoutHelper {
 
       // highlight the parent of the current subtree and make the connection to the root invisible
       if (this.subtree.parent) {
-        this.canvasObjectEdge = this.graphComponent.graphModelManager.getCanvasObject(
+        this.renderTreeElementEdge = this.graphComponent.graphModelManager.getRenderTreeElement(
           this.subtree.parentToRootEdge as IEdge
         )!
-        this.canvasObjectEdge.visible = false
+        this.renderTreeElementEdge.visible = false
 
         this.subtree.newParent = this.subtree.parent
         this.updateComponents()
-        highlightIndicatorManager.addHighlight(this.subtree.newParent)
+        highlights.add(this.subtree.newParent)
       }
     } else if (this.stopped) {
       // before the last run starts, we have to re-parent the subtree
@@ -214,20 +212,20 @@ export default class RelocateSubtreeLayoutHelper {
 
       // remove highlight
       if (this.subtree.newParent) {
-        highlightIndicatorManager.removeHighlight(this.subtree.newParent)
+        highlights.remove(this.subtree.newParent)
       }
       // make root edge visible
-      if (this.subtree.parent === this.subtree.newParent && this.canvasObjectEdge) {
-        this.canvasObjectEdge.visible = true
+      if (this.subtree.parent === this.subtree.newParent && this.renderTreeElementEdge) {
+        this.renderTreeElementEdge.visible = true
       }
     } else if (this.canceled) {
       // make root edge visible
-      if (this.canvasObjectEdge) {
-        this.canvasObjectEdge.visible = true
+      if (this.renderTreeElementEdge) {
+        this.renderTreeElementEdge.visible = true
       }
       // remove highlight
       if (this.subtree.newParent) {
-        highlightIndicatorManager.removeHighlight(this.subtree.newParent)
+        highlights.remove(this.subtree.newParent)
       }
       // reset to original graph layout
       this.executor = this.createCanceledLayoutExecutor()
@@ -239,7 +237,7 @@ export default class RelocateSubtreeLayoutHelper {
    */
   private onLayoutFinished(): void {
     if (this.initializing) {
-      this.resetToWorkingGraphStageData = this.createGivenCoordinatesStageData(
+      this.resetToWorkingGraphStageData = this.createGivenCoordinatesLayoutData(
         (n) => !this.subtree.nodes.has(n),
         (e) => !this.subtree.edges.has(e)
       )
@@ -259,11 +257,11 @@ export default class RelocateSubtreeLayoutHelper {
     const candidate = this.getParentCandidate()
     if (candidate !== this.subtree.newParent) {
       if (this.subtree.newParent) {
-        this.graphComponent.highlightIndicatorManager.removeHighlight(this.subtree.newParent)
+        this.graphComponent.highlights.remove(this.subtree.newParent)
       }
 
       if (candidate) {
-        this.graphComponent.highlightIndicatorManager.addHighlight(candidate)
+        this.graphComponent.highlights.add(candidate)
       }
       this.subtree.newParent = candidate
       this.updateComponents()
@@ -278,7 +276,7 @@ export default class RelocateSubtreeLayoutHelper {
     this.components.clear()
     if (this.subtree.newParent) {
       graph.outEdgesAt(this.subtree.newParent).forEach((edge: IEdge) => {
-        const siblingSubtree = new Subtree(graph, edge.targetNode!)
+        const siblingSubtree = new Subtree(graph, edge.targetNode)
         siblingSubtree.nodes.forEach((node: INode) => {
           this.components.set(node, siblingSubtree)
         })
@@ -334,16 +332,16 @@ export default class RelocateSubtreeLayoutHelper {
   }
 
   /**
-   * Creates a {@link GivenCoordinatesStageData} that stores the layout of nodes and edges.
+   * Creates a {@link GivenCoordinatesLayoutData} that stores the layout of nodes and edges.
    * @param nodePredicate Determines the nodes to store
    * @param edgePredicate Determines the edges to store
-   * @returns The {@link GivenCoordinatesStageData}
+   * @returns The {@link GivenCoordinatesLayoutData}
    */
-  private createGivenCoordinatesStageData(
+  private createGivenCoordinatesLayoutData(
     nodePredicate: (node: INode) => boolean,
     edgePredicate: (edge: IEdge) => boolean
-  ): GivenCoordinatesStageData {
-    const layoutData = new GivenCoordinatesStageData()
+  ): GivenCoordinatesLayoutData {
+    const layoutData = new GivenCoordinatesLayoutData()
     const graph = this.graphComponent.graph
     graph.nodes
       .filter((node: INode) => nodePredicate(node))
@@ -357,9 +355,9 @@ export default class RelocateSubtreeLayoutHelper {
       .filter((edge: IEdge) => edgePredicate(edge))
       .forEach((edge: IEdge) => {
         const points = new List<IPoint>()
-        points.add(edge.sourcePort!.location)
+        points.add(edge.sourcePort.location)
         points.addRange(edge.bends.map((bend: IBend) => bend.location.toPoint()))
-        points.add(edge.targetPort!.location)
+        points.add(edge.targetPort.location)
         layoutData.edgePaths.mapper.set(edge, points)
       })
 
@@ -381,15 +379,15 @@ export default class RelocateSubtreeLayoutHelper {
         () => true
       ),
       layout: new FillAreaLayout({
-        area: this.subtree.bounds.toYRectangle(),
+        area: this.subtree.bounds,
         layoutOrientation: PartialLayoutOrientation.TOP_TO_BOTTOM,
-        componentAssignmentStrategy: ComponentAssignmentStrategy.CUSTOMIZED,
         spacing: 50
       }),
       layoutData: new FillAreaLayoutData({
         componentIds: this.components
       }),
-      duration: TimeSpan.fromMilliseconds(150)
+      animateViewport: false,
+      animationDuration: TimeSpan.fromMilliseconds(150)
     })
   }
 
@@ -406,7 +404,7 @@ export default class RelocateSubtreeLayoutHelper {
       this.subtree.nodes
     )
     draggingLayoutExecutor.layoutData = this.createClearAreaLayoutData()
-    draggingLayoutExecutor.duration = TimeSpan.fromMilliseconds(150)
+    draggingLayoutExecutor.animationDuration = TimeSpan.fromMilliseconds(150)
     return draggingLayoutExecutor
   }
 
@@ -420,7 +418,8 @@ export default class RelocateSubtreeLayoutHelper {
     return new LayoutExecutor({
       graphComponent: this.graphComponent,
       layout: RelocateSubtreeLayoutHelper.createClearAreaLayout(false),
-      duration: TimeSpan.fromMilliseconds(150),
+      animationDuration: TimeSpan.fromMilliseconds(150),
+      animateViewport: false,
       layoutData: this.createClearAreaLayoutData()
     })
   }
@@ -432,9 +431,9 @@ export default class RelocateSubtreeLayoutHelper {
   private createCanceledLayoutExecutor(): LayoutExecutor {
     return new LayoutExecutor({
       graphComponent: this.graphComponent,
-      layout: new GivenCoordinatesStage(),
+      layout: new GivenCoordinatesLayout(),
       layoutData: this.resetToOriginalGraphStageData,
-      duration: TimeSpan.fromMilliseconds(150)
+      animationDuration: TimeSpan.fromMilliseconds(150)
     })
   }
 
@@ -443,20 +442,16 @@ export default class RelocateSubtreeLayoutHelper {
    */
   private static createClearAreaLayout(dragging: boolean): ILayoutAlgorithm {
     if (dragging) {
-      return new GivenCoordinatesStage(
+      return new GivenCoordinatesLayout(
         new ClearAreaLayout({
-          componentAssignmentStrategy: ComponentAssignmentStrategy.CUSTOMIZED,
           clearAreaStrategy: ClearAreaStrategy.PRESERVE_SHAPES,
           layoutOrientation: PartialLayoutOrientation.TOP_TO_BOTTOM,
-          edgeRouter: new StraightLineEdgeRouter({
-            scope: EdgeRouterScope.ROUTE_AFFECTED_EDGES
-          })
+          edgeRouter: new StraightLineEdgeRouter()
         })
       )
     } else {
-      return new GivenCoordinatesStage(
+      return new GivenCoordinatesLayout(
         new ClearAreaLayout({
-          componentAssignmentStrategy: ComponentAssignmentStrategy.CUSTOMIZED,
           clearAreaStrategy: ClearAreaStrategy.PRESERVE_SHAPES,
           layoutOrientation: PartialLayoutOrientation.TOP_TO_BOTTOM
         })
@@ -468,17 +463,19 @@ export default class RelocateSubtreeLayoutHelper {
    * Creates the {@link LayoutData} used while dragging and finishing the gesture.
    */
   private createClearAreaLayoutData(): LayoutData {
-    return new CompositeLayoutData(
-      this.resetToWorkingGraphStageData,
-      new ClearAreaLayoutData({
-        areaNodes: (node: INode): boolean => this.subtree.nodes.has(node),
-        componentIds: this.components,
-        // force the router to let edges leave the nodes at the center of the south side
-        // and to let enter the nodes in the center of the north side
-        sourcePortCandidates: [PortCandidate.createCandidate(0, 0, PortDirections.SOUTH)],
-        targetPortCandidates: [PortCandidate.createCandidate(0, 0, PortDirections.NORTH)]
-      })
-    )
+    const clearAreaLayoutData = new ClearAreaLayoutData({
+      areaNodes: (node: INode): boolean => this.subtree.nodes.has(node),
+      componentIds: this.components,
+      ports: {
+        // force the router to let edges leave the nodes at the center of the bottom side
+        // and to let enter the nodes in the center of the top side
+        sourcePortCandidates: () =>
+          new EdgePortCandidates().addFixedCandidate(PortSides.BOTTOM, [0, 0]),
+        targetPortCandidates: () =>
+          new EdgePortCandidates().addFixedCandidate(PortSides.TOP, [0, 0])
+      }
+    })
+    return new CompositeLayoutData(this.resetToWorkingGraphStageData, clearAreaLayoutData)
   }
 }
 
@@ -501,6 +498,7 @@ class DraggingLayoutExecutor extends LayoutExecutor {
    */
   constructor(graphComponent: GraphComponent, layout: ILayoutAlgorithm, nodes: Set<INode>) {
     super(graphComponent, layout)
+    this.animateViewport = false
     this.filteredGraph = new FilteredGraphWrapper(
       graphComponent.graph,
       (n) => !nodes.has(n),
@@ -512,7 +510,11 @@ class DraggingLayoutExecutor extends LayoutExecutor {
    * Creates an {@link IAnimation} that morphs all graph elements except the subgraph to
    * the new layout.
    */
-  createMorphAnimation(): IAnimation {
-    return IAnimation.createLayoutAnimation(this.filteredGraph, this.layoutGraph, this.duration)
+  createLayoutAnimation(): IAnimation {
+    return IAnimation.createLayoutAnimation(
+      this.filteredGraph,
+      this.adapter!,
+      this.animationDuration
+    )
   }
 }

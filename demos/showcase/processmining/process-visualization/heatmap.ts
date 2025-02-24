@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,14 +29,13 @@
 import {
   type GraphComponent,
   HtmlCanvasVisual,
-  type ICanvasObject,
-  ICanvasObjectDescriptor,
   IEdge,
   INode,
   type IRenderContext,
+  type IRenderTreeElement,
   IVisualCreator,
   type Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 const heatScale = 0.5
 
@@ -57,11 +56,12 @@ export class HeatmapBackground extends HtmlCanvasVisual {
   /**
    * Renders the heat map on a canvas.
    */
-  paint(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
+  render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
     ctx.save()
     ctx.setTransform(1, 0, 0, 1, 0, 0)
 
     const { width, height } = ctx.canvas
+    const devicePixelRatio = renderContext.canvasComponent.devicePixelRatio
 
     let canvas = this.backBufferCanvas
     let backBufferContext: CanvasRenderingContext2D
@@ -75,23 +75,16 @@ export class HeatmapBackground extends HtmlCanvasVisual {
       this.backBufferContext = backBufferContext
     } else {
       backBufferContext = this.backBufferContext!
-      backBufferContext.clearRect(0, 0, width, height)
+      backBufferContext.clearRect(0, 0, width / devicePixelRatio, height / devicePixelRatio)
     }
 
     const scale = renderContext.zoom * heatScale
 
-    backBufferContext.setTransform(
-      renderContext.canvasComponent!.devicePixelRatio,
-      0,
-      0,
-      renderContext.canvasComponent!.devicePixelRatio,
-      0,
-      0
-    )
+    backBufferContext.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
 
     let lastFillStyleHeat = -1
     for (const node of (renderContext.canvasComponent as GraphComponent)!.graph.nodes) {
-      const center = renderContext.toViewCoordinates(node.layout.center)
+      const center = renderContext.worldToViewCoordinates(node.layout.center)
       const heat = this.getHeat(node)
       if (heat > 0) {
         if (heat !== lastFillStyleHeat) {
@@ -121,10 +114,10 @@ export class HeatmapBackground extends HtmlCanvasVisual {
         backBufferContext.beginPath()
         const cursor = path.createCursor()
         if (cursor.moveNext()) {
-          const point = renderContext.toViewCoordinates(cursor.currentEndPoint)
+          const point = renderContext.worldToViewCoordinates(cursor.currentEndPoint)
           backBufferContext.moveTo(point.x, point.y)
           while (cursor.moveNext()) {
-            const point = renderContext.toViewCoordinates(cursor.currentEndPoint)
+            const point = renderContext.worldToViewCoordinates(cursor.currentEndPoint)
             backBufferContext.lineTo(point.x, point.y)
           }
           backBufferContext.stroke()
@@ -149,7 +142,7 @@ let installedDivElement: HTMLDivElement | null = null
 export function addHeatmap(
   graphComponent: GraphComponent,
   getHeat: (t: INode | IEdge) => number
-): ICanvasObject {
+): IRenderTreeElement {
   if (!installedDivElement || !document.body.contains(installedDivElement)) {
     installedDivElement = document.createElement('div')
     installedDivElement.setAttribute(
@@ -183,7 +176,8 @@ export function addHeatmap(
 `
     document.body.appendChild(installedDivElement)
   }
-  return graphComponent.backgroundGroup.addChild(
+  return graphComponent.renderTree.createElement(
+    graphComponent.renderTree.backgroundGroup,
     IVisualCreator.create({
       createVisual(): Visual {
         return new HeatmapBackground(getHeat)
@@ -191,7 +185,6 @@ export function addHeatmap(
       updateVisual(context: IRenderContext, oldVisual: Visual | null): Visual {
         return oldVisual!
       }
-    }),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    })
   )
 }

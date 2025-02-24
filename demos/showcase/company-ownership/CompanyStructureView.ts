@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,8 +32,7 @@ import {
   FreeNodePortLocationModel,
   GraphBuilder,
   GraphComponent,
-  GraphViewerInputMode,
-  type IComparable,
+  type GraphViewerInputMode,
   IEdge,
   type IEnumerable,
   type IGraph,
@@ -42,16 +41,16 @@ import {
   LayoutExecutor,
   SpanningTree,
   ViewportLimitingPolicy
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import {
   type Company,
   type CompanyRelationshipEdge,
+  EdgeTypeEnum,
+  getCompany,
+  getRelationship,
   type GraphData,
   type OwnershipEdge,
-  type RelationshipEdge,
-  EdgeTypeEnum,
-  getRelationship,
-  getCompany
+  type RelationshipEdge
 } from './data-types'
 import { enableBridgeRendering } from './bridge-rendering'
 import { enableTooltips } from './enable-tooltips'
@@ -63,7 +62,7 @@ import {
   nameLabelDefaults
 } from './styles/CompanyOwnershipNodeStyles'
 import { edgeLabelDefaults, getEdgeStyle } from './styles/CompanyOwnershipEdgeStyles'
-import { configureLayoutNormalizationIds, createLayout, createLayoutData } from './configure-layout'
+import { createLayout, createLayoutData } from './configure-layout'
 import TogglePortButtonSupport from './TogglePortButtonSupport'
 import { addSmartClickNavigation } from './configure-click-navigation'
 import { modifyGraph } from './prepare-smooth-animation'
@@ -131,15 +130,14 @@ const setDominantHierarchyEdge = (edge: IEdge, dominant: boolean): void => {
 }
 
 /**
- * Returns the node id needed for the `NormalizeGraphElementOrderStage`.
+ * Returns the node id needed for the sorting the nodes during the layout.
  */
-const getNodeId = (node: INode): IComparable =>
-  ('node-' + getCompany(node).id.toString()) as unknown as IComparable
+const getNodeId = (node: INode): string => 'node-' + getCompany(node).id.toString()
 
 /**
- * Returns the edge id needed for the `NormalizeGraphElementOrderStage`.
+ * Returns the edge id needed for the sorting the edges during the layout.
  */
-const getEdgeId = (edge: IEdge): IComparable => getRelationship(edge).id as unknown as IComparable
+const getEdgeId = (edge: IEdge): string => getRelationship(edge).id.toString()
 
 /**
  * Central class of the application that manages the graph component and the handling of the data.
@@ -160,7 +158,6 @@ export class CompanyStructureView {
 
   private toggleButtonSupport = new TogglePortButtonSupport()
 
-  moveToTop = false
   private readonly completeGraph: IGraph
   useShapeNodeStyle = true
 
@@ -176,7 +173,6 @@ export class CompanyStructureView {
           ? !this.completeGraph.getChildren(node).every((child) => !isVisible(child))
           : isVisible(node)
     )
-    configureLayoutNormalizationIds(graphComponent.graph, getNodeId, getEdgeId)
     this.configureInputMode()
 
     // enable the tooltips
@@ -189,7 +185,7 @@ export class CompanyStructureView {
   private configureInputMode(): void {
     const graphComponent = this.graphComponent
     // create the view input mode
-    const viewerInputMode = new GraphViewerInputMode()
+    const viewerInputMode = graphComponent.inputMode as GraphViewerInputMode
     // enable the highlighting
     enableHoverHighlights(viewerInputMode, graphComponent)
     // create the limiter for the viewport movement
@@ -198,9 +194,10 @@ export class CompanyStructureView {
     this.toggleButtonSupport.initializeInputMode(viewerInputMode)
     // configure the item click listener
     this.enableItemClicking(viewerInputMode, graphComponent)
-    // enable the smart click navigation to bring to focus the clicked edge
-    addSmartClickNavigation(viewerInputMode)
     graphComponent.inputMode = viewerInputMode
+
+    // enable the smart click navigation to bring to focus the clicked edge
+    addSmartClickNavigation(graphComponent)
   }
 
   /**
@@ -212,15 +209,15 @@ export class CompanyStructureView {
     viewerInputMode: GraphViewerInputMode,
     graphComponent: GraphComponent
   ): void {
-    viewerInputMode.addItemClickedListener((_, evt) => {
+    viewerInputMode.addEventListener('item-clicked', (evt) => {
       if (evt.item instanceof INode && !graphComponent.graph.isGroupNode(evt.item)) {
-        this.nodeClickListener && this.nodeClickListener(getCompany(evt.item))
+        this.nodeClickListener?.(getCompany(evt.item))
         evt.handled = true
       } else if (evt.item instanceof IEdge) {
-        this.edgeClickListener && this.edgeClickListener(getRelationship(evt.item))
+        this.edgeClickListener?.(getRelationship(evt.item))
         evt.handled = true
       } else if (evt.item instanceof ILabel && evt.item.owner instanceof IEdge) {
-        this.edgeClickListener && this.edgeClickListener(getRelationship(evt.item.owner))
+        this.edgeClickListener?.(getRelationship(evt.item.owner))
         evt.handled = true
       }
     })
@@ -231,9 +228,7 @@ export class CompanyStructureView {
    * @param graphComponent The given graphComponent
    */
   limitViewportNavigation(graphComponent: GraphComponent): void {
-    const limiter = graphComponent.viewportLimiter
-    limiter.limitingPolicy = ViewportLimitingPolicy.TOWARDS_LIMIT
-    limiter.honorBothDimensions = false
+    graphComponent.viewportLimiter.policy = ViewportLimitingPolicy.TOWARDS_LIMIT
     graphComponent.maximumZoom = 3
   }
 
@@ -289,11 +284,8 @@ export class CompanyStructureView {
   ): void {
     nodes.forEach((n) => {
       if (graph.outDegree(n) > 0) {
-        this.toggleButtonSupport.addPort(
-          graph,
-          n,
-          FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED,
-          (collapsed) => (collapsed ? collapse(n, false) : expand(n, false))
+        this.toggleButtonSupport.addPort(graph, n, FreeNodePortLocationModel.BOTTOM, (collapsed) =>
+          collapsed ? collapse(n, false) : expand(n, false)
         )
       }
     })
@@ -305,7 +297,11 @@ export class CompanyStructureView {
    * @param input True if the incoming edges should be used, false otherwise
    */
   private async expand(node: INode, input: boolean): Promise<void> {
-    input ? collapseInput(node, false) : collapseOutput(node, false)
+    if (input) {
+      collapseInput(node, false)
+    } else {
+      collapseOutput(node, false)
+    }
     await this.adjustVisibility()
   }
 
@@ -315,7 +311,11 @@ export class CompanyStructureView {
    * @param input True if the incoming edges should be used, false otherwise
    */
   private async collapse(node: INode, input: boolean): Promise<void> {
-    input ? collapseInput(node, true) : collapseOutput(node, true)
+    if (input) {
+      collapseInput(node, true)
+    } else {
+      collapseOutput(node, true)
+    }
     await this.adjustVisibility()
   }
 
@@ -370,7 +370,7 @@ export class CompanyStructureView {
       graph.inDegree(node) === 0 ||
       graph
         .inEdgesAt(node)
-        .map((e) => e.sourceNode!)
+        .map((e) => e.sourceNode)
         .some((parent: INode) => !isOutputCollapsed(parent) && this.shouldBeShown(graph, parent))
     )
   }
@@ -422,7 +422,7 @@ export class CompanyStructureView {
     })
 
     // whenever the node changes in the future, we want to update the tag, too
-    nodeSource.nodeCreator.addNodeUpdatedListener((_, evt) => {
+    nodeSource.nodeCreator.addEventListener('node-updated', (evt) => {
       nodeSource.nodeCreator.updateTag(evt.graph, evt.item, evt.dataItem)
       nodeSource.nodeCreator.updateLabels(evt.graph, evt.item, evt.dataItem)
     })
@@ -435,7 +435,7 @@ export class CompanyStructureView {
         preferredSize: () => labelSizeDefaults
       })
 
-      nameLabel.addLabelUpdatedListener((_, evt) => {
+      nameLabel.addEventListener('label-updated', (evt) => {
         nameLabel.updateText(evt.graph, evt.item, evt.dataItem)
       })
     }
@@ -454,10 +454,10 @@ export class CompanyStructureView {
         dataItem.type === EdgeTypeEnum.Hierarchy ? `${dataItem.ownership}` : null,
       defaults: edgeLabelDefaults
     })
-    edgeSource.edgeCreator.addEdgeUpdatedListener((_, evt) => {
+    edgeSource.edgeCreator.addEventListener('edge-updated', (evt) => {
       edgeSource.edgeCreator.updateLabels(evt.graph, evt.item, evt.dataItem)
     })
-    edgeLabel.addLabelUpdatedListener((_, evt) =>
+    edgeLabel.addEventListener('label-updated', (evt) =>
       edgeLabel.updateText(evt.graph, evt.item, evt.dataItem)
     )
 
@@ -483,30 +483,21 @@ export class CompanyStructureView {
     this.layoutRunning = true
 
     const layout = createLayout()
-    const layoutData = createLayoutData(
-      this.graphComponent.graph,
-      isHierarchyEdge,
-      getNodeId,
-      this.moveToTop
-    )
-
-    // make sure we don't have an influence on the layout, first
-    this.graphComponent.viewportLimiter.bounds = null
+    const layoutData = createLayoutData(isHierarchyEdge, getNodeId)
 
     // run the layout
     await new LayoutExecutor({
-      portAdjustmentPolicy: 'lengthen',
-      layoutData: layoutData,
+      layoutData,
       layout,
       graphComponent: this.graphComponent,
       animateViewport: true,
-      duration: animate ? '0.8s' : '0s',
+      animationDuration: animate ? '0.8s' : '0s',
       easedAnimation: true,
-      allowUserInteraction: false
+      allowUserInteraction: false,
+      nodeComparator: (n1, n2) => getNodeId(n2).localeCompare(getNodeId(n1)),
+      edgeComparator: (e1, e2) => getEdgeId(e2).localeCompare(getEdgeId(e1))
     }).start()
 
-    // finally, set the new limits after the morphing
-    this.graphComponent.viewportLimiter.bounds = this.graphComponent.viewport
     this.layoutRunning = false
   }
 
@@ -525,7 +516,7 @@ export class CompanyStructureView {
   /**
    * Updates the graph if something has changed.
    */
-  async morphLayout(): Promise<void> {
+  async applyLayoutAnimated(): Promise<void> {
     modifyGraph(() => {
       this.builder!.updateGraph()
       this.graphHasChanged()
@@ -538,7 +529,7 @@ export class CompanyStructureView {
    * Adds the click listener for the nodes.
    * @param listener The listener to be added
    */
-  addNodeClickedListener(listener: (item: Company) => void): void {
+  setNodeClickedListener(listener: (item: Company) => void): void {
     this.nodeClickListener = delegate.combine(listener, this.nodeClickListener)
   }
 
@@ -546,7 +537,7 @@ export class CompanyStructureView {
    * Adds the click listener for the edges.
    * @param listener The listener to be added
    */
-  addEdgeClickedListener(listener: (item: OwnershipEdge | RelationshipEdge) => void): void {
+  setEdgeClickedListener(listener: (item: OwnershipEdge | RelationshipEdge) => void): void {
     this.edgeClickListener = delegate.combine(listener, this.edgeClickListener)
   }
 }

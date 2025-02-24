@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Clear Rectangle Area Demo
 
-# Clear Rectangle Area Demo
+<img src="../../../doc/demo-thumbnails/clear-rectangle-area.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/layout/clearrectanglearea/).
 
 A demo that shows how to interactively move graph elements around a rectangle in a given graph so that the modifications in the graph are minimal. The rectangle can be freely moved or resized.
 
@@ -38,4 +40,4 @@ You can choose between different strategies for assigning nodes to components wh
 - Select another strategy for clearing the rectangular area.
 - Select another strategy for assigning nodes to components.
 - Change the setting whether orthogonal edges should be considered or not.
-- Hold down the Shift key while dragging to freeze the current graph layout. If you new release the Shift key when the mouse is hovering a group node, the rectangular area within the group node is kept free.
+- Hold down the Shift key while dragging to freeze the current graph layout. If you now release the Shift key when the mouse is hovering a group node, the rectangular area within the group node is kept free.

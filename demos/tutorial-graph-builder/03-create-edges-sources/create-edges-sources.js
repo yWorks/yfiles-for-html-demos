@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,21 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @param {!GraphBuilder} graphBuilder
- * @returns {!EdgesSource.<object>}
- */
 export function createEdgesSourceFromArray(graphBuilder) {
   // add node data including ids
   const nodeData = [{ id: 0 }, { id: 1 }, { id: 2 }]
   graphBuilder.createNodesSource(nodeData, 'id')
-
   // data for some edges that connect to the nodes using their ids
   const edgeData = [
     { id: '0', sourceId: '0', targetId: '1' },
     { id: '1', sourceId: '0', targetId: '2' }
   ]
-
   // create an edges source with id providers for sources and targets
   const edgesSource = graphBuilder.createEdgesSource({
     data: edgeData,
@@ -48,6 +42,5 @@ export function createEdgesSourceFromArray(graphBuilder) {
     sourceId: (item) => item.sourceId,
     targetId: (item) => item.targetId
   })
-
   return edgesSource
 }

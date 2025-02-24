@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,10 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { daysInMonth, ganttDayWidth, GanttTimestamp, getVisualRange } from '../gantt-utils.js'
-
+import { daysInMonth, ganttDayWidth, GanttTimestamp, getVisualRange } from '../gantt-utils'
 const colors = ['#a7a7c1', '#242265']
-
 /**
  * Manages the timeline rendering using the html canvas.
  */
@@ -37,26 +35,17 @@ export class TimelineComponent {
   timelineHeight = 70
   canvas
   renderingContext2D
-  /**
-   * @param {!string} parentElementId
-   * @param {!GraphComponent} graphComponent
-   */
   constructor(parentElementId, graphComponent) {
     const parent = document.getElementById(parentElementId)
-
     this.canvas = document.createElement('canvas')
     this.renderingContext2D = this.canvas.getContext('2d')
     parent.append(this.canvas)
-
     this.update(graphComponent)
-
     // synchronize with x-axis with the graph component
-    graphComponent.addViewportChangedListener((src) => this.update(src))
+    graphComponent.addEventListener('viewport-changed', (_, src) => this.update(src))
   }
-
   /**
    * Repaints the timeline with respect to the graphComponent's viewport position.
-   * @param {!GraphComponent} graphComponent
    */
   update(graphComponent) {
     requestAnimationFrame(() => {
@@ -64,11 +53,8 @@ export class TimelineComponent {
       this.paint(x, width)
     })
   }
-
   /**
    * Paints a timeline of months and days.
-   * @param {number} x
-   * @param {number} width
    */
   paint(x, width) {
     this.renderingContext2D.clearRect(0, 0, this.canvas.width, this.canvas.height)
@@ -76,22 +62,15 @@ export class TimelineComponent {
     this.canvas.width = width * ratio
     this.canvas.height = this.timelineHeight * ratio
     this.renderingContext2D.transform(ratio, 0, 0, ratio, -x * ratio, 0)
-
     const { startDate, startX, endX, oddStartDay, oddStartMonth } = getVisualRange(
       x - 100,
       x + width + 100
     )
-
     this.paintDays(startX, endX, startDate, oddStartDay)
     this.paintMonths(startX, endX, startDate, oddStartMonth)
   }
-
   /**
    * Paints the day cells.
-   * @param {number} startX
-   * @param {number} endX
-   * @param {!GanttTimestamp} startDate
-   * @param {boolean} startIsOdd
    */
   paintDays(startX, endX, startDate, startIsOdd) {
     this.renderingContext2D.strokeStyle = 'white'
@@ -99,7 +78,6 @@ export class TimelineComponent {
     this.renderingContext2D.textAlign = 'center'
     this.renderingContext2D.textBaseline = 'middle'
     this.renderingContext2D.font = '14px sans-serif'
-
     const y = 35
     const height = 30
     const width = ganttDayWidth
@@ -119,13 +97,8 @@ export class TimelineComponent {
       )
     }
   }
-
   /**
    * Paints the month cells.
-   * @param {number} startX
-   * @param {number} endX
-   * @param {!GanttTimestamp} startDate
-   * @param {boolean} startIsOdd
    */
   paintMonths(startX, endX, startDate, startIsOdd) {
     this.renderingContext2D.strokeStyle = 'white'
@@ -133,7 +106,6 @@ export class TimelineComponent {
     this.renderingContext2D.textAlign = 'center'
     this.renderingContext2D.textBaseline = 'middle'
     this.renderingContext2D.font = '14px sans-serif'
-
     const y = 5
     const height = 30
     for (

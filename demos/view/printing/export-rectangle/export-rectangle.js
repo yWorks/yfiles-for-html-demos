@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,83 +27,62 @@
  **
  ***************************************************************************/
 import {
-  Cursor,
   GeneralPath,
   HandleInputMode,
   HandlePositions,
+  HandlesRenderer,
   IHitTestable,
   MoveInputMode,
   MutableRectangle,
   ObservableCollection,
   RectangleHandle,
-  RectangleIndicatorInstaller,
-  RenderModes
-} from 'yfiles'
-import PositionHandler from './PositionHandler.js'
-
-/** @type {ICanvasObject} */
-let canvasObject
-/** @type {HandleInputMode} */
+  RenderMode
+} from '@yfiles/yfiles'
+import PositionHandler from './PositionHandler'
+import { RectangleRenderer } from '../../../utils/RectangleRenderer'
+let renderTreeElement
 let exportHandleInputMode
-
 /**
  * Initializes user interaction.
  * Aside from basic editing, this demo provides a visual marker (the 'export rectangle') that
  * determines the area that will be exported. Users may move and resize the marker with their mouse.
- * @param {!GraphComponent} graphComponent
- * @returns {!MutableRectangle}
  */
 export function initializeExportRectangle(graphComponent) {
   // create the model for the export rectangle, ...
   const exportRect = new MutableRectangle(-20, 0, 300, 160)
   // ... visualize it in the canvas, ...
-  const installer = new RectangleIndicatorInstaller(exportRect)
-  canvasObject = installer.addCanvasObject(
-    graphComponent.createRenderContext(),
-    graphComponent.backgroundGroup,
-    exportRect
+  renderTreeElement = graphComponent.renderTree.createElement(
+    graphComponent.renderTree.highlightGroup,
+    exportRect,
+    new RectangleRenderer()
   )
-
   // add an input mode that allows the user resizing the rectangle
   makeRectResizable(graphComponent.inputMode, exportRect)
-
   // add an input mode that allows the user moving the rectangle
   makeRectMovable(graphComponent.inputMode, exportRect)
-
   // initially disable the rectangle
-  canvasObject.visible = false
+  renderTreeElement.visible = false
   exportHandleInputMode.enabled = false
-
   return exportRect
 }
-
-/**
- * @param {!GraphInputMode} inputMode
- * @param {!MutableRectangle} exportRect
- */
 function makeRectResizable(inputMode, exportRect) {
   // create a mode that deals with resizing the export rectangle and ...
   exportHandleInputMode = new HandleInputMode({
     // ensure that this mode takes precedence over most other modes,
     // i.e. resizing the export rectangle takes precedence over another interactive editing
     priority: 1,
-    renderMode: RenderModes.SVG,
+    handlesRenderer: new HandlesRenderer(RenderMode.SVG),
     // specify handles for resizing the export rectangle
     handles: new ObservableCollection([
-      new RectangleHandle(HandlePositions.NORTH_EAST, exportRect),
-      new RectangleHandle(HandlePositions.NORTH_WEST, exportRect),
-      new RectangleHandle(HandlePositions.SOUTH_EAST, exportRect),
-      new RectangleHandle(HandlePositions.SOUTH_WEST, exportRect)
+      new RectangleHandle(HandlePositions.TOP_RIGHT, exportRect),
+      new RectangleHandle(HandlePositions.TOP_LEFT, exportRect),
+      new RectangleHandle(HandlePositions.BOTTOM_RIGHT, exportRect),
+      new RectangleHandle(HandlePositions.BOTTOM_LEFT, exportRect)
     ])
   })
   // ... add it to the demo's main input mode
   inputMode.add(exportHandleInputMode)
 }
-
-/**
- * @param {!GraphInputMode} inputMode
- * @param {!MutableRectangle} exportRect
- */
 function makeRectMovable(inputMode, exportRect) {
   // create a mode that deals with moving the export rectangle and ...
   const moveInputMode = new MoveInputMode({
@@ -120,16 +99,14 @@ function makeRectMovable(inputMode, exportRect) {
     // elements
     priority: 41
   })
-
   // ... add it to the demo's main input mode
   inputMode.add(moveInputMode)
 }
-
 /**
  * Toggles the visibility of the export rectangle.
  */
 export function toggleExportRectangle() {
-  const visible = !canvasObject.visible
-  canvasObject.visible = visible
+  const visible = !renderTreeElement.visible
+  renderTreeElement.visible = visible
   exportHandleInputMode.enabled = visible
 }

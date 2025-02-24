@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,127 +27,94 @@
  **
  ***************************************************************************/
 import {
-  Class,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphOverviewComponent,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   LayoutExecutor,
   License,
   Point,
   Size
-} from 'yfiles'
-
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-
 /**
  * Application Features - Add an overview component to the application
- * @type {GraphComponent}
  */
-
 // The graph component
 let graphComponent
-
 /**
  * Bootstraps the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   // initialize the GraphComponent
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   /////////////////////// overview component ///////////////////////
-
   // initialize the GraphOverviewComponent
   const overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
-
   // This code toggles the visibility of the overview.
   // Developers who want to keep the overview component always visible don't need this
-  const overviewContainer = overviewComponent.div.parentElement
+  const overviewContainer = overviewComponent.htmlElement.parentElement
   const overviewHeader = overviewContainer.querySelector('.demo-overlay__header')
   overviewHeader.addEventListener('click', () => {
     overviewContainer.classList.toggle('collapsed')
   })
-
   //////////////////////////////////////////////////////////////////
-
   // configure user interaction
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
-
+  graphComponent.inputMode = new GraphEditorInputMode()
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
-
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
-
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
-  graphComponent.fitGraphBounds()
-
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
   // add some nodes outside the visible area
   // to demonstrate the overview's viewport indicator
   graphComponent.graph.createNodeAt(new Point(-1000, -1000))
   graphComponent.graph.createNodeAt(new Point(1000, -1000))
   graphComponent.graph.createNodeAt(new Point(-1000, 1000))
   graphComponent.graph.createNodeAt(new Point(1000, 1000))
-  graphComponent.updateContentRect()
-
+  graphComponent.updateContentBounds()
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
-
 /**
  * Creates nodes and edges according to the given data.
- * @param {!IGraph} graph
- * @param {!JSONGraph} graphData
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-
   graphBuilder.createNodesSource({
     data: graphData.nodeList.filter((item) => !item.isGroup),
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
-
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
-
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
-
   graphBuilder.buildGraph()
 }
-
 /**
  * Initializes the defaults for the styles in this demo.
- * @param {!IGraph} graph The graph.
+ * @param graph The graph.
  */
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
-
   graph.nodeDefaults.size = new Size(40, 40)
 }
-
 run().then(finishLoading)

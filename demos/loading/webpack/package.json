@@ -1,5 +1,5 @@
 {
-  "name": "webpack-demo-for-yfiles-for-html",
+  "name": "@yfiles/webpack-demo-for-yfiles-for-html",
   "version": "1.0.0",
   "description": "Shows how to use webpack with yFiles for HTML",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
@@ -7,9 +7,9 @@
   "private": true,
   "main": "webpack-demo.js",
   "dependencies": {
-    "demo-resources": "../../resources",
-    "utils": "../../utils",
-    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz"
+    "@yfiles/demo-resources": "../../resources",
+    "@yfiles/demo-utils": "../../utils",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
   },
   "scripts": {
     "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json', './src/license.json')\" || echo To run this demo, please add a license.json to the src folder.",
@@ -19,16 +19,16 @@
   },
   "devDependencies": {
     "@yworks/optimizer": "^1.8.2",
-    "css-loader": "6.8.1",
-    "html-webpack-plugin": "5.5.3",
-    "mini-css-extract-plugin": "2.7.6",
-    "style-loader": "3.3.3",
-    "terser-webpack-plugin": "5.3.9",
-    "ts-loader": "^9.5.1",
-    "typescript": "~5.3.2",
-    "webpack": "5.89.0",
-    "webpack-cli": "5.1.4",
-    "webpack-dev-server": "4.15.1",
-    "webpack-merge": "5.10.0"
+    "css-loader": "7.1.2",
+    "html-webpack-plugin": "5.6.3",
+    "mini-css-extract-plugin": "2.9.2",
+    "style-loader": "4.0.0",
+    "terser-webpack-plugin": "5.3.11",
+    "ts-loader": "^9.5.2",
+    "typescript": "~5.7.3",
+    "webpack": "5.97.1",
+    "webpack-cli": "6.0.1",
+    "webpack-dev-server": "5.2.0",
+    "webpack-merge": "6.0.1"
   }
 }

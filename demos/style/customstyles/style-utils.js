@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FoldingEdgeStateId } from 'yfiles'
-
+import { FoldingEdgeStateId } from '@yfiles/yfiles'
 /**
  * Applies the given graph's default styles to the graph's items.
- * @param {!IGraph} graph
  */
 export function applyDefaultStyles(graph) {
   const foldingView = graph.foldingView
@@ -40,19 +38,15 @@ export function applyDefaultStyles(graph) {
     applyDefaultStylesImpl(graph)
   }
 }
-
 /**
  * Applies the default styles of the manager's master graph to the master graph's items as well as
  * to all the manager's folding states.
- * @param {!FoldingManager} foldingManager
  */
 function applyDefaultStylesAndUpdateFoldingStates(foldingManager) {
   const graph = foldingManager.masterGraph
   applyDefaultStylesImpl(graph)
-
   const groupLabelDefaults = graph.groupNodeDefaults.labels
   const groupPortDefaults = graph.groupNodeDefaults.ports
-
   for (const node of graph.nodes) {
     if (graph.isGroupNode(node) && foldingManager.hasFolderNodeState(node)) {
       const state = foldingManager.getFolderNodeState(node)
@@ -65,9 +59,7 @@ function applyDefaultStylesAndUpdateFoldingStates(foldingManager) {
       }
     }
   }
-
   const edgeLabelDefaults = graph.edgeDefaults.labels
-
   for (const edge of graph.edges) {
     const source = edge.sourceNode
     const target = edge.targetNode
@@ -81,7 +73,6 @@ function applyDefaultStylesAndUpdateFoldingStates(foldingManager) {
             tmpTarget,
             tmpTarget !== target
           )
-
           if (foldingManager.hasFoldingEdgeState(stateId)) {
             const state = foldingManager.getFoldingEdgeState(stateId)
             state.style = edge.style
@@ -96,10 +87,8 @@ function applyDefaultStylesAndUpdateFoldingStates(foldingManager) {
     }
   }
 }
-
 /**
  * Applies the given graph's default styles to the graph's items.
- * @param {!IGraph} graph
  */
 function applyDefaultStylesImpl(graph) {
   for (const item of graph.nodes) {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,25 +28,23 @@
  ***************************************************************************/
 import {
   BaseClass,
+  WebGLVisual,
   type CanvasComponent,
   Color,
   type GeneralPath,
   IArrow,
   IBoundsProvider,
-  type ICanvasContext,
-  type ICanvasObject,
-  ICanvasObjectDescriptor,
   type IEdge,
   IHitTestable,
+  IObjectRenderer,
   type IRenderContext,
   IVisibilityTestable,
   IVisualCreator,
   PathType,
   PolylineEdgeStyle,
   SimpleEdge,
-  type Visual,
-  WebGLVisual
-} from 'yfiles'
+  type Visual
+} from '@yfiles/yfiles'
 import { type WebGLBufferData, WebGLProgramInfo } from './webgl-utils'
 
 type ProcessItemWebGLProgram = WebGLProgram & { info: ProcessItemProgramInfo | undefined }
@@ -64,14 +62,21 @@ type ItemEntry = {
 
 let processItemVisual: ProcessItemVisual
 
-const dummyEdgeStyle = new PolylineEdgeStyle({ sourceArrow: IArrow.NONE, targetArrow: IArrow.NONE })
+const dummyEdgeStyle = new PolylineEdgeStyle({
+  sourceArrow: IArrow.NONE,
+  targetArrow: IArrow.NONE
+})
 
 /**
  * Installs a process item visual in the given canvas component.
  */
 export function installProcessItemVisual(canvas: CanvasComponent): void {
   processItemVisual = new ProcessItemVisual()
-  canvas.highlightGroup.addChild(processItemVisual, new ProcessItemCanvasObjectDescriptor())
+  canvas.renderTree.createElement(
+    canvas.renderTree.highlightGroup,
+    processItemVisual,
+    new ProcessItemRenderer()
+  )
 }
 
 /**
@@ -107,14 +112,14 @@ export function addItem(
 }
 
 function getGeneralPath(path: IEdge): GeneralPath {
-  const dummyEdge = new SimpleEdge({
+  const previewEdge = new SimpleEdge({
     sourcePort: path.sourcePort,
     targetPort: path.targetPort,
     style: dummyEdgeStyle,
     bends: path.bends
   })
 
-  return dummyEdge.style.renderer.getPathGeometry(dummyEdge, dummyEdge.style).getPath()!
+  return previewEdge.style.renderer.getPathGeometry(previewEdge, previewEdge.style).getPath()!
 }
 
 class ProcessItemProgramInfo extends WebGLProgramInfo {
@@ -396,17 +401,6 @@ export class ProcessItemVisual extends WebGLVisual {
     }
   }
 
-  expungeOldEntries(): void {
-    const currentTime = this.time
-    const entries = this.entries
-    for (let i = 0; i < entries.length; i++) {
-      if (entries[i].endTime < currentTime) {
-        entries.splice(i, 1)
-        i--
-      }
-    }
-  }
-
   /**
    * Paints onto the context using WebGL item styles.
    */
@@ -467,34 +461,30 @@ export class ProcessItemVisual extends WebGLVisual {
   }
 }
 
-class ProcessItemCanvasObjectDescriptor extends BaseClass(ICanvasObjectDescriptor, IVisualCreator) {
+class ProcessItemRenderer extends BaseClass(IObjectRenderer, IVisualCreator) {
   private processItemVisual: ProcessItemVisual | null = null
-  getBoundsProvider(forUserObject: unknown): IBoundsProvider {
+  getBoundsProvider(_: unknown): IBoundsProvider {
     return IBoundsProvider.UNBOUNDED
   }
 
-  getHitTestable(forUserObject: unknown): IHitTestable {
+  getHitTestable(_: unknown): IHitTestable {
     return IHitTestable.NEVER
   }
 
-  getVisibilityTestable(forUserObject: unknown): IVisibilityTestable {
+  getVisibilityTestable(_: unknown): IVisibilityTestable {
     return IVisibilityTestable.ALWAYS
   }
 
-  getVisualCreator(forUserObject: unknown): IVisualCreator {
-    this.processItemVisual = forUserObject as ProcessItemVisual
+  getVisualCreator(renderTag: unknown): IVisualCreator {
+    this.processItemVisual = renderTag as ProcessItemVisual
     return this
   }
 
-  isDirty(context: ICanvasContext, canvasObject: ICanvasObject): boolean {
-    return canvasObject.dirty || (canvasObject.userObject as ProcessItemVisual).needsRepaint
-  }
-
-  createVisual(context: IRenderContext): Visual | null {
+  createVisual(_: IRenderContext): Visual | null {
     return this.processItemVisual
   }
 
-  updateVisual(context: IRenderContext, oldVisual: Visual | null): Visual | null {
+  updateVisual(_: IRenderContext, __: Visual | null): Visual | null {
     return this.processItemVisual
   }
 }

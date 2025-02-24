@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, type IGraph } from 'yfiles'
+import {
+  GraphComponent,
+  GraphEditorInputMode,
+  type IGraph
+} from '@yfiles/yfiles'
 
 /**
  * Enables undo functionality.
@@ -78,11 +82,11 @@ function enableClipboard(graphComponent: GraphComponent): void {
   graphEditorInputMode.allowClipboardOperations = true // this is the default, already
 
   // programmatically copy the selected graph items
-  if (graphComponent.selection.selectedNodes.size > 0) {
+  if (graphComponent.selection.nodes.size > 0) {
     graphEditorInputMode.copy()
   }
   // programmatically paste and clear the clipboard content
-  if (!graphComponent.clipboard.empty) {
+  if (!graphComponent.clipboard.isEmpty) {
     graphEditorInputMode.paste()
     graphComponent.clipboard.clear()
   }

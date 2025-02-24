@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,9 +34,8 @@ import {
   IInputModeContext,
   INode,
   List
-} from 'yfiles'
-import HeightHandle from './HeightHandle.js'
-
+} from '@yfiles/yfiles'
+import HeightHandle from './HeightHandle'
 /**
  * An {@link IHandleProvider} implementation that
  * adds a {@link HeightHandle} to a node's available handles.
@@ -45,23 +44,12 @@ export default class HeightHandleProvider extends BaseClass(IHandleProvider) {
   node
   delegateHandler
   minimumHeight
-
-  /**
-   * @param {!INode} node
-   * @param {!IHandleProvider} delegateHandler
-   * @param {number} minimumHeight
-   */
   constructor(node, delegateHandler, minimumHeight) {
     super()
     this.node = node
     this.delegateHandler = delegateHandler
     this.minimumHeight = minimumHeight
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @returns {!IEnumerable.<IHandle>}
-   */
   getHandles(context) {
     const result = new List()
     if (this.delegateHandler) {

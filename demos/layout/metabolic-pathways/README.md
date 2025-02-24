@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Metabolic Pathways Demo
 
-# Metabolic Pathways Demo
+<img src="../../../doc/demo-thumbnails/metabolic-pathways.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/layout/metabolic-pathways/).
 
 This demo shows how to configure the [organic layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) for visualizing metabolic pathways.
 

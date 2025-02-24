@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,22 +27,24 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  ICommand,
+  ILabel,
+  ILabelOwner,
+  type IModelItem,
   KeyEventArgs,
+  LabelStyle,
   License,
   Point,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import CustomEditLabelHelper from './CustomEditLabelHelper'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * The default pattern for label validation.
@@ -76,8 +78,6 @@ let graphEditorInputMode: GraphEditorInputMode
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initDemoStyles(graphComponent.graph)
   graphComponent.graph.nodeDefaults.size = new Size(100, 100)
 
@@ -99,7 +99,7 @@ function initializeInputModes(): void {
   registerCustomEditLabelHelper()
 
   // Register custom event handler for the instant typing feature
-  graphComponent.addKeyPressListener(handleInstantTyping)
+  graphComponent.addEventListener('key-down', handleInstantTyping)
 }
 
 /**
@@ -113,13 +113,23 @@ function createEditorMode(): GraphEditorInputMode {
 
   // Configure label text validation
   // Note that by default, no visual feedback is provided, the text is just not changed
-  graphEditorInputMode.addValidateLabelTextListener((_, evt) => {
+  graphEditorInputMode.editLabelInputMode.addEventListener('validate-label-text', (evt) => {
     // label must match the pattern
     evt.validatedText = validateText(evt.newText)
     // validatedText also accepts asynchronous calls e.g.:
-    //args.validatedText = validateTextAsync(args.newText)
+    //evt.validatedText = validateTextAsync(evt.newText)
   })
 
+  // register a key listener on the text editor that validates the text and applies a CSS class
+  const textEditorInputMode = graphEditorInputMode.editLabelInputMode.textEditorInputMode
+  const editorContainer = textEditorInputMode.editorContainer
+  editorContainer.addEventListener('keyup', () => {
+    if (validationEnabled && !validationPattern.test(textEditorInputMode.editorText)) {
+      editorContainer.classList.add('invalid')
+    } else {
+      editorContainer.classList.remove('invalid')
+    }
+  })
   return graphEditorInputMode
 }
 
@@ -155,7 +165,7 @@ async function fakeDatabaseAccess(time: number): Promise<void> {
  * Registers custom label helpers for nodes and node labels
  */
 function registerCustomEditLabelHelper(): void {
-  const firstLabelStyle = new DefaultLabelStyle({
+  const firstLabelStyle = new LabelStyle({
     textFill: 'firebrick'
   })
 
@@ -163,34 +173,59 @@ function registerCustomEditLabelHelper(): void {
   // We can use more or less the same implementation for both items, so we just change the item to which the helper
   // is bound The decorator on nodes is called when a label should be added or the label does not provide its own
   // label helper
-  graphComponent.graph.decorator.nodeDecorator.editLabelHelperDecorator.setFactory(
+  graphComponent.graph.decorator.nodes.editLabelHelper.addFactory(
     () => customHelperEnabled,
-    (node) => new CustomEditLabelHelper(node, null, ExteriorLabelModel.NORTH, firstLabelStyle)
+    (node) => new CustomEditLabelHelper(node, null, ExteriorNodeLabelModel.TOP, firstLabelStyle)
   )
   // The decorator on labels is called when a label is edited
-  graphComponent.graph.decorator.labelDecorator.editLabelHelperDecorator.setFactory(
+  graphComponent.graph.decorator.labels.editLabelHelper.addFactory(
     () => customHelperEnabled,
-    (label) => new CustomEditLabelHelper(null, label, ExteriorLabelModel.NORTH, firstLabelStyle)
+    (label) => new CustomEditLabelHelper(null, label, ExteriorNodeLabelModel.TOP, firstLabelStyle)
   )
+}
+
+function getEditableItem(): IModelItem | null {
+  const currentItem = graphComponent.currentItem
+  if (currentItem && graphComponent.selection.includes(currentItem)) {
+    return currentItem
+  }
+  return graphComponent.selection.at(0) ?? null
+}
+
+function isTextEditing() {
+  const inputMode = graphComponent.inputMode as GraphEditorInputMode
+  return inputMode.editLabelInputMode.textEditorInputMode.editing
 }
 
 /**
  * Event handler that implements "instant typing"
  */
-function handleInstantTyping(sender: object, args: KeyEventArgs): void {
-  // if nothing is selected, we try using the "current item" of the GraphComponent, instead
-  const parameter = graphComponent.selection.size === 0 ? graphComponent.currentItem : null
-
-  if (!instantTypingEnabled || !ICommand.EDIT_LABEL.canExecute(parameter, graphComponent)) {
+function handleInstantTyping(args: KeyEventArgs): void {
+  // Start editing only for printable characters.
+  if (!instantTypingEnabled || args.key?.length !== 1 || isTextEditing()) {
     return
   }
 
-  // Raise the edit command...
-  ICommand.EDIT_LABEL.execute(parameter, graphComponent)
-  // ... and populate the text box with the pressed key.
-  graphEditorInputMode.textEditorInputMode.editorText = String.fromCharCode(args.charCode)
-  // Also prevent the TextEditorInputMode from handling this event, as we already handled it.
+  // Prevent the TextEditorInputMode from handling this event, as we already handled it.
   args.preventDefault()
+
+  const item = getEditableItem()
+  const editLabelInputMode = graphEditorInputMode.editLabelInputMode
+
+  // Trigger the label editor.
+  if (item instanceof ILabelOwner) {
+    if (item.labels.size > 0) {
+      void editLabelInputMode.startLabelEditing(item.labels.at(0)!)
+    } else {
+      void editLabelInputMode.startLabelAddition(item)
+    }
+  } else if (item instanceof ILabel) {
+    void editLabelInputMode.startLabelEditing(item)
+  }
+
+  // Set the text of the input box after the editor is triggered but without awaiting its promise.
+  // This ensures that the pressed character, which started the instant label editing, is its input.
+  editLabelInputMode.textEditorInputMode.editorText = args.key
 }
 
 /**
@@ -198,27 +233,27 @@ function handleInstantTyping(sender: object, args: KeyEventArgs): void {
  */
 function initializeUI(): void {
   const labelCreation = document.querySelector<HTMLInputElement>('#labelCreation')!
-  labelCreation.addEventListener('change', (evt) => {
+  labelCreation.addEventListener('change', () => {
     graphEditorInputMode.allowAddLabel = labelCreation.checked
   })
   const labelEditing = document.querySelector<HTMLInputElement>('#labelEditing')!
-  labelEditing.addEventListener('change', (evt) => {
+  labelEditing.addEventListener('change', () => {
     graphEditorInputMode.allowEditLabel = labelEditing.checked
   })
   const hideLabel = document.querySelector<HTMLInputElement>('#hideLabel')!
-  hideLabel.addEventListener('change', (evt) => {
-    graphEditorInputMode.hideLabelDuringEditing = hideLabel.checked
+  hideLabel.addEventListener('change', () => {
+    graphEditorInputMode.editLabelInputMode.hideLabelDuringEditing = hideLabel.checked
   })
   const instantTyping = document.querySelector<HTMLInputElement>('#instantTyping')!
-  instantTyping.addEventListener('change', (evt) => (instantTypingEnabled = instantTyping.checked))
+  instantTyping.addEventListener('change', () => (instantTypingEnabled = instantTyping.checked))
   const customLabelHelper = document.querySelector<HTMLInputElement>('#customLabelHelper')!
   customLabelHelper.addEventListener(
     'change',
-    (evt) => (customHelperEnabled = customLabelHelper.checked)
+    () => (customHelperEnabled = customLabelHelper.checked)
   )
 
   const nodesEnabled = document.querySelector<HTMLInputElement>('#nodesEnabled')!
-  nodesEnabled.addEventListener('change', (evt) => {
+  nodesEnabled.addEventListener('change', () => {
     if (nodesEnabled.checked) {
       graphEditorInputMode.labelEditableItems =
         graphEditorInputMode.labelEditableItems | GraphItemTypes.NODE | GraphItemTypes.NODE_LABEL
@@ -228,7 +263,7 @@ function initializeUI(): void {
     }
   })
   const edgesEnabled = document.querySelector<HTMLInputElement>('#edgesEnabled')!
-  edgesEnabled.addEventListener('change', (evt) => {
+  edgesEnabled.addEventListener('change', () => {
     if (edgesEnabled.checked) {
       graphEditorInputMode.labelEditableItems =
         graphEditorInputMode.labelEditableItems | GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL
@@ -240,12 +275,12 @@ function initializeUI(): void {
 
   const validationEnabledElement = document.querySelector<HTMLInputElement>('#validationEnabled')!
   const validationPatternElement = document.querySelector<HTMLInputElement>('#validationPattern')!
-  validationEnabledElement.addEventListener('change', (evt) => {
+  validationEnabledElement.addEventListener('change', () => {
     const checked = validationEnabledElement.checked
     validationEnabled = checked
     validationPatternElement.disabled = !checked
   })
-  validationPatternElement.addEventListener('input', (e) => {
+  validationPatternElement.addEventListener('input', () => {
     try {
       validationPattern = new RegExp(validationPatternElement.value)
     } catch (ex) {

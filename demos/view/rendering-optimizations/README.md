@@ -1,21 +1,23 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Rendering Optimizations Demo
 
-# Rendering Optimizations Demo
+<img src="../../../doc/demo-thumbnails/rendering-optimizations.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/view/rendering-optimizations/).
 
 This demo illustrates ways to improve the **rendering performance for large graphs** in [yFiles for HTML](https://www.yworks.com/products/yfileshtml/). yFiles' default settings are adequate for graphs up to a few hundred elements. Scaling to several thousand elements is possible with a bit of tweaking, though, as shown in this demo.
 
-yFiles comes with a dedicated [WebGL2-based rendering pipeline](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) that is especially suited for large graphs. This is the easiest way to get good performance for large data sets, but comes with a few drawbacks. This pipeline is enabled with the **WebGL2 rendering** option in the GraphModelManager Optimizations section.
+yFiles comes with a dedicated [WebGL-based rendering pipeline](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) that is especially suited for large graphs. This is the easiest way to get good performance for large data sets, but comes with a few drawbacks. This pipeline is enabled with the **WebGL rendering** option in the GraphModelManager Optimizations section.
 
 The other options of this section show approaches to performance tweaking based on the normal yFiles rendering pipeline. All of them are realized in the source code of this demo, and serve as a viable starting point for handling large graphs in your project. However, it might be necessary to apply more use-case specific tweaks. The impact of each option depends on the graph, its layout, and how users interact with it.
 
@@ -35,7 +37,7 @@ Choose different sizes of graphs with or without labels. The graphs are served b
 
   The [GraphModelManager](https://docs.yworks.com/yfileshtml/#/api/GraphModelManager) (GMM) manages the visual appearance of the graph. A GMM tailored to your use case can have a massive impact on the performance of your application, especially for input gestures like panning, zooming, etc.
 
-  This demo showcases two different GraphModelManager implementations. The demo's [WebGL2GraphModelManager](https://docs.yworks.com/yfileshtml/#/api/WebGL2GraphModelManager)\-based GMM uses yFiles' WebGL2-based rendering pipeline for the utmost performance gain.
+  This demo showcases two different GraphModelManager implementations. The demo's [WebGLGraphModelManager](https://docs.yworks.com/yfileshtml/#/api/WebGLGraphModelManager)\-based GMM uses yFiles' WebGL-based rendering pipeline for the utmost performance gain.
 
   On the other hand, `FastGraphModelManager` (FGMM) shows how to improve performance for yFiles' normal rendering pipeline. This implementation is designed to be plugged right into your application and to work without much additional effort.  
   FGMM switches between different rendering styles at different zoom intervals:

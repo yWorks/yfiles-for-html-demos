@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,58 +33,32 @@ import {
   IReparentNodeHandler,
   ITable,
   NodeDropInputMode
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * Custom {@link NodeDropInputMode} that disallows to reparent a table node.
  */
 export default class MyReparentHandler extends BaseClass(IReparentNodeHandler) {
+  coreHandler
   /**
    * Creates a new instance of MyReparentHandler.
-   * @param {!IReparentNodeHandler} coreHandler
    */
   constructor(coreHandler) {
     super()
     this.coreHandler = coreHandler
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!INode} node
-   * @returns {boolean}
-   */
   isReparentGesture(context, node) {
     return this.coreHandler.isReparentGesture(context, node)
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!INode} node
-   * @returns {boolean}
-   */
   shouldReparent(context, node) {
     // Ok, this node has a table associated - disallow dragging into a group node.
-    if (node.lookup(ITable.$class) !== null) {
+    if (ITable.getTable(node)) {
       return false
     }
     return this.coreHandler.shouldReparent(context, node)
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!INode} node
-   * @param {!INode} newParent
-   * @returns {boolean}
-   */
   isValidParent(context, node, newParent) {
     return this.coreHandler.isValidParent(context, node, newParent)
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!INode} node
-   * @param {!INode} newParent
-   */
   reparent(context, node, newParent) {
     this.coreHandler.reparent(context, node, newParent)
   }

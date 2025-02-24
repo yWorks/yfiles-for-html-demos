@@ -2,11 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,12 +31,11 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Basic Tree Layout - Layout Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -91,14 +89,14 @@
             to left-to-right to get a horizontal tree layout.
           </li>
           <li>
-            A <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultNodePlacer" target="_blank">DefaultNodePlacer</a> is specified as placer for the tree nodes, its
+            A <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultSubtreePlacer" target="_blank">DefaultSubtreePlacer</a> is specified as placer for the tree nodes, its
             distance settings are configured to get a rather wide spacing between elements.
           </li>
           <li>
-            The <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultPortAssignment" target="_blank">port assignment</a> is configured
-            such that the edges are distributed at the node border and the segments are forced to
-            keep some distance in this example (via
-            <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultNodePlacer#minimumChannelSegmentDistance" target="_blank">minimumChannelSegmentDistance</a>). By default, the tree layout groups the edge segments and places the ports in the
+            The <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultPortAssignmer" target="_blank">port assignment</a> is configured such
+            that the edges are distributed at the node border and the segments are forced to keep
+            some distance in this example (via
+            <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultSubtreePlacer#minimumChannelSegmentDistance" target="_blank">minimumChannelSegmentDistance</a>). By default, the tree layout groups the edge segments and places the ports in the
             node center.
           </li>
           <li>
@@ -123,7 +121,7 @@
         <ul>
           <li>
             The <a href="../../layout/tree/" target="_blank">Tree Layout Demo</a> shows complex configurations of
-            <a href="https://docs.yworks.com/yfileshtml/#/api/NodePlacer" target="_blank">NodePlacer</a> instances to further customize the node placement.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/ISubtreePlacer" target="_blank">ISubtreePlacer</a> instances to further customize the node placement.
           </li>
           <li>
             More features of the tree layout and supported use cases are shown in the

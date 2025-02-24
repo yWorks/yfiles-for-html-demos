@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,39 +27,29 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  GraphMLSupport,
+  GraphMLIOHandler,
   GroupNodeLabelModel,
   GroupNodeStyle,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
-  ImageNodeStyle,
+  LabelStyle,
   LayoutExecutor,
   License,
-  Size,
-  StorageLocation,
-  StringTemplateNodeStyle,
-  TableNodeStyle
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
-
-// We need to load the 'styles-other', 'styles-template', and 'view-table' modules explicitly to prevent tree-shaking
-// tools from removing implicit dependencies which are needed for loading all library styles.
-Class.ensure(ImageNodeStyle)
-Class.ensure(StringTemplateNodeStyle)
-Class.ensure(TableNodeStyle)
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent: GraphComponent
 
@@ -71,10 +61,7 @@ async function run(): Promise<void> {
 
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode()
 
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
@@ -83,11 +70,9 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
@@ -128,15 +113,14 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
  * Enables loading and saving the graph to GraphML.
  */
 function enableGraphML(): void {
-  // Create a new GraphMLSupport instance that handles save and load operations.
-  // This is a convenience layer around the core GraphMLIOHandler class
-  // that does all the heavy lifting. It adds support for commands at the GraphComponent level
-  // and file/loading and saving capabilities.
-  // eslint-disable-next-line no-new
-  new GraphMLSupport({
-    graphComponent,
-    // configure loading from and saving to the file system
-    storageLocation: StorageLocation.FILE_SYSTEM
+  const graphMLIOHandler = new GraphMLIOHandler()
+  document
+    .querySelector<HTMLInputElement>('#open-file-button')!
+    .addEventListener('click', async () => {
+      await openGraphML(graphComponent, graphMLIOHandler)
+    })
+  document.querySelector<HTMLInputElement>('#save-button')!.addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'InputOutputDemo.graphml', graphMLIOHandler)
   })
 }
 
@@ -157,7 +141,7 @@ function initializeGraph(graph: IGraph): void {
     stroke: '2px solid #9dc6d0',
     cornerRadius: 10
   })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'left',
     textFill: '#042d37'
   })
@@ -166,9 +150,9 @@ function initializeGraph(graph: IGraph): void {
 
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true

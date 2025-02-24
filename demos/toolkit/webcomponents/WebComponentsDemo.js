@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,52 +26,37 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphEditorInputMode, IGraph, IInputMode, License, Rect, ShapeNodeStyle } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-
-import './GraphComponentElement.js'
-import { createDemoEdgeStyle } from 'demo-resources/demo-styles'
-
+import {
+  GraphEditorInputMode,
+  IGraph,
+  IInputMode,
+  License,
+  Rect,
+  ShapeNodeStyle
+} from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import './GraphComponentElement'
+import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
 // wait for the custom graph-component element to be defined
 window.customElements.whenDefined('graph-component').then(run)
-
-/**
- * @typedef {*} GraphComponentElementType
- */
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
-
   // create a custom graph component element
   const graphComponent = document.createElement('graph-component')
   graphComponent.setAttribute('id', 'graphComponent')
-
   document.querySelector('.demo-page__main').appendChild(graphComponent)
-
   graphComponent.editMode = new GraphEditorInputMode()
-
   // initialize graph
   initializeGraph(graphComponent.graph)
-
   initializeUI(graphComponent)
-
   // center graph
   graphComponent.fitGraphBounds()
-
   defineShadowDomHelper()
 }
-
-/**
- * @param {!IGraph} graph
- */
 function initializeGraph(graph) {
   // initialize default styles
   graph.nodeDefaults.style = new ShapeNodeStyle({ fill: 'orange' })
   graph.edgeDefaults.style = createDemoEdgeStyle()
-
   // create a small sample graph
   const node1 = graph.createNode(new Rect(50, 50, 30, 30))
   const node2 = graph.createNode(new Rect(0, 150, 30, 30))
@@ -79,10 +64,8 @@ function initializeGraph(graph) {
   graph.createEdge(node1, node2)
   graph.createEdge(node1, node3)
 }
-
 /**
  * Binds actions to demo's UI controls.
- * @param {!GraphComponentElementType} graphComponent
  */
 function initializeUI(graphComponent) {
   addClickListener("button[data-command='INCREASE_ZOOM']", () => {
@@ -109,17 +92,13 @@ function initializeUI(graphComponent) {
     graphComponent.toggleShadowRoot()
   })
 }
-
 /**
  * Adds the given handler as a listener for click events to the element identified by the given
  * selector.
- * @param {!string} selector
- * @param {!function} handler
  */
 function addClickListener(selector, handler) {
   document.querySelector(selector).addEventListener('click', handler)
 }
-
 /**
  * Simple auxiliary custom element that puts all its children inside a shadow root
  */

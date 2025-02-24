@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -44,7 +44,7 @@ import {
   SvgVisual,
   SvgVisualGroup,
   Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * This node style decorator adds an image in the upper right corner of a given node style.
@@ -99,7 +99,7 @@ export default class NodeStyleDecorator extends NodeStyleBase {
       .createVisual(context) as SvgVisual
 
     // create the decoration
-    this.imageStyle.image = this.imageUrl
+    this.imageStyle.href = this.imageUrl
     this.dummyDecorationNode.layout = this.getDecorationLayout(layout)
     const decorationRenderer = this.imageStyle.renderer.getVisualCreator(
       this.dummyDecorationNode,
@@ -156,7 +156,7 @@ export default class NodeStyleDecorator extends NodeStyleBase {
     const oldRenderData = (oldVisual as any)['data-renderDataCache']
     // first, check whether the image URL changed
     if (this.imageUrl !== oldRenderData.imageUrl) {
-      this.imageStyle.image = this.imageUrl
+      this.imageStyle.href = this.imageUrl
     }
 
     this.dummyDecorationNode.layout = this.getDecorationLayout(layout)

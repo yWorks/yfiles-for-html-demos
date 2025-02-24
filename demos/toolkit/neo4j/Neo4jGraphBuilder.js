@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,17 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, GraphComponent, INodeStyle, ShapeNodeStyle } from 'yfiles'
-
+import { GraphBuilder, GraphComponent, INodeStyle, ShapeNodeStyle } from '@yfiles/yfiles'
 /**
  * Helper method to convert the Neo4j "long" ids, to a simple string
- * @param {!Integer} identity
- * @returns {!string}
  */
 function getId(identity) {
   return `${identity.low.toString()}:${identity.high.toString()}`
 }
-
 // label names that are well suited to be a primary label
 const labelNameCandidates = ['name', 'title', 'firstName', 'lastName', 'email', 'content']
 // some pre-defined node styles
@@ -66,21 +62,15 @@ const predefinedNodesStyles = [
     fill: '#fcfe1f'
   })
 ]
-
 /**
  * Returns a GraphBuilder that is configured to work well with Neo4J query results.
  * @yjs:keep = end
- * @param {!GraphComponent} graphComponent
- * @param {!Array.<Node>} nodes
- * @param {!Array.<Relationship>} edges
- * @returns {!GraphBuilder}
  */
 export function createGraphBuilder(graphComponent, nodes, edges) {
   // mapping from labels to node styles
   const nodeStyleMapping = {}
   let nodeStyleCounter = 0
   const graph = graphComponent.graph
-
   const graphBuilder = new GraphBuilder(graph)
   const nodeCreator = graphBuilder.createNodesSource({
     data: nodes,
@@ -106,8 +96,7 @@ export function createGraphBuilder(graphComponent, nodes, edges) {
     targetId: (edge) => getId(edge.end),
     labels: ['type']
   })
-
-  graphBuilder.addNodeCreatedListener((_, { graph, item, dataItem }) => {
+  graphBuilder.addEventListener('node-created', ({ graph, item, dataItem }) => {
     // look for a mapping for any of the nodes labels and use the mapped style
     let matchingLabel = dataItem.labels.find((label) => label in nodeStyleMapping)
     if (!matchingLabel) {
@@ -120,6 +109,5 @@ export function createGraphBuilder(graphComponent, nodes, edges) {
     // start the animation from the center of the viewport
     graph.setNodeCenter(item, graphComponent.viewport.center)
   })
-
   return graphBuilder
 }

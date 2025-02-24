@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 10 Bridge Support - Tutorial: Edge Style Implementation
 
-# Bridge support
+<img src="../../../doc/demo-thumbnails/tutorial-style-implementation-edge-bridge-support.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-edge/10-bridge-support/).
 
 When there are a lot of crossing edges, especially when they are orthogonal, it can be hard to determine where an edge actually leads.
 
@@ -28,8 +30,8 @@ bridgeManager.addObstacleProvider(new GraphObstacleProvider())
 The BridgeManager uses the lookup mechanism to ask about the obstacles for each edge. The request is passed to the EdgeStyle’s lookup method. Our lookup method provides an IObstacleProvider implementation that returns the path of the edge. Now the BridgeManager can determinate where bridges have to be created.
 
 ```
-protected lookup(edge: IEdge, type: Class): any {
-  if (type === IObstacleProvider.$class) {
+protected lookup(edge: IEdge, type: Constructor<any>): any {
+  if (type === IObstacleProvider) {
     const getPath = this.getPath.bind(this)
     return new (class extends BaseClass(IObstacleProvider) {
       getObstacles(context: IRenderContext): GeneralPath | null {
@@ -48,7 +50,7 @@ private createPathWithBridges(
   path: GeneralPath,
   context: IRenderContext
 ): GeneralPath {
-  const manager = context.lookup(BridgeManager.$class)
+  const manager = context.lookup(BridgeManager)
   return manager ? manager.addBridges(context, path) : path
 }
 ```
@@ -57,7 +59,7 @@ The BridgeManager provides a [hash code](https://docs.yworks.com/yfileshtml/#/ap
 
 ```
 private getObstacleHash(context: IRenderContext): number {
-  const manager = context.lookup(BridgeManager.$class)
+  const manager = context.lookup(BridgeManager)
   return manager ? manager.getObstacleHash(context) : 42
 }
 ```

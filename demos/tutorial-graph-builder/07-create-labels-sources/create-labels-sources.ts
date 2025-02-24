@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { GraphBuilder, ILabelModelParameter } from 'yfiles'
-import { InteriorLabelModel } from 'yfiles'
+import {
+  type GraphBuilder,
+  type ILabelModelParameter,
+  InteriorNodeLabelModel
+} from '@yfiles/yfiles'
 
 export function createNodeLabelsWithBinding(graphBuilder: GraphBuilder): void {
   const nodeData = [
@@ -39,6 +42,7 @@ export function createNodeLabelsWithBinding(graphBuilder: GraphBuilder): void {
   // create the label binding to the name property
   nodesSource.nodeCreator.createLabelBinding((data) => data.name)
 }
+
 export function createNodeLabelsWithProvider(graphBuilder: GraphBuilder): void {
   const nodeData = [{ id: '2', name: 'Monster Inc' }]
   const nodesSource = graphBuilder.createNodesSource(nodeData, 'id')
@@ -47,6 +51,7 @@ export function createNodeLabelsWithProvider(graphBuilder: GraphBuilder): void {
   const labelCreator = nodesSource.nodeCreator.createLabelBinding()
   labelCreator.textProvider = (data): string => data.name.toUpperCase()
 }
+
 export function createNodeLabelsWithSources(graphBuilder: GraphBuilder): void {
   const nodeData = [
     { id: '3', owners: ['Local Group', 'Germany'] },
@@ -62,9 +67,10 @@ export function createNodeLabelsWithSources(graphBuilder: GraphBuilder): void {
     data
   ): ILabelModelParameter =>
     data.endsWith('Group')
-      ? InteriorLabelModel.CENTER
-      : InteriorLabelModel.SOUTH
+      ? InteriorNodeLabelModel.CENTER
+      : InteriorNodeLabelModel.BOTTOM
 }
+
 export function createEdgeLabelsWithProvider(graphBuilder: GraphBuilder): void {
   const edgeData = [
     {

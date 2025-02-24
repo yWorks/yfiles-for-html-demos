@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,17 +28,17 @@
  ***************************************************************************/
 import {
   type CanvasComponent,
-  EdgeStyleDecorationInstaller,
-  GraphComponent,
+  EdgeStyleIndicatorRenderer,
+  type GraphComponent,
   HighlightIndicatorManager,
-  type ICanvasObjectGroup,
-  type ICanvasObjectInstaller,
   IEdge,
   type IModelItem,
   INode,
-  NodeStyleDecorationInstaller,
+  type IObjectRenderer,
+  type IRenderTreeGroup,
+  NodeStyleIndicatorRenderer,
   PolylineEdgeStyle
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getStroke } from '../styles/graph-styles'
 import { EntityNodeStyle } from '../styles/EntityNodeStyle'
 
@@ -46,24 +46,23 @@ import { EntityNodeStyle } from '../styles/EntityNodeStyle'
  * A highlight manager responsible for highlighting the fraud components.
  */
 export class FraudHighlightManager extends HighlightIndicatorManager<IModelItem> {
-  edgeHighlightGroup?: ICanvasObjectGroup
-  nodeHighlightGroup?: ICanvasObjectGroup
+  edgeHighlightGroup?: IRenderTreeGroup
+  nodeHighlightGroup?: IRenderTreeGroup
 
   /**
-   * Installs the manager on the canvas.
+   * Installs the manager on the component.
    * Adds the highlight group.
    */
   install(canvas: CanvasComponent): void {
-    if (canvas instanceof GraphComponent) {
-      const graphModelManager = canvas.graphModelManager
-      // the edges' highlight group should be above the nodes
-      this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
-      this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
+    const graphModelManager = (canvas as GraphComponent).graphModelManager
+    // the edges' highlight group should be above the nodes
+    const renderTree = canvas.renderTree
+    this.edgeHighlightGroup = renderTree.createGroup(graphModelManager.contentGroup!)
+    this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
 
-      // the nodes' highlight group should be above the nodes
-      this.nodeHighlightGroup = graphModelManager.contentGroup.addGroup()
-      this.nodeHighlightGroup.above(graphModelManager.nodeGroup)
-    }
+    // the nodes' highlight group should be above the nodes
+    this.nodeHighlightGroup = renderTree.createGroup(graphModelManager.contentGroup!)
+    this.nodeHighlightGroup.above(graphModelManager.nodeGroup)
     super.install(canvas)
   }
 
@@ -74,45 +73,43 @@ export class FraudHighlightManager extends HighlightIndicatorManager<IModelItem>
   uninstall(canvas: CanvasComponent): void {
     super.uninstall(canvas)
     if (this.edgeHighlightGroup) {
-      this.edgeHighlightGroup.remove()
+      canvas.renderTree.remove(this.edgeHighlightGroup)
       this.edgeHighlightGroup = undefined
     }
     if (this.nodeHighlightGroup) {
-      this.nodeHighlightGroup.remove()
+      canvas.renderTree.remove(this.nodeHighlightGroup)
       this.nodeHighlightGroup = undefined
     }
   }
 
   /**
-   * This implementation always returns the highlightGroup of this instance's canvasComponent.
+   * Returns the render tree group for a given item.
    */
-  getCanvasObjectGroup(item: IModelItem): ICanvasObjectGroup | null {
-    if (item instanceof IEdge) {
-      return this.edgeHighlightGroup!
-    } else if (item instanceof INode) {
-      return this.nodeHighlightGroup!
-    }
-    return super.getCanvasObjectGroup(item)
+  getRenderTreeGroup(item: IModelItem): IRenderTreeGroup | null {
+    return item instanceof IEdge
+      ? this.edgeHighlightGroup!
+      : item instanceof INode
+        ? this.nodeHighlightGroup!
+        : super.getRenderTreeGroup(item)
   }
 
   /**
-   * Callback used by install to retrieve the installer for a given item.
+   * Callback used by {@link install} to retrieve the object renderer for a given item.
    */
-  getInstaller(item: IModelItem): ICanvasObjectInstaller | null {
-    if (item instanceof INode) {
-      return new NodeStyleDecorationInstaller({
-        margins: 2,
-        zoomPolicy: 'world-coordinates',
-        nodeStyle: new EntityNodeStyle()
-      })
-    } else if (item instanceof IEdge) {
-      return new EdgeStyleDecorationInstaller({
-        edgeStyle: new PolylineEdgeStyle({
-          stroke: `8px solid ${getStroke(item)}`
-        }),
-        zoomPolicy: 'world-coordinates'
-      })
-    }
-    return super.getInstaller(item)
+  getRenderer(item: IModelItem): IObjectRenderer | null {
+    return item instanceof INode
+      ? new NodeStyleIndicatorRenderer({
+          margins: 2,
+          zoomPolicy: 'world-coordinates',
+          nodeStyle: new EntityNodeStyle()
+        })
+      : item instanceof IEdge
+        ? new EdgeStyleIndicatorRenderer({
+            edgeStyle: new PolylineEdgeStyle({
+              stroke: `8px solid ${getStroke(item)}`
+            }),
+            zoomPolicy: 'world-coordinates'
+          })
+        : super.getRenderer(item)
   }
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,18 +35,16 @@ import {
   NgZone
 } from '@angular/core'
 import {
+  Command,
   GraphComponent,
   IArrow,
-  ICommand,
   IGraph,
   INode,
   LayoutExecutorAsync,
-  OrganicEdgeRouter,
   PolylineEdgeStyle,
   Size,
-  TreeLayout,
-  TreeReductionStage
-} from 'yfiles'
+  SvgExport
+} from '@yfiles/yfiles'
 import { EDGE_DATA, NODE_DATA } from './data'
 import { Person } from './person'
 import { NodeComponentStyle } from './NodeComponentStyle'
@@ -54,11 +52,17 @@ import { GraphComponentService } from './services/graph-component.service'
 import { GraphSearch } from '../utils/GraphSearch'
 import { zoomDetail, zoomIntermediate } from './node.component'
 
-// Run layout calculation on a Web Worker
-let layoutWorker: Worker
-if (typeof Worker != 'undefined') {
-  // @ts-ignore
-  layoutWorker = new Worker(new URL('./layout.worker.ts', import.meta.url), { type: 'module' })
+const layoutWorker = new Worker(new URL('./layout.worker.ts', import.meta.url), { type: 'module' })
+
+function downloadFile(content: string, filename: string, type: string): void {
+  const objectURL = URL.createObjectURL(new Blob([content], { type }))
+  const aElement = document.createElement('a')
+  aElement.setAttribute('href', objectURL)
+  aElement.setAttribute('download', filename)
+  aElement.style.display = 'none'
+  document.body.appendChild(aElement)
+  aElement.click()
+  document.body.removeChild(aElement)
 }
 
 @Component({
@@ -89,7 +93,7 @@ export class AppComponent implements AfterViewInit {
     this.setDefaultStyles(this.graphComponent.graph)
 
     // hook up the properties view panel with the current item of the graph
-    this.graphComponent.addCurrentItemChangedListener(() => {
+    this.graphComponent.addEventListener('current-item-changed', () => {
       this._zone.run(() => {
         this.currentPerson = this.graphComponent.currentItem!.tag
       })
@@ -102,7 +106,7 @@ export class AppComponent implements AfterViewInit {
     // Since the node component style runs "outside of angular", we have to
     // trigger change detection manually if the level of detail needs to change.
     let oldZoom = this.graphComponent.zoom
-    this.graphComponent.addZoomChangedListener((_, evt) => {
+    this.graphComponent.addEventListener('zoom-changed', () => {
       const newZoom = this.graphComponent.zoom
       if (
         (newZoom > zoomDetail && oldZoom <= zoomDetail) ||
@@ -142,19 +146,43 @@ export class AppComponent implements AfterViewInit {
   }
 
   zoomIn() {
-    ICommand.INCREASE_ZOOM.execute(null, this.graphComponent)
+    this.graphComponent.executeCommand(Command.INCREASE_ZOOM)
   }
 
   zoomOriginal() {
-    ICommand.ZOOM.execute(1, this.graphComponent)
+    this.graphComponent.executeCommand(Command.ZOOM, 1)
   }
 
   zoomOut() {
-    ICommand.DECREASE_ZOOM.execute(null, this.graphComponent)
+    this.graphComponent.executeCommand(Command.DECREASE_ZOOM)
   }
 
   fitContent() {
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, this.graphComponent)
+    void this.graphComponent.fitGraphBounds()
+  }
+
+  /**
+   * Exports the graph component to an SVG file
+   */
+  async exportSvg() {
+    const exportComponent = new GraphComponent({
+      graph: this.graphComponent.graph
+    })
+    exportComponent.updateContentBounds()
+    const exporter = new SvgExport({
+      worldBounds: exportComponent.contentBounds,
+      inlineSvgImages: true,
+      zoom: this.graphComponent.zoom,
+      // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
+      cssStyleSheet: null
+    })
+    const svg = await exporter.exportSvgAsync(
+      exportComponent,
+      // this callback is needed since Angular needs to finish rendering its templates
+      async () => this._appRef.tick()
+    )
+    // download the result
+    downloadFile(SvgExport.exportSvgString(svg), 'graph.svg', 'image/svg+xml')
   }
 
   onSearchInput(query: string) {
@@ -181,38 +209,15 @@ function createSampleGraph(graph: IGraph): void {
 }
 
 async function runLayout(graphComponent: GraphComponent): Promise<void> {
-  if (layoutWorker != null) {
-    // run layout calculation in a Web Worker thread
-
-    // helper function that performs the actual message passing to the web worker
-    function webWorkerMessageHandler(data: unknown): Promise<any> {
-      return new Promise((resolve) => {
-        layoutWorker.onmessage = (e: any) => resolve(e.data)
-        layoutWorker.postMessage(data)
-      })
-    }
-
-    // create an asynchronous layout executor that calculates a layout on the worker
-    const executor = new LayoutExecutorAsync({
-      messageHandler: webWorkerMessageHandler,
-      graphComponent,
-      duration: '1s',
-      easedAnimation: true,
-      animateViewport: true
-    })
-
-    await executor.start()
-  } else {
-    // just run the layout calculation in the main thread
-    const treeLayout = new TreeLayout()
-    const treeReductionStage = new TreeReductionStage()
-    treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
-    treeReductionStage.nonTreeEdgeSelectionKey = OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
-
-    treeLayout.appendStage(treeReductionStage)
-
-    await graphComponent.morphLayout(treeLayout, '1s')
-  }
+  // create an asynchronous layout executor that calculates a layout on the worker
+  const executor = new LayoutExecutorAsync({
+    messageHandler: LayoutExecutorAsync.createWebWorkerMessageHandler(layoutWorker),
+    graphComponent,
+    animationDuration: '1s',
+    easedAnimation: true,
+    animateViewport: true
+  })
+  await executor.start()
 }
 
 class PersonSearch extends GraphSearch {

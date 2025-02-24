@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -63,16 +63,13 @@ export const nodeData =
       path: '/root/dir2/dir2',
       children: [{ id: 'child7', children: [{ id: 'child16' }] }, { id: 'child8' }]
     },
-
     {
       id: 'item7',
       path: '/root/dir1',
       children: [{ id: 'child9' }, { id: 'child10' }]
     },
-
     { id: 'item8', path: '/root/dir1' }
   ]
-
 export const edgeData = [
   { from: 'item8', to: 'child16' },
   { from: 'item8', to: 'child9' },
@@ -90,16 +87,3 @@ export const edgeData = [
   //It's also perfectly valid to have edges between any of the parent or child entitities
   { from: '/root/dir1', to: '/root/dir2' }
 ]
-
-/**
- * @typedef {Object} ChildData
- * @property {string} id
- * @property {Array.<ChildData>} [children]
- */
-
-/**
- * @typedef {Object} ItemData
- * @property {string} id
- * @property {string} path
- * @property {Array.<ChildData>} [children]
- */

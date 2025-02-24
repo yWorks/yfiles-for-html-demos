@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+    <title>Viewport Limiter - Application Features [yFiles for HTML]</title>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="./resources/settings-panel.css" />
+    <link rel="stylesheet" href="./resources/policy-description.css" />
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Viewport Limiter</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <input type="checkbox" id="isometric-view-toggle" class="demo-toggle-button labeled" />
+      <label for="isometric-view-toggle" title="Toggles Isometric Projection"
+        >Toggle Isometric View</label
+      >
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Viewport Limiter</h1>
+
+        <p>
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter" target="_blank">ViewportLimiter</a> limits the interactive movement of the viewport. This
+          helps to navigate the canvas without losing the content.
+        </p>
+
+        <p>
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter#bounds" target="_blank">ViewportLimiter#bounds</a> (or effective viewport limiter area) are
+          calculated as the union of two rectangles: The
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter#viewportContentMargins" target="_blank">ViewportLimiter#viewportContentMargins</a>, which act like insets on the graph
+          component, and the ViewportLimiter.minimumViewportContentRatio, which defines which
+          percentage of the viewport is used for limiting.
+        </p>
+
+        <h2>Things to Try</h2>
+
+        <ul>
+          <li>
+            Pan the graph with a pointer or touch device. Try to move the graph out of the viewport.
+            Observe how the Viewport Limiter prevents moving the graph completely outside.
+          </li>
+          <li>
+            Change the limiting policy and the settings in the property panel on the right-hand
+            side. Move the graph again to see how the different settings affect the viewport
+            limiting.
+          </li>
+        </ul>
+
+        <div id="policy-description-container">
+          <h2 id="policy-title">Policy Description</h2>
+          <div id="policy-description"></div>
+        </div>
+
+        <h4>Strict Bounds Containment</h4>
+        <p>
+          If enabled, the viewport only shows elements inside the bounds of the ViewportLimiter. No
+          area outside the bounds should ever be visible.
+        </p>
+        <p>
+          If disabled, it is possible to see parts outside the bounds, but the limiter tries to
+          minimize the amount of possible space outside.
+        </p>
+
+        <p>See the sources for details.</p>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <div class="demo-properties__settings">
+            <h2>Viewport Limiter Settings</h2>
+
+            <div class="demo-form-block">
+              <div class="settings-grid">
+                <p class="settings-legend1">Limiting Policy</p>
+                <div class="select-container settings-editor-row2">
+                  <select id="policy-select">
+                    <option value="WITHIN_MARGINS">Within Margins</option>
+                    <option value="TOWARDS_LIMIT">Towards Limit</option>
+                    <option value="STRICT">Strict</option>
+                    <option value="UNRESTRICTED">Unrestricted</option>
+                  </select>
+                </div>
+
+                <label
+                  for="strict-bounds-containment-checkbox"
+                  class="settings-label-row3"
+                  id="strict-bounds-containment-label"
+                  >Strict Bounds Containment</label
+                >
+                <input
+                  class="settings-editor-row3"
+                  type="checkbox"
+                  id="strict-bounds-containment-checkbox"
+                />
+
+                <p class="settings-legend2">Viewport Content Margins</p>
+                <div class="settings-info2">
+                  Configures the margins of the viewport in the view coordinate system around the
+                  content bounds.
+                </div>
+
+                <label for="margins-left-input" class="settings-label-row5">Left</label>
+                <input
+                  class="settings-editor-row5"
+                  type="number"
+                  min="0"
+                  id="margins-left-input"
+                  value="600"
+                />
+
+                <label for="margins-top-input" class="settings-label-row6">Top</label>
+                <input
+                  class="settings-editor-row6"
+                  type="number"
+                  min="0"
+                  id="margins-top-input"
+                  value="120"
+                />
+
+                <label for="margins-right-input" class="settings-label-row7">Right</label>
+                <input
+                  class="settings-editor-row7"
+                  type="number"
+                  min="0"
+                  id="margins-right-input"
+                  value="600"
+                />
+
+                <label for="margins-bottom-input" class="settings-label-row8">Bottom</label>
+                <input
+                  class="settings-editor-row8"
+                  type="number"
+                  min="0"
+                  id="margins-bottom-input"
+                  value="120"
+                />
+
+                <p class="settings-legend3">Minimum Viewport Content Ratio</p>
+                <div class="settings-info3">
+                  Configures the percentage of the width and height of the viewport that should be
+                  reserved <em>at least</em> when Viewport Content Margins are defined.
+                </div>
+
+                <label for="ratio-width-input" class="settings-label-row9">Width</label>
+                <input
+                  class="settings-editor-row9"
+                  type="number"
+                  min="0.1"
+                  step="0.1"
+                  id="ratio-width-input"
+                  value="0.8"
+                />
+
+                <label for="ratio-height-input" class="settings-label-row10">Height</label>
+                <input
+                  class="settings-editor-row10"
+                  type="number"
+                  min="0.1"
+                  step="0.1"
+                  id="ratio-height-input"
+                  value="0.4"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script type="module" crossorigin="anonymous" src="ViewportLimiterDemo.ts" async></script>
+  </body>
+</html>

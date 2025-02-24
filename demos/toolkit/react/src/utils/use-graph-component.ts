@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@ import {
   License,
   PolylineEdgeStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import ReactComponentNodeStyle from '../utils/ReactComponentNodeStyle.ts'
 import NodeTemplate from '../components/NodeTemplate.tsx'
 import { useLayoutEffect, useMemo, useRef } from 'react'
@@ -52,15 +52,16 @@ function configureDefaultStyles(graph: IGraph) {
     stroke: '4px #66485B',
     targetArrow: new Arrow({
       fill: '#66485B',
-      scale: 2,
-      type: 'circle'
+      lengthScale: 2,
+      widthScale: 2,
+      type: 'ellipse'
     })
   })
   graph.edgeDefaults.labels.style = new ReactComponentLabelStyle(LabelTemplate)
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     autoRotation: false,
     sideOfEdge: 'on-edge'
-  }).createDefaultParameter()
+  }).createRatioParameter()
 }
 
 export function useGraphComponent() {
@@ -83,9 +84,9 @@ export function useGraphComponent() {
 
   useLayoutEffect(() => {
     const gcContainer = graphComponentContainer.current!
-    graphComponent.div.style.width = '100%'
-    graphComponent.div.style.height = '100%'
-    gcContainer.appendChild(graphComponent.div)
+    graphComponent.htmlElement.style.width = '100%'
+    graphComponent.htmlElement.style.height = '100%'
+    gcContainer.appendChild(graphComponent.htmlElement)
 
     return () => {
       gcContainer.innerHTML = ''

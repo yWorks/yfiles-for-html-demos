@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,23 +28,21 @@
  ***************************************************************************/
 import {
   GraphComponent,
-  GraphHighlightIndicatorManager,
   GraphItemTypes,
   GraphViewerInputMode,
   IGraph,
   IModelItem,
-  IndicatorNodeStyleDecorator,
   INode,
   INodeStyle,
-  Insets,
   ItemClickedEventArgs,
-  ItemSelectionChangedEventArgs,
+  ItemEventArgs,
   Mapper,
   MouseWheelBehaviors,
+  NodeStyleIndicatorRenderer,
   Rect,
   ShapeNodeStyle,
-  StyleDecorationZoomPolicy
-} from 'yfiles'
+  StyleIndicatorZoomPolicy
+} from '@yfiles/yfiles'
 
 /**
  * Specifies the contract for callbacks that arrange the neighborhood graph of a given
@@ -59,7 +57,7 @@ export type ApplyLayoutCallback = (view: NeighborhoodView, selectedViewNodes: IN
 export type BuildGraphCallback = (
   view: NeighborhoodView,
   selectedSourceNodes: INode[],
-  elementCopiedCallback: (sourceItem: IModelItem, viewItem: IModelItem) => void
+  itemCopiedCallback: (sourceItem: IModelItem, viewItem: IModelItem) => void
 ) => void
 
 /**
@@ -102,7 +100,7 @@ export class NeighborhoodView {
    */
   onNeighborhoodUpdated: (view: NeighborhoodView) => void = (view) => {
     // Ensure the neighborhood graph fits inside the neighborhood graph component.
-    view.neighborhoodComponent.fitGraphBounds(new Insets(5))
+    void view.neighborhoodComponent.fitGraphBounds(5)
   }
 
   /**
@@ -120,7 +118,6 @@ export class NeighborhoodView {
   })
   private _selectedNodes: INode[] = []
   private _useSelection = true
-  private readonly graphChangeListener = () => this.onGraphChanged()
   private readonly editListeners = new Map<string, any>()
   private readonly maxSelectedNodesCount = 25 // limit the neighborhood computation to avoid UI blocking
 
@@ -150,7 +147,6 @@ export class NeighborhoodView {
   set graphComponent(value: GraphComponent | null) {
     this.selectedNodes = []
     if (this._graphComponent !== null) {
-      this._graphComponent.removeGraphChangedListener(this.graphChangeListener)
       if (this.useSelection) {
         this.uninstallItemSelectionChangedListener()
       }
@@ -164,7 +160,6 @@ export class NeighborhoodView {
       if (this._sourceGraph !== null) {
         this.installEditListeners()
       }
-      this._graphComponent.addGraphChangedListener(this.graphChangeListener)
       if (this.useSelection) {
         this.installItemSelectionChangedListener()
       }
@@ -188,7 +183,6 @@ export class NeighborhoodView {
       this.uninstallEditListeners()
     }
     if (this.graphComponent !== null) {
-      this.graphComponent.removeGraphChangedListener(this.graphChangeListener)
       if (this.useSelection) {
         this.uninstallItemSelectionChangedListener()
       }
@@ -268,7 +262,7 @@ export class NeighborhoodView {
     if (this._useSelection !== value) {
       this._useSelection = value
       if (value) {
-        this.selectedNodes = this.graphComponent?.selection.selectedNodes.toArray() ?? []
+        this.selectedNodes = this.graphComponent?.selection.nodes.toArray() ?? []
         this.installItemSelectionChangedListener()
       } else {
         this.uninstallItemSelectionChangedListener()
@@ -281,7 +275,7 @@ export class NeighborhoodView {
     editListeners.clear()
     editListeners.set('nodeCreated', () => this.scheduleAutoUpdate())
     editListeners.set('nodeRemoved', () => this.scheduleAutoUpdate(true))
-    editListeners.set('nodeLayoutChanged', (source: object, { layout }: INode, oldLayout: Rect) => {
+    editListeners.set('nodeLayoutChanged', ({ layout }: INode, oldLayout: Rect) => {
       if (layout.width !== oldLayout.width || layout.height !== oldLayout.height) {
         // only react to size changes, since the neighborhood view has its own layout
         this.scheduleAutoUpdate()
@@ -302,14 +296,11 @@ export class NeighborhoodView {
 
     editListeners.set('isGroupNodeChanged', () => this.scheduleAutoUpdate())
     editListeners.set('parentChanged', () => this.scheduleAutoUpdate())
-    editListeners.set(
-      'itemSelectionChanged',
-      (source: object, { item }: ItemSelectionChangedEventArgs<IModelItem>) => {
-        if (item instanceof INode) {
-          this.scheduleAutoUpdate(true)
-        }
+    editListeners.set('itemSelectionChanged', ({ item }: ItemEventArgs<IModelItem>) => {
+      if (item instanceof INode) {
+        this.scheduleAutoUpdate(true)
       }
-    )
+    })
   }
 
   /**
@@ -322,23 +313,23 @@ export class NeighborhoodView {
       return
     }
     const editListeners = this.editListeners
-    sourceGraph.addNodeCreatedListener(editListeners.get('nodeCreated'))
-    sourceGraph.addNodeRemovedListener(editListeners.get('nodeRemoved'))
-    sourceGraph.addNodeLayoutChangedListener(editListeners.get('nodeLayoutChanged'))
-    sourceGraph.addNodeStyleChangedListener(editListeners.get('nodeStyleChanged'))
-    sourceGraph.addEdgeCreatedListener(editListeners.get('edgeCreated'))
-    sourceGraph.addEdgeRemovedListener(editListeners.get('edgeRemoved'))
-    sourceGraph.addEdgePortsChangedListener(editListeners.get('edgePortsChanged'))
-    sourceGraph.addEdgeStyleChangedListener(editListeners.get('edgeStyleChanged'))
-    sourceGraph.addPortAddedListener(editListeners.get('portAdded'))
-    sourceGraph.addPortRemovedListener(editListeners.get('portRemoved'))
-    sourceGraph.addPortStyleChangedListener(editListeners.get('portStyleChanged'))
-    sourceGraph.addLabelAddedListener(editListeners.get('labelAdded'))
-    sourceGraph.addLabelRemovedListener(editListeners.get('labelRemoved'))
-    sourceGraph.addLabelStyleChangedListener(editListeners.get('labelStyleChanged'))
-    sourceGraph.addLabelTextChangedListener(editListeners.get('labelTextChanged'))
-    sourceGraph.addIsGroupNodeChangedListener(editListeners.get('isGroupNodeChanged'))
-    sourceGraph.addParentChangedListener(editListeners.get('parentChanged'))
+    sourceGraph.addEventListener('node-created', editListeners.get('nodeCreated'))
+    sourceGraph.addEventListener('node-removed', editListeners.get('nodeRemoved'))
+    sourceGraph.addEventListener('node-layout-changed', editListeners.get('nodeLayoutChanged'))
+    sourceGraph.addEventListener('node-style-changed', editListeners.get('nodeStyleChanged'))
+    sourceGraph.addEventListener('edge-created', editListeners.get('edgeCreated'))
+    sourceGraph.addEventListener('edge-removed', editListeners.get('edgeRemoved'))
+    sourceGraph.addEventListener('edge-ports-changed', editListeners.get('edgePortsChanged'))
+    sourceGraph.addEventListener('edge-style-changed', editListeners.get('edgeStyleChanged'))
+    sourceGraph.addEventListener('port-added', editListeners.get('portAdded'))
+    sourceGraph.addEventListener('port-removed', editListeners.get('portRemoved'))
+    sourceGraph.addEventListener('port-style-changed', editListeners.get('portStyleChanged'))
+    sourceGraph.addEventListener('label-added', editListeners.get('labelAdded'))
+    sourceGraph.addEventListener('label-removed', editListeners.get('labelRemoved'))
+    sourceGraph.addEventListener('label-style-changed', editListeners.get('labelStyleChanged'))
+    sourceGraph.addEventListener('label-text-changed', editListeners.get('labelTextChanged'))
+    sourceGraph.addEventListener('is-group-node-changed', editListeners.get('isGroupNodeChanged'))
+    sourceGraph.addEventListener('parent-changed', editListeners.get('parentChanged'))
   }
 
   /**
@@ -350,23 +341,26 @@ export class NeighborhoodView {
       return
     }
     const editListeners = this.editListeners
-    sourceGraph.removeNodeCreatedListener(editListeners.get('nodeCreated'))
-    sourceGraph.removeNodeRemovedListener(editListeners.get('nodeRemoved'))
-    sourceGraph.removeNodeLayoutChangedListener(editListeners.get('nodeLayoutChanged'))
-    sourceGraph.removeNodeStyleChangedListener(editListeners.get('nodeStyleChanged'))
-    sourceGraph.removeEdgeCreatedListener(editListeners.get('edgeCreated'))
-    sourceGraph.removeEdgeRemovedListener(editListeners.get('edgeRemoved'))
-    sourceGraph.removeEdgePortsChangedListener(editListeners.get('edgePortsChanged'))
-    sourceGraph.removeEdgeStyleChangedListener(editListeners.get('edgeStyleChanged'))
-    sourceGraph.removePortAddedListener(editListeners.get('portAdded'))
-    sourceGraph.removePortRemovedListener(editListeners.get('portRemoved'))
-    sourceGraph.removePortStyleChangedListener(editListeners.get('portStyleChanged'))
-    sourceGraph.removeLabelAddedListener(editListeners.get('labelAdded'))
-    sourceGraph.removeLabelRemovedListener(editListeners.get('labelRemoved'))
-    sourceGraph.removeLabelStyleChangedListener(editListeners.get('labelStyleChanged'))
-    sourceGraph.removeLabelTextChangedListener(editListeners.get('labelTextChanged'))
-    sourceGraph.removeIsGroupNodeChangedListener(editListeners.get('isGroupNodeChanged'))
-    sourceGraph.removeParentChangedListener(editListeners.get('parentChanged'))
+    sourceGraph.removeEventListener('node-created', editListeners.get('nodeCreated'))
+    sourceGraph.removeEventListener('node-removed', editListeners.get('nodeRemoved'))
+    sourceGraph.removeEventListener('node-layout-changed', editListeners.get('nodeLayoutChanged'))
+    sourceGraph.removeEventListener('node-style-changed', editListeners.get('nodeStyleChanged'))
+    sourceGraph.removeEventListener('edge-created', editListeners.get('edgeCreated'))
+    sourceGraph.removeEventListener('edge-removed', editListeners.get('edgeRemoved'))
+    sourceGraph.removeEventListener('edge-ports-changed', editListeners.get('edgePortsChanged'))
+    sourceGraph.removeEventListener('edge-style-changed', editListeners.get('edgeStyleChanged'))
+    sourceGraph.removeEventListener('port-added', editListeners.get('portAdded'))
+    sourceGraph.removeEventListener('port-removed', editListeners.get('portRemoved'))
+    sourceGraph.removeEventListener('port-style-changed', editListeners.get('portStyleChanged'))
+    sourceGraph.removeEventListener('label-added', editListeners.get('labelAdded'))
+    sourceGraph.removeEventListener('label-removed', editListeners.get('labelRemoved'))
+    sourceGraph.removeEventListener('label-style-changed', editListeners.get('labelStyleChanged'))
+    sourceGraph.removeEventListener('label-text-changed', editListeners.get('labelTextChanged'))
+    sourceGraph.removeEventListener(
+      'is-group-node-changed',
+      editListeners.get('isGroupNodeChanged')
+    )
+    sourceGraph.removeEventListener('parent-changed', editListeners.get('parentChanged'))
   }
 
   /**
@@ -376,7 +370,7 @@ export class NeighborhoodView {
   private scheduleAutoUpdate(updateSelectedNodes = false): void {
     if (this.autoUpdatesEnabled) {
       if (updateSelectedNodes) {
-        this._selectedNodes = this.graphComponent?.selection.selectedNodes.toArray() ?? []
+        this._selectedNodes = this.graphComponent?.selection.nodes.toArray() ?? []
       }
       this.scheduleUpdate()
     }
@@ -386,7 +380,8 @@ export class NeighborhoodView {
    * Installs the selection listeners.
    */
   private installItemSelectionChangedListener(): void {
-    this.graphComponent?.selection.addItemSelectionChangedListener(
+    this.graphComponent?.selection.addEventListener(
+      'item-added',
       this.editListeners.get('itemSelectionChanged')
     )
   }
@@ -395,32 +390,26 @@ export class NeighborhoodView {
    * Uninstalls the selection listeners.
    */
   private uninstallItemSelectionChangedListener(): void {
-    this.graphComponent?.selection.removeItemSelectionChangedListener(
+    this.graphComponent?.selection.removeEventListener(
+      'item-removed',
       this.editListeners.get('itemSelectionChanged')
     )
-  }
-
-  /**
-   * Called when the graph property of the source graph is changed.
-   */
-  private onGraphChanged(): void {
-    this.sourceGraph = this.graphComponent?.graph ?? null
   }
 
   /**
    * Installs the given highlight style as node decorator.
    */
   private installHighlightStyle(highlightStyle: INodeStyle): void {
-    const nodeHighlightStyle = new IndicatorNodeStyleDecorator({
-      wrapped: highlightStyle,
+    const nodeHighlightStyle = new NodeStyleIndicatorRenderer({
+      nodeStyle: highlightStyle,
       // that should be slightly larger than the real node
-      padding: 5,
-      zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
+      margins: 5,
+      zoomPolicy: StyleIndicatorZoomPolicy.VIEW_COORDINATES
     })
     // register it as the default implementation for all nodes
-    this.neighborhoodComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-      nodeStyle: nodeHighlightStyle
-    })
+    this.neighborhoodComponent.graph.decorator.nodes.highlightRenderer.addConstant(
+      nodeHighlightStyle
+    )
   }
 
   /**
@@ -448,14 +437,17 @@ export class NeighborhoodView {
     // If an item is clicked, we want the view to show the neighborhood
     // of the clicked node, and invoke the click callback with the original
     // node.
-    graphViewerInputMode.addItemClickedListener((_, { item }: ItemClickedEventArgs<IModelItem>) => {
-      if (item instanceof INode) {
-        const originalNode = this.originalNodes.get(item)
-        if (originalNode) {
-          this.clickCallback?.(originalNode)
+    graphViewerInputMode.addEventListener(
+      'item-clicked',
+      ({ item }: ItemClickedEventArgs<IModelItem>) => {
+        if (item instanceof INode) {
+          const originalNode = this.originalNodes.get(item)
+          if (originalNode) {
+            this.clickCallback?.(originalNode)
+          }
         }
       }
-    })
+    )
 
     this.neighborhoodComponent.inputMode = graphViewerInputMode
   }
@@ -515,10 +507,10 @@ export class NeighborhoodView {
 
     // Highlight the root node in the neighborhood graph.
     if (this.showHighlight && copiedStartNodes.length > 0) {
-      const manager = this.neighborhoodComponent.highlightIndicatorManager
-      manager.clearHighlights()
+      const highlights = this.neighborhoodComponent.highlights
+      highlights.clear()
       copiedStartNodes.forEach((startNode) => {
-        manager.addHighlight(startNode)
+        highlights.add(startNode)
       })
     }
 

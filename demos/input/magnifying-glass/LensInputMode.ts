@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,12 +35,10 @@ import {
   GraphComponent,
   IInputModeContext,
   InputModeBase,
-  MouseEventArgs,
   MouseWheelBehaviors,
+  PointerEventArgs,
   ScrollBarVisibility
-} from 'yfiles'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+} from '@yfiles/yfiles'
 
 // noinspection CssInvalidFunction
 /**
@@ -136,7 +134,7 @@ export class LensInputMode extends InputModeBase {
    * larger than 0.7 or if the size of the graphComponent is small.
    */
   updateLensVisibility() {
-    const canvasComponent = this.inputModeContext?.canvasComponent
+    const canvasComponent = this.parentInputModeContext?.canvasComponent
     if (
       canvasComponent != null &&
       canvasComponent.zoom < 0.7 &&
@@ -155,18 +153,18 @@ export class LensInputMode extends InputModeBase {
 
   /**
    * Updates the location of the magnifying component.
-   * @param sender The source of the event
+   * @param component The source of the event
    * @param location The event
    * @param location.location The current mouse location
    */
-  updateLensLocation(sender: CanvasComponent, { location }: MouseEventArgs) {
+  updateLensLocation({ location }: PointerEventArgs, component: CanvasComponent) {
     if (
       this.lensGraphComponent != null &&
       this.lensElement != null &&
       this.updateLensVisibility()
     ) {
       this.lensGraphComponent.center = location
-      const viewCoords = sender.toViewCoordinates(location)
+      const viewCoords = component.worldToViewCoordinates(location)
       this.lensElement.style.left = `${Math.round(viewCoords.x)}px`
       this.lensElement.style.top = `${Math.round(viewCoords.y)}px`
     }
@@ -184,7 +182,7 @@ export class LensInputMode extends InputModeBase {
    */
   set zoomFactor(value: number) {
     this.$zoomFactor = value
-    this.inputModeContext!.canvasComponent!.invalidate()
+    this.parentInputModeContext!.canvasComponent!.invalidate()
     this.lensGraphComponent!.zoom = this.zoomFactor
   }
 
@@ -201,7 +199,7 @@ export class LensInputMode extends InputModeBase {
     // Initialize the lens graph component
     this.lensGraphComponent = new GraphComponent({
       // Get the div for the lens graphComponent
-      div: this.lensElement.querySelector<HTMLDivElement>('.demo-lens-component')!,
+      htmlElement: this.lensElement.querySelector<HTMLDivElement>('.demo-lens-component')!,
 
       // Re-use the same graph, selection, projection
       graph: graphComponent.graph,
@@ -210,27 +208,25 @@ export class LensInputMode extends InputModeBase {
 
       // Disable interaction and scrollbars
       mouseWheelBehavior: MouseWheelBehaviors.NONE,
-      autoDrag: false,
-      horizontalScrollBarPolicy: ScrollBarVisibility.NEVER,
-      verticalScrollBarPolicy: ScrollBarVisibility.NEVER,
+      autoScrollOnBounds: false,
+      horizontalScrollBarPolicy: ScrollBarVisibility.HIDDEN,
+      verticalScrollBarPolicy: ScrollBarVisibility.HIDDEN,
 
       // Set the zoom factor of the graph component
       zoom: this.zoomFactor
     })
-    applyDemoTheme(this.lensGraphComponent)
-
     graphComponent.overlayPanel.appendChild(this.lensElement)
 
     // Add the listeners to the initial graph component that will update the position and the zoom
     // of the lens
     const mouseMoveListener = delegate(this.updateLensLocation, this)
-    graphComponent.addMouseMoveListener(mouseMoveListener)
-    graphComponent.addMouseDragListener(mouseMoveListener)
+    graphComponent.addEventListener('pointer-move', mouseMoveListener)
+    graphComponent.addEventListener('pointer-drag', mouseMoveListener)
 
     const visibilityChangeListener = delegate(this.updateLensVisibility, this)
-    graphComponent.addZoomChangedListener(visibilityChangeListener)
-    graphComponent.addMouseLeaveListener(visibilityChangeListener)
-    graphComponent.addMouseEnterListener(visibilityChangeListener)
+    graphComponent.addEventListener('zoom-changed', visibilityChangeListener)
+    graphComponent.addEventListener('pointer-leave', visibilityChangeListener)
+    graphComponent.addEventListener('pointer-enter', visibilityChangeListener)
 
     this.hideLens()
   }
@@ -245,16 +241,16 @@ export class LensInputMode extends InputModeBase {
 
     // remove the listeners
     const mouseMoveListener = delegate(this.updateLensLocation, this)
-    canvasComponent.removeMouseMoveListener(mouseMoveListener)
-    canvasComponent.removeMouseDragListener(mouseMoveListener)
+    canvasComponent.removeEventListener('pointer-move', mouseMoveListener)
+    canvasComponent.removeEventListener('pointer-drag', mouseMoveListener)
 
     const visibilityChangeListener = delegate(this.updateLensVisibility, this)
-    canvasComponent.removeZoomChangedListener(visibilityChangeListener)
-    canvasComponent.removeMouseLeaveListener(visibilityChangeListener)
-    canvasComponent.removeMouseEnterListener(visibilityChangeListener)
+    canvasComponent.removeEventListener('zoom-changed', visibilityChangeListener)
+    canvasComponent.removeEventListener('pointer-leave', visibilityChangeListener)
+    canvasComponent.removeEventListener('pointer-enter', visibilityChangeListener)
 
     // clean up
-    canvasComponent.overlayPanel.removeChild(this.lensGraphComponent!.div)
+    canvasComponent.overlayPanel.removeChild(this.lensGraphComponent!.htmlElement)
     this.lensGraphComponent!.cleanUp()
     this.lensGraphComponent = null
 

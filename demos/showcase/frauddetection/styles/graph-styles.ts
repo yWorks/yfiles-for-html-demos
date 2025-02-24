@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
  ***************************************************************************/
 // maps each node type with an object containing information about its style
 import { getConnectionData, isFraud } from '../entity-data'
-import type { IEdge } from 'yfiles'
+import type { IEdge } from '@yfiles/yfiles'
 
 export const nodeStyleMapping: Record<string, { image: string; fill: string; stroke: string }> = {
   'Account Holder': { image: 'resources/icons/person.svg', fill: '#242265', stroke: '#242265' },

@@ -1,5 +1,5 @@
 {
-  "name": "web-dev-server-yfiles-for-html-example",
+  "name": "@yfiles/web-dev-server-yfiles-for-html-example",
   "version": "1.0.0",
   "description": "Shows how to load yFiles for HTML with @web/dev-server",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
@@ -7,13 +7,13 @@
   "private": true,
   "scripts": {
     "start": "web-dev-server",
-    "postinstall": "node -e \\\"require('fs').copyFileSync('../../../lib/license.json', 'src/license.json'); require('fs-extra').copySync('../../resources/style/loading-demo.css', 'src/demo.css'); require('fs-extra').copySync('../../resources/icons', 'src/icons');\\\""
-  },
-  "dependencies": {
-    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz"
+    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json', 'src/license.json'); require('fs-extra').copySync('../../resources/style/loading-demo.css', 'src/demo.css'); require('fs-extra').copySync('../../resources/icons', 'src/icons');\""
   },
   "devDependencies": {
-    "@web/dev-server": "^0.4.1",
-    "fs-extra": "^11.1.1"
+    "@web/dev-server": "^0.4.6",
+    "fs-extra": "^11.3.0"
+  },
+  "dependencies": {
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
   }
 }

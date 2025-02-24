@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,31 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-const express = require('express')
-const cors = require('cors')
-const { graphqlHTTP } = require('express-graphql')
-const { buildSchema } = require('graphql')
-const fs = require('fs')
-const path = require('path')
+import express from 'express'
+import { createHandler } from 'graphql-http/lib/use/express'
+import cors from 'cors'
+
+import path from 'node:path'
+import fs from 'node:fs'
+import { buildSchema } from 'graphql'
+
+// The root provides a resolver function for each API endpoint
+import root from './resolver.js'
 
 const port = 4244
 
 // Construct a schema, using GraphQL schema language
 const schema = buildSchema(
-  fs.readFileSync(path.resolve(__dirname, './schema.graphql'), { encoding: 'utf-8' })
+  fs.readFileSync(path.resolve(import.meta.dirname, './schema.graphql'), { encoding: 'utf-8' })
 )
-
-// The root provides a resolver function for each API endpoint
-const root = require('./resolver.js')
-
 const app = express()
 app.use(cors())
 app.use(
   '/graphql',
-  graphqlHTTP({
+  createHandler({
     schema: schema,
-    rootValue: root,
-    graphiql: true
+    rootValue: root
   })
 )
 app.listen(port)

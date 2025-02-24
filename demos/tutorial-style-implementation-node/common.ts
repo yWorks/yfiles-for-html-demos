@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import {
   Animator,
   BaseClass,
-  DefaultLabelStyle,
   FreeNodeLabelModel,
-  GeomUtilities,
+  GeometryUtilities,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -42,34 +39,34 @@ import {
   IAnimation,
   IBoundsProvider,
   type ICanvasContext,
-  type ICanvasObject,
-  ICanvasObjectDescriptor,
   type IGraph,
   type IHitTestable,
   INode,
   type INodeStyle,
+  IObjectRenderer,
   type IRenderContext,
+  type IRenderTreeElement,
   IVisibilityTestable,
   IVisualCreator,
+  LabelStyle,
   MouseWheelBehaviors,
   NodeSizeConstraintProvider,
   Point,
+  PointerType,
   PolylineEdgeStyle,
   Rect,
   ScrollBarVisibility,
   ShapeNodeShape,
   ShapeNodeStyle,
   Size,
-  SizeChangedDetectionMode,
   SvgVisual,
   type Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import {
   createPathData,
   CustomNodeStyle
 } from './07-hit-testing/CustomNodeStyle'
 import { CustomGroupNodeStyle } from './11-group-node-style/CustomGroupNodeStyle'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 export function createSimpleGraph(graph: IGraph): void {
   graph.createNode([0, 0, 100, 50])
@@ -161,12 +158,13 @@ export function createSampleGraphIsVisible(graph: IGraph, area: Rect): void {
 
     const p = new Point(i, y - nodeRadius)
     const p2 = new Point(i, y + nodeRadius)
-    graph.createNode(Rect.fromCenter(p, new Size(120, 70)), null, {
-      isVisibleImplementation: false,
-      color: '#ab2346'
+    graph.createNode({
+      layout: Rect.fromCenter(p, new Size(120, 70)),
+      tag: { isVisibleImplementation: false, color: '#ab2346' }
     })
-    graph.createNode(Rect.fromCenter(p2, new Size(120, 70)), null, {
-      isVisibleImplementation: true
+    graph.createNode({
+      layout: Rect.fromCenter(p2, new Size(120, 70)),
+      tag: { isVisibleImplementation: true }
     })
   }
 }
@@ -233,7 +231,7 @@ export function findLineIntersection(
   segment: [Point, Point],
   line: [Point, Point]
 ): Point | null {
-  const t = GeomUtilities.findRayIntersection(
+  const t = GeometryUtilities.getSegmentRayIntersection(
     segment[0],
     segment[1],
     line[0],
@@ -253,10 +251,11 @@ export function addHoverEffect(
 ): void {
   const itemHoverInputMode = inputMode.itemHoverInputMode
   itemHoverInputMode.hoverItems = GraphItemTypes.NODE
-  let hoveredItemHighlight: ICanvasObject | null = null
+  let hoveredItemHighlight: IRenderTreeElement | null = null
 
   function addHighlight(node: INode): void {
-    hoveredItemHighlight = graphComponent.inputModeGroup.addChild(
+    hoveredItemHighlight = graphComponent.renderTree.createElement(
+      graphComponent.renderTree.inputModeGroup,
       new (class extends BaseClass(IVisualCreator) {
         createVisual(context: IRenderContext): Visual | null {
           const { x, y, width, height } = node.layout
@@ -293,17 +292,22 @@ export function addHoverEffect(
   }
 
   function removeHighlight(): void {
-    hoveredItemHighlight?.remove()
-    hoveredItemHighlight = null
+    if (hoveredItemHighlight) {
+      graphComponent.renderTree.remove(hoveredItemHighlight)
+      hoveredItemHighlight = null
+    }
   }
 
-  itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+  itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     removeHighlight()
     if (evt.item) {
       addHighlight(evt.item as INode)
     }
   })
-  inputMode.addItemTappedListener((_, evt) => {
+  inputMode.addEventListener('item-clicked', (evt) => {
+    if (evt.pointerType !== PointerType.TOUCH) {
+      return
+    }
     removeHighlight()
     if (evt.item instanceof INode) {
       addHighlight(evt.item as INode)
@@ -324,13 +328,8 @@ export function enableGraphEditing(
   return graphEditorInputMode
 }
 
-export function enableGrouping(graphComponent: GraphComponent): void {
-  ;(graphComponent.inputMode as GraphEditorInputMode).allowGroupingOperations =
-    true
-}
-
 export function configureMinimumSize(graphComponent: GraphComponent): void {
-  graphComponent.graph.decorator.nodeDecorator.sizeConstraintProviderDecorator.setImplementation(
+  graphComponent.graph.decorator.nodes.sizeConstraintProvider.addConstant(
     new NodeSizeConstraintProvider(
       [60, 30],
       [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY]
@@ -343,9 +342,10 @@ export function initializeInlineGraphComponent(
 ): GraphComponent {
   const graphComponent = new GraphComponent(selector)
   graphComponent.horizontalScrollBarPolicy =
-    graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.NEVER
-  graphComponent.autoDrag = false
+    graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.HIDDEN
+  graphComponent.autoScrollOnBounds = false
   graphComponent.mouseWheelBehavior = MouseWheelBehaviors.NONE
+  graphComponent.inputMode = null
   initializeTutorialDefaults(graphComponent)
   return graphComponent
 }
@@ -395,8 +395,7 @@ export class BoundsVisual extends BaseClass(IVisualCreator) {
 }
 
 export function startNodeAnimation(graphComponent: GraphComponent): void {
-  graphComponent.sizeChangedDetection = SizeChangedDetectionMode.TIMER
-  graphComponent.addSizeChangedListener((_) => {
+  graphComponent.addEventListener('size-changed', () => {
     setTimeout(() => {
       setAnimationStartPoint(graphComponent)
       void animate()
@@ -445,7 +444,7 @@ function animateNodes(
 }
 
 function setAnimationStartPoint(graphComponent: GraphComponent): void {
-  const contentRect = graphComponent.contentRect
+  const contentRect = graphComponent.contentBounds
   graphComponent.viewPoint = new Point(
     contentRect.topRight.x,
     contentRect.centerY
@@ -457,9 +456,7 @@ function setAnimationStartPoint(graphComponent: GraphComponent): void {
   )
 }
 
-export class IsVisibleNodeStyleDescriptor extends BaseClass(
-  ICanvasObjectDescriptor
-) {
+export class IsVisibleNodeStyleRenderer extends BaseClass(IObjectRenderer) {
   getBoundsProvider(node: INode): IBoundsProvider {
     return new (class extends BaseClass(IBoundsProvider) {
       getBounds(context: ICanvasContext): Rect {
@@ -508,10 +505,6 @@ export class IsVisibleNodeStyleDescriptor extends BaseClass(
       }
     })()
   }
-
-  isDirty(context: ICanvasContext, canvasObject: ICanvasObject): boolean {
-    return true
-  }
 }
 
 /**
@@ -520,8 +513,6 @@ export class IsVisibleNodeStyleDescriptor extends BaseClass(
 export function initializeTutorialDefaults(
   graphComponent: GraphComponent
 ): void {
-  applyDemoTheme(graphComponent)
-
   graphComponent.focusIndicatorManager.enabled = false
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -529,11 +520,11 @@ export function initializeTutorialDefaults(
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     shape: 'round-rectangle',
     textFill: '#042d37',
     backgroundFill: '#9dc6d0',
-    insets: 2,
+    padding: 2,
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
   })
   graph.edgeDefaults.style = new PolylineEdgeStyle({
@@ -543,7 +534,7 @@ export function initializeTutorialDefaults(
 
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#111d4a',
-    contentAreaInsets: 10
+    contentAreaPadding: 10
   })
 }
 
@@ -556,6 +547,6 @@ export function fitGraphBounds(
   minimumZoom = 3
 ): void {
   graphComponent.limitFitContentZoom = false
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
   graphComponent.zoom = Math.min(graphComponent.zoom, minimumZoom)
 }

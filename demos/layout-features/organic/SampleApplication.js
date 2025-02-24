@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,31 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Class, GraphComponent, GraphViewerInputMode, LayoutExecutor, License } from 'yfiles'
-
-import { createLayoutConfiguration } from './Organic.js'
-import { loadLayoutSampleGraph } from 'demo-utils/LoadLayoutFeaturesSampleGraph'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-Class.ensure(LayoutExecutor)
-
-/**
- * @returns {!Promise}
- */
+import { GraphComponent, GraphViewerInputMode, LayoutExecutor, License } from '@yfiles/yfiles'
+import { createLayoutConfiguration } from './Organic'
+import { loadLayoutSampleGraph } from '@yfiles/demo-utils/LoadLayoutFeaturesSampleGraph'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // configure the graph not be editable
   graphComponent.inputMode = new GraphViewerInputMode()
-
   // load the graph and run the layout
   await loadLayoutSampleGraph(graphComponent.graph, './sample.json')
-  await graphComponent.morphLayout(createLayoutConfiguration(graphComponent.graph), '0s')
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
+  await graphComponent.applyLayoutAnimated(createLayoutConfiguration(graphComponent.graph), '0s')
 }
-
 run().then(finishLoading)

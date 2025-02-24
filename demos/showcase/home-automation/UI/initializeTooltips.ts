@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,21 +26,27 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, GraphItemTypes, Point, TimeSpan } from 'yfiles'
+import {
+  GraphComponent,
+  GraphEditorInputMode,
+  GraphItemTypes,
+  Point,
+  TimeSpan
+} from '@yfiles/yfiles'
 import { type FlowNodeValidation, isFlowNode } from '../FlowNode/FlowNode'
 
 export function initializeTooltips(graphComponent: GraphComponent): void {
   // Assume input mode has already been initialized because of order of operations in the main run function
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
 
-  const mouseHoverInputMode = inputMode.mouseHoverInputMode
-  mouseHoverInputMode.toolTipLocationOffset = new Point(10, 10)
+  const toolTipInputMode = inputMode.toolTipInputMode
+  toolTipInputMode.toolTipLocationOffset = new Point(10, 10)
   // Increase time it takes for tooltip to appear and the time before it disappears
-  mouseHoverInputMode.delay = TimeSpan.fromMilliseconds(300)
-  mouseHoverInputMode.duration = TimeSpan.fromSeconds(20)
+  toolTipInputMode.delay = TimeSpan.fromMilliseconds(300)
+  toolTipInputMode.duration = TimeSpan.fromSeconds(20)
 
   inputMode.toolTipItems = GraphItemTypes.NODE
-  inputMode.addQueryItemToolTipListener((_, eventArgs): void => {
+  inputMode.addEventListener('query-item-tool-tip', (eventArgs): void => {
     if (eventArgs.handled) {
       // Tooltip content has already been assigned -> nothing to do.
       return
@@ -87,7 +93,7 @@ function createValidationTooltipContent(validationMessages: Array<string>): HTML
 
   // Create list of messages and append it to tooltip container
   const ul = document.createElement('ul')
-  validationMessages.forEach(message => {
+  validationMessages.forEach((message) => {
     const li = document.createElement('li')
     li.innerHTML = message
     ul.appendChild(li)

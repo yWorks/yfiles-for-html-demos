@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,21 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HierarchicLayout, LayoutExecutorAsyncWorker, LayoutGraph, License } from 'yfiles'
+import { HierarchicalLayout, LayoutExecutorAsyncWorker, License } from '@yfiles/yfiles'
 import licenseData from '../../../../../lib/license.json'
 
 License.value = licenseData
 
-function applyLayout(graph: LayoutGraph): void {
-  new HierarchicLayout({ integratedEdgeLabeling: true }).applyLayout(graph)
-}
-
-// eslint-disable-next-line no-restricted-globals
-self.addEventListener(
-  'message',
-  (e) => {
-    const executor = new LayoutExecutorAsyncWorker(applyLayout)
-    executor.process(e.data).then(postMessage).catch(postMessage)
-  },
-  false
-)
+LayoutExecutorAsyncWorker.initializeWebWorker((graph) => {
+  new HierarchicalLayout({ edgeLabelPlacement: 'integrated' }).applyLayout(graph)
+})

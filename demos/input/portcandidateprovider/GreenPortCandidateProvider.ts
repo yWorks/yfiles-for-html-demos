@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
   IEnumerable,
   IInputModeContext,
   IListEnumerable,
@@ -35,9 +34,10 @@ import {
   IPortCandidate,
   IPortCandidateProvider,
   List,
+  PortCandidate,
   PortCandidateProviderBase,
   PortCandidateValidity
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * This port candidate provider only allows connections from green nodes.
@@ -96,7 +96,7 @@ export default class GreenPortCandidateProvider extends PortCandidateProviderBas
     if (graph) {
       // Create a port candidate for each free port on the node
       this.node.ports.forEach((port) => {
-        const portCandidate = new DefaultPortCandidate(port)
+        const portCandidate = new PortCandidate(port)
         const valid = graph.degree(port) === 0
         hasValid = hasValid || valid
         portCandidate.validity = valid ? PortCandidateValidity.VALID : PortCandidateValidity.INVALID

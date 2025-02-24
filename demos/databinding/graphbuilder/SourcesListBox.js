@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,20 +33,18 @@
 export class SourcesListBox {
   Factory
   DialogFactory
-
   sources
   lastSourceIndex
   rootElement
   addButton
   dataUpdatedCallback
-
   /**
    * Sources list box constructor
-   * @param {!function} factory the arrow function providing an appropriate {@link SourceDefinitionBuilderConnector}
+   * @param factory the arrow function providing an appropriate {@link SourceDefinitionBuilderConnector}
    *        connector via the factory class
-   * @param {!object} dialogFactory the Node- or Edge- {@link SourceDialog} to use
-   * @param {!HTMLElement} rootElement the HTMLElement used to display the list box
-   * @param {!function} dataUpdatedCallback the callback arrow function used to update the graph after
+   * @param dialogFactory the Node- or Edge- {@link SourceDialog} to use
+   * @param rootElement the HTMLElement used to display the list box
+   * @param dataUpdatedCallback the callback arrow function used to update the graph after
    *        the SourceDialog was closed as accepted
    */
   constructor(factory, dialogFactory, rootElement, dataUpdatedCallback) {
@@ -56,39 +54,32 @@ export class SourcesListBox {
     this.DialogFactory = dialogFactory
     this.rootElement = rootElement
     this.lastSourceIndex = 1
-
     this.addButton = document.createElement('button')
     this.addButton.textContent = 'Add Source'
     this.addButton.addEventListener('click', () => this.createDefinition())
     this.rootElement.appendChild(this.addButton)
   }
-
   /**
    * Event handler for "Add Source" button
    * Generates a new definition via the provided connector Factory
    * and add ist to the list box
-   * @returns {!TSourceConnector}
    */
   createDefinition() {
     const newDefinition = this.Factory(`Source ${this.lastSourceIndex++}`)
     this.addDefinition(newDefinition)
     return newDefinition
   }
-
   /**
    * Adds a new definition using the provided {@link SourceDefinitionBuilderConnector} to the list box
-   * @param {!TSourceConnector} newDefinition the {@link SourceDefinitionBuilderConnector}
+   * @param newDefinition the {@link SourceDefinitionBuilderConnector}
    */
   addDefinition(newDefinition) {
     this.sources.push(newDefinition)
-
     const container = document.createElement('div')
     container.classList.add('sourceCard')
-
     const label = document.createElement('span')
     label.textContent = newDefinition.sourceDefinition.name
     label.classList.add('sourceLabel')
-
     const editButton = document.createElement('button')
     editButton.classList.add('editButton')
     editButton.addEventListener('click', () => {
@@ -98,23 +89,19 @@ export class SourcesListBox {
       }).show()
     })
     editButton.textContent = 'Edit'
-
     const removeButton = document.createElement('button')
     removeButton.classList.add('removeButton')
     removeButton.addEventListener('click', () => this.removeDefinition(newDefinition, container))
     removeButton.textContent = 'Remove'
-
     container.appendChild(label)
     container.appendChild(editButton)
     container.appendChild(removeButton)
-
     this.rootElement.insertBefore(container, this.addButton)
   }
-
   /**
    * Removes the provided definition from the list box
-   * @param {!TSourceConnector} definition the {@link SourceDefinitionBuilderConnector}
-   * @param {!HTMLDivElement} container the list box div container
+   * @param definition the {@link SourceDefinitionBuilderConnector}
+   * @param container the list box div container
    */
   removeDefinition(definition, container) {
     // The GraphBuilder does not support removing sources - for simplicity of this demo simply set

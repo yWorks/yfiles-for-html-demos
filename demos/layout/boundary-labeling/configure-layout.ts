@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,19 +27,18 @@
  **
  ***************************************************************************/
 import {
-  ExteriorLabelModel,
+  ConstraintOrientation,
+  ExteriorNodeLabelModel,
   type IEdge,
   type IGraph,
   type ILayoutAlgorithm,
   type INode,
   type LayoutData,
   OrganicLayout,
-  OrganicLayoutConstraintOrientation,
   OrganicLayoutData,
-  OrganicLayoutScope,
   Rect
-} from 'yfiles'
-import { getPointData, isLabel, NodeType } from './data-types'
+} from '@yfiles/yfiles'
+import { getPointData, isLabel, MultiPageNodeType } from './data-types'
 
 /**
  * Returns a layout configuration of the organic layout with constraints so that:
@@ -65,25 +64,24 @@ export function configureLayout(
   assignLabelModels(graph, imageRect)
 
   // some basic configuration for the organic layout
-  // scope SUBSET is used because the locations of the points may not change. i.e. the algorithm may
+  // scope SUBSET is used because the locations of the points may not change i.e., the algorithm may
   // arrange only label nodes
   const organicLayout = new OrganicLayout({
     deterministic: true,
-    scope: OrganicLayoutScope.SUBSET,
-    considerNodeLabels: true,
-    minimumNodeDistance: 5
+    defaultMinimumNodeDistance: 5
   })
 
   // specifies desired edge lengths and the set of node to be arranged, i.e., the label nodes
   const organicLayoutData = new OrganicLayoutData({
-    affectedNodes: (node) => getPointData(node).type === NodeType.LABEL,
-    preferredEdgeLengths: (edge: IEdge) => (isLeftPoint(edge.sourceNode!, imageRect) ? 50 : 25)
+    preferredEdgeLengths: (edge: IEdge) => (isLeftPoint(edge.sourceNode, imageRect) ? 50 : 25),
+    scope: {
+      nodes: graph.nodes.filter((node) => getPointData(node).type === MultiPageNodeType.LABEL)
+    }
   })
-
   // create the constraints for the layout algorithm
   for (const edge of graph.edges) {
-    const point = edge.sourceNode!
-    const labelNode = edge.targetNode!
+    const point = edge.sourceNode
+    const labelNode = edge.targetNode
 
     if (isVerticalPoint(point, imageRect)) {
       // create the constraints for the nodes on the top/bottom part
@@ -126,7 +124,7 @@ function addHorizontalConstraints(
 
   // enforce a minimum distance between the two nodes
   const separationConstraint = organicLayoutData.constraints.addSeparationConstraint(
-    OrganicLayoutConstraintOrientation.HORIZONTAL,
+    ConstraintOrientation.HORIZONTAL,
     distanceToBorder + 20
   )
   separationConstraint.firstSet.item = left
@@ -134,9 +132,11 @@ function addHorizontalConstraints(
 
   // create a constraint tο enforce the desired order of the point and label node
   const orderConstraint = organicLayoutData.constraints.addOrderConstraint(
-    OrganicLayoutConstraintOrientation.HORIZONTAL
+    ConstraintOrientation.HORIZONTAL
   )
-  orderConstraint.items = [left, right]
+
+  orderConstraint.mapper.set(left, 1)
+  orderConstraint.mapper.set(right, 2)
 }
 
 /**
@@ -164,7 +164,7 @@ function addVerticalConstraints(
 
   // enforce a minimum distance between the two nodes
   const separationConstraint = organicLayoutData.constraints.addSeparationConstraint(
-    OrganicLayoutConstraintOrientation.VERTICAL,
+    ConstraintOrientation.VERTICAL,
     distanceToBorder + 20
   )
   separationConstraint.firstSet.item = top
@@ -173,9 +173,10 @@ function addVerticalConstraints(
   // create a constraint to enforce the desired ordering of the point and its label node
   // based on whether the point node should ly above or below its label node
   const orderConstraint = organicLayoutData.constraints.addOrderConstraint(
-    OrganicLayoutConstraintOrientation.VERTICAL
+    ConstraintOrientation.VERTICAL
   )
-  orderConstraint.items = [top, bottom]
+  orderConstraint.mapper.set(top, 1)
+  orderConstraint.mapper.set(bottom, 2)
 }
 
 /**
@@ -193,13 +194,13 @@ function addVerticalLabelToLabelConstraints(
 
   // get the labels on the left side and create a constraint to align them vertically
   const leftAlignmentConstraint = organicLayoutData.constraints.addAlignmentConstraint(
-    OrganicLayoutConstraintOrientation.VERTICAL
+    ConstraintOrientation.VERTICAL
   )
   leftAlignmentConstraint.items = nonVerticalPoints.filter((node) => isLeftPoint(node, imageRect))
 
   // get the labels on the right side and create a constraint to align them vertically
   const rightAlignmentConstraint = organicLayoutData.constraints.addAlignmentConstraint(
-    OrganicLayoutConstraintOrientation.VERTICAL
+    ConstraintOrientation.VERTICAL
   )
   rightAlignmentConstraint.items = nonVerticalPoints.filter((node) => !isLeftPoint(node, imageRect))
 }
@@ -250,7 +251,7 @@ function assignLabelModels(graph: IGraph, imageRect: Rect): void {
         // the label should go above the node or below the node, respectively
         graph.setLabelLayoutParameter(
           label,
-          isTop ? ExteriorLabelModel.NORTH : ExteriorLabelModel.SOUTH
+          isTop ? ExteriorNodeLabelModel.TOP : ExteriorNodeLabelModel.BOTTOM
         )
       } else {
         const isLeft = isLeftPoint(labelNode, imageRect)
@@ -258,7 +259,7 @@ function assignLabelModels(graph: IGraph, imageRect: Rect): void {
         // the label should go before the node or after the node, respectively
         graph.setLabelLayoutParameter(
           label,
-          isLeft ? ExteriorLabelModel.WEST : ExteriorLabelModel.EAST
+          isLeft ? ExteriorNodeLabelModel.LEFT : ExteriorNodeLabelModel.RIGHT
         )
       }
     })
@@ -272,7 +273,7 @@ function resetLabelPositions(graph: IGraph): void {
   graph.nodes
     .filter((node) => isLabel(node))
     .forEach((labelNode) => {
-      const point = graph.edgesAt(labelNode).at(0)!.sourceNode!
+      const point = graph.edgesAt(labelNode).at(0)!.sourceNode
       graph.setNodeLayout(
         labelNode,
         new Rect(point.layout.x, point.layout.y, labelNode.layout.width, labelNode.layout.height)

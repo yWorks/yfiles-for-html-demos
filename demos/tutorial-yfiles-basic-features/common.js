@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,10 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  DefaultLabelStyle,
-  EdgeStyleDecorationInstaller,
-  ExteriorLabelModel,
+  EdgeStyleIndicatorRenderer,
+  ExteriorNodeLabelModel,
   FreeNodePortLocationModel,
   GraphBuilder,
   GraphEditorInputMode,
@@ -37,22 +37,18 @@ import {
   GroupNodeStyle,
   HorizontalTextAlignment,
   IGraph,
-  InteriorLabelModel,
-  NodeStyleDecorationInstaller,
+  InteriorNodeLabelModel,
+  LabelStyle,
+  NodeStyleIndicatorRenderer,
   Point,
   PolylineEdgeStyle,
   Rect,
-  RectangleCornerStyle,
-  RectangleNodeStyle,
   ShapeNodeStyle,
   SmartEdgeLabelModel
-} from 'yfiles'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { graphDataAnalysis, graphDataLayout, graphDataLayoutData } from './graph-data.js'
-
+} from '@yfiles/yfiles'
+import { graphDataAnalysis, graphDataLayout, graphDataLayoutData } from './graph-data'
 /**
  * Configures colors for styling the nodes retrieved from the given data sources.
- * @param {!Array.<NodesSource>} nodesSources
  */
 export function configureStyles(nodesSources) {
   const nodeFills = ['#0b7189', '#111d4a', '#ff6c00', '#ab2346', '#621b00']
@@ -65,21 +61,18 @@ export function configureStyles(nodesSources) {
       fill: nodeFills[index % nodeFills.length],
       stroke: nodeStrokes[index % nodeStrokes.length]
     })
-    nodesSource.nodeCreator.defaults.labels.style = new DefaultLabelStyle({
+    nodesSource.nodeCreator.defaults.labels.style = new LabelStyle({
       shape: 'round-rectangle',
       textFill: labelTextColors[index % labelTextColors.length],
       backgroundFill: labelFills[index % labelFills.length],
-      insets: 2
+      padding: 2
     })
   })
 }
-
 /**
  * Initializes the default styles for nodes, edges, and labels.
- * @param {!GraphComponent} graphComponent
  */
 export function initializeTutorialDefaults(graphComponent) {
-  applyDemoTheme(graphComponent)
   graphComponent.focusIndicatorManager.enabled = false
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -87,135 +80,98 @@ export function initializeTutorialDefaults(graphComponent) {
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     shape: 'round-rectangle',
     textFill: '#042d37',
     backgroundFill: '#9dc6d0',
-    insets: 2,
+    padding: 2,
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
   })
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '1.5px #0b7189',
     targetArrow: '#0b7189 medium triangle'
   })
-
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#111d4a',
-    contentAreaInsets: 10
+    contentAreaPadding: 10
   })
-
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'left',
     textFill: 'white'
   })
-
-  graph.groupNodeDefaults.labels.layoutParameter =
-    new GroupNodeLabelModel().createDefaultParameter()
+  graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
 }
-
 /**
  * Fits the graph into the graph component with a minimum zoom value.
  * The graph will be slightly zoomed in to avoid that small graphs are displayed too small.
- * @param {!GraphComponent} graphComponent
- * @param {number} [minimumZoom=3]
  */
 export function fitGraphBounds(graphComponent, minimumZoom = 3) {
   graphComponent.limitFitContentZoom = false
   graphComponent.fitGraphBounds()
   graphComponent.zoom = Math.min(graphComponent.zoom, minimumZoom)
 }
-
 /**
  * Creates a sample graph and introduces all important graph elements present in
  * yFiles for HTML. Additionally, this method now overrides the label placement for some specific labels.
- * @param {!IGraph} graph
  */
 export function createSampleGraph(graph) {
   const node1 = graph.createNodeAt(new Point(30, 30))
   const node2 = graph.createNodeAt(new Point(170, 30))
   const node3 = graph.createNode(new Rect(230, 200, 60, 30))
-
   graph.createEdge(node1, node2)
   const edge2 = graph.createEdge(node2, node3)
-
   graph.addBend(edge2, new Point(260, 30))
-
-  const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
-
+  const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.CENTER)
   const port1AtNode3 = graph.addPortAt(node3, new Point(node3.layout.x, node3.layout.center.y))
-
   const edgeAtPorts = graph.createEdge(port1AtNode1, port1AtNode3)
-
   // Adds labels to several graph elements
   graph.addLabel(node1, 'n1')
   graph.addLabel(node2, 'n2')
   const n3Label = graph.addLabel(node3, 'n3')
   graph.addLabel(edgeAtPorts, 'Edge at Ports')
 }
-
-/**
- * @param {!IGraph} graph
- */
 export function createSampleGraphLabelPlacement(graph) {
   const node1 = graph.createNodeAt(new Point(30, 30))
   const node2 = graph.createNode(new Rect(120, 10, 60, 40))
   const node3 = graph.createNode(new Rect(230, 200, 60, 30))
-
   graph.createEdge(node1, node2)
   const edge2 = graph.createEdge(node2, node3)
-
   graph.addBend(edge2, new Point(260, 30))
-
-  const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
-
+  const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.CENTER)
   const port1AtNode3 = graph.addPortAt(node3, new Point(node3.layout.x, node3.layout.center.y))
-
   const edgeAtPorts = graph.createEdge(port1AtNode1, port1AtNode3)
-
   // Adds labels to several graph elements
   graph.addLabel(node1, 'n1')
   graph.addLabel(node2, 'n2')
   const n3Label = graph.addLabel(node3, 'n3')
   graph.addLabel(edgeAtPorts, 'Edge at Ports')
 }
-
 /**
  * Creates a sample graph and introduces all important graph elements present in
  * yFiles for HTML. Additionally, this method now overrides the label placement for some specific labels.
- * @param {!IGraph} graph
  */
 export function createSampleGraphViewport(graph) {
   const node1 = graph.createNodeAt(new Point(30, 30))
   const node2 = graph.createNodeAt(new Point(150, 30))
-
   const node3 = graph.createNode(new Rect(230, 200, 60, 30))
-
   graph.createEdge(node1, node2)
   const edgeWithBend = graph.createEdge(node2, node3)
-
   graph.addBend(edgeWithBend, new Point(260, 30))
-
-  const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
-
+  const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.CENTER)
   const port1AtNode3 = graph.addPortAt(node3, new Point(node3.layout.x, node3.layout.center.y))
-
   const edgeAtPorts = graph.createEdge(port1AtNode1, port1AtNode3)
-
   graph.addLabel(node1, 'n1')
   graph.addLabel(node2, 'n2')
   graph.addLabel(node3, 'n3')
   graph.addLabel(edgeAtPorts, 'Edge at Ports')
-
   graph.addLabel(
     graph.createNodeAt(new Point(-500, -500)),
     'Outside initial viewport',
-    ExteriorLabelModel.SOUTH
+    ExteriorNodeLabelModel.BOTTOM
   )
 }
-
 /**
  * Creates a larger sample graph.
- * @param {!IGraph} graph
  */
 export function createSampleGraphLayout(graph) {
   const builder = new GraphBuilder(graph)
@@ -233,13 +189,10 @@ export function createSampleGraphLayout(graph) {
     labels: ['label']
   })
   builder.createEdgesSource(graphDataLayout.edges, 'source', 'target', 'id')
-
   builder.buildGraph()
 }
-
 /**
  * Creates a larger sample graph.
- * @param {!IGraph} graph
  */
 export function createSampleGraphLayoutData(graph) {
   const builder = new GraphBuilder(graph)
@@ -257,13 +210,8 @@ export function createSampleGraphLayoutData(graph) {
     labels: ['label']
   })
   builder.createEdgesSource(graphDataLayoutData.edges, 'source', 'target', 'id')
-
   builder.buildGraph()
 }
-
-/**
- * @param {!IGraph} graph
- */
 export function createSampleGraphAnalysis(graph) {
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
@@ -280,66 +228,41 @@ export function createSampleGraphAnalysis(graph) {
     labels: ['label']
   })
   builder.createEdgesSource(graphDataAnalysis.edges, 'source', 'target', 'id')
-
   builder.buildGraph()
 }
-
-/**
- * @param {!IGraph} graph
- */
 export function setDefaultLabelLayoutParameters(graph) {
   // For node labels, the default is a label position at the node center
   // Let's keep the default.  Here is how to set it manually
-
   // Place node labels in the node center
-  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
-
+  graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
   // Use a rotated layout for edge labels
   graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel({
     autoRotation: true
   }).createParameterFromSource(0, 10.0, 0.5)
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- * @returns {!GraphEditorInputMode}
- */
 export function configureInteraction(graphComponent) {
   // Create a new GraphEditorInputMode instance and register it as the main
   // input mode for the graphComponent
-  const graphEditorInputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  const graphEditorInputMode = new GraphEditorInputMode()
   graphComponent.inputMode = graphEditorInputMode
   return graphEditorInputMode
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- */
 export function configureHighlights(graphComponent) {
-  graphComponent.selection.addItemSelectionChangedListener(() =>
-    graphComponent.highlightIndicatorManager.clearHighlights()
-  )
-
-  graphComponent.graph.decorator.nodeDecorator.highlightDecorator.setImplementation(
-    new NodeStyleDecorationInstaller({
+  graphComponent.selection.addEventListener('item-added', () => graphComponent.highlights.clear())
+  graphComponent.selection.addEventListener('item-removed', () => graphComponent.highlights.clear())
+  graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(
+    new NodeStyleIndicatorRenderer({
       nodeStyle: new ShapeNodeStyle({ stroke: '3px orange', fill: 'none' })
     })
   )
-  graphComponent.graph.decorator.edgeDecorator.highlightDecorator.setImplementation(
-    new EdgeStyleDecorationInstaller({
+  graphComponent.graph.decorator.edges.highlightRenderer.addConstant(
+    new EdgeStyleIndicatorRenderer({
       edgeStyle: new PolylineEdgeStyle({
         stroke: '3px orange'
       })
     })
   )
 }
-
-/**
- * @param {!string} selector
- * @param {!function} callback
- */
 export function addButtonListener(selector, callback) {
   document.querySelector(selector)?.addEventListener('click', async () => {
     callback()

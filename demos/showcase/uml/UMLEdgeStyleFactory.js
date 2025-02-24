@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,32 +26,23 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Arrow, ArrowType, DashStyle, Fill, PolylineEdgeStyle, Stroke } from 'yfiles'
-
+import { Arrow, ArrowType, Color, DashStyle, PolylineEdgeStyle, Stroke } from '@yfiles/yfiles'
 /**
  * Static helpers class to create UML styles and provide methods to check for certain styles.
- * @returns {!PolylineEdgeStyle}
  */
 export function createAssociationStyle() {
-  return new PolylineEdgeStyle()
+  return new PolylineEdgeStyle({ orthogonalEditing: true })
 }
-
-/**
- * @returns {!PolylineEdgeStyle}
- */
 export function createDirectedAssociationStyle() {
   return new PolylineEdgeStyle({
     targetArrow: new Arrow({
       stroke: Stroke.BLACK,
-      fill: Fill.BLACK,
-      type: ArrowType.DEFAULT
-    })
+      fill: Color.BLACK,
+      type: ArrowType.STEALTH
+    }),
+    orthogonalEditing: true
   })
 }
-
-/**
- * @returns {!PolylineEdgeStyle}
- */
 export function createRealizationStyle() {
   return new PolylineEdgeStyle({
     stroke: new Stroke({
@@ -59,41 +50,32 @@ export function createRealizationStyle() {
     }),
     sourceArrow: new Arrow({
       stroke: Stroke.BLACK,
-      fill: Fill.WHITE,
+      fill: Color.WHITE,
       type: ArrowType.TRIANGLE
-    })
+    }),
+    orthogonalEditing: true
   })
 }
-
-/**
- * @returns {!PolylineEdgeStyle}
- */
 export function createGeneralizationStyle() {
   return new PolylineEdgeStyle({
     sourceArrow: new Arrow({
       stroke: Stroke.BLACK,
-      fill: Fill.WHITE,
+      fill: Color.WHITE,
       type: ArrowType.TRIANGLE
-    })
+    }),
+    orthogonalEditing: true
   })
 }
-
-/**
- * @returns {!PolylineEdgeStyle}
- */
 export function createAggregationStyle() {
   return new PolylineEdgeStyle({
     sourceArrow: new Arrow({
       stroke: Stroke.BLACK,
-      fill: Fill.WHITE,
+      fill: Color.WHITE,
       type: ArrowType.DIAMOND
-    })
+    }),
+    orthogonalEditing: true
   })
 }
-
-/**
- * @returns {!PolylineEdgeStyle}
- */
 export function createDependencyStyle() {
   return new PolylineEdgeStyle({
     stroke: new Stroke({
@@ -101,54 +83,34 @@ export function createDependencyStyle() {
     }),
     targetArrow: new Arrow({
       stroke: Stroke.BLACK,
-      fill: Fill.BLACK,
-      type: ArrowType.DEFAULT
-    })
+      fill: Color.BLACK,
+      type: ArrowType.STEALTH
+    }),
+    orthogonalEditing: true
   })
 }
-
 /**
  * Inheritance styles, i.e. generalization or realization
- * @param {!PolylineEdgeStyle} style
- * @returns {boolean}
  */
 export function isInheritance(style) {
   return isGeneralization(style) || isRealization(style)
 }
-
 /**
  * If the style symbolizes a generalization.
- * @param {!PolylineEdgeStyle} style
- * @returns {boolean}
  */
 export function isGeneralization(style) {
   return hasStroke(style, DashStyle.SOLID) && hasArrow(style, ArrowType.TRIANGLE)
 }
-
 /**
  * If the style symbolizes a realization.
- * @param {!PolylineEdgeStyle} style
- * @returns {boolean}
  */
 export function isRealization(style) {
   return hasStroke(style, DashStyle.DASH) && hasArrow(style, ArrowType.TRIANGLE)
 }
-
-/**
- * @param {!PolylineEdgeStyle} edgeStyle
- * @param {!DashStyle} dashStyle
- * @returns {boolean}
- */
 function hasStroke(edgeStyle, dashStyle) {
   const stroke = edgeStyle.stroke
   return !!stroke && stroke.dashStyle === dashStyle
 }
-
-/**
- * @param {!PolylineEdgeStyle} style
- * @param {!ArrowType} arrowType
- * @returns {boolean}
- */
 function hasArrow(style, arrowType) {
   const arrow = style.sourceArrow
   return !!arrow && arrow instanceof Arrow && arrow.type === arrowType

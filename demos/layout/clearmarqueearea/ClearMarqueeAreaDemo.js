@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  BaseClass,
   CanvasComponent,
   ClearAreaStrategy,
   ComponentAssignmentStrategy,
@@ -35,57 +35,42 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  GraphItemTypes,
+  IHitTester,
   IInputModeContext,
   INode,
-  INodeHitTester,
   IRenderContext,
-  IVisualTemplate,
-  KeyEventRecognizers,
   License,
+  MarqueeRenderTag,
   MarqueeSelectionEventArgs,
   MarqueeSelectionInputMode,
-  MouseEventRecognizers,
+  ObjectRendererBase,
   Point,
+  PointerButtons,
+  PointerEventArgs,
+  PointerEventType,
   Rect,
   SvgVisual
-} from 'yfiles'
-
-import SampleData from './resources/SampleData.js'
-import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper.js'
-import { applyDemoTheme, createDemoGroupStyle, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
-
-/** @type {GraphComponent} */
+} from '@yfiles/yfiles'
+import SampleData from './resources/SampleData'
+import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
+import { createDemoGroupStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 let graphComponent = null
-
-/** @type {ClearAreaLayoutHelper} */
 let layoutHelper = null
-
-/** @type {ComponentAssignmentStrategy} */
 let componentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
-
-/** @type {ClearAreaStrategy} */
 let clearAreaStrategy = ClearAreaStrategy.PRESERVE_SHAPES
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeInputModes()
   initDemoStyles(graphComponent.graph)
-  loadGraph('hierarchic')
-
+  loadGraph('hierarchical')
   graphComponent.graph.undoEngine.clear()
-
   // bind the buttons to their actions
   initializeUI()
 }
-
 /**
  * Registers the {@link GraphEditorInputMode} as the {@link CanvasComponent.inputMode}
  * and initializes the marquee input mode that clears the area of the marquee rectangle.
@@ -93,70 +78,53 @@ async function run() {
 function initializeInputModes() {
   // enable undo/redo support
   graphComponent.graph.undoEngineEnabled = true
-
   // create an input mode to edit graphs
   const editMode = new GraphEditorInputMode()
-
   // create an input mode to clear the area of a marquee rectangle
   // using the right mouse button
   const marqueeClearInputMode = new MarqueeSelectionInputMode({
-    template: new ClearRectTemplate(),
-    pressedRecognizer: MouseEventRecognizers.RIGHT_DOWN,
-    draggedRecognizer: MouseEventRecognizers.RIGHT_DRAG,
-    releasedRecognizer: MouseEventRecognizers.RIGHT_UP,
-    cancelRecognizer: EventRecognizers.createOrRecognizer(
-      KeyEventRecognizers.ESCAPE_DOWN,
-      MouseEventRecognizers.LOST_CAPTURE_DURING_DRAG
-    )
+    marqueeRenderer: new ClearRectangleRenderer(),
+    beginRecognizer: (evt) =>
+      evt instanceof PointerEventArgs &&
+      evt.buttons === PointerButtons.MOUSE_RIGHT &&
+      evt.eventType === PointerEventType.DOWN,
+    moveRecognizer: (evt) =>
+      evt instanceof PointerEventArgs && evt.eventType === PointerEventType.DRAG,
+    finishRecognizer: (evt) =>
+      evt instanceof PointerEventArgs &&
+      evt.changedButtons === PointerButtons.MOUSE_RIGHT &&
+      evt.eventType === PointerEventType.UP,
+    cancelRecognizer: (evt, sender) =>
+      EventRecognizers.ESCAPE_DOWN(evt, sender) ||
+      (evt instanceof PointerEventArgs && evt.eventType === PointerEventType.DRAG_CAPTURE_LOST),
+    useViewCoordinates: false
   })
-
   // handle dragging the marquee
-  marqueeClearInputMode.addDragStartingListener(onDragStarting)
-  marqueeClearInputMode.addDraggedListener(onDragged)
-  marqueeClearInputMode.addDragCanceledListener(onDragCanceled)
-  marqueeClearInputMode.addDragFinishedListener(onDragFinished)
+  marqueeClearInputMode.addEventListener('drag-starting', onDragStarting)
+  marqueeClearInputMode.addEventListener('dragged', onDragged)
+  marqueeClearInputMode.addEventListener('drag-canceled', onDragCanceled)
+  marqueeClearInputMode.addEventListener('drag-finished', onDragFinished)
   // add this mode to the edit mode
   editMode.add(marqueeClearInputMode)
-
   // and install the edit mode into the canvas
   graphComponent.inputMode = editMode
 }
-
 /**
- * A template for the red marquee rectangle.
+ * A renderer for the blue marquee rectangle.
  */
-class ClearRectTemplate extends BaseClass(IVisualTemplate) {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!Rect} bounds
-   * @param {*} dataObject
-   * @returns {?SvgVisual}
-   */
-  createVisual(context, bounds, dataObject) {
+class ClearRectangleRenderer extends ObjectRendererBase {
+  createVisual(context, renderTag) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.setAttribute('fill', 'rgba(0,187,255,0.65)')
     rect.setAttribute('stroke', 'rgba(77,131,153,0.65)')
     rect.setAttribute('stroke-width', '1.5')
-    ClearRectTemplate.setBounds(rect, bounds)
+    ClearRectangleRenderer.setBounds(rect, renderTag.selectionRectangle)
     return new SvgVisual(rect)
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!SvgVisual} oldVisual
-   * @param {!Rect} bounds
-   * @param {*} dataObject
-   * @returns {?SvgVisual}
-   */
-  updateVisual(context, oldVisual, bounds, dataObject) {
-    ClearRectTemplate.setBounds(oldVisual.svgElement, bounds)
+  updateVisual(context, oldVisual, renderTag) {
+    ClearRectangleRenderer.setBounds(oldVisual.svgElement, renderTag.selectionRectangle)
     return oldVisual
   }
-
-  /**
-   * @param {!SVGElement} rect
-   * @param {!Rect} bounds
-   */
   static setBounds(rect, bounds) {
     rect.setAttribute('x', String(bounds.x))
     rect.setAttribute('y', String(bounds.y))
@@ -164,13 +132,10 @@ class ClearRectTemplate extends BaseClass(IVisualTemplate) {
     rect.setAttribute('height', String(bounds.height))
   }
 }
-
 /**
  * The marquee rectangle is upon to be dragged.
- * @param {*} sender
- * @param {!MarqueeSelectionEventArgs} e
  */
-function onDragStarting(sender, e) {
+function onDragStarting(e) {
   const hitGroupNode = getHitGroupNode(e.context, e.context.canvasComponent.lastEventLocation)
   layoutHelper = new ClearAreaLayoutHelper(
     graphComponent,
@@ -181,62 +146,44 @@ function onDragStarting(sender, e) {
   )
   layoutHelper.initializeLayout()
 }
-
 /**
  * The marquee rectangle is currently dragged. For each drag a new layout is calculated and applied
  * if the previous one is completed.
- * @param {*} sender
- * @param {!MarqueeSelectionEventArgs} e
  */
-function onDragged(sender, e) {
+function onDragged(e) {
   layoutHelper.clearRectangle = e.rectangle
   layoutHelper.runLayout()
 }
-
 /**
  * Dragging the marquee rectangle has been canceled so the state before the gesture must be restored.
- * @param {*} sender
- * @param {!MarqueeSelectionEventArgs} e
  */
-function onDragCanceled(sender, e) {
+function onDragCanceled(e) {
   layoutHelper.clearRectangle = e.rectangle
   layoutHelper.cancelLayout()
 }
-
 /**
  * Dragging the marquee rectangle has been finished so
  * we execute the layout with the final rectangle.
- * @param {*} sender
- * @param {!MarqueeSelectionEventArgs} e
  */
-function onDragFinished(sender, e) {
+function onDragFinished(e) {
   layoutHelper.clearRectangle = e.rectangle
   layoutHelper.stopLayout()
 }
-
 /**
  * Returns the group node at the given location. If there is no group node, `null` is returned.
- * @param {!IInputModeContext} context
- * @param {!Point} location
- * @returns {?INode}
  */
 function getHitGroupNode(context, location) {
-  return context
-    .lookup(INodeHitTester.$class)
-    .enumerateHits(context, location)
-    .find((n) => graphComponent.graph.isGroupNode(n))
+  const hits = context.lookup(IHitTester).enumerateHits(context, location, GraphItemTypes.NODE)
+  return hits.find((n) => graphComponent.graph.isGroupNode(n))
 }
-
 /**
  * Loads the sample graph associated with the given name
- * @param {!string} sampleName
  */
 function loadGraph(sampleName) {
+  // @ts-ignore We don't have proper types for the sample data
   const data = SampleData[sampleName]
-
   const graph = graphComponent.graph
   graph.clear()
-
   const defaultNodeSize = graph.nodeDefaults.size
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
@@ -245,6 +192,10 @@ function loadGraph(sampleName) {
     parentId: 'parentId',
     layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
+  const groupStyle = createDemoGroupStyle({})
+  // set hitTransparentContentArea to false so group nodes are properly hit in getHitGroupNode
+  groupStyle.hitTransparentContentArea = false
+  graph.groupNodeDefaults.style = groupStyle
   if (data.groups) {
     const nodesSource = builder.createGroupNodesSource({
       data: data.groups,
@@ -252,15 +203,9 @@ function loadGraph(sampleName) {
       parentId: 'parentId',
       layout: (data) => data // the data object itself has x, y, width, height properties
     })
-    const groupStyle = createDemoGroupStyle({})
-    // set hitTransparentContentArea to false so group nodes are properly hit in getHitGroupNode
-    groupStyle.hitTransparentContentArea = false
-    nodesSource.nodeCreator.defaults.style = groupStyle
   }
   builder.createEdgesSource(data.edges, 'source', 'target', 'id')
-
   builder.buildGraph()
-
   graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
       graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
@@ -272,10 +217,8 @@ function loadGraph(sampleName) {
       graph.addBend(edge, bend)
     })
   })
-
   graphComponent.fitGraphBounds()
 }
-
 /**
  * Registers actions for the items in the toolbar.
  */
@@ -286,7 +229,6 @@ function initializeUI() {
     const selectedOption = sampleGraphs.options[selectedIndex]
     loadGraph(selectedOption.value)
   })
-
   const assignmentStrategies = document.querySelector('#component-assignment-strategies')
   assignmentStrategies.addEventListener('change', () => {
     const selectedOption = assignmentStrategies.options[assignmentStrategies.selectedIndex]
@@ -302,7 +244,6 @@ function initializeUI() {
         break
     }
   })
-
   const clearAreaStrategies = document.querySelector('#clear-area-strategies')
   clearAreaStrategies.addEventListener('change', () => {
     const selectedOption = clearAreaStrategies.options[clearAreaStrategies.selectedIndex]
@@ -325,5 +266,4 @@ function initializeUI() {
     }
   })
 }
-
 run().then(finishLoading)

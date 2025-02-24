@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,83 +26,4 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphMLAttribute,
-  GraphMLIOHandler,
-  ILookup,
-  MarkupExtension,
-  TypeAttribute,
-  XamlAttributeWritePolicy,
-  YString
-} from 'yfiles'
-
-import { createLitNodeStyleFromSource, LitNodeStyle } from './LitNodeStyle.js'
-
-/**
- * A markup extension class used for (de-)serializing a Lit node style.
- */
-export class LitNodeStyleMarkupExtension extends MarkupExtension {
-  _renderFunction = ''
-
-  /**
-   * @type {!string}
-   */
-  get renderFunction() {
-    return this._renderFunction
-  }
-
-  /**
-   * @type {!string}
-   */
-  set renderFunction(value) {
-    this._renderFunction = value
-  }
-
-  /**
-   * @type {!object}
-   */
-  static get $meta() {
-    return {
-      $self: [GraphMLAttribute().init({ contentProperty: 'renderFunction' })],
-      renderFunction: [
-        GraphMLAttribute().init({
-          defaultValue: '',
-          writeAsAttribute: XamlAttributeWritePolicy.NEVER
-        }),
-        TypeAttribute(YString.$class)
-      ]
-    }
-  }
-
-  /**
-   * @param {!ILookup} serviceProvider
-   */
-  provideValue(serviceProvider) {
-    return createLitNodeStyleFromSource(this._renderFunction)
-  }
-}
-
-/**
- * Enable serialization of the LitNodeStyle - without a namespace mapping, serialization will fail
- * @param {!GraphMLIOHandler} graphmlHandler
- */
-export function registerLitNodeStyleSerialization(graphmlHandler) {
-  graphmlHandler.addXamlNamespaceMapping('http://www.yworks.com/demos/yfiles-lit-node-style/1.0', {
-    LitNodeStyle: LitNodeStyleMarkupExtension
-  })
-  graphmlHandler.addNamespace('http://www.yworks.com/demos/yfiles-lit-node-style/1.0', 'lit')
-  graphmlHandler.addHandleSerializationListener((_, evt) => {
-    const item = evt.item
-    const context = evt.context
-    if (item instanceof LitNodeStyle) {
-      const litNodeStyleMarkupExtension = new LitNodeStyleMarkupExtension()
-      litNodeStyleMarkupExtension.renderFunction = item.renderFunction.toString()
-      context.serializeReplacement(
-        LitNodeStyleMarkupExtension.$class,
-        item,
-        litNodeStyleMarkupExtension
-      )
-      evt.handled = true
-    }
-  })
-}
+export * from '@yfiles/demo-utils/LitNodeStyleMarkupExtension'

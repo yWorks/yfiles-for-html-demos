@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>06 Rendering Text - Tutorial: Node Style Implementation [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -52,7 +50,7 @@
         <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
         <a href="../../README.html">Demos</a>
 
-        <a href="../../README.html#tutorial-node-style-implementation">
+        <a href="../../README.html#tutorial-style-implementation-node">
           Tutorial: Node Style Implementation
         </a>
 
@@ -197,7 +195,7 @@ graph.<span class="hljs-title function_">createNode</span>({
     <span class="hljs-attr">targetElement</span>: text,
     <span class="hljs-attr">text</span>: node.<span class="hljs-property">tag</span>.<span class="hljs-property">title</span>,
     <span class="hljs-attr">font</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Font</span>(<span class="hljs-string">&#x27;sans-serif&#x27;</span>, <span class="hljs-number">10</span>),
-    <span class="hljs-attr">wrapping</span>: <span class="hljs-title class_">TextWrapping</span>.<span class="hljs-property">CHARACTER_ELLIPSIS</span>,
+    <span class="hljs-attr">wrapping</span>: <span class="hljs-title class_">TextWrapping</span>.<span class="hljs-property">WRAP_CHARACTER_ELLIPSIS</span>,
     <span class="hljs-attr">maximumSize</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(tabWidth - <span class="hljs-number">12</span>, <span class="hljs-number">15</span>)
   })
 

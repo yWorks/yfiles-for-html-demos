@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,12 +35,17 @@ import {
   type IModelItem,
   INode,
   type LayoutData,
-  PortConstraintKeys,
+  LayoutKeys,
   TableNodeStyle
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import { FlowchartNodeStyle, FlowchartNodeType } from '../style/FlowchartStyle'
-import { EDGE_TYPE_DP_KEY, EdgeType, NODE_TYPE_DP_KEY, NodeType } from './flowchart-elements'
+import {
+  EDGE_TYPE_DATA_KEY,
+  MultiPageEdgeType,
+  MultiPageNodeType,
+  NODE_TYPE_DATA_KEY
+} from './flowchart-elements'
 
 import { BranchDirection, FlowchartLayout } from './FlowchartLayout'
 
@@ -232,21 +237,16 @@ export class FlowchartLayoutData {
   create(graph: IGraph): LayoutData {
     const data = new GenericLayoutData()
 
-    data.addEdgeItemMapping(FlowchartLayout.PREFERRED_DIRECTION_DP_KEY).delegate = (
+    data.addItemMapping(FlowchartLayout.PREFERRED_DIRECTION_DATA_KEY).mapperFunction = (
       edge
     ): BranchDirection => this.getBranchType(edge)
 
-    data.addNodeItemMapping(NODE_TYPE_DP_KEY).delegate = (node): NodeType | EdgeType =>
-      this.getType(node)
-    data.addEdgeItemMapping(EDGE_TYPE_DP_KEY).delegate = (edge): NodeType | EdgeType =>
-      this.getType(edge)
-
-    if (graph.groupingSupport.hasGroupNodes()) {
-      data.addLabelItemMapping(FlowchartLayout.LABEL_LAYOUT_DP_KEY).delegate = (label): boolean => {
-        const node = label.owner
-        return node instanceof INode && label === node.labels.at(0) && !graph.isGroupNode(node)
-      }
-    }
+    data.addItemMapping(NODE_TYPE_DATA_KEY).mapperFunction = (
+      node
+    ): MultiPageNodeType | MultiPageEdgeType => this.getType(node)
+    data.addItemMapping(EDGE_TYPE_DATA_KEY).mapperFunction = (
+      edge
+    ): MultiPageNodeType | MultiPageEdgeType => this.getType(edge)
 
     if (this.inEdgeGrouping !== 'none') {
       let inDegreeThreshold: number
@@ -259,10 +259,10 @@ export class FlowchartLayoutData {
         degreeThreshold = 4
       }
 
-      data.addEdgeItemMapping(PortConstraintKeys.TARGET_GROUP_ID_DP_KEY).delegate = (
+      data.addItemMapping(LayoutKeys.TARGET_EDGE_GROUP_ID_DATA_KEY).mapperFunction = (
         edge
       ): INode | null => {
-        const node = edge.targetNode!
+        const node = edge.targetNode
         return graph.inDegree(node) >= 2 &&
           graph.inDegree(node) >= inDegreeThreshold &&
           graph.degree(node) >= degreeThreshold
@@ -281,39 +281,39 @@ export class FlowchartLayoutData {
     if (item instanceof INode) {
       const style = item.style
       if (style instanceof TableNodeStyle) {
-        return NodeType.Pool
+        return MultiPageNodeType.Pool
       } else if (style instanceof GroupNodeStyle) {
-        return NodeType.Group
+        return MultiPageNodeType.Group
       } else if (style instanceof FlowchartNodeStyle) {
         const type = style.type
         if (nodeActivityElements.has(type)) {
-          return NodeType.Process
+          return MultiPageNodeType.Process
         } else if (nodeDataElements.has(type)) {
-          return NodeType.Data
+          return MultiPageNodeType.Data
         } else if (nodeAnnotationElements.has(type)) {
-          return NodeType.Annotation
+          return MultiPageNodeType.Annotation
         } else if (nodeGatewayElements.has(type)) {
-          return NodeType.Decision
+          return MultiPageNodeType.Decision
         } else if (nodeEndElements.has(type)) {
-          return NodeType.EndEvent
+          return MultiPageNodeType.EndEvent
         } else if (nodeEventElements.has(type)) {
-          return NodeType.Event
+          return MultiPageNodeType.Event
         } else if (nodeReferenceElements.has(type)) {
-          return NodeType.Process
+          return MultiPageNodeType.Process
         } else if (nodeStartElements.has(type)) {
-          return NodeType.StartEvent
+          return MultiPageNodeType.StartEvent
         }
       }
     } else if (item instanceof IEdge) {
       if (
-        this.getType(item.sourceNode!) === NodeType.Annotation ||
-        this.getType(item.targetNode!) === NodeType.Annotation
+        this.getType(item.sourceNode) === MultiPageNodeType.Annotation ||
+        this.getType(item.targetNode) === MultiPageNodeType.Annotation
       ) {
-        return EdgeType.MessageFlow
+        return MultiPageEdgeType.MessageFlow
       }
-      return EdgeType.SequenceFlow
+      return MultiPageEdgeType.SequenceFlow
     }
-    return NodeType.Invalid
+    return MultiPageNodeType.Invalid
   }
 
   /**
@@ -337,9 +337,9 @@ export class FlowchartLayoutData {
    */
   isPositiveBranch(edge: IEdge): boolean {
     return (
-      this.getType(edge.sourceNode!) === NodeType.Decision &&
+      this.getType(edge.sourceNode) === MultiPageNodeType.Decision &&
       edge.labels.size > 0 &&
-      FlowchartLayoutData.isMatchingLabelText(edge.labels.first(), this.positiveBranchLabel)
+      FlowchartLayoutData.isMatchingLabelText(edge.labels.first()!, this.positiveBranchLabel)
     )
   }
 
@@ -351,9 +351,9 @@ export class FlowchartLayoutData {
    */
   isNegativeBranch(edge: IEdge): boolean {
     return (
-      this.getType(edge.sourceNode!) === NodeType.Decision &&
+      this.getType(edge.sourceNode) === MultiPageNodeType.Decision &&
       edge.labels.size > 0 &&
-      FlowchartLayoutData.isMatchingLabelText(edge.labels.first(), this.negativeBranchLabel)
+      FlowchartLayoutData.isMatchingLabelText(edge.labels.first()!, this.negativeBranchLabel)
     )
   }
 

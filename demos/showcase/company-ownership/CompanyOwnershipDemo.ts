@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,15 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { type GraphComponent, GraphOverviewComponent, License } from 'yfiles'
+import { type GraphComponent, GraphOverviewComponent, License } from '@yfiles/yfiles'
 import { CompanyStructureView } from './CompanyStructureView'
 
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { CompanyOwnershipSearch } from './CompanyOwnershipSearch'
 import { PropertiesView } from './PropertiesView'
-import { initializeConverters } from './styles/TableNodeStyle'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * The component for the search in the graph
@@ -57,11 +55,9 @@ async function run(): Promise<void> {
 
   companyStructureView = new CompanyStructureView('#graphComponent')
   const graphComponent = companyStructureView.graphComponent
-  applyDemoTheme(graphComponent)
-
   // add the listeners for the companyStructureView
-  companyStructureView.addNodeClickedListener((node) => propertiesView.showNodeProperties(node))
-  companyStructureView.addEdgeClickedListener((edge) => propertiesView.showEdgeProperties(edge))
+  companyStructureView.setNodeClickedListener((node) => propertiesView.showNodeProperties(node))
+  companyStructureView.setEdgeClickedListener((edge) => propertiesView.showEdgeProperties(edge))
 
   // initialize graph search
   graphSearch = new CompanyOwnershipSearch(graphComponent)
@@ -69,9 +65,6 @@ async function run(): Promise<void> {
     document.querySelector<HTMLInputElement>('#searchBox')!,
     graphSearch
   )
-
-  // initialize the converters needed for the template node style
-  initializeConverters()
 
   // create the properties view
   createPropertiesView()
@@ -106,14 +99,14 @@ function initializeUI(graphComponent: GraphComponent): void {
       await loadGraph(graphComponent)
     })
 
-  document.querySelectorAll<HTMLButtonElement>('[data-command="Shapes"]').forEach((element) => {
+  document.querySelectorAll<HTMLButtonElement>('button[data-command="Shapes"]').forEach((element) => {
     element.addEventListener('click', async () => {
       document.querySelector<HTMLSelectElement>('#styles')!.value = 'shapes'
       companyStructureView.useShapeNodeStyle = true
       await loadGraph(graphComponent)
     })
   })
-  document.querySelectorAll<HTMLButtonElement>('[data-command="Tables"]').forEach((element) => {
+  document.querySelectorAll<HTMLButtonElement>('button[data-command="Tables"]').forEach((element) => {
     element.addEventListener('click', async () => {
       document.querySelector<HTMLSelectElement>('#styles')!.value = 'tables'
       companyStructureView.useShapeNodeStyle = false

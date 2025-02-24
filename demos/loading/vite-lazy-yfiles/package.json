@@ -1,0 +1,24 @@
+{
+  "name": "@yfiles/vite-lazy-yfiles-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json', 'src/license.json')\" || echo To run this demo, please add a license.json to the src/ folder.",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@yfiles/demo-resources": "../../resources",
+    "@yfiles/demo-utils": "../../utils",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
+  },
+  "devDependencies": {
+    "@yworks/optimizer": "^1.8.2",
+    "typescript": "~5.7.3",
+    "vite": "^6.1.0"
+  }
+}

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,23 +27,19 @@
  **
  ***************************************************************************/
 import {
-  Arrow,
-  BridgeEdgeStyle,
-  DefaultLabelStyle,
   ImageNodeStyle,
+  LabelStyle,
   Point,
   PolylineEdgeStyle,
   RectangleCornerStyle,
   RectangleNodeStyle,
   ShapeNodeStyle,
   Size
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * Set up default styles for graph elements.
  * Default styles apply only to elements created after the default style has been set,
  * so typically, you'd set these as early as possible in your application.
- * @param {!IGraph} graph
  */
 export function setDefaultStyles(graph) {
   // Create a ShapeNodeStyle instance, using an orange fill.
@@ -56,36 +52,30 @@ export function setDefaultStyles(graph) {
   })
   // Also assign the default node size
   graph.nodeDefaults.size = new Size(40, 40)
-
   // Create a PolylineEdgeStyle which will be used as default for all edges
   // that don't have another style assigned explicitly
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '1.5px #662f01',
     targetArrow: '#662f01 small triangle'
   })
-
   // Create a label style using Tahoma as the label font and a black text color
-  const defaultLabelStyle = new DefaultLabelStyle({
+  const defaultLabelStyle = new LabelStyle({
     font: '12px Tahoma',
     textFill: 'black',
-    backgroundFill: '#8fff',
+    backgroundFill: '#ffffff87',
     shape: 'round-rectangle',
-    insets: [2, 5]
+    padding: [2, 5]
   })
-
   // Set the defined style as the default for both edge and node labels
   graph.edgeDefaults.labels.style = defaultLabelStyle
   graph.nodeDefaults.labels.style = defaultLabelStyle
 }
-
 /**
  * Creates a node, an edge and a label using specific styles,
- * i.e. styles different from the defaults.
- * @param {!IGraph} graph
+ * i.e., styles different from the defaults.
  */
 export function createGraphItemsWithStyles(graph) {
   const sourceNode = graph.nodes.get(0)
-
   const node = graph.createNodeAt({
     location: new Point(30, 215),
     style: new ImageNodeStyle('resources/star-16.svg')
@@ -101,13 +91,11 @@ export function createGraphItemsWithStyles(graph) {
   graph.addLabel({
     text: 'New Label',
     owner: node,
-    style: new DefaultLabelStyle({ backgroundFill: '#a6a6c0' })
+    style: new LabelStyle({ backgroundFill: '#a6a6c0' })
   })
 }
-
 /**
  * Changes the styles of some of the graph items.
- * @param {!IGraph} graph
  */
 export function setStyles(graph) {
   // get some graph items to change the style for
@@ -115,31 +103,25 @@ export function setStyles(graph) {
   const node2 = graph.nodes.get(2)
   const edge = graph.edges.get(0)
   const label = graph.nodeLabels.at(2)
-
   const edgeStyle = new PolylineEdgeStyle({
     stroke: '2px dashed #224556',
     sourceArrow: '#224556 medium circle',
     targetArrow: '#224556 medium short'
   })
-
   graph.setStyle(edge, edgeStyle)
-
   // Creates a different style for the label with black text and a red border
-  const labelStyle = new DefaultLabelStyle({
+  const labelStyle = new LabelStyle({
     backgroundStroke: '2px #46A8D5',
     backgroundFill: '#b4dbed',
-    insets: [3, 5, 3, 5]
+    padding: [3, 5, 3, 5]
   })
-
   graph.setStyle(label, labelStyle)
-
   const nodeStyle1 = new ShapeNodeStyle({
     shape: 'ellipse',
     fill: '#a37ab3',
     stroke: '2px #433449'
   })
   graph.setStyle(node1, nodeStyle1)
-
   const nodeStyle2 = new RectangleNodeStyle({
     fill: '#46a8d5',
     stroke: '2px #224556',

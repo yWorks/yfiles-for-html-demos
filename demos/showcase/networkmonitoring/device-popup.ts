@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,13 +27,12 @@
  **
  ***************************************************************************/
 import {
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
   type GraphComponent,
   type GraphInputMode,
   INode
-} from 'yfiles'
-import HTMLPopupSupport from '../../view/htmlpopup/HTMLPopupSupport'
+} from '@yfiles/yfiles'
+import { HTMLPopupSupport } from './HTMLPopupSupport'
 import type { Device } from './model/Device'
 import { D3BarChart } from './ui/D3BarChart'
 
@@ -51,7 +50,7 @@ export function initializeDeviceDetailsPopup(
   createDeviceDetailsPopup(graphComponent)
 
   // On item click, update the popup with the device's data
-  graphInputMode.addItemClickedListener((_, evt) => {
+  graphInputMode.addEventListener('item-clicked', (evt) => {
     if (!(evt.item instanceof INode)) {
       return
     }
@@ -64,7 +63,7 @@ export function initializeDeviceDetailsPopup(
   })
 
   // On canvas click, hide the popup
-  graphInputMode.addCanvasClickedListener(() => (devicePopup.currentItem = null))
+  graphInputMode.addEventListener('canvas-clicked', () => (devicePopup.currentItem = null))
 
   // On click of the power button, toggle a device enabled/disabled
   devicePopup.div.querySelector('#powerButton')!.addEventListener(
@@ -81,8 +80,8 @@ export function initializeDeviceDetailsPopup(
 
 function createDeviceDetailsPopup(graphComponent: GraphComponent): void {
   // create a label model parameter that is used to position the node pop-up
-  const nodeLabelModel = new ExteriorLabelModel({ insets: 10 })
-  const popupPositionParameter = nodeLabelModel.createParameter(ExteriorLabelModelPosition.NORTH)
+  const nodeLabelModel = new ExteriorNodeLabelModel({ margins: 10 })
+  const popupPositionParameter = nodeLabelModel.createParameter('top')
 
   devicePopup = new HTMLPopupSupport(
     graphComponent,
@@ -128,7 +127,7 @@ const barChart = initializeD3BarChart()
 function initializeD3BarChart(): D3BarChart | undefined {
   try {
     return new D3BarChart()
-  } catch (ignored) {
+  } catch {
     // if for some reason d3 has not loaded, this will be caught here,
     // and we disable the d3 charts in the popup
     const chartElement = document.getElementsByClassName('chart')[0]

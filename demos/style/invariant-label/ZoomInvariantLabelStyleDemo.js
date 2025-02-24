@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,84 +27,64 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultLabelStyle,
   GraphBuilder,
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   ILabelStyle,
+  LabelStyle,
   LayoutExecutor,
   License,
   Rect
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import {
   FitOwnerLabelStyle,
   ZoomInvariantAboveThresholdLabelStyle,
   ZoomInvariantBelowThresholdLabelStyle,
   ZoomInvariantLabelStyleBase,
   ZoomInvariantOutsideRangeLabelStyle
-} from './ZoomInvariantLabelStyle.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, addOptions, finishLoading } from 'demo-resources/demo-page'
+} from './ZoomInvariantLabelStyle'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   graphComponent.inputMode = new GraphViewerInputMode({
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
   })
-
   initDemoStyles(graphComponent.graph)
   // For the general appearance of a label, we use the common demo defaults set above
   const baseLabelStyle = graphComponent.graph.nodeDefaults.labels.style
   // Initially, use FIXED_BELOW_THRESHOLD mode
   setLabelStyle(graphComponent.graph, 'FIXED_BELOW_THRESHOLD', baseLabelStyle)
-
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
-
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
-    new HierarchicLayout({
-      orthogonalRouting: true,
+    new HierarchicalLayout({
       minimumLayerDistance: 100,
-      edgeToEdgeDistance: 100,
-      nodeToEdgeDistance: 100,
-      considerNodeLabels: true,
-      integratedEdgeLabeling: true
+      edgeDistance: 100,
+      nodeToEdgeDistance: 100
     })
   )
-  graphComponent.fitGraphBounds()
-
+  void graphComponent.fitGraphBounds()
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
-
   // Instances of {@link ZoomInvariantLabelStyleBase} should not be shared
   graphComponent.graph.nodeDefaults.labels.shareStyleInstance = false
   graphComponent.graph.edgeDefaults.labels.shareStyleInstance = false
-
   initializeUI(graphComponent)
 }
-
 /**
  * Creates nodes and edges according to the given data.
- * @param {!IGraph} graph
- * @param {!JSONGraph} graphData
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id
@@ -112,7 +92,6 @@ function buildGraph(graph, graphData) {
   nodesSource.nodeCreator.createLabelBinding((item) => item.label)
   nodesSource.nodeCreator.layoutProvider = (item) =>
     item.tag === 'level 1' ? new Rect(0, 0, 100, 70) : new Rect(0, 0, 30, 70)
-
   graphBuilder
     .createEdgesSource({
       data: graphData.edgeList,
@@ -120,16 +99,13 @@ function buildGraph(graph, graphData) {
       targetId: (item) => item.target
     })
     .edgeCreator.createLabelBinding((item) => item.label)
-
   graphBuilder.buildGraph()
 }
-
 /**
  * Sets a new label style for the given mode to all labels in the graph.
- * @param {!IGraph} graph The graph.
- * @param {!string} mode The label style mode.
+ * @param graph The graph.
+ * @param mode The label style mode.
  * @param baseLabelStyle An optional base label style. If not provided, the graph defaults are used.
- * @param {?ILabelStyle} [baseLabelStyle=null]
  */
 function setLabelStyle(graph, mode, baseLabelStyle = null) {
   const innerLabelStyle =
@@ -138,15 +114,15 @@ function setLabelStyle(graph, mode, baseLabelStyle = null) {
     graph.nodeDefaults.labels.style
   graph.nodeDefaults.labels.style = createLabelStyle(mode, innerLabelStyle)
   graph.edgeDefaults.labels.style = createLabelStyle(mode, innerLabelStyle)
+  // to make sure that the selection rectangle has the correct label bounds, the label style should not be shared
+  graph.nodeDefaults.labels.shareStyleInstance = false
+  graph.edgeDefaults.labels.shareStyleInstance = false
   for (const label of graph.labels) {
     graph.setStyle(label, createLabelStyle(mode, innerLabelStyle))
   }
 }
-
 /**
  * Creates a new label style for the given mode and base style.
- * @param {!string} mode
- * @param {!ILabelStyle} baseLabelStyle
  */
 function createLabelStyle(mode, baseLabelStyle) {
   if (mode === 'FIXED_ABOVE_THRESHOLD') {
@@ -161,10 +137,8 @@ function createLabelStyle(mode, baseLabelStyle) {
     return baseLabelStyle
   }
 }
-
 /**
  * Wires up the UI.
- * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
   const modeSelectElement = document.querySelector('#modeChooserBox')
@@ -178,43 +152,36 @@ function initializeUI(graphComponent) {
   )
   addNavigationButtons(modeSelectElement).addEventListener('change', (_evt) => {
     setLabelStyle(graphComponent.graph, modeSelectElement.value)
-
     // hide the threshold controls if not applicable for the selected zoom style
     document.getElementById('zoomThresholdControls').hidden =
       modeSelectElement.value === 'DEFAULT' || modeSelectElement.value === 'FIT_OWNER'
-
     // hide the maxScale controls if not applicable for the selected zoom style
     document.getElementById('maxScaleControls').hidden =
       modeSelectElement.value !== 'INVARIANT_OUTSIDE_RANGE'
   })
-
   // adds an event listener to the threshold slider
   const zoomThresholdInput = document.querySelector('#zoomThreshold')
   zoomThresholdInput.addEventListener('change', () => {
     document.querySelector('#zoomThresholdLabel').textContent = zoomThresholdInput.value
     const zoomThreshold = parseFloat(zoomThresholdInput.value)
-
     for (const label of graphComponent.graph.labels) {
       label.style.zoomThreshold = zoomThreshold
     }
     graphComponent.updateVisual()
   })
-
   const maxScaleInput = document.querySelector('#maxScale')
   maxScaleInput.addEventListener('change', () => {
     document.querySelector('#maxScaleLabel').textContent = maxScaleInput.value
     const maxScale = parseFloat(maxScaleInput.value)
-
     for (const label of graphComponent.graph.labels) {
       label.style.maxScale = maxScale
     }
     graphComponent.updateVisual()
   })
-
   // shows the current zoom level in the toolbar
-  graphComponent.addZoomChangedListener(() => {
+  graphComponent.addEventListener('zoom-changed', () => {
     document.querySelector('#zoomLevel').textContent = graphComponent.zoom.toFixed(2)
   })
+  modeSelectElement.dispatchEvent(new Event('change'))
 }
-
 run().then(finishLoading)

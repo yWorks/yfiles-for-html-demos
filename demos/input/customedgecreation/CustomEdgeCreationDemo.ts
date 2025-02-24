@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,33 +29,30 @@
 import {
   Arrow,
   CreateEdgeInputMode,
-  DefaultPortCandidate,
-  DefaultPortCandidateDescriptor,
   FreeNodePortLocationModel,
   GraphComponent,
   GraphEditorInputMode,
   IGraph,
   IHitTestable,
   INode,
+  INodeStyle,
   IPortCandidateProvider,
   IPortStyle,
   License,
-  NodeStylePortStyleAdapter,
-  OrthogonalEdgeEditingContext,
   Point,
   PolylineEdgeStyle,
+  PortCandidate,
   ShapeNodeStyle,
+  ShapePortStyle,
   ShowPortCandidates,
-  Size,
-  VoidNodeStyle,
-  VoidPortStyle
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 
 import { RoutingCreateEdgeInputMode, RoutingStrategy } from './RoutingCreateEdgeInputMode'
-import PortCandidateTemplate from './PortCandidateTemplate'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import PortCandidateRenderer from './PortCandidateRenderer'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 const defaultColor = '#F0EBE6'
 const nodeColors = ['#D4B483', '#C1666B', '#48A9A6', '#4357AD']
@@ -66,20 +63,19 @@ const nodeColors = ['#D4B483', '#C1666B', '#48A9A6', '#4357AD']
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // configures default styles for newly created graph elements
-  initDemoStyles(graphComponent.graph)
+  initDemoStyles(graphComponent.graph, { orthogonalEditing: true })
   graphComponent.graph.nodeDefaults.size = new Size(40, 40)
 
   // configure the port candidate decorator and associated input mode behavior
   initializePortBehavior(graphComponent)
-  initializeCustomPortCandidates(graphComponent)
 
   // edge creation should be able to finish on an empty canvas
   initializeInputMode(graphComponent, true)
 
-  // set the initial edge routing strategy to CHANNEL_EDGE_ROUTER
+  initializeCustomPortCandidates(graphComponent)
+
+  // set the initial edge routing strategy to performance
   ;(
     (graphComponent.inputMode as GraphEditorInputMode)
       .createEdgeInputMode as RoutingCreateEdgeInputMode
@@ -87,7 +83,7 @@ async function run(): Promise<void> {
 
   // create an initial sample graph
   createGraph(graphComponent.graph)
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   // bind the buttons to their functionality
   initializeUI(graphComponent)
@@ -98,39 +94,36 @@ async function run(): Promise<void> {
  * canvas with a newly created node.
  */
 function enableTargetNodeCreation(createEdgeInputMode: CreateEdgeInputMode): void {
-  createEdgeInputMode.dummyEdgeGraph.nodeDefaults.size = new Size(40, 40)
+  createEdgeInputMode.previewGraph.nodeDefaults.size = new Size(40, 40)
 
   // each edge creation should use another random target node color
-  createEdgeInputMode.addGestureStartingListener((src) => {
+  createEdgeInputMode.addEventListener('gesture-starting', (_, src) => {
     const randomColor = getRandomColor()
     const randomNodeStyle = newNodeStyle(randomColor)
-    src.dummyEdgeGraph.nodeDefaults.style = randomNodeStyle
-    src.dummyEdgeGraph.setStyle(src.dummyTargetNode, randomNodeStyle)
-    src.dummyTargetNode.tag = randomColor
+    src.previewGraph.nodeDefaults.style = randomNodeStyle
+    src.previewGraph.setStyle(src.previewEndNode, randomNodeStyle)
+    src.previewEndNode.tag = randomColor
 
     // add ports to the dummy node
-    addDirectionalPorts(src.dummyEdgeGraph, src.dummyTargetNode, newPortStyle(randomColor))
+    addDirectionalPorts(src.previewGraph, src.previewEndNode, newPortStyle(randomColor))
   })
 
   // If targeting another node during edge creation, the dummy target node should not be rendered
   // because we'd use that actual graph node as target if the gesture is finished on a node.
-  createEdgeInputMode.addTargetPortCandidateChangedListener((src, evt) => {
-    const dummyEdgeGraph = createEdgeInputMode.dummyEdgeGraph
+  createEdgeInputMode.addEventListener('end-port-candidate-changed', (evt, src) => {
+    const previewGraph = createEdgeInputMode.previewGraph
     if (evt.item && evt.item.owner instanceof INode) {
-      dummyEdgeGraph.setStyle(createEdgeInputMode.dummyTargetNode, VoidNodeStyle.INSTANCE)
-      createEdgeInputMode.dummyEdgeGraph.ports.toArray().forEach((port) => {
-        createEdgeInputMode.dummyEdgeGraph.remove(port)
+      previewGraph.setStyle(createEdgeInputMode.previewEndNode, INodeStyle.VOID_NODE_STYLE)
+      createEdgeInputMode.previewGraph.ports.toArray().forEach((port) => {
+        createEdgeInputMode.previewGraph.remove(port)
       })
     } else {
-      dummyEdgeGraph.setStyle(
-        createEdgeInputMode.dummyTargetNode,
-        dummyEdgeGraph.nodeDefaults.style
-      )
+      previewGraph.setStyle(createEdgeInputMode.previewEndNode, previewGraph.nodeDefaults.style)
       // add ports to the dummy node
       addDirectionalPorts(
-        src.dummyEdgeGraph,
-        src.dummyTargetNode,
-        newPortStyle(src.dummyTargetNode.tag)
+        src.previewGraph,
+        src.previewEndNode,
+        newPortStyle(src.previewEndNode.tag)
       )
     }
   })
@@ -154,13 +147,13 @@ function enableTargetNodeCreation(createEdgeInputMode: CreateEdgeInputMode): voi
       return edgeCreator(context, graph, sourcePortCandidate, targetPortCandidate, templateEdge)
     }
     // we use the dummy target node to create a new node at the current location
-    const dummyTargetNode = createEdgeInputMode.dummyTargetNode
+    const dummyTargetNode = createEdgeInputMode.previewEndNode
     const node = createNode(graph, dummyTargetNode.layout.center, dummyTargetNode.tag)
     return edgeCreator(
       context,
       graph,
       sourcePortCandidate,
-      new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED),
+      new PortCandidate(node, FreeNodePortLocationModel.CENTER),
       templateEdge
     )
   }
@@ -174,10 +167,7 @@ function enableTargetNodeCreation(createEdgeInputMode: CreateEdgeInputMode): voi
  *   gesture ends on empty canvas.
  */
 function initializeInputMode(graphComponent: GraphComponent, enableTargetNode: boolean) {
-  const geim = new GraphEditorInputMode({
-    // enable orthogonal edge editing
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext()
-  })
+  const geim = new GraphEditorInputMode()
   const routingCreateEdgeInputMode = new RoutingCreateEdgeInputMode()
   // the priority determines the order in which input modes are asked to handle an event
   // assigning the original CreateEdgeInputMode priority to RoutingCreateEdgeInputMode ensures
@@ -192,9 +182,9 @@ function initializeInputMode(graphComponent: GraphComponent, enableTargetNode: b
   geim.createEdgeInputMode.startOverCandidateOnly = true
 
   // newly created edges should use the same color as their source port color
-  geim.createEdgeInputMode.addEdgeCreationStartedListener((src, evt) => {
-    const color = evt.sourcePortOwner.tag
-    src.dummyEdgeGraph.setStyle(src.dummyEdge, newEdgeStyle(color))
+  geim.createEdgeInputMode.addEventListener('edge-creation-started', (evt, src) => {
+    const color = evt.item.sourceNode.tag
+    src.previewGraph.setStyle(src.previewEdge, newEdgeStyle(color))
   })
 
   if (enableTargetNode) {
@@ -203,7 +193,7 @@ function initializeInputMode(graphComponent: GraphComponent, enableTargetNode: b
 
   // Use a random node color and add directional ports to each created node
   const graph = graphComponent.graph
-  geim.addNodeCreatedListener((src, evt) => {
+  geim.addEventListener('node-created', (evt) => {
     const node = evt.item
     // assign a random color style
     const randomColor = getRandomColor()
@@ -229,35 +219,18 @@ function initializePortBehavior(graphComponent: GraphComponent): void {
   // prevent cleanup of ports when edges are removed
   graph.nodeDefaults.ports.autoCleanUp = false
   // each node should provide its ports as port candidates
-  graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory((node) =>
+  graph.decorator.nodes.portCandidateProvider.addFactory((node) =>
     IPortCandidateProvider.fromExistingPorts(node)
   )
+  graph.decorator.ports.handle.hide()
 }
 
 /**
- * Installs custom port candidate visualizations for interactive edge creation.
+ * Configures custom port candidate visualizations for the interactive edge creation.
  */
 function initializeCustomPortCandidates(graphComponent: GraphComponent): void {
-  const validFocusedStyle = new ShapeNodeStyle({
-    shape: 'ellipse',
-    fill: 'rgb(106,106,106)',
-    stroke: null
-  })
-  const validNonFocusedStyle = new ShapeNodeStyle({
-    shape: 'ellipse',
-    fill: 'rgb(147,147,147)',
-    stroke: null
-  })
-
-  // use adapter class with the ShapeNodeStyle instances to style the port candidates
-  graphComponent.resources.set(
-    DefaultPortCandidateDescriptor.CANDIDATE_DRAWING_VALID_FOCUSED_KEY,
-    new PortCandidateTemplate(validFocusedStyle)
-  )
-  graphComponent.resources.set(
-    DefaultPortCandidateDescriptor.CANDIDATE_DRAWING_VALID_NON_FOCUSED_KEY,
-    new PortCandidateTemplate(validNonFocusedStyle)
-  )
+  ;(graphComponent.inputMode as GraphEditorInputMode).createEdgeInputMode.portCandidateRenderer =
+    new PortCandidateRenderer()
 }
 
 /**
@@ -275,6 +248,7 @@ function newEdgeStyle(color: string): PolylineEdgeStyle {
   return new PolylineEdgeStyle({
     stroke: `2px solid ${color}`,
     targetArrow: new Arrow({
+      type: 'stealth',
       fill: color,
       cropLength: 1
     })
@@ -299,15 +273,13 @@ function newNodeStyle(color: string): ShapeNodeStyle {
  */
 function newPortStyle(color: string): IPortStyle {
   if (document.querySelector<HTMLInputElement>('#toggle-port-visualization')!.checked) {
-    return new NodeStylePortStyleAdapter(
-      new ShapeNodeStyle({
-        shape: 'ellipse',
-        fill: defaultColor,
-        stroke: color
-      })
-    )
+    return new ShapePortStyle({
+      shape: 'ellipse',
+      fill: defaultColor,
+      stroke: color
+    })
   } else {
-    return VoidPortStyle.INSTANCE
+    return IPortStyle.VOID_PORT_STYLE
   }
 }
 
@@ -315,11 +287,11 @@ function newPortStyle(color: string): IPortStyle {
  * Helper function to add directional ports to the given node.
  */
 function addDirectionalPorts(graph: IGraph, node: INode, portStyle: IPortStyle): void {
-  graph.addPort(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED, portStyle)
-  graph.addPort(node, FreeNodePortLocationModel.NODE_TOP_ANCHORED, portStyle)
-  graph.addPort(node, FreeNodePortLocationModel.NODE_RIGHT_ANCHORED, portStyle)
-  graph.addPort(node, FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED, portStyle)
-  graph.addPort(node, FreeNodePortLocationModel.NODE_LEFT_ANCHORED, portStyle)
+  graph.addPort(node, FreeNodePortLocationModel.CENTER, portStyle)
+  graph.addPort(node, FreeNodePortLocationModel.TOP, portStyle)
+  graph.addPort(node, FreeNodePortLocationModel.RIGHT, portStyle)
+  graph.addPort(node, FreeNodePortLocationModel.BOTTOM, portStyle)
+  graph.addPort(node, FreeNodePortLocationModel.LEFT, portStyle)
 }
 
 /**
@@ -408,8 +380,6 @@ function getRoutingStrategy(): RoutingStrategy {
       return RoutingStrategy.EDGE_ROUTER
     case 2:
       return RoutingStrategy.PERFORMANCE_EDGE_ROUTER
-    case 3:
-      return RoutingStrategy.CHANNEL_EDGE_ROUTER
     default:
       return RoutingStrategy.NONE
   }
@@ -420,15 +390,13 @@ function getRoutingStrategy(): RoutingStrategy {
  */
 function onTogglePortVisualization(graph: IGraph, checked: boolean): void {
   graph.ports.forEach((port) => {
-    let portStyle = VoidPortStyle.INSTANCE as IPortStyle
+    let portStyle = IPortStyle.VOID_PORT_STYLE
     if (checked) {
-      portStyle = new NodeStylePortStyleAdapter(
-        new ShapeNodeStyle({
-          shape: 'ellipse',
-          fill: defaultColor,
-          stroke: port.owner!.tag
-        })
-      )
+      portStyle = new ShapePortStyle({
+        shape: 'ellipse',
+        fill: defaultColor,
+        stroke: port.owner.tag
+      })
     }
     graph.setStyle(port, portStyle)
   })

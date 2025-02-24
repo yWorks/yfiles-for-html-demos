@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,13 +31,13 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Gantt Chart Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="resources/gantt-styles.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -96,7 +94,7 @@
 
         <ul>
           <li>Scroll the tasks using the mouse wheel.</li>
-          <li>Scroll the timeline horizontally using shift + mouse wheel.</li>
+          <li>Scroll the timeline horizontally using <kbd>Shift</kbd> + mouse wheel.</li>
           <li>Hover over an activity to highlight its dependencies.</li>
           <li>Hover over a dependency edge to highlight its source and target.</li>
           <li>Select an activity to display the activity information.</li>
@@ -112,13 +110,13 @@
             Select an activity and drag one of the round handles on the left or right to change the
             lead or follow-up time.
           </li>
-          <li>Select an activity and press 'F2' to change its name.</li>
+          <li>Select an activity and press <kbd>F2</kbd> to change its name.</li>
           <li>
             Drag an activity so it overlaps with other activities in the same task lane. The
             activities are placed below each other so they don't overlap.
           </li>
           <li>Drag the mouse on an empty part of a task lane to create a new activity.</li>
-          <li>Shift-drag from a node to create a new dependency edge.</li>
+          <li><kbd>Shift</kbd>-drag from a node to create a new dependency edge.</li>
         </ul>
       </div>
     </aside>

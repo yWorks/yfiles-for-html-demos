@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, ICommand, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import {
   addButtonListener,
   configureInteraction,
@@ -36,27 +36,22 @@ import {
   fitGraphBounds,
   initializeTutorialDefaults,
   setDefaultLabelLayoutParameters
-} from '../common.js'
-import { clearUndoQueue, enableUndo, redo, undo } from './undo-clipboard-support.js'
-
+} from '../common'
+import { clearUndoQueue, enableUndo, redo, undo } from './undo-clipboard-support'
 License.value = await fetchLicense()
-
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 setDefaultLabelLayoutParameters(graphComponent.graph)
-
 createSampleGraph(graphComponent.graph)
-
 configureInteraction(graphComponent)
 enableUndo(graphComponent.graph)
-
 fitGraphBounds(graphComponent)
 finishLoading()
-
 addButtonListener('#undoButton', () => undo(graphComponent.graph))
 addButtonListener('#redoButton', () => redo(graphComponent.graph))
 addButtonListener('#clearUndoQueueButton', () => clearUndoQueue(graphComponent.graph))
-addButtonListener('#cutButton', () => ICommand.CUT.execute(null, graphComponent))
-addButtonListener('#copyButton', () => ICommand.COPY.execute(null, graphComponent))
-addButtonListener('#pasteButton', () => ICommand.PASTE.execute(null, graphComponent))
-addButtonListener('#duplicateButton', () => ICommand.DUPLICATE.execute(null, graphComponent))
+const inputMode = graphComponent.inputMode
+addButtonListener('#cutButton', () => inputMode.cut())
+addButtonListener('#copyButton', () => inputMode.copy())
+addButtonListener('#pasteButton', () => inputMode.paste())
+addButtonListener('#duplicateButton', () => inputMode.duplicateSelection())

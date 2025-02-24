@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>08 Configure Labels - Tutorial: Graph Builder [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -226,7 +224,7 @@
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript">typeLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">layoutParameter</span> = <span class="hljs-title class_">InteriorLabelModel</span>.<span class="hljs-property">CENTER</span></code></pre>
+                    ><code class="language-javascript" data-lang="javascript">typeLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">layoutParameter</span> = <span class="hljs-title class_">InteriorNodeLabelModel</span>.<span class="hljs-property">CENTER</span></code></pre>
                   </div>
                 </div>
                 <div class="paragraph">
@@ -253,7 +251,7 @@
                       class="highlight"
                     ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// position the label on the top of the node</span>
 nameLabelCreator.<span class="hljs-property">layoutParameterProvider</span> = (): <span class="hljs-function"><span class="hljs-params">ILabelModelParameter</span> =&gt;</span>
-  <span class="hljs-title class_">InteriorStretchLabelModel</span>.<span class="hljs-property">NORTH</span></code></pre>
+  <span class="hljs-title class_">StretchNodeLabelModel</span>.<span class="hljs-property">TOP</span></code></pre>
                   </div>
                 </div>
               </div>
@@ -271,15 +269,15 @@ nameLabelCreator.<span class="hljs-property">layoutParameterProvider</span> = ()
                   <p>
                     In our example, we will first create a default style for all labels for which we
                     will not set a specific style. More precisely, we use the
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultLabelStyle" target="_blank">DefaultLabelStyle</a> and align the text to the
-                    <code>center</code> of the node.
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle" target="_blank">LabelStyle</a> and align the text to the <code>center</code> of the
+                    node.
                   </p>
                 </div>
                 <div class="listingblock">
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript">nameLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultLabelStyle</span>({
+                    ><code class="language-javascript" data-lang="javascript">nameLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LabelStyle</span>({
   <span class="hljs-attr">horizontalTextAlignment</span>: <span class="hljs-string">&#x27;center&#x27;</span>
 })</code></pre>
                   </div>
@@ -318,16 +316,16 @@ nameLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-p
 <span class="hljs-comment">// create a provider that will assign a new style, based on the type property</span>
 nameLabelCreator.<span class="hljs-property">styleProvider</span> = (data): <span class="hljs-function"><span class="hljs-params">ILabelStyle</span> =&gt;</span> {
   <span class="hljs-keyword">if</span> (data.<span class="hljs-property">type</span> === <span class="hljs-string">&#x27;Corporation&#x27;</span>) {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultLabelStyle</span>({
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">LabelStyle</span>({
       <span class="hljs-attr">backgroundFill</span>: orange,
       <span class="hljs-attr">horizontalTextAlignment</span>: <span class="hljs-string">&#x27;center&#x27;</span>
     })
   } <span class="hljs-keyword">else</span> {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IconLabelStyle</span>({
-      icon,
+      <span class="hljs-attr">href</span>: icon,
       <span class="hljs-attr">iconSize</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(<span class="hljs-number">14</span>, <span class="hljs-number">14</span>),
-      <span class="hljs-attr">iconPlacement</span>: <span class="hljs-title class_">InteriorLabelModel</span>.<span class="hljs-property">WEST</span>,
-      <span class="hljs-attr">wrapped</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultLabelStyle</span>({
+      <span class="hljs-attr">iconPlacement</span>: <span class="hljs-title class_">InteriorNodeLabelModel</span>.<span class="hljs-property">LEFT</span>,
+      <span class="hljs-attr">wrappedStyle</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">LabelStyle</span>({
         <span class="hljs-attr">backgroundFill</span>: pink,
         <span class="hljs-attr">horizontalTextAlignment</span>: <span class="hljs-string">&#x27;center&#x27;</span>
       })
@@ -385,7 +383,7 @@ typeLabelCreator.<span class="hljs-property">preferredSizeBindings</span>.<span 
 edgeLabelCreator.<span class="hljs-property">layoutParameterProvider</span> = (): <span class="hljs-function"><span class="hljs-params">ILabelModelParameter</span> =&gt;</span>
   <span class="hljs-keyword">new</span> <span class="hljs-title class_">EdgePathLabelModel</span>({
     <span class="hljs-attr">autoRotation</span>: <span class="hljs-literal">false</span>
-  }).<span class="hljs-title function_">createDefaultParameter</span>()
+  }).<span class="hljs-title function_">createRatioParameter</span>()
 
 <span class="hljs-comment">// configure its style</span>
 edgeLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">shareStyleInstance</span> = <span class="hljs-literal">false</span>

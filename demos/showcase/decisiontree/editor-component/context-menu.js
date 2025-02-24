@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,83 +26,49 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ContextMenu } from 'demo-utils/ContextMenu'
-import { INode } from 'yfiles'
-
+import { INode } from '@yfiles/yfiles'
 /**
  * Configure the context menu for this demo.
- * @param {!GraphComponent} graphComponent
- * @param {!function} setAsRootNode
  */
 export function configureContextMenu(graphComponent, setAsRootNode) {
   const inputMode = graphComponent.inputMode
-
-  // Create a context menu. In this demo, we use our sample context menu implementation, but you can use any other
-  // context menu widget as well. See the Context Menu demo for more details about working with context menus.
-  const contextMenu = new ContextMenu(graphComponent)
-
-  // Add event listeners to the various events that open the context menu. These listeners then
-  // call the provided callback-function which in turn asks the current ContextMenuInputMode if a
-  // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
-    if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
-      contextMenu.show(location)
-    }
-  })
-
   // Add a listener that populates the context menu for the hit elements or cancels showing a menu.
   // This PopulateItemContextMenu event is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  inputMode.addPopulateItemContextMenuListener((_, evt) => {
+  inputMode.addEventListener('populate-item-context-menu', (evt) => {
     const item = evt.item
     if (!item || item instanceof INode) {
-      populateContextMenu(contextMenu, graphComponent, setAsRootNode, item ?? undefined)
-      evt.showMenu = true
+      populateContextMenu(graphComponent, setAsRootNode, evt, item ?? undefined)
     }
   })
-
-  // Add a listener that closes the menu when the input mode requests this
-  inputMode.contextMenuInputMode.addCloseMenuListener(() => contextMenu.close())
-
-  // If the context menu closes itself, for example, because a menu item was clicked, notify the input mode
-  contextMenu.onClosedCallback = () => inputMode.contextMenuInputMode.menuClosed()
 }
-
 /**
  * Populates the context menu based on the item for which the menu was opened.
- * @param {!ContextMenu} contextMenu
- * @param {!GraphComponent} graphComponent
- * @param {!function} setAsRootNode
- * @param {!INode} [node]
  */
-function populateContextMenu(contextMenu, graphComponent, setAsRootNode, node) {
+function populateContextMenu(graphComponent, setAsRootNode, evt, node) {
   // select the node
   updateSelection(graphComponent, node)
-
-  contextMenu.clearItems()
-
   // create the context menu items
   if (node && !graphComponent.graph.isGroupNode(node)) {
-    contextMenu.addMenuItem('Set as root node', () => setAsRootNode(graphComponent, node))
+    evt.contextMenu = [
+      { label: 'Set as root node', action: () => setAsRootNode(graphComponent, node) }
+    ]
   } else {
     // no normal node has been hit
-    contextMenu.addMenuItem('Clear root node', () => setAsRootNode(graphComponent, undefined))
+    evt.contextMenu = [{ label: 'Clear root node', action: () => setAsRootNode(graphComponent) }]
   }
 }
-
 /**
  * Updates the node selection state when the context menu is opened for a node.
- * @param {!GraphComponent} graphComponent
- * @param {!INode} [node]
  */
 function updateSelection(graphComponent, node) {
   if (!node) {
     // clear the selection
     graphComponent.selection.clear()
-  } else if (!graphComponent.selection.selectedNodes.isSelected(node)) {
+  } else if (!graphComponent.selection.nodes.includes(node)) {
     // clear the selection
     graphComponent.selection.clear()
     // and select the node
-    graphComponent.selection.selectedNodes.setSelected(node, true)
+    graphComponent.selection.nodes.add(node)
     // also update the current item
     graphComponent.currentItem = node
   }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,23 +26,20 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, License, NodeStylePortStyleAdapter, ShapeNodeStyle, Size } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { GraphComponent, License, ShapePortStyle, Size } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   createSimpleGraph,
   enableGraphEditing,
   fitGraphBounds,
   initializeLabelModel,
   initializeTutorialDefaults
-} from '../common.js'
-import { CustomEdgeStyle as OldCustomEdgeStyle } from '../01-create-a-polyline/CustomEdgeStyle.js'
-
-import { finishLoading } from 'demo-resources/demo-page'
-import { CustomEdgeStyle } from './CustomEdgeStyle.js'
-import { initializeInlineGraphComponent } from '../../tutorial-style-implementation-node/common.js'
-
+} from '../common'
+import { CustomEdgeStyle as OldCustomEdgeStyle } from '../01-create-a-polyline/CustomEdgeStyle'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { CustomEdgeStyle } from './CustomEdgeStyle'
+import { initializeInlineGraphComponent } from '../../tutorial-style-implementation-node/common'
 License.value = await fetchLicense()
-
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 initializeLabelModel(graphComponent)
@@ -50,18 +47,14 @@ graphComponent.graph.edgeDefaults.style = new CustomEdgeStyle()
 createSimpleGraph(graphComponent, false)
 enableGraphEditing(graphComponent)
 fitGraphBounds(graphComponent)
-
 const oldState = initializeInlineGraphComponent('#old-state')
 oldState.graph.edgeDefaults.style = new OldCustomEdgeStyle()
-const portStyle = new NodeStylePortStyleAdapter(
-  new ShapeNodeStyle({
-    shape: 'ellipse',
-    fill: 'gray'
-  })
-)
+const portStyle = new ShapePortStyle({
+  shape: 'ellipse',
+  fill: 'gray'
+})
 portStyle.renderSize = new Size(5, 5)
 oldState.graph.nodeDefaults.ports.style = portStyle
 createSimpleGraph(oldState, false)
 oldState.zoomTo(oldState.graph.nodes.first().layout.toRect().getEnlarged(10))
-
 finishLoading()

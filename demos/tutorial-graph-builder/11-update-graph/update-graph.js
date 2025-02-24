@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,32 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @param {!NodesSource.<EntityData>} nodesSource
- * @param {!GraphBuilder} graphBuilder
- * @param {!Data} data
- */
 export function setDataAndUpdateGraph(nodesSource, graphBuilder, data) {
   // get the new data
   const newData = data.nodesSource.slice(0, 6)
-
   // assign the new data to the nodesSource
   graphBuilder.setData(nodesSource, newData)
   // tell GraphBuilder to update the graph structure
   graphBuilder.updateGraph()
 }
-
-/** @type {Set.<string>} */
 let nodeTypes
-
-/**
- * @param {!GraphBuilder} graphBuilder
- * @param {!Data} data
- * @returns {!Promise.<NodesSource.<EntityData>>}
- */
 export async function createDynamicNodesSource(graphBuilder, data) {
   nodeTypes = new Set(['Corporation', 'Trust'])
-
   function* nodes() {
     for (const entity of data.nodesSource) {
       if (entity.type && nodeTypes.has(entity.type)) {
@@ -59,28 +44,18 @@ export async function createDynamicNodesSource(graphBuilder, data) {
       }
     }
   }
-
   // create nodes source from dynamic data
   return graphBuilder.createNodesSource(nodes, 'id')
 }
-
-/**
- * @param {!GraphBuilder} graphBuilder
- */
 export function updateGraph(graphBuilder) {
   // update displayed node types
   nodeTypes.delete('Corporation')
   nodeTypes.add('Branch')
   nodeTypes.add('PE_Risk')
-
   // since the nodesSource uses a generator function,
   // calling updateGraph is enough to update the graph structure
   graphBuilder.updateGraph()
 }
-
-/**
- * @param {!GraphBuilder} graphBuilder
- */
 export function resetGraph(graphBuilder) {
   // reset node types
   nodeTypes = new Set(['Corporation', 'Trust'])

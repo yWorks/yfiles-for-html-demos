@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>NodeJS Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -55,7 +55,6 @@
         visibility: hidden;
       }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -112,13 +111,13 @@
       <div class="demo-description__play-button">Start here</div>
 
       <div class="demo-description__content">
-        <h1>NodeJS Demo</h1>
+        <h1>Node.js Demo</h1>
 
         <p>
-          This demo shows how to run a yFiles layout algorithm in a
-          <em><a href="https://nodejs.org/" target="_blank">Node.js®</a></em>
-          environment. This makes it possible to run the layout calculation asynchronously,
-          preventing it from blocking the UI.
+          This demo shows how to run a yFiles layout algorithm in
+          <em><a href="https://nodejs.org/" target="_blank">Node.js</a></em
+          >. This makes it possible to run the layout calculation asynchronously, preventing it from
+          blocking the UI.
         </p>
         <p>
           To transfer the graph structure and layout between the <em>Node.js</em>
@@ -144,6 +143,14 @@
         <p>
           Modify the graph structure by adding/removing nodes and edges, and re-run the
           <em>Node.js</em> layout.
+        </p>
+
+        <h2>Note on licensing</h2>
+
+        <p>
+          Running yFiles for HTML on a Node.js server requires a license that explicitly allows
+          this. Please contact the <a href="mailto:sales@yworks.com">sales team</a> for more
+          information.
         </p>
 
         <h2>Running the Node.js Layout Server</h2>

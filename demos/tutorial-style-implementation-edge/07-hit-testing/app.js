@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,29 +26,24 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphItemTypes, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { GraphComponent, GraphItemTypes, License } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   addHoverEffect,
   createSampleGraphHitTest,
   enableGraphEditing,
   fitGraphBounds,
   initializeTutorialDefaults
-} from '../common.js'
-
-import { finishLoading } from 'demo-resources/demo-page'
-import { CustomEdgeStyle } from './CustomEdgeStyle.js'
-import { CustomEdgeStyle as OldCustomEdgeStyle } from '../06-data-from-tag/CustomEdgeStyle.js'
-
+} from '../common'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { CustomEdgeStyle } from './CustomEdgeStyle'
+import { CustomEdgeStyle as OldCustomEdgeStyle } from '../06-data-from-tag/CustomEdgeStyle'
 License.value = await fetchLicense()
-
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 createSampleGraphHitTest(graphComponent.graph, new CustomEdgeStyle(5), new OldCustomEdgeStyle(5))
-
 const graphEditorInputMode = enableGraphEditing(graphComponent)
 graphEditorInputMode.selectableItems = GraphItemTypes.NONE
 addHoverEffect(graphComponent, graphEditorInputMode)
-
 fitGraphBounds(graphComponent)
 finishLoading()

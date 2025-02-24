@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,29 +27,37 @@
  **
  ***************************************************************************/
 import {
-  Class,
   EdgePathLabelModel,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
+  GraphBuilder,
   GraphComponent,
   GraphItemTypes,
-  GraphMLSupport,
   GraphViewerInputMode,
-  ICommand,
   IEdge,
   ImageNodeStyle,
   INode,
-  Key,
   License,
   ModifierKeys,
   Point,
-  StorageLocation
-} from 'yfiles'
+  PolylineEdgeStyle
+} from '@yfiles/yfiles'
 
-import HTMLPopupSupport from './HTMLPopupSupport'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { HTMLPopupSupport } from './HTMLPopupSupport'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import graphData from './resources/graph-data.json'
+
+/**
+ * A type that describes an Employee.
+ */
+type Employee = {
+  position?: string
+  name?: string
+  email?: string
+  phone?: string
+  businessUnit?: string
+  icon?: string
+}
 
 /**
  * Runs the demo.
@@ -58,13 +66,11 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeInputMode(graphComponent)
 
   initializePopups(graphComponent)
 
-  readSampleGraph(graphComponent)
+  buildGraph(graphComponent)
 }
 
 /**
@@ -74,13 +80,13 @@ async function run(): Promise<void> {
  */
 function initializePopups(graphComponent: GraphComponent): void {
   // Creates a label model parameter that is used to position the node pop-up
-  const nodeLabelModel = new ExteriorLabelModel({ insets: 10 })
+  const nodeLabelModel = new ExteriorNodeLabelModel({ margins: 10 })
 
   // Creates the pop-up for the node pop-up template
   const nodePopup = new HTMLPopupSupport<INode>(
     graphComponent,
     getDiv('#nodePopupContent'),
-    nodeLabelModel.createParameter(ExteriorLabelModelPosition.NORTH)
+    nodeLabelModel.createParameter('top')
   )
 
   // Creates the edge pop-up for the edge pop-up template with a suitable label model parameter
@@ -91,7 +97,7 @@ function initializePopups(graphComponent: GraphComponent): void {
   const edgePopup = new HTMLPopupSupport<IEdge>(
     graphComponent,
     getDiv('#edgePopupContent'),
-    edgeLabelModel.createDefaultParameter()
+    edgeLabelModel.createRatioParameter()
   )
 
   // The following works with both GraphEditorInputMode and GraphViewerInputMode
@@ -101,7 +107,7 @@ function initializePopups(graphComponent: GraphComponent): void {
   inputMode.focusableItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
 
   // Register a listener that shows the pop-up for the currentItem
-  graphComponent.addCurrentItemChangedListener((_, evt) => {
+  graphComponent.addEventListener('current-item-changed', () => {
     const item = graphComponent.currentItem
     if (item instanceof INode) {
       // update data in node pop-up
@@ -122,19 +128,14 @@ function initializePopups(graphComponent: GraphComponent): void {
   })
 
   // On clicks on empty space, set currentItem to `null` to hide the pop-ups
-  inputMode.addCanvasClickedListener((_, evt) => {
+  inputMode.addEventListener('canvas-clicked', () => {
     graphComponent.currentItem = null
   })
 
   // On press of the ESCAPE key, set currentItem to `null` to hide the pop-ups
-  inputMode.keyboardInputMode.addKeyBinding(
-    Key.ESCAPE,
-    ModifierKeys.NONE,
-    (command: ICommand, parameter: object, source: object) => {
-      ;(source as GraphComponent).currentItem = null
-      return true
-    }
-  )
+  inputMode.keyboardInputMode.addKeyBinding('Escape', ModifierKeys.NONE, () => {
+    graphComponent.currentItem = null
+  })
 }
 
 /**
@@ -171,8 +172,8 @@ function updateNodePopupContent(nodePopup: HTMLPopupSupport<INode>, node: INode)
  */
 function updateEdgePopupContent(edgePopup: HTMLPopupSupport<IEdge>, edge: IEdge): void {
   // get business data from node tags
-  const sourceData = edge.sourcePort!.owner!.tag
-  const targetData = edge.targetPort!.owner!.tag
+  const sourceData = edge.sourcePort.owner.tag
+  const targetData = edge.targetPort.owner.tag
 
   // get all divs in the pop-up
   const divs = edgePopup.div.getElementsByTagName('div')
@@ -190,22 +191,31 @@ function updateEdgePopupContent(edgePopup: HTMLPopupSupport<IEdge>, edge: IEdge)
   }
 }
 
-// We load the 'styles-other' module explicitly to prevent tree-shaking tools from removing this
-// dependency which is needed for loading all library styles.
-Class.ensure(ImageNodeStyle)
-
 /**
- * Reads the source graph from a graphml file.
+ * Iterates through the given data set and creates nodes and edges according to the given data.
  */
-async function readSampleGraph(graphComponent: GraphComponent): Promise<void> {
-  // Enables the graphml support
-  const gs = new GraphMLSupport({
-    graphComponent,
-    // configure to load and save to the file system
-    storageLocation: StorageLocation.FILE_SYSTEM
+function buildGraph(graphComponent: GraphComponent): void {
+  const graphBuilder = new GraphBuilder(graphComponent.graph)
+
+  const nodesSource = graphBuilder.createNodesSource({
+    data: graphData.nodeList,
+    id: (item) => item.id,
+    layout: (item) => item.layout,
+    tag: (item) => item.tag
   })
-  await gs.graphMLIOHandler.readFromURL(graphComponent.graph, 'resources/sample.graphml')
-  graphComponent.fitGraphBounds()
+  nodesSource.nodeCreator.styleProvider = (item) =>
+    new ImageNodeStyle(`./resources/${(item.tag as Employee).icon}.svg`)
+
+  const edgeSource = graphBuilder.createEdgesSource({
+    data: graphData.edgeList,
+    sourceId: (item) => item.source,
+    targetId: (item) => item.target
+  })
+  edgeSource.edgeCreator.defaults.style = new PolylineEdgeStyle({ targetArrow: 'none' })
+
+  graphBuilder.buildGraph()
+
+  void graphComponent.fitGraphBounds()
 }
 
 /**
@@ -218,8 +228,8 @@ function initializeInputMode(graphComponent: GraphComponent): void {
     marqueeSelectableItems: GraphItemTypes.NONE
   })
 
-  mode.mouseHoverInputMode.toolTipLocationOffset = new Point(10, 10)
-  mode.addQueryItemToolTipListener((_, evt) => {
+  mode.toolTipInputMode.toolTipLocationOffset = new Point(10, 10)
+  mode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.item instanceof INode && !evt.handled) {
       const nodeName = evt.item.tag.name
       if (nodeName) {

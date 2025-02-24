@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -52,7 +52,6 @@ export const spanningTreeSample = [
   [20, 0],
   [22, 0]
 ]
-
 export const connectivitySample = [
   [5, 3],
   [2, 4],
@@ -101,7 +100,6 @@ export const connectivitySample = [
   [42],
   [44]
 ]
-
 export const kCoreSample = [
   [3, 4, 10, 9],
   [0, 3, 8, 9, 10],
@@ -126,7 +124,6 @@ export const kCoreSample = [
   [],
   []
 ]
-
 export const pathsSample = [
   [3],
   [0],
@@ -168,7 +165,6 @@ export const pathsSample = [
   [36],
   []
 ]
-
 export const cycleSample = [
   [2],
   [4],
@@ -224,7 +220,6 @@ export const cycleSample = [
   [50],
   [51]
 ]
-
 export const centralitySample = [
   [1, 4, 3, 10, 19, 2],
   [5, 20],
@@ -269,7 +264,6 @@ export const centralitySample = [
   [39],
   []
 ]
-
 export const substructuresCyclesSample = [
   [4],
   [33],
@@ -322,7 +316,6 @@ export const substructuresCyclesSample = [
   [],
   []
 ]
-
 export const substructuresCliquesSample = [
   [1, 2],
   [2, 3, 4],

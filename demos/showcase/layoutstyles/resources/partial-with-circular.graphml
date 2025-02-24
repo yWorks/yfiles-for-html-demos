@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,8 +32,8 @@
     xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd "
     xmlns="http://graphml.graphdrawing.org/xmlns"
     xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0"
-    xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0"
-    xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml"
+    xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0"
+    xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <key id="d1" for="node" attr.type="boolean" attr.name="SelectedNodes">
     <default>false</default>
@@ -57,7 +57,7 @@
     <y:SharedData>
       <yjs:ShapeNodeStyle stroke="{x:Null}" fill="#FFC7C7A6" x:Key="1"/>
       <yjs:ShapeNodeStyle stroke="{x:Null}" fill="#FFF26419" x:Key="2"/>
-      <yjs:PolylineEdgeStyle x:Key="3">
+      <yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="3">
         <yjs:PolylineEdgeStyle.stroke>
           <yjs:Stroke fill="#FF8E8873" thickness="1.5"/>
         </yjs:PolylineEdgeStyle.stroke>
@@ -74,7 +74,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="7,14">
+          <y:Label PreferredSize="15,18">
             <y:Label.Text>1</y:Label.Text>
           </y:Label>
         </x:List>
@@ -91,7 +91,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="7,14">
+          <y:Label PreferredSize="15,18">
             <y:Label.Text>2</y:Label.Text>
           </y:Label>
         </x:List>
@@ -108,7 +108,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="7,14">
+          <y:Label PreferredSize="15,18">
             <y:Label.Text>3</y:Label.Text>
           </y:Label>
         </x:List>
@@ -125,7 +125,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="7,14">
+          <y:Label PreferredSize="15,18">
             <y:Label.Text>5</y:Label.Text>
           </y:Label>
         </x:List>
@@ -142,7 +142,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="7,14">
+          <y:Label PreferredSize="15,18">
             <y:Label.Text>6</y:Label.Text>
           </y:Label>
         </x:List>
@@ -159,7 +159,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="7,14">
+          <y:Label PreferredSize="15,18">
             <y:Label.Text>7</y:Label.Text>
           </y:Label>
         </x:List>
@@ -176,7 +176,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="7,14">
+          <y:Label PreferredSize="15,18">
             <y:Label.Text>8</y:Label.Text>
           </y:Label>
         </x:List>
@@ -193,7 +193,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="7,14">
+          <y:Label PreferredSize="15,18">
             <y:Label.Text>9</y:Label.Text>
           </y:Label>
         </x:List>
@@ -210,7 +210,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>10</y:Label.Text>
           </y:Label>
         </x:List>
@@ -228,7 +228,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="13,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>11</y:Label.Text>
           </y:Label>
         </x:List>
@@ -245,7 +245,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>12</y:Label.Text>
           </y:Label>
         </x:List>
@@ -262,7 +262,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>13</y:Label.Text>
           </y:Label>
         </x:List>
@@ -279,7 +279,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>14</y:Label.Text>
           </y:Label>
         </x:List>
@@ -296,7 +296,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>15</y:Label.Text>
           </y:Label>
         </x:List>
@@ -313,7 +313,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>16</y:Label.Text>
           </y:Label>
         </x:List>
@@ -330,7 +330,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>17</y:Label.Text>
           </y:Label>
         </x:List>
@@ -347,7 +347,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>18</y:Label.Text>
           </y:Label>
         </x:List>
@@ -364,7 +364,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>19</y:Label.Text>
           </y:Label>
         </x:List>
@@ -382,7 +382,7 @@
       </data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>20</y:Label.Text>
           </y:Label>
         </x:List>
@@ -401,7 +401,7 @@
       <data key="d1">true</data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>20</y:Label.Text>
           </y:Label>
         </x:List>
@@ -427,7 +427,7 @@
       <data key="d1">true</data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>21</y:Label.Text>
           </y:Label>
         </x:List>
@@ -454,7 +454,7 @@
       <data key="d1">true</data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>22</y:Label.Text>
           </y:Label>
         </x:List>
@@ -480,7 +480,7 @@
       <data key="d1">true</data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>23</y:Label.Text>
           </y:Label>
         </x:List>
@@ -506,7 +506,7 @@
       <data key="d1">true</data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>24</y:Label.Text>
           </y:Label>
         </x:List>
@@ -533,7 +533,7 @@
       <data key="d1">true</data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>25</y:Label.Text>
           </y:Label>
         </x:List>
@@ -559,7 +559,7 @@
       <data key="d1">true</data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>26</y:Label.Text>
           </y:Label>
         </x:List>
@@ -585,7 +585,7 @@
       <data key="d1">true</data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>27</y:Label.Text>
           </y:Label>
         </x:List>
@@ -611,7 +611,7 @@
       <data key="d1">true</data>
       <data key="d2">
         <x:List>
-          <y:Label PreferredSize="14,14">
+          <y:Label PreferredSize="22,18">
             <y:Label.Text>28</y:Label.Text>
           </y:Label>
         </x:List>

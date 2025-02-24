@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Graph Drag and Drop Demo
 
-# Graph Drag and Drop Demo
+<img src="../../../doc/demo-thumbnails/graph-drag-and-drop.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/input/graph-drag-and-drop/).
 
 This demo shows how to add drag and drop of graphs to an app.
 
@@ -32,4 +34,4 @@ This demo contains a custom implementation of a [DropInputMode](https://docs.ywo
 - [Drag and Drop Demo](../../input/draganddrop/)
 - [Drag From Component Demo](../../input/drag-from-component/)
 - [Custom Drag and Drop Demo](../../input/custom-drag-and-drop/)
-- [Simple Drag And Drop Demo](../../application-features/drag-and-drop/)
+- application-features-drag-and-drop

@@ -1,0 +1,297 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+import {
+  Class,
+  GraphComponent,
+  ILayoutAlgorithm,
+  LayoutTransformations,
+  SubgraphLayoutStage
+} from '@yfiles/yfiles'
+
+import LayoutConfiguration, { OperationType } from './LayoutConfiguration'
+import {
+  ComponentAttribute,
+  Components,
+  EnumValuesAttribute,
+  LabelAttribute,
+  MinMaxAttribute,
+  OptionGroup,
+  OptionGroupAttribute,
+  TypeAttribute
+} from '@yfiles/demo-resources/demo-option-editor'
+
+/**
+ * Configuration options for the layout algorithm of the same name.
+ */
+const LayoutTransformationsConfig = (Class as any)('LayoutTransformationsConfig', {
+  $extends: LayoutConfiguration,
+
+  _meta: {
+    GeneralGroup: [
+      new LabelAttribute('General'),
+      new OptionGroupAttribute('RootGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    RotateGroup: [
+      new LabelAttribute('Rotate'),
+      new OptionGroupAttribute('GeneralGroup', 20),
+      new TypeAttribute(OptionGroup)
+    ],
+    ScaleGroup: [
+      new LabelAttribute('Scale'),
+      new OptionGroupAttribute('GeneralGroup', 30),
+      new TypeAttribute(OptionGroup)
+    ],
+    TranslateGroup: [
+      new LabelAttribute('Translate'),
+      new OptionGroupAttribute('GeneralGroup', 40),
+      new TypeAttribute(OptionGroup)
+    ],
+    descriptionText: [
+      new OptionGroupAttribute('DescriptionGroup', 10),
+      new ComponentAttribute(Components.HTML_BLOCK),
+      new TypeAttribute(String)
+    ],
+    operationItem: [
+      new LabelAttribute('Operation', '#/api/LayoutTransformations'),
+      new OptionGroupAttribute('GeneralGroup', 10),
+      new EnumValuesAttribute([
+        ['Mirror on X axis', OperationType.MIRROR_X_AXIS],
+        ['Mirror on Y axis', OperationType.MIRROR_Y_AXIS],
+        ['Rotate', OperationType.ROTATE],
+        ['Scale', OperationType.SCALE],
+        ['Translate', OperationType.TRANSLATE]
+      ]),
+      new TypeAttribute(Number)
+    ],
+    actOnSelectionOnlyItem: [
+      new LabelAttribute(
+        'Act on Selection Only',
+        '#/api/SubgraphLayoutStage#LayoutStageBase-property-enabled'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    rotationAngleItem: [
+      new LabelAttribute(
+        'Rotation Angle',
+        '#/api/LayoutTransformations#LayoutTransformations-method-createRotationStage'
+      ),
+      new OptionGroupAttribute('RotateGroup', 10),
+      new MinMaxAttribute(-360, 360),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    applyBestFitRotationItem: [
+      new LabelAttribute(
+        'Best Fit Rotation',
+        '#/api/LayoutTransformations#LayoutTransformations-method-createBestFitRotationStage'
+      ),
+      new OptionGroupAttribute('RotateGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    scaleFactorItem: [
+      new LabelAttribute(
+        'Scale Factor',
+        '#/api/LayoutTransformations#LayoutTransformations-method-createScalingStage'
+      ),
+      new OptionGroupAttribute('ScaleGroup', 10),
+      new MinMaxAttribute(0.1, 10.0, 0.01),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    scaleNodeSizeItem: [
+      new LabelAttribute(
+        'Scale Node Size',
+        '#/api/LayoutTransformations#LayoutTransformations-method-createScalingStage'
+      ),
+      new OptionGroupAttribute('ScaleGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    translateXItem: [
+      new LabelAttribute(
+        'Horizontal Distance',
+        '#/api/LayoutTransformations#LayoutTransformations-method-createTranslationStage'
+      ),
+      new OptionGroupAttribute('TranslateGroup', 10),
+      new TypeAttribute(Number)
+    ],
+    translateYItem: [
+      new LabelAttribute(
+        'Vertical Distance',
+        '#/api/LayoutTransformations#LayoutTransformations-method-createTranslationStage'
+      ),
+      new OptionGroupAttribute('TranslateGroup', 20),
+      new TypeAttribute(Number)
+    ]
+  },
+
+  /**
+   * Setup default values for various configuration parameters.
+   */
+  constructor: function () {
+    // @ts-ignore This is part of the old-school yFiles class definition used here
+    LayoutConfiguration.call(this)
+    this.operationItem = OperationType.SCALE
+    this.actOnSelectionOnlyItem = false
+    this.rotationAngleItem = 0
+    this.applyBestFitRotationItem = false
+    this.scaleFactorItem = 1
+    this.scaleNodeSizeItem = false
+    this.translateXItem = 0
+    this.translateYItem = 0
+    this.title = 'Layout Transformations'
+  },
+
+  /**
+   * Creates and configures a layout.
+   * @param graphComponent The {@link GraphComponent} to apply the
+   *   configuration on.
+   * @returns The configured layout algorithm.
+   */
+  createConfiguredLayout: function (graphComponent: GraphComponent): ILayoutAlgorithm {
+    let stage
+    switch (this.operationItem) {
+      case OperationType.MIRROR_X_AXIS:
+        stage = LayoutTransformations.createMirroringStage(true)
+        break
+      case OperationType.MIRROR_Y_AXIS:
+        stage = LayoutTransformations.createMirroringStage(false)
+        break
+      case OperationType.ROTATE:
+        stage = this.applyBestFitRotationItem
+          ? LayoutTransformations.createBestFitRotationStage()
+          : LayoutTransformations.createRotationStage(this.rotationAngleItem)
+        break
+      case OperationType.SCALE:
+        stage = LayoutTransformations.createScalingStage(
+          this.scaleFactorItem,
+          this.scaleFactorItem,
+          this.scaleNodeSizeItem
+        )
+        break
+      case OperationType.TRANSLATE:
+        stage = LayoutTransformations.createTranslationStage(
+          this.translateXItem,
+          this.translateYItem
+        )
+        break
+      default:
+        stage = LayoutTransformations.createScalingStage()
+    }
+
+    return this.actOnSelectionOnlyItem ? new SubgraphLayoutStage(stage) : stage!
+  },
+
+  /** @type {OptionGroup} */
+  GeneralGroup: null,
+
+  /** @type {OptionGroup} */
+  RotateGroup: null,
+
+  /** @type {OptionGroup} */
+  ScaleGroup: null,
+
+  /** @type {OptionGroup} */
+  TranslateGroup: null,
+
+  /** @type {string} */
+  descriptionText: {
+    get: function (): string {
+      return '<p>This layout algorithm applies geometric transformations to (sub-)graphs.</p><p>There are several ways to transform the graph that include mirroring, rotating, scaling and translating.</p>'
+    }
+  },
+
+  /** @type {OperationType} */
+  operationItem: null,
+
+  /** @type {boolean} */
+  actOnSelectionOnlyItem: false,
+
+  /** @type {number} */
+  rotationAngleItem: 0,
+
+  /** @type {boolean} */
+  shouldDisableRotationAngleItem: <any>{
+    get: function (): boolean {
+      return this.operationItem !== OperationType.ROTATE || this.applyBestFitRotationItem
+    }
+  },
+
+  /** @type {boolean} */
+  applyBestFitRotationItem: false,
+
+  /** @type {boolean} */
+  shouldDisableApplyBestFitRotationItem: <any>{
+    get: function (): boolean {
+      return this.operationItem !== OperationType.ROTATE
+    }
+  },
+
+  /** @type {number} */
+  scaleFactorItem: 0.1,
+
+  /** @type {boolean} */
+  shouldDisableScaleFactorItem: <any>{
+    get: function (): boolean {
+      return this.operationItem !== OperationType.SCALE
+    }
+  },
+
+  /** @type {boolean} */
+  scaleNodeSizeItem: false,
+
+  /** @type {boolean} */
+  shouldDisableScaleNodeSizeItem: <any>{
+    get: function (): boolean {
+      return this.operationItem !== OperationType.SCALE
+    }
+  },
+
+  /** @type {number} */
+  translateXItem: 0,
+
+  /** @type {boolean} */
+  shouldDisableTranslateXItem: <any>{
+    get: function (): boolean {
+      return this.operationItem !== OperationType.TRANSLATE
+    }
+  },
+
+  /** @type {number} */
+  translateYItem: 0,
+
+  /** @type {boolean} */
+  shouldDisableTranslateYItem: <any>{
+    get: function (): boolean {
+      return this.operationItem !== OperationType.TRANSLATE
+    }
+  }
+})
+export default LayoutTransformationsConfig

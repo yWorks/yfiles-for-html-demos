@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,16 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { Class, ILabel, IOrientedRectangle } from 'yfiles'
+import type { Constructor, ILabel, INode, IOrientedRectangle } from '@yfiles/yfiles'
 import {
   BaseClass,
   ILabelModel,
   ILabelModelParameter,
   ILookup,
-  INode,
   OrientedRectangle
-} from 'yfiles'
-import { ActivityNodeStyle } from './ActivityNodeStyle'
+} from '@yfiles/yfiles'
 import { getMainActivityWidth, getMainActivityX } from '../gantt-utils'
 import { getActivity } from '../resources/data-model'
 
@@ -69,11 +67,11 @@ export class ActivityNodeLabelModel extends BaseClass(ILabelModel) {
     return new ActivityNodeStyleLabelModelParameter(this)
   }
 
-  getContext(label: ILabel, layoutParameter: ILabelModelParameter): ILookup {
+  getContext(label: ILabel): ILookup {
     return ILookup.EMPTY
   }
 
-  lookup<T>(type: Class<T>): T | null {
+  lookup<T>(type: Constructor<T>): T | null {
     return null
   }
 }
@@ -95,12 +93,5 @@ class ActivityNodeStyleLabelModelParameter extends BaseClass(ILabelModelParamete
    */
   get model(): ILabelModel {
     return this._model
-  }
-
-  /**
-   * Returns true if the owner of the label is an activity node, false otherwise.
-   */
-  supports(label: ILabel): boolean {
-    return label.owner instanceof INode && label.owner.style instanceof ActivityNodeStyle
   }
 }

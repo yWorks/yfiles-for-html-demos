@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CSS_CLASS_PRESET_APPLIED } from './PresetsUiBuilder.js'
-
+import { CSS_CLASS_PRESET_APPLIED } from './PresetsUiBuilder'
 const CSS_CLASS_VISIBLE = 'visible'
 const CSS_CLASS_ACTIVE = 'active'
-
 /**
  * Manages the tooltips for the preset buttons.
  */
@@ -39,59 +37,50 @@ export class Tooltip {
   dummy
   hideTimer
   deltaHeight
-
   constructor() {
     this.element = document.querySelector('#preset-tooltip')
     this.dummy = Tooltip.createDummyElement(this.element)
     this.deltaHeight = this.element.parentElement.getBoundingClientRect().top
   }
-
   /**
    * Shows the tooltip text for the given activator element.
-   * @param {!HTMLElement} activator The button for which the tool tip is shown.
-   * @param {!string} content The tool tip text.
+   * @param activator The button for which the tool tip is shown.
+   * @param content The tool tip text.
    */
   show(activator, content) {
     const triangleSize = 12
     const activatorBounds = activator.getBoundingClientRect()
     const activatorAnchorX = activatorBounds.left + activatorBounds.width / 2
     const activatorAnchorY = activatorBounds.top + activatorBounds.height + triangleSize + 2
-
     const tooltipHeight = this.calculateTooltipHeight(content)
     if (Tooltip.fitsViewport(activatorAnchorY + tooltipHeight)) {
       // do not hide tooltip if a new one is already triggered
       clearTimeout(this.hideTimer)
-
       const element = this.element
       const contentDiv = element.querySelector('.content')
       contentDiv.innerHTML = content
       element.style.display = 'block'
       element.style.top = `${activatorAnchorY - this.deltaHeight}px`
-
       const tooltipBounds = element.getBoundingClientRect()
       const triangle = element.querySelector('.triangle')
       triangle.style.left = `${activatorAnchorX - tooltipBounds.left - triangleSize}px`
-
       this.updateActive(activator)
       element.classList.add(CSS_CLASS_VISIBLE)
     }
   }
-
   /**
    * Hides the tooltip.
    */
   hide() {
     const element = this.element
     element.classList.remove(CSS_CLASS_VISIBLE)
-
     // remove the tooltip from the DOM, after the fade-out CSS transition has finished
     this.hideTimer = setTimeout(() => {
       element.style.display = 'none'
     }, 210)
   }
-
   /**
-   * @param {!HTMLElement} activator The button for which the tool tip is shown.
+   * @param activator The button for which the tool tip is shown.
    */
   updateActive(activator) {
     const element = this.element
@@ -100,19 +89,15 @@ export class Tooltip {
       element.classList.add(CSS_CLASS_ACTIVE)
     }
   }
-
   /**
    * Whether the tooltip fits into the current view port without being clipped.
-   * @param {number} maxY The maximum y-coordinate of the current viewport.
-   * @returns {boolean}
+   * @param maxY The maximum y-coordinate of the current viewport.
    */
   static fitsViewport(maxY) {
     return document.documentElement.clientHeight > maxY
   }
-
   /**
-   * @param {!string} content The tool tip text.
-   * @returns {number}
+   * @param content The tool tip text.
    */
   calculateTooltipHeight(content) {
     this.dummy.innerHTML = content
@@ -120,12 +105,10 @@ export class Tooltip {
     this.dummy.innerHTML = ''
     return height
   }
-
   /**
    * Creates a dummy element to measure the tooltip height off-screen in order to not show the
    * tooltip content if it does not fit the current viewport.
-   * @param {!HTMLDivElement} tooltipElement The container for the tool tip text.
-   * @returns {!HTMLDivElement}
+   * @param tooltipElement The container for the tool tip text.
    */
   static createDummyElement(tooltipElement) {
     const dummy = document.createElement('div')

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,8 +27,7 @@
  **
  ***************************************************************************/
 import {
-  DefaultFolderNodeConverter,
-  DefaultLabelStyle,
+  FolderNodeConverter,
   FoldingManager,
   GraphComponent,
   GraphEditorInputMode,
@@ -36,52 +35,39 @@ import {
   GraphModelManager,
   GroupNodeLabelModel,
   GroupNodeStyle,
-  ICommand,
   IGraph,
   INode,
+  LabelStyle,
   License,
   NodeAlignmentPolicy,
   Rect,
-  WebGL2GraphModelManager
-} from 'yfiles'
-import { configureToolTips } from './ToolTipHelper.js'
-import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { initializeSvgWebGlSwitchButton } from './svg-webgl-switch.js'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
-
-/**
- * @returns {!Promise}
- */
+  WebGLGraphModelManager
+} from '@yfiles/yfiles'
+import { configureToolTips } from './ToolTipHelper'
+import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initializeSvgWebGlSwitchButton } from './svg-webgl-switch'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   configureFolding(graphComponent)
   configureInteraction(graphComponent)
   configureRenderMode(graphComponent)
-
   configureDefaultStyles(graphComponent.graph)
   createSampleGraph(graphComponent.graph)
-
   // center the sample graph in the visible area
-  graphComponent.fitGraphBounds()
-
+  void graphComponent.fitGraphBounds()
   initializeSvgWebGlSwitchButton('#styleTypeChooser', graphComponent)
 }
-
 /**
  * Creates a sample graph with several group and folder nodes.
- * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
   // create a couple of GroupNodeStyle instances that demonstrate various tab configuration options
   // for tabs that are placed at the top of the respective node ...
   const stylesWithTabAtTop = []
-
   // style for red nodes
   const red = colorSets['demo-palette-59']
   stylesWithTabAtTop.push(
@@ -97,7 +83,6 @@ function createSampleGraph(graph) {
       stroke: red.stroke
     })
   )
-
   // style for green nodes
   const green = colorSets['demo-palette-53']
   stylesWithTabAtTop.push(
@@ -117,7 +102,6 @@ function createSampleGraph(graph) {
       stroke: `1px ${green.stroke}`
     })
   )
-
   // style for blue nodes
   const blue = colorSets['demo-palette-56']
   stylesWithTabAtTop.push(
@@ -138,7 +122,6 @@ function createSampleGraph(graph) {
       stroke: `1px ${blue.stroke}`
     })
   )
-
   // style for orange nodes
   const orange = colorSets['demo-palette-51']
   stylesWithTabAtTop.push(
@@ -155,14 +138,12 @@ function createSampleGraph(graph) {
       iconBackgroundShape: 'circle-solid',
       tabFill: orange.fill,
       tabHeight: 22.0,
-      tabInset: 8.0,
+      tabPadding: 8.0,
       stroke: `1px ${orange.stroke}`
     })
   )
-
   // ... and for tabs at different sides of the respective nodes
   const stylesWithTabAtMiscPositions = []
-
   // style for gold nodes
   const gold = colorSets['demo-palette-510']
   stylesWithTabAtMiscPositions.push(
@@ -177,7 +158,6 @@ function createSampleGraph(graph) {
       tabFill: gold.fill
     })
   )
-
   // style for gray nodes
   const gray = colorSets['demo-palette-58']
   stylesWithTabAtMiscPositions.push(
@@ -197,7 +177,6 @@ function createSampleGraph(graph) {
       stroke: `1px ${gray.stroke}`
     })
   )
-
   // style for light-green nodes
   const lightGreen = colorSets['demo-palette-54']
   stylesWithTabAtMiscPositions.push(
@@ -218,7 +197,6 @@ function createSampleGraph(graph) {
       stroke: `1px ${lightGreen.stroke}`
     })
   )
-
   // style for purple nodes
   const purple = colorSets['demo-palette-55']
   stylesWithTabAtMiscPositions.push(
@@ -237,97 +215,80 @@ function createSampleGraph(graph) {
       tabPosition: 'left',
       tabFill: purple.fill,
       tabHeight: 22.0,
-      tabInset: 8.0,
+      tabPadding: 8.0,
       stroke: `1px ${purple.stroke}`
     })
   )
-
   // create label styles that use the same color sets as the GroupNodeStyle instances created above
   const labelStyles = []
-
   // style for red nodes
   labelStyles.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'top',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: red.nodeLabelFill
     })
   )
-
   // style for green nodes
   labelStyles.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: green.text
     })
   )
-
   // style for blue nodes
   // this style uses centered horizontal text because of the sloped tab in the blue nodes
   labelStyles.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       horizontalTextAlignment: 'center',
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: blue.nodeLabelFill
     })
   )
-
   // style for orange nodes
   labelStyles.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: orange.nodeLabelFill
     })
   )
-
   const labelStylesWithTabAtMiscPositions = []
-
   // style for gold nodes
   labelStylesWithTabAtMiscPositions.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: gold.nodeLabelFill
     })
   )
   // style for gray nodes
   labelStylesWithTabAtMiscPositions.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis'
+      wrapping: 'wrap-character-ellipsis'
     })
   )
   // style for light-green nodes
   labelStylesWithTabAtMiscPositions.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: green.nodeLabelFill
     })
   )
   // style for purple nodes
   labelStylesWithTabAtMiscPositions.push(
-    new DefaultLabelStyle({
+    new LabelStyle({
       verticalTextAlignment: 'center',
-      clipText: false,
-      wrapping: 'character-ellipsis',
+      wrapping: 'wrap-character-ellipsis',
       textFill: purple.nodeLabelFill
     })
   )
-
   const labelTexts = ['Red', 'Green', 'Blue', 'Orange']
   const labelTextsWithTabAtMiscPositions = ['Gold', 'Gray', 'Light green', 'Purple']
-
   // create one group node and one folder node for each of the above GroupNodeStyle instances
   createGroupAndFolderNodes(graph, stylesWithTabAtTop, labelStyles, labelTexts, 0, 0)
   createGroupAndFolderNodes(
@@ -338,7 +299,6 @@ function createSampleGraph(graph) {
     0,
     425
   )
-
   // create a couple of child nodes for group nodes ...
   const nodes = graph.nodes.toArray()
   const p1c1 = createChildNode(graph, nodes[1], 20, 52)
@@ -358,7 +318,6 @@ function createSampleGraph(graph) {
   const pBc2 = createChildNode(graph, nodes[11], 128, 74)
   const pBc3 = createChildNode(graph, nodes[11], 138, 28)
   const pBc4 = createChildNode(graph, nodes[11], 50, 88)
-
   graph.createEdge(p1c1, p1c3)
   graph.createEdge(p1c3, p1c2)
   graph.createEdge(p1c3, p1c4)
@@ -368,7 +327,6 @@ function createSampleGraph(graph) {
   graph.createEdge(p9c2, p9c3)
   graph.createEdge(pBc1, pBc2)
   graph.createEdge(pBc3, pBc4)
-
   // ... and folder nodes
   createChildNode(graph, nodes[4], 68, 46)
   createChildNode(graph, nodes[4], 147, 82)
@@ -389,22 +347,20 @@ function createSampleGraph(graph) {
   createChildNode(graph, nodes[15], 55, 95)
   createChildNode(graph, nodes[15], 133, 95)
 }
-
 /**
  * Creates a group node and a folder node for each of the given style instances.
  * Additionally, this method will add one label to each created group or folder node.
- * @param {!IGraph} graph The graph in which to create the new group and folder nodes.
- * @param {!Array.<GroupNodeStyle>} nodeStyles The style instances for which to create new group and folder nodes.
- * @param {!Array.<DefaultLabelStyle>} labelStyles The style instances for the labels of the new group and folder nodes.
- * @param {!Array.<string>} labelTexts The texts for the labels of the new group and folder nodes.
- * @param {number} x0 The top-left x-coordinate of the first node to create.
- * @param {number} y0 The top-left x-coordinate of the first node to create.
+ * @param graph The graph in which to create the new group and folder nodes.
+ * @param nodeStyles The style instances for which to create new group and folder nodes.
+ * @param labelStyles The style instances for the labels of the new group and folder nodes.
+ * @param labelTexts The texts for the labels of the new group and folder nodes.
+ * @param x0 The top-left x-coordinate of the first node to create.
+ * @param y0 The top-left x-coordinate of the first node to create.
  */
 function createGroupAndFolderNodes(graph, nodeStyles, labelStyles, labelTexts, x0, y0) {
   // place the labels of the group and folder nodes into the tab background of their visualizations
   // GroupNodeLabelModel's default parameter can be used to place labels into the tab area instead
   const tabBackgroundParameter = new GroupNodeLabelModel().createTabBackgroundParameter()
-
   let y = y0
   const width = 200
   const height = 150
@@ -413,28 +369,22 @@ function createGroupAndFolderNodes(graph, nodeStyles, labelStyles, labelTexts, x
     const n = nodeStyles.length
     for (let i = 0; i < n; ++i) {
       const node = graph.createGroupNode(null, new Rect(x, y, width, height), nodeStyles[i])
-
       graph.addLabel(node, `${labelTexts[i]} ${j + 1}`, tabBackgroundParameter, labelStyles[i])
-
       if (j > 0) {
         collapseLast(graph)
       }
-
       x += width + 100
     }
-
     y += height + 25
   }
 }
-
 /**
  * Creates a child node for the given parent group node.
  * The created node will be neither a group node nor a folder node.
- * @param {!IGraph} graph The graph in which to create the new node.
- * @param {!INode} parent The parent node for the new node.
- * @param {number} xOffset The distance in x-direction from the new node's top left corner to the parent node's top left corner.
- * @param {number} yOffset The distance in y-direction from the new node's top left corner to the parent node's top left corner.
- * @returns {!INode}
+ * @param graph The graph in which to create the new node.
+ * @param parent The parent node for the new node.
+ * @param xOffset The distance in x-direction from the new node's top left corner to the parent node's top left corner.
+ * @param yOffset The distance in y-direction from the new node's top left corner to the parent node's top left corner.
  */
 function createChildNode(graph, parent, xOffset, yOffset) {
   const nl = parent.layout
@@ -442,77 +392,77 @@ function createChildNode(graph, parent, xOffset, yOffset) {
   graph.setParent(node, parent)
   return node
 }
-
 /**
  * Collapses the last group node in the given graph.
- * @param {!IGraph} graph
  */
 function collapseLast(graph) {
   graph.foldingView.collapse(graph.nodes.last())
 }
-
 /**
  * Enables folding in the given graph component.
- * @param {!GraphComponent} graphComponent
  */
 function configureFolding(graphComponent) {
   graphComponent.graph = new FoldingManager({
-    folderNodeConverter: new DefaultFolderNodeConverter({
-      copyFirstLabel: true
+    folderNodeConverter: new FolderNodeConverter({
+      folderNodeDefaults: {
+        copyLabels: true
+      }
     }),
     masterGraph: graphComponent.graph
   }).createFoldingView().graph
 }
-
 /**
  * Enables basic user interaction for the given graph component.
- * @param {!GraphComponent} graphComponent
  */
 function configureInteraction(graphComponent) {
-  const geim = new GraphEditorInputMode({
+  const editorInputMode = new GraphEditorInputMode({
     allowCreateNode: false,
-    allowGroupingOperations: true,
-    deletableItems: GraphItemTypes.ALL & ~GraphItemTypes.NODE
+    deletableItems: GraphItemTypes.ALL & ~GraphItemTypes.NODE,
+    // give labels a higher priority, so that double-clicking labels will still trigger the label
+    // editing, even though below we handle the double clicks for nodes
+    doubleClickHitTestOrder: [GraphItemTypes.LABEL, GraphItemTypes.ALL],
+    navigationInputMode: {
+      autoGroupNodeAlignmentPolicy: NodeAlignmentPolicy.CENTER
+    }
   })
-  geim.navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.CENTER
-
   // Provide a way to collapse group nodes or expand folder nodes even if their style does not
   // show an icon for collapsing or expanding.
-  geim.addItemLeftDoubleClickedListener((_, evt) => {
+  editorInputMode.addEventListener('item-left-double-clicked', (evt) => {
     const item = evt.item
     if (item instanceof INode) {
-      if (ICommand.TOGGLE_EXPANSION_STATE.canExecute(item, graphComponent)) {
-        ICommand.TOGGLE_EXPANSION_STATE.execute(item, graphComponent)
+      const foldingView = graphComponent.graph.foldingView
+      if (
+        foldingView &&
+        foldingView.manager.masterGraph.isGroupNode(foldingView.getMasterItem(item))
+      ) {
+        if (foldingView.isExpanded(item)) {
+          editorInputMode.navigationInputMode.collapseGroup(item)
+        } else {
+          editorInputMode.navigationInputMode.expandGroup(item)
+        }
         // we need to make sure that any handles that are present are reevaluated because they
         // may have different constraints after the expand/collapse operation
-        geim.requeryHandles()
+        editorInputMode.requeryHandles()
         evt.handled = true
       }
     }
   })
-
-  configureToolTips(geim)
-
-  graphComponent.inputMode = geim
+  configureToolTips(editorInputMode)
+  graphComponent.inputMode = editorInputMode
 }
-
 /**
  * Configures the graphModelManager to support switching between svg and webgl rendering.
  * At the beginning, the svg rendering is applied.
- * @param {!GraphComponent} graphComponent
  */
 function configureRenderMode(graphComponent) {
   graphComponent.graphModelManager = BrowserDetection.webGL2
-    ? new WebGL2GraphModelManager({ renderMode: 'svg' })
-    : new GraphModelManager(graphComponent, graphComponent.contentGroup)
+    ? new WebGLGraphModelManager({ renderMode: 'svg' })
+    : new GraphModelManager()
 }
-
 /**
  * Configures the default styles for new nodes, edges, and labels in the given graph.
- * @param {!IGraph} graph
  */
 function configureDefaultStyles(graph) {
   initDemoStyles(graph, { theme: 'demo-palette-58' })
 }
-
 run().then(finishLoading)

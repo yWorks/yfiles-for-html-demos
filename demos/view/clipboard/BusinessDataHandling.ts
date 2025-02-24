@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { INode, ISelectionModel } from 'yfiles'
-import { StringTemplateNodeStyle } from 'yfiles'
+import { type INode, type IObservableCollection } from '@yfiles/yfiles'
 
 let counter = 0
 
@@ -38,19 +37,18 @@ export type NodeBusinessData = {
 /**
  * Creates an instance of ClipboardBusinessObject with a new name.
  */
-export function createNodeBusinessData() {
-  const obj = { name: `Name ${++counter}` }
-  return StringTemplateNodeStyle.makeObservable(obj) as NodeBusinessData
+export function createNodeBusinessData(): NodeBusinessData {
+  return { name: `Name ${++counter}` }
 }
 
 /**
  * Returns the common name of the selected nodes if such a common name
  * exists, or the empty string otherwise.
  */
-export function getCommonName(selectedNodes: ISelectionModel<INode>): string {
+export function getCommonName(selectedNodes: IObservableCollection<INode>): string {
   if (selectedNodes.size === 0) {
     return ''
   }
-  const name = selectedNodes.first().tag.name
+  const name = selectedNodes.first()!.tag.name
   return selectedNodes.some((node: INode): boolean => name !== node.tag.name) ? '' : name
 }

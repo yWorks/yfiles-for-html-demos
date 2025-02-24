@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,47 +26,29 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IArrow, IBoundsProvider, IEdge, IVisualCreator, Point } from 'yfiles'
-
+import { BaseClass, IArrow, IBoundsProvider, IEdge, IVisualCreator, Point } from '@yfiles/yfiles'
 /**
  * A simple wrapper around an {@link IArrow} that rotates the arrow by 180 degrees.
  */
 export class FlippedArrow extends BaseClass(IArrow) {
   wrappedArrow
   offset
-
   /**
    * Creates a new instance.
-   * @param {!IArrow} wrappedArrow The arrow to wrap.
-   * @param {number} offset A location offset that is applied in flipped direction of the arrow.
+   * @param wrappedArrow The arrow to wrap.
+   * @param offset A location offset that is applied in flipped direction of the arrow.
    */
   constructor(wrappedArrow, offset) {
     super()
     this.wrappedArrow = wrappedArrow
     this.offset = offset
   }
-
-  /**
-   * @type {number}
-   */
   get cropLength() {
     return this.wrappedArrow.cropLength
   }
-
-  /**
-   * @type {number}
-   */
   get length() {
     return this.wrappedArrow.length
   }
-
-  /**
-   * @param {!IEdge} edge
-   * @param {boolean} atSource
-   * @param {!Point} anchor
-   * @param {!Point} direction
-   * @returns {!IBoundsProvider}
-   */
   getBoundsProvider(edge, atSource, anchor, direction) {
     return this.wrappedArrow.getBoundsProvider(
       edge,
@@ -75,14 +57,6 @@ export class FlippedArrow extends BaseClass(IArrow) {
       FlippedArrow.getFlippedDirection(direction)
     )
   }
-
-  /**
-   * @param {!IEdge} edge
-   * @param {boolean} atSource
-   * @param {!Point} anchor
-   * @param {!Point} direction
-   * @returns {!IVisualCreator}
-   */
   getVisualCreator(edge, atSource, anchor, direction) {
     return this.wrappedArrow.getVisualCreator(
       edge,
@@ -91,21 +65,17 @@ export class FlippedArrow extends BaseClass(IArrow) {
       FlippedArrow.getFlippedDirection(direction)
     )
   }
-
   /**
    * Rotates the direction vector by 180 degrees.
-   * @param {!Point} direction The original direction vector
-   * @returns {!Point}
+   * @param direction The original direction vector
    */
   static getFlippedDirection(direction) {
     return direction.multiply(-1)
   }
-
   /**
    * Returns the new anchor for the flipped arrow.
-   * @param {!Point} anchor The original anchor
-   * @param {!Point} direction The original direction vector
-   * @returns {!Point}
+   * @param anchor The original anchor
+   * @param direction The original direction vector
    */
   getFlippedAnchor(anchor, direction) {
     return anchor.subtract(
@@ -114,5 +84,8 @@ export class FlippedArrow extends BaseClass(IArrow) {
         (this.length + this.offset) * direction.y
       )
     )
+  }
+  get cropAtPort() {
+    return false
   }
 }

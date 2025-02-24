@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,73 +27,59 @@
  **
  ***************************************************************************/
 import {
-  CompactNodePlacer,
-  DefaultNodePlacer,
+  CompactSubtreePlacer,
   IEdge,
   IGraph,
   ILayoutAlgorithm,
   INode,
   LayoutData,
-  LeafNodePlacer,
-  LeftRightNodePlacer,
+  LeftRightSubtreePlacer,
   Mapper,
-  MinimumNodeSizeStage,
   OrganicEdgeRouter,
+  SingleLayerSubtreePlacer,
   TreeLayout,
-  TreeLayoutData,
-  TreeReductionStage
-} from 'yfiles'
-import type { NodePlacerPanel } from './NodePlacerPanel'
+  TreeLayoutData
+} from '@yfiles/yfiles'
+import type { SubtreePlacerPanel } from './SubtreePlacerPanel'
 
 export type Configuration = { layout: ILayoutAlgorithm; layoutData?: LayoutData }
 
 /**
- * Creates a layout configuration that uses the node placers from the panel.
+ * Creates a layout configuration that uses the subtree placers from the panel.
  * This configuration considers assistant nodes as well as an out-edge comparer.
  * @param graph The graph
- * @param nodePlacerPanel The panel
+ * @param subtreePlacerPanel The panel
  */
 export function createGenericConfiguration(
   graph: IGraph,
-  nodePlacerPanel: NodePlacerPanel
+  subtreePlacerPanel: SubtreePlacerPanel
 ): Configuration {
   // create layout algorithm
-  const treeLayout = new TreeLayout()
+  const layout = new TreeLayout()
   const sample = document.querySelector<HTMLSelectElement>('#select-sample')!.value
   if (sample === 'general') {
     // add the tree reduction stage for the case where the graph is not a tree but a general graph
-    const treeReductionStage = new TreeReductionStage({
-      nonTreeEdgeRouter: new OrganicEdgeRouter(),
-      nonTreeEdgeSelectionKey: OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
-    })
-    treeLayout.prependStage(treeReductionStage)
+    const treeReductionStage = layout.treeReductionStage
+    treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
   }
-  const layout = new MinimumNodeSizeStage(treeLayout)
 
-  // configure layout data with node placers, assistant markers and edge order
+  // configure layout data with subtree placers, assistant markers and edge order
   const layoutData = new TreeLayoutData({
-    nodePlacers: (node) => {
+    subtreePlacers: (node: INode) => {
       if (graph.outDegree(node) > 0) {
-        // return the node placer specified for the node
-        return nodePlacerPanel.nodePlacers.get(node)
+        // return the subtree placer specified for the node
+        return subtreePlacerPanel.subtreePlacers.get(node)
       }
-
-      // use LeafNodePlacer for all nodes without children to avoid weird node connectors
-      return new LeafNodePlacer()
+      return null
     },
     // mark assistant nodes
     assistantNodes: (node) => node.tag.assistant,
-    // order out edges by the label of their target nodes
-    outEdgeComparers: () => {
-      return (edge1: IEdge, edge2: IEdge): number => {
-        const value1 = getOrdinal(edge1)
-        const value2 = getOrdinal(edge2)
-        return value1 - value2
-      }
-    },
-    compactNodePlacerStrategyMementos: new Mapper<INode, any>()
+    compactSubtreePlacerStrategyMementos: new Mapper<INode, any>(),
+    childOrder: {
+      // order out edges by the label of their target nodes
+      outEdgeComparables: (edge: IEdge): number => getOrdinal(edge)
+    }
   })
-
   return { layout, layoutData }
 }
 
@@ -102,9 +88,9 @@ export function createGenericConfiguration(
  * This implementation uses the label text if it is a number or 0.
  */
 function getOrdinal(edge: IEdge): number {
-  const targetLabels = edge.targetNode!.labels
+  const targetLabels = edge.targetNode.labels
   if (targetLabels.size > 0) {
-    const number = Number.parseFloat(targetLabels.first().text)
+    const number = Number.parseFloat(targetLabels.first()!.text)
     if (!Number.isNaN(number)) {
       return number
     }
@@ -113,28 +99,29 @@ function getOrdinal(edge: IEdge): number {
 }
 
 /**
- * Creates a layout configuration that uses a combination of LeftRightNodePlacer and
- * DefaultNodePlacer.
+ * Creates a layout configuration that uses a combination of {@link LeftRightSubtreePlacer} and
+ * {@link SingleLayerSubtreePlacer}.
  * @param graph The graph
- * @param nodePlacerPanel The panel
+ * @param subtreePlacerPanel The panel
  */
 export function createDefaultTreeConfiguration(
   graph: IGraph,
-  nodePlacerPanel: NodePlacerPanel
+  subtreePlacerPanel: SubtreePlacerPanel
 ): Configuration {
   // create layout algorithm
-  const layout = new MinimumNodeSizeStage(new TreeLayout())
+  const layout = new TreeLayout()
 
   // create layout data
   const layoutData = new TreeLayoutData()
 
   for (const node of graph.nodes) {
-    //specify placer in layout data, depending on the layer value stored in the node's tag
-    const placer = node.tag.layer === 3 ? new LeftRightNodePlacer() : new DefaultNodePlacer()
-    layoutData.nodePlacers.mapper.set(node, placer)
+    // specify placer in layout data, depending on the layer value stored in the node's tag
+    const placer =
+      node.tag.layer === 3 ? new LeftRightSubtreePlacer() : new SingleLayerSubtreePlacer()
+    layoutData.subtreePlacers.mapper.set(node, placer)
 
-    // update node placers with the same values to keep the panel intact
-    nodePlacerPanel.nodePlacers.set(node, placer)
+    // update subtree placers with the same values to keep the panel intact
+    subtreePlacerPanel.subtreePlacers.set(node, placer)
   }
 
   return { layout, layoutData }
@@ -144,14 +131,14 @@ export function createDefaultTreeConfiguration(
  * Creates a layout configuration that places the first two levels horizontally and stacks the
  * remaining layers left-right.
  * @param graph The graph
- * @param nodePlacerPanel The panel
+ * @param subtreePlacerPanel The panel
  */
 export function createCategoryTreeConfiguration(
   graph: IGraph,
-  nodePlacerPanel: NodePlacerPanel
+  subtreePlacerPanel: SubtreePlacerPanel
 ): Configuration {
   // create layout algorithm
-  const layout = new MinimumNodeSizeStage(new TreeLayout())
+  const layout = new TreeLayout()
 
   // create layout data
   const layoutData = new TreeLayoutData()
@@ -160,14 +147,14 @@ export function createCategoryTreeConfiguration(
     //specify placer in layout data, depending on the layer value stored in the node's tag
     const placer =
       node.tag.layer === 0
-        ? new DefaultNodePlacer()
-        : new LeftRightNodePlacer({
+        ? new SingleLayerSubtreePlacer()
+        : new LeftRightSubtreePlacer({
             placeLastOnBottom: false
           })
-    layoutData.nodePlacers.mapper.set(node, placer)
+    layoutData.subtreePlacers.mapper.set(node, placer)
 
-    // update node placers with the same values to keep the panel intact
-    nodePlacerPanel.nodePlacers.set(node, placer)
+    // update subtree placers with the same values to keep the panel intact
+    subtreePlacerPanel.subtreePlacers.set(node, placer)
   }
 
   return { layout, layoutData }
@@ -177,73 +164,73 @@ export function createCategoryTreeConfiguration(
  * Creates a layout configuration that can handle general graphs.
  * Non-tree edges are routed with organic style.
  * @param graph The graph
- * @param nodePlacerPanel The panel
+ * @param subtreePlacerPanel The panel
  */
 export function createGeneralGraphConfiguration(
   graph: IGraph,
-  nodePlacerPanel: NodePlacerPanel
+  subtreePlacerPanel: SubtreePlacerPanel
 ): Configuration {
   // create layout algorithm
-  const treeLayout = new TreeReductionStage({
-    coreLayout: new TreeLayout(),
-    nonTreeEdgeRouter: new OrganicEdgeRouter(),
-    nonTreeEdgeSelectionKey: OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
-  })
-  const layout = new MinimumNodeSizeStage(treeLayout)
+  const treeLayout = new TreeLayout()
+  const treeReductionStage = treeLayout.treeReductionStage
+  treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
 
-  // update node placers with the same values to keep the panel intact
+  const layout = treeLayout
+
+  // update subtree placers with the same values to keep the panel intact
   for (const node of graph.nodes) {
-    nodePlacerPanel.nodePlacers.set(node, new DefaultNodePlacer())
+    subtreePlacerPanel.subtreePlacers.set(node, new SingleLayerSubtreePlacer())
   }
 
   return { layout }
 }
 
 /**
- * Creates a layout configuration that uses CompactNodePlacer for nodes with more than 5 children.
+ * Creates a layout configuration that uses {@link CompactSubtreePlacer} for nodes with more than 5 children.
  * @param graph The graph
- * @param nodePlacerPanel The panel
+ * @param subtreePlacerPanel The panel
  */
 export function createLargeTreeConfiguration(
   graph: IGraph,
-  nodePlacerPanel: NodePlacerPanel
+  subtreePlacerPanel: SubtreePlacerPanel
 ): Configuration {
   // create layout algorithm
-  const layout = new MinimumNodeSizeStage(new TreeLayout())
+  const layout = new TreeLayout()
 
   const layoutData = new TreeLayoutData({
-    compactNodePlacerStrategyMementos: new Mapper<INode, any>()
+    compactSubtreePlacerStrategyMementos: new Mapper<INode, any>()
   })
 
   // select placer depending on out-degree and specify it in the layout data
   for (const node of graph.nodes) {
-    const placer = graph.outDegree(node) > 5 ? new CompactNodePlacer() : new DefaultNodePlacer()
-    layoutData.nodePlacers.mapper.set(node, placer)
+    const placer =
+      graph.outDegree(node) > 5 ? new CompactSubtreePlacer() : new SingleLayerSubtreePlacer()
+    layoutData.subtreePlacers.mapper.set(node, placer)
 
-    // update node placers with the same values to keep the panel intact
-    nodePlacerPanel.nodePlacers.set(node, placer)
+    // update subtree placers with the same values to keep the panel intact
+    subtreePlacerPanel.subtreePlacers.set(node, placer)
   }
 
   return { layout, layoutData }
 }
 
 /**
- * Creates a layout configuration that uses DefaultNodePlacer for all nodes in the graph.
+ * Creates a layout configuration that uses {@link SingleLayerSubtreePlacer} for all nodes in the graph.
  * @param graph The graph
- * @param nodePlacerPanel The panel
+ * @param subtreePlacerPanel The panel
  */
 export function createWideTreeConfiguration(
   graph: IGraph,
-  nodePlacerPanel: NodePlacerPanel
+  subtreePlacerPanel: SubtreePlacerPanel
 ): Configuration {
-  const defaultNodePlacer = new DefaultNodePlacer()
+  const singleLayerSubtreePlacer = new SingleLayerSubtreePlacer()
   const layout = new TreeLayout({
-    defaultNodePlacer: defaultNodePlacer
+    defaultSubtreePlacer: singleLayerSubtreePlacer
   })
-  // update node placers with the same values to keep the panel intact
+  // update subtree placers with the same values to keep the panel intact
   for (const node of graph.nodes) {
-    nodePlacerPanel.nodePlacers.set(node, defaultNodePlacer)
+    subtreePlacerPanel.subtreePlacers.set(node, singleLayerSubtreePlacer)
   }
 
-  return { layout: new MinimumNodeSizeStage(layout) }
+  return { layout: layout }
 }

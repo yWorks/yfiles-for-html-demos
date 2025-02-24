@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,27 +26,20 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  ExteriorLabelModel,
-  GraphComponent,
-  ICommand,
-  type IGraph,
-  Point,
-  ViewportChanges
-} from 'yfiles'
+import { GraphComponent, Point } from '@yfiles/yfiles'
 
 /**
  * Updates the content rectangle to encompass all existing graph elements.
  */
 export function fitGraphBounds(graphComponent: GraphComponent): void {
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
 
 /**
  * Updates the content rectangle to encompass all existing graph elements.
  */
 export function updateViewport(graphComponent: GraphComponent): void {
-  graphComponent.updateContentRect()
+  graphComponent.updateContentBounds()
   graphComponent.fitContent()
 }
 

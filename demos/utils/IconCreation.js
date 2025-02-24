@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,13 +28,11 @@
  ***************************************************************************/
 /**
  * Creates an {@link ImageData} icon from a given url.
- * @param {!CanvasRenderingContext2D} ctx The canvas context in which to render the icon.
- * @param {!string} url The image url.
- * @param {!Size} imageSize The render size of the source image.
+ * @param ctx The canvas context in which to render the icon.
+ * @param url The image url.
+ * @param imageSize The render size of the source image.
  * @param iconSize The size of the created ImageData. If not specified, the size will be the one of
  *   the context's canvas.
- * @param {?Size} [iconSize=null]
- * @returns {!Promise.<ImageData>}
  */
 export function createUrlIcon(ctx, url, imageSize, iconSize = null) {
   return new Promise((resolve, reject) => {
@@ -55,21 +53,17 @@ export function createUrlIcon(ctx, url, imageSize, iconSize = null) {
     image.src = url
   })
 }
-
 /**
  * Creates an {@link ImageData} icon from a given Font Awesome class.
- * @param {!CanvasRenderingContext2D} ctx The canvas context in which to render the icon.
- * @param {!string} fontAwesomeCssClass The name of the Font Awesome icon.
+ * @param ctx The canvas context in which to render the icon.
+ * @param fontAwesomeCssClass The name of the Font Awesome icon.
  * @param iconSize The size of the created ImageData. If not specified, the size will be the one of
  *   the context's canvas.
- * @param {?Size} [iconSize=null]
- * @returns {!ImageData}
  */
 export function createFontAwesomeIcon(ctx, fontAwesomeCssClass, iconSize = null) {
   const faHelperElement = getHelperElement()
   // assign the Font Awesome class
   faHelperElement.setAttribute('class', fontAwesomeCssClass)
-
   // get the computed style to read the font-family, font-weight and text
   const computedStyle = window.getComputedStyle(faHelperElement)
   const beforeComputedStyle = window.getComputedStyle(faHelperElement, ':before')
@@ -78,10 +72,8 @@ export function createFontAwesomeIcon(ctx, fontAwesomeCssClass, iconSize = null)
   const propertyValue = beforeComputedStyle.getPropertyValue('content')
   // in some browsers, the character is enclosed by quotes
   const text = propertyValue[1] ?? propertyValue[0]
-
   const iconWidth = iconSize?.width || ctx.canvas.width
   const iconHeight = iconSize?.height || ctx.canvas.height
-
   // render the text into the canvas
   ctx.clearRect(0, 0, iconWidth, iconHeight)
   ctx.font = `${fontWeight} 100px ${fontFamily}`
@@ -89,13 +81,10 @@ export function createFontAwesomeIcon(ctx, fontAwesomeCssClass, iconSize = null)
   ctx.textBaseline = 'top'
   ctx.textAlign = 'center'
   ctx.fillText(text, 64, 14)
-
   return ctx.getImageData(0, 0, iconWidth, iconHeight)
 }
-
 /**
  * Gets or creates an <i> element that is used to pre-render the font awesome icon.
- * @returns {!HTMLElement}
  */
 function getHelperElement() {
   const faHelperElement = document.getElementById('fa-helper')
@@ -108,14 +97,10 @@ function getHelperElement() {
   document.body.appendChild(newElement)
   return newElement
 }
-
 /**
  * Creates a rendering context intended for creating the {@link ImageData} with the createXyzIcon
  * functions of this file.
  * The context has its willReadFrequently attribute set to true.
- * @param {number} width
- * @param {number} height
- * @returns {!CanvasRenderingContext2D}
  */
 export function createCanvasContext(width, height) {
   // canvas used to pre-render the icons

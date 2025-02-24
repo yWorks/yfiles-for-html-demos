@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,26 +26,37 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { Class, IEdge, IEdgeStyleRenderer, Tangent } from 'yfiles'
 import {
   Arrow,
   ArrowType,
-  BaseClass,
-  EdgeStyleDecorationInstaller,
   GeneralPath,
   IArrow,
-  IEdgeStyle,
-  IHighlightIndicatorInstaller,
-  PathBasedEdgeStyleRenderer,
+  type IEdge,
+  PathEdgeStyleBase,
   Point,
   Stroke
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * An edge style that draws an edge in an orthogonal fashion.
  * All existing bends of the edge are ignored.
  */
-export class RoutingEdgeStyle extends BaseClass<IEdgeStyle>(IEdgeStyle) {
+export class RoutingEdgeStyle extends PathEdgeStyleBase {
+  /**
+   * The distance on the y-axis between the source port and the horizontal middle segment.
+   * This only has an effect when the source location is right of the target location.
+   */
+  middleSegmentOffset = 32
+
+  /** The amount of corner rounding */
+  smoothing = 10
+
+  /** The source arrow. */
+  sourceArrow: IArrow = IArrow.NONE
+
+  /** The target arrow. */
+  targetArrow: IArrow
+
   /**
    * Creates a new instance of RoutingEdgeStyle.
    * @param outSegmentLength The length of the horizontal segment that connects to the source node.
@@ -65,50 +76,31 @@ export class RoutingEdgeStyle extends BaseClass<IEdgeStyle>(IEdgeStyle) {
     })
   }
 
-  /**
-   * The distance on the y-axis between the source port and the horizontal middle segment.
-   * This only has an effect when the source location is right of the target location.
-   */
-  middleSegmentOffset = 32
-
-  /** The amount of corner rounding */
-  smoothing = 10
-
-  /** The source arrow. */
-  sourceArrow: IArrow = IArrow.NONE
-
-  /** The target arrow. */
-  targetArrow: IArrow
-
-  get renderer(): IEdgeStyleRenderer {
-    return new RoutingEdgeStyleRenderer()
-  }
-
-  clone(): this {
-    return new RoutingEdgeStyle(this.outSegmentLength, this.inSegmentLength, this.stroke) as this
-  }
-}
-
-/**
- * Responsible for drawing the edge path using the given {@link RoutingEdgeStyle}.
- */
-class RoutingEdgeStyleRenderer extends PathBasedEdgeStyleRenderer<RoutingEdgeStyle> {
-  constructor() {
-    super(RoutingEdgeStyle.$class as Class<RoutingEdgeStyle>)
-  }
-
-  /**
-   * Creates the orthogonal edge-path.
-   */
-  createPath(): GeneralPath {
+  protected getPath(edge: IEdge): GeneralPath | null {
     // create a new GeneralPath with the edge points
     const generalPath = new GeneralPath()
-    const points = this.getEdgePoints(this.edge)
+    const points = this.getEdgePoints(edge)
     generalPath.moveTo(points[0])
     for (const item of points) {
       generalPath.lineTo(item)
     }
-    return generalPath
+    return PathEdgeStyleBase.cropPath(edge, generalPath, this.sourceArrow, this.targetArrow)
+  }
+
+  protected getSmoothingLength(edge: IEdge): number {
+    return this.smoothing
+  }
+
+  protected getSourceArrow(edge: IEdge): IArrow {
+    return this.sourceArrow
+  }
+
+  protected getTargetArrow(edge: IEdge): IArrow {
+    return this.targetArrow
+  }
+
+  protected getStroke(edge: IEdge): Stroke {
+    return this.stroke
   }
 
   /**
@@ -118,15 +110,15 @@ class RoutingEdgeStyleRenderer extends PathBasedEdgeStyleRenderer<RoutingEdgeSty
    * Otherwise, we have to calculate some bend-points.
    */
   private getEdgePoints(edge: IEdge): Point[] {
-    const sourcePoint = edge.sourcePort!.location
-    const targetPoint = edge.targetPort!.location
+    const sourcePoint = edge.sourcePort.location
+    const targetPoint = edge.targetPort.location
     const points: Point[] = []
     points.push(sourcePoint)
 
     // the source location with the x-offset
-    const sourceX = sourcePoint.x + this.style.outSegmentLength
+    const sourceX = sourcePoint.x + this.outSegmentLength
     // the target location with the x-offset
-    const targetX = targetPoint.x - this.style.inSegmentLength
+    const targetX = targetPoint.x - this.inSegmentLength
 
     if (sourceX <= targetX) {
       // the source is left of target and not in the same row, add two bends
@@ -139,8 +131,8 @@ class RoutingEdgeStyleRenderer extends PathBasedEdgeStyleRenderer<RoutingEdgeSty
       // get the y-coordinate of the vertical middle segment
       const middleSegmentY =
         sourcePoint.y <= targetPoint.y
-          ? sourcePoint.y + this.style.middleSegmentOffset
-          : sourcePoint.y - this.style.middleSegmentOffset
+          ? sourcePoint.y + this.middleSegmentOffset
+          : sourcePoint.y - this.middleSegmentOffset
       points.push(new Point(sourceX, sourcePoint.y))
       points.push(new Point(sourceX, middleSegmentY))
       points.push(new Point(targetX, middleSegmentY))
@@ -149,68 +141,5 @@ class RoutingEdgeStyleRenderer extends PathBasedEdgeStyleRenderer<RoutingEdgeSty
 
     points.push(targetPoint)
     return points
-  }
-
-  /**
-   * Returns the tangent on this path at the given ratio.
-   */
-  getTangent(ratio: number): Tangent | null {
-    return this.getPath()!.getTangent(ratio)!
-  }
-
-  /**
-   * Returns the tangent on this path instance at the segment and segment ratio.
-   */
-  getTangentForSegment(segmentIndex: number, ratio: number): Tangent | null {
-    return this.getPath()!.getTangentForSegment(segmentIndex, ratio)!
-  }
-
-  /**
-   * Returns the segment count which is the number of edge points -1.
-   */
-  getSegmentCount(): number {
-    // the segment count is the number of edge points - 1
-    const p = this.getEdgePoints(this.edge)
-    return p.length - 1
-  }
-
-  /**
-   * Returns the target arrow.
-   */
-  getTargetArrow(): IArrow {
-    return this.style.targetArrow
-  }
-
-  /**
-   * Returns the source arrow.
-   */
-  getSourceArrow(): IArrow {
-    return this.style.sourceArrow
-  }
-
-  /**
-   * Returns the pen used by style.
-   */
-  getStroke(): Stroke {
-    return this.style.stroke
-  }
-
-  /**
-   * Returns the smoothing length used by style.
-   */
-  getSmoothingLength(): number {
-    return this.style.smoothing
-  }
-
-  /**
-   * Returns an instance that implements the given type or null if no such instance is available.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  lookup(type: Class): any {
-    if (type === IHighlightIndicatorInstaller.$class) {
-      const edgeStyle = new RoutingEdgeStyle(20, 20, new Stroke('goldenrod', 3))
-      return new EdgeStyleDecorationInstaller({ edgeStyle })
-    }
-    return super.lookup.call(this, type)
   }
 }

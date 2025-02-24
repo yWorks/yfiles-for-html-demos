@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,94 +27,78 @@
  **
  ***************************************************************************/
 import {
-  EdgeStyleDecorationInstaller,
-  GraphComponent,
+  EdgeStyleIndicatorRenderer,
   HighlightIndicatorManager,
   IEdge,
   INode,
-  NodeStyleDecorationInstaller,
+  NodeStyleIndicatorRenderer,
   PolylineEdgeStyle
-} from 'yfiles'
-import { getStroke } from '../styles/graph-styles.js'
-import { EntityNodeStyle } from '../styles/EntityNodeStyle.js'
-
+} from '@yfiles/yfiles'
+import { getStroke } from '../styles/graph-styles'
+import { EntityNodeStyle } from '../styles/EntityNodeStyle'
 /**
  * A highlight manager responsible for highlighting the fraud components.
  */
 export class FraudHighlightManager extends HighlightIndicatorManager {
   edgeHighlightGroup
   nodeHighlightGroup
-
   /**
-   * Installs the manager on the canvas.
+   * Installs the manager on the component.
    * Adds the highlight group.
-   * @param {!CanvasComponent} canvas
    */
   install(canvas) {
-    if (canvas instanceof GraphComponent) {
-      const graphModelManager = canvas.graphModelManager
-      // the edges' highlight group should be above the nodes
-      this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
-      this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
-
-      // the nodes' highlight group should be above the nodes
-      this.nodeHighlightGroup = graphModelManager.contentGroup.addGroup()
-      this.nodeHighlightGroup.above(graphModelManager.nodeGroup)
-    }
+    const graphModelManager = canvas.graphModelManager
+    // the edges' highlight group should be above the nodes
+    const renderTree = canvas.renderTree
+    this.edgeHighlightGroup = renderTree.createGroup(graphModelManager.contentGroup)
+    this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
+    // the nodes' highlight group should be above the nodes
+    this.nodeHighlightGroup = renderTree.createGroup(graphModelManager.contentGroup)
+    this.nodeHighlightGroup.above(graphModelManager.nodeGroup)
     super.install(canvas)
   }
-
   /**
    * Uninstalls the manager from the canvas.
    * Removes the highlight group.
-   * @param {!CanvasComponent} canvas
    */
   uninstall(canvas) {
     super.uninstall(canvas)
     if (this.edgeHighlightGroup) {
-      this.edgeHighlightGroup.remove()
+      canvas.renderTree.remove(this.edgeHighlightGroup)
       this.edgeHighlightGroup = undefined
     }
     if (this.nodeHighlightGroup) {
-      this.nodeHighlightGroup.remove()
+      canvas.renderTree.remove(this.nodeHighlightGroup)
       this.nodeHighlightGroup = undefined
     }
   }
-
   /**
-   * This implementation always returns the highlightGroup of this instance's canvasComponent.
-   * @param {!IModelItem} item
-   * @returns {?ICanvasObjectGroup}
+   * Returns the render tree group for a given item.
    */
-  getCanvasObjectGroup(item) {
-    if (item instanceof IEdge) {
-      return this.edgeHighlightGroup
-    } else if (item instanceof INode) {
-      return this.nodeHighlightGroup
-    }
-    return super.getCanvasObjectGroup(item)
+  getRenderTreeGroup(item) {
+    return item instanceof IEdge
+      ? this.edgeHighlightGroup
+      : item instanceof INode
+        ? this.nodeHighlightGroup
+        : super.getRenderTreeGroup(item)
   }
-
   /**
-   * Callback used by install to retrieve the installer for a given item.
-   * @param {!IModelItem} item
-   * @returns {?ICanvasObjectInstaller}
+   * Callback used by {@link install} to retrieve the object renderer for a given item.
    */
-  getInstaller(item) {
-    if (item instanceof INode) {
-      return new NodeStyleDecorationInstaller({
-        margins: 2,
-        zoomPolicy: 'world-coordinates',
-        nodeStyle: new EntityNodeStyle()
-      })
-    } else if (item instanceof IEdge) {
-      return new EdgeStyleDecorationInstaller({
-        edgeStyle: new PolylineEdgeStyle({
-          stroke: `8px solid ${getStroke(item)}`
-        }),
-        zoomPolicy: 'world-coordinates'
-      })
-    }
-    return super.getInstaller(item)
+  getRenderer(item) {
+    return item instanceof INode
+      ? new NodeStyleIndicatorRenderer({
+          margins: 2,
+          zoomPolicy: 'world-coordinates',
+          nodeStyle: new EntityNodeStyle()
+        })
+      : item instanceof IEdge
+        ? new EdgeStyleIndicatorRenderer({
+            edgeStyle: new PolylineEdgeStyle({
+              stroke: `8px solid ${getStroke(item)}`
+            }),
+            zoomPolicy: 'world-coordinates'
+          })
+        : super.getRenderer(item)
   }
 }

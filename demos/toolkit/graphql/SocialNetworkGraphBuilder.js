@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EdgesSource, GraphBuilder, IGraph, INode, NodesSource } from 'yfiles'
-
-/**
- * @typedef {Object} Friendship
- * @property {number} from
- * @property {number} to
- */
-
+import { EdgesSource, GraphBuilder, IGraph, INode, NodesSource } from '@yfiles/yfiles'
 /**
  * A {@link GraphBuilder} that is tailored towards the social network use case in this demo.
  */
@@ -43,10 +36,6 @@ export class SocialNetworkGraphBuilder {
   _graphBuilder
   _nodesSource
   _edgesSource
-
-  /**
-   * @param {!IGraph} graph
-   */
   constructor(graph) {
     this._graphBuilder = new GraphBuilder(graph)
     // create empty NodesSources whose data will be set on updateGraph
@@ -57,7 +46,6 @@ export class SocialNetworkGraphBuilder {
     })
     this._edgesSource = this._graphBuilder.createEdgesSource([], 'from', 'to')
   }
-
   /**
    * Clears the graph.
    */
@@ -65,44 +53,37 @@ export class SocialNetworkGraphBuilder {
     this._persons = []
     this.updateGraph()
   }
-
   /**
    * Adds the given persons to the graph.
-   * @param {!Array.<Person>} persons The persons that should be added
-   * @returns {!Iterable.<INode>} The newly created nodes
+   * @param persons The persons that should be added
+   * @returns The newly created nodes
    */
   addPersons(persons) {
     for (const person of persons) {
       this.addPerson(person)
     }
     this._seen.clear()
-
     const existingNodes = this._graphBuilder.graph.nodes.toList()
     this.updateGraph()
     return this._graphBuilder.graph.nodes.filter((node) => !existingNodes.includes(node))
   }
-
   /**
    * Helper method to add a person to the graph in which we make sure to not add the same person
    * multiple times.
-   * @param {!Person} newPerson The person that should be added
-   * @returns {!Person} The newly added or existing person
+   * @param newPerson The person that should be added
+   * @returns The newly added or existing person
    */
   addPerson(newPerson) {
     const existingPerson = this._persons.find((person) => person.id === newPerson.id)
-
     if (this._seen.has(newPerson)) {
       return existingPerson
     }
-
     this._seen.add(newPerson)
-
     if (newPerson.friends) {
       newPerson.friends = newPerson.friends.map((friend) => this.addPerson(friend))
     } else {
       newPerson.friends = []
     }
-
     if (existingPerson) {
       existingPerson.friends = Array.from(new Set(existingPerson.friends.concat(newPerson.friends)))
       existingPerson.icon = existingPerson.icon || newPerson.icon
@@ -114,7 +95,6 @@ export class SocialNetworkGraphBuilder {
       return newPerson
     }
   }
-
   /**
    * Updates the diagram with the help of the {@link GraphBuilder}.
    */
@@ -123,25 +103,21 @@ export class SocialNetworkGraphBuilder {
     this._graphBuilder.setData(this._edgesSource, this.createEdgesSource())
     this._graphBuilder.updateGraph()
   }
-
   /**
    * Creates the edges for the persons that are currently in the graph.
-   * @returns {!Array.<Friendship>} A list of connections
+   * @returns A list of connections
    */
   createEdgesSource() {
     const edges = []
-
     for (const person of this._persons) {
       for (const friend of person.friends) {
         const from = Math.min(person.id, friend.id)
         const to = Math.max(person.id, friend.id)
-
         if (!edges.some((edge) => edge.from === from && edge.to === to)) {
           edges.push({ from, to })
         }
       }
     }
-
     return edges
   }
 }

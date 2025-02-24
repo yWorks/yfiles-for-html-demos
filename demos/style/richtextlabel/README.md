@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Rich Text Label Demo
 
-# Rich Text Label Demo
+<img src="../../../doc/demo-thumbnails/rich-text-label.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/style/richtextlabel/).
 
 This demo shows how to create labels with rich text features using `MarkupLabelStyle`.
 
@@ -21,7 +23,7 @@ The demo also utilizes [Quill](https://quilljs.com/), an open source WYSIWYG tex
 
 #### Creating and Editing Labels
 
-Press F2 or double-click a label to open the text editor.
+Press F2 or double-click a label to open the text editor. Ctrl + Enter commits the changes while Esc cancels the edit.
 
 Note how the editor is hooked up with yFiles such that users don't need to write HTML markup themselves, but can rely on commonly known editor functions to format the text.
 
@@ -57,7 +59,7 @@ Markup labels can use line wrapping. In this demo application, the labels use wo
 
 ## Related Demos
 
-- [Default Label Style Demo](../../style/default-label-style/)
+- [Label Style Demo](../../style/label-style/)
 - [HTML Label Style Demo](../../style/html-label-style/)
 - [Markdown Label Demo](../../style/markdownlabel/)
 - [Step 01 Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/)

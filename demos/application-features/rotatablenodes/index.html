@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Rotatable Nodes [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -62,8 +60,16 @@
     </header>
 
     <div class="demo-page__toolbar">
-      <button data-command="OPEN"></button>
-      <button data-command="SAVE"></button>
+      <button
+        id="open-file-button"
+        title="Open a GraphML file"
+        class="demo-icon-yIconOpen labeled"
+      ></button>
+      <button
+        id="save-button"
+        title="Save a GraphML file"
+        class="demo-icon-yIconSave labeled"
+      ></button>
 
       <span class="demo-separator"></span>
 
@@ -86,7 +92,7 @@
 
       <span class="demo-separator"></span>
 
-      <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button" />
+      <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button" checked="" />
       <label for="demo-snapping-button" class="demo-icon-yIconSnapping" title="Snapping"></label>
       <input
         type="checkbox"
@@ -117,12 +123,12 @@
       <span class="demo-separator"></span>
 
       <select id="select-layout" title="Select a Layout Algorithm">
-        <option value="hierarchic">Layout: Hierarchic</option>
+        <option value="hierarchical">Layout: Hierarchical</option>
         <option value="organic">Layout: Organic</option>
         <option value="orthogonal">Layout: Orthogonal</option>
         <option value="circular">Layout: Circular</option>
         <option value="tree">Layout: Tree</option>
-        <option value="balloon">Layout: Balloon</option>
+        <option value="radial-tree">Layout: Radial Tree</option>
         <option value="radial">Layout: Radial</option>
         <option disabled="">------------------</option>
         <option value="router-polyline">Routing: Polyline</option>
@@ -161,8 +167,8 @@
           <li>Select a node by clicking it and note the additional rotation handle.</li>
           <li>Rotate a node by dragging the rotation handle.</li>
           <li>
-            Enable snapping to snap the rotation to the coordinate axis and other rotated nodes. You
-            can hold Shift to prevent snapping.
+            Observe how nodes, when rotated, are snapped to the coordinate axes and other rotated
+            nodes. You can hold <kbd>Alt</kbd> to prevent snapping or disable it in the toolbar.
           </li>
           <li>
             Create edges between nodes. Note that port candidates are rotated with the node, as are

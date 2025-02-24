@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   IEdge,
   IEdgeReconnectionPortCandidateProvider,
@@ -36,14 +35,15 @@ import {
   IInputModeContext,
   IPortCandidate,
   IPortCandidateProvider,
-  List
-} from 'yfiles'
+  List,
+  PortCandidate
+} from '@yfiles/yfiles'
 
 /**
  * An {@link IEdgeReconnectionPortCandidateProvider} that allows moving ports to
  * any other port candidate that another node provides.
  */
-export default class EdgeReconnectionPortCandidateProvider extends BaseClass<IEdgeReconnectionPortCandidateProvider>(
+export default class EdgeReconnectionPortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider
 ) {
   constructor(private edge: IEdge) {
@@ -75,15 +75,15 @@ export default class EdgeReconnectionPortCandidateProvider extends BaseClass<IEd
     const result = new List<IPortCandidate>()
 
     // add the current one as the default
-    const port = source ? this.edge.sourcePort! : this.edge.targetPort!
-    result.add(new DefaultPortCandidate(port))
+    const port = source ? this.edge.sourcePort : this.edge.targetPort
+    result.add(new PortCandidate(port))
 
     const graph = context.graph
     if (!graph) {
       return result
     }
     for (const node of graph.nodes) {
-      const provider = node.lookup(IPortCandidateProvider.$class)
+      const provider = node.lookup(IPortCandidateProvider)
       // If available, use the candidates from the provider. Otherwise, add a default candidate.
       if (provider) {
         const candidates = source
@@ -91,7 +91,7 @@ export default class EdgeReconnectionPortCandidateProvider extends BaseClass<IEd
           : provider.getAllTargetPortCandidates(context)
         result.addRange(candidates)
       } else {
-        result.add(new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED))
+        result.add(new PortCandidate(node, FreeNodePortLocationModel.CENTER))
       }
     }
     return result

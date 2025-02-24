@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Selection Styling Demo
 
-# Selection Styling Demo
+<img src="../../../doc/demo-thumbnails/selection-styling.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/style/selectionstyling/).
 
 The Selection Styling demo shows customized selection painting of nodes, edges and labels by decorating these items with a corresponding style.
 
@@ -37,3 +39,7 @@ The visual is rendered in the view coordinate space and doesn't scale with the z
 Mixed
 
 Uses world coordinates for zoom level ≥ 1 and view coordinates for zoom level < 1.
+
+No downscaling
+
+Uses world coordinates for zoom level ≥ 1 and view coordinates for zoom level < 1, but in the latter case, the visual does not scale down below its initial size.

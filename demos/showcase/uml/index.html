@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,6 +30,8 @@
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
      //
      ////////////////////////////////////////////////////////////////////////-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>UML Editor Demo</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
@@ -77,7 +77,6 @@
         opacity: 0.5;
       }
     </style>
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -102,8 +101,16 @@
 
     <div class="demo-page__toolbar">
       <button data-command="NEW"></button>
-      <button data-command="OPEN"></button>
-      <button data-command="SAVE"></button>
+      <button
+        id="open-file-button"
+        title="Open a GraphML file"
+        class="demo-icon-yIconOpen labeled"
+      ></button>
+      <button
+        id="save-button"
+        title="Save a GraphML file"
+        class="demo-icon-yIconSave labeled"
+      ></button>
 
       <span class="demo-separator"></span>
 
@@ -151,9 +158,9 @@
         </p>
 
         <p>
-          The node style uses an <a href="https://docs.yworks.com/yfileshtml/#/api/InteriorStretchLabelModel" target="_blank">InteriorStretchLabelModel</a> to stack the UML entries
-          on top of each other. A custom <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" target="_blank">IEditLabelHelper</a> is provided by the UML
-          node style to enable editing of the different UML entries.
+          The node style uses an <a href="https://docs.yworks.com/yfileshtml/#/api/StretchLabelModel" target="_blank">StretchLabelModel</a> to stack the UML entries on top
+          of each other. A custom <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" target="_blank">IEditLabelHelper</a> is provided by the UML node style
+          to enable editing of the different UML entries.
         </p>
 
         <h2>Things to Try</h2>

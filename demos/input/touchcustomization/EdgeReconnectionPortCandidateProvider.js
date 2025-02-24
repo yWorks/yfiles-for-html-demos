@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   IEdge,
   IEdgeReconnectionPortCandidateProvider,
@@ -36,9 +35,9 @@ import {
   IInputModeContext,
   IPortCandidate,
   IPortCandidateProvider,
-  List
-} from 'yfiles'
-
+  List,
+  PortCandidate
+} from '@yfiles/yfiles'
 /**
  * An {@link IEdgeReconnectionPortCandidateProvider} that allows moving ports to
  * any other port candidate that another node provides.
@@ -46,52 +45,38 @@ import {
 export default class EdgeReconnectionPortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider
 ) {
-  /**
-   * @param {!IEdge} edge
-   */
+  edge
   constructor(edge) {
     super()
     this.edge = edge
   }
-
   /**
    * Gets a list of port candidates for edge reconnection that matches the list of candidates the
    * IPortCandidateProvider interface returns.
-   * @returns {!IEnumerable.<IPortCandidate>} The list of source port candidates
-   * @param {!IInputModeContext} context
+   * @returns The list of source port candidates
    */
   getSourcePortCandidates(context) {
     return this.getPortCandidates(context, true)
   }
-
   /**
    * Gets a list of port candidates for edge reconnection that matches the list of candidates the
    * IPortCandidateProvider interface returns.
-   * @returns {!IEnumerable.<IPortCandidate>} The list of target port candidates
-   * @param {!IInputModeContext} context
+   * @returns The list of target port candidates
    */
   getTargetPortCandidates(context) {
     return this.getPortCandidates(context, false)
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {boolean} source
-   * @returns {!IEnumerable.<IPortCandidate>}
-   */
   getPortCandidates(context, source) {
     const result = new List()
-
     // add the current one as the default
     const port = source ? this.edge.sourcePort : this.edge.targetPort
-    result.add(new DefaultPortCandidate(port))
-
+    result.add(new PortCandidate(port))
     const graph = context.graph
     if (!graph) {
       return result
     }
     for (const node of graph.nodes) {
-      const provider = node.lookup(IPortCandidateProvider.$class)
+      const provider = node.lookup(IPortCandidateProvider)
       // If available, use the candidates from the provider. Otherwise, add a default candidate.
       if (provider) {
         const candidates = source
@@ -99,7 +84,7 @@ export default class EdgeReconnectionPortCandidateProvider extends BaseClass(
           : provider.getAllTargetPortCandidates(context)
         result.addRange(candidates)
       } else {
-        result.add(new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED))
+        result.add(new PortCandidate(node, FreeNodePortLocationModel.CENTER))
       }
     }
     return result

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,43 +26,23 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Font, LabelStyleBase, Size, SvgVisual, TextRenderSupport } from 'yfiles'
-
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+import { Font, LabelStyleBase, Size, SvgVisual, TextRenderSupport } from '@yfiles/yfiles'
 const font = new Font({
   fontFamily: 'Arial',
   fontSize: 12
 })
 const padding = 3
 const iconSize = 16
-
-/**
- * Augment the SvgVisual type with the data used to cache the rendering information
- * @typedef {Object} Cache
- * @property {number} width
- * @property {number} height
- * @property {string} text
- * @property {string} iconUrl
- * @property {string} backgroundColor
- */
-
-/**
- * @typedef {TaggedSvgVisual.<SVGGElement,Cache>} CustomLabelStyleVisual
- */
-
 export class CustomLabelStyle extends LabelStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @returns {!CustomLabelStyleVisual}
-   */
   createVisual(context, label) {
     // create an SVG text element that displays the label text
     const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text')
     font.applyTo(textElement)
-
     const labelSize = label.layout.toSize()
     this.updateText(textElement, label.text, labelSize)
-
     const iconUrl = label.tag?.iconUrl
     let imageElement
     if (iconUrl) {
@@ -73,24 +53,20 @@ export class CustomLabelStyle extends LabelStyleBase {
       const translateX = labelSize.width - iconSize - padding
       imageElement.setAttribute('transform', `translate(${translateX} ${padding})`)
     }
-
     // add a background shape
     const backgroundPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     backgroundPathElement.setAttribute('d', this.createBackgroundShapeData(labelSize))
     backgroundPathElement.setAttribute('stroke', '#aaa')
     backgroundPathElement.setAttribute('fill', label.tag?.backgroundColor || '#fffecd')
-
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     gElement.appendChild(backgroundPathElement)
     gElement.appendChild(textElement)
     if (imageElement) {
       gElement.appendChild(imageElement)
     }
-
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(gElement)
-
     const cache = {
       width: labelSize.width,
       height: labelSize.height,
@@ -98,28 +74,18 @@ export class CustomLabelStyle extends LabelStyleBase {
       iconUrl: iconUrl,
       backgroundColor: label.tag?.backgroundColor
     }
-
     return SvgVisual.from(gElement, cache)
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!CustomLabelStyleVisual} oldVisual
-   * @param {!ILabel} label
-   * @returns {!CustomLabelStyleVisual}
-   */
   updateVisual(context, oldVisual, label) {
     const gElement = oldVisual.svgElement
     const labelSize = label.layout.toSize()
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
-
     const iconUrl = label.tag?.iconUrl
     if (iconUrl !== cache.iconUrl) {
       // re-render the complete visual if the icon changes
       return this.createVisual(context, label)
     }
-
     // check if the label size or text has changed
     if (
       labelSize.width !== cache.width ||
@@ -137,7 +103,6 @@ export class CustomLabelStyle extends LabelStyleBase {
       if (textElement instanceof SVGTextElement) {
         this.updateText(textElement, label.text, labelSize)
       }
-
       // update the cache with the new values
       cache.width = labelSize.width
       cache.height = labelSize.height
@@ -145,37 +110,23 @@ export class CustomLabelStyle extends LabelStyleBase {
       cache.iconUrl = iconUrl
       cache.backgroundColor = label.tag?.backgroundColor
     }
-
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(gElement)
-
     return oldVisual
   }
-
   /**
    * Updates the text content of the text element using TextRenderSupport.
-   * @param {!SVGTextElement} textElement
-   * @param {!string} text
-   * @param {!Size} labelSize
    */
   updateText(textElement, text, labelSize) {
     // use a convenience method to place text content in the <text> element.
     const textContent = TextRenderSupport.addText(textElement, text, font)
-
     // calculate the size of the text element
     const textSize = TextRenderSupport.measureText(textContent, font)
-
     // calculate vertical offset for centered alignment
     const translateY = (labelSize.height - textSize.height) * 0.5
-
     textElement.setAttribute('transform', `translate(${padding} ${translateY})`)
   }
-
-  /**
-   * @param {!ILabel} label
-   * @returns {!Size}
-   */
   getPreferredSize(label) {
     let size = new Size(padding, padding)
     if (label.text && label.text.length > 0) {
@@ -192,11 +143,8 @@ export class CustomLabelStyle extends LabelStyleBase {
     }
     return size
   }
-
   /**
    * Creates a simple "speech balloon" shape.
-   * @param {!Size} labelSize
-   * @returns {!string}
    */
   createBackgroundShapeData(labelSize) {
     const { width: w, height: h } = labelSize

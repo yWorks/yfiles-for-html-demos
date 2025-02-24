@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,14 +34,14 @@ import {
   INode,
   License,
   Point
-} from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { flightData } from './resources/flight-data'
 import { initializeDefaultMapStyles } from './map-styles'
 import { createMap } from './leaflet-graph-layer'
 import type { Map as LeafletMap } from 'leaflet'
-import { initializeShortestPaths, updateHighlights } from './shortest-paths'
+import { initializeShortestPaths } from './shortest-paths'
 import { getAirportData } from './data-types'
 
 async function run(): Promise<void> {
@@ -121,10 +121,10 @@ function createGraph(graphComponent: GraphComponent, map: LeafletMap): void {
 function initializeTooltips(graphComponent: GraphComponent): void {
   const inputMode = graphComponent.inputMode as GraphViewerInputMode
   // initialize tooltips
-  inputMode.mouseHoverInputMode.delay = '200ms'
-  inputMode.mouseHoverInputMode.duration = '1000ms'
-  inputMode.mouseHoverInputMode.toolTipLocationOffset = new Point(10, 10)
-  inputMode.addQueryItemToolTipListener((_, evt) => {
+  inputMode.toolTipInputMode.delay = '200ms'
+  inputMode.toolTipInputMode.duration = '1000ms'
+  inputMode.toolTipInputMode.toolTipLocationOffset = new Point(10, 10)
+  inputMode.addEventListener('query-item-tool-tip', (evt) => {
     const item = evt.item
     if (item instanceof INode && !evt.handled && item.labels.size > 0) {
       evt.toolTip = item.labels.at(0)!.text
@@ -151,8 +151,6 @@ function zoomChanged(graphComponent: GraphComponent, zoom: number): void {
     graph.nodePredicateChanged()
     graph.edgePredicateChanged()
   }
-  // update the path highlights because parts of the path may not be visible anymore
-  updateHighlights(graphComponent)
 
   // update the label for the airports since they depend on the zoom level
   graph.nodes.forEach((node) => {

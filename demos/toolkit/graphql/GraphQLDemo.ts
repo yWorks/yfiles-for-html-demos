@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,36 +28,32 @@
  ***************************************************************************/
 import {
   Arrow,
-  Class,
-  DefaultLabelStyle,
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
   IGraph,
   IModelItem,
   INode,
-  InteriorStretchLabelModel,
-  InteriorStretchLabelModelPosition,
+  LabelStyle,
   LayoutExecutor,
   License,
   OrganicLayout,
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
   PolylineEdgeStyle,
-  Size
-} from 'yfiles'
+  Size,
+  StretchNodeLabelModel
+} from '@yfiles/yfiles'
 import { graphQLQuery } from './GraphQLQuery'
 import { SocialNetworkGraphBuilder } from './SocialNetworkGraphBuilder'
 import { SocialNetworkNodeStyle } from './SocialNetworkNodeStyle'
 import PropertiesPanel from './PropertiesPanel'
 import type { Person } from './Person'
 import { copyWithFriends } from './Person'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-Class.ensure(LayoutExecutor)
+LayoutExecutor.ensure()
 
 let graphComponent: GraphComponent
 
@@ -113,8 +109,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   configureGraph(graphComponent.graph)
 
   graphBuilder = new SocialNetworkGraphBuilder(graphComponent.graph)
@@ -140,19 +134,19 @@ function configureGraph(graph: IGraph): void {
   graph.nodeDefaults.size = new Size(75, 75)
 
   // labels
-  const labelModel = new InteriorStretchLabelModel({ insets: [0, 0, 5, 0] })
-  graph.nodeDefaults.labels.layoutParameter = labelModel.createParameter(
-    InteriorStretchLabelModelPosition.SOUTH
-  )
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.layoutParameter = new StretchNodeLabelModel({
+    padding: [0, 0, 5, 0]
+  }).createParameter('bottom')
+  graph.nodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'center',
     backgroundFill: 'rgba(255,255,255,0.66)'
   })
 
   // edges
   const circleArrow = new Arrow({
-    scale: 2,
-    type: 'circle',
+    lengthScale: 2,
+    widthScale: 2,
+    type: 'ellipse',
     fill: 'lightgray'
   })
   graph.edgeDefaults.style = new PolylineEdgeStyle({
@@ -173,7 +167,7 @@ function configureInteraction(graphComponent: GraphComponent): void {
   })
   mode.marqueeSelectionInputMode.enabled = false
 
-  mode.addItemDoubleClickedListener(async (_, evt) => {
+  mode.addEventListener('item-double-clicked', async (evt) => {
     await loadFriends(evt.item)
 
     // update the properties panel, since new friends may be visible now
@@ -190,7 +184,7 @@ function createPropertiesPanel(graphComponent: GraphComponent): void {
   const propertiesPanelRoot = document.getElementById('propertiesView')!
   propertiesPanel = new PropertiesPanel(propertiesPanelRoot)
 
-  graphComponent.addCurrentItemChangedListener(() => {
+  graphComponent.addEventListener('current-item-changed', () => {
     propertiesPanel.showProperties(graphComponent.currentItem as INode)
   })
 }
@@ -219,8 +213,8 @@ async function runLayout(newNodes?: Iterable<INode>): Promise<void> {
     prepareSmoothExpandLayoutAnimation(newNodes)
   }
   const layout = new OrganicLayout()
-  layout.minimumNodeDistance = 100
-  await graphComponent.morphLayout(layout, '1s')
+  layout.defaultMinimumNodeDistance = 100
+  await graphComponent.applyLayoutAnimated(layout, '1s')
 }
 
 /**

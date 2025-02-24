@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,12 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, INode } from 'yfiles'
+import { GraphComponent, INode } from '@yfiles/yfiles'
 import {
+  type FlowNode,
   type FlowNodeValidation,
   type FlowNodeValidationFn,
   hiddenProperties,
-  type FlowNode,
   isFlowNode,
   lockedProperties
 } from '../FlowNode/FlowNode'
@@ -39,16 +39,12 @@ import { showErrorDialog } from './showErrorDialog'
 
 export function initializeTagExplorer(graphComponent: GraphComponent): void {
   // Use selection event instead of currentItemChanged event to be able to clear tag explorer when no item is selected
-  graphComponent.selection.addItemSelectionChangedListener(selection => {
+  graphComponent.selection.addEventListener('item-added', () => {
     try {
       const list = document.getElementById('tags-explorer-list') as Element
       list.innerHTML = ''
-      // Leave tag explorer empty if no item is selected
-      if (selection.size === 0) {
-        return
-      }
       // If current item isn't a node then don't populate tag explorer
-      const node = selection.first()
+      const node = graphComponent.selection.first()
       if (!isFlowNode(node)) {
         return
       }
@@ -61,14 +57,14 @@ export function initializeTagExplorer(graphComponent: GraphComponent): void {
   })
 
   // Repopulate current tag manager view with updated tags whenever tag is changed by outside source, e.g. undo-redo
-  graphComponent.graph.addNodeTagChangedListener((_, evt) => {
+  graphComponent.graph.addEventListener('node-tag-changed', (evt) => {
     const graphSelection = graphComponent.selection
-    if (graphSelection.selectedNodes.size === 0) {
+    if (graphSelection.nodes.size === 0) {
       return
     }
 
     const changedNode = evt.item
-    const selectedNode = graphSelection.selectedNodes.first()
+    const selectedNode = graphSelection.nodes.first()
 
     if (
       !selectedNode ||
@@ -89,8 +85,8 @@ function populateTagExplorer(selectedNode: INode) {
 
   const tagKeys = Object.keys(selectedNode.tag) as Array<keyof FlowNode['tag']>
   tagKeys
-    .filter(key => !hiddenProperties.includes(key))
-    .forEach(key => {
+    .filter((key) => !hiddenProperties.includes(key))
+    .forEach((key) => {
       list.appendChild(
         createTagInputLine({
           name: key,
@@ -128,7 +124,7 @@ function createTagInputLine({
     input.setAttribute('disabled', 'true')
   }
 
-  input.addEventListener('change', event => {
+  input.addEventListener('change', (event) => {
     if (!event.target || !(event instanceof Event) || !(event.target instanceof HTMLInputElement)) {
       return
     }

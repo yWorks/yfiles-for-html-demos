@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,14 +31,10 @@
  * @param item The element that we clicked.
  * @param currentMouseClickLocation The arguments that is used by the event.
  */
-import { IEdge, ILabel, Point } from 'yfiles'
-
-/**
- * @param {!GraphInputMode} graphInputMode
- */
-export function addSmartClickNavigation(graphInputMode) {
-  graphInputMode.addItemLeftClickedListener(async (sender, event) => {
-    const graphComponent = graphInputMode.inputModeContext.canvasComponent
+import { IEdge, ILabel } from '@yfiles/yfiles'
+export function addSmartClickNavigation(graphComponent) {
+  const graphInputMode = graphComponent.inputMode
+  graphInputMode.addEventListener('item-left-clicked', async (event) => {
     if (!event.handled) {
       const item = event.item
       // gets the point where we should zoom in
@@ -51,13 +47,11 @@ export function addSmartClickNavigation(graphInputMode) {
       if (location) {
         // zooms to the new location of the mouse
         const offset = event.location.subtract(graphComponent.viewport.center)
-        await graphComponent.zoomToAnimated(location.subtract(offset), graphComponent.zoom)
+        await graphComponent.zoomToAnimated(graphComponent.zoom, location.subtract(offset))
       }
     }
   })
-
   function getFocusPoint(item, graphComponent) {
-    // If the source and the target node are in the view port, then zoom to the middle point of the edge
     const targetNodeCenter = item.targetNode.layout.center
     const sourceNodeCenter = item.sourceNode.layout.center
     const viewport = graphComponent.viewport

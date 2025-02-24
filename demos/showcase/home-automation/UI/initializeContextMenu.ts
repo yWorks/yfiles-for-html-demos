@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,49 +26,204 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, GraphItemTypes } from 'yfiles'
-import { populateContextMenu } from '../flow-context-menu/contextMenuUtils'
-import { FlowContextMenu } from '../flow-context-menu/FlowContextMenu'
+import {
+  ContextMenuInputMode,
+  GraphComponent,
+  GraphEditorInputMode,
+  GraphInputMode,
+  GraphItemTypes,
+  IModelItem,
+  INode,
+  Point,
+  PopulateItemContextMenuEventArgs
+} from '@yfiles/yfiles'
+import DeleteIcon from '../../../resources/icons/delete3-16.svg'
+import CopyIcon from '../../../resources/icons/copy-16.svg'
+import PasteIcon from '../../../resources/icons/paste-16.svg'
+import CutIcon from '../../../resources/icons/cut2-16.svg'
+import UndoIcon from '../../../resources/icons/undo-16.svg'
+import RedoIcon from '../../../resources/icons/redo-16.svg'
+import FitContentIcon from '../../../resources/icons/fit-16.svg'
+import { runAutoLayout } from '../utils/customTriggers'
+import LayoutIcon from '../../../resources/icons/play2-16.svg'
 
 export function initializeContextMenu(graphComponent: GraphComponent): void {
   const graphEditorInputMode = graphComponent.inputMode as GraphEditorInputMode
 
-  // This code example uses mostly the sample implementation from the Context Menu demo,
-  // copied as FlowContextMenu mostly to customize items population,
-  // but you can use any other context menu widget as well.
-  // See the Context Menu demo for more details about working with context menus.
-  const contextMenu = new FlowContextMenu(graphComponent)
-
   // handle context menus only for nodes
   graphEditorInputMode.contextMenuItems = GraphItemTypes.NODE
 
-  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
-  // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  graphEditorInputMode.addPopulateItemContextMenuListener((_, args) =>
-    populateContextMenu(contextMenu, graphComponent, args)
+  // Add an event listener that populates the context menu according to the hit elements,
+  // or cancels showing a menu.
+  graphEditorInputMode.addEventListener('populate-item-context-menu', (args) =>
+    populateContextMenu(graphComponent, args)
+  )
+}
+
+function populateContextMenu(
+  graphComponent: GraphComponent,
+  evt: PopulateItemContextMenuEventArgs<IModelItem>
+): void {
+  const item = evt.item
+  // Only show the context menu on nodes and the empty canvas.
+  if (item === null || item instanceof INode) {
+    updateSelection(graphComponent, item)
+    evt.contextMenu = getMenuComponent(graphComponent, item, evt.queryLocation)
+  }
+  return
+}
+
+function getMenuComponent(
+  graphComponent: GraphComponent,
+  node: INode | null,
+  queryLocation: Point
+): HTMLDivElement {
+  const menuDiv = document.createElement('div')
+  menuDiv.classList.add('flow-context-menu')
+
+  const contextMenuInputMode = (graphComponent.inputMode as GraphInputMode).contextMenuInputMode
+
+  const inputMode = graphComponent.inputMode as GraphEditorInputMode
+  if (graphComponent.selection.nodes.size > 0) {
+    menuDiv.appendChild(
+      createMenuItem(
+        contextMenuInputMode,
+        'Delete Node',
+        () => graphComponent.graph.remove(node!),
+        false,
+        DeleteIcon
+      )
+    )
+
+    menuDiv.appendChild(createSeparator())
+    menuDiv.appendChild(
+      createMenuItem(contextMenuInputMode, 'Copy', () => inputMode.copy(), false, CopyIcon)
+    )
+    menuDiv.appendChild(
+      createMenuItem(
+        contextMenuInputMode,
+        'Paste',
+        () => inputMode.pasteAtLocation(queryLocation),
+        graphComponent.clipboard.isEmpty,
+        PasteIcon
+      )
+    )
+    menuDiv.appendChild(
+      createMenuItem(contextMenuInputMode, 'Cut', () => inputMode.cut(), false, CutIcon)
+    )
+  } else {
+    // no node has been hit
+    menuDiv.appendChild(
+      createMenuItem(
+        contextMenuInputMode,
+        'Paste',
+        () => inputMode.pasteAtLocation(queryLocation),
+        graphComponent.clipboard.isEmpty,
+        PasteIcon
+      )
+    )
+  }
+
+  menuDiv.appendChild(createSeparator())
+  const undoEngine = graphComponent.graph.undoEngine
+  menuDiv.appendChild(
+    createMenuItem(
+      contextMenuInputMode,
+      'Undo',
+      () => undoEngine?.undo(),
+      !undoEngine?.canUndo(),
+      UndoIcon
+    )
+  )
+  menuDiv.appendChild(
+    createMenuItem(
+      contextMenuInputMode,
+      'Redo',
+      () => undoEngine?.redo(),
+      !undoEngine?.canRedo(),
+      RedoIcon
+    )
+  )
+  menuDiv.appendChild(createSeparator())
+  menuDiv.appendChild(
+    createMenuItem(
+      contextMenuInputMode,
+      'Fit Content',
+      () => graphComponent.fitContent(),
+      false,
+      FitContentIcon
+    )
+  )
+  menuDiv.appendChild(
+    createMenuItem(
+      contextMenuInputMode,
+      'Auto Layout',
+      () => runAutoLayout(graphComponent),
+      undefined,
+      LayoutIcon
+    )
   )
 
-  // Register event listeners for the various "contextmenu" events of the application.
-  contextMenu.addOpeningEventListeners(graphComponent, location => {
-    // On "contextmenu" event, inform the input mode and check if the context menu may open now.
-    if (
-      graphEditorInputMode.contextMenuInputMode.shouldOpenMenu(
-        graphComponent.toWorldFromPage(location)
-      )
-    ) {
-      // Display the UI elements of the context menu at the given location.
-      contextMenu.show(location)
-    }
-  })
+  return menuDiv
+}
 
-  // Add a listener that closes the menu when the input mode requests it.
-  graphEditorInputMode.contextMenuInputMode.addCloseMenuListener(() => {
-    contextMenu.close()
-  })
+function createSeparator(): HTMLDivElement {
+  const separator = document.createElement('div')
+  separator.setAttribute('class', 'flow-context-menu__separator')
+  return separator
+}
 
-  // If the context menu closes itself, for example because a menu item was clicked,
-  // we must inform the input mode to keep everything in sync.
-  contextMenu.onClosedCallback = () => {
-    graphEditorInputMode.contextMenuInputMode.menuClosed()
+function createMenuItem(
+  contextMenuInputMode: ContextMenuInputMode,
+  label: string,
+  clickListener: ((e: MouseEvent) => void) | null,
+  disabled?: boolean,
+  icon?: string
+): HTMLElement {
+  const menuButton = document.createElement('button')
+  menuButton.classList.add('flow-context-menu__item')
+  if (disabled) {
+    menuButton.classList.add('flow-context-menu__item-disabled')
+  }
+
+  if (clickListener !== null) {
+    menuButton.addEventListener(
+      'click',
+      (e) => {
+        clickListener(e)
+        contextMenuInputMode.closeMenu()
+      },
+      false
+    )
+  }
+
+  const iconItem = document.createElement('div')
+  iconItem.classList.add('flow-context-menu__item-icon')
+  if (icon) {
+    iconItem.style.backgroundImage = `url(${icon})`
+  }
+  menuButton.appendChild(iconItem)
+
+  const buttonText = document.createElement('span')
+  buttonText.innerHTML = label
+  menuButton.appendChild(buttonText)
+
+  return menuButton
+}
+
+/**
+ * Updates the selection of the given node.
+ */
+function updateSelection(graphComponent: GraphComponent, node: INode | null): void {
+  if (node === null) {
+    // clear the whole selection
+    graphComponent.selection.clear()
+  } else if (!graphComponent.selection.nodes.includes(node)) {
+    // no - clear the remaining selection
+    graphComponent.selection.clear()
+    // and select the node
+    graphComponent.selection.nodes.add(node)
+    // also update the current item
+    graphComponent.currentItem = node
   }
 }

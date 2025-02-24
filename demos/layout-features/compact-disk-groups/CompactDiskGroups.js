@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,14 +33,13 @@ import {
   OrganicLayout,
   RecursiveGroupLayout,
   RecursiveGroupLayoutData
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * Demonstrates how to configure the {@link CompactDiskLayout} algorithm in conjunction with the
  * {@link RecursiveGroupLayout} and {@link OrganicLayout} to arrange the group node children in a
  * compact, circular way.
- * @param {!IGraph} graph The graph to be laid out
- * @returns {!object} ({CompactDiskLayout, CompactDiskLayoutData}) the configured compact disk algorithm and the corresponding layout data
+ * @param graph The graph to be laid out
+ * @returns ({CompactDiskLayout, CompactDiskLayoutData}) the configured compact disk algorithm and the corresponding layout data
  */
 export function createFeatureLayoutConfiguration(graph) {
   // create the compact disk layout responsible for group node contents
@@ -48,26 +47,22 @@ export function createFeatureLayoutConfiguration(graph) {
     // add a little extra distance between nodes
     minimumNodeDistance: 4
   })
-
   // create the (optional) layout data to configure node types
   const compactDiskData = new CompactDiskLayoutData()
   // the node types are taken from an optional nodeType property on the node's tag
-  compactDiskData.nodeTypes.delegate = (node) => (node.tag ? node.tag.nodeType : null)
-
+  compactDiskData.nodeTypes = (node) => (node.tag ? node.tag.nodeType : null)
   // create a recursive layout that will apply the compact disk layout to each grouping
   // hierarchy independently
   const recursiveGroupLayout = new RecursiveGroupLayout({
     coreLayout: new OrganicLayout({
       deterministic: true,
-      minimumNodeDistance: 20
+      defaultMinimumNodeDistance: 20
     })
   })
-
   // use the recursive group layout data to define that the content of each group node should
   // be arranged using the CompactDiskLayout algorithm configured above
   const recursiveLayoutData = new RecursiveGroupLayoutData()
-  recursiveLayoutData.groupNodeLayouts.constant = compactDiskLayout
-
+  recursiveLayoutData.groupNodeLayouts = compactDiskLayout
   return {
     layout: recursiveGroupLayout,
     layoutData: compactDiskData.combineWith(recursiveLayoutData)

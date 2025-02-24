@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, PortLayerPolicy } from 'yfiles'
+import { GraphComponent, PortLayerPolicy } from '@yfiles/yfiles'
 import { FlowNodePortCandidateProvider } from './FlowNodePortCandidateProvider'
 import { FlowEdgeReconnectionPortCandidateProvider } from './FlowEdgeReconnectionPortCandidateProvider'
 
@@ -40,11 +40,11 @@ export type FlowNodePortProperties = {
 export function configureFlowNodePorts(gc: GraphComponent): void {
   gc.graphModelManager.portLayerPolicy = PortLayerPolicy.AT_OWNER
   gc.graph.nodeDefaults.ports.autoCleanUp = false
-  gc.graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(
-    node => new FlowNodePortCandidateProvider(node)
+  gc.graph.decorator.nodes.portCandidateProvider.addFactory(
+    (node) => new FlowNodePortCandidateProvider(node)
   )
-  gc.graph.decorator.edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setFactory(
-    edge => new FlowEdgeReconnectionPortCandidateProvider(edge)
+  gc.graph.decorator.edges.reconnectionPortCandidateProvider.addFactory(
+    (edge) => new FlowEdgeReconnectionPortCandidateProvider(edge)
   )
 }
 

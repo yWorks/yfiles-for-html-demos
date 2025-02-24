@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,14 +28,11 @@
  ***************************************************************************/
 import {
   CircularLayout,
-  Class,
-  DefaultLabelStyle,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  GraphOverviewCanvasVisualCreator,
   GraphOverviewComponent,
   GraphSnapContext,
   IEdge,
@@ -44,18 +41,17 @@ import {
   type IModelItem,
   INode,
   IPort,
-  type IRenderContext,
-  LabelSnapContext,
+  LabelStyle,
   LayoutExecutor,
-  License,
-  Visualization
-} from 'yfiles'
-import { createDemoEdgeStyle, createDemoNodeStyle } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+  License
+} from '@yfiles/yfiles'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import CSS3NodeStyleWrapper from './CSS3NodeStyleWrapper'
-import type { JSONGraph } from 'demo-utils/json-model'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
+import GraphOverviewRenderer from './GraphOverviewRenderer'
 
 let graphComponent: GraphComponent
 
@@ -64,9 +60,8 @@ async function run(): Promise<void> {
 
   graphComponent = new GraphComponent('graphComponent')
   const overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
-
   // add a custom visualization for the elements in the overview
-  overviewComponent.graphVisualCreator = new GraphOverviewVisualCreator(overviewComponent.graph!)
+  overviewComponent.graphOverviewRenderer = new GraphOverviewRenderer()
 
   configureInputMode()
   initializeGraph(graphComponent.graph)
@@ -75,16 +70,16 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new CircularLayout({
-      layoutStyle: 'single-cycle',
-      componentLayoutEnabled: false,
-      integratedNodeLabeling: true,
-      nodeLabelingPolicy: 'ray-like'
-    })
-  )
-  graphComponent.fitGraphBounds()
+  LayoutExecutor.ensure()
+  const circularLayout = new CircularLayout({
+    partitioningPolicy: 'single-cycle',
+    nodeLabelPlacement: 'ray-like',
+    componentLayout: {
+      enabled: false
+    }
+  })
+  graphComponent.graph.applyLayout(circularLayout)
+  await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
@@ -119,11 +114,9 @@ function configureInputMode(): void {
   const graphEditorInputMode = new GraphEditorInputMode({
     // enable snapping
     snapContext: new GraphSnapContext({
-      enabled: true,
       snapDistance: 10,
       visualizeSnapResults: true
     }),
-    labelSnapContext: new LabelSnapContext(),
     // allow focusing all graph elements
     focusableItems: GraphItemTypes.ALL
   })
@@ -132,16 +125,13 @@ function configureInputMode(): void {
   graphEditorInputMode.itemHoverInputMode.hoverItems = GraphItemTypes.ALL
 
   // enable tooltips
-  const mouseHoverInputMode = graphEditorInputMode.mouseHoverInputMode
-  mouseHoverInputMode.toolTipLocationOffset = [15, 15]
-  mouseHoverInputMode.delay = '500ms'
-  mouseHoverInputMode.duration = '5s'
-
-  // show an indicator for the current label position
-  graphEditorInputMode.moveLabelInputMode.visualization = Visualization.GHOST
+  const toolTipInputMode = graphEditorInputMode.toolTipInputMode
+  toolTipInputMode.toolTipLocationOffset = [15, 15]
+  toolTipInputMode.delay = '500ms'
+  toolTipInputMode.duration = '5s'
 
   // add a tooltip for hovered items
-  graphEditorInputMode.addQueryItemToolTipListener((_, evt) => {
+  graphEditorInputMode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.handled) {
       return
     }
@@ -150,18 +140,19 @@ function configureInputMode(): void {
   })
 
   // add a highlight for hovered items
-  graphEditorInputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+  graphEditorInputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
+    const highlights = graphComponent.highlights
     if (evt.oldItem) {
-      graphComponent.highlightIndicatorManager.removeHighlight(evt.oldItem)
+      highlights.remove(evt.oldItem)
     }
     if (evt.item) {
-      graphComponent.highlightIndicatorManager.addHighlight(evt.item)
+      highlights.add(evt.item)
     }
   })
 
   // whenever the user creates a node, we set a created flag on its tag data object, which will then be used
   // by the custom node style to set the appropriate CSS classes
-  graphEditorInputMode.addNodeCreatedListener((_, evt) => {
+  graphEditorInputMode.addEventListener('node-created', (evt) => {
     const node = evt.item
     node.tag = { created: true }
   })
@@ -196,9 +187,9 @@ function initializeGraph(graph: IGraph): void {
   const demoEdgeStyle = createDemoEdgeStyle({ showTargetArrow: false })
   demoEdgeStyle.stroke = '1.5px white'
 
-  const demoLabelStyle = new DefaultLabelStyle({
+  const demoLabelStyle = new LabelStyle({
     textFill: 'white',
-    insets: [3, 5, 3, 5],
+    padding: [3, 5, 3, 5],
     backgroundFill: 'rgba(60, 66, 83, 0.5)'
   })
 
@@ -206,37 +197,7 @@ function initializeGraph(graph: IGraph): void {
   graph.edgeDefaults.style = demoEdgeStyle
   graph.nodeDefaults.labels.style = demoLabelStyle
   graph.edgeDefaults.labels.style = demoLabelStyle
-  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
-}
-
-class GraphOverviewVisualCreator extends GraphOverviewCanvasVisualCreator {
-  /**
-   * Paints the path of the edge in a very light gray.
-   */
-  paintEdge(_renderContext: IRenderContext, ctx: CanvasRenderingContext2D, edge: IEdge): void {
-    ctx.strokeStyle = '#f7f7f7'
-    ctx.beginPath()
-    ctx.moveTo(edge.sourcePort!.location.x, edge.sourcePort!.location.y)
-    edge.bends.forEach((bend) => ctx.lineTo(bend.location.x, bend.location.y))
-    ctx.lineTo(edge.targetPort!.location.x, edge.targetPort!.location.y)
-    ctx.stroke()
-  }
-
-  /**
-   * Paints the outline of the group node in a very light gray.
-   */
-  paintGroupNode(_renderContext: IRenderContext, ctx: CanvasRenderingContext2D, node: INode): void {
-    ctx.strokeStyle = '#f7f7f7'
-    ctx.strokeRect(node.layout.x, node.layout.y, node.layout.width, node.layout.height)
-  }
-
-  /**
-   * Paints the rectangle of the node in a very light gray
-   */
-  paintNode(_renderContext: IRenderContext, ctx: CanvasRenderingContext2D, node: INode): void {
-    ctx.fillStyle = '#f7f7f7'
-    ctx.fillRect(node.layout.x, node.layout.y, node.layout.width, node.layout.height)
-  }
+  graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.BOTTOM
 }
 
 void run().then(finishLoading)

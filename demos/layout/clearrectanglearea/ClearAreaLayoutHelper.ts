@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,12 +27,11 @@
  **
  ***************************************************************************/
 import {
-  ChannelEdgeRouter,
   ClearAreaLayout,
   ClearAreaLayoutData,
   CompositeLayoutData,
-  GivenCoordinatesStage,
-  GivenCoordinatesStageData,
+  GivenCoordinatesLayout,
+  GivenCoordinatesLayoutData,
   GraphComponent,
   ICompoundEdit,
   IEdge,
@@ -41,11 +40,9 @@ import {
   INode,
   LayoutData,
   LayoutExecutor,
-  LayoutGraph,
-  LayoutStageBase,
   MutableRectangle,
   Rect
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import type { LayoutOptions } from './LayoutOptions'
 
@@ -78,7 +75,7 @@ export class ClearAreaLayoutHelper {
   /**
    * The graph layout copy that stores the original layout before the marquee rectangle has been dragged.
    */
-  private resetToOriginalGraphStageData: GivenCoordinatesStageData | null = null
+  private resetToOriginalGraphStageData: GivenCoordinatesLayoutData | null = null
 
   /**
    * The rectangular area that can be freely moved or resized.
@@ -115,10 +112,10 @@ export class ClearAreaLayoutHelper {
   // --------------------------------------------------------------- LayoutExecutor configurations
 
   /**
-   * Creates a {@link GivenCoordinatesStageData} that store the layout of nodes and edges.
+   * Creates a {@link GivenCoordinatesLayoutData} that store the layout of nodes and edges.
    */
-  private createGivenCoordinateStageData(): GivenCoordinatesStageData {
-    const data = new GivenCoordinatesStageData()
+  private createGivenCoordinateStageData(): GivenCoordinatesLayoutData {
+    const data = new GivenCoordinatesLayoutData()
 
     this.graph.nodes.forEach((node: INode) => {
       data.nodeLocations.mapper.set(node, node.layout.topLeft)
@@ -144,7 +141,8 @@ export class ClearAreaLayoutHelper {
       graphComponent: this.graphComponent,
       layout: this.createDraggingLayout(),
       layoutData: this.createDraggingLayoutData(),
-      duration: '150ms'
+      animationDuration: '150ms',
+      animateViewport: false
     })
   }
 
@@ -156,9 +154,9 @@ export class ClearAreaLayoutHelper {
   private createCanceledLayoutExecutor(): LayoutExecutor {
     return new LayoutExecutor({
       graphComponent: this.graphComponent,
-      layout: new GivenCoordinatesStage(),
+      layout: new GivenCoordinatesLayout(),
       layoutData: this.resetToOriginalGraphStageData,
-      duration: '150ms'
+      animationDuration: '150ms'
     })
   }
 
@@ -171,8 +169,7 @@ export class ClearAreaLayoutHelper {
       clearAreaStrategy: this.options.clearAreaStrategy,
       considerEdges: this.options.considerEdges
     })
-    this.clearAreaLayout.edgeRouter = new AffectedEdgesChannelRouter()
-    return new GivenCoordinatesStage(this.clearAreaLayout)
+    return new GivenCoordinatesLayout(this.clearAreaLayout)
   }
 
   /**
@@ -180,7 +177,7 @@ export class ClearAreaLayoutHelper {
    */
   private createDraggingLayoutData(): LayoutData {
     const clearAreaLayoutData = new ClearAreaLayoutData()
-    clearAreaLayoutData.areaGroupNode.delegate = (node: INode): boolean => node === this.groupNode
+    clearAreaLayoutData.areaGroupNode = (node: INode): boolean => node === this.groupNode
 
     return new CompositeLayoutData(this.resetToOriginalGraphStageData!, clearAreaLayoutData)
   }
@@ -289,7 +286,7 @@ export class ClearAreaLayoutHelper {
       // use an executor that resets the graph to original layout
       this.executor = this.createCanceledLayoutExecutor()
     } else {
-      this.clearAreaLayout!.area = this.clearRect.toRect().toYRectangle()
+      this.clearAreaLayout!.area = this.clearRect.toRect()
     }
   }
 
@@ -311,10 +308,10 @@ export class ClearAreaLayoutHelper {
         'Rectangle changed',
         () => {
           if (oldRect) {
-            this.clearRect.reshape(oldRect)
+            this.clearRect.setShape(oldRect)
           }
         },
-        () => this.clearRect.reshape(newRect)
+        () => this.clearRect.setShape(newRect)
       )
 
       // add all changes of the complete gesture as one undo/redo unit
@@ -322,21 +319,5 @@ export class ClearAreaLayoutHelper {
         this.layoutEdit.commit()
       }
     }
-  }
-}
-
-class AffectedEdgesChannelRouter extends LayoutStageBase {
-  private readonly channelEdgeRouter: ChannelEdgeRouter
-
-  constructor() {
-    super()
-    this.channelEdgeRouter = new ChannelEdgeRouter()
-  }
-
-  applyLayout(graph: LayoutGraph): void {
-    const routedEdges = graph.getDataProvider(ClearAreaLayout.ROUTE_EDGE_DP_KEY)
-    graph.addDataProvider(ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY, routedEdges!)
-    this.channelEdgeRouter.applyLayout(graph)
-    graph.removeDataProvider(ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY)
   }
 }

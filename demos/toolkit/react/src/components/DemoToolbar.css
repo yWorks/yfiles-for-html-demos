@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -95,19 +95,22 @@
   margin: 0 2px;
 }
 .demo-icon-yIconReload {
-  background-image: url('../assets/reload-16.svg');
+  background-image: url('@yfiles/demo-resources/icons/reload-16.svg');
 }
 .demo-icon-yIconZoomOriginal {
-  background-image: url('../assets/zoom-original-16.svg');
+  background-image: url('@yfiles/demo-resources/icons/zoom-original3-16.svg');
 }
 .demo-icon-yIconZoomIn {
-  background-image: url('../assets/magnify-16.svg');
+  background-image: url('@yfiles/demo-resources/icons/magnify-16.svg');
 }
 .demo-icon-yIconZoomOut {
-  background-image: url('../assets/demagnify-16.svg');
+  background-image: url('@yfiles/demo-resources/icons/demagnify-16.svg');
 }
 .demo-icon-yIconZoomFit {
-  background-image: url('../assets/fit-16.svg');
+  background-image: url('@yfiles/demo-resources/icons/fit-16.svg');
+}
+.demo-icon-yIconExportImage {
+  background-image: url('@yfiles/demo-resources/icons/export-image-16.svg');
 }
 .search {
   margin-left: auto;

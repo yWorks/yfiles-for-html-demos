@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
-  Class,
+  type Constructor,
   FreeLabelModel,
   ICanvasContext,
   IEdge,
@@ -36,15 +36,16 @@ import {
   ILabel,
   ILabelStyle,
   INode,
+  IOrientedRectangle,
   IRenderContext,
-  ISelectionIndicatorInstaller,
+  ISelectionRenderer,
+  ISize,
   ISvgDefsCreator,
   IVisualCreator,
   LabelStyleBase,
   Matrix,
   MatrixOrder,
   OrientedRectangle,
-  OrientedRectangleIndicatorInstaller,
   Point,
   Rect,
   SimpleLabel,
@@ -52,7 +53,8 @@ import {
   SvgVisual,
   SvgVisualGroup,
   WebGLSupport
-} from 'yfiles'
+} from '@yfiles/yfiles'
+import { OrientedRectangleRendererBase } from '../../utils/OrientedRectangleRendererBase'
 
 /**
  * A label style that renders labels at the same size regardless of the zoom level.
@@ -79,11 +81,9 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   constructor(innerLabelStyle: ILabelStyle, zoomThreshold: number) {
     super()
     this.innerLabelStyle = innerLabelStyle
-    this.dummyLabel = new SimpleLabel(
-      null,
-      '',
-      FreeLabelModel.INSTANCE.createDynamic(this.dummyLabelLayout)
-    )
+    this.dummyLabel = new SimpleLabel({
+      layoutParameter: FreeLabelModel.INSTANCE.createDynamic(this.dummyLabelLayout)
+    })
     this.zoomThreshold = typeof zoomThreshold === 'undefined' ? 2.0 : zoomThreshold
   }
 
@@ -126,8 +126,8 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
       0,
       0,
       scale,
-      label.layout.orientedRectangleCenter.x,
-      label.layout.orientedRectangleCenter.y
+      label.layout.center.x,
+      label.layout.center.y
     )
 
     const creator = this.innerLabelStyle.renderer.getVisualCreator(
@@ -174,8 +174,8 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
       0,
       0,
       scale,
-      label.layout.orientedRectangleCenter.x,
-      label.layout.orientedRectangleCenter.y
+      label.layout.center.x,
+      label.layout.center.y
     )
 
     // update the visual created by the inner style renderer
@@ -214,31 +214,30 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
     this.dummyLabel.text = original.text
 
     const originalLayout = original.layout
-    this.dummyLabelLayout.reshape(originalLayout)
+    this.dummyLabelLayout.setShape(originalLayout)
     this.dummyLabelLayout.setCenter(new Point(0, 0))
     this.dummyLabel.preferredSize = this.dummyLabelLayout.toSize()
 
     const scale = this.getScaleForZoom(original, context.zoom)
-    this.dummyLabelBounds.reshape(originalLayout)
-    this.dummyLabelBounds.resize(originalLayout.width * scale, originalLayout.height * scale)
-    this.dummyLabelBounds.setCenter(originalLayout.orientedRectangleCenter)
+    this.dummyLabelBounds.setUpVector(originalLayout.upVector)
+    this.dummyLabelBounds.width = originalLayout.width * scale
+    this.dummyLabelBounds.height = originalLayout.height * scale
+    this.dummyLabelBounds.setCenter(originalLayout.center)
   }
 
   /**
    * Creates a new copy of this instance.
    *
-   * In addition to the defualt memberwise clone, the internal fields for caching the layout are
+   * In addition to the default memberwise clone, the internal fields for caching the layout are
    * initialized with new instances, too.
    */
   clone(): this {
     const clone = super.clone()
     clone.dummyLabelBounds = new OrientedRectangle()
     clone.dummyLabelLayout = new OrientedRectangle()
-    clone.dummyLabel = new SimpleLabel(
-      null,
-      '',
-      FreeLabelModel.INSTANCE.createDynamic(clone.dummyLabelLayout)
-    )
+    clone.dummyLabel = new SimpleLabel({
+      layoutParameter: FreeLabelModel.INSTANCE.createDynamic(clone.dummyLabelLayout)
+    })
     return clone
   }
 
@@ -282,7 +281,7 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
    */
   isHit(canvasContext: IInputModeContext, p: Point, label: ILabel): boolean {
     this.updateDummyLabel(canvasContext, label)
-    return this.dummyLabelBounds.containsWithEps(p, 0.001)
+    return this.dummyLabelBounds.contains(p, 0.001)
   }
 
   /**
@@ -301,9 +300,9 @@ export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
    * Returns an adjusted selection rectangle for the resized label styles.
    *
    */
-  lookup(label: ILabel, type: Class): object {
-    if (type === ISelectionIndicatorInstaller.$class) {
-      return new OrientedRectangleIndicatorInstaller(this.dummyLabelBounds)
+  lookup(label: ILabel, type: Constructor<any>): object {
+    if (type === ISelectionRenderer) {
+      return new ZoomInvariantSelectionRenderer(this.dummyLabelBounds)
     }
     return super.lookup(label, type)
   }
@@ -384,8 +383,8 @@ export class FitOwnerLabelStyle extends ZoomInvariantLabelStyleBase {
       ratio = Math.min(1, nodeWidth / labelWidth)
     } else if (label.owner instanceof IEdge) {
       const edge = label.owner
-      const sourcePortLocation = edge.sourcePort!.location
-      const targetPortLocation = edge.targetPort!.location
+      const sourcePortLocation = edge.sourcePort.location
+      const targetPortLocation = edge.targetPort.location
       const edgeLength = sourcePortLocation.distanceTo(targetPortLocation)
       ratio = Math.min(1, edgeLength / labelWidth)
     }
@@ -456,7 +455,7 @@ class DummyContext extends BaseClass(IRenderContext) {
     return this.innerContext.webGLSupport
   }
 
-  toViewCoordinates(worldPoint: Point): Point {
+  worldToViewCoordinates(worldPoint: Point): Point {
     return this._viewTransform.transform(worldPoint)
   }
 
@@ -473,7 +472,7 @@ class DummyContext extends BaseClass(IRenderContext) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-  lookup<T>(type: Class<T>): T | null {
+  lookup<T>(type: Constructor<T>): T | null {
     return this.innerContext.lookup(type)
   }
 
@@ -484,5 +483,36 @@ class DummyContext extends BaseClass(IRenderContext) {
     const transformed = matrix.clone()
     transformed.multiply(this._transform, MatrixOrder.APPEND)
     return transformed
+  }
+}
+
+class ZoomInvariantSelectionRenderer extends OrientedRectangleRendererBase<ILabel> {
+  constructor(private fixedLayout: IOrientedRectangle) {
+    super()
+  }
+
+  createIndicatorElement(_context: IRenderContext, size: ISize, _renderTag: ILabel): SVGElement {
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.setAttribute('width', size.width.toString())
+    rect.setAttribute('height', size.height.toString())
+    rect.setAttribute('stroke', 'rgb(56,67,79)')
+    rect.setAttribute('stroke-width', '2')
+    rect.setAttribute('fill', 'none')
+    return rect
+  }
+
+  updateIndicatorElement(
+    _context: IRenderContext,
+    size: ISize,
+    _renderTag: ILabel,
+    oldSvgElement: SVGElement
+  ): SVGElement {
+    oldSvgElement.setAttribute('width', size.width.toString())
+    oldSvgElement.setAttribute('height', size.height.toString())
+    return oldSvgElement
+  }
+
+  getLayout(_renderTag: ILabel): IOrientedRectangle {
+    return this.fixedLayout
   }
 }

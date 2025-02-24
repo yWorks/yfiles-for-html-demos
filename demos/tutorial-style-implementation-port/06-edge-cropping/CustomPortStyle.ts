@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,10 +32,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   BaseClass,
-  type Class,
-  DefaultEdgePathCropper,
+  type Constructor,
+  EdgePathCropper,
   GeneralPath,
-  GeomUtilities,
+  GeometryUtilities,
   type ICanvasContext,
   IEdgePathCropper,
   type IInputModeContext,
@@ -47,7 +47,7 @@ import {
   Rect,
   SvgVisual,
   type TaggedSvgVisual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Augment the SvgVisual type with the data used to cache the rendering information
@@ -130,21 +130,25 @@ export class CustomPortStyle extends PortStyleBase<CustomPortStyleVisual> {
     // get the ellipse bounds
     const bounds = this.getBounds(context, port)
     // use a convenience function to check if the location is inside the ellipse
-    return GeomUtilities.ellipseContains(
+    return GeometryUtilities.ellipseContains(
       bounds,
       location,
       context.hitTestRadius
     )
   }
 
-  protected lookup(port: IPort, type: Class): any {
-    if (type === IShapeGeometry.$class) {
+  protected lookup(port: IPort, type: Constructor<any>): any {
+    if (type === IShapeGeometry) {
       // calculate the port bounds for edge cropping
       const bounds = this.getPortBounds(port)
       // the IShapeGeometry implementation for this style
       const PortShapeGeometry = class extends BaseClass(IShapeGeometry) {
         getIntersection(inner: Point, outer: Point): Point | null {
-          return GeomUtilities.findEllipseLineIntersection(bounds, inner, outer)
+          return GeometryUtilities.getEllipseLineIntersection(
+            bounds,
+            inner,
+            outer
+          )
         }
 
         getOutline(): GeneralPath | null {
@@ -154,16 +158,16 @@ export class CustomPortStyle extends PortStyleBase<CustomPortStyleVisual> {
         }
 
         isInside(location: Point): boolean {
-          return GeomUtilities.ellipseContains(bounds, location, 0)
+          return GeometryUtilities.ellipseContains(bounds, location, 0)
         }
       }
       return new PortShapeGeometry()
     }
-    if (type === IEdgePathCropper.$class) {
+    if (type === IEdgePathCropper) {
       // a custom IEdgePathCropped implementation that uses the IShapeGeometry defined above
-      const CustomEdgePathCropper = class extends DefaultEdgePathCropper {
+      const CustomEdgePathCropper = class extends EdgePathCropper {
         protected getPortGeometry(port: IPort): IShapeGeometry | null {
-          return port.lookup(IShapeGeometry.$class)
+          return port.lookup(IShapeGeometry)
         }
       }
       return new CustomEdgePathCropper({ cropAtPort: true })

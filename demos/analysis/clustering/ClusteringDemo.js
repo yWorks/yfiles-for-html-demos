@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,8 +29,6 @@
 import {
   BiconnectedComponentClustering,
   BiconnectedComponentClusteringResult,
-  DefaultLabelStyle,
-  DistanceMetric,
   EdgeBetweennessClustering,
   EdgeBetweennessClusteringResult,
   EdgePathLabelModel,
@@ -38,146 +36,105 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  GraphHighlightIndicatorManager,
   GraphItemTypes,
   HierarchicalClustering,
+  HierarchicalClusteringLinkage,
   HierarchicalClusteringResult,
-  ICanvasObject,
-  ICanvasObjectDescriptor,
   IEdge,
   IGraph,
-  IndicatorNodeStyleDecorator,
   INode,
-  Insets,
   IRectangle,
+  IRenderTreeElement,
   IVisualCreator,
   KMeansClustering,
   KMeansClusteringResult,
+  KMeansDistanceMetric,
   LabelPropagationClustering,
   LabelPropagationClusteringResult,
+  LabelStyle,
   License,
-  LinkageMethod,
   LouvainModularityClustering,
   LouvainModularityClusteringResult,
+  NodeStyleIndicatorRenderer,
   PolylineEdgeStyle,
   Rect,
   ShapeNodeShape
-} from 'yfiles'
-
-import * as ClusteringData from './resources/ClusteringData.js'
-import { VoronoiDiagram } from './VoronoiDiagram.js'
-import { PolygonVisual, VoronoiVisual } from './DemoVisuals.js'
-import { DendrogramComponent } from './DendrogramSupport.js'
-import {
-  applyDemoTheme,
-  createDemoEdgeStyle,
-  createDemoShapeNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
-
+} from '@yfiles/yfiles'
+import * as ClusteringData from './resources/ClusteringData'
+import { VoronoiDiagram } from './VoronoiDiagram'
+import { PolygonVisual, VoronoiVisual } from './DemoVisuals'
+import { DendrogramComponent } from './DendrogramSupport'
+import { createDemoEdgeStyle, createDemoShapeNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * The {@link GraphComponent} which contains the {@link IGraph}.
- * @type {GraphComponent}
  */
 let graphComponent
-
 /**
  * The {@link GraphComponent} for the visualization of the dendrogram in the hierarchical clustering.
- * @type {DendrogramComponent}
  */
 let dendrogramComponent
-
 /**
  * The canvas object for the cluster visual
- * @type {ICanvasObject}
  */
 let clusterVisualObject
-
 /**
  * The canvas object for the k-means centroids visual
- * @type {ICanvasObject}
  */
 let kMeansCentroidObject
-
 /**
  * The style for the directed edges
- * @type {PolylineEdgeStyle}
  */
 let directedEdgeStyle
-
 /**
  * The result of the clustering algorithm
- * @type {(BiconnectedComponentClusteringResult|EdgeBetweennessClusteringResult|HierarchicalClusteringResult|KMeansClusteringResult|LouvainModularityClusteringResult|LabelPropagationClusteringResult)}
  */
 let result
-
 /**
  * Holds whether a clustering algorithm is running
- * @type {boolean}
  */
 let busy = false
-
 /**
  * The algorithm selected by the user
- * @type {ClusteringAlgorithm}
  */
 let selectedAlgorithm
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
-
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize the default styles
   configureGraph(graphComponent)
-
   // create the input mode
   configureUserInteraction(graphComponent)
-
   dendrogramComponent = new DendrogramComponent(graphComponent)
-
   // initialize the dendrogram component
   configureDendrogramComponent(dendrogramComponent)
-
   // load the graph and run the algorithm
-  onAlgorithmChanged()
-
+  await onAlgorithmChanged()
   // wire up the UI
   initializeUI()
 }
-
 /**
  * Initializes the default styles and the highlight style.
- * @param {!GraphComponent} graphComponent
  */
 function configureGraph(graphComponent) {
   const graph = graphComponent.graph
   graph.nodeDefaults.style = createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE, 'demo-palette-401')
-
   // sets the default edge style as 'undirected'
   graph.edgeDefaults.style = createDemoEdgeStyle({
     colorSetName: 'demo-palette-401',
     showTargetArrow: false
   })
-
   // sets the edge style of the algorithms that support edge direction
   directedEdgeStyle = createDemoEdgeStyle({ colorSetName: 'demo-palette-401' })
-
   // set the default style for node labels
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     font: 'bold Arial'
   })
-
   // set the default style for edge labels
-  graph.edgeDefaults.labels.style = new DefaultLabelStyle({
+  graph.edgeDefaults.labels.style = new LabelStyle({
     font: 'bold 10px Arial'
   })
-
   // For edge labels, the default is a label that is rotated to match the associated edge segment
   // We'll start by creating a model that is similar to the default:
   const edgeLabelModel = new EdgePathLabelModel({
@@ -186,32 +143,26 @@ function configureGraph(graphComponent) {
     distance: 2
   })
   // Finally, we can set this label model as the default for edge labels
-  graph.edgeDefaults.labels.layoutParameter = edgeLabelModel.createDefaultParameter()
-
+  graph.edgeDefaults.labels.layoutParameter = edgeLabelModel.createRatioParameter()
   // highlight node style
-  const nodeHighlight = new IndicatorNodeStyleDecorator({
-    wrapped: createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE, 'demo-palette-23'),
+  const nodeHighlight = new NodeStyleIndicatorRenderer({
+    nodeStyle: createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE, 'demo-palette-23'),
     zoomPolicy: 'mixed',
-    padding: 3
+    margins: 3
   })
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    nodeStyle: nodeHighlight
-  })
+  graph.decorator.nodes.highlightRenderer.addConstant(nodeHighlight)
 }
-
 /**
  * Configures user interaction for the given graph component.
- * @param {!GraphComponent} graphComponent
  */
 function configureUserInteraction(graphComponent) {
   const mode = new GraphEditorInputMode({
     allowEditLabel: false,
     showHandleItems: GraphItemTypes.NONE
   })
-
   // when an edge is created, run the algorithm again except for the k-means and hierarchical
   // because these two are independent of the edges of the graph
-  mode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
+  mode.createEdgeInputMode.addEventListener('edge-created', async (evt) => {
     if (
       selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS &&
       document.querySelector(`#directed`).checked
@@ -222,75 +173,70 @@ function configureUserInteraction(graphComponent) {
       selectedAlgorithm != ClusteringAlgorithm.kMEANS &&
       selectedAlgorithm != ClusteringAlgorithm.HIERARCHICAL
     ) {
-      runAlgorithm()
+      await runAlgorithm()
     }
   })
-
   // when a node/edge is created/deleted, run the algorithm
-  mode.addDeletedSelectionListener(() => {
-    runAlgorithm()
+  mode.addEventListener('deleted-selection', async () => {
+    await runAlgorithm()
   })
-  mode.addNodeCreatedListener(() => {
-    runAlgorithm()
+  mode.addEventListener('node-created', async () => {
+    await runAlgorithm()
   })
-
   // when a node is dragged, run the algorithm if this is HIERARCHICAL clustering or kMEANS
-  mode.moveInputMode.addDragFinishedListener(() => {
+  const onDragFinished = async () => {
     if (
       selectedAlgorithm === ClusteringAlgorithm.HIERARCHICAL ||
       selectedAlgorithm === ClusteringAlgorithm.kMEANS
     ) {
-      runAlgorithm()
+      await runAlgorithm()
     }
-  })
-
+  }
+  mode.moveSelectedItemsInputMode.addEventListener('drag-finished', onDragFinished)
+  mode.moveUnselectedItemsInputMode.addEventListener('drag-finished', onDragFinished)
   // add the hover listener
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
-  mode.itemHoverInputMode.discardInvalidItems = false
-  mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+  mode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     // if a node is hovered and the algorithm is HIERARCHICAL clustering, hover the corresponding dendrogram node
     if (selectedAlgorithm === ClusteringAlgorithm.HIERARCHICAL) {
       const node = evt.item
-      graphComponent.highlightIndicatorManager.clearHighlights()
+      const highlights = graphComponent.highlights
+      highlights.clear()
       if (node && result) {
-        graphComponent.highlightIndicatorManager.addHighlight(node)
+        highlights.add(node)
         dendrogramComponent.updateHighlight(result.getDendrogramNode(node))
+      } else {
+        dendrogramComponent.updateHighlight()
       }
     }
   })
   graphComponent.inputMode = mode
-
   // add listeners for clipboard operations that might change the graph structure like cut and paste
-  graphComponent.clipboard.addElementsPastedListener(() => {
-    runAlgorithm()
+  graphComponent.clipboard.addEventListener('items-pasted', async () => {
+    await runAlgorithm()
   })
-
-  graphComponent.clipboard.addElementsCutListener(() => {
-    runAlgorithm()
+  graphComponent.clipboard.addEventListener('items-cut', async () => {
+    await runAlgorithm()
   })
 }
-
 /**
  * Initializes the dendrogram component.
- * @param {!DendrogramComponent} dendrogramComponent
  */
 function configureDendrogramComponent(dendrogramComponent) {
   // add a dragging listener to run the hierarchical algorithm when the dragging of the cutoff line has finished
-  dendrogramComponent.addDragFinishedListener((cutOffValue) => {
+  dendrogramComponent.setDragFinishedListener(async (cutOffValue) => {
     removeClusterVisuals()
-    runHierarchicalClustering(cutOffValue)
+    await runHierarchicalClustering(cutOffValue)
   })
 }
-
 /**
  * Runs the clustering algorithm.
  */
-function runAlgorithm() {
+async function runAlgorithm() {
   if (!busy) {
     setUIDisabled(true)
-    graphComponent.updateContentRect(new Insets(10))
+    graphComponent.updateContentBounds(10)
     removeClusterVisuals()
-
     if (graphComponent.graph.nodes.size > 0) {
       switch (selectedAlgorithm) {
         default:
@@ -301,7 +247,7 @@ function runAlgorithm() {
           runKMeansClustering()
           break
         case ClusteringAlgorithm.HIERARCHICAL:
-          runHierarchicalClustering()
+          await runHierarchicalClustering()
           break
         case ClusteringAlgorithm.BICONNECTED_COMPONENTS:
           runBiconnectedComponentsClustering()
@@ -321,19 +267,15 @@ function runAlgorithm() {
     setUIDisabled(false)
   }
 }
-
 /**
  * Runs the edge betweenness clustering algorithm.
  */
 function runEdgeBetweennessClustering() {
   updateInformationPanel('edge-betweenness')
-
   const graph = graphComponent.graph
-
   // get the algorithm preferences from the right panel
   let minClusterCount = parseFloat(document.querySelector(`#ebMinClusterNumber`).value)
   const maxClusterCount = parseFloat(document.querySelector(`#ebMaxClusterNumber`).value)
-
   if (minClusterCount > maxClusterCount) {
     alert(
       'Desired minimum number of clusters cannot be larger than the desired maximum number of clusters.'
@@ -347,7 +289,6 @@ function runEdgeBetweennessClustering() {
     document.querySelector(`#ebMinClusterNumber`).value = graph.nodes.size.toString()
     minClusterCount = graph.nodes.size
   }
-
   // run the algorithm
   result = new EdgeBetweennessClustering({
     directed: document.querySelector(`#directed`).checked,
@@ -355,84 +296,72 @@ function runEdgeBetweennessClustering() {
     maximumClusterCount: maxClusterCount,
     weights: getEdgeWeight
   }).run(graph)
-
   // visualize the result
   visualizeClusteringResult()
 }
-
 /**
  * Runs the k-means clustering algorithm.
  */
 function runKMeansClustering() {
   updateInformationPanel('k-means')
-
   // get the algorithm preferences from the right panel
   let distanceMetric
   switch (document.querySelector(`#distance-metrics`).selectedIndex) {
     default:
     case 0:
-      distanceMetric = DistanceMetric.EUCLIDEAN
+      distanceMetric = KMeansDistanceMetric.EUCLIDEAN
       break
     case 1:
-      distanceMetric = DistanceMetric.MANHATTAN
+      distanceMetric = KMeansDistanceMetric.MANHATTAN
       break
     case 2:
-      distanceMetric = DistanceMetric.CHEBYCHEV
+      distanceMetric = KMeansDistanceMetric.CHEBYCHEV
       break
   }
-
   // run the clustering algorithm
   result = new KMeansClustering({
     metric: distanceMetric,
     maximumIterations: parseFloat(document.querySelector(`#iterations`).value),
     k: parseFloat(document.querySelector(`#kMeansMaxClusterNumber`).value)
   }).run(graphComponent.graph)
-
   // visualize the result
   visualizeClusteringResult()
 }
-
 /**
  * Run the hierarchical clustering algorithm.
  * @param cutoff The given cut-off value to run the algorithm
- * @param {number} [cutoff]
  */
-function runHierarchicalClustering(cutoff) {
+async function runHierarchicalClustering(cutoff) {
   updateInformationPanel('hierarchical')
-
   const graph = graphComponent.graph
   // get the algorithm preferences from the right panel
   let linkage
   switch (document.querySelector(`#linkage`).selectedIndex) {
     default:
     case 0:
-      linkage = LinkageMethod.SINGLE
+      linkage = HierarchicalClusteringLinkage.SINGLE
       break
     case 1:
-      linkage = LinkageMethod.AVERAGE
+      linkage = HierarchicalClusteringLinkage.AVERAGE
       break
     case 2:
-      linkage = LinkageMethod.COMPLETE
+      linkage = HierarchicalClusteringLinkage.COMPLETE
       break
   }
-
   // run the algorithm that calculates only the node clusters
   result = new HierarchicalClustering({
     metric: HierarchicalClustering.EUCLIDEAN,
     linkage,
     // if no cutoff is specified when runHierarchicalClustering is called, the clustering algorithm
-    // should produce a single cluster with all nodes (i.e. not cut-off any nodes)
+    // should produce a single cluster with all nodes (i.e., not cut-off any nodes)
     // setting the algorithm's cutoff property to a negative value ensures a single cluster result
     cutoff: typeof cutoff === 'undefined' ? -1 : cutoff
   }).run(graph)
-
   // visualize the result
   visualizeClusteringResult()
-
   // draw the dendrogram from the algorithm's result
-  dendrogramComponent.generateDendrogram(result, cutoff)
+  await dendrogramComponent.generateDendrogram(result, cutoff)
 }
-
 /**
  * Run the biconnected components clustering algorithm.
  */
@@ -443,7 +372,6 @@ function runBiconnectedComponentsClustering() {
   // visualize the result
   visualizeClusteringResult()
 }
-
 /**
  * Run the Louvain modularity clustering algorithm.
  */
@@ -454,7 +382,6 @@ function runLouvainModularityClustering() {
   // visualize the result
   visualizeClusteringResult()
 }
-
 /**
  * Run the label propagation clustering algorithm.
  */
@@ -465,13 +392,11 @@ function runLabelPropagationClustering() {
   // visualize the result
   visualizeClusteringResult()
 }
-
 /**
  * Visualizes the result of the clustering algorithm by adding the appropriate visuals.
  */
 function visualizeClusteringResult() {
   const graph = graphComponent.graph
-
   // creates a map the holds for each cluster id, the list of nodes that belong to the particular cluster
   const clustering = new Map()
   graph.nodes.forEach((node) => {
@@ -489,10 +414,8 @@ function visualizeClusteringResult() {
     }
     clusterNodesCoordinates.push(node.layout)
   })
-
   if (!clusterVisualObject) {
     let clusterVisual
-
     switch (selectedAlgorithm) {
       default:
       case ClusteringAlgorithm.EDGE_BETWEENNESS:
@@ -508,13 +431,13 @@ function visualizeClusteringResult() {
       }
       case ClusteringAlgorithm.kMEANS: {
         const centroids = result.centroids
-        if (clustering.size >= 3 && graphComponent.contentRect) {
+        if (clustering.size >= 3 && graphComponent.contentBounds) {
           // create a voronoi diagram
           const clusters = {
             centroids: centroids
           }
           clusterVisual = new VoronoiVisual(
-            new VoronoiDiagram(centroids, graphComponent.contentRect),
+            new VoronoiDiagram(centroids, graphComponent.contentBounds),
             clusters
           )
         } else {
@@ -529,62 +452,51 @@ function visualizeClusteringResult() {
         break
       }
     }
-
     // add the visual to the graphComponent's background group
-    clusterVisualObject = graphComponent.backgroundGroup.addChild(
-      clusterVisual,
-      ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    clusterVisualObject = graphComponent.renderTree.createElement(
+      graphComponent.renderTree.backgroundGroup,
+      clusterVisual
     )
     clusterVisualObject.toBack()
   }
-
   // invalidate the graphComponent
   graphComponent.invalidate()
 }
-
 /**
  * Called when the clustering algorithm changes
  */
-function onAlgorithmChanged() {
+async function onAlgorithmChanged() {
   const algorithmsComboBox = document.querySelector(`#algorithms`)
   selectedAlgorithm = algorithmsComboBox.selectedIndex
-
   // determine the file name that will be used for loading the graph
   const fileName = algorithmsComboBox.value
-
-  // Adjusts the window appearance. This method is needed since when the selected clustering algorithm is
+  // Adjusts the window appearance. This method is required since when the selected clustering algorithm is
   // HIERARCHICAL, the window has to be split to visualize the dendrogram.
   const showDendrogram = selectedAlgorithm === ClusteringAlgorithm.HIERARCHICAL
   dendrogramComponent.toggleVisibility(showDendrogram)
-  graphComponent.fitGraphBounds(new Insets(10))
-
+  await graphComponent.fitGraphBounds(10)
   // load the graph and run the algorithm
-  loadGraph(ClusteringData[fileName])
-  runAlgorithm()
+  await loadGraph(ClusteringData[fileName])
+  await runAlgorithm()
 }
-
 /**
  * Loads the sample graphs from a JSON file.
- * @param {*} sampleData The data samples
+ * @param sampleData The data samples
  */
-function loadGraph(sampleData) {
+async function loadGraph(sampleData) {
   // remove all previous visuals
   removeClusterVisuals()
-
   const graph = graphComponent.graph
   graph.clear()
-
   const isEdgeBetweenness = selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS
   const styleFactory =
     isEdgeBetweenness && document.querySelector(`#directed`).checked
       ? () => directedEdgeStyle
       : () => undefined // tell GraphBuilder to use default styles
-
   const labelsFactory =
     isEdgeBetweenness && document.querySelector(`#edgeCosts`).checked
       ? () => Math.floor(Math.random() * 200 + 1).toString()
       : () => undefined // tell GraphBuilder not to create any labels
-
   // initialize a graph builder to parse the graph from the JSON file
   const builder = new GraphBuilder({
     graph: graph,
@@ -606,24 +518,19 @@ function loadGraph(sampleData) {
       }
     ]
   })
-
   builder.buildGraph()
-
-  graphComponent.fitGraphBounds(new Insets(10))
+  await graphComponent.fitGraphBounds(10)
 }
-
 /**
  * Wires up the UI.
  */
 function initializeUI() {
   const graph = graphComponent.graph
-
   const samplesComboBox = document.querySelector(`#algorithms`)
   addNavigationButtons(samplesComboBox).addEventListener('change', onAlgorithmChanged)
-
   // edge-betweenness menu
   const minInput = document.querySelector(`#ebMinClusterNumber`)
-  minInput.addEventListener('change', (_) => {
+  minInput.addEventListener('change', async (_) => {
     const value = parseFloat(minInput.value)
     const maximumClusterNumber = parseFloat(document.querySelector(`#ebMaxClusterNumber`).value)
     if (Number.isNaN(value) || value < 1) {
@@ -643,11 +550,10 @@ function initializeUI() {
       minInput.value = graph.nodes.size.toString()
       return
     }
-    runAlgorithm()
+    await runAlgorithm()
   })
-
   const maxInput = document.querySelector(`#ebMaxClusterNumber`)
-  maxInput.addEventListener('change', (_) => {
+  maxInput.addEventListener('change', async (_) => {
     const value = parseFloat(maxInput.value)
     const minimumClusterNumber = parseFloat(document.querySelector(`#ebMinClusterNumber`).value)
     if (Number.isNaN(value) || value < minimumClusterNumber || minimumClusterNumber < 1) {
@@ -659,21 +565,18 @@ function initializeUI() {
       maxInput.value = minimumClusterNumber.toString()
       return
     }
-    runAlgorithm()
+    await runAlgorithm()
   })
-
   const considerEdgeDirection = document.querySelector(`#directed`)
-  considerEdgeDirection.addEventListener('click', () => {
+  considerEdgeDirection.addEventListener('click', async () => {
     const isChecked = considerEdgeDirection.checked
     graph.edges.forEach((edge) => {
       graph.setStyle(edge, isChecked ? directedEdgeStyle : graph.edgeDefaults.style)
     })
-
-    runAlgorithm()
+    await runAlgorithm()
   })
-
   const considerEdgeCosts = document.querySelector(`#edgeCosts`)
-  considerEdgeCosts.addEventListener('click', () => {
+  considerEdgeCosts.addEventListener('click', async () => {
     graph.edges.forEach((edge) => {
       if (considerEdgeCosts.checked) {
         const edgeCost = Math.floor(Math.random() * 200 + 1)
@@ -688,62 +591,56 @@ function initializeUI() {
         })
       }
     })
-    runAlgorithm()
+    await runAlgorithm()
   })
-
   // k-Means
   const distanceCombobox = document.querySelector(`#distance-metrics`)
   distanceCombobox.addEventListener('change', runAlgorithm)
   const kMeansInput = document.querySelector(`#kMeansMaxClusterNumber`)
-  kMeansInput.addEventListener('change', (_) => {
+  kMeansInput.addEventListener('change', async (_) => {
     const value = parseFloat(kMeansInput.value)
     if (Number.isNaN(value) || value < 1) {
       alert('Desired maximum number of clusters should be greater than zero.')
       kMeansInput.value = '1'
       return
     }
-    runAlgorithm()
+    await runAlgorithm()
   })
   const iterationInput = document.querySelector(`#iterations`)
-  iterationInput.addEventListener('change', (_) => {
+  iterationInput.addEventListener('change', async (_) => {
     const value = parseFloat(iterationInput.value)
     if (Number.isNaN(value) || value < 0) {
       alert('Desired maximum number of iterations should be non-negative.')
       iterationInput.value = '0'
       return
     }
-    runAlgorithm()
+    await runAlgorithm()
   })
-
   // hierarchical
   document.querySelector('#linkage')?.addEventListener('change', runAlgorithm)
 }
-
 /**
  * Remove all present cluster visuals.
  */
 function removeClusterVisuals() {
   if (clusterVisualObject) {
-    clusterVisualObject.remove()
+    graphComponent.renderTree.remove(clusterVisualObject)
     clusterVisualObject = null
   }
-
   if (kMeansCentroidObject) {
-    kMeansCentroidObject.remove()
+    graphComponent.renderTree.remove(kMeansCentroidObject)
     kMeansCentroidObject = null
   }
 }
-
 /**
  * Returns the edge weight for the given edge.
- * @param {!IEdge} edge The given edge
- * @returns {number} The edge weight
+ * @param edge The given edge
+ * @returns The edge weight
  */
 function getEdgeWeight(edge) {
   if (!document.querySelector(`#edgeCosts`).checked) {
     return 1
   }
-
   // if edge has at least one label...
   if (edge.labels.size > 0) {
     // ...try to return its value
@@ -754,10 +651,8 @@ function getEdgeWeight(edge) {
   }
   return 1
 }
-
 /**
  * Updates the elements of the UI's state and checks whether the buttons should be enabled or not.
- * @param {boolean} disabled
  */
 function setUIDisabled(disabled) {
   const samplesComboBox = document.querySelector(`#algorithms`)
@@ -765,10 +660,9 @@ function setUIDisabled(disabled) {
   graphComponent.inputMode.waiting = disabled
   busy = disabled
 }
-
 /**
  * Updates the description and the settings panel.
- * @param {!string} panelId The id of the panel to be updated
+ * @param panelId The id of the panel to be updated
  */
 function updateInformationPanel(panelId) {
   // set display none to all and then change only the desired one
@@ -780,18 +674,14 @@ function updateInformationPanel(panelId) {
   document.querySelector(`#label-propagation`).style.display = 'none'
   document.querySelector(`#${panelId}`).style.display = 'inline-block'
 }
-
-/**
- * @readonly
- * @enum {number}
- */
-const ClusteringAlgorithm = {
-  EDGE_BETWEENNESS: 0,
-  kMEANS: 1,
-  HIERARCHICAL: 2,
-  BICONNECTED_COMPONENTS: 3,
-  LOUVAIN_MODULARITY: 4,
-  LABEL_PROPAGATION: 5
-}
-
+var ClusteringAlgorithm
+;(function (ClusteringAlgorithm) {
+  ClusteringAlgorithm[(ClusteringAlgorithm['EDGE_BETWEENNESS'] = 0)] = 'EDGE_BETWEENNESS'
+  ClusteringAlgorithm[(ClusteringAlgorithm['kMEANS'] = 1)] = 'kMEANS'
+  ClusteringAlgorithm[(ClusteringAlgorithm['HIERARCHICAL'] = 2)] = 'HIERARCHICAL'
+  ClusteringAlgorithm[(ClusteringAlgorithm['BICONNECTED_COMPONENTS'] = 3)] =
+    'BICONNECTED_COMPONENTS'
+  ClusteringAlgorithm[(ClusteringAlgorithm['LOUVAIN_MODULARITY'] = 4)] = 'LOUVAIN_MODULARITY'
+  ClusteringAlgorithm[(ClusteringAlgorithm['LABEL_PROPAGATION'] = 5)] = 'LABEL_PROPAGATION'
+})(ClusteringAlgorithm || (ClusteringAlgorithm = {}))
 run().then(finishLoading)

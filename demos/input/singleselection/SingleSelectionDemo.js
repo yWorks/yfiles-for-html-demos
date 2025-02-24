@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Class,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
@@ -35,18 +34,14 @@ import {
   LayoutExecutor,
   License,
   OrganicLayout
-} from 'yfiles'
-
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { disableSingleSelection, enableSingleSelection } from './SingleSelectionHelper.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { disableSingleSelection, enableSingleSelection } from './SingleSelectionHelper'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-
 /**
  * Changes the selection mode.
- * @param {!GraphComponent} graphComponent
- * @param {boolean} [singleSelectionEnabled=true]
  */
 function toggleSingleSelection(graphComponent, singleSelectionEnabled = true) {
   if (singleSelectionEnabled) {
@@ -55,67 +50,47 @@ function toggleSingleSelection(graphComponent, singleSelectionEnabled = true) {
     disableSingleSelection(graphComponent)
   }
 }
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
-
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
-
   graphComponent.inputMode = new GraphEditorInputMode()
-
   // Initialize the default style of the nodes and edges
   initDemoStyles(graph)
-
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
-
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
     new OrganicLayout({
-      minimumNodeDistance: 50
+      defaultMinimumNodeDistance: 50
     })
   )
-  graphComponent.fitGraphBounds()
-
+  await graphComponent.fitGraphBounds()
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
-
   // wire up the UI
   const singleSelection = document.querySelector('#toggle-single-selection')
   singleSelection.addEventListener('change', (evt) => {
     toggleSingleSelection(graphComponent, singleSelection.checked)
   })
-
   toggleSingleSelection(graphComponent)
 }
-
 /**
  * Creates nodes and edges according to the given data.
- * @param {!IGraph} graph
- * @param {!JSONGraph} graphData
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id
   })
-
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
-
   graphBuilder.buildGraph()
 }
-
 run().then(finishLoading)

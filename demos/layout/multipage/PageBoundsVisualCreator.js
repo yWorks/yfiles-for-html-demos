@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,13 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IRenderContext, IVisualCreator, Point, SvgVisual, Visual } from 'yfiles'
-
+import { BaseClass, IRenderContext, IVisualCreator, Point, SvgVisual, Visual } from '@yfiles/yfiles'
 /**
  * A constant margin for the page so the graph does not touch the frame.
  */
 const MARGIN = 15
-
 /**
  * This class renders a rectangle that represents the page.
  */
@@ -40,7 +38,6 @@ export default class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
   pageWidth = 0
   pageHeight = 0
   center
-
   constructor() {
     super()
     /**
@@ -48,12 +45,9 @@ export default class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
      */
     this.center = Point.ORIGIN
   }
-
   /**
    * Creates a visual for a rectangular page.
    * @see Overrides {@link IVisualCreator.createVisual}.
-   * @param {!IRenderContext} context
-   * @returns {?Visual}
    */
   createVisual(context) {
     const rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -62,38 +56,29 @@ export default class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
     rectangle.setAttribute('stroke-dasharray', '5')
     rectangle.setAttribute('stroke-linecap', 'square')
     rectangle.setAttribute('fill', 'white')
-
     return this.updateVisual(context, new SvgVisual(rectangle))
   }
-
   /**
    * Updates the size of the visual for a rectangular page.
    * @see Overrides {@link IVisualCreator.updateVisual}.
-   * @param {!IRenderContext} context
-   * @param {!Visual} oldVisual
-   * @returns {?Visual}
    */
   updateVisual(context, oldVisual) {
     if (this.pageWidth === 0 || this.pageHeight === 0) {
       return null
     }
-
     const rectangle = oldVisual.svgElement
     // update the size of the page
     const width = this.pageWidth + MARGIN
     const height = this.pageHeight + MARGIN
-
     rectangle.setAttribute('x', '0')
     rectangle.setAttribute('y', '0')
     rectangle.setAttribute('width', width.toString())
     rectangle.setAttribute('height', height.toString())
-
     // update the position of the page
     rectangle.setAttribute(
       'transform',
       `translate(${this.center.x - width * 0.5} ${this.center.y - height * 0.5})`
     )
-
     return oldVisual
   }
 }

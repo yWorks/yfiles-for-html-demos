@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,37 +26,28 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { html, useEffect, useRef } from '../../preact-loader.js'
+// @ts-ignore - We have no proper types for preact, here
+import { html, useEffect, useRef } from '../../preact-loader'
 import {
-  Class,
   EdgesSource,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   LayoutExecutor,
   NodesSource,
   PolylineEdgeStyle
-} from 'yfiles'
-import PreactComponentNodeStyle from './PreactComponentNodeStyle.js'
-import NodeTemplate from './NodeTemplate.js'
-import { finishLoading } from 'demo-resources/demo-page'
-
-Class.ensure(LayoutExecutor)
-
-/**
- * @typedef {Object} Props
- * @property {Array.<DataItem>} itemData
- * @property {Array.<ConnectionItem>} connectionData
- */
-
+} from '@yfiles/yfiles'
+import PreactComponentNodeStyle from './PreactComponentNodeStyle'
+import NodeTemplate from './NodeTemplate'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+LayoutExecutor.ensure()
 export default (props) => {
   const gcRef = useRef(null)
   const graphComponentRef = useRef(null)
   const graphBuilderRef = useRef(null)
   const nodesSourceRef = useRef(null)
   const edgesSourceRef = useRef(null)
-
   /**
    * Note that we pass an empty dependency array here, which causes
    * the effect to only be triggered when the component is first mounted
@@ -65,22 +56,18 @@ export default (props) => {
   useEffect(() => {
     const graphComponent = new GraphComponent(gcRef.current)
     graphComponent.inputMode = new GraphViewerInputMode()
-
     initializeStyles(graphComponent)
-
     graphComponentRef.current = graphComponent
     const graphBuilder = createGraphBuilder()
     graphBuilderRef.current = graphBuilder
     graphBuilder.buildGraph()
     doLayout()
     finishLoading()
-
     // return a cleanup function (like componentWillUnmount())
     return () => {
       graphComponent.cleanUp()
     }
   }, [])
-
   /**
    * This effect is triggered whenever the itemData or connectionData changes.
    * In order to update the graph view, we set the new data and apply a GraphBuilder update.
@@ -91,7 +78,6 @@ export default (props) => {
     graphBuilderRef.current?.updateGraph()
     doLayout()
   }, [props.itemData, props.connectionData])
-
   /**
    * We use a string template to create the node visualizations. Depending on the
    * "state" property of the data items, a different CSS class is set on the outer
@@ -105,11 +91,12 @@ export default (props) => {
       targetArrow: `#304f52 small triangle`
     })
   }
-
   const doLayout = () => {
-    graphComponentRef.current?.morphLayout(new HierarchicLayout(), '1s')
+    props.setLayoutRunning(true)
+    graphComponentRef.current?.applyLayoutAnimated(new HierarchicalLayout(), '1s').then(() => {
+      props.setLayoutRunning(false)
+    })
   }
-
   /**
    * The GraphBuilder configuration is straight-forward for the simple data model
    * used in the demo: we use the data item's "id" property for the GraphBuilder id, and
@@ -130,13 +117,11 @@ export default (props) => {
     })
     nodesSourceRef.current = nodesSource
     edgesSourceRef.current = edgesSource
-
     // We need to update the node tags with each item update.
-    nodesSource.nodeCreator.addNodeUpdatedListener((_, evt) => {
+    nodesSource.nodeCreator.addEventListener('node-updated', (evt) => {
       nodesSource.nodeCreator.updateTag(evt.graph, evt.item, evt.dataItem)
     })
     return graphBuilder
   }
-
   return html` <div class="graph-component" ref=${gcRef} /> `
 }

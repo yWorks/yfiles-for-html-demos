@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,49 +32,36 @@ import {
   LayoutExecutorAsync,
   License,
   WaitInputMode
-} from 'yfiles'
-
-import { fetchLicense } from 'demo-resources/fetch-license.js'
-
+} from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license.js'
 import {
   createGroupedSampleGraph,
   initializeBasicDemoStyles,
   initializeFolding
-} from 'demo-utils/sample-graph'
-import { finishLoading } from 'demo-resources/demo-ui/finish-loading'
-
-/** @type {GraphComponent} */
+} from '@yfiles/demo-utils/sample-graph'
+import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
 let graphComponent
-
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-
   // initialize styles as well as graph
   graphComponent.inputMode = new GraphEditorInputMode()
   initializeFolding(graphComponent)
   initializeBasicDemoStyles(graphComponent.graph)
   createGroupedSampleGraph(graphComponent.graph)
-  graphComponent.fitGraphBounds()
-
+  await graphComponent.fitGraphBounds()
   initializeUI()
-
-  runNodeJSLayout(true)
+  await runNodeJSLayout()
+  graphComponent.graph.undoEngine.clear()
 }
-
 /**
- * Runs the layout using the NodeJS server.
- * @param {boolean} clearUndo Specifies whether the undo queue should be cleared after the layout
- * calculation. This is set to `true` if this method is called directly after
- * loading a new sample graph.
- * @param {boolean} clearUndo
+ * Runs the layout using the Node.js server.
  */
-async function runNodeJSLayout(clearUndo) {
+async function runNodeJSLayout() {
   showLoading()
-
-  // handles the connection between the NodeJS server and the client application
+  // handles the connection between the Node.js server and the client application
   async function nodeJsMessageHandler(data) {
-    // send the data blob to the NodeJS server
+    // send the data blob to the Node.js server
     const request = await fetch('http://localhost:3001/layout', {
       method: 'POST',
       headers: {
@@ -82,55 +69,46 @@ async function runNodeJSLayout(clearUndo) {
       },
       body: JSON.stringify(data)
     })
-    // resolve with the layouted graph returned from the server
-    return await request.json()
+    // resolve with the data of the resulting graph that was returned from the server
+    return request.json()
   }
-
   // The LayoutExecutorAsync allows to hook up with a LayoutExecutorAsyncWorker on a different
   // server and applies the response to the current diagram.
   const remoteExecutor = new LayoutExecutorAsync({
     messageHandler: nodeJsMessageHandler,
     graphComponent,
-    duration: '1s',
+    animationDuration: '1s',
     animateViewport: true,
     easedAnimation: true
   })
-
   try {
     await remoteExecutor.start()
   } catch (e) {
     if (e instanceof TypeError) {
-      alert(
-        `Layout request failed with message "${e.message}".
+      alert(`Layout request failed with message "${e.message}".
 
 Is the layout server running? If not, start the layout server and reload the demo.
-`
-      )
+`)
     } else {
       throw e
     }
   } finally {
-    if (clearUndo) {
-      graphComponent.graph.undoEngine.clear()
-    }
     hideLoading()
   }
 }
-
 /**
  * Shows the wait cursor and disables editing during the layout calculation.
  */
 function showLoading() {
   const statusElement = document.getElementById('graphComponentStatus')
   statusElement.style.setProperty('visibility', 'visible', '')
-  const waitMode = graphComponent.lookup(WaitInputMode.$class)
+  const waitMode = graphComponent.lookup(WaitInputMode)
   if (waitMode !== null && !waitMode.waiting) {
     if (waitMode.canStartWaiting()) {
       waitMode.waiting = true
     }
   }
 }
-
 /**
  * Removes the wait cursor and restores editing after the layout calculation.
  */
@@ -139,19 +117,17 @@ function hideLoading() {
   if (statusElement !== null) {
     statusElement.style.setProperty('visibility', 'hidden', '')
   }
-  const waitMode = graphComponent.lookup(WaitInputMode.$class)
+  const waitMode = graphComponent.lookup(WaitInputMode)
   if (waitMode !== null) {
     waitMode.waiting = false
   }
 }
-
 /**
  * Registers the run layout button action.
  */
 function initializeUI() {
-  document.querySelector('#runNodeJSLayout').addEventListener('click', () => {
-    runNodeJSLayout(false)
+  document.querySelector('#runNodeJSLayout').addEventListener('click', async () => {
+    await runNodeJSLayout()
   })
 }
-
 run().then(finishLoading)

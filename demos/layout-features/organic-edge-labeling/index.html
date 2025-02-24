@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Organic Layout with Edge Labeling - Layout Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -94,9 +92,8 @@
           <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModelParameter" target="_blank">parameters</a> determine the position of a label. For
           many interactive use cases, it makes sense to choose a model that restricts the available
           positions in some way. However, for automatic label placement the opposite is true: Models
-          that do not impose restrictions on a label's position work best. Thus
-          <a href="https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel" target="_blank">FreeEdgeLabelModel</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/SmartEdgeLabelModel" target="_blank">SmartEdgeLabelModel</a>
-          are good choices for integrated label placement.
+          that do not impose restrictions on a label's position work best. For instance,
+          <a href="https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel" target="_blank">FreeEdgeLabelModel</a> would be a good choice for integrated label placement.
         </p>
 
         <p>
@@ -111,7 +108,7 @@
           Note that self-loops and parallel edges are handled by <a href="https://docs.yworks.com/yfileshtml/#/api/SelfLoopRouter" target="_blank">SelfLoopRouter</a> and
           <a href="https://docs.yworks.com/yfileshtml/#/api/ParallelEdgeRouter" target="_blank">ParallelEdgeRouter</a> respectively. Thus, labels of such edges are not
           considered by the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">organic layout algorithm</a>. To place the
-          labels of these edges, a <a href="https://docs.yworks.com/yfileshtml/#/api/GenericLabeling" target="_blank">generic labeling</a>
+          labels of these edges, a <a href="https://docs.yworks.com/yfileshtml/#/api/Labeling" target="_blank">generic labeling</a>
           algorithm has to be applied as a post-processing step.
         </p>
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,8 +28,8 @@
  ***************************************************************************/
 import './DemoDataPanel.css'
 import ItemElement from './ItemElement'
-import plusIcon from '../assets/plus-16.svg'
-import minusIcon from '../assets/minus-16.svg'
+import plusIcon from '@yfiles/demo-resources/icons/plus-16.svg'
+import minusIcon from '@yfiles/demo-resources/icons/minus-16.svg'
 import { GraphData } from '../App'
 
 interface DemoDataPanelProps {

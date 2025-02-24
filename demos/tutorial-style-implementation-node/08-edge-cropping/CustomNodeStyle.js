@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,6 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   Font,
   GeneralPath,
@@ -36,47 +39,21 @@ import {
   SvgVisual,
   TextRenderSupport,
   TextWrapping
-} from 'yfiles'
-import { findLineIntersection } from '../common.js'
-
+} from '@yfiles/yfiles'
+import { findLineIntersection } from '../common'
 const tabWidth = 50
 const tabHeight = 14
-
-/**
- * Augment the SvgVisual type with the data used to cache the rendering information
- * @typedef {Object} Cache
- * @property {number} width
- * @property {number} height
- * @property {string} [fillColor]
- * @property {boolean} showBadge
- * @property {string} title
- */
-
-/**
- * @typedef {TaggedSvgVisual.<SVGGElement,Cache>} CustomNodeStyleVisual
- */
-
 export class CustomNodeStyle extends NodeStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {!CustomNodeStyleVisual}
-   */
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
-
     const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     pathElement.setAttribute('d', createPathData(0, 0, width, height))
-
     const fillColor = node.tag?.color ?? '#0b7189'
     pathElement.setAttribute('fill', fillColor)
     pathElement.setAttribute('stroke', '#333')
-
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     SvgVisual.setTranslate(g, x, y)
-
     g.append(pathElement)
-
     const showBadge = node.tag?.showBadge
     if (showBadge) {
       const badge = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
@@ -85,24 +62,20 @@ export class CustomNodeStyle extends NodeStyleBase {
       badge.setAttribute('stroke', '#496c2e')
       g.append(badge)
     }
-
     const title = node.tag?.title
     if (title) {
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
       text.setAttribute('fill', '#eee')
       SvgVisual.setTranslate(text, 10, 2)
-
       TextRenderSupport.addText({
         targetElement: text,
         text: node.tag.title,
         font: new Font('sans-serif', 10),
-        wrapping: TextWrapping.CHARACTER_ELLIPSIS,
+        wrapping: TextWrapping.WRAP_CHARACTER_ELLIPSIS,
         maximumSize: new Size(tabWidth - 12, 15)
       })
-
       g.append(text)
     }
-
     return SvgVisual.from(g, {
       width,
       height,
@@ -111,13 +84,6 @@ export class CustomNodeStyle extends NodeStyleBase {
       title
     })
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!CustomNodeStyleVisual} oldVisual
-   * @param {!INode} node
-   * @returns {!CustomNodeStyleVisual}
-   */
   updateVisual(context, oldVisual, node) {
     const { x, y, width, height } = node.layout
     // get the path element that needs updating from the old visual
@@ -125,37 +91,27 @@ export class CustomNodeStyle extends NodeStyleBase {
     const pathElement = g.firstElementChild
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
-
     const showBadge = node.tag?.showBadge
     const title = node.tag?.title
     if (!pathElement || showBadge !== cache.showBadge || title !== cache.title) {
       // re-create the visual if the badge visibility or the title has changed
       return this.createVisual(context, node)
     }
-
     const fillColor = node.tag?.color ?? '#0b7189'
     if (fillColor !== cache.fillColor) {
       // update the fill color
       cache.fillColor = fillColor
       pathElement.setAttribute('fill', fillColor)
     }
-
     if (width !== cache.width || height !== cache.height) {
       // update the path data to fit the new width and height
       pathElement.setAttribute('d', createPathData(0, 0, width, height))
       cache.width = width
       cache.height = height
     }
-
     SvgVisual.setTranslate(g, x, y)
     return oldVisual
   }
-
-
-  /**
-   * @param {!INode} node
-   * @returns {?GeneralPath}
-   */
   getOutline(node) {
     // Use the node's layout, and enlarge it with
     // half the stroke width to ensure that the
@@ -171,14 +127,6 @@ export class CustomNodeStyle extends NodeStyleBase {
     path.close()
     return path
   }
-
-
-
-  /**
-   * @param {!INode} node
-   * @param {!Point} location
-   * @returns {boolean}
-   */
   isInside(node, location) {
     // Check for bounding box
     if (!node.layout.contains(location)) {
@@ -186,7 +134,6 @@ export class CustomNodeStyle extends NodeStyleBase {
     }
     const { x, y } = location
     const { y: ly } = node.layout
-
     // Check for the upper-right corner, which is empty
     if (x > x + tabWidth && y < ly + tabHeight) {
       return false
@@ -195,18 +142,8 @@ export class CustomNodeStyle extends NodeStyleBase {
     // or the rest of the node
     return true
   }
-
-
-
-  /**
-   * @param {!INode} node
-   * @param {!Point} inner
-   * @param {!Point} outer
-   * @returns {?Point}
-   */
   getIntersection(node, inner, outer) {
     const layout = node.layout.toRect()
-
     const emptyRect = new Rect(layout.x + tabWidth, layout.y, layout.width - tabWidth, tabHeight)
     if (emptyRect.intersectsLine(inner, outer)) {
       // Intersection with the empty rectangle: find intersection with the actual segments of the outline
@@ -220,30 +157,19 @@ export class CustomNodeStyle extends NodeStyleBase {
       ]
       const intersection1 = findLineIntersection(segment1, [inner, outer])
       const intersection2 = findLineIntersection(segment2, [inner, outer])
-
       if (intersection1 === null || intersection2 === null) {
         return intersection1 ?? intersection2
       }
     }
-
     return layout.findLineIntersection(inner, outer)
   }
-
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} location
-   * @param {!INode} node
-   * @returns {boolean}
-   */
   isHit(context, location, node) {
     // Check for bounding box
-    if (!node.layout.toRect().containsWithEps(location, context.hitTestRadius)) {
+    if (!node.layout.toRect().contains(location, context.hitTestRadius)) {
       return false
     }
     const { x, y } = location
     const { x: layoutX, y: layoutY } = node.layout
-
     // Check for the upper-right corner, which is empty
     if (
       x > layoutX + tabWidth + context.hitTestRadius &&
@@ -255,17 +181,9 @@ export class CustomNodeStyle extends NodeStyleBase {
     return true
   }
 }
-
 /**
  * Creates the path data for the SVG path element.
- * @param {number} x
- * @param {number} y
- * @param {number} width
- * @param {number} height
- * @returns {!string}
  */
 export function createPathData(x, y, width, height) {
-  return `M ${x} ${y} h ${tabWidth} v ${tabHeight} h ${width - tabWidth} v ${
-    height - tabHeight
-  } h ${-width} z`
+  return `M ${x} ${y} h ${tabWidth} v ${tabHeight} h ${width - tabWidth} v ${height - tabHeight} h ${-width} z`
 }

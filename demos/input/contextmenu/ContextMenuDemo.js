@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,140 +29,115 @@
 import {
   GraphComponent,
   GraphEditorInputMode,
-  ICommand,
   IGraph,
   IModelItem,
   INode,
   License,
   Point,
   PopulateItemContextMenuEventArgs
-} from 'yfiles'
-import { ContextMenu } from 'demo-utils/ContextMenu'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/**
- * @returns {!Promise}
- */
+} from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import iconCopy from '@yfiles/demo-resources/icons/copy-16.svg'
+import iconCut from '@yfiles/demo-resources/icons/cut2-16.svg'
+import iconDelete from '@yfiles/demo-resources/icons/delete3-16.svg'
+import iconPaste from '@yfiles/demo-resources/icons/paste-16.svg'
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize the demo styles
   initDemoStyles(graphComponent.graph)
-
   // create a default editor input mode
   graphComponent.inputMode = new GraphEditorInputMode()
-
   // initialize the context menu
   configureContextMenu(graphComponent)
-
   // create the sample graph
   createSampleGraph(graphComponent.graph)
-
   graphComponent.fitGraphBounds()
 }
-
 /**
  * Initializes the context menu.
- * @param {!GraphComponent} graphComponent The graph component to which the context menu belongs
+ * @param graphComponent The graph component to which the context menu belongs
  */
 function configureContextMenu(graphComponent) {
   const inputMode = graphComponent.inputMode
-
-  // Create a context menu. In this demo, we use our sample context menu implementation but you can use any other
-  // context menu widget as well. See the Context Menu demo for more details about working with context menus.
-  const contextMenu = new ContextMenu(graphComponent)
-
-  // Add event listeners to the various events that open the context menu. These listeners then
-  // call the provided callback function which in turn asks the current ContextMenuInputMode if a
-  // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
-    if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
-      contextMenu.show(location)
-    }
-  })
-
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
-  // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  inputMode.addPopulateItemContextMenuListener((_, evt) =>
-    populateContextMenu(contextMenu, graphComponent, evt)
+  inputMode.addEventListener('populate-item-context-menu', (evt) =>
+    populateContextMenu(graphComponent, evt)
   )
-
-  // Add a listener that closes the menu when the input mode requests this
-  inputMode.contextMenuInputMode.addCloseMenuListener(() => {
-    contextMenu.close()
-  })
-
-  // If the context menu closes itself, for example because a menu item was clicked, we must inform the input mode
-  contextMenu.onClosedCallback = () => {
-    inputMode.contextMenuInputMode.menuClosed()
-  }
 }
-
 /**
  * Populates the context menu based on the item the mouse hovers over.
- *
- * @param {!ContextMenu} contextMenu The context menu.
- * @param {!GraphComponent} graphComponent The given graphComponent
- * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args The event args.
+ * @param graphComponent The given graphComponent
+ * @param args The event args.
  */
-function populateContextMenu(contextMenu, graphComponent, args) {
-  // The 'showMenu' property is set to true to inform the input mode that we actually want to show a context menu
-  // for this item (or more generally, the location provided by the event args).
-  // If you don't want to show a context menu for some locations, set 'false' in this cases.
-  args.showMenu = true
-
-  contextMenu.clearItems()
-
+function populateContextMenu(graphComponent, args) {
+  if (args.handled) {
+    return
+  }
   const node = args.item instanceof INode ? args.item : null
   // If the cursor is over a node select it
   updateSelection(graphComponent, node)
-
+  const inputMode = graphComponent.inputMode
   // Create the context menu items
-  if (graphComponent.selection.selectedNodes.size > 0) {
-    contextMenu.addMenuItem('Cut', () => ICommand.CUT.execute(null, graphComponent))
-    contextMenu.addMenuItem('Copy', () => ICommand.COPY.execute(null, graphComponent))
-    contextMenu.addMenuItem('Delete', () => ICommand.DELETE.execute(null, graphComponent))
+  if (graphComponent.selection.nodes.size > 0) {
+    args.contextMenu = [
+      {
+        label: 'Cut',
+        action: () => inputMode.cut(),
+        icon: `url("${iconCut}")`
+      },
+      {
+        label: 'Copy',
+        action: () => inputMode.copy(),
+        icon: `url("${iconCopy}")`
+      },
+      {
+        label: 'Delete',
+        action: () => inputMode.deleteSelection(),
+        icon: `url("${iconDelete}")`
+      }
+    ]
   } else {
     // no node has been hit
-    contextMenu.addMenuItem('Select all', () => ICommand.SELECT_ALL.execute(null, graphComponent))
-    contextMenu.addMenuItem('Paste', () =>
-      ICommand.PASTE.execute(args.queryLocation, graphComponent)
-    )
+    args.contextMenu = [
+      { label: 'Select all', action: () => inputMode.selectAll() },
+      {
+        label: 'Paste',
+        action: () => inputMode.pasteAtLocation(args.queryLocation),
+        icon: `url("${iconPaste}")`,
+        disabled: graphComponent.clipboard.isEmpty
+      }
+    ]
   }
 }
-
 /**
  * Helper function that updates the node selection state when the context menu is opened on a node.
- * @param {!GraphComponent} graphComponent The given graphComponent
- * @param {?INode} node The node or `null`.
+ * @param graphComponent The given graphComponent
+ * @param node The node or `null`.
  */
 function updateSelection(graphComponent, node) {
   if (node === null) {
     // clear the whole selection
     graphComponent.selection.clear()
-  } else if (!graphComponent.selection.selectedNodes.isSelected(node)) {
+  } else if (!graphComponent.selection.nodes.includes(node)) {
     // no - clear the remaining selection
     graphComponent.selection.clear()
     // and select the node
-    graphComponent.selection.selectedNodes.setSelected(node, true)
+    graphComponent.selection.nodes.add(node)
     // also update the current item
     graphComponent.currentItem = node
   }
 }
-
 /**
  * Creates a sample graph.
- * @param {!IGraph} graph The input graph
+ * @param graph The input graph
  */
 function createSampleGraph(graph) {
   graph.addLabel(graph.createNodeAt(new Point(80, 100)), '1')
   graph.addLabel(graph.createNodeAt(new Point(200, 100)), '2')
   graph.addLabel(graph.createNodeAt(new Point(320, 100)), '3')
 }
-
 run().then(finishLoading)

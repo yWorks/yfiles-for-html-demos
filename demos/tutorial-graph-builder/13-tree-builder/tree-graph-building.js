@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,25 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { TreeBuilder } from 'yfiles'
-
-/**
- * @param {!IGraph} graph
- * @param {!Array.<OrgChartEntry>} nodesData
- * @returns {!TreeBuilder}
- */
+import { TreeBuilder } from '@yfiles/yfiles'
 export function configureGraphBuilder(graph, nodesData) {
   const treeBuilder = new TreeBuilder(graph)
-
-  const rootNodesSource = treeBuilder.createRootNodesSource(nodesData)
-
-
+  const rootNodesSource = treeBuilder.createRootNodesSource(nodesData, null)
   // the childDataProvider identifies the property of a node object that contains its child nodes
   rootNodesSource.addChildNodesSource((data) => data.colleagues, rootNodesSource)
-
   rootNodesSource.nodeCreator.createLabelBinding({
     text: (dataItem) => dataItem.name
   })
-
   return treeBuilder
 }

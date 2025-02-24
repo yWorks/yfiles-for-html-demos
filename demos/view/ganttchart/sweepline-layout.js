@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,29 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { getActivity } from './resources/data-model.js'
-import { ganttChartData as dataModel } from './resources/gantt-chart-data.js'
-import { Animator, IAnimation, Rect, TimeSpan } from 'yfiles'
-
-/**
- * Type that describes the data needed for the sweep-line.
- * @typedef {Object} SweepLineData
- * @property {number} x
- * @property {Activity} activity
- * @property {boolean} open
- */
-
+import { getActivity } from './resources/data-model'
+import { ganttChartData as dataModel } from './resources/gantt-chart-data'
+import { Animator, IAnimation, Rect, TimeSpan } from '@yfiles/yfiles'
 export const ganttActivityHeight = 40
 export const ganttActivitySpacing = 20
 export const ganttTaskSpacing = 10
-
 const subRowMap = new Map()
 const subRowCountMap = new Map()
-
 /**
  * Gets the y-coordinate for a given task.
- * @param {!Task} task
- * @returns {number}
  */
 export function getTaskY(task) {
   const tasks = dataModel.tasks
@@ -59,11 +46,8 @@ export function getTaskY(task) {
   }
   return height
 }
-
 /**
  * Gets the task at the given y-coordinate.
- * @param {number} y
- * @returns {!Task}
  */
 export function getTask(y) {
   const tasks = dataModel.tasks
@@ -77,11 +61,8 @@ export function getTask(y) {
   }
   return tasks[tasks.length - 1]
 }
-
 /**
  * Gets the y-coordinate for a given activity, considering the sub-row information.
- * @param {!Activity} activity
- * @returns {number}
  */
 export function getActivityY(activity) {
   const taskId = activity.taskId
@@ -91,20 +72,15 @@ export function getActivityY(activity) {
   y += subRow * (ganttActivityHeight + ganttActivitySpacing)
   return y
 }
-
 /**
  * Calculates the task height, including sub-rows and spacing.
- * @param {!Task} task
- * @returns {number}
  */
 export function getCompleteTaskHeight(task) {
   const subRowCount = getSubRowCount(task)
   return subRowCount * (ganttActivityHeight + ganttActivitySpacing) + ganttActivitySpacing
 }
-
 /**
  * Calculates the height of all tasks, including their sub-rows and spacing
- * @returns {number}
  */
 export function getTotalTasksHeight() {
   return dataModel.tasks.reduce(
@@ -112,11 +88,8 @@ export function getTotalTasksHeight() {
     0
   )
 }
-
 /**
  * Gets the sub-row in which the given activity is placed.
- * @param {!Activity} activity
- * @returns {number}
  */
 export function getSubRowIndex(activity) {
   if (typeof subRowMap.get(activity) !== 'undefined') {
@@ -124,21 +97,16 @@ export function getSubRowIndex(activity) {
   }
   return 0
 }
-
 /**
  * Gets the number of sub-rows for a given task.
- * @param {!Task} task
- * @returns {number}
  */
 export function getSubRowCount(task) {
   return typeof subRowCountMap.get(task.id) === 'number' ? subRowCountMap.get(task.id) : 1
 }
-
 /**
  * Calculates the new height for each task row, spreading overlapping activity nodes
  * on multiple sub-rows.
  * The calculated data is stored in the mapper.
- * @param {!GraphComponent} graphComponent
  */
 export function updateSubRowMappings(graphComponent) {
   // maps the task id to the task's activities
@@ -147,7 +115,6 @@ export function updateSubRowMappings(graphComponent) {
   // maps each task row to the number of sub-rows
   subRowMap.clear()
   subRowCountMap.clear()
-
   // create the task mapping for each activity and initialize the sub-row mapping with 0
   for (const node of graphComponent.graph.nodes) {
     const activity = getActivity(node)
@@ -158,20 +125,17 @@ export function updateSubRowMappings(graphComponent) {
     taskId2Activities.get(taskId).push(node)
     subRowMap.set(activity, 0)
   }
-
   // calculate the sub-row mapping for each task
   dataModel.tasks.forEach((task) => {
     const maxRowIndex = calculateMappingForTask(task, taskId2Activities, subRowMap, graphComponent)
     subRowCountMap.set(task.id, maxRowIndex + 1)
   })
 }
-
 /**
  * Analyzes node overlaps within the same task lane
  * and splits up those nodes in sub-rows.
- * @param {!GraphComponent} graphComponent The current GraphComponent
- * @param {boolean} animate Whether to animate the resulting node layout change
- * @returns {!Promise}
+ * @param graphComponent The current GraphComponent
+ * @param animate Whether to animate the resulting node layout change
  */
 export async function updateSubRows(graphComponent, animate) {
   // update the information mapping the tasks to sub-rows and rows to the number of sub-rows
@@ -184,7 +148,6 @@ export async function updateSubRows(graphComponent, animate) {
     const subRowIndex = getSubRowIndex(activity)
     if (typeof subRowIndex !== 'undefined') {
       const layout = node.layout
-
       const yTop = getActivityY(activity)
       // calculate the new node layout
       const newLayout = new Rect(layout.x, yTop, layout.width, layout.height)
@@ -209,7 +172,6 @@ export async function updateSubRows(graphComponent, animate) {
       }
     }
   }
-
   if (animate && animations.length > 0) {
     // create a composite animation that executes all node transitions at the same time
     const compositeAnimation = IAnimation.createParallelAnimation(animations)
@@ -220,26 +182,15 @@ export async function updateSubRows(graphComponent, animate) {
     geim.waiting = false
   }
 }
-
 /**
  * Calculates the sub-row mapping for a given task.
  * In order to do that, a sweep line, or scan line algorithm is used:
  * The tasks are sorted by their x-coordinate. The algorithm runs over
  * the activities from left to right and chooses the first available sub-row
  * for each task until all activities have been assigned to a sub-row.
- * @returns {number} The number of sub-rows needed for this task row.
- * @param {!Task} task
- * @param {!Map.<number,Array.<INode>>} taskId2Activities
- * @param {!Map.<Activity,number>} subRowMap
- * @param {!GraphComponent} graphComponent
+ * @returns The number of sub-rows needed for this task row.
  */
-export function calculateMappingForTask(
-  task,
-  taskId2Activities,
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  subRowMap,
-  graphComponent
-) {
+export function calculateMappingForTask(task, taskId2Activities, subRowMap, graphComponent) {
   let maxRowIndex = 0
   // get the array of activities for this task
   const activityNodes = taskId2Activities.get(task.id)
@@ -267,7 +218,6 @@ export function calculateMappingForTask(
         open: false
       })
     })
-
     // sort by x-coordinates
     sweeplineData.sort((t1, t2) => t1.x - t2.x)
     const subRows = [] // holds information about available and unavailable sub-rows

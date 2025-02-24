@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,115 +33,86 @@ import {
   GraphItemTypes,
   GraphSnapContext,
   IEdge,
-  IEdgeReconnectionPortCandidateProvider,
   IGraph,
   INode,
   IPort,
   License,
-  OrthogonalEdgeEditingContext,
   OrthogonalEdgeHelper,
   Point,
-  Rect
-} from 'yfiles'
-
-import PortLookupEdgePortHandleProvider from './PortLookupEdgePortHandleProvider.js'
-import BlueBendCreator from './BlueBendCreator.js'
-import BlueOrthogonalEdgeHelper from './BlueOrthogonalEdgeHelper.js'
-import OrangeOrthogonalEdgeHelper from './OrangeOrthogonalEdgeHelper.js'
-import PurpleOrthogonalEdgeHelper from './PurpleOrthogonalEdgeHelper.js'
-import RedOrthogonalEdgeHelper from './RedOrthogonalEdgeHelper.js'
-import YellowOrthogonalEdgeHelper from './YellowOrthogonalEdgeHelper.js'
-import {
-  applyDemoTheme,
-  createDemoEdgeStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
+  Rect,
+  SnappableItems
+} from '@yfiles/yfiles'
+import PortLookupEdgePortHandleProvider from './PortLookupEdgePortHandleProvider'
+import BlueBendCreator from './BlueBendCreator'
+import BlueOrthogonalEdgeHelper from './BlueOrthogonalEdgeHelper'
+import OrangeOrthogonalEdgeHelper from './OrangeOrthogonalEdgeHelper'
+import PurpleOrthogonalEdgeHelper from './PurpleOrthogonalEdgeHelper'
+import RedOrthogonalEdgeHelper from './RedOrthogonalEdgeHelper'
+import YellowOrthogonalEdgeHelper from './YellowOrthogonalEdgeHelper'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * Registers different IOrthogonalEdgeHelpers to demonstrate various custom behaviour.
- * @param {!IGraph} graph The given graph
+ * @param graph The given graph
  */
 function registerOrthogonalEdgeHelperDecorators(graph) {
-  const edgeDecorator = graph.decorator.edgeDecorator
-
-  // Add different IOrthogonalEdgeHelpers to demonstrate various custom behaviour
-  edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
+  // Add different IOrthogonalEdgeHelpers to demonstrate various custom behavior
+  graph.decorator.edges.orthogonalEdgeHelper.addFactory(
     (edge) => edge.tag === 'red',
-    new RedOrthogonalEdgeHelper()
+    (edge) => new RedOrthogonalEdgeHelper(edge)
   )
-
   // Green edges have the regular orthogonal editing behavior and therefore,
   // don't need a custom implementation
-  edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
+  graph.decorator.edges.orthogonalEdgeHelper.addFactory(
     (edge) => edge.tag === 'green',
-    new OrthogonalEdgeHelper()
+    (edge) => new OrthogonalEdgeHelper(edge)
   )
-
-  edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
+  graph.decorator.edges.orthogonalEdgeHelper.addFactory(
     (edge) => edge.tag === 'purple',
-    new PurpleOrthogonalEdgeHelper()
+    (edge) => new PurpleOrthogonalEdgeHelper(edge)
   )
-
-  edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
+  graph.decorator.edges.orthogonalEdgeHelper.addFactory(
     (edge) => edge.tag === 'orange',
-    new OrangeOrthogonalEdgeHelper()
+    (edge) => new OrangeOrthogonalEdgeHelper(edge)
   )
-
-  edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
+  graph.decorator.edges.orthogonalEdgeHelper.addFactory(
     (edge) => edge.tag === 'yellow',
-    new YellowOrthogonalEdgeHelper()
+    (edge) => new YellowOrthogonalEdgeHelper(edge)
   )
-
-  edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
+  graph.decorator.edges.orthogonalEdgeHelper.addFactory(
     (edge) => edge.tag === 'blue',
-    new BlueOrthogonalEdgeHelper()
+    (edge) => new BlueOrthogonalEdgeHelper(edge)
   )
-
   // Disable moving of the complete edge for orthogonal edges since this would create way too many bends
-  edgeDecorator.positionHandlerDecorator.hideImplementation(
+  graph.decorator.edges.positionHandler.hide(
     (edge) =>
       edge.tag === 'orange' ||
       edge.tag === 'yellow' ||
       edge.tag === 'green' ||
       edge.tag === 'purple'
   )
-
   // Add a custom BendCreator for blue edges that ensures orthogonality
   // if a bend is added to the first or last (non-orthogonal) segment
-  edgeDecorator.bendCreatorDecorator.setImplementation(
+  graph.decorator.edges.bendCreator.addWrapperFactory(
     (edge) => edge.tag === 'blue',
-    new BlueBendCreator()
+    (edge, originalBendCreator) =>
+      originalBendCreator != null ? new BlueBendCreator(edge, originalBendCreator) : null
   )
-
-  // Add a custom EdgePortHandleProvider to make the handles of a
+  // Add a custom EdgePortHandleProvider to make the handles of an
   // orange edge move within the bounds of the node
-  edgeDecorator.edgePortHandleProviderDecorator.setImplementationWrapper(
+  graph.decorator.edges.portHandleProvider.addWrapperFactory(
     (edge) => edge.tag === 'orange',
-    () => new PortLookupEdgePortHandleProvider()
-  )
-
-  // Allow the relocating of an edge to another node
-  edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setImplementation(
-    IEdgeReconnectionPortCandidateProvider.ALL_NODE_CANDIDATES
+    (edge) => new PortLookupEdgePortHandleProvider(edge)
   )
 }
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
-
   // Create a default editor input mode
   const graphEditorInputMode = new GraphEditorInputMode({
-    // Enable orthogonal edge editing
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext(),
     // Just for user convenience: disable node, edge creation and clipboard operations
     allowCreateEdge: false,
     allowCreateNode: false,
@@ -150,34 +121,26 @@ async function run() {
     deletableItems: GraphItemTypes.NONE,
     // enable snapping for edges only
     snapContext: new GraphSnapContext({
-      collectNodeSnapLines: false,
+      snappableItems: SnappableItems.EDGE,
       collectNodePairCenterSnapLines: false,
       collectNodePairSnapLines: false,
       collectNodePairSegmentSnapLines: false,
-      collectNodeSizes: false,
-      snapNodesToSnapLines: false,
-      snapOrthogonalMovement: false
+      collectNodeSizes: false
     })
   })
-
   // and enable the undo feature.
   graph.undoEngineEnabled = true
-
   // Finally, set the input mode to the graph component.
   graphComponent.inputMode = graphEditorInputMode
-
   // Disable auto-cleanup of ports since the purple nodes have explicit ports
   graph.nodeDefaults.ports.autoCleanUp = false
-
   // Create and register the edge decorations
   registerOrthogonalEdgeHelperDecorators(graph)
-
   createSampleGraph(graph)
 }
-
 /**
  * Creates the sample graph of this demo.
- * @param {!IGraph} graph The input graph
+ * @param graph The input graph
  */
 function createSampleGraph(graph) {
   createSubgraph(graph, 0, 'demo-red', 'red')
@@ -185,7 +148,6 @@ function createSampleGraph(graph) {
   createSubgraph(graph, 220, 'demo-purple', 'purple', true)
   createSubgraph(graph, 330, 'demo-orange', 'orange')
   createSubgraph(graph, 440, 'demo-palette-510', 'yellow')
-
   // The blue edge has more bends than the other edges
   const blueEdge = createSubgraph(graph, 550, 'demo-lightblue', 'blue')
   const blueBends = blueEdge.bends.toArray()
@@ -195,31 +157,20 @@ function createSampleGraph(graph) {
   graph.addBend(blueEdge, new Point(300, blueEdge.sourcePort.location.y - 30))
   graph.addBend(blueEdge, new Point(300, blueEdge.targetPort.location.y + 30))
   graph.addBend(blueEdge, new Point(380, blueEdge.targetPort.location.y + 30))
-
   // clear undo after initial graph loading
   graph.undoEngine.clear()
 }
-
 /**
  * Creates the sample graph of the given color with two nodes and a single edge.
- * @param {!IGraph} graph
- * @param {number} yOffset
- * @param {!ColorSetName} colorSet
- * @param {!string} tag
- * @param {boolean} [createPorts=false]
- * @returns {!IEdge}
  */
 function createSubgraph(graph, yOffset, colorSet, tag, createPorts = false) {
   // Create two nodes
   const nodeStyle = createDemoNodeStyle(colorSet)
-
   const n1 = graph.createNode(new Rect(110, 100 + yOffset, 40, 40), nodeStyle, tag)
   const n2 = graph.createNode(new Rect(450, 130 + yOffset, 40, 40), nodeStyle, tag)
-
   // Create an edge, either between the two nodes or between their ports
   let edge
   const edgeStyle = createDemoEdgeStyle({ colorSetName: colorSet, showTargetArrow: false })
-
   if (!createPorts) {
     edge = graph.createEdge(n1, n2, edgeStyle, tag)
   } else {
@@ -227,23 +178,16 @@ function createSubgraph(graph, yOffset, colorSet, tag, createPorts = false) {
     const p2 = createSamplePorts(graph, n2, false)
     edge = graph.createEdge(p1[1], p2[2], edgeStyle, tag)
   }
-
   // Add bends that create a vertical segment in the middle of the edge
   const sourcePortLocation = edge.sourcePort.location
   const targetPortLocation = edge.targetPort.location
   const x = (sourcePortLocation.x + targetPortLocation.x) / 2
   graph.addBend(edge, new Point(x, sourcePortLocation.y))
   graph.addBend(edge, new Point(x, targetPortLocation.y))
-
   return edge
 }
-
 /**
  * Adds some ports to the given node.
- * @param {!IGraph} graph
- * @param {!INode} node
- * @param {boolean} toEastSide
- * @returns {!Array.<IPort>}
  */
 function createSamplePorts(graph, node, toEastSide) {
   const nodeScaledPortLocationModel = FreeNodePortLocationModel.INSTANCE
@@ -263,5 +207,4 @@ function createSamplePorts(graph, node, toEastSide) {
   )
   return ports
 }
-
 run().then(finishLoading)

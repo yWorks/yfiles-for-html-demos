@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,26 +27,26 @@
  **
  ***************************************************************************/
 import {
-  DefaultFolderNodeConverter,
+  Command,
+  FolderNodeConverter,
   FoldingManager,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
-  GraphMLSupport,
   IGraph,
   INode,
   License,
   NodeAlignmentPolicy,
   Point,
   Rect,
-  Size,
-  StorageLocation
-} from 'yfiles'
-import { ZIndexChangedEventArgs, ZOrderSupport } from './ZOrderSupport'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { bindYFilesCommand, finishLoading } from 'demo-resources/demo-page'
+  Size
+} from '@yfiles/yfiles'
+import { ZOrderSupport } from './ZOrderSupport'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { bindYFilesCommand, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent: GraphComponent = null!
 
@@ -58,8 +58,6 @@ let zOrderSupport: ZOrderSupport = null!
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize the graph
   initializeGraph()
 
@@ -72,13 +70,6 @@ async function run(): Promise<void> {
   const ioHandler = new GraphMLIOHandler()
   zOrderSupport.configureGraphMLIOHandler(ioHandler)
 
-  // eslint-disable-next-line no-new
-  new GraphMLSupport({
-    graphComponent: graphComponent,
-    storageLocation: StorageLocation.FILE_SYSTEM,
-    graphMLIOHandler: ioHandler
-  })
-
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
   inputMode.focusableItems = GraphItemTypes.NONE
   // prevent interactive label changes since they display the z-index in this demo
@@ -87,7 +78,7 @@ async function run(): Promise<void> {
   inputMode.allowAddLabel = false
   inputMode.allowEditLabelOnDoubleClick = false
 
-  inputMode.addNodeCreatedListener((_, evt) => {
+  inputMode.addEventListener('node-created', (evt) => {
     const node = evt.item
     updateLabel(node, zOrderSupport.getZOrder(node))
   })
@@ -95,9 +86,9 @@ async function run(): Promise<void> {
   // if graph structure is changed, update _all_ labels,
   // otherwise the copied labels erroneously show the z-order
   // of the source nodes. (this is for demo purposes only)
-  inputMode.addElementsDuplicatedListener(updateLabels)
-  inputMode.addElementsPastedListener(updateLabels)
-  inputMode.navigationInputMode.addGroupExpandedListener(updateLabels)
+  inputMode.addEventListener('items-duplicated', updateLabels)
+  inputMode.addEventListener('items-pasted', updateLabels)
+  inputMode.navigationInputMode.addEventListener('group-expanded', updateLabels)
 
   zOrderSupport.addZIndexChangedLister((_, evt) => {
     if (evt.item instanceof INode) {
@@ -108,7 +99,7 @@ async function run(): Promise<void> {
   createGraph(graphComponent.graph)
 
   // bind the buttons to their functionality
-  initializeUI()
+  initializeUI(ioHandler)
 }
 
 /**
@@ -130,8 +121,8 @@ function initializeGraph(): void {
   graphComponent.graph.nodeDefaults.size = new Size(70, 40)
 
   const folderNodeConverter = graphComponent.graph.foldingView!.manager
-    .folderNodeConverter as DefaultFolderNodeConverter
-  folderNodeConverter.copyFirstLabel = true
+    .folderNodeConverter as FolderNodeConverter
+  folderNodeConverter.folderNodeDefaults.copyLabels = true
 }
 
 function createGraph(graph: IGraph): void {
@@ -212,7 +203,6 @@ function updateLabel(node: INode, zIndex: number): void {
 function enableGroupingOperations(): void {
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
   if (inputMode) {
-    inputMode.allowGroupingOperations = true
     inputMode.navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.TOP_RIGHT
   }
 }
@@ -220,35 +210,43 @@ function enableGroupingOperations(): void {
 /**
  * Binds actions to the buttons in the tutorial's toolbar.
  */
-function initializeUI(): void {
+function initializeUI(graphMLIOHandler: GraphMLIOHandler): void {
   bindYFilesCommand(
     "button[data-command='Raise']",
-    ZOrderSupport.RAISE,
+    Command.RAISE,
     graphComponent,
     null,
     'Raise Selection'
   )
   bindYFilesCommand(
     "button[data-command='Lower']",
-    ZOrderSupport.LOWER,
+    Command.LOWER,
     graphComponent,
     null,
     'Lower Selection'
   )
   bindYFilesCommand(
     "button[data-command='ToFront']",
-    ZOrderSupport.TO_FRONT,
+    Command.TO_FRONT,
     graphComponent,
     null,
     'Bring Selection to Front'
   )
   bindYFilesCommand(
     "button[data-command='ToBack']",
-    ZOrderSupport.TO_BACK,
+    Command.TO_BACK,
     graphComponent,
     null,
     'Bring Selection to Back'
   )
+  document
+    .querySelector<HTMLInputElement>('#open-file-button')!
+    .addEventListener('click', async () => {
+      await openGraphML(graphComponent, graphMLIOHandler)
+    })
+  document.querySelector<HTMLInputElement>('#save-button')!.addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'zOrder.graphml', graphMLIOHandler)
+  })
 }
 
 run().then(finishLoading)

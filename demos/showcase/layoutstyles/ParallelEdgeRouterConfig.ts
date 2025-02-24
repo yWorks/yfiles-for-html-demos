@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,16 +28,12 @@
  ***************************************************************************/
 import {
   Class,
-  Enum,
   GraphComponent,
   ILayoutAlgorithm,
   LayoutData,
   ParallelEdgeRouter,
-  ParallelEdgeRouterData,
-  YBoolean,
-  YNumber,
-  YString
-} from 'yfiles'
+  ParallelEdgeRouterData
+} from '@yfiles/yfiles'
 
 import LayoutConfiguration from './LayoutConfiguration'
 import {
@@ -49,7 +45,13 @@ import {
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from 'demo-resources/demo-option-editor'
+} from '@yfiles/demo-resources/demo-option-editor'
+
+enum Scope {
+  SCOPE_ALL_EDGES,
+  SCOPE_SELECTED_EDGES,
+  SCOPE_AT_SELECTED_NODES
+}
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -57,7 +59,83 @@ import {
 const ParallelEdgeRouterConfig = (Class as any)('ParallelEdgeRouterConfig', {
   $extends: LayoutConfiguration,
 
-  $meta: [LabelAttribute('ParallelEdgeRouter')],
+  _meta: {
+    descriptionText: [
+      new OptionGroupAttribute('DescriptionGroup', 10),
+      new ComponentAttribute(Components.HTML_BLOCK),
+      new TypeAttribute(String)
+    ],
+    LayoutGroup: [
+      new LabelAttribute('General'),
+      new OptionGroupAttribute('RootGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    scopeItem: [
+      new LabelAttribute(
+        'Scope',
+        '#/api/ParallelEdgeRouterData#ParallelEdgeRouterData-property-affectedEdges'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 10),
+      new EnumValuesAttribute([
+        ['All Edges', Scope.SCOPE_ALL_EDGES],
+        ['Selected Edges', Scope.SCOPE_SELECTED_EDGES],
+        ['Edges at Selected Nodes', Scope.SCOPE_AT_SELECTED_NODES]
+      ]),
+      new TypeAttribute(Scope)
+    ],
+    useSelectedEdgesAsMasterItem: [
+      new LabelAttribute(
+        'Use Selected Edges As Leading Edges',
+        '#/api/ParallelEdgeRouterData#ParallelEdgeRouterData-property-leadingEdges'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 20),
+      new TypeAttribute(Boolean)
+    ],
+    considerEdgeDirectionItem: [
+      new LabelAttribute(
+        'Consider Edge Direction',
+        '#/api/ParallelEdgeRouter#ParallelEdgeRouter-property-directedMode'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 30),
+      new TypeAttribute(Boolean)
+    ],
+    useAdaptiveEdgeDistanceItem: [
+      new LabelAttribute(
+        'Use Adaptive Edge Distance',
+        '#/api/ParallelEdgeRouter#ParallelEdgeRouter-property-adaptiveEdgeDistances'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 40),
+      new TypeAttribute(Boolean)
+    ],
+    edgeDistanceItem: [
+      new LabelAttribute(
+        'Line Distance',
+        '#/api/ParallelEdgeRouter#ParallelEdgeRouter-property-edgeDistance'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 50),
+      new MinMaxAttribute(0, 50),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    joinEndsItem: [
+      new LabelAttribute(
+        'Join Ends',
+        '#/api/ParallelEdgeRouter#ParallelEdgeRouter-property-joinEnds'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 60),
+      new TypeAttribute(Boolean)
+    ],
+    joinDistanceItem: [
+      new LabelAttribute(
+        'Join Distance',
+        '#/api/ParallelEdgeRouter#ParallelEdgeRouter-property-absoluteJoinEndDistance'
+      ),
+      new OptionGroupAttribute('LayoutGroup', 70),
+      new MinMaxAttribute(0, 50),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ]
+  },
 
   /**
    * Setup default values for various configuration parameters.
@@ -69,15 +147,15 @@ const ParallelEdgeRouterConfig = (Class as any)('ParallelEdgeRouterConfig', {
     this.scopeItem = Scope.SCOPE_ALL_EDGES
     this.useSelectedEdgesAsMasterItem = false
     this.considerEdgeDirectionItem = router.directedMode
-    this.useAdaptiveLineDistanceItem = router.adaptiveLineDistances
-    this.lineDistanceItem = router.lineDistance | 0
+    this.useAdaptiveEdgeDistanceItem = router.adaptiveEdgeDistances
+    this.edgeDistanceItem = router.edgeDistance | 0
     this.joinEndsItem = router.joinEnds
-    this.joinDistanceItem = router.absJoinEndDistance
+    this.joinDistanceItem = router.absoluteJoinEndDistance
     this.title = 'Parallel Edge Router'
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @returns The configured layout algorithm.
@@ -86,10 +164,10 @@ const ParallelEdgeRouterConfig = (Class as any)('ParallelEdgeRouterConfig', {
     const router = new ParallelEdgeRouter()
     router.adjustLeadingEdge = false
     router.directedMode = this.considerEdgeDirectionItem
-    router.adaptiveLineDistances = this.useAdaptiveLineDistanceItem
-    router.lineDistance = this.lineDistanceItem
+    router.adaptiveEdgeDistances = this.useAdaptiveEdgeDistanceItem
+    router.edgeDistance = this.edgeDistanceItem
     router.joinEnds = this.joinEndsItem
-    router.absJoinEndDistance = this.joinDistanceItem
+    router.absoluteJoinEndDistance = this.joinDistanceItem
 
     return router
   },
@@ -106,16 +184,16 @@ const ParallelEdgeRouterConfig = (Class as any)('ParallelEdgeRouterConfig', {
     const selection = graphComponent.selection
 
     if (this.scopeItem === Scope.SCOPE_AT_SELECTED_NODES) {
-      layoutData.affectedEdges.delegate = (edge) =>
-        selection.isSelected(edge.sourceNode!) || selection.isSelected(edge.targetNode!)
+      layoutData.affectedEdges = (edge) =>
+        selection.includes(edge.sourceNode) || selection.includes(edge.targetNode)
     } else if (this.scopeItem === Scope.SCOPE_SELECTED_EDGES) {
-      layoutData.affectedEdges.items = selection.selectedEdges.toList()
+      layoutData.affectedEdges = selection.edges.toList()
     } else {
-      layoutData.affectedEdges.delegate = (edge) => true
+      layoutData.affectedEdges = () => true
     }
 
     if (this.useSelectedEdgesAsMasterItem) {
-      layoutData.leadingEdges.items = selection.selectedEdges.toList()
+      layoutData.leadingEdges = selection.edges.toList()
     }
 
     return layoutData
@@ -123,166 +201,40 @@ const ParallelEdgeRouterConfig = (Class as any)('ParallelEdgeRouterConfig', {
 
   /** @type {string} */
   descriptionText: {
-    $meta: function () {
-      return [
-        OptionGroupAttribute('DescriptionGroup', 10),
-        ComponentAttribute(Components.HTML_BLOCK),
-        TypeAttribute(YString.$class)
-      ]
-    },
     get: function (): string {
       return "<p style='margin-top:0'>The parallel edge routing algorithm routes parallel edges which connect the same pair of nodes in a graph. It is often used as layout stage for other layout algorithms to handle the parallel edges for those.</p>"
     }
   },
 
   /** @type {OptionGroup} */
-  LayoutGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('General'),
-        OptionGroupAttribute('RootGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  LayoutGroup: null,
 
   /** @type {Scope} */
-  scopeItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Scope',
-          '#/api/ParallelEdgeRouterData#ParallelEdgeRouterData-property-affectedEdges'
-        ),
-        OptionGroupAttribute('LayoutGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['All Edges', Scope.SCOPE_ALL_EDGES],
-            ['Selected Edges', Scope.SCOPE_SELECTED_EDGES],
-            ['Edges at Selected Nodes', Scope.SCOPE_AT_SELECTED_NODES]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  scopeItem: null,
 
   /** @type {boolean} */
-  useSelectedEdgesAsMasterItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Use Selected Edges As Leading Edges',
-          '#/api/ParallelEdgeRouterData#ParallelEdgeRouterData-property-leadingEdges'
-        ),
-        OptionGroupAttribute('LayoutGroup', 20),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  useSelectedEdgesAsMasterItem: false,
 
   /** @type {boolean} */
-  considerEdgeDirectionItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Consider Edge Direction',
-          '#/api/ParallelEdgeRouter#ParallelEdgeRouter-property-directedMode'
-        ),
-        OptionGroupAttribute('LayoutGroup', 30),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  considerEdgeDirectionItem: false,
 
   /** @type {boolean} */
-  useAdaptiveLineDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Use Adaptive Line Distance',
-          '#/api/ParallelEdgeRouter#ParallelEdgeRouter-property-adaptiveLineDistances'
-        ),
-        OptionGroupAttribute('LayoutGroup', 40),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  useAdaptiveEdgeDistanceItem: false,
 
   /** @type {number} */
-  lineDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Line Distance',
-          '#/api/ParallelEdgeRouter#ParallelEdgeRouter-property-lineDistance'
-        ),
-        OptionGroupAttribute('LayoutGroup', 50),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 50
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  edgeDistanceItem: 0,
 
   /** @type {boolean} */
-  joinEndsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Join Ends',
-          '#/api/ParallelEdgeRouter#ParallelEdgeRouter-property-joinEnds'
-        ),
-        OptionGroupAttribute('LayoutGroup', 60),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  joinEndsItem: false,
 
   /** @type {number} */
-  joinDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Join Distance',
-          '#/api/ParallelEdgeRouter#ParallelEdgeRouter-property-absJoinEndDistance'
-        ),
-        OptionGroupAttribute('LayoutGroup', 70),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 50
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  joinDistanceItem: 0,
 
   /** @type {boolean} */
   shouldDisableJoinDistanceItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
       return !this.joinEndsItem
     }
   }
 })
 export default ParallelEdgeRouterConfig
-
-enum Scope {
-  SCOPE_ALL_EDGES,
-  SCOPE_SELECTED_EDGES,
-  SCOPE_AT_SELECTED_NODES
-}

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,33 +27,30 @@
  **
  ***************************************************************************/
 import {
-  DefaultNodePlacer,
-  DefaultTreeLayoutPortAssignment,
   IEdge,
   IGraph,
   ILayoutAlgorithm,
   LayoutData,
   LayoutOrientation,
+  SingleLayerSubtreePlacer,
   TreeLayout,
   TreeLayoutData,
+  TreeLayoutPortAssigner,
   TreeLayoutPortAssignmentMode
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * Demonstrates how to configure {@link TreeLayout}.
- * @param {!IGraph} graph The graph to be laid out
- * @returns {!object} {{TreeLayout, TreeLayoutData}} the configured layout algorithm and the
+ * @param graph The graph to be laid out
+ * @returns {{TreeLayout, TreeLayoutData}} the configured layout algorithm and the
  * corresponding layout data
  */
 export function createFeatureLayoutConfiguration(graph) {
   // instantiate the tree layout algorithm
   const layout = new TreeLayout()
-
   // change the orientation to left-to-right (horizontal flow)
   layout.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
-
-  // configure the default node placer
-  layout.defaultNodePlacer = new DefaultNodePlacer({
+  // configure the single layer subtree placer
+  layout.defaultSubtreePlacer = new SingleLayerSubtreePlacer({
     // increase the distances the elements must keep from each other vertically and horizontally
     verticalDistance: 30,
     horizontalDistance: 30,
@@ -68,23 +65,16 @@ export function createFeatureLayoutConfiguration(graph) {
     // grouped edge routing style)
     minimumChannelSegmentDistance: 6
   })
-
   // define a port assignment that distributes the ports (due to the global orientation change
-  // to left-to-right, the DISTRIBUTED_SOUTH setting actually distributes right).
-  // change this to NONE if ports should be centered and not distributed
-  layout.defaultPortAssignment = new DefaultTreeLayoutPortAssignment({
-    mode: TreeLayoutPortAssignmentMode.DISTRIBUTED_SOUTH
+  // evenly on the side of their nodes
+  layout.defaultPortAssigner = new TreeLayoutPortAssigner({
+    mode: TreeLayoutPortAssignmentMode.DISTRIBUTED
   })
-
-  // make the layout consider node labels in order to avoid overlaps with them
-  layout.considerNodeLabels = true
-
   // create layout data object to specify item-individual settings
   const layoutData = new TreeLayoutData()
-
   // define a comparison function for the out-edges at a tree node such that the respective
   // child nodes are order with respect to the label text (if they have a label)
-  layoutData.outEdgeComparers.delegate = (node) => (edge1, edge2) => {
+  layoutData.childOrder.outEdgeComparators = () => (edge1, edge2) => {
     const targetLabel1 = edge1.targetNode.labels.at(0)
     const targetLabel2 = edge2.targetNode.labels.at(0)
     if (targetLabel1 && targetLabel2) {
@@ -93,6 +83,5 @@ export function createFeatureLayoutConfiguration(graph) {
     }
     return 0
   }
-
   return { layout, layoutData }
 }

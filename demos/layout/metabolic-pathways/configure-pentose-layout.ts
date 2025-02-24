@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,21 +29,21 @@
 import {
   Bfs,
   type BfsResult,
+  ConstraintOrientation,
   type GraphComponent,
   type IEdge,
   type IGraph,
   type ILayoutAlgorithm,
   type INode,
+  Insets,
   type LayoutData,
-  NodeHalo,
   OrganicLayout,
-  OrganicLayoutConstraintOrientation,
   OrganicLayoutData,
   type ResultItemCollection,
   type ResultItemMapping,
   ShortestPath,
   TraversalDirection
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getMetabolicData, getType, NodeTypes } from './data-types'
 
 /**
@@ -57,20 +57,20 @@ export function configurePentosePhosphateLayout(graphComponent: GraphComponent):
   // some basic configuration for the organic layout
   const organicLayout = new OrganicLayout({
     deterministic: true,
-    minimumNodeDistance: 60,
-    nodeEdgeOverlapAvoided: true
+    defaultPreferredEdgeLength: 60,
+    defaultMinimumNodeDistance: 10,
+    avoidNodeEdgeOverlap: true
   })
 
   // create the layout data to assign different edge lengths for edges attached to enzymes
   // and to add node halos to reaction nodes
   const organicLayoutData = new OrganicLayoutData({
     preferredEdgeLengths: (edge) =>
-      getType(edge.sourceNode!) === NodeTypes.ENZYME ||
-      getType(edge.targetNode!) === NodeTypes.ENZYME
+      getType(edge.sourceNode) === NodeTypes.ENZYME || getType(edge.targetNode) === NodeTypes.ENZYME
         ? 5
         : 80,
-    nodeHalos: (node) =>
-      getType(node) === NodeTypes.REACTION ? NodeHalo.create(60, 15, 15, 60) : NodeHalo.ZERO_HALO
+    nodeMargins: (node) =>
+      getType(node) === NodeTypes.REACTION ? new Insets(60, 60, 15, 15) : Insets.EMPTY
   })
 
   const graph = graphComponent.graph
@@ -89,7 +89,7 @@ export function configurePentosePhosphateLayout(graphComponent: GraphComponent):
 
   // add the constraints for the co-reactant nodes to vertically align them and place them before
   // their associated reaction node
-  addCoReactantConstraints(graph, layers, organicLayoutData)
+  addCoReactantConstraints(graph, organicLayoutData)
 
   // add the constraints for the enzymes to align them after their associated reaction
   addEnzymeConstraints(graph, organicLayoutData)
@@ -118,15 +118,14 @@ function alignReactionPath(
     (node) => getType(node) !== NodeTypes.REACTION || !isMultipleProductReaction(graph, node)
   )
   // align the main path vertically and order its nodes based on their order in the path
-  organicLayoutData.constraints.addAlignmentConstraint(
-    OrganicLayoutConstraintOrientation.VERTICAL,
-    0
-  ).source = excludeMultiProductReactions
+  organicLayoutData.constraints.addAlignmentConstraint(ConstraintOrientation.VERTICAL, 0).source =
+    excludeMultiProductReactions
 
-  organicLayoutData.constraints.addOrderConstraint(
-    OrganicLayoutConstraintOrientation.VERTICAL
-  ).source = excludeMultiProductReactions
-
+  excludeMultiProductReactions.forEach((node, index) => {
+    organicLayoutData.constraints
+      .addOrderConstraint(ConstraintOrientation.VERTICAL)
+      .mapper.set(node, index)
+  })
   return pathNodes
 }
 
@@ -150,25 +149,25 @@ function placeNodesOnLayers(
   reactions
     .filter((reaction) => isMultipleProductReaction(graph, reaction))
     .forEach((reaction) => {
-      // get the edges attached toto product/reactant nodes
+      // get the edges attached to product/reactant nodes
       const productEdges = graph
         .inEdgesAt(reaction)
-        .filter((edge) => isProductOrReactant(edge.sourceNode!))
+        .filter((edge) => isProductOrReactant(edge.sourceNode))
       const reactionLayer = firstBfs.nodeLayerIds.get(reaction)!
 
       // get the maximum layer of these edges
       const maxLayer = productEdges.reduce(
-        (acc: number, edge: IEdge) => Math.max(acc, firstBfs.nodeLayerIds.get(edge.sourceNode!)!),
+        (acc: number, edge: IEdge) => Math.max(acc, firstBfs.nodeLayerIds.get(edge.sourceNode)!),
         reactionLayer
       )
 
       if (maxLayer !== reactionLayer) {
         // use the first edge that does not belong to the maximum layer of these edges
         const edgesToUse = productEdges
-          .filter((edge) => firstBfs.nodeLayerIds.get(edge.sourceNode!)! !== maxLayer)
+          .filter((edge) => firstBfs.nodeLayerIds.get(edge.sourceNode)! !== maxLayer)
           .at(0)
 
-        if (edgesToUse !== undefined) {
+        if (edgesToUse != null) {
           excludeEdges.push(edgesToUse)
         }
       }
@@ -185,16 +184,20 @@ function placeNodesOnLayers(
   bfs.layers.forEach((bfsLayer) => {
     // nodes that belong in the same layer have to be horizontally aligned
     organicLayoutData.constraints.addAlignmentConstraint(
-      OrganicLayoutConstraintOrientation.HORIZONTAL,
+      ConstraintOrientation.HORIZONTAL,
       0
     ).items = bfsLayer.nodes
 
     if (bfsLayer.index > 0) {
       // nodes that belong to consecutive layers have to be ordered based on their bfs layering
       const previousLayerNodes = bfs.layers.at(bfsLayer.index - 1)!.nodes.toArray()
-      organicLayoutData.constraints.addOrderConstraint(
-        OrganicLayoutConstraintOrientation.VERTICAL
-      ).items = previousLayerNodes.concat(bfsLayer.nodes.toArray())
+
+      const orderConstraints = organicLayoutData.constraints.addOrderConstraint(
+        ConstraintOrientation.VERTICAL
+      )
+      previousLayerNodes.concat(bfsLayer.nodes.toArray()).forEach((node, index) => {
+        orderConstraints.mapper.set(node, index)
+      })
     }
   })
 
@@ -207,44 +210,47 @@ function placeNodesOnLayers(
  * (ii) placed on the left of their associated reaction,
  * (iii) one placed on the layer above the one of the associated reaction and one below.
  */
-function addCoReactantConstraints(
-  graph: IGraph,
-  bfs: ResultItemMapping<INode, number>,
-  organicLayoutData: OrganicLayoutData
-): void {
+function addCoReactantConstraints(graph: IGraph, organicLayoutData: OrganicLayoutData): void {
   // find the nodes representing the co-reactants
   const coReactants = graph.nodes.filter((node) => getType(node) === NodeTypes.CO_REACTANT)
 
   // align vertically the co-reactants
-  organicLayoutData.constraints.addAlignmentConstraint(
-    OrganicLayoutConstraintOrientation.VERTICAL
-  ).items = coReactants
+  organicLayoutData.constraints.addAlignmentConstraint(ConstraintOrientation.VERTICAL).items =
+    coReactants
 
   coReactants.forEach((coReactant) => {
     if (graph.outDegree(coReactant) > 0) {
-      const reaction = graph.outEdgesAt(coReactant).at(0)!.targetNode!
+      const reaction = graph.outEdgesAt(coReactant).at(0)!.targetNode
       // for each co-reactant, find the associated reaction and place:
       // (i) the reaction after the co-reactant in the horizontal axis
       // (ii) the reaction below the co-reactant
-      organicLayoutData.constraints.addOrderConstraint(
-        OrganicLayoutConstraintOrientation.HORIZONTAL
-      ).items = [coReactant, reaction]
+      const horizontalOrdering = organicLayoutData.constraints.addOrderConstraint(
+        ConstraintOrientation.HORIZONTAL
+      )
+      horizontalOrdering.mapper.set(coReactant, 1)
+      horizontalOrdering.mapper.set(reaction, 2)
 
-      organicLayoutData.constraints.addOrderConstraint(
-        OrganicLayoutConstraintOrientation.VERTICAL
-      ).items = [coReactant, reaction]
+      const verticalOrdering = organicLayoutData.constraints.addOrderConstraint(
+        ConstraintOrientation.VERTICAL
+      )
+      verticalOrdering.mapper.set(coReactant, 1)
+      verticalOrdering.mapper.set(reaction, 2)
     } else if (graph.inDegree(coReactant) > 0) {
-      const reaction = graph.inEdgesAt(coReactant).at(0)!.sourceNode!
+      const reaction = graph.inEdgesAt(coReactant).at(0)!.sourceNode
       // for each co-reactant, find the associated reaction and place,
       // (i) the reaction after the co-reactant in the horizontal axis
       // (ii) the reaction above the co-reactant
-      organicLayoutData.constraints.addOrderConstraint(
-        OrganicLayoutConstraintOrientation.HORIZONTAL
-      ).items = [coReactant, reaction]
+      const horizontalOrdering = organicLayoutData.constraints.addOrderConstraint(
+        ConstraintOrientation.HORIZONTAL
+      )
+      horizontalOrdering.mapper.set(coReactant, 1)
+      horizontalOrdering.mapper.set(reaction, 2)
 
-      organicLayoutData.constraints.addOrderConstraint(
-        OrganicLayoutConstraintOrientation.VERTICAL
-      ).items = [reaction, coReactant]
+      const verticalOrdering = organicLayoutData.constraints.addOrderConstraint(
+        ConstraintOrientation.VERTICAL
+      )
+      verticalOrdering.mapper.set(reaction, 1)
+      verticalOrdering.mapper.set(coReactant, 2)
     }
   })
 }
@@ -258,13 +264,23 @@ function addEnzymeConstraints(graph: IGraph, organicLayoutData: OrganicLayoutDat
   enzymes.forEach((enzyme) => {
     const reaction = graph.neighbors(enzyme).at(0)!
     // align horizontally the reaction and the enzyme
-    organicLayoutData.constraints.addAlignmentConstraint(
-      OrganicLayoutConstraintOrientation.HORIZONTAL
-    ).items = [reaction, enzyme]
+    organicLayoutData.constraints.addAlignmentConstraint(ConstraintOrientation.HORIZONTAL).items = [
+      reaction,
+      enzyme
+    ]
     // place the reaction before the enzyme
-    organicLayoutData.constraints.addOrderConstraint(
-      OrganicLayoutConstraintOrientation.HORIZONTAL
-    ).items = [reaction, enzyme]
+    const orderConstraint = organicLayoutData.constraints.addOrderConstraint(
+      ConstraintOrientation.HORIZONTAL
+    )
+    orderConstraint.mapper.set(reaction, 1)
+    orderConstraint.mapper.set(enzyme, 2)
+
+    organicLayoutData.constraints.addMaximumDistance(
+      reaction,
+      enzyme,
+      0,
+      ConstraintOrientation.HORIZONTAL
+    )
   })
 }
 
@@ -287,16 +303,15 @@ function addReactionConstraints(
         !reactionPath.includes(opposite)
       ) {
         // align vertically the reactions with the reactants on the path
-        organicLayoutData.constraints.addAlignmentConstraint(
-          OrganicLayoutConstraintOrientation.VERTICAL
-        ).items = [reaction, opposite]
+        organicLayoutData.constraints.addAlignmentConstraint(ConstraintOrientation.VERTICAL).items =
+          [reaction, opposite]
       }
     })
   })
 }
 
 /**
- * Creates the constraints for the nodes representing reactions that contain more than reactants.
+ * Creates the constraints for the nodes representing reactions that contain more than two reactants.
  * In this case, the four products involved in the reaction should be pairwise aligned vertically.
  */
 function addMultiProductReactionConstraints(
@@ -307,20 +322,45 @@ function addMultiProductReactionConstraints(
   reactions
     .filter((reaction) => isMultipleProductReaction(graph, reaction))
     .forEach((reaction) => {
-      const in1 = graph.inEdgesAt(reaction).at(0)!.sourceNode!
-      const in2 = graph.inEdgesAt(reaction).at(1)!.sourceNode!
-      const out1 = graph.outEdgesAt(reaction).at(0)!.targetNode!
-      const out2 = graph.outEdgesAt(reaction).at(1)!.targetNode!
+      const in1 = graph.inEdgesAt(reaction).at(0)!.sourceNode
+      const in2 = graph.inEdgesAt(reaction).at(1)!.sourceNode
+      const out1 = graph.outEdgesAt(reaction).at(0)!.targetNode
+      const out2 = graph.outEdgesAt(reaction).at(1)!.targetNode
       // align vertically pairwise the reactants
       organicLayoutData.constraints.addAlignmentConstraint(
-        OrganicLayoutConstraintOrientation.VERTICAL,
+        ConstraintOrientation.VERTICAL,
         0
       ).items = [in2, out1]
       // align vertically pairwise the reactants
       organicLayoutData.constraints.addAlignmentConstraint(
-        OrganicLayoutConstraintOrientation.VERTICAL,
+        ConstraintOrientation.VERTICAL,
         0
       ).items = [in1, out2]
+
+      organicLayoutData.constraints.addMaximumDistance(
+        in1,
+        reaction,
+        8,
+        ConstraintOrientation.HORIZONTAL
+      )
+      organicLayoutData.constraints.addMaximumDistance(
+        in2,
+        reaction,
+        8,
+        ConstraintOrientation.HORIZONTAL
+      )
+      organicLayoutData.constraints.addMaximumDistance(
+        out1,
+        reaction,
+        8,
+        ConstraintOrientation.HORIZONTAL
+      )
+      organicLayoutData.constraints.addMaximumDistance(
+        out2,
+        reaction,
+        8,
+        ConstraintOrientation.HORIZONTAL
+      )
     })
 }
 
@@ -329,8 +369,8 @@ function addMultiProductReactionConstraints(
  * which is marked with vAlign = 'end' in its tag.
  */
 function calculateMainReactionPath(graph: IGraph): ResultItemCollection<INode> {
-  const startNodes = graph.nodes.filter((node) => graph.inEdgesAt(node).size === 0).at(0)
-  const endNodes = graph.nodes.filter((node) => getMetabolicData(node).vAlign === 'end').at(0)
+  const startNodes = graph.nodes.filter((node) => graph.inEdgesAt(node).size === 0).at(0)!
+  const endNodes = graph.nodes.filter((node) => getMetabolicData(node).vAlign === 'end').at(0)!
 
   const shortestPath = new ShortestPath({
     source: startNodes,
@@ -353,7 +393,7 @@ function calculateMainReactionPath(graph: IGraph): ResultItemCollection<INode> {
 function calculateLayers(graph: IGraph, excludedEdges?: IEdge[]): BfsResult {
   const startNodes = graph.nodes
     .filter((node) => graph.inEdgesAt(node).size === 0 && isProductOrReactant(node))
-    .first()
+    .first()!
   const bfsTraversal = new Bfs({
     coreNodes: startNodes,
     traversalDirection: TraversalDirection.SUCCESSOR,

@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Edge Reconnection Port Candidate Provider Demo
 
-# Edge Reconnection Port Candidate Provider Demo
+<img src="../../../doc/demo-thumbnails/edge-reconnection.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/input/edgereconnection/).
 
 This demo shows how the reconnection of edge ports can be customized and restricted.
 
@@ -26,4 +28,4 @@ Select an edge and drag one of its port handles to another node. When over a nod
 - _Red edges_ cannot be moved to another port.
 - _Orange edges_ connect to other orange nodes, but you cannot create self-loops.
 - _Blue edges_ connect to all other ports (black and white dots). Note that the blue edge will reuse existing port locations.
-- _Green edges_ connect to any location inside of other green nodes when the `Shift` key is pressed.
+- _Green edges_ connect to any location inside of other green nodes when the Ctrl key is pressed.

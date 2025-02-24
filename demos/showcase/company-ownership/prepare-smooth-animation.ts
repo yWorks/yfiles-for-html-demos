@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,7 +39,7 @@ import {
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
   SimplePort
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Prepares the graph for running a smooth animation so that the new nodes that are added
@@ -50,11 +50,11 @@ import {
 export function modifyGraph(modification: (graph: IGraph) => void, graph: IGraph): void {
   const newNodes: INode[] = []
   const newEdges: IEdge[] = []
-  const newNodeCollector = (sender: IGraph, evt: ItemEventArgs<INode>): void => {
+  const newNodeCollector = (evt: ItemEventArgs<INode>): void => {
     newNodes.push(evt.item)
   }
 
-  const newEdgeCollector = (sender: IGraph, evt: ItemEventArgs<IEdge>): void => {
+  const newEdgeCollector = (evt: ItemEventArgs<IEdge>): void => {
     newEdges.push(evt.item)
   }
 
@@ -66,27 +66,27 @@ export function modifyGraph(modification: (graph: IGraph) => void, graph: IGraph
       owner: simulatedOwner,
       locationParameter: port.locationParameter
     })
-    return FreeNodePortLocationModel.INSTANCE.createParameter(port.owner!, dummyPort.location)
+    return FreeNodePortLocationModel.INSTANCE.createParameter(port.owner, dummyPort.location)
   }
 
-  const edgeChangedCollector = (sender: IGraph, evt: EdgeEventArgs): void => {
+  const edgeChangedCollector = (evt: EdgeEventArgs): void => {
     graph.setPortLocationParameter(
-      evt.item.sourcePort!,
-      getSimulatedParameter(evt.item.sourcePort!, evt.sourcePortOwner)
+      evt.item.sourcePort,
+      getSimulatedParameter(evt.item.sourcePort, evt.sourcePortOwner)
     )
     graph.setPortLocationParameter(
-      evt.item.targetPort!,
-      getSimulatedParameter(evt.item.targetPort!, evt.targetPortOwner)
+      evt.item.targetPort,
+      getSimulatedParameter(evt.item.targetPort, evt.targetPortOwner)
     )
   }
 
-  graph.addNodeCreatedListener(newNodeCollector)
-  graph.addEdgeCreatedListener(newEdgeCollector)
-  graph.addEdgePortsChangedListener(edgeChangedCollector)
+  graph.addEventListener('node-created', newNodeCollector)
+  graph.addEventListener('edge-created', newEdgeCollector)
+  graph.addEventListener('edge-ports-changed', edgeChangedCollector)
   modification(graph)
-  graph.removeNodeCreatedListener(newNodeCollector)
-  graph.removeEdgeCreatedListener(newEdgeCollector)
-  graph.removeEdgePortsChangedListener(edgeChangedCollector)
+  graph.removeEventListener('node-created', newNodeCollector)
+  graph.removeEventListener('edge-created', newEdgeCollector)
+  graph.removeEventListener('edge-ports-changed', edgeChangedCollector)
 
   // first, we place the new nodes at the barycenter of their neighbors
   graph.applyLayout({
@@ -103,11 +103,8 @@ export function modifyGraph(modification: (graph: IGraph) => void, graph: IGraph
   newEdges.forEach((e) => {
     graph.clearBends(e)
     graph.setPortLocationParameter(
-      e.targetPort!,
-      FreeNodePortLocationModel.INSTANCE.createParameter(
-        e.targetPort!.owner!,
-        e.sourcePort!.location
-      )
+      e.targetPort,
+      FreeNodePortLocationModel.INSTANCE.createParameter(e.targetPort.owner, e.sourcePort.location)
     )
   })
 }

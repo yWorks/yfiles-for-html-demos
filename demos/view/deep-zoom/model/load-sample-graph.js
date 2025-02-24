@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,19 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, ShapeNodeStyle } from 'yfiles'
-import { sampleData } from './deep-zoom-sample.js'
-
+import { GraphBuilder, ShapeNodeStyle } from '@yfiles/yfiles'
+import { sampleData } from './deep-zoom-sample'
 /**
  * Loads the initial sample graph.
- * @param {!GraphComponent} graphComponent
- * @returns {!Promise}
  */
 export async function loadSampleGraph(graphComponent) {
   const graph = graphComponent.graph
-
   const graphBuilder = new GraphBuilder(graph)
-
   // configure node creation
   graph.nodeDefaults.shareStyleInstance = false
   graphBuilder.createNodesSource({
@@ -50,7 +45,6 @@ export async function loadSampleGraph(graphComponent) {
       stroke: (dataItem) => `1.5px ${dataItem.stroke}`
     }
   })
-
   // configure group node creation
   graph.groupNodeDefaults.shareStyleInstance = false
   graphBuilder.createGroupNodesSource({
@@ -66,7 +60,6 @@ export async function loadSampleGraph(graphComponent) {
         })
     }
   })
-
   // configure edge creation
   graph.edgeDefaults.shareStyleInstance = false
   graphBuilder.createEdgesSource({
@@ -78,7 +71,6 @@ export async function loadSampleGraph(graphComponent) {
       targetArrow: (data) => `${data.color} medium triangle`
     }
   })
-
   // actually create the graph
   graphBuilder.buildGraph()
 }

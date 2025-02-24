@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -198,7 +198,6 @@ const graphDataLayout = {
       },
       alignment: 0.0,
       label: '15',
-
       parent: 15
     },
     {
@@ -211,7 +210,6 @@ const graphDataLayout = {
       },
       alignment: 0.0,
       label: '16',
-
       parent: 15
     },
     {
@@ -224,7 +222,6 @@ const graphDataLayout = {
       },
       alignment: 0.0,
       label: '17',
-
       parent: 15
     },
     {
@@ -237,7 +234,6 @@ const graphDataLayout = {
       },
       alignment: 1,
       label: '18',
-
       parent: 15
     },
     {
@@ -250,7 +246,6 @@ const graphDataLayout = {
       },
       alignment: 0.0,
       label: '19',
-
       parent: 15
     },
     {
@@ -734,7 +729,6 @@ const graphDataLayout = {
     }
   ]
 }
-
 const graphDataLayoutData = {
   nodes: [
     {
@@ -1416,7 +1410,6 @@ const graphDataLayoutData = {
     }
   ]
 }
-
 const graphDataAnalysis = {
   nodes: [
     {
@@ -1589,7 +1582,6 @@ const graphDataAnalysis = {
       },
       alignment: 0.0,
       label: '15',
-
       parent: 15
     },
     {
@@ -1602,7 +1594,6 @@ const graphDataAnalysis = {
       },
       alignment: 0.0,
       label: '16',
-
       parent: 15
     },
     {
@@ -1615,7 +1606,6 @@ const graphDataAnalysis = {
       },
       alignment: 0.0,
       label: '17',
-
       parent: 15
     },
     {
@@ -1628,7 +1618,6 @@ const graphDataAnalysis = {
       },
       alignment: 1,
       label: '18',
-
       parent: 15
     },
     {
@@ -1641,7 +1630,6 @@ const graphDataAnalysis = {
       },
       alignment: 0.0,
       label: '19',
-
       parent: 15
     },
     {
@@ -2125,5 +2113,4 @@ const graphDataAnalysis = {
     }
   ]
 }
-
 export { graphDataLayout, graphDataLayoutData, graphDataAnalysis }

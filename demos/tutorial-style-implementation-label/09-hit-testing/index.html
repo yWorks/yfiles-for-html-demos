@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>09 Hit-Testing - Tutorial: Label Style Implementation [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -52,7 +50,7 @@
         <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
         <a href="../../README.html">Demos</a>
 
-        <a href="../../README.html#tutorial-label-style-implementation">
+        <a href="../../README.html#tutorial-style-implementation-label">
           Tutorial: Label Style Implementation
         </a>
 
@@ -180,7 +178,7 @@
 ): <span class="hljs-built_in">boolean</span> {
   <span class="hljs-keyword">const</span> labelLayout = label.<span class="hljs-property">layout</span>
   <span class="hljs-comment">// first check if the label layout is hit</span>
-  <span class="hljs-keyword">if</span> (labelLayout.<span class="hljs-title function_">hits</span>(location, context.<span class="hljs-property">hitTestRadius</span>)) {
+  <span class="hljs-keyword">if</span> (labelLayout.<span class="hljs-title function_">contains</span>(location, context.<span class="hljs-property">hitTestRadius</span>)) {
     <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
   }
   <span class="hljs-comment">// if the layout is not hit, we have to check the tail triangle.</span>
@@ -201,9 +199,7 @@
 
   <span class="hljs-comment">// check the rectangular tail bounds</span>
   <span class="hljs-keyword">const</span> tailBounds = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rect</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, tailWidth, tailHeight)
-  <span class="hljs-keyword">if</span> (
-    !tailBounds.<span class="hljs-title function_">containsWithEps</span>(transformedLocation, context.<span class="hljs-property">hitTestRadius</span>)
-  ) {
+  <span class="hljs-keyword">if</span> (!tailBounds.<span class="hljs-title function_">contains</span>(transformedLocation, context.<span class="hljs-property">hitTestRadius</span>)) {
     <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
   }
 

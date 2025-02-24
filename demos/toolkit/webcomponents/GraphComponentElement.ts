@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, IGraph, IInputMode } from 'yfiles'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { GraphComponent, IGraph, IInputMode } from '@yfiles/yfiles'
 
 if (window.customElements) {
   const template = document.createElement('template')
@@ -79,10 +77,9 @@ if (window.customElements) {
       }
 
       this._graphComponent = new GraphComponent()
-      applyDemoTheme(this._graphComponent)
       this.isInShadowRoot = true
 
-      stamped.appendChild(this.graphComponent.div)
+      stamped.appendChild(this.graphComponent.htmlElement)
 
       // append the template and the GraphComponent div to the shadow root so that they are encapsulated
       this._shadowRoot.appendChild(stamped)
@@ -91,7 +88,7 @@ if (window.customElements) {
       this.updateZoomAttribute()
       // listen to changes in the graphComponent's zoom property (which may happend e.g. after a
       // fitGraphBounds call) and update the corresponding HTML attribute accordingly
-      this.graphComponent.addZoomChangedListener(() => this.updateZoomAttribute())
+      this.graphComponent.addEventListener('zoom-changed', () => this.updateZoomAttribute())
     }
 
     /**
@@ -178,7 +175,7 @@ if (window.customElements) {
      * style children.
      */
     private setParent(parent: Node): void {
-      parent.appendChild(this.graphComponent.div)
+      parent.appendChild(this.graphComponent.htmlElement)
 
       const styles = this.componentStyles!
       for (let i = 0; i < styles.length; i++) {

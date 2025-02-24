@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,25 +27,24 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
-  Enum,
+  Color,
   EventArgs,
+  EventRecognizers,
   Fill,
   HorizontalTextAlignment,
   IconLabelStyle,
   ILabelModelParameter,
   ILabelStyle,
   IModelItem,
-  Insets,
-  InteriorLabelModel,
-  InteriorStretchLabelModel,
-  Key,
+  InteriorNodeLabelModel,
   KeyEventArgs,
   KeyEventType,
+  LabelStyle,
   ModifierKeys,
   Size,
+  StretchNodeLabelModel,
   VerticalTextAlignment
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { GraphWizardInputMode } from './GraphWizardInputMode'
 import type { Button, ButtonActionListener } from '../../input/button-input-mode/ButtonInputMode'
 
@@ -57,13 +56,13 @@ export type PreCondition = (mode: GraphWizardInputMode) => boolean
 /**
  * A callback to decide, whether an event triggers an active {@link WizardAction}.
  */
-export type Trigger = (source: object, evt: EventArgs) => boolean
+export type Trigger = ReturnType<typeof EventRecognizers.createKeyEventRecognizer>
 
 /**
  * A combination of {@link Key} and {@link ModifierKeys} that describe a keyboard shortcut.
  */
 export type Shortcut = {
-  key: Key
+  key: string
   modifier?: ModifierKeys
 }
 
@@ -179,8 +178,8 @@ export default class WizardAction {
     this._type = type
     this._preCondition = preCondition
     this._shortcuts = shortcuts ?? []
-    this._trigger = (source, evt) => {
-      if (trigger && trigger(source, evt)) {
+    this._trigger = (evt, source) => {
+      if (trigger && trigger(evt, source)) {
         return true
       } else if (
         this.shortcuts.length > 0 &&
@@ -189,7 +188,7 @@ export default class WizardAction {
       ) {
         return this.shortcuts.some(
           (shortCut) =>
-            shortCut.key == evt.key &&
+            shortCut.key.toUpperCase() === evt.key.toUpperCase() &&
             (shortCut.modifier === undefined || shortCut.modifier == evt.modifiers)
         )
       }
@@ -256,14 +255,8 @@ export default class WizardAction {
    * @param mode The {@link GraphWizardInputMode} handling this action.
    */
   getDefaultAction(mode: GraphWizardInputMode): ButtonActionListener {
-    return (button: Button) => {
-      mode.handleAction(
-        this,
-        button.owner,
-        button.tag,
-        mode.inputModeContext!.canvasComponent!.lastInputEvent
-      )
-    }
+    return (button: Button) =>
+      mode.handleAction(this, button.owner, button.tag, mode.graphComponent.lastInputEvent)
   }
 
   /**
@@ -297,30 +290,30 @@ export default class WizardAction {
     const styleConfig = options.style || options.styleFactory!(owner)
     if (styleConfig && styleConfig.type === 'icon') {
       const iconLabelStyle = new IconLabelStyle({
-        icon: styleConfig.iconPath,
+        href: styleConfig.iconPath,
         iconSize: buttonSize,
-        iconPlacement: InteriorStretchLabelModel.CENTER
+        iconPlacement: StretchNodeLabelModel.CENTER
       })
       const fill = styleConfig.backgroundFill
         ? Fill.from(styleConfig.backgroundFill)
-        : Fill.WHITE_SMOKE
-      iconLabelStyle.wrapped = new DefaultLabelStyle({
+        : Color.WHITE_SMOKE
+      iconLabelStyle.wrappedStyle = new LabelStyle({
         backgroundFill: fill
       })
       return iconLabelStyle
     } else if (styleConfig && styleConfig.type === 'rect') {
-      return new DefaultLabelStyle({
+      return new LabelStyle({
         backgroundStroke: styleConfig.outline,
         backgroundFill: styleConfig.fill || null,
-        insets: new Insets(4)
+        padding: 4
       })
     } else if (styleConfig && styleConfig.type === 'text') {
       const fill = styleConfig.backgroundFill
         ? Fill.from(styleConfig.backgroundFill)
-        : Fill.WHITE_SMOKE
-      const labelStyle = new DefaultLabelStyle({
+        : Color.WHITE_SMOKE
+      const labelStyle = new LabelStyle({
         backgroundFill: fill,
-        insets: new Insets(1),
+        padding: 1,
         verticalTextAlignment: VerticalTextAlignment.CENTER,
         horizontalTextAlignment: styleConfig.iconPath
           ? HorizontalTextAlignment.RIGHT
@@ -329,15 +322,15 @@ export default class WizardAction {
       if (styleConfig.iconPath) {
         const min = Math.min(buttonSize.width, buttonSize.height)
         return new IconLabelStyle({
-          icon: styleConfig.iconPath,
+          href: styleConfig.iconPath,
           iconSize: new Size(min, min),
-          iconPlacement: InteriorLabelModel.WEST,
-          wrapped: labelStyle
+          iconPlacement: InteriorNodeLabelModel.LEFT,
+          wrappedStyle: labelStyle
         })
       }
       return labelStyle
     } else {
-      return new DefaultLabelStyle()
+      return new LabelStyle()
     }
   }
 
@@ -444,17 +437,19 @@ export default class WizardAction {
     return tooltip
   }
 
-  private static getKeyName(key: Key): string {
-    if (key == Key.ARROW_UP) {
+  private static getKeyName(key: string): string {
+    if (key == 'ArrowUp') {
       return '&uarr;'
-    } else if (key == Key.ARROW_DOWN) {
+    } else if (key == 'ArrowDown') {
       return '&darr;'
-    } else if (key == Key.ARROW_LEFT) {
+    } else if (key == 'ArrowLeft') {
       return '&larr;'
-    } else if (key == Key.ARROW_RIGHT) {
+    } else if (key == 'ArrowRight') {
       return '&rarr;'
+    } else if (key == ' ') {
+      return 'Space'
     }
-    return Enum.getName(Key.$class, key)
+    return key
   }
 }
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { ILayoutAlgorithm, LayoutData } from 'yfiles'
+import type { ILayoutAlgorithm, INode, LayoutData } from '@yfiles/yfiles'
 import {
   CompactDiskLayout,
   CompactDiskLayoutData,
@@ -34,7 +34,7 @@ import {
   OrganicLayout,
   RecursiveGroupLayout,
   RecursiveGroupLayoutData
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Demonstrates how to configure the {@link CompactDiskLayout} algorithm in conjunction with the
@@ -56,21 +56,21 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
   // create the (optional) layout data to configure node types
   const compactDiskData = new CompactDiskLayoutData()
   // the node types are taken from an optional nodeType property on the node's tag
-  compactDiskData.nodeTypes.delegate = (node) => (node.tag ? node.tag.nodeType : null)
+  compactDiskData.nodeTypes = (node: INode) => (node.tag ? node.tag.nodeType : null)
 
   // create a recursive layout that will apply the compact disk layout to each grouping
   // hierarchy independently
   const recursiveGroupLayout = new RecursiveGroupLayout({
     coreLayout: new OrganicLayout({
       deterministic: true,
-      minimumNodeDistance: 20
+      defaultMinimumNodeDistance: 20
     })
   })
 
   // use the recursive group layout data to define that the content of each group node should
   // be arranged using the CompactDiskLayout algorithm configured above
   const recursiveLayoutData = new RecursiveGroupLayoutData()
-  recursiveLayoutData.groupNodeLayouts.constant = compactDiskLayout
+  recursiveLayoutData.groupNodeLayouts = compactDiskLayout
 
   return {
     layout: recursiveGroupLayout,

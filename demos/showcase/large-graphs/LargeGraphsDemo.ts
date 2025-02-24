@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,24 +35,23 @@ import {
   IReshapeHandler,
   License,
   NodeReshapeHandleProvider
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import RenderingTypesManager from './RenderingTypesManager'
 
 import type { DemoConfiguration } from './DemoConfiguration'
 import {
-  HierarchicDemoConfiguration,
+  HierarchicalDemoConfiguration,
   OrganicDemoConfiguration
 } from './LargeGraphDemoConfiguration'
 import OrgChartDemoConfiguration from './OrgChartDemoConfiguration'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   addNavigationButtons,
   addOptions,
   checkWebGL2Support,
   finishLoading
-} from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+} from '@yfiles/demo-resources/demo-page'
 
 let renderingTypesManager: RenderingTypesManager = null!
 
@@ -63,11 +62,10 @@ async function run(): Promise<void> {
 
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   configureInteraction(graphComponent)
   initToolbar(graphComponent)
 
-  await loadGraph(graphComponent, new HierarchicDemoConfiguration())
+  await loadGraph(graphComponent, new HierarchicalDemoConfiguration())
 
   initGraphInformationUI(graphComponent)
   initRenderingInformationUI(graphComponent)
@@ -101,17 +99,13 @@ async function loadGraph(graphComponent: GraphComponent, config: DemoConfigurati
     graphComponent,
     config.svgThreshold,
     config.nodeStyleProvider,
-    config.webGL2NodeStyleProvider,
     config.edgeStyleProvider,
-    config.webGL2EdgeStyleProvider,
     config.nodeCreator
   )
 
   await config.loadGraph(graphComponent)
 
-  renderingTypesManager.initializeWebGL2NodeStyles()
-
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   renderingTypesManager.registerZoomChangedListener()
   renderingTypesManager.registerItemCreatedListeners()
@@ -129,17 +123,16 @@ async function loadGraph(graphComponent: GraphComponent, config: DemoConfigurati
  */
 function configureInteraction(graphComponent: GraphComponent) {
   graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
     allowClipboardOperations: true
   })
 
   // Disable moving of individual edge segments
-  graphComponent.graph.decorator.edgeDecorator.positionHandlerDecorator.hideImplementation()
+  graphComponent.graph.decorator.edges.positionHandler.hide()
 
-  graphComponent.graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory((node) => {
+  graphComponent.graph.decorator.nodes.reshapeHandleProvider.addFactory((node) => {
     const keepAspectRatio = new NodeReshapeHandleProvider(
       node,
-      node.lookup(IReshapeHandler.$class) as IReshapeHandler,
+      node.lookup(IReshapeHandler) as IReshapeHandler,
       HandlePositions.BORDER
     )
     keepAspectRatio.ratioReshapeRecognizer = EventRecognizers.ALWAYS
@@ -159,9 +152,9 @@ function initGraphInformationUI(graphComponent: GraphComponent) {
     updateGraphInformation(graphComponent.graph)
   }
 
-  inputMode.addNodeCreatedListener(updateGraphInformationListener)
-  inputMode.createEdgeInputMode.addEdgeCreatedListener(updateGraphInformationListener)
-  inputMode.addDeletedItemListener(updateGraphInformationListener)
+  inputMode.addEventListener('node-created', updateGraphInformationListener)
+  inputMode.createEdgeInputMode.addEventListener('edge-created', updateGraphInformationListener)
+  inputMode.addEventListener('deleted-item', updateGraphInformationListener)
 
   updateGraphInformation(graphComponent.graph)
 }
@@ -176,19 +169,19 @@ function updateGraphInformation(graph: IGraph) {
  * and zoom level.
  */
 function initRenderingInformationUI(graphComponent: GraphComponent) {
-  graphComponent.addZoomChangedListener((graphComponent) => {
+  graphComponent.addEventListener('zoom-changed', (_, graphComponent) => {
     updateRenderingInformationUI(graphComponent)
   })
   updateRenderingInformationUI(graphComponent)
 
   // Show a popup when the rendering type changes
-  renderingTypesManager.addRenderingTypeChangedListener((newMode) => {
+  renderingTypesManager.setRenderingTypeChangedListener((newMode) => {
     const thresholdPercent = Math.floor(renderingTypesManager.svgThreshold * 100)
     const renderingInfoPopup = document.querySelector('#renderingInfoPopup')!
     renderingInfoPopup.textContent =
       newMode === 'SVG'
         ? `SVG rendering at zoom above ${thresholdPercent}%`
-        : `WebGL2 rendering at zoom below ${thresholdPercent}%`
+        : `WebGL rendering at zoom below ${thresholdPercent}%`
     renderingInfoPopup.className = 'visible'
     setTimeout(() => {
       renderingInfoPopup.className = ''
@@ -219,31 +212,31 @@ function setUIDisabled(disabled: boolean) {
  */
 function initToolbar(graphComponent: GraphComponent): void {
   const sampleSelect = document.querySelector<HTMLSelectElement>('#sampleSelection')!
-  addOptions(sampleSelect, 'Hierarchic', 'Organic', 'OrgChart')
+  addOptions(sampleSelect, 'Hierarchical', 'Organic', 'OrgChart')
   sampleSelect.addEventListener('change', async (e) => {
     await setUIDisabled(true)
     sampleSelect.disabled = true
-    const hierarchicOrganicDescription =
-      document.querySelector<HTMLDivElement>('#hierarchicOrganic')!
+    const hierarchicalOrganicDescription =
+      document.querySelector<HTMLDivElement>('#hierarchicalOrganic')!
     const orgChartDescription = document.querySelector<HTMLDivElement>('#orgChart')!
 
     const select = e.target as HTMLSelectElement
     document.querySelector<HTMLDivElement>('#sampleName')!.innerText = select.value
     switch (select.value) {
-      case 'Hierarchic': {
-        hierarchicOrganicDescription.style.display = 'block'
+      case 'Hierarchical': {
+        hierarchicalOrganicDescription.style.display = 'block'
         orgChartDescription.style.display = 'none'
-        await loadGraph(graphComponent, new HierarchicDemoConfiguration())
+        await loadGraph(graphComponent, new HierarchicalDemoConfiguration())
         break
       }
       case 'Organic': {
-        hierarchicOrganicDescription.style.display = 'block'
+        hierarchicalOrganicDescription.style.display = 'block'
         orgChartDescription.style.display = 'none'
         await loadGraph(graphComponent, new OrganicDemoConfiguration())
         break
       }
       case 'OrgChart': {
-        hierarchicOrganicDescription.style.display = 'none'
+        hierarchicalOrganicDescription.style.display = 'none'
         orgChartDescription.style.display = 'block'
         await loadGraph(graphComponent, new OrgChartDemoConfiguration())
         break

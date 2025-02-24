@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEnumerable, IGraph, INode, Rect } from 'yfiles'
+import { IEnumerable, IGraph, INode, Rect } from '@yfiles/yfiles'
 
 /*
  * Provides utility functions for aligning nodes, i.e.
@@ -124,7 +124,7 @@ function alignMinCoordImpl(graph: IGraph, nodes: IEnumerable<INode>, coordinate:
 
   const min = nodes.reduce(
     (min, node) => Math.min(node.layout[coordinate], min),
-    nodes.first().layout[coordinate]
+    nodes.first()!.layout[coordinate]
   )
   for (const node of nodes) {
     updateLayout(graph, node, coordinate, min)
@@ -155,7 +155,7 @@ function alignMaxCoordImpl(
 
   const max = nodes.reduce(
     (max, node) => Math.max(node.layout[coordinate] + node.layout[size], max),
-    nodes.first().layout[coordinate]
+    nodes.first()!.layout[coordinate]
   )
   // technically, the initial value should be
   //   nodes.at(0).layout[coordinate] + nodes.at(0).layout[size]
@@ -255,7 +255,7 @@ function distributeImpl(
 
   const edit = graph.beginEdit('Distribute Nodes', 'Distribute Nodes')
 
-  const fnl = nodes.first().layout
+  const fnl = nodes.first()!.layout
   let min = fnl[coordinate]
   let max = fnl[coordinate] + fnl[size]
   let occupied = 0

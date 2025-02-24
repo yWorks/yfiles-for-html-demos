@@ -1,21 +1,21 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Angular CLI Demo
+<img src="../../../doc/demo-thumbnails/angular-cli.webp" alt="demo-thumbnail" height="320"/>
 
-The Angular CLI Demo shows the integration of yFiles for HTML with [Angular CLI](https://cli.angular.io/).
+The Angular CLI Demo shows the integration of yFiles for HTML with [Angular CLI](https://angular.dev/tools/cli/).
 
 To start the demo
 
-1.  Go to the demo's directory `demos-js/toolkit/angular`.
+1.  Go to the demo's directory `demos-ts/toolkit/angular`.
 2.  Run `npm install`.
 3.  Run `npm start`.
 

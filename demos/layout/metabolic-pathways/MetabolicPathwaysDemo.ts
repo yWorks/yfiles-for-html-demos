@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,33 +26,29 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   ArcEdgeStyle,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
+  IEdgeStyle,
   LayoutExecutor,
-  License,
-  PortAdjustmentPolicy,
-  VoidEdgeStyle
-} from 'yfiles'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+  License
+} from '@yfiles/yfiles'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 import { pentosePhosphateData } from './resources/pentose-phosphate-data'
 import { configurePentosePhosphateLayout } from './configure-pentose-layout'
 import { type InputNodeData, nodeTypesMap } from './data-types'
 import { getArcEdgeStyle, initializeDefaultStyles, updateStyles } from './styles'
 import { krebsCycleData } from './resources/krebs-cycle-data'
 import { configureKrebsCycleLayout } from './configure-krebs-cycle-layout'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 let graphComponent: GraphComponent
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize the interaction
   graphComponent.inputMode = new GraphViewerInputMode()
 
@@ -95,9 +91,8 @@ async function runLayout(): Promise<void> {
     graphComponent,
     layout: config.layout,
     layoutData: config.layoutData,
-    duration: '0s',
-    animateViewport: true,
-    portAdjustmentPolicy: PortAdjustmentPolicy.LENGTHEN
+    animationDuration: '0s',
+    animateViewport: true
   })
   await layoutExecutor.start()
 
@@ -138,12 +133,12 @@ function createGraph(): void {
 }
 
 /**
- * Removes the parallel edges that have already been assigned a VoidEdgeStyle.
+ * Removes the parallel edges that have already been assigned a void edge style.
  */
 function removeParallelEdges(): void {
   const graph = graphComponent.graph
   for (const edge of graph.edges.toArray()) {
-    if (edge.style instanceof VoidEdgeStyle) {
+    if (edge.style === IEdgeStyle.VOID_EDGE_STYLE) {
       graph.remove(edge)
     }
   }

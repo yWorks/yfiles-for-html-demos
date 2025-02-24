@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,8 +35,8 @@ import {
   Point,
   Rect,
   SvgVisual,
-  Visual
-} from 'yfiles'
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
 import { ChordDiagramLayout } from './ChordDiagramLayout'
 
 const SVG_NS = 'http://www.w3.org/2000/svg'
@@ -45,13 +45,15 @@ const SEMI_CIRCLE = Math.PI
 const QUARTER_CIRCLE = Math.PI * 0.5
 const STROKE_WIDTH = 2
 
+type CircleSegmentNodeStyleVisual = TaggedSvgVisual<SVGGElement, NodeRenderDataCache>
+
 /**
  * Visualizes nodes as arc segments for a fixed center point.
  * This implementation uses ...
  * ... the node's width as the angle (in radians) of the arc segment that visualizes the node and
  * ... the node's height as the thickness of said arc segment.
  */
-export class CircleSegmentNodeStyle extends NodeStyleBase {
+export class CircleSegmentNodeStyle extends NodeStyleBase<CircleSegmentNodeStyleVisual> {
   /**
    * Determines whether or not additional information is shown.
    */
@@ -66,14 +68,8 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
   /**
    * Creates the actual SVG element inside the provided container
    */
-  private render(
-    node: INode,
-    container: SVGGElement & { 'data-renderDataCache'?: NodeRenderDataCache },
-    cache: NodeRenderDataCache
-  ): void {
+  private render(node: INode, container: SVGGElement, cache: NodeRenderDataCache): void {
     const data = cache.nodeData
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
 
     // the node itself is displayed by an svg arc segment
     const path = document.createElementNS(SVG_NS, 'path')
@@ -174,15 +170,15 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
   /**
    * Creates the visualization of a node in a chord diagram.
    */
-  createVisual(context: IRenderContext, node: INode): SvgVisual {
+  createVisual(context: IRenderContext, node: INode): CircleSegmentNodeStyleVisual {
     // creates a 'g' element and use it as a container for the rendering of the node.
     const g = document.createElementNS(SVG_NS, 'g')
     // Get the necessary data for rendering of the node
     const cache = new NodeRenderDataCache(circleData(node), this._showStyleHints)
     // Render the node
     this.render(node, g, cache)
-
-    return new SvgVisual(g)
+    // store information with the visual on how we created it
+    return SvgVisual.from(g, cache)
   }
 
   /**
@@ -191,14 +187,12 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
    */
   protected updateVisual(
     context: IRenderContext,
-    oldVisual: SvgVisual,
+    oldVisual: CircleSegmentNodeStyleVisual,
     node: INode
-  ): Visual | null {
-    const container = oldVisual.svgElement as SVGGElement & {
-      'data-renderDataCache'?: NodeRenderDataCache
-    }
+  ): CircleSegmentNodeStyleVisual {
+    const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
-    const oldData = container['data-renderDataCache']
+    const oldData = oldVisual.tag
     // get the data for the new visual
     const newData = new NodeRenderDataCache(circleData(node), this._showStyleHints)
     if (!newData.equals(oldData)) {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Key, KeyEventRecognizers, KeyEventType, ModifierKeys } from 'yfiles'
+import { EventRecognizers, KeyEventType, ModifierKeys } from '@yfiles/yfiles'
 import type { Trigger } from './WizardAction'
 
 /**
@@ -34,7 +34,10 @@ import type { Trigger } from './WizardAction'
  * @param key The key that has to be pressed.
  * @param modifiers A modifier that has to be pressed together with the key.
  */
-export function onKey(key: Key, modifiers?: ModifierKeys): Trigger {
-  const mods = modifiers || ModifierKeys.NONE
-  return KeyEventRecognizers.create(KeyEventType.DOWN, key, mods)
+export function onKey(key: string, modifiers?: ModifierKeys): Trigger {
+  return EventRecognizers.createKeyEventRecognizer(
+    KeyEventType.DOWN,
+    key,
+    modifiers ?? ModifierKeys.NONE
+  )
 }

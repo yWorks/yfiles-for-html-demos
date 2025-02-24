@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,7 @@ import {
   ArrowEdgeStyle,
   ArrowStyleShape,
   ArrowType,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   Font,
   GeneralPath,
   HorizontalTextAlignment,
@@ -43,10 +43,9 @@ import {
   RectangleNodeStyle,
   Size,
   VerticalTextAlignment
-} from 'yfiles'
-import { colorSets } from 'demo-resources/demo-colors'
-import { getType, NodeTypes } from './data-types.js'
-
+} from '@yfiles/yfiles'
+import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { getType, NodeTypes } from './data-types'
 /**
  * A mapping between node types and colors.
  */
@@ -67,26 +66,23 @@ const predefinedColorSets = new Map([
   [NodeTypes.CO_REACTANT, colorSets['demo-palette-72']],
   [NodeTypes.OTHER, colorSets['demo-palette-511']]
 ])
-
 /**
  * The style used for labels that can support HTML tags.
  */
 const markupLabelStyle = new MarkupLabelStyle({
   shape: 'round-rectangle',
-  insets: 2,
+  padding: 2,
   verticalTextAlignment: VerticalTextAlignment.CENTER,
   horizontalTextAlignment: HorizontalTextAlignment.CENTER,
-  font: new Font({ fontSize: 14, fontWeight: 'bold', fontFamily: 'Tahoma,sans-serif' })
+  font: new Font({ fontSize: 14, fontWeight: 'bold', fontFamily: 'Tahoma,sans-serif' }),
+  wrapping: 'none'
 })
-
 /**
  * The color of the edges.
  */
 const edgeStrokeColor = '#0b7189'
-
 /**
  * Initializes the default styles for the nodes and edges of the graph.
- * @param {!IGraph} graph
  */
 export function initializeDefaultStyles(graph) {
   graph.nodeDefaults.size = new Size(190, 60)
@@ -96,10 +92,8 @@ export function initializeDefaultStyles(graph) {
     fill: `${edgeStrokeColor}`
   })
 }
-
 /**
  * Updates the node and edge styles based on the node types.
- * @param {!IGraph} graph
  */
 export function updateStyles(graph) {
   graph.nodes.forEach((node) => {
@@ -114,33 +108,28 @@ export function updateStyles(graph) {
           })
         : reactionNodeStyle
     )
-
     if (node.labels.size > 0) {
       const label = node.labels.at(0)
       graph.setStyle(label, markupLabelStyle)
       if (type === NodeTypes.CO_REACTANT || type === NodeTypes.OTHER) {
-        graph.setLabelLayoutParameter(label, ExteriorLabelModel.NORTH)
+        graph.setLabelLayoutParameter(label, ExteriorNodeLabelModel.TOP)
       }
     }
-
     if (type === NodeTypes.REACTION) {
       graph.setNodeLayout(node, new Rect(0, 0, 40, 40))
     } else if (type === NodeTypes.CO_REACTANT || type === NodeTypes.OTHER) {
       graph.setNodeLayout(node, new Rect(0, 0, 20, 20))
     }
   })
-
   const visited = new Set()
   graph.edges.toArray().forEach((edge) => {
     if (visited.has(edge)) {
       return
     }
-
     const source = edge.sourceNode
     const sourceType = getType(source)
     const target = edge.targetNode
     const targetType = getType(target)
-
     const parallelEdge = graph.getEdge(target, source)
     if (parallelEdge && !visited.has(parallelEdge)) {
       graph.remove(parallelEdge)
@@ -155,18 +144,13 @@ export function updateStyles(graph) {
       visited.add(parallelEdge)
       visited.add(edge)
     }
-
     if (sourceType === NodeTypes.CO_REACTANT || targetType === NodeTypes.CO_REACTANT) {
       graph.setStyle(edge, getArcEdgeStyle(graph, edge))
     }
   })
 }
-
 /**
  * Returns an arc-edge style for edges attached to co-reactants by calculating the appropriate edge height.
- * @param {!IGraph} graph
- * @param {!IEdge} edge
- * @returns {!IEdgeStyle}
  */
 export function getArcEdgeStyle(graph, edge) {
   const hasArrow = getType(edge.sourceNode) !== NodeTypes.CO_REACTANT
@@ -182,17 +166,12 @@ export function getArcEdgeStyle(graph, edge) {
       : IArrow.NONE
   })
 }
-
 /**
  * Calculates the height for the arc edge based on the position of its source/target.
- * @param {!IGraph} graph
- * @param {!IEdge} edge
- * @returns {number}
  */
 function getArcHeight(graph, edge) {
   const source = edge.sourceNode
   const target = edge.targetNode
-
   const reaction = getType(source) === NodeTypes.REACTION ? source : target
   const coReactants = graph
     .neighbors(reaction)
@@ -202,19 +181,16 @@ function getArcHeight(graph, edge) {
     )
   return coReactants.size > 1 ? -40 : 40
 }
-
 /**
  * The node style used for rendering reactions with an image.
  */
 export const reactionNodeStyle = new ImageNodeStyle({
-  image: 'resources/reaction.svg',
+  href: 'resources/reaction.svg',
   aspectRatio: 1,
   normalizedOutline: createReactionNodeOutline()
 })
-
 /**
  * Returns the normalized outline for the ImageNodeStyle to support the elliptical shape.
- * @returns {!GeneralPath}
  */
 function createReactionNodeOutline() {
   const outline = new GeneralPath()

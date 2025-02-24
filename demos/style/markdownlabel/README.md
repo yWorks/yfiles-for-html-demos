@@ -1,33 +1,35 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Markdown Label Demo
 
-# Markdown Label Demo
+<img src="../../../doc/demo-thumbnails/markdown-label.webp" alt="demo-thumbnail" height="320"/>
 
-This demo shows how to create labels using markdown syntax.
+[You can also run this demo online](https://www.yworks.com/demos/style/markdownlabel/).
 
-The label style implementation `MarkdownLabelStyle` uses [markdown-it](https://github.com/markdown-it/markdown-it) to transpile markdown text into HTML. The actual rendering of the HTML text is done by `MarkupLabelStyle`.
+This demo shows how to create labels using Markdown syntax.
+
+The label style implementation `MarkdownLabelStyle` uses [markdown-it](https://github.com/markdown-it/markdown-it) to transpile Markdown syntax into HTML. The actual rendering of the HTML text is done by `MarkupLabelStyle`.
 
 ## Label Editor
 
 #### Creating and Editing Labels
 
 - Press the F2 key while an element or connection is selected.
-- Insert markdown text into the editor, i.e. `**Hello World**`.
-- Press `Ctrl-Return` to enter a newline.
+- Insert Markdown text into the editor, i.e. `**Hello World**`.
+- Press Shift + Enter to enter a newline.
 
 #### Supported Markdown
 
-The markdown elements supported by this style labels are
+The Markdown elements supported by this style labels are
 
 - \# Headings
 - \*emphasis\* and \*\*strong\*\* text
@@ -51,7 +53,7 @@ Markdown labels can use line wrapping. In this demo application, the labels use 
 
 ## Related Demos
 
-- [Default Label Style Demo](../../style/default-label-style/)
+- [Label Style Demo](../../style/label-style/)
 - [HTML Label Style Demo](../../style/html-label-style/)
 - [Rich Text Label Demo](../../style/richtextlabel/)
 - [Step 01 Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/)

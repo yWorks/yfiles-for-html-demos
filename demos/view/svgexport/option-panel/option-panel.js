@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,24 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { toggleExportRectangle } from '../export-rectangle/export-rectangle.js'
-
-/**
- * @param {!function} exportCallback
- */
+import { toggleExportRectangle } from '../export-rectangle/export-rectangle'
 export function initializeOptionPanel(exportCallback) {
   const useRectInput = document.querySelector('#use-rect')
   const scaleInput = document.querySelector('#scale')
   const backgroundInput = document.querySelector('#transparent')
   const exportButton = document.querySelector('#export-button')
-
   useRectInput.addEventListener('change', () => {
     toggleExportRectangle()
   })
-
   exportButton.addEventListener('click', async () => {
     exportButton.disabled = true
-
     if (window.location.protocol === 'file:') {
       alert(
         'This demo features SVG export with inlined images. ' +
@@ -52,18 +45,15 @@ export function initializeOptionPanel(exportCallback) {
       )
       return
     }
-
     const options = {
       background: backgroundInput.checked ? 'transparent' : 'white',
       scale: parseFloat(scaleInput.value),
       useExportRectangle: useRectInput.checked
     }
-
     if (Number.isNaN(options.scale) || options.scale <= 0) {
       alert('Scale must be a positive number.')
       return
     }
-
     exportCallback(options)
   })
 }

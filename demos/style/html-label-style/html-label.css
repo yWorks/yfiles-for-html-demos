@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,21 +37,26 @@
   background-color: white;
   text-align: center;
   line-height: 140%;
-  /* Scrollbar styling in Firefox and spec */
-  scrollbar-width: thin;
-  scrollbar-color: darkgrey lightgray;
 }
 
 /* Scrollbar styling with --webkit prefix */
 .label-content::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+}
+
+.label-content::-webkit-scrollbar-track {
+  background-color: transparent;
 }
 
 .label-content::-webkit-scrollbar-thumb {
-  background-color: darkgrey;
-  border-radius: 20px;
-  border: 1px solid white;
+  background-clip: content-box;
+  background-color: #cccccc;
+  border-radius: 6px;
+  border: 3px solid transparent;
+}
+
+.label-content::-webkit-scrollbar-thumb:hover {
+  background-color: #bbbbbb;
 }
 
 .label-content h1 {

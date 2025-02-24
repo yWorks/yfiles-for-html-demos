@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,33 +27,31 @@
  **
  ***************************************************************************/
 import {
-  BaseClass,
-  EdgeRouterScope,
+  EdgePortCandidates,
+  EdgeRouter,
+  EdgeRouterData,
+  EdgeRouterRoutingStyle,
   FilteredGraphWrapper,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  ICanvasObjectDescriptor,
+  HandleInputMode,
   IEdge,
   IGraph,
-  IModelItem,
   INode,
-  IRenderContext,
-  IVisualCreator,
+  InputModeEventArgs,
+  LayoutExecutor,
   License,
-  List,
-  Point,
-  ShapeNodeStyle,
-  SvgVisual,
-  SvgVisualGroup
-} from 'yfiles'
+  MoveInputMode,
+  PortSides,
+  ShapeNodeStyle
+} from '@yfiles/yfiles'
 
 import MazeData from './resources/maze'
-import { OptionEditor } from 'demo-resources/demo-option-editor'
-import PolylineEdgeRouterConfig from './PolylineEdgeRouterConfig'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { MazeVisual } from './MazeVisual'
 
 /**
  * The graph component that displays the demo's graph.
@@ -64,11 +62,6 @@ let graphComponent: GraphComponent
  * Holds whether a layout is current running.
  */
 let inLayout = false
-
-/**
- * The option editor that stores the currently selected layout configuration.
- */
-let optionEditor: OptionEditor
 
 /**
  * Holds the filtered graph. The graph consists of the maze graph nodes which are the ones that
@@ -84,10 +77,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
-  // initialize the option editor
-  initializeOptionEditor()
 
   // set some default styles
   initDemoStyles(graphComponent.graph, { theme: 'demo-palette-31' })
@@ -99,10 +88,10 @@ async function run(): Promise<void> {
   createSampleGraph(graphComponent.graph)
 
   // create the visualization for the edge path routing obstacles
-  createMazeVisual()
+  await createMazeVisual()
 
-  // route all edges
-  await routeAll()
+  // route edges
+  await routeEdges()
 
   // initialize undo and redo for the demo's graph
   initializeUndoEngine(graphComponent.graph)
@@ -112,189 +101,129 @@ async function run(): Promise<void> {
 }
 
 /**
- * Initializes the option editor that will display the routing algorithm's settings.
- */
-function initializeOptionEditor(): void {
-  const editorElement = document.querySelector<HTMLDivElement>('#data-editor')!
-  optionEditor = new OptionEditor(editorElement)
-  optionEditor.config = new PolylineEdgeRouterConfig()
-}
-
-/**
  * Initializes the input mode.
  */
 function createEditorInputMode(): void {
   const inputMode = new GraphEditorInputMode()
 
-  inputMode.createEdgeInputMode.addEdgeCreatedListener((_, evt) => {
-    const selectedEdges = new List<IEdge>()
-    selectedEdges.add(evt.item)
-    routeAffectedEdges(selectedEdges)
-  })
+  // route the newly created edge
+  inputMode.createEdgeInputMode.addEventListener(
+    'edge-created',
+    async (evt) => await routeEdges([evt.item])
+  )
 
-  inputMode.moveInputMode.addDragFinishedListener(() => {
-    const graphSelection = graphComponent.selection
-    if (graphSelection.size === graphSelection.selectedNodes.size) {
-      // only nodes are selected
-      routeEdgesAtAffectedNodes(graphSelection.selectedNodes.toList())
-    } else if (graphSelection.size === graphSelection.selectedEdges.size) {
-      // only edges are selected
-      routeAffectedEdges(graphSelection.selectedEdges.toList())
-    } else {
-      const affectedEdges = new List<IEdge>()
-      // nodes and edges are selected
-      graphSelection.selectedNodes.forEach((node) => {
-        // add all edges connected to the selected nodes to the affected edges' list
-        graphComponent.graph.edgesAt(node).forEach((edge) => {
-          affectedEdges.add(edge)
-        })
-      })
-      // add all selected edges to the affected edges' list
-      graphSelection.selectedEdges.forEach((edge) => {
-        affectedEdges.add(edge)
-      })
-      // route the affected edges
-      routeAffectedEdges(affectedEdges)
-    }
-  })
-
-  inputMode.handleInputMode.addDragFinishedListener(() => {
-    const affectedEdges = new List<IEdge>()
-    const graphSelection = graphComponent.selection
-    graphSelection.selectedNodes.forEach((node) => {
-      // add all edges connected to the selected nodes to the affected edges' list
-      graphComponent.graph.edgesAt(node).forEach((edge) => {
-        affectedEdges.add(edge)
-      })
-    })
-    // add bend owners to the affected edges' list
-    graphSelection.selectedBends.forEach((bend) => {
-      affectedEdges.add(bend.owner as IEdge)
-    })
-    // route the affected edges
-    routeAffectedEdges(affectedEdges)
-  })
+  // add the listeners to route the edges affected by a node movement or node resize
+  inputMode.moveSelectedItemsInputMode.addEventListener('drag-finished', onDragFinished)
+  inputMode.moveUnselectedItemsInputMode.addEventListener('drag-finished', onDragFinished)
+  inputMode.handleInputMode.addEventListener('drag-finished', onDragFinished)
 
   graphComponent.inputMode = inputMode
 }
 
 /**
- * Enables and configures undo/redo for the given graph.
+ * Routes the edges affected by a node movement or resize.
  */
-function initializeUndoEngine(graph: IGraph): void {
-  // enable the undo engine and merge undo units that occur within a specific time window (e.g. 2 seconds)
-  graph.undoEngineEnabled = true
-  graph.undoEngine!.mergeUnits = true
-}
-
-/**
- * Applies the routing algorithm.
- * @returns A promise which resolves after the layout is applied without errors.
- */
-async function route(): Promise<void> {
-  // prevent starting another layout calculation
-  inLayout = true
-  setUIDisabled(true)
-
-  const graph = graphComponent.graph
-  const layoutEdit = graph.beginEdit('layout', 'layout')
-
-  // call to nodePredicateChanged() to insert the nodes of the maze
-  filteredGraph.nodePredicateChanged()
-
-  // don't draw maze nodes on top of the other nodes
-  graph.nodes.forEach((node) => {
-    if (node.tag && node.tag.maze) {
-      graphComponent.graphModelManager.getCanvasObject(node)!.toBack()
-    }
-  })
-
-  try {
-    const config = optionEditor.config
-    await config.apply(graphComponent)
-
-    inLayout = false
-    // call to nodePredicateChanged() to remove the nodes of the maze
-    filteredGraph.nodePredicateChanged()
-    layoutEdit.commit()
-    setUIDisabled(false)
-  } catch (error) {
-    inLayout = false
-    layoutEdit.cancel()
-    // call to nodePredicateChanged() to remove the nodes of the maze
-    filteredGraph.nodePredicateChanged()
-    setUIDisabled(false)
-  }
-}
-
-/**
- * Routes all edges in the demo's graph.
- * @returns A promise which resolves after the layout is applied without errors.
- */
-async function routeAll(): Promise<void> {
-  await routeImpl(null, EdgeRouterScope.ROUTE_ALL_EDGES)
-}
-
-/**
- * Routes the edges that match the routing scope from the demo's layout settings.
- * @returns A promise which resolves after the layout is applied without errors.
- */
-async function routeWithSettingsScope(): Promise<void> {
-  await routeImpl(null, null)
+async function onDragFinished(
+  _evt: InputModeEventArgs,
+  inputMode: MoveInputMode | HandleInputMode
+) {
+  const affectedEdges = inputMode.affectedItems.ofType(IEdge).toArray()
+  // route the affected edges
+  await routeEdges(affectedEdges)
 }
 
 /**
  * Routes only the affected edges.
- * @param affectedEdges The list of edges to be routed
+ * @param affectedEdges The array of edges to be routed
  * @returns A promise which resolves after the layout is applied without errors.
  */
-async function routeAffectedEdges(affectedEdges: List<IEdge>): Promise<void> {
-  await routeImpl(
-    (edge) => affectedEdges.includes(edge as IEdge),
-    EdgeRouterScope.ROUTE_AFFECTED_EDGES
-  )
-}
+async function routeEdges(affectedEdges?: IEdge[]): Promise<void> {
+  // prevent starting another layout calculation
+  inLayout = true
+  setUIDisabled(true)
 
-/**
- * Routes only the edges connected to affected nodes.
- * @param affectedNodes The list of nodes whose edges will be routed
- * @returns A promise which resolves after the layout is applied without errors.
- */
-async function routeEdgesAtAffectedNodes(affectedNodes: List<INode>): Promise<void> {
-  await routeImpl(
-    (node) => affectedNodes.includes(node as INode),
-    EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES
-  )
-}
-
-/**
- * Configures the routing algorithm for the given scope of affected edges and run the algorithm
- * for those affected edges (which may be all edges in the graph).
- * @param affectedItems A predicate determining the items for the given scope. May be null.
- * @param scope The scope determining the routing algorithm's mode of operation.
- * @returns A promise which resolves after the layout is applied without errors.
- */
-async function routeImpl(
-  affectedItems: ((item: IModelItem) => boolean) | null,
-  scope: EdgeRouterScope | null
-): Promise<void> {
-  if (inLayout) {
-    return Promise.reject(new Error('Edge routing already in progress'))
-  }
-  const config = optionEditor.config
-  const oldScope = config.scopeItem
-  if (scope !== null) {
-    config.scopeItem = scope
-  }
-  config.$affectedItems = affectedItems
   try {
-    await route()
-  } catch (ignored) {
-    // ignore
-  } finally {
-    config.$affectedItems = null
-    config.scopeItem = oldScope
+    // configure the routing style and the edge distances
+    const router = new EdgeRouter({
+      defaultEdgeDescriptor: {
+        routingStyle: getRoutingStyle(),
+        minimumEdgeDistance: getEdgeDistance()
+      }
+    })
+
+    // configure the edge ports allowed to be used by the edge router
+    const edgeRouterData = new EdgeRouterData()
+    const allowedPorts = getAllowedPorts()
+    if (allowedPorts) {
+      edgeRouterData.ports.sourcePortCandidates = allowedPorts
+      edgeRouterData.ports.targetPortCandidates = allowedPorts
+    }
+
+    // if there are edges marked as affected, as a result of edge creation, node movement or
+    // node resize, route only them
+    if (affectedEdges && affectedEdges.length > 0) {
+      edgeRouterData.scope.edges = affectedEdges
+    } else {
+      const routingScopeElement = document.querySelector<HTMLSelectElement>('#router-scope')!.value
+      const selection = graphComponent.selection
+      if (routingScopeElement === 'route-edges-at-selected-nodes') {
+        edgeRouterData.scope.incidentNodes = selection.nodes
+      } else if (routingScopeElement === 'route-selected-edges') {
+        edgeRouterData.scope.edges = selection.edges
+      }
+    }
+
+    // apply the layout
+    const layoutExecutor = new LayoutExecutor({
+      graphComponent,
+      graph: (graphComponent.graph as FilteredGraphWrapper).wrappedGraph!,
+      layout: router,
+      layoutData: edgeRouterData,
+      animationDuration: '0.5s'
+    })
+    await layoutExecutor.start()
+    inLayout = false
+    setUIDisabled(false)
+  } catch (error) {
+    inLayout = false
+    setUIDisabled(false)
   }
+}
+
+/**
+ * Returns the selected routing style.
+ */
+function getRoutingStyle(): EdgeRouterRoutingStyle {
+  const routingStyleElement = document.querySelector<HTMLSelectElement>('#router-style')!.value
+  return routingStyleElement === 'orthogonal'
+    ? EdgeRouterRoutingStyle.ORTHOGONAL
+    : EdgeRouterRoutingStyle.OCTILINEAR
+}
+
+/**
+ * Checks whether the {@link EdgeRouter} should use specific ports,
+ * and creates {@link EdgePortCandidates} for them.
+ */
+function getAllowedPorts(): EdgePortCandidates | null {
+  const allowedPortsElement = document.querySelector<HTMLSelectElement>('#router-ports')!.value
+  if (allowedPortsElement === 'left-right') {
+    return new EdgePortCandidates()
+      .addFreeCandidate(PortSides.LEFT)
+      .addFreeCandidate(PortSides.RIGHT)
+  } else if (allowedPortsElement === 'top-bottom') {
+    return new EdgePortCandidates()
+      .addFreeCandidate(PortSides.TOP)
+      .addFreeCandidate(PortSides.BOTTOM)
+  }
+  return null
+}
+
+/**
+ * Returns the minimum distance between a pair of edges.
+ */
+function getEdgeDistance() {
+  const routingDistance = document.querySelector<HTMLSelectElement>('#router-edge-distance')!.value
+  return parseInt(routingDistance)
 }
 
 /**
@@ -302,10 +231,19 @@ async function routeImpl(
  * @param disabled True if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled: boolean): void {
-  document.querySelector<HTMLButtonElement>('#route-edges-button')!.disabled = disabled
-  document.querySelector<HTMLButtonElement>('#reset-button')!.disabled = disabled
+  document.querySelector<HTMLButtonElement>('#route-edges')!.disabled = disabled
   // enable/disable input so that no use interactions occur on the graphComponent when a layout is running
   ;(graphComponent.inputMode as GraphEditorInputMode).waiting = disabled
+}
+
+/**
+ * Enables and configures undo/redo for the given graph.
+ */
+function initializeUndoEngine(graph: IGraph): void {
+  // enable the undo engine and merge undo units that occur within a specific time window
+  // (e.g., 2 seconds)
+  graph.undoEngineEnabled = true
+  graph.undoEngine!.mergeUnits = true
 }
 
 /**
@@ -324,51 +262,37 @@ function createSampleGraph(graph: IGraph): void {
     data: MazeData.nodes,
     id: 'id',
     layout: (data) => data,
-    style: (data) => {
-      if (data.maze) {
-        return mazeNodeStyle
-      } else {
-        return null
-      }
-    },
+    style: (data) => (data.maze ? mazeNodeStyle : graph.nodeDefaults.style),
     tag: (data) => ({ maze: data.maze })
   })
   builder.createEdgesSource(MazeData.edges, 'from', 'to')
   builder.buildGraph()
-
-  for (const edge of graph.edges) {
-    if (edge.tag.sourcePort) {
-      graph.setPortLocation(edge.sourcePort!, Point.from(edge.tag.sourcePort))
-      graph.setPortLocation(edge.targetPort!, Point.from(edge.tag.targetPort))
-    }
-
-    for (const bend of edge.tag.bends) {
-      graph.addBend(edge, bend)
-    }
-  }
 }
 
 /**
  * Creates the visualization for the obstacles that affect edge path routing.
  */
-function createMazeVisual(): void {
+async function createMazeVisual(): Promise<void> {
   const graph = graphComponent.graph
 
   // determine the nodes that model the obstacles
   const mazeNodes = graph.nodes.filter((node) => node.tag.maze)
   // add the maze visualization for the obstacle nodes
   const mazeVisual = new MazeVisual(mazeNodes)
-  graphComponent.backgroundGroup.addChild(mazeVisual, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE)
+  graphComponent.renderTree.createElement(graphComponent.renderTree.backgroundGroup, mazeVisual)
+
+  // route the edges according to the configured polylineEdgeRouter
+  await routeEdges()
 
   // center the graph in the visible area
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   // "hide" the obstacle nodes from the current view to prevent users from interacting with
   // the obstacles
   filteredGraph = new FilteredGraphWrapper(
     graphComponent.graph,
     (node: INode) => inLayout || !node.tag || !node.tag.maze,
-    (edge: IEdge) => true
+    () => true
   )
   graphComponent.graph = filteredGraph
 }
@@ -378,52 +302,8 @@ function createMazeVisual(): void {
  */
 function initializeUI(): void {
   document
-    .querySelector<HTMLButtonElement>('#route-edges-button')!
-    .addEventListener('click', () => routeWithSettingsScope())
-
-  document.querySelector<HTMLButtonElement>('#reset-button')!.addEventListener('click', () => {
-    optionEditor.reset()
-    optionEditor.refresh()
-  })
-}
-
-/**
- * This class implements the maze visualization based on the nodes that form the maze.
- */
-class MazeVisual extends BaseClass<IVisualCreator>(IVisualCreator) implements IVisualCreator {
-  /**
-   * Creates a new instance of MazeVisual.
-   */
-  constructor(private readonly nodes: Iterable<INode>) {
-    super()
-  }
-
-  /**
-   * Creates the maze visual.
-   * @param context The render context
-   * @returns The maze visual
-   */
-  createVisual(context: IRenderContext): SvgVisual {
-    const visualGroup = new SvgVisualGroup()
-    for (const node of this.nodes) {
-      const nodeVisual = node.style.renderer
-        .getVisualCreator(node, node.style)
-        .createVisual(context)
-      visualGroup.add(nodeVisual as SvgVisual)
-    }
-    return visualGroup
-  }
-
-  /**
-   * Updates the maze visual. As the maze cannot be changed in this demo, the old visual is
-   * returned.
-   * @param context The render context
-   * @param oldVisual The old visual
-   * @returns The updated visual
-   */
-  updateVisual(context: IRenderContext, oldVisual: SvgVisual): SvgVisual {
-    return oldVisual
-  }
+    .querySelector<HTMLButtonElement>('#route-edges')!
+    .addEventListener('click', async () => await routeEdges())
 }
 
 run().then(finishLoading)

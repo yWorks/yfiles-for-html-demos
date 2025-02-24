@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,35 +26,26 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Class, GraphComponent, HierarchicLayout, LayoutExecutor, OrganicLayout } from 'yfiles'
-
+import { GraphComponent, HierarchicalLayout, LayoutExecutor, OrganicLayout } from '@yfiles/yfiles'
 /**
- * Calculates and applies a hierarchic layout.
- * @param {!GraphComponent} graphComponent
+ * Calculates and applies a hierarchical layout.
  */
 export function applyLayout(graphComponent) {
   const graph = graphComponent.graph
-  const layout = new HierarchicLayout()
+  const layout = new HierarchicalLayout()
   graph.applyLayout(layout)
-
   // Fit the graph bounds since they changed for the new layout
   graphComponent.fitGraphBounds()
 }
-
 /**
  * Calculates and animates an organic layout.
- * @param {!GraphComponent} graphComponent
- * @returns {!Promise}
  */
 export async function runLayout(graphComponent) {
-  // Here, we reference and thus load the LayoutExecutor class from the 'view-layout-bridge' module
-  // explicitly to prevent tree-shaking tools from removing the dependency.
-  // This is needed for 'morphLayout' to work.
-  Class.ensure(LayoutExecutor) // doing this somewhere in your code should suffice
-
-  await graphComponent.morphLayout({
-    layout: new OrganicLayout({ considerNodeSizes: true }),
-    morphDuration: '1s',
-    easedAnimation: true
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure() // doing this somewhere in your code should suffice
+  await graphComponent.applyLayoutAnimated({
+    layout: new OrganicLayout(),
+    animationDuration: '1s'
   })
 }

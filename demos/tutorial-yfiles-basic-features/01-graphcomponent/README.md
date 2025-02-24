@@ -1,21 +1,23 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 01 Creating the View - Tutorial: Basic Features
 
-# Creating the View
+<img src="../../../doc/demo-thumbnails/tutorial-basic-features.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/01-graphcomponent/).
 
 ## How to create a basic view.
 
-This step introduces class [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent), which is the [central UI element for working with graphs](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-application). The app does not provide any interactive features except mouse wheel zooming, which is enabled by default. It is merely meant as a very basic example of how to display a [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) within a web page.
+This step introduces class [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent), which is the [central UI element for working with graphs](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-application). The app does not provide any interactive features except basic navigation and selection, which is enabled by default. It is merely meant as a very basic example of how to display a [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) within a web page.
 
 This is the minimal code that’s needed to display a graph on a web page using yFiles for HTML.
 
@@ -25,7 +27,7 @@ First we make sure that there is a `div` element on the HTML page in the documen
 <div id="graphComponent"></div>
 ```
 
-We also need to make sure that the `div` actually has a positive size. We can do this via CSS, but any technique that assigns a positive size to the element would work:
+We should also make sure that the `div` actually has a reasonable size, as the default style will only set a `min-width` and `min-height` to `100px`. We can do this via CSS, but any technique that assigns a positive size to the element would work:
 
 ```
 #graphComponent {

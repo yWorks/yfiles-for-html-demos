@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,25 +28,22 @@
  ***************************************************************************/
 import {
   GraphComponent,
-  GraphHighlightIndicatorManager,
   GraphOverviewComponent,
   IArrow,
   type IEdge,
   type INode,
   License,
   PolylineEdgeStyle,
-  Size,
-  VoidNodeStyle
-} from 'yfiles'
-import PrintingSupport from 'demo-utils/PrintingSupport'
+  Size
+} from '@yfiles/yfiles'
+import PrintingSupport from '@yfiles/demo-utils/PrintingSupport'
 import { CollapsibleTree } from './CollapsibleTree'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { bindYFilesCommand, finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { initializeGraphSearch } from './OrgChartGraphSearch'
 import { buildGraph, getEmployee } from './model/data-loading'
 import { createOrgChartNodeStyle } from './graph-style/orgchart-node-style'
-import { initializeInputMode, initializeInteractivity, showAllCommand } from './input'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { initializeInputMode, initializeInteractivity } from './input'
 
 let graphComponent: GraphComponent = null!
 
@@ -55,8 +52,6 @@ async function run(): Promise<void> {
 
   // initialize the graph component and overview
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   new GraphOverviewComponent('overviewComponent', graphComponent)
 
   // the orgchart graph supports expanding collapsing subtrees
@@ -76,7 +71,7 @@ async function run(): Promise<void> {
   initializeGraphSearch(graphComponent, orgChartGraph)
 
   // wire up the UI
-  initializeUI()
+  initializeUI(orgChartGraph)
 
   // apply a layout
   configureOrgChartLayout(orgChartGraph)
@@ -90,10 +85,10 @@ function configureOrgChartLayout(orgChartGraph: CollapsibleTree): void {
 
   // sort subtrees by a fixed order of the business units
   const businessUnitOrder = ['Engineering', 'Production', 'Accounting', 'Sales', 'Marketing']
-  orgChartGraph.outEdgeComparers = (): ((edge1: IEdge, edge2: IEdge) => number) => {
+  orgChartGraph.outEdgeComparison = (): ((edge1: IEdge, edge2: IEdge) => number) => {
     return (edge1: IEdge, edge2: IEdge): number => {
-      const employee1 = getEmployee(edge1.targetNode!)
-      const employee2 = getEmployee(edge2.targetNode!)
+      const employee1 = getEmployee(edge1.targetNode)
+      const employee2 = getEmployee(edge2.targetNode)
       if (
         employee1 &&
         employee1.businessUnit != null &&
@@ -135,16 +130,16 @@ function initializeDefaultStyle(orgChartGraph: CollapsibleTree): void {
   })
 
   // Hide the default highlight in favor of the CSS highlighting from the template styles
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
+  graph.decorator.nodes.highlightRenderer.hide()
 }
 
 /**
  * Wires up the UI.
  */
-function initializeUI(): void {
-  bindYFilesCommand('#show-all-button', showAllCommand, graphComponent, null, 'Show all nodes')
+function initializeUI(orgChartGraph: CollapsibleTree): void {
+  document.getElementById('show-all-button')!.addEventListener('click', async () => {
+    await orgChartGraph.executeShowAll()
+  })
   document.getElementById('print-button')!.addEventListener('click', print)
 }
 

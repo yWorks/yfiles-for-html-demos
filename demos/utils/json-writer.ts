@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,8 +27,7 @@
  **
  ***************************************************************************/
 import type { JSONEdge, JSONGraph, JSONLabel, JSONNode, JSONPoint, NodeID } from './json-model'
-import type { IEdge, IGraph, ILabel, INode } from 'yfiles'
-import { ILabelModelParameter } from 'yfiles'
+import type { IEdge, IGraph, ILabel, INode } from '@yfiles/yfiles'
 
 export type NodeDataWriter = (data: JSONNode, node: INode, graph: IGraph) => void
 export type EdgeDataWriter = (data: JSONEdge, edge: IEdge, graph: IGraph) => void
@@ -95,8 +94,8 @@ export function getDefaultWriterOptions(): WriterOptions {
       data.bends = edge.bends.toArray().map((bend) => toPoint(bend.location))
     },
     edgePortLocations: (data, edge) => {
-      data.sourcePort = toPoint(edge.sourcePort!.location)
-      data.targetPort = toPoint(edge.targetPort!.location)
+      data.sourcePort = toPoint(edge.sourcePort.location)
+      data.targetPort = toPoint(edge.targetPort.location)
     },
     edgeLabels: (data, edge) => {
       data.labels = edge.labels.toArray().map((label) => createLabelData(label, 'parameter'))
@@ -161,8 +160,8 @@ function createEdgeData(
 ) {
   /* @yjs:keep = source,target */
   const edgeData: JSONEdge = {
-    source: nodeIdProvider(edge.sourceNode!),
-    target: nodeIdProvider(edge.targetNode!)
+    source: nodeIdProvider(edge.sourceNode),
+    target: nodeIdProvider(edge.targetNode)
   }
 
   if (options.edgePortLocations) {
@@ -192,25 +191,20 @@ export function createLabelData(
   label: ILabel,
   details: 'none' | 'layout' | 'parameter' = 'none'
 ): JSONLabel {
-  const { text, layout, layoutParameter } = label
+  const { text, layout } = label
   return details === 'none'
     ? { text }
-    : details === 'parameter'
-      ? {
-          text,
-          layoutParameter: ILabelModelParameter.serializeParameter(layoutParameter)
+    : {
+        text,
+        layout: {
+          anchorX: layout.anchorX,
+          anchorY: layout.anchorY,
+          upX: layout.upX,
+          upY: layout.upY,
+          width: layout.width,
+          height: layout.height
         }
-      : {
-          text,
-          layout: {
-            anchorX: layout.anchorX,
-            anchorY: layout.anchorY,
-            upX: layout.upX,
-            upY: layout.upY,
-            width: layout.width,
-            height: layout.height
-          }
-        }
+      }
 }
 
 /**

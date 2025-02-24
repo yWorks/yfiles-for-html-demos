@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,37 +26,28 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, GraphComponent, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { configureStyles, initializeTutorialDefaults, runLayout } from '../common.js'
+import { GraphBuilder, GraphComponent, License } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { configureStyles, initializeTutorialDefaults, runLayout } from '../common'
 import {
   createNodesSourceFromArray,
   createNodesSourceFromGenerator,
   createNodesSourceFromIEnumerable,
   createNodesSourceFromMap,
   createNodesSourceFromObject
-} from './create-nodes-sources.js'
-
+} from './create-nodes-sources'
 License.value = await fetchLicense()
-
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
-
 const graph = graphComponent.graph
-
 const graphBuilder = new GraphBuilder(graph)
-
 const nodesSource0 = createNodesSourceFromArray(graphBuilder)
 const nodesSource1 = createNodesSourceFromIEnumerable(graphBuilder)
 const nodesSource2 = createNodesSourceFromObject(graphBuilder)
 const nodesSource3 = createNodesSourceFromMap(graphBuilder)
 const nodesSource4 = createNodesSourceFromGenerator(graphBuilder)
-
 configureStyles([nodesSource0, nodesSource1, nodesSource2, nodesSource3, nodesSource4])
-
 graphBuilder.buildGraph()
-
 void runLayout(graphComponent)
-
 finishLoading()

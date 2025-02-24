@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,7 @@
 import './App.css'
 import DemoDescription from './components/DemoDescription.tsx'
 import DemoDataPanel from './components/DemoDataPanel.tsx'
-import yLogo from './assets/ylogo.svg'
+import yLogo from '@yfiles/demo-resources/icons/ylogo.svg'
 import { useCallback, useState } from 'react'
 import { ReactGraphComponent } from './components/ReactGraphComponent.tsx'
 

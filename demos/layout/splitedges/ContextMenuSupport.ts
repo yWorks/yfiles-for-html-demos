@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,8 +39,7 @@ import {
   Point,
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs
-} from 'yfiles'
-import { ContextMenu } from 'demo-utils/ContextMenu'
+} from '@yfiles/yfiles'
 
 export default class ContextMenuSupport {
   constructor(
@@ -50,36 +49,24 @@ export default class ContextMenuSupport {
 
   createContextMenu(): void {
     const inputMode = this.graphComponent.inputMode as GraphEditorInputMode
-    const contextMenu = new ContextMenu(this.graphComponent)
-    contextMenu.addOpeningEventListeners(this.graphComponent, (location) => {
-      const worldLocation = this.graphComponent.toWorldFromPage(location)
-      const showMenu = inputMode.contextMenuInputMode.shouldOpenMenu(worldLocation)
-      if (showMenu) {
-        contextMenu.show(location)
-      }
-    })
-    inputMode.addPopulateItemContextMenuListener((_, evt) =>
-      this.populateContextMenu(contextMenu, evt)
-    )
-    inputMode.contextMenuInputMode.addCloseMenuListener(() => contextMenu.close())
-    contextMenu.onClosedCallback = () => inputMode.contextMenuInputMode.menuClosed()
+    inputMode.addEventListener('populate-item-context-menu', (evt) => this.populateContextMenu(evt))
   }
 
   /**
    * Adds menu items to the context menu depending on what type of graph element was hit.
    */
-  populateContextMenu(
-    contextMenu: ContextMenu,
-    args: PopulateItemContextMenuEventArgs<IModelItem>
-  ): void {
-    contextMenu.clearItems()
+  populateContextMenu(args: PopulateItemContextMenuEventArgs<IModelItem>): void {
+    if (args.handled) {
+      return
+    }
 
     const item = args.item
     this.updateSelection(item as INode | IEdge)
     const graph = this.graphComponent.graph
-    if (IEdge.isInstance(item)) {
-      const selectedEdges = this.graphComponent.selection.selectedEdges.toArray()
+    if (item instanceof IEdge) {
+      const selectedEdges = this.graphComponent.selection.edges.toArray()
 
+      const menuItems: { label: string; action: () => void }[] = []
       if (
         selectedEdges.length > 1 &&
         selectedEdges.some((edge1) =>
@@ -89,30 +76,31 @@ export default class ContextMenuSupport {
               ((graph.isGroupNode(edge1.sourceNode) && edge1.sourceNode === edge2.targetNode) ||
                 (graph.isGroupNode(edge1.targetNode) &&
                   edge1.targetNode === edge2.sourceNode &&
-                  graph.getParent(edge1.targetNode!) !== graph.getParent(edge2.sourceNode!)))
+                  graph.getParent(edge1.targetNode) !== graph.getParent(edge2.sourceNode)))
           )
         )
       ) {
-        args.showMenu = true
-        contextMenu.addMenuItem('Align Selected Edges', () =>
-          this.alignSelectedEdges(selectedEdges)
-        )
+        menuItems.push({
+          label: 'Align Selected Edges',
+          action: () => this.alignSelectedEdges(selectedEdges)
+        })
       }
       if (
         selectedEdges.some((edge) => edge.tag && (edge.tag.sourceSplitId || edge.tag.targetSplitId))
       ) {
-        args.showMenu = true
-        contextMenu.addMenuItem('Unalign Selected Edges', () =>
-          this.unalignSelectedEdges(selectedEdges)
-        )
-        contextMenu.addMenuItem('Join Inter-Edges', () =>
-          this.joinInterEdgesAtGroups(selectedEdges)
-        )
+        menuItems.push({
+          label: 'Unalign Selected Edges',
+          action: () => this.unalignSelectedEdges(selectedEdges)
+        })
+        menuItems.push({
+          label: 'Join Inter-Edges',
+          action: () => this.joinInterEdgesAtGroups(selectedEdges)
+        })
       }
       if (
         selectedEdges.some((edge) => {
-          const sourceNode = edge.sourceNode!
-          const targetNode = edge.targetNode!
+          const sourceNode = edge.sourceNode
+          const targetNode = edge.targetNode
           return (
             graph.getParent(sourceNode) !== graph.getParent(targetNode) &&
             graph.getParent(sourceNode) !== targetNode &&
@@ -120,15 +108,20 @@ export default class ContextMenuSupport {
           )
         })
       ) {
-        args.showMenu = true
-        contextMenu.addMenuItem('Split Inter-Edges', () =>
-          this.splitInterEdgesAtGroups(selectedEdges)
-        )
+        menuItems.push({
+          label: 'Split Inter-Edges',
+          action: () => this.splitInterEdgesAtGroups(selectedEdges)
+        })
+      }
+
+      if (menuItems.length > 0) {
+        args.contextMenu = menuItems
       }
     } else if (item instanceof INode && graph.isGroupNode(item)) {
-      args.showMenu = true
-      contextMenu.addMenuItem('Split Inter-Edges', () => this.splitInterEdgesAtGroup(item))
-      contextMenu.addMenuItem('Join Inter-Edges', () => this.joinInterEdgesAtGroup(item))
+      args.contextMenu = [
+        { label: 'Split Inter-Edges', action: () => this.splitInterEdgesAtGroup(item) },
+        { label: 'Join Inter-Edges', action: () => this.joinInterEdgesAtGroup(item) }
+      ]
     }
   }
 
@@ -145,7 +138,7 @@ export default class ContextMenuSupport {
           (edge2) =>
             graph.isGroupNode(edge1.sourceNode) &&
             edge1.sourceNode === edge2.targetNode &&
-            graph.getParent(edge1.targetNode!) !== graph.getParent(edge2.sourceNode!)
+            graph.getParent(edge1.targetNode) !== graph.getParent(edge2.sourceNode)
         )
       ) {
         if (edge1.tag) {
@@ -160,7 +153,7 @@ export default class ContextMenuSupport {
           (edge2: IEdge): boolean =>
             graph.isGroupNode(edge1.targetNode) &&
             edge1.targetNode === edge2.sourceNode &&
-            graph.getParent(edge1.sourceNode!) !== graph.getParent(edge2.targetNode!)
+            graph.getParent(edge1.sourceNode) !== graph.getParent(edge2.targetNode)
         )
       ) {
         if (edge1.tag) {
@@ -192,8 +185,8 @@ export default class ContextMenuSupport {
 
     // unalign predecessor and successor edges that have the same split id but there is no edge to align, anymore
     edges.forEach((edge) => {
-      const sourceNode = edge.sourceNode!
-      const targetNode = edge.targetNode!
+      const sourceNode = edge.sourceNode
+      const targetNode = edge.targetNode
       if (graph.isGroupNode(sourceNode)) {
         graph.inEdgesAt(sourceNode).forEach((inEdge) => {
           if (
@@ -201,7 +194,7 @@ export default class ContextMenuSupport {
             edge.tag &&
             inEdge.tag.targetSplitId === edge.tag.sourceSplitId &&
             !graph
-              .inEdgesAt(inEdge.sourceNode!)
+              .inEdgesAt(inEdge.sourceNode)
               .some(
                 (previousEdge) =>
                   previousEdge.tag &&
@@ -220,7 +213,7 @@ export default class ContextMenuSupport {
             edge.tag &&
             outEdge.tag.sourceSplitId === edge.tag.targetSplitId &&
             !graph
-              .outEdgesAt(outEdge.targetNode!)
+              .outEdgesAt(outEdge.targetNode)
               .some(
                 (nextEdge) =>
                   nextEdge.tag && nextEdge.tag.sourceSplitId === nextEdge.tag.targetSplitId
@@ -253,7 +246,7 @@ export default class ContextMenuSupport {
       }
       if (edge.tag && (edge.tag.sourceSplitId || edge.tag.targetSplitId)) {
         visited.push(edge)
-        let sourceNode: INode = edge.sourceNode!
+        let sourceNode: INode = edge.sourceNode
         let predecessor = graph
           .inEdgesAt(sourceNode)
           .find(
@@ -266,7 +259,7 @@ export default class ContextMenuSupport {
           if (!visited.includes(predecessor)) {
             visited.push(predecessor)
           }
-          sourceNode = predecessor.sourceNode!
+          sourceNode = predecessor.sourceNode
           predecessor = graph
             .inEdgesAt(sourceNode)
             .find(
@@ -276,7 +269,7 @@ export default class ContextMenuSupport {
                 inEdge.tag.targetSplitId === edge.tag.sourceSplitId
             )
         }
-        let targetNode: INode = edge.targetNode!
+        let targetNode: INode = edge.targetNode
         let successor = graph
           .outEdgesAt(targetNode)
           .find(
@@ -289,7 +282,7 @@ export default class ContextMenuSupport {
           if (!visited.includes(successor)) {
             visited.push(successor)
           }
-          targetNode = successor.targetNode!
+          targetNode = successor.targetNode
           successor = graph
             .outEdgesAt(targetNode)
             .find(
@@ -316,8 +309,8 @@ export default class ContextMenuSupport {
     const graph = this.graphComponent.graph
     interEdges.forEach((edge) => {
       const commonAncestor = graph.groupingSupport.getNearestCommonAncestor(
-        edge.sourceNode!,
-        edge.targetNode!
+        edge.sourceNode,
+        edge.targetNode
       )
 
       let splitId: number
@@ -333,8 +326,8 @@ export default class ContextMenuSupport {
         color = getColor()
         splitId = Date.now() + Math.random() // unique id
       }
-      let lastNode: INode = edge.sourceNode!
-      let walkerGroup = graph.getParent(edge.sourceNode!)
+      let lastNode: INode = edge.sourceNode
+      let walkerGroup = graph.getParent(edge.sourceNode)
       while (walkerGroup && walkerGroup !== commonAncestor && walkerGroup !== edge.targetNode) {
         const splitEdge = this.createSplitEdge(
           lastNode,
@@ -346,23 +339,23 @@ export default class ContextMenuSupport {
           color
         )
         graph.setPortLocation(
-          splitEdge.sourcePort!,
+          splitEdge.sourcePort,
           lastNode !== edge.sourceNode
             ? this.getIntersection(edge, lastNode)
-            : edge.sourcePort!.location.toPoint()
+            : edge.sourcePort.location.toPoint()
         )
         graph.setPortLocation(
-          splitEdge.targetPort!,
+          splitEdge.targetPort,
           walkerGroup !== edge.sourceNode
             ? this.getIntersection(edge, walkerGroup)
-            : edge.targetPort!.location.toPoint()
+            : edge.targetPort.location.toPoint()
         )
         lastNode = walkerGroup
         walkerGroup = graph.getParent(lastNode)
       }
       const lastSourceNode = lastNode
-      lastNode = edge.targetNode!
-      walkerGroup = graph.getParent(edge.targetNode!)
+      lastNode = edge.targetNode
+      walkerGroup = graph.getParent(edge.targetNode)
       while (walkerGroup && walkerGroup !== commonAncestor && walkerGroup !== edge.sourceNode) {
         const splitEdge = this.createSplitEdge(
           walkerGroup,
@@ -374,16 +367,16 @@ export default class ContextMenuSupport {
           color
         )
         graph.setPortLocation(
-          splitEdge.sourcePort!,
+          splitEdge.sourcePort,
           walkerGroup !== edge.targetNode
             ? this.getIntersection(edge, walkerGroup)
-            : edge.sourcePort!.location.toPoint()
+            : edge.sourcePort.location.toPoint()
         )
         graph.setPortLocation(
-          splitEdge.targetPort!,
+          splitEdge.targetPort,
           lastNode !== edge.targetNode
             ? this.getIntersection(edge, lastNode)
-            : edge.targetPort!.location.toPoint()
+            : edge.targetPort.location.toPoint()
         )
         lastNode = walkerGroup
         walkerGroup = graph.getParent(lastNode)
@@ -398,16 +391,16 @@ export default class ContextMenuSupport {
         color
       )
       graph.setPortLocation(
-        splitEdge.sourcePort!,
+        splitEdge.sourcePort,
         lastSourceNode !== edge.sourceNode
           ? this.getIntersection(edge, lastSourceNode)
-          : edge.sourcePort!.location.toPoint()
+          : edge.sourcePort.location.toPoint()
       )
       graph.setPortLocation(
-        splitEdge.targetPort!,
+        splitEdge.targetPort,
         lastNode !== edge.targetNode
           ? this.getIntersection(edge, lastNode)
-          : edge.targetPort!.location.toPoint()
+          : edge.targetPort.location.toPoint()
       )
       graph.remove(edge)
     })
@@ -429,8 +422,8 @@ export default class ContextMenuSupport {
           (edge) =>
             edge.sourceNode !== group &&
             edge.targetNode !== group &&
-            graph.getParent(edge.sourceNode!) !== graph.getParent(edge.targetNode!) &&
-            (!descendants.includes(edge.sourceNode!) || !descendants.includes(edge.targetNode!))
+            graph.getParent(edge.sourceNode) !== graph.getParent(edge.targetNode) &&
+            (!descendants.includes(edge.sourceNode) || !descendants.includes(edge.targetNode))
         )
         .forEach((edge) => interEdges.push(edge))
     })
@@ -451,7 +444,7 @@ export default class ContextMenuSupport {
       }
       const intersection = this.getIntersection(edge, group)
       const sourceEdge = this.createSplitEdge(
-        edge.sourceNode!,
+        edge.sourceNode,
         group,
         {
           sourceSplitId: splitId,
@@ -459,17 +452,17 @@ export default class ContextMenuSupport {
         },
         color
       )
-      graph.setPortLocation(sourceEdge.targetPort!, intersection)
+      graph.setPortLocation(sourceEdge.targetPort, intersection)
       const targetEdge = this.createSplitEdge(
         group,
-        edge.targetNode!,
+        edge.targetNode,
         {
           sourceSplitId: splitId,
           targetSplitId: splitId
         },
         color
       )
-      graph.setPortLocation(targetEdge.sourcePort!, intersection)
+      graph.setPortLocation(targetEdge.sourcePort, intersection)
       graph.remove(edge)
     })
 
@@ -483,11 +476,11 @@ export default class ContextMenuSupport {
   getIntersection(edge: IEdge, group: INode): Point {
     const groupingSupport = this.graphComponent.graph.groupingSupport
     let inner: IPort | IBend = groupingSupport.isDescendant(edge.sourceNode, group)
-      ? edge.sourcePort!
-      : edge.targetPort!
+      ? edge.sourcePort
+      : edge.targetPort
     let outer: IPort | IBend = groupingSupport.isDescendant(edge.sourceNode, group)
-      ? edge.targetPort!
-      : edge.sourcePort!
+      ? edge.targetPort
+      : edge.sourcePort
 
     // find the intersecting segment of the edge
     let foundInner = false
@@ -530,7 +523,7 @@ export default class ContextMenuSupport {
         }
         const sourceEdge = sourceEdges[edge.tag.sourceSplitId]
         if (sourceEdge) {
-          graph.createEdge(sourceEdge.sourceNode!, edge.targetNode!)
+          graph.createEdge(sourceEdge.sourceNode, edge.targetNode)
           graph.remove(sourceEdge)
           graph.remove(edge)
         }
@@ -556,7 +549,8 @@ export default class ContextMenuSupport {
         targetArrow: new Arrow({
           fill: color,
           type: ArrowType.TRIANGLE,
-          scale: 1.5
+          widthScale: 1.5,
+          lengthScale: 1.5
         }),
         smoothingLength: 15
       }),
@@ -575,16 +569,16 @@ export default class ContextMenuSupport {
     const selection = this.graphComponent.selection
     if (!item) {
       selection.clear()
-    } else if (!selection.isSelected(item)) {
+    } else if (!selection.includes(item)) {
       selection.clear()
-      selection.setSelected(item, true)
+      selection.add(item)
     } else {
-      if (IEdge.isInstance(item)) {
-        selection.selectedNodes.clear()
+      if (item instanceof IEdge) {
+        selection.nodes.clear()
       } else {
-        selection.selectedEdges.clear()
+        selection.edges.clear()
       }
-      selection.setSelected(item, true)
+      selection.add(item)
     }
   }
 }

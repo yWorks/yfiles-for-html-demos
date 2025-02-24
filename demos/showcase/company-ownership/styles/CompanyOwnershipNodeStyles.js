@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,20 +26,19 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { NodeTypeEnum } from '../data-types.js'
+import { NodeTypeEnum } from '../data-types'
 import {
-  DefaultLabelStyle,
   Fill,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   LabelDefaults,
+  LabelStyle,
   Rect,
   Size,
   Stroke
-} from 'yfiles'
-import { CustomShapeNodeStyle } from './CustomShapeNodeStyle.js'
-import { colorSets } from 'demo-resources/demo-colors'
-import { tableNodeStyle } from './TableNodeStyle.js'
-
+} from '@yfiles/yfiles'
+import { CustomShapeNodeStyle } from './CustomShapeNodeStyle'
+import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { tableNodeStyle } from './TableNodeStyle'
 // maps each node type with an enum value
 const nodeTypeMap = {
   Corporation: NodeTypeEnum.CORPORATION,
@@ -56,7 +55,6 @@ const nodeTypeMap = {
   PE_Risk: NodeTypeEnum.PE_RISK,
   Trapezoid: NodeTypeEnum.TRAPEZOID
 }
-
 // maps each node type with a color palette
 export const predefinedColorSets = new Map([
   ['Corporation', 'demo-palette-51'],
@@ -73,12 +71,10 @@ export const predefinedColorSets = new Map([
   ['PE_Risk', 'demo-palette-61'],
   ['Trapezoid', 'demo-palette-62']
 ])
-
 /**
  * Returns the style of a node based on its type.
- * @param {!Company} item The given node
- * @param {boolean} useShapeNodeStyle True if a shape node style should be used, false otherwise
- * @returns {!INodeStyle}
+ * @param item The given node
+ * @param useShapeNodeStyle True if a shape node style should be used, false otherwise
  */
 export function getNodeStyle(item, useShapeNodeStyle) {
   const nodeType = item.nodeType
@@ -91,29 +87,23 @@ export function getNodeStyle(item, useShapeNodeStyle) {
       )
     : tableNodeStyle
 }
-
 /**
  * Returns the layout of the nodes based on the style selection.
- * @param {boolean} useShapeNodeStyle True if shape node styles have to be applied, false otherwise
- * @returns {!Rect}
+ * @param useShapeNodeStyle True if shape node styles have to be applied, false otherwise
  */
 export function getNodeLayout(useShapeNodeStyle) {
   return useShapeNodeStyle ? new Rect(0, 0, 120, 60) : new Rect(0, 0, 200, 110)
 }
-
 // configures the style of the node labels
-export const nodeLabelStyle = new DefaultLabelStyle({
-  wrapping: 'word-ellipsis',
+export const nodeLabelStyle = new LabelStyle({
+  wrapping: 'wrap-word-ellipsis',
   horizontalTextAlignment: 'center',
   verticalTextAlignment: 'center'
 })
-
 // configures the node label parameter
-export const nodeLabelParameter = InteriorLabelModel.CENTER
-
+export const nodeLabelParameter = InteriorNodeLabelModel.CENTER
 // configures the node label size (used for wrapping)
 export const labelSizeDefaults = new Size(80, 60)
-
 // sets some defaults for node labels
 export const nameLabelDefaults = new LabelDefaults({
   style: nodeLabelStyle,

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,12 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GroupNodeStyle, InteriorLabelModel, Size } from 'yfiles'
-import { edgeData, nodeData } from './group-data.js'
-
-/**
- * @param {!GraphBuilder} graphBuilder
- */
+import { GroupNodeStyle, InteriorNodeLabelModel, Size } from '@yfiles/yfiles'
+import { edgeData, nodeData } from './group-data'
 export function createGroupNodes(graphBuilder) {
   // Create the initial set of nodes that correspond to the top level entries in the NodeData array
   const idProvider = (item) => item.id
@@ -39,13 +35,11 @@ export function createGroupNodes(graphBuilder) {
     data: nodeData,
     id: idProvider
   })
-  nodesSource.nodeCreator.defaults.labels.layoutParameter = InteriorLabelModel.NORTH
+  nodesSource.nodeCreator.defaults.labels.layoutParameter = InteriorNodeLabelModel.TOP
   nodesSource.nodeCreator.defaults.size = new Size(60, 40)
-
   // Describe how to create the first level of groups from the items in the NodeData
   const parentsSource = nodesSource.createParentNodesSource((item) => item.path)
   parentsSource.nodeCreator.createLabelBinding((data) => data)
-
   // Describe how to navigate higher up in the hierarchy
   const parentDataProvider = (path) => {
     const separator = path.lastIndexOf('/')
@@ -55,7 +49,6 @@ export function createGroupNodes(graphBuilder) {
   // Enable recursive processing higher up in the container hierarchy
   ancestorSource.addParentNodesSource(parentDataProvider, ancestorSource)
   ancestorSource.nodeCreator.createLabelBinding((data) => data)
-
   // Enable processing of the contents of the nodes in the NodeData
   const childDataProvider = (item) => item.children ?? []
   const childNodesSource = nodesSource.createChildNodesSource(childDataProvider, idProvider)
@@ -63,24 +56,20 @@ export function createGroupNodes(graphBuilder) {
   const descendantsSource = childNodesSource.createChildNodesSource(childDataProvider, idProvider)
   // Enable recursive processing of the contents
   descendantsSource.addChildNodesSource(childDataProvider, descendantsSource)
-
   // Declare edges between all different kinds of entities
   const edgesSource = graphBuilder.createEdgesSource({
     data: edgeData,
     sourceId: (item) => item.from,
     targetId: (item) => item.to
   })
-
   // Styling for the group nodes
   const graph = graphBuilder.graph
-
   // We style the different levels differently
   // the "path" containers are pale blue
   parentsSource.nodeCreator.defaults.style = new GroupNodeStyle({
     tabFill: '#9dc6d0',
-    contentAreaInsets: 10
+    contentAreaPadding: 10
   })
-
   // whereas the entities in the NodeData and all other group nodes have their respective
   // default styles
   childNodesSource.nodeCreator.styleProvider =

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,27 +27,23 @@
  **
  ***************************************************************************/
 import {
-  DefaultFolderNodeConverter,
+  FolderNodeConverter,
   FoldingManager,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicLayout,
-  HierarchicLayoutEdgeRoutingStyle,
-  HierarchicLayoutRoutingStyle,
+  HierarchicalLayout,
   IGraph,
-  LayoutMode,
   License,
   Point,
-  RecursiveEdgeStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import GraphData from './resources/SampleData'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { ExpandCollapseNavigationHelper } from './ExpandCollapseNavigationHandler'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent = null!
 
@@ -59,8 +55,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeGraph()
 }
 
@@ -83,15 +77,17 @@ function initializeGraph(): void {
   initDemoStyles(graphComponent.graph, { foldingEnabled: true })
 
   // managing the appearance of folder nodes
-  const defaultFolderNodeConverter = new DefaultFolderNodeConverter()
-  defaultFolderNodeConverter.copyFirstLabel = true
-  defaultFolderNodeConverter.folderNodeSize = new Size(110, 60)
-  foldingManager.folderNodeConverter = defaultFolderNodeConverter
+  foldingManager.folderNodeConverter = new FolderNodeConverter({
+    folderNodeDefaults: {
+      copyLabels: true,
+      size: new Size(110, 60)
+    }
+  })
 
   // read sample graph
   buildGraph(graphComponent.graph)
 
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
 
 /**
@@ -120,7 +116,7 @@ function createGraphBuilder(masterGraph: IGraph): GraphBuilder {
 
 /**
  * Builds the graph using the JSON Data
- * After building the graph, a hierarchic layout is applied.
+ * After building the graph, a hierarchical layout is applied.
  */
 function buildGraph(graph: IGraph): void {
   // Create the builder on the master graph
@@ -136,8 +132,8 @@ function buildGraph(graph: IGraph): void {
         graph.addBend(edge, bend)
       })
     }
-    graph.setPortLocation(edge.sourcePort!, Point.from(edge.tag.sourcePort))
-    graph.setPortLocation(edge.targetPort!, Point.from(edge.tag.targetPort))
+    graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
+    graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
   })
 
   // collapsing the groups whose tags are collapsed
@@ -147,18 +143,16 @@ function buildGraph(graph: IGraph): void {
     }
   })
 
-  // applying  hierarchic layout with recursive edges
-  const hierarchicLayout = new HierarchicLayout({
-    recursiveGroupLayering: true,
-    layoutMode: LayoutMode.INCREMENTAL
+  // applying  hierarchical layout with recursive edges
+  const hierarchicalLayout = new HierarchicalLayout({
+    fromSketchMode: true,
+    defaultEdgeDescriptor: {
+      recursiveEdgePolicy: 'directed'
+    }
   })
-  hierarchicLayout.edgeLayoutDescriptor.routingStyle = new HierarchicLayoutRoutingStyle(
-    HierarchicLayoutEdgeRoutingStyle.ORTHOGONAL
-  )
-  hierarchicLayout.edgeLayoutDescriptor.recursiveEdgeStyle = RecursiveEdgeStyle.DIRECTED
 
   // apply a layout and move it to the top of the graph component
-  graph.applyLayout(hierarchicLayout)
+  graph.applyLayout(hierarchicalLayout)
 }
 
 run().then(finishLoading)

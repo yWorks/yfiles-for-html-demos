@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,10 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { INode, IRenderContext, TaggedSvgVisual } from 'yfiles'
-import { GraphComponent, NodeStyleBase, SvgVisual } from 'yfiles'
+import type { INode, IRenderContext, TaggedSvgVisual } from '@yfiles/yfiles'
+import { GraphComponent, NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 import { ComponentClass, createElement, FunctionComponent } from 'react'
-import { type Root, createRoot } from 'react-dom/client'
+import { createRoot, type Root } from 'react-dom/client'
 
 /**
  * The interface of the props passed to the SVG react component for rendering the node contents.
@@ -86,7 +86,7 @@ export default class ReactComponentNodeStyle<TTag> extends NodeStyleBase<
       height: node.layout.height,
       selected:
         context.canvasComponent instanceof GraphComponent &&
-        context.canvasComponent.selection.selectedNodes.isSelected(node),
+        context.canvasComponent.selection.nodes.includes(node),
       tag: node.tag as TTag
     }
   }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,164 +27,132 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GroupNodeStyle,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   INode,
   IPortCandidateProvider,
+  LabelStyle,
   LayoutExecutor,
   License,
   NodeDecorator,
   Size
-} from 'yfiles'
-
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-
-/** @type {GraphComponent} */
 let graphComponent
-
 /**
  * Bootstraps the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
-
+  graphComponent.inputMode = new GraphEditorInputMode()
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
-
   // then build the graph with the given data set
   buildGraph(graphComponent.graph, graphData)
-
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
-  graphComponent.fitGraphBounds()
-
+  LayoutExecutor.ensure()
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
-
   // configure port candidate provider
   configurePortCandidateProvider(graphComponent.graph)
 }
-
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
- * @param {!IGraph} graph
- * @param {!JSONGraph} graphData
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-
   graphBuilder.createNodesSource({
     data: graphData.nodeList.filter((item) => !item.isGroup),
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
-
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
-
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
-
   graphBuilder.buildGraph()
 }
-
 /**
- * Configures custom port candidates by utilizing the portCandidateProviderDecorator of the {@link NodeDecorator}.
- * @param {!IGraph} graph
+ * Configures custom port candidates by utilizing the portCandidateProvider of the {@link NodeDecorator}.
  */
 function configurePortCandidateProvider(graph) {
   // Don't remove unoccupied ports.
   graph.nodeDefaults.ports.autoCleanUp = false
-
   // First, get the GraphDecorator from the IGraph.
   // GraphDecorator is a utility class that aids in decorating
   // functionality to model items from a graph instance.
   const decorator = graph.decorator
-
-  // Here, we obtain the nodeDecorator.portCandidateProviderDecorator
+  // Here, we obtain the nodeDecorator.portCandidateProvider
   // to access the lookup decorator that handles ports candidates at nodes.
   // Basically this means that if any INode instance in the graph is queried for
   // the IPortCandidateProvider interface, the query will be handled by our code below.
-  const portCandidateProviderDecorator = decorator.nodeDecorator.portCandidateProviderDecorator
-
+  const portCandidateProvider = decorator.nodes.portCandidateProvider
   // One way to decorate the graph is to use the factory design pattern.
   // For each INode in the graph that will be queried for the IPortCandidateProvider interface, the below
   // factory method will be called with the node instance as argument.
   // We set the factory to a function expression which
   // returns a custom instance that implements the IPortCandidateProvider interface.
-
   // IPortCandidateProvider.combine() combines various port candidate providers.
   // IPortCandidateProvider.fromExistingPorts provides port candidates at the locations of already existing ports.
   // IPortCandidateProvider.fromNodeCenter provides a single port candidate at the center of the node.
   // IPortCandidateProvider.fromShapeGeometry provides several port candidates based on the shape of the node's style.
-  portCandidateProviderDecorator.setFactory((node) =>
-    IPortCandidateProvider.combine([
-      IPortCandidateProvider.fromExistingPorts(node),
-      IPortCandidateProvider.fromNodeCenter(node),
-      IPortCandidateProvider.fromShapeGeometry(node, 0.5)
-    ])
+  portCandidateProvider.addFactory((node) =>
+    IPortCandidateProvider.combine(
+      graph.isGroupNode(node)
+        ? [IPortCandidateProvider.fromShapeGeometry(node, 0.5)]
+        : [
+            IPortCandidateProvider.fromExistingPorts(node),
+            IPortCandidateProvider.fromNodeCenter(node),
+            IPortCandidateProvider.fromShapeGeometry(node, 0.5)
+          ]
+    )
   )
 }
-
 /**
  * Initializes the defaults for the styling in this demo.
  *
- * @param {!IGraph} graph The graph.
+ * @param graph The graph.
  */
 function initializeGraph(graph) {
   // set styles for this demo
-  initDemoStyles(graph)
-
+  initDemoStyles(graph, { orthogonalEditing: true })
   // set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#46a8d5',
     stroke: '2px solid #b5dcee',
     contentAreaFill: '#b5dcee'
   })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'left',
     textFill: '#eee'
   })
-
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
-
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
-
 run().then(finishLoading)

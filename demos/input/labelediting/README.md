@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Label Editing Demo
 
-# Label Editing Demo
+<img src="../../../doc/demo-thumbnails/label-editing.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/input/labelediting/).
 
 This demo shows customizations of the interactive label editing. In particular, it shows:
 
@@ -23,8 +25,8 @@ This demo shows customizations of the interactive label editing. In particular, 
 ## Thing to Try
 
 - Edit a selected label by pressing F2. If no label exists, a new one will be added.
-- Add an additional label to a selected graph item by pressing Shift+F2.
-- Select multiple items (labels and/or label owners) and try to add or edit them by pressing Shift+F2 or F2, resp. Note that by default, if both labels and other items are selected, editing a label is preferred.
+- Add an additional label to a selected graph item by pressing Shift + F2.
+- Select multiple items (labels and/or label owners) and try to add or edit them by pressing Shift + F2 or F2, resp. Note that by default, if both labels and other items are selected, editing a label is preferred.
 
 ## Editing Properties
 

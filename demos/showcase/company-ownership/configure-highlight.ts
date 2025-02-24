@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,23 +28,27 @@
  ***************************************************************************/
 import {
   Arrow,
-  DefaultLabelStyle,
-  EdgeStyleDecorationInstaller,
+  EdgeStyleIndicatorRenderer,
   type GraphComponent,
   GraphItemTypes,
   type GraphViewerInputMode,
   IEdge,
   ILabel,
+  type IModelItem,
   INode,
-  LabelStyleDecorationInstaller,
-  NodeStyleDecorationInstaller,
+  type IObservableCollection,
+  type LabelStyle,
+  LabelStyleIndicatorRenderer,
+  NodeStyleIndicatorRenderer,
   PolylineEdgeStyle,
+  PortStyleIndicatorRenderer,
   ShapeNodeShape,
   ShapeNodeStyle,
-  StyleDecorationZoomPolicy
-} from 'yfiles'
+  StyleIndicatorZoomPolicy
+} from '@yfiles/yfiles'
 import { CustomShapeNodeStyle } from './styles/CustomShapeNodeStyle'
 import { getCompany, getRelationship } from './data-types'
+import { CollapseExpandPortStyle } from '../orgchart/graph-style/CollapseExpandPortStyle'
 
 /**
  * Enables the highlighting of the edges.
@@ -55,30 +59,29 @@ export function enableHoverHighlights(
   viewerInputMode: GraphViewerInputMode,
   graphComponent: GraphComponent
 ): void {
-  // render ports and labels above the highlight group
-  graphComponent.graphModelManager.portGroup.above(graphComponent.highlightGroup)
-  graphComponent.graphModelManager.edgeLabelGroup.above(graphComponent.highlightGroup)
-
-  // configures the highlighting style for the edges
   const decorator = graphComponent.graph.decorator
-  decorator.nodeDecorator.highlightDecorator.setFactory((node) => {
+
+  // configures the highlighting style for the nodes
+  decorator.nodes.highlightRenderer.addFactory((node) => {
     const shape =
       node.style instanceof CustomShapeNodeStyle
         ? highlightShapes.get(getCompany(node).nodeType)
         : ShapeNodeShape.RECTANGLE
-    return new NodeStyleDecorationInstaller({
+    return new NodeStyleIndicatorRenderer({
       nodeStyle: new ShapeNodeStyle({
         stroke: '2px #ab2346',
         fill: 'none',
         shape
       }),
-      zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES,
+      zoomPolicy: StyleIndicatorZoomPolicy.WORLD_COORDINATES,
       margins: 2
     })
   })
-  decorator.edgeDecorator.highlightDecorator.setFactory(
+
+  // configures the highlighting style for the edges
+  decorator.edges.highlightRenderer.addFactory(
     (edge) =>
-      new EdgeStyleDecorationInstaller({
+      new EdgeStyleIndicatorRenderer({
         edgeStyle: new PolylineEdgeStyle({
           stroke: '3px #ab2346',
           targetArrow: new Arrow({
@@ -88,53 +91,92 @@ export function enableHoverHighlights(
           }),
           smoothingLength: getRelationship(edge).type === 'Hierarchy' ? 5 : 100
         }),
-        zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
+        zoomPolicy: StyleIndicatorZoomPolicy.WORLD_COORDINATES
+      })
+  )
+
+  // configures the highlighting style for the ports
+  decorator.ports.highlightRenderer.addFactory(
+    (port) =>
+      new PortStyleIndicatorRenderer({
+        portStyle: port.style,
+        zoomPolicy: StyleIndicatorZoomPolicy.WORLD_COORDINATES
       })
   )
 
   // configures the highlighting style for the labels
-  decorator.labelDecorator.highlightDecorator.setImplementation(
-    new LabelStyleDecorationInstaller({
-      labelStyle: new DefaultLabelStyle({
-        backgroundStroke: '3px #ab2346',
-        shape: 'round-rectangle',
-        backgroundFill: 'transparent',
-        textFill: 'transparent'
-      }),
-      zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES,
-      margins: 1
+  decorator.labels.highlightRenderer.addFactory((label) => {
+    const style = label.style.clone() as LabelStyle
+    style.backgroundStroke = '3px #ab2346'
+    return new LabelStyleIndicatorRenderer({
+      labelStyle: style,
+      zoomPolicy: StyleIndicatorZoomPolicy.WORLD_COORDINATES,
+      margins: 0
     })
-  )
+  })
 
   // configures the hover input mode
   viewerInputMode.itemHoverInputMode.hoverItems =
-    GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL
+    GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL | GraphItemTypes.PORT
   viewerInputMode.itemHoverInputMode.enabled = true
-  viewerInputMode.itemHoverInputMode.discardInvalidItems = false
-  viewerInputMode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
-    const highlightIndicatorManager = graphComponent.highlightIndicatorManager
-    highlightIndicatorManager.clearHighlights()
+  viewerInputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
+    const highlights = graphComponent.highlights
+    highlights.clear()
     if (evt.item) {
-      highlightIndicatorManager.addHighlight(evt.item)
       if (evt.item instanceof INode) {
-        graphComponent.graph.edgesAt(evt.item).forEach((edge) => {
-          highlightIndicatorManager.addHighlight(edge)
-          edge.labels.forEach((label) => {
-            highlightIndicatorManager.addHighlight(label)
-          })
+        const node = evt.item
+        // highlight first the edges and their ports that are not adjacent to the 'hovered' node,
+        // which will be highlighted afterwards, to make sure that its highlight lies
+        // above the edge highlight
+        graphComponent.graph.edgesAt(node).forEach((edge) => {
+          highlightEdge(edge, highlights, false)
+          highlightPorts(node === edge.sourceNode ? edge.targetNode : edge.sourceNode, highlights)
         })
+        // highlight the hovered node and its ports
+        highlights.add(node)
+        highlightPorts(node, highlights)
       } else if (evt.item instanceof IEdge) {
-        evt.item.labels.forEach((label) => {
-          highlightIndicatorManager.addHighlight(label)
-        })
+        highlightEdge(evt.item, highlights)
       } else if (evt.item instanceof ILabel) {
-        const owner = evt.item.owner
-        if (owner instanceof IEdge) {
-          highlightIndicatorManager.addHighlight(owner)
+        if (evt.item.owner instanceof IEdge) {
+          highlightEdge(evt.item.owner, highlights)
         }
+        highlights.add(evt.item)
       }
     }
   })
+}
+
+/**
+ * Highlights the edge, the edge labels and the ports incident to the given edge.
+ */
+function highlightEdge(
+  edge: IEdge,
+  highlights: IObservableCollection<IModelItem>,
+  highlightIncidentPorts = true
+): void {
+  // highlight the edge
+  highlights.add(edge)
+  // highlight the edge labels
+  edge.labels.forEach((label) => {
+    highlights.add(label)
+  })
+  if (highlightIncidentPorts) {
+    // highlight the ports incident to the given edge
+    highlightPorts(edge.sourceNode, highlights)
+    highlightPorts(edge.targetNode, highlights)
+  }
+}
+
+/**
+ * Highlights the ports incident to the given node rendered by {@link CollapseExpandPortStyle}.
+ */
+function highlightPorts(node: INode, highlights: IObservableCollection<IModelItem>): void {
+  node.ports
+    .filter((port) => port.style instanceof CollapseExpandPortStyle)
+    .forEach((port) => {
+      highlights.add(port)
+    })
 }
 
 export const highlightShapes = new Map<string, ShapeNodeShape>([

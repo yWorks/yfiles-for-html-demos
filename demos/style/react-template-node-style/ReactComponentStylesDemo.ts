@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { finishLoading } from 'demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 import * as ReactDOM from 'react-dom'
 
@@ -43,24 +43,22 @@ import 'codemirror/addon/dialog/dialog.css'
 import 'codemirror/addon/lint/lint.css'
 
 import {
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphItemTypes,
   GraphMLIOHandler,
-  GraphMLSupport,
   GraphViewerInputMode,
   IArrow,
   License,
   PolylineEdgeStyle,
   Rect,
   Size,
-  type SizeConvertible,
-  StorageLocation
-} from 'yfiles'
+  type SizeConvertible
+} from '@yfiles/yfiles'
 
 import SampleData, { type FullNodeData, type NodeData } from './resources/sample'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { registerReactComponentNodeStyleSerialization } from './ReactComponentSvgNodeStyleMarkupExtension'
 import {
   createReactComponentHtmlLabelStyleFromJSX,
@@ -71,17 +69,15 @@ import {
 } from './jsx-compiler'
 import { ReactComponentHtmlLabelStyle } from './ReactComponentHtmlLabelStyle'
 import { ReactComponentHtmlNodeStyle } from './ReactComponentHtmlNodeStyle'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
 import { ReactComponentSvgLabelStyle } from './ReactComponentSvgLabelStyle'
 import { ReactComponentSvgNodeStyle } from './ReactComponentSvgNodeStyle'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent: GraphComponent
 
 let jsxRenderFunctionTextArea: CodeMirror.EditorFromTextArea
 
 let tagTextArea: CodeMirror.EditorFromTextArea
-
-let graphMLSupport: GraphMLSupport
 
 const templateErrorArea = document.querySelector<HTMLDivElement>('#template-text-area-error')!
 const tagErrorArea = document.querySelector<HTMLDivElement>('#tag-text-area-error')!
@@ -95,7 +91,6 @@ const applyTagButton = document.querySelector<HTMLButtonElement>('#apply-tag-but
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphViewerInputMode({
     clickSelectableItems: GraphItemTypes.NODE | GraphItemTypes.LABEL,
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.LABEL
@@ -104,7 +99,6 @@ async function run(): Promise<void> {
   // initialize demo
   initializeTextAreas()
   initializeStyles()
-  initializeIO()
   loadSampleGraph()
   initializeUI()
 }
@@ -137,31 +131,8 @@ function initializeTextAreas(): void {
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
 
-  graphComponent.selection.addItemSelectionChangedListener(() => {
-    const selectedItem =
-      graphComponent.selection.selectedNodes.at(0) ?? graphComponent.selection.selectedLabels.at(0)
-
-    templateErrorArea.classList.remove('open-error')
-    tagErrorArea.classList.remove('open-error')
-    let jsx: string | undefined
-    let tag: any
-    if (selectedItem && isReactComponentStyleEx(selectedItem.style)) {
-      jsx = selectedItem.style.jsx
-      tag = selectedItem.tag
-      htmlTemplateToggle.checked =
-        selectedItem.style instanceof ReactComponentHtmlLabelStyle ||
-        selectedItem.style instanceof ReactComponentHtmlNodeStyle
-    }
-
-    jsxRenderFunctionTextArea.setOption('readOnly', !jsx)
-    jsxRenderFunctionTextArea.setValue(jsx ?? 'Style is not an instance with attached JSX sources.')
-    applyTemplateButton.disabled = !jsx
-    htmlTemplateToggle.disabled = !jsx
-
-    tagTextArea.setOption('readOnly', false)
-    tagTextArea.setValue(tag ? JSON.stringify(tag, null, 2) : '{}')
-    applyTagButton.disabled = !selectedItem
-  })
+  graphComponent.selection.addEventListener('item-added', onSelectionChanged)
+  graphComponent.selection.addEventListener('item-removed', onSelectionChanged)
 }
 
 const defaultLabelSize: SizeConvertible = [150, 14]
@@ -180,9 +151,9 @@ function initializeStyles(): void {
     defaultLabelSize
   )
 
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({ insets: 2 }).createParameter(
-    'north'
-  )
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 2
+  }).createParameter('top')
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '2px rgb(170, 170, 170)',
@@ -193,7 +164,7 @@ function initializeStyles(): void {
 function toggleHtmlSvgTemplate(event: Event) {
   const isHtml = (event.target as HTMLInputElement).checked
   if (
-    graphComponent.selection.selectedNodes.some(
+    graphComponent.selection.nodes.some(
       (label) =>
         label.style instanceof ReactComponentSvgNodeStyle ||
         label.style instanceof ReactComponentHtmlNodeStyle
@@ -203,7 +174,7 @@ function toggleHtmlSvgTemplate(event: Event) {
       isHtml ? demoHtmlNodeStyleJSXSources : demoSvgNodeStyleJSXSources
     )
   } else if (
-    graphComponent.selection.selectedLabels.some(
+    graphComponent.selection.labels.some(
       (label) =>
         label.style instanceof ReactComponentSvgLabelStyle ||
         label.style instanceof ReactComponentHtmlLabelStyle
@@ -215,6 +186,31 @@ function toggleHtmlSvgTemplate(event: Event) {
   } else {
     jsxRenderFunctionTextArea.setValue('Style is not an instance with attached JSX sources.')
   }
+}
+
+function onSelectionChanged() {
+  const selectedItem = graphComponent.selection.nodes.at(0) ?? graphComponent.selection.labels.at(0)
+
+  templateErrorArea.classList.remove('open-error')
+  tagErrorArea.classList.remove('open-error')
+  let jsx: string | undefined
+  let tag: any
+  if (selectedItem && isReactComponentStyleEx(selectedItem.style)) {
+    jsx = selectedItem.style.jsx
+    tag = selectedItem.tag
+    htmlTemplateToggle.checked =
+      selectedItem.style instanceof ReactComponentHtmlLabelStyle ||
+      selectedItem.style instanceof ReactComponentHtmlNodeStyle
+  }
+
+  jsxRenderFunctionTextArea.setOption('readOnly', !jsx)
+  jsxRenderFunctionTextArea.setValue(jsx ?? 'Style is not an instance with attached JSX sources.')
+  applyTemplateButton.disabled = !jsx
+  htmlTemplateToggle.disabled = !jsx
+
+  tagTextArea.setOption('readOnly', false)
+  tagTextArea.setValue(tag ? JSON.stringify(tag, null, 2) : '{}')
+  applyTagButton.disabled = !selectedItem
 }
 
 const demoSvgNodeStyleJSXSources = `({width, height, selected, detail, tag}) =>
@@ -378,16 +374,12 @@ const demoHtmlLabelStyleJSXSources = `({selected, text, tag}) =>
 /**
  * Initializes GraphML writing and reading for files containing ReactComponentNodeStyle.
  */
-function initializeIO(): void {
+function initializeIO(): GraphMLIOHandler {
   const graphmlHandler = new GraphMLIOHandler()
 
   registerReactComponentNodeStyleSerialization(graphmlHandler)
 
-  graphMLSupport = new GraphMLSupport({
-    graphComponent,
-    graphMLIOHandler: graphmlHandler,
-    storageLocation: StorageLocation.FILE_SYSTEM
-  })
+  return graphmlHandler
 }
 
 /**
@@ -418,9 +410,9 @@ function loadSampleGraph(): void {
     e.bends
 
   const graph = graphBuilder.buildGraph()
-  graphComponent.fitGraphBounds(30)
+  void graphComponent.fitGraphBounds(30)
 
-  graphComponent.selection.setSelected(graph.nodes.last(), true)
+  graphComponent.selection.add(graph.nodes.last()!)
 }
 
 function applyJSXtoSelectedNodes(jsxSource: string, svg: boolean) {
@@ -429,13 +421,13 @@ function applyJSXtoSelectedNodes(jsxSource: string, svg: boolean) {
     : createReactComponentHtmlNodeStyleFromJSX(jsxSource)
   // check if style is a valid style
   style.renderer
-    .getVisualCreator(graphComponent.selection.selectedNodes.first(), style)
+    .getVisualCreator(graphComponent.selection.nodes.first()!, style)
     .createVisual(graphComponent.createRenderContext())
 
   // check whether there is an error in the style or template
   ReactDOM.flushSync(() => {})
 
-  graphComponent.selection.selectedNodes.forEach((node) => {
+  graphComponent.selection.nodes.forEach((node) => {
     graphComponent.graph.setStyle(node, style)
   })
 }
@@ -447,13 +439,13 @@ function applyJSXtoSelectedLabels(jsxSource: string, svg: boolean) {
 
   // check if style is a valid style
   style.renderer
-    .getVisualCreator(graphComponent.selection.selectedLabels.first(), style)
+    .getVisualCreator(graphComponent.selection.labels.first()!, style)
     .createVisual(graphComponent.createRenderContext())
 
   // check whether there is an error in the style or template
   ReactDOM.flushSync(() => {})
 
-  graphComponent.selection.selectedLabels.forEach((label) => {
+  graphComponent.selection.labels.forEach((label) => {
     graphComponent.graph.setStyle(label, style)
   })
 }
@@ -462,36 +454,37 @@ function applyJSXtoSelectedLabels(jsxSource: string, svg: boolean) {
  * Wires up the UI. Buttons are linked with their according actions.
  */
 function initializeUI(): void {
-  const openButton = document.querySelector("button[data-command='OPEN']")!
-  openButton.setAttribute('data-command-registered', 'true')
-  openButton.setAttribute('title', 'Open a GraphML file')
-  openButton.addEventListener('click', async () => {
-    try {
-      await graphMLSupport.openFile(graphComponent.graph)
-      graphComponent.fitGraphBounds()
-    } catch (ignored) {
-      alert(
-        'The graph contains styles that are not supported by this demo. This demo works best when nodes have ReactComponentNodeStyles created by this demo.'
-      )
-      graphComponent.graph.clear()
-    }
-  })
+  const graphMLIOHandler = initializeIO()
 
+  document
+    .querySelector<HTMLInputElement>('#open-file-button')!
+    .addEventListener('click', async () => {
+      try {
+        await openGraphML(graphComponent, graphMLIOHandler)
+        graphComponent.fitGraphBounds()
+      } catch (ignored) {
+        alert(
+          'The graph contains styles that are not supported by this demo. This demo works best when nodes have ReactComponentNodeStyles created by this demo.'
+        )
+        graphComponent.graph.clear()
+      }
+    })
+
+  document.querySelector<HTMLInputElement>('#save-button')!.addEventListener('click', async () => {
+    saveGraphML(graphComponent, 'reactTemplateNodeStyle.graphml', graphMLIOHandler)
+  })
   htmlTemplateToggle.addEventListener('change', toggleHtmlSvgTemplate)
 
   document.querySelector('#apply-template-button')!.addEventListener('click', () => {
-    if (
-      graphComponent.selection.selectedNodes.size === 0 &&
-      graphComponent.selection.selectedLabels.size === 0
-    ) {
+    if (graphComponent.selection.nodes.size === 0 && graphComponent.selection.labels.size === 0) {
       return
     }
     const svg = !htmlTemplateToggle.checked
     const jsxSource = jsxRenderFunctionTextArea.getValue()
     try {
-      if (graphComponent.selection.selectedNodes.size > 0) {
+      if (graphComponent.selection.nodes.size > 0) {
         applyJSXtoSelectedNodes(jsxSource, svg)
-      } else if (graphComponent.selection.selectedLabels.size > 0) {
+      } else if (graphComponent.selection.labels.size > 0) {
         applyJSXtoSelectedLabels(jsxSource, svg)
       }
       templateErrorArea.classList.remove('open-error')
@@ -503,7 +496,7 @@ function initializeUI(): void {
   })
 
   document.querySelector('#apply-tag-button')!.addEventListener('click', () => {
-    graphComponent.selection.selectedNodes.forEach((node) => {
+    graphComponent.selection.nodes.forEach((node) => {
       try {
         const tag = JSON.parse(tagTextArea.getValue())
         tagErrorArea.classList.remove('open-error')

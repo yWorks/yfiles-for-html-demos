@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,14 +27,18 @@
  **
  ***************************************************************************/
 // language=HTML
-export const leafNodeStyleTemplate = `
-  <rect stroke="none" fill="#76b041" rx="4" ry="4" width="58" height="28" transform="translate(1 1)"/>
-`
+import { LitNodeStyle, type LitNodeStyleProps } from '@yfiles/demo-utils/LitNodeStyle'
+// @ts-ignore Import via URL
+import { svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import type { GraphComponent } from '@yfiles/yfiles'
 
-// language=HTML
-export const innerNodeStyleTemplate = `
-  <defs>
-    <g id="expand_icon" transform="translate(21 6)">
+export function initializeStyles(graphComponent: GraphComponent): {
+  templateInnerNodeStyle: LitNodeStyle
+  templateLeafNodeStyle: LitNodeStyle
+} {
+  const defs = graphComponent.svgDefsManager.defs
+  const element = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
+  element.innerHTML = `<g id="expand_icon" transform="translate(21 6)">
       <polygon stroke="#FFFFFF" stroke-width="3" fill="none"
         points="6,17 6,12 1,12 1,6 6,6 6,1 12,1 12,6 17,6 17,12 12,12 12,17" />
       <polygon stroke="none" fill="#999999" points="6,17 6,12 1,12 1,6 6,6 6,1 12,1 12,6 17,6 17,12 12,12 12,17" />
@@ -42,11 +46,24 @@ export const innerNodeStyleTemplate = `
     <g id="collapse_icon" transform="translate(21 6)">
       <rect x="1" y="6" fill="none" stroke="#FFFFFF" stroke-width="3" width="16" height="6" />
       <rect x="1" y="6" fill="#999999" stroke="none" width="16" height="6" />
-    </g>
-  </defs>
-  <g>
-    <rect stroke="none" fill="{TemplateBinding styleTag, Converter=collapseDemo.backgroundConverter}"
-      rx="4" ry="4" width="60" height="30"/>
-    <use xlink:href="{TemplateBinding styleTag, Converter=collapseDemo.iconConverter}"
-      style="pointer-events:none"/>
-  </g>`
+    </g>`
+  defs.appendChild(element)
+
+  const templateLeafNodeStyle = new LitNodeStyle(
+    (): SVGElement => svg`
+  <rect stroke="none" fill="#76b041" rx="4" ry="4" width="58" height="28" transform="translate(1 1)"/>
+`
+  )
+
+  const templateInnerNodeStyle = new LitNodeStyle(
+    ({ tag }: LitNodeStyleProps<{ collapsed: boolean }>): SVGElement => svg`
+      <g>
+        <rect stroke="none" fill=${tag.collapsed ? '#f26419' : '#01baff'}
+              rx="4" ry="4" width="60" height="30" />
+        <use href=${tag.collapsed ? '#expand_icon' : '#collapse_icon'}
+             style="pointer-events:none" />
+      </g>`
+  )
+
+  return { templateInnerNodeStyle, templateLeafNodeStyle }
+}

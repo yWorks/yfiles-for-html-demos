@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,33 +28,25 @@
  ***************************************************************************/
 import {
   AdjacencyGraphBuilder,
+  EdgeLabelPreferredPlacement,
   GraphComponent,
   GraphViewerInputMode,
-  HierarchicLayout,
-  HierarchicLayoutData,
-  HierarchicLayoutLayeringStrategy,
-  IIncrementalHintsFactory,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   IList,
-  IModelItem,
   INode,
-  LabelPlacements,
-  LabelSideReferences,
-  LayoutMode,
-  License,
-  PreferredPlacementDescriptor,
-  TemplateNodeStyle
-} from 'yfiles'
+  LayoutExecutor,
+  License
+} from '@yfiles/yfiles'
 import { SchemaComponent } from './SchemaComponent'
 import samples from './samples'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 const samplesComboBox = document.querySelector<HTMLSelectElement>('#samples-combo-box')!
 
-let layout: HierarchicLayout
-let layoutData: HierarchicLayoutData
+let layout: HierarchicalLayout
+let layoutData: HierarchicalLayoutData
 let layouting = false
 
 let graphComponent: GraphComponent
@@ -68,7 +60,7 @@ let existingNodes: IList<INode>
  * This demo provides a schema graph component for interactive manipulation
  * of the result graph structure and content.
  *
- * In order to visualize the nodes, {@link TemplateNodeStyle} is used. The style's
+ * In order to visualize the nodes, {@link LitNodeStyle} is used. The style's
  * node template can also be changed interactively in order to display arbitrary data
  * of the business data associated with the node.
  */
@@ -77,8 +69,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   schemaComponent = new SchemaComponent('schemaGraphComponent', graphComponent.graph, () => {
     // noinspection JSIgnoredPromiseFromCall
     buildGraphFromData(true)
@@ -154,7 +144,7 @@ async function buildGraphFromData(update: boolean): Promise<void> {
     } catch (e) {
       alert(`${(e as Error).message}`)
     }
-    graphComponent.fitGraphBounds()
+    await graphComponent.fitGraphBounds()
   }
 
   await applyLayout(update)
@@ -170,16 +160,15 @@ async function applyLayout(update: boolean): Promise<void> {
     return
   }
 
-  if (update) {
-    // configure from scratch layout
-    layout.layoutMode = LayoutMode.INCREMENTAL
-  } else {
-    layout.layoutMode = LayoutMode.FROM_SCRATCH
-  }
-
+  layout.fromSketchMode = update
   layouting = true
+
   try {
-    await graphComponent.morphLayout(layout, '1s', layoutData)
+    // Ensure that the LayoutExecutor class is not removed by build optimizers
+    // It is needed for the 'applyLayoutAnimated' method in this demo.
+    LayoutExecutor.ensure()
+
+    await graphComponent.applyLayoutAnimated(layout, '1s', layoutData)
   } finally {
     layouting = false
   }
@@ -216,28 +205,19 @@ function initializeSamplesComboBox(): void {
  */
 function initializeLayout() {
   // initialize layout algorithm
-  layout = new HierarchicLayout()
-  layout.orthogonalRouting = true
-  layout.integratedEdgeLabeling = true
-  layout.fromScratchLayeringStrategy = HierarchicLayoutLayeringStrategy.HIERARCHICAL_TOPMOST
+  layout = new HierarchicalLayout({
+    fromScratchLayeringStrategy: 'hierarchical-topmost'
+  })
 
   // initialize layout data
   // configure label placement
-  const preferredPlacementDescriptor = new PreferredPlacementDescriptor({
-    sideOfEdge: LabelPlacements.RIGHT_OF_EDGE,
-    sideReference: LabelSideReferences.ABSOLUTE_WITH_RIGHT_IN_NORTH,
-    distanceToEdge: 5
-  })
-  preferredPlacementDescriptor.freeze()
-
-  layoutData = new HierarchicLayoutData({
-    incrementalHints: (item: IModelItem, hintsFactory: IIncrementalHintsFactory): object | null => {
-      if (item instanceof INode && !existingNodes!.includes(item)) {
-        return hintsFactory.createLayerIncrementallyHint(item)
-      }
-      return null
-    },
-    edgeLabelPreferredPlacement: preferredPlacementDescriptor
+  layoutData = new HierarchicalLayoutData({
+    edgeLabelPreferredPlacements: new EdgeLabelPreferredPlacement({
+      edgeSide: 'right-of-edge',
+      sideReference: 'absolute-with-right-above',
+      distanceToEdge: 5
+    }),
+    incrementalNodes: (node) => !existingNodes.includes(node)
   })
 }
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,57 +28,42 @@
  ***************************************************************************/
 import {
   Color,
-  DefaultLabelStyle,
+  EdgeLabelPreferredPlacement,
   EdgePathLabelModel,
   EdgeSides,
-  FreeEdgeLabelModel,
+  EdgeStyleIndicatorRenderer,
   GraphComponent,
   GraphEditorInputMode,
-  GraphFocusIndicatorManager,
-  GraphHighlightIndicatorManager,
   GraphItemTypes,
-  GraphSelectionIndicatorManager,
-  HierarchicLayout,
-  HierarchicLayoutData,
-  ICanvasObjectDescriptor,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   ICompoundEdit,
   IEdge,
   IGraph,
   ILabel,
   ILabelOwner,
   IMapper,
-  IModelItem,
   INode,
-  ItemClickedEventArgs,
-  LabelPlacements,
-  LayoutMode,
-  LayoutOrientation,
+  IUndoUnit,
+  LabelEdgeSides,
+  LabelStyle,
+  LayoutGrid,
   License,
   Mapper,
   MaximumFlow,
   MinimumCostFlow,
   MinimumCostFlowResult,
-  PartitionGrid,
-  PartitionGridData,
-  PreferredPlacementDescriptor,
   Rect,
   Size,
-  VoidEdgeStyle,
-  VoidLabelStyle
-} from 'yfiles'
+  SmartEdgeLabelModel
+} from '@yfiles/yfiles'
 
 import HTMLPopupSupport from './HTMLPopupSupport'
-import {
-  EmptyReshapeHandleProvider,
-  MinCutUndoUnit,
-  NetworkFlowInputMode,
-  TagUndoUnit
-} from './NetworkFlowsHelper'
+import { EmptyReshapeHandleProvider, NetworkFlowInputMode } from './NetworkFlowsHelper'
 import { MinCutLine, NetworkFlowEdgeStyle, NetworkFlowNodeStyle } from './DemoStyles'
 
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * The GraphComponent.
@@ -145,13 +130,11 @@ const flowInput = document.querySelector<HTMLInputElement>('#flowValue')!
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeGraph()
   initializeGraphComponent()
   createEditorInputMode()
-  graphComponent.fitGraphBounds()
-  createSampleGraph()
+  await graphComponent.fitGraphBounds()
+  await createSampleGraph()
   initializeUI()
 }
 
@@ -170,29 +153,25 @@ function initializeGraph(): void {
   // enable the undo engine
   graph.undoEngineEnabled = true
 
-  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+  graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
 
-  graph.edgeDefaults.labels.style = new DefaultLabelStyle({
+  graph.edgeDefaults.labels.style = new LabelStyle({
     font: '11px Arial',
     backgroundStroke: 'skyblue',
     backgroundFill: 'aliceblue',
-    insets: [3, 5, 3, 5]
+    padding: [3, 5, 3, 5]
   })
 
-  graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setImplementation(
-    new EmptyReshapeHandleProvider()
+  graph.decorator.nodes.reshapeHandleProvider.addConstant(new EmptyReshapeHandleProvider())
+  graph.decorator.edges.selectionRenderer.hide()
+  graph.decorator.labels.selectionRenderer.hide()
+  graph.decorator.labels.focusRenderer.hide()
+  graph.decorator.edges.highlightRenderer.addConstant(
+    new EdgeStyleIndicatorRenderer({
+      edgeStyle: new NetworkFlowEdgeStyle(Color.DARK_ORANGE),
+      zoomPolicy: 'world-coordinates'
+    })
   )
-
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    edgeStyle: VoidEdgeStyle.INSTANCE,
-    labelStyle: VoidLabelStyle.INSTANCE
-  })
-  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
-    labelStyle: VoidLabelStyle.INSTANCE
-  })
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    edgeStyle: new NetworkFlowEdgeStyle(Color.DARK_ORANGE)
-  })
 }
 
 /**
@@ -201,7 +180,7 @@ function initializeGraph(): void {
  */
 function initializeGraphComponent(): void {
   minCutLine = new MinCutLine()
-  graphComponent.highlightGroup.addChild(minCutLine, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE)
+  graphComponent.renderTree.createElement(graphComponent.renderTree.highlightGroup, minCutLine)
 
   // We use the EdgePathLabelModel for the edge pop-up
   const edgeLabelModel = new EdgePathLabelModel({
@@ -214,10 +193,10 @@ function initializeGraphComponent(): void {
   edgePopup = new HTMLPopupSupport(
     graphComponent,
     edgePopupContent,
-    edgeLabelModel.createDefaultParameter()
+    edgeLabelModel.createRatioParameter()
   )
 
-  graphComponent.addZoomChangedListener(() => graphComponent.invalidate())
+  graphComponent.addEventListener('zoom-changed', () => graphComponent.invalidate())
 }
 
 /**
@@ -235,31 +214,30 @@ function createEditorInputMode(): void {
   const networkFlowsInputMode = new NetworkFlowInputMode()
   networkFlowsInputMode.priority = 1
   networkFlowsInputMode.addDragFinished(async (item, oldTag) => {
-    // crates undo units for tag changes
+    // creates undo units for tag changes
+    const newTag = item.tag
     if (item instanceof INode) {
-      const tagUndoUnit = new TagUndoUnit(
-        'Supply/demand changed',
-        'Supply/demand changed',
-        oldTag,
-        item.tag,
-        item
+      graphComponent.graph.undoEngine!.addUnit(
+        IUndoUnit.fromHandler(
+          'Supply/demand changed',
+          () => (item.tag = oldTag),
+          () => (item.tag = newTag)
+        )
       )
-      graphComponent.graph.undoEngine!.addUnit(tagUndoUnit)
       runFlowAlgorithm()
       if (compoundEdit) {
         compoundEdit.commit()
       }
     } else if (item instanceof IEdge) {
-      const tagUndoUnit = new TagUndoUnit(
-        'Capacity changed',
-        'Capacity changed',
-        oldTag,
-        item.tag,
-        item
+      graphComponent.graph.undoEngine!.addUnit(
+        IUndoUnit.fromHandler(
+          'Capacity changed',
+          () => (item.tag = oldTag),
+          () => (item.tag = newTag)
+        )
       )
-      graphComponent.graph.undoEngine!.addUnit(tagUndoUnit)
-      calculateNodeSize(item.sourceNode!)
-      calculateNodeSize(item.targetNode!)
+      calculateNodeSize(item.sourceNode)
+      calculateNodeSize(item.targetNode)
       runFlowAlgorithm()
       await runLayout(true)
       if (compoundEdit) {
@@ -267,14 +245,14 @@ function createEditorInputMode(): void {
       }
     }
   })
-  networkFlowsInputMode.addDragStartedListener(() => {
+  networkFlowsInputMode.setDragStartedListener(() => {
     compoundEdit = graphComponent.graph.beginEdit('Dragging', 'Dragging')
   })
 
   inputMode.add(networkFlowsInputMode)
 
   // deletion
-  inputMode.addDeletedSelectionListener(async () => {
+  inputMode.addEventListener('deleted-selection', async (_) => {
     const deletedCompoundEdit = graphComponent.graph.beginEdit('Element deleted', 'Element deleted')
     // if an edge was removed, calculate the new node size of its endpoints
     if (nodesToChange.length > 0) {
@@ -290,22 +268,22 @@ function createEditorInputMode(): void {
     deletedCompoundEdit.commit()
   })
 
-  inputMode.addDeletingSelectionListener((_, evt) => {
+  inputMode.addEventListener('deleting-selection', (evt) => {
     edgePopup.currentItem = null
     // collect all nodes that are endpoints of removed edges
     evt.selection.forEach((item) => {
       if (item instanceof IEdge) {
-        nodesToChange.push(item.sourceNode!)
-        nodesToChange.push(item.targetNode!)
+        nodesToChange.push(item.sourceNode)
+        nodesToChange.push(item.targetNode)
       }
     })
   })
 
   // do not allow self-loops
-  inputMode.createEdgeInputMode.allowSelfloops = false
+  inputMode.createEdgeInputMode.allowSelfLoops = false
 
   // edge creation
-  inputMode.createEdgeInputMode.addEdgeCreatedListener(async (_, evt) => {
+  inputMode.createEdgeInputMode.addEventListener('edge-created', async (evt) => {
     const edgeCreatedCompoundEdit = graphComponent.graph.beginEdit('EdgeCreation', 'EdgeCreation')
     const edge = evt.item
     edge.tag = {
@@ -318,15 +296,15 @@ function createEditorInputMode(): void {
     updateEdgeThickness(edge)
 
     // update the size of the source and target nodes
-    calculateNodeSize(edge.sourceNode!)
-    calculateNodeSize(edge.targetNode!)
+    calculateNodeSize(edge.sourceNode)
+    calculateNodeSize(edge.targetNode)
     runFlowAlgorithm()
-    await runLayout(true, [edge.sourceNode!, edge.targetNode!])
+    await runLayout(true, [edge.sourceNode, edge.targetNode])
     edgeCreatedCompoundEdit.commit()
   })
 
   // node creation
-  inputMode.addNodeCreatedListener((_, evt) => {
+  inputMode.addEventListener('node-created', (evt) => {
     evt.item.tag = {
       supply: 0,
       flow: 0,
@@ -334,10 +312,10 @@ function createEditorInputMode(): void {
     }
   })
 
-  inputMode.addCanvasClickedListener(() => (edgePopup.currentItem = null))
+  inputMode.addEventListener('canvas-clicked', () => (edgePopup.currentItem = null))
 
   // Presents a popup that provides buttons for increasing/decreasing the edge capacity.
-  inputMode.addItemClickedListener((_, evt) => {
+  inputMode.addEventListener('item-clicked', (evt) => {
     const item = evt.item
     if (item instanceof ILabel && item.tag === 'cost') {
       costForm.value = parseInt(item.text).toString()
@@ -377,8 +355,8 @@ function updateEdgeThickness(edge: IEdge): void {
     graphComponent.graph.addLabel({
       owner: edge,
       text: `0 / ${edge.tag.capacity}`,
-      layoutParameter: new FreeEdgeLabelModel().createDefaultParameter(),
-      style: new DefaultLabelStyle({ textFill: 'black' })
+      layoutParameter: new SmartEdgeLabelModel().createParameterFromSource(0),
+      style: new LabelStyle({ textFill: 'black' })
     })
 
     // add label for cost
@@ -472,7 +450,7 @@ function calculateMaxFlowMinCut(minCut: boolean): number {
   const maxFlowMinCutResult = maxFlowMinCut.run(graph)
   graph.nodes.forEach((node) => {
     const flow = (graph.inDegree(node) > 0 ? graph.inEdgesAt(node) : graph.outEdgesAt(node)).sum(
-      (edge: IEdge): number => maxFlowMinCutResult.flow.get(edge) || 0
+      (edge) => maxFlowMinCutResult.flow.get(edge) || 0
     )
     node.tag = {
       flow,
@@ -588,14 +566,11 @@ function getDemandNodes(graph: IGraph): INode[] {
 }
 
 /**
- * Run a hierarchic layout.
- * @param incremental True if the algorithm should run in incremental mode, false otherwise
+ * Run a hierarchical layout.
+ * @param fromSketch True if the algorithm should run in incremental mode, false otherwise
  * @param additionalIncrementalNodes An array of the incremental nodes
  */
-async function runLayout(
-  incremental: boolean,
-  additionalIncrementalNodes?: INode[]
-): Promise<void> {
+async function runLayout(fromSketch: boolean, additionalIncrementalNodes?: INode[]): Promise<void> {
   const graph = graphComponent.graph
 
   if (inLayout || graph.nodes.size === 0) {
@@ -605,35 +580,30 @@ async function runLayout(
   inLayout = true
   setUIDisabled(true)
 
-  const layoutAlgorithm = new HierarchicLayout()
-  layoutAlgorithm.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
-  layoutAlgorithm.integratedEdgeLabeling = true
-  layoutAlgorithm.backLoopRouting = true
+  const layoutAlgorithm = new HierarchicalLayout({
+    layoutOrientation: 'left-to-right',
+    fromSketchMode: fromSketch,
+    defaultEdgeDescriptor: {
+      routingStyleDescriptor: {
+        defaultRoutingStyle: 'octilinear'
+      },
+      backLoopRouting: true
+    }
+  })
 
-  const layoutData = new HierarchicLayoutData({
+  const layoutData = new HierarchicalLayoutData({
     edgeThickness: (edge) => edge.tag.capacity
   })
 
-  if (incremental && algorithmComboBox.selectedIndex !== MAX_FLOW_MIN_CUT) {
-    layoutAlgorithm.layoutMode = LayoutMode.INCREMENTAL
-
+  if (fromSketch && algorithmComboBox.selectedIndex !== MAX_FLOW_MIN_CUT) {
     // mark all sources and sinks as well as passed additional nodes as incremental
-    const hintsFactory = layoutAlgorithm.createIncrementalHintsFactory()!
-    const incrementalNodesMapper = new Mapper()
-    getSourceNodes().forEach((node) =>
-      incrementalNodesMapper.set(node, hintsFactory.createLayerIncrementallyHint(node))
-    )
-    getSinkNodes().forEach((node) =>
-      incrementalNodesMapper.set(node, hintsFactory.createLayerIncrementallyHint(node))
-    )
+    const incrementalNodes: INode[] = []
+    incrementalNodes.push(...getSourceNodes())
+    incrementalNodes.push(...getSinkNodes())
     if (additionalIncrementalNodes) {
-      additionalIncrementalNodes.forEach((node) =>
-        incrementalNodesMapper.set(node, hintsFactory.createLayerIncrementallyHint(node))
-      )
+      incrementalNodes.push(...additionalIncrementalNodes)
     }
-    layoutData.incrementalHints = incrementalNodesMapper
-  } else {
-    layoutAlgorithm.layoutMode = LayoutMode.FROM_SCRATCH
+    layoutData.incrementalNodes = incrementalNodes
   }
 
   // sources will be in the first layer, sinks in the last layer
@@ -643,36 +613,34 @@ async function runLayout(
   getSinkNodes().forEach((node) => layerConstraints.placeAtBottom(node))
 
   if (algorithmComboBox.selectedIndex === MAX_FLOW_MIN_CUT) {
-    layoutData.partitionGridData = new PartitionGridData({
-      grid: new PartitionGrid(1, 2, 0, 150, 0, 0),
-      cellIds: (node: INode, grid: PartitionGrid) =>
-        node.tag.cut ? grid.createCellId(0, 0) : grid.createCellId(0, 1)
-    })
+    const grid = new LayoutGrid(1, 2, 0, 150, 0, 0)
+    layoutData.layoutGridData.layoutGridCellDescriptors = (node) =>
+      node.tag.cut ? grid.createCellDescriptor(0, 0) : grid.createCellDescriptor(0, 1)
   }
 
-  layoutData.edgeLabelPreferredPlacement.delegate = (key) => {
-    const preferredPlacementDescriptor = new PreferredPlacementDescriptor()
+  layoutData.edgeLabelPreferredPlacements = (key) => {
+    const preferredPlacementDescriptor = new EdgeLabelPreferredPlacement()
     if (key.tag === 'cost') {
-      preferredPlacementDescriptor.sideOfEdge = LabelPlacements.LEFT_OF_EDGE
+      preferredPlacementDescriptor.edgeSide = LabelEdgeSides.LEFT_OF_EDGE
       preferredPlacementDescriptor.distanceToEdge = 5
     } else {
-      preferredPlacementDescriptor.sideOfEdge = LabelPlacements.ON_EDGE
+      preferredPlacementDescriptor.edgeSide = LabelEdgeSides.ON_EDGE
     }
 
     preferredPlacementDescriptor.freeze()
     return preferredPlacementDescriptor
   }
 
-  await graphComponent.morphLayout(layoutAlgorithm, '1s', layoutData)
+  await graphComponent.applyLayoutAnimated(layoutAlgorithm, '1s', layoutData)
   graph.edges.forEach((edge: IEdge): void => {
     if (lastFlowMap.get(edge) !== edge.tag.flow) {
-      graphComponent.highlightIndicatorManager.addHighlight(edge)
+      graphComponent.highlights.add(edge)
       lastFlowMap.set(edge, edge.tag.flow)
     }
   })
 
   setTimeout((): void => {
-    graphComponent.highlightIndicatorManager.clearHighlights()
+    graphComponent.highlights.clear()
   }, 1000)
 
   inLayout = false
@@ -697,7 +665,7 @@ function getSourceNodes(): INode[] {
   })
   // Special case: No node with in-degree 0 was found, take the first node of the graph
   if (sourceNodes.length === 0) {
-    sourceNodes.push(graph.nodes.first())
+    sourceNodes.push(graph.nodes.first()!)
   }
   sourceNodes.forEach((node) => (node.tag.source = true))
   return sourceNodes
@@ -731,10 +699,10 @@ function getSinkNodes(): INode[] {
  */
 function updateMinCutLine(): void {
   const graph = graphComponent.graph
-  const graphBounds = graphComponent.contentRect
+  const graphBounds = graphComponent.contentBounds
 
   // hold the old bounds to store in the undo unit
-  const oldBounds = new Rect(minCutLine.bounds)
+  const oldBounds = Rect.from(minCutLine.bounds)
 
   if (graph.edges.size > 0) {
     // find the center between the last "source-cut"-layer and the first "target-cut"-layer
@@ -761,14 +729,14 @@ function updateMinCutLine(): void {
     }
 
     // create the undo unit
-    const tagUndoUnit = new MinCutUndoUnit(
-      'Min cut changed',
-      'Min cut changed',
-      oldBounds,
-      minCutLine.bounds,
-      minCutLine
+    const newBounds = minCutLine.bounds
+    graphComponent.graph.undoEngine!.addUnit(
+      IUndoUnit.fromHandler(
+        'Min cut changed',
+        () => (minCutLine.bounds = oldBounds),
+        () => (minCutLine.bounds = newBounds)
+      )
     )
-    graphComponent.graph.undoEngine!.addUnit(tagUndoUnit)
   } else {
     minCutLine.visible = false
     graphComponent.invalidate()
@@ -798,7 +766,7 @@ function visualizeResult(): void {
       }
       edge.tag.color = colors[colorIndex]
     }
-    const textLabelStyle = new DefaultLabelStyle({
+    const textLabelStyle = new LabelStyle({
       font: '11px bold Arial',
       textFill: edge.tag.capacity === 0 || colorIndex < colors.length * 0.4 ? 'black' : 'cyan'
     })
@@ -863,13 +831,13 @@ function generateColors(startColor: Color, endColor: Color, gradientCount: numbe
 function initializeUI(): void {
   addNavigationButtons(algorithmComboBox).addEventListener('change', onAlgorithmChanged)
 
-  reloadButton.addEventListener('click', () => {
+  reloadButton.addEventListener('click', async () => {
     edgePopup.currentItem = null
-    createSampleGraph()
+    await createSampleGraph()
   })
-  layoutButton.addEventListener('click', () => {
+  layoutButton.addEventListener('click', async () => {
     edgePopup.currentItem = null
-    runLayout(false)
+    await runLayout(false)
   })
   document
     .querySelector<HTMLButtonElement>('#cost-plus')!
@@ -879,9 +847,9 @@ function initializeUI(): void {
     .addEventListener('click', () => updateCostForm(-1), true)
   document.querySelector<HTMLButtonElement>('#apply')!.addEventListener(
     'click',
-    () => {
+    async () => {
       runFlowAlgorithm()
-      runLayout(true)
+      await runLayout(true)
     },
     true
   )
@@ -969,7 +937,7 @@ function setUIDisabled(disabled: boolean): void {
 /**
  * Loads and prepares the input graph.
  */
-function createSampleGraph(): void {
+async function createSampleGraph(): Promise<void> {
   const graph = graphComponent.graph
   graph.clear()
 
@@ -1134,7 +1102,7 @@ function createSampleGraph(): void {
     calculateNodeSize(node)
   })
 
-  onAlgorithmChanged()
+  await onAlgorithmChanged()
 }
 
 run().then(finishLoading)

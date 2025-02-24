@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,47 +27,35 @@
  **
  ***************************************************************************/
 import {
-  Class,
   GraphComponent,
-  HierarchicLayout,
-  HierarchicLayoutData,
-  HierarchicLayoutNodeLayoutDescriptor,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
+  HierarchicalLayoutNodeDescriptor,
   INode,
-  LayoutExecutor,
-  MinimumNodeSizeStage
-} from 'yfiles'
-
+  LayoutExecutor
+} from '@yfiles/yfiles'
 /**
- * Calculates and animates a hierarchic layout.
- * @param {!GraphComponent} graphComponent
- * @returns {!Promise}
+ * Calculates and animates a hierarchical layout.
  */
 export async function runLayout(graphComponent) {
-  Class.ensure(LayoutExecutor)
-
-  const hierarchicLayout = new HierarchicLayout()
-
+  LayoutExecutor.ensure()
+  const hierarchicalLayout = new HierarchicalLayout()
   // Configure the layout data using the information from the node labels
-  const hierarchicLayoutData = new HierarchicLayoutData({
-    nodeLayoutDescriptors: (node) =>
-      new HierarchicLayoutNodeLayoutDescriptor({
+  const hierarchicalLayoutData = new HierarchicalLayoutData({
+    nodeDescriptors: (node) =>
+      new HierarchicalLayoutNodeDescriptor({
         // Set the alignment of the node based on the label
         layerAlignment: getAlignment(node)
       })
   })
-
-  await graphComponent.morphLayout({
-    layout: new MinimumNodeSizeStage(hierarchicLayout),
-    layoutData: hierarchicLayoutData,
-    morphDuration: '1s',
-    easedAnimation: true
+  await graphComponent.applyLayoutAnimated({
+    layout: hierarchicalLayout,
+    layoutData: hierarchicalLayoutData,
+    animationDuration: '1s'
   })
 }
-
 /**
  * Returns the alignment value based on the data stored in the given node's label.
- * @param {!INode} node
- * @returns {number}
  */
 function getAlignment(node) {
   const text = node.labels.at(0)?.text?.toLowerCase() ?? 'center'

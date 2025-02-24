@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  ComponentArrangementStyles,
   FilteredGraphWrapper,
   GraphBuilder,
   GraphComponent,
@@ -36,80 +35,69 @@ import {
   License,
   OrganicLayout,
   Size
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 import {
   closeFraudDetectionView,
   openInspectionViewForItem
-} from './fraud-detection/inspection-view.js'
-import { initializeLayout, startLayout, stopLayout } from './interactive-layout.js'
-import { ConnectionEdgeStyle } from './styles/ConnectionEdgeStyle.js'
-import { bankFraudData } from './resources/bank-fraud-data.js'
-import { insuranceFraudData } from './resources/insurance-fraud-data.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading, showLoadingIndicator } from 'demo-resources/demo-page'
+} from './fraud-detection/inspection-view'
+import { initializeLayout } from './interactive-layout'
+import { ConnectionEdgeStyle } from './styles/ConnectionEdgeStyle'
+import { bankFraudData } from './resources/bank-fraud-data'
+import { insuranceFraudData } from './resources/insurance-fraud-data'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo-page'
 import {
   calculateComponents,
   clearFraudHighlights,
   focusFraudComponent,
   initializeFraudHighlights,
   updateFraudWarnings
-} from './fraud-detection/fraud-components.js'
-import { EntityNodeStyle } from './styles/EntityNodeStyle.js'
-import { getEntityData, getTimeEntry } from './entity-data.js'
-import Timeline from './timeline/Timeline.js'
-import { detectBankFraud, detectInsuranceFraud } from './fraud-detection/fraud-detection.js'
+} from './fraud-detection/fraud-components'
+import { EntityNodeStyle } from './styles/EntityNodeStyle'
+import { getEntityData, getTimeEntry } from './entity-data'
+import { Timeline } from './timeline/Timeline'
+import { detectBankFraud, detectInsuranceFraud } from './fraud-detection/fraud-detection'
 import './resources/fraud-detection-demo.css'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { enableWebGLRendering, setWebGL2Styles } from './styles/initialize-webgl-styles.js'
-import { initializeHighlights } from './initialize-highlights.js'
-import { clearPropertiesView, initializePropertiesView } from './properties-view.js'
-import { enableTooltips } from './entity-tooltip.js'
-import { useSingleSelection } from '../mindmap/interaction/single-selection.js'
-
+import { enableWebGLRendering, setWebGLStyles } from './styles/initialize-webgl-styles'
+import { initializeHighlights } from './initialize-highlights'
+import { clearPropertiesView, initializePropertiesView } from './properties-view'
+import { enableTooltips } from './entity-tooltip'
+import { useSingleSelection } from '../mindmap/interaction/single-selection'
 /**
  * The main graph component that displays the graph.
- * @type {GraphComponent}
  */
 let graphComponent
-
+/**
+ * The methods that control the layout
+ */
+let startLayout
+let stopLayout
 /**
  * The graph component that displays the timeline.
- * @type {Timeline.<Entity>}
  */
 let timeline
-
 /**
  * Starts a demo which shows fraud detection on a graph with changing time-frames. Since the nodes
  * have different timestamps (defined in their tag object), they will only appear in some
  * time-frames. Time-frames are chosen using a timeline component.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeGraphComponent()
   initializeHighlights(graphComponent)
   initializeGraph()
-
   await enableWebGLRendering(graphComponent)
-
   enableTooltips(graphComponent)
-
   initializeTimelineComponent('timeline-component', graphComponent)
-  initializeLayout(graphComponent)
+  const layout = initializeLayout(graphComponent)
+  startLayout = layout.startLayout
+  stopLayout = layout.stopLayout
   initializeFraudHighlights(graphComponent)
-
   initializePropertiesView(graphComponent)
-
   await loadSampleGraph(bankFraudData)
-
   initializeUI()
 }
-
 /**
  * Binds the UI elements in the toolbar to actions.
  */
@@ -117,7 +105,7 @@ function initializeUI() {
   const bankFraudDescription = document.querySelector('#bank-fraud-detection')
   const insuranceFraudDescription = document.querySelector('#insurance-fraud-detection')
   const samples = document.querySelector('#samples')
-  samples.addEventListener('change', async (event) => {
+  samples.addEventListener('change', async () => {
     clearPropertiesView()
     // if an inspection view is open, close it
     closeFraudDetectionView()
@@ -132,7 +120,6 @@ function initializeUI() {
     }
   })
 }
-
 /**
  * Initializes the main graph component and its interactive behavior.
  */
@@ -151,26 +138,20 @@ function initializeGraphComponent() {
     focusableItems: GraphItemTypes.NONE,
     showHandleItems: GraphItemTypes.NONE,
     deletableItems: GraphItemTypes.NONE,
-    movableItems: GraphItemTypes.NODE,
+    movableSelectedItems: GraphItemTypes.NODE,
     clickHitTestOrder: [GraphItemTypes.NODE, GraphItemTypes.EDGE]
   })
-  inputMode.moveInputMode.enabled = false
-  inputMode.moveUnselectedInputMode.enabled = true
+  inputMode.moveSelectedItemsInputMode.enabled = false
   inputMode.marqueeSelectionInputMode.enabled = false
-
-  inputMode.addItemDoubleClickedListener((_, evt) => {
+  inputMode.addEventListener('item-double-clicked', (evt) => {
     openInspectionViewForItem(evt.item, graphComponent)
   })
-
   graphComponent.inputMode = inputMode
-
   // limit the minimum and the maximum zoom of the graphComponent
   graphComponent.minimumZoom = 0.2
   graphComponent.maximumZoom = 3
-
   useSingleSelection(graphComponent)
 }
-
 /**
  * Initializes the graph with default styles and decorators for highlights and selections.
  */
@@ -179,26 +160,20 @@ function initializeGraph() {
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new EntityNodeStyle()
   graph.nodeDefaults.size = new Size(30, 30)
-
   // default edge style
   graph.edgeDefaults.style = new ConnectionEdgeStyle()
-
-  graphComponent.graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
+  graphComponent.graph.decorator.nodes.focusRenderer.hide()
 }
-
 /**
  * Builds the graph based on the given dataset.
- * @param {!IGraph} graph The graph where the elements are added
- * @param {!BusinessData} data The sample data
- * @returns {!Promise}
+ * @param graph The graph where the elements are added
+ * @param data The sample data
  */
 async function buildGraph(graph, data) {
   graph.clear()
-
   function convertDates(dates) {
     return Array.isArray(dates) ? dates.map((e) => new Date(e)) : [new Date(dates)]
   }
-
   const builder = new GraphBuilder(graph)
   const entityNodesSource = builder.createNodesSource(data.nodesSource, 'id')
   entityNodesSource.nodeCreator.tagProvider = (entity) => ({
@@ -209,129 +184,100 @@ async function buildGraph(graph, data) {
   builder.createEdgesSource(data.edgesSource, 'from', 'to')
   builder.buildGraph()
 }
-
 /**
  * Runs an organic layout on the complete initial graph.
- * @param {!IGraph} graph
  */
-function runInitialLayout(graph) {
+async function runInitialLayout(graph) {
   // run an initial layout
   const organicLayout = new OrganicLayout({
     deterministic: true,
-    nodeOverlapsAllowed: false,
-    preferredEdgeLength: 50
+    allowNodeOverlaps: false,
+    defaultPreferredEdgeLength: 50,
+    componentLayout: {
+      style: 'packed-compact-circle'
+    }
   })
-  organicLayout.componentLayout.style = ComponentArrangementStyles.PACKED_COMPACT_CIRCLE
   graph.applyLayout(organicLayout)
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 }
-
 /**
  * Loads a graph from the given JSON data.
- * @param {!BusinessData} data The JSON data from which the graph is retrieved.
- * @returns {!Promise}
+ * @param data The JSON data from which the graph is retrieved.
  */
 async function loadSampleGraph(data) {
   // deactivate UI
   await setBusy(true)
-
   clearFraudHighlights()
-
   // stop the layout for the graph change
   stopLayout()
-
   // read the sample data and populate the wrapped graph,
   // so nodes outside the current timeframe are hidden and can appear later
   const wrappedGraph = graphComponent.graph.wrappedGraph
   await buildGraph(wrappedGraph, data)
-
   // calculate the connected components of the given graph
   calculateComponents()
-
   // if there is a timeline, add the new entities
   if (timeline) {
     timeline.stop()
     timeline.items = wrappedGraph.nodes.map(getEntityData).toArray()
   }
-
   // run a layout on the complete graph
   // to have nice initial locations even for the currently hidden nodes
-  runInitialLayout(wrappedGraph)
-
-  // initializes the element styles using WebGL2 rendering, if this is supported by the browser
-  await setWebGL2Styles(graphComponent)
-
-  // start the interactive layout
-  startLayout()
-
+  await runInitialLayout(wrappedGraph)
+  // initializes the element styles using WebGL rendering if this is supported by the browser
+  setWebGLStyles(graphComponent)
+  void startLayout()
   // re-activate UI
   await setBusy(false)
-
   // focus on a component containing fraudsters
   void focusFraudComponent()
 }
-
-/**
- * @param {!string} selector
- * @param {!GraphComponent} graphComponent
- * @returns {!Timeline.<Entity>}
- */
 function initializeTimelineComponent(selector, graphComponent) {
   timeline = new Timeline(selector, getTimeEntry)
-
   // filter the elements that are not part of the current timeframe
   const filteredGraph = new FilteredGraphWrapper(graphComponent.graph, (node) =>
     timeline.filter(getEntityData(node))
   )
   graphComponent.graph = filteredGraph
-  timeline.addFilterChangedListener(() => {
+  timeline.setFilterChangedListener(() => {
     filteredGraph.nodePredicateChanged()
-
     const bankFraud = document.querySelector('#samples').value === 'bank-fraud'
     const fraudsters = bankFraud
       ? detectBankFraud(graphComponent)
       : detectInsuranceFraud(graphComponent)
-
     updateFraudWarnings(fraudsters)
   })
-  timeline.addBarSelectListener((items) => {
+  timeline.setBarSelectListener((items) => {
     const selection = graphComponent.selection
     selection.clear()
-
     const selectedItems = new Set(items.map((item) => item.id))
     graphComponent.graph.nodes.forEach((node) => {
       const entity = getEntityData(node)
       if (selectedItems.has(entity.id)) {
-        selection.setSelected(node, true)
+        selection.add(node)
       }
     })
   })
-  timeline.addBarHoverListener((items) => {
-    const highlightManager = graphComponent.highlightIndicatorManager
-    highlightManager.clearHighlights()
-
+  timeline.setBarHoverListener((items) => {
+    const highlights = graphComponent.highlights
+    highlights.clear()
     const selected = new Set(items.map((item) => item.id))
-
     graphComponent.graph.nodes.forEach((node) => {
       const entity = getEntityData(node)
       if (selected.has(entity.id)) {
-        highlightManager.addHighlight(node)
+        highlights.add(node)
       }
     })
   })
   return timeline
 }
-
 /**
  * Marks whether the demo is currently loading a sample graph.
  * When busy, the mouse cursor is changed and the toolbar as well as the input modes are disabled.
- * @param {boolean} state
- * @returns {!Promise}
  */
 async function setBusy(state) {
   graphComponent.inputMode.waiting = state
   document.querySelector('#samples').disabled = state
   await showLoadingIndicator(state)
 }
-
 void run().then(finishLoading)

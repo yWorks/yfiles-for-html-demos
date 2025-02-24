@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,34 +26,26 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { initializeEditorComponent, readSampleGraph } from './editor-component/editor-component.js'
+import { GraphComponent, License } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initializeEditorComponent, readSampleGraph } from './editor-component/editor-component'
 import {
   initializeDecisionTreeComponent,
   showDecisionTree
-} from './decision-tree-component/decision-tree-component.js'
-import { initializeSwitchButton } from './switch-components-button/switch-components-button.js'
-
-/**
- * @returns {!Promise}
- */
+} from './decision-tree-component/decision-tree-component'
+import { initializeSwitchButton } from './switch-components-button/switch-components-button'
 async function run() {
   License.value = await fetchLicense()
-
   // initialize the editor graph component
   // this component contains the input graph which is the model for the decision tree
   const graphComponent = new GraphComponent('#graphComponent')
-
   // initialize both components and the button that toggles between them
   initializeSwitchButton(graphComponent)
   initializeEditorComponent(graphComponent)
   initializeDecisionTreeComponent(graphComponent)
-
   // read the initial sample model and display the corresponding decision tree
   await readSampleGraph(graphComponent)
   showDecisionTree(graphComponent.graph)
 }
-
 void run().then(finishLoading)

@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 05 Implicit Grouping - Tutorial: Graph Builder
 
-# Grouping nodes in the graph
+<img src="../../../doc/demo-thumbnails/tutorial-graph-builder-implicit-grouping.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/05-implicit-grouping/).
 
 In this tutorial step, you will learn an alternative approach to create group nodes to show hierarchy information within the business data.
 
@@ -144,6 +146,6 @@ Edges can connect to any of the nodes, whether they are in the "core" nodes sour
 
 Note
 
-Please have a look in this tutorial step’s demo code in `implicit-group-nodes.ts` and play around with the hierarchic structure. For example, try to change the definition of the group nodes.
+Please have a look in this tutorial step’s demo code in `implicit-group-nodes.ts` and play around with the hierarchical structure. For example, try to change the definition of the group nodes.
 
 [06 Configure Styles](../../tutorial-graph-builder/06-configure-styles/)

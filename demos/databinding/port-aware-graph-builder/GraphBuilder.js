@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -46,59 +46,24 @@ import {
   PolylineEdgeStyle,
   Rect,
   ShapeNodeStyle,
-  Size,
-  VoidPortStyle
-} from 'yfiles'
-import { AndGateNodeStyle } from '../../showcase/logicgates/node-styles/AndGateNodeStyle.js'
-import { NotNodeStyle } from '../../showcase/logicgates/node-styles/NotNodeStyle.js'
-import { OrNodeStyle } from '../../showcase/logicgates/node-styles/OrNodeStyle.js'
-import { XOrNodeStyle } from '../../showcase/logicgates/node-styles/XOrNodeStyle.js'
-
-/*
- This file shows how to configure GraphBuilder to support ports.
- */
-
-// In this sample the data is arranged in the following way.
-// When used in an own sample it has to be adjusted for the source data.
-
-/**
- * @typedef {Object} NodeData
- * @property {string} id
- * @property {('and'|'or'|'not'|'nand'|'nor'|'xor'|'xnor')} type
- */
-/**
- * @typedef {Object} EdgeData
- * @property {string} id
- * @property {string} from
- * @property {string} to
- */
-// internally used port data
-/**
- * @typedef {Object} PortData
- * @property {string} id
- * @property {string} [name]
- * @property {Array.<number>} location
- * @property {boolean} [rightSide]
- */
-
-/** @type {GraphBuilder} */
+  Size
+} from '@yfiles/yfiles'
+import { AndGateNodeStyle } from '../../showcase/logicgates/node-styles/AndGateNodeStyle'
+import { NotNodeStyle } from '../../showcase/logicgates/node-styles/NotNodeStyle'
+import { OrNodeStyle } from '../../showcase/logicgates/node-styles/OrNodeStyle'
+import { XOrNodeStyle } from '../../showcase/logicgates/node-styles/XOrNodeStyle'
 let graphBuilder
-/** @type {NodesSource.<NodeData>} */
 let nodesSource
-/** @type {EdgesSource.<EdgeData>} */
 let edgesSource
-
 /**
  * Creates a new instance of a port-aware graph builder.
  * The builder uses the given node and edge sources.
- * @param {!IGraph} graph The graph the builder works on
- * @param {!Array.<NodeData>} sampleNodes The data to build the nodes from
- * @param {!Array.<EdgeData>} sampleEdges The data to build the edges from
- * @returns {!GraphBuilder}
+ * @param graph The graph the builder works on
+ * @param sampleNodes The data to build the nodes from
+ * @param sampleEdges The data to build the edges from
  */
 export function createPortAwareGraphBuilder(graph, sampleNodes, sampleEdges) {
   graphBuilder = new GraphBuilder(graph)
-
   nodesSource = graphBuilder.createNodesSource({
     data: sampleNodes,
     id: 'id'
@@ -125,9 +90,7 @@ export function createPortAwareGraphBuilder(graph, sampleNodes, sampleEdges) {
         return new ShapeNodeStyle()
     }
   }
-
   nodesSource.nodeCreator.defaults.size = new Size(100, 50)
-
   edgesSource = graphBuilder.createEdgesSource({
     data: sampleEdges,
     // we extract the node Id from source Id and target Id
@@ -140,27 +103,23 @@ export function createPortAwareGraphBuilder(graph, sampleNodes, sampleEdges) {
   edgesSource.edgeCreator.defaults.style = new PolylineEdgeStyle({ stroke: '2px black' })
   return graphBuilder
 }
-
 /**
  * Update new nodes and edges data for the builder's nodes source.
- * @param {!Array.<*>} nodesSourceData The new node data to set.
- * @param {!Array.<*>} edgesSourceData The new edge data to set.
+ * @param nodesSourceData The new node data to set.
+ * @param edgesSourceData The new edge data to set.
  */
 export function setBuilderData(nodesSourceData, edgesSourceData) {
   graphBuilder.setData(nodesSource, nodesSourceData)
   graphBuilder.setData(edgesSource, edgesSourceData)
 }
-
 /**
  * Extracts the node ID from the source or target ID of an edge.
- * @param {!string} fullId The full ID.
- * @returns {!string}
+ * @param fullId The full ID.
  */
 function getNodeId(fullId) {
   // here the ID is 'nodeId;portId'
   return fullId.split(';')[0]
 }
-
 /**
  * A node creator which adds ports according to the node's type.
  * Overrides createNodeCore to add ports according to the node's type.
@@ -171,35 +130,25 @@ class TypeAwareNodeCreator extends NodeCreator {
    * according to the node type.
    * Note that the given style is already chosen for the node type
    * since method getStyle is overridden below.
-   * @param {!IGraph} graph
-   * @param {boolean} groupNode
-   * @param {!INode} parent
-   * @param {!Rect} layout
-   * @param {!INodeStyle} style
-   * @param {*} tag
-   * @returns {!INode}
    */
   createNodeCore(graph, groupNode, parent, layout, style, tag) {
     // this assumes that we don't use a custom tag provider,
     // i.e. the tag contains the node data as provided by the node source array
     const nodeData = tag
-
     // let the base implementation create the node
     const node = super.createNodeCore(graph, groupNode, parent, layout, style, tag)
-
     // add ports according to their type
     this.getPorts(nodeData).forEach((pin) => {
       this.addPort(graph, node, pin)
     })
     return node
   }
-
   /**
    * Adds a port to the given node.
    * The port can be identified by its ID which is set to its tag.
-   * @param {!IGraph} graph The graph to operate on.
-   * @param {!INode} node The node to add the port to.
-   * @param {!PortData} portData The port data to create the port for.
+   * @param graph The graph to operate on.
+   * @param node The node to add the port to.
+   * @param portData The port data to create the port for.
    */
   addPort(graph, node, portData) {
     const port = graph.addPort({
@@ -212,12 +161,11 @@ class TypeAwareNodeCreator extends NodeCreator {
     })
     this.addPortLabel(graph, port, portData)
   }
-
   /**
    * Adds a label to the port.
-   * @param {!IGraph} graph The graph to operate on.
-   * @param {!IPort} port The port to add the label to.
-   * @param {!PortData} portData The port data to create the label for.
+   * @param graph The graph to operate on.
+   * @param port The port to add the label to.
+   * @param portData The port data to create the label for.
    */
   addPortLabel(graph, port, portData) {
     const text = this.getPortLabel(portData)
@@ -225,14 +173,13 @@ class TypeAwareNodeCreator extends NodeCreator {
       graph.addLabel(port, text, this.getParameter(portData))
     }
   }
-
   /**
    * Updates a given node. This function is called for nodes which already exist in the graph.
    * The method itself updates the ports and style. The actual node update is delegated to the base method.
-   * @param {!IGraph} graph The graph to operate on.
-   * @param {!INode} node The node to update.
-   * @param {?INode} parent The parent node.
-   * @param {!NodeData} dataItem The new data item.
+   * @param graph The graph to operate on.
+   * @param node The node to update.
+   * @param parent The parent node.
+   * @param dataItem The new data item.
    */
   updateNode(graph, node, parent, dataItem) {
     super.updateNode(graph, node, parent, dataItem)
@@ -285,19 +232,15 @@ class TypeAwareNodeCreator extends NodeCreator {
       }
     }
   }
-
   /* *****************************************************
    * Developers who want to use this graph builder
    * in their own applications can modify the following
    * methods to adapt to different node data (Gate) and
    * port data (Pin) definitions.
    * *****************************************************/
-
   /**
    * Gets an array of PortData from the given node data.
    * The port data is created according to the node type.
-   * @param {!NodeData} nodeData
-   * @returns {!Array.<PortData>}
    */
   getPorts(nodeData) {
     switch (nodeData.type) {
@@ -320,38 +263,27 @@ class TypeAwareNodeCreator extends NodeCreator {
         ]
     }
   }
-
   /**
    * Gets the (relative) port location from the port data.
-   * @param {!PortData} pin
-   * @returns {!Point}
    */
   getPortLocation(pin) {
     return Point.from(pin.location)
   }
-
   /**
    * Gets the ID from the port data.
-   * @param {!PortData} pin
    */
   getPortId(pin) {
     return pin.id
   }
-
   /**
    * Gets the port style from the port data.
-   * @param {!PortData} pin
-   * @returns {!IPortStyle}
    */
   getPortStyle(pin) {
     // the ports are invisible
-    return VoidPortStyle.INSTANCE
+    return IPortStyle.VOID_PORT_STYLE
   }
-
   /**
    * Gets the port label location parameter.
-   * @param {!PortData} pin
-   * @returns {!ILabelModelParameter}
    */
   getParameter(pin) {
     return new FreePortLabelModel().createParameter(
@@ -359,18 +291,14 @@ class TypeAwareNodeCreator extends NodeCreator {
       new Point(pin.rightSide ? 0.8 : 0.5, 1)
     )
   }
-
   /**
    * Gets the port label text.
    * Might be null if no label should be displayed.
-   * @param {!PortData} pin
-   * @returns {!string}
    */
   getPortLabel(pin) {
     return pin.name
   }
 }
-
 /**
  * A custom edge creator connects the edges to specified ports.
  * Overrides createEdgeCore to extract a port ID from the source and target node ID.
@@ -379,12 +307,11 @@ class TypeAwareNodeCreator extends NodeCreator {
 class PortAwareEdgeCreator extends EdgeCreator {
   /**
    * Overrides the original edge creator to connect edges to specified ports.
-   * @param {!IGraph} graph The graph to operate on.
-   * @param {!INode} source The source node.
-   * @param {!INode} target The target node.
-   * @param {!IEdgeStyle} style The edge style.
-   * @param {*} tag The edge tag (actually the node data of the target node)
-   * @returns {!IEdge}
+   * @param graph The graph to operate on.
+   * @param source The source node.
+   * @param target The target node.
+   * @param style The edge style.
+   * @param tag The edge tag (actually the node data of the target node)
    */
   createEdgeCore(graph, source, target, style, tag) {
     const edgeData = tag
@@ -398,7 +325,6 @@ class PortAwareEdgeCreator extends EdgeCreator {
     const targetPort = targetPortId
       ? target.ports.find((p) => p.tag === targetPortId)
       : target.ports.at(0)
-
     // create the edges between source and target port. If no port is provided add a default port.
     return graph.createEdge(
       sourcePort ?? graph.addPort(source),
@@ -407,18 +333,16 @@ class PortAwareEdgeCreator extends EdgeCreator {
       tag
     )
   }
-
   /**
    * Updates a given edge. This function is called for edges which already exist in the graph.
    * Delegates to the base implementation for the actual edge update,
    * then sets the new ports if needed.
-   * @param {!IGraph} graph The graph to operate on.
-   * @param {!IEdge} edge The edge to update.
-   * @param {!EdgeData} dataItem The edge data of the edge to update.
+   * @param graph The graph to operate on.
+   * @param edge The edge to update.
+   * @param dataItem The edge data of the edge to update.
    */
   updateEdge(graph, edge, dataItem) {
     super.updateEdge(graph, edge, dataItem)
-
     // If there is no ID or the ID is already the current port ID don't update the port.
     // Otherwise, get the first port at the source node which matches the ID.
     const sourcePortId = this.getSourcePortId(dataItem)
@@ -435,10 +359,8 @@ class PortAwareEdgeCreator extends EdgeCreator {
     // remember the current source and target ports
     const oldSource = edge.sourcePort
     const oldTarget = edge.targetPort
-
     // now set the new ports
     graph.setEdgePorts(edge, sourcePort ?? edge.sourcePort, targetPort ?? edge.targetPort)
-
     // if the source or target port has been changed and the old port doesn't have a tag:
     // remove it since it has been auto-generated
     if (oldSource !== edge.sourcePort && !oldSource.tag) {
@@ -448,28 +370,21 @@ class PortAwareEdgeCreator extends EdgeCreator {
       graph.remove(oldTarget)
     }
   }
-
   /* *****************************************************
    * Developers who want to use this graph builder
    * in their own applications can modify the following
    * methods to adapt to different edge data definitions.
    * *****************************************************/
-
   /**
    * Gets the source port ID from the edge data.
    * Returns undefined if the port to connect is not specified.
-   * @param {!EdgeData} data
-   * @returns {!string}
    */
   getSourcePortId(data) {
     return data.from?.split(';')[1]
   }
-
   /**
    * Gets the target port ID from the edge data.
    * Returns undefined if the port to connect is not specified.
-   * @param {!EdgeData} data
-   * @returns {!string}
    */
   getTargetPortId(data) {
     return data.to?.split(';')[1]

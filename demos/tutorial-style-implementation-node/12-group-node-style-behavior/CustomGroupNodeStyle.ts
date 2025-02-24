@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,18 +29,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
-  type Class,
+  type Constructor,
   Font,
   GeneralPath,
   type IGraph,
   IGroupBoundsCalculator,
+  IGroupPaddingProvider,
   type IInputModeContext,
   type ILabel,
   type INode,
-  INodeInsetsProvider,
   INodeSizeConstraintProvider,
   Insets,
   type IRenderContext,
@@ -52,7 +51,7 @@ import {
   type TaggedSvgVisual,
   TextRenderSupport,
   TextWrapping
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 const tabWidth = 50
 const tabHeight = 14
@@ -70,50 +69,47 @@ type Cache = {
 type CustomGroupNodeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 export class CustomGroupNodeStyle extends NodeStyleBase<CustomGroupNodeStyleVisual> {
-  protected lookup(node: INode, type: Class): any {
-    if (type === INodeInsetsProvider.$class) {
+  protected lookup(node: INode, type: Constructor<any>): any {
+    if (type === IGroupPaddingProvider) {
       // use a custom insets provider that reserves space for the tab
-      return INodeInsetsProvider.create(
-        (group: INode): Insets => new Insets(4, tabHeight + 4, 4, 4)
+      return IGroupPaddingProvider.create(
+        (): Insets => new Insets(tabHeight + 4, 4, 4, 4)
       )
     }
 
     // Determines the minimum and maximum node size.
-    if (type === INodeSizeConstraintProvider.$class) {
+    if (type === INodeSizeConstraintProvider) {
       // use a custom size constraint provider to make sure that the node doesn't get smaller than the tab
       return INodeSizeConstraintProvider.create({
         // returns the tab size plus a small margin
-        getMinimumSize: (item: INode): Size =>
-          new Size(tabWidth + 20, tabHeight + 20),
+        getMinimumSize: (): Size => new Size(tabWidth + 20, tabHeight + 20),
         // don't limit the maximum size
-        getMaximumSize: (item: INode): Size => Size.INFINITE,
+        getMaximumSize: (): Size => Size.INFINITE,
         // don't constrain the area
-        getMinimumEnclosedArea: (item: INode): Rect => Rect.EMPTY
+        getMinimumEnclosedArea: (): Rect => Rect.EMPTY
       })
     }
 
     // A group bounds calculator that calculates bounds that encompass the
     // children of a group and all the children's labels.
-    if (type === IGroupBoundsCalculator.$class) {
+    if (type === IGroupBoundsCalculator) {
       // use a custom group bounds calculator that takes labels into account
-      return IGroupBoundsCalculator.create(
-        (graph: IGraph, groupNode: INode): Rect => {
-          let bounds: Rect = Rect.EMPTY
-          const children = graph.getChildren(groupNode)
-          children.forEach((child: INode): void => {
-            bounds = Rect.add(bounds, child.layout.toRect())
-            child.labels.forEach((label: ILabel): void => {
-              bounds = Rect.add(bounds, label.layout.bounds)
-            })
+      return IGroupBoundsCalculator.create((graph: IGraph): Rect => {
+        let bounds: Rect = Rect.EMPTY
+        const children = graph.getChildren(node)
+        children.forEach((child: INode): void => {
+          bounds = Rect.add(bounds, child.layout.toRect())
+          child.labels.forEach((label: ILabel): void => {
+            bounds = Rect.add(bounds, label.layout.bounds)
           })
+        })
 
-          // also consider the node insets
-          const insetsProvider = groupNode.lookup(INodeInsetsProvider.$class)
-          return insetsProvider
-            ? bounds.getEnlarged(insetsProvider.getInsets(groupNode))
-            : bounds
-        }
-      )
+        // also consider the node insets
+        const paddingProvider = node.lookup(IGroupPaddingProvider)
+        return paddingProvider
+          ? bounds.getEnlarged(paddingProvider.getPadding())
+          : bounds
+      })
     }
 
     return super.lookup(node, type)
@@ -153,7 +149,7 @@ export class CustomGroupNodeStyle extends NodeStyleBase<CustomGroupNodeStyleVisu
         targetElement: text,
         text: node.tag.title,
         font: new Font('sans-serif', 10),
-        wrapping: TextWrapping.CHARACTER_ELLIPSIS,
+        wrapping: TextWrapping.WRAP_CHARACTER_ELLIPSIS,
         maximumSize: new Size(tabWidth - 12, 15)
       })
 
@@ -210,9 +206,7 @@ export class CustomGroupNodeStyle extends NodeStyleBase<CustomGroupNodeStyleVisu
     node: INode
   ): boolean {
     // Check for bounding box
-    if (
-      !node.layout.toRect().containsWithEps(location, context.hitTestRadius)
-    ) {
+    if (!node.layout.toRect().contains(location, context.hitTestRadius)) {
       return false
     }
     const { x, y } = location

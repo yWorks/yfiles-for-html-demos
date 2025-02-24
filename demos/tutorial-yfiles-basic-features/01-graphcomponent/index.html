@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>01 Creating the View - Tutorial: Basic Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -139,9 +137,9 @@
               <div class="paragraph">
                 <p>
                   This step introduces class <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a>, which is the
-                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-application" target="_blank">central UI element for working with graphs</a>. The app does not provide any interactive features except mouse wheel zooming,
-                  which is enabled by default. It is merely meant as a very basic example of how to
-                  display a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> within a web page.
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-application" target="_blank">central UI element for working with graphs</a>. The app does not provide any interactive features except basic navigation and
+                  selection, which is enabled by default. It is merely meant as a very basic example
+                  of how to display a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> within a web page.
                 </p>
               </div>
               <div class="paragraph">
@@ -165,9 +163,10 @@
               </div>
               <div class="paragraph">
                 <p>
-                  We also need to make sure that the <code>div</code> actually has a positive size.
-                  We can do this via CSS, but any technique that assigns a positive size to the
-                  element would work:
+                  We should also make sure that the <code>div</code> actually has a reasonable size,
+                  as the default style will only set a <code>min-width</code> and
+                  <code>min-height</code> to <code>100px</code>. We can do this via CSS, but any
+                  technique that assigns a positive size to the element would work:
                 </p>
               </div>
               <div class="listingblock">

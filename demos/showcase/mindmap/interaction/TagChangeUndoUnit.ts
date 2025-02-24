@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,48 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { type INode, UndoUnitBase } from 'yfiles'
+import { type INode, IUndoUnit } from '@yfiles/yfiles'
 import type { NodeData } from '../data-types'
 
 /**
- * This class provides undo/redo for an operation for changing tag data.
+ * Provides undo/redo when changing tag data.
  * Since information about color, collapsed state, and layout side is stored in the tag, it is
  * important to undo these changes along with the changes in layout.
  */
-export class TagChangeUndoUnit extends UndoUnitBase {
-  /**
-   * Creates a new instance of
-   * @param undoName Name of the undo operation.
-   * @param redoName Name of the redo operation.
-   * @param oldTag The data needed to restore the previous state.
-   * @param newTag The data needed to restore the next state.
-   * @param item The owner of the tag.
-   * @param callback Callback that is executed after undo and redo.
-   */
-  constructor(
-    undoName: string,
-    redoName: string,
-    private readonly oldTag: NodeData,
-    private readonly newTag: NodeData,
-    private readonly item: INode,
-    private readonly callback?: (node: INode) => void
-  ) {
-    super(undoName, redoName)
-  }
-
-  /**
-   * Undoes the work that is represented by this unit.
-   */
-  undo(): void {
-    this.item.tag = this.oldTag
-    this.callback?.(this.item)
-  }
-
-  /**
-   * Redoes the work that is represented by this unit.
-   */
-  redo(): void {
-    this.item.tag = this.newTag
-    this.callback?.(this.item)
-  }
+export function createTagChangeUndoUnit(
+  undoName: string,
+  oldTag: NodeData,
+  newTag: NodeData,
+  item: INode,
+  callback?: (node: INode) => void
+): IUndoUnit {
+  return IUndoUnit.fromHandler(
+    undoName,
+    () => {
+      item.tag = oldTag
+      callback?.(item)
+    },
+    () => {
+      item.tag = newTag
+      callback?.(item)
+    }
+  ) as IUndoUnit
 }

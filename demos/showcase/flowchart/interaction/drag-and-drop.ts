@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { GraphEditorInputMode } from 'yfiles'
-import { NodeDropInputMode, Rect, SimpleNode } from 'yfiles'
-import { DragAndDropPanel } from 'demo-utils/DragAndDropPanel'
+import type { GraphEditorInputMode } from '@yfiles/yfiles'
+import { NodeDropInputMode, Rect, SimpleNode } from '@yfiles/yfiles'
+import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
 import { FlowchartNodeStyle, FlowchartNodeType } from '../style/FlowchartStyle'
 
 export function initializeDnd(graphEditorInputMode: GraphEditorInputMode): void {

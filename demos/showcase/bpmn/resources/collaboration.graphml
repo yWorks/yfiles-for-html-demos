@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
 	</key>
@@ -55,7 +55,7 @@
 	<key id="d13" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
 	<data key="d13">
 		<y:SharedData>
-			<yjs:DefaultLabelStyle x:Key="1" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 3}" textFill="BLACK"/>
+			<yjs:LabelStyle x:Key="1" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 3}" textFill="BLACK"/>
 			<bpmn:AlternatingLeafStripeStyle x:Key="2">
 				<bpmn:AlternatingLeafStripeStyle.evenLeafDescriptor>
 					<bpmn:StripeDescriptor backgroundFill="#FFC4D7ED" insetFill="#FFE0E0E0"/>
@@ -69,31 +69,31 @@
 			</bpmn:AlternatingLeafStripeStyle>
 			<yjs:Font x:Key="3" fontSize="12"/>
 			<yjs:ShapeNodeStyle x:Key="4" fill="#00FFFFFF"/>
-			<y:InteriorLabelModel x:Key="5"/>
-			<yjs:DefaultLabelStyle x:Key="6" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" textFill="BLACK">
-				<yjs:DefaultLabelStyle.font>
+			<yx:InteriorNodeLabelModel x:Key="5"/>
+			<yjs:LabelStyle x:Key="6" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" textFill="BLACK">
+				<yjs:LabelStyle.font>
 					<yjs:Font fontSize="12"/>
-				</yjs:DefaultLabelStyle.font>
-			</yjs:DefaultLabelStyle>
+				</yjs:LabelStyle.font>
+			</yjs:LabelStyle>
 			<bpmn:BpmnEdgeStyle x:Key="7"/>
 			<yjs:ShapeNodeStyle x:Key="8" fill="#FFE0E0E0"/>
-			<y:StripeDefaults x:Key="9" Insets="20,0,0,0" Style="{y:GraphMLReference 2}">
-				<y:StripeDefaults.Labels>
-					<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 1}" ShareStyleInstance="true"/>
-				</y:StripeDefaults.Labels>
-			</y:StripeDefaults>
-			<y:StripeDefaults x:Key="10" Insets="0,20,0,0">
-				<y:StripeDefaults.Labels>
-					<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" ShareStyleInstance="true">
+			<yx:StripeDefaults x:Key="9" Padding="20,0,0,0" Style="{y:GraphMLReference 2}">
+				<yx:StripeDefaults.Labels>
+					<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 1}" ShareStyleInstance="true"/>
+				</yx:StripeDefaults.Labels>
+			</yx:StripeDefaults>
+			<yx:StripeDefaults x:Key="10" Padding="0,20,0,0">
+				<yx:StripeDefaults.Labels>
+					<y:LabelDefaults AutoAdjustPreferredSize="true" ShareLayoutParameterInstance="true" LayoutParameter="{x:Static yx:StretchStripeLabelModel.Top}" ShareStyleInstance="true">
 						<y:LabelDefaults.Style>
-							<yjs:DefaultLabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 3}" textFill="BLACK"/>
+							<yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" font="{y:GraphMLReference 3}" textFill="BLACK"/>
 						</y:LabelDefaults.Style>
 					</y:LabelDefaults>
-				</y:StripeDefaults.Labels>
-				<y:StripeDefaults.Style>
+				</yx:StripeDefaults.Labels>
+				<yx:StripeDefaults.Style>
 					<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 4}"/>
-				</y:StripeDefaults.Style>
-			</y:StripeDefaults>
+				</yx:StripeDefaults.Style>
+			</yx:StripeDefaults>
 			<bpmn:BpmnEdgeStyle x:Key="11" type="MESSAGE_FLOW"/>
 		</y:SharedData>
 	</data>
@@ -106,24 +106,24 @@
 				<bpmn:PoolNodeStyle>
 					<yjs:TableNodeStyle tableRenderingOrder="ROWS_FIRST" backgroundStyle="{y:GraphMLReference 8}">
 						<yjs:TableNodeStyle.table>
-							<y:Table Insets="20,0,0,0" RowDefaults="{y:GraphMLReference 9}" ColumnDefaults="{y:GraphMLReference 10}">
-								<y:Table.Rows>
-									<y:Row MinimumSize="10" Size="113.35714285714283" Insets="20,0,0,0" Style="{y:GraphMLReference 2}">
-										<y:Row.Labels>
-											<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 1}">
+							<yx:Table Padding="20,0,0,0" RowDefaults="{y:GraphMLReference 9}" ColumnDefaults="{y:GraphMLReference 10}">
+								<yx:Table.Rows>
+									<yx:Row MinimumSize="10" Size="113.35714285714283" Padding="20,0,0,0" Style="{y:GraphMLReference 2}">
+										<yx:Row.Labels>
+											<y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 1}">
 												<y:Label.Text>Applicant</y:Label.Text>
 											</y:Label>
-										</y:Row.Labels>
-									</y:Row>
-								</y:Table.Rows>
-								<y:Table.Columns>
-									<y:Column MinimumSize="10" Size="880">
-										<y:Column.Style>
+										</yx:Row.Labels>
+									</yx:Row>
+								</yx:Table.Rows>
+								<yx:Table.Columns>
+									<yx:Column MinimumSize="10" Size="880">
+										<yx:Column.Style>
 											<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 4}"/>
-										</y:Column.Style>
-									</y:Column>
-								</y:Table.Columns>
-							</y:Table>
+										</yx:Column.Style>
+									</yx:Column>
+								</yx:Table.Columns>
+							</yx:Table>
 						</yjs:TableNodeStyle.table>
 					</yjs:TableNodeStyle>
 				</bpmn:PoolNodeStyle>
@@ -149,7 +149,7 @@
 								<y:Label.Text><![CDATA[Write Job
 Application]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -184,7 +184,7 @@ Application]]></y:Label.Text>
 Confirmation
 of Receipt]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -224,7 +224,7 @@ of Receipt]]></y:Label.Text>
 Invitation to
 Interview]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -263,7 +263,7 @@ Interview]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Take Part in
 Interview]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -303,7 +303,7 @@ Interview]]></y:Label.Text>
 Employment
 Contract]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -343,7 +343,7 @@ Contract]]></y:Label.Text>
 and Send It
 Back]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -428,24 +428,24 @@ Back]]></y:Label.Text>
 				<bpmn:PoolNodeStyle>
 					<yjs:TableNodeStyle tableRenderingOrder="ROWS_FIRST" backgroundStyle="{y:GraphMLReference 8}">
 						<yjs:TableNodeStyle.table>
-							<y:Table Insets="20,0,0,0" RowDefaults="{y:GraphMLReference 9}" ColumnDefaults="{y:GraphMLReference 10}">
-								<y:Table.Rows>
-									<y:Row MinimumSize="10" Size="127.38253968253969" Insets="20,0,0,0" Style="{y:GraphMLReference 2}">
-										<y:Row.Labels>
-											<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.West}" Style="{y:GraphMLReference 1}">
+							<yx:Table Padding="20,0,0,0" RowDefaults="{y:GraphMLReference 9}" ColumnDefaults="{y:GraphMLReference 10}">
+								<yx:Table.Rows>
+									<yx:Row MinimumSize="10" Size="127.38253968253969" Padding="20,0,0,0" Style="{y:GraphMLReference 2}">
+										<yx:Row.Labels>
+											<y:Label LayoutParameter="{x:Static yx:StretchStripeLabelModel.Left}" Style="{y:GraphMLReference 1}">
 												<y:Label.Text>Enterprise</y:Label.Text>
 											</y:Label>
-										</y:Row.Labels>
-									</y:Row>
-								</y:Table.Rows>
-								<y:Table.Columns>
-									<y:Column MinimumSize="10" Size="880">
-										<y:Column.Style>
+										</yx:Row.Labels>
+									</yx:Row>
+								</yx:Table.Rows>
+								<yx:Table.Columns>
+									<yx:Column MinimumSize="10" Size="880">
+										<yx:Column.Style>
 											<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 4}"/>
-										</y:Column.Style>
-									</y:Column>
-								</y:Table.Columns>
-							</y:Table>
+										</yx:Column.Style>
+									</yx:Column>
+								</yx:Table.Columns>
+							</yx:Table>
 						</yjs:TableNodeStyle.table>
 					</yjs:TableNodeStyle>
 				</bpmn:PoolNodeStyle>
@@ -476,7 +476,7 @@ Back]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Receive
 Application]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -515,7 +515,7 @@ Application]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Confirm
 Receipt]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -549,7 +549,7 @@ Receipt]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Invite to
 Interview]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -583,7 +583,7 @@ Interview]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Carry Out
 Interview]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -623,7 +623,7 @@ Interview]]></y:Label.Text>
 Employment
 Contract]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -659,7 +659,7 @@ Signed
 Employment
 Contract]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:InteriorLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
+									<yx:InteriorNodeLabelModelParameter Position="Center" Model="{y:GraphMLReference 5}"/>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -757,11 +757,11 @@ Contract]]></y:Label.Text>
 					<y:Label Style="{y:GraphMLReference 6}">
 						<y:Label.Text>Application</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:FreeEdgeLabelModelParameter Ratio="0.49999999999999994" Angle="1.5707963267948968">
-								<y:FreeEdgeLabelModelParameter.Model>
-									<y:FreeEdgeLabelModel/>
-								</y:FreeEdgeLabelModelParameter.Model>
-							</y:FreeEdgeLabelModelParameter>
+							<yx:FreeEdgeLabelModelParameter Ratio="0.49999999999999994" Angle="1.5707963267948968">
+								<yx:FreeEdgeLabelModelParameter.Model>
+									<yx:FreeEdgeLabelModel/>
+								</yx:FreeEdgeLabelModelParameter.Model>
+							</yx:FreeEdgeLabelModelParameter>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -777,11 +777,11 @@ Contract]]></y:Label.Text>
 						<y:Label.Text><![CDATA[Confirmation
 of Receipt]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:FreeEdgeLabelModelParameter Ratio="0.49999999999999994" Angle="-1.5707963267948966">
-								<y:FreeEdgeLabelModelParameter.Model>
-									<y:FreeEdgeLabelModel/>
-								</y:FreeEdgeLabelModelParameter.Model>
-							</y:FreeEdgeLabelModelParameter>
+							<yx:FreeEdgeLabelModelParameter Ratio="0.49999999999999994" Angle="-1.5707963267948966">
+								<yx:FreeEdgeLabelModelParameter.Model>
+									<yx:FreeEdgeLabelModel/>
+								</yx:FreeEdgeLabelModelParameter.Model>
+							</yx:FreeEdgeLabelModelParameter>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -796,11 +796,11 @@ of Receipt]]></y:Label.Text>
 					<y:Label Style="{y:GraphMLReference 6}">
 						<y:Label.Text>Invitation</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:FreeEdgeLabelModelParameter Ratio="0.49999999999999994" Angle="-1.5707963267948966">
-								<y:FreeEdgeLabelModelParameter.Model>
-									<y:FreeEdgeLabelModel/>
-								</y:FreeEdgeLabelModelParameter.Model>
-							</y:FreeEdgeLabelModelParameter>
+							<yx:FreeEdgeLabelModelParameter Ratio="0.49999999999999994" Angle="-1.5707963267948966">
+								<yx:FreeEdgeLabelModelParameter.Model>
+									<yx:FreeEdgeLabelModel/>
+								</yx:FreeEdgeLabelModelParameter.Model>
+							</yx:FreeEdgeLabelModelParameter>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -816,11 +816,11 @@ of Receipt]]></y:Label.Text>
 						<y:Label.Text><![CDATA[Employment
 Contract]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:FreeEdgeLabelModelParameter Ratio="0.49999999999999994" Angle="-1.5707963267948966">
-								<y:FreeEdgeLabelModelParameter.Model>
-									<y:FreeEdgeLabelModel/>
-								</y:FreeEdgeLabelModelParameter.Model>
-							</y:FreeEdgeLabelModelParameter>
+							<yx:FreeEdgeLabelModelParameter Ratio="0.49999999999999994" Angle="-1.5707963267948966">
+								<yx:FreeEdgeLabelModelParameter.Model>
+									<yx:FreeEdgeLabelModel/>
+								</yx:FreeEdgeLabelModelParameter.Model>
+							</yx:FreeEdgeLabelModelParameter>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -837,11 +837,11 @@ Contract]]></y:Label.Text>
 Employment
 Contract]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:FreeEdgeLabelModelParameter Ratio="0.49999999999999994" Angle="1.5707963267948968">
-								<y:FreeEdgeLabelModelParameter.Model>
-									<y:FreeEdgeLabelModel/>
-								</y:FreeEdgeLabelModelParameter.Model>
-							</y:FreeEdgeLabelModelParameter>
+							<yx:FreeEdgeLabelModelParameter Ratio="0.49999999999999994" Angle="1.5707963267948968">
+								<yx:FreeEdgeLabelModelParameter.Model>
+									<yx:FreeEdgeLabelModel/>
+								</yx:FreeEdgeLabelModelParameter.Model>
+							</yx:FreeEdgeLabelModelParameter>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -856,11 +856,11 @@ Contract]]></y:Label.Text>
 					<y:Label Style="{y:GraphMLReference 6}">
 						<y:Label.Text>Question</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:FreeEdgeLabelModelParameter Ratio="0.5000000000000001" Angle="-1.5707963267948966">
-								<y:FreeEdgeLabelModelParameter.Model>
-									<y:FreeEdgeLabelModel/>
-								</y:FreeEdgeLabelModelParameter.Model>
-							</y:FreeEdgeLabelModelParameter>
+							<yx:FreeEdgeLabelModelParameter Ratio="0.5000000000000001" Angle="-1.5707963267948966">
+								<yx:FreeEdgeLabelModelParameter.Model>
+									<yx:FreeEdgeLabelModel/>
+								</yx:FreeEdgeLabelModelParameter.Model>
+							</yx:FreeEdgeLabelModelParameter>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -875,11 +875,11 @@ Contract]]></y:Label.Text>
 					<y:Label Style="{y:GraphMLReference 6}">
 						<y:Label.Text>Answer</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:FreeEdgeLabelModelParameter Ratio="0.49999999999999994" Angle="1.5707963267948968">
-								<y:FreeEdgeLabelModelParameter.Model>
-									<y:FreeEdgeLabelModel/>
-								</y:FreeEdgeLabelModelParameter.Model>
-							</y:FreeEdgeLabelModelParameter>
+							<yx:FreeEdgeLabelModelParameter Ratio="0.49999999999999994" Angle="1.5707963267948968">
+								<yx:FreeEdgeLabelModelParameter.Model>
+									<yx:FreeEdgeLabelModel/>
+								</yx:FreeEdgeLabelModelParameter.Model>
+							</yx:FreeEdgeLabelModelParameter>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>

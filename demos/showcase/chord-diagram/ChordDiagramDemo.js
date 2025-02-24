@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,91 +27,67 @@
  **
  ***************************************************************************/
 import {
-  Class,
   GenericLayoutData,
   GraphBuilder,
   GraphComponent,
-  GraphFocusIndicatorManager,
   GraphItemTypes,
-  GraphSelectionIndicatorManager,
   GraphViewerInputMode,
   IEdge,
   IGraph,
-  IMapper,
   INode,
   LayoutExecutor,
   License,
-  Rect,
-  VoidEdgeStyle,
-  VoidNodeStyle
-} from 'yfiles'
-import { ChordDiagramLayout } from './ChordDiagramLayout.js'
-import { ChordEdgeStyle } from './ChordEdgeStyle.js'
-import { CircleSegmentNodeStyle } from './CircleSegmentNodeStyle.js'
-import SampleData from './resources/SampleData.js'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-// this custom layout data will be used to transfer edge weights to the chord diagram layout algorithm
-const chordDiagramLayoutData = new GenericLayoutData()
+  Mapper,
+  Rect
+} from '@yfiles/yfiles'
+import { ChordDiagramLayout } from './ChordDiagramLayout'
+import { ChordEdgeStyle } from './ChordEdgeStyle'
+import { CircleSegmentNodeStyle } from './CircleSegmentNodeStyle'
+import SampleData from './resources/SampleData'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 // maps edges to their thickness
-/** @type {IMapper.<IEdge,number>} */
-let weightMapping
-
+let weightMapping = new Mapper()
+// maps edges to layout specific information
+let edgeStyleHints = new Mapper()
+let edgeHighlightDecoratorLookupChainLink
 /**
  * Bootstraps the demo.
- * @returns {!Promise}
  */
 async function run() {
-  Class.ensure(LayoutExecutor)
-
+  LayoutExecutor.ensure()
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // setup effects of hovering and selecting edges
   configureUserInteraction(graphComponent)
-
   // configure default styles for newly created graph elements
   initStyles(graphComponent)
-
   // create an initial sample graph
   createSampleGraph(graphComponent.graph)
-
   // bind the toolbar components their actions
   initializeUI(graphComponent)
-
   // layout the graph
-  graphComponent.graph.applyLayout(new ChordDiagramLayout(), chordDiagramLayoutData)
-
+  runLayout(graphComponent)
   // center the diagram
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 }
-
 /**
  * Prevents interactive editing and registers hover and selection effects.
- * @param {!GraphComponent} graphComponent
  */
 function configureUserInteraction(graphComponent) {
   const graph = graphComponent.graph
   const manager = graphComponent.graphModelManager
-
   // create an input mode that generally does not allow modifying the graph
   const gvim = new GraphViewerInputMode()
   // set edges as selectable
   gvim.selectableItems = GraphItemTypes.EDGE
   // set which items are hoverable
   gvim.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
-
-  gvim.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+  gvim.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     // reset opacities of all edges
     graph.edges.forEach((edge) => {
       edge.tag.opacity = ChordEdgeStyle.defaultOpacity
     })
-
     // if hovered on a node, highlight all edges of this node
     if (evt.item instanceof INode) {
       const node = evt.item
@@ -128,60 +104,53 @@ function configureUserInteraction(graphComponent) {
     }
     graphComponent.invalidate()
   })
-
   // when the selected edge changes, the toolbar slider needs to reflect the thickness of the current edge
-  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+  graphComponent.selection.addEventListener('item-added', (evt) => {
     if (evt.item instanceof IEdge) {
       const label = document.querySelector('#thickness-label')
       const slider = document.querySelector('#thickness')
       const edge = evt.item
-      if (evt.itemSelected) {
-        edge.tag.highlighted = true
-        manager.toFront(edge)
-        slider.value = String(weightMapping.get(edge))
-        slider.disabled = false
-        slider.classList.remove('disabled-control')
-        label.classList.remove('disabled-control')
-
-        // deselect all other edges
-        graphComponent.selection.selectedEdges
-          .filter((e) => e != edge)
-          .toList()
-          .forEach((e) => graphComponent.selection.setSelected(e, false))
-      } else {
-        edge.tag.highlighted = false
-        slider.disabled = graphComponent.selection.selectedEdges.size == 0
-        slider.classList.add('disabled-control')
-        label.classList.add('disabled-control')
-      }
+      edge.tag.highlighted = true
+      manager.toFront(edge)
+      slider.value = String(weightMapping.get(edge))
+      slider.disabled = false
+      slider.classList.remove('disabled-control')
+      label.classList.remove('disabled-control')
+      // deselect all other edges
+      graphComponent.selection.edges
+        .filter((e) => e != edge)
+        .toList()
+        .forEach((e) => graphComponent.selection.remove(e))
     }
   })
-
+  graphComponent.selection.addEventListener('item-removed', (evt) => {
+    if (evt.item instanceof IEdge) {
+      const label = document.querySelector('#thickness-label')
+      const slider = document.querySelector('#thickness')
+      const edge = evt.item
+      edge.tag.highlighted = false
+      slider.disabled = graphComponent.selection.edges.size == 0
+      slider.classList.add('disabled-control')
+      label.classList.add('disabled-control')
+    }
+  })
   graphComponent.inputMode = gvim
 }
-
 /**
  * Configures the look of the graph.
- * @param {!GraphComponent} graphComponent The component containing the graph.
+ * @param graphComponent The component containing the graph.
  */
 function initStyles(graphComponent) {
   const graph = graphComponent.graph
-  graph.edgeDefaults.style = new ChordEdgeStyle(graph)
+  graph.edgeDefaults.style = new ChordEdgeStyle(edgeStyleHints)
   graph.nodeDefaults.style = new CircleSegmentNodeStyle()
-
   // hide the default selection for edges
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    edgeStyle: VoidEdgeStyle.INSTANCE
-  })
+  graph.decorator.edges.selectionRenderer.hide()
   // hide the focus visual for nodes
-  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
+  graph.decorator.nodes.focusRenderer.hide()
 }
-
 /**
  * Creates the sample graph.
- * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
   const defaultNodeSize = graph.nodeDefaults.size
@@ -196,74 +165,64 @@ function createSampleGraph(graph) {
     sourceId: 'from',
     targetId: 'to'
   })
-
   builder.buildGraph()
-
-  // create a mapping that for the thickness
-  weightMapping = chordDiagramLayoutData.addEdgeItemMapping(
-    ChordDiagramLayout.EDGE_WEIGHT_KEY
-  ).mapper
-
-  graph.edges.forEach((edge) => {
-    // create initial weights for the edges, these are relative and will be normalized by the layout
-    weightMapping.set(edge, parseFloat(edge.tag.thickness))
-  })
+  graph.edges.forEach((edge) => weightMapping.set(edge, parseFloat(edge.tag.thickness)))
 }
-
 /**
  * Shows or hides the visualization of the actual graph structure.
- * @param {!GraphComponent} graphComponent the demo's main graph view.
- * @param {boolean} enabled if true, the actual graph structure is shown; otherwise it is not.
+ * @param graphComponent the demo's main graph view.
+ * @param enabled if true, the actual graph structure is shown; otherwise it is not.
  */
 function showGraph(graphComponent, enabled) {
   const graph = graphComponent.graph
-  const selectionIndicatorManager = graphComponent.selectionIndicatorManager
   // if the actual, basic graph is shown, use the standard selection indicators, else hide them.
-  selectionIndicatorManager.edgeStyle = enabled ? null : VoidEdgeStyle.INSTANCE
+  if (enabled) {
+    edgeHighlightDecoratorLookupChainLink &&
+      graph.decorator.edges.remove(edgeHighlightDecoratorLookupChainLink)
+  } else {
+    edgeHighlightDecoratorLookupChainLink = graph.decorator.edges.selectionRenderer.hide()
+  }
   // also tell the styles to render additional information
   const edgeStyle = graph.edgeDefaults.style
   edgeStyle.showStyleHints = enabled
   const nodeStyle = graph.nodeDefaults.style
   nodeStyle.showStyleHints = enabled
-
   graphComponent.invalidate()
 }
-
 /**
  * Sets the given edge weight for the currently selected edges and updates the chord layout.
- * @param {!GraphComponent} graphComponent the demo's main graph view.
- * @param {number} weight the new weight for each of the selected edges.
+ * @param graphComponent the demo's main graph view.
+ * @param weight the new weight for each of the selected edges.
  */
 function updateDiagram(graphComponent, weight) {
-  const graph = graphComponent.graph
-  const layout = new ChordDiagramLayout()
-
-  for (const edge of graphComponent.selection.selectedEdges) {
+  for (const edge of graphComponent.selection.edges) {
     weightMapping.set(edge, weight)
   }
-  layout.gapRatio = currentGapRatio
-  graph.applyLayout(layout, chordDiagramLayoutData)
+  runLayout(graphComponent)
 }
-
-/** @type {number} */
 let currentGapRatio = 0.25
-
 /**
  * Updates the amount of gap to node space of the diagram and re-layouts
- * @param {!GraphComponent} graphComponent
- * @param {number} gapRatio
  */
 function updateGapRatio(graphComponent, gapRatio) {
   currentGapRatio = gapRatio
-  const graph = graphComponent.graph
-  const layout = new ChordDiagramLayout()
-  layout.gapRatio = currentGapRatio
-  graph.applyLayout(layout, chordDiagramLayoutData)
+  runLayout(graphComponent)
 }
-
+/**
+ * Runs the chord layout.
+ * @param graphComponent
+ */
+function runLayout(graphComponent) {
+  const layout = new ChordDiagramLayout()
+  // passes the edge thickness and the map with the style hints that has to be filled by the layout algorithm
+  const chordDiagramLayoutData = new GenericLayoutData() // create a mapping that for the thickness
+  chordDiagramLayoutData.addItemMapping(ChordDiagramLayout.EDGE_WEIGHT_KEY).mapper = weightMapping
+  chordDiagramLayoutData.addItemMapping(ChordDiagramLayout.STYLE_HINT_KEY).mapper = edgeStyleHints
+  layout.gapRatio = currentGapRatio
+  graphComponent.graph.applyLayout(layout, chordDiagramLayoutData)
+}
 /**
  * Binds actions to the buttons in the toolbar.
- * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
   document
@@ -280,5 +239,4 @@ function initializeUI(graphComponent) {
       updateGapRatio(graphComponent, parseFloat(evt.target.value))
     )
 }
-
 run().then(finishLoading)

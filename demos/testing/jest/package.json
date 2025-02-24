@@ -1,5 +1,5 @@
 {
-  "name": "jest-demo-for-yfiles-for-html",
+  "name": "@yfiles/jest-demo-for-yfiles-for-html",
   "version": "1.0.0",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
@@ -7,12 +7,11 @@
   "scripts": {
     "test": "jest"
   },
-  "dependencies": {
-    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz",
-    "yfiles-umd": "../../../lib-dev/yfiles-umd-26.0.4+dev.tgz"
-  },
   "devDependencies": {
-    "@babel/preset-env": "^7.22.5",
-    "jest": "^29.5.0"
+    "@babel/preset-env": "^7.25.9",
+    "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
   }
 }

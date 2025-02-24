@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,43 +26,35 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EdgeStyleBase, GeneralPath, HtmlCanvasVisual } from 'yfiles'
-import { getNodeData } from '../data-types.js'
-
+import { EdgeStyleBase, GeneralPath, HtmlCanvasVisual } from '@yfiles/yfiles'
+import { getNodeData } from '../data-types'
 /**
  * An edge style that draws a smooth Bézier curve with color and thickness interpolation
  * between the source and the target nodes.
  */
 export class MindMapEdgeStyle extends EdgeStyleBase {
+  thicknessStart
+  thicknessEnd
   /**
    * Creates the edge style as a Bézier curve using the given thicknesses.
-   * @param {number} thicknessStart The thickness of the edge at its start.
-   * @param {number} thicknessEnd The thickness of the edge at its end.
+   * @param thicknessStart The thickness of the edge at its start.
+   * @param thicknessEnd The thickness of the edge at its end.
    */
   constructor(thicknessStart, thicknessEnd) {
     super()
-    this.thicknessEnd = thicknessEnd
     this.thicknessStart = thicknessStart
+    this.thicknessEnd = thicknessEnd
   }
-
   /**
    * Creates the visual for the edge using an HTML5 canvas visual.
-   * @param {!IRenderContext} context
-   * @param {!IEdge} edge
-   * @returns {!Visual}
    */
   createVisual(context, edge) {
     return new MindMapCanvasVisual(edge, this.thicknessStart, this.thicknessEnd)
   }
-
   /**
    * Updates the visual for the edge.
    * If the edge thickness has changed, the edge visual has to be re-created.
    * Otherwise, the old visual will be used instead.
-   * @param {!IRenderContext} context
-   * @param {!Visual} oldVisual
-   * @param {!IEdge} edge
-   * @returns {!Visual}
    */
   updateVisual(context, oldVisual, edge) {
     // old state of edge
@@ -74,60 +66,52 @@ export class MindMapEdgeStyle extends EdgeStyleBase {
     }
     return oldVisual
   }
-
   /**
    * Hit-test of the edge style.
    * Mind map edges should not be clicked, selected or hovered.
    * Thus, the hit-test should always return false.
-   * @param {!IInputModeContext} canvasContext
-   * @param {!Point} p
-   * @param {!IEdge} edge
-   * @returns {boolean}
    */
   isHit(canvasContext, p, edge) {
     return false
   }
 }
-
 /**
  * Contains the actual rendering logic of the edge.
  * This class uses HTML5 canvas rendering to visualize the edge.
  */
 class MindMapCanvasVisual extends HtmlCanvasVisual {
+  edge
+  thicknessStart
+  thicknessEnd
   // The cached path to use during updates
   cachedPath = null
   // The cached start thickness to use during updates
   cachedThicknessStart = 0
   // The cached end thickness to use during updates
   cachedThicknessEnd = 0
-
   /**
    * The array of points after flattening the path.
    */
   points = []
-
   /**
    * Creates the canvas visual.
-   * @param {!IEdge} edge The given edge.
-   * @param {number} thicknessStart The thickness of the edge at its start.
-   * @param {number} thicknessEnd The thickness of the edge at its end.
+   * @param edge The given edge.
+   * @param thicknessStart The thickness of the edge at its start.
+   * @param thicknessEnd The thickness of the edge at its end.
    */
   constructor(edge, thicknessStart, thicknessEnd) {
     super()
-    this.thicknessEnd = thicknessEnd
-    this.thicknessStart = thicknessStart
     this.edge = edge
+    this.thicknessStart = thicknessStart
+    this.thicknessEnd = thicknessEnd
     this.edge = edge
     this.thicknessStart = thicknessStart
     this.thicknessEnd = thicknessEnd
   }
-
   /**
    * Renders the edge as a flattened Bézier path.
-   * @param {!IRenderContext} renderContext
-   * @param {!CanvasRenderingContext2D} ctx
    */
-  paint(renderContext, ctx) {
+  render(renderContext, ctx) {
     ctx.save()
     ctx.beginPath()
     // create the new path for the edge
@@ -139,44 +123,36 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
       const flattenedPath = p.flatten(0.01)
       this.points = this.getPoints(flattenedPath)
     }
-
     // draw the edge path based on the color of the source/target node
     const startColor = MindMapCanvasVisual.hexToRgb(getNodeData(this.edge.sourceNode).color)
     const endColor = MindMapCanvasVisual.hexToRgb(getNodeData(this.edge.targetNode).color)
     this.drawEdgePath(startColor, endColor, ctx)
-
     ctx.restore()
-
     // save the data used to create the visualization
     this.cachedPath = p
     this.cachedThicknessStart = this.thicknessStart
     this.cachedThicknessEnd = this.thicknessEnd
   }
-
   /**
    * Returns equidistant points on the edge path.
    * The quality of the curve rendering may be adjusted by setting MAX_SEGMENTS.
    * For larger thicknesses, we use more points, for smaller thicknesses less.
-   * @param {!GeneralPath} path
-   * @returns {!Array.<Point>}
    */
   getPoints(path) {
     const MAX_SEGMENTS = this.thicknessStart > 8 ? 100 : 15
     const points = []
-
     const lInc = 1.0 / MAX_SEGMENTS
     for (let i = 0; i <= MAX_SEGMENTS; i++) {
       points[i] = path.getPoint(lInc * i)
     }
     return points
   }
-
   /**
    * Draws the edge consisting of concatenated line segments of varying thickness and color.
    * Intermediate values of color components (r,g,b) and thickness (w) are computed using linear interpolation.
-   * @param {!RGB} startColor The color of the edge at its start.
-   * @param {!RGB} endColor The color of the edge at its end.
-   * @param {!CanvasRenderingContext2D} ctx The HTML5 Canvas context.
+   * @param startColor The color of the edge at its start.
+   * @param endColor The color of the edge at its end.
+   * @param ctx The HTML5 Canvas context.
    */
   drawEdgePath(startColor, endColor, ctx) {
     const rS = startColor.r
@@ -185,7 +161,6 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
     const gE = endColor.g
     const bS = startColor.b
     const bE = endColor.b
-
     const linc = 1.0 / this.points.length
     // compute the increments for thickness and color components for each step
     const wDelta = (this.thicknessEnd - this.thicknessStart) * linc
@@ -197,24 +172,19 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
     let r = rS
     let g = gS
     let b = bS
-
     ctx.lineCap = 'round'
-
     let x0
     let x1
     for (let i = 0; i < this.points.length - 1; i++) {
       x0 = this.points[i]
       x1 = this.points[i + 1]
-
       // compute the thickness and color values for the current line segment by adding increment
       w += wDelta
       r += rDelta
       g += gDelta
       b += bDelta
-
       ctx.strokeStyle = `rgb(${Math.floor(r)},${Math.floor(g)},${Math.floor(b)})`
       ctx.lineWidth = w
-
       // create the line segment
       ctx.beginPath()
       ctx.moveTo(x0.x, x0.y)
@@ -222,11 +192,9 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
       ctx.stroke()
     }
   }
-
   /**
    * Creates a curved path segment using edge bends as control points.
    * If no bends are available, a straight line is created.
-   * @returns {!GeneralPath}
    */
   createCurvedPath() {
     const edge = this.edge
@@ -244,11 +212,10 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
     }
     return p
   }
-
   /**
    * Converts a hex to rgb color.
-   * @param {!string} hex The hex to be converted.
-   * @returns {!RGB} The color in rgb format.
+   * @param hex The hex to be converted.
+   * @returns The color in rgb format.
    */
   static hexToRgb(hex) {
     const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
@@ -261,10 +228,3 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
       : { r: 255, g: 255, b: 255 }
   }
 }
-
-/**
- * @typedef {Object} RGB
- * @property {number} r
- * @property {number} g
- * @property {number} b
- */

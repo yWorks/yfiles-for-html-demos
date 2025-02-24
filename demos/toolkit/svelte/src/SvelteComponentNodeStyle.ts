@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { GraphComponent, INode, IRenderContext, Visual } from 'yfiles'
-import { NodeStyleBase, SvgVisual } from 'yfiles'
+import type { GraphComponent, INode, IRenderContext, Visual } from '@yfiles/yfiles'
+import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 import type { SvelteComponent } from 'svelte'
 import type { Person } from './types'
 
@@ -99,12 +99,8 @@ export default class SvelteComponentNodeStyle extends NodeStyleBase {
 }
 
 function createProps(context: IRenderContext, node: INode): Props {
-  const selected = (context.canvasComponent as GraphComponent).selection.selectedNodes.isSelected(
-    node
-  )
-  const highlighted = (
-    context.canvasComponent as GraphComponent
-  ).highlightIndicatorManager.selectionModel!.isSelected(node)
+  const selected = (context.canvasComponent as GraphComponent).selection.nodes.includes(node)
+  const highlighted = (context.canvasComponent as GraphComponent).highlights.includes(node)
   const layout = node.layout
   return {
     item: node.tag as Person,

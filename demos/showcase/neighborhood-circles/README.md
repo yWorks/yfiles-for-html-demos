@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Neighborhood Circles Demo
 
-# Neighborhood Circles Demo
+<img src="../../../doc/demo-thumbnails/neighborhood-circles.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/showcase/neighborhood-circles/).
 
 The Neighborhood Circles demo shows the neighborhood of selected nodes arranged on concentric circles. The concentric arrangement highlights how close the connection between a selected node and a neighbor node is.
 

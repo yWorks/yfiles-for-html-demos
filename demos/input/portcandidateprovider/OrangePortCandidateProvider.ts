@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,15 +27,15 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   IEnumerable,
   IInputModeContext,
   INode,
   IPortCandidate,
   List,
+  PortCandidate,
   PortCandidateProviderBase
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * This port candidate provider uses dynamic port candidates that allow
@@ -64,7 +64,7 @@ export default class OrangePortCandidateProvider extends PortCandidateProviderBa
    */
   getPortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
     const list = new List<IPortCandidate>()
-    list.add(new DefaultPortCandidate(this.node, FreeNodePortLocationModel.INSTANCE))
+    list.add(new PortCandidate(this.node, FreeNodePortLocationModel.INSTANCE))
     return list
   }
 }

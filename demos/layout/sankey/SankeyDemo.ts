@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, GraphComponent, License } from 'yfiles'
+import { GraphBuilder, GraphComponent, License } from '@yfiles/yfiles'
 
 import { electionData } from './resources/samples'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import type { VoterShift } from './data-types'
 import { initializeDefaultStyles, updateAdjacentEdges } from './styles-support'
 import { configureInteraction } from './interaction/configure-interaction'
@@ -39,13 +39,10 @@ import { initializeHighlight } from './interaction/configure-highlight'
 import { getThickness } from './edge-thickness'
 import { updateStylesAndLayout } from './sankey-layout'
 import { allowOnlyVerticalNodeMovement } from './interaction/constrain-node-movement'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // set default styles for nodes, edges and edge labels
   initializeDefaultStyles(graphComponent)
 

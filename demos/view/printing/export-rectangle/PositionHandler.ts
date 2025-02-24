@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,7 @@ import {
   MutablePoint,
   type MutableRectangle,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * An {@link IPositionHandler} that manages the position of a given {@link MutableRectangle}.
@@ -61,7 +61,7 @@ export default class PositionHandler extends BaseClass(IPositionHandler) {
   initializeDrag(context: IInputModeContext): void {
     const x = this.rectangle.x - context.canvasComponent!.lastEventLocation.x
     const y = this.rectangle.y - context.canvasComponent!.lastEventLocation.y
-    this.offset.relocate(x, y)
+    this.offset.setLocation(x, y)
   }
 
   /**
@@ -70,14 +70,14 @@ export default class PositionHandler extends BaseClass(IPositionHandler) {
   handleMove(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
     const newX = newLocation.x + this.offset.x
     const newY = newLocation.y + this.offset.y
-    this.rectangle.relocate(new Point(newX, newY))
+    this.rectangle.setLocation(new Point(newX, newY))
   }
 
   /**
    * Resets the rectangle's position when the move gesture was cancelled.
    */
   cancelDrag(context: IInputModeContext, originalLocation: Point): void {
-    this.rectangle.relocate(originalLocation)
+    this.rectangle.setLocation(originalLocation)
   }
 
   /**
@@ -86,6 +86,6 @@ export default class PositionHandler extends BaseClass(IPositionHandler) {
   dragFinished(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
     const newX = newLocation.x + this.offset.x
     const newY = newLocation.y + this.offset.y
-    this.rectangle.relocate(new Point(newX, newY))
+    this.rectangle.setLocation(new Point(newX, newY))
   }
 }

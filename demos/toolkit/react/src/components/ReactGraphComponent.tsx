@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,13 +31,14 @@ import { ContextMenuComponent } from './ContextMenuComponent.tsx'
 import { ReactGraphOverviewComponent } from './GraphOverviewComponent.tsx'
 import { GraphData } from '../App.tsx'
 import { useMemo, useState } from 'react'
-import { ICommand } from 'yfiles'
+import { Command, GraphComponent, SvgExport } from '@yfiles/yfiles'
 import DemoToolbar from './DemoToolbar.tsx'
 import { LayoutSupport } from '../utils/LayoutSupport.ts'
 import { useTooltips } from '../utils/use-tooltips.tsx'
 import { useGraphSearch } from '../utils/use-graph-search.ts'
 import { useGraphBuilder } from '../utils/use-graph-builder.ts'
 import { useGraphComponent } from '../utils/use-graph-component.ts'
+import { downloadFile } from '@yfiles/demo-utils/file-support.ts'
 
 interface ReactGraphComponentProps {
   graphData: GraphData
@@ -64,11 +65,12 @@ export function ReactGraphComponent({ graphData, onResetData }: ReactGraphCompon
       <div className="toolbar">
         <DemoToolbar
           resetData={onResetData}
-          zoomIn={() => ICommand.INCREASE_ZOOM.execute(null, graphComponent)}
-          zoomOut={() => ICommand.DECREASE_ZOOM.execute(null, graphComponent)}
-          resetZoom={() => ICommand.ZOOM.execute(1.0, graphComponent)}
-          fitContent={() => ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)}
+          zoomIn={() => graphComponent.executeCommand(Command.INCREASE_ZOOM)}
+          zoomOut={() => graphComponent.executeCommand(Command.DECREASE_ZOOM)}
+          resetZoom={() => graphComponent.executeCommand(Command.ZOOM, 1)}
+          fitContent={() => void graphComponent.fitGraphBounds()}
           searchChange={(evt) => setSearchQuery(evt.target.value)}
+          exportSvg={() => exportSvg(graphComponent)}
         />
       </div>
       <div className="main">
@@ -84,4 +86,27 @@ export function ReactGraphComponent({ graphData, onResetData }: ReactGraphCompon
       </div>
     </>
   )
+}
+
+/**
+ * Exports the graph component to an SVG.
+ */
+async function exportSvg(graphComponent: GraphComponent): Promise<void> {
+  const exportComponent = new GraphComponent()
+  exportComponent.graph = graphComponent.graph
+  exportComponent.updateContentBounds()
+  const exporter = new SvgExport({
+    worldBounds: exportComponent.contentBounds,
+    encodeImagesBase64: true,
+    inlineSvgImages: true
+  })
+
+  // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
+  exporter.cssStyleSheet = null
+  const svg = await exporter.exportSvgAsync(exportComponent, async () => {
+    // in case you have styles that render asynchronously, or if React hasn't finished rendering yet,
+    // you can wait for them to finish here, e.g. like this:
+    // await new Promise((resolve) => setTimeout(resolve, 2000))
+  })
+  downloadFile(SvgExport.exportSvgString(svg), 'graph.svg')
 }

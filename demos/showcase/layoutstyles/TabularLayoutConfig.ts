@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,20 +28,17 @@
  ***************************************************************************/
 import {
   Class,
-  Enum,
+  FreeNodeLabelModel,
   GraphComponent,
   ILayoutAlgorithm,
   LayoutData,
-  PartitionGrid,
-  PartitionGridData,
+  LayoutGrid,
+  NodeLabelPlacement,
   TabularLayout,
   TabularLayoutData,
-  TabularLayoutNodeLayoutDescriptor,
-  TabularLayoutPolicy,
-  YBoolean,
-  YNumber,
-  YString
-} from 'yfiles'
+  TabularLayoutMode,
+  TabularLayoutNodeDescriptor
+} from '@yfiles/yfiles'
 
 import LayoutConfiguration from './LayoutConfiguration'
 import {
@@ -53,7 +50,27 @@ import {
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from 'demo-resources/demo-option-editor'
+} from '@yfiles/demo-resources/demo-option-editor'
+
+enum LayoutPolicies {
+  AUTO_SIZE,
+  SINGLE_ROW,
+  SINGLE_COLUMN,
+  FIXED_TABLE_SIZE,
+  FROM_SKETCH
+}
+
+enum HorizontalAlignments {
+  LEFT,
+  CENTER,
+  RIGHT
+}
+
+enum VerticalAlignments {
+  TOP,
+  CENTER,
+  BOTTOM
+}
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -61,7 +78,110 @@ import {
 const TabularLayoutConfig = (Class as any)('TabularLayoutConfig', {
   $extends: LayoutConfiguration,
 
-  $meta: [LabelAttribute('TabularLayout')],
+  _meta: {
+    GeneralGroup: [
+      new LabelAttribute('General'),
+      new OptionGroupAttribute('RootGroup', 10),
+      new TypeAttribute(OptionGroup)
+    ],
+    descriptionText: [
+      new OptionGroupAttribute('DescriptionGroup', 10),
+      new ComponentAttribute(Components.HTML_BLOCK),
+      new TypeAttribute(String)
+    ],
+    layoutModeItem: [
+      new LabelAttribute('Layout Mode', '#/api/TabularLayout#TabularLayout-property-layoutMode'),
+      new OptionGroupAttribute('GeneralGroup', 10),
+      new EnumValuesAttribute([
+        ['Automatic Table Size', LayoutPolicies.AUTO_SIZE],
+        ['Single Row', LayoutPolicies.SINGLE_ROW],
+        ['Single Column', LayoutPolicies.SINGLE_COLUMN],
+        ['Fixed Table Size', LayoutPolicies.FIXED_TABLE_SIZE],
+        ['From Sketch', LayoutPolicies.FROM_SKETCH]
+      ]),
+      new TypeAttribute(LayoutPolicies)
+    ],
+    rowCountItem: [
+      new LabelAttribute('Row Count', '#/api/LayoutGrid#LayoutGrid-constructor-LayoutGrid'),
+      new OptionGroupAttribute('GeneralGroup', 20),
+      new MinMaxAttribute(1, 200, 1),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    columnCountItem: [
+      new LabelAttribute('Column Count', '#/api/LayoutGrid#LayoutGrid-constructor-LayoutGrid'),
+      new OptionGroupAttribute('GeneralGroup', 30),
+      new MinMaxAttribute(1, 200, 1),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    nodeLabelingItem: [
+      new LabelAttribute(
+        'Node Labeling',
+        '#/api/TabularLayout#TabularLayout-property-nodeLabelPlacement'
+      ),
+      new EnumValuesAttribute([
+        ['Consider', NodeLabelPlacement.CONSIDER],
+        ['Generic', NodeLabelPlacement.GENERIC],
+        ['Ignore', NodeLabelPlacement.IGNORE]
+      ]),
+      new OptionGroupAttribute('GeneralGroup', 40),
+      new TypeAttribute(NodeLabelPlacement)
+    ],
+    horizontalAlignmentItem: [
+      new OptionGroupAttribute('GeneralGroup', 50),
+      new LabelAttribute(
+        'Horizontal Alignment',
+        '#/api/TabularLayoutNodeDescriptor#TabularLayoutNodeDescriptor-property-horizontalAlignment'
+      ),
+      new EnumValuesAttribute([
+        ['Left', HorizontalAlignments.LEFT],
+        ['Center', HorizontalAlignments.CENTER],
+        ['Right', HorizontalAlignments.RIGHT]
+      ]),
+      new TypeAttribute(HorizontalAlignments)
+    ],
+    verticalAlignmentItem: [
+      new OptionGroupAttribute('GeneralGroup', 60),
+      new LabelAttribute(
+        'Vertical Alignment',
+        '#/api/TabularLayoutNodeDescriptor#TabularLayoutNodeDescriptor-property-verticalAlignment'
+      ),
+      new EnumValuesAttribute([
+        ['Top', VerticalAlignments.TOP],
+        ['Center', VerticalAlignments.CENTER],
+        ['Bottom', VerticalAlignments.BOTTOM]
+      ]),
+      new TypeAttribute(VerticalAlignments)
+    ],
+    cellPaddingItem: [
+      new LabelAttribute('Cell Padding (all sides)', '#/api/LayoutGridRow'),
+      new OptionGroupAttribute('GeneralGroup', 70),
+      new MinMaxAttribute(0, 50, 1),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumRowHeightItem: [
+      new LabelAttribute(
+        'Minimum Row Height',
+        '#/api/LayoutGridRow#LayoutGridRow-property-minimumHeight'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 80),
+      new MinMaxAttribute(0, 100, 1),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
+    minimumColumnWidthItem: [
+      new LabelAttribute(
+        'Minimum Column Width',
+        '#/api/LayoutGridColumn#LayoutGridColumn-property-minimumWidth'
+      ),
+      new OptionGroupAttribute('GeneralGroup', 90),
+      new MinMaxAttribute(0, 100, 1),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ]
+  },
 
   /**
    * Setup default values for various configuration parameters.
@@ -72,20 +192,20 @@ const TabularLayoutConfig = (Class as any)('TabularLayoutConfig', {
 
     const layout = new TabularLayout()
 
-    this.layoutPolicyItem = LayoutPolicies.AUTO_SIZE
+    this.layoutModeItem = LayoutPolicies.AUTO_SIZE
     this.rowCountItem = 8
     this.columnCountItem = 12
     this.horizontalAlignmentItem = HorizontalAlignments.CENTER
     this.verticalAlignmentItem = HorizontalAlignments.CENTER
-    this.considerNodeLabelsItem = layout.considerNodeLabels
+    this.nodeLabelingItem = layout.nodeLabelPlacement
     this.minimumRowHeightItem = 0
     this.minimumColumnWidthItem = 0
-    this.cellInsetsItem = 5
+    this.cellPaddingItem = 5
     this.title = 'Tabular Layout'
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph.mapperRegistry} if necessary.
+   * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
    * @returns The configured layout algorithm.
@@ -93,22 +213,30 @@ const TabularLayoutConfig = (Class as any)('TabularLayoutConfig', {
   createConfiguredLayout: function (graphComponent: GraphComponent): ILayoutAlgorithm {
     const layout = new TabularLayout()
 
-    switch (this.layoutPolicyItem) {
+    switch (this.layoutModeItem) {
       case LayoutPolicies.AUTO_SIZE:
-        layout.layoutPolicy = TabularLayoutPolicy.AUTO_SIZE
+        layout.layoutMode = TabularLayoutMode.AUTO_SIZE
         break
       case LayoutPolicies.FIXED_TABLE_SIZE:
       case LayoutPolicies.SINGLE_ROW:
       case LayoutPolicies.SINGLE_COLUMN:
-        layout.layoutPolicy = TabularLayoutPolicy.FIXED_SIZE
+        layout.layoutMode = TabularLayoutMode.FIXED_SIZE
         break
       case LayoutPolicies.FROM_SKETCH:
-        layout.layoutPolicy = TabularLayoutPolicy.FROM_SKETCH
+        layout.layoutMode = TabularLayoutMode.FROM_SKETCH
         break
       default:
     }
 
-    layout.considerNodeLabels = this.considerNodeLabelsItem
+    layout.nodeLabelPlacement = this.nodeLabelingItem
+    if (this.nodeLabelingItem === NodeLabelPlacement.GENERIC) {
+      graphComponent.graph.nodeLabels.forEach((label) => {
+        graphComponent.graph.setLabelLayoutParameter(
+          label,
+          FreeNodeLabelModel.INSTANCE.findBestParameter(label, label.layout)
+        )
+      })
+    }
 
     return layout
   },
@@ -147,76 +275,62 @@ const TabularLayoutConfig = (Class as any)('TabularLayoutConfig', {
         verticalAlignment = 1
         break
     }
-    const nodeLayoutDescriptor = new TabularLayoutNodeLayoutDescriptor({
+    const nodeDescriptor = new TabularLayoutNodeDescriptor({
       horizontalAlignment,
       verticalAlignment
     })
 
     const nodeCount = graphComponent.graph.nodes.size
-    let partitionGrid
-    switch (this.layoutPolicyItem) {
+    let layoutGrid: LayoutGrid
+    switch (this.layoutModeItem) {
       case LayoutPolicies.FIXED_TABLE_SIZE: {
         const rowCount = this.rowCountItem
         const columnCount = this.columnCountItem
         if (rowCount * columnCount >= nodeCount) {
-          partitionGrid = new PartitionGrid(rowCount, columnCount)
+          layoutGrid = new LayoutGrid(rowCount, columnCount)
         } else {
-          // make sure partitionGrid has enough cells for all nodes
-          partitionGrid = new PartitionGrid(nodeCount / columnCount, columnCount)
+          // make sure layoutGrid has enough cells for all nodes
+          layoutGrid = new LayoutGrid(nodeCount / columnCount, columnCount)
         }
         break
       }
       case LayoutPolicies.SINGLE_ROW:
-        partitionGrid = new PartitionGrid(1, nodeCount)
+        layoutGrid = new LayoutGrid(1, nodeCount)
         break
       case LayoutPolicies.SINGLE_COLUMN:
-        partitionGrid = new PartitionGrid(nodeCount, 1)
+        layoutGrid = new LayoutGrid(nodeCount, 1)
         break
       default:
-        partitionGrid = new PartitionGrid(1, 1)
+        layoutGrid = new LayoutGrid(1, 1)
     }
 
     const minimumRowHeight = this.minimumRowHeightItem
     const minimumColumnWidth = this.minimumColumnWidthItem
-    const cellInsets = this.cellInsetsItem
-    partitionGrid.rows.forEach((row) => {
+    const cellPadding = this.cellPaddingItem
+    layoutGrid.rows.forEach((row) => {
       row.minimumHeight = minimumRowHeight
-      row.topInset = cellInsets
-      row.bottomInset = cellInsets
+      row.topPadding = cellPadding
+      row.bottomPadding = cellPadding
     })
-    partitionGrid.columns.forEach((column) => {
+    layoutGrid.columns.forEach((column) => {
       column.minimumWidth = minimumColumnWidth
-      column.leftInset = cellInsets
-      column.rightInset = cellInsets
+      column.leftPadding = cellPadding
+      column.rightPadding = cellPadding
     })
 
-    return new TabularLayoutData({
-      nodeLayoutDescriptors: nodeLayoutDescriptor,
-      partitionGridData: new PartitionGridData({ grid: partitionGrid })
+    const tabularLayoutData = new TabularLayoutData({
+      nodeDescriptors: nodeDescriptor
     })
+    tabularLayoutData.layoutGridData.layoutGridCellDescriptors = () =>
+      layoutGrid.createDynamicCellDescriptor()
+    return tabularLayoutData
   },
 
   /** @type {OptionGroup} */
-  GeneralGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('General'),
-        OptionGroupAttribute('RootGroup', 10),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
+  GeneralGroup: null,
 
   /** @type {string} */
   descriptionText: {
-    $meta: function () {
-      return [
-        OptionGroupAttribute('DescriptionGroup', 10),
-        ComponentAttribute(Components.HTML_BLOCK),
-        TypeAttribute(YString.$class)
-      ]
-    },
     get: function (): string {
       return (
         "<p style='margin-top:0'>The tabular layout style arranges the nodes in rows and columns. This is a" +
@@ -227,223 +341,44 @@ const TabularLayoutConfig = (Class as any)('TabularLayoutConfig', {
   },
 
   /** @type {LayoutPolicies} */
-  layoutPolicyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Layout Mode', '#/api/TabularLayout#TabularLayout-property-layoutPolicy'),
-        OptionGroupAttribute('GeneralGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Automatic Table Size', LayoutPolicies.AUTO_SIZE],
-            ['Single Row', LayoutPolicies.SINGLE_ROW],
-            ['Single Column', LayoutPolicies.SINGLE_COLUMN],
-            ['Fixed Table Size', LayoutPolicies.FIXED_TABLE_SIZE],
-            ['From Sketch', LayoutPolicies.FROM_SKETCH]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  layoutModeItem: null,
 
   /** @type {number} */
-  rowCountItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Row Count',
-          '#/api/PartitionGrid#PartitionGrid-constructor-PartitionGrid(number,number)'
-        ),
-        OptionGroupAttribute('GeneralGroup', 20),
-        MinMaxAttribute().init({
-          min: 1,
-          max: 200,
-          step: 1
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 1
-  },
+  rowCountItem: 1,
 
   /** @type {boolean} */
   shouldDisableRowCountItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
-      return this.layoutPolicyItem !== LayoutPolicies.FIXED_TABLE_SIZE
+      return this.layoutModeItem !== LayoutPolicies.FIXED_TABLE_SIZE
     }
   },
 
   /** @type {number} */
-  columnCountItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Column Count',
-          '#/api/PartitionGrid#PartitionGrid-constructor-PartitionGrid(number,number)'
-        ),
-        OptionGroupAttribute('GeneralGroup', 30),
-        MinMaxAttribute().init({
-          min: 1,
-          max: 200,
-          step: 1
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 1
-  },
+  columnCountItem: 1,
 
   /** @type {boolean} */
   shouldDisableColumnCountItem: <any>{
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
     get: function (): boolean {
-      return this.layoutPolicyItem !== LayoutPolicies.FIXED_TABLE_SIZE
+      return this.layoutModeItem !== LayoutPolicies.FIXED_TABLE_SIZE
     }
   },
 
-  /** @type {boolean} */
-  considerNodeLabelsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Consider Node Labels',
-          '#/api/TabularLayout#TabularLayout-property-considerNodeLabels'
-        ),
-        OptionGroupAttribute('GeneralGroup', 40),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    value: false
-  },
+  /** @type {NodeLabelPlacement} */
+  nodeLabelingItem: false,
 
   /** @type {HorizontalAlignments} */
-  horizontalAlignmentItem: {
-    $meta: function () {
-      return [
-        OptionGroupAttribute('GeneralGroup', 50),
-        LabelAttribute(
-          'Horizontal Alignment',
-          '#/api/TabularLayoutNodeLayoutDescriptor#TabularLayoutNodeLayoutDescriptor-property-horizontalAlignment'
-        ),
-        EnumValuesAttribute().init({
-          values: [
-            ['Left', HorizontalAlignments.LEFT],
-            ['Center', HorizontalAlignments.CENTER],
-            ['Right', HorizontalAlignments.RIGHT]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  horizontalAlignmentItem: null,
 
   /** @type {VerticalAlignments} */
-  verticalAlignmentItem: {
-    $meta: function () {
-      return [
-        OptionGroupAttribute('GeneralGroup', 60),
-        LabelAttribute(
-          'Vertical Alignment',
-          '#/api/TabularLayoutNodeLayoutDescriptor#TabularLayoutNodeLayoutDescriptor-property-verticalAlignment'
-        ),
-        EnumValuesAttribute().init({
-          values: [
-            ['Top', VerticalAlignments.TOP],
-            ['Center', VerticalAlignments.CENTER],
-            ['Bottom', VerticalAlignments.BOTTOM]
-          ]
-        }),
-        TypeAttribute(Enum.$class)
-      ]
-    },
-    value: null
-  },
+  verticalAlignmentItem: null,
 
   /** @type {number} */
-  cellInsetsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Cell Insets (all sides)', '#/api/RowDescriptor'),
-        OptionGroupAttribute('GeneralGroup', 70),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 50,
-          step: 1
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  cellPaddingItem: 0,
 
   /** @type {number} */
-  minimumRowHeightItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Row Height',
-          '#/api/RowDescriptor#RowDescriptor-property-minimumHeight'
-        ),
-        OptionGroupAttribute('GeneralGroup', 80),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100,
-          step: 1
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  },
+  minimumRowHeightItem: 0,
 
   /** @type {number} */
-  minimumColumnWidthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Column Width',
-          '#/api/ColumnDescriptor#ColumnDescriptor-property-minimumWidth'
-        ),
-        OptionGroupAttribute('GeneralGroup', 90),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100,
-          step: 1
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    value: 0
-  }
+  minimumColumnWidthItem: 0
 })
 export default TabularLayoutConfig
-
-enum LayoutPolicies {
-  AUTO_SIZE,
-  SINGLE_ROW,
-  SINGLE_COLUMN,
-  FIXED_TABLE_SIZE,
-  FROM_SKETCH
-}
-enum HorizontalAlignments {
-  LEFT,
-  CENTER,
-  RIGHT
-}
-enum VerticalAlignments {
-  TOP,
-  CENTER,
-  BOTTOM
-}

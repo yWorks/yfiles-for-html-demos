@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,54 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, IEdge, IGraph, INode } from 'yfiles'
-
-/**
- * A type that describes the graph data.
- * This data is used to build a graph that acts as a base for the simulated event log.
- * @typedef {Object} GraphData
- * @property {Array.<NodeData>} nodes
- * @property {Array.<EdgeData>} edges
- */
-
-/**
- * A type that describes the data of a node in the simulation graph.
- * @typedef {Object} NodeData
- * @property {number} id
- * @property {string} label
- * @property {number} [capacity]
- * @property {number} [duration]
- */
-
-/**
- * A type that describes the data of an edge in the simulation graph.
- * @typedef {Object} EdgeData
- * @property {number} source
- * @property {number} target
- * @property {number} [probability]
- */
-
+import { GraphBuilder, IEdge, IGraph, INode } from '@yfiles/yfiles'
 /**
  * Returns the data of the given process step.
- * @param {!INode} step
- * @returns {!NodeData}
  */
 export function getProcessStepTag(step) {
   return step.tag
 }
-
 /**
  * Returns the data of the given process transition.
- * @param {!IEdge} transition
- * @returns {!EdgeData}
  */
 export function getProcessTransitionTag(transition) {
   return transition.tag
 }
-
 /**
  * Returns the graph on which the simulation runs random traversals to create an event log.
- * @returns {!IGraph}
  */
 export function getSimulationGraph() {
   const builder = new GraphBuilder()
@@ -91,7 +58,6 @@ export function getSimulationGraph() {
   })
   return builder.buildGraph()
 }
-
 /**
  * The data from which the simulation graph is built.
  */

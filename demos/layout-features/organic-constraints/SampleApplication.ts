@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,33 +26,34 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphViewerInputMode, License } from 'yfiles'
+import { GraphComponent, GraphViewerInputMode, LayoutExecutor, License } from '@yfiles/yfiles'
 import {
   createDefaultLayoutConfiguration,
   createFeatureLayoutConfiguration
 } from './OrganicConstraints'
-import { finishLoading } from 'demo-resources/demo-page'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { loadLayoutSampleGraph } from 'demo-utils/LoadLayoutFeaturesSampleGraph'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { loadLayoutSampleGraph } from '@yfiles/demo-utils/LoadLayoutFeaturesSampleGraph'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // enable mouse drag panning and mouse wheel zooming
   graphComponent.inputMode = new GraphViewerInputMode()
 
   // load the graph
   await loadLayoutSampleGraph(graphComponent.graph, './sample.json')
 
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
+
   // create a configured instance of the organic layout algorithm
   const { layout, layoutData } = createFeatureLayoutConfiguration(graphComponent.graph)
 
   // run the layout algorithm
-  await graphComponent.morphLayout(layout, '0s', layoutData)
+  await graphComponent.applyLayoutAnimated(layout, '0s', layoutData)
 
   initializeUI(graphComponent)
 }
@@ -69,7 +70,7 @@ function initializeUI(graphComponent: GraphComponent): void {
       const { layout, layoutData } = useFeature
         ? createFeatureLayoutConfiguration(graphComponent.graph)
         : createDefaultLayoutConfiguration(graphComponent.graph)
-      await graphComponent.morphLayout(layout, '250ms', layoutData)
+      await graphComponent.applyLayoutAnimated(layout, '250ms', layoutData)
     })
 }
 

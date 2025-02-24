@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { type IGraph, type INode, TreeBuilder } from 'yfiles'
+import { type IGraph, type INode, TreeBuilder } from '@yfiles/yfiles'
 import { type Employee, orgChartData } from './orgchart-data'
 
 type OrgChartData = Employee[]
@@ -41,7 +41,7 @@ export function buildGraph(graph: IGraph): void {
 
   const treeBuilder = new TreeBuilder(graph)
   // configure the root nodes
-  const rootSource = treeBuilder.createRootNodesSource(data)
+  const rootSource = treeBuilder.createRootNodesSource(data, null)
   // configure the recursive structure of the children
   rootSource.addChildNodesSource((dataItem) => dataItem.subordinates, rootSource)
   treeBuilder.buildGraph()

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,18 +38,11 @@ import {
   SvgVisual,
   TextRenderSupport,
   TextWrapping
-} from 'yfiles'
-import { SVGNS, XLINKNS } from './Namespaces.js'
-
+} from '@yfiles/yfiles'
+import { SVGNS, XLINKNS } from './Namespaces'
 const HORIZONTAL_INSET = 2
 const VERTICAL_INSET = 2
 const BUTTON_SIZE = 16
-
-/**
- * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
- * @typedef {TaggedSvgVisual.<SVGGElement,LabelRenderDataCache>} Sample1LabelStyleVisual
- */
-
 /**
  * This class is an example for a custom style based on the {@link LabelStyleBase}.
  * The font for the label text can be set. The label text is drawn with black letters inside a blue
@@ -62,13 +55,9 @@ export default class Sample1LabelStyle extends LabelStyleBase {
     fontFamily: 'Arial',
     fontSize: 12
   })
-
   /**
    * Creates the visual for a label to be drawn.
    * @see Overrides {@link LabelStyleBase.createVisual}
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @returns {!Sample1LabelStyleVisual}
    */
   createVisual(context, label) {
     // This implementation creates a 'g' element and uses it for the rendering of the label.
@@ -82,26 +71,18 @@ export default class Sample1LabelStyle extends LabelStyleBase {
     // move container to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(container)
-
     // set data item
     container.setAttribute('data-internalId', 'Sample1Label')
-
     return visual
   }
-
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase.updateVisual}
-   * @param {!IRenderContext} context
-   * @param {!Sample1LabelStyleVisual} oldVisual
-   * @param {!ILabel} label
-   * @returns {!Sample1LabelStyleVisual}
    */
   updateVisual(context, oldVisual, label) {
     const container = oldVisual.svgElement
     // get the data with which the oldVisual was created
     const oldCache = oldVisual.tag
-
     // get the data for the new visual
     const newCache = Sample1LabelStyle.createRenderDataCache(context, label, this.font)
     if (!newCache.equals(oldCache)) {
@@ -115,18 +96,13 @@ export default class Sample1LabelStyle extends LabelStyleBase {
     transform.applyTo(container)
     return oldVisual
   }
-
   /**
    * Creates the visual appearance of a label.
-   * @param {!IRenderContext} context
-   * @param {!Sample1LabelStyleVisual} visual
-   * @param {!ILabel} label
    */
   render(context, visual, label) {
     const container = visual.svgElement
     const cache = visual.tag
     const labelLayout = label.layout
-
     // background rectangle
     let rect
     if (container.childElementCount > 0) {
@@ -142,7 +118,6 @@ export default class Sample1LabelStyle extends LabelStyleBase {
     rect.setAttribute('stroke', 'skyblue')
     rect.setAttribute('stroke-width', '1')
     rect.setAttribute('fill', 'rgb(155,226,255)')
-
     let text
     if (container.childElementCount > 1) {
       text = container.childNodes[1]
@@ -163,18 +138,14 @@ export default class Sample1LabelStyle extends LabelStyleBase {
       labelLayout.toSize(),
       TextWrapping.NONE
     )
-
     // calculate the size of the text element
     const textSize = TextRenderSupport.measureText(textContent, cache.font)
-
     // if edit button is visible align left, otherwise center
     const translateX = cache.buttonVisibility
       ? HORIZONTAL_INSET
       : (labelLayout.width - textSize.width) * 0.5
-
     // calculate vertical offset for centered alignment
     const translateY = (labelLayout.height - textSize.height) * 0.5
-
     text.setAttribute('transform', `translate(${translateX} ${translateY})`)
     while (container.childElementCount > 2) {
       container.removeChild(container.lastChild)
@@ -190,29 +161,20 @@ export default class Sample1LabelStyle extends LabelStyleBase {
         VERTICAL_INSET
       ).applyTo(button)
       container.appendChild(button)
-
       button.addEventListener('click', () => onMouseDown(context.canvasComponent, label), false)
     }
   }
-
   /**
    * Creates an object containing all necessary data to create a label visual.
-   * @param {!IRenderContext} context
-   * @param {!ILabel} label
-   * @param {!Font} font
-   * @returns {!LabelRenderDataCache}
    */
   static createRenderDataCache(context, label, font) {
     // Visibility of button changes dependent on the zoom level
     return new LabelRenderDataCache(label.text, context.zoom > 1, font)
   }
-
   /**
    * Calculates the preferred size for the given label if this style is used for the rendering.
    * The size is calculated from the label's text.
    * @see Overrides {@link LabelStyleBase.getPreferredSize}
-   * @param {!ILabel} label
-   * @returns {!Size}
    */
   getPreferredSize(label) {
     // first measure
@@ -224,23 +186,15 @@ export default class Sample1LabelStyle extends LabelStyleBase {
     )
   }
 }
-
 class LabelRenderDataCache {
-  /**
-   * @param {!string} text
-   * @param {boolean} buttonVisibility
-   * @param {!Font} font
-   */
+  text
+  buttonVisibility
+  font
   constructor(text, buttonVisibility, font) {
-    this.font = font
-    this.buttonVisibility = buttonVisibility
     this.text = text
+    this.buttonVisibility = buttonVisibility
+    this.font = font
   }
-
-  /**
-   * @param {!LabelRenderDataCache} [other]
-   * @returns {boolean}
-   */
   equals(other) {
     return (
       !!other &&
@@ -250,10 +204,6 @@ class LabelRenderDataCache {
     )
   }
 }
-
-/**
- * @returns {!SVGGElement}
- */
 function createButton() {
   const image = document.createElementNS(SVGNS, 'image')
   image.setAttributeNS(XLINKNS, 'href', 'resources/edit_label.png')
@@ -275,14 +225,11 @@ function createButton() {
   g.appendChild(image)
   return g
 }
-
 /**
  * Called when the edit label button inside a label has been clicked.
- * @param {?CanvasComponent} canvasComponent
- * @param {!ILabel} label
  */
 function onMouseDown(canvasComponent, label) {
   if (canvasComponent && canvasComponent.inputMode instanceof GraphEditorInputMode) {
-    void canvasComponent.inputMode.editLabel(label)
+    void canvasComponent.inputMode.editLabelInputMode.startLabelEditing(label)
   }
 }

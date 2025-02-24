@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,21 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { PolylineEdgeStyle, ShapeNodeStyle, Size, StringTemplateNodeStyle } from 'yfiles'
-
-/**
- * @param {!IGraph} graph
- */
+import { PolylineEdgeStyle, ShapeNodeStyle, Size } from '@yfiles/yfiles'
 export function initializeStyles(graph) {
-  StringTemplateNodeStyle.CONVERTERS.labelConverters = {
-    center: (value) => value * 0.5,
-    altitude: (value) => `${value} m`,
-    iconHeight: (value) => value * 0.6,
-    iconConverter: (wayPoint) => getIcon(wayPoint) ?? '',
-    iconVisible: (wayPoint) => (getIcon(wayPoint) != null ? 'visible' : 'hidden'),
-    textVisible: (wayPoint) => (getIcon(wayPoint) != null ? 'hidden' : 'visible')
-  }
-
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'ellipse',
     fill: '#ff6c00',
@@ -48,38 +35,19 @@ export function initializeStyles(graph) {
   })
   graph.nodeDefaults.size = new Size(5, 5)
 }
-
 /**
  * Style for the edges that connect the waypoints with the associated label nodes.
  */
 export const leaderEdgeStyle = new PolylineEdgeStyle({ stroke: '1px dashed #662b00' })
-
 /**
  * The size of the label nodes
  */
 export const labelNodeSize = new Size(130, 50)
-
-/**
- * The template string used for the label nodes.
- */
-export const templateString = `
-<rect width="{TemplateBinding width}"  height="{TemplateBinding height}" fill="white" opacity="0.4"/>
-<g visibility="{TemplateBinding styleTag, Converter=labelConverters.iconVisible}">
-  <image  xlink:href="{TemplateBinding styleTag, Converter=labelConverters.iconConverter}" x="0" y="0" width="{TemplateBinding width}" height="{TemplateBinding height, Converter=labelConverters.iconHeight}"/>
-</g>
-<g visibility="{TemplateBinding styleTag, Converter=labelConverters.textVisible}" style="font-family: Roboto,sans-serif; fill: #444" >
-  <text x="{TemplateBinding width, Converter=labelConverters.center}" y="10" dominant-baseline="middle" text-anchor="middle" style="font-size: 16px; fill: #336699" data-content="{Binding name}" />
-</g>
-<text x="{TemplateBinding width, Converter=labelConverters.center}" y="38" dominant-baseline="middle" text-anchor="middle" style="font-size: 11px; fill: black"  data-content="{Binding y, Converter=labelConverters.altitude}"/>
-`
-
 /**
  * Returns the icon that will be used in the template string instead of text associated
  * with the given waypoint.
- * @param {!Waypoint} value
- * @returns {?string}
  */
-function getIcon(value) {
+export function getIcon(value) {
   switch (value.category) {
     case 'yWorks':
     case 'start':

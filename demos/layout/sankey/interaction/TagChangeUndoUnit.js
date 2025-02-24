@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,32 +26,43 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { UndoUnitBase } from 'yfiles'
-
+import { BaseClass, IUndoUnit } from '@yfiles/yfiles'
 /**
  * This class provides undo/redo for an operation for changing tag data.
  * Since information about node/edge color and edge thickness is stored in the item's tag, it is
  * important to undo these changes along with the changes in style and layout.
  */
-export class TagChangeUndoUnit extends UndoUnitBase {
+export class TagChangeUndoUnit extends BaseClass(IUndoUnit) {
+  oldTag
+  newTag
+  item
+  undoRedoCallback
+  _undoName
+  _redoName
   /**
    * Creates a new instance of TagChangeUndoUnit.
-   * @param {!string} undoName Name of the undo operation.
-   * @param {!string} redoName Name of the redo operation.
-   * @param {!object} oldTag The data needed to restore the previous state.
-   * @param {!object} newTag The data needed to restore the next state.
-   * @param {!IModelItem} item The owner of the tag.
+   * @param undoName Name of the undo operation.
+   * @param redoName Name of the redo operation.
+   * @param oldTag The data needed to restore the previous state.
+   * @param newTag The data needed to restore the next state.
+   * @param item The owner of the tag.
    * @param undoRedoCallback Callback that is executed after undo and redo.
-   * @param {!function} [undoRedoCallback]
    */
   constructor(undoName, redoName, oldTag, newTag, item, undoRedoCallback) {
-    super(undoName, redoName)
-    this.undoRedoCallback = undoRedoCallback
-    this.item = item
-    this.newTag = newTag
+    super()
     this.oldTag = oldTag
+    this.newTag = newTag
+    this.item = item
+    this.undoRedoCallback = undoRedoCallback
+    this._undoName = undoName
+    this._redoName = redoName
   }
-
+  get undoName() {
+    return this._undoName
+  }
+  get redoName() {
+    return this._redoName
+  }
   /**
    * Undoes the work that is represented by this unit.
    */
@@ -59,12 +70,18 @@ export class TagChangeUndoUnit extends UndoUnitBase {
     this.item.tag = this.oldTag
     this.undoRedoCallback?.()
   }
-
   /**
    * Redoes the work that is represented by this unit.
    */
   redo() {
     this.item.tag = this.newTag
     this.undoRedoCallback?.()
+  }
+  dispose() {}
+  tryMergeUnit(_unit) {
+    return false
+  }
+  tryReplaceUnit(_unit) {
+    return false
   }
 }

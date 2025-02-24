@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,38 +27,13 @@
  **
  ***************************************************************************/
 /**
- * Type that describes the format of the node data in this demo.
- * It is used for building the graph structure and contains information used for the node visualization.
- * @typedef {Object} PoliticalParty
- * @property {number} id
- * @property {string} name
- * @property {number} [colorId]
- */
-
-/**
- * Type that describes the format of the edge data in this demo.
- * It is used for building the graph structure and contains information used for the edge visualization.
- * @typedef {Object} VoterShift
- * @property {number} source
- * @property {number} target
- * @property {number} voters
- * @property {number} [thickness]
- * @property {number} [colorId]
- */
-
-/**
  * Returns the data associated with the given node.
- * @param {!INode} node
- * @returns {!PoliticalParty}
  */
 export function getPoliticalParty(node) {
   return node.tag
 }
-
 /**
  * Returns the data associated with the given edge.
- * @param {!IEdge} edge
- * @returns {!VoterShift}
  */
 export function getVoterShift(edge) {
   return edge.tag

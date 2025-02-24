@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,8 +40,7 @@ import {
   GraphSnapContext,
   HandleInputMode,
   HandlePositions,
-  HandleTypes,
-  ICanvasObject,
+  HandleType,
   ICompoundEdit,
   IDragHandler,
   IEnumerable,
@@ -60,9 +59,10 @@ import {
   Insets,
   IPoint,
   IRectangle,
+  IRenderTreeElement,
   IReshapeHandler,
   ISize,
-  ItemSelectionChangedEventArgs,
+  ItemEventArgs,
   List,
   MutableRectangle,
   MutableSize,
@@ -71,13 +71,13 @@ import {
   OrthogonalEdgeEditingContext,
   Point,
   Rect,
-  RectangleIndicatorInstaller,
   ReshapeHandlerHandle,
   ReshapePolicy,
   ReshapeRectangleContext,
   SelectionEventArgs,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
+import { RectangleRenderer } from '../../utils/RectangleRenderer'
 
 /**
  * An {@link IInputMode} for reshape handles for groups of nodes. Can be added as child input
@@ -94,7 +94,7 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
 
   private readonly moveHandleOrthogonalHelper: OrthogonalEdgeEditingHelper
   private rectangle: EncompassingRectangle | null
-  private rectCanvasObject: ICanvasObject | null
+  private rectRenderTreeElement: IRenderTreeElement | null
   private ignoreSingleSelectionEvents: boolean
 
   /**
@@ -133,7 +133,7 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
     this.$margins = margins || Insets.EMPTY
     this.$mode = mode || 'scale'
     this.rectangle = null
-    this.rectCanvasObject = null
+    this.rectRenderTreeElement = null
     this.handleInputMode = null
     this.moveHandleOrthogonalHelper = new OrthogonalEdgeEditingHelper()
     this.ignoreSingleSelectionEvents = false
@@ -141,7 +141,7 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
 
   public install(context: IInputModeContext, controller: ConcurrencyController): void {
     super.install(context, controller)
-    const geim = context.parentInputMode as GraphEditorInputMode
+    const geim = context.inputMode as GraphEditorInputMode
     if (!geim) {
       throw new Error(
         'InvalidOperationException: NodeSelectionResizingInputMode must be installed as child mode of GraphEditorInputMode'
@@ -155,42 +155,54 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
     })
 
     // notify the GraphSnapContext which nodes are resized and shouldn't provide SnapLines
-    this.handleInputMode.addDragStartedListener(delegate(this.registerReshapedNodes, this))
+    this.handleInputMode.addEventListener(
+      'drag-started',
+      delegate(this.registerReshapedNodes, this)
+    )
 
     // forward events to OrthogonalEdgeEditingContext so it can handle keeping edges at reshaped nodes orthogonal
-    this.handleInputMode.addDragStartingListener(
+    this.handleInputMode.addEventListener(
+      'drag-starting',
       delegate(this.moveHandleOrthogonalHelper.starting, this.moveHandleOrthogonalHelper)
     )
-    this.handleInputMode.addDragStartedListener(
+    this.handleInputMode.addEventListener(
+      'drag-started',
       delegate(this.moveHandleOrthogonalHelper.started, this.moveHandleOrthogonalHelper)
     )
-    this.handleInputMode.addDragFinishedListener(
+    this.handleInputMode.addEventListener(
+      'drag-finished',
       delegate(this.moveHandleOrthogonalHelper.finished, this.moveHandleOrthogonalHelper)
     )
-    this.handleInputMode.addDragCanceledListener(
+    this.handleInputMode.addEventListener(
+      'drag-canceled',
       delegate(this.moveHandleOrthogonalHelper.canceled, this.moveHandleOrthogonalHelper)
     )
 
     this.handleInputMode.install(context, controller)
 
     // update handles depending on the changed node selection
-    geim.addMultiSelectionStartedListener(delegate(this.multiSelectionStarted, this))
-    geim.addMultiSelectionFinishedListener(delegate(this.multiSelectionFinished, this))
-    ;(context.canvasComponent as GraphComponent).selection.addItemSelectionChangedListener(
+    geim.addEventListener('multi-selection-started', delegate(this.multiSelectionStarted, this))
+    geim.addEventListener('multi-selection-finished', delegate(this.multiSelectionFinished, this))
+    ;(context.canvasComponent as GraphComponent).selection.addEventListener(
+      'item-added',
+      delegate(this.itemSelectionChanged, this)
+    )
+    ;(context.canvasComponent as GraphComponent).selection.addEventListener(
+      'item-removed',
       delegate(this.itemSelectionChanged, this)
     )
 
     // add a NodeLayoutChanged listener so the reshape rect is updated when the nodes are moved (e.g. through
     // layout animations or MoveInputMode).
-    context.graph!.addNodeLayoutChangedListener(delegate(this.nodeLayoutChanged, this))
+    context.graph!.addEventListener('node-layout-changed', delegate(this.nodeLayoutChanged, this))
   }
 
   /**
    * Notifies the current {@link GraphSnapContext} which nodes are going to be reshaped.
    */
-  private registerReshapedNodes(sender: object, event: InputModeEventArgs): void {
+  private registerReshapedNodes(event: InputModeEventArgs): void {
     // register reshaped nodes
-    const snapContext = event.context.lookup(GraphSnapContext.$class)
+    const snapContext = event.context.lookup(GraphSnapContext)
     if (snapContext && snapContext.enabled) {
       this.rectangle!.nodes.forEach((node) => {
         snapContext.addItemToBeReshaped(node)
@@ -202,7 +214,7 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
    * Invalidates the (bounds of the) {@link EncompassingRectangle} when any node layout is changed
    * but not by this input mode.
    */
-  private nodeLayoutChanged(sender: object, node: INode, oldLayout: Rect): void {
+  private nodeLayoutChanged(node: INode, oldLayout: Rect): void {
     if (this.rectangle && !this.handleInputMode!.isDragging) {
       this.rectangle.invalidate()
     }
@@ -219,28 +231,46 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
   }
 
   public uninstall(context: IInputModeContext): void {
-    context.graph!.removeNodeLayoutChangedListener(delegate(this.nodeLayoutChanged, this))
-    const geim = context.parentInputMode as GraphEditorInputMode
-    geim.removeMultiSelectionStartedListener(delegate(this.multiSelectionStarted, this))
-    geim.removeMultiSelectionFinishedListener(delegate(this.multiSelectionFinished, this))
-    ;(context.canvasComponent as GraphComponent).selection.removeItemSelectionChangedListener(
+    context.graph!.removeEventListener(
+      'node-layout-changed',
+      delegate(this.nodeLayoutChanged, this)
+    )
+    const geim = context.inputMode as GraphEditorInputMode
+    geim.removeEventListener('multi-selection-started', delegate(this.multiSelectionStarted, this))
+    geim.removeEventListener(
+      'multi-selection-finished',
+      delegate(this.multiSelectionFinished, this)
+    )
+    ;(context.canvasComponent as GraphComponent).selection.removeEventListener(
+      'item-added',
+      delegate(this.itemSelectionChanged, this)
+    )
+    ;(context.canvasComponent as GraphComponent).selection.removeEventListener(
+      'item-removed',
       delegate(this.itemSelectionChanged, this)
     )
 
     // notify the GraphSnapContext which nodes are resized and shouldn't provide SnapLines
-    this.handleInputMode!.removeDragStartedListener(delegate(this.registerReshapedNodes, this))
+    this.handleInputMode!.removeEventListener(
+      'drag-started',
+      delegate(this.registerReshapedNodes, this)
+    )
 
     // forward events to OrthogonalEdgeEditingContext so it can handle keeping edges at reshaped nodes orthogonal
-    this.handleInputMode!.removeDragStartingListener(
+    this.handleInputMode!.removeEventListener(
+      'drag-starting',
       delegate(this.moveHandleOrthogonalHelper.starting, this.moveHandleOrthogonalHelper)
     )
-    this.handleInputMode!.removeDragStartedListener(
+    this.handleInputMode!.removeEventListener(
+      'drag-started',
       delegate(this.moveHandleOrthogonalHelper.started, this.moveHandleOrthogonalHelper)
     )
-    this.handleInputMode!.removeDragFinishedListener(
+    this.handleInputMode!.removeEventListener(
+      'drag-finished',
       delegate(this.moveHandleOrthogonalHelper.finished, this.moveHandleOrthogonalHelper)
     )
-    this.handleInputMode!.removeDragCanceledListener(
+    this.handleInputMode!.removeEventListener(
+      'drag-canceled',
       delegate(this.moveHandleOrthogonalHelper.canceled, this.moveHandleOrthogonalHelper)
     )
 
@@ -252,20 +282,17 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
     super.uninstall(context)
   }
 
-  private multiSelectionStarted(sender: object, args: SelectionEventArgs<IModelItem>): void {
+  private multiSelectionStarted(__args: SelectionEventArgs<IModelItem>): void {
     // a multi-selection started so the ItemSelectionChanged events can be ignored until MultiSelectionFinished
     this.ignoreSingleSelectionEvents = true
   }
 
-  private multiSelectionFinished(sender: object, args: SelectionEventArgs<IModelItem>): void {
+  private multiSelectionFinished(__args: SelectionEventArgs<IModelItem>): void {
     this.ignoreSingleSelectionEvents = false
     this.updateHandles()
   }
 
-  private itemSelectionChanged(
-    sender: object,
-    evt: ItemSelectionChangedEventArgs<IModelItem>
-  ): void {
+  private itemSelectionChanged(_evt: ItemEventArgs<IModelItem>): void {
     this.updateHandles()
   }
 
@@ -277,8 +304,8 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
     // first, clear any existing handles
     this.clearHandles()
 
-    const geim = this.inputModeContext!.parentInputMode as GraphEditorInputMode
-    const selectedNodesCount = geim.graphComponent!.selection.selectedNodes.size
+    const geim = this.parentInputModeContext!.inputMode as GraphEditorInputMode
+    const selectedNodesCount = geim.graphComponent!.selection.nodes.size
     // use default behavior only if one node is selected
     geim.handleInputMode.enabled = selectedNodesCount <= 1
 
@@ -303,24 +330,22 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
    * Initializes the handles, the reshapeHandler and enables the handleInputMode.
    */
   private showHandles(): void {
-    const graphComponent = this.inputModeContext!.canvasComponent as GraphComponent
+    const graphComponent = this.parentInputModeContext!.canvasComponent as GraphComponent
 
     // collect all selected nodes as well as their descendents
     const reshapeNodes = this.collectReshapeNodes(graphComponent.graph, graphComponent.selection)
 
     // create a mutable rectangle, that is updated by the ReshapeHandler
     this.rectangle = new EncompassingRectangle(reshapeNodes, this.margins)
+
     // and visualize it
-    const rectangleIndicator = new RectangleIndicatorInstaller(
+    this.rectRenderTreeElement = graphComponent.renderTree.createElement(
+      graphComponent.renderTree.inputModeGroup,
       this.rectangle,
-      RectangleIndicatorInstaller.SELECTION_TEMPLATE_KEY
+      new RectangleRenderer(undefined, undefined, undefined, this.margins)
     )
-    this.rectCanvasObject = rectangleIndicator.addCanvasObject(
-      graphComponent.canvasContext,
-      graphComponent.inputModeGroup,
-      this.rectangle
-    )
-    this.rectCanvasObject!.toBack()
+
+    this.rectRenderTreeElement!.toBack()
 
     // Create a reshape handler factory depending on the current mode
     const reshapeHandlerFactory =
@@ -330,24 +355,24 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
 
     // create and add the handles to our HandleInputMode
     this.handleInputMode!.handles = new ObservableCollection<IHandle>([
-      this.createHandle(HandlePositions.NORTH, reshapeHandlerFactory),
-      this.createHandle(HandlePositions.NORTH_WEST, reshapeHandlerFactory),
-      this.createHandle(HandlePositions.WEST, reshapeHandlerFactory),
-      this.createHandle(HandlePositions.SOUTH_WEST, reshapeHandlerFactory),
-      this.createHandle(HandlePositions.SOUTH, reshapeHandlerFactory),
-      this.createHandle(HandlePositions.SOUTH_EAST, reshapeHandlerFactory),
-      this.createHandle(HandlePositions.EAST, reshapeHandlerFactory),
-      this.createHandle(HandlePositions.NORTH_EAST, reshapeHandlerFactory)
+      this.createHandle(HandlePositions.TOP, reshapeHandlerFactory),
+      this.createHandle(HandlePositions.TOP_LEFT, reshapeHandlerFactory),
+      this.createHandle(HandlePositions.LEFT, reshapeHandlerFactory),
+      this.createHandle(HandlePositions.BOTTOM_LEFT, reshapeHandlerFactory),
+      this.createHandle(HandlePositions.BOTTOM, reshapeHandlerFactory),
+      this.createHandle(HandlePositions.BOTTOM_RIGHT, reshapeHandlerFactory),
+      this.createHandle(HandlePositions.RIGHT, reshapeHandlerFactory),
+      this.createHandle(HandlePositions.TOP_RIGHT, reshapeHandlerFactory)
     ])
     this.handleInputMode!.enabled = true
   }
 
   /**
-   * Collect all {@link IGraphSelection.selectedNodes selected nodes} and their descendents.
+   * Collect all {@link IGraphselection.nodes selected nodes} and their descendents.
    */
   private collectReshapeNodes(graph: IGraph, selection: IGraphSelection): IList<INode> {
     const nodes = new Set<INode>()
-    selection.selectedNodes.forEach((node) => {
+    selection.nodes.forEach((node) => {
       if (nodes.add(node) && graph.isGroupNode(node)) {
         graph.groupingSupport.getDescendants(node).forEach((descendant) => {
           nodes.add(descendant)
@@ -363,7 +388,7 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
   ): IHandle {
     const reshapeHandler = reshapeHandlerFactory()
     const handle = new NodeSelectionReshapeHandle(
-      this.inputModeContext!,
+      this.parentInputModeContext!,
       position,
       reshapeHandler,
       this.margins
@@ -373,12 +398,12 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
   }
 
   /**
-   * Removes the rectCanvasObject.
+   * Removes the rectRenderTreeElement.
    */
   private removeRectangleVisualization(): void {
-    if (this.rectCanvasObject) {
-      this.rectCanvasObject.remove()
-      this.rectCanvasObject = null
+    if (this.rectRenderTreeElement) {
+      this.parentInputModeContext?.canvasComponent?.renderTree.remove(this.rectRenderTreeElement)
+      this.rectRenderTreeElement = null
     }
     this.rectangle = null
   }
@@ -395,9 +420,9 @@ class OrthogonalEdgeEditingHelper {
     this.editingContext = null
   }
 
-  public starting(sender: object, event: InputModeEventArgs): void {
+  public starting(event: InputModeEventArgs): void {
     const context = event.context
-    const edgeEditingContext = context.lookup(OrthogonalEdgeEditingContext.$class)
+    const edgeEditingContext = context.lookup(OrthogonalEdgeEditingContext)
     if (
       edgeEditingContext &&
       !edgeEditingContext.isInitializing &&
@@ -410,20 +435,20 @@ class OrthogonalEdgeEditingHelper {
     }
   }
 
-  public started(sender: object, evt: InputModeEventArgs): void {
+  public started(_evt: InputModeEventArgs): void {
     if (this.editingContext) {
       this.editingContext.dragInitialized()
     }
   }
 
-  public finished(sender: object, evt: InputModeEventArgs): void {
+  public finished(_evt: InputModeEventArgs): void {
     if (this.editingContext) {
       this.editingContext.dragFinished()
       this.editingContext = null
     }
   }
 
-  public canceled(sender: object, evt: InputModeEventArgs): void {
+  public canceled(_evt: InputModeEventArgs): void {
     if (this.editingContext) {
       this.editingContext.cancelDrag()
       this.editingContext = null
@@ -432,57 +457,54 @@ class OrthogonalEdgeEditingHelper {
 }
 
 /**
- * Returns whether `position` is {@link HandlePositions.NORTH_WEST},
- * {@link HandlePositions.NORTH} or {@link HandlePositions.NORTH_EAST}
+ * Returns whether `position` is {@link HandlePositions.TOP_LEFT},
+ * {@link HandlePositions.TOP} or {@link HandlePositions.TOP_RIGHT}
  * @param position The position to check.
- * @returns `true` if the position is at any of the north sides.
+ * @returns `true` if the position is at any of the top sides.
  */
-function isAnyNorth(position: HandlePositions): boolean {
+function isAnyTop(position: HandlePositions): boolean {
+  return (
+    (position & (HandlePositions.TOP_LEFT | HandlePositions.TOP | HandlePositions.TOP_RIGHT)) !== 0
+  )
+}
+
+/**
+ * Returns whether `position` is {@link HandlePositions.BOTTOM_LEFT},
+ * {@link HandlePositions.BOTTOM} or {@link HandlePositions.BOTTOM_RIGHT}
+ * @param position The position to check.
+ * @returns `true` if the position is at any of the bottom sides.
+ */
+function isAnyBottom(position: HandlePositions): boolean {
   return (
     (position &
-      (HandlePositions.NORTH_WEST | HandlePositions.NORTH | HandlePositions.NORTH_EAST)) !==
+      (HandlePositions.BOTTOM_LEFT | HandlePositions.BOTTOM | HandlePositions.BOTTOM_RIGHT)) !==
     0
   )
 }
 
 /**
- * Returns whether `position` is {@link HandlePositions.SOUTH_WEST},
- * {@link HandlePositions.SOUTH} or {@link HandlePositions.SOUTH_EAST}
+ * Returns whether `position` is {@link HandlePositions.TOP_LEFT},
+ * {@link HandlePositions.LEFT} or {@link HandlePositions.BOTTOM_LEFT}
  * @param position The position to check.
- * @returns `true` if the position is at any of the south sides.
+ * @returns `true` if the position is at any of the left sides.
  */
-function isAnySouth(position: HandlePositions): boolean {
+function isAnyLeft(position: HandlePositions): boolean {
   return (
-    (position &
-      (HandlePositions.SOUTH_WEST | HandlePositions.SOUTH | HandlePositions.SOUTH_EAST)) !==
+    (position & (HandlePositions.TOP_LEFT | HandlePositions.LEFT | HandlePositions.BOTTOM_LEFT)) !==
     0
   )
 }
 
 /**
- * Returns whether `position` is {@link HandlePositions.NORTH_WEST},
- * {@link HandlePositions.WEST} or {@link HandlePositions.SOUTH_WEST}
+ * Returns whether `position` is {@link HandlePositions.TOP_RIGHT},
+ * {@link HandlePositions.RIGHT} or {@link HandlePositions.BOTTOM_RIGHT}
  * @param position The position to check.
- * @returns `true` if the position is at any of the west sides.
+ * @returns `true` if the position is at any of the right sides.
  */
-function isAnyWest(position: HandlePositions): boolean {
+function isAnyRight(position: HandlePositions): boolean {
   return (
     (position &
-      (HandlePositions.NORTH_WEST | HandlePositions.WEST | HandlePositions.SOUTH_WEST)) !==
-    0
-  )
-}
-
-/**
- * Returns whether `position` is {@link HandlePositions.NORTH_EAST},
- * {@link HandlePositions.EAST} or {@link HandlePositions.SOUTH_EAST}
- * @param position The position to check.
- * @returns `true` if the position is at any of the east sides.
- */
-function isAnyEast(position: HandlePositions): boolean {
-  return (
-    (position &
-      (HandlePositions.NORTH_EAST | HandlePositions.EAST | HandlePositions.SOUTH_EAST)) !==
+      (HandlePositions.TOP_RIGHT | HandlePositions.RIGHT | HandlePositions.BOTTOM_RIGHT)) !==
     0
   )
 }
@@ -514,7 +536,7 @@ class EncompassingRectangle extends BaseClass(IRectangle) {
 
   public reshape(newRectangle: IRectangle): void {
     this.tightRect = newRectangle.toRect()
-    this.rectangle.reshape(this.tightRect.getEnlarged(this.margins))
+    this.rectangle.setShape(this.tightRect.getEnlarged(this.margins))
     this.invalid = false
   }
 
@@ -529,7 +551,7 @@ class EncompassingRectangle extends BaseClass(IRectangle) {
     this.rectangle.y = 0
 
     this.nodes.forEach((node) => {
-      this.rectangle.setToUnion(this.rectangle, node.layout)
+      this.rectangle.add(node.layout)
     })
     this.tightRect = this.rectangle.toRect()
 
@@ -645,9 +667,9 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
     this.$originalBounds = this.rectangle.tightRectangle
 
     // register our CollectSnapResults callback
-    const snapContext = context.lookup(GraphSnapContext.$class)
+    const snapContext = context.lookup(GraphSnapContext)
     if (snapContext) {
-      snapContext.addCollectSnapResultsListener(delegate(this.collectSnapResults, this))
+      snapContext.addEventListener('collect-snap-results', delegate(this.collectSnapResults, this))
     }
 
     // store original node layouts, reshape handlers and reshape snap result providers
@@ -655,13 +677,13 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
       this.originalNodeLayouts.set(node, node.layout.toRect())
 
       // store reshape handler to change the shape of node
-      const reshapeHandler = node.lookup(IReshapeHandler.$class)
+      const reshapeHandler = node.lookup(IReshapeHandler)
       if (reshapeHandler) {
         reshapeHandler.initializeReshape(context)
         this.reshapeHandlers.set(node, reshapeHandler)
       }
       // store reshape snap result provider to collect snap results where node would snap to snaplines etc.
-      const snapResultProvider = node.lookup(INodeReshapeSnapResultProvider.$class)
+      const snapResultProvider = node.lookup(INodeReshapeSnapResultProvider)
       if (snapContext && snapResultProvider) {
         this.reshapeSnapResultProviders.set(node, snapResultProvider)
       }
@@ -681,10 +703,10 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
     this.compoundEdit = context.graph!.beginEdit('Undo Group Resize', 'Redo Group Resize')
   }
 
-  private collectSnapResults(sender: object, args: CollectSnapResultsEventArgs): void {
-    const lastEvent = args.context.canvasComponent!.lastInputEvent
-    const fixedAspectRatio = this.handle!.ratioReshapeRecognizer(this, lastEvent)
-    const centered = this.handle!.centerReshapeRecognizer(this, lastEvent)
+  private collectSnapResults(evt: CollectSnapResultsEventArgs, context: GraphSnapContext): void {
+    const lastEvent = evt.context.canvasComponent!.lastInputEvent
+    const fixedAspectRatio = this.handle!.ratioReshapeRecognizer(lastEvent, this)
+    const centered = this.handle!.centerReshapeRecognizer(lastEvent, this)
 
     const reshapePolicy = fixedAspectRatio ? this.handle!.reshapePolicy : ReshapePolicy.NONE
     const ratio = this.originalBounds.width / this.originalBounds.height
@@ -702,7 +724,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
 
         // get factors that determine how the node layout changes depending on the mouse delta
         const topLeftChangeFactor = ReshapeHandlerBase.fixZero(
-          this.getFactor(layout.minX, layout.minY, layout, centered, this.handle!.position)
+          this.getFactor(layout.x, layout.y, layout, centered, this.handle!.position)
         )
         const bottomRightChangeFactor = ReshapeHandlerBase.fixZero(
           this.getFactor(layout.maxX, layout.maxY, layout, centered, this.handle!.position)
@@ -729,7 +751,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
         )
 
         // call the INodeReshapeSnapResultProvider
-        handler.collectSnapResults(sender as GraphSnapContext, args, node, reshapeRectangleContext)
+        handler.collectSnapResults(context, evt, node, reshapeRectangleContext)
       }
     )
   }
@@ -792,17 +814,17 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
     if (this.handle!.reshapePolicy === ReshapePolicy.HORIZONTAL) {
       const x2y = 1 / (ratio * (centered ? 1 : 2))
       const orthogonalPosition =
-        this.handle!.position === HandlePositions.EAST
-          ? HandlePositions.SOUTH
-          : HandlePositions.NORTH
+        this.handle!.position === HandlePositions.RIGHT
+          ? HandlePositions.BOTTOM
+          : HandlePositions.TOP
       const orthoFactor = this.getFactor(x, y, originalNodeLayout, true, orthogonalPosition)
       return new Point(orthoFactor.y * x2y, 0)
     } else if (this.handle!.reshapePolicy === ReshapePolicy.VERTICAL) {
       const x2y = ratio / (centered ? 1 : 2)
       const orthogonalPosition =
-        this.handle!.position === HandlePositions.SOUTH
-          ? HandlePositions.EAST
-          : HandlePositions.WEST
+        this.handle!.position === HandlePositions.BOTTOM
+          ? HandlePositions.RIGHT
+          : HandlePositions.LEFT
       const orthoFactor = this.getFactor(x, y, originalNodeLayout, true, orthogonalPosition)
       return new Point(0, orthoFactor.x * x2y)
     }
@@ -830,24 +852,24 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
     // calculate a possible mouse movement that could have led to the newBounds
     let dx = 0
     let dy = 0
-    if (isAnyWest(this.handle!.position)) {
+    if (isAnyLeft(this.handle!.position)) {
       dx = dMinX
-    } else if (isAnyEast(this.handle!.position)) {
+    } else if (isAnyRight(this.handle!.position)) {
       dx = dMaxX
     }
-    if (isAnyNorth(this.handle!.position)) {
+    if (isAnyTop(this.handle!.position)) {
       dy = dMinY
-    } else if (isAnySouth(this.handle!.position)) {
+    } else if (isAnyBottom(this.handle!.position)) {
       dy = dMaxY
     }
 
     const centerResize = this.handle!.centerReshapeRecognizer(
-      this,
-      context.canvasComponent!.lastInputEvent
+      context.canvasComponent!.lastInputEvent,
+      this
     )
     const ratioResize = this.handle!.ratioReshapeRecognizer(
-      this,
-      context.canvasComponent!.lastInputEvent
+      context.canvasComponent!.lastInputEvent,
+      this
     )
     const useOrthogonalFactors =
       ratioResize &&
@@ -929,9 +951,12 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   }
 
   protected clear(context: IInputModeContext): void {
-    const snapContext = context.lookup(GraphSnapContext.$class)
+    const snapContext = context.lookup(GraphSnapContext)
     if (snapContext) {
-      snapContext.removeCollectSnapResultsListener(delegate(this.collectSnapResults, this))
+      snapContext.removeEventListener(
+        'collect-snap-results',
+        delegate(this.collectSnapResults, this)
+      )
     }
     this.reshapeSnapResultProviders.clear()
     this.originalNodeLayouts.clear()
@@ -987,10 +1012,10 @@ class ScalingReshapeHandler extends ReshapeHandlerBase {
       } else {
         const xRatio = centered
           ? (2 * (originalNodeLayout.centerX - this.originalBounds.centerX)) / boundsWidth
-          : (originalNodeLayout.minX - this.originalBounds.x) / boundsWidth
-        if (isAnyWest(position)) {
+          : (originalNodeLayout.x - this.originalBounds.x) / boundsWidth
+        if (isAnyLeft(position)) {
           fx = centered ? -xRatio : 1 - xRatio
-        } else if (isAnyEast(position)) {
+        } else if (isAnyRight(position)) {
           fx = xRatio
         }
       }
@@ -1003,10 +1028,10 @@ class ScalingReshapeHandler extends ReshapeHandlerBase {
       } else {
         const yRatio = centered
           ? (2 * (originalNodeLayout.centerY - this.originalBounds.centerY)) / boundsHeight
-          : (originalNodeLayout.minY - this.originalBounds.y) / boundsHeight
-        if (isAnyNorth(position)) {
+          : (originalNodeLayout.y - this.originalBounds.y) / boundsHeight
+        if (isAnyTop(position)) {
           fy = centered ? -yRatio : 1 - yRatio
-        } else if (isAnySouth(position)) {
+        } else if (isAnyBottom(position)) {
           fy = yRatio
         }
       }
@@ -1044,9 +1069,9 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
     let minScaleY = 0
 
     this.reshapeNodes.forEach((node) => {
-      const constraintProvider = node.lookup(INodeSizeConstraintProvider.$class)
+      const constraintProvider = node.lookup(INodeSizeConstraintProvider)
       if (constraintProvider) {
-        const minSize = constraintProvider.getMinimumSize(node)
+        const minSize = constraintProvider.getMinimumSize()
         if (minSize !== Size.EMPTY) {
           const originalLayout = this.originalNodeLayouts.get(node)!
           minScaleX = Math.max(minScaleX, minSize.width / originalLayout.width)
@@ -1069,9 +1094,9 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
     let maxScaleY = Number.POSITIVE_INFINITY
 
     this.reshapeNodes.forEach((node) => {
-      const constraintProvider = node.lookup(INodeSizeConstraintProvider.$class)
+      const constraintProvider = node.lookup(INodeSizeConstraintProvider)
       if (constraintProvider) {
-        const maxSize = constraintProvider.getMaximumSize(node)
+        const maxSize = constraintProvider.getMaximumSize()
         if (maxSize !== Size.INFINITE) {
           const originalLayout = this.originalNodeLayouts.get(node)!
           maxScaleX = Math.min(maxScaleX, maxSize.width / originalLayout.width)
@@ -1100,15 +1125,15 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
       : (y - this.originalBounds.y) / this.originalBounds.height
 
     let fx = 0
-    if (isAnyWest(position)) {
+    if (isAnyLeft(position)) {
       fx = centered ? -xRatio : 1 - xRatio
-    } else if (isAnyEast(position)) {
+    } else if (isAnyRight(position)) {
       fx = xRatio
     }
     let fy = 0
-    if (isAnyNorth(position)) {
+    if (isAnyTop(position)) {
       fy = centered ? -yRatio : 1 - yRatio
-    } else if (isAnySouth(position)) {
+    } else if (isAnyBottom(position)) {
       fy = yRatio
     }
     return new Point(fx, fy)
@@ -1145,6 +1170,9 @@ class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
     } else {
       this.reshapeHandlerHandle.reshapePolicy = ReshapePolicy.PROJECTION
     }
+    this.reshapeHandlerHandle.ratioReshapeRecognizer = (
+      context.inputMode as GraphEditorInputMode
+    ).handleInputMode.directionalConstraintRecognizer
   }
 
   get location(): IPoint {
@@ -1187,13 +1215,13 @@ class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  centerReshapeRecognizer(eventSource: any, evt: EventArgs): boolean {
-    return this.reshapeHandlerHandle.centerReshapeRecognizer(eventSource, evt)
+  centerReshapeRecognizer(evt: EventArgs, eventSource: any): boolean {
+    return this.reshapeHandlerHandle.centerReshapeRecognizer(evt, eventSource)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ratioReshapeRecognizer(eventSource: any, evt: EventArgs): boolean {
-    return this.reshapeHandlerHandle.ratioReshapeRecognizer(eventSource, evt)
+  ratioReshapeRecognizer(evt: EventArgs, eventSource: any): boolean {
+    return this.reshapeHandlerHandle.ratioReshapeRecognizer!(evt, eventSource)
   }
 
   cancelDrag(context: IInputModeContext, originalLocation: Point): void {
@@ -1216,8 +1244,12 @@ class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
     return this.reshapeHandlerHandle.cursor
   }
 
-  get type(): HandleTypes {
+  get type(): HandleType {
     return this.reshapeHandlerHandle.type
+  }
+
+  get tag(): any {
+    return null
   }
 
   /**
@@ -1245,18 +1277,18 @@ class HandleLocation extends BaseClass(IPoint) {
   get x(): number {
     const bounds = this.outerThis.reshapeHandler.bounds
     switch (this.outerThis.position) {
-      case HandlePositions.NORTH_WEST:
-      case HandlePositions.WEST:
-      case HandlePositions.SOUTH_WEST:
+      case HandlePositions.TOP_LEFT:
+      case HandlePositions.LEFT:
+      case HandlePositions.BOTTOM_LEFT:
         return bounds.x - (this.outerThis.margins.left + this.offset / this.outerThis.context.zoom)
-      case HandlePositions.NORTH:
+      case HandlePositions.TOP:
       case HandlePositions.CENTER:
-      case HandlePositions.SOUTH:
+      case HandlePositions.BOTTOM:
       default:
         return bounds.x + bounds.width * 0.5
-      case HandlePositions.NORTH_EAST:
-      case HandlePositions.EAST:
-      case HandlePositions.SOUTH_EAST:
+      case HandlePositions.TOP_RIGHT:
+      case HandlePositions.RIGHT:
+      case HandlePositions.BOTTOM_RIGHT:
         return (
           bounds.x +
           bounds.width +
@@ -1268,18 +1300,18 @@ class HandleLocation extends BaseClass(IPoint) {
   get y(): number {
     const bounds = this.outerThis.reshapeHandler.bounds
     switch (this.outerThis.position) {
-      case HandlePositions.NORTH_WEST:
-      case HandlePositions.NORTH:
-      case HandlePositions.NORTH_EAST:
+      case HandlePositions.TOP_LEFT:
+      case HandlePositions.TOP:
+      case HandlePositions.TOP_RIGHT:
         return bounds.y - (this.outerThis.margins.top + this.offset / this.outerThis.context.zoom)
-      case HandlePositions.WEST:
+      case HandlePositions.LEFT:
       case HandlePositions.CENTER:
-      case HandlePositions.EAST:
+      case HandlePositions.RIGHT:
       default:
         return bounds.y + bounds.height * 0.5
-      case HandlePositions.SOUTH_WEST:
-      case HandlePositions.SOUTH:
-      case HandlePositions.SOUTH_EAST:
+      case HandlePositions.BOTTOM_LEFT:
+      case HandlePositions.BOTTOM:
+      case HandlePositions.BOTTOM_RIGHT:
         return (
           bounds.y +
           bounds.height +

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,19 +27,13 @@
  **
  ***************************************************************************/
 import {
-  CanvasComponent,
   Color,
   EdgeStyleBase,
   GeneralPath,
-  GeomUtilities,
+  GeometryUtilities,
   GraphComponent,
-  GraphHighlightIndicatorManager,
-  HierarchicNestingPolicy,
-  ICanvasObjectGroup,
   IEdge,
   IInputModeContext,
-  IModelItem,
-  IndicatorEdgeStyleDecorator,
   INode,
   IRectangle,
   IRenderContext,
@@ -47,33 +41,8 @@ import {
   NodeStyleBase,
   PathType,
   Point,
-  SvgVisual,
-  Visual,
-  YObject
-} from 'yfiles'
-
-/**
- * @typedef {Object} EdgeStyleCache
- * @property {Color} startColor
- * @property {Color} endColor
- * @property {number} pathThickness
- * @property {GeneralPath} path
- * @property {boolean} selected
- * @property {function} equals
- */
-
-/**
- * @typedef {Object} NodeStyleCache
- * @property {Point} nodeCenter
- * @property {Point} circleCenter
- * @property {number} [thickness]
- * @property {Color} color
- * @property {number} circleNodeSize
- * @property {boolean} selected
- * @property {*} nodeLayout
- * @property {function} equals
- */
-
+  SvgVisual
+} from '@yfiles/yfiles'
 /**
  * This class draws the edges with cubic bezier curves. Also, the edges are drawn with gradient colors from red that
  * starts from the source node of the edge to blue that ends to the target node of the edge.
@@ -82,15 +51,11 @@ export class DemoEdgeStyle extends EdgeStyleBase {
   pathThickness
   startColor
   endColor
-
   /**
    * Initializes a new instance of the {@link DemoEdgeStyle} class.
    * @param pathThickness The thickness of the edge
    * @param startColor The starting color of the gradient
    * @param endColor The end color of the gradient
-   * @param {number} [pathThickness]
-   * @param {!Color} [startColor]
-   * @param {!Color} [endColor]
    */
   constructor(pathThickness, startColor, endColor) {
     super()
@@ -98,39 +63,32 @@ export class DemoEdgeStyle extends EdgeStyleBase {
     this.startColor = startColor || Color.DARK_BLUE
     this.endColor = endColor || Color.SKY_BLUE
   }
-
   /**
    * Creates the visual for an edge.
-   * @param {!IRenderContext} context The render context
-   * @param {!IEdge} edge The edge to which this style instance is assigned
-   * @returns {!SvgVisual}
+   * @param context The render context
+   * @param edge The edge to which this style instance is assigned
    */
   createVisual(context, edge) {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
     // Get the necessary data for rendering of the edge
     const cache = this.createRenderDataCache(context, edge)
-
     // Render the edge
     this.render(g, cache, edge)
-
-    return new SvgVisual(g)
+    // store information with the visual on how we created it
+    return SvgVisual.from(g, cache)
   }
-
   /**
    * Re-renders the edge using the old visual for performance reasons.
-   * @param {!IRenderContext} context The render context
-   * @param {!SvgVisual} oldVisual The old visual
-   * @param {!IEdge} edge The edge to which this style instance is assigned
-   * @returns {!Visual}
+   * @param context The render context
+   * @param oldVisual The old visual
+   * @param edge The edge to which this style instance is assigned
    */
   updateVisual(context, oldVisual, edge) {
-    const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
-    const oldCache = container['data-renderDataCache']
+    const oldCache = oldVisual.tag
     // get the data for the new visual
     const newCache = this.createRenderDataCache(context, edge)
-
     // check if something changed
     if (newCache.equals(newCache, oldCache)) {
       // nothing changed, return the old visual
@@ -138,16 +96,15 @@ export class DemoEdgeStyle extends EdgeStyleBase {
     }
     return this.createVisual(context, edge)
   }
-
   /**
    * Creates an object containing all necessary data to create an edge visual.
-   * @param {!IRenderContext} context The render context
-   * @param {!IEdge} edge The given edge
-   * @returns {!EdgeStyleCache} The render data cache
+   * @param context The render context
+   * @param edge The given edge
+   * @returns The render data cache
    */
   createRenderDataCache(context, edge) {
     const selection = context.canvasComponent.selection
-    const selected = selection !== null && selection.isSelected(edge)
+    const selected = selection !== null && selection.includes(edge)
     return {
       startColor: this.startColor,
       endColor: this.endColor,
@@ -162,17 +119,13 @@ export class DemoEdgeStyle extends EdgeStyleBase {
         self.selected === other.selected
     }
   }
-
   /**
    * Creates the visual appearance of an edge.
-   * @param {!Element} container The svg element
-   * @param {!EdgeStyleCache} cache The render data cache object
-   * @param {!IEdge} edge The edge to which this style instance is assigned
+   * @param container The svg element
+   * @param cache The render data cache object
+   * @param edge The edge to which this style instance is assigned
    */
   render(container, cache, edge) {
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
-
     const gradientColors = DemoEdgeStyle.generateColors(this.startColor, this.endColor)
     const selectionColors = DemoEdgeStyle.generateColors(Color.RED, Color.GOLD)
     if (edge.bends.size > 1) {
@@ -220,11 +173,10 @@ export class DemoEdgeStyle extends EdgeStyleBase {
       }
     }
   }
-
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
-   * @param {!IEdge} edge The edge to create the path for
-   * @returns {!GeneralPath} A {@link GeneralPath} following the edge
+   * @param edge The edge to create the path for
+   * @returns A {@link GeneralPath} following the edge
    */
   getPath(edge) {
     // Create a general path from the locations of the ports and the bends of the edge.
@@ -244,13 +196,12 @@ export class DemoEdgeStyle extends EdgeStyleBase {
     }
     return path
   }
-
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
-   * @param {!IInputModeContext} canvasContext The input mode context
-   * @param {!Point} p The point to test
-   * @param {!IEdge} edge The edge to which this style instance is assigned
-   * @returns {boolean} True if the edge has been hit, false otherwise
+   * @param canvasContext The input mode context
+   * @param p The point to test
+   * @param edge The edge to which this style instance is assigned
+   * @returns True if the edge has been hit, false otherwise
    */
   isHit(canvasContext, p, edge) {
     return this.getPath(edge).pathContains(
@@ -258,18 +209,16 @@ export class DemoEdgeStyle extends EdgeStyleBase {
       canvasContext.hitTestRadius + this.pathThickness * 0.5
     )
   }
-
   /**
    * Generates gradient colors between the two given colors.
-   * @param {!Color} startColor The start color
-   * @param {!Color} endColor The end color
-   * @returns {!Array.<string>} The gradient color array
+   * @param startColor The start color
+   * @param endColor The end color
+   * @returns The gradient color array
    */
   static generateColors(startColor, endColor) {
     const gradient = 25
     const colors = []
     const stepCount = gradient - 1
-
     for (let i = 0; i < gradient; i++) {
       const r = (startColor.r * (stepCount - i) + endColor.r * i) / stepCount
       const g = (startColor.g * (stepCount - i) + endColor.g * i) / stepCount
@@ -281,53 +230,44 @@ export class DemoEdgeStyle extends EdgeStyleBase {
     return colors
   }
 }
-
 /**
  * This class draws the nodes in a circular-sector style.
  */
 export class DemoNodeStyle extends NodeStyleBase {
   color
   thickness
-
   /**
    * Initializes a new DemoNodeStyle.
    * @param color ? The given color
    * @param thickness ? The thickness of the segment
-   * @param {!Color} [color]
-   * @param {number} [thickness]
    */
   constructor(color, thickness) {
     super()
     this.color = color || Color.DARK_ORANGE
     this.thickness = thickness || 20
   }
-
   /**
    * Creates the visual for a node.
-   * @param {!IRenderContext} context The render context
-   * @param {!INode} node The given node
-   * @returns {!SvgVisual}
+   * @param context The render context
+   * @param node The given node
    */
   createVisual(context, node) {
     // This implementation creates a CanvasContainer and uses it for the rendering of the node.
     const path = window.document.createElementNS('http://www.w3.org/2000/svg', 'path')
-
     const cache = this.createRenderDataCache(context, node)
     this.render(path, node, cache)
-    return new SvgVisual(path)
+    // store information with the visual on how we created it
+    return SvgVisual.from(path, cache)
   }
-
   /**
    * Updates the visual for a node.
-   * @param {!IRenderContext} context The render context
-   * @param {!SvgVisual} oldVisual The old visual
-   * @param {!INode} node The given node
-   * @returns {!SvgVisual}
+   * @param context The render context
+   * @param oldVisual The old visual
+   * @param node The given node
    */
   updateVisual(context, oldVisual, node) {
-    const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
-    const oldCache = container['data-renderDataCache']
+    const oldCache = oldVisual.tag
     // get the data for the new visual
     const newCache = this.createRenderDataCache(context, node)
     // check if something changed
@@ -337,16 +277,15 @@ export class DemoNodeStyle extends NodeStyleBase {
     }
     return this.createVisual(context, node)
   }
-
   /**
    * Creates an object containing all necessary data to create a node visual.
-   * @param {!IRenderContext} context The render context
-   * @param {!INode} node The given node
-   * @returns {!NodeStyleCache} The render data cache
+   * @param context The render context
+   * @param node The given node
+   * @returns The render data cache
    */
   createRenderDataCache(context, node) {
     const selection = context.canvasComponent.selection
-    const selected = selection !== null && selection.isSelected(node)
+    const selected = selection !== null && selection.includes(node)
     return {
       nodeCenter: node.layout.center,
       circleCenter: (node.tag && node.tag.center) || Point.ORIGIN,
@@ -362,20 +301,19 @@ export class DemoNodeStyle extends NodeStyleBase {
         self.color === other.color &&
         self.circleNodeSize === other.circleNodeSize &&
         self.selected === other.selected &&
-        self.nodeLayout.equals(other.nodeLayout)
+        self.nodeLayout.x === other.nodeLayout.x &&
+        self.nodeLayout.y === other.nodeLayout.y &&
+        self.nodeLayout.width === other.nodeLayout.width &&
+        self.nodeLayout.height === other.nodeLayout.height
     }
   }
-
   /**
    * Renders the given node.
-   * @param {!Element} container The svg container
-   * @param {!INode} node The given node
-   * @param {!NodeStyleCache} cache The render data cache object
+   * @param container The svg container
+   * @param node The given node
+   * @param cache The render data cache object
    */
   render(container, node, cache) {
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
-
     let pathData
     const nodeCenter = node.layout.center
     if (node.tag && node.tag.circleNodeSize > 2 && node.tag.center) {
@@ -399,11 +337,8 @@ export class DemoNodeStyle extends NodeStyleBase {
           ${Math.sin(currentAngle - angle2) * largeRadius + circleCenter.y} Z`
     } else {
       const nodeWidth = node.layout.width
-      pathData = `M ${nodeCenter.x} ${nodeCenter.y} m -${nodeWidth / 2}, 0 a ${nodeWidth / 2},${
-        nodeWidth / 2
-      } 0 1,0 ${nodeWidth},0 a ${nodeWidth / 2},${nodeWidth / 2} 0 1,0 -${nodeWidth},0`
+      pathData = `M ${nodeCenter.x} ${nodeCenter.y} m -${nodeWidth / 2}, 0 a ${nodeWidth / 2},${nodeWidth / 2} 0 1,0 ${nodeWidth},0 a ${nodeWidth / 2},${nodeWidth / 2} 0 1,0 -${nodeWidth},0`
     }
-
     const color = cache.selected
       ? 'red'
       : `rgba(${this.color.r},${this.color.g},${this.color.b},${this.color.a / 255})`
@@ -411,108 +346,40 @@ export class DemoNodeStyle extends NodeStyleBase {
     container.setAttribute('stroke', 'white')
     container.setAttribute('d', pathData)
   }
-
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
-   * @param {!IInputModeContext} context The canvas context
-   * @param {!Point} location The point to test
-   * @param {!INode} node The given node
-   * @returns {boolean} True if the node has been hit, false otherwise
+   * @param context The canvas context
+   * @param location The point to test
+   * @param node The given node
+   * @returns True if the node has been hit, false otherwise
    */
   isHit(context, location, node) {
     if (node.tag && node.tag.center) {
       const circleCenter = node.tag.center
-
       const delta = node.layout.center.subtract(circleCenter)
       const radius = delta.vectorLength
       const angle = Math.PI / node.tag.circleNodeSize
-
       const height = this.thickness
-
       const smallRadius = radius - height * 0.5
       const largeRadius = radius + height * 0.5
-
       const hitDelta = location.subtract(circleCenter)
       const hitRadius = hitDelta.vectorLength
-
       if (
         hitRadius > largeRadius + context.hitTestRadius ||
         hitRadius < smallRadius - context.hitTestRadius
       ) {
         return false
       }
-
       return Math.acos(delta.normalized.scalarProduct(hitDelta.normalized)) < angle
     } else {
-      return GeomUtilities.ellipseContains(node.layout.toRect(), location, 0)
+      return GeometryUtilities.ellipseContains(node.layout.toRect(), location, 0)
     }
   }
 }
-
-/**
- * Install a visual representation of a highlight decoration for the edges such that the edge highlight is drawn
- * below the node group.
- */
-export class HighlightManager extends GraphHighlightIndicatorManager {
-  edgeHighlightGroup = null
-
-  /**
-   * Creates a new instance and configures the node and edge styles used for highlighting.
-   */
-  constructor() {
-    super()
-    this.nodeStyle = new DemoNodeStyle(Color.RED)
-    this.edgeStyle = new IndicatorEdgeStyleDecorator({
-      wrapped: new DemoEdgeStyle(6, Color.RED, Color.GOLD)
-    })
-  }
-
-  /**
-   * Installs the manager on the canvas.
-   * Adds the highlight group
-   * @param {!CanvasComponent} canvas
-   */
-  install(canvas) {
-    if (canvas instanceof GraphComponent) {
-      // create a new group for the edge highlight that lies below the node group
-      const graphModelManager = canvas.graphModelManager
-      graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NONE
-      this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
-      this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
-    }
-    super.install(canvas)
-  }
-
-  /**
-   * Uninstalls the manager from the canvas
-   * removes the highlight groups
-   * @param {!CanvasComponent} canvas
-   */
-  uninstall(canvas) {
-    super.uninstall(canvas)
-    if (this.edgeHighlightGroup) {
-      this.edgeHighlightGroup.remove()
-      this.edgeHighlightGroup = null
-    }
-  }
-
-  /**
-   * Retrieves the Canvas Object group to use for the given item.
-   * @param {!IModelItem} item The given item
-   * @returns {?ICanvasObjectGroup}
-   */
-  getCanvasObjectGroup(item) {
-    if (IEdge.isInstance(item)) {
-      return this.edgeHighlightGroup
-    }
-    return super.getCanvasObjectGroup(item)
-  }
-}
-
 /**
  * Returns the points of the given path.
- * @param {!GeneralPath} path The given path
- * @returns {!Array.<Point>} The array of points of the given path
+ * @param path The given path
+ * @returns The array of points of the given path
  */
 function getPathPoints(path) {
   if (path === null) {
@@ -556,11 +423,10 @@ function getPathPoints(path) {
   }
   return points.toArray()
 }
-
 /**
  * Calculates the control points for the given edge.
- * @param {!IEdge} edge The given edge
- * @returns {!Array.<Point>} The control points of the edge
+ * @param edge The given edge
+ * @returns The control points of the edge
  */
 function calculateControlPoints(edge) {
   const controlPoints = []
@@ -573,7 +439,6 @@ function calculateControlPoints(edge) {
   // add the target port
   const targetLocation = edge.targetPort.location
   controlPoints.push(targetLocation)
-
   // check if the control points can create piecewise bezier curves, if not duplicate the target port
   if (controlPoints.length % 3 === 0) {
     controlPoints.push(targetLocation)

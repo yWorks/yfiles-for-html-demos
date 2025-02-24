@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,17 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphItemTypes, IEdge, INode } from 'yfiles'
-
+import { GraphItemTypes, IEdge, INode } from '@yfiles/yfiles'
 const cssHovering = 'hovering'
 const cssLabelHidden = 'invisible'
-
 /**
  * Adds or removes a CSS class to highlight the given item.
- * @param {!GraphComponent} graphComponent
- * @param {?IModelItem} item
- * @param {boolean} highlight
- * @returns {!Promise}
  */
 async function highlightItem(graphComponent, item, highlight) {
   const graph = graphComponent.graph
@@ -47,16 +41,13 @@ async function highlightItem(graphComponent, item, highlight) {
     item.style.cssClass = highlight
       ? `${item.style.cssClass} ${cssHovering}`
       : item.style.cssClass.replace(` ${cssHovering}`, '')
-
     const label = item.labels.at(0)
     if (label && supportsCssClass(label.style)) {
       // update the label text with the current CSS rules of the owner
       graph.setLabelText(label, `.${item.style.cssClass.replaceAll(' ', '\n.')}`)
-
       // to animate the CSS class changes, we need to wait for the text to be updated
       // because this will rebuild the DOM of the label and thus break any CSS based animations here
       await graphComponent.updateVisualAsync()
-
       // the 'pure' cssClass property change (due to the awaited updateVisual) will only update the
       // CSS class on the label's DOM structure
       label.style.cssClass = highlight
@@ -66,29 +57,19 @@ async function highlightItem(graphComponent, item, highlight) {
     graphComponent.invalidate()
   }
 }
-
 /**
  * Configures the {@link ItemHoverInputMode} of the {@link GraphInputMode} to add/remove CSS classes
  * on the currently hovered graph item.
- * @param {!GraphComponent} graphComponent
- * @param {!GraphInputMode} mode
  */
 export function configureHoverHighlight(graphComponent, mode) {
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
-  mode.itemHoverInputMode.discardInvalidItems = false
-  mode.itemHoverInputMode.addHoveredItemChangedListener((_, { item, oldItem }) => {
+  mode.itemHoverInputMode.addEventListener('hovered-item-changed', ({ item, oldItem }) => {
     // the promise for both highlightItem calls can be ignored because it is merely a visual update
     void highlightItem(graphComponent, oldItem, false)
     void highlightItem(graphComponent, item, true)
     graphComponent.invalidate()
   })
 }
-
-/**
- * @template {(IEdgeStyle|INodeStyle|ILabelStyle)} T
- * @param {!T} style
- * @returns {*}
- */
 function supportsCssClass(style) {
   return 'cssClass' in style && typeof style.cssClass === 'string'
 }

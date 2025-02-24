@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,10 +27,9 @@
  **
  ***************************************************************************/
 import {
-  Class,
   GraphComponent,
   GraphEditorInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   type IGraph,
   type INode,
   LayoutExecutor,
@@ -39,24 +38,22 @@ import {
   PolylineEdgeStyle,
   Size,
   SvgExport
-} from 'yfiles'
-import { finishLoading } from 'demo-resources/demo-page'
-import { fetchLicense } from 'demo-resources/fetch-license'
+} from '@yfiles/yfiles'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { HtmlEditableNodeStyle } from './HtmlEditableNodeStyle'
 import { updateTagView } from './util'
 import { defaultData, people } from './data'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { downloadFile } from 'demo-utils/file-support'
+import { downloadFile } from '@yfiles/demo-utils/file-support'
 
-// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for 'applyLayout'.
-Class.ensure(LayoutExecutor)
+// Ensure that the LayoutExecutor class is not removed by build optimizers
+// It is needed for the 'applyLayoutAnimated' method in this demo.
+LayoutExecutor.ensure()
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   // We use the custom HTML node style for all nodes
@@ -103,7 +100,7 @@ function initGraphDefaults(graph: IGraph): void {
     targetArrow: '#aaa triangle',
     stroke: '1.5px solid #aaa'
   })
-  graph.decorator.nodeDecorator.sizeConstraintProviderDecorator.setImplementation(
+  graph.decorator.nodes.sizeConstraintProvider.addConstant(
     new NodeSizeConstraintProvider([50, 50], Size.INFINITE)
   )
 }
@@ -112,13 +109,13 @@ function initGraphDefaults(graph: IGraph): void {
  * When a node is selected or deselected, update the node data JSON in the left panel.
  */
 function initTagView(graphComponent: GraphComponent): void {
-  graphComponent.selection.addItemSelectionChangedListener((graphComponent) => {
-    const firstSelectedNode = graphComponent.selectedNodes.at(0)
-    if (firstSelectedNode) {
-      updateTagView(firstSelectedNode)
-    } else {
-      updateTagView(null)
-    }
+  graphComponent.selection.addEventListener('item-added', (_, graphComponent) => {
+    const firstSelectedNode = graphComponent.nodes.at(0)!
+    updateTagView(firstSelectedNode)
+  })
+
+  graphComponent.selection.addEventListener('item-removed', (_, graphComponent) => {
+    updateTagView(null)
   })
 }
 
@@ -128,7 +125,7 @@ function createInputMode(): GraphEditorInputMode {
   })
 
   // When a node is created, we add default dummy data as the user tag.
-  inputMode.addNodeCreatedListener((inputMode, evt) => {
+  inputMode.addEventListener('node-created', (evt, inputMode) => {
     const graph = inputMode.graphComponent!.graph
     evt.item.tag = {
       ...defaultData,
@@ -140,14 +137,14 @@ function createInputMode(): GraphEditorInputMode {
 }
 
 /**
- * Run a plain hierarchic layout
+ * Run a plain hierarchical layout
  */
 function initLayout(graphComponent: GraphComponent): void {
-  const layout = new HierarchicLayout()
+  const layout = new HierarchicalLayout()
   graphComponent.graph.applyLayout(layout)
-  graphComponent.fitGraphBounds(20)
+  void graphComponent.fitGraphBounds(20)
   document.querySelector('#layout-btn')!.addEventListener('click', async () => {
-    await graphComponent.morphLayout(layout)
+    await graphComponent.applyLayoutAnimated(layout)
   })
 }
 
@@ -164,7 +161,7 @@ async function initExport(graphComponent: GraphComponent): Promise<void> {
       cssStyleSheet: styles,
       inlineSvgImages: true,
       strictMode: true,
-      worldBounds: graphComponent.contentRect
+      worldBounds: graphComponent.contentBounds
     })
     const exportComponent = new GraphComponent()
     exportComponent.graph = graphComponent.graph

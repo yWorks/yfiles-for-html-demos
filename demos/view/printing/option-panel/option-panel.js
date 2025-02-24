@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,54 +26,58 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { toggleExportRectangle } from '../export-rectangle/export-rectangle.js'
-
-/**
- * @typedef {Object} PrintingOptions
- * @property {boolean} usePrintRectangle
- * @property {number} scale
- * @property {number} margin
- * @property {boolean} useTilePrinting
- * @property {number} tileWidth
- * @property {number} tileHeight
- */
-
-/**
- * @param {!function} exportCallback
- */
+import { toggleExportRectangle } from '../export-rectangle/export-rectangle'
 export function initializeOptionPanel(exportCallback) {
   const useRectInput = document.querySelector('#useRect')
+  const fitToTile = document.querySelector('#fitToTile')
   const scale = document.querySelector('#scale')
   const margin = document.querySelector('#margin')
   const useTilePrinting = document.querySelector('#useTilePrinting')
+  const skipEmptyTiles = document.querySelector('#skipEmptyTiles')
+  const paperSize = document.querySelector('#paperSize')
   const tileWidth = document.querySelector('#tileWidth')
   const tileHeight = document.querySelector('#tileHeight')
   const printButton = document.querySelector('#print-button')
-
   useRectInput.addEventListener('change', () => {
     toggleExportRectangle()
   })
-
+  // disable scale input field if fit to page option is selected
+  useTilePrinting.addEventListener('change', () => {
+    paperSize.disabled = !useTilePrinting.checked
+    fitToTile.disabled = !useTilePrinting.checked
+    skipEmptyTiles.disabled = !useTilePrinting.checked
+  })
+  // change tile width and height based on paper size selection
+  paperSize.addEventListener('change', () => {
+    if (paperSize.value === 'letter') {
+      tileWidth.value = '816'
+      tileHeight.value = '1056'
+    } else if (paperSize.value === 'a4') {
+      tileWidth.value = '794'
+      tileHeight.value = '1123'
+    }
+    tileWidth.disabled = !(paperSize.value === 'custom')
+    tileHeight.disabled = !(paperSize.value === 'custom')
+  })
   printButton.addEventListener('click', async () => {
     const options = {
       usePrintRectangle: useRectInput.checked,
+      fitToTile: fitToTile.checked,
       scale: parseFloat(scale.value),
       margin: parseInt(margin.value, 10),
       useTilePrinting: useTilePrinting.checked,
+      skipEmptyTiles: skipEmptyTiles.checked,
       tileWidth: parseInt(tileWidth.value, 10),
       tileHeight: parseInt(tileHeight.value, 10)
     }
-
     if (Number.isNaN(options.scale) || options.scale <= 0) {
       alert('Scale must be a positive number.')
       return
     }
-
     if (Number.isNaN(options.margin) || options.margin < 0) {
       alert('Scale must be a non-negative number.')
       return
     }
-
     if (useTilePrinting.checked) {
       if (Number.isNaN(options.tileWidth) || options.tileWidth <= 0) {
         alert('Tile width must be a positive number.')
@@ -84,7 +88,6 @@ export function initializeOptionPanel(exportCallback) {
         return
       }
     }
-
     exportCallback(options)
   })
 }

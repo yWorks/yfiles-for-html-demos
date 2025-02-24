@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Class,
   EventRecognizers,
   GraphBuilder,
   GraphComponent,
@@ -35,81 +34,55 @@ import {
   IContextLookupChainLink,
   IGraph,
   ILassoTestable,
-  LassoTestables,
   LayoutExecutor,
-  LayoutOrientation,
   License,
-  MouseEventRecognizers,
   OrganicLayout,
-  TouchEventRecognizers
-} from 'yfiles'
-
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+  PointerEventArgs
+} from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-
-/** @type {GraphComponent} */
 let graphComponent
-/** @type {GraphEditorInputMode} */
 let inputMode
-/** @type {IContextLookupChainLink} */
 let decoration
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initDemoStyles(graphComponent.graph)
-
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
-
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
     new OrganicLayout({
-      minimumNodeDistance: 50,
+      defaultMinimumNodeDistance: 50,
       automaticGroupNodeCompaction: true,
-      layoutOrientation: LayoutOrientation.TOP_TO_BOTTOM
+      layoutOrientation: 'top-to-bottom'
     })
   )
-  graphComponent.fitGraphBounds()
-
+  await graphComponent.fitGraphBounds()
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
-
   configureLassoSelection()
-
   initializeUI()
 }
-
 /**
  * Creates nodes and edges according to the given data.
- * @param {!IGraph} graph
- * @param {!JSONGraph} graphData
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id
   })
-
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
-
   graphBuilder.buildGraph()
 }
-
 /**
  * Initialize lasso selection.
  */
@@ -120,56 +93,51 @@ function configureLassoSelection() {
   lassoSelectionInputMode.enabled = true
   graphComponent.inputMode = inputMode
 }
-
 /**
  * Sets the selection style.
  * Supports free-hand or polyline lasso selection. Additionally, classic marquee selection
  * is supported for easy comparison of all selection styles.
- * @param {!('free-hand-selection'|'polyline-selection'|'marquee-selection')} style
  */
 function setSelectionStyle(style) {
   const lassoSelectionInputMode = inputMode.lassoSelectionInputMode
-
   switch (style) {
     default:
     case 'free-hand-selection':
-      lassoSelectionInputMode.dragFreeRecognizer = MouseEventRecognizers.LEFT_DRAG
+      lassoSelectionInputMode.dragFreeHandRecognizer = EventRecognizers.MOUSE_DRAG
       // never start a segment in free-hand lasso selection
       lassoSelectionInputMode.startSegmentRecognizer = EventRecognizers.NEVER
-      lassoSelectionInputMode.endSegmentRecognizer = MouseEventRecognizers.LEFT_DOWN
-      lassoSelectionInputMode.dragSegmentRecognizer = MouseEventRecognizers.MOVE
-      lassoSelectionInputMode.finishRecognizer = MouseEventRecognizers.LEFT_UP
-
-      lassoSelectionInputMode.dragFreeRecognizerTouch = TouchEventRecognizers.TOUCH_MOVE_PRIMARY
+      lassoSelectionInputMode.endSegmentRecognizer = EventRecognizers.MOUSE_DOWN
+      lassoSelectionInputMode.dragSegmentRecognizer = EventRecognizers.MOUSE_MOVE
+      lassoSelectionInputMode.finishRecognizer = EventRecognizers.MOUSE_UP
+      lassoSelectionInputMode.dragFreeHandRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DRAG
       // never start a segment in free-hand lasso selection
       lassoSelectionInputMode.startSegmentRecognizerTouch = EventRecognizers.NEVER
-      lassoSelectionInputMode.endSegmentRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
-      lassoSelectionInputMode.dragSegmentRecognizerTouch = TouchEventRecognizers.TOUCH_MOVE_PRIMARY
-      lassoSelectionInputMode.finishRecognizerTouch = TouchEventRecognizers.TOUCH_UP_PRIMARY
-
+      lassoSelectionInputMode.endSegmentRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DOWN
+      lassoSelectionInputMode.dragSegmentRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DRAG
+      lassoSelectionInputMode.finishRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_UP
       lassoSelectionInputMode.enabled = true
       break
     case 'polyline-selection':
-      lassoSelectionInputMode.dragFreeRecognizer = MouseEventRecognizers.LEFT_DRAG
+      lassoSelectionInputMode.dragFreeHandRecognizer = EventRecognizers.MOUSE_DRAG
       // always start a segment for polyline lasso selection
       lassoSelectionInputMode.startSegmentRecognizer = EventRecognizers.ALWAYS
-      lassoSelectionInputMode.endSegmentRecognizer = EventRecognizers.createOrRecognizer(
-        MouseEventRecognizers.LEFT_DOWN,
-        MouseEventRecognizers.LEFT_UP
-      )
-      lassoSelectionInputMode.dragSegmentRecognizer = MouseEventRecognizers.MOVE_OR_DRAG
-      lassoSelectionInputMode.finishRecognizer = MouseEventRecognizers.LEFT_DOUBLE_CLICK
-
-      lassoSelectionInputMode.dragFreeRecognizerTouch = TouchEventRecognizers.TOUCH_MOVE_PRIMARY
+      lassoSelectionInputMode.endSegmentRecognizer = (evt, eventSource) =>
+        EventRecognizers.MOUSE_DOWN(evt, eventSource) || EventRecognizers.MOUSE_UP(evt, eventSource)
+      lassoSelectionInputMode.dragSegmentRecognizer = (evt, eventSource) =>
+        EventRecognizers.MOUSE_DRAG(evt, eventSource) ||
+        EventRecognizers.MOUSE_MOVE(evt, eventSource)
+      // finish anywhere with a double click
+      lassoSelectionInputMode.finishRecognizer = (evt) => {
+        return evt instanceof PointerEventArgs && evt.clickCount > 1
+      }
+      lassoSelectionInputMode.dragFreeHandRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DRAG
       // always start a segment for polyline lasso selection
       lassoSelectionInputMode.startSegmentRecognizerTouch = EventRecognizers.ALWAYS
-      lassoSelectionInputMode.endSegmentRecognizerTouch = EventRecognizers.createOrRecognizer(
-        TouchEventRecognizers.TOUCH_DOWN_PRIMARY,
-        TouchEventRecognizers.TOUCH_UP_PRIMARY
-      )
-      lassoSelectionInputMode.dragSegmentRecognizerTouch = TouchEventRecognizers.TOUCH_MOVE_PRIMARY
-      lassoSelectionInputMode.finishRecognizerTouch = TouchEventRecognizers.TOUCH_DOUBLE_TAP_PRIMARY
-
+      lassoSelectionInputMode.endSegmentRecognizerTouch = (evt, eventSource) =>
+        EventRecognizers.TOUCH_PRIMARY_DOWN(evt, eventSource) ||
+        EventRecognizers.TOUCH_PRIMARY_UP(evt, eventSource)
+      lassoSelectionInputMode.dragSegmentRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DRAG
+      lassoSelectionInputMode.finishRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DOUBLE_TAP
       lassoSelectionInputMode.enabled = true
       break
     case 'marquee-selection':
@@ -180,49 +148,44 @@ function setSelectionStyle(style) {
       break
   }
 }
-
 /**
  * Specifies the radius around the lasso selection starting point in which the lasso can be closed.
  * When the lasso is dragged near its starting point, a circle with corresponding radius is
  * highlighted.
- * @param {number} radius
  */
 function setFinishRadius(radius) {
   inputMode.lassoSelectionInputMode.finishRadius = radius
 }
-
 /**
  * Decorates the lasso-testable lookup to provide different modes of when a node is selected.
- * @param {!('nodes-complete'|'nodes-intersected'|'nodes-center')} mode
  */
 function setLassoTestables(mode) {
-  const nodeDecorator = graphComponent.graph.decorator.nodeDecorator
-  const lassoTestableDecorator = nodeDecorator.lassoTestableDecorator
+  const nodeDecorator = graphComponent.graph.decorator.nodes
+  const lassoTestableDecorator = nodeDecorator.lassoTestable
   if (decoration) {
     nodeDecorator.remove(decoration)
   }
   if (mode === 'nodes-complete') {
     // the nodes must be completely contained in the lasso to end up in the selection
-    decoration = lassoTestableDecorator.setFactory((node) =>
+    decoration = lassoTestableDecorator.addFactory((node) =>
       ILassoTestable.create(
         (_context, lassoPath) =>
-          !lassoPath.intersects(node.layout.toRect(), 0) &&
+          !lassoPath.pathIntersects(node.layout.toRect(), 0) &&
           lassoPath.areaContains(node.layout.center)
       )
     )
   } else if (mode === 'nodes-intersected') {
     // the nodes must be intersected by or completely contained in the lasso to end up in the selection
-    decoration = lassoTestableDecorator.setFactory((node) =>
-      LassoTestables.fromRectangle(node.layout)
+    decoration = lassoTestableDecorator.addFactory((node) =>
+      ILassoTestable.fromRectangle(node.layout)
     )
   } else if (mode === 'nodes-center') {
     // the nodes' center must be contained in the lasso to end up in the selection
-    decoration = lassoTestableDecorator.setFactory((node) =>
-      LassoTestables.fromPoint(node.layout.center)
+    decoration = lassoTestableDecorator.addFactory((node) =>
+      ILassoTestable.fromPoint(node.layout.center)
     )
   }
 }
-
 /**
  * Binds actions to the toolbar elements.
  */
@@ -240,5 +203,4 @@ function initializeUI() {
     setLassoTestables(lassoTestable.value)
   })
 }
-
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, IGraph, INode, IPort, Point } from 'yfiles'
+import { IEdge, IGraph, INode, IPort, Point } from '@yfiles/yfiles'
 
 export type SerializableEdgeData = {
   bends: Array<[number, number]>
@@ -51,7 +51,7 @@ export class EdgeData {
   static fromGraphItem(edge: IEdge, sourceNodeIndex: number, targetNodeIndex: number): EdgeData {
     const bends = edge.bends
       .toArray()
-      .map(bend => [bend.location.x, bend.location.y] as [number, number])
+      .map((bend) => [bend.location.x, bend.location.y] as [number, number])
     return new EdgeData({ bends, sourceNodeIndex, targetNodeIndex })
   }
 
@@ -69,7 +69,7 @@ export class EdgeData {
    */
   static validate(data: unknown): asserts data is EdgeDataOptions {
     const bendsAreValid = (data as EdgeDataOptions).bends.every(
-      bend => Array.isArray(bend) && Number.isFinite(bend[0]) && Number.isFinite(bend[1])
+      (bend) => Array.isArray(bend) && Number.isFinite(bend[0]) && Number.isFinite(bend[1])
     )
     if (
       data !== null &&
@@ -96,8 +96,8 @@ export class EdgeData {
     const sourceNode = nodes[this.sourceNodeIndex]
     const targetNode = nodes[this.targetNodeIndex]
 
-    const sourcePort = sourceNode.ports.find(p => p.tag.side === 'right')
-    const targetPort = targetNode.ports.find(p => p.tag.side === 'left')
+    const sourcePort = sourceNode.ports.find((p) => p.tag.side === 'right')
+    const targetPort = targetNode.ports.find((p) => p.tag.side === 'left')
     if (!sourcePort || !targetPort) {
       throw new Error('Malformed edge data')
     }
@@ -108,7 +108,7 @@ export class EdgeData {
    * Converts node data to an actual graph node.
    */
   createGraphItem(graph: IGraph, sourcePort: IPort, targetPort: IPort): IEdge {
-    const bends = this.bends.map(b => new Point(...b))
+    const bends = this.bends.map((b) => new Point(...b))
     return graph.createEdge({ sourcePort, targetPort, bends })
   }
 

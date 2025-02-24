@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, IInputModeContext, IOrthogonalEdgeHelper, OrthogonalEdgeHelper } from 'yfiles'
+import { IInputModeContext, IOrthogonalEdgeHelper, OrthogonalEdgeHelper } from '@yfiles/yfiles'
 
 /**
  * An {@link OrthogonalEdgeHelper} that enables moving the
@@ -35,18 +35,13 @@ import { IEdge, IInputModeContext, IOrthogonalEdgeHelper, OrthogonalEdgeHelper }
 export default class OrangeOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   /**
    * Enables moving the source and target of the edge to other ports.
-   * @param inputModeContext The input mode context in which the segment is edited
-   * @param edge The edge to inspect
-   * @param sourceEnd `true` if the source end of the edge is queried, `false` false
+   * @param _inputModeContext The input mode context in which the segment is edited
+   * @param _sourceEnd `true` if the source end of the edge is queried, `false` false
    * for the target end
    * @see Overrides {@link OrthogonalEdgeHelper.shouldMoveEndImplicitly}
    * @see Specified by {@link IOrthogonalEdgeHelper.shouldMoveEndImplicitly}.
    */
-  shouldMoveEndImplicitly(
-    inputModeContext: IInputModeContext,
-    edge: IEdge,
-    sourceEnd: boolean
-  ): boolean {
+  shouldMoveEndImplicitly(_inputModeContext: IInputModeContext, _sourceEnd: boolean): boolean {
     return true
   }
 }

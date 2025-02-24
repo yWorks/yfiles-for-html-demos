@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
 	<key id="d1" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
 	<key id="d2" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
@@ -50,24 +50,24 @@
 	<key id="d10" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
 	<data key="d10">
 		<y:SharedData>
-			<yjs:NodeStyleLabelStyleAdapter x:Key="1" labelStyleInsets="5,3,5,3">
+			<yjs:NodeStyleLabelStyleAdapter x:Key="1" labelStylePadding="5,3,5,3">
 				<yjs:NodeStyleLabelStyleAdapter.nodeStyle>
 					<yjs:ShapeNodeStyle stroke="{x:Null}" fill="#aa4586" shape="ROUND_RECTANGLE"/>
 				</yjs:NodeStyleLabelStyleAdapter.nodeStyle>
 				<yjs:NodeStyleLabelStyleAdapter.labelStyle>
-					<yjs:DefaultLabelStyle textFill="WHITE">
-						<yjs:DefaultLabelStyle.font>
+					<yjs:LabelStyle textFill="WHITE">
+						<yjs:LabelStyle.font>
 							<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-						</yjs:DefaultLabelStyle.font>
-					</yjs:DefaultLabelStyle>
+						</yjs:LabelStyle.font>
+					</yjs:LabelStyle>
 				</yjs:NodeStyleLabelStyleAdapter.labelStyle>
 			</yjs:NodeStyleLabelStyleAdapter>
-      <yjs:PolylineEdgeStyle x:Key="2">
+      <yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="2">
         <yjs:PolylineEdgeStyle.stroke>
           <yjs:Stroke fill="#177e89" lineCap="SQUARE" thickness="1.5"/>
         </yjs:PolylineEdgeStyle.stroke>
       </yjs:PolylineEdgeStyle>
-      <yjs:ImageNodeStyle x:Key="3" image="resources/airport-circle.svg">
+      <yjs:ImageNodeStyle x:Key="3" href="resources/airport-circle.svg">
         <yjs:ImageNodeStyle.normalizedOutline>
           <y:GeneralPath>
             <y:MoveTo Point="0.5,0.75"/>
@@ -85,7 +85,7 @@
 		<node id="n0">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="77,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="77,20">
 						<y:Label.Text><![CDATA[Los Angeles]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -132,7 +132,7 @@
 		<node id="n1">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="88,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="88,20">
 						<y:Label.Text><![CDATA[Rio de Janeiro]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -173,7 +173,7 @@
 		<node id="n2">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="37,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="37,20">
 						<y:Label.Text>Lima</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -201,7 +201,7 @@
 		<node id="n3">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="51,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="51,20">
 						<y:Label.Text>London</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -255,7 +255,7 @@
 		<node id="n4">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="59,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="59,20">
 						<y:Label.Text>Frankfurt</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -320,7 +320,7 @@
 		<node id="n5">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="55,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="55,20">
 						<y:Label.Text>Moscow</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -361,7 +361,7 @@
 		<node id="n6">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="65,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="65,20">
 						<y:Label.Text><![CDATA[New Delhi]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -387,7 +387,7 @@
 		<node id="n7">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="61,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="61,20">
 						<y:Label.Text>Shanghai</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -428,7 +428,7 @@
 		<node id="n8">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="65,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="65,20">
 						<y:Label.Text>Hongkong</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -462,7 +462,7 @@
 		<node id="n9">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="39,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="39,20">
 						<y:Label.Text>Tokio</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -483,7 +483,7 @@
 		<node id="n10">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="42,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="42,20">
 						<y:Label.Text>Dubai</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -531,7 +531,7 @@
 		<node id="n11">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="43,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="43,20">
 						<y:Label.Text>Dakar</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -559,7 +559,7 @@
 		<node id="n12">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="87,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="87,20">
 						<y:Label.Text>Johannesburg</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -587,7 +587,7 @@
 		<node id="n13">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="51,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="51,20">
 						<y:Label.Text>Sydney</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -634,7 +634,7 @@
 		<node id="n14">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="49,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="49,20">
 						<y:Label.Text>Nairobi</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -657,7 +657,7 @@
 		<node id="n15">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="48,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="48,20">
 						<y:Label.Text>Atlanta</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -682,7 +682,7 @@
 		<node id="n16">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="85,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="85,20">
 						<y:Label.Text><![CDATA[New York City]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -725,7 +725,7 @@
 		<node id="n17">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="39,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="39,20">
 						<y:Label.Text>Cairo</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -752,7 +752,7 @@
 		<node id="n18">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="74,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="74,20">
 						<y:Label.Text>Casablanca</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -774,7 +774,7 @@
 		<node id="n19">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="43,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="43,20">
 						<y:Label.Text>Lagos</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -795,7 +795,7 @@
 		<node id="n20">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="71,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="71,20">
 						<y:Label.Text><![CDATA[Cape Town]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -815,7 +815,7 @@
 		<node id="n21">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="59,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="59,20">
 						<y:Label.Text>Chengdu</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -836,7 +836,7 @@
 		<node id="n22">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="50,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="50,20">
 						<y:Label.Text>Jakarta</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -856,7 +856,7 @@
 		<node id="n23">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="54,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="54,20">
 						<y:Label.Text>Teheran</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -877,7 +877,7 @@
 		<node id="n24">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="52,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="52,20">
 						<y:Label.Text><![CDATA[Tel Aviv]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -898,7 +898,7 @@
 		<node id="n25">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="85,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="85,20">
 						<y:Label.Text><![CDATA[Kuala Lumpur]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -918,7 +918,7 @@
 		<node id="n26">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="46,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="46,20">
 						<y:Label.Text>Manila</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -939,7 +939,7 @@
 		<node id="n27">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="59,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="59,20">
 						<y:Label.Text>Singapur</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -971,7 +971,7 @@
 		<node id="n28">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="46,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="46,20">
 						<y:Label.Text>Taipeh</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -992,7 +992,7 @@
 		<node id="n29">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="57,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="57,20">
 						<y:Label.Text>Bangkok</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1013,7 +1013,7 @@
 		<node id="n30">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="53,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="53,20">
 						<y:Label.Text>Istanbul</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1035,7 +1035,7 @@
 		<node id="n31">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="76,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="76,20">
 						<y:Label.Text>Ulaanbaatar</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1055,7 +1055,7 @@
 		<node id="n32">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="67,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="67,20">
 						<y:Label.Text>Melbourne</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1075,7 +1075,7 @@
 		<node id="n33">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="58,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="58,20">
 						<y:Label.Text>Brisbane</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1095,7 +1095,7 @@
 		<node id="n34">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="35,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="35,20">
 						<y:Label.Text>Nadi</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1116,7 +1116,7 @@
 		<node id="n35">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="60,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="60,20">
 						<y:Label.Text>Auckland</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1137,7 +1137,7 @@
 		<node id="n36">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="38,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="38,20">
 						<y:Label.Text>Paris</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1159,7 +1159,7 @@
 		<node id="n37">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="72,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="72,20">
 						<y:Label.Text>Amsterdam</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1180,7 +1180,7 @@
 		<node id="n38">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="47,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="47,20">
 						<y:Label.Text>Madrid</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1202,7 +1202,7 @@
 		<node id="n39">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="65,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="65,20">
 						<y:Label.Text>Barcelona</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1230,7 +1230,7 @@
 		<node id="n40">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="49,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="49,20">
 						<y:Label.Text>Munich</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1252,7 +1252,7 @@
 		<node id="n41">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="43,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="43,20">
 						<y:Label.Text>Rome</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1279,7 +1279,7 @@
 		<node id="n42">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="79,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="79,20">
 						<y:Label.Text>Copenhagen</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1310,7 +1310,7 @@
 		<node id="n43">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="53,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="53,20">
 						<y:Label.Text>Helsinki</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1331,7 +1331,7 @@
 		<node id="n44">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="48,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="48,20">
 						<y:Label.Text>Athens</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1353,7 +1353,7 @@
 		<node id="n45">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="45,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="45,20">
 						<y:Label.Text>Dublin</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1373,7 +1373,7 @@
 		<node id="n46">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="62,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="62,20">
 						<y:Label.Text>Reykjavik</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1393,7 +1393,7 @@
 		<node id="n47">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="35,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="35,20">
 						<y:Label.Text>Oslo</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1413,7 +1413,7 @@
 		<node id="n48">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="48,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="48,20">
 						<y:Label.Text>Vienna</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1439,7 +1439,7 @@
 		<node id="n49">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="46,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="46,20">
 						<y:Label.Text>Lisbon</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1465,7 +1465,7 @@
 		<node id="n50">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="67,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="67,20">
 						<y:Label.Text>Stockholm</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1486,7 +1486,7 @@
 		<node id="n51">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="65,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="65,20">
 						<y:Label.Text>Edinburgh</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1506,7 +1506,7 @@
 		<node id="n52">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="55,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="55,20">
 						<y:Label.Text>Chicago</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1527,7 +1527,7 @@
 		<node id="n53">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="44,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="44,20">
 						<y:Label.Text>Dallas</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1548,7 +1548,7 @@
 		<node id="n54">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="87,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="87,20">
 						<y:Label.Text><![CDATA[San Francisco]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1574,7 +1574,7 @@
 		<node id="n55">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="67,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="67,20">
 						<y:Label.Text><![CDATA[Las Vegas]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1595,7 +1595,7 @@
 		<node id="n56">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="43,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="43,20">
 						<y:Label.Text>Miami</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1616,7 +1616,7 @@
 		<node id="n57">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="51,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="51,20">
 						<y:Label.Text>Toronto</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1639,7 +1639,7 @@
 		<node id="n58">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="67,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="67,20">
 						<y:Label.Text>Vancouver</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1659,7 +1659,7 @@
 		<node id="n59">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="57,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="57,20">
 						<y:Label.Text>Montreal</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1680,7 +1680,7 @@
 		<node id="n60">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="73,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="73,20">
 						<y:Label.Text>Mexico-City</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1702,7 +1702,7 @@
 		<node id="n61">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="94,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="94,20">
 						<y:Label.Text>Guatemala-City</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1724,7 +1724,7 @@
 		<node id="n62">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="82,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="82,20">
 						<y:Label.Text><![CDATA[Buenos Aires]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1745,7 +1745,7 @@
 		<node id="n63">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="66,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="66,20">
 						<y:Label.Text><![CDATA[Sao Paulo]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1766,7 +1766,7 @@
 		<node id="n64">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="105,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="105,20">
 						<y:Label.Text><![CDATA[Santiago de Chile]]></y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1789,7 +1789,7 @@
 		<node id="n65">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="50,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="50,20">
 						<y:Label.Text>Brasilia</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1821,7 +1821,7 @@
 		<node id="n66">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="49,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="49,20">
 						<y:Label.Text>Bogota</y:Label.Text>
 					</y:Label>
 				</x:List>
@@ -1846,7 +1846,7 @@
 		<node id="n67">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{x:Static y:ExteriorLabelModel.South}" Style="{y:GraphMLReference 1}" PreferredSize="55,20">
+					<y:Label LayoutParameter="{x:Static yx:ExteriorNodeLabelModel.Bottom}" Style="{y:GraphMLReference 1}" PreferredSize="55,20">
 						<y:Label.Text>Caracas</y:Label.Text>
 					</y:Label>
 				</x:List>

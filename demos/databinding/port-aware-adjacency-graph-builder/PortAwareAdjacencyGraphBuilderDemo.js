@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,25 +30,23 @@ import {
   AdjacencyGraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   IGraph,
   INode,
   InsideOutsidePortLabelModel,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   LayoutExecutor,
   License,
   PolylineEdgeStyle,
+  PortPlacementPolicy,
   Size
-} from 'yfiles'
-
-import { createPortAwareAdjacencyGraphBuilder, setBuilderData } from './AdjacencyGraphBuilder.js'
-import GraphData from './graph-builder-data.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider.js'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
+} from '@yfiles/yfiles'
+import { createPortAwareAdjacencyGraphBuilder, setBuilderData } from './AdjacencyGraphBuilder'
+import GraphData from './graph-builder-data'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * This demo shows how to automatically build a graph from business data using
  * a customized AdjacencyGraphBuilder which creates node ports based on the node data and
@@ -57,150 +55,114 @@ import { applyDemoTheme } from 'demo-resources/demo-styles'
  * It also uses AdjacencyGraphBuilder's updateGraph method to modify the existing graph
  * to reflect changes in the business data. Also, an incremental layout is applied to arrange
  * new elements while keeping the location of the unchanged items as stable as possible.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   // initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   setGraphDefaults(graphComponent.graph)
-
   // use the viewer input mode since this demo should not allow interactive graph editing
   graphComponent.inputMode = new GraphViewerInputMode()
-
   // build the graph from data
   builder = createPortAwareAdjacencyGraphBuilder(graphComponent.graph, GraphData.nodesSource)
   builder.buildGraph()
-
   // center graph in the visible area
-  graphComponent.fitGraphBounds()
-
-  // arrange the graph using a hierarchic layout algorithm
+  void graphComponent.fitGraphBounds()
+  // arrange the graph using a hierarchical layout algorithm
   await arrangeGraph(graphComponent, graphComponent.graph.nodes.toArray())
-
   // register toolbar actions
   initializeUI(graphComponent)
 }
-
-/** @type {AdjacencyGraphBuilder} */
 let builder
-
 /**
  * Updates the graph. This reflects changes in the business data while keeping the unchanged items.
  * This function uses AdjacencyGraphBuilder's updateGraph method to modify the existing graph
  * instead of building it anew. After that, it arranges the item in incremental mode
  * which keeps the unchanged items as stable as possible.
- * @param {!GraphComponent} graphComponent
- * @param {!Array.<*>} nodesSource
- * @returns {!Promise}
  */
 async function updateGraph(graphComponent, nodesSource) {
   const graph = graphComponent.graph
-
   // determine which nodes were added while updating the graph
   const newNodes = []
-  const nodeCreatedListener = (_, evt) => newNodes.push(evt.item)
-  builder.addNodeCreatedListener(nodeCreatedListener)
-
+  const nodeCreatedListener = (evt) => newNodes.push(evt.item)
+  builder.addEventListener('node-created', nodeCreatedListener)
   // update the graph according the new (but related) data
   // this will remove nodes whose IDs are not in the new data set
   // this will add nodes whose IDs are in the new data set, but not in the old one
   setBuilderData(nodesSource)
   builder.updateGraph()
-
-  builder.removeNodeCreatedListener(nodeCreatedListener)
-
+  builder.removeEventListener('node-created', nodeCreatedListener)
   // hide the new items (i.e. the new nodes, the edges connected to the new nodes, their labels
   // and their ports) during the animated layout calculation
   hideNodesAndRelatedItems(graph, newNodes)
-
   // arrange the graph: arrange the new nodes while keeping the other nodes as stable as possible
   await arrangeGraph(graphComponent, newNodes)
-
   // after the layout animation has finished, show the previously hidden items
   // this way new items do not seem to be affected by the layout calculation
   // otherwise, new items would appear at the default location (0,0) and then move to their
   // final location during the layout animation
   showNodesAndRelatedItems(graph, newNodes)
 }
-
 /**
  * Arranges the graph of the given graph component and applies the new layout in an animated
  * fashion.
- * @param {!GraphComponent} graphComponent
- * @param {!Array.<INode>} newNodes
- * @returns {!Promise}
  */
 function arrangeGraph(graphComponent, newNodes) {
   document.querySelector('#update-builder').disabled = true
-
   const graph = graphComponent.graph
   // if there are less new nodes than there are nodes in total, calculate an incremental layout
-  // i.e. try to keep the positions of the "old" nodes while finding good positions for new nodes
+  // i.e., try to keep the positions of the "old" nodes while finding good positions for new nodes
   const arrangeIncrementally = newNodes.length < graph.nodes.size
-
-  const algorithm = new HierarchicLayout({
+  const algorithm = new HierarchicalLayout({
     layoutOrientation: 'left-to-right',
     minimumLayerDistance: 50,
-    orthogonalRouting: true,
-    layoutMode: arrangeIncrementally ? 'incremental' : 'from-scratch'
+    fromSketchMode: arrangeIncrementally
   })
-  const eld = algorithm.edgeLayoutDescriptor
+  const eld = algorithm.defaultEdgeDescriptor
   eld.minimumFirstSegmentLength = 30
   eld.minimumLastSegmentLength = 30
-
-  const hierarchicLayoutData = new HierarchicLayoutData()
+  const hierarchicalLayoutData = new HierarchicalLayoutData()
   // specify which nodes are the "new" nodes in the case of an incremental layout calculation
   // i.e. for which nodes the algorithm needs to calculate layer assignment and sequence order
   // for "old" nodes, the algorithm will determine layer and sequence from their current positions
   if (arrangeIncrementally) {
-    hierarchicLayoutData.incrementalHints.incrementalLayeringNodes = newNodes
+    hierarchicalLayoutData.incrementalNodes = newNodes
   }
-
   // arrange the graph with the chosen layout algorithm
   return new LayoutExecutor({
     graphComponent: graphComponent,
     graph: graph,
     layout: algorithm,
-    layoutData: hierarchicLayoutData,
-    fixPorts: true,
+    layoutData: hierarchicalLayoutData,
+    portPlacementPolicies: PortPlacementPolicy.KEEP_PARAMETER,
     animateViewport: true,
-    duration: '0.5s'
+    animationDuration: '0.5s'
   })
     .start()
     .finally(() => {
       document.querySelector('#update-builder').disabled = false
     })
 }
-
 /**
  * Initializes style defaults for the graph items.
- * @param {!IGraph} graph
  */
 function setGraphDefaults(graph) {
   graph.nodeDefaults.size = new Size(100, 160)
-  graph.nodeDefaults.labels.layoutParameter = new InteriorLabelModel({ insets: 5 }).createParameter(
-    'south'
-  )
+  graph.nodeDefaults.labels.layoutParameter = new InteriorNodeLabelModel({
+    padding: 5
+  }).createParameter('bottom')
   graph.nodeDefaults.labels.shareLayoutParameterInstance = true
-
   // we want to keep the ports
   graph.nodeDefaults.ports.autoCleanUp = false
-
   graph.nodeDefaults.ports.labels.layoutParameter = new InsideOutsidePortLabelModel({
     distance: 5
   }).createInsideParameter()
-
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '2px #662b00'
   })
 }
-
 /**
  * Binds the toolbar buttons to their functionality.
- * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
   let index = 0
@@ -210,5 +172,4 @@ function initializeUI(graphComponent) {
     await updateGraph(graphComponent, data)
   })
 }
-
 run().then(finishLoading)

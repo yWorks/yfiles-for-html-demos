@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,55 +27,50 @@
  **
  ***************************************************************************/
 import {
-  HierarchicLayout,
-  HierarchicLayoutData,
-  HierarchicLayoutEdgeRoutingStyle,
+  EdgePortCandidates,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   ILayoutAlgorithm,
   LayoutData,
-  LayoutOrientation,
-  PortConstraint,
-  PortSide,
-  SimplexNodePlacer
-} from 'yfiles'
+  PortSides
+} from '@yfiles/yfiles'
 
-export function createHierarchicLayoutConfiguration(): {
+export function createHierarchicalLayoutConfiguration(): {
   layout: ILayoutAlgorithm
   layoutData: LayoutData
 } {
-  const layout = new HierarchicLayout()
-  const defaultEdgeDescriptor = layout.edgeLayoutDescriptor
+  const layout = new HierarchicalLayout()
+  const defaultEdgeDescriptor = layout.defaultEdgeDescriptor
   defaultEdgeDescriptor.minimumFirstSegmentLength = 5
   defaultEdgeDescriptor.minimumLastSegmentLength = 5
-  defaultEdgeDescriptor.routingStyle.defaultEdgeRoutingStyle =
-    HierarchicLayoutEdgeRoutingStyle.CURVED
+  defaultEdgeDescriptor.routingStyleDescriptor.defaultRoutingStyle = 'curved'
 
-  const defaultNodeDescriptor = layout.nodeLayoutDescriptor
-  defaultNodeDescriptor.layerAlignment = 0.5
+  layout.defaultNodeDescriptor.layerAlignment = 0.5
 
-  layout.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
+  layout.layoutOrientation = 'left-to-right'
   // specify a preferred maximum duration to prevent very long runtimes for LARGE graphs
-  layout.maximumDuration = 5000
+  layout.stopDuration = '5s'
   // the minimum vertical distance between nodes in subsequent layers
   layout.minimumLayerDistance = 30
   // the minimum horizontal distance between nodes and long edges that span multiple layers
   layout.nodeToEdgeDistance = 10
   // the minimum horizontal distance between two nodes in the same layer
-  layout.nodeToNodeDistance = 30
+  layout.nodeDistance = 30
   // try to reduce the number of bends in edges that connect nodes in subsequent layers
   // this produces more readable results in this demo scenario
-  const placer = layout.nodePlacer as SimplexNodePlacer
-  placer.straightenEdges = true
+  layout.coordinateAssigner.straightenEdges = true
   // disable the barycenter node placer mode for straightenEdges option to take effect
-  placer.barycenterMode = false
+  layout.coordinateAssigner.symmetryOptimizationStrategy = 'none'
   // reflects our standard spacing so that nodes end up aligned with the snap grid
   layout.gridSpacing = 15
 
-  // create and configure layout data for the hierarchic layout algorithm
+  // create and configure layout data for the hierarchical layout algorithm
   // this makes sure that edges start and end in the correct ports
-  const layoutData = new HierarchicLayoutData({
-    sourcePortConstraints: PortConstraint.create(PortSide.EAST, true),
-    targetPortConstraints: PortConstraint.create(PortSide.WEST, true)
-  })
+  const layoutData = new HierarchicalLayoutData()
+  layoutData.ports.sourcePortCandidates = new EdgePortCandidates().addFixedCandidate(
+    PortSides.RIGHT
+  )
+  layoutData.ports.targetPortCandidates = new EdgePortCandidates().addFixedCandidate(PortSides.LEFT)
 
   return { layout, layoutData }
 }

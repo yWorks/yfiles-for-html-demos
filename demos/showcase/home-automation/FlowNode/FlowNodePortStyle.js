@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,68 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ICanvasContext, IPort, Point, PortStyleBase, Rect } from 'yfiles'
-
-/**
- * @typedef {Object} DummyPortOptions
- * @property {Rect} nodeBounds
- * @property {*} side
- * @property {boolean} [isConnected]
- */
-
+import { ICanvasContext, IPort, Point, PortStyleBase, Rect } from '@yfiles/yfiles'
 export class FlowNodePortStyle extends PortStyleBase {
-  /** @type {number} */
-  static get size() {
-    if (typeof FlowNodePortStyle.$size === 'undefined') {
-      FlowNodePortStyle.$size = 12
-    }
-
-    return FlowNodePortStyle.$size
-  }
-
-  /** @type {number} */
-  static get nodeMargin() {
-    if (typeof FlowNodePortStyle.$nodeMargin === 'undefined') {
-      FlowNodePortStyle.$nodeMargin = 3
-    }
-
-    return FlowNodePortStyle.$nodeMargin
-  }
-
-  /** @type {undefined} */
-  static get nodeReservedWidthForPort() {
-    if (typeof FlowNodePortStyle.$nodeReservedWidthForPort === 'undefined') {
-      FlowNodePortStyle.$nodeReservedWidthForPort =
-        FlowNodePortStyle.size / 2 + FlowNodePortStyle.nodeMargin
-    }
-
-    return FlowNodePortStyle.$nodeReservedWidthForPort
-  }
-
+  static size = 12
+  static nodeMargin = 3
+  static nodeReservedWidthForPort = FlowNodePortStyle.size / 2 + FlowNodePortStyle.nodeMargin
   /**
    * Creates a visual for the dummy "port" that will be rendered as part of node visual
    * to bypass DnD limitations. (We can't render actual ports when preparing nodes
    * for the DnD palette, as dragging such a node to the main graph results in an
    * uncatchable exception).
-   * @param {!DummyPortOptions} undefined
-   * @returns {!SVGGElement}
    */
   static createDummyPortElement({ nodeBounds, side, isConnected = false }) {
     const { size } = FlowNodePortStyle
     const outerRadius = size / 2
     const innerRadius = size / 2 / 2 + 0.5
     const color = isConnected ? 'rgb(0, 0, 0)' : 'rgb(153, 153, 153)'
-
     const location = {
       left: new Point(0, nodeBounds.height / 2),
       right: new Point(nodeBounds.width, nodeBounds.height / 2)
     }[side]
     const { x, y } = location
-
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const outer = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     const inner = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
-
     outer.setAttribute('cx', String(x))
     outer.setAttribute('cy', String(y))
     outer.setAttribute('rx', String(outerRadius))
@@ -95,23 +57,16 @@ export class FlowNodePortStyle extends PortStyleBase {
     outer.setAttribute('fill', 'rgb(255, 255, 255)')
     outer.setAttribute('stroke', color)
     outer.setAttribute('stroke-width', '1')
-
     inner.setAttribute('cx', String(x))
     inner.setAttribute('cy', String(y))
     inner.setAttribute('rx', String(innerRadius))
     inner.setAttribute('ry', String(innerRadius))
     inner.setAttribute('fill', color)
-
     group.setAttribute('style', 'cursor: crosshair')
     group.appendChild(outer)
     group.appendChild(inner)
-
     return group
   }
-
-  /**
-   * @param {*} undefined
-   */
   static updateDummyPortElement({ element, nodeBounds, side }) {
     const location = {
       left: new Point(0, nodeBounds.height / 2),
@@ -123,20 +78,12 @@ export class FlowNodePortStyle extends PortStyleBase {
       e.setAttribute('cy', String(y))
     })
   }
-
   /**
    * The actual visual is rendered as part of the accompanying node.
-   * @returns {!null}
    */
   createVisual() {
     return null
   }
-
-  /**
-   * @param {!ICanvasContext} _context
-   * @param {!IPort} port
-   * @returns {!Rect}
-   */
   getBounds(_context, port) {
     const { size } = FlowNodePortStyle
     return Rect.fromCenter(port.location, [size, size])

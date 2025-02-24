@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,16 +27,15 @@
  **
  ***************************************************************************/
 import {
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
+  ExteriorNodeLabelModelPosition,
   GraphComponent,
   ILabelModelParameter,
   INode,
   Point,
   SimpleLabel,
   Size
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can display arbitrary information
  * about an {@link INode}. In order to not interfere with the positioning of the pop-up, HTML content should be added
@@ -44,35 +43,30 @@ import {
  * an {@link ILabelModelParameter} to determine the position of the pop-up.
  */
 export default class NodeTypePanel {
+  graphComponent
+  typeColors
+  colorSets
   div
   dirty = false
   _currentItems = null
-
   /**
    * Creates a new instance of {@link NodeTypePanel}.
-   * @param {!GraphComponent} graphComponent
-   * @param {!Array.<string>} typeColors
-   * @param {!Record.<string,object>} colorSets
    */
   constructor(graphComponent, typeColors, colorSets) {
-    this.colorSets = colorSets
-    this.typeColors = typeColors
     this.graphComponent = graphComponent
+    this.typeColors = typeColors
+    this.colorSets = colorSets
     this.div = document.getElementById('node-type-panel')
-
     // make the popup invisible
     this.div.style.opacity = '0'
     this.div.style.display = 'none'
-
     this.registerListeners()
     this.registerClickListeners()
   }
-
   /**
    * Sets the {@link INode nodes} to display the type choice pop-up for.
    * Setting this property to a value other than `null` shows the pop-up.
    * Setting the property to `null` hides the pop-up.
-   * @type {?Array.<INode>}
    */
   set currentItems(items) {
     if (items && items.length > 0) {
@@ -85,35 +79,30 @@ export default class NodeTypePanel {
       this.hide()
     }
   }
-
   /**
    * Returns all {@link INode}s to display the pop-up for.
-   * @type {?Array.<INode>}
    */
   get currentItems() {
     return this._currentItems
   }
-
   /**
    * Registers listeners for viewport, node bounds and visual tree changes to the {@link GraphComponent}.
    */
   registerListeners() {
     // Adds listener for viewport changes
-    this.graphComponent.addViewportChangedListener(() => {
+    this.graphComponent.addEventListener('viewport-changed', () => {
       if (this.currentItems && this.currentItems.length > 0) {
         this.dirty = true
       }
     })
-
     // Adds listener for updates of the visual tree
-    this.graphComponent.addUpdatedVisualListener(() => {
+    this.graphComponent.addEventListener('updated-visual', () => {
       if (this.currentItems && this.currentItems.length > 0 && this.dirty) {
         this.dirty = false
         this.updateLocation()
       }
     })
   }
-
   /**
    * Registers click listeners for all buttons of this {@link NodeTypePanel}.
    */
@@ -127,11 +116,6 @@ export default class NodeTypePanel {
       }
     }
   }
-
-  /**
-   * @param {?string} cssClasses
-   * @returns {number}
-   */
   static findType(cssClasses) {
     if (cssClasses != null && cssClasses.length > 0) {
       for (const cssClass of cssClasses.split(' ')) {
@@ -142,12 +126,9 @@ export default class NodeTypePanel {
     }
     return -1
   }
-
   /**
    * Registers a click listener to given element which will invoke the callback {@link nodeTypeChanged} and
    * {@link typeChanged} in case the type of the current item changed.
-   * @param {?Element} element
-   * @param {number} type
    */
   addClickListener(element, type) {
     if (!element) {
@@ -166,7 +147,6 @@ export default class NodeTypePanel {
       }
     })
   }
-
   /**
    * Makes this pop-up visible.
    */
@@ -185,7 +165,6 @@ export default class NodeTypePanel {
     }
     this.updateLocation()
   }
-
   /**
    * Hides this pop-up.
    */
@@ -193,7 +172,6 @@ export default class NodeTypePanel {
     this.div.style.opacity = '0'
     this.div.style.display = 'none'
   }
-
   /**
    * Changes the location of this pop-up to the location calculated by the
    * {@link NodeTypePanel.labelModelParameter}.
@@ -205,52 +183,37 @@ export default class NodeTypePanel {
     const width = this.div.offsetWidth
     const height = this.div.offsetHeight
     const zoom = this.graphComponent.zoom
-
-    const labelModelParameter = new ExteriorLabelModel({ insets: [20, 0, 0, 0] }).createParameter(
-      ExteriorLabelModelPosition.NORTH
-    )
+    const labelModelParameter = new ExteriorNodeLabelModel({
+      margins: [20, 0, 0, 0]
+    }).createParameter(ExteriorNodeLabelModelPosition.TOP)
     const dummyLabel = new SimpleLabel(this.currentItems[0], '', labelModelParameter)
-    if (labelModelParameter.supports(dummyLabel)) {
-      dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
-      const { anchorX, anchorY } = labelModelParameter.model.getGeometry(
-        dummyLabel,
-        labelModelParameter
-      )
-      this.setLocation(anchorX, anchorY - height / zoom)
-    }
+    dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
+    const { anchorX, anchorY } = labelModelParameter.model.getGeometry(
+      dummyLabel,
+      labelModelParameter
+    )
+    this.setLocation(anchorX, anchorY - height / zoom)
   }
-
   /**
    * Sets the location of this pop-up to the given world coordinates.
-   * @param {number} x
-   * @param {number} y
    */
   setLocation(x, y) {
     // Calculate the view coordinates since we have to place the div in the regular HTML coordinate space
-    const viewPoint = this.graphComponent.toViewCoordinates(new Point(x, y))
+    const viewPoint = this.graphComponent.worldToViewCoordinates(new Point(x, y))
     this.div.style.left = `${viewPoint.x}px`
     this.div.style.top = `${viewPoint.y}px`
   }
-
   /**
    * Callback for when the type changed for a specific node
-   * @param {!INode} item
-   * @param {number} newType
-   * @param {number} oldType
    */
   nodeTypeChanged(item, newType, oldType) {}
-
   /**
    * Callback for when the type changed for some or all nodes in the graph.
    */
   typeChanged() {}
 }
-
 /**
  * Checks the given arrays for equality.
- * @param {?Array.<INode>} nodes1
- * @param {?Array.<INode>} nodes2
- * @returns {boolean}
  */
 function equals(nodes1, nodes2) {
   if (nodes1 === nodes2) {
@@ -262,7 +225,6 @@ function equals(nodes1, nodes2) {
   if (nodes1.length !== nodes2.length) {
     return false
   }
-
   nodes1.sort()
   nodes2.sort()
   for (let i = 0; i < nodes1.length; i++) {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { INode, GraphComponent } from 'yfiles'
-import { GraphSearch } from 'demo-utils/GraphSearch'
+import type { GraphComponent, INode } from '@yfiles/yfiles'
+import { GraphSearch } from '@yfiles/demo-utils/GraphSearch'
 import { getEmployee } from './model/data-loading'
 import type { CollapsibleTree } from './CollapsibleTree'
 
@@ -41,7 +41,7 @@ export function initializeGraphSearch(
   const graphSearch = new OrgChartGraphSearch(graphComponent)
   const searchBox = document.querySelector<HTMLInputElement>('#searchBox')!
   GraphSearch.registerEventListener(searchBox, graphSearch)
-  orgChartGraph.addGraphUpdatedListener(() => graphSearch.updateSearch(searchBox.value))
+  orgChartGraph.setGraphUpdatedListener(() => graphSearch.updateSearch(searchBox.value))
 }
 
 /**

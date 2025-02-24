@@ -1,21 +1,23 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # Move Unselected Nodes Demo
 
-# Move Unselected Nodes Demo
+<img src="../../../doc/demo-thumbnails/move-unselected-nodes.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/input/moveunselectednodes/).
 
 This demo shows a special input mode that allows you to move nodes without selecting them first.
 
-This is done by enabling the [GraphEditorInputMode#moveUnselectedInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode#moveUnselectedInputMode).
+This is done by enabling the [GraphEditorInputMode#moveUnselectedItemsInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode#moveUnselectedItemsInputMode).
 
 ## Things to Try
 

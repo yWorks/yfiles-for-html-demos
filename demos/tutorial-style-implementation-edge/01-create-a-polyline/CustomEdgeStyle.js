@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,15 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EdgeStyleBase, IEdge, SvgVisual } from 'yfiles'
-
+import { EdgeStyleBase, IEdge, SvgVisual } from '@yfiles/yfiles'
 export class CustomEdgeStyle extends EdgeStyleBase {
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!IEdge} edge
-   * @returns {?Visual}
-   */
   createVisual(context, edge) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path.setAttribute('d', this.createPathData(edge))
@@ -43,16 +36,8 @@ export class CustomEdgeStyle extends EdgeStyleBase {
     path.setAttribute('stroke-width', '1')
     return new SvgVisual(path)
   }
-
-
-
-  /**
-   * @param {!IEdge} edge
-   * @returns {!string}
-   */
   createPathData(edge) {
     const points = IEdge.getPathPoints(edge).toArray()
     return 'M ' + points.map((point) => `${point.x} ${point.y}`).join(' L ')
   }
-
 }

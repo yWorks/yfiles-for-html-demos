@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,7 @@
      ////////////////////////////////////////////////////////////////////////-->
 
 <!--Created by yFiles for HTML 2.4-layout1-->
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/2.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="int" attr.name="zOrder" y:attr.uri="http://www.yworks.com/xml/yfiles-z-order/1.0/zOrder"/>
 	<key id="d1" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
@@ -62,48 +62,48 @@
 	<key id="d19" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
 	<data key="d19">
 		<y:SharedData>
-			<y:FreeNodeLabelModel x:Key="1"/>
-			<yjs:DefaultLabelStyle x:Key="2" wrapping="WORD" textFill="BLACK">
-				<yjs:DefaultLabelStyle.font>
+			<yx:FreeNodeLabelModel x:Key="1"/>
+			<yjs:LabelStyle x:Key="2" wrapping="WRAP_WORD" textFill="BLACK">
+				<yjs:LabelStyle.font>
 					<yjs:Font fontSize="12" fontFamily="'Arial'"/>
-				</yjs:DefaultLabelStyle.font>
-			</yjs:DefaultLabelStyle>
+				</yjs:LabelStyle.font>
+			</yjs:LabelStyle>
 			<yjs:ShapeNodeStyle x:Key="3" shape="ELLIPSE">
 				<yjs:ShapeNodeStyle.stroke>
 					<yjs:Stroke fill="BLACK" lineCap="ROUND" lineJoin="ROUND" thickness="2"/>
 				</yjs:ShapeNodeStyle.stroke>
 			</yjs:ShapeNodeStyle>
-			<yjs:DefaultLabelStyle x:Key="4" wrapping="WORD" textFill="BLACK" textSize="13">
-				<yjs:DefaultLabelStyle.font>
-					<yjs:Font fontSize="13" fontFamily="'Arial'" fontWeight="BOLD"/>
-				</yjs:DefaultLabelStyle.font>
-			</yjs:DefaultLabelStyle>
-			<yjs:PolylineEdgeStyle x:Key="5" smoothingLength="20">
+			<yjs:LabelStyle x:Key="4" wrapping="WRAP_WORD" textFill="BLACK" textSize="13">
+				<yjs:LabelStyle.font>
+					<yjs:Font fontSize="13" fontFamily="'Arial'" fontWeight="bold"/>
+				</yjs:LabelStyle.font>
+			</yjs:LabelStyle>
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="5" smoothingLength="20">
 				<yjs:PolylineEdgeStyle.stroke>
 					<yjs:Stroke fill="#FFE94333" lineCap="SQUARE" thickness="4.5"/>
 				</yjs:PolylineEdgeStyle.stroke>
 			</yjs:PolylineEdgeStyle>
-			<yjs:PolylineEdgeStyle x:Key="6" smoothingLength="20">
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="6" smoothingLength="20">
 				<yjs:PolylineEdgeStyle.stroke>
 					<yjs:Stroke fill="#FF000090" lineCap="SQUARE" thickness="4.5"/>
 				</yjs:PolylineEdgeStyle.stroke>
 			</yjs:PolylineEdgeStyle>
-			<yjs:PolylineEdgeStyle x:Key="7" smoothingLength="20">
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="7" smoothingLength="20">
 				<yjs:PolylineEdgeStyle.stroke>
 					<yjs:Stroke fill="#FFE89038" lineCap="SQUARE" thickness="4.5"/>
 				</yjs:PolylineEdgeStyle.stroke>
 			</yjs:PolylineEdgeStyle>
-			<yjs:PolylineEdgeStyle x:Key="8" smoothingLength="20">
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="8" smoothingLength="20">
 				<yjs:PolylineEdgeStyle.stroke>
 					<yjs:Stroke fill="#FFEFE330" lineCap="SQUARE" thickness="4.5"/>
 				</yjs:PolylineEdgeStyle.stroke>
 			</yjs:PolylineEdgeStyle>
-			<yjs:PolylineEdgeStyle x:Key="9" smoothingLength="20">
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="9" smoothingLength="20">
 				<yjs:PolylineEdgeStyle.stroke>
 					<yjs:Stroke fill="#FF008000" lineCap="SQUARE" thickness="4.5"/>
 				</yjs:PolylineEdgeStyle.stroke>
 			</yjs:PolylineEdgeStyle>
-			<yjs:PolylineEdgeStyle x:Key="10" smoothingLength="20">
+			<yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="10" smoothingLength="20">
 				<yjs:PolylineEdgeStyle.stroke>
 					<yjs:Stroke fill="#FF999999" lineCap="SQUARE" thickness="4.5"/>
 				</yjs:PolylineEdgeStyle.stroke>
@@ -121,7 +121,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text>Glenmont</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-16.983,420.901" LabelRatio="0.5,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-16.983,420.901" LabelRatio="0.5,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -158,7 +158,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text>Wheaton</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-0.733,364.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-0.733,364.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -187,7 +187,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Forest Glen]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-18.233,304.151" LabelRatio="0.5,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-18.233,304.151" LabelRatio="0.5,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -216,7 +216,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Silver Spring]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-40.733,244.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-40.733,244.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -245,7 +245,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text>Takoma</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-126.733,184.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-126.733,184.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -274,7 +274,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[Fort Totten]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-159.483,120.901" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-159.483,120.901" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -331,7 +331,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text>Brookland-CUA</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-145.733,58.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-145.733,58.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -360,7 +360,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Rhode Island Ave-Brentwood]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-73.733,5.151" LabelRatio="1,0.5" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-73.733,5.151" LabelRatio="1,0.5" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -389,7 +389,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[NoMa-Gallaudet U (New York Ave)]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-43.733,-34.348" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-43.733,-34.348" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -418,7 +418,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Union Station]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-156.733,-94.348" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-156.733,-94.348" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -447,7 +447,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Judiciary Sq]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-103.733,-94.348" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-103.733,-94.348" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -476,7 +476,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[Gallery Place - Chinatown]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-21.483,-92.098" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-21.483,-92.098" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -538,7 +538,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[Metro Center]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0.5,0" LayoutOffset="0,-20.298" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0.5,0" LayoutOffset="0,-20.298" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -610,7 +610,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Farragut North]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="20.766,84.151" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="20.766,84.151" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -639,7 +639,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Dupont Circle]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="80.766,144.151" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="80.766,144.151" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -668,7 +668,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Woodley Park-Zoo/Adams Morgan]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="140.766,204.151" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="140.766,204.151" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -697,7 +697,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Cleveland Park]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="200.766,264.151" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="200.766,264.151" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -721,7 +721,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[Franconia-Springfield Metro]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="166.516,-432.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="166.516,-432.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -758,7 +758,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Van Dorn Street Metro Station]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="108.766,-374.348" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="108.766,-374.348" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -787,7 +787,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[King Street]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="46.516,-372.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="46.516,-372.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -839,7 +839,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Braddock Road]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="28.016,-312.098" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="28.016,-312.098" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -891,7 +891,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Ronald Reagan Washington National Airport]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="104.516,-252.098" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="104.516,-252.098" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -943,7 +943,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Crystal City]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="46.516,-192.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="46.516,-192.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -995,7 +995,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Pentagon City]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="106.516,-192.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="106.516,-192.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1047,7 +1047,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text>Pentagon</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="46.516,-132.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="46.516,-132.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1099,7 +1099,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Arlington Cemetery]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="108.766,-74.348" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="108.766,-74.348" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1128,7 +1128,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text>Rosslyn</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="218.716,7.101" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="218.716,7.101" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1190,7 +1190,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[Foggy Bottom-GWU]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="152.716,7.101" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="152.716,7.101" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1252,7 +1252,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[Farragut West]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="82.716,77.101" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="82.716,77.101" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1314,7 +1314,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[McPherson Square]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="7.716,11.101" LabelRatio="0.5,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="7.716,11.101" LabelRatio="0.5,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1376,7 +1376,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[Federal Triangle]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0.94,0" LayoutOffset="0,-88.298" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0.94,0" LayoutOffset="0,-88.298" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1438,7 +1438,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text>Smithsonian</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0.454,0" LayoutOffset="0,-154.298" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0.454,0" LayoutOffset="0,-154.298" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1500,7 +1500,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[L'Enfant Plaza]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0.685,0" LayoutOffset="0,-226.298" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0.685,0" LayoutOffset="0,-226.298" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1577,7 +1577,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[Federal Center SW]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-41.683,-226.298" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-41.683,-226.298" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1639,7 +1639,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[Capitol South]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-80.683,-226.298" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-80.683,-226.298" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1701,7 +1701,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[Eastern Market]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-137.683,-226.298" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-137.683,-226.298" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1763,7 +1763,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[Potomac Ave]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-215.683,-226.298" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-215.683,-226.298" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1825,7 +1825,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text>Stadium-Armory</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-261.683,-160.298" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-261.683,-160.298" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1887,7 +1887,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Benning Road]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-354.483,-162.098" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-354.483,-162.098" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1939,7 +1939,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Capitol Heights]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-409.483,-222.098" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-409.483,-222.098" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -1991,7 +1991,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Addison Road/Seat Pleasant]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-397.483,-222.098" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-397.483,-222.098" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2043,7 +2043,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Morgan Boulevard]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-512.483,-222.098" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-512.483,-222.098" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2095,7 +2095,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[Largo Town Center]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-553.483,-222.098" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-553.483,-222.098" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2137,7 +2137,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text>Vienna/Fairfax-GMU</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="706.516,-18.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="706.516,-18.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2174,7 +2174,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Dunn Loring-Merrifield]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="648.766,-20.348" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="648.766,-20.348" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2203,7 +2203,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[West Falls Church Metro]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="588.766,-20.348" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="588.766,-20.348" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2232,7 +2232,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[East Falls Church]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="526.516,-18.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="526.516,-18.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2284,7 +2284,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text>Ballston-MU</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="466.516,-18.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="466.516,-18.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2336,7 +2336,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Virginia Square-GMU]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="406.516,-18.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="406.516,-18.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2388,7 +2388,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text>Clarendon</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="346.516,9.901" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="346.516,9.901" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2440,7 +2440,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Court House]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="286.516,9.901" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="286.516,9.901" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2492,7 +2492,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Minnesota Ave]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-353.733,-98.348" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-353.733,-98.348" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2521,7 +2521,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text>Deanwood</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-435.733,-38.348" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-435.733,-38.348" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2550,7 +2550,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text>Cheverly</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-505.733,-38.348" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-505.733,-38.348" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2579,7 +2579,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text>Landover</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-562.733,1.151" LabelRatio="1,0.5" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-562.733,1.151" LabelRatio="1,0.5" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2608,7 +2608,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[New Carrollton]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-578.483,50.901" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-578.483,50.901" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2645,7 +2645,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Georgia Avenue-Petworth]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-23.483,121.901" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-23.483,121.901" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2697,7 +2697,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Columbia Heights]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-6.483,121.901" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-6.483,121.901" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2749,7 +2749,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[U Street]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-56.483,61.901" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-56.483,61.901" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2801,7 +2801,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Shaw-Howard Univ]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-49.983,1.901" LabelRatio="0.5,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-49.983,1.901" LabelRatio="0.5,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2853,7 +2853,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Mt Vernon Sq 7th St]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-47.483,-26.098" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-47.483,-26.098" LabelRatio="0.5,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2905,7 +2905,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text>Archives</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutOffset="-54.483,-158.098" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutOffset="-54.483,-158.098" LabelRatio="1,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2957,7 +2957,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Eisenhower Avenue]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="48.766,-434.348" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="48.766,-434.348" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -2986,7 +2986,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text>Huntington</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,0" LayoutOffset="106.516,-492.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,0" LayoutOffset="106.516,-492.098" LabelRatio="0,1" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -3023,7 +3023,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text>Greenbelt</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-406.483,240.901" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-406.483,240.901" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -3060,7 +3060,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[College Park - University of Maryland]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-210.733,184.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-210.733,184.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -3089,7 +3089,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Prince George's Plaza]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-229.733,184.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-229.733,184.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -3118,7 +3118,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[West Hyattsville]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="0,1" LayoutOffset="-203.733,124.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="0,1" LayoutOffset="-203.733,124.151" LabelRatio="1,0" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -3147,7 +3147,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text>McLean</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="588.766,12.151" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="588.766,12.151" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -3176,7 +3176,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Tysons Corner]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="648.766,12.151" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="648.766,12.151" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -3205,7 +3205,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text>Greensboro</y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="708.766,12.151" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="708.766,12.151" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -3234,7 +3234,7 @@
 					<y:Label Style="{y:GraphMLReference 2}">
 						<y:Label.Text><![CDATA[Spring Hill]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="768.766,12.151" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="768.766,12.151" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>
@@ -3263,7 +3263,7 @@
 					<y:Label Style="{y:GraphMLReference 4}">
 						<y:Label.Text><![CDATA[Wiehle-Reston East]]></y:Label.Text>
 						<y:Label.LayoutParameter>
-							<y:RatioAnchoredLabelModelParameter LayoutRatio="1,1" LayoutOffset="826.516,8.901" Model="{y:GraphMLReference 1}"/>
+							<yx:FreeNodeLabelModelParameter LayoutRatio="1,1" LayoutOffset="826.516,8.901" Model="{y:GraphMLReference 1}"/>
 						</y:Label.LayoutParameter>
 					</y:Label>
 				</x:List>

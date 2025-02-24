@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,32 +31,24 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/addon/dialog/dialog.css'
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/addon/dialog/dialog'
-
-/** @type {HTMLDivElement} */
 let container
 let sourceDataView
-
 /**
  * Initializes a data view in the element with the given selector.
  * The data view displays JSON data in a CodeMirror editor.
- * @param {!string} selector
  */
 function initDataView(selector) {
   container = document.querySelector(selector)
   const header = document.createElement('div')
   const dataContainer = document.createElement('div')
   const textArea = document.createElement('textarea')
-
   container.appendChild(header)
   container.appendChild(dataContainer)
   dataContainer.appendChild(textArea)
-
   container.setAttribute('class', 'demo-overlay')
   dataContainer.setAttribute('class', 'data-container')
   header.setAttribute('class', 'demo-overlay__header')
-
   header.textContent = 'Source Data'
-
   header.addEventListener('click', () => {
     container.classList.toggle('collapsed')
   })
@@ -67,21 +59,17 @@ function initDataView(selector) {
     readOnly: true
   })
 }
-
 /**
  * Updates the data view with the given data.
- * @param {*} nodesSource An object or JSON string that contains the nodes data.
+ * @param nodesSource An object or JSON string that contains the nodes data.
  * @param groupsSource An object or JSON string that contains the groups data.
  * @param edgesSource An object or JSON string that contains the edges data.
- * @param {*} [groupsSource]
- * @param {*} [edgesSource]
  */
 function updateDataView(nodesSource, groupsSource, edgesSource) {
   if (sourceDataView) {
     const nodesData = stringifyData(nodesSource)
     const groupsData = stringifyData(groupsSource)
     const edgesData = stringifyData(edgesSource)
-
     let editorData = `// nodes source:\n${nodesData}`
     if (groupsData) {
       editorData += `\n\n// groups source:\n${groupsData}`
@@ -89,18 +77,11 @@ function updateDataView(nodesSource, groupsSource, edgesSource) {
     if (edgesData) {
       editorData += `\n\n// edges source:\n${edgesData}`
     }
-
     sourceDataView.setValue(editorData)
   }
 }
-
-/**
- * @param {*} data
- * @returns {*}
- */
 function stringifyData(data) {
   const t = typeof data
   return t === 'undefined' ? '' : t === 'string' ? data : JSON.stringify(data, null, 2)
 }
-
 export { initDataView, updateDataView }

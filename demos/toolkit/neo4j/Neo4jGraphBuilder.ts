@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, GraphComponent, INodeStyle, ShapeNodeStyle } from 'yfiles'
+import { GraphBuilder, GraphComponent, INodeStyle, ShapeNodeStyle } from '@yfiles/yfiles'
 import type { Integer, Node, Relationship } from './Neo4jUtil'
 
 /**
@@ -106,7 +106,7 @@ export function createGraphBuilder(
     labels: ['type']
   })
 
-  graphBuilder.addNodeCreatedListener((_, { graph, item, dataItem }) => {
+  graphBuilder.addEventListener('node-created', ({ graph, item, dataItem }) => {
     // look for a mapping for any of the nodes labels and use the mapped style
     let matchingLabel: string = dataItem.labels.find((label: string) => label in nodeStyleMapping)
     if (!matchingLabel) {

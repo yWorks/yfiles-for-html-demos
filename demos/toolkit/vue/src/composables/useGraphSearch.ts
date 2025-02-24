@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,13 +28,13 @@
  ***************************************************************************/
 import {
   GraphComponent,
-  IndicatorNodeStyleDecorator,
+  NodeStyleIndicatorRenderer,
   ShapeNodeStyle,
   Stroke,
-  StyleDecorationZoomPolicy
-} from 'yfiles'
+  StyleIndicatorZoomPolicy
+} from '@yfiles/yfiles'
 import { onMounted } from 'vue'
-import { GraphSearch } from 'demo-utils/GraphSearch.ts'
+import { GraphSearch } from '@yfiles/demo-utils/GraphSearch.ts'
 
 export function useGraphSearch(getGraphComponent: () => GraphComponent) {
   let graphComponent: GraphComponent
@@ -51,19 +51,19 @@ export function useGraphSearch(getGraphComponent: () => GraphComponent) {
    */
   function register(): void {
     graphSearch = new GraphSearch(graphComponent)
-    graphSearch.highlightStyle = new IndicatorNodeStyleDecorator({
-      wrapped: new ShapeNodeStyle({
+    graphSearch.highlightRenderer = new NodeStyleIndicatorRenderer({
+      nodeStyle: new ShapeNodeStyle({
         stroke: new Stroke(0x03, 0xa9, 0xf4, 220, 3),
         fill: null
       }),
-      padding: 3,
-      zoomPolicy: StyleDecorationZoomPolicy.MIXED
+      margins: 3,
+      zoomPolicy: StyleIndicatorZoomPolicy.MIXED
     })
-    graphComponent.graph.addNodeCreatedListener(updateSearch)
-    graphComponent.graph.addNodeRemovedListener(updateSearch)
-    graphComponent.graph.addLabelAddedListener(updateSearch)
-    graphComponent.graph.addLabelRemovedListener(updateSearch)
-    graphComponent.graph.addLabelTextChangedListener(updateSearch)
+    graphComponent.graph.addEventListener('node-created', updateSearch)
+    graphComponent.graph.addEventListener('node-removed', updateSearch)
+    graphComponent.graph.addEventListener('label-added', updateSearch)
+    graphComponent.graph.addEventListener('label-removed', updateSearch)
+    graphComponent.graph.addEventListener('label-text-changed', updateSearch)
   }
 
   /**

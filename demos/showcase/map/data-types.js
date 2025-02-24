@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,35 +27,13 @@
  **
  ***************************************************************************/
 /**
- * Type describing an airport with IATA-code and location.
- * @typedef {Object} Airport
- * @property {string} iata
- * @property {string} name
- * @property {number} lat
- * @property {number} lng
- * @property {number} passengers
- */
-
-/**
- * Type describing a connection between airports.
- * @typedef {Object} Connection
- * @property {string} from
- * @property {string} to
- */
-
-/**
  * Returns the business data for an airport type-safe.
- * @param {!INode} node
- * @returns {!Airport}
  */
 export function getAirportData(node) {
   return node.tag
 }
-
 /**
  * Returns the business data for a connection between airports type-safe.
- * @param {!IEdge} edge
- * @returns {!Connection}
  */
 export function getConnectionData(edge) {
   return edge.tag

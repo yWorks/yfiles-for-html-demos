@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,18 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { PaperSize } from './PaperSize.js'
-import { GraphComponent, Insets, Size, SvgExport, WebGL2GraphModelManager } from 'yfiles'
-import { useWebGL2Rendering } from '../svgexport/webgl-support.js'
-import { hideExportDialog } from '../svgexport/export-dialog/export-dialog.js'
-
+import { PaperSize } from './PaperSize'
+import { GraphComponent, Insets, Size, SvgExport, WebGLGraphModelManager } from '@yfiles/yfiles'
+import { useWebGLRendering } from './webgl-support'
+import { hideExportDialog } from './export-dialog/export-dialog'
 /**
  * Enables the server-side export checkbox in a non-blocking way, if that export mode is available.
- * @param {!string} url
  */
 export function initializeServerSideExport(url) {
   initializeForm()
-
   // if a server is available, enable the server export button
   isServerAlive(url)
     .then((response) => {
@@ -47,13 +44,10 @@ export function initializeServerSideExport(url) {
       // don't enable the button in case of errors
     })
 }
-
 /**
  * Checks if the server at the given URL is alive.
- * @param {!string} url The URL of the service to check.
+ * @param url The URL of the service to check.
  * @param timeout The timeout of the check request.
- * @param {number} [timeout=5000]
- * @returns {!Promise.<Response>}
  */
 async function isServerAlive(url, timeout = 5000) {
   const initObject = {
@@ -62,42 +56,32 @@ async function isServerAlive(url, timeout = 5000) {
     body: 'isAlive',
     mode: 'no-cors'
   }
-
   try {
     const controller = new AbortController()
     const id = setTimeout(() => controller.abort(), timeout)
-
     const response = await fetch(url, {
       ...initObject,
       signal: controller.signal
     })
     clearTimeout(id)
     return Promise.resolve(response)
-  } catch (_) {
+  } catch {
     return Promise.reject(new Error(`Fetch timed out after ${timeout}ms`))
   }
 }
-
 /**
  * Requests a server-side export.
- * @param {!string} svgData a string representation of the SVG document to be exported.
- * @param {!('png'|'pdf')} format the export format, either 'png' or 'pdf'
- * @param {!Size} size the size of the exported image.
- * @param {!string} url the URL of the service that will convert the given SVG document to a raster image.
+ * @param svgData a string representation of the SVG document to be exported.
+ * @param format the export format, either 'png' or 'pdf'
+ * @param size the size of the exported image.
+ * @param url the URL of the service that will convert the given SVG document to a raster image.
  */
 export function requestServerExport(svgData, format, size, url) {
   requestFile(url, format, svgData, size)
   hideExportDialog()
 }
-
 /**
  * Send the request to the server which initiates a file download.
- * @param {!string} url
- * @param {!string} format
- * @param {!string} svgString
- * @param {!Size} size
- * @param {*} margins
- * @param {*} paperSize
  */
 function requestFile(
   url,
@@ -119,12 +103,10 @@ function requestFile(
   margin.setAttribute('value', `${margins.left}`)
   const pSize = document.querySelector('#postPaperSize')
   pSize.setAttribute('value', paperSize === PaperSize.AUTO ? '' : paperSize)
-
   const form = document.querySelector('#postForm')
   form.setAttribute('action', url)
   form.submit()
 }
-
 /**
  * Adds a form to the document body that is used to request the image from the server.
  */
@@ -163,34 +145,30 @@ function initializeForm() {
   paperSize.name = 'paperSize'
   paperSize.type = 'hidden'
   form.appendChild(paperSize)
-
   document.body.appendChild(form)
 }
-
 /**
  * Exports an SVG element of the passed {@link IGraph} on the server-side.
  * The {@link SvgExport} exports an SVG element of a {@link GraphComponent} into an
  * SVG document which is sent to the server that converts it to a PNG image or PDF document.
- * @param {!GraphComponent} graphComponent
- * @param {number} [scale=1]
- * @param {*} margins
- * @param {!Rect} [exportRect]
- * @returns {!Promise.<object>}
  */
-export async function exportSvg(graphComponent, scale = 1, margins = Insets.from(5), exportRect) {
+export async function exportSvg(
+  graphComponent,
+  scale = 1,
+  margins = Insets.from(5),
+  exportRect,
+  renderCompletionCallback
+) {
   // Create a new graph component for exporting the original SVG content
   const exportComponent = new GraphComponent()
   // ... and assign it the same graph.
   exportComponent.graph = graphComponent.graph
-  exportComponent.updateContentRect()
-
-  if (graphComponent.graphModelManager instanceof WebGL2GraphModelManager) {
-    useWebGL2Rendering(exportComponent)
+  exportComponent.updateContentBounds()
+  if (graphComponent.graphModelManager instanceof WebGLGraphModelManager) {
+    useWebGLRendering(exportComponent)
   }
-
   // Determine the bounds of the exported area
-  const targetRect = exportRect || exportComponent.contentRect
-
+  const targetRect = exportRect || exportComponent.contentBounds
   // Create the exporter class
   const exporter = new SvgExport({
     worldBounds: targetRect,
@@ -199,11 +177,12 @@ export async function exportSvg(graphComponent, scale = 1, margins = Insets.from
     encodeImagesBase64: true,
     inlineSvgImages: true
   })
-
   // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
   exporter.cssStyleSheet = null
-
-  const svgElement = await exporter.exportSvgAsync(exportComponent)
+  const svgElement = await exporter.exportSvgAsync(
+    exportComponent,
+    renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
+  )
   return {
     element: svgElement,
     size: new Size(exporter.viewWidth, exporter.viewHeight)

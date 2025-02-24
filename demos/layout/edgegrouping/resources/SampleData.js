@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -50,7 +50,6 @@ export default {
     { id: 19 },
     { id: 20 }
   ],
-
   edges: [
     { id: 0, from: 0, to: 20, groupIds: { sourceGroupId: 'st9', targetGroupId: 'st9' } },
     { id: 1, from: 1, to: 2, groupIds: { sourceGroupId: 's1' } },

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,23 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, GraphSnapContext, LabelSnapContext } from 'yfiles'
-
-/**
- * @param {!GraphComponent} graphComponent
- */
+import {
+  GraphComponent,
+  GraphEditorInputMode,
+  GraphSnapContext,
+  SnappableItems
+} from '@yfiles/yfiles'
 export function initializeSnapping(graphComponent) {
   const gcInputMode = graphComponent.inputMode
-  const graphSnapContext = new GraphSnapContext({
-    enabled: true,
-    snapNodesToSnapLines: true,
-    snapBendAdjacentSegments: false,
-    snapBendsToSnapLines: false,
-    snapOrthogonalMovement: false,
-    snapPortAdjacentSegments: false,
-    snapSegmentsToSnapLines: false
+  gcInputMode.snapContext = new GraphSnapContext({
+    snappableItems: SnappableItems.NODE
   })
-  const labelSnapContext = new LabelSnapContext()
-  gcInputMode.snapContext = graphSnapContext
-  gcInputMode.labelSnapContext = labelSnapContext
 }

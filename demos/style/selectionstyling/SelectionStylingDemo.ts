@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,42 +27,38 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   EdgePathLabelModel,
-  ExteriorLabelModel,
+  EdgeStyleIndicatorRenderer,
+  ExteriorNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
-  GraphFocusIndicatorManager,
   GraphItemTypes,
-  GraphSelectionIndicatorManager,
-  IndicatorEdgeStyleDecorator,
-  IndicatorLabelStyleDecorator,
-  IndicatorNodeStyleDecorator,
+  LabelStyle,
+  LabelStyleIndicatorRenderer,
   License,
+  NodeStyleIndicatorRenderer,
   Point,
   PolylineEdgeStyle,
   Rect,
   ShapeNodeStyle,
   Size,
-  StyleDecorationZoomPolicy,
-  VoidNodeStyle
-} from 'yfiles'
+  StyleIndicatorZoomPolicy
+} from '@yfiles/yfiles'
 
-import {
-  applyDemoTheme,
-  createDemoEdgeStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
-let selectionNodeStyle: IndicatorNodeStyleDecorator
+let selectionNodeStyle: NodeStyleIndicatorRenderer
+let currentSelectionNodeStyle: NodeStyleIndicatorRenderer | null
 
-let selectionEdgeStyle: IndicatorEdgeStyleDecorator
+let selectionEdgeStyle: EdgeStyleIndicatorRenderer
+let currentSelectionEdgeStyle: EdgeStyleIndicatorRenderer | null
 
-let selectionLabelStyle: IndicatorLabelStyleDecorator
+let selectionLabelStyle: LabelStyleIndicatorRenderer
+let currentSelectionLabelStyle: LabelStyleIndicatorRenderer | null
 
 let zoomModeComboBox: HTMLSelectElement
 
@@ -97,11 +93,10 @@ async function run(): Promise<void> {
  */
 function init(): void {
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   zoomModeComboBox = document.querySelector<HTMLSelectElement>('#zoom-mode')!
 
   // initialize the helper UI
-  const items = ['Mixed', 'Zoom with Graph', 'Always the same size']
+  const items = ['Mixed', 'Zoom with Graph', 'Always the Same Size', 'No Downscaling']
 
   items.forEach((name) => {
     const option = document.createElement('option')
@@ -121,22 +116,23 @@ function initializeGraph(): void {
   graph.nodeDefaults.size = new Size(50, 30)
 
   // defaults for labels
-  const simpleLabelStyle = new DefaultLabelStyle({
+  const simpleLabelStyle = new LabelStyle({
     backgroundFill: '#FFC398',
     textFill: '#662b00',
-    insets: [3, 5, 3, 5]
+    padding: [3, 5, 3, 5]
   })
 
   // nodes...
   graph.nodeDefaults.labels.style = simpleLabelStyle
-  const exteriorLabelModel = new ExteriorLabelModel({ insets: 15 })
-  graph.nodeDefaults.labels.layoutParameter = exteriorLabelModel.createParameter('north')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 15
+  }).createParameter('top')
 
   graph.edgeDefaults.style = createDemoEdgeStyle()
   graph.edgeDefaults.labels.style = simpleLabelStyle
 
   // labels
-  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel().createDefaultParameter()
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel().createRatioParameter()
 
   // create a simple sample graph
   const n1 = graph.createNode({ layout: new Rect(0, 0, 50, 30), labels: ['Node 1'] })
@@ -150,7 +146,7 @@ function initializeGraph(): void {
   })
 
   // center the graph on the screen
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   // select all elements to show the effect
   selectAllNodes()
@@ -169,47 +165,49 @@ function initializeGraph(): void {
  */
 function initializeDecoration(): void {
   // for nodes...
-  selectionNodeStyle = new IndicatorNodeStyleDecorator({
+  currentSelectionNodeStyle = selectionNodeStyle = new NodeStyleIndicatorRenderer({
     // we choose a shape node style
-    wrapped: new ShapeNodeStyle({
+    nodeStyle: new ShapeNodeStyle({
       shape: 'round-rectangle',
       stroke: '#01BAFF',
       fill: 'transparent'
     }),
     // with a margin for the decoration
-    padding: 8
+    margins: 8
   })
 
   // for edges..
   // just a thick polyline edge style
-  selectionEdgeStyle = new IndicatorEdgeStyleDecorator({
-    wrapped: new PolylineEdgeStyle({
+  currentSelectionEdgeStyle = selectionEdgeStyle = new EdgeStyleIndicatorRenderer({
+    edgeStyle: new PolylineEdgeStyle({
       stroke: '3px #01BAFF'
     })
   })
 
   // ... and for labels
-  selectionLabelStyle = new IndicatorLabelStyleDecorator({
+  currentSelectionLabelStyle = selectionLabelStyle = new LabelStyleIndicatorRenderer({
     // we use a node style with a rounded rectangle adapted as a label style, and we declare a margin for the
     // decoration
-    wrapped: new DefaultLabelStyle({
+    labelStyle: new LabelStyle({
       shape: 'rectangle',
       backgroundStroke: '#01BAFF',
       textFill: 'transparent'
     }),
-    padding: 5
+    margins: 5
   })
 
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    nodeStyle: selectionNodeStyle,
-    edgeStyle: selectionEdgeStyle,
-    labelStyle: selectionLabelStyle
-  })
+  graphComponent.graph.decorator.nodes.selectionRenderer.addWrapperFactory(
+    (_, original) => currentSelectionNodeStyle ?? original
+  )
+  graphComponent.graph.decorator.edges.selectionRenderer.addWrapperFactory(
+    (_, original) => currentSelectionEdgeStyle ?? original
+  )
+  graphComponent.graph.decorator.labels.selectionRenderer.addWrapperFactory(
+    (_, original) => currentSelectionLabelStyle ?? original
+  )
 
   // hide focus indication
-  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
+  graphComponent.graph.decorator.nodes.focusRenderer.hide()
 }
 
 /**
@@ -218,9 +216,10 @@ function initializeDecoration(): void {
  */
 function updateZoomModeDecoration(): void {
   const zoomModes = [
-    StyleDecorationZoomPolicy.MIXED,
-    StyleDecorationZoomPolicy.WORLD_COORDINATES,
-    StyleDecorationZoomPolicy.VIEW_COORDINATES
+    StyleIndicatorZoomPolicy.MIXED,
+    StyleIndicatorZoomPolicy.WORLD_COORDINATES,
+    StyleIndicatorZoomPolicy.VIEW_COORDINATES,
+    StyleIndicatorZoomPolicy.NO_DOWNSCALING
   ]
   const selectedZoomMode = zoomModes[zoomModeComboBox.selectedIndex]
 
@@ -230,23 +229,23 @@ function updateZoomModeDecoration(): void {
 }
 
 function selectAllNodes(): void {
-  const nodeSelection = graphComponent.selection.selectedNodes
+  const nodeSelection = graphComponent.selection.nodes
   graphComponent.graph.nodes.forEach((node) => {
-    nodeSelection.setSelected(node, true)
+    nodeSelection.add(node)
   })
 }
 
 function selectAllEdges(): void {
-  const edgeSelection = graphComponent.selection.selectedEdges
+  const edgeSelection = graphComponent.selection.edges
   graphComponent.graph.edges.forEach((edge) => {
-    edgeSelection.setSelected(edge, true)
+    edgeSelection.add(edge)
   })
 }
 
 function selectAllLabels(): void {
-  const labelSelection = graphComponent.selection.selectedLabels
+  const labelSelection = graphComponent.selection.labels
   graphComponent.graph.labels.forEach((label) => {
-    labelSelection.setSelected(label, true)
+    labelSelection.add(label)
   })
 }
 
@@ -277,31 +276,26 @@ function initializeUI(): void {
 
 function customNodeDecorationChanged(value: boolean) {
   nodesSelected = value
-  const selectionIndicatorManager =
-    graphComponent.selectionIndicatorManager as GraphSelectionIndicatorManager
-  selectionIndicatorManager.nodeStyle = value ? selectionNodeStyle : null
+  currentSelectionNodeStyle = value ? selectionNodeStyle : null
+
   // de-select and re-select all nodes to refresh the selection visualization
-  graphComponent.selection.selectedNodes.clear()
+  graphComponent.selection.nodes.clear()
   selectAllNodes()
 }
 
 function customEdgeDecorationChanged(value: boolean) {
   edgesSelected = value
-  const selectionIndicatorManager =
-    graphComponent.selectionIndicatorManager as GraphSelectionIndicatorManager
-  selectionIndicatorManager.edgeStyle = value ? selectionEdgeStyle : null
+  currentSelectionEdgeStyle = value ? selectionEdgeStyle : null
   // de-select and re-select all edges to refresh the selection visualization
-  graphComponent.selection.selectedEdges.clear()
+  graphComponent.selection.edges.clear()
   selectAllEdges()
 }
 
 function customLabelDecorationChanged(value: boolean) {
   labelsSelected = value
-  const selectionIndicatorManager =
-    graphComponent.selectionIndicatorManager as GraphSelectionIndicatorManager
-  selectionIndicatorManager.labelStyle = value ? selectionLabelStyle : null
-  // de-select and re-select all labels to refresh the selection visualization
-  graphComponent.selection.selectedLabels.clear()
+  currentSelectionLabelStyle = value ? selectionLabelStyle : null
+  // deselect and re-select all labels to refresh the selection visualization
+  graphComponent.selection.labels.clear()
   selectAllLabels()
 }
 

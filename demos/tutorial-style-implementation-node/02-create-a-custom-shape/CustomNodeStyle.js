@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,41 +26,25 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { NodeStyleBase, SvgVisual } from 'yfiles'
-
+import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 /**
  * A node style that renders a simple card shape with a tab.
  */
 export class CustomNodeStyle extends NodeStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {?Visual}
-   */
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
-
     const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     pathElement.setAttribute('d', createPathData(x, y, width, height))
     pathElement.setAttribute('fill', '#0b7189')
     pathElement.setAttribute('stroke', '#042d37')
-
     // wrap the SVG path into an SvgVisual
     return new SvgVisual(pathElement)
   }
 }
-
-
 const tabWidth = 50
 const tabHeight = 10
-
 /**
  * Creates the path data for the SVG path element.
- * @param {number} x
- * @param {number} y
- * @param {number} width
- * @param {number} height
- * @returns {!string}
  */
 function createPathData(x, y, width, height) {
   return (
@@ -72,4 +56,3 @@ function createPathData(x, y, width, height) {
     `h ${-width} z`
   )
 }
-

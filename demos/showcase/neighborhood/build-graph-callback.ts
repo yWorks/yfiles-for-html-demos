@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphCopier, IEdge, IModelItem, INode, Neighborhood, TraversalDirection } from 'yfiles'
+import {
+  GraphCopier,
+  IEdge,
+  IModelItem,
+  INode,
+  Neighborhood,
+  TraversalDirection
+} from '@yfiles/yfiles'
 import { NeighborhoodType } from './NeighborhoodType'
 import type { BuildGraphCallback, NeighborhoodView } from './NeighborhoodView'
 
@@ -73,7 +80,7 @@ export function getBuildNeighborhoodCallback(
 function buildFolderContents(
   view: NeighborhoodView,
   selectedSourceNodes: INode[],
-  elementCopiedCallback: (sourceItem: IModelItem, targetItem: IModelItem) => void
+  itemCopiedCallback: (sourceItem: IModelItem, targetItem: IModelItem) => void
 ): void {
   const nodesToCopy = new Set<INode>()
 
@@ -92,12 +99,11 @@ function buildFolderContents(
   })
 
   // Use GraphCopier to copy the nodes inside the neighborhood into the NeighborhoodComponent's graph.
-  // Include only edges that are descendants of the same root node.
   const graphCopier = new GraphCopier()
   graphCopier.copy({
     sourceGraph: masterGraph,
     targetGraph: view.neighborhoodGraph,
-    filter: (item) => {
+    copyPredicate: (item) => {
       if (item instanceof IEdge) {
         // filter intra-component edges
         return !!selectedSourceNodes.find(
@@ -108,7 +114,7 @@ function buildFolderContents(
       }
       return !(item instanceof INode) || nodesToCopy.has(item)
     },
-    elementCopiedCallback
+    itemCopiedCallback
   })
 }
 
@@ -118,7 +124,7 @@ function buildFolderContents(
 function buildNeighborhood(
   view: NeighborhoodView,
   selectedSourceNodes: INode[],
-  elementCopiedCallback: (sourceItem: IModelItem, targetItem: IModelItem) => void,
+  itemCopiedCallback: (sourceItem: IModelItem, targetItem: IModelItem) => void,
   direction: TraversalDirection,
   maxDistance: number
 ): void {
@@ -144,8 +150,8 @@ function buildNeighborhood(
   graphCopier.copy({
     sourceGraph: sourceGraph,
     targetGraph: view.neighborhoodGraph,
-    filter: (item) => !(item instanceof INode) || nodesToCopy.has(item),
-    elementCopiedCallback
+    copyPredicate: (item) => !(item instanceof INode) || nodesToCopy.has(item),
+    itemCopiedCallback
   })
 }
 

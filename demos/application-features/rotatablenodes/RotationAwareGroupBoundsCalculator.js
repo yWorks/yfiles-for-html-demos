@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,27 +30,28 @@ import {
   BaseClass,
   IGraph,
   IGroupBoundsCalculator,
+  IGroupPaddingProvider,
   INode,
-  INodeInsetsProvider,
   Insets,
   Rect
-} from 'yfiles'
-import { RotatableNodeStyleDecorator } from './RotatableNodes.js'
-
+} from '@yfiles/yfiles'
+import { RotatableNodeStyleDecorator } from './RotatableNodes'
 /**
  * Calculates group bounds taking the rotated layout for nodes which
  * {@link RotatableNodeStyleDecorator support rotation}.
  */
 export default class RotationAwareGroupBoundsCalculator extends BaseClass(IGroupBoundsCalculator) {
+  node
+  constructor(node) {
+    super()
+    this.node = node
+  }
   /**
    * Calculates the minimum bounds for the given group node to enclose all its children plus insets.
-   * @param {!IGraph} graph
-   * @param {!INode} groupNode
-   * @returns {!Rect}
    */
-  calculateBounds(graph, groupNode) {
+  calculateBounds(graph) {
     let bounds = Rect.EMPTY
-    graph.getChildren(groupNode).forEach((node) => {
+    graph.getChildren(this.node).forEach((node) => {
       const style = node.style
       if (style instanceof RotatableNodeStyleDecorator) {
         // if the node supports rotation: add the outer bounds of the rotated layout
@@ -61,20 +62,17 @@ export default class RotationAwareGroupBoundsCalculator extends BaseClass(IGroup
       }
     })
     // if we have content: add insets
-    return bounds.isEmpty ? bounds : bounds.getEnlarged(getInsets(groupNode))
+    return bounds.isEmpty ? bounds : bounds.getEnlarged(getPadding(this.node))
   }
 }
-
 /**
  * Returns insets to add to apply to the given groupNode.
- * @param {!INode} groupNode
- * @returns {!Insets}
  */
-function getInsets(groupNode) {
-  const provider = groupNode.lookup(INodeInsetsProvider.$class)
+function getPadding(groupNode) {
+  const provider = groupNode.lookup(IGroupPaddingProvider)
   if (provider) {
     // get the insets from the node's insets provider if there is one
-    return provider.getInsets(groupNode)
+    return provider.getPadding()
   }
   // otherwise add 5 to each border
   return new Insets(5)

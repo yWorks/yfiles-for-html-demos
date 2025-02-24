@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,41 +29,29 @@
 import * as CodeMirror from 'codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/css/css'
-
 let editor
-
 /**
  * Initializes a data view in the element with the given selector.
  * The data view displays a CSS Stylesheet in a CodeMirror editor.
- * @param {!string} selector
- * @returns {!Promise}
  */
 export async function createStylesheetView(selector) {
   const container = document.querySelector(selector)
   const dataContainer = document.createElement('div')
   const textArea = document.createElement('textarea')
-
   container.appendChild(dataContainer)
   dataContainer.appendChild(textArea)
-
   dataContainer.setAttribute('class', 'data-container')
-
   editor = CodeMirror.fromTextArea(textArea, {
     lineNumbers: true,
     mode: { name: 'css' }
   })
-
   let stylesheet = await fetchStylesheet()
-
   // remove the @license doc comment from the css file
   stylesheet = stylesheet.replace(/\/\*{2,}.*@license.*\*{2,}\/(\n|\r\n)/s, '')
-
   editor.setValue(stylesheet)
 }
-
 /**
  * Fetches the raw stylesheet data to display it in the demo.
- * @returns {!Promise.<string>}
  */
 async function fetchStylesheet() {
   const stylesheetUrl = './graph-item-styles.css'
@@ -80,7 +68,6 @@ async function fetchStylesheet() {
     return Promise.resolve(`Could not fetch ${stylesheetUrl}.\n${e}`)
   }
 }
-
 /**
  * Replaces the stylesheet for the item styles with the current content of the editor.
  */
@@ -88,7 +75,6 @@ export function replaceStylesheet() {
   removeStylesheet()
   addStylesheet()
 }
-
 /**
  * Removes the user stylesheet from the document.
  */
@@ -99,7 +85,6 @@ export function removeStylesheet() {
     head.removeChild(el)
   }
 }
-
 /**
  * Adds the contents of the CSS editor as a stylesheet in the document.
  */

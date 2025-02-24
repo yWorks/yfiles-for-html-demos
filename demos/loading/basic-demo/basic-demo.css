@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,6 +29,9 @@
 :root {
   --header-bg-color: #343e49;
   --sidebar-bg-color: #e0edf0;
+  --base-spacing: clamp(0.5rem, 2vw, 1rem);
+  --header-height: clamp(2.5rem, 5vw, 4rem);
+  --sidebar-width: clamp(12rem, 25vw, 18em);
 }
 
 * {
@@ -39,26 +42,54 @@ html,
 body {
   width: 100%;
   height: 100%;
-  font-family: sans-serif;
+  font-family: system-ui, sans-serif;
+  font-size: clamp(14px, 1vw + 0.5rem, 16px);
 }
 
 body {
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template: 'header header' min-content 'sidebar main' 1fr / 18em 1fr;
+  grid-template: 'header header' min-content 'sidebar main' 1fr / var(--sidebar-width) 1fr;
+}
+
+@media (max-width: 768px) {
+  body {
+    grid-template: none;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .demo-header {
+    flex: 0 0 auto;
+  }
+
+  .demo-sidebar {
+    flex: 0 1 auto;
+    max-height: calc(40vh - var(--header-height));
+  }
+
+  .demo-main {
+    flex: 1 0 60vh;
+  }
 }
 
 .demo-header {
   grid-area: header;
   margin: 0;
-  padding: 16px;
+  padding: var(--base-spacing);
   background: var(--header-bg-color);
   color: white;
+  min-height: var(--header-height);
+  display: flex;
+  align-items: center;
 }
 
 .demo-header h1 {
   margin: 0;
+  font-size: clamp(1.2rem, 3vw, 2rem);
 }
 
 .demo-header a,
@@ -68,18 +99,52 @@ body {
 
 .demo-sidebar {
   grid-area: sidebar;
-  padding: 16px;
+  padding: var(--base-spacing);
   background: var(--sidebar-bg-color);
   border-inline-end: 1px solid #bbb;
-  line-height: 140%;
+  line-height: 1.4;
+}
+
+.demo-sidebar h1,
+.demo-sidebar h2,
+.demo-sidebar h3,
+.demo-sidebar h4 {
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  font-weight: 500;
+  margin: calc(var(--base-spacing) * 0.75) 0 calc(var(--base-spacing) * 0.5);
+}
+
+.demo-sidebar h1:first-child,
+.demo-sidebar h2:first-child,
+.demo-sidebar h3:first-child,
+.demo-sidebar h4:first-child {
+  margin-top: 0;
+}
+
+@media (max-width: 768px) {
+  .demo-sidebar {
+    border-inline-end: none;
+    border-block-end: 1px solid #bbb;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .demo-sidebar h1,
+  .demo-sidebar h2,
+  .demo-sidebar h3,
+  .demo-sidebar h4 {
+    font-size: 0.95rem;
+    margin: calc(var(--base-spacing) * 0.5) 0 calc(var(--base-spacing) * 0.25);
+  }
 }
 
 #actionsArea button {
-  margin: 0 8px;
+  margin: 0 calc(var(--base-spacing) * 0.5);
   border: 1px solid var(--header-bg-color);
-  padding: 4px 12px;
+  padding: calc(var(--base-spacing) * 0.25) calc(var(--base-spacing) * 0.75);
   border-radius: 4px;
   cursor: pointer;
+  font-size: clamp(0.875rem, 1vw + 0.5rem, 1rem);
 }
 
 #actionsArea button:hover {

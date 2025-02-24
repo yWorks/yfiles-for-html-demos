@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
  ***************************************************************************/
 import {
   GeneralPath,
-  GeomUtilities,
+  GeometryUtilities,
   HtmlCanvasVisual,
   ICanvasContext,
   IInputModeContext,
@@ -40,8 +40,7 @@ import {
   Point,
   Rect,
   Visual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * A node style for HTML5 Canvas rendering with a complex visualization. Its visual complexity is
  * similar to the complex SVG node style. As a result, their performance is comparable.
@@ -49,35 +48,31 @@ import {
 export default class ComplexCanvasNodeStyle extends NodeStyleBase {
   /**
    * Creates the visual representation for the given node.
-   * @param {!IRenderContext} context The render context.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param context The render context.
+   * @param node The node to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link ComplexCanvasNodeStyle.updateVisual}
    */
   createVisual(context, node) {
     const type = typeof node.tag === 'number' ? node.tag : 0
     return new NodeRenderVisual(node.layout, COLOR_SCHEMES[type % COLOR_SCHEMES.length])
   }
-
   /**
    * Updates the visual representation for the given node.
-   * @param {!IRenderContext} context The render context.
-   * @param {!Visual} oldVisual The visual that has been created in the call to
+   * @param context The render context.
+   * @param oldVisual The visual that has been created in the call to
    * {@link ComplexCanvasNodeStyle.createVisual}.
-   * @param {!INode} node The node to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param node The node to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link ComplexCanvasNodeStyle.createVisual}
    */
   updateVisual(context, oldVisual, node) {
     return oldVisual
   }
-
   /**
    * Gets the outline of the node, an ellipse in this case.
    * This allows correct edge path intersection calculation, among others.
    * @see Overrides {@link NodeStyleBase.getOutline}
-   * @param {!INode} node
-   * @returns {!GeneralPath}
    */
   getOutline(node) {
     const rect = this.getEllipseBounds(node.layout)
@@ -85,24 +80,21 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
     outline.appendEllipse(rect, false)
     return outline
   }
-
   /**
    * Get the bounding box of the node.
-   * @param {!ICanvasContext} context The canvas context.
-   * @param {!INode} node The node whose bounds are returned.
+   * @param context The canvas context.
+   * @param node The node whose bounds are returned.
    * @see Overrides {@link NodeStyleBase.getBounds}
-   * @returns {!Rect}
    */
   getBounds(context, node) {
     return node.layout.toRect()
   }
-
   /**
    * Hit test which considers the HitTestRadius specified in CanvasContext.
-   * @param {!IInputModeContext} context The input mode context.
-   * @param {!Point} p The location to be checked.
-   * @param {!INode} node The node that may be hit.
-   * @returns {boolean} True if p is inside node.
+   * @param context The input mode context.
+   * @param p The location to be checked.
+   * @param node The node that may be hit.
+   * @returns True if p is inside node.
    * @see Overrides {@link NodeStyleBase.isHit}
    */
   isHit(context, p, node) {
@@ -110,15 +102,14 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
       return false
     }
     const bounds = this.getEllipseBounds(node.layout)
-    return GeomUtilities.ellipseContains(bounds, p, context.hitTestRadius)
+    return GeometryUtilities.ellipseContains(bounds, p, context.hitTestRadius)
   }
-
   /**
    * Checks if a node is inside a certain box. Considers HitTestRadius.
-   * @param {!IInputModeContext} context The input mode context.
-   * @param {!Rect} rectangle the rectangle to be checked.
-   * @param {!INode} node The node that may be in the rectangle.
-   * @returns {boolean} True if the box intersects the elliptical shape of the node. Also true if box lies
+   * @param context The input mode context.
+   * @param rectangle the rectangle to be checked.
+   * @param node The node that may be in the rectangle.
+   * @returns True if the box intersects the elliptical shape of the node. Also true if box lies
    * completely inside node.
    * @see Overrides {@link NodeStyleBase.isInBox}
    */
@@ -127,15 +118,12 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
     if (!super.isInBox(context, rectangle, node)) {
       return false
     }
-
     const eps = context.hitTestRadius
-
     const outline = this.getOutline(node)
     if (outline === null) {
       return false
     }
-
-    if (outline.intersects(rectangle, eps)) {
+    if (outline.pathIntersects(rectangle, eps)) {
       return true
     }
     if (
@@ -149,44 +137,37 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
       rectangle.contains(node.layout.toRect().bottomRight)
     )
   }
-
   /**
    * Exact geometric check whether a point p lies inside the node. This is important for
    * e.g. intersection calculation.
    * @see Overrides {@link NodeStyleBase.isInside}
-   * @param {!INode} node The node.
-   * @param {!Point} p The point to be checked.
-   * @returns {boolean}
+   * @param node The node.
+   * @param p The point to be checked.
    */
   isInside(node, p) {
     if (!super.isInside(node, p)) {
       return false
     }
     const bounds = this.getEllipseBounds(node.layout)
-    return GeomUtilities.ellipseContains(bounds, p, 0)
+    return GeometryUtilities.ellipseContains(bounds, p, 0)
   }
-
   /**
    * Calculates the intersection point of the node's outline with a line between
    * an inner and an outer point.
    * @see Overrides {@link NodeStyleBase.getIntersection}
-   * @param {!INode} node The node.
-   * @param {!Point} inner The inner point of the line.
-   * @param {!Point} outer The outer point of the line.
-   * @returns {?Point}
+   * @param node The node.
+   * @param inner The inner point of the line.
+   * @param outer The outer point of the line.
    */
   getIntersection(node, inner, outer) {
-    return GeomUtilities.findEllipseLineIntersection(
+    return GeometryUtilities.getEllipseLineIntersection(
       this.getEllipseBounds(node.layout),
       inner,
       outer
     )
   }
-
   /**
    * Calculates the bounds of the icon inside the node.
-   * @param {!IRectangle} layout
-   * @returns {!Rect}
    */
   getEllipseBounds(layout) {
     const d = Math.min(layout.width, layout.height)
@@ -195,27 +176,7 @@ export default class ComplexCanvasNodeStyle extends NodeStyleBase {
     return new Rect(x, y, d, d)
   }
 }
-
-/**
- * @typedef {Object} ColorScheme
- * @property {string} undefined
- * @property {string} undefined
- * @property {string} undefined
- * @property {string} undefined
- * @property {string} undefined
- * @property {string} undefined
- * @property {string} undefined
- * @property {string} undefined
- * @property {string} undefined
- * @property {string} undefined
- * @property {string} undefined
- */
-
 const COLOR_SCHEMES = createColorSchemes()
-
-/**
- * @returns {!Array.<ColorScheme>}
- */
 function createColorSchemes() {
   const colorSchemes = []
   colorSchemes.push({
@@ -263,42 +224,30 @@ function createColorSchemes() {
  * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeRenderVisual extends HtmlCanvasVisual {
-  /** 
-   *
-     * The canvas draw commands origins from a converted SVG.
-     * To scale it correctly, the original SVG size is needed.
-     
-  * @type {number}
+  layout
+  colorScheme
+  /**
+   * The canvas draw commands origins from a converted SVG.
+   * To scale it correctly, the original SVG size is needed.
    */
-  static get ORIGINAL_SIZE() {
-    if (typeof NodeRenderVisual.$ORIGINAL_SIZE === 'undefined') {
-      NodeRenderVisual.$ORIGINAL_SIZE = 75
-    }
-
-    return NodeRenderVisual.$ORIGINAL_SIZE
-  }
-
+  static ORIGINAL_SIZE = 75
   /**
    * Creates an instance of the complex canvas node style renderer.
-   * @param {!IRectangle} layout A live view of the layout of a node.
-   * @param {!ColorScheme} colorScheme The color scheme for this visual.
+   * @param layout A live view of the layout of a node.
+   * @param colorScheme The color scheme for this visual.
    */
   constructor(layout, colorScheme) {
     super()
-    this.colorScheme = colorScheme
     this.layout = layout
+    this.colorScheme = colorScheme
   }
-
   /**
    * Draws a complex node style. The visual complexity is comparable to the complex SVG node style, since
    * it is a converted SVG but with a rectangular shape.
    * @see Overrides {@link HtmlCanvasVisual.paint}
-   * @param {!IRenderContext} context
-   * @param {!CanvasRenderingContext2D} htmlCanvasContext
    */
-  paint(context, htmlCanvasContext) {
+  render(context, htmlCanvasContext) {
     const l = this.layout
-
     // get the min of width and height to be able to draw the icon in a square
     const length = Math.min(l.width, l.height)
     htmlCanvasContext.save()
@@ -311,9 +260,7 @@ class NodeRenderVisual extends HtmlCanvasVisual {
       length / NodeRenderVisual.ORIGINAL_SIZE,
       length / NodeRenderVisual.ORIGINAL_SIZE
     )
-
     const colorScheme = this.colorScheme
-
     // draw the icon
     htmlCanvasContext.save()
     htmlCanvasContext.beginPath()

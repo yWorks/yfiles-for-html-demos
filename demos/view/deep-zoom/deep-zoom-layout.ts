@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,12 +29,12 @@
 import {
   CircularLayout,
   type FoldingManager,
-  HierarchicLayout,
+  HierarchicalLayout,
   type IFoldingView,
   type ILayoutAlgorithm,
   type INode,
   OrganicLayout
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Applies different layouts to each of the group layers.
@@ -71,20 +71,20 @@ function applyLayout(foldingManager: FoldingManager, root: INode | null, layer: 
 }
 
 function getLayoutForLayer(layer: number): ILayoutAlgorithm {
-  return layouts[layer] ?? hierarchicLayout
+  return layouts[layer] ?? hierarchicalLayout
 }
 
-const hierarchicLayout = new HierarchicLayout({ orthogonalRouting: true })
-const organicLayout = new OrganicLayout({ minimumNodeDistance: 80 })
+const hierarchicalLayout = new HierarchicalLayout()
+const organicLayout = new OrganicLayout({ defaultMinimumNodeDistance: 80 })
 const circularLayout = new CircularLayout()
 const layouts = [
-  hierarchicLayout,
-  hierarchicLayout,
+  hierarchicalLayout,
+  hierarchicalLayout,
   organicLayout,
-  hierarchicLayout,
+  hierarchicalLayout,
   circularLayout,
   organicLayout,
   circularLayout,
   organicLayout,
-  hierarchicLayout
+  hierarchicalLayout
 ]

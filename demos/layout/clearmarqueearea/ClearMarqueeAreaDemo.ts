@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  BaseClass,
   CanvasComponent,
   ClearAreaStrategy,
   ComponentAssignmentStrategy,
@@ -36,26 +35,32 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  GraphItemTypes,
+  type IEdge,
+  type IEnumerable,
+  IHitTester,
   IInputModeContext,
   INode,
-  INodeHitTester,
+  type IRectangle,
   IRenderContext,
-  IVisualTemplate,
-  KeyEventRecognizers,
   License,
+  MarqueeRenderTag,
   MarqueeSelectionEventArgs,
   MarqueeSelectionInputMode,
-  MouseEventRecognizers,
+  ObjectRendererBase,
   Point,
+  PointerButtons,
+  PointerEventArgs,
+  PointerEventType,
   Rect,
   SvgVisual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import SampleData from './resources/SampleData'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
-import { applyDemoTheme, createDemoGroupStyle, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { createDemoGroupStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent = null!
 
@@ -68,11 +73,9 @@ let clearAreaStrategy: ClearAreaStrategy = ClearAreaStrategy.PRESERVE_SHAPES
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeInputModes()
   initDemoStyles(graphComponent.graph)
-  loadGraph('hierarchic')
+  loadGraph('hierarchical')
 
   graphComponent.graph.undoEngine!.clear()
 
@@ -94,21 +97,29 @@ function initializeInputModes(): void {
   // create an input mode to clear the area of a marquee rectangle
   // using the right mouse button
   const marqueeClearInputMode = new MarqueeSelectionInputMode({
-    template: new ClearRectTemplate(),
-    pressedRecognizer: MouseEventRecognizers.RIGHT_DOWN,
-    draggedRecognizer: MouseEventRecognizers.RIGHT_DRAG,
-    releasedRecognizer: MouseEventRecognizers.RIGHT_UP,
-    cancelRecognizer: EventRecognizers.createOrRecognizer(
-      KeyEventRecognizers.ESCAPE_DOWN,
-      MouseEventRecognizers.LOST_CAPTURE_DURING_DRAG
-    )
+    marqueeRenderer: new ClearRectangleRenderer(),
+    beginRecognizer: (evt) =>
+      evt instanceof PointerEventArgs &&
+      evt.buttons === PointerButtons.MOUSE_RIGHT &&
+      evt.eventType === PointerEventType.DOWN,
+    moveRecognizer: (evt) =>
+      evt instanceof PointerEventArgs && evt.eventType === PointerEventType.DRAG,
+    finishRecognizer: (evt) =>
+      evt instanceof PointerEventArgs &&
+      evt.changedButtons === PointerButtons.MOUSE_RIGHT &&
+      evt.eventType === PointerEventType.UP,
+    cancelRecognizer: (evt, sender) =>
+      EventRecognizers.ESCAPE_DOWN(evt, sender) ||
+      (evt instanceof PointerEventArgs && evt.eventType === PointerEventType.DRAG_CAPTURE_LOST),
+    useViewCoordinates: false
   })
 
   // handle dragging the marquee
-  marqueeClearInputMode.addDragStartingListener(onDragStarting)
-  marqueeClearInputMode.addDraggedListener(onDragged)
-  marqueeClearInputMode.addDragCanceledListener(onDragCanceled)
-  marqueeClearInputMode.addDragFinishedListener(onDragFinished)
+  marqueeClearInputMode.addEventListener('drag-starting', onDragStarting)
+  marqueeClearInputMode.addEventListener('dragged', onDragged)
+  marqueeClearInputMode.addEventListener('drag-canceled', onDragCanceled)
+  marqueeClearInputMode.addEventListener('drag-finished', onDragFinished)
+
   // add this mode to the edit mode
   editMode.add(marqueeClearInputMode)
 
@@ -117,29 +128,29 @@ function initializeInputModes(): void {
 }
 
 /**
- * A template for the red marquee rectangle.
+ * A renderer for the blue marquee rectangle.
  */
-class ClearRectTemplate extends BaseClass(IVisualTemplate) {
-  createVisual(context: IRenderContext, bounds: Rect, dataObject: any): SvgVisual | null {
+class ClearRectangleRenderer extends ObjectRendererBase<MarqueeRenderTag, SvgVisual> {
+  protected createVisual(context: IRenderContext, renderTag: MarqueeRenderTag) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.setAttribute('fill', 'rgba(0,187,255,0.65)')
     rect.setAttribute('stroke', 'rgba(77,131,153,0.65)')
     rect.setAttribute('stroke-width', '1.5')
-    ClearRectTemplate.setBounds(rect, bounds)
+
+    ClearRectangleRenderer.setBounds(rect, renderTag.selectionRectangle)
     return new SvgVisual(rect)
   }
 
-  updateVisual(
+  protected updateVisual(
     context: IRenderContext,
-    oldVisual: SvgVisual,
-    bounds: Rect,
-    dataObject: any
-  ): SvgVisual | null {
-    ClearRectTemplate.setBounds(oldVisual.svgElement, bounds)
+    oldVisual: any,
+    renderTag: MarqueeRenderTag
+  ): any {
+    ClearRectangleRenderer.setBounds(oldVisual.svgElement, renderTag.selectionRectangle)
     return oldVisual
   }
 
-  private static setBounds(rect: SVGElement, bounds: Rect): void {
+  private static setBounds(rect: SVGElement, bounds: IRectangle): void {
     rect.setAttribute('x', String(bounds.x))
     rect.setAttribute('y', String(bounds.y))
     rect.setAttribute('width', String(bounds.width))
@@ -150,7 +161,7 @@ class ClearRectTemplate extends BaseClass(IVisualTemplate) {
 /**
  * The marquee rectangle is upon to be dragged.
  */
-function onDragStarting(sender: any, e: MarqueeSelectionEventArgs): void {
+function onDragStarting(e: MarqueeSelectionEventArgs): void {
   const hitGroupNode = getHitGroupNode(e.context, e.context.canvasComponent!.lastEventLocation)
   layoutHelper = new ClearAreaLayoutHelper(
     graphComponent,
@@ -166,7 +177,7 @@ function onDragStarting(sender: any, e: MarqueeSelectionEventArgs): void {
  * The marquee rectangle is currently dragged. For each drag a new layout is calculated and applied
  * if the previous one is completed.
  */
-function onDragged(sender: any, e: MarqueeSelectionEventArgs): void {
+function onDragged(e: MarqueeSelectionEventArgs): void {
   layoutHelper.clearRectangle = e.rectangle
   layoutHelper.runLayout()
 }
@@ -174,7 +185,7 @@ function onDragged(sender: any, e: MarqueeSelectionEventArgs): void {
 /**
  * Dragging the marquee rectangle has been canceled so the state before the gesture must be restored.
  */
-function onDragCanceled(sender: any, e: MarqueeSelectionEventArgs): void {
+function onDragCanceled(e: MarqueeSelectionEventArgs): void {
   layoutHelper.clearRectangle = e.rectangle
   layoutHelper.cancelLayout()
 }
@@ -183,7 +194,7 @@ function onDragCanceled(sender: any, e: MarqueeSelectionEventArgs): void {
  * Dragging the marquee rectangle has been finished so
  * we execute the layout with the final rectangle.
  */
-function onDragFinished(sender: any, e: MarqueeSelectionEventArgs): void {
+function onDragFinished(e: MarqueeSelectionEventArgs): void {
   layoutHelper.clearRectangle = e.rectangle
   layoutHelper.stopLayout()
 }
@@ -192,10 +203,10 @@ function onDragFinished(sender: any, e: MarqueeSelectionEventArgs): void {
  * Returns the group node at the given location. If there is no group node, `null` is returned.
  */
 function getHitGroupNode(context: IInputModeContext, location: Point): INode | null {
-  return context
-    .lookup(INodeHitTester.$class)!
-    .enumerateHits(context, location)
-    .find((n) => graphComponent.graph.isGroupNode(n))
+  const hits = context
+    .lookup(IHitTester)!
+    .enumerateHits(context, location, GraphItemTypes.NODE) as IEnumerable<INode>
+  return hits.find((n: INode) => graphComponent.graph.isGroupNode(n))
 }
 
 /**
@@ -216,6 +227,11 @@ function loadGraph(sampleName: string): void {
     parentId: 'parentId',
     layout: (data: any) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
+  const groupStyle = createDemoGroupStyle({})
+  // set hitTransparentContentArea to false so group nodes are properly hit in getHitGroupNode
+  groupStyle.hitTransparentContentArea = false
+  graph.groupNodeDefaults.style = groupStyle
+
   if (data.groups) {
     const nodesSource = builder.createGroupNodesSource({
       data: data.groups,
@@ -223,21 +239,17 @@ function loadGraph(sampleName: string): void {
       parentId: 'parentId',
       layout: (data: any) => data // the data object itself has x, y, width, height properties
     })
-    const groupStyle = createDemoGroupStyle({})
-    // set hitTransparentContentArea to false so group nodes are properly hit in getHitGroupNode
-    groupStyle.hitTransparentContentArea = false
-    nodesSource.nodeCreator.defaults.style = groupStyle
   }
   builder.createEdgesSource(data.edges, 'source', 'target', 'id')
 
   builder.buildGraph()
 
-  graph.edges.forEach((edge) => {
+  graph.edges.forEach((edge: IEdge) => {
     if (edge.tag.sourcePort) {
-      graph.setPortLocation(edge.sourcePort!, Point.from(edge.tag.sourcePort))
+      graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
     }
     if (edge.tag.targetPort) {
-      graph.setPortLocation(edge.targetPort!, Point.from(edge.tag.targetPort))
+      graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
     }
     edge.tag.bends.forEach((bend: { x: number; y: number }) => {
       graph.addBend(edge, bend)

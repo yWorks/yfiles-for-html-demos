@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,71 +26,36 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EdgeStyleBase, IArrow, SvgVisual } from 'yfiles'
-
-/**
- * Augment the SvgVisual type with the data used to cache the rendering information
- */
-// the values we use to render the graphics
-/**
- * @typedef {Object} Cache
- * @property {GeneralPath} generalPath
- */
-
-// the type of visual we create and update in CustomEdgeStyle
-/**
- * @typedef {TaggedSvgVisual.<SVGGElement,Cache>} CustomEdgeStyleVisual
- */
-
+import { EdgeStyleBase, IArrow, SvgVisual } from '@yfiles/yfiles'
 export class CustomEdgeStyle extends EdgeStyleBase {
-  /**
-   * @param {!IRenderContext} context
-   * @param {!IEdge} edge
-   * @returns {!CustomEdgeStyleVisual}
-   */
   createVisual(context, edge) {
     const generalPath = super.getPath(edge)
     const croppedGeneralPath = super.cropPath(edge, IArrow.NONE, IArrow.NONE, generalPath)
-
     const widePath = croppedGeneralPath.createSvgPath()
     widePath.setAttribute('fill', 'none')
     widePath.setAttribute('stroke', 'black')
     widePath.setAttribute('stroke-width', '4')
-
     const thinPath = croppedGeneralPath.createSvgPath()
     thinPath.setAttribute('fill', 'none')
     thinPath.setAttribute('stroke', 'white')
     thinPath.setAttribute('stroke-width', '2')
-
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     group.append(widePath, thinPath)
-
     // we use the factory method to create a properly typed SvgVisual
     return SvgVisual.from(group, { generalPath })
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!CustomEdgeStyleVisual} oldVisual
-   * @param {!IEdge} edge
-   * @returns {!CustomEdgeStyleVisual}
-   */
   updateVisual(context, oldVisual, edge) {
     const cache = oldVisual.tag
     const oldGeneralPath = cache.generalPath
     const newGeneralPath = super.getPath(edge)
-
     if (!newGeneralPath.hasSameValue(oldGeneralPath)) {
       const croppedGeneralPath = super.cropPath(edge, IArrow.NONE, IArrow.NONE, newGeneralPath)
       const pathData = croppedGeneralPath.createSvgPathData()
-
       const group = oldVisual.svgElement
       const widePath = group.children[0]
       const thinPath = group.children[1]
-
       widePath.setAttribute('d', pathData)
       thinPath.setAttribute('d', pathData)
-
       cache.generalPath = newGeneralPath
     }
     return oldVisual

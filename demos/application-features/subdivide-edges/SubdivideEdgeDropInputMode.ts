@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,14 +34,14 @@ import {
   IInputModeContext,
   IModelItem,
   INode,
-  ItemEventArgs,
+  InputModeItemEventArgs,
   ListEnumerable,
   NodeDropInputMode,
   Point,
   Rect,
   SimpleBend,
   SimpleEdge
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 type SplitSegment = {
   index: number
@@ -64,10 +64,10 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
    */
   protected getDropTarget(dragLocation: Point): IModelItem | null {
     // return the edge as hit item as well
-    let hitItem: IModelItem | undefined
+    let hitItem: IModelItem | null = null
 
-    const inputModeContext = this.inputModeContext!
-    const parentMode = inputModeContext.lookup(GraphInputMode.$class)
+    const inputModeContext = this.parentInputModeContext!
+    const parentMode = inputModeContext.canvasComponent!.inputMode as GraphInputMode | null
     if (parentMode) {
       const foldingView = inputModeContext.graph!.foldingView
       // exclude edges that are in folding state
@@ -100,8 +100,8 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
     // if the dropTarget is a group node. Therefore, if the node is dropped onto an edge that is
     // located on top of a group node, provide this group node as dropTarget.
     if (dropTarget instanceof IEdge) {
-      const groupAtDropLocation = context
-        .lookup(GraphInputMode.$class)
+      const parentInputMode = context.canvasComponent!.inputMode as GraphInputMode | null
+      const groupAtDropLocation = parentInputMode
         ?.findItems(context, this.dropLocation, [GraphItemTypes.NODE], (item) =>
           graph.isGroupNode(item as INode)
         )
@@ -118,7 +118,7 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
   /**
    * Splits the edge if the node is dropped on an edge.
    */
-  protected onItemCreated(evt: ItemEventArgs<INode>) {
+  protected onItemCreated(evt: InputModeItemEventArgs<INode>) {
     const newNode = evt.item
     if (!(this.dropTarget instanceof IEdge)) {
       // trigger the default event if the dropped target is not an edge
@@ -127,11 +127,11 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
     }
 
     const edge = this.dropTarget
-    const targetGraph = this.inputModeContext!.graph!
+    const targetGraph = this.parentInputModeContext!.graph!
     const size = edge.bends.size
     const droppedNodeCenter = newNode.layout.center
     let splitEdge = edge
-    if (edge.isSelfloop && (size === 0 || size === 1)) {
+    if (edge.isSelfLoop && (size === 0 || size === 1)) {
       // these self loops are drawn specifically
       splitEdge = this.getDummyEdgeFromPath(edge)
     }
@@ -141,8 +141,8 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
     const newPort1 = targetGraph.addPortAt(newNode, closestSegment.projection)
     const newPort2 = targetGraph.addPortAt(newNode, closestSegment.projection)
     // for the new edges, we use the style of the original edge
-    const newEdge1 = targetGraph.createEdge(edge.sourcePort!, newPort1, edge.style.clone())
-    const newEdge2 = targetGraph.createEdge(newPort2, edge.targetPort!, edge.style.clone())
+    const newEdge1 = targetGraph.createEdge(edge.sourcePort, newPort1, edge.style.clone())
+    const newEdge2 = targetGraph.createEdge(newPort2, edge.targetPort, edge.style.clone())
     splitEdge.bends.forEach((bend, idx) => {
       if (idx < closestSegment.index) {
         targetGraph.addBend(newEdge1, bend.location.toPoint())
@@ -184,8 +184,8 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
    */
   private getClosestSegment(point: Point, edge: IEdge): SplitSegment {
     // if the edge has no bends, use the projection of the node center to the edge line
-    const sourcePortLocation = edge.sourcePort!.location
-    const targetPortLocation = edge.targetPort!.location
+    const sourcePortLocation = edge.sourcePort.location
+    const targetPortLocation = edge.targetPort.location
     if (edge.bends.size === 0) {
       return {
         index: 0,
@@ -198,7 +198,7 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
     let closestProjection: Point | null = null
 
     let lastPoint = sourcePortLocation
-    edge.bends.concat(new SimpleBend(null, targetPortLocation)).forEach((bend, i) => {
+    edge.bends.concat(new SimpleBend(edge, targetPortLocation)).forEach((bend, i) => {
       const currentPoint = bend.location.toPoint()
       const projectionOnSegment = point.getProjectionOnSegment(lastPoint, currentPoint)
       const distance = point.distanceTo(projectionOnSegment)
@@ -218,16 +218,16 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
    * Creates a dummy edge for the given self-loop edge. The new edge will take the bends from the edge style renderer.
    */
   private getDummyEdgeFromPath(edge: IEdge): SimpleEdge {
-    const dummyEdge = new SimpleEdge(edge.sourcePort, edge.targetPort)
+    const previewEdge = new SimpleEdge(edge.sourcePort, edge.targetPort)
 
     const path = edge.style.renderer.getPathGeometry(edge, edge.style).getPath()!
     const pathCursor = path.createCursor()
     const bends = []
     while (pathCursor.moveNext()) {
-      bends.push(new SimpleBend(dummyEdge, pathCursor.currentEndPoint))
+      bends.push(new SimpleBend(previewEdge, pathCursor.currentEndPoint))
     }
-    dummyEdge.bends = new ListEnumerable(bends)
+    previewEdge.bends = new ListEnumerable(bends)
 
-    return dummyEdge
+    return previewEdge
   }
 }

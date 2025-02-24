@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,22 +27,19 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  LabelStyle,
   License,
   PolylineEdgeStyle,
   Rect
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import SampleData from './D3ChartNodesData'
 import D3ChartNodeStyle from './D3ChartNodeStyle'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -51,14 +48,12 @@ async function run(): Promise<void> {
 
   // create a new graph component
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // load an initial graph
   loadSampleGraph()
 
   // initialize the input mode
   const graphEditorInputMode = new GraphEditorInputMode()
-  graphEditorInputMode.addNodeCreatedListener((_, evt) => {
+  graphEditorInputMode.addEventListener('node-created', (evt) => {
     // put random data in tag of created node
     evt.item.tag = createRandomSparklineData()
   })
@@ -97,12 +92,12 @@ function loadSampleGraph(): void {
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new D3ChartNodeStyle()
   graph.nodeDefaults.size = [100, 50]
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 3
-  }).createParameter(ExteriorLabelModelPosition.NORTH)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 3
+  }).createParameter('top')
+  graph.nodeDefaults.labels.style = new LabelStyle({
     backgroundFill: 'rgba(255, 255, 255, 0.6)',
-    insets: [2, 3, 2, 3]
+    padding: [2, 3, 2, 3]
   })
 
   graph.edgeDefaults.style = new PolylineEdgeStyle()

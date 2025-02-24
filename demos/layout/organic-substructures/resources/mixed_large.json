@@ -4,7 +4,7 @@
     "chainSubstructureStyle": "DISK",
     "starSubstructureStyle": "CIRCULAR",
     "parallelSubstructureStyle": "RECTANGULAR",
-    "treeSubstructureStyle": "BALLOON",
+    "treeSubstructureStyle": "IGNORE",
     "groupSubstructures": "NO_GROUPS",
     "useEdgeGrouping": false,
     "considerNodeTypes": true,

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,18 +29,16 @@
 import {
   EdgeStyleBase,
   GeneralPath,
-  GraphComponent,
   ICanvasContext,
   IEdge,
-  IGraph,
   IInputModeContext,
+  type IMapper,
   IRenderContext,
   Point,
   Rect,
   SvgVisual,
-  Visual,
-  YObject
-} from 'yfiles'
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
 import { ChordDiagramLayout } from './ChordDiagramLayout'
 
 export type EdgeStyleHints = {
@@ -54,10 +52,12 @@ export type EdgeStyleHints = {
 const SVG_NS = 'http://www.w3.org/2000/svg'
 const STROKE_WIDTH = 2
 
+type ChordEdgeStyleVisual = TaggedSvgVisual<SVGGElement, EdgeRenderDataCache>
+
 /**
  * A custom edge style that draws the edges of a chord diagram.
  */
-export class ChordEdgeStyle extends EdgeStyleBase {
+export class ChordEdgeStyle extends EdgeStyleBase<ChordEdgeStyleVisual> {
   /**
    * Specifies whether to show the information about the underlying graph
    */
@@ -66,27 +66,14 @@ export class ChordEdgeStyle extends EdgeStyleBase {
   // opacity of edges if not further specified
   static defaultOpacity = 0.8
 
-  constructor(graph: IGraph) {
+  constructor(public edgeStyleHints: IMapper<IEdge, EdgeStyleHints>) {
     super()
-    // prepare the style hints that need to be provided by the layout
-    graph.mapperRegistry.createMapper(
-      IEdge.$class,
-      YObject.$class,
-      ChordDiagramLayout.STYLE_HINT_KEY
-    )
   }
 
   /**
    * Creates the visual appearance of an edge.
    */
-  private render(
-    edge: IEdge,
-    container: SVGElement & { 'data-renderDataCache'?: EdgeRenderDataCache },
-    cache: EdgeRenderDataCache
-  ) {
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
-
+  private render(edge: IEdge, container: SVGGElement, cache: EdgeRenderDataCache) {
     const center = ChordDiagramLayout.CENTER
     const radius = ChordDiagramLayout.RADIUS
 
@@ -116,8 +103,8 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     const defs = document.createElementNS(SVG_NS, 'defs')
     const gradient = document.createElementNS(SVG_NS, 'linearGradient')
 
-    const color1 = edge.sourcePort?.owner?.tag.color
-    const color2 = edge.targetPort?.owner?.tag.color
+    const color1 = edge.sourcePort.owner.tag.color
+    const color2 = edge.targetPort.owner.tag.color
 
     // stop information for the <linearGradient>
     const stops = [
@@ -177,10 +164,10 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     if (this.showStyleHints) {
       wholePath.setAttribute('opacity', '0.1')
       const line = document.createElementNS(SVG_NS, 'line')
-      line.setAttribute('x1', `${edge.sourcePort!.location.x}`)
-      line.setAttribute('y1', `${edge.sourcePort!.location.y}`)
-      line.setAttribute('x2', `${edge.targetPort!.location.x}`)
-      line.setAttribute('y2', `${edge.targetPort!.location.y}`)
+      line.setAttribute('x1', `${edge.sourcePort.location.x}`)
+      line.setAttribute('y1', `${edge.sourcePort.location.y}`)
+      line.setAttribute('x2', `${edge.targetPort.location.x}`)
+      line.setAttribute('y2', `${edge.targetPort.location.y}`)
       line.setAttribute('stroke', 'black')
       line.setAttribute('stroke-width', '3px')
       container.appendChild(line)
@@ -202,11 +189,11 @@ export class ChordEdgeStyle extends EdgeStyleBase {
   /**
    * Creates the visualization of an edge in a chord diagram.
    */
-  createVisual(context: IRenderContext, edge: IEdge): SvgVisual {
+  createVisual(context: IRenderContext, edge: IEdge): ChordEdgeStyleVisual {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
     const g = document.createElementNS(SVG_NS, 'g')
     // Get the necessary data for rendering of the edge
-    const hint = ChordEdgeStyle.getStyleHint(context, edge)
+    const hint = this.getStyleHint(edge)
     const cache = new EdgeRenderDataCache(
       hint.sourceStart,
       hint.sourceEnd,
@@ -219,7 +206,8 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     )
     // Render the edge
     this.render(edge, g, cache)
-    return new SvgVisual(g)
+    // store information with the visual on how we created it
+    return SvgVisual.from(g, cache)
   }
 
   /**
@@ -230,17 +218,14 @@ export class ChordEdgeStyle extends EdgeStyleBase {
    */
   protected updateVisual(
     context: IRenderContext,
-    oldVisual: SvgVisual,
+    oldVisual: ChordEdgeStyleVisual,
     edge: IEdge
-  ): Visual | null {
-    const container = oldVisual.svgElement as SVGGElement & {
-      'data-renderDataCache'?: EdgeRenderDataCache
-    }
+  ): ChordEdgeStyleVisual {
     // get the data with which the oldvisual was created
-    const oldCache = container['data-renderDataCache']
+    const oldCache = oldVisual.tag
 
     // create the data for the new visual
-    const hint = ChordEdgeStyle.getStyleHint(context, edge)
+    const hint = this.getStyleHint(edge)
     const newCache = new EdgeRenderDataCache(
       hint.sourceStart,
       hint.sourceEnd,
@@ -261,12 +246,12 @@ export class ChordEdgeStyle extends EdgeStyleBase {
    */
   isHit(context: IInputModeContext, location: Point, edge: IEdge): boolean {
     // approximation of the edge outline by Bézier curves
-    const hint = ChordEdgeStyle.getStyleHint(context, edge)
+    const hint = this.getStyleHint(edge)
     const path = new GeneralPath()
     path.moveTo(hint.sourceStart)
-    path.quadTo(edge.sourceNode!.layout.center, hint.sourceEnd)
+    path.quadTo(edge.sourceNode.layout.center, hint.sourceEnd)
     path.quadTo(hint.circleCenter, hint.targetStart)
-    path.quadTo(edge.targetNode!.layout.center, hint.targetEnd)
+    path.quadTo(edge.targetNode.layout.center, hint.targetEnd)
     path.quadTo(hint.circleCenter, hint.sourceStart)
     path.close()
 
@@ -279,7 +264,7 @@ export class ChordEdgeStyle extends EdgeStyleBase {
    * instead if the bounding box of the circle and the viewport overlap.
    */
   protected isVisible(context: ICanvasContext, rectangle: Rect, edge: IEdge): boolean {
-    const hint = ChordEdgeStyle.getStyleHint(context, edge)
+    const hint = this.getStyleHint(edge)
     const radius = Math.abs(hint.circleCenter.distanceTo(hint.sourceStart))
     const bounding = new Rect(
       hint.circleCenter.x - radius,
@@ -293,12 +278,16 @@ export class ChordEdgeStyle extends EdgeStyleBase {
   /**
    * Gets the hint object that the layout has provided.
    */
-  private static getStyleHint(context: ICanvasContext, edge: IEdge): EdgeStyleHints {
-    const graphComponent = context.canvasComponent as GraphComponent
-    const mapper = graphComponent.graph.mapperRegistry.getMapper<IEdge, EdgeStyleHints>(
-      ChordDiagramLayout.STYLE_HINT_KEY
+  private getStyleHint(edge: IEdge): EdgeStyleHints {
+    return (
+      this.edgeStyleHints!.get(edge) ?? {
+        circleCenter: Point.ORIGIN,
+        sourceStart: Point.ORIGIN,
+        sourceEnd: Point.ORIGIN,
+        targetStart: Point.ORIGIN,
+        targetEnd: Point.ORIGIN
+      }
     )
-    return mapper!.get(edge)!
   }
 }
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,15 +29,12 @@
 import {
   CollectSnapResultsEventArgs,
   GraphSnapContext,
-  GridSnapTypes,
   INode,
   NodeSnapResultProvider,
   PathType,
   Point,
-  Rect,
-  SnapPolicy
-} from 'yfiles'
-
+  Rect
+} from '@yfiles/yfiles'
 /**
  * Customizes the grid snapping behavior of NodeSnapResultProvider by providing SnapResults for each point of the
  * node's shape path instead of the node's center.
@@ -45,26 +42,25 @@ import {
 export class ShapeBasedGridNodeSnapResultProvider extends NodeSnapResultProvider {
   /**
    * Collects snap results that snap the node to a grid and adds them to the argument.
-   * @param {!GraphSnapContext} context The context in which the snapping is performed
-   * @param {!CollectSnapResultsEventArgs} args The arguments to add the results to
-   * @param {!Rect} suggestedLayout The layout of the node if it would move without snapping
-   * @param {!INode} node The node that is currently being processed
+   * @param context The context in which the snapping is performed
+   * @param args The arguments to add the results to
+   * @param snapGrid The grid snap reference with information that may be useful for visualization
+   * @param suggestedLayout The layout of the node if it would move without snapping
+   * @param node The node that is currently being processed
    */
-  collectGridSnapResults(context, args, suggestedLayout, node) {
-    // node.Layout isn't updated, yet, so we have to calculate the delta between the the new suggested layout and the
+  collectGridSnapResults(context, args, snapGrid, suggestedLayout, node) {
+    // node.Layout isn't updated, yet, so we have to calculate the delta between the new suggested layout and the
     // current node.Layout
     const delta = new Point(
       suggestedLayout.topLeft.x - node.layout.topLeft.x,
       suggestedLayout.topLeft.y - node.layout.topLeft.y
     )
-
     // get outline of the shape and iterate over its path point
     const geometry = node.style.renderer.getShapeGeometry(node, node.style)
     const outline = geometry.getOutline()
     if (outline === null) {
       return
     }
-
     const cursor = outline.createCursor()
     while (cursor.moveNext()) {
       // ignore PathType.Close as we had the path point as first point
@@ -72,15 +68,7 @@ export class ShapeBasedGridNodeSnapResultProvider extends NodeSnapResultProvider
       if (cursor.pathType !== PathType.CLOSE) {
         // adjust path point by the delta calculated above and add an according SnapResult
         const endPoint = cursor.currentEndPoint.add(delta)
-        this.addGridSnapResultCore(
-          context,
-          args,
-          endPoint,
-          node,
-          GridSnapTypes.GRID_POINTS,
-          SnapPolicy.TO_NEAREST,
-          SnapPolicy.TO_NEAREST
-        )
+        this.collectGridSnapResult(context, args, snapGrid, endPoint, node)
       }
     }
   }

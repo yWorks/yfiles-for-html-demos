@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,17 +34,14 @@ import {
   NodeStyleBase,
   Point,
   Rect,
-  SvgVisual,
-  Visual
-} from 'yfiles'
-import { ChordDiagramLayout } from './ChordDiagramLayout.js'
-
+  SvgVisual
+} from '@yfiles/yfiles'
+import { ChordDiagramLayout } from './ChordDiagramLayout'
 const SVG_NS = 'http://www.w3.org/2000/svg'
 const FULL_CIRCLE = 2 * Math.PI
 const SEMI_CIRCLE = Math.PI
 const QUARTER_CIRCLE = Math.PI * 0.5
 const STROKE_WIDTH = 2
-
 /**
  * Visualizes nodes as arc segments for a fixed center point.
  * This implementation uses ...
@@ -54,27 +51,18 @@ const STROKE_WIDTH = 2
 export class CircleSegmentNodeStyle extends NodeStyleBase {
   /**
    * Determines whether or not additional information is shown.
-   * @type {boolean}
    */
   set showStyleHints(value) {
     if (value != this._showStyleHints) {
       this._showStyleHints = value
     }
   }
-
   _showStyleHints = false
-
   /**
    * Creates the actual SVG element inside the provided container
-   * @param {!INode} node
-   * @param {*} container
-   * @param {!NodeRenderDataCache} cache
    */
   render(node, container, cache) {
     const data = cache.nodeData
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
-
     // the node itself is displayed by an svg arc segment
     const path = document.createElementNS(SVG_NS, 'path')
     path.setAttribute(
@@ -91,7 +79,6 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
     path.setAttribute('stroke-width', `${node.layout.height}px`)
     path.setAttribute('fill', 'none')
     container.appendChild(path)
-
     // a second arc segment is used for drawing the outline
     const outline = document.createElementNS(SVG_NS, 'path')
     outline.setAttribute(
@@ -106,9 +93,7 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
     outline.setAttribute('stroke', 'black')
     outline.setAttribute('stroke-width', String(STROKE_WIDTH))
     outline.setAttribute('fill', 'none')
-
     container.appendChild(outline)
-
     // edge outline sides
     const line0Start = polarToCartesian(
       data.circleCenter,
@@ -128,7 +113,6 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
     line0.setAttribute('stroke', 'black')
     line0.setAttribute('stroke-width', String(STROKE_WIDTH))
     container.appendChild(line0)
-
     const line1Start = polarToCartesian(
       data.circleCenter,
       data.nodeDist - STROKE_WIDTH,
@@ -147,7 +131,6 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
     line1.setAttribute('stroke', 'black')
     line1.setAttribute('stroke-width', String(STROKE_WIDTH))
     container.appendChild(line1)
-
     // displays information about what information the ChordDiagramLayout provided
     if (this._showStyleHints) {
       const er = ((data.endAngle - data.startAngle) * data.nodeDist) / 2
@@ -173,9 +156,6 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
   }
   /**
    * Creates the visualization of a node in a chord diagram.
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     // creates a 'g' element and use it as a container for the rendering of the node.
@@ -184,22 +164,17 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
     const cache = new NodeRenderDataCache(circleData(node), this._showStyleHints)
     // Render the node
     this.render(node, g, cache)
-
-    return new SvgVisual(g)
+    // store information with the visual on how we created it
+    return SvgVisual.from(g, cache)
   }
-
   /**
    * Check wether the Visual has to be recreated, which isn't the case unless the defining
    * characteristics of the node have changed
-   * @param {!IRenderContext} context
-   * @param {!SvgVisual} oldVisual
-   * @param {!INode} node
-   * @returns {?Visual}
    */
   updateVisual(context, oldVisual, node) {
     const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
-    const oldData = container['data-renderDataCache']
+    const oldData = oldVisual.tag
     // get the data for the new visual
     const newData = new NodeRenderDataCache(circleData(node), this._showStyleHints)
     if (!newData.equals(oldData)) {
@@ -208,46 +183,34 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
       return oldVisual
     }
   }
-
   /**
    * Determines if the given location lies on the visualization of a node in a chord diagram.
-   * @param {!IInputModeContext} context
-   * @param {!Point} location
-   * @param {!INode} node
-   * @returns {boolean}
    */
   isHit(context, location, node) {
     if (!node.tag) {
       return false
     }
-
     const { nodeCenter, nodeRadiusY, circleCenter, startAngle, endAngle, nodeDist } =
       circleData(node)
-
     // check whether the given point lies inside the node's height
     const locationDist = location.distanceTo(circleCenter)
     const inRing = nodeDist <= locationDist && locationDist <= nodeDist + 2 * nodeRadiusY
-
     // check whether the given point lies inside the node's width
     const locationAngle = calculateAngle(location, circleCenter)
     const isSegmentHit =
       startAngle > endAngle
         ? startAngle <= locationAngle || locationAngle <= endAngle
         : startAngle <= locationAngle && locationAngle <= endAngle
-
     return inRing && isSegmentHit
   }
-
   /**
    * Calculates the bounding box of the visualization of the given node.
-   * @param {!ICanvasContext} context the context for the bounds calculation.
-   * @param {!INode} node the node whose bounding box is calculated.
-   * @returns {!Rect}
+   * @param context the context for the bounds calculation.
+   * @param node the node whose bounding box is calculated.
    */
   getBounds(context, node) {
     const { nodeCenter, nodeRadiusY, circleCenter, startAngle, endAngle, nodeDist } =
       circleData(node)
-
     // handle the start and end points of the upper and lower arc segments
     const corner1 = polarToCartesian(circleCenter, nodeDist + nodeRadiusY, endAngle)
     const corner2 = polarToCartesian(circleCenter, nodeDist - nodeRadiusY, endAngle)
@@ -257,7 +220,6 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
     let maxX = Math.max(corner1.x, corner2.x, corner3.x, corner4.x)
     let minY = Math.min(corner1.y, corner2.y, corner3.y, corner4.y)
     let maxY = Math.max(corner1.y, corner2.y, corner3.y, corner4.y)
-
     // handle the intersection points of the outer arc segment with the coordinate axis
     const lb = startAngle
     const ub = startAngle > endAngle ? endAngle + FULL_CIRCLE : endAngle
@@ -273,52 +235,40 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
         maxY = Math.max(maxY, point.y)
       }
     }
-
     return new Rect(minX, minY, maxX - minX, maxY - minY)
   }
-
   /**
    * Determines if the visualization of the given node is visible in the given viewport.
-   * @param {!ICanvasContext} context the context for the visibility check.
-   * @param {!Rect} rectangle the viewport to check
-   * @param {!INode} node the node to check
-   * @returns {boolean}
+   * @param context the context for the visibility check.
+   * @param rectangle the viewport to check
+   * @param node the node to check
    */
   isVisible(context, rectangle, node) {
     return rectangle.intersects(this.getBounds(context, node))
   }
 }
-
 /**
  * Returns the angle in radians between the given point and the circle implicit start point.
- * @param {!Point} pointOnCircle the point on the circle for which the angle is calculated
- * @param {!Point} circleCenter the center of the circle
- * @returns {number}
+ * @param pointOnCircle the point on the circle for which the angle is calculated
+ * @param circleCenter the center of the circle
  */
 function calculateAngle(pointOnCircle, circleCenter) {
   const vx = pointOnCircle.x - circleCenter.x
   const vy = pointOnCircle.y - circleCenter.y
   return normalize(Math.atan2(vy, vx))
 }
-
 /**
  * Transforms polar coordinates to cartesian coordinates.
- * @param {!Point} center
- * @param {number} radius
- * @param {number} angle
- * @returns {!Point}
  */
 function polarToCartesian(center, radius, angle) {
   return new Point(center.x + radius * Math.cos(angle), center.y + radius * Math.sin(angle))
 }
-
 /**
  * Creates an arc instruction for SVG path data.
- * @param {!Point} center the center of the arc
- * @param {number} radius the radius of the arc
- * @param {number} startAngle the angle that determines the start point for the arc
- * @param {number} endAngle the angle that determines the end point for the arc
- * @returns {!string}
+ * @param center the center of the arc
+ * @param radius the radius of the arc
+ * @param startAngle the angle that determines the start point for the arc
+ * @param endAngle the angle that determines the end point for the arc
  */
 function describeArc(center, radius, startAngle, endAngle) {
   const start = polarToCartesian(center, radius, endAngle)
@@ -326,11 +276,8 @@ function describeArc(center, radius, startAngle, endAngle) {
   const flag = normalize(endAngle - startAngle) < SEMI_CIRCLE ? 0 : 1
   return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${flag} 0 ${end.x} ${end.y}`
 }
-
 /**
  * Collects the necessary data for calculating arc visualization of the given node.
- * @param {!INode} node
- * @returns {!NodeData}
  */
 function circleData(node) {
   const nodeCenter = node.layout.center
@@ -338,17 +285,13 @@ function circleData(node) {
   const nodeRadiusX = node.layout.width * 0.5
   // the height of the node is the thickness of the arc segment that visualizes the node
   const nodeRadiusY = node.layout.height * 0.5
-
   const circleCenter = ChordDiagramLayout.CENTER
-
   // the angular coordinate for the node
   const nodeCenterAngle = calculateAngle(nodeCenter, circleCenter)
   const startAngle = normalize(nodeCenterAngle - nodeRadiusX)
   const endAngle = normalize(nodeCenterAngle + nodeRadiusX)
-
   // the radial coordinate for the node
   const nodeDist = nodeCenter.distanceTo(circleCenter)
-
   return {
     nodeCenter,
     nodeRadiusX,
@@ -359,32 +302,13 @@ function circleData(node) {
     nodeDist
   }
 }
-
-/**
- * @typedef {Object} NodeData
- * @property {Point} nodeCenter
- * @property {number} nodeRadiusX
- * @property {number} nodeRadiusY
- * @property {Point} circleCenter
- * @property {number} startAngle
- * @property {number} endAngle
- * @property {number} nodeDist
- */
-
 class NodeRenderDataCache {
-  /**
-   * @param {!NodeData} nodeData
-   * @param {boolean} showStyleHints
-   */
+  nodeData
+  showStyleHints
   constructor(nodeData, showStyleHints) {
-    this.showStyleHints = showStyleHints
     this.nodeData = nodeData
+    this.showStyleHints = showStyleHints
   }
-
-  /**
-   * @param {!NodeRenderDataCache} [other]
-   * @returns {boolean}
-   */
   equals(other) {
     if (!other) {
       return false
@@ -393,12 +317,8 @@ class NodeRenderDataCache {
     }
   }
 }
-
 /**
  * Helper function to check wether the defining characteristics of the node have changed
- * @param {!NodeData} a
- * @param {!NodeData} b
- * @returns {boolean}
  */
 function equals(a, b) {
   return (
@@ -412,11 +332,8 @@ function equals(a, b) {
     a.endAngle == b.endAngle
   )
 }
-
 /**
  * Normalizes angles to be non-negative.
- * @param {number} angle
- * @returns {number}
  */
 function normalize(angle) {
   return angle < 0 ? FULL_CIRCLE + angle : angle

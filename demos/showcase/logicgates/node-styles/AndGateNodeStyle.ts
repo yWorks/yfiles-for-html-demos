@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,23 +27,22 @@
  **
  ***************************************************************************/
 import {
-  type IPoint,
   Font,
-  FontWeight,
   GeneralPath,
   type INode,
+  type IPoint,
   Point,
   TextRenderSupport
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { getNodeHighlightInfo } from '../NodeHighlightInfo'
 import {
   appendEllipse,
+  type Cache,
   type CacheOwnerElement,
   createPath,
   createText,
   GateNodeStyle,
   getPointOnCurve,
-  type Cache,
   setAttribute
 } from './GateNodeStyle'
 import { LogicGateType } from '../LogicGateType'
@@ -168,7 +167,7 @@ export class AndGateNodeStyle extends GateNodeStyle {
       new Font({
         fontFamily: 'Arial',
         fontSize,
-        fontWeight: FontWeight.BOLD
+        fontWeight: 'bold'
       })
     )
     setAttribute(text, 'x', (node.layout.width - textSize.width) * 0.45)

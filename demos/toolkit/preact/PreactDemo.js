@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,27 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { html, render, useState } from './preact-loader.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { License } from 'yfiles'
-import ItemList from './components/items/ItemList.js'
-import PreactGraphComponent from './components/graphComponent/PreactGraphComponent.js'
-
-/**
- * @typedef {Object} DataItem
- * @property {number} id
- * @property {boolean} state
- */
-
-/**
- * @typedef {Object} ConnectionItem
- * @property {number} from
- * @property {number} to
- */
-
-/** @type {number} */
+// @ts-ignore - We have no proper types for preact, here
+import { html, render, useState } from './preact-loader'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { License } from '@yfiles/yfiles'
+import ItemList from './components/items/ItemList'
+import PreactGraphComponent from './components/graphComponent/PreactGraphComponent'
 let idCount = 6
-
 const App = () => {
   const [items, setItems] = useState([
     { id: 0, state: true },
@@ -63,7 +49,7 @@ const App = () => {
     { from: 3, to: 4 },
     { from: 3, to: 5 }
   ])
-
+  const [layoutRunning, setLayoutRunning] = useState(false)
   /**
    * Toggle the state property of a specific item.
    */
@@ -72,13 +58,11 @@ const App = () => {
     newItems[index] = { id: newItems[index].id, state: !newItems[index].state }
     setItems(newItems)
   }
-
   const removeDataItem = (index) => {
     const newItems = [...items]
     newItems.splice(index, 1)
     setItems(newItems)
   }
-
   /**
    * Add a new item and create a connection from a random
    * existing node to the new item.
@@ -99,25 +83,24 @@ const App = () => {
     }
     setConnections(newConnections)
   }
-
   return html`
-    <${PreactGraphComponent} itemData="${items}" connectionData="${connections}" />
+    <${PreactGraphComponent}
+      itemData="${items}"
+      connectionData="${connections}"
+      setLayoutRunning="${setLayoutRunning}"
+    />
     <${ItemList}
       itemData="${items}"
       toggleState="${toggleItemState}"
       removeDataItem="${removeDataItem}"
       addDataItem="${addDataItem}"
+      disabled="${layoutRunning}"
     />
   `
 }
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   render(html` <${App} /> `, document.querySelector('.preact-app'))
 }
-
 // noinspection JSIgnoredPromiseFromCall
 run()

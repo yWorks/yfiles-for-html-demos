@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,60 +29,57 @@
 import {
   type GraphComponent,
   type GraphEditorInputMode,
-  GraphHighlightIndicatorManager,
   GraphItemTypes,
-  GraphSelectionIndicatorManager,
   type IModelItem,
-  IndicatorNodeStyleDecorator,
   INode,
+  NodeStyleIndicatorRenderer,
   ShapeNodeStyle
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 export function initializeHighlights(graphComponent: GraphComponent): void {
   // highlight node style
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    nodeStyle: new IndicatorNodeStyleDecorator({
-      wrapped: new ShapeNodeStyle({
+  graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(
+    new NodeStyleIndicatorRenderer({
+      nodeStyle: new ShapeNodeStyle({
         fill: 'transparent',
         stroke: '3px slateblue',
         shape: 'ellipse'
       }),
       zoomPolicy: 'mixed',
-      padding: 2
+      margins: 2
     })
-  })
+  )
 
   // selection node style
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    nodeStyle: new IndicatorNodeStyleDecorator({
-      wrapped: new ShapeNodeStyle({
+  graphComponent.graph.decorator.nodes.selectionRenderer.addConstant(
+    new NodeStyleIndicatorRenderer({
+      nodeStyle: new ShapeNodeStyle({
         fill: 'transparent',
-        stroke: '3px darkblue',
+        stroke: '3px slateblue',
         shape: 'ellipse'
       }),
-      padding: 2,
+      margins: 2,
       zoomPolicy: 'mixed'
     })
-  })
+  )
 
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
   // configure the input mode to highlight nodes on hover
   const graphItemHoverInputMode = inputMode.itemHoverInputMode
   graphItemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
-  graphItemHoverInputMode.discardInvalidItems = false
-  graphItemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+  graphItemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     updateHighlights(graphComponent, evt.item, evt.oldItem)
   })
 
   const graph = graphComponent.graph
-  graph.addNodeRemovedListener((_, evt) => {
+  graph.addEventListener('node-removed', (evt) => {
     // if the node is removed, remove the highlights
-    graphComponent.highlightIndicatorManager.removeHighlight(evt.item)
+    graphComponent.highlights.remove(evt.item)
   })
 
-  graph.addEdgeRemovedListener((_, evt) => {
+  graph.addEventListener('edge-removed', (evt) => {
     // if the edge is removed, remove the highlights
-    graphComponent.highlightIndicatorManager.removeHighlight(evt.item)
+    graphComponent.highlights.remove(evt.item)
   })
 }
 
@@ -94,11 +91,10 @@ function updateHighlights(
   item: IModelItem | null,
   oldItem: IModelItem | null
 ): void {
-  const highlightManager = graphComponent.highlightIndicatorManager
   if (oldItem) {
-    highlightManager.removeHighlight(oldItem)
+    graphComponent.highlights.remove(oldItem)
   }
   if (item instanceof INode) {
-    highlightManager.addHighlight(item)
+    graphComponent.highlights.add(item)
   }
 }

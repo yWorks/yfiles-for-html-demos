@@ -1,10 +1,10 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,9 @@
 
       03 Adding a Background Shape - Tutorial: Label Style Implementation
 
-# Adding a background shape
+<img src="../../../doc/demo-thumbnails/tutorial-style-implementation-label-add-background-shape.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-label/03-add-background-shape/).
 
 In many cases, it’s required to add a background to the label text. This is useful to improve contrast, add a meaningful shape or color, or simply to make the style look nicer.
 

@@ -1,0 +1,116 @@
+{
+  "nodeList": [
+    {
+      "id": 0,
+      "tag": 0,
+      "labels": [
+        {
+          "text": "0",
+          "fill": "#A1E5E3",
+          "fillColor": "#114D4C"
+        }
+      ],
+      "fill": "#17BEBB",
+      "stroke": "#407271"
+    },
+    {
+      "id": 1,
+      "tag": 1,
+      "labels": [
+        {
+          "text": "1"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "tag": 2,
+      "labels": [
+        {
+          "text": "2"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "tag": 3,
+      "labels": [
+        {
+          "text": "3"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "tag": 4,
+      "labels": [
+        {
+          "text": "4"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "tag": 5,
+      "labels": [
+        {
+          "text": "5",
+          "fill": "#A1E5E3",
+          "fillColor": "#114D4C"
+        }
+      ],
+      "fill": "#17BEBB",
+      "stroke": "#407271"
+    }
+  ],
+  "edgeList": [
+    {
+      "id": 0,
+      "source": 0,
+      "target": 1,
+      "targetArrow": "stealth"
+    },
+    {
+      "id": 1,
+      "source": 0,
+      "target": 2,
+      "targetArrow": "stealth"
+    },
+    {
+      "id": 2,
+      "source": 0,
+      "target": 3,
+      "targetArrow": "stealth"
+    },
+    {
+      "id": 3,
+      "source": 0,
+      "target": 4,
+      "targetArrow": "stealth"
+    },
+    {
+      "id": 4,
+      "source": 1,
+      "target": 5,
+      "targetArrow": "stealth"
+    },
+    {
+      "id": 5,
+      "source": 2,
+      "target": 5,
+      "targetArrow": "stealth"
+    },
+    {
+      "id": 6,
+      "source": 3,
+      "target": 5,
+      "targetArrow": "stealth"
+    },
+    {
+      "id": 7,
+      "source": 4,
+      "target": 5,
+      "targetArrow": "stealth"
+    }
+  ]
+}

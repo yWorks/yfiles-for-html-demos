@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,18 +27,20 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   FreeNodePortLocationModel,
   type GraphComponent,
   type GraphEditorInputMode,
+  type IModelItem,
   INode,
-  Point
-} from 'yfiles'
-import { stateIcons } from './styles/MindMapIconLabelStyleRenderer'
+  type ItemEventArgs,
+  Point,
+  PortCandidate
+} from '@yfiles/yfiles'
+import { stateIcons } from './styles/MindMapIconLabelStyle'
 import { getEdgeStyle, getLabelStyle, getNodeStyle, setNodeColor } from './styles/styles-support'
-import { executeCreateChild, executeDeleteItem, changeStateLabel } from './interaction/commands'
-import HTMLPopupSupport from '../../view/htmlpopup/HTMLPopupSupport'
+import { changeStateLabel, executeCreateChild, executeDeleteItem } from './interaction/commands'
+import { HTMLPopupSupport } from './HTMLPopupSupport'
 import { isInLayout } from './mind-map-layout'
 import { getNodeData } from './data-types'
 
@@ -62,32 +64,32 @@ export function initializeNodePopups(graphComponent: GraphComponent): void {
   nodePopup = new HTMLPopupSupport(
     graphComponent,
     document.getElementById('contextualToolbar')!,
-    ExteriorLabelModel.NORTH
+    ExteriorNodeLabelModel.TOP
   )
 
-  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+  graphComponent.selection.addEventListener('item-added', (evt: ItemEventArgs<IModelItem>) => {
     hidePopup(graphComponent)
-    const selectedItem = evt.item
-    if (selectedItem instanceof INode && evt.itemSelected) {
-      showToolbar(selectedItem)
+    if (evt.item instanceof INode) {
+      showToolbar(evt.item)
     }
   })
 
+  graphComponent.selection.addEventListener('item-removed', () => {
+    hidePopup(graphComponent)
+  })
+
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
-  inputMode.addItemRightClickedListener((_, evt) => {
+  inputMode.addEventListener('item-right-clicked', (evt) => {
     if (!(evt.item instanceof INode)) {
       return
     }
     showToolbar(evt.item)
   })
 
-  inputMode.moveInputMode.addDragStartedListener((_) => {
+  inputMode.moveSelectedItemsInputMode.addEventListener('drag-started', () =>
     hidePopup(graphComponent)
-  })
-
-  inputMode.addCanvasClickedListener(() => {
-    hidePopup(graphComponent)
-  })
+  )
+  inputMode.addEventListener('canvas-clicked', () => hidePopup(graphComponent))
 }
 
 /**
@@ -170,14 +172,11 @@ async function startCrossReferenceEdgeCreation(
   graphComponent: GraphComponent
 ): Promise<void> {
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
-  const portCandidate = new DefaultPortCandidate(
-    sourceNode,
-    FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-  )
+  const portCandidate = new PortCandidate(sourceNode, FreeNodePortLocationModel.CENTER)
   const createEdgeInputMode = inputMode.createEdgeInputMode
   // enable CreateEdgeInputMode for the moment
   createEdgeInputMode.enabled = true
-  await createEdgeInputMode.doStartEdgeCreation(portCandidate)
+  await createEdgeInputMode.startEdgeCreation(portCandidate)
 }
 
 /**
@@ -214,7 +213,7 @@ export function showPickerContainer(
     pickerContainer.clientWidth / 2 -
     toolbarClientRect.left
   }px`
-  const gcAnchor = graphComponent.toPageFromView(new Point(0, 0))
+  const gcAnchor = graphComponent.viewToPageCoordinates(new Point(0, 0))
   if (toolbarClientRect.top - gcAnchor.y < pickerClientRect.height + 20) {
     pickerContainer.style.top = '55px'
     pickerContainer.classList.add('bottom')

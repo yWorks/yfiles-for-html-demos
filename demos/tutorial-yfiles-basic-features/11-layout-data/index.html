@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,12 +31,12 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>11 Layout Data - Tutorial: Basic Features [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/tutorial.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -201,11 +199,9 @@
                   <pre
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Configure the layout data using the information from the node labels</span>
-<span class="hljs-keyword">const</span> hierarchicLayoutData = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HierarchicLayoutData</span>({
-  <span class="hljs-attr">nodeLayoutDescriptors</span>: (
-    <span class="hljs-attr">node</span>: <span class="hljs-title class_">INode</span>
-  ): <span class="hljs-function"><span class="hljs-params">HierarchicLayoutNodeLayoutDescriptor</span> =&gt;</span>
-    <span class="hljs-keyword">new</span> <span class="hljs-title class_">HierarchicLayoutNodeLayoutDescriptor</span>({
+<span class="hljs-keyword">const</span> hierarchicalLayoutData = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HierarchicalLayoutData</span>({
+  <span class="hljs-attr">nodeDescriptors</span>: (<span class="hljs-attr">node</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-function"><span class="hljs-params">HierarchicalLayoutNodeDescriptor</span> =&gt;</span>
+    <span class="hljs-keyword">new</span> <span class="hljs-title class_">HierarchicalLayoutNodeDescriptor</span>({
       <span class="hljs-comment">// Set the alignment of the node based on the label</span>
       <span class="hljs-attr">layerAlignment</span>: <span class="hljs-title function_">getAlignment</span>(node)
     })
@@ -240,7 +236,7 @@
               <div class="paragraph">
                 <p>
                   The layout data is used as a parameter for
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-morphLayout" target="_blank">morphLayout</a>
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-applyLayoutAnimated" target="_blank">applyLayoutAnimated</a>
                   to pass the information to the layout algorithm.
                 </p>
               </div>
@@ -248,11 +244,10 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">await</span> graphComponent.<span class="hljs-title function_">morphLayout</span>({
-  <span class="hljs-attr">layout</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">MinimumNodeSizeStage</span>(hierarchicLayout),
-  <span class="hljs-attr">layoutData</span>: hierarchicLayoutData,
-  <span class="hljs-attr">morphDuration</span>: <span class="hljs-string">&#x27;1s&#x27;</span>,
-  <span class="hljs-attr">easedAnimation</span>: <span class="hljs-literal">true</span>
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">await</span> graphComponent.<span class="hljs-title function_">applyLayoutAnimated</span>({
+  <span class="hljs-attr">layout</span>: hierarchicalLayout,
+  <span class="hljs-attr">layoutData</span>: hierarchicalLayoutData,
+  <span class="hljs-attr">animationDuration</span>: <span class="hljs-string">&#x27;1s&#x27;</span>
 })</code></pre>
                 </div>
               </div>

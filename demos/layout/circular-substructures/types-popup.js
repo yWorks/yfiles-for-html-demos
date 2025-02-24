@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import NodeTypePanel from 'demo-utils/NodeTypePanel'
-import { colorSets, createDemoNodeStyle } from 'demo-resources/demo-styles'
-
+import NodeTypePanel from '@yfiles/demo-utils/NodeTypePanel'
+import { colorSets, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 /**
  * The color sets for the eight different node types.
  */
@@ -42,31 +41,22 @@ export const nodeTypeColors = [
   'demo-palette-12',
   'demo-palette-14'
 ]
-
 /**
  * Gets the type of the given node by querying it from the node's tag.
- * @param {!INode} node
- * @returns {number}
  */
 export function getNodeType(node) {
   return node.tag?.type ?? 0
 }
-
 /**
  * Sets the type for the given node by updating the node's tag and the according style.
  * This function is invoked when the type of node is changed via the type panel.
- * @param {!INode} node
- * @param {number} type
  */
 export function setNodeType(node, type) {
   // set a new tag and style so that this change is easily undo-able
   node.tag = { type: type }
 }
-
 /**
  * Initializes the context menu for changing a node's type.
- * @param {!GraphComponent} graphComponent
- * @returns {!NodeTypePanel}
  */
 export function initializeTypePanel(graphComponent) {
   const graph = graphComponent.graph
@@ -75,14 +65,13 @@ export function initializeTypePanel(graphComponent) {
     setNodeType(node, newType)
     graph.setStyle(node, createDemoNodeStyle(nodeTypeColors[newType]))
   }
-
   // update the nodes whose types will be changed on selection change events
-  graphComponent.selection.addItemSelectionChangedListener(
+  graphComponent.selection.addEventListener(
+    'item-added',
     () =>
-      (typePanel.currentItems = graphComponent.selection.selectedNodes
+      (typePanel.currentItems = graphComponent.selection.nodes
         .filter((n) => !graph.isGroupNode(n))
         .toArray())
   )
-
   return typePanel
 }

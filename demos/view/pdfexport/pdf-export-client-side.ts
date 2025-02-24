@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,10 +33,10 @@ import {
   type Rect,
   Size,
   SvgExport,
-  WebGL2GraphModelManager
-} from 'yfiles'
+  WebGLGraphModelManager
+} from '@yfiles/yfiles'
 import { PaperSize } from './PaperSize'
-import { useWebGL2Rendering } from './webgl-support'
+import { useWebGLRendering } from './webgl-support'
 
 // The demo uses the open-source library for PDF export https://github.com/MrRio/jsPDF alongside with
 // https://github.com/yWorks/svg2pdf.js/ to convert a given SVG element to PDF
@@ -67,7 +67,8 @@ export async function exportPdfClientSide(
   margin: number,
   paperSize: PaperSize,
   exportRectangle?: Rect,
-  customFonts: CustomFontDescriptor[] = []
+  customFonts: CustomFontDescriptor[] = [],
+  renderCompletionCallback?: () => Promise<void | void[]>
 ): Promise<{ pdfData: string; previewElement: HTMLIFrameElement }> {
   // configure export, export the PDF and show a dialog to save the PDF file
   const { raw, uri } = await exportPdf(
@@ -76,7 +77,8 @@ export async function exportPdfClientSide(
     Insets.from(margin),
     paperSize,
     exportRectangle,
-    customFonts
+    customFonts,
+    renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
   )
 
   const pdfIFrame = createPdfIFrame(raw, uri)
@@ -95,20 +97,21 @@ export async function exportPdf(
   margins = Insets.from(5),
   paperSize = PaperSize.AUTO,
   exportRect?: Rect,
-  customFonts: CustomFontDescriptor[] = []
+  customFonts: CustomFontDescriptor[] = [],
+  renderCompletionCallback?: () => Promise<void | void[]>
 ): Promise<{ raw: string; uri: string }> {
   // Create a new graph component for exporting the original SVG content
   const exportComponent = new GraphComponent()
   // ... and assign it the same graph.
   exportComponent.graph = graphComponent.graph
-  exportComponent.updateContentRect()
+  exportComponent.updateContentBounds()
 
-  if (graphComponent.graphModelManager instanceof WebGL2GraphModelManager) {
-    useWebGL2Rendering(exportComponent)
+  if (graphComponent.graphModelManager instanceof WebGLGraphModelManager) {
+    useWebGLRendering(exportComponent)
   }
 
   // Determine the bounds of the exported area
-  const targetRect = exportRect || exportComponent.contentRect
+  const targetRect = exportRect || exportComponent.contentBounds
 
   // Create the exporter class
   const exporter = new SvgExport({
@@ -123,7 +126,10 @@ export async function exportPdf(
   exporter.cssStyleSheet = null
 
   // export the component to svg
-  const svgElement = await exporter.exportSvgAsync(exportComponent)
+  const svgElement = await exporter.exportSvgAsync(
+    exportComponent,
+    renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
+  )
 
   const size = getExportSize(paperSize, exporter)
   return convertSvgToPdf(svgElement as SVGElement, size, customFonts)

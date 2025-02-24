@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -109,6 +109,9 @@ export class D3BarChart {
       .attr('y', (d) => y(d))
       .attr('height', (d) => this.chartHeight - y(d))
 
+    const tooltip = d3.select('.d3-loadTooltip')
+    this.addTooltip(groups, tooltip)
+
     // Remove bars which are no longer bound to data in the current data set
     groups.exit().remove()
 
@@ -148,6 +151,8 @@ export class D3BarChart {
       .attr('y', (d) => y(d))
       .attr('height', (d) => this.chartHeight - y(d))
 
+    this.addTooltip(currentGroup, tooltip)
+
     // Remove old data
     currentGroup.exit().remove()
   }
@@ -159,5 +164,25 @@ export class D3BarChart {
     if (this.currentDevice) {
       this.barChart(this.currentDevice)
     }
+  }
+
+  /**
+   * Creates a tooltip for each bar.
+   */
+  addTooltip(
+    groups: d3.Selection<d3.BaseType, number, d3.BaseType, unknown>,
+    tooltip: d3.Selection<d3.BaseType, unknown, HTMLElement, unknown>
+  ): void {
+    groups
+      .select('rect')
+      .on('mouseenter', (_, load) => {
+        tooltip.style('visibility', 'visible').html(`Load: ${(load as number).toFixed(2)}`)
+      })
+      .on('mousemove', (event: MouseEvent) => {
+        const currentTarget = event.currentTarget as SVGSVGElement
+        const [x, y] = d3.pointer(event, currentTarget.closest('svg'))
+        tooltip.style('left', `${x + 10}px`).style('top', `${y + 10}px`)
+      })
+      .on('mouseleave', () => tooltip.style('visibility', 'hidden'))
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "rollupjs-demo-for-yfiles-for-html",
+  "name": "@yfiles/rollupjs-demo-for-yfiles-for-html",
   "version": "1.0.0",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
@@ -9,19 +9,19 @@
     "build": "rollup --config rollup.config.mjs --environment NODE_ENV:production"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-json": "^6.0.1",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-replace": "^5.0.5",
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-terser": "^0.4.4",
     "@yworks/optimizer": "^1.8.2",
-    "postcss": "^8.4.31",
+    "postcss": "^8.4.47",
     "postcss-url": "^10.1.3",
-    "rollup": "^4.5.1",
+    "rollup": "^4.24.0",
     "rollup-plugin-postcss": "^4.0.2"
   },
   "dependencies": {
-    "demo-resources": "../../resources",
-    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz"
+    "@yfiles/demo-resources": "../../resources",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
   }
 }

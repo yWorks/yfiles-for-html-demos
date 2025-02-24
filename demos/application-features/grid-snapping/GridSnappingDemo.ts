@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,10 +28,10 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Class,
+  Color,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   Fill,
   GraphBuilder,
   GraphComponent,
@@ -39,25 +39,25 @@ import {
   GraphSnapContext,
   GridConstraintProvider,
   GridInfo,
+  GridRenderer,
+  GridSnappableItems,
   GridSnapTypes,
   GridStyle,
-  GridVisualCreator,
-  HierarchicLayout,
-  ICanvasContext,
+  HierarchicalLayout,
   IGraph,
-  LabelSnapContext,
   LayoutExecutor,
   License,
-  RenderModes,
+  RenderMode,
   Size,
+  SnappableItems,
   Stroke
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
@@ -65,7 +65,7 @@ let graphComponent: GraphComponent
 /**
  * Visualizes the grid.
  */
-let grid: GridVisualCreator = null!
+let grid: GridRenderer = null!
 
 /**
  * Bootstraps the demo.
@@ -75,10 +75,7 @@ async function run(): Promise<void> {
 
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode()
 
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
@@ -87,15 +84,14 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
-    new HierarchicLayout({
-      orthogonalRouting: true,
+    new HierarchicalLayout({
       minimumLayerDistance: 70,
-      nodeToNodeDistance: 70
+      nodeDistance: 70
     })
   )
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
@@ -140,24 +136,15 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
  * Initializes snapping for labels and other graph items. The default snapping behavior can easily
  * be enabled by setting the according snap context. Those snap contexts provide many options to
  * fine-tune their behavior; in this case, we use it to make the items snap only to the given grid
- * but not to other graph items. Please see the documentation of {@link GraphSnapContext} and
- * {@link LabelSnapContext} for more information.
+ * but not to other graph items. Please see the documentation of {@link GraphSnapContext} for more information.
  */
 function initializeSnapping(): void {
   const geim = graphComponent.inputMode as GraphEditorInputMode
-  const graphSnapContext = new GraphSnapContext({
-    enabled: true,
+  geim.snapContext = new GraphSnapContext({
     // disable some default snapping behavior such that the graph items only snap to the grid and nowhere else
-    snapBendAdjacentSegments: false,
-    snapBendsToSnapLines: false,
-    snapNodesToSnapLines: false,
-    snapOrthogonalMovement: false,
-    snapPortAdjacentSegments: false,
-    snapSegmentsToSnapLines: false
+    snappableItems: SnappableItems.NONE,
+    gridSnappableItems: GridSnappableItems.ALL
   })
-  const labelSnapContext = new LabelSnapContext()
-  geim.snapContext = graphSnapContext
-  geim.labelSnapContext = labelSnapContext
 }
 
 /**
@@ -165,7 +152,7 @@ function initializeSnapping(): void {
  * which items can snap.
  */
 function initializeGrid(): void {
-  // Adds the grid snap types to a dictionary
+  // The snap types available in the UI
   const gridSnapTypes = {
     None: GridSnapTypes.NONE,
     'Horizontal Lines': GridSnapTypes.HORIZONTAL_LINES,
@@ -175,6 +162,7 @@ function initializeGrid(): void {
     All: GridSnapTypes.ALL
   }
 
+  // The grid appearances available in the UI
   const gridStyles = {
     Dots: GridStyle.DOTS,
     Lines: GridStyle.LINES,
@@ -183,29 +171,25 @@ function initializeGrid(): void {
     Crosses: GridStyle.CROSSES
   }
 
-  // Adds the grid colors to a dictionary
+  // The grid color available in the UI
   const gridColors = [
-    'Black',
-    'Gray',
-    'Light Gray',
-    'Dark Orchid',
-    'Navy',
-    'Teal',
-    'Forest Green',
-    'Firebrick',
-    'Sienna'
+    'black',
+    'gray',
+    'lightgray',
+    'darkorchid',
+    'navy',
+    'teal',
+    'firebrick',
+    'sienna'
   ]
 
   // Adds the grid render modes to a dictionary
-  const gridRenderModes: Record<string, RenderModes> = {
-    Canvas: RenderModes.CANVAS,
-    Svg: RenderModes.SVG
-  }
-  if (BrowserDetection.webGL) {
-    gridRenderModes['WebGL'] = RenderModes.WEB_GL
+  const gridRenderModes: Record<string, RenderMode> = {
+    Canvas: RenderMode.CANVAS,
+    Svg: RenderMode.SVG
   }
   if (BrowserDetection.webGL2) {
-    gridRenderModes['WebGL2'] = RenderModes.WEB_GL2
+    gridRenderModes['WebGL2'] = RenderMode.WEBGL
   }
 
   // Creates a radio group for the snap types
@@ -243,10 +227,8 @@ function initializeGrid(): void {
   gridInfo.verticalSpacing = 50
 
   // Creates grid visualization and adds it to graphComponent
-  grid = new GridVisualCreator(gridInfo)
-  grid.gridStyle = GridStyle.LINES
-  grid.stroke = new Stroke(Fill.GRAY, 1)
-  graphComponent.backgroundGroup.addChild(grid)
+  grid = new GridRenderer({ gridStyle: GridStyle.LINES, stroke: new Stroke(Color.GRAY, 1) })
+  graphComponent.renderTree.createElement(graphComponent.renderTree.backgroundGroup, gridInfo, grid)
   // Sets constraint provider to make nodes and bends snap to grid
   const graphSnapContext = (graphComponent.inputMode as GraphEditorInputMode)
     .snapContext as GraphSnapContext
@@ -255,8 +237,8 @@ function initializeGrid(): void {
 
   updateSnapType(GridSnapTypes.GRID_POINTS)
   updateGridStyle(GridStyle.DOTS)
-  updateRenderMode(RenderModes.CANVAS)
-  updateGridColor(Fill.GRAY)
+  updateRenderMode(RenderMode.CANVAS)
+  updateGridColor(Color.GRAY)
   updateGridThickness()
 }
 
@@ -308,28 +290,24 @@ function createColorPicker(sortedGridColors: Array<string>): void {
     rect.setAttribute('x', `${xOffset}px`)
     rect.setAttribute('width', `${size}px`)
     rect.setAttribute('height', `${size}px`)
+    rect.setAttribute('fill', colorName)
 
     const title = document.createElementNS('http://www.w3.org/2000/svg', 'title')
     title.textContent = colorName
     rect.appendChild(title)
 
-    if (colorName === 'Gray') {
+    if (colorName === 'gray') {
       rect.classList.add('selected-color')
     }
 
-    Fill.from(colorName.replace(' ', '-')).applyTo(rect, ICanvasContext.DEFAULT)
-
-    rect.addEventListener(
-      'click',
-      function (fill: Fill, rect: SVGElement): void {
-        // Remove styling from previous selection
-        gridColorPicker!
-          .querySelectorAll('.selected-color')
-          .forEach((rect: Element) => rect.classList.remove('selected-color'))
-        rect.classList.add('selected-color')
-        updateGridColor(fill)
-      }.bind(null, Fill.from(colorName.replace(' ', '-')), rect)
-    )
+    rect.addEventListener('click', (): void => {
+      // Remove styling from previous selection
+      gridColorPicker!
+        .querySelectorAll('.selected-color')
+        .forEach((rect: Element) => rect.classList.remove('selected-color'))
+      rect.classList.add('selected-color')
+      updateGridColor(Fill.from(colorName))
+    })
 
     gridColorPicker!.appendChild(rect)
     xOffset += size + 2
@@ -354,7 +332,7 @@ function updateGridStyle(gridStyle: GridStyle): void {
 /**
  * Sets the chosen render mode on the grid.
  */
-function updateRenderMode(renderMode: RenderModes): void {
+function updateRenderMode(renderMode: RenderMode): void {
   grid.renderMode = renderMode
   graphComponent.invalidate()
 }
@@ -363,10 +341,10 @@ function updateRenderMode(renderMode: RenderModes): void {
  * Updates the svg template.
  */
 function updateSvgTemplate(): void {
-  if (grid.renderMode === RenderModes.SVG) {
-    grid.renderMode = RenderModes.CANVAS
+  if (grid.renderMode === RenderMode.SVG) {
+    grid.renderMode = RenderMode.CANVAS
     graphComponent.updateVisual()
-    grid.renderMode = RenderModes.SVG
+    grid.renderMode = RenderMode.SVG
   }
 }
 
@@ -408,14 +386,15 @@ function initializeGraph(graph: IGraph): void {
 
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 /**
  * Binds the buttons in the toolbar to their functionality.
  */
@@ -427,7 +406,7 @@ function initializeUI(): void {
   })
   document
     .querySelector<HTMLInputElement>('#thickness')!
-    .addEventListener('change', updateGridThickness)
+    .addEventListener('input', updateGridThickness)
 }
 
 run().then(finishLoading)

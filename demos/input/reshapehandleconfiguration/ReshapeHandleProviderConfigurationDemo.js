@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,38 +39,31 @@ import {
   MutableRectangle,
   NodeReshapeHandleProvider,
   Rect
-} from 'yfiles'
-import LimitingRectangleDescriptor from './LimitingRectangleDescriptor.js'
-import PurpleNodeReshapeHandleProvider from './PurpleNodeReshapeHandleProvider.js'
+} from '@yfiles/yfiles'
+import { LimitingRectangleRenderer } from './LimitingRectangleRenderer'
+import PurpleNodeReshapeHandleProvider from './PurpleNodeReshapeHandleProvider'
 import {
   ApplicationState,
   ClickableNodeReshapeHandleProvider
-} from './ClickableNodeReshapeHandleProvider.js'
-import {
-  applyDemoTheme,
-  createDemoNodeLabelStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from './ClickableNodeReshapeHandleProvider'
+import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * Registers a callback function as a decorator that provides a customized
  * {@link IReshapeHandleProvider} for each node.
  * This callback function is called whenever a node in the graph is queried
  * for its {@link IReshapeHandleProvider}. In this case, the 'node'
  * parameter will be set to that node.
- * @param {!IGraph} graph The given graph
- * @param {!Rect} boundaryRectangle The rectangle that limits the node's size.
+ * @param graph The given graph
+ * @param boundaryRectangle The rectangle that limits the node's size.
  */
 function registerReshapeHandleProvider(graph, boundaryRectangle) {
-  const nodeDecorator = graph.decorator.nodeDecorator
-
+  const nodeDecorator = graph.decorator.nodes
   // deactivate reshape handling for the red node
-  nodeDecorator.reshapeHandleProviderDecorator.hideImplementation((node) => node.tag === 'red')
-
+  nodeDecorator.reshapeHandleProvider.hide((node) => node.tag === 'red')
   // return customized reshape handle provider for the orange, blue and green node
-  nodeDecorator.reshapeHandleProviderDecorator.setFactory(
+  nodeDecorator.reshapeHandleProvider.addFactory(
     (node) =>
       node.tag === 'orange' ||
       node.tag === 'blue' ||
@@ -81,11 +74,9 @@ function registerReshapeHandleProvider(graph, boundaryRectangle) {
     (node) => {
       // Obtain the tag from the node
       const nodeTag = node.tag
-
       // Create a default reshape handle provider for nodes
-      const reshapeHandler = node.lookup(IReshapeHandler.$class)
+      const reshapeHandler = node.lookup(IReshapeHandler)
       let provider = new NodeReshapeHandleProvider(node, reshapeHandler, HandlePositions.BORDER)
-
       // Customize the handle provider depending on the node's color
       if (nodeTag === 'orange') {
         // Restrict the node bounds to the boundaryRectangle
@@ -103,7 +94,7 @@ function registerReshapeHandleProvider(graph, boundaryRectangle) {
       } else if (nodeTag === 'purple') {
         provider = new PurpleNodeReshapeHandleProvider(node, reshapeHandler)
       } else if (nodeTag === 'darkblue') {
-        provider.handlePositions = HandlePositions.SOUTH_EAST
+        provider.handlePositions = HandlePositions.BOTTOM_RIGHT
         provider.centerReshapeRecognizer = EventRecognizers.ALWAYS
       } else if (nodeTag === 'gold') {
         provider = new ClickableNodeReshapeHandleProvider(node, reshapeHandler, applicationState)
@@ -112,50 +103,40 @@ function registerReshapeHandleProvider(graph, boundaryRectangle) {
     }
   )
 }
-
-/** @type {ApplicationState} */
 let applicationState
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
-
   // Create a default editor input mode
   const graphEditorInputMode = new GraphEditorInputMode({
     // Just for user convenience: disable node, edge creation and clipboard operations,
     allowCreateEdge: false,
     allowCreateNode: false,
     allowClipboardOperations: false,
-    movableItems: GraphItemTypes.NONE
+    movableSelectedItems: GraphItemTypes.NONE
   })
-
   applicationState = new ApplicationState(graphEditorInputMode, true)
-
   // and enable the undo feature.
   graph.undoEngineEnabled = true
-
   // Finally, set the input mode to the graph component.
   graphComponent.inputMode = graphEditorInputMode
-
   // Create the rectangle that limits the movement of some nodes
   // and add it to the graphComponent.
   const boundaryRectangle = new MutableRectangle(20, 20, 480, 550)
-  graphComponent.backgroundGroup.addChild(boundaryRectangle, new LimitingRectangleDescriptor())
-
+  const renderTree = graphComponent.renderTree
+  renderTree.createElement(
+    renderTree.backgroundGroup,
+    boundaryRectangle,
+    new LimitingRectangleRenderer()
+  )
   registerReshapeHandleProvider(graph, boundaryRectangle.toRect())
-
   createSampleGraph(graph)
 }
-
 /**
  * Creates the sample graph of this demo.
- * @param {!IGraph} graph The input graph
+ * @param graph The input graph
  */
 function createSampleGraph(graph) {
   createNode(graph, 80, 100, 140, 30, 'demo-red', 'red', 'Fixed size')
@@ -183,21 +164,19 @@ function createSampleGraph(graph) {
     'gold',
     'Keep Aspect ratio\ndepending on state'
   )
-
   // clear undo after initial graph loading
   graph.undoEngine.clear()
 }
-
 /**
  * Creates a sample node for this demo.
- * @param {!IGraph} graph The given graph
- * @param {number} x The node's x-coordinate
- * @param {number} y The node's y-coordinate
- * @param {number} w The node's width
- * @param {number} h The node's height
- * @param {!ColorSetName} colorSet The color set that defines the node color
- * @param {!string} tag The tag to identify the reshape handler
- * @param {!string} labelText The nodes label's text
+ * @param graph The given graph
+ * @param x The node's x-coordinate
+ * @param y The node's y-coordinate
+ * @param w The node's width
+ * @param h The node's height
+ * @param colorSet The color set that defines the node color
+ * @param tag The tag to identify the reshape handler
+ * @param labelText The nodes label's text
  */
 function createNode(graph, x, y, w, h, colorSet, tag, labelText) {
   const node = graph.createNode({
@@ -205,12 +184,10 @@ function createNode(graph, x, y, w, h, colorSet, tag, labelText) {
     style: createDemoNodeStyle(colorSet),
     tag: tag
   })
-
   graph.addLabel({
     owner: node,
     text: labelText,
     style: createDemoNodeLabelStyle(colorSet)
   })
 }
-
 run().then(finishLoading)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,10 +32,11 @@ import {
   CanvasComponent,
   Font,
   GraphComponent,
-  HierarchicNestingPolicy,
+  HierarchicalNestingPolicy,
   IAnimation,
   IEdgeStyle,
   INode,
+  INodeStyle,
   IPoint,
   IRenderContext,
   IVisualCreator,
@@ -47,9 +48,8 @@ import {
   SvgVisual,
   TextRenderSupport,
   TimeSpan,
-  Visual,
-  VoidNodeStyle
-} from 'yfiles'
+  Visual
+} from '@yfiles/yfiles'
 
 import {
   createAggregationStyle,
@@ -64,10 +64,7 @@ import type { UMLNodeStyle } from './UMLNodeStyle'
 /**
  * Provides the visuals of the edge creation buttons.
  */
-export default class ButtonVisualCreator
-  extends BaseClass<IVisualCreator>(IVisualCreator)
-  implements IVisualCreator
-{
+export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
   private static buttons: SVGElement[]
 
   private renderer: ButtonIconRenderer
@@ -240,7 +237,7 @@ export default class ButtonVisualCreator
   ): IEdgeStyle | null {
     for (let i = 0; i < ButtonVisualCreator.buttons.length; i++) {
       const boundingRect = ButtonVisualCreator.buttons[i].getBoundingClientRect()
-      const worldTopLeft = canvasComponent.toWorldFromPage(
+      const worldTopLeft = canvasComponent.pageToWorldCoordinates(
         new Point(boundingRect.left, boundingRect.top)
       )
       if (
@@ -286,7 +283,7 @@ export default class ButtonVisualCreator
 /**
  * Executes the button fan out animation.
  */
-class ButtonAnimation extends BaseClass<IAnimation>(IAnimation) implements IAnimation {
+class ButtonAnimation extends BaseClass(IAnimation) {
   constructor(
     private rotationElement: SVGElement,
     private finishAngle: number,
@@ -323,7 +320,7 @@ class ButtonIconRenderer {
 
   constructor() {
     this.gc = new GraphComponent()
-    this.gc.graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NONE
+    this.gc.graphModelManager.hierarchicalNestingPolicy = HierarchicalNestingPolicy.NONE
     this.gc.graphModelManager.edgeGroup.above(this.gc.graphModelManager.nodeGroup)
   }
 
@@ -336,8 +333,8 @@ class ButtonIconRenderer {
       shape: ShapeNodeShape.ELLIPSE
     })
     graph.createNode(new Rect(-15, -15, 30, 30), style)
-    const src = graph.createNode(new Rect(-10, 0, 1, 1), VoidNodeStyle.INSTANCE)
-    const tgt = graph.createNode(new Rect(10, 0, 1, 1), VoidNodeStyle.INSTANCE)
+    const src = graph.createNode(new Rect(-10, 0, 1, 1), INodeStyle.VOID_NODE_STYLE)
+    const tgt = graph.createNode(new Rect(10, 0, 1, 1), INodeStyle.VOID_NODE_STYLE)
     graph.createEdge(src, tgt, edgeStyle)
     const svgExport = new SvgExport(new Rect(-18, -18, 36, 36))
     return svgExport.exportSvg(this.gc)

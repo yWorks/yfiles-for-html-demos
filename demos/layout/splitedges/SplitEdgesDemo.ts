@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,44 +29,40 @@
 import {
   Arrow,
   ArrowType,
+  CssFill,
   EdgeRouter,
   EdgeStyleBase,
+  EdgeStyleIndicatorRenderer,
+  GenericLayoutData,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  GraphSelectionIndicatorManager,
-  GroupingKeys,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   IArrow,
   IEdge,
   IGraph,
+  Insets,
   IRenderContext,
-  LayoutOrientation,
+  LayoutExecutor,
+  LayoutKeys,
   License,
   PolylineEdgeStyle,
   RecursiveGroupLayout,
   RecursiveGroupLayoutData,
-  SimplexNodePlacer,
   Size,
   SmoothingPolicy,
-  SolidColorFill,
   SvgVisual,
   SvgVisualGroup,
-  Visual,
-  YInsets
-} from 'yfiles'
+  Visual
+} from '@yfiles/yfiles'
 
 import ContextMenuSupport from './ContextMenuSupport'
-import {
-  applyDemoTheme,
-  createDemoGroupStyle,
-  createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { createDemoGroupStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
@@ -74,8 +70,6 @@ let graphComponent: GraphComponent
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   configureInteraction()
   await loadGraph()
 
@@ -91,6 +85,7 @@ async function loadGraph(): Promise<void> {
 
   await runLayout()
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
@@ -121,32 +116,33 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
     item.tag ? `3px ${item.tag.color}` : undefined
   )
   edgesSource.edgeCreator.styleBindings.addBinding('targetArrow', (item) =>
-    item.tag ? new Arrow({ fill: item.tag.color, type: 'triangle', scale: 1.5 }) : undefined
+    item.tag ? new Arrow({ fill: item.tag.color, type: 'triangle' }) : undefined
   )
 
   graphBuilder.buildGraph()
 }
 
 /**
- * Runs a {@link RecursiveGroupLayout} with {@link HierarchicLayout} as its core
+ * Runs a {@link RecursiveGroupLayout} with {@link HierarchicalLayout} as its core
  * layout.
  */
 async function runLayout() {
-  const hierarchicLayout = new HierarchicLayout({
-    layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT
+  const hierarchicalLayout = new HierarchicalLayout({
+    layoutOrientation: 'left-to-right',
+    defaultEdgeDescriptor: {
+      directGroupContentEdgeRouting: true
+    }
   })
-  hierarchicLayout.edgeLayoutDescriptor.directGroupContentEdgeRouting = true
-  ;(hierarchicLayout.nodePlacer as SimplexNodePlacer).barycenterMode = true
 
   const edgeRouter = new EdgeRouter({
-    scope: 'route-affected-edges'
+    defaultEdgeDescriptor: {
+      directGroupContentEdgeRouting: true
+    }
   })
-  edgeRouter.defaultEdgeLayoutDescriptor.directGroupContentEdgeRouting = true
 
   const recursiveGroupLayout = new RecursiveGroupLayout({
-    coreLayout: hierarchicLayout,
-    interEdgeRouter: edgeRouter,
-    interEdgesDpKey: edgeRouter.affectedEdgesDpKey
+    coreLayout: hierarchicalLayout,
+    interEdgeRouter: edgeRouter
   })
 
   // use the split ids from the edge tags
@@ -156,21 +152,30 @@ async function runLayout() {
     targetSplitIds: (edge: IEdge) =>
       edge.tag && edge.tag.targetSplitId ? edge.tag.targetSplitId : null
   }).combineWith(
-    new HierarchicLayoutData({
+    new HierarchicalLayoutData({
       edgeThickness: 3
     })
   )
 
-  graphComponent.graph.mapperRegistry.createConstantMapper(
-    GroupingKeys.GROUP_NODE_INSETS_DP_KEY,
-    new YInsets(35, 20, 20, 20)
+  const genericLayoutData = new GenericLayoutData()
+  genericLayoutData.addItemMapping(LayoutKeys.GROUP_NODE_PADDING_DATA_KEY).constant = new Insets(
+    35,
+    20,
+    20,
+    20
   )
 
-  setUIDisabled(true)
-  await graphComponent.morphLayout(recursiveGroupLayout, '700ms', layoutData)
-  setUIDisabled(false)
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
 
-  graphComponent.graph.mapperRegistry.removeMapper(GroupingKeys.GROUP_NODE_INSETS_DP_KEY)
+  setUIDisabled(true)
+  await graphComponent.applyLayoutAnimated(
+    recursiveGroupLayout,
+    '700ms',
+    layoutData.combineWith(genericLayoutData)
+  )
+  setUIDisabled(false)
 }
 
 /**
@@ -188,16 +193,18 @@ function initializeDefaults(): void {
     stroke: '3px #4E4E4E',
     targetArrow: new Arrow({
       fill: '#4E4E4E',
-      type: 'triangle',
-      scale: 1.5
+      type: 'triangle'
     }),
     smoothingLength: 15
   })
   graph.edgeDefaults.shareStyleInstance = false
 
-  graphComponent.selectionIndicatorManager = new GraphSelectionIndicatorManager({
-    edgeStyle: new HighlightEdgeStyle()
-  })
+  graph.decorator.edges.selectionRenderer.addConstant(
+    new EdgeStyleIndicatorRenderer({
+      edgeStyle: new HighlightEdgeStyle(),
+      zoomPolicy: 'world-coordinates'
+    })
+  )
 }
 
 /**
@@ -205,8 +212,7 @@ function initializeDefaults(): void {
  */
 function configureInteraction(): void {
   graphComponent.inputMode = new GraphEditorInputMode({
-    selectableItems: GraphItemTypes.EDGE | GraphItemTypes.NODE,
-    allowGroupingOperations: true
+    selectableItems: GraphItemTypes.EDGE | GraphItemTypes.NODE
   })
 
   const contextMenuSupport = new ContextMenuSupport(graphComponent, runLayout)
@@ -237,8 +243,7 @@ function setUIDisabled(disabled: boolean): void {
 class HighlightEdgeStyle extends EdgeStyleBase {
   createVisual(context: IRenderContext, edge: IEdge): Visual {
     const edgeStyle = edge.style as PolylineEdgeStyle
-    const strokeColor = (edgeStyle.stroke!.fill as SolidColorFill)?.color
-    const highlightColor = `rgb(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b})`
+    const highlightColor = (edgeStyle.stroke!.fill as CssFill)?.value
     const visualGroup = new SvgVisualGroup()
     const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const highlightPath = document.createElementNS('http://www.w3.org/2000/svg', 'path')
@@ -259,8 +264,9 @@ class HighlightEdgeStyle extends EdgeStyleBase {
       path,
       IArrow.NONE,
       new Arrow({
-        color: highlightColor,
-        scale: 1.7,
+        fill: highlightColor,
+        lengthScale: 1.7,
+        widthScale: 1.7,
         type: ArrowType.TRIANGLE
       })
     )
@@ -269,9 +275,12 @@ class HighlightEdgeStyle extends EdgeStyleBase {
 
     const highlightVisual = new SvgVisual(highlight)
     visualGroup.add(highlightVisual)
-    visualGroup.add(
-      edge.style.renderer.getVisualCreator(edge, edge.style).createVisual(context) as SvgVisual
-    )
+    const visual = edge.style.renderer
+      .getVisualCreator(edge, edge.style)
+      .createVisual(context) as SvgVisual
+    if (visual) {
+      visualGroup.add(visual)
+    }
 
     return visualGroup
   }

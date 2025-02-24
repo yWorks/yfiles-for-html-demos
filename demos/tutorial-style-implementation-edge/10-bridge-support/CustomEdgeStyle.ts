@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,7 +30,7 @@
 import {
   BaseClass,
   BridgeManager,
-  type Class,
+  type Constructor,
   EdgeStyleBase,
   type GeneralPath,
   IArrow,
@@ -43,7 +43,7 @@ import {
   type Rect,
   SvgVisual,
   type TaggedSvgVisual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Augment the SvgVisual type with the data used to cache the rendering information
@@ -187,8 +187,8 @@ export class CustomEdgeStyle extends EdgeStyleBase<CustomEdgeStyleVisual> {
     return path.getBounds().getEnlarged(thickness * 0.5)
   }
 
-  protected lookup(edge: IEdge, type: Class): any {
-    if (type === IObstacleProvider.$class) {
+  protected lookup(edge: IEdge, type: Constructor<any>): any {
+    if (type === IObstacleProvider) {
       const getPath = this.getPath.bind(this)
       return new (class extends BaseClass(IObstacleProvider) {
         getObstacles(context: IRenderContext): GeneralPath | null {
@@ -200,7 +200,7 @@ export class CustomEdgeStyle extends EdgeStyleBase<CustomEdgeStyleVisual> {
   }
 
   private getObstacleHash(context: IRenderContext): number {
-    const manager = context.lookup(BridgeManager.$class)
+    const manager = context.lookup(BridgeManager)
     return manager ? manager.getObstacleHash(context) : 42
   }
 
@@ -208,7 +208,7 @@ export class CustomEdgeStyle extends EdgeStyleBase<CustomEdgeStyleVisual> {
     path: GeneralPath,
     context: IRenderContext
   ): GeneralPath {
-    const manager = context.lookup(BridgeManager.$class)
+    const manager = context.lookup(BridgeManager)
     return manager ? manager.addBridges(context, path) : path
   }
 

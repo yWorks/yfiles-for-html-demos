@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,20 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode } from 'yfiles'
-import { getEntityData, getInfoMap } from './entity-data.js'
-import { nodeStyleMapping } from './styles/graph-styles.js'
-
+import { INode } from '@yfiles/yfiles'
+import { getEntityData, getInfoMap } from './entity-data'
+import { nodeStyleMapping } from './styles/graph-styles'
 /**
  * Creates the right-panel which displays information about the selected node.
- * @param {!GraphComponent} graphComponent
  */
 export function initializePropertiesView(graphComponent) {
   let detailsContainer = document.querySelector('.details-container')
   if (!detailsContainer) {
     detailsContainer = document.createElement('div')
     detailsContainer.classList.add('details-container')
-
     // creates the div that contains the message displayed when no item is selected
     const messageElement = document.createElement('div')
     messageElement.classList.add('no-item-selection')
@@ -51,23 +48,21 @@ export function initializePropertiesView(graphComponent) {
   const parentContainer = document.querySelector('#properties-view')
   parentContainer.appendChild(detailsContainer)
   toggleNoSelectionVisibility(true)
-
   const inputMode = graphComponent.inputMode
-  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+  graphComponent.selection.addEventListener('item-added', (evt) => {
     clearPropertiesView()
-    updatePropertiesView(evt.item, evt.itemSelected, detailsContainer)
+    updatePropertiesView(evt.item, true, detailsContainer)
   })
-
-  inputMode.addCanvasClickedListener(() => {
+  graphComponent.selection.addEventListener('item-removed', (evt) => {
+    clearPropertiesView()
+    updatePropertiesView(evt.item, false, detailsContainer)
+  })
+  inputMode.addEventListener('canvas-clicked', () => {
     clearPropertiesView()
   })
 }
-
 /**
  * Updates the information that has to be displayed based on the selected node.
- * @param {?IModelItem} item
- * @param {boolean} isSelected
- * @param {!HTMLDivElement} detailsContainer
  */
 function updatePropertiesView(item, isSelected, detailsContainer) {
   if (item instanceof INode && isSelected) {
@@ -75,7 +70,6 @@ function updatePropertiesView(item, isSelected, detailsContainer) {
     showEntityProperties(item, detailsContainer)
   }
 }
-
 /**
  * Cleats the properties view panel.
  */
@@ -84,26 +78,19 @@ export function clearPropertiesView() {
   detailsContainer?.remove()
   toggleNoSelectionVisibility(true)
 }
-
 /**
  * Creates the HTMLElement that will display the information of the given node and adds it to the parent container.
- * @param {!INode} node
- * @param {!HTMLDivElement} parentContainer
  */
 function showEntityProperties(node, parentContainer) {
   const propertiesContainer = document.createElement('div')
   propertiesContainer.classList.add('properties-container')
-
   const entity = getEntityData(node)
-
   const headerContainer = document.createElement('div')
   headerContainer.classList.add('header-container')
   propertiesContainer.appendChild(headerContainer)
-
   const heading = document.createElement('div')
   heading.classList.add('header')
   headerContainer.appendChild(heading)
-
   const imageUrl = nodeStyleMapping[entity.type].image
   if (imageUrl) {
     const icon = document.createElement('img')
@@ -112,18 +99,14 @@ function showEntityProperties(node, parentContainer) {
     icon.setAttribute('src', imageUrl)
     heading.appendChild(icon)
   }
-
   const typeElement = createElement('h2', entity.type)
   typeElement.style.display = 'inline-block'
   heading.appendChild(typeElement)
-
   const tableContainer = document.createElement('div')
   tableContainer.classList.add('table-container')
   propertiesContainer.appendChild(tableContainer)
-
   const table = document.createElement('table')
   tableContainer.appendChild(table)
-
   const infoMap = getInfoMap(node)
   Object.keys(infoMap).forEach((key) => {
     const tr = document.createElement('tr')
@@ -133,20 +116,14 @@ function showEntityProperties(node, parentContainer) {
   })
   parentContainer.appendChild(propertiesContainer)
 }
-
 /**
  * Sets the visibility of the message displayed when no item is selected.
- * @param {boolean} visible
  */
 function toggleNoSelectionVisibility(visible) {
   document.querySelector('.no-item-selection').style.display = visible ? 'flex' : 'none'
 }
-
 /**
  * Creates a DOM element with the specified text content.
- * @param {!string} tagName
- * @param {!string} textContent
- * @returns {!HTMLElement}
  */
 function createElement(tagName, textContent) {
   const element = document.createElement(tagName)

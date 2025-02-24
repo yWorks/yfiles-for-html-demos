@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CircularLayout, HierarchicLayout, OrganicLayout } from 'yfiles'
-
+import { CircularLayout, HierarchicalLayout, OrganicLayout } from '@yfiles/yfiles'
 /**
  * Applies different layouts to each of the group layers.
  *
@@ -35,17 +34,15 @@ import { CircularLayout, HierarchicLayout, OrganicLayout } from 'yfiles'
  * on top of each other in the master graph. However, with the deep zoom feature,
  * only a single layer is visible at a time.
  *
- * @param {!IFoldingView} foldingView The top level folding view
+ * @param foldingView The top level folding view
  */
 export function applyDeepZoomLayout(foldingView) {
   const foldingManager = foldingView.manager
   const masterGraph = foldingManager.masterGraph
-
   const queue = [[foldingView.localRoot, 0]]
   while (queue.length > 0) {
     const [root, layer] = queue.shift()
     applyLayout(foldingManager, root, layer)
-
     const childGroups = masterGraph
       .getChildren(root)
       .filter((child) => masterGraph.isGroupNode(child))
@@ -54,38 +51,26 @@ export function applyDeepZoomLayout(foldingView) {
     }
   }
 }
-
-/**
- * @param {!FoldingManager} foldingManager
- * @param {?INode} root
- * @param {number} layer
- */
 function applyLayout(foldingManager, root, layer) {
   // create a temporary view of the graph inside the given root with all child groups collapsed
   const localFoldingView = foldingManager.createFoldingView({ root, isExpanded: () => false })
   localFoldingView.graph.applyLayout(getLayoutForLayer(layer))
   localFoldingView.dispose()
 }
-
-/**
- * @param {number} layer
- * @returns {!ILayoutAlgorithm}
- */
 function getLayoutForLayer(layer) {
-  return layouts[layer] ?? hierarchicLayout
+  return layouts[layer] ?? hierarchicalLayout
 }
-
-const hierarchicLayout = new HierarchicLayout({ orthogonalRouting: true })
-const organicLayout = new OrganicLayout({ minimumNodeDistance: 80 })
+const hierarchicalLayout = new HierarchicalLayout()
+const organicLayout = new OrganicLayout({ defaultMinimumNodeDistance: 80 })
 const circularLayout = new CircularLayout()
 const layouts = [
-  hierarchicLayout,
-  hierarchicLayout,
+  hierarchicalLayout,
+  hierarchicalLayout,
   organicLayout,
-  hierarchicLayout,
+  hierarchicalLayout,
   circularLayout,
   organicLayout,
   circularLayout,
   organicLayout,
-  hierarchicLayout
+  hierarchicalLayout
 ]

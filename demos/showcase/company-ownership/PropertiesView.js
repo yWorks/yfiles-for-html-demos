@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,28 +26,26 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EdgeTypeEnum } from './data-types.js'
-
+import { EdgeTypeEnum } from './data-types'
 /**
  * Creates the properties view panel to display the properties of the clicked elements.
  */
 export class PropertiesView {
+  element
   /**
    * Creates the PropertiesView.
-   * @param {!Element} element The DOM element that will be filled with the properties.
+   * @param element The DOM element that will be filled with the properties.
    */
   constructor(element) {
     this.element = element
     this.element = element
   }
-
   /**
    * Displays the properties of the given node.
-   * @param {!Company} item The given node
+   * @param item The given node
    */
   showNodeProperties(item) {
     this.clear()
-
     const heading = document.createElement('div')
     heading.appendChild(createElement('h2', 'Company Details'))
     heading.classList.add('heading')
@@ -55,36 +53,30 @@ export class PropertiesView {
     // Display the individual properties
     const table = document.createElement('table')
     this.element.appendChild(table)
-
     let tr = document.createElement('tr')
     table.appendChild(tr)
     tr.appendChild(createElement('td', 'Name'))
     tr.appendChild(createElement('td', item.name))
-
     tr = document.createElement('tr')
     table.appendChild(tr)
     tr.appendChild(createElement('td', 'Type'))
     tr.appendChild(createElement('td', item.nodeType))
-
     tr = document.createElement('tr')
     table.appendChild(tr)
     tr.appendChild(createElement('td', 'Jurisdiction'))
     tr.appendChild(createElement('td', `${item.jurisdiction}`))
-
     if (item.taxStatus !== undefined) {
       tr = document.createElement('tr')
       table.appendChild(tr)
       tr.appendChild(createElement('td', 'Tax Status'))
       tr.appendChild(createElement('td', `${item.taxStatus}`))
     }
-
     if (item.currency !== undefined) {
       tr = document.createElement('tr')
       table.appendChild(tr)
       tr.appendChild(createElement('td', 'Currency'))
       tr.appendChild(createElement('td', `${item.currency}`))
     }
-
     if (item.units !== undefined) {
       tr = document.createElement('tr')
       table.appendChild(tr)
@@ -92,14 +84,12 @@ export class PropertiesView {
       tr.appendChild(createElement('td', `${item.units}`))
     }
   }
-
   /**
    * Displays the properties of the given edge.
-   * @param {!(OwnershipEdge|RelationshipEdge)} item The given edge
+   * @param item The given edge
    */
   showEdgeProperties(item) {
     this.clear()
-
     const heading = document.createElement('div')
     heading.appendChild(createElement('h2', 'Relationship Details'))
     heading.classList.add('heading')
@@ -112,7 +102,6 @@ export class PropertiesView {
     table.appendChild(tr)
     tr.appendChild(createElement('td', 'Type'))
     tr.appendChild(createElement('td', item.type))
-
     if (item.type === EdgeTypeEnum.Hierarchy) {
       tr = document.createElement('tr')
       table.appendChild(tr)
@@ -120,7 +109,6 @@ export class PropertiesView {
       tr.appendChild(createElement('td', `${item.ownership}`))
     }
   }
-
   /**
    * Clears the properties panel.
    */
@@ -128,12 +116,8 @@ export class PropertiesView {
     this.element.innerHTML = ''
   }
 }
-
 /**
  * Creates a DOM element with the specified text content
- * @param {!string} tagName
- * @param {!string} textContent
- * @returns {!HTMLElement}
  */
 function createElement(tagName, textContent) {
   const element = document.createElement(tagName)

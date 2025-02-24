@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEnumerable, IGraph } from 'yfiles'
+import { IEnumerable, IGraph } from '@yfiles/yfiles'
 import type { Event, EventLog } from '../event-log-types'
 import { addItem } from './ProcessItemVisual'
 import { getProcessStepData, getProcessTransitionData } from '../process-graph-extraction'
@@ -63,33 +63,54 @@ export function prepareProcessVisualization(graph: IGraph, eventLog: EventLog): 
   // determine the heat over time for each process transition
   graph.edges.forEach((processTransition) => {
     const processTransitionData = getProcessTransitionData(processTransition)
-    const sourceEvents = eventsByActivities[processTransitionData.sourceLabel]
-    const targetEvents = eventsByActivities[processTransitionData.targetLabel]
+    let allEvents
+    if (processTransition.isSelfLoop) {
+      allEvents = eventsByActivities[processTransitionData.sourceLabel]
+      allEvents.sort((event1, event2) => event1.timestamp - event2.timestamp)
+      allEvents = allEvents.map((event, index) => ({
+        source: index % 2 === 0,
+        event
+      }))
+    } else {
+      const sourceEvents = eventsByActivities[processTransitionData.sourceLabel].map((event) => ({
+        source: true,
+        event
+      }))
+      const targetEvents = eventsByActivities[processTransitionData.targetLabel].map((event) => ({
+        source: false,
+        event
+      }))
+      allEvents = sourceEvents!.concat(targetEvents)
+    }
 
-    const allEvents = sourceEvents!.concat(targetEvents)
     allEvents
       .groupBy(
-        (event) => event.caseId,
+        (event) => event.event.caseId,
         (caseId, events) => events?.toArray() ?? []
       )
       .filter((events) => events.length > 1)
-      .map((events) => events.sort((event1, event2) => event1.timestamp - event2.timestamp))
+      .map((events) =>
+        events.sort((event1, event2) => event1.event.timestamp - event2.event.timestamp)
+      )
       .forEach((events) => {
-        // skip the last event if there is an odd number of events
-        const count = events.length % 2 === 0 ? events.length - 1 : events.length - 2
-        for (let i = 0; i < count; i += 2) {
-          // add the transition's heat value for its duration
-          processTransitionData.heat.addValues(events[i].timestamp, events[i + 1].timestamp, 1)
+        for (let i = 0; i < events.length - 1; i++) {
+          if (events[i].source && !events[i + 1].source) {
+            const event = events[i].event
+            const nextEvent = events[i + 1].event
 
-          // add an item to the transition representing the event
-          addItem(
-            processTransition,
-            false,
-            events[0].timestamp,
-            events[1].timestamp,
-            Math.random() * 3 + 5,
-            (Math.random() * 0.2 + 0.5) / 4 + 0.4
-          )
+            // add the transition's heat value for its duration
+            processTransitionData.heat.addValues(event.timestamp, nextEvent.timestamp, 1)
+
+            // add an item to the transition representing the event
+            addItem(
+              processTransition,
+              false,
+              event.timestamp,
+              nextEvent.timestamp,
+              Math.random() * 3 + 5,
+              (Math.random() * 0.2 + 0.5) / 4 + 0.4
+            )
+          }
         }
       })
 

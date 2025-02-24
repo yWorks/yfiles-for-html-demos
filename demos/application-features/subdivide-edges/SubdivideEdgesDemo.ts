@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,37 +27,31 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   DragDropEffects,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GroupNodeLabelModel,
   GroupNodeStyle,
   IGraph,
   INodeStyle,
-  Insets,
+  LabelStyle,
   License,
   NodeDropInputMode,
   Point,
-  QueryContinueDragEventArgs,
   Rect,
   ShapeNodeShape,
   SimpleNode,
   Size,
   SmartEdgeLabelModel,
   SvgExport
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
-import { finishLoading } from 'demo-resources/demo-page'
-import {
-  applyDemoTheme,
-  createDemoShapeNodeStyle,
-  initDemoStyles
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoShapeNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { SubdivideEdgeDropInputMode } from './SubdivideEdgeDropInputMode'
 
 let graphComponent: GraphComponent
@@ -68,8 +62,6 @@ let graphComponent: GraphComponent
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   graphComponent.graph.undoEngineEnabled = true
 
   // configures default styles for newly created graph elements
@@ -87,9 +79,7 @@ async function run(): Promise<void> {
  */
 function configureDragAndDrop(): void {
   // create and configure the input mode
-  const inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  const inputMode = new GraphEditorInputMode()
 
   // create and configure the node drop input mode
   const nodeDropInputMode = new SubdivideEdgeDropInputMode()
@@ -160,7 +150,7 @@ function addNodeVisual(style: INodeStyle, panel: Element): void {
     // Within the GraphComponent, it draws its own preview node. Therefore, we need to hide the additional
     // preview element that is used outside the GraphComponent.
     // The GraphComponent uses its own preview node to support features like snap lines or snapping of the dragged node.
-    dragSource.addQueryContinueDragListener((_, evt): void => {
+    dragSource.addEventListener('query-continue-drag', (evt): void => {
       if (evt.dropTarget === null) {
         dragPreview.classList.remove('hidden')
       } else {
@@ -170,20 +160,12 @@ function addNodeVisual(style: INodeStyle, panel: Element): void {
   }
 
   img.addEventListener(
-    'mousedown',
+    'pointerdown',
     (event) => {
       startDrag()
       event.preventDefault()
     },
     false
-  )
-  img.addEventListener(
-    'touchstart',
-    (event) => {
-      startDrag()
-      event.preventDefault()
-    },
-    { passive: false }
   )
   div.appendChild(img)
   panel.appendChild(div)
@@ -199,10 +181,10 @@ function createNodeVisual(style: INodeStyle): string {
 
   // we create a node in this GraphComponent that should be exported as SVG
   exportGraph.createNode(new Rect(0, 0, 40, 40), style)
-  exportComponent.updateContentRect(new Insets(5))
+  exportComponent.updateContentBounds(5)
 
   // the SvgExport can export the content of any GraphComponent
-  const svgExport = new SvgExport(exportComponent.contentRect)
+  const svgExport = new SvgExport(exportComponent.contentBounds)
   const svg = svgExport.exportSvg(exportComponent)
   const svgString = SvgExport.exportSvgString(svg)
   return SvgExport.encodeSvgDataUrl(svgString)
@@ -222,26 +204,25 @@ function initializeGraph(graph: IGraph): void {
     tabFill: '#46a8d5',
     tabPosition: 'top-leading',
     contentAreaFill: '#b5dcee',
-    contentAreaInsets: 20
+    contentAreaPadding: 20
   })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'left',
     textFill: '#eee'
   })
-  graph.groupNodeDefaults.labels.layoutParameter =
-    new GroupNodeLabelModel().createDefaultParameter()
+  graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
 
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 
-  graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createDefaultParameter()
+  graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
 }
 
 /**

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   GraphBuilder,
   GraphComponent,
@@ -34,73 +35,48 @@ import {
   Insets,
   License,
   NodeSizeConstraintProvider,
-  OrthogonalEdgeEditingContext,
   Point,
   Rect,
   Size
-} from 'yfiles'
-import { NodeSelectionResizingInputMode } from './NodeSelectionResizingInputMode.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import SampleData from './resources/SampleData.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
-/** @type {GraphComponent} */
+} from '@yfiles/yfiles'
+import { NodeSelectionResizingInputMode } from './NodeSelectionResizingInputMode'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import SampleData from './resources/SampleData'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 let graphComponent = null
-
-/** @type {NodeSelectionResizingInputMode} */
 let nodeSelectionResizingInputMode = null
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
-
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // enable undo engine
   graphComponent.graph.undoEngineEnabled = true
-
   initializeInputMode()
-
   // set minimum and maximum sizes for all non-group nodes (group nodes should be able to grow larger so they can
   // contain arbitrary numbers of nodes)
   const sizeConstraintProvider = new NodeSizeConstraintProvider(
     new Size(10, 10),
     new Size(100, 100)
   )
-  graphComponent.graph.decorator.nodeDecorator.sizeConstraintProviderDecorator.setFactory(
+  graphComponent.graph.decorator.nodes.sizeConstraintProvider.addFactory(
     (node) => !graphComponent.graph.isGroupNode(node),
     () => sizeConstraintProvider
   )
-
   // load sample graph
   loadSampleGraph()
-
   initializeUI()
 }
-
 function initializeInputMode() {
   const graphEditorInputMode = new GraphEditorInputMode({
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext({ enabled: true }),
-
-    allowGroupingOperations: true,
-
     snapContext: new GraphSnapContext({ enabled: false })
   })
-
   // add a custom input mode to the GraphEditorInputMode that shows a single set of handles when multiple nodes are selected
   nodeSelectionResizingInputMode = new NodeSelectionResizingInputMode('resize', new Insets(10))
   graphEditorInputMode.add(nodeSelectionResizingInputMode)
-
   graphComponent.inputMode = graphEditorInputMode
 }
-
 function loadSampleGraph() {
-  initDemoStyles(graphComponent.graph)
-
+  initDemoStyles(graphComponent.graph, { orthogonalEditing: true })
   const defaultNodeSize = graphComponent.graph.nodeDefaults.size
   const builder = new GraphBuilder(graphComponent.graph)
   builder.createNodesSource({
@@ -115,7 +91,6 @@ function loadSampleGraph() {
     layout: (data) => data // the data object itself has x, y, width, height properties
   })
   builder.createEdgesSource(SampleData.edges, 'source', 'target', 'id')
-
   builder.buildGraph()
   graphComponent.graph.edges.forEach((edge) => {
     edge.tag.bends &&
@@ -126,7 +101,6 @@ function loadSampleGraph() {
   graphComponent.fitContent()
   graphComponent.graph.undoEngine.clear()
 }
-
 function initializeUI() {
   const snappingButton = document.querySelector('#demo-snapping-button')
   snappingButton.addEventListener('click', () => {
@@ -136,7 +110,6 @@ function initializeUI() {
   orthogonalEditingButton.addEventListener('click', () => {
     graphComponent.inputMode.orthogonalEdgeEditingContext.enabled = orthogonalEditingButton.checked
   })
-
   const changeResizeModeButton = document.querySelector('#change-resize-mode')
   changeResizeModeButton.addEventListener('change', (evt) => {
     if (nodeSelectionResizingInputMode) {
@@ -144,5 +117,4 @@ function initializeUI() {
     }
   })
 }
-
 run().then(finishLoading)

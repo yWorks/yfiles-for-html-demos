@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,13 +31,13 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Single Selection Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="./singleselection.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -97,13 +95,14 @@
         <ul>
           <li>Toggle single selection mode and examine the differences.</li>
           <li>
-            Select a single node and toggle its selection state by pressing <code>Ctrl-Space</code>.
-            This works in both single selection and regular mode due to a custom command binding.
+            Select a single node and toggle its selection state by pressing <kbd>Ctrl</kbd> +
+            <kbd>Space</kbd>. This works in both single selection and regular mode due to a custom
+            command binding.
           </li>
           <li>
             Move the node focus (indicated by a thin dashed line) by holding down
-            <code>Ctrl</code> and pressing an arrow key. Toggle the selection state of the focused
-            item by pressing <code>Ctrl-Space</code>.
+            <kbd>Ctrl</kbd> and pressing an arrow key. Toggle the selection state of the focused
+            item by pressing <kbd>Ctrl</kbd> + <kbd>Space</kbd>.
           </li>
           <li>Take a look at the source code, especially method <em>enableSingleSelection</em>.</li>
         </ul>
@@ -116,11 +115,11 @@
           </li>
           <li>
             Click-selecting multiple nodes is disabled. Try to extend the selection by holding the
-            <code>Ctrl</code> key while clicking another node.
+            <kbd>Ctrl</kbd> key while clicking another node.
           </li>
           <li>
-            <em>Select All</em> is disabled. Try to select all nodes by pressing
-            <code>Ctrl-A</code>.
+            <em>Select All</em> is disabled. Try to select all nodes by pressing <kbd>Ctrl</kbd> +
+            <kbd>A</kbd>.
           </li>
         </ul>
       </div>

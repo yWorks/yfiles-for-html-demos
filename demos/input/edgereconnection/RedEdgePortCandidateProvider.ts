@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,25 +28,24 @@
  ***************************************************************************/
 import {
   BaseClass,
-  DefaultPortCandidate,
   IEdge,
   IEdgeReconnectionPortCandidateProvider,
   IEnumerable,
   IInputModeContext,
   IListEnumerable,
   IPortCandidate,
-  List
-} from 'yfiles'
+  List,
+  PortCandidate
+} from '@yfiles/yfiles'
 
 /**
  * An {@link IEdgeReconnectionPortCandidateProvider} that uses candidates with a
  * dynamic NodeScaled port location model. It allows moving ports to any
  * location inside a green node.
  */
-export default class RedEdgePortCandidateProvider
-  extends BaseClass<IEdgeReconnectionPortCandidateProvider>(IEdgeReconnectionPortCandidateProvider)
-  implements IEdgeReconnectionPortCandidateProvider
-{
+export default class RedEdgePortCandidateProvider extends BaseClass(
+  IEdgeReconnectionPortCandidateProvider
+) {
   edge: IEdge
 
   /**
@@ -65,7 +64,7 @@ export default class RedEdgePortCandidateProvider
    */
   getSourcePortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
     const candidates = new List<IPortCandidate>()
-    candidates.add(new DefaultPortCandidate(this.edge.sourcePort!))
+    candidates.add(new PortCandidate(this.edge.sourcePort))
     return candidates
   }
 

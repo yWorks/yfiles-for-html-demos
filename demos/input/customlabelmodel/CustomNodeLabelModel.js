@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,8 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
-  Class,
-  DefaultLabelModelParameterFinder,
+  Graph,
   HandleDeserializationEventArgs,
   HandleSerializationEventArgs,
   IEnumerable,
@@ -44,8 +43,7 @@ import {
   List,
   OrientedRectangle,
   Point
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * Custom implementation of @{link ILabelModel} that provides either continuous or discrete label
  * positions directly outside the node border.
@@ -54,51 +52,23 @@ import {
  * {@link ILabelModelParameterFinder} and {@link ILabelModelParameterProvider} are also
  * implemented.
  */
-export default class CustomNodeLabelModel extends BaseClass(
-  ILabelModel,
-  ILabelModelParameterProvider,
-  ILabelModelParameterFinder
-) {
+export default class CustomNodeLabelModel extends BaseClass(ILabelModel) {
   /**
    * The number of discrete label positions around the border.
    *
    * A value of 0 signifies that continuous label positions are used.
    */
   candidateCount = 8
-
   /**
    * The offset of the label location, i.e., the distance to the node layout borders.
    */
   offset = 0
-
-  /**
-   * Returns instances of the support interfaces (which are actually the model instance itself)
-   * @template T
-   * @param {!Class.<T>} type
-   * @returns {?T}
-   */
-  lookup(type) {
-    if (type === ILabelModelParameterProvider.$class && this.candidateCount > 0) {
-      // If we request a ILabelModelParameterProvider AND we use discrete label candidates, we return the label model
-      // itself, otherwise, null is returned, which means that continuous label positions are supported.
-      return this
-    } else if (type === ILabelModelParameterFinder.$class) {
-      // If we request a ILabelModelParameterProvider, we return the label model itself, so we can always retrieve a
-      // matching parameter for a given actual position.
-      return this
-    }
-    return null
-  }
-
   /**
    * Calculates for the given parameter the actual geometry of the specified label in absolute world coordinates.
    *
    * The actual position is calculated from the {@link CustomNodeLabelModelParameter.ratio} specified in the
    * parameter as the counterclockwise angle on the label owner's circumference. Note that we also rotate the label
    * layout itself accordingly.
-   * @param {!ILabel} label
-   * @param {!ILabelModelParameter} layoutParameter
-   * @returns {!IOrientedRectangle}
    */
   getGeometry(label, layoutParameter) {
     const ownerNode = label.owner
@@ -107,14 +77,13 @@ export default class CustomNodeLabelModel extends BaseClass(
       // and the matching rotation of the label layout box itself.
       const center = ownerNode.layout.center
       const radius = Math.max(ownerNode.layout.width, ownerNode.layout.height) * 0.5
-      const ratio = layoutParameter.ratio
-      const angle = ratio * Math.PI * 2
+      const angle = layoutParameter.ratio * Math.PI * 2
       const x = Math.sin(angle)
       const y = Math.cos(angle)
       const up = new Point(-y, x)
       const result = new OrientedRectangle()
-      result.setUpVector(up.x, up.y)
-      result.resize(label.preferredSize)
+      result.setUpVector(up)
+      result.dynamicSize = label.preferredSize
       result.setCenter(
         center.add(up.multiply(this.offset + radius + label.preferredSize.height * 0.5))
       )
@@ -122,200 +91,155 @@ export default class CustomNodeLabelModel extends BaseClass(
     }
     return IOrientedRectangle.EMPTY
   }
-
-  /**
-   * Creates the default parameter for this model. Here it is located at 1/4 around the node's circumference.
-   * @returns {!ILabelModelParameter}
-   */
-  createDefaultParameter() {
-    return this.createParameter(0.25)
-  }
-
   /**
    * Factory method that creates a parameter for a given rotation angle.
-   * @param {number} ratio
-   * @returns {!CustomNodeLabelModelParameter}
    */
   createParameter(ratio) {
     return new CustomNodeLabelModelParameter(this, ratio)
   }
-
   /**
    * Provides a lookup context for the given combination of label and parameter.
-   * @param {!ILabel} label
-   * @param {!ILabelModelParameter} parameter
-   * @returns {!ILookup}
    */
-  getContext(label, parameter) {
-    return ILookup.EMPTY
+  getContext(label) {
+    return new CustomNodeLabelModelLookup(label, this)
   }
-
+}
+/**
+ * Custom implementation of {@link ILabelModelParameter} that is tailored to match
+ * {@link CustomNodeLabelModel} instances.
+ */
+export class CustomNodeLabelModelParameter extends BaseClass(ILabelModelParameter) {
+  _model
+  ratio
+  /**
+   * Creates a new instance of {@link CustomNodeLabelModelParameter}.
+   * @param _model The model for this parameter
+   * @param ratio The ratio for the given label model parameter
+   */
+  constructor(_model, ratio) {
+    super()
+    this._model = _model
+    this.ratio = ratio
+  }
+  /**
+   * Creates a clone of this {@link CustomNodeLabelModelParameter} object.
+   */
+  clone() {
+    // we have no mutable state, so return this.
+    return this
+  }
+  /**
+   * Returns the model instance to which this parameter belongs.
+   *
+   * This is usually a reference to the model instance that has created this parameter.
+   */
+  get model() {
+    return this._model
+  }
+  /**
+   * Serialization handler for graphML I/O.
+   */
+  static serializationHandler = (args) => {
+    // only serialize items that are of the specific type
+    if (args.item instanceof CustomNodeLabelModelParameter) {
+      const modelParameter = args.item
+      const writer = args.writer
+      writer.writeStartElement(
+        'CustomNodeLabelModelParameter',
+        'http://www.yworks.com/yFilesHTML/demos/CustomNodeLabelModelParameter/1.0'
+      )
+      writer.writeAttribute('candidateCount', modelParameter.model.candidateCount.toString())
+      writer.writeAttribute('offset', modelParameter.model.offset.toString())
+      writer.writeAttribute('ratio', modelParameter.ratio.toString())
+      writer.writeEndElement()
+      // Signal that this item is serialized.
+      args.handled = true
+    }
+  }
+  /**
+   * Deserialization handler for graphML I/O.
+   */
+  static deserializationHandler = (args) => {
+    if (args.xmlNode instanceof Element) {
+      const element = args.xmlNode
+      if (
+        element.localName === 'CustomNodeLabelModelParameter' &&
+        element.namespaceURI ===
+          'http://www.yworks.com/yFilesHTML/demos/CustomNodeLabelModelParameter/1.0'
+      ) {
+        // setting the result sets the event arguments to handled
+        const model = new CustomNodeLabelModel()
+        model.candidateCount = parseInt(element.getAttribute('candidateCount'))
+        model.offset = parseFloat(element.getAttribute('offset'))
+        args.result = new CustomNodeLabelModelParameter(
+          model,
+          parseFloat(element.getAttribute('ratio'))
+        )
+      }
+    }
+  }
+}
+class CustomNodeLabelModelLookup extends BaseClass(
+  ILookup,
+  ILabelModelParameterProvider,
+  ILabelModelParameterFinder
+) {
+  label
+  model
+  constructor(label, model) {
+    super()
+    this.label = label
+    this.model = model
+    if (!Graph.hasOwner(label)) {
+      throw new Error('The label has no valid owner.')
+    }
+    if (!(label.owner instanceof INode)) {
+      throw new Error('This model supports only node labels.')
+    }
+  }
+  /**
+   * Returns instances of the support interfaces (which are actually the model instance itself)
+   */
+  lookup(type) {
+    if (type === ILabelModelParameterProvider && this.model.candidateCount > 0) {
+      // If we request a ILabelModelParameterProvider AND we use discrete label candidates, we return the label model
+      // itself, otherwise, null is returned, which means that continuous label positions are supported.
+      return this
+    } else if (type === ILabelModelParameterFinder) {
+      // If we request a ILabelModelParameterProvider, we return the label model itself, so we can always retrieve a
+      // matching parameter for a given actual position.
+      return this
+    }
+    return null
+  }
   /**
    * Returns an enumerator over a set of possible {@link ILabelModelParameter}
    * instances that can be used for the given label and model.
    *
    * Since in {@link lookup}, we return an instance of this class only for positive {@link candidateCount}s,
    * this method is only called for __discrete__ candidates.
-   * @param {!ILabel} label
-   * @param {!ILabelModel} model
-   * @returns {!IEnumerable.<ILabelModelParameter>}
    */
-  getParameters(label, model) {
+  getParameters() {
     const parameters = new List()
-    for (let i = 0; i < this.candidateCount; ++i) {
-      parameters.add(new CustomNodeLabelModelParameter(this, i / this.candidateCount))
+    for (let i = 0; i < this.model.candidateCount; ++i) {
+      parameters.add(this.model.createParameter(i / this.model.candidateCount))
     }
     return parameters
   }
-
   /**
    * Tries to find a parameter that best matches the given layout for the provided label instance.
    *
    * By default, this method is only called when __no discrete__ candidates are specified (i.e. here for
    * {@link candidateCount} = 0. This implementation just calculates the rotation angle for the center of layout and
    * creates a parameter for exactly this angle which {@link createParameter}.
-   * @param {!ILabel} label
-   * @param {!ILabelModel} model
-   * @param {!IOrientedRectangle} layout
-   * @returns {!ILabelModelParameter}
    */
-  findBestParameter(label, model, layout) {
-    const labelModel = model
-    const node = label.owner
-    if (labelModel !== null && node !== null) {
-      const direction = layout.orientedRectangleCenter.subtract(node.layout.center).normalized
-      const ratio = Math.atan2(direction.y, -direction.x) / (Math.PI * 2)
-      return labelModel.createParameter(ratio)
-    }
-    return DefaultLabelModelParameterFinder.INSTANCE.findBestParameter(label, labelModel, layout)
+  findBestParameter(layout) {
+    const direction = layout.center.subtract(this.label.owner.layout.center).normalized
+    const ratio = Math.atan2(direction.y, -direction.x) / (Math.PI * 2)
+    return this.model.createParameter(ratio)
   }
-}
-
-/**
- * Custom implementation of {@link ILabelModelParameter} that is tailored to match
- * {@link CustomNodeLabelModel} instances.
- */
-export class CustomNodeLabelModelParameter extends BaseClass(ILabelModelParameter) {
-  /**
-   * Creates a new instance of {@link CustomNodeLabelModelParameter}.
-   * @param {!CustomNodeLabelModel} _model The model for this parameter
-   * @param {number} ratio The ratio for the given label model parameter
-   */
-  constructor(_model, ratio) {
-    super()
-    this.ratio = ratio
-    this._model = _model
-  }
-
-  /**
-   * Creates a clone of this {@link CustomNodeLabelModelParameter} object.
-   * @returns {*}
-   */
   clone() {
     // we have no mutable state, so return this.
     return this
-  }
-
-  /**
-   * Returns the model instance to which this parameter belongs.
-   *
-   * This is usually a reference to the model instance that has created this parameter.
-   * @type {!CustomNodeLabelModel}
-   */
-  get model() {
-    return this._model
-  }
-
-  /**
-   * Predicate that checks if this parameter instance may be used with the given label.
-   *
-   * Our model/parameter implementation only makes sense when used for {@link INode}s.
-   * @param {!ILabel} label
-   * @returns {boolean}
-   */
-  supports(label) {
-    return label.owner instanceof INode
-  }
-
-  /** 
-   *
-     * Serialization handler for graphML I/O.
-     
-  * @type {function(*,*)}
-   */
-  static get serializationHandler() {
-    if (typeof CustomNodeLabelModelParameter.$serializationHandler === 'undefined') {
-      CustomNodeLabelModelParameter.$serializationHandler = (source, args) => {
-        // only serialize items that are of the specific type
-        if (args.item instanceof CustomNodeLabelModelParameter) {
-          const modelParameter = args.item
-          const writer = args.writer
-          writer.writeStartElement(
-            'CustomNodeLabelModelParameter',
-            'http://www.yworks.com/yFilesHTML/demos/CustomNodeLabelModelParameter/1.0'
-          )
-          writer.writeAttribute('candidateCount', modelParameter.model.candidateCount.toString())
-          writer.writeAttribute('offset', modelParameter.model.offset.toString())
-          writer.writeAttribute('ratio', modelParameter.ratio.toString())
-          writer.writeEndElement()
-          // Signal that this item is serialized.
-          args.handled = true
-        }
-      }
-    }
-
-    return CustomNodeLabelModelParameter.$serializationHandler
-  }
-
-  /** 
-   *
-     * Serialization handler for graphML I/O.
-     
-  * @type {function(*,*)}
-   */
-  static set serializationHandler(serializationHandler) {
-    CustomNodeLabelModelParameter.$serializationHandler = serializationHandler
-  }
-
-  /** 
-   *
-     * Deserialization handler for graphML I/O.
-     
-  * @type {function(*,*)}
-   */
-  static get deserializationHandler() {
-    if (typeof CustomNodeLabelModelParameter.$deserializationHandler === 'undefined') {
-      CustomNodeLabelModelParameter.$deserializationHandler = (source, args) => {
-        if (args.xmlNode instanceof Element) {
-          const element = args.xmlNode
-          if (
-            element.localName === 'CustomNodeLabelModelParameter' &&
-            element.namespaceURI ===
-              'http://www.yworks.com/yFilesHTML/demos/CustomNodeLabelModelParameter/1.0'
-          ) {
-            // setting the result sets the event arguments to handled
-            const model = new CustomNodeLabelModel()
-            model.candidateCount = parseInt(element.getAttribute('candidateCount'))
-            model.offset = parseFloat(element.getAttribute('offset'))
-            args.result = new CustomNodeLabelModelParameter(
-              model,
-              parseFloat(element.getAttribute('ratio'))
-            )
-          }
-        }
-      }
-    }
-
-    return CustomNodeLabelModelParameter.$deserializationHandler
-  }
-
-  /** 
-   *
-     * Deserialization handler for graphML I/O.
-     
-  * @type {function(*,*)}
-   */
-  static set deserializationHandler(deserializationHandler) {
-    CustomNodeLabelModelParameter.$deserializationHandler = deserializationHandler
   }
 }

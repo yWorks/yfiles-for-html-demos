@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,9 +27,18 @@
  **
  ***************************************************************************/
 import { getMax, SCALED_MAX_X, SCALED_MAX_Y, scalePoint } from './scale-data'
-import { nodeData, NodeType } from './resources/TrekkingData'
-import { labelNodeSize, leaderEdgeStyle, templateString } from './styles'
-import { type GraphComponent, Rect, StringTemplateNodeStyle } from 'yfiles'
+import { MultiPageNodeType, nodeData } from './resources/TrekkingData'
+import { getIcon, labelNodeSize, leaderEdgeStyle } from './styles'
+import {
+  type GraphComponent,
+  IconLabelStyle,
+  InteriorNodeLabelModel,
+  LabelStyle,
+  Rect,
+  ShapeNodeShape,
+  ShapeNodeStyle,
+  Size
+} from '@yfiles/yfiles'
 
 /**
  * Creates the graph from the trekking dataset.
@@ -50,23 +59,44 @@ export function initializeGraph(graphComponent: GraphComponent): void {
 
     const waypoint = graph.createNode({
       layout: new Rect(xPos - width * 0.5, yPos - height * 0.5, width, height),
-      tag: { ...data, type: NodeType.WAYPOINT }
+      tag: { ...data, type: MultiPageNodeType.WAYPOINT }
     })
 
     // create the label node and define its tag based on the tag of the associated waypoint
     const labelNode = graph.createNode({
-      tag: { ...data, type: NodeType.LABEL },
+      tag: { ...data, type: MultiPageNodeType.LABEL },
       layout: new Rect(0, 0, labelNodeSize.width, labelNodeSize.height)
     })
 
     // set the style of the label node and ...
     graph.setStyle(
       labelNode,
-      new StringTemplateNodeStyle({
-        svgContent: templateString,
-        styleTag: { ...data, type: NodeType.LABEL }
-      })
+      new ShapeNodeStyle({ shape: ShapeNodeShape.ROUND_RECTANGLE, fill: '#ffffff66', stroke: null })
     )
+    graph.addLabel(labelNode, `${data.y} m`, InteriorNodeLabelModel.BOTTOM)
+    const icon = getIcon(data)
+    if (icon) {
+      graph.addLabel(
+        labelNode,
+        '',
+        InteriorNodeLabelModel.TOP,
+        new IconLabelStyle({
+          href: icon,
+          iconPlacement: InteriorNodeLabelModel.TOP,
+          iconSize:
+            data.category === 'yWorks'
+              ? new Size(labelNodeSize.width * 0.6, labelNodeSize.height * 0.6)
+              : new Size(labelNodeSize.height * 0.6, labelNodeSize.height * 0.6)
+        })
+      )
+    } else {
+      graph.addLabel(
+        labelNode,
+        data.name!,
+        InteriorNodeLabelModel.TOP,
+        new LabelStyle({ font: '16px sans-serif', textFill: '#336699' })
+      )
+    }
 
     // ... create an edge between the waypoint and the label node
     graph.createEdge(waypoint, labelNode, leaderEdgeStyle)

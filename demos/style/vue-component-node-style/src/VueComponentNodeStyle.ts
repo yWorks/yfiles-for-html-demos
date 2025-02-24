@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HtmlVisual, INode, IRenderContext, NodeStyleBase, type TaggedHtmlVisual } from 'yfiles'
+import {
+  HtmlVisual,
+  INode,
+  IRenderContext,
+  NodeStyleBase,
+  type TaggedHtmlVisual
+} from '@yfiles/yfiles'
 import { type Component, createApp, defineComponent, h, type Plugin, reactive } from 'vue'
 
 /**
@@ -36,11 +42,13 @@ const WrapperComponent = defineComponent({
   props: ['component', 'initialState'],
   setup(props) {
     const state = reactive(props.initialState)
+
     function setState(value: any) {
       for (const k of Object.keys(value)) {
         state[k] = value[k]
       }
     }
+
     return {
       state,
       setState
@@ -56,6 +64,7 @@ type PropsProvider<P> = (context: IRenderContext, node: INode) => P
 const defaultPropsProvider: PropsProvider<any> = (context, node) => ({ tag: node.tag })
 
 type VueComponentNodeStyleVisual = TaggedHtmlVisual<HTMLDivElement, any>
+
 /**
  * An {@link INodeStyle} implementation that renders a Vue.js component as the visualization for a node.
  */
@@ -69,7 +78,7 @@ export class VueComponentNodeStyle<P> extends NodeStyleBase<VueComponentNodeStyl
   }
 
   protected createVisual(context: IRenderContext, node: INode): VueComponentNodeStyleVisual {
-    const div = context.canvasComponent!.div.ownerDocument.createElement('div')
+    const div = context.canvasComponent!.htmlElement.ownerDocument.createElement('div')
     const props = this.propsProvider(context, node)
     const app = createApp(WrapperComponent, { component: this.vueComponent, initialState: props })
     for (const plugin of this.plugins) {

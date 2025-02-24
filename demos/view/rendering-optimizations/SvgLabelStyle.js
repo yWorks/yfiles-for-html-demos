@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,92 +36,75 @@ import {
   Size,
   SvgVisual,
   TextRenderSupport,
-  TextWrapping,
-  Visual
-} from 'yfiles'
-
+  TextWrapping
+} from '@yfiles/yfiles'
 const SVG_NS = 'http://www.w3.org/2000/svg'
-
 /**
  * A fast label style. It only renders the text but doesn't support features like text clipping and
  * trimming that are potentially costly.
  */
 export default class SvgLabelStyle extends LabelStyleBase {
   font = new Font({ fontSize: 14 })
-
   /**
    * Creates the visual representation for the given label.
-   * @param {!IRenderContext} context The render context.
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param context The render context.
+   * @param label The label to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SvgLabelStyle.updateVisual}
    */
   createVisual(context, label) {
     const layout = label.layout
-
     const g = document.createElementNS(SVG_NS, 'g')
-
     // render the label
     this.render(label, layout, g)
-
     // move container to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(g)
-
     // Cache the necessary data for rendering of the label
-    g['data-cache'] = label.text
-    return new SvgVisual(g)
+    return SvgVisual.from(g, { text: label.text })
   }
-
   /**
    * Updates the visual representation for the given label.
-   * @param {!IRenderContext} context The render context.
-   * @param {!SvgVisual} oldVisual The visual that has been created in the call to
+   * @param context The render context.
+   * @param oldVisual The visual that has been created in the call to
    * {@link SvgLabelStyle.createVisual}.
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {!Visual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param label The label to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SvgLabelStyle.createVisual}
    */
   updateVisual(context, oldVisual, label) {
     const layout = label.layout
     const g = oldVisual.svgElement
-
     // if text changed, re-create the text element
-    const oldText = g['data-cache']
+    const oldText = oldVisual.tag.text
     if (oldText !== label.text) {
       // remove the old text element
       g.removeChild(g.firstChild)
       this.render(label, layout, g)
       // update the cache
-      g['data-cache'] = label.text
+      oldVisual.tag.text = label.text
     }
-
     // move container to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(g)
-
     return oldVisual
   }
-
   /**
    * Creates the text element and appends it to the given g element.
-   * @param {!ILabel} label The label to render.
-   * @param {!IOrientedRectangle} layout The bounds of the label.
-   * @param {!SVGElement} g The group element to which the text is appended.
+   * @param label The label to render.
+   * @param layout The bounds of the label.
+   * @param g The group element to which the text is appended.
    */
   render(label, layout, g) {
     const text = document.createElementNS(SVG_NS, 'text')
     text.setAttribute('fill', 'black')
-
     TextRenderSupport.addText(text, label.text, this.font, layout.toSize(), TextWrapping.NONE)
-
     g.appendChild(text)
   }
-
   /**
    * Calculates the preferred {@link Size size} for the given label.
-   * @param {!ILabel} label The label to which this style instance is assigned.
-   * @returns {!Size} The preferred size.
+   * @param label The label to which this style instance is assigned.
+   * @returns The preferred size.
    */
   getPreferredSize(label) {
     return TextRenderSupport.measureText(label.text, this.font)

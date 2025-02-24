@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,25 +30,25 @@
 import { html, type RefObject, useEffect, useRef } from '../../preact-loader'
 import type { ConnectionItem, DataItem } from '../../PreactDemo'
 import {
-  Class,
   EdgesSource,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   LayoutExecutor,
   NodesSource,
   PolylineEdgeStyle
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import PreactComponentNodeStyle from './PreactComponentNodeStyle'
 import NodeTemplate from './NodeTemplate'
-import { finishLoading } from 'demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
-Class.ensure(LayoutExecutor)
+LayoutExecutor.ensure()
 
 interface Props {
   itemData: DataItem[]
   connectionData: ConnectionItem[]
+  setLayoutRunning: (running: boolean) => void
 }
 
 export default (props: Props) => {
@@ -108,7 +108,10 @@ export default (props: Props) => {
   }
 
   const doLayout = () => {
-    graphComponentRef.current?.morphLayout(new HierarchicLayout(), '1s')
+    props.setLayoutRunning(true)
+    graphComponentRef.current?.applyLayoutAnimated(new HierarchicalLayout(), '1s').then(() => {
+      props.setLayoutRunning(false)
+    })
   }
 
   /**
@@ -133,7 +136,7 @@ export default (props: Props) => {
     edgesSourceRef.current = edgesSource
 
     // We need to update the node tags with each item update.
-    nodesSource.nodeCreator.addNodeUpdatedListener((_, evt) => {
+    nodesSource.nodeCreator.addEventListener('node-updated', (evt) => {
       nodesSource.nodeCreator.updateTag(evt.graph, evt.item, evt.dataItem)
     })
     return graphBuilder

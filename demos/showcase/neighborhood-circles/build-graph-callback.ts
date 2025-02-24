@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BezierEdgeStyle, type IEdgeStyle, Neighborhood, TraversalDirection } from 'yfiles'
+import { BezierEdgeStyle, type IEdgeStyle, Neighborhood, TraversalDirection } from '@yfiles/yfiles'
 import { NeighborhoodType } from './NeighborhoodType'
 import { getBuildNeighborhoodCallback } from '../neighborhood/build-graph-callback'
 import type { BuildGraphCallback } from '../neighborhood/NeighborhoodView'
-import { createDemoEdgeStyle } from 'demo-resources/demo-styles'
+import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
 
 /**
  * Returns the "build neighborhood graph" callback that is able to create neighborhood graphs

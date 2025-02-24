@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,8 +28,6 @@
  ***************************************************************************/
 import {
   Font,
-  FontStyle,
-  FontWeight,
   INode,
   INodeStyle,
   IRenderContext,
@@ -39,28 +37,19 @@ import {
   SvgVisualGroup,
   TextRenderSupport,
   Visual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * An {@link INodeStyle} rendering a label using the node's tag for the content and placement.
  */
 export class IsometricBarLabelNodeStyle extends NodeStyleBase {
   svgNS = 'http://www.w3.org/2000/svg'
-  font = new Font('Arial', 12, FontStyle.NORMAL, FontWeight.BOLD)
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!INode} node
-   * @returns {?Visual}
-   */
+  font = new Font('Arial', 12, 'normal', 'bold')
   createVisual(context, node) {
     const g = document.createElementNS(this.svgNS, 'g')
-
     // the offset off the label from the top of the bar in view coordinates
     const offset = -12
     // the size of the pointing triangle
     const triangleSize = 12
-
     // draw a small triangle as label pointer
     const triangle = document.createElementNS(this.svgNS, 'polygon')
     const svgPolygonDefinition = `${-triangleSize / 2},0 ${triangleSize / 2},0 0,${triangleSize}`
@@ -70,7 +59,6 @@ export class IsometricBarLabelNodeStyle extends NodeStyleBase {
     triangle.setAttribute('fill', '#AB2346')
     SvgVisual.setTranslate(triangle, 0, offset)
     g.appendChild(triangle)
-
     // use the 'value' of the node.tag as label text
     const text = document.createElementNS(this.svgNS, 'text')
     const labelText = node.tag.value
@@ -81,11 +69,9 @@ export class IsometricBarLabelNodeStyle extends NodeStyleBase {
     const textSize = TextRenderSupport.measureText(textContent, this.font)
     text.setAttribute('x', `${-textSize.width / 2}`)
     text.setAttribute('y', `${textOffset}`)
-
     // use a semi-transparent round rect as label background
     const background = document.createElementNS(this.svgNS, 'rect')
     background.setAttribute('fill', '#F6FFF7')
-
     // calculate background position
     const bgWidth = Math.max(textSize.width + 4, 10)
     const bgHeight = textSize.height + textVerticalInset
@@ -95,19 +81,15 @@ export class IsometricBarLabelNodeStyle extends NodeStyleBase {
     background.setAttribute('width', `${bgWidth}`)
     background.setAttribute('rx', '3.5')
     background.setAttribute('ry', '3.5')
-
     g.appendChild(background)
     g.appendChild(text)
-
     // the label shall be rendered in view coordinates, that is without any visible transform
     const group = new SvgVisualGroup()
     group.transform = context.viewTransform
-
     // get the location of the node in view coordinates
-    const viewCenter = context.toViewCoordinates(node.layout.center)
+    const viewCenter = context.worldToViewCoordinates(node.layout.center)
     // the tip of the bar, in view coordinates but zoom-independent
     const barTip = new Point(viewCenter.x, viewCenter.y - node.tag.height * context.zoom)
-
     SvgVisual.setTranslate(g, barTip.x, barTip.y)
     group.add(new SvgVisual(g))
     return group

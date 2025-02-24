@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,34 +26,41 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type {
+  Constructor,
+  ICanvasContext,
+  INode,
+  IRenderContext,
+  TaggedSvgVisual
+} from '@yfiles/yfiles'
 import {
   Fill,
   IHandleProvider,
-  IHighlightIndicatorInstaller,
+  IHighlightRenderer,
   INodeSnapResultProvider,
   IPortCandidateProvider,
   NodeStyleBase,
-  NodeStyleDecorationInstaller,
+  NodeStyleIndicatorRenderer,
   PatternFill,
   Point,
   ShapeNodeShape,
   ShapeNodeStyle,
   Size,
   SvgVisual
-} from 'yfiles'
-import type { Class, ICanvasContext, INode, IRenderContext, Visual } from 'yfiles'
+} from '@yfiles/yfiles'
 import { getFollowUpWidth, getLeadWidth } from '../gantt-utils'
 import { ActivityNodePortCandidateProvider } from './ActivityNodePortCandidateProvider'
 import { ActivityNodeHandleProvider } from './ActivityNodeHandleProvider'
 import { ActivityNodeSnapResultProvider } from './ActivityNodeSnapResultProvider'
 import { getActivity } from '../resources/data-model'
 
-type VisualCache = SvgVisual & {
+type VisualCache = {
   leadWidth?: number
   followUpWidth?: number
   color?: string
   width?: number
 }
+type ActivityNodeStyleVisual = TaggedSvgVisual<SVGGElement, VisualCache>
 
 export const patternFill: PatternFill = createPatternFill()
 
@@ -62,7 +69,7 @@ export const patternFill: PatternFill = createPatternFill()
  * The visualization consists of a 'solid' part that shows the actual duration of the activity, and
  * two parts with hatch fill that show lead/follow-up time, if such time exists.
  */
-export class ActivityNodeStyle extends NodeStyleBase {
+export class ActivityNodeStyle extends NodeStyleBase<ActivityNodeStyleVisual> {
   constructor(public color: string) {
     super()
   }
@@ -71,7 +78,7 @@ export class ActivityNodeStyle extends NodeStyleBase {
    * Creates the visualization for the given node which contains a filled rectangle, and two
    * hatch fills for the lead/follow-up time, if any.
    */
-  createVisual(context: IRenderContext, node: INode): SvgVisual {
+  createVisual(context: IRenderContext, node: INode): ActivityNodeStyleVisual {
     const { x, y, width, height } = node.layout
     const activity = getActivity(node)
 
@@ -124,31 +131,30 @@ export class ActivityNodeStyle extends NodeStyleBase {
     SvgVisual.setTranslate(outerG, x, y)
 
     // save node layout for later use in update
-    const visual: VisualCache = new SvgVisual(outerG)
-    visual.leadWidth = leadWidth
-    visual.followUpWidth = followUpWidth
-    visual.color = this.color
-    visual.width = width
-    return visual
+    return SvgVisual.from(outerG, {
+      leadWidth: leadWidth,
+      followUpWidth: followUpWidth,
+      color: this.color,
+      width: width
+    })
   }
 
   /**
    * Updates the visual element for the node with the current data.
    */
-  updateVisual(context: IRenderContext, oldVisual: Visual, node: INode): SvgVisual {
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: ActivityNodeStyleVisual,
+    node: INode
+  ): ActivityNodeStyleVisual {
     const { x, y, width } = node.layout
     const activity = getActivity(node)
-
-    if (!(oldVisual instanceof SvgVisual)) {
-      // there's no old visual to update
-      return this.createVisual(context, node)
-    }
 
     // get the width of the lead and follow-up decorations
     const leadWidth = getLeadWidth(activity)
     const followUpWidth = getFollowUpWidth(activity)
 
-    const cache = oldVisual as VisualCache
+    const cache = oldVisual.tag
     const outerG = oldVisual.svgElement
 
     SvgVisual.setTranslate(outerG, x, y)
@@ -187,9 +193,9 @@ export class ActivityNodeStyle extends NodeStyleBase {
    * Overridden to switch off the default selection decoration.
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  lookup(node: INode, type: Class): any {
-    if (type === IHighlightIndicatorInstaller.$class) {
-      return new NodeStyleDecorationInstaller({
+  lookup(node: INode, type: Constructor<any>): any {
+    if (type === IHighlightRenderer) {
+      return new NodeStyleIndicatorRenderer({
         nodeStyle: new ShapeNodeStyle({
           shape: ShapeNodeShape.PILL,
           stroke: '4px goldenrod',
@@ -198,13 +204,13 @@ export class ActivityNodeStyle extends NodeStyleBase {
         margins: 2
       })
     }
-    if (type === IPortCandidateProvider.$class) {
+    if (type === IPortCandidateProvider) {
       return new ActivityNodePortCandidateProvider(node)
     }
-    if (type === IHandleProvider.$class) {
+    if (type === IHandleProvider) {
       return new ActivityNodeHandleProvider(node)
     }
-    if (type === INodeSnapResultProvider.$class) {
+    if (type === INodeSnapResultProvider) {
       return new ActivityNodeSnapResultProvider()
     }
 

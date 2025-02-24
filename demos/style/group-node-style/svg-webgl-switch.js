@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,21 +29,18 @@
 import {
   FocusIndicatorManager,
   SelectionIndicatorManager,
-  WebGL2FocusIndicatorManager,
-  WebGL2GraphModelManager,
-  WebGL2GraphModelManagerRenderMode,
-  WebGL2SelectionIndicatorManager
-} from 'yfiles'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
-import { addNavigationButtons } from 'demo-resources/demo-page'
-
-/** @type {EventListener} */
+  WebGLFocusIndicatorManager,
+  WebGLGraphModelManager,
+  WebGLGraphModelManagerRenderMode,
+  WebGLSelectionIndicatorManager
+} from '@yfiles/yfiles'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
 let changeListener
-
 /**
  * Adds an event listener to the HTML select element with the given selector.
- * @param {!string} selector The selector that describes the HTML select element
- * @param {!GraphComponent} graphComponent The current graph component
+ * @param selector The selector that describes the HTML select element
+ * @param graphComponent The current graph component
  */
 export function initializeSvgWebGlSwitchButton(selector, graphComponent) {
   const renderModeSelectElement = document.querySelector(selector)
@@ -52,47 +49,42 @@ export function initializeSvgWebGlSwitchButton(selector, graphComponent) {
   } else {
     const optionElement = document.querySelector('option[value="webgl"]')
     optionElement.disabled = true
-    optionElement.title = 'This style is disabled since WebGL2 is not available.'
+    optionElement.title = 'This style is disabled since WebGL is not available.'
   }
-
   changeListener = (e) => {
     changeRenderMode(graphComponent, e.target.value)
   }
   renderModeSelectElement.addEventListener('change', changeListener)
 }
-
 /**
- * Changes the style implementations in the given graph component from SVG to WebGL2 and vice versa.
- * @param {!GraphComponent} graphComponent The demo's main graph view
- * @param {!string} renderMode The new type of style implementation to use. Either 'svg' or 'webgl'
+ * Changes the style implementations in the given graph component from SVG to WebGL and vice versa.
+ * @param graphComponent The demo's main graph view
+ * @param renderMode The new type of style implementation to use. Either 'svg' or 'webgl'
  */
 function changeRenderMode(graphComponent, renderMode) {
   const graphModelManager = graphComponent.graphModelManager
   if ('webgl' === renderMode) {
-    graphModelManager.renderMode = WebGL2GraphModelManagerRenderMode.WEB_GL
-    graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
-    graphComponent.focusIndicatorManager = new WebGL2FocusIndicatorManager()
+    graphModelManager.renderMode = WebGLGraphModelManagerRenderMode.WEBGL
+    graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager()
+    graphComponent.focusIndicatorManager = new WebGLFocusIndicatorManager()
   } else {
-    graphModelManager.renderMode = WebGL2GraphModelManagerRenderMode.SVG
+    graphModelManager.renderMode = WebGLGraphModelManagerRenderMode.SVG
     graphComponent.selectionIndicatorManager = new SelectionIndicatorManager()
     graphComponent.focusIndicatorManager = new FocusIndicatorManager()
   }
 }
-
 /**
  * Removes the event listener from the HTML select element with the given selector.
- * @param {!string} selector The selector that describes the HTML select element
- * @param {!GraphComponent} graphComponent The current graph component
+ * @param selector The selector that describes the HTML select element
+ * @param graphComponent The current graph component
  */
 export function updateSvgWebGlSwitchButton(selector, graphComponent) {
   const renderModeSelectElement = document.querySelector(selector)
   renderModeSelectElement.removeEventListener('change', changeListener)
-
   changeListener = (e) => {
     changeRenderMode(graphComponent, e.target.value)
   }
   renderModeSelectElement.addEventListener('change', changeListener)
-
   // set to current render mode
   changeRenderMode(graphComponent, renderModeSelectElement.value)
 }

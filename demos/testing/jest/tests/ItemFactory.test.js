@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { DefaultGraph, GraphSelection, License } from 'yfiles'
+import { Graph, License } from '@yfiles/yfiles'
 import { createEdge, createNode } from '../src/ItemFactory.js'
 import licenseData from '../../../../lib/license.json'
 
 /**
  * This test file tests ItemFactory without mocking yFiles. Note that some yFiles functionality
  * (such as GraphComponent) requires a working DOM implementation. Jest's JSDOM environment
- * misses some required DOM APIs. For code importing yFiles modules that require a DOM, it is
+ * misses some required DOM APIs. For code importing yFiles library files that require a DOM, it is
  * necessary to mock yFiles. See the ItemFactoryWithMock.test.js file.
  */
 
@@ -41,26 +41,21 @@ import licenseData from '../../../../lib/license.json'
 License.value = licenseData
 
 test('creates a node at the specified location', () => {
-  const graph = new DefaultGraph()
+  const graph = new Graph()
 
   const node = createNode(graph, 13, 37)
   expect(node.layout.x).toEqual(13)
   expect(node.layout.y).toEqual(37)
 })
 
-test('connects two selected nodes with an edge', () => {
-  const graph = new DefaultGraph()
+test('connects two nodes with an edge', () => {
+  const graph = new Graph()
   const source = graph.createNode()
   const target = graph.createNode()
 
-  const selection = new GraphSelection(graph)
+  const edge = createEdge(graph, source, target)
+  expect(edge).toBeTruthy()
 
-  expect(createEdge(graph, selection)).toBeNull()
-
-  selection.setSelected(source, true)
-  selection.setSelected(target, true)
-
-  const edge = createEdge(graph, selection)
   expect(edge.sourceNode).toBe(source)
   expect(edge.targetNode).toBe(target)
 })

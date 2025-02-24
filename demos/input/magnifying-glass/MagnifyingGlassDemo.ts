@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import {
-  DefaultEdgePathCropper,
+  EdgePathCropper,
   GeneralPath,
   GraphBuilder,
   GraphComponent,
@@ -39,13 +39,13 @@ import {
   Rect,
   Size,
   Stroke
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import { LensInputMode } from './LensInputMode'
-import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
+import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { deviceIcons, networkData } from './resources/network-sample'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent = null!
 let lensInputMode: LensInputMode = null!
@@ -54,13 +54,11 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   const graphEditorInputMode = new GraphEditorInputMode({
     // Some configurations for a better user experience in this demo.
     // All these settings can be changed.
     focusableItems: 'none',
-    showHandleItems: 'none',
+    showHandleItems: 'bend',
     allowCreateNode: false
   })
 
@@ -94,8 +92,8 @@ function populateGraph(graph: IGraph): void {
       lineCap: 'round'
     })
   })
-  graph.decorator.portDecorator.edgePathCropperDecorator.setImplementation(
-    new DefaultEdgePathCropper({ cropAtPort: false, extraCropLength: 10.0 })
+  graph.decorator.ports.edgePathCropper.addConstant(
+    new EdgePathCropper({ cropAtPort: false, extraCropLength: 10.0 })
   )
 
   // Create shared image node styles
@@ -105,7 +103,7 @@ function populateGraph(graph: IGraph): void {
       circle.appendEllipse(new Rect(0, 0, 1, 1), false)
 
       obj[name] = new ImageNodeStyle({
-        image: (deviceIcons as any)[name],
+        href: (deviceIcons as any)[name],
         normalizedOutline: circle
       })
       return obj
@@ -135,12 +133,12 @@ function populateGraph(graph: IGraph): void {
  */
 function initializeUI(): void {
   const zoomSelectElement = document.querySelector<HTMLSelectElement>('#lens-zoom')!
-  zoomSelectElement.addEventListener('change', (evt) => {
+  zoomSelectElement.addEventListener('change', () => {
     lensInputMode.zoomFactor = parseInt(zoomSelectElement.value)
   })
   zoomSelectElement.selectedIndex = 1
 
-  graphComponent.addZoomChangedListener(() => {
+  graphComponent.addEventListener('zoom-changed', () => {
     const label = document.querySelector<HTMLElement>('#zoomLabel')!
     label.textContent = String(Math.round(graphComponent.zoom * 100) / 100)
   })

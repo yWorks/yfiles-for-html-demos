@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,7 +30,6 @@ import {
   EdgeStyleBase,
   Font,
   FontStyle,
-  FontWeight,
   HtmlCanvasVisual,
   IBend,
   IEdge,
@@ -43,79 +42,51 @@ import {
   IRectangle,
   IRenderContext,
   LabelStyleBase,
+  Matrix,
   NodeStyleBase,
   Point,
   Size
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 export class FastNodeStyle extends NodeStyleBase {
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!INode} node
-   * @returns {!NodeCanvasVisual}
-   */
   createVisual(renderContext, node) {
     return new NodeCanvasVisual(node.layout)
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!NodeCanvasVisual} oldVisual
-   * @param {!INode} node
-   * @returns {!NodeCanvasVisual}
-   */
   updateVisual(renderContext, oldVisual, node) {
     oldVisual.layout = node.layout
     return oldVisual
   }
 }
-
 /**
  * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeCanvasVisual extends HtmlCanvasVisual {
+  layout
   /**
    * Initializes a new NodeCanvasVisual instance with the given property value.
-   * @param {!IRectangle} layout A live view of the layout of a node.
+   * @param layout A live view of the layout of a node.
    */
   constructor(layout) {
     super()
     this.layout = layout
   }
-
   /**
-   * Draw a rectangle with a solid orange fill.
+   * Draws a rectangle with a solid orange fill.
    * @see Overrides {@link HtmlCanvasVisual.paint}
-   * @param {!IRenderContext} renderContext
-   * @param {!CanvasRenderingContext2D} ctx
    */
-  paint(renderContext, ctx) {
+  render(renderContext, ctx) {
     ctx.fillStyle = 'rgba(255,140,0,1)'
     const l = this.layout
     ctx.fillRect(l.x, l.y, l.width, l.height)
   }
 }
-
 /**
  * A very basic high-performance edge style that uses HTML 5 canvas rendering.
  * Arrows are not supported by this implementation.
  */
 export class FastEdgeStyle extends EdgeStyleBase {
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!IEdge} edge
-   * @returns {!EdgeCanvasVisual}
-   */
   createVisual(renderContext, edge) {
     return new EdgeCanvasVisual(edge.bends, edge.sourcePort.location, edge.targetPort.location)
   }
-
-  /**
-   * @param {!IInputModeContext} inputContext
-   * @param {!Point} location
-   * @param {!IEdge} edge
-   * @returns {boolean}
-   */
   isHit(inputContext, location, edge) {
     // we use a very simple hit logic here (the base implementation)
     if (!super.isHit(inputContext, location, edge)) {
@@ -129,13 +100,6 @@ export class FastEdgeStyle extends EdgeStyleBase {
       !t.style.renderer.getHitTestable(t, t.style).isHit(inputContext, location)
     )
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!EdgeCanvasVisual} oldVisual
-   * @param {!IEdge} edge
-   * @returns {!EdgeCanvasVisual}
-   */
   updateVisual(renderContext, oldVisual, edge) {
     oldVisual.bends = edge.bends
     oldVisual.sourcePortLocation = edge.sourcePort.location
@@ -143,32 +107,28 @@ export class FastEdgeStyle extends EdgeStyleBase {
     return oldVisual
   }
 }
-
 /**
  * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeCanvasVisual extends HtmlCanvasVisual {
+  bends
+  sourcePortLocation
+  targetPortLocation
   /**
    * Initializes a new EdgeCanvasVisual instance with the given property values.
-   * @param {!IListEnumerable.<IBend>} bends The bends in the edge's path.
-   * @param {!Point} sourcePortLocation The start point of the edge's path.
-   * @param {!Point} targetPortLocation The end point of the edge's path.
+   * @param bends The bends in the edge's path.
+   * @param sourcePortLocation The start point of the edge's path.
+   * @param targetPortLocation The end point of the edge's path.
    */
   constructor(bends, sourcePortLocation, targetPortLocation) {
     super()
-    this.targetPortLocation = targetPortLocation
-    this.sourcePortLocation = sourcePortLocation
     this.bends = bends
+    this.sourcePortLocation = sourcePortLocation
+    this.targetPortLocation = targetPortLocation
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!CanvasRenderingContext2D} ctx
-   */
-  paint(renderContext, ctx) {
+  render(renderContext, ctx) {
     // simply draw a black line from the source port location via all bends to the target port location
     ctx.strokeStyle = 'rgb(51,102,153)'
-
     ctx.beginPath()
     let location = this.sourcePortLocation
     ctx.moveTo(location.x, location.y)
@@ -183,7 +143,6 @@ class EdgeCanvasVisual extends HtmlCanvasVisual {
     ctx.stroke()
   }
 }
-
 /**
  * A very basic high-performance label style that uses HTML 5 canvas rendering and level-of-detail rendering.
  * This style does not support multiline text.
@@ -191,50 +150,21 @@ class EdgeCanvasVisual extends HtmlCanvasVisual {
 export class FastLabelStyle extends LabelStyleBase {
   _zoomThreshold = 0.7
   _font = new Font()
-
-  /**
-   * @type {number}
-   */
   get zoomThreshold() {
     return this._zoomThreshold
   }
-
-  /**
-   * @type {number}
-   */
   set zoomThreshold(value) {
     this._zoomThreshold = value
   }
-
-  /**
-   * @type {!Font}
-   */
   get font() {
     return this._font
   }
-
-  /**
-   * @type {!Font}
-   */
   set font(value) {
     this._font = value
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!ILabel} label
-   * @returns {!LabelCanvasVisual}
-   */
   createVisual(renderContext, label) {
     return new LabelCanvasVisual(label.text, label.layout, this.font, this.zoomThreshold)
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!LabelCanvasVisual} oldVisual
-   * @param {!ILabel} label
-   * @returns {!LabelCanvasVisual}
-   */
   updateVisual(renderContext, oldVisual, label) {
     oldVisual.text = label.text
     oldVisual.layout = label.layout
@@ -242,11 +172,6 @@ export class FastLabelStyle extends LabelStyleBase {
     oldVisual.zoomThreshold = this.zoomThreshold
     return oldVisual
   }
-
-  /**
-   * @param {!ILabel} label
-   * @returns {!Size}
-   */
   getPreferredSize(label) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
@@ -254,22 +179,12 @@ export class FastLabelStyle extends LabelStyleBase {
     const width = ctx.measureText(label.text).width
     return new Size(width, this.font.fontSize)
   }
-
   /**
    * Helper method to set a Font on the given context;
-   * @param {!CanvasRenderingContext2D} ctx
-   * @param {!Font} font
    */
   static setFont(ctx, font) {
-    ctx.font = `${FastLabelStyle.fontStyleToString(
-      font.fontStyle
-    )} ${FastLabelStyle.fontWeightToString(font.fontWeight)} ${font.fontSize}px ${font.fontFamily}`
+    ctx.font = `${FastLabelStyle.fontStyleToString(font.fontStyle)} ${font.fontWeight} ${font.fontSize}px ${font.fontFamily}`
   }
-
-  /**
-   * @param {!FontStyle} fontStyle
-   * @returns {!string}
-   */
   static fontStyleToString(fontStyle) {
     switch (fontStyle) {
       default:
@@ -283,71 +198,31 @@ export class FastLabelStyle extends LabelStyleBase {
         return 'inherit'
     }
   }
-
-  /**
-   * @param {!FontWeight} fontWeight
-   * @returns {!string}
-   */
-  static fontWeightToString(fontWeight) {
-    switch (fontWeight) {
-      default:
-      case FontWeight.NORMAL:
-        return 'normal'
-      case FontWeight.BOLD:
-        return 'bold'
-      case FontWeight.BOLDER:
-        return 'bolder'
-      case FontWeight.LIGHTER:
-        return 'lighter'
-      case FontWeight.INHERIT:
-        return 'inherit'
-      case FontWeight.ITEM100:
-        return '100'
-      case FontWeight.ITEM200:
-        return '200'
-      case FontWeight.ITEM300:
-        return '300'
-      case FontWeight.ITEM400:
-        return '400'
-      case FontWeight.ITEM500:
-        return '500'
-      case FontWeight.ITEM600:
-        return '600'
-      case FontWeight.ITEM700:
-        return '700'
-      case FontWeight.ITEM800:
-        return '800'
-      case FontWeight.ITEM900:
-        return '900'
-    }
-  }
 }
-
 /**
  * The CanvasVisual for label rendering
  */
 class LabelCanvasVisual extends HtmlCanvasVisual {
+  text
+  layout
+  font
+  zoomThreshold
   /**
    * Initializes a new LabelCanvasVisual with the given property values.
-   * @param {!string} text The text to be rendered.
-   * @param {!IOrientedRectangle} layout A live view of the layout of a label.
-   * @param {!Font} font The Font to render the label text with.
-   * @param {number} zoomThreshold Text is rendered only if the zoom property of the component in which
+   * @param text The text to be rendered.
+   * @param layout A live view of the layout of a label.
+   * @param font The Font to render the label text with.
+   * @param zoomThreshold Text is rendered only if the zoom property of the component in which
    * this visual is displayed is greater than the given value.
    */
   constructor(text, layout, font, zoomThreshold) {
     super()
-    this.zoomThreshold = zoomThreshold
-    this.font = font
-    this.layout = layout
     this.text = text
+    this.layout = layout
+    this.font = font
+    this.zoomThreshold = zoomThreshold
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!CanvasRenderingContext2D} ctx
-   */
-  paint(renderContext, ctx) {
+  render(renderContext, ctx) {
     if (renderContext.zoom > this.zoomThreshold) {
       FastLabelStyle.setFont(ctx, this.font)
       const dx = this.layout.anchorX
@@ -356,7 +231,7 @@ class LabelCanvasVisual extends HtmlCanvasVisual {
       ctx.fillStyle = 'rgba(50,50,50,1)'
       ctx.textBaseline = 'bottom'
       if (this.layout.upY !== -1) {
-        const elements = this.layout.createTransform().elements
+        const elements = Matrix.createTransform(this.layout).elements
         ctx.transform(elements[0], elements[1], elements[2], elements[3], elements[4], elements[5])
         ctx.fillText(this.text, 0, this.layout.height)
       } else {
@@ -366,6 +241,5 @@ class LabelCanvasVisual extends HtmlCanvasVisual {
     }
   }
 }
-
 // export a default object to be able to map a namespace to this module for serialization
 export default { FastEdgeStyle, FastLabelStyle, FastNodeStyle }

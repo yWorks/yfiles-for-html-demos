@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,14 +27,14 @@
  **
  ***************************************************************************/
 import {
-  DefaultPortCandidate,
   EdgePathPortLocationModel,
   IEdge,
   IEnumerable,
   IInputModeContext,
   IPortCandidate,
+  PortCandidate,
   PortCandidateProviderBase
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * A port candidate provider that aggregates different {@link IPortLocationModel PortLocationModels}
@@ -58,15 +58,12 @@ export class EdgePathPortCandidateProvider extends PortCandidateProviderBase {
     // add equally distributed port candidates along the edge
     for (let i = 1; i < 10; ++i) {
       candidates.push(
-        new DefaultPortCandidate(
-          edge,
-          EdgePathPortLocationModel.INSTANCE.createRatioParameter(0.1 * i)
-        )
+        new PortCandidate(edge, EdgePathPortLocationModel.INSTANCE.createRatioParameter(0.1 * i))
       )
     }
 
     // add a dynamic candidate that can be used if shift is pressed to assign the exact location.
-    candidates.push(new DefaultPortCandidate(edge, EdgePathPortLocationModel.INSTANCE))
+    candidates.push(new PortCandidate(edge, EdgePathPortLocationModel.INSTANCE))
 
     return IEnumerable.from(candidates)
   }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,32 +26,24 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { toggleExportRectangle } from '../export-rectangle/export-rectangle.js'
-
-/**
- * @param {!function} exportCallback
- */
+import { toggleExportRectangle } from '../export-rectangle/export-rectangle'
 export function initializeOptionPanel(exportCallback) {
   const useRectInput = document.querySelector('#use-rect')
   const scaleInput = document.querySelector('#scale')
   const marginInput = document.querySelector('#margin')
   const serverExportInput = document.querySelector('#server-export')
   const exportButton = document.querySelector('#export-button')
-
   useRectInput.addEventListener('change', () => {
     toggleExportRectangle()
   })
-
   exportButton.addEventListener('click', async () => {
     exportButton.disabled = !serverExportInput.checked
-
     const options = {
       useExportRectangle: useRectInput.checked,
       scale: parseFloat(scaleInput.value),
       margin: parseFloat(marginInput.value),
       serverExport: serverExportInput.checked
     }
-
     if (Number.isNaN(options.scale) || options.scale <= 0) {
       alert('Scale must be a positive number.')
       return false
@@ -60,7 +52,6 @@ export function initializeOptionPanel(exportCallback) {
       alert('Margin must be a non-negative number.')
       return false
     }
-
     exportCallback(options)
   })
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,31 +32,31 @@ export default [
     fileName: 'small'
   },
   {
-    displayName: 'Balloon: 2000 nodes 1999 edges',
-    fileName: 'balloon_2000_1999'
+    displayName: 'Radial Tree: 2000 nodes 1999 edges',
+    fileName: 'radial_tree_2000_1999'
   },
   {
-    displayName: 'Balloon: 5000 nodes 4999 edges',
-    fileName: 'balloon_5000_4999'
+    displayName: 'Radial Tree: 5000 nodes 4999 edges',
+    fileName: 'radial_tree_5000_4999'
   },
   {
-    displayName: 'Balloon: 10000 nodes 9999 edges',
-    fileName: 'balloon_10000_9999'
+    displayName: 'Radial Tree: 10000 nodes 9999 edges',
+    fileName: 'radial_tree_10000_9999'
   },
   {
-    displayName: 'Balloon: 15000 nodes 14999 edges',
-    fileName: 'balloon_15000_14999'
+    displayName: 'Radial Tree: 15000 nodes 14999 edges',
+    fileName: 'radial_tree_15000_14999'
   },
   {
-    displayName: 'Hierarchic: 2000 nodes 2100 edges',
+    displayName: 'Hierarchical: 2000 nodes 2100 edges',
     fileName: 'hierarchic_2000_2100'
   },
   {
-    displayName: 'Hierarchic: 5000 nodes 5100 edges',
+    displayName: 'Hierarchical: 5000 nodes 5100 edges',
     fileName: 'hierarchic_5000_5100'
   },
   {
-    displayName: 'Hierarchic: 10000 nodes 11000 edges',
+    displayName: 'Hierarchical: 10000 nodes 11000 edges',
     fileName: 'hierarchic_10000_11000'
   }
 ]

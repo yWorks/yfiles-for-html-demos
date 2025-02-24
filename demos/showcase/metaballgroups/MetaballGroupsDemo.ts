@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,7 +31,6 @@ import {
   Color,
   GraphComponent,
   GraphEditorInputMode,
-  ICanvasObjectDescriptor,
   INode,
   IRenderContext,
   IVisualCreator,
@@ -39,16 +38,13 @@ import {
   License,
   OrganicLayout,
   OrganicLayoutData,
-  OrganicLayoutScope,
   ShapeNodeStyle,
-  Size,
-  SolidColorFill
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 import WebglBlobVisual from './WebglBlobVisual'
 
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { checkWebGLSupport, finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { checkWebGLSupport, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -63,41 +59,41 @@ async function run(): Promise<void> {
   }
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode({
     allowEditLabel: true,
-    hideLabelDuringEditing: false,
-    allowGroupingOperations: true
+    editLabelInputMode: {
+      hideLabelDuringEditing: false
+    }
   })
 
   createSampleGraph()
 
   // add a blob visualization for the reddish group
-  graphComponent.backgroundGroup.addChild(
+  const renderTree = graphComponent.renderTree
+  renderTree.createElement(
+    renderTree.backgroundGroup,
     new BlobBackground(
       (n: INode): boolean => {
-        const color = ((n.style as ShapeNodeStyle).fill! as SolidColorFill).color
+        const color = (n.style as ShapeNodeStyle).fill! as Color
         return color == redColor || color == purpleColor
       },
       new Color(224, 113, 113, 196),
       120
-    ),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    )
   )
 
   // add a blob visualization for the bluish group
-  graphComponent.backgroundGroup.addChild(
+  renderTree.createElement(
+    renderTree.backgroundGroup,
     new BlobBackground(
       (n: INode): boolean => {
-        const color = ((n.style as ShapeNodeStyle).fill! as SolidColorFill).color
+        const color = (n.style as ShapeNodeStyle).fill! as Color
         return color == blueColor || color == purpleColor
       },
       new Color(144, 142, 208, 196),
       150
-    ),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    )
   )
 
   changeLayout()
@@ -107,22 +103,22 @@ async function run(): Promise<void> {
 
 const redStyle = new ShapeNodeStyle({
   shape: 'ellipse',
-  fill: new SolidColorFill(redColor),
+  fill: redColor,
   stroke: null
 })
 const blueStyle = new ShapeNodeStyle({
   shape: 'ellipse',
-  fill: new SolidColorFill(blueColor),
+  fill: blueColor,
   stroke: null
 })
 const purpleStyle = new ShapeNodeStyle({
   shape: 'ellipse',
-  fill: new SolidColorFill(purpleColor),
+  fill: purpleColor,
   stroke: null
 })
 const greyStyle = new ShapeNodeStyle({
   shape: 'ellipse',
-  fill: new SolidColorFill(greyColor),
+  fill: greyColor,
   stroke: null
 })
 
@@ -135,10 +131,10 @@ function createSampleGraph(): void {
   graph.nodeDefaults.size = new Size(50, 50)
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'ellipse',
-    fill: new SolidColorFill(redColor)
+    fill: redColor
   })
 
-  graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.hideImplementation()
+  graph.decorator.nodes.reshapeHandleProvider.hide()
 
   const styles = [greyStyle, redStyle, purpleStyle, blueStyle]
   for (const type of '0002211333000221333000221333000221333000221333000221333') {
@@ -168,19 +164,20 @@ function createSampleGraph(): void {
 function changeLayout(): void {
   const organicLayout = new OrganicLayout({
     compactnessFactor: Math.random() * 0.8,
-    preferredEdgeLength: 70 + Math.random() * 20,
-    scope: OrganicLayoutScope.SUBSET
+    defaultPreferredEdgeLength: 70 + Math.random() * 20
   })
 
   const organicLayoutData = new OrganicLayoutData({
-    affectedNodes: graphComponent.graph.nodes
+    scope: {
+      nodes: graphComponent.graph.nodes
+    }
   })
 
   new LayoutExecutor({
     graphComponent,
     layout: organicLayout,
     layoutData: organicLayoutData,
-    duration: '1s',
+    animationDuration: '1s',
     animateViewport: true,
     easedAnimation: true
   }).start()
@@ -195,7 +192,7 @@ function initializeUI(): void {
 /**
  * A background visual creator that produces the metaball groups.
  */
-class BlobBackground extends BaseClass<IVisualCreator>(IVisualCreator) implements IVisualCreator {
+class BlobBackground extends BaseClass(IVisualCreator) {
   selector: (node: INode) => boolean
   size: number
   color: Color

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -41,7 +41,7 @@ import {
   IReparentNodeHandler,
   Point,
   WaitInputMode
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { LayoutHelper } from './LayoutHelper'
 
 export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
@@ -82,7 +82,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
    * The node is upon to be dragged.
    */
   public initializeDrag(context: IInputModeContext): void {
-    this.reparentHandler = context.lookup(IReparentNodeHandler.$class)
+    this.reparentHandler = context.lookup(IReparentNodeHandler)
     this.layoutHelper = new LayoutHelper(context.canvasComponent as GraphComponent, this.node!)
     this.layoutHelper.initializeLayout()
     this.handler!.initializeDrag(context)
@@ -97,8 +97,8 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
     this.handler!.handleMove(context, originalLocation, newLocation)
 
     if (!this.reparentHandler || !this.reparentHandler.isReparentGesture(context, this.node!)) {
-      this.timeoutHandle = setTimeout(() => {
-        this.layoutHelper!.runLayout()
+      this.timeoutHandle = setTimeout(async () => {
+        await this.layoutHelper!.runLayout()
       }, 50)
     }
   }
@@ -110,7 +110,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
     this.clearTimeout()
     this.handler!.cancelDrag(context, originalLocation)
 
-    const waitInputMode = context.lookup(WaitInputMode.$class)
+    const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
       // disable user interaction while the cancel layout is running
       waitInputMode.waiting = true
@@ -134,7 +134,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
     this.clearTimeout()
     this.handler!.dragFinished(context, originalLocation, newLocation)
 
-    const waitInputMode = context.lookup(WaitInputMode.$class)
+    const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
       // disable user interaction while the finish layout is running
       waitInputMode.waiting = true

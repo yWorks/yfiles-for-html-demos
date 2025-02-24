@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,57 +26,45 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, ICanvasObjectDescriptor, IVisualCreator, SvgVisual } from 'yfiles'
-import { getWayPoint } from './resources/TrekkingData.js'
-
+import { BaseClass, IVisualCreator, SvgVisual } from '@yfiles/yfiles'
+import { getWayPoint } from './resources/TrekkingData'
 /**
  * The visual that contains the icon associated with a node that is being hovered.
- * @type {ICanvasObject}
  */
 let iconDescriptionVisual
-
 /**
  * Adds the icon visual associated to the given node to the background group of the
  * given graph component.
  * Called when a node is being hovered.
- * @param {!GraphComponent} graphComponent
- * @param {!INode} node
  */
 export function addIconDescription(graphComponent, node) {
-  iconDescriptionVisual = graphComponent.highlightGroup.addChild(
-    new IconDescriptionVisual(node),
-    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+  iconDescriptionVisual = graphComponent.renderTree.createElement(
+    graphComponent.renderTree.highlightGroup,
+    new IconDescriptionVisual(node)
   )
 }
-
 /**
  * Removes the icon visual from the background group of the given graph component.
  * Called whenever the highlighting of a node is being removed.
  */
-export function removeIconDescription() {
+export function removeIconDescription(graphComponent) {
   if (iconDescriptionVisual) {
-    iconDescriptionVisual.remove()
+    graphComponent.renderTree.remove(iconDescriptionVisual)
     iconDescriptionVisual = null
   }
 }
-
 /**
  * Creates a background visual that contains an icon for the given node.
  */
 export class IconDescriptionVisual extends BaseClass(IVisualCreator) {
-  /**
-   * @param {!INode} node
-   */
+  node
   constructor(node) {
     super()
     this.node = node
   }
-
   /**
    * Creates an image element with the icon associated to the current node and a line that connects
    * the node with the image element.
-   * @param {!IRenderContext} context
-   * @returns {!SvgVisual}
    */
   createVisual(context) {
     const data = getWayPoint(this.node)
@@ -89,7 +77,6 @@ export class IconDescriptionVisual extends BaseClass(IVisualCreator) {
       const imageHeight = 200
       const imageX = Math.max(5, layout.center.x - imageWidth * 0.5)
       const imageY = -250
-
       const image = document.createElementNS('http://www.w3.org/2000/svg', 'image')
       image.x.baseVal.value = Math.max(5, imageX)
       image.y.baseVal.value = imageY
@@ -98,7 +85,6 @@ export class IconDescriptionVisual extends BaseClass(IVisualCreator) {
       image.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', data.icon)
       image.setAttribute('style', 'pointer-events: none')
       container.appendChild(image)
-
       // create the icon border
       const rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
       rectangle.x.baseVal.value = imageX
@@ -109,7 +95,6 @@ export class IconDescriptionVisual extends BaseClass(IVisualCreator) {
       rectangle.setAttribute('stroke-width', '2')
       rectangle.setAttribute('fill', 'none')
       container.appendChild(rectangle)
-
       // create the line that connects the node with the icon
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
       line.x1.baseVal.value = cx
@@ -121,15 +106,10 @@ export class IconDescriptionVisual extends BaseClass(IVisualCreator) {
       line.setAttribute('stroke-dasharray', '2')
       container.appendChild(line)
     }
-
     return new SvgVisual(container)
   }
-
   /**
    * Delegates the call to the {@link createVisual} method.
-   * @param {!IRenderContext} context
-   * @param {?Visual} oldVisual
-   * @returns {?Visual}
    */
   updateVisual(context, oldVisual) {
     return this.createVisual(context)

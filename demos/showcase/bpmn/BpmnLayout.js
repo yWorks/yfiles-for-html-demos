@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,114 +27,98 @@
  **
  ***************************************************************************/
 import {
-  AsIsLayerer,
   BaseClass,
-  ConstraintIncrementalLayerer,
-  Edge,
+  ConstraintIncrementalLayerAssigner,
+  EdgeDataKey,
+  EdgeLabelDataKey,
+  EdgeLabelPlacement,
+  FromSketchLayerAssigner,
   GenericLabeling,
-  HierarchicLayout,
-  IComparer,
-  IEdgeLabelLayout,
-  IEdgeMap,
+  HierarchicalLayout,
+  HierarchicalLayoutContext,
   IEnumerable,
-  IItemFactory,
-  ILayerer,
-  ILayers,
   ILayoutAlgorithm,
-  ILayoutDataProvider,
-  INodeCursor,
-  INodeData,
-  INodeLabelLayout,
-  INodeMap,
-  IPortConstraintOptimizer,
-  IProfitModel,
   LabelCandidate,
+  LayoutEdge,
   LayoutGraph,
   LayoutGraphHider,
-  LayoutMode,
-  LayoutOrientation,
+  LayoutGrid,
+  LayoutNode,
+  LayoutNodeLabel,
+  LayoutPortCandidate,
+  LineSegment,
   List,
-  Maps,
-  PartitionGrid,
-  PortCandidateOptimizer,
-  PortConstraint,
-  PortConstraintOptimizerBase,
-  PortConstraintOptimizerSameLayerData,
-  PortSide,
-  SimplexNodePlacer,
-  TopologicalLayerer,
-  YNode,
-  YNodeList,
-  YPoint,
-  YPointPath
-} from 'yfiles'
-
+  Mapper,
+  NodeDataKey,
+  NodeLabelDataKey,
+  NodeLabelPlacement,
+  Point,
+  PortCandidateSelector,
+  PortCandidateSelectorSameLayerData,
+  PortSides,
+  TopologicalLayerAssigner,
+  YList
+} from '@yfiles/yfiles'
 class PortLocationAdjuster extends BaseClass(ILayoutAlgorithm) {
   /**
    * Main layout routine that assigns new layout information to the given graph.
-   * @param {!LayoutGraph} graph the input graph.
+   * @param graph the input graph.
    * @see Specified by {@link ILayoutAlgorithm.applyLayout}.
    */
   applyLayout(graph) {
-    const affectedNodesDP = graph.getDataProvider(PortLocationAdjuster.AFFECTED_NODES_DP_KEY)
-
-    for (let ec = graph.getEdgeCursor(); ec.ok; ec.next()) {
-      const e = ec.edge
-      const path = graph.getPath(e)
+    const affectedNodesDP = graph.context.getItemData(PortLocationAdjuster.AFFECTED_NODES_DATA_KEY)
+    for (const edge of graph.edges) {
       // adjust source point
-      if (affectedNodesDP == null || affectedNodesDP.getBoolean(e.source)) {
-        adjustPortLocation(graph, e, path, true)
+      if (affectedNodesDP == null || affectedNodesDP.get(edge.source)) {
+        adjustPortLocation(edge, true)
       }
-      if (affectedNodesDP == null || affectedNodesDP.getBoolean(e.target)) {
-        adjustPortLocation(graph, e, path, false)
+      if (affectedNodesDP == null || affectedNodesDP.get(edge.target)) {
+        adjustPortLocation(edge, false)
       }
     }
   }
-
   /**
    * Data provider key used to store if the ports on a node should be adjusted.
-   * @type {!string}
    */
-  static get AFFECTED_NODES_DP_KEY() {
-    return 'com.yworks.yfiles.bpmn.layout.PortLocationAdjuster.AffectedNodesDpKey'
+  static get AFFECTED_NODES_DATA_KEY() {
+    return new NodeDataKey(
+      'com.yworks.yfiles.bpmn.layout.PortLocationAdjuster.AffectedNodesDataKey'
+    )
   }
 }
-
 /**
  * Adjusts the edge end points so they don't end outside the shape of the node they are attached to.
- * @param {!LayoutGraph} graph
- * @param {!Edge} e
- * @param {!YPointPath} path
- * @param {boolean} atSource
  */
-function adjustPortLocation(graph, e, path, atSource) {
+function adjustPortLocation(e, atSource) {
   const node = atSource ? e.source : e.target
-  const pointRel = atSource ? graph.getSourcePointRel(e) : graph.getTargetPointRel(e)
+  const pointRel = atSource ? e.sourcePortOffset : e.targetPortOffset
   // get offset from the node center to the end of the shape at the node side the edge connects to
-  const segment = path.getLineSegment(atSource ? 0 : path.length() - 2)
-  const offset = Math.min(graph.getWidth(node), graph.getHeight(node)) / 2
+  const points = e.pathPoints.toArray()
+  const p1 = atSource ? points[0].location : points[points.length - 2].location
+  const p2 = atSource ? points[1].location : points[points.length - 1].location
+  const segment = new LineSegment(p1, p2)
+  const offset = Math.min(node.layout.width, node.layout.height) / 2
   const offsetX = segment.deltaX > 0 !== atSource ? -offset : offset
   const offsetY = segment.deltaY > 0 !== atSource ? -offset : offset
   // if the edge end point is at the center of this side, we use the calculated offset to put the end point on
   // the node bounds, otherwise we prolong the last segment to the center line of the node so it doesn't end
   // outside the node's shape
-  const newPortLocation = segment.isHorizontal
-    ? new YPoint(pointRel.y !== 0 ? 0 : offsetX, pointRel.y)
-    : new YPoint(pointRel.x, pointRel.x !== 0 ? 0 : offsetY)
+  const newPortLocation = segment.isHorizontal(1e-8)
+    ? new Point(pointRel.y !== 0 ? 0 : offsetX, pointRel.y)
+    : new Point(pointRel.x, pointRel.x !== 0 ? 0 : offsetY)
   if (atSource) {
-    graph.setSourcePointRel(e, newPortLocation)
+    e.sourcePortOffset = newPortLocation
   } else {
-    graph.setTargetPointRel(e, newPortLocation)
+    e.targetPortOffset = newPortLocation
   }
 }
-
 /**
  * An automatic layout algorithm for BPMN diagrams.
  *
  * Some elements have to be marked with the DataProvider keys
- * {@link BpmnLayout.SEQUENCE_FLOW_EDGES_DP_KEY} and {@link BpmnLayout.BOUNDARY_INTERRUPTING_EDGES_DP_KEY}.
+ * {@link BpmnLayout.SEQUENCE_FLOW_EDGES_DATA_KEY} and {@link BpmnLayout.BOUNDARY_INTERRUPTING_EDGES_DATA_KEY}.
  */
-export default class BpmnLayout extends BaseClass(ILayoutAlgorithm) {
+export class BpmnLayout extends BaseClass(ILayoutAlgorithm) {
   /**
    * The scope of graph elements that are laid out.
    * Possible values are 'ALL_ELEMENTS'
@@ -143,255 +127,220 @@ export default class BpmnLayout extends BaseClass(ILayoutAlgorithm) {
    * Defaults to 'ALL_ELEMENTS'.
    *
    * Note, if the scope is set to 'SELECTED_ELEMENTS',
-   * non-selected elements may also be moved. However the layout algorithm uses the initial position of
+   * non-selected elements may also be moved. However, the layout algorithm uses the initial position of
    * such elements as sketch.
    */
   scope = 'ALL_ELEMENTS'
-
   /**
    * The insets used for swim-lanes.
-   * The insets for swim-lanes, that is the distance between a graph element
-   * and the border of its enclosing swim-lane.
+   * These insets define the distance between a graph element and the border of its enclosing swim-lane.
    *
    * Defaults to `10.0`.
-   *
    */
   laneInsets = 10
-
   /**
-   * Zhe layout orientation.
+   * The layout orientation.
    * Defaults to {@link 'LEFT_TO_RIGHT'}.
    */
   layoutOrientation = 'LEFT_TO_RIGHT'
-
   /**
    * The minimum distance between two node elements.
    * Defaults to `40.0`
    */
   minimumNodeDistance = 40
-
   /**
-   * Lays out the specified graph.
-   * @see Specified by {@link ILayoutAlgorithm.applyLayout}.
-   * @param {!LayoutGraph} graph
+   * Applies the layout to the specified graph.
    */
   applyLayout(graph) {
-    if (graph.empty) {
+    if (graph.isEmpty) {
       return
     }
-    // set the laneInsets to all partition grid columns and rows
-    this.configurePartitionGrid(graph)
-
+    // set the laneInsets to all layout grid columns and rows
+    this.configureLayoutGrid(graph)
     // run core layout
-    this.applyHierarchicLayout(graph)
-
+    this.applyHierarchicalLayout(graph)
     // apply generic labeling
-    BpmnLayout.applyLabeling(graph)
+    this.applyLabeling(graph)
     // adjust endpoints of edges
     new PortLocationAdjuster().applyLayout(graph)
-
-    // remove data provider for CriticalEdgePriorityDpKey that was added by BalancingPortOptimizer
-    graph.removeDataProvider(HierarchicLayout.CRITICAL_EDGE_PRIORITY_DP_KEY)
+    // remove data provider for CriticalEdgePriorityDataKey that was added by BalancingPortSelection
+    graph.context.remove(HierarchicalLayout.CRITICAL_EDGE_PRIORITY_DATA_KEY)
   }
-
-  /**
-   * @param {!LayoutGraph} graph
-   */
-  configurePartitionGrid(graph) {
-    const grid = PartitionGrid.getPartitionGrid(graph)
-    if (grid != null) {
-      grid.columns.forEach((columnObject) => {
-        const column = columnObject
-        column.leftInset += this.laneInsets
-        column.rightInset += this.laneInsets
-      })
-      grid.rows.forEach((rowObject) => {
-        const row = rowObject
-        row.topInset += this.laneInsets
-        row.bottomInset += this.laneInsets
-      })
+  configureLayoutGrid(graph) {
+    const cellDescriptors = graph.context.getItemData(
+      LayoutGrid.LAYOUT_GRID_CELL_DESCRIPTOR_DATA_KEY
+    )
+    if (cellDescriptors == null) {
+      return
+    }
+    const nodeWithCell = graph.nodes.find((node) => cellDescriptors.get(node) !== null)
+    if (nodeWithCell) {
+      const grid = cellDescriptors.get(nodeWithCell)?.layoutGrid
+      if (grid) {
+        grid.columns.forEach((columnObject) => {
+          const column = columnObject
+          column.leftPadding += this.laneInsets
+          column.rightPadding += this.laneInsets
+        })
+        grid.rows.forEach((rowObject) => {
+          const row = rowObject
+          row.topPadding += this.laneInsets
+          row.bottomPadding += this.laneInsets
+        })
+      }
     }
   }
-
-  /**
-   * @param {!LayoutGraph} graph
-   */
-  applyHierarchicLayout(graph) {
-    const hl = new HierarchicLayout()
-    hl.orthogonalRouting = true
-    hl.recursiveGroupLayering = false
-    hl.componentLayoutEnabled = false
-    hl.fromScratchLayerer = new BackLoopLayerer()
-    hl.minimumLayerDistance = this.minimumNodeDistance
-    hl.nodeToNodeDistance = this.minimumNodeDistance
-    hl.nodePlacer.barycenterMode = true
-    hl.nodePlacer.straightenEdges = true
-    hl.layoutOrientation =
-      this.layoutOrientation === 'LEFT_TO_RIGHT'
-        ? LayoutOrientation.LEFT_TO_RIGHT
-        : LayoutOrientation.TOP_TO_BOTTOM
-    hl.hierarchicLayoutCore.portConstraintOptimizer = new BalancingPortOptimizer(
-      new PortCandidateOptimizer()
-    )
+  applyHierarchicalLayout(graph) {
+    const hl = new HierarchicalLayout({
+      groupLayeringPolicy: 'ignore-groups',
+      layoutOrientation:
+        this.layoutOrientation === 'LEFT_TO_RIGHT' ? 'left-to-right' : 'top-to-bottom',
+      minimumLayerDistance: this.minimumNodeDistance,
+      nodeDistance: this.minimumNodeDistance,
+      core: {
+        fromScratchLayerAssigner: new BackLoopLayerer(),
+        portCandidateSelector: new BalancingPortSelection(new PortCandidateSelector())
+      },
+      componentLayout: { enabled: false },
+      coordinateAssigner: {
+        straightenEdges: true
+      },
+      edgeLabelPlacement: EdgeLabelPlacement.IGNORE,
+      nodeLabelPlacement: NodeLabelPlacement.IGNORE
+    })
     if (this.scope === 'SELECTED_ELEMENTS') {
-      const newAsIsLayerer = new AsIsLayerer()
-      newAsIsLayerer.maximumNodeSize = 5
-      hl.fixedElementsLayerer = newAsIsLayerer
-
-      hl.layoutMode = LayoutMode.INCREMENTAL
+      hl.core.fixedElementsLayerAssigner = new FromSketchLayerAssigner({
+        maximumNodeSize: 5
+      })
+      hl.fromSketchMode = true
     }
     hl.applyLayout(graph)
   }
-
-  /**
-   * @param {!LayoutGraph} graph
-   */
-  static applyLabeling(graph) {
-    const labeling = new GenericLabeling()
-    labeling.reduceAmbiguity = true
-    labeling.placeNodeLabels = true
-    labeling.placeEdgeLabels = true
-    labeling.affectedLabelsDpKey = BpmnLayout.AFFECTED_LABELS_DP_KEY
-    labeling.profitModel = new BpmnLabelProfitModel(graph)
-    labeling.customProfitModelRatio = 0.15
+  applyLabeling(graph) {
+    const labeling = new GenericLabeling({
+      scope: 'all',
+      defaultNodeLabelingCosts: { ambiguousPlacementCost: 1.0 },
+      defaultEdgeLabelingCosts: { ambiguousPlacementCost: 1.0 }
+    })
     labeling.applyLayout(graph)
   }
-
   /**
    * Data provider key used to store if an edge represents a sequence flow, default flow or
    * conditional flow.
-   * @type {!string}
    */
-  static get SEQUENCE_FLOW_EDGES_DP_KEY() {
-    return 'com.yworks.yfiles.bpmn.layout.BpmnLayout.SequenceFlowEdgesDpKey'
+  static get SEQUENCE_FLOW_EDGES_DATA_KEY() {
+    return new EdgeDataKey('com.yworks.yfiles.bpmn.layout.BpmnLayout.SequenceFlowEdgesDataKey')
   }
-
   /**
    * Data provider key used to store if an edge starts at a boundary interrupting event.
-   * @type {!string}
    */
-  static get BOUNDARY_INTERRUPTING_EDGES_DP_KEY() {
-    return 'com.yworks.yfiles.bpmn.layout.BpmnLayout.BoundaryInterruptingEdgesDpKey'
+  static get BOUNDARY_INTERRUPTING_EDGES_DATA_KEY() {
+    return new EdgeDataKey(
+      'com.yworks.yfiles.bpmn.layout.BpmnLayout.BoundaryInterruptingEdgesDataKey'
+    )
   }
-
   /**
    * Data provider key used to store which labels shall be positioned by the labeling
    * algorithm.
-   * @type {!string}
    */
-  static get AFFECTED_LABELS_DP_KEY() {
-    return 'com.yworks.yfiles.bpmn.layout.BpmnLayout.AffectedLabelsDpKey'
+  static get AFFECTED_NODE_LABELS_DATA_KEY() {
+    return new NodeLabelDataKey(
+      'com.yworks.yfiles.bpmn.layout.BpmnLayout.AffectedNodeLabelsDataKey'
+    )
   }
-
+  /**
+   * Data provider key used to store which labels shall be positioned by the labeling
+   * algorithm.
+   */
+  static get AFFECTED_EDGE_LABELS_DATA_KEY() {
+    return new EdgeLabelDataKey(
+      'com.yworks.yfiles.bpmn.layout.BpmnLayout.AffectedEdgeLabelsDataKey'
+    )
+  }
   /**
    * Data provider key used to identify nodes for which the port locations should be
    * adjusted.
-   * @type {!string}
    */
-  static get ADJUST_PORT_LOCATION_NODES_DP_KEY() {
-    return PortLocationAdjuster.AFFECTED_NODES_DP_KEY
+  static get ADJUST_PORT_LOCATION_NODES_DATA_KEY() {
+    return PortLocationAdjuster.AFFECTED_NODES_DATA_KEY
   }
-
   /**
    * Returns if the edge represents a sequence flow, default flow or conditional flow.
-   * @see {@link BpmnLayout.SEQUENCE_FLOW_EDGES_DP_KEY}
-   * @param {!Edge} edge
-   * @param {!LayoutGraph} graph
-   * @returns {boolean}
+   * @see {@link BpmnLayout.SEQUENCE_FLOW_EDGES_DATA_KEY}
    */
   static isSequenceFlow(edge, graph) {
-    const flowDP = graph.getDataProvider(BpmnLayout.SEQUENCE_FLOW_EDGES_DP_KEY)
-    return flowDP != null && flowDP.getBoolean(edge)
+    const flowDP = graph.context.getItemData(BpmnLayout.SEQUENCE_FLOW_EDGES_DATA_KEY)
+    return flowDP != null && flowDP.get(edge)
   }
-
   /**
    * Returns if the edge is attached to a boundary interrupting event.
-   * @see {@link BpmnLayout.BOUNDARY_INTERRUPTING_EDGES_DP_KEY}
-   * @param {!Edge} edge
-   * @param {!LayoutGraph} graph
-   * @returns {boolean}
+   * @see {@link BpmnLayout.BOUNDARY_INTERRUPTING_EDGES_DATA_KEY}
    */
   static isBoundaryInterrupting(edge, graph) {
-    const isInterruptingDP = graph.getDataProvider(BpmnLayout.BOUNDARY_INTERRUPTING_EDGES_DP_KEY)
-    return isInterruptingDP != null && isInterruptingDP.getBoolean(edge)
+    const isInterruptingDP = graph.context.getItemData(
+      BpmnLayout.BOUNDARY_INTERRUPTING_EDGES_DATA_KEY
+    )
+    return isInterruptingDP != null && isInterruptingDP.get(edge)
   }
 }
-
 /**
  * A layerer stage that pulls back loop components to earlier layers to reduce the spanned layers of back edges.
  * A back loop component is a set of connected nodes satisfying the following rules:
  *
- * - the set contains no sink node, i.e. no node with out degree 0
+ * - the set contains no sink node, i.e., no node with out-degree 0
  * - all outgoing edges to nodes outside of this set are back edges
  */
-class BackLoopLayerer extends ConstraintIncrementalLayerer {
+class BackLoopLayerer extends ConstraintIncrementalLayerAssigner {
   nodeStates = null
   currentLayers = null
-
   /**
    * Creates a new instance with the specified core layerer.
    */
   constructor() {
-    super(new TopologicalLayerer())
+    super(new TopologicalLayerAssigner())
     this.allowSameLayerEdges = true
   }
-
   /**
-   * Assigns all nodes of the graph to layers and adds them to the {@link ILayers} instance.
+   * Assigns all nodes of the graph to layers and adds them to the {@link Layers} instance.
    *
-   * In order to create new layers, factory method {@link ILayers.insert} has to be used.
-   *
-   * Information about the nodes is provided by a {@link ILayoutDataProvider}. However, positional
-   * information
-   * (see {@link INodeData.position} and {@link INodeData.layer}) is not
-   * available during this phase.
-   *
-   * @param {!LayoutGraph} graph the input graph
-   * @param {!ILayers} layers the {@link ILayers} instance that will be filled with the results of the calculation
-   * @param {!ILayoutDataProvider} ldp the {@link ILayoutDataProvider} used for querying information about the nodes and edges
-   * @see {@link ILayers.insert}
-   * @see {@link ILayer.add}
-   * @see Specified by {@link ILayerer.assignLayers}.
+   * @param graph the input graph
+   * @param layoutContext the context that provides access to information for the graph elements
+   * and to the {@link ILayers layers} instance on which the nodes are assigned
    */
-  assignLayers(graph, layers, ldp) {
+  assignLayers(graph, layoutContext) {
     // get core layer assignment
-    super.assignLayers(graph, layers, ldp)
-
+    super.assignLayers(graph, layoutContext)
     // Hide all edges that are no sequence flows
     const graphHider = new LayoutGraphHider(graph)
-    for (let i = 0, arr = graph.getEdgeArray(); i < arr.length; i++) {
-      const edge = arr[i]
+    for (const edge of graph.edges.toArray()) {
       if (!BpmnLayout.isSequenceFlow(edge, graph)) {
         graphHider.hide(edge)
       }
     }
-
+    const layers = layoutContext.layers
     // determine current layer of all nodes
-    this.currentLayers = new Array(graph.nodeCount)
-    for (let i = 0; i < layers.size(); i++) {
-      for (let nc = layers.getLayer(i).list.nodes(); nc.ok; nc.next()) {
-        this.currentLayers[nc.node.index] = i
+    this.currentLayers = new Array(graph.nodes.size)
+    for (let i = 0; i < layers.size; i++) {
+      for (const node of layers.get(i).nodes) {
+        this.currentLayers[node.index] = i
       }
     }
-
     // mark nodes on a back-loop and candidates that may be on a back loop if other back-loop nodes are reassigned
-    this.nodeStates = new Array(graph.nodeCount)
-    let candidates = new YNodeList()
-    const backLoopNodes = new YNodeList()
-    for (let i = layers.size() - 1; i >= 0; i--) {
+    this.nodeStates = new Array(graph.nodes.size)
+    let candidates = new YList()
+    const backLoopNodes = new YList()
+    for (let i = layers.size - 1; i >= 0; i--) {
       // check from last to first layer to detect candidates as well
-      const nodes = layers.getLayer(i).list
+      const nodes = layers.get(i).nodes
       this.updateNodeStates(nodes, backLoopNodes, candidates)
     }
-
     // swap layer for back-loop nodes
     while (backLoopNodes.size > 0) {
-      for (let nc = backLoopNodes.nodes(); nc.ok; nc.next()) {
-        const node = nc.node
+      for (const node of backLoopNodes) {
         const currentLayer = this.currentLayers[node.index]
         // the target layer is the next layer after the highest fixed target node layer
         let targetLayer = 0
-        for (let edge = node.firstOutEdge; edge != null; edge = edge.nextOutEdge) {
+        for (const edge of node.outEdges) {
           const targetNodeIndex = edge.target.index
           if (this.nodeStates[targetNodeIndex] === NodeState.FIXED) {
             targetLayer = Math.max(targetLayer, this.currentLayers[targetNodeIndex] + 1)
@@ -403,40 +352,29 @@ class BackLoopLayerer extends ConstraintIncrementalLayerer {
           continue
         }
         if (targetLayer < currentLayer) {
-          layers.getLayer(currentLayer).remove(node)
-          layers.getLayer(targetLayer).add(node)
+          layers.get(currentLayer).remove(node)
+          layers.get(targetLayer).add(node)
           this.currentLayers[node.index] = targetLayer
           this.nodeStates[node.index] = NodeState.FIXED
         }
       }
       backLoopNodes.clear()
-
       // update states of the candidates
-      candidates = this.updateNodeStates(candidates, backLoopNodes, new YNodeList())
+      candidates = this.updateNodeStates(candidates, backLoopNodes, new YList())
     }
-
     // remove empty layers
-    for (let i = layers.size() - 1; i >= 0; i--) {
-      if (layers.getLayer(i).list.size === 0) {
-        layers.remove(i)
+    for (let i = layers.size - 1; i >= 0; i--) {
+      if (layers.get(i).nodes.size === 0) {
+        layoutContext.removeLayer(i)
       }
     }
-
     // cleanup
     graphHider.unhideAll()
     this.nodeStates = null
     this.currentLayers = null
   }
-
-  /**
-   * @param {!YNodeList} nodes
-   * @param {!YNodeList} backLoopNodes
-   * @param {!YNodeList} candidates
-   * @returns {!YNodeList}
-   */
   updateNodeStates(nodes, backLoopNodes, candidates) {
-    for (let nc = nodes.nodes(); nc.ok; nc.next()) {
-      const node = nc.node
+    for (const node of nodes) {
       const nodeState = this.getNodeState(node)
       switch (nodeState) {
         case NodeState.BACK_LOOPING:
@@ -451,11 +389,6 @@ class BackLoopLayerer extends ConstraintIncrementalLayerer {
     }
     return candidates
   }
-
-  /**
-   * @param {!YNode} node
-   * @returns {!NodeState}
-   */
   getNodeState(node) {
     const nodeLayer = this.currentLayers[node.index]
     if (nodeLayer === 0) {
@@ -463,7 +396,7 @@ class BackLoopLayerer extends ConstraintIncrementalLayerer {
       return NodeState.FIXED
     }
     let nodeState = NodeState.FIXED
-    for (let edge = node.firstOutEdge; edge != null; edge = edge.nextOutEdge) {
+    for (const edge of node.outEdges) {
       const targetIndex = edge.target.index
       if (this.currentLayers[targetIndex] >= nodeLayer) {
         // no back-looping edge...
@@ -486,348 +419,270 @@ class BackLoopLayerer extends ConstraintIncrementalLayerer {
     return nodeState
   }
 }
-
 /**
  * The state of a node while calculating those nodes on a back loop that might be pulled
  * to a lower layer.
- 
-* @readonly
- * @enum {number}
-*/
-const NodeState = {
-  FIXED: 0,
-  BACK_LOOPING: 1,
-  BACK_LOOPING_CANDIDATE: 2
-}
-
+ */
+var NodeState
+;(function (NodeState) {
+  NodeState[(NodeState['FIXED'] = 0)] = 'FIXED'
+  NodeState[(NodeState['BACK_LOOPING'] = 1)] = 'BACK_LOOPING'
+  NodeState[(NodeState['BACK_LOOPING_CANDIDATE'] = 2)] = 'BACK_LOOPING_CANDIDATE'
+})(NodeState || (NodeState = {}))
 /**
- * This port optimizer tries to balance the edges on each node and distribute them to the four node sides.
- * To balances the edge distribution it calculates edges that should be on a
- * {@link HierarchicLayout.CRITICAL_EDGE_DP_KEY critical path} and define the flow of the diagram.
- * Furthermore it uses {@link IItemFactory.setTemporaryPortConstraint temporary port constraints}
+ * This port selection tries to balance the edges on each node, and distribute them to the four node sides.
+ * To balance the edge distribution, it calculates edges that should be on a
+ * {@link HierarchicalLayout.CRITICAL_EDGE_DATA_KEY critical path} and define the flow of the diagram.
+ * Furthermore, it uses {@link ItemFactory.setSelectedPortCandidate selected port candidates}
  * on the non-flow sides of the nodes.
  */
-class BalancingPortOptimizer extends PortConstraintOptimizerBase {
-  static _portConstraintWest
-  static _portConstraintEast
-
+class BalancingPortSelection extends PortCandidateSelector {
+  coreSelection
+  static _portCandidateLeft = LayoutPortCandidate.createFree(PortSides.LEFT)
+  static _portCandidateRight = LayoutPortCandidate.createFree(PortSides.RIGHT)
   sameLayerData = null
   edge2LaneCrossing = null
   node2LaneAlignment = null
-
-  /**
-   * @param {!IPortConstraintOptimizer} coreOptimizer
-   */
-  constructor(coreOptimizer) {
+  constructor(coreSelection) {
     super()
-    this.coreOptimizer = coreOptimizer
+    this.coreSelection = coreSelection
   }
-
-  /**
-   * @param {!LayoutGraph} graph
-   * @param {!ILayers} layers
-   * @param {!ILayoutDataProvider} ldp
-   * @param {!IItemFactory} itemFactory
-   */
-  optimizeAfterLayering(graph, layers, ldp, itemFactory) {
-    if (this.coreOptimizer != null) {
-      this.coreOptimizer.optimizeAfterLayering(graph, layers, ldp, itemFactory)
+  selectAfterLayering(graph, layoutContext) {
+    if (this.coreSelection != null) {
+      this.coreSelection.selectAfterLayering(graph, layoutContext)
     }
   }
-
-  /**
-   * @param {!LayoutGraph} graph
-   * @param {!ILayers} layers
-   * @param {!ILayoutDataProvider} ldp
-   * @param {!IItemFactory} itemFactory
-   */
-  optimizeAfterSequencing(graph, layers, ldp, itemFactory) {
-    if (this.coreOptimizer != null) {
-      this.coreOptimizer.optimizeAfterSequencing(graph, layers, ldp, itemFactory)
+  selectAfterSequencing(graph, layoutContext) {
+    if (this.coreSelection != null) {
+      this.coreSelection.selectAfterSequencing(graph, layoutContext)
     }
-    super.optimizeAfterSequencing(graph, layers, ldp, itemFactory)
+    super.selectAfterSequencing(graph, layoutContext)
   }
-
-  /**
-   * @param {!YNode} node
-   * @param {!IComparer.<object>} inEdgeOrder
-   * @param {!IComparer.<object>} outEdgeOrder
-   * @param {!LayoutGraph} graph
-   * @param {!ILayoutDataProvider} ldp
-   * @param {!IItemFactory} itemFactory
-   */
-  optimizeAfterSequencingForSingleNode(node, inEdgeOrder, outEdgeOrder, graph, ldp, itemFactory) {}
-
-  /**
-   * @param {!LayoutGraph} graph
-   * @param {!ILayers} layers
-   * @param {!ILayoutDataProvider} ldp
-   * @param {!IItemFactory} itemFactory
-   * @returns {?PortConstraintOptimizerSameLayerData}
-   */
-  insertSameLayerStructures(graph, layers, ldp, itemFactory) {
+  selectAfterSequencingAtNode(_node, _inEdgeOrder, _outEdgeOrder, _graph, _layoutContext) {}
+  insertSameLayerStructures(graph, layoutContext) {
     // store the SameLayerData for later use
-    this.sameLayerData = super.insertSameLayerStructures(graph, layers, ldp, itemFactory)
+    this.sameLayerData = super.insertSameLayerStructures(graph, layoutContext)
     return this.sameLayerData
   }
-
-  /**
-   * @param {!IComparer.<object>} inEdgeOrder
-   * @param {!IComparer.<object>} outEdgeOrder
-   * @param {!LayoutGraph} graph
-   * @param {!ILayers} layers
-   * @param {!ILayoutDataProvider} ldp
-   * @param {!IItemFactory} itemFactory
-   */
-  optimizeAfterSequencingForAllNodes(inEdgeOrder, outEdgeOrder, graph, layers, ldp, itemFactory) {
-    this.edge2LaneCrossing = Maps.createHashedEdgeMap()
-    this.node2LaneAlignment = Maps.createHashedNodeMap()
-
-    const criticalEdges = Maps.createHashedEdgeMap()
-
+  selectAfterSequencingWithOrders(inEdgeOrder, outEdgeOrder, graph, layoutContext) {
+    this.edge2LaneCrossing = new Mapper()
+    this.node2LaneAlignment = new Mapper()
+    const criticalEdges = new Mapper(0)
     // determine whether an edge crosses a swim-lane border and if so in which direction
     graph.edges.forEach((edge) => {
-      const originalEdge = this.getOriginalEdge(edge, ldp)
-
+      const originalEdge = this.getOriginalEdge(edge, layoutContext)
       // now we have a 'real' edge with valid source and target nodes
-      const originalSourceId = getLaneId(originalEdge.source, ldp)
-      const originalTargetId = getLaneId(originalEdge.target, ldp)
+      const originalSourceId = getLaneId(originalEdge.source, layoutContext)
+      const originalTargetId = getLaneId(originalEdge.target, layoutContext)
       let crossing = LaneCrossing.NONE
       if (originalSourceId !== originalTargetId) {
         // check if we need to flip the sides because edge and original edge have different directions
         const flipSides = edge.source !== originalEdge.source
         const sourceId = flipSides ? originalTargetId : originalSourceId
         const targetId = flipSides ? originalSourceId : originalTargetId
-
-        crossing = sourceId > targetId ? LaneCrossing.TO_WEST : LaneCrossing.TO_EAST
+        crossing = sourceId > targetId ? LaneCrossing.TO_LEFT : LaneCrossing.TO_RIGHT
       }
       this.edge2LaneCrossing.set(edge, crossing)
     })
-
     // determine basic node alignment
     graph.nodes.forEach((n) => {
       const alignment = this.calculateLaneAlignment(n)
       this.node2LaneAlignment.set(n, alignment)
     })
-
     graph.nodes.forEach((n) => {
       // sort the edges with the provided comparer
       n.sortInEdges(inEdgeOrder)
       n.sortOutEdges(outEdgeOrder)
-
       // calculate 'critical' in and out-edges whose nodes should be aligned in flow
-      const bestInEdge = n.inDegree > 0 ? this.getBestFlowEdge(n.inEdges, ldp, graph) : null
-      const bestOutEdge = n.outDegree > 0 ? this.getBestFlowEdge(n.outEdges, ldp, graph) : null
+      const inEdges = n.inEdges
+      const bestInEdge = n.inDegree > 0 ? this.getBestFlowEdge(inEdges, layoutContext, graph) : null
+      const outEdges = n.outEdges
+      const bestOutEdge =
+        n.outDegree > 0 ? this.getBestFlowEdge(outEdges, layoutContext, graph) : null
       if (bestInEdge != null) {
-        criticalEdges.setInt(bestInEdge, criticalEdges.getInt(bestInEdge) + 0.5)
+        criticalEdges.set(bestInEdge, criticalEdges.get(bestInEdge) + 0.5)
       }
       if (bestOutEdge != null) {
-        criticalEdges.setInt(bestOutEdge, criticalEdges.getInt(bestOutEdge) + 0.5)
+        criticalEdges.set(bestOutEdge, criticalEdges.get(bestOutEdge) + 0.5)
       }
       if (n.degree <= 4) {
-        // should usually be the case and we can distribute each edge to its own side
+        // should usually be the case, and we can distribute each edge to its own side
         // remember which node side is already taken by an in- or out-edge
-        let westTakenByInEdge = false
-        let eastTakenByInEdge = false
-        let westTakenByOutEdge = false
-        let eastTakenByOutEdge = false
-
+        let leftTakenByInEdge = false
+        let rightTakenByInEdge = false
+        let leftTakenByOutEdge = false
+        let rightTakenByOutEdge = false
         if (n.inDegree > 0 && n.outDegree < 3) {
           // if there are at least three out-edges, we distribute those first, otherwise we start with the in-edges
-          const firstInEdge = n.firstInEdge
-          const lastInEdge = n.lastInEdge
+          const firstInEdge = inEdges.first()
+          const lastInEdge = inEdges.last()
           if (
-            this.getLaneCrossing(firstInEdge) === LaneCrossing.TO_EAST &&
-            (n.inDegree > 1 || this.isSameLayerEdge(firstInEdge, ldp))
+            this.getLaneCrossing(firstInEdge) === LaneCrossing.TO_RIGHT &&
+            (n.inDegree > 1 || this.isSameLayerEdge(firstInEdge, layoutContext))
           ) {
-            // the first in-edge comes from west and is either a same layer edge or there are other in-edges
-            constrainWest(firstInEdge, false, itemFactory)
-            westTakenByInEdge = true
+            // the first in-edge comes from the left and is either a same layer edge or there are other in-edges
+            selectLeftSideCandidate(firstInEdge, false, layoutContext)
+            leftTakenByInEdge = true
           }
-          if (!westTakenByInEdge || n.outDegree < 2) {
-            // don't use west and east side for in-edges if there are at least 2 out-edges
+          if (!leftTakenByInEdge || n.outDegree < 2) {
+            // don't use left and right side for in-edges if there are at least 2 out-edges
             if (
-              this.getLaneCrossing(lastInEdge) === LaneCrossing.TO_WEST &&
-              (n.inDegree > 1 || this.isSameLayerEdge(lastInEdge, ldp))
+              this.getLaneCrossing(lastInEdge) === LaneCrossing.TO_LEFT &&
+              (n.inDegree > 1 || this.isSameLayerEdge(lastInEdge, layoutContext))
             ) {
-              // the last in-edge comes from east and is either
+              // the last in-edge comes from right and is either
               // a same-layer edge or there are other in-edges
-              constrainEast(lastInEdge, false, itemFactory)
-              eastTakenByInEdge = true
+              selectRightSideCandidate(lastInEdge, false, layoutContext)
+              rightTakenByInEdge = true
             }
           }
         }
-
         if (n.outDegree > 0) {
-          const firstOutEdge = n.firstOutEdge
-          const lastOutEdge = n.lastOutEdge
-
-          if (!westTakenByInEdge) {
-            // the west side is still free
+          const firstOutEdge = outEdges.first()
+          const lastOutEdge = outEdges.last()
+          if (!leftTakenByInEdge) {
+            // the left side is still free
             if (
               BpmnLayout.isBoundaryInterrupting(firstOutEdge, graph) ||
-              (this.getLaneCrossing(firstOutEdge) === LaneCrossing.TO_WEST &&
-                (n.outDegree > 1 || this.isSameLayerEdge(firstOutEdge, ldp)))
+              (this.getLaneCrossing(firstOutEdge) === LaneCrossing.TO_LEFT &&
+                (n.outDegree > 1 || this.isSameLayerEdge(firstOutEdge, layoutContext)))
             ) {
-              // the first out-edge is either boundary interrupting or goes to west and
+              // the first out-edge is either boundary interrupting or goes to left and
               // is either a same layer edge or there are other out-edges
-              constrainWest(firstOutEdge, true, itemFactory)
-              westTakenByOutEdge = true
+              selectLeftSideCandidate(firstOutEdge, true, layoutContext)
+              leftTakenByOutEdge = true
             } else if (
-              eastTakenByInEdge &&
+              rightTakenByInEdge &&
               n.outDegree >= 2 &&
-              !this.isSameLayerEdge(firstOutEdge.nextOutEdge, ldp)
+              !this.isSameLayerEdge(outEdges.at(0), layoutContext)
             ) {
-              // the east side is already taken but we have more then one out edge.
+              // the right side is already taken, but we have more than one out edge.
               // if the second out edge is a same layer edge, constraining the firstOutEdge could lead to
               // no in-flow edge
-              constrainWest(firstOutEdge, true, itemFactory)
-              westTakenByOutEdge = true
+              selectLeftSideCandidate(firstOutEdge, true, layoutContext)
+              leftTakenByOutEdge = true
             }
           }
-          if (!eastTakenByInEdge) {
-            // the east side is still free
+          if (!rightTakenByInEdge) {
+            // the right side is still free
             if (
-              this.getLaneCrossing(lastOutEdge) === LaneCrossing.TO_EAST &&
-              (n.outDegree > 1 || this.isSameLayerEdge(lastOutEdge, ldp))
+              this.getLaneCrossing(lastOutEdge) === LaneCrossing.TO_RIGHT &&
+              (n.outDegree > 1 || this.isSameLayerEdge(lastOutEdge, layoutContext))
             ) {
-              // the last out-edge goes to east and
+              // the last out-edge goes to the right and
               // is either a same layer edge or there are other out-edges
-              constrainEast(lastOutEdge, true, itemFactory)
-              eastTakenByOutEdge = true
+              selectRightSideCandidate(lastOutEdge, true, layoutContext)
+              rightTakenByOutEdge = true
             } else if (
-              westTakenByInEdge &&
+              leftTakenByInEdge &&
               n.outDegree >= 2 &&
-              !this.isSameLayerEdge(lastOutEdge.prevOutEdge, ldp)
+              !this.isSameLayerEdge(outEdges.at(outEdges.size - 2), layoutContext)
             ) {
-              // the west side is already taken but we have more then one out edge.
+              // the left side is already taken, but we have more than one out edge.
               // if the second last out edge is a same layer edge, constraining the lastOutEdge could lead to
               // no in-flow edge
-              constrainEast(lastOutEdge, true, itemFactory)
-              eastTakenByOutEdge = true
+              selectRightSideCandidate(lastOutEdge, true, layoutContext)
+              rightTakenByOutEdge = true
             }
           }
         }
-
         // distribute remaining in-edges
-        if (n.inDegree === 2 && !(eastTakenByInEdge || westTakenByInEdge)) {
+        if (n.inDegree === 2 && !(rightTakenByInEdge || leftTakenByInEdge)) {
           // two in-edges but none distributed, yet
-          if (bestInEdge === n.firstInEdge && !eastTakenByOutEdge) {
-            // first in-edge is in-flow edge and east side is still free
-            constrainEast(n.lastInEdge, false, itemFactory)
-            eastTakenByInEdge = true
-          } else if (bestInEdge === n.lastInEdge && !westTakenByOutEdge) {
-            // last in-edge is in-flow edge and west side is still free
-            constrainWest(n.firstInEdge, false, itemFactory)
-            westTakenByInEdge = true
+          if (bestInEdge === inEdges.first() && !rightTakenByOutEdge) {
+            // first in-edge is in-flow edge and right side is still free
+            selectRightSideCandidate(inEdges.last(), false, layoutContext)
+            rightTakenByInEdge = true
+          } else if (bestInEdge === inEdges.last() && !leftTakenByOutEdge) {
+            // last in-edge is in-flow edge and left side is still free
+            selectLeftSideCandidate(inEdges.first(), false, layoutContext)
+            leftTakenByInEdge = true
           }
         } else if (
           n.inDegree === 3 &&
-          !(eastTakenByInEdge && westTakenByInEdge) &&
-          !this.isSameLayerEdge(n.firstInEdge.nextInEdge, ldp)
+          !(rightTakenByInEdge && leftTakenByInEdge) &&
+          !this.isSameLayerEdge(inEdges.at(1), layoutContext)
         ) {
           // three in-edges but not both sides taken, yet and the middle edge is no same layer edge
-          if (!eastTakenByOutEdge) {
-            // if not already taken, constraint the last in-edge to east
-            constrainEast(n.lastInEdge, false, itemFactory)
-            eastTakenByInEdge = true
+          if (!rightTakenByOutEdge) {
+            // if not already taken, constraint the last in-edge to right
+            selectRightSideCandidate(inEdges.last(), false, layoutContext)
+            rightTakenByInEdge = true
           }
-          if (!westTakenByOutEdge) {
-            // if not already taken, constraint the first in-edge to west
-            constrainWest(n.firstInEdge, false, itemFactory)
-            westTakenByInEdge = true
+          if (!leftTakenByOutEdge) {
+            // if not already taken, constraint the first in-edge to left
+            selectLeftSideCandidate(inEdges.first(), false, layoutContext)
+            leftTakenByInEdge = true
           }
         }
-
         // distribute remaining out-edges
-        if (n.outDegree === 2 && !(eastTakenByOutEdge || westTakenByOutEdge)) {
+        if (n.outDegree === 2 && !(rightTakenByOutEdge || leftTakenByOutEdge)) {
           // two out-edges but none distributed, yet
-          if (bestOutEdge === n.firstOutEdge && !eastTakenByInEdge) {
-            // first out-edge is in-flow edge and east side is still free
-            constrainEast(n.lastOutEdge, true, itemFactory)
-          } else if (bestOutEdge === n.lastOutEdge && !westTakenByInEdge) {
-            // last out-edge is in-flow edge and west side is still free
-            constrainWest(n.firstOutEdge, true, itemFactory)
+          if (bestOutEdge === outEdges.first() && !rightTakenByInEdge) {
+            // first out-edge is in-flow edge and right side is still free
+            selectRightSideCandidate(outEdges.last(), true, layoutContext)
+          } else if (bestOutEdge === outEdges.last() && !leftTakenByInEdge) {
+            // last out-edge is in-flow edge and left side is still free
+            selectLeftSideCandidate(outEdges.first(), true, layoutContext)
           }
         } else if (
           n.outDegree === 3 &&
-          !(eastTakenByOutEdge && westTakenByOutEdge) &&
-          !this.isSameLayerEdge(n.firstOutEdge.nextOutEdge, ldp)
+          !(rightTakenByOutEdge && leftTakenByOutEdge) &&
+          !this.isSameLayerEdge(outEdges.at(1), layoutContext)
         ) {
           // three out-edges but not both sides taken, yet and the middle edge is no same layer edge
-          if (!eastTakenByInEdge) {
-            // if not already taken, constraint the last out-edge to east
-            constrainEast(n.lastOutEdge, true, itemFactory)
+          if (!rightTakenByInEdge) {
+            // if not already taken, constraint the last out-edge to right
+            selectRightSideCandidate(outEdges.last(), true, layoutContext)
           }
-          if (!westTakenByInEdge) {
-            // if not already taken, constraint the first out-edge to west
-            constrainWest(n.firstOutEdge, true, itemFactory)
+          if (!leftTakenByInEdge) {
+            // if not already taken, constraint the first out-edge to left
+            selectLeftSideCandidate(outEdges.first(), true, layoutContext)
           }
         }
       }
     })
-
     // register the data provider for critical edge paths. It is deregistered again by BpmnLayout itself
-    graph.addDataProvider(HierarchicLayout.CRITICAL_EDGE_PRIORITY_DP_KEY, criticalEdges)
-
+    graph.context.addItemData(HierarchicalLayout.CRITICAL_EDGE_PRIORITY_DATA_KEY, criticalEdges)
     this.sameLayerData = null
     this.edge2LaneCrossing = null
     this.node2LaneAlignment = null
   }
-
-  /**
-   * @param {!Edge} edge
-   * @returns {!LaneCrossing}
-   */
   getLaneCrossing(edge) {
     return this.edge2LaneCrossing && this.edge2LaneCrossing.get(edge)
   }
-
-  /**
-   * @param {!YNode} source
-   * @returns {!LaneAlignment}
-   */
   getLaneAlignment(source) {
     return this.node2LaneAlignment && this.node2LaneAlignment.get(source)
   }
-
   /**
-   * Get the {@link Edge} representing the original edge on the graph.
-   * As the core layout algorithm creates temporary edges for example for same-layer edges and edges spanning
-   * multiple layers, we need to lookup the original edge of the graph for example as key in data providers.
-   * @param {!Edge} edge
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {!Edge}
+   * Get the {@link LayoutEdge} representing the original edge on the graph.
+   * As the core layout algorithm creates selected edges, for example, for same-layer edges and edges spanning
+   * multiple layers, we need to lookup the original edge of the graph, for example, as key in data providers.
    */
-  getOriginalEdge(edge, ldp) {
-    const originalEdgeSource = this.sameLayerData.getOriginalEdge(edge.source)
-    const originalEdgeTarget = this.sameLayerData.getOriginalEdge(edge.target)
-    const originalEdge = originalEdgeSource || originalEdgeTarget || edge
-    const edgeData = ldp.getEdgeData(originalEdge)
+  getOriginalEdge(edge, layoutContext) {
+    const originalEdge =
+      this.sameLayerData.getOriginalEdge(edge.source) ||
+      this.sameLayerData.getOriginalEdge(edge.target) ||
+      edge
+    const edgeData = layoutContext.getEdgeContext(originalEdge)
     return edgeData.associatedEdge || originalEdge
   }
-
   /**
    * Returns the best suited edge in `edges` for use as in-flow edge or `null`
    * if no such edge could be found.
-   * @param {!IEnumerable.<Edge>} edges
-   * @param {!ILayoutDataProvider} ldp
-   * @param {!LayoutGraph} graph
-   * @returns {?Edge}
    */
-  getBestFlowEdge(edges, ldp, graph) {
+  getBestFlowEdge(edges, layoutContext, graph) {
     const weakCandidates = new List()
     const candidates = new List()
-
     const edgeArray = edges.toArray()
     for (let i = 0; i < edgeArray.length; i++) {
       const edge = edgeArray[i]
       {
-        const originalEdge = this.getOriginalEdge(edge, ldp)
+        const originalEdge = this.getOriginalEdge(edge, layoutContext)
         if (
           this.edge2LaneCrossing.get(edge) !== LaneCrossing.NONE ||
           BpmnLayout.isBoundaryInterrupting(originalEdge, graph) ||
-          this.isSameLayerEdge(originalEdge, ldp) ||
+          this.isSameLayerEdge(originalEdge, layoutContext) ||
           edge.selfLoop
         ) {
           // an edge should not be aligned if:
@@ -837,7 +692,10 @@ class BalancingPortOptimizer extends PortConstraintOptimizerBase {
           // - it is a self-loop
           continue
         }
-        if (ldp.getEdgeData(edge).reversed || !BpmnLayout.isSequenceFlow(originalEdge, graph)) {
+        if (
+          layoutContext.getEdgeContext(edge).reversed ||
+          !BpmnLayout.isSequenceFlow(originalEdge, graph)
+        ) {
           // it is only a weak candidate if:
           // - it is reversed
           // - it is no sequence flow
@@ -862,14 +720,11 @@ class BalancingPortOptimizer extends PortConstraintOptimizerBase {
     }
     return null
   }
-
   /**
    * Returns how much the {@link LaneAlignment} of the source and target node is consistent.
    * The consistency is `2`, if both nodes have the same alignment.
    * It is `1` if exactly one of the alignments is
    * {@link LaneAlignment.NONE} and `0` otherwise.
-   * @param {!Edge} edge
-   * @returns {number}
    */
   getAlignmentConsistency(edge) {
     const sourceLA = this.getLaneAlignment(edge.source)
@@ -879,30 +734,23 @@ class BalancingPortOptimizer extends PortConstraintOptimizerBase {
     }
     return sourceLA === LaneAlignment.NONE || targetLA === LaneAlignment.NONE ? 1 : 0
   }
-
   /**
-   * Returns if the source and target node of the {@link BalancingPortOptimizer.getOriginalEdge original edge} of
+   * Returns if the source and target node of the {@link BalancingPortSelection.getOriginalEdge original edge} of
    * `edge` are on the same layer.
-   * @param {!Edge} edge
-   * @param {!ILayoutDataProvider} ldp
-   * @returns {boolean}
    */
-  isSameLayerEdge(edge, ldp) {
-    const originalEdge = this.getOriginalEdge(edge, ldp)
-    const sourceNodeData = ldp.getNodeData(originalEdge.source)
-    const targetNodeData = ldp.getNodeData(originalEdge.target)
+  isSameLayerEdge(edge, layoutContext) {
+    const originalEdge = this.getOriginalEdge(edge, layoutContext)
+    const sourceNodeData = layoutContext.getNodeContext(originalEdge.source)
+    const targetNodeData = layoutContext.getNodeContext(originalEdge.target)
     return (
       sourceNodeData != null &&
       targetNodeData != null &&
       sourceNodeData.layer === targetNodeData.layer
     )
   }
-
   /**
    * Determine the alignment of a node in its swim-lane depending on the {@link LaneCrossing}s
    * of its attached edges.
-   * @param {!YNode} n
-   * @returns {!LaneAlignment}
    */
   calculateLaneAlignment(n) {
     let toRightCount = 0
@@ -910,14 +758,14 @@ class BalancingPortOptimizer extends PortConstraintOptimizerBase {
     n.edges.forEach((edge) => {
       const crossing = this.edge2LaneCrossing.get(edge)
       if (n === edge.source) {
-        if (crossing === LaneCrossing.TO_EAST) {
+        if (crossing === LaneCrossing.TO_RIGHT) {
           toRightCount++
-        } else if (crossing === LaneCrossing.TO_WEST) {
+        } else if (crossing === LaneCrossing.TO_LEFT) {
           toLeftCount++
         }
-      } else if (crossing === LaneCrossing.TO_EAST) {
+      } else if (crossing === LaneCrossing.TO_RIGHT) {
         toLeftCount++
-      } else if (crossing === LaneCrossing.TO_WEST) {
+      } else if (crossing === LaneCrossing.TO_LEFT) {
         toRightCount++
       }
     })
@@ -928,101 +776,110 @@ class BalancingPortOptimizer extends PortConstraintOptimizerBase {
     }
     return LaneAlignment.NONE
   }
-
   /**
-   * weak port constraints that are assigned as temporary port constraints
-   * @type {!PortConstraint}
+   * Free port candidates that are assigned as selected port candidates on the right side.
    */
-  static get PORT_CONSTRAINT_EAST() {
+  static get PORT_CANDIDATE_RIGHT() {
     return (
-      BalancingPortOptimizer._portConstraintEast ||
-      (BalancingPortOptimizer._portConstraintEast = PortConstraint.create(PortSide.EAST))
+      BalancingPortSelection._portCandidateRight ||
+      (BalancingPortSelection._portCandidateRight = LayoutPortCandidate.createFree(PortSides.RIGHT))
     )
   }
-
   /**
-   * weak port constraints that are assigned as temporary port constraints
-   * @type {!PortConstraint}
+   * Free port candidates that are assigned as selected port candidates on the left side.
    */
-  static get PORT_CONSTRAINT_WEST() {
+  static get PORT_CANDIDATE_LEFT() {
     return (
-      BalancingPortOptimizer._portConstraintWest ||
-      (BalancingPortOptimizer._portConstraintWest = PortConstraint.create(PortSide.WEST))
+      BalancingPortSelection._portCandidateLeft ||
+      (BalancingPortSelection._portCandidateLeft = LayoutPortCandidate.createFree(PortSides.LEFT))
     )
   }
 }
-
 /**
  * Specifies the alignment of a node in its swim-lane.
- 
-* @readonly
- * @enum {number}
-*/
-const LaneAlignment = {
-  NONE: 0,
-  LEFT: 1,
-  RIGHT: 2
-}
-
+ */
+var LaneAlignment
+;(function (LaneAlignment) {
+  /**
+   * The node has no special alignment.
+   */
+  LaneAlignment[(LaneAlignment['NONE'] = 0)] = 'NONE'
+  /**
+   * The node is aligned to the left side.
+   */
+  LaneAlignment[(LaneAlignment['LEFT'] = 1)] = 'LEFT'
+  /**
+   * The node is aligned to the right side.
+   */
+  LaneAlignment[(LaneAlignment['RIGHT'] = 2)] = 'RIGHT'
+})(LaneAlignment || (LaneAlignment = {}))
 /**
  * Specifies in which direction an edge crosses swim-lane borders.
- 
-* @readonly
- * @enum {number}
-*/
-const LaneCrossing = {
-  NONE: 0,
-  TO_EAST: 1,
-  TO_WEST: 2
-}
-
+ */
+var LaneCrossing
+;(function (LaneCrossing) {
+  /**
+   * The edge doesn't cross a swim-lane border.
+   */
+  LaneCrossing[(LaneCrossing['NONE'] = 0)] = 'NONE'
+  /**
+   * The edge crosses column borders to the right, so its source node is in a column with a lower
+   * {@link LayoutGridColumn.index}.
+   */
+  LaneCrossing[(LaneCrossing['TO_RIGHT'] = 1)] = 'TO_RIGHT'
+  /**
+   * The edge crosses column borders to the left, so its source node is in a swim-lane with a lower
+   * {@link LayoutGridColumn.index}.
+   */
+  LaneCrossing[(LaneCrossing['TO_LEFT'] = 2)] = 'TO_LEFT'
+})(LaneCrossing || (LaneCrossing = {}))
 /**
- * Sets a {@link IItemFactory.setTemporaryPortConstraint temporary east port constraint}
+ * Sets a {@link ItemFactory.setSelectedPortCandidate right port candidate}
  * on `source` or target side of `edge`.
- * @param {!Edge} edge
- * @param {boolean} source
- * @param {!IItemFactory} itemFactory
  */
-function constrainEast(edge, source, itemFactory) {
-  itemFactory.setTemporaryPortConstraint(edge, source, BalancingPortOptimizer.PORT_CONSTRAINT_EAST)
+function selectRightSideCandidate(edge, source, layoutContext) {
+  const edgeContext = layoutContext.getEdgeContext(edge)
+  if (source) {
+    edgeContext.selectedSourcePortCandidate = BalancingPortSelection.PORT_CANDIDATE_RIGHT
+  } else {
+    edgeContext.selectedTargetPortCandidate = BalancingPortSelection.PORT_CANDIDATE_RIGHT
+  }
 }
-
 /**
- * Sets a {@link IItemFactory.setTemporaryPortConstraint temporary west port constraint}
+ * Sets a {@link ItemFactory.setSelectedPortCandidate right port candidate}
  * on `source` or target side of `edge`.
- * @param {!Edge} edge
- * @param {boolean} source
- * @param {!IItemFactory} itemFactory
  */
-function constrainWest(edge, source, itemFactory) {
-  itemFactory.setTemporaryPortConstraint(edge, source, BalancingPortOptimizer.PORT_CONSTRAINT_WEST)
+function selectLeftSideCandidate(edge, source, layoutContext) {
+  const edgeContext = layoutContext.getEdgeContext(edge)
+  if (source) {
+    edgeContext.selectedSourcePortCandidate = BalancingPortSelection.PORT_CANDIDATE_LEFT
+  } else {
+    edgeContext.selectedTargetPortCandidate = BalancingPortSelection.PORT_CANDIDATE_LEFT
+  }
 }
-
 /**
- * Returns the {@link SwimlaneDescriptor.computedLaneIndex} for `node`.
- * @param {!YNode} node
- * @param {!ILayoutDataProvider} ldp
- * @returns {number}
+ * Returns the {@link LayoutGridColumn.index} for `node`.
  */
-function getLaneId(node, ldp) {
-  const nodeData = ldp.getNodeData(node)
-  const laneDesc = nodeData != null ? nodeData.swimLaneDescriptor : null
-  return laneDesc != null ? laneDesc.computedLaneIndex : -1
+function getLaneId(node, layoutContext) {
+  const nodeData = layoutContext.getNodeContext(node)
+  const laneDesc = nodeData != null ? nodeData.column : null
+  return laneDesc != null ? laneDesc.index : -1
 }
-
 /**
  * A profit model for exterior node labels that prefers node sides that are far away
  * from incoming or outgoing edges.
  */
-class BpmnLabelProfitModel extends BaseClass(IProfitModel) {
-  /**
-   * @param {!LayoutGraph} graph
-   */
-  constructor(graph) {
-    super()
-    this.graph = graph
+export class BpmnLabelProfitModel {
+  static customProfitRatio = 0.15
+  static nodeLabelProfitDelegate(candidates, label) {
+    for (const candidate of candidates) {
+      const profit = candidate.weight
+      const customProfit = BpmnLabelProfitModel.getProfit(label, candidate)
+      candidate.weight =
+        (1 - BpmnLabelProfitModel.customProfitRatio) * profit +
+        BpmnLabelProfitModel.customProfitRatio * customProfit
+    }
   }
-
   /**
    * Returns the profit for placing a label using the given {@link LabelCandidate}.
    *
@@ -1031,25 +888,20 @@ class BpmnLabelProfitModel extends BaseClass(IProfitModel) {
    *
    * Profits need to have a value between `0` and `1`.
    *
-   * @param {!LabelCandidate} candidate the candidate
-   * @returns {number} the profit of the candidate
-   * @see Specified by {@link IProfitModel.getProfit}.
+   * @param label the owner label of the candidate
+   * @param candidate the candidate
+   * @returns the profit of the candidate
    */
-  getProfit(candidate) {
-    if (candidate.owner instanceof IEdgeLabelLayout) {
-      return 1
-    }
+  static getProfit(label, candidate) {
     let profit = 0
-    const nl = candidate.owner
-    const node = this.graph.getOwnerNode(nl)
-    const nodeLayout = this.graph.getLayout(node)
-    const candidateLayout = candidate.boundingBox
+    const node = label.owner
+    const nodeLayout = node.layout
+    const candidateLayout = candidate.layout.bounds
     const isLeft = candidateLayout.x + candidateLayout.width / 2 < nodeLayout.x
     const isRight = candidateLayout.x + candidateLayout.width / 2 > nodeLayout.x + nodeLayout.width
     const isTop = candidateLayout.y + candidateLayout.height / 2 < nodeLayout.y
     const isBottom =
       candidateLayout.y + candidateLayout.height / 2 > nodeLayout.y + nodeLayout.height
-
     const horizontalCenter = !isLeft && !isRight
     const verticalCenter = !isTop && !isBottom
     if (horizontalCenter && verticalCenter) {
@@ -1062,10 +914,7 @@ class BpmnLabelProfitModel extends BaseClass(IProfitModel) {
       profit = 0.9
     }
     node.edges.forEach((edge) => {
-      const portLocation =
-        edge.source === node
-          ? this.graph.getSourcePointRel(edge)
-          : this.graph.getTargetPointRel(edge)
+      const portLocation = edge.source === node ? edge.sourcePortOffset : edge.targetPortOffset
       if (Math.abs(portLocation.x) > Math.abs(portLocation.y)) {
         // edge at left or right
         if ((portLocation.x < 0 && isLeft) || (portLocation.x > 0 && isRight)) {
@@ -1093,7 +942,6 @@ class BpmnLabelProfitModel extends BaseClass(IProfitModel) {
         }
       }
     })
-
     return Math.max(0, profit)
   }
 }

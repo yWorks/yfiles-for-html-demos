@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,16 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, INode, Point } from 'yfiles'
-import { getCompany, getRelationship } from './data-types.js'
-
+import { IEdge, INode, Point } from '@yfiles/yfiles'
+import { getCompany, getRelationship } from './data-types'
 /**
  * Enables the tooltips for node and edge elements.
- * @param {!GraphComponent} graphComponent
  */
 export function enableTooltips(graphComponent) {
   const viewerInputMode = graphComponent.inputMode
-  viewerInputMode.addQueryItemToolTipListener((_, evt) => {
+  viewerInputMode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.item instanceof IEdge) {
       const edgeTag = getRelationship(evt.item)
       evt.toolTip = edgeTag.type
@@ -44,9 +42,9 @@ export function enableTooltips(graphComponent) {
       evt.toolTip = nodeTag.nodeType
     }
   })
-  const mouseHoverInputMode = viewerInputMode.mouseHoverInputMode
-  mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)
+  const toolTipInputMode = viewerInputMode.toolTipInputMode
+  toolTipInputMode.toolTipLocationOffset = new Point(15, 15)
   // show the tooltip faster and for a longer time
-  mouseHoverInputMode.duration = '10s'
-  mouseHoverInputMode.delay = '0.5s'
+  toolTipInputMode.duration = '10s'
+  toolTipInputMode.delay = '0.5s'
 }

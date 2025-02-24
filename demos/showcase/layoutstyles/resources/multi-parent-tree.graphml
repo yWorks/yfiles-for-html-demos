@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
     <default>true</default>
   </key>
@@ -57,12 +57,12 @@
   <data key="d14">
     <y:SharedData>
       <yjs:SolidColorFill x:Key="1" color="#FF71113F"/>
-      <yjs:PolylineEdgeStyle x:Key="2">
+      <yjs:PolylineEdgeStyle orthogonalEditing="true" x:Key="2">
         <yjs:PolylineEdgeStyle.stroke>
           <yjs:Stroke fill="{y:GraphMLReference 1}" miterLimit="1.45" thickness="1.5"/>
         </yjs:PolylineEdgeStyle.stroke>
         <yjs:PolylineEdgeStyle.targetArrow>
-          <yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF71113F" fill="{y:GraphMLReference 1}" cropLength="1"/>
+          <yjs:Arrow type="TRIANGLE" lengthScale="0.75" widthScale="0.75" stroke="#FF71113F" fill="{y:GraphMLReference 1}" cropLength="1"/>
         </yjs:PolylineEdgeStyle.targetArrow>
       </yjs:PolylineEdgeStyle>
     </y:SharedData>
@@ -73,14 +73,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -103,14 +103,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -136,14 +136,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -168,14 +168,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -199,14 +199,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -230,14 +230,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -263,14 +263,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -294,14 +294,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,30"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,30"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -323,14 +323,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -352,14 +352,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -383,14 +383,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,30"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,30"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -413,14 +413,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -442,14 +442,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -473,14 +473,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -506,14 +506,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -539,14 +539,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -568,14 +568,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -598,14 +598,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -628,14 +628,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -659,14 +659,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -688,14 +688,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -717,14 +717,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -746,14 +746,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,30"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,30"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -776,14 +776,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -806,14 +806,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,30"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,30"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -835,14 +835,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -866,14 +866,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -898,14 +898,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -929,14 +929,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -959,14 +959,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -988,14 +988,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -1019,14 +1019,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -1050,14 +1050,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -1080,14 +1080,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -1110,14 +1110,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -1141,14 +1141,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,30"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,30"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>
@@ -1171,14 +1171,14 @@
         <x:List>
           <y:Label PreferredSize="0,16">
             <y:Label.LayoutParameter>
-              <y:RatioAnchoredLabelModelParameter LayoutOffset="20,20"/>
+              <yx:FreeNodeLabelModelParameter LayoutOffset="20,20"/>
             </y:Label.LayoutParameter>
             <y:Label.Style>
-              <yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
-                <yjs:DefaultLabelStyle.font>
+              <yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000" textSize="13">
+                <yjs:LabelStyle.font>
                   <yjs:Font fontSize="13" fontFamily="'Arial'"/>
-                </yjs:DefaultLabelStyle.font>
-              </yjs:DefaultLabelStyle>
+                </yjs:LabelStyle.font>
+              </yjs:LabelStyle>
             </y:Label.Style>
           </y:Label>
         </x:List>

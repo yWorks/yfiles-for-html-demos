@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,113 +27,89 @@
  **
  ***************************************************************************/
 import {
-  BaseClass,
   CollectSnapResultsEventArgs,
   GraphSnapContext,
   HandlePositions,
-  IInputModeContext,
+  InputModeContext,
   IRenderContext,
-  IVisualTemplate,
+  MarqueeRenderTag,
   MarqueeSelectionEventArgs,
   MarqueeSelectionInputMode,
   NodeReshapeSnapResultProvider,
+  ObjectRendererBase,
   Point,
   Rect,
   ReshapePolicy,
   ReshapeRectangleContext,
   SimpleNode,
   Size,
-  SnapContext,
   SvgVisual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMode {
   dummyNode
-
   // determines in which quadrant the marquee is dragged
   currentReshapePosition
-
   constructor() {
     super()
     this.priority = 50
     this.dummyNode = new SimpleNode()
-
     this.currentReshapePosition = HandlePositions.NONE
-
+    this.useViewCoordinates = false
     // customizing the marquee rect visualization to look like the current node
-    this.template = new MyMarqueeTemplate()
+    this.marqueeRenderer = new MyMarqueeTemplate()
   }
-
   /**
    * Creates a rectangle that incorporates the snap result
-   * @param {!Point} startDragLocation
-   * @param {!Point} currentDragLocation
-   * @returns {!Rect}
    */
   calculateMarqueeRectangle(startDragLocation, currentDragLocation) {
     this.currentReshapePosition = HandlePositions.NONE
     if (startDragLocation.x > currentDragLocation.x) {
-      this.currentReshapePosition |= HandlePositions.WEST
+      this.currentReshapePosition |= HandlePositions.LEFT
     } else {
-      this.currentReshapePosition |= HandlePositions.EAST
+      this.currentReshapePosition |= HandlePositions.RIGHT
     }
     if (startDragLocation.y > currentDragLocation.y) {
-      this.currentReshapePosition |= HandlePositions.NORTH
+      this.currentReshapePosition |= HandlePositions.TOP
     } else {
-      this.currentReshapePosition |= HandlePositions.SOUTH
+      this.currentReshapePosition |= HandlePositions.BOTTOM
     }
-
     const snapState = this.getSnapContext().handleMove(currentDragLocation, false)
-    const rect = super.calculateMarqueeRectangle(startDragLocation, snapState.location)
-
+    const rect = super.calculateMarqueeRectangle(startDragLocation, snapState)
     this.dummyNode.layout = rect
-
     this.getSnapContext().dragged(currentDragLocation, snapState)
     return rect
   }
-
   /**
    * Called when a drag is started. Prepares the SnapContext for collecting results that the marquee can be snapped to.
-   * @param {!MarqueeSelectionEventArgs} evt
    */
   onDragStarted(evt) {
     super.onDragStarted(evt)
-
     const snapContext = this.getSnapContext()
-
     snapContext.initializeDrag(
-      IInputModeContext.createInputModeContext(this),
+      new InputModeContext(this.parentInputModeContext),
       this.selectionRectangle.topLeft
     )
-
     snapContext.addItemToBeReshaped(this.dummyNode)
-
     snapContext.dragInitialized()
-
-    this.dummyNode.layout = new Rect(evt.rectangle)
-
-    const initialBounds = new Rect(evt.rectangle)
-
-    const lastEventLocation = this.inputModeContext?.canvasComponent?.lastEventLocation
+    this.dummyNode.layout = Rect.from(evt.rectangle)
+    const initialBounds = Rect.from(evt.rectangle)
+    const lastEventLocation = this.parentInputModeContext?.canvasComponent?.lastEventLocation
     this.currentReshapePosition = this.getReshapePosition(lastEventLocation, evt.rectangle)
-
     this.getSnapContext().addItemToBeReshaped(this.dummyNode)
-
-    const collectSnapResultsEventListener = (_, evt) => {
+    const collectSnapResultsEventListener = (evt) => {
       const reshapePosition = this.currentReshapePosition
       const topLeftChangeFactor_x =
-        (reshapePosition & HandlePositions.WEST) == HandlePositions.WEST ? 1 : 0
+        (reshapePosition & HandlePositions.LEFT) == HandlePositions.LEFT ? 1 : 0
       const topLeftChangeFactor_y =
-        (reshapePosition & HandlePositions.NORTH) == HandlePositions.NORTH ? 1 : 0
+        (reshapePosition & HandlePositions.TOP) == HandlePositions.TOP ? 1 : 0
       const bottomRightChangeFactor_x =
-        (reshapePosition & HandlePositions.WEST) == HandlePositions.WEST ? 0 : 1
+        (reshapePosition & HandlePositions.LEFT) == HandlePositions.LEFT ? 0 : 1
       const bottomRightChangeFactor_y =
-        (reshapePosition & HandlePositions.NORTH) == HandlePositions.NORTH ? 0 : 1
+        (reshapePosition & HandlePositions.TOP) == HandlePositions.TOP ? 0 : 1
       const sizeChangeFactor_x =
-        (reshapePosition & HandlePositions.WEST) == HandlePositions.WEST ? -1 : 1
+        (reshapePosition & HandlePositions.LEFT) == HandlePositions.LEFT ? -1 : 1
       const sizeChangeFactor_y =
-        (reshapePosition & HandlePositions.NORTH) == HandlePositions.NORTH ? -1 : 1
-
+        (reshapePosition & HandlePositions.TOP) == HandlePositions.TOP ? -1 : 1
       NodeReshapeSnapResultProvider.INSTANCE.collectSnapResults(
         snapContext,
         evt,
@@ -153,40 +129,33 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
         )
       )
     }
-    snapContext.addCollectSnapResultsListener(collectSnapResultsEventListener)
-
-    snapContext.addCleanedUpListener((_, evt) =>
-      snapContext.removeCollectSnapResultsListener(collectSnapResultsEventListener)
+    snapContext.addEventListener('collect-snap-results', collectSnapResultsEventListener)
+    snapContext.addEventListener('cleaned-up', () =>
+      snapContext.removeEventListener('collect-snap-results', collectSnapResultsEventListener)
     )
   }
-
   /**
    * Signals the SnapContext that the drag is finished.
-   * @param {!MarqueeSelectionEventArgs} evt
    */
   onDragFinished(evt) {
     const x =
-      this.currentReshapePosition & HandlePositions.WEST
-        ? this.selectionRectangle.minX
+      this.currentReshapePosition & HandlePositions.LEFT
+        ? this.selectionRectangle.x
         : this.selectionRectangle.maxX
     const y =
-      this.currentReshapePosition & HandlePositions.NORTH
-        ? this.selectionRectangle.minY
+      this.currentReshapePosition & HandlePositions.TOP
+        ? this.selectionRectangle.y
         : this.selectionRectangle.maxY
     this.getSnapContext().dragFinished(new Point(x, y), false)
     super.onDragFinished(evt)
   }
-
   /**
    * Signals the SnapContext that the drag has been canceled.
-   * @param {!MarqueeSelectionEventArgs} evt
    */
   onDragCanceled(evt) {
     this.getSnapContext().cancelDrag()
   }
-
   snapContext = null
-
   /**
    * Looks up the current SnapContext or creates a new one
    */
@@ -194,7 +163,7 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
     if (this.snapContext != null) {
       return this.snapContext
     } else {
-      this.snapContext = super.inputModeContext.lookup(GraphSnapContext.$class)
+      this.snapContext = this.parentInputModeContext.lookup(GraphSnapContext)
       if (this.snapContext == null) {
         return new GraphSnapContext()
       } else {
@@ -202,47 +171,32 @@ export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMo
       }
     }
   }
-
   /**
    * Determines the reshape position
-   * @param {!Point} pointer
-   * @param {!Rect} rect
-   * @returns {!HandlePositions}
    */
   getReshapePosition(pointer, rect) {
     const result = HandlePositions.NONE
     if (pointer.x < rect.centerX) {
-      this.currentReshapePosition |= HandlePositions.WEST
+      this.currentReshapePosition |= HandlePositions.LEFT
     } else {
-      this.currentReshapePosition |= HandlePositions.EAST
+      this.currentReshapePosition |= HandlePositions.RIGHT
     }
     if (pointer.y < rect.centerY) {
-      this.currentReshapePosition |= HandlePositions.NORTH
+      this.currentReshapePosition |= HandlePositions.TOP
     } else {
-      this.currentReshapePosition |= HandlePositions.SOUTH
+      this.currentReshapePosition |= HandlePositions.BOTTOM
     }
     return result
   }
 }
-
-/**
- * This class wraps the current node style so as to be usable as a template for the marquee rectangle
- */
-class MyMarqueeTemplate extends BaseClass(IVisualTemplate) {
+export class MyMarqueeTemplate extends ObjectRendererBase {
   dummyNode
   constructor() {
     super()
     this.dummyNode = new SimpleNode()
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!Rect} bounds
-   * @param {*} dataObject
-   * @returns {!SvgVisual}
-   */
-  createVisual(context, bounds, dataObject) {
-    this.dummyNode.layout = bounds
+  createVisual(context, renderTag) {
+    this.dummyNode.layout = renderTag.selectionRectangle
     const graph = context.canvasComponent.inputModeContext.graph
     const wrappedStyle = graph.nodeDefaults.style
     const visualCreator = wrappedStyle.renderer.getVisualCreator(this.dummyNode, wrappedStyle)
@@ -252,14 +206,7 @@ class MyMarqueeTemplate extends BaseClass(IVisualTemplate) {
     }
     return visual
   }
-  /**
-   * @param {!IRenderContext} context
-   * @param {!SvgVisual} oldVisual
-   * @param {!Rect} bounds
-   * @param {*} dataObject
-   * @returns {!SvgVisual}
-   */
-  updateVisual(context, oldVisual, bounds, dataObject) {
-    return this.createVisual(context, bounds, null)
+  updateVisual(context, oldVisual, renderTag) {
+    return this.createVisual(context, renderTag)
   }
 }

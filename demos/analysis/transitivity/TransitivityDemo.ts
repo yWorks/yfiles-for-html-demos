@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,23 +30,16 @@ import {
   Arrow,
   ArrowType,
   BaseClass,
+  Command,
   Cursor,
-  DefaultLabelStyle,
-  ExteriorLabelModel,
-  ExteriorLabelModelPosition,
+  ExteriorNodeLabelModel,
   FilteredGraphWrapper,
   GraphBuilder,
   GraphComponent,
-  GraphFocusIndicatorManager,
-  GraphHighlightIndicatorManager,
   GraphItemTypes,
   GraphViewerInputMode,
-  HierarchicLayout,
-  HierarchicLayoutData,
-  HierarchicLayoutEdgeRoutingStyle,
-  HierarchicLayoutRoutingStyle,
-  IArrow,
-  ICommand,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   ICompoundEdit,
   IconLabelStyle,
   IEdge,
@@ -56,37 +49,33 @@ import {
   ILabelOwner,
   IMementoSupport,
   IModelItem,
-  IndicatorLabelStyleDecorator,
-  IndicatorNodeStyleDecorator,
   INode,
-  Insets,
-  InteriorLabelModel,
-  InteriorLabelModelPosition,
+  InteriorNodeLabelModel,
+  IUndoUnit,
+  LabelStyle,
+  LabelStyleIndicatorRenderer,
   LayoutExecutor,
-  LayoutMode,
-  LayoutOrientation,
   License,
+  NodeStyleIndicatorRenderer,
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
   PolylineEdgeStyle,
   PortAdjustmentPolicy,
   Rect,
   RectangleNodeStyle,
-  SimplexNodePlacer,
+  RoutingStyleDescriptor,
   Size,
-  StyleDecorationZoomPolicy,
+  StyleIndicatorZoomPolicy,
   TransitiveClosure,
   TransitiveReduction,
   UndoEngine,
-  UndoUnitBase,
-  VerticalTextAlignment,
-  VoidNodeStyle
-} from 'yfiles'
+  VerticalTextAlignment
+} from '@yfiles/yfiles'
 
 import GraphData from './resources/yfiles-modules-data'
-import { applyDemoTheme, createDemoNodeStyle } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+import { createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 import packageIconUrl from './resources/package.svg?url'
 
@@ -123,7 +112,7 @@ let removedEdgeStyle: IEdgeStyle
  * The layout algorithm that is used for every layout calculation in this demo.
  * It is configured in {@link initializeLayout()}.
  */
-let layout: HierarchicLayout
+let layout: HierarchicalLayout
 
 /**
  * Marks whether the demo is currently applying a layout to the graph.
@@ -212,8 +201,6 @@ let dependenciesNo = 0
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   algorithmComboBox = document.querySelector<HTMLSelectElement>('#algorithms')!
   addNavigationButtons(algorithmComboBox)
 
@@ -229,7 +216,7 @@ async function run(): Promise<void> {
   initializeLayout()
   initializeGraph()
 
-  loadGraph()
+  await loadGraph()
 }
 
 /**
@@ -247,8 +234,8 @@ function getUndoEngine(graphComponent: GraphComponent): UndoEngine {
 function initializeUI(): void {
   document.querySelector('#algorithms')!.addEventListener('change', onAlgorithmChanged)
 
-  document.querySelector('#layout')!.addEventListener('click', () => {
-    applyLayout(false)
+  document.querySelector('#layout')!.addEventListener('click', async () => {
+    await applyLayout(false)
   })
 
   const showTransitiveEdgesButton =
@@ -263,25 +250,6 @@ function initializeUI(): void {
       commitUndoEdit(undoEdit)
     }
   })
-
-  const gvim = graphComponent.inputMode as GraphViewerInputMode
-  gvim.keyboardInputMode.addCommandBinding(
-    ICommand.UNDO,
-    () => {
-      getUndoEngine(graphComponent).undo()
-      return true
-    },
-    () => getUndoEngine(graphComponent).canUndo()
-  )
-
-  gvim.keyboardInputMode.addCommandBinding(
-    ICommand.REDO,
-    () => {
-      getUndoEngine(graphComponent).redo()
-      return true
-    },
-    (): boolean => getUndoEngine(graphComponent).canRedo()
-  )
 }
 
 /**
@@ -293,52 +261,100 @@ function initializeInputModes(): void {
   })
 
   // show enlarged nodes on hover
-  mode.itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+  mode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     const item = evt.item
     const oldItem = evt.oldItem
 
-    const highlightManager = graphComponent.highlightIndicatorManager
+    const highlights = graphComponent.highlights
     if (item) {
       // add enlarged version of the node with its first label as highlight
-      highlightManager.addHighlight(item)
+      highlights.add(item)
       item.tag.highlight = true
       if (item instanceof ILabelOwner && item.labels.size > 0) {
-        highlightManager.addHighlight(item.labels.get(0)!)
+        highlights.add(item.labels.get(0)!)
       }
     }
     if (oldItem) {
       // remove previous highlight
-      highlightManager.removeHighlight(oldItem)
+      highlights.remove(oldItem)
       oldItem.tag.highlight = false
       if (oldItem instanceof ILabelOwner && oldItem.labels.size > 0) {
-        highlightManager.removeHighlight(oldItem.labels.get(0)!)
+        highlights.remove(oldItem.labels.get(0)!)
       }
     }
   })
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
-  mode.itemHoverInputMode.discardInvalidItems = false
   mode.itemHoverInputMode.hoverCursor = Cursor.POINTER
 
-  // install custom highlight
-  graphComponent.highlightIndicatorManager = new GraphHighlightIndicatorManager({
-    nodeStyle: new IndicatorNodeStyleDecorator({
-      padding: 5,
-      zoomPolicy: StyleDecorationZoomPolicy.NO_DOWNSCALING
-    }),
-    labelStyle: new IndicatorLabelStyleDecorator({
-      padding: 5,
-      zoomPolicy: StyleDecorationZoomPolicy.NO_DOWNSCALING
-    })
+  mode.keyboardInputMode.addCommandBinding(
+    Command.UNDO,
+    (args) => {
+      const engine = getUndoEngine(graphComponent)
+      if (engine.canUndo()) {
+        engine.undo()
+        args.handled = true
+      }
+    },
+    (args) => {
+      args.canExecute = getUndoEngine(graphComponent).canUndo()
+      args.handled = true
+    }
+  )
+
+  mode.keyboardInputMode.addCommandBinding(
+    Command.REDO,
+    (args) => {
+      const engine = getUndoEngine(graphComponent)
+      if (engine.canRedo()) {
+        engine.redo()
+        args.handled = true
+      }
+    },
+    (args) => {
+      args.canExecute = getUndoEngine(graphComponent).canRedo()
+      args.handled = true
+    }
+  )
+
+  mode.addEventListener('item-clicked', async (evt): Promise<void> => {
+    if (evt.item instanceof INode) {
+      evt.handled = true
+
+      const item = evt.item
+
+      // check if dependencies' circle was hit
+      if (item !== startNode) {
+        const undoEdit = beginUndoEdit('undoChangeStartNode', 'redoChangeStartNode')
+        getUndoEngine(graphComponent).addUnit(createChangedSetUndoUnit())
+        graphComponent.currentItem = item
+        await filterGraph(item)
+        commitUndoEdit(undoEdit)
+      }
+    }
   })
 
+  graphComponent.inputMode = mode
+
+  // install custom highlight
+  graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(
+    new NodeStyleIndicatorRenderer({
+      margins: 5,
+      zoomPolicy: StyleIndicatorZoomPolicy.NO_DOWNSCALING
+    })
+  )
+  graphComponent.graph.decorator.labels.highlightRenderer.addConstant(
+    new LabelStyleIndicatorRenderer({
+      margins: 5,
+      zoomPolicy: StyleIndicatorZoomPolicy.NO_DOWNSCALING
+    })
+  )
+
   // disable default focus indicator
-  graphComponent.focusIndicatorManager = new GraphFocusIndicatorManager({
-    nodeStyle: VoidNodeStyle.INSTANCE
-  })
+  graphComponent.graph.decorator.nodes.focusRenderer.hide()
 
   let currentNode: INode | null = null
   // set a css class to the currently focused node that changes its background color to orange
-  graphComponent.addCurrentItemChangedListener(() => {
+  graphComponent.addEventListener('current-item-changed', () => {
     if (currentNode != null && currentNode != graphComponent.currentItem) {
       ;(currentNode.style as RectangleNodeStyle).cssClass = ''
       currentNode = null
@@ -348,27 +364,6 @@ function initializeInputModes(): void {
       ;(currentNode.style as RectangleNodeStyle).cssClass = 'node-focus'
     }
   })
-
-  mode.addItemClickedListener(async (_, evt): Promise<void> => {
-    // check if the clicked item is a node or if the loaded graph is yfiles/modules, since this graph has
-    // no pending dependencies... in this case, we have to execute the code in addItemSelectedListener.
-    if (evt.item instanceof INode) {
-      evt.handled = true
-
-      const item = evt.item
-
-      // check if dependencies' circle was hit
-      if (item !== startNode) {
-        const undoEdit = beginUndoEdit('undoChangeStartNode', 'redoChangeStartNode')
-        getUndoEngine(graphComponent).addUnit(new ChangedSetUndoUnit())
-        graphComponent.currentItem = item
-        await filterGraph(item)
-        commitUndoEdit(undoEdit)
-      }
-    }
-  })
-
-  graphComponent.inputMode = mode
 }
 
 /**
@@ -377,7 +372,7 @@ function initializeInputModes(): void {
 function initializeStyles(): void {
   normalEdgeStyle = new PolylineEdgeStyle({
     stroke: '1.5px #203744',
-    targetArrow: IArrow.TRIANGLE,
+    targetArrow: new Arrow(ArrowType.TRIANGLE),
     smoothingLength: 10
   })
 
@@ -401,10 +396,9 @@ function initializeStyles(): void {
     smoothingLength: 10
   })
 
-  const nodeLabelModel = new InteriorLabelModel({
-    insets: 9
-  })
-  nodeLabelParameter = nodeLabelModel.createParameter(InteriorLabelModelPosition.CENTER)
+  nodeLabelParameter = new InteriorNodeLabelModel({
+    padding: 9
+  }).createParameter('center')
 }
 
 /**
@@ -417,15 +411,13 @@ function initializeGraph(): void {
   graph.nodeDefaults.size = new Size(80, 30)
 
   graph.nodeDefaults.labels.style = new IconLabelStyle({
-    wrapped: new DefaultLabelStyle({
+    wrappedStyle: new LabelStyle({
       textFill: 'white',
       verticalTextAlignment: VerticalTextAlignment.CENTER
     }),
-    icon: packageIconUrl,
-    iconPlacement: new ExteriorLabelModel({ insets: new Insets(-5, 0, 0, 0) }).createParameter(
-      ExteriorLabelModelPosition.WEST
-    ),
-    wrappedInsets: 10,
+    href: packageIconUrl,
+    iconPlacement: new ExteriorNodeLabelModel({ margins: [0, 0, 0, -5] }).createParameter('left'),
+    wrappedStylePadding: 10,
     iconSize: new Size(24, 24)
   })
   graph.edgeDefaults.style = normalEdgeStyle
@@ -437,16 +429,15 @@ function initializeGraph(): void {
  * Initializes the layout algorithms.
  */
 function initializeLayout(): void {
-  layout = new HierarchicLayout()
-  layout.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
-  layout.minimumLayerDistance = 0
-  layout.nodeToNodeDistance = 20
-  layout.backLoopRouting = true
-  layout.automaticEdgeGrouping = true
-  ;(layout.nodePlacer as SimplexNodePlacer)!.barycenterMode = true
-  layout.edgeLayoutDescriptor.routingStyle = new HierarchicLayoutRoutingStyle(
-    HierarchicLayoutEdgeRoutingStyle.OCTILINEAR
-  )
+  layout = new HierarchicalLayout({
+    layoutOrientation: 'left-to-right',
+    minimumLayerDistance: 0,
+    nodeDistance: 20,
+    automaticEdgeGrouping: true
+  })
+  layout.coordinateAssigner.symmetryOptimizationStrategy = 'weak'
+  layout.defaultEdgeDescriptor.routingStyleDescriptor = new RoutingStyleDescriptor('octilinear')
+  layout.defaultEdgeDescriptor.backLoopRouting = true
 }
 
 /**
@@ -473,7 +464,7 @@ async function loadGraph(): Promise<void> {
   const graph = builder.buildGraph()
 
   graph.nodes.forEach((node) => {
-    const label = node.labels.first()
+    const label = node.labels.first()!
     const nodeLayout = new Rect(
       node.layout.x,
       node.layout.y,
@@ -602,7 +593,7 @@ function edgePredicate(edge: IEdge): boolean {
 
 /**
  * Returns whether the given node should be visible.
- * A node is visible if it is contains in {@link filteredNodes}.
+ * A node is visible if it is contained in {@link filteredNodes}.
  */
 function nodePredicate(node: INode): boolean {
   return !filteredNodes || filteredNodes.has(node)
@@ -724,10 +715,10 @@ function resetGraph(): void {
 
 /**
  * Applies the layout to the current graph.
- * @param incremental `true` if an incremental layout is desired,
+ * @param fromSketchMode `true` if an incremental layout is desired,
  *   `false` otherwise
  */
-async function applyLayout(incremental: boolean): Promise<void> {
+async function applyLayout(fromSketchMode: boolean): Promise<void> {
   // if is in layout or the graph has no nodes then return.
   // it is important to check if nodes === 0, since else Exceptions can occur due to asynchronous
   // calls of this function
@@ -750,23 +741,17 @@ async function applyLayout(incremental: boolean): Promise<void> {
     return 0
   })
 
-  const layoutData = new HierarchicLayoutData()
+  const layoutData = new HierarchicalLayoutData()
+  layout.fromSketchMode = fromSketchMode
 
-  if (incremental) {
-    layout.layoutMode = LayoutMode.INCREMENTAL
-    layoutData.incrementalHints.incrementalLayeringNodes = incrementalNodes.filter((node) =>
-      filteredGraph.contains(node)
-    )
-    layoutData.incrementalHints.incrementalSequencingItems = incrementalEdges.filter((edge) =>
-      filteredGraph.contains(edge)
-    )
+  if (fromSketchMode) {
+    layoutData.incrementalNodes = incrementalNodes.filter((node) => filteredGraph.contains(node))
+    layoutData.incrementalEdges = incrementalEdges.filter((edge) => filteredGraph.contains(edge))
 
     prepareSmoothLayoutAnimation()
 
     incrementalNodes = []
     incrementalEdges = []
-  } else {
-    layout.layoutMode = LayoutMode.FROM_SCRATCH
   }
 
   try {
@@ -774,9 +759,9 @@ async function applyLayout(incremental: boolean): Promise<void> {
       graphComponent,
       layout,
       layoutData,
-      duration: '0.5s',
+      animationDuration: '0.5s',
       animateViewport: true,
-      portAdjustmentPolicy: PortAdjustmentPolicy.ALWAYS
+      portAdjustmentPolicies: PortAdjustmentPolicy.ALWAYS
     }).start()
 
     // update the graph information with (intermediate) results
@@ -816,6 +801,7 @@ function setUIDisabled(disabled: boolean): void {
   document.querySelector<HTMLButtonElement>('#show-transitive-edges')!.disabled = disabled
   document.querySelector<HTMLButtonElement>('#layout')!.disabled = disabled
 }
+
 /**
  * Updates the table when dependencies are loaded.
  * @param packageNode the start node
@@ -833,6 +819,7 @@ function updateGraphInformation(packageNode: INode | null): void {
   table.rows[3].cells[1].innerHTML = filteredGraph.nodes.size.toString()
   table.rows[4].cells[1].innerHTML = filteredGraph.edges.size.toString()
 }
+
 /**
  * Enum definition for accessing different transitivity algorithms.
  */
@@ -847,7 +834,6 @@ enum AlgorithmName {
  * @param undoName The undo name.
  * @param redoName The redo name.
  * @see {@link commitUndoEdit}
- * @see {@link cancelUndoEdit}
  */
 function beginUndoEdit(
   undoName: string,
@@ -879,56 +865,51 @@ function commitUndoEdit(edit: { compoundEdit: ICompoundEdit; tagEdit: ICompoundE
  * An undo unit that handles the undo/redo of the currentItem and all sets that determine whether
  * a node or edge is currently visible (part of the filtered graph).
  */
-class ChangedSetUndoUnit extends UndoUnitBase {
-  private readonly oldFilteredNodes: Set<INode> | null
-  private readonly oldFilteredEdges: Set<IEdge> | null
-  private readonly oldRemovedEdges: Set<IEdge> | null
-  private readonly oldCurrentItem: IModelItem | null
-  private newFilteredNodes: Set<INode> | null
-  private newFilteredEdges: Set<IEdge> | null
-  private newRemovedEdges: Set<IEdge> | null
-  private newCurrentItem: IModelItem | null
+function createChangedSetUndoUnit() {
+  let oldFilteredNodes = filteredNodes ? new Set(filteredNodes) : null
+  let oldFilteredEdges = filteredEdges ? new Set(filteredEdges) : null
+  let oldRemovedEdges = removedEdgesSet ? new Set(removedEdgesSet) : null
+  let oldCurrentItem = graphComponent.currentItem
+  let oldStartNode = startNode
+  let newFilteredNodes: Set<INode> | null = new Set<INode>()
+  let newFilteredEdges: Set<IEdge> | null = new Set<IEdge>()
+  let newRemovedEdges: Set<IEdge> | null = new Set<IEdge>()
+  let newCurrentItem: IModelItem | null = null
+  let newStartNode: INode | null = null
 
-  constructor() {
-    super('changedSet', 'changedSet')
-    this.oldFilteredNodes = filteredNodes ? new Set(filteredNodes) : null
-    this.oldFilteredEdges = filteredEdges ? new Set(filteredEdges) : null
-    this.oldRemovedEdges = removedEdgesSet ? new Set(removedEdgesSet) : null
-    this.oldCurrentItem = graphComponent.currentItem
-    this.newFilteredNodes = new Set()
-    this.newFilteredEdges = new Set()
-    this.newRemovedEdges = new Set()
-    this.newCurrentItem = null
-  }
-
-  undo(): void {
-    this.newFilteredNodes = filteredNodes ? new Set(filteredNodes) : null
-    this.newFilteredEdges = filteredEdges ? new Set(filteredEdges) : null
-    this.newRemovedEdges = removedEdgesSet ? new Set(removedEdgesSet) : null
-    this.newCurrentItem = graphComponent.currentItem
-    filteredNodes = this.oldFilteredNodes
-    filteredEdges = this.oldFilteredEdges
-    removedEdgesSet = this.oldRemovedEdges
-    graphComponent.currentItem = this.oldCurrentItem
-    filteredGraph.nodePredicateChanged()
-    filteredGraph.edgePredicateChanged()
-  }
-
-  redo(): void {
-    filteredNodes = this.newFilteredNodes
-    filteredEdges = this.newFilteredEdges
-    removedEdgesSet = this.newRemovedEdges
-    graphComponent.currentItem = this.newCurrentItem
-    filteredGraph.nodePredicateChanged()
-    filteredGraph.edgePredicateChanged()
-  }
+  return IUndoUnit.fromHandler(
+    'changedSet',
+    () => {
+      newFilteredNodes = filteredNodes ? new Set(filteredNodes) : null
+      newFilteredEdges = filteredEdges ? new Set(filteredEdges) : null
+      newRemovedEdges = removedEdgesSet ? new Set(removedEdgesSet) : null
+      newCurrentItem = graphComponent.currentItem
+      newStartNode = startNode
+      filteredNodes = oldFilteredNodes
+      filteredEdges = oldFilteredEdges
+      removedEdgesSet = oldRemovedEdges
+      startNode = oldStartNode
+      graphComponent.currentItem = oldCurrentItem
+      filteredGraph.nodePredicateChanged()
+      filteredGraph.edgePredicateChanged()
+    },
+    () => {
+      filteredNodes = newFilteredNodes
+      filteredEdges = newFilteredEdges
+      removedEdgesSet = newRemovedEdges
+      startNode = newStartNode
+      graphComponent.currentItem = newCurrentItem
+      filteredGraph.nodePredicateChanged()
+      filteredGraph.edgePredicateChanged()
+    }
+  )
 }
 
 /**
  * A MementoSupport that will handle the state of the node tags (especially pending dependencies)
  * during undo/redo.
  */
-class TagMementoSupport extends BaseClass(IMementoSupport) implements IMementoSupport {
+class TagMementoSupport extends BaseClass(IMementoSupport) {
   getState(item: any): any {
     if (item instanceof INode) {
       const tag = item.tag

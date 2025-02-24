@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,10 +35,9 @@ import {
   IHandleProvider,
   IInputModeContext,
   INode
-} from 'yfiles'
-import { ArrowNodeStyleAngleHandle } from './ArrowNodeStyleAngleHandle.js'
-import { ArrowNodeStyleShaftRatioHandle } from './ArrowNodeStyleShaftRatioHandle.js'
-
+} from '@yfiles/yfiles'
+import { ArrowNodeStyleAngleHandle } from './ArrowNodeStyleAngleHandle'
+import { ArrowNodeStyleShaftRatioHandle } from './ArrowNodeStyleShaftRatioHandle'
 /**
  * An {@link IHandleProvider} for nodes using an {@link ArrowNodeStyle} that provides an
  * {@link ArrowNodeStyleAngleHandle}, an {@link ArrowNodeStyleShaftRatioHandle} and further
@@ -48,33 +47,28 @@ import { ArrowNodeStyleShaftRatioHandle } from './ArrowNodeStyleShaftRatioHandle
  * {@link ArrowStyleShape.DOUBLE_ARROW}, and {@link ArrowStyleShape.NOTCHED_ARROW}.
  */
 export default class ArrowNodeStyleHandleProvider extends BaseClass(IHandleProvider) {
+  node
+  stylePropertyChanged
+  delegateProvider
   /**
    * Creates a new instance of {@link ArrowNodeStyleHandleProvider} with the given
    * {@link stylePropertyChanged} action and an optional {@link delegateProvider} whose handles are
    * also returned.
-   * @param {!INode} node The node to provide handles for.
-   * @param {!function} stylePropertyChanged An action that is called when the handle is moved.
+   * @param node The node to provide handles for.
+   * @param stylePropertyChanged An action that is called when the handle is moved.
    * @param delegateProvider The wrapped {@link IHandleProvider implementation}.
-   * @param {?IHandleProvider} [delegateProvider=null]
    */
   constructor(node, stylePropertyChanged, delegateProvider = null) {
     super()
-    this.delegateProvider = delegateProvider
-    this.stylePropertyChanged = stylePropertyChanged
     this.node = node
+    this.stylePropertyChanged = stylePropertyChanged
+    this.delegateProvider = delegateProvider
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @returns {!IEnumerable.<IHandle>}
-   */
   getHandles(context) {
     const handles = []
-
     if (this.delegateProvider) {
       handles.push(...this.delegateProvider.getHandles(context))
     }
-
     if (this.node.style instanceof ArrowNodeStyle) {
       handles.push(new ArrowNodeStyleAngleHandle(this.node, this.stylePropertyChanged))
       if (this.hasShaft(this.node.style)) {
@@ -83,11 +77,6 @@ export default class ArrowNodeStyleHandleProvider extends BaseClass(IHandleProvi
     }
     return IEnumerable.from(handles)
   }
-
-  /**
-   * @param {!ArrowNodeStyle} style
-   * @returns {boolean}
-   */
   hasShaft(style) {
     return (
       style.shape === ArrowStyleShape.ARROW ||

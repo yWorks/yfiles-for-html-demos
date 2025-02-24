@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,7 @@ import {
   GraphItemTypes,
   INode,
   ItemHoverInputMode
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { FlowMoveInputMode } from './FlowMoveInputMode'
 import { FlowCreateEdgeInputMode } from './FlowCreateEdgeInputMode'
 import { configureCreateEdgeInputMode } from '../FlowEdge/FlowEdge'
@@ -44,20 +44,17 @@ export function configureInputMode(gc: GraphComponent): void {
     enabled: true,
     hoverItems: GraphItemTypes.NODE | GraphItemTypes.EDGE
   })
-  itemHoverInputMode.addHoveredItemChangedListener(({ inputModeContext }, { item }) => {
-    const gc = inputModeContext?.canvasComponent
-    if (!(gc instanceof GraphComponent)) {
-      return
-    }
-    gc.highlightIndicatorManager.clearHighlights()
+  itemHoverInputMode.addEventListener('hovered-item-changed', ({ item }) => {
+    const highlights = gc.highlights
+    highlights.clear()
     if (item) {
-      gc.highlightIndicatorManager.addHighlight(item)
+      highlights.add(item)
       gc.graphModelManager.toFront(item)
     }
   })
 
-  gc.selection.addItemSelectionChangedListener((_sender, { item, itemSelected }) => {
-    if (itemSelected && item instanceof INode) {
+  gc.selection.addEventListener('item-added', ({ item }) => {
+    if (item instanceof INode) {
       const connectedEdges = gc.graph.edgesAt(item)
       gc.graphModelManager.toFront(connectedEdges)
     }
@@ -65,34 +62,33 @@ export function configureInputMode(gc: GraphComponent): void {
 
   // Custom CreateEdgeInputMode for overwriting onMoved method
   const createEdgeInputMode = new FlowCreateEdgeInputMode()
-  configureCreateEdgeInputMode(createEdgeInputMode)
+  configureCreateEdgeInputMode(gc, createEdgeInputMode)
 
   // Custom MoveInputMode for overwriting onDragging method
-  const moveInputMode = new FlowMoveInputMode()
-  const moveUnselectedInputMode = new FlowMoveInputMode()
+  const moveSelectedItemsInputMode = new FlowMoveInputMode()
+  const moveUnselectedItemsInputMode = new FlowMoveInputMode()
 
   const inputMode = new GraphEditorInputMode({
     allowCreateNode: false,
     allowEditLabel: false,
     allowReverseEdge: false,
     showHandleItems: GraphItemTypes.EDGE,
-    movableItems: GraphItemTypes.NODE,
+    movableSelectedItems: GraphItemTypes.NODE,
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     marqueeSelectableItems: GraphItemTypes.NODE,
     clickHitTestOrder: [GraphItemTypes.NODE, GraphItemTypes.EDGE, GraphItemTypes.PORT],
-    moveInputMode,
-    moveUnselectedInputMode,
+    moveSelectedItemsInputMode,
+    moveUnselectedItemsInputMode,
     createEdgeInputMode,
     itemHoverInputMode
   })
 
-  inputMode.moveUnselectedInputMode.enabled = true
   // Increase priority over handleInputMode to not block edge creation by dragging from ports
-  inputMode.moveUnselectedInputMode.priority = inputMode.handleInputMode.priority + 1
-  inputMode.moveInputMode.priority = inputMode.handleInputMode.priority + 1
+  inputMode.moveUnselectedItemsInputMode.priority = inputMode.handleInputMode.priority + 1
+  inputMode.moveSelectedItemsInputMode.priority = inputMode.handleInputMode.priority + 1
 
   inputMode.marqueeSelectionInputMode.enabled = true
-  inputMode.marqueeSelectionInputMode.priority = inputMode.moveUnselectedInputMode.priority + 1
+  inputMode.marqueeSelectionInputMode.priority = inputMode.moveUnselectedItemsInputMode.priority + 1
 
   gc.inputMode = inputMode
 }

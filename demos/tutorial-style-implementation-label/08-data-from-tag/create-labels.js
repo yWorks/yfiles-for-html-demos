@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,27 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @param {!IGraph} graph
- */
 export function createLabels(graph) {
   const node1 = graph.createNodeAt([0, 0])
   const node2 = graph.createNodeAt([0, 100])
   const node3 = graph.createNodeAt([0, 200])
   const node4 = graph.createNodeAt([0, 300])
-
   graph.addLabel({
     owner: node1,
     text: 'Label with text and icon',
     tag: { iconUrl: 'resources/search-16.svg' }
   })
-
   graph.addLabel({
     owner: node2,
     text: '',
     tag: { iconUrl: 'resources/star-16.svg' }
   })
-
   graph.addLabel({
     owner: node3,
     text: 'Label with background color and icon',
@@ -55,6 +49,5 @@ export function createLabels(graph) {
       backgroundColor: '#9DC6D0'
     }
   })
-
   graph.addLabel({ owner: node4, text: 'This label has only text' })
 }

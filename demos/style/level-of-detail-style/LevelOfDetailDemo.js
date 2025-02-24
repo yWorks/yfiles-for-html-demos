@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   GraphComponent,
   GraphViewerInputMode,
@@ -34,73 +35,55 @@ import {
   License,
   Point,
   PolylineEdgeStyle,
-  Size,
-  StringTemplateNodeStyle
-} from 'yfiles'
-
-import LevelOfDetailNodeStyle from './LevelOfDetailNodeStyle.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+  Size
+} from '@yfiles/yfiles'
+import LevelOfDetailNodeStyle from './LevelOfDetailNodeStyle'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import {
-  detailNodeStyleTemplate,
-  intermediateNodeStyleTemplate,
-  overviewNodeStyleTemplate
-} from './style-templates.js'
-
-/** @type {GraphComponent} */
+  detailNodeStyleTemplateSource,
+  intermediateNodeStyleTemplateSource,
+  overviewNodeStyleTemplateSource
+} from './style-templates'
+import { createLitNodeStyleFromSource } from '@yfiles/demo-utils/LitNodeStyle'
 let graphComponent
-
 /**
  * Support three styles for different zoom level.
- * @type {LevelOfDetailNodeStyle}
  */
 let levelOfDetailNodeStyle = null
-
 /**
  * The Popup text that shows in which level we are now.
  */
 const detailLevelPopup = document.querySelector('#detailLevelPopup')
-
-/**
- * @returns {!Promise}
- */
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize input Mode
   graphComponent.inputMode = new GraphViewerInputMode()
-
   // set default styles for the nodes and the edges
   initTutorialDefaults(graphComponent.graph)
-
   // check the zooming level and update the Popup text that shows in which level we are now
   updateDetailLevelIndicator()
-
   // build a sample graph
   createGraph()
-
   // center the graph
   graphComponent.fitGraphBounds()
 }
-
 /**
  * Initializes the defaults for the styling in this tutorial.
  *
- * @param {!IGraph} graph The graph.
+ * @param graph The graph.
  */
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
   initDemoStyles(graph)
-
   // set styles, sizes and locations specific for this tutorial
   levelOfDetailNodeStyle = new LevelOfDetailNodeStyle(
-    new StringTemplateNodeStyle(detailNodeStyleTemplate),
-    new StringTemplateNodeStyle(intermediateNodeStyleTemplate),
-    new StringTemplateNodeStyle(overviewNodeStyleTemplate)
+    createLitNodeStyleFromSource(detailNodeStyleTemplateSource),
+    createLitNodeStyleFromSource(intermediateNodeStyleTemplateSource),
+    createLitNodeStyleFromSource(overviewNodeStyleTemplateSource)
   )
   graph.nodeDefaults.style = levelOfDetailNodeStyle
   graph.nodeDefaults.size = new Size(285, 100)
@@ -109,13 +92,12 @@ function initTutorialDefaults(graph) {
     targetArrow: IArrow.NONE
   })
 }
-
 /**
  * Updates the indicator for the level of details to the current graph.
  */
 function updateDetailLevelIndicator() {
   let zoomLevelChangedTimer
-  graphComponent.addZoomChangedListener(() => {
+  graphComponent.addEventListener('zoom-changed', () => {
     // update the zoom level display after 200ms
     if (zoomLevelChangedTimer >= 0) {
       return
@@ -126,7 +108,6 @@ function updateDetailLevelIndicator() {
     }, 200)
   })
 }
-
 /**
  * Updates the levels indicator.
  */
@@ -148,7 +129,6 @@ function updateIndicator() {
     }, 2000)
   }
 }
-
 /**
  * Create a sample graph.
  */
@@ -199,5 +179,4 @@ function createGraph() {
   graph.createEdge({ source: n2, target: n4, bends: [new Point(0, 230), new Point(175, 230)] })
   graphComponent.fitGraphBounds()
 }
-
 run().then(finishLoading)

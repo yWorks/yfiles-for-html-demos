@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,54 +30,49 @@ import {
   BaseClass,
   INode,
   INodeSizeConstraintProvider,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   Rect,
   Size
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * An {@link INodeSizeConstraintProvider} that returns the size of the
  * first label as minimum size. The maximum size is not limited.
  */
 export default class GreenSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
+  node
+  constructor(node) {
+    super()
+    this.node = node
+  }
   /**
    * Returns the label size to prevent the shrinking of nodes beyond their
    * label's size.
    * @see Specified by {@link INodeSizeConstraintProvider.getMinimumSize}.
-   * @param {!INode} node
-   * @returns {!Size}
    */
-  getMinimumSize(node) {
-    for (const label of node.labels) {
-      const labelProvider = label.lookup(INodeSizeConstraintProvider.$class)
+  getMinimumSize() {
+    for (const label of this.node.labels) {
+      const labelProvider = label.lookup(INodeSizeConstraintProvider)
       if (labelProvider instanceof INodeSizeConstraintProvider) {
-        return labelProvider.getMinimumSize(node)
+        return labelProvider.getMinimumSize()
       }
-
-      if (label.layoutParameter.model instanceof InteriorLabelModel) {
+      if (label.layoutParameter.model instanceof InteriorNodeLabelModel) {
         return label.preferredSize
       }
     }
     return new Size(1, 1)
   }
-
   /**
    * Returns the infinite size since the maximum size is not limited.
    * @see Specified by {@link INodeSizeConstraintProvider.getMaximumSize}.
-   * @param {!INode} node
-   * @returns {!Size}
    */
-  getMaximumSize(node) {
+  getMaximumSize() {
     return Size.INFINITE
   }
-
   /**
    * Returns an empty rectangle since this area is not constraint.
    * @see Specified by {@link INodeSizeConstraintProvider.getMinimumEnclosedArea}.
-   * @param {!INode} node
-   * @returns {!Rect}
    */
-  getMinimumEnclosedArea(node) {
+  getMinimumEnclosedArea() {
     return Rect.EMPTY
   }
 }

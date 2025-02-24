@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,112 +27,70 @@
  **
  ***************************************************************************/
 import {
-  HierarchicLayout,
-  HierarchicLayoutData,
-  ICollection,
-  ItemMapping,
-  NormalizeGraphElementOrderStage,
-  PortCandidate,
-  PortCandidateSet
-} from 'yfiles'
-
-/**
- * Sorts the elements for the layout according to their id, to keep the automatic layout stable.
- * @param {!IGraph} graph
- * @param {!function} nodeId
- * @param {!function} edgeId
- */
-export function configureLayoutNormalizationIds(graph, nodeId, edgeId) {
-  graph.mapperRegistry.createDelegateMapper(
-    NormalizeGraphElementOrderStage.NODE_COMPARABLE_DP_KEY,
-    nodeId
-  )
-  graph.mapperRegistry.createDelegateMapper(
-    NormalizeGraphElementOrderStage.EDGE_COMPARABLE_DP_KEY,
-    edgeId
-  )
-}
-
+  EdgePortCandidates,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
+  NodePortCandidates
+} from '@yfiles/yfiles'
 /**
  * Creates and configures the layout algorithm.
- * @returns {!ILayoutAlgorithm}
  */
 export function createLayout() {
-  const layout = new HierarchicLayout({
-    orthogonalRouting: true,
-    recursiveGroupLayering: false,
-    integratedEdgeLabeling: true
+  return new HierarchicalLayout({
+    groupLayeringPolicy: 'ignore-groups',
+    defaultEdgeDescriptor: {
+      minimumFirstSegmentLength: 25,
+      minimumLastSegmentLength: 25
+    }
   })
-  layout.edgeLayoutDescriptor.minimumLastSegmentLength = 25
-  layout.edgeLayoutDescriptor.minimumFirstSegmentLength = 25
-  // add this stage to ensure the same order of elements for multiple layout invocations
-  layout.prependStage(new NormalizeGraphElementOrderStage())
-  return layout
 }
-
 /**
  * Creates and configures the layout data.
- * @param {!IGraph} graph The given graph
- * @param {!function} isHierarchyEdge Returns whether an edge is a hierarchy edge
- * @param {!function} nodeId The node id for each node
- * @param moveToTop True if nodes should be placed on the topmost layer, false otherwise
- * @param {boolean} [moveToTop=false]
- * @returns {!LayoutData}
+ * @param isHierarchyEdge Returns whether an edge is a hierarchy edge
+ * @param nodeId The node id for each node
  */
-export function createLayoutData(graph, isHierarchyEdge, nodeId, moveToTop = false) {
+export function createLayoutData(isHierarchyEdge, nodeId) {
   // create the port candidates for the edges
   const { createPortCandidateSet, createSourcePortCandidates, createTargetPortCandidates } =
     configureEdgeHierarchyCandidates(isHierarchyEdge)
-
-  const layoutData = new HierarchicLayoutData({
+  return new HierarchicalLayoutData({
     edgeDirectedness: (item) => (isHierarchyEdge(item) ? 1 : 0),
     sourceGroupIds: (item) =>
       isHierarchyEdge(item) ? 's-' + nodeId(item.sourceNode).toString() : null,
     targetGroupIds: (item) =>
       isHierarchyEdge(item) ? 't-' + nodeId(item.targetNode).toString() : null,
-    nodePortCandidateSets: createPortCandidateSet,
-    sourcePortCandidates: createSourcePortCandidates,
-    targetPortCandidates: createTargetPortCandidates
+    ports: {
+      nodePortCandidates: createPortCandidateSet,
+      sourcePortCandidates: createSourcePortCandidates,
+      targetPortCandidates: createTargetPortCandidates
+    }
   })
-
-  if (moveToTop) {
-    layoutData.partitionGridData.rowIndices = new ItemMapping((node) =>
-      graph.inEdgesAt(node).filter(isHierarchyEdge).size === 0 ? 0 : 1
-    )
-  }
-
-  return layoutData
 }
-
 /**
  * Configures the port candidates for the edges.
- * @param {!function} isHierarchyEdge Returns whether an edge is a hierarchy edge
- * @returns {!object}
+ * @param isHierarchyEdge Returns whether an edge is a hierarchy edge
  */
 function configureEdgeHierarchyCandidates(isHierarchyEdge) {
-  const northCandidate = PortCandidate.createCandidate('north', 1)
-  const southCandidate = PortCandidate.createCandidate('south', 1)
-  const eastCandidate = PortCandidate.createCandidate('east', 0)
-  const westCandidate = PortCandidate.createCandidate('west', 0)
-
-  const hierarchyEdgeSourceSideCandidates = ICollection.from([southCandidate])
-  const hierarchyEdgeTargetSideCandidates = ICollection.from([northCandidate])
-  const regularEdgeSourceSideCandidates = ICollection.from([eastCandidate, westCandidate])
-  const regularEdgeTargetSideCandidates = ICollection.from([westCandidate, eastCandidate])
-
+  const hierarchyEdgeSourceSideCandidates = new EdgePortCandidates().addFreeCandidate('bottom', 1)
+  const hierarchyEdgeTargetSideCandidates = new EdgePortCandidates().addFreeCandidate('top', 1)
+  const regularEdgeSourceSideCandidates = new EdgePortCandidates()
+    .addFreeCandidate('right')
+    .addFreeCandidate('left')
+  const regularEdgeTargetSideCandidates = new EdgePortCandidates()
+    .addFreeCandidate('left')
+    .addFreeCandidate('right')
   function createPortCandidateSet() {
-    const portCandidateSet = new PortCandidateSet()
-    portCandidateSet.add(northCandidate, 1)
-    portCandidateSet.add(southCandidate, 1)
-    portCandidateSet.add(eastCandidate, 1 << 30)
-    portCandidateSet.add(westCandidate, 1 << 30)
-    return portCandidateSet
+    const nodePortCandidates = new NodePortCandidates()
+    nodePortCandidates
+      .addFreeCandidate('top', 1)
+      .addFreeCandidate('bottom', 1)
+      .addFreeCandidate('right', 1000)
+      .addFreeCandidate('left', 1000)
+    return nodePortCandidates
   }
-
   const createSourcePortCandidates = (edge) =>
     isHierarchyEdge(edge) ? hierarchyEdgeSourceSideCandidates : regularEdgeSourceSideCandidates
   const createTargetPortCandidates = (edge) =>
     isHierarchyEdge(edge) ? hierarchyEdgeTargetSideCandidates : regularEdgeTargetSideCandidates
-
   return { createPortCandidateSet, createSourcePortCandidates, createTargetPortCandidates }
 }

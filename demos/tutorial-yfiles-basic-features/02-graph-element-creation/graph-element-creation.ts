@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FreeNodePortLocationModel, type IGraph, Point, Rect } from 'yfiles'
+import {
+  FreeNodePortLocationModel,
+  type IGraph,
+  Point,
+  Rect
+} from '@yfiles/yfiles'
 
 /**
  * Creates a sample graph and introduces all important graph elements present in
@@ -54,10 +59,7 @@ export function graphElementCreation(graph: IGraph) {
   // If necessary, you can manually create ports at nodes
   // and let the edges connect to these.
   // Create a port in the center of the node layout
-  const port1AtNode1 = graph.addPort(
-    node1,
-    FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-  )
+  const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.CENTER)
 
   // Create a port at the middle of the left border
   // The location is interpreted as absolute coordinates

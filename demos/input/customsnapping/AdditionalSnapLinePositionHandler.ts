@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,16 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IInputModeContext, IPoint, IPositionHandler, Point } from 'yfiles'
+import { BaseClass, IInputModeContext, IPoint, IPositionHandler, Point } from '@yfiles/yfiles'
 import type { AdditionalSnapLineVisualCreator } from './AdditionalSnapLineVisualCreator'
 
 /**
  * An {@link IPositionHandler} used to move {@link AdditionalSnapLineVisualCreator} instances.
  */
-export class AdditionalSnapLinePositionHandler
-  extends BaseClass(IPositionHandler)
-  implements IPositionHandler
-{
+export class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandler) {
   private readonly line: AdditionalSnapLineVisualCreator
   private readonly mouseDeltaFromStart: Point
   private startFrom: Point = null!
@@ -68,10 +65,10 @@ export class AdditionalSnapLinePositionHandler
    * Called by clients to indicate that the element is going to be dragged.
    * This call will be followed by one or more calls to {@link IPositionHandler.handleMove},
    * and a final {@link IPositionHandler.dragFinished} or {@link IPositionHandler.cancelDrag}.
-   * @param inputModeContext The context to retrieve information about the drag from.
+   * @param _inputModeContext The context to retrieve information about the drag from.
    * @see Specified by {@link IPositionHandler.initializeDrag}.
    */
-  initializeDrag(inputModeContext: IInputModeContext): void {
+  initializeDrag(_inputModeContext: IInputModeContext): void {
     this.startFrom = this.line.from
   }
 

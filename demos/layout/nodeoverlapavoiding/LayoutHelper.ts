@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  ChannelEdgeRouter,
   ClearAreaLayout,
   ClearAreaLayoutData,
   ClearAreaStrategy,
@@ -35,12 +34,11 @@ import {
   CompositeLayoutData,
   EdgeRouter,
   EdgeRouterData,
-  EdgeRouterScope,
   FillAreaLayout,
   FillAreaLayoutData,
   FilteredGraphWrapper,
-  GivenCoordinatesStage,
-  GivenCoordinatesStageData,
+  GivenCoordinatesLayout,
+  GivenCoordinatesLayoutData,
   GraphComponent,
   IAnimation,
   IEdge,
@@ -49,13 +47,10 @@ import {
   INode,
   LayoutData,
   LayoutExecutor,
-  LayoutGraph,
-  LayoutStageBase,
   SequentialLayout,
   Size,
   TimeSpan
-} from 'yfiles'
-import { HidingEdgeDescriptor } from './HidingEdgeDescriptor'
+} from '@yfiles/yfiles'
 
 /**
  * Calculates a new layout so that there is space at the current position of the moved or resized node.
@@ -80,7 +75,7 @@ export class LayoutHelper implements PendingLayout {
    * The graph layout copy that stores the original layout before the node has been changed.
    * This copy is used to restore the graph when the drag is canceled.
    */
-  private resetToOriginalGraphStageData: GivenCoordinatesStageData | null
+  private resetToOriginalGraphStageData: GivenCoordinatesLayoutData | null
 
   /**
    * The node that is moved or resized.
@@ -103,11 +98,6 @@ export class LayoutHelper implements PendingLayout {
   private resizeState: ResizeState
 
   /**
-   * The edges which are hidden temporally during the gesture.
-   */
-  private hiddenEdges: Set<IEdge>
-
-  /**
    * Initializes the helper.
    */
   constructor(graphComponent: GraphComponent, node: INode) {
@@ -122,9 +112,6 @@ export class LayoutHelper implements PendingLayout {
         .getDescendants(node)
         .forEach((descendant) => this.nodes.add(descendant))
     }
-    const descriptor = graphComponent.graphModelManager.edgeDescriptor
-    this.hiddenEdges =
-      descriptor instanceof HidingEdgeDescriptor ? descriptor.hiddenEdges : new Set<IEdge>()
     this.executor = null
     this.resetToOriginalGraphStageData = null
     this.fillLayout = null
@@ -134,13 +121,13 @@ export class LayoutHelper implements PendingLayout {
   }
 
   /**
-   * Creates a {@link GivenCoordinatesStageData} that stores the layout of nodes and edges.
+   * Creates a {@link GivenCoordinatesLayoutData} that stores the layout of nodes and edges.
    */
-  private createGivenCoordinatesStageData(
+  private createGivenCoordinatesLayoutData(
     nodePredicate: (obj: INode) => boolean,
     edgePredicate: (obj: IEdge) => boolean
-  ): GivenCoordinatesStageData {
-    const data = new GivenCoordinatesStageData()
+  ): GivenCoordinatesLayoutData {
+    const data = new GivenCoordinatesLayoutData()
     for (const node of this.graph.nodes.filter(nodePredicate)) {
       data.nodeLocations.mapper.set(node, node.layout.topLeft)
       data.nodeSizes.mapper.set(node, node.layout.toSize())
@@ -176,7 +163,7 @@ export class LayoutHelper implements PendingLayout {
     p2: TimeSpan
   ): DragLayoutExecutor {
     instance.layoutData = p1
-    instance.duration = p2
+    instance.animationDuration = p2
     return instance
   }
 
@@ -199,37 +186,34 @@ export class LayoutHelper implements PendingLayout {
   private createLayout(resizeState: ResizeState): ILayoutAlgorithm {
     const sequentialLayout = new SequentialLayout()
     if (resizeState === 'SHRINKING') {
-      const fillAreaLayout = new FillAreaLayout()
-      fillAreaLayout.componentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
       // fill the free space of the shrunken node
-      this.fillLayout = fillAreaLayout
-      sequentialLayout.appendLayout(this.fillLayout)
+      this.fillLayout = new FillAreaLayout({
+        componentAssignmentStrategy: ComponentAssignmentStrategy.SINGLE
+      })
+      sequentialLayout.layouts.add(this.fillLayout)
       if (this.state === 'FINISHING') {
-        const edgeRouter = new EdgeRouter(null)
-        edgeRouter.scope = EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES
         // only route edges for the final layout
-        sequentialLayout.appendLayout(edgeRouter)
+        sequentialLayout.layouts.add(new EdgeRouter())
       }
     } else {
       if (resizeState === 'BOTH') {
-        const fillAreaLayout = new FillAreaLayout()
-        fillAreaLayout.componentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
         // fill the free space of the resized node
-        this.fillLayout = fillAreaLayout
-        sequentialLayout.appendLayout(this.fillLayout)
+        this.fillLayout = new FillAreaLayout({
+          componentAssignmentStrategy: ComponentAssignmentStrategy.SINGLE
+        })
+        sequentialLayout.layouts.add(this.fillLayout)
       }
-      const clearAreaLayout = new ClearAreaLayout()
-      clearAreaLayout.componentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
-      clearAreaLayout.clearAreaStrategy = ClearAreaStrategy.LOCAL
-      clearAreaLayout.considerEdges = true
-      if (this.state !== 'FINISHING') {
-        // use fast ChannelRouter during drag
-        clearAreaLayout.edgeRouter = new AffectedEdgesChannelRouter()
-      }
+
       // clear the space of the moved/enlarged node
-      sequentialLayout.appendLayout(clearAreaLayout)
+      sequentialLayout.layouts.add(
+        new ClearAreaLayout({
+          componentAssignmentStrategy: ComponentAssignmentStrategy.SINGLE,
+          clearAreaStrategy: ClearAreaStrategy.LOCAL,
+          considerEdges: true
+        })
+      )
     }
-    return new GivenCoordinatesStage(sequentialLayout)
+    return new GivenCoordinatesLayout(sequentialLayout)
   }
 
   /**
@@ -238,23 +222,27 @@ export class LayoutHelper implements PendingLayout {
   private createLayoutData(resizeState: ResizeState): LayoutData {
     const layoutData = new CompositeLayoutData(this.resetToOriginalGraphStageData!)
     if (resizeState === 'SHRINKING') {
-      const fillAreaLayoutData = new FillAreaLayoutData()
-      fillAreaLayoutData.fixedNodes = this.nodes
+      const fillAreaLayoutData = new FillAreaLayoutData({
+        fixedNodes: this.nodes
+      })
       layoutData.items.add(fillAreaLayoutData)
       if (this.state === 'FINISHING') {
-        const polylineEdgeRouterData = new EdgeRouterData()
-        polylineEdgeRouterData.affectedNodes = this.nodes
+        const edgeRouterData = new EdgeRouterData({
+          scope: { incidentNodes: this.nodes }
+        })
         // only route edges for the final layout
-        layoutData.items.add(polylineEdgeRouterData)
+        layoutData.items.add(edgeRouterData)
       }
     } else {
       if (resizeState === 'BOTH') {
-        const fillAreaLayoutData = new FillAreaLayoutData()
-        fillAreaLayoutData.fixedNodes = this.nodes
+        const fillAreaLayoutData = new FillAreaLayoutData({
+          fixedNodes: this.nodes
+        })
         layoutData.items.add(fillAreaLayoutData)
       }
-      const clearAreaLayoutData = new ClearAreaLayoutData()
-      clearAreaLayoutData.areaNodes = this.nodes
+      const clearAreaLayoutData = new ClearAreaLayoutData({
+        areaNodes: this.nodes
+      })
       layoutData.items.add(clearAreaLayoutData)
     }
     return layoutData
@@ -266,9 +254,9 @@ export class LayoutHelper implements PendingLayout {
    * All nodes and edges are pushed back into place before the drag started.
    */
   private createCancelLayoutExecutor(): LayoutExecutor {
-    const layoutExecutor = new LayoutExecutor(this.graphComponent, new GivenCoordinatesStage(null))
+    const layoutExecutor = new LayoutExecutor(this.graphComponent, new GivenCoordinatesLayout(null))
     layoutExecutor.layoutData = this.resetToOriginalGraphStageData
-    layoutExecutor.duration = TimeSpan.fromMilliseconds(150)
+    layoutExecutor.animationDuration = TimeSpan.fromMilliseconds(150)
     return layoutExecutor
   }
 
@@ -276,14 +264,14 @@ export class LayoutHelper implements PendingLayout {
    * A {@link LayoutExecutor} that is used after the drag is finished.
    *
    * First, all nodes and edges are pushed back into place before the drag started, except the node
-   * and its descendants. Then space is made for the node and its descendants at its current position.
+   * and its descendants. Then space is made for the node and its descendants in its current position.
    * The animation morphs all elements to the calculated positions.
    */
   private createFinishLayoutExecutor(): LayoutExecutor {
     const state = this.getResizeState()
     const layoutExecutor = new LayoutExecutor(this.graphComponent, this.createLayout(state))
     layoutExecutor.layoutData = this.createLayoutData(state)
-    layoutExecutor.duration = TimeSpan.fromMilliseconds(150)
+    layoutExecutor.animationDuration = TimeSpan.fromMilliseconds(150)
     return layoutExecutor
   }
 
@@ -308,7 +296,7 @@ export class LayoutHelper implements PendingLayout {
    * Initializes the layout calculation.
    */
   public initializeLayout(): void {
-    this.resetToOriginalGraphStageData = this.createGivenCoordinatesStageData(
+    this.resetToOriginalGraphStageData = this.createGivenCoordinatesLayoutData(
       (n: INode) => {
         return !this.nodes.has(n)
       },
@@ -317,79 +305,49 @@ export class LayoutHelper implements PendingLayout {
       }
     )
 
-    // hide edge path for any edge between a node in 'nodes' and a node not in 'nodes'
-    this.hideInterEdges()
-
     this.executor = this.getDragLayoutExecutor()
     this.state = 'DRAGGING'
-  }
-
-  /**
-   * Hides the inter-edges.
-   */
-  private hideInterEdges(): void {
-    for (const edge of this.graph.edges) {
-      if (this.isInterEdge(edge)) {
-        this.hiddenEdges.add(edge)
-      }
-    }
-  }
-
-  /**
-   * Un-hides the inter-edges.
-   */
-  private unhideInterEdges(): void {
-    this.hiddenEdges.clear()
-  }
-
-  /**
-   * Determines whether source or target node of the given edge is part of {@link LayoutHelper.nodes}.
-   */
-  private isInterEdge(edge: IEdge): boolean {
-    const sourceInNodes = this.nodes.has(edge.sourceNode!)
-    const targetInNodes = this.nodes.has(edge.targetNode!)
-    return (sourceInNodes && !targetInNodes) || (targetInNodes && !sourceInNodes)
   }
 
   /**
    * Determines whether both source and target node of the given edge is part of {@link LayoutHelper.nodes}.
    */
   private isSubgraphEdge(edge: IEdge): boolean {
-    return this.nodes.has(edge.sourceNode!) && this.nodes.has(edge.targetNode!)
+    return this.nodes.has(edge.sourceNode) && this.nodes.has(edge.targetNode)
   }
 
   /**
    * Cancels the current layout calculation.
    */
-  public cancelLayout(): Promise<void> {
+  public async cancelLayout(): Promise<void> {
     this.state = 'CANCELLING'
-    this.runLayout()
+    await this.runLayout()
     return new Promise((resolve) => (this.resolveFinishLayoutPromise = resolve))
   }
 
   /**
    * Stops the current layout calculation.
    */
-  public finishLayout(): Promise<void> {
+  public async finishLayout(): Promise<void> {
     this.state = 'FINISHING'
-    this.runLayout()
+    await this.runLayout()
     return new Promise((resolve) => (this.resolveFinishLayoutPromise = resolve))
   }
 
   /**
    * Run a layout immediately.
    */
-  public layoutImmediately(): void {
-    this.resetToOriginalGraphStageData = this.createGivenCoordinatesStageData(
+  public async layoutImmediately(): Promise<void> {
+    this.resetToOriginalGraphStageData = this.createGivenCoordinatesLayoutData(
       () => false,
       () => false
     )
     this.state = 'FINISHING'
-    this.runLayout()
+    await this.runLayout()
   }
 
   /**
-   * Called before the a layout run starts.
+   * Called before a layout run starts.
    */
   public onLayoutStarting(): LayoutExecutor {
     switch (this.state) {
@@ -415,13 +373,12 @@ export class LayoutHelper implements PendingLayout {
   }
 
   /**
-   * Called after the a layout run finished.
+   * Called after a layout run finished.
    */
   public onLayoutFinished(): void {
     switch (this.state) {
       case 'CANCELLED':
       case 'FINISHED':
-        this.unhideInterEdges()
         if (this.resolveFinishLayoutPromise) {
           this.resolveFinishLayoutPromise()
         }
@@ -431,7 +388,8 @@ export class LayoutHelper implements PendingLayout {
 }
 
 /**
- * Calculates the layout for the whole graph but only animates the part that does not belong to node and its descendants.
+ * Calculates the layout for the whole graph but only animates the part
+ * that does not belong to the node and its descendants.
  */
 class DragLayoutExecutor extends LayoutExecutor {
   /**
@@ -442,37 +400,21 @@ class DragLayoutExecutor extends LayoutExecutor {
   private readonly filteredGraph: FilteredGraphWrapper
 
   constructor(graphComponent: GraphComponent, layout: ILayoutAlgorithm, nodes: Set<INode>) {
-    super(graphComponent, layout)
-    this.filteredGraph = new FilteredGraphWrapper(
-      graphComponent.graph,
-      (n: INode) => {
-        return !nodes.has(n)
-      },
-      null
-    )
+    super({ graphComponent: graphComponent, layout: layout, animateViewport: false })
+    this.filteredGraph = new FilteredGraphWrapper(graphComponent.graph, (n: INode) => {
+      return !nodes.has(n)
+    })
   }
 
   /**
    * Creates an {@link IAnimation} that morphs all graph elements except the node and its descendants to the new layout.
    */
-  public createMorphAnimation(): IAnimation {
-    return IAnimation.createLayoutAnimation(this.filteredGraph, this.layoutGraph, this.duration)
-  }
-}
-
-class AffectedEdgesChannelRouter extends LayoutStageBase {
-  private readonly channelEdgeRouter: ChannelEdgeRouter
-
-  constructor() {
-    super()
-    this.channelEdgeRouter = new ChannelEdgeRouter()
-  }
-
-  applyLayout(graph: LayoutGraph): void {
-    const routedEdges = graph.getDataProvider(ClearAreaLayout.ROUTE_EDGE_DP_KEY)
-    graph.addDataProvider(ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY, routedEdges!)
-    this.channelEdgeRouter.applyLayout(graph)
-    graph.removeDataProvider(ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY)
+  public createLayoutAnimation(): IAnimation {
+    return IAnimation.createLayoutAnimation(
+      this.filteredGraph,
+      this.adapter!,
+      this.animationDuration
+    )
   }
 }
 
@@ -501,7 +443,9 @@ export class LayoutRunner {
    * Returns the singleton instance of this class.
    */
   public static get INSTANCE(): LayoutRunner {
-    return LayoutRunner.instance ? LayoutRunner.instance : (LayoutRunner.instance = new LayoutRunner())
+    return LayoutRunner.instance
+      ? LayoutRunner.instance
+      : (LayoutRunner.instance = new LayoutRunner())
   }
 
   /**

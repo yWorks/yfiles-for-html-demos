@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,20 +27,18 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   GraphComponent,
   GraphItemTypes,
   GraphMLIOHandler,
-  GraphMLParser,
   IEdge,
   IGraph,
   INode,
+  LabelStyle,
   Mapper,
   SerializationProperties,
   ShapeNodeStyle,
-  StripeTypes,
-  YBoolean
-} from 'yfiles'
+  StripeTypes
+} from '@yfiles/yfiles'
 
 /**
  * This GraphML IO Handler can read graphs with unknown styles.
@@ -49,20 +47,7 @@ import {
  * try.
  */
 class FaultTolerantGraphMLIOHandler extends GraphMLIOHandler {
-  private disableStyles = false
   private onRetry: ((e: Error) => void) | null = null
-
-  configureGraphMLParser(parser: GraphMLParser, graph: IGraph): void {
-    super.configureGraphMLParser(parser, graph)
-    parser.setDeserializationProperty(
-      SerializationProperties.DISABLE_STYLES,
-      this.disableStyles ? GraphItemTypes.ALL : GraphItemTypes.NONE
-    )
-    parser.setDeserializationProperty(
-      SerializationProperties.DISABLE_STRIPE_STYLES,
-      this.disableStyles ? StripeTypes.ALL : StripeTypes.NONE
-    )
-  }
 
   async readFromDocument(graph: IGraph, document: Document): Promise<IGraph> {
     return this.retry(() => super.readFromDocument(graph, document))
@@ -74,14 +59,10 @@ class FaultTolerantGraphMLIOHandler extends GraphMLIOHandler {
 
   async retry(read: () => Promise<IGraph>): Promise<IGraph> {
     try {
-      this.disableStyles = false
+      // try with styles enabled
       return await read()
     } catch (err) {
-      if (
-        !(err instanceof Error) ||
-        err.message == null ||
-        err.message.indexOf('Unable to map XML element') === -1
-      ) {
+      if (!(err instanceof Error) || err.message == null) {
         throw err
       }
       if (typeof this.onRetry === 'function') {
@@ -89,8 +70,43 @@ class FaultTolerantGraphMLIOHandler extends GraphMLIOHandler {
       }
 
       // retry with styles disabled
-      this.disableStyles = true
-      return await read()
+      this.deserializationPropertyOverrides.set(
+        SerializationProperties.DISABLE_STYLES,
+        GraphItemTypes.ALL
+      )
+      this.deserializationPropertyOverrides.set(
+        SerializationProperties.DISABLE_STRIPE_STYLES,
+        StripeTypes.ALL
+      )
+      this.deserializationPropertyOverrides.set(
+        SerializationProperties.DISABLE_GEOMETRY,
+        GraphItemTypes.PORT | GraphItemTypes.LABEL
+      )
+      this.deserializationPropertyOverrides.set(
+        SerializationProperties.IGNORE_XAML_DESERIALIZATION_ERRORS,
+        true
+      )
+      const graph = await read()
+
+      // re-enable styles
+      this.deserializationPropertyOverrides.set(
+        SerializationProperties.DISABLE_STYLES,
+        GraphItemTypes.NONE
+      )
+      this.deserializationPropertyOverrides.set(
+        SerializationProperties.DISABLE_STRIPE_STYLES,
+        StripeTypes.NONE
+      )
+      this.deserializationPropertyOverrides.set(
+        SerializationProperties.DISABLE_GEOMETRY,
+        GraphItemTypes.NONE
+      )
+      this.deserializationPropertyOverrides.set(
+        SerializationProperties.IGNORE_XAML_DESERIALIZATION_ERRORS,
+        false
+      )
+
+      return graph
     }
   }
 }
@@ -107,31 +123,31 @@ export function createConfiguredGraphMLIOHandler(
     const selectedNodes = new Mapper()
 
     // read selection state for edges ...
-    graphMLIOHandler.addInputMapper(IEdge.$class, YBoolean.$class, 'SelectedEdges', selectedEdges)
+    graphMLIOHandler.addInputMapper(IEdge, Boolean, 'SelectedEdges', selectedEdges)
     // ... and nodes.
-    graphMLIOHandler.addInputMapper(INode.$class, YBoolean.$class, 'SelectedNodes', selectedNodes)
+    graphMLIOHandler.addInputMapper(INode, Boolean, 'SelectedNodes', selectedNodes)
 
     // set selection state for edges and nodes once parsing is finished
-    graphMLIOHandler.addParsedListener((_, evt) => {
+    graphMLIOHandler.addEventListener('parsed', () => {
       const selection = graphComponent.selection
       selection.clear()
 
       const graph = graphComponent.graph
       for (const node of graph.nodes) {
         if (selectedNodes.get(node)) {
-          selection.setSelected(node, true)
+          selection.add(node)
         }
       }
       for (const edge of graph.edges) {
         if (selectedEdges.get(edge)) {
-          selection.setSelected(edge, true)
+          selection.add(edge)
         }
       }
     })
   }
 
   // ignore or replace some unknown bpmn styles to avoid exceptions
-  graphMLIOHandler.addHandleDeserializationListener((_, evt) => {
+  graphMLIOHandler.addEventListener('handle-deserialization', (evt) => {
     if (evt.xmlNode instanceof Element) {
       const element = evt.xmlNode
       if (
@@ -143,7 +159,7 @@ export function createConfiguredGraphMLIOHandler(
       } else if (element.localName === 'PoolNodeStyle') {
         evt.result = new ShapeNodeStyle()
       } else if (element.localName === 'AnnotationLabelStyle') {
-        evt.result = new DefaultLabelStyle()
+        evt.result = new LabelStyle()
       }
     }
   })

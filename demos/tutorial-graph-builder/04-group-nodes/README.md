@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 04 Group Nodes - Tutorial: Graph Builder
 
-# Grouping nodes in the graph
+<img src="../../../doc/demo-thumbnails/tutorial-graph-builder-group-nodes.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/04-group-nodes/).
 
 In this tutorial step, you will learn how to create group nodes to show hierarchy information within the business data.
 
@@ -57,6 +59,6 @@ Edges work the same way for group nodes as for other nodes. They can connect to 
 
 Note
 
-Please have a look in this tutorial step’s demo code in `create-group-nodes.ts` and play around with the hierarchic structure. For example, try to use a separate collection for group items.
+Please have a look in this tutorial step’s demo code in `create-group-nodes.ts` and play around with the hierarchical structure. For example, try to use a separate collection for group items.
 
 [05 Implicit Grouping](../../tutorial-graph-builder/05-implicit-grouping/)

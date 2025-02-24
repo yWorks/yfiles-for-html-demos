@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,45 +27,35 @@
  **
  ***************************************************************************/
 import {
-  BaseClass,
-  DefaultLabelStyle,
   EdgeSegmentLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  HierarchicLayout,
-  HierarchicLayoutData,
-  IEdge,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   IGraph,
   IInputModeContext,
   INode,
-  IPropertyObservable,
+  LabelStyle,
+  LayoutExecutor,
   License,
   Point,
-  PropertyChangedEventArgs,
   Rect,
-  Size,
-  StringTemplateNodeStyle,
-  TemplateNodeStyle
-} from 'yfiles'
-
-import RandomGraphGenerator from 'demo-utils/RandomGraphGenerator'
-
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+  Size
+} from '@yfiles/yfiles'
+import RandomGraphGenerator from '@yfiles/demo-utils/RandomGraphGenerator'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { constraintNodeStyle } from './style-templates'
+
+type LayerConstraintsData = { value: number; constraints: boolean }
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   initializeInputMode(graphComponent)
   initializeGraph(graphComponent.graph)
-
-  initializeConverters()
 
   createGraph(graphComponent.graph)
 
@@ -79,17 +69,14 @@ async function run(): Promise<void> {
  */
 async function runLayout(graphComponent: GraphComponent): Promise<void> {
   // create a new layout algorithm
-  const hierarchicLayout = new HierarchicLayout({
-    orthogonalRouting: true,
-    fromScratchLayeringStrategy: 'hierarchical-topmost',
-    integratedEdgeLabeling: true
+  const hierarchicalLayout = new HierarchicalLayout({
+    fromScratchLayeringStrategy: 'hierarchical-topmost'
   })
 
   // and layout data for it
-  const hierarchicLayoutData = new HierarchicLayoutData({
-    constraintIncrementalLayererAdditionalEdgeWeights: getEdgeWeight
-  })
-  const layerConstraints = hierarchicLayoutData.layerConstraints
+  const hierarchicalLayoutData = new HierarchicalLayoutData()
+
+  const layerConstraints = hierarchicalLayoutData.layerConstraints
 
   // assign constraints for all nodes in the graph
   for (const node of graphComponent.graph.nodes) {
@@ -101,16 +88,21 @@ async function runLayout(graphComponent: GraphComponent): Promise<void> {
       }
       if (data.value === 7) {
         layerConstraints.placeAtBottom(node)
+      } else {
+        // All nodes can then be sorted into their respective layers by their value
+        layerConstraints.nodeComparables.mapper.set(node, data.value)
       }
-      // All nodes can then be sorted into their respective layers by their value
-      layerConstraints.nodeComparables.mapper.set(node, data.value)
     }
   }
 
   // perform the layout operation
   setUIDisabled(true)
   try {
-    await graphComponent.morphLayout(hierarchicLayout, '1s', hierarchicLayoutData)
+    // Ensure that the LayoutExecutor class is not removed by build optimizers
+    // It is needed for the 'applyLayoutAnimated' method in this demo.
+    LayoutExecutor.ensure()
+
+    await graphComponent.applyLayoutAnimated(hierarchicalLayout, '1s', hierarchicalLayoutData)
   } finally {
     setUIDisabled(false)
   }
@@ -129,22 +121,6 @@ function setUIDisabled(disabled: boolean): void {
 }
 
 /**
- * Calculates the weight of an edge by translating its (first) label into an int.
- * It will return 1 if the label is not a correctly formatted double.
- */
-function getEdgeWeight(edge: IEdge): number {
-  // if edge has at least one label...
-  if (edge.labels.size > 0) {
-    // ..try to return it's value
-    const weight = Number.parseInt(edge.labels.get(0).text)
-    if (!Number.isNaN(weight)) {
-      return weight
-    }
-  }
-  return 1
-}
-
-/**
  * Initializes the input mode for interaction.
  * @yjs:keep = constraints
  */
@@ -154,41 +130,41 @@ function initializeInputMode(graphComponent: GraphComponent): void {
     labelEditableItems: GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL,
     showHandleItems: GraphItemTypes.ALL ^ GraphItemTypes.NODE
   })
-  inputMode.addValidateLabelTextListener((_, evt) => {
-    evt.newText = evt.newText.trim()
-    if (evt.newText.length === 0) {
-      return
-    }
-    const result = Number.parseFloat(evt.newText)
-    if (!Number.isNaN(result)) {
-      // only allow numbers between 0 and 100
-      if (result > 100 && result <= 0) {
-        evt.cancel = true
+  inputMode.editLabelInputMode.addEventListener('validate-label-text', (evt) => {
+    function validateText(newText: string): string | null {
+      if (evt.newText.length === 0) {
+        return null
       }
+      const result = Number.parseFloat(evt.newText)
+      if (!Number.isNaN(result)) {
+        // only allow numbers between 0 and 100
+        return result > 100 && result <= 0 ? null : newText
+      }
+      return null
     }
+
+    evt.validatedText = validateText(evt.newText.trim())
   })
 
   // listener for the buttons on the nodes
-  inputMode.addItemClickedListener((_, evt) => {
+  inputMode.addEventListener('item-clicked', (evt) => {
     if (evt.item instanceof INode) {
       const node = evt.item
       const location = evt.location
       const { x, y, width, height } = node.layout
-      const constraints = node.tag
-      if (constraints instanceof LayerConstraintsData) {
-        if (constraints.constraints) {
-          if (location.y > y + height * 0.5) {
-            if (location.x < x + width * 0.3) {
-              constraints.value = Math.max(0, constraints.value - 1)
-            } else if (location.x > x + width * 0.7) {
-              constraints.value = Math.min(7, constraints.value + 1)
-            } else {
-              constraints.constraints = !constraints.constraints
-            }
+      const data = node.tag as LayerConstraintsData
+      if (data.constraints) {
+        if (location.y > y + height * 0.5) {
+          if (location.x < x + width * 0.3) {
+            node.tag = { ...data, value: Math.max(0, data.value - 1) }
+          } else if (location.x > x + width * 0.7) {
+            node.tag = { ...data, value: Math.min(7, data.value + 1) }
+          } else {
+            node.tag = { ...data, constraints: !data.constraints }
           }
-        } else {
-          constraints.constraints = !constraints.constraints
         }
+      } else {
+        node.tag = { ...data, constraints: !data.constraints }
       }
     }
   })
@@ -202,25 +178,23 @@ function initializeGraph(graph: IGraph): void {
   // minimum size for nodes
   const size = new Size(60, 50)
 
-  const defaultStyle = new StringTemplateNodeStyle(constraintNodeStyle)
-  defaultStyle.minimumSize = size
   // set the style as the default for all new nodes
-  graph.nodeDefaults.style = defaultStyle
-
+  graph.nodeDefaults.style = constraintNodeStyle
   graph.nodeDefaults.size = size
 
   // create a simple label style
-  const labelStyle = new DefaultLabelStyle({
+  const labelStyle = new LabelStyle({
     font: 'Arial',
     backgroundFill: 'white',
     autoFlip: true,
-    insets: [3, 5, 3, 5]
+    padding: [3, 5, 3, 5]
   })
 
   // set the style as the default for all new labels
   graph.nodeDefaults.labels.style = labelStyle
   graph.edgeDefaults.labels.style = labelStyle
-  graph.edgeDefaults.labels.layoutParameter = new EdgeSegmentLabelModel().createDefaultParameter()
+  graph.edgeDefaults.labels.layoutParameter =
+    new EdgeSegmentLabelModel().createParameterFromCenter()
 }
 
 /**
@@ -253,10 +227,10 @@ function initializeUI(graphComponent: GraphComponent): void {
   })
   document
     .querySelector<HTMLButtonElement>('#enable-all-constraints')!
-    .addEventListener('click', () => setConstraintsEnabled(graph, true))
+    .addEventListener('click', () => setConstraintsEnabled(graphComponent, true))
   document
     .querySelector<HTMLButtonElement>('#disable-all-constraints')!
-    .addEventListener('click', () => setConstraintsEnabled(graph, false))
+    .addEventListener('click', () => setConstraintsEnabled(graphComponent, false))
   document
     .querySelector<HTMLButtonElement>('#layout')!
     .addEventListener('click', async () => await runLayout(graphComponent))
@@ -266,15 +240,18 @@ function initializeUI(graphComponent: GraphComponent): void {
  * Callback that actually creates the node and its business object.
  */
 function createNodeCallback(
-  context: IInputModeContext,
+  _context: IInputModeContext,
   graph: IGraph,
   location: Point,
-  parent: INode | null
+  _parent: INode | null
 ): INode {
   const bounds = Rect.fromCenter(location, graph.nodeDefaults.size)
   return graph.createNode({
     layout: bounds,
-    tag: new LayerConstraintsData(Math.round(Math.random() * 7), Math.random() < 0.9)
+    tag: {
+      value: Math.round(Math.random() * 7),
+      constraints: Math.random() < 0.9
+    }
   })
 }
 
@@ -282,158 +259,15 @@ function createNodeCallback(
  * Enables or disables all constraints for the graph's nodes.
  * @yjs:keep = constraints
  */
-function setConstraintsEnabled(graph: IGraph, enabled: boolean): void {
+function setConstraintsEnabled(graphComponent: GraphComponent, enabled: boolean): void {
+  const graph = graphComponent.graph
   for (const node of graph.nodes) {
-    const data = node.tag
+    const data = node.tag as LayerConstraintsData
     if (data) {
-      data.constraints = enabled
+      node.tag = { ...data, constraints: enabled }
     }
   }
-}
-
-/**
- * Initializes the converters for the constraint node styles.
- */
-function initializeConverters(): void {
-  const backgroundconverter = (value: any): string => {
-    if (Number.isInteger(value)) {
-      switch (value) {
-        case 0:
-          return 'yellowgreen'
-        case 7:
-          return 'indianred'
-        default: {
-          return `rgb(${Math.round((value * 255) / 7)}, ${Math.round((value * 255) / 7)}, 255)`
-        }
-      }
-    }
-    return '#FFF'
-  }
-
-  const textcolorconverter = (value: any): string => {
-    if (Number.isInteger(value)) {
-      if (value === 0 || value > 3) {
-        return 'black'
-      }
-    }
-    return 'white'
-  }
-
-  const constraintconverter = (value: any): string => {
-    switch (value) {
-      case 0:
-        return 'First'
-      case 7:
-        return 'Last'
-      default:
-        return value.toString()
-    }
-  }
-
-  const constraintsvisibilityconverter = (constraints: boolean): string =>
-    constraints ? 'visible' : 'hidden'
-  const noconstraintsvisibilityconverter = (constraints: boolean): string =>
-    constraints ? 'hidden' : 'visible'
-
-  // create an object to store the converter functions
-  TemplateNodeStyle.CONVERTERS.constraintsdemos = {
-    backgroundconverter,
-    textcolorconverter,
-    constraintconverter,
-    constraintsvisibilityconverter,
-    noconstraintsvisibilityconverter
-  }
-}
-
-// property changed support - needed for data-binding to the template style
-const VALUE_CHANGED_EVENT_ARGS = new PropertyChangedEventArgs('value')
-const CONSTRAINTS_CHANGED_EVENT_ARGS = new PropertyChangedEventArgs('constraints')
-
-/**
- * A business object that represents the weight (through property "Value") of the node and whether or not its weight
- * should be taken into account as a layer constraint.
- * @yjs:keep = constraints
- */
-class LayerConstraintsData extends BaseClass(IPropertyObservable) {
-  private _value: number
-  private _constraints: boolean
-  private readonly propertyChangedListeners: ((_: this, evt: PropertyChangedEventArgs) => void)[] =
-    []
-
-  /**
-   * Creates a new instance of LayerConstraintsData.
-   */
-  constructor(value: number, constraints: boolean) {
-    super()
-    this._value = value
-    this._constraints = constraints
-  }
-
-  /**
-   * The weight of the object. An object with a lower number will be layered in a higher layer.
-   * The number 0 means the node should be the in the first, 7 means it should be the last layer.
-   */
-  get value(): number {
-    return this._value
-  }
-
-  /**
-   * The weight of the object. An object with a lower number will be layered in a higher layer.
-   * The number 0 means the node should be the in the first, 7 means it should be the last layer.
-   */
-  set value(value: number) {
-    const oldVal = this._value
-    this._value = value
-    if (oldVal !== value && this.propertyChanged) {
-      this.propertyChanged(this, VALUE_CHANGED_EVENT_ARGS)
-    }
-  }
-
-  /**
-   * Describes whether or not the constraint is active. If `true`, the constraint will be taken into
-   * account by the layout algorithm.
-   */
-  get constraints(): boolean {
-    return this._constraints
-  }
-
-  /**
-   * Describes whether or not the constraint is active. If `true`, the constraint will be taken into
-   * account by the layout algorithm.
-   */
-  set constraints(value: boolean) {
-    const oldConstraints = this._constraints
-    this._constraints = value
-    if (oldConstraints !== value && this.propertyChanged) {
-      this.propertyChanged(this, CONSTRAINTS_CHANGED_EVENT_ARGS)
-    }
-  }
-
-  /**
-   * Adds a listener for property changes
-   */
-  addPropertyChangedListener(listener: (_: this, evt: PropertyChangedEventArgs) => void): void {
-    this.propertyChangedListeners.push(listener)
-  }
-
-  /**
-   * Removes a listener for property changes
-   */
-  removePropertyChangedListener(listener: (_: this, evt: PropertyChangedEventArgs) => void): void {
-    const index = this.propertyChangedListeners.indexOf(listener)
-    if (index >= 0) {
-      this.propertyChangedListeners.splice(index, 1)
-    }
-  }
-
-  /**
-   * Notifies all registered listeners when a property changed.
-   */
-  propertyChanged(propertyChange: this, evt: PropertyChangedEventArgs): void {
-    for (const listener of this.propertyChangedListeners) {
-      listener(propertyChange, evt)
-    }
-  }
+  graphComponent.updateVisual()
 }
 
 run().then(finishLoading)

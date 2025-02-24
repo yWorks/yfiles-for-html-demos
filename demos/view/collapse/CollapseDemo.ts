@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,35 +27,32 @@
  **
  ***************************************************************************/
 import {
-  BalloonLayout,
   CompositeLayoutData,
-  DefaultGraph,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   FilteredGraphWrapper,
-  FixNodeLayoutStage,
+  Graph,
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   ILayoutAlgorithm,
   INode,
+  LayoutAnchoringStage,
   LayoutExecutor,
   License,
-  MultiStageLayout,
   OrganicLayout,
   PlaceNodesAtBarycenterStage,
+  RadialTreeLayout,
   Size,
-  StringTemplateNodeStyle,
-  TemplateNodeStyle,
   TreeLayout
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import CollapseAndExpandNodes from './CollapseAndExpandNodes'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { createDemoEdgeStyle } from 'demo-resources/demo-styles'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
-import { innerNodeStyleTemplate, leafNodeStyleTemplate } from './style-templates'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initializeStyles } from './style-templates'
 
 /**
  * Utilities for collapsing and expanding nodes.
@@ -85,7 +82,7 @@ async function run(): Promise<void> {
   configureUserInteraction()
 
   graphComponent.graph = createGraph()
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   initializeUI()
 
@@ -99,26 +96,15 @@ async function run(): Promise<void> {
  */
 function createGraph(): FilteredGraphWrapper {
   // create the graph instance that will hold the complete graph
-  const completeGraph = new DefaultGraph()
+  const completeGraph = new Graph()
 
-  // create a new style that uses the specified svg snippet as a template for the node
-  const leafNodeStyle = new StringTemplateNodeStyle(leafNodeStyleTemplate)
+  const { templateInnerNodeStyle, templateLeafNodeStyle } = initializeStyles(graphComponent)
 
-  // create a new style that uses the specified svg snippet as a template for the node
-  const style = new StringTemplateNodeStyle(innerNodeStyleTemplate)
-  style.styleTag = { collapsed: true }
-  completeGraph.nodeDefaults.style = style
+  // create a new style for inner nodes
+  completeGraph.nodeDefaults.style = templateInnerNodeStyle
   completeGraph.nodeDefaults.size = new Size(60, 30)
   completeGraph.nodeDefaults.shareStyleInstance = false
-  completeGraph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
-
-  // set the converters for the collapsible node styles
-  TemplateNodeStyle.CONVERTERS.collapseDemo = {
-    // converter function for node background
-    backgroundConverter: (data: any) => (data && data.collapsed ? '#f26419' : '#01baff'),
-    // converter function for node icon
-    iconConverter: (data: any) => (data && data.collapsed ? '#expand_icon' : '#collapse_icon')
-  }
+  completeGraph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.BOTTOM
 
   // set a default edge style
   completeGraph.edgeDefaults.style = createDemoEdgeStyle()
@@ -127,13 +113,13 @@ function createGraph(): FilteredGraphWrapper {
 
   for (const node of completeGraph.nodes) {
     // initially, 3 levels are expanded and thus, 4 levels are visible
-    ;(node.style as TemplateNodeStyle).styleTag = { collapsed: node.tag.level > 2 }
+    node.tag = { ...node.tag, collapsed: node.tag.level > 2 }
     collapseAndExpandNodes.setCollapsed(node, node.tag.level > 2)
     collapseAndExpandNodes.setNodeVisibility(node, node.tag.level < 4)
 
     // set a different style to leaf nodes
     if (completeGraph.outDegree(node) === 0) {
-      completeGraph.setStyle(node, leafNodeStyle)
+      completeGraph.setStyle(node, templateLeafNodeStyle)
     }
   }
 
@@ -158,7 +144,7 @@ function configureUserInteraction(): void {
   })
 
   // add an event listener that expands or collapses the clicked node
-  graphViewerInputMode.addItemClickedListener(async (_, evt) => {
+  graphViewerInputMode.addEventListener('item-clicked', async (evt) => {
     if (!(evt.item instanceof INode)) {
       return
     }
@@ -168,18 +154,18 @@ function configureUserInteraction(): void {
     if (canExpand) {
       collapseAndExpandNodes.expand(node)
       filteredGraph.nodePredicateChanged()
-      // Stores the collapsed state of the node in the style tag in order to be able to bind to it
+      // Stores the collapsed state of the node in the tag in order to be able to bind to it
       // using a template binding.
-      ;(node.style as TemplateNodeStyle).styleTag = { collapsed: false }
+      node.tag = { ...node.tag, collapsed: false }
 
       await runLayout(node, true)
     } else {
       collapseAndExpandNodes.collapse(node)
       await runLayout(node, false)
       filteredGraph.nodePredicateChanged()
-      // Stores the collapsed state of the node in the style tag in order to be able to bind to it
+      // Stores the collapsed state of the node in the tag in order to be able to bind to it
       // using a template binding.
-      ;(node.style as TemplateNodeStyle).styleTag = { collapsed: true }
+      node.tag = { ...node.tag, collapsed: true }
     }
   })
 
@@ -190,26 +176,25 @@ function configureUserInteraction(): void {
 }
 
 /**
- * Creates a new balloon layout algorithm instance.
+ * Creates a new radial tree layout algorithm instance.
  */
-function newBalloonLayout(): BalloonLayout {
-  const balloonLayout = new BalloonLayout()
-  balloonLayout.fromSketchMode = true
-  balloonLayout.compactnessFactor = 1.0
-  balloonLayout.allowOverlaps = true
-  return balloonLayout
+function newRadialTreeLayout(): RadialTreeLayout {
+  return new RadialTreeLayout({
+    childOrderingPolicy: 'from-sketch',
+    allowOverlaps: true
+  })
 }
 
 /**
  * Creates a new organic layout algorithm instance.
  */
 function newOrganicLayout(): OrganicLayout {
-  const organicLayout = new OrganicLayout()
-  organicLayout.minimumNodeDistance = 100
-  organicLayout.preferredEdgeLength = 80
-  organicLayout.deterministic = true
-  organicLayout.nodeOverlapsAllowed = true
-  return organicLayout
+  return new OrganicLayout({
+    defaultMinimumNodeDistance: 100,
+    defaultPreferredEdgeLength: 80,
+    deterministic: true,
+    allowNodeOverlaps: true
+  })
 }
 
 /**
@@ -220,10 +205,10 @@ function newTreeLayout(): TreeLayout {
 }
 
 /**
- * Creates a new hierarchic layout algorithm instance.
+ * Creates a new hierarchical layout algorithm instance.
  */
-function newHierarchicLayout(): HierarchicLayout {
-  return new HierarchicLayout()
+function newHierarchicalLayout(): HierarchicalLayout {
+  return new HierarchicalLayout()
 }
 
 /**
@@ -231,30 +216,27 @@ function newHierarchicLayout(): HierarchicLayout {
  * @param algorithmName the name of the layout algorithm that will be created.
  */
 function newLayoutAlgorithm(algorithmName: string): ILayoutAlgorithm {
-  let algorithm: MultiStageLayout
+  let algorithm: TreeLayout | RadialTreeLayout | OrganicLayout | HierarchicalLayout
   switch (algorithmName) {
+    default:
     case 'tree':
       algorithm = newTreeLayout()
       break
-    case 'balloon':
-      algorithm = newBalloonLayout()
+    case 'radial-tree':
+      algorithm = newRadialTreeLayout()
       break
     case 'organic':
       algorithm = newOrganicLayout()
       break
-    case 'hierarchic':
-      algorithm = newHierarchicLayout()
-      break
-    default:
-      algorithm = newTreeLayout()
+    case 'hierarchical':
+      algorithm = newHierarchicalLayout()
       break
   }
 
   // For a nice layout animation, we use PlaceNodesAtBarycenterStage to make sure new nodes
-  // appear at the position of their parent and FixNodeLayoutStage to keep the clicked node
-  // at its current location.
-  algorithm.prependStage(new PlaceNodesAtBarycenterStage())
-  algorithm.prependStage(new FixNodeLayoutStage())
+  // appear at the position of their parent
+  algorithm.layoutStages.prepend(new PlaceNodesAtBarycenterStage())
+  algorithm.layoutStages.prepend(new LayoutAnchoringStage())
   return algorithm
 }
 
@@ -281,7 +263,7 @@ async function runLayout(toggledNode: INode | null, expand: boolean): Promise<vo
     graphComponent,
     layout: currentLayout,
     layoutData: currentLayoutData,
-    duration: '0.3s',
+    animationDuration: '0.3s',
     animateViewport: toggledNode == null
   })
   try {
@@ -297,7 +279,7 @@ async function runLayout(toggledNode: INode | null, expand: boolean): Promise<vo
  */
 function buildTree(graph: IGraph, levelCount: number): void {
   const root = graph.createNode({
-    tag: { level: 0 }
+    tag: { level: 0, collapsed: true }
   })
   addChildren(graph, root, 3, levelCount)
 }
@@ -312,7 +294,7 @@ function addChildren(graph: IGraph, root: INode, childrenCount: number, levelCou
   }
   for (let i = 0; i < childrenCount; ++i) {
     const child = graph.createNode({
-      tag: { level: level }
+      tag: { level: level, collapsed: true }
     })
     graph.createEdge(root, child)
     addChildren(graph, child, Math.floor(4 * Math.random() + 1), levelCount)
@@ -326,7 +308,7 @@ function initializeUI(): void {
   addNavigationButtons(
     document.querySelector<HTMLSelectElement>('#layout-combo-box')!
   ).addEventListener('change', () => {
-    runLayout(null, false)
+    void runLayout(null, false)
   })
 }
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,20 +28,17 @@
  ***************************************************************************/
 const cssSelected = 'selected'
 const cssConnected = `connected`
-
 /**
  * Adds or removes CSS classes on the given node and its connected items to highlight these elements.
- * @param {!GraphComponent} undefined
  */
 function highlightConnectedItems({ graph, selection }) {
   for (const node of graph.nodes) {
     if (supportsCssClass(node.style)) {
       const baseCssClass = getBaseCssClass(node.style.cssClass)
-
-      if (selection.isSelected(node)) {
+      if (selection.includes(node)) {
         // selected nodes
         node.style.cssClass = `${baseCssClass} ${cssSelected}`
-      } else if (graph.neighbors(node).some((n) => selection.isSelected(n))) {
+      } else if (graph.neighbors(node).some((n) => selection.includes(n))) {
         // nodes adjacent to a selected node
         node.style.cssClass = `${baseCssClass} ${cssConnected}`
       } else {
@@ -53,10 +50,8 @@ function highlightConnectedItems({ graph, selection }) {
   for (const edge of graph.edges) {
     if (supportsCssClass(edge.style)) {
       const baseCssClass = getBaseCssClass(edge.style.cssClass)
-
       const hasSelectedNode =
-        selection.isSelected(edge.sourceNode) || selection.isSelected(edge.targetNode)
-
+        selection.includes(edge.sourceNode) || selection.includes(edge.targetNode)
       edge.style.cssClass = hasSelectedNode ? `${baseCssClass} ${cssSelected}` : baseCssClass
     }
   }
@@ -70,41 +65,26 @@ function highlightConnectedItems({ graph, selection }) {
   }
   graph.invalidateDisplays()
 }
-
 /**
  * Adds a selection changed listener to add/remove CSS classes on the currently selected items.
- * @param {!GraphComponent} graphComponent
- * @param {!GraphInputMode} inputMode
  */
 export function configureSelectionHighlight(graphComponent, inputMode) {
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
   // Schedule an update to the style's CSS classes, as those reflect the selection state
-  inputMode.addMultiSelectionFinishedListener(() => {
+  inputMode.addEventListener('multi-selection-finished', () => {
     highlightConnectedItems(graphComponent)
-
     // propagate the selection state to the GraphComponent to easily fade out any non-selected items
     if (graphComponent.selection.size > 0) {
-      graphComponent.div.classList.add('focus-selection')
+      graphComponent.htmlElement.classList.add('focus-selection')
     } else {
-      graphComponent.div.classList.remove('focus-selection')
+      graphComponent.htmlElement.classList.remove('focus-selection')
     }
   })
 }
-
-/**
- * @template {(IEdgeStyle|INodeStyle|ILabelStyle)} T
- * @param {!T} style
- * @returns {*}
- */
 function supportsCssClass(style) {
   return 'cssClass' in style && typeof style.cssClass === 'string'
 }
-
-/**
- * @param {!string} cssClass
- * @returns {!string}
- */
 function getBaseCssClass(cssClass) {
   return cssClass.replace(` ${cssConnected}`, '').replace(` ${cssSelected}`, '')
 }

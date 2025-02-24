@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +31,8 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Layer Constraints Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
@@ -54,8 +54,6 @@
         vertical-align: middle;
       }
     </style>
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -102,7 +100,7 @@
 
       <span class="demo-separator"></span>
 
-      <button id="layout" title="Run Hierarchic Layout" class="demo-icon-yIconLayout labeled">
+      <button id="layout" title="Run Hierarchical Layout" class="demo-icon-yIconLayout labeled">
         Layout
       </button>
     </div>
@@ -122,7 +120,7 @@
         <h1>Layer Constraints Demo</h1>
 
         Shows how to use layer constraints to restrict the node layering in
-        <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> .
+        <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a>.
         <p>The layer is determined by the model data.</p>
         <p>
           A <em>weight</em> property determines the position of the node. Higher weights will force
@@ -149,7 +147,7 @@
           <li>
             Clicking on <img src="../../resources/icons/delete2-16.svg" /> in the toolbar removes
             all constraints from the nodes. In this case, integral values between 1 and 100 can be
-            assigned as labels to the edges using the <em>F2</em> key. These values will be
+            assigned as labels to the edges using the <kbd>F2</kbd> key. These values will be
             interpreted as edge weights during the assignment of the layers. Higher values indicate
             higher importance. The algorithm tries to minimize the lengths of important edges. Thus,
             assigning higher edge label values will lead to the adjacent nodes coming closer

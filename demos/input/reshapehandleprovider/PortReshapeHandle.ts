@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,15 +31,15 @@ import {
   ClickEventArgs,
   Cursor,
   HandlePositions,
-  HandleTypes,
+  HandleType,
   IHandle,
   IInputModeContext,
   IPoint,
   IPort,
-  NodeStylePortStyleAdapter,
   Point,
+  ShapePortStyle,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 export class PortReshapeHandle extends BaseClass(IHandle) {
   /**
@@ -57,14 +57,14 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
    * Creates a new instance for port and its adapter.
    * @param context The context of the reshape gesture.
    * @param port The port whose visualization shall be resized.
-   * @param adapter The adapter whose render size shall be changed.
+   * @param portStyle The adapter whose render size shall be changed.
    * @param position The position of the handle.
    * @param minimumSize The minimum render size for the given port.
    */
   public constructor(
     private readonly context: IInputModeContext,
     private readonly port: IPort,
-    private readonly adapter: NodeStylePortStyleAdapter,
+    private readonly portStyle: ShapePortStyle,
     private readonly position: HandlePositions,
     private readonly minimumSize: Size
   ) {
@@ -81,7 +81,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
 
   /**
    * Calculates the location of the handle considering the {@link IPort.location port location},
-   * {@link NodeStylePortStyleAdapter.renderSize render size} and {@link margins}.
+   * {@link ShapePortStyle.renderSize render size} and {@link margins}.
    */
   private calculateLocation(): Point {
     const portLocation = this.port.location
@@ -89,44 +89,44 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     let handleY = portLocation.y
     const marginsInViewCoordinates = this.margins / this.context.zoom
     if (
-      this.position === HandlePositions.NORTH_WEST ||
-      this.position === HandlePositions.WEST ||
-      this.position === HandlePositions.SOUTH_WEST
+      this.position === HandlePositions.TOP_LEFT ||
+      this.position === HandlePositions.LEFT ||
+      this.position === HandlePositions.BOTTOM_LEFT
     ) {
-      handleX -= this.adapter.renderSize.width / 2 + marginsInViewCoordinates
+      handleX -= this.portStyle.renderSize.width / 2 + marginsInViewCoordinates
     } else if (
-      this.position === HandlePositions.NORTH_EAST ||
-      this.position === HandlePositions.EAST ||
-      this.position === HandlePositions.SOUTH_EAST
+      this.position === HandlePositions.TOP_RIGHT ||
+      this.position === HandlePositions.RIGHT ||
+      this.position === HandlePositions.BOTTOM_RIGHT
     ) {
-      handleX += this.adapter.renderSize.width / 2 + marginsInViewCoordinates
+      handleX += this.portStyle.renderSize.width / 2 + marginsInViewCoordinates
     }
     if (
-      this.position === HandlePositions.NORTH_WEST ||
-      this.position === HandlePositions.NORTH ||
-      this.position === HandlePositions.NORTH_EAST
+      this.position === HandlePositions.TOP_LEFT ||
+      this.position === HandlePositions.TOP ||
+      this.position === HandlePositions.TOP_RIGHT
     ) {
-      handleY -= this.adapter.renderSize.height / 2 + marginsInViewCoordinates
+      handleY -= this.portStyle.renderSize.height / 2 + marginsInViewCoordinates
     } else if (
-      this.position === HandlePositions.SOUTH_WEST ||
-      this.position === HandlePositions.SOUTH ||
-      this.position === HandlePositions.SOUTH_EAST
+      this.position === HandlePositions.BOTTOM_LEFT ||
+      this.position === HandlePositions.BOTTOM ||
+      this.position === HandlePositions.BOTTOM_RIGHT
     ) {
-      handleY += this.adapter.renderSize.height / 2 + marginsInViewCoordinates
+      handleY += this.portStyle.renderSize.height / 2 + marginsInViewCoordinates
     }
     return new Point(handleX, handleY)
   }
 
   /**
-   * Stores the initial {@link NodeStylePortStyleAdapter.renderSize render size}.
+   * Stores the initial {@link ShapePortStyle.renderSize render size}.
    * @param context The context of the reshape gesture.
    */
   public initializeDrag(context: IInputModeContext): void {
-    this.initialRenderSize = this.adapter.renderSize
+    this.initialRenderSize = this.portStyle.renderSize
   }
 
   /**
-   * Calculates and applies the new {@link NodeStylePortStyleAdapter.renderSize render size}.
+   * Calculates and applies the new {@link ShapePortStyle.renderSize render size}.
    * @param context The context of the reshape gesture.
    * @param originalLocation The value of the {@link location} property at the time of {@link initializeDrag}.
    * @param newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
@@ -135,7 +135,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     // calculate the size delta implied by the originalLocation and newLocation
     const delta = this.calculateDelta(originalLocation, newLocation)
     // calculate and apply the new render size
-    this.adapter.renderSize = this.calculateNewSize(delta)
+    this.portStyle.renderSize = this.calculateNewSize(delta)
   }
 
   /**
@@ -149,21 +149,21 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     const mouseDelta = newLocation.subtract(originalLocation)
     // depending on the handle position this mouse delta shall increase or decrease the render size
     switch (this.position) {
-      case HandlePositions.NORTH_WEST:
+      case HandlePositions.TOP_LEFT:
         return new Size(-2 * mouseDelta.x, -2 * mouseDelta.y)
-      case HandlePositions.NORTH:
+      case HandlePositions.TOP:
         return new Size(0, -2 * mouseDelta.y)
-      case HandlePositions.NORTH_EAST:
+      case HandlePositions.TOP_RIGHT:
         return new Size(2 * mouseDelta.x, -2 * mouseDelta.y)
-      case HandlePositions.WEST:
+      case HandlePositions.LEFT:
         return new Size(-2 * mouseDelta.x, 0)
-      case HandlePositions.EAST:
+      case HandlePositions.RIGHT:
         return new Size(2 * mouseDelta.x, 0)
-      case HandlePositions.SOUTH_WEST:
+      case HandlePositions.BOTTOM_LEFT:
         return new Size(-2 * mouseDelta.x, 2 * mouseDelta.y)
-      case HandlePositions.SOUTH:
+      case HandlePositions.BOTTOM:
         return new Size(0, 2 * mouseDelta.y)
-      case HandlePositions.SOUTH_EAST:
+      case HandlePositions.BOTTOM_RIGHT:
         return new Size(2 * mouseDelta.x, 2 * mouseDelta.y)
     }
     return Size.EMPTY
@@ -184,16 +184,16 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
   }
 
   /**
-   * Resets the {@link NodeStylePortStyleAdapter.renderSize render size} to its initial value.
+   * Resets the {@link ShapePortStyle.renderSize render size} to its initial value.
    * @param context The context of the reshape gesture.
    * @param originalLocation The value of the {@link location} property at the time of {@link initializeDrag}.
    */
   public cancelDrag(context: IInputModeContext, originalLocation: Point): void {
-    this.adapter.renderSize = this.initialRenderSize
+    this.portStyle.renderSize = this.initialRenderSize
   }
 
   /**
-   * Calculates and applies the final {@link NodeStylePortStyleAdapter.renderSize render size}.
+   * Calculates and applies the final {@link ShapePortStyle.renderSize render size}.
    * @param context The context of the reshape gesture.
    * @param originalLocation The value of the {@link location} property at the time of {@link initializeDrag}.
    * @param newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
@@ -204,14 +204,21 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     newLocation: Point
   ): void {
     const delta = this.calculateDelta(originalLocation, newLocation)
-    this.adapter.renderSize = this.calculateNewSize(delta)
+    this.portStyle.renderSize = this.calculateNewSize(delta)
   }
 
   /**
-   * Returns {@link HandleTypes.RESIZE}.
+   * Returns {@link HandleType.RESIZE}.
    */
-  public get type(): HandleTypes {
-    return HandleTypes.RESIZE
+  public get type(): HandleType {
+    return HandleType.RESIZE
+  }
+
+  /**
+   *  Gets an optional tag object associated with the handle.
+   */
+  public get tag(): any {
+    return null
   }
 
   /**
@@ -219,17 +226,17 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
    */
   public get cursor(): Cursor {
     switch (this.position) {
-      case HandlePositions.SOUTH:
-      case HandlePositions.NORTH:
+      case HandlePositions.BOTTOM:
+      case HandlePositions.TOP:
         return Cursor.NS_RESIZE
-      case HandlePositions.EAST:
-      case HandlePositions.WEST:
+      case HandlePositions.RIGHT:
+      case HandlePositions.LEFT:
         return Cursor.EW_RESIZE
-      case HandlePositions.NORTH_WEST:
-      case HandlePositions.SOUTH_EAST:
+      case HandlePositions.TOP_LEFT:
+      case HandlePositions.BOTTOM_RIGHT:
         return Cursor.NWSE_RESIZE
-      case HandlePositions.NORTH_EAST:
-      case HandlePositions.SOUTH_WEST:
+      case HandlePositions.TOP_RIGHT:
+      case HandlePositions.BOTTOM_LEFT:
         return Cursor.NESW_RESIZE
     }
     return Cursor.NONE

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yx="http://www.yworks.com/xml/yfiles-common/4.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/3.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<key id="d0" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
 		<default>true</default>
 	</key>
@@ -55,16 +55,16 @@
 	<key id="d13" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
 	<data key="d13">
 		<y:SharedData>
-			<y:InteriorLabelModelParameter x:Key="1" Position="Center">
-				<y:InteriorLabelModelParameter.Model>
-					<y:InteriorLabelModel/>
-				</y:InteriorLabelModelParameter.Model>
-			</y:InteriorLabelModelParameter>
-			<yjs:DefaultLabelStyle x:Key="2" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" textFill="BLACK">
-				<yjs:DefaultLabelStyle.font>
+			<yx:InteriorNodeLabelModelParameter x:Key="1" Position="Center">
+				<yx:InteriorNodeLabelModelParameter.Model>
+					<yx:InteriorNodeLabelModel/>
+				</yx:InteriorNodeLabelModelParameter.Model>
+			</yx:InteriorNodeLabelModelParameter>
+			<yjs:LabelStyle x:Key="2" verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" textFill="BLACK">
+				<yjs:LabelStyle.font>
 					<yjs:Font fontSize="12"/>
-				</yjs:DefaultLabelStyle.font>
-			</yjs:DefaultLabelStyle>
+				</yjs:LabelStyle.font>
+			</yjs:LabelStyle>
 			<bpmn:BpmnEdgeStyle x:Key="3"/>
 			<bpmn:BpmnEdgeStyle x:Key="4" type="DEFAULT_FLOW"/>
 		</y:SharedData>
@@ -271,11 +271,11 @@ Result]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Result not
 plausible]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="East">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel Insets="5"/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Right">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel Margins="5"/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -299,11 +299,11 @@ plausible]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Equipment
 out of order]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:ExteriorLabelModelParameter Position="East">
-										<y:ExteriorLabelModelParameter.Model>
-											<y:ExteriorLabelModel/>
-										</y:ExteriorLabelModelParameter.Model>
-									</y:ExteriorLabelModelParameter>
+									<yx:ExteriorNodeLabelModelParameter Position="Right">
+										<yx:ExteriorNodeLabelModelParameter.Model>
+											<yx:ExteriorNodeLabelModel/>
+										</yx:ExteriorNodeLabelModelParameter.Model>
+									</yx:ExteriorNodeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -372,11 +372,11 @@ out of order]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Repair not
 successful]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:FreeEdgeLabelModelParameter Ratio="0.499999999999999" Distance="-16" Angle="6.123233995736766e-17">
-										<y:FreeEdgeLabelModelParameter.Model>
-											<y:FreeEdgeLabelModel/>
-										</y:FreeEdgeLabelModelParameter.Model>
-									</y:FreeEdgeLabelModelParameter>
+									<yx:FreeEdgeLabelModelParameter Ratio="0.499999999999999" Distance="-16" Angle="6.123233995736766e-17">
+										<yx:FreeEdgeLabelModelParameter.Model>
+											<yx:FreeEdgeLabelModel/>
+										</yx:FreeEdgeLabelModelParameter.Model>
+									</yx:FreeEdgeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -392,11 +392,11 @@ successful]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Result
 plausible]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:FreeEdgeLabelModelParameter Ratio="0.499999999999999" Distance="-16" Angle="6.123233995736766e-17">
-										<y:FreeEdgeLabelModelParameter.Model>
-											<y:FreeEdgeLabelModel/>
-										</y:FreeEdgeLabelModelParameter.Model>
-									</y:FreeEdgeLabelModelParameter>
+									<yx:FreeEdgeLabelModelParameter Ratio="0.499999999999999" Distance="-16" Angle="6.123233995736766e-17">
+										<yx:FreeEdgeLabelModelParameter.Model>
+											<yx:FreeEdgeLabelModel/>
+										</yx:FreeEdgeLabelModelParameter.Model>
+									</yx:FreeEdgeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>
@@ -412,11 +412,11 @@ plausible]]></y:Label.Text>
 								<y:Label.Text><![CDATA[Repair
 successful]]></y:Label.Text>
 								<y:Label.LayoutParameter>
-									<y:FreeEdgeLabelModelParameter Ratio="-0.027692307692307787" Distance="-34.73149756455837" Angle="-3.141592653589793">
-										<y:FreeEdgeLabelModelParameter.Model>
-											<y:FreeEdgeLabelModel/>
-										</y:FreeEdgeLabelModelParameter.Model>
-									</y:FreeEdgeLabelModelParameter>
+									<yx:FreeEdgeLabelModelParameter Ratio="-0.027692307692307787" Distance="-34.73149756455837" Angle="-3.141592653589793">
+										<yx:FreeEdgeLabelModelParameter.Model>
+											<yx:FreeEdgeLabelModel/>
+										</yx:FreeEdgeLabelModelParameter.Model>
+									</yx:FreeEdgeLabelModelParameter>
 								</y:Label.LayoutParameter>
 							</y:Label>
 						</x:List>

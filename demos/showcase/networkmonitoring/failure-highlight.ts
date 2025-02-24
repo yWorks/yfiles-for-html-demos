@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,14 +30,14 @@ import {
   type CanvasComponent,
   HighlightIndicatorManager,
   type INode,
-  WebGL2BeaconNodeIndicatorStyle,
-  WebGL2HighlightIndicatorManager
-} from 'yfiles'
-import { BrowserDetection } from 'demo-utils/BrowserDetection'
+  WebGLBeaconNodeIndicatorStyle,
+  WebGLHighlightIndicatorManager
+} from '@yfiles/yfiles'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 
 const highlightIndicatorManager = BrowserDetection.webGL2
-  ? new WebGL2HighlightIndicatorManager({
-      nodeStyle: new WebGL2BeaconNodeIndicatorStyle({
+  ? new WebGLHighlightIndicatorManager({
+      nodeStyle: new WebGLBeaconNodeIndicatorStyle({
         shape: 'triangle',
         color: '#cc0000',
         pulseCount: 3,
@@ -72,12 +72,12 @@ export function uninstallFailureHighlight(): void {
  * Shows the given node highlighted.
  */
 export function addFailureHighlight(node: INode): void {
-  highlightIndicatorManager.addHighlight(node)
+  highlightIndicatorManager.items.add(node)
 }
 
 /**
  * Stops highlighting the given node.
  */
 export function removeFailureHighlight(node: INode): void {
-  highlightIndicatorManager.removeHighlight(node)
+  highlightIndicatorManager.items.remove(node)
 }

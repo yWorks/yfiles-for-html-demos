@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,23 +28,16 @@
  ***************************************************************************/
 import {
   CanvasComponent,
-  Class,
   EdgeRouter,
   type GraphComponent,
-  HierarchicLayout,
   type IGraph,
   type ILayoutAlgorithm,
   type LayoutData,
-  PartitionGrid,
-  PartitionGridData,
+  LayoutGrid,
   TabularLayout,
   TabularLayoutData,
-  TabularLayoutPolicy
-} from 'yfiles'
-
-// For the considerEdges feature of the tabular layout, the module containing the hierarchic layout
-// is needed. This line prevents it from being removed by tree-shaking tools.
-Class.ensure(HierarchicLayout)
+  TabularLayoutMode
+} from '@yfiles/yfiles'
 
 /**
  * Demonstrates various settings of the {@link TabularLayout} algorithm.
@@ -55,51 +48,50 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
   layout: ILayoutAlgorithm
   layoutData: LayoutData
 } {
-  const policy = getPolicy()
   // initialize the tabular layout algorithm
   // edges are considered to minimize the overall edge length
   const tabularLayout = new TabularLayout({
     considerEdges: true,
-    layoutPolicy: policy
+    layoutMode: getLayoutMode()
   })
 
   // the tabular layout algorithm supports only straight-line edges
   // the edge router algorithm is used as a post-processing to get orthogonal edge paths instead
   const layout = new EdgeRouter({ coreLayout: tabularLayout })
 
-  // calculate a partition grid for a compact arrangement of the graph's nodes
-  const partitionGrid = calculateGrid(policy)
+  // calculate a layout grid for a compact arrangement of the graph's nodes
+  const layoutGrid = calculateGrid(getLayoutMode())
 
   // create the layout data for the tabular layout algorithm
-  // the layout data is necessary to support data-driven features like the partition grid
-  const layoutData = new TabularLayoutData({
-    partitionGridData: new PartitionGridData({ grid: partitionGrid })
-  })
+  // the layout data is necessary to support data-driven features like the layout grid
+  const layoutData = new TabularLayoutData()
+  layoutData.layoutGridData.layoutGridCellDescriptors = () =>
+    layoutGrid.createDynamicCellDescriptor()
 
   return { layout, layoutData }
 }
 
 /**
- * Calculates the size of the partition grid based on whether the aspect ratio of the
+ * Calculates the size of the layout grid based on whether the aspect ratio of the
  * graphComponent's width/height should be preserved.
  */
-function calculateGrid(policy: TabularLayoutPolicy): PartitionGrid {
+function calculateGrid(policy: TabularLayoutMode): LayoutGrid {
   const graphComponent = CanvasComponent.getComponent(
     document.getElementById('graphComponent')
   ) as GraphComponent
 
-  let partitionGrid
-  if (policy === TabularLayoutPolicy.FIXED_SIZE) {
+  let layoutGrid
+  if (policy === TabularLayoutMode.FIXED_SIZE) {
     // get the aspect ratio of the graphComponent's width/height and calculate how many rows/columns are
     // needed to accommodate all nodes of the graph so that this ratio is preserved
     const aspectRatio = graphComponent.innerSize.width / graphComponent.innerSize.height
     const nodeCount = graphComponent.graph.nodes.size
     const rowCount = Math.ceil(Math.sqrt(nodeCount / aspectRatio))
     const columnCount = Math.ceil(nodeCount / rowCount)
-    partitionGrid = new PartitionGrid(rowCount, columnCount)
+    layoutGrid = new LayoutGrid(rowCount, columnCount)
   } else {
-    // if the table's size should be automatically assigned, no partition grid is required
-    partitionGrid = new PartitionGrid(1, 1)
+    // if the table's size should be automatically assigned, no layout grid is required
+    layoutGrid = new LayoutGrid(1, 1)
   }
 
   // calculate the maximum node width and maximum node height
@@ -113,16 +105,16 @@ function calculateGrid(policy: TabularLayoutPolicy): PartitionGrid {
     maxHeight = Math.max(maxHeight, nodeBounds.height)
   }
 
-  partitionGrid.rows.forEach((row) => (row.minimumHeight = maxHeight + 20))
-  partitionGrid.columns.forEach((column) => (column.minimumWidth = maxWidth + 20))
+  layoutGrid.rows.forEach((row) => (row.minimumHeight = maxHeight + 20))
+  layoutGrid.columns.forEach((column) => (column.minimumWidth = maxWidth + 20))
 
-  return partitionGrid
+  return layoutGrid
 }
 
 /**
- * Returns the selected layout policy for the tabular layout algorithm.
+ * Returns the selected layout mode for the tabular layout algorithm.
  */
-function getPolicy(): TabularLayoutPolicy {
+function getLayoutMode(): TabularLayoutMode {
   const aspectRatioButton = document.querySelector<HTMLInputElement>('#use-aspect-ratio')!
-  return aspectRatioButton.checked ? TabularLayoutPolicy.FIXED_SIZE : TabularLayoutPolicy.AUTO_SIZE
+  return aspectRatioButton.checked ? TabularLayoutMode.FIXED_SIZE : TabularLayoutMode.AUTO_SIZE
 }

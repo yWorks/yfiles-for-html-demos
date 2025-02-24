@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,39 +27,40 @@
  **
  ***************************************************************************/
 import {
-  ChainLayoutStyle,
-  ChainSubstructureStyle,
   CircularLayoutStarSubstructureStyle,
-  CircularLayoutStyle,
   ComponentAssignmentStrategy,
-  CycleLayoutStyle,
-  CycleSubstructureStyle,
-  EdgeRouterEdgeRoutingStyle,
-  HierarchicLayoutEdgeRoutingStyle,
-  OperationType,
+  EdgeLabelPlacement,
+  EdgeRouterRoutingStyle,
+  GroupSubstructureStyle,
+  HierarchicalLayoutRoutingStyle,
+  OrganicLayoutChainSubstructureStyle,
   OrganicLayoutClusteringPolicy,
+  OrganicLayoutCycleSubstructureStyle,
   OrganicLayoutGroupSubstructureScope,
+  OrganicLayoutParallelSubstructureStyle,
   OrganicLayoutStarSubstructureStyle,
   OrganicLayoutTreeSubstructureStyle,
-  ParallelSubstructureStyle,
-  PartialLayoutEdgeRoutingStrategy,
+  OrthogonalLayoutChainSubstructureStyle,
+  OrthogonalLayoutCycleSubstructureStyle,
+  OrthogonalLayoutTreeSubstructureStyle,
   PartialLayoutOrientation,
-  RadialLayoutEdgeRoutingStrategy,
-  RadialLayoutLayeringStrategy,
+  PartialLayoutRoutingStyle,
+  RadialLayeringStrategy,
+  RadialLayoutRoutingStyle,
+  RadialNodeLabelPlacement,
   SubgraphPlacement,
-  SubstructureOrientation,
-  TreeLayoutStyle
-} from 'yfiles'
+  SubstructureOrientation
+} from '@yfiles/yfiles'
 import {
-  EdgeLabeling,
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
   LabelPlacementSideOfEdge,
-  NodeLabelingPolicies
+  OperationType
 } from '../LayoutConfiguration'
 import { SubgraphLayouts } from '../PartialLayoutConfig'
-import { BusMembership, PortSides } from '../PolylineEdgeRouterConfig'
-import { TreeNodePlacer } from '../TreeLayoutConfig'
+import { BusMembership, PortSide } from '../PolylineEdgeRouterConfig'
+import { SubtreePlacer } from '../TreeLayoutConfig'
+import { CircularPartitioningPolicy } from '../CircularLayoutConfig'
 
 export type LayoutSample = {
   layout: string
@@ -90,56 +91,56 @@ export function isSeparator(entry: LayoutSample | Separator): entry is Separator
 
 export const LayoutStyles: (LayoutSample | Separator)[] = [
   {
-    layout: 'Hierarchic',
+    layout: 'Hierarchical',
     presets: [
       'default',
-      'hierarchic-with-curves',
-      'hierarchic-with-buses',
-      'hierarchic-incremental',
-      'hierarchic-flowchart',
-      'hierarchic-with-subcomponents'
+      'hierarchical-with-curves',
+      'hierarchical-with-buses',
+      'hierarchical-incremental',
+      'hierarchical-flowchart',
+      'hierarchical-with-subcomponents'
     ],
     samples: [
       {
-        sample: 'hierarchic',
+        sample: 'hierarchical',
         label: 'Default',
         defaultPreset: 'default',
-        invalidPresets: ['hierarchic-with-subcomponents', 'hierarchic-with-buses']
+        invalidPresets: ['hierarchical-with-subcomponents', 'hierarchical-with-buses']
       },
       {
         sample: 'grouping',
         label: 'Grouping',
         defaultPreset: 'default',
-        invalidPresets: ['hierarchic-with-subcomponents', 'hierarchic-with-buses']
+        invalidPresets: ['hierarchical-with-subcomponents', 'hierarchical-with-buses']
       },
       {
-        sample: 'hierarchic-with-buses',
+        sample: 'hierarchical-with-buses',
         label: 'Bus Structures',
-        defaultPreset: 'hierarchic-with-buses',
-        invalidPresets: ['hierarchic-with-subcomponents']
+        defaultPreset: 'hierarchical-with-buses',
+        invalidPresets: ['hierarchical-with-subcomponents']
       },
       {
-        sample: 'hierarchic-with-subcomponents',
+        sample: 'hierarchical-with-subcomponents',
         label: 'Sub-Components',
-        defaultPreset: 'hierarchic-with-subcomponents'
+        defaultPreset: 'hierarchical-with-subcomponents'
       },
       {
         sample: 'registration-flowchart',
         label: 'Registration Flowchart',
-        defaultPreset: 'hierarchic-flowchart',
-        invalidPresets: ['hierarchic-with-buses', 'hierarchic-with-subcomponents']
+        defaultPreset: 'hierarchical-flowchart',
+        invalidPresets: ['hierarchical-with-buses', 'hierarchical-with-subcomponents']
       },
       {
         sample: 'bpmn-order-table',
         label: 'Order Fulfillment Table',
         defaultPreset: 'default',
-        invalidPresets: ['hierarchic-with-buses', 'hierarchic-with-subcomponents']
+        invalidPresets: ['hierarchical-with-buses', 'hierarchical-with-subcomponents']
       },
       {
         sample: 'bpmn-job-posting',
         label: 'BPMN Job Posting',
-        defaultPreset: 'hierarchic-incremental',
-        invalidPresets: ['hierarchic-with-buses', 'hierarchic-with-subcomponents']
+        defaultPreset: 'hierarchical-incremental',
+        invalidPresets: ['hierarchical-with-buses', 'hierarchical-with-subcomponents']
       }
     ]
   },
@@ -239,22 +240,14 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
     ]
   },
   {
-    layout: 'Classic Tree',
-    presets: ['default'],
+    layout: 'Radial Tree',
+    presets: ['default', 'radial-tree-with-rays'],
     samples: [
-      { sample: 'tree', label: 'Default', defaultPreset: 'default' },
-      { sample: 'mindmap', label: 'Mindmap', defaultPreset: 'default' }
-    ]
-  },
-  {
-    layout: 'Balloon',
-    presets: ['default', 'balloon-with-rays'],
-    samples: [
-      { sample: 'balloon', label: 'Default', defaultPreset: 'default' },
+      { sample: 'radial-tree', label: 'Default', defaultPreset: 'default' },
       {
-        sample: 'balloon-with-rays',
+        sample: 'radial-tree-with-rays',
         label: 'Ray-like label placement',
-        defaultPreset: 'balloon-with-rays'
+        defaultPreset: 'radial-tree-with-rays'
       },
       { sample: 'mindmap', label: 'Mindmap', defaultPreset: 'default' }
     ]
@@ -351,29 +344,7 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
     ]
   },
   {
-    layout: 'Bus Router',
-    presets: ['default'],
-    samples: [{ sample: 'network-plan', label: 'Network Plan', defaultPreset: 'default' }]
-  },
-  {
-    layout: 'Channel Router',
-    presets: ['default', 'channel-router-reduce-bends'],
-    samples: [
-      { sample: 'edge-router', label: 'Default', defaultPreset: 'default' },
-      {
-        sample: 'network-plan',
-        label: 'Network Plan',
-        defaultPreset: 'channel-router-reduce-bends'
-      },
-      {
-        sample: 'activity-diagram',
-        label: 'Activity Diagram',
-        defaultPreset: 'default'
-      }
-    ]
-  },
-  {
-    layout: 'Organic Router',
+    layout: 'Organic Edge Router',
     presets: ['default'],
     samples: [
       { sample: 'organic-star', label: 'Organic Star', defaultPreset: 'default' },
@@ -381,7 +352,7 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
     ]
   },
   {
-    layout: 'Parallel Router',
+    layout: 'Parallel Edge Router',
     presets: ['default'],
     samples: [{ sample: 'edge-router', label: 'Default', defaultPreset: 'default' }]
   },
@@ -419,16 +390,16 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
     layout: 'Partial',
     presets: [
       'default',
-      'partial-with-hierarchic',
+      'partial-with-hierarchical',
       'partial-with-organic',
       'partial-with-orthogonal',
       'partial-with-circular'
     ],
     samples: [
       {
-        sample: 'partial-with-hierarchic',
-        label: 'Partial with Hierarchic',
-        defaultPreset: 'partial-with-hierarchic'
+        sample: 'partial-with-hierarchical',
+        label: 'Partial with Hierarchical',
+        defaultPreset: 'partial-with-hierarchical'
       },
       {
         sample: 'partial-with-organic',
@@ -448,7 +419,7 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
     ]
   },
   {
-    layout: 'Graph Transform',
+    layout: 'Transformations',
     presets: ['default', 'rotate45', 'mirrorY', 'scale3'],
     samples: [
       { sample: 'lattice', label: 'Lattice', defaultPreset: 'rotate45' },
@@ -459,7 +430,7 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
 ]
 
 export const Presets: Record<string, Preset> = {
-  'hierarchic-with-buses': {
+  'hierarchical-with-buses': {
     description:
       '<p>Enables the bus structures feature. Bus structures are arranged using a' +
       ' style that results in a more compact layout. Edges to the bus nodes are routed using a' +
@@ -471,26 +442,26 @@ export const Presets: Record<string, Preset> = {
     }
   },
 
-  'hierarchic-with-curves': {
+  'hierarchical-with-curves': {
     description:
       '<p>Enables curved routing, symmetric u-turns for curves and adjust the minimum slope setting to' +
       ' better fit the curved routing style.</p>',
     label: 'Curves',
     settings: {
-      edgeRoutingItem: HierarchicLayoutEdgeRoutingStyle.CURVED,
+      edgeRoutingItem: HierarchicalLayoutRoutingStyle.CURVED,
       curveShortcutsItem: true,
       curveUTurnSymmetryItem: 1.0,
       minimumSlopeItem: 0.1
     }
   },
 
-  'hierarchic-with-subcomponents': {
+  'hierarchical-with-subcomponents': {
     description:
       '<p>Enables the sub-component feature which makes it possible to arrange defined' +
       ' subsets of nodes and edges using a different layout algorithm. In this demo, the label' +
       ' text of nodes is considered to derive these sub-components. </p> ' +
       '<ul>' +
-      '<li>Nodes with label "HL" are arranged using a hierarchic layout with left-to-right orientation</li>' +
+      '<li>Nodes with label "HL" are arranged using a hierarchical layout with left-to-right orientation</li>' +
       '<li>Nodes with label "OL" are arranged using organic layout</li>' +
       '<li>Those with label "TL" are handled by a tree layout algorithm.</li' +
       '</ul>',
@@ -500,27 +471,27 @@ export const Presets: Record<string, Preset> = {
     }
   },
 
-  'hierarchic-flowchart': {
+  'hierarchical-flowchart': {
     description:
       '<p>Suitable settings for a top-to-bottom flowchart with curved edges and integrated edge labeling.' +
       ' To emphasize the longest path through the diagram, nodes on the path are aligned.</p>',
     label: 'Flowchart',
     settings: {
-      edgeRoutingItem: HierarchicLayoutEdgeRoutingStyle.CURVED,
+      edgeRoutingItem: HierarchicalLayoutRoutingStyle.CURVED,
       labelPlacementAlongEdgeItem: LabelPlacementAlongEdge.AT_SOURCE,
-      edgeLabelingItem: EdgeLabeling.INTEGRATED,
+      edgeLabelingItem: EdgeLabelPlacement.INTEGRATED,
       highlightCriticalPath: true
     }
   },
 
-  'hierarchic-incremental': {
+  'hierarchical-incremental': {
     description:
       '<p>Arranges selected elements while keeping relative positions of elements that are not selected.</p>',
     label: 'Incremental',
     settings: {
       minimumLayerDistanceItem: 30,
-      SelectedElementsIncrementallyItem: true,
-      UseDrawingAsSketchItem: true
+      selectedElementsIncrementallyItem: true,
+      useDrawingAsSketchItem: true
     }
   },
 
@@ -531,11 +502,11 @@ export const Presets: Record<string, Preset> = {
       'structures in the underlying data.</p>',
     label: 'Substructures',
     settings: {
-      cycleSubstructureItem: CycleSubstructureStyle.CIRCULAR,
-      chainSubstructureItem: ChainSubstructureStyle.DISK,
+      cycleSubstructureItem: OrganicLayoutCycleSubstructureStyle.CIRCULAR,
+      chainSubstructureItem: OrganicLayoutChainSubstructureStyle.DISK,
       starSubstructureItem: OrganicLayoutStarSubstructureStyle.CIRCULAR,
-      parallelSubstructureItem: ParallelSubstructureStyle.STRAIGHT_LINE,
-      treeSubstructureItem: OrganicLayoutTreeSubstructureStyle.ORIENTED
+      parallelSubstructureItem: OrganicLayoutParallelSubstructureStyle.STRAIGHT_LINE,
+      treeSubstructureItem: OrganicLayoutTreeSubstructureStyle.RADIAL_TREE
     }
   },
 
@@ -546,6 +517,7 @@ export const Presets: Record<string, Preset> = {
     label: 'Clustered Substructures',
     settings: {
       clusteringPolicyItem: OrganicLayoutClusteringPolicy.LOUVAIN_MODULARITY,
+      groupSubstructureStyleItem: GroupSubstructureStyle.CIRCLE,
       groupSubstructureScopeItem: OrganicLayoutGroupSubstructureScope.ALL_GROUPS,
       clusterAsGroupSubstructureItem: true
     }
@@ -557,7 +529,7 @@ export const Presets: Record<string, Preset> = {
       ' the organic layout algorithm.</p>',
     label: 'Clustered',
     settings: {
-      maximumDurationItem: 60,
+      stopDurationItem: 60,
       qualityTimeRatioItem: 1.0,
       clusteringPolicyItem: OrganicLayoutClusteringPolicy.LOUVAIN_MODULARITY
     }
@@ -569,11 +541,13 @@ export const Presets: Record<string, Preset> = {
       'handled in a specific way. This makes it much easier to detect such common structure in the underlying data.</p>',
     label: 'Substructures',
     settings: {
-      chainSubstructureStyleItem: ChainLayoutStyle.WRAPPED_WITH_NODES_AT_TURNS,
+      chainSubstructureStyleItem:
+        OrthogonalLayoutChainSubstructureStyle.WRAPPED_WITH_NODES_AT_TURNS,
       chainSubstructureSizeItem: 2,
-      cycleSubstructureStyleItem: CycleLayoutStyle.CIRCULAR_WITH_BENDS_AT_CORNERS,
+      cycleSubstructureStyleItem:
+        OrthogonalLayoutCycleSubstructureStyle.CIRCULAR_WITH_BENDS_AT_CORNERS,
       cycleSubstructureSizeItem: 4,
-      treeSubstructureStyleItem: TreeLayoutStyle.INTEGRATED,
+      treeSubstructureStyleItem: OrthogonalLayoutTreeSubstructureStyle.INTEGRATED,
       treeSubstructureSizeItem: 3,
       treeSubstructureOrientationItem: SubstructureOrientation.AUTO_DETECT
     }
@@ -585,7 +559,7 @@ export const Presets: Record<string, Preset> = {
       'thus increase the readability in diagrams with a large number of connections.</p>',
     label: 'Single-Cycle Bundled',
     settings: {
-      layoutStyleItem: CircularLayoutStyle.SINGLE_CYCLE,
+      partitioningPolicyItem: CircularPartitioningPolicy.SINGLE_CYCLE,
       edgeBundlingItem: true
     }
   },
@@ -601,15 +575,15 @@ export const Presets: Record<string, Preset> = {
     }
   },
 
-  'partial-with-hierarchic': {
-    description: '<p>Incorporate new elements into an hierarchic layout using PartialLayout.</p>',
+  'partial-with-hierarchical': {
+    description: '<p>Incorporate new elements into a hierarchical layout using PartialLayout.</p>',
     label: 'Partial with Hierarchic',
     settings: {
       alignNodesItem: true,
       componentAssignmentStrategyItem: ComponentAssignmentStrategy.CONNECTED,
       minNodeDistItem: 5,
       orientationItem: PartialLayoutOrientation.TOP_TO_BOTTOM,
-      routingToSubgraphItem: PartialLayoutEdgeRoutingStrategy.ORTHOGONAL,
+      routingToSubgraphItem: PartialLayoutRoutingStyle.ORTHOGONAL,
       subgraphLayoutItem: SubgraphLayouts.HIERARCHIC,
       subgraphPlacementItem: SubgraphPlacement.BARYCENTER
     }
@@ -622,7 +596,7 @@ export const Presets: Record<string, Preset> = {
       componentAssignmentStrategyItem: ComponentAssignmentStrategy.SINGLE,
       minNodeDistItem: 5,
       orientationItem: PartialLayoutOrientation.NONE,
-      routingToSubgraphItem: PartialLayoutEdgeRoutingStrategy.STRAIGHTLINE,
+      routingToSubgraphItem: PartialLayoutRoutingStyle.STRAIGHT_LINE,
       subgraphLayoutItem: SubgraphLayouts.ORGANIC,
       subgraphPlacementItem: SubgraphPlacement.BARYCENTER
     }
@@ -635,7 +609,7 @@ export const Presets: Record<string, Preset> = {
       componentAssignmentStrategyItem: ComponentAssignmentStrategy.SINGLE,
       minNodeDistItem: 5,
       orientationItem: PartialLayoutOrientation.NONE,
-      routingToSubgraphItem: PartialLayoutEdgeRoutingStrategy.ORTHOGONAL,
+      routingToSubgraphItem: PartialLayoutRoutingStyle.ORTHOGONAL,
       subgraphLayoutItem: SubgraphLayouts.ORTHOGONAL,
       subgraphPlacementItem: SubgraphPlacement.BARYCENTER
     }
@@ -648,7 +622,7 @@ export const Presets: Record<string, Preset> = {
       componentAssignmentStrategyItem: ComponentAssignmentStrategy.CONNECTED,
       minNodeDistItem: 5,
       orientationItem: PartialLayoutOrientation.NONE,
-      routingToSubgraphItem: PartialLayoutEdgeRoutingStrategy.STRAIGHTLINE,
+      routingToSubgraphItem: PartialLayoutRoutingStyle.STRAIGHT_LINE,
       subgraphLayoutItem: SubgraphLayouts.CIRCULAR,
       subgraphPlacementItem: SubgraphPlacement.BARYCENTER
     }
@@ -660,9 +634,9 @@ export const Presets: Record<string, Preset> = {
       ' places edge labels using the integrated labeling approach.</p>',
     label: 'Left/Right Ports & Labeling',
     settings: {
-      portSidesItem: PortSides.LEFT_RIGHT,
-      edgeLabelingItem: EdgeLabeling.INTEGRATED,
-      routingStyleItem: EdgeRouterEdgeRoutingStyle.OCTILINEAR
+      portSidesItem: PortSide.LEFT_RIGHT,
+      edgeLabelingItem: EdgeLabelPlacement.INTEGRATED,
+      routingStyleItem: EdgeRouterRoutingStyle.OCTILINEAR
     }
   },
 
@@ -693,19 +667,7 @@ export const Presets: Record<string, Preset> = {
     description: '<p>Edges are routed as smooth curves.</p>',
     label: 'Curves',
     settings: {
-      routingStyleItem: EdgeRouterEdgeRoutingStyle.CURVED
-    }
-  },
-
-  'channel-router-reduce-bends': {
-    description:
-      '<p>The algorithm tries to reduce bends at the expense of potentially more edge' +
-      ' crossings. Edges are not routed on grid coordinates anymore.</p>',
-    label: 'Reduce Bends',
-    settings: {
-      activateGridRoutingItem: false,
-      bendCostItem: 20,
-      edgeCrossingCostItem: 1
+      routingStyleItem: EdgeRouterRoutingStyle.CURVED
     }
   },
 
@@ -720,12 +682,12 @@ export const Presets: Record<string, Preset> = {
 
   'tree-mindmap': {
     description:
-      '<p>Suitable configuration for a mindmap-like diagram. This preset configures a DelegatingNodePlacer' +
+      '<p>Suitable configuration for a mindmap-like diagram. This preset configures a DelegatingSubtreePlacer' +
       ' that delegates to two layered placers with different orientations, one arranging the subtree' +
       ' from left to right and the other from right to left.</p>',
     label: 'Mindmap',
     settings: {
-      nodePlacerItem: TreeNodePlacer.DELEGATING_LAYERED,
+      subtreePlacerItem: SubtreePlacer.SINGLE_SPLIT_LAYERED,
       spacingItem: 50
     }
   },
@@ -807,14 +769,14 @@ export const Presets: Record<string, Preset> = {
     }
   },
 
-  'balloon-with-rays': {
+  'radial-tree-with-rays': {
     description: '<p>Places node label in a ray-like fashion pointing away from the root node.</p>',
     label: 'Ray-like label placement',
     settings: {
-      edgeLabelingItem: EdgeLabeling.INTEGRATED,
-      nodeLabelingStyleItem: NodeLabelingPolicies.RAYLIKE_LEAVES,
+      edgeLabelingItem: EdgeLabelPlacement.INTEGRATED,
+      nodeLabelingStyleItem: RadialNodeLabelPlacement.RAY_LIKE_LEAVES,
       placeChildrenInterleavedItem: true,
-      preferredChildWedgeItem: 100
+      preferredChildSectorAngle: 100
     }
   },
 
@@ -830,10 +792,10 @@ export const Presets: Record<string, Preset> = {
 
   compact: {
     description:
-      '<p>This preset utilizes the compact node placer and places all nodes that are marked with <code>assistant</code> in their tag alongside the main branch as assistantNodes.</p>',
+      '<p>This preset utilizes the compact subtree placer and places all nodes that are marked with <code>assistant</code> in their tag alongside the main branch as assistantNodes.</p>',
     label: 'Compact',
     settings: {
-      nodePlacerItem: TreeNodePlacer.COMPACT
+      subtreePlacerItem: SubtreePlacer.COMPACT
     }
   },
 
@@ -845,9 +807,9 @@ export const Presets: Record<string, Preset> = {
       'that will route edges as a series of straight and arc segments.</p>',
     label: 'Dendrogram',
     settings: {
-      edgeRoutingStrategyItem: RadialLayoutEdgeRoutingStrategy.RADIAL_POLYLINE,
-      layeringStrategyItem: RadialLayoutLayeringStrategy.DENDROGRAM,
-      nodeLabelingStyleItem: NodeLabelingPolicies.RAYLIKE,
+      edgeRoutingStrategyItem: RadialLayoutRoutingStyle.RADIAL_POLYLINE,
+      layeringStrategyItem: RadialLayeringStrategy.DENDROGRAM,
+      nodeLabelingStyleItem: RadialNodeLabelPlacement.RAY_LIKE,
       maximumChildSectorSizeItem: 360,
       minimumNodeToNodeDistanceItem: 5
     }
@@ -867,7 +829,7 @@ export const Presets: Record<string, Preset> = {
     description: '<p>Places node labels in a ray-like fashion pointing away from the disk.</p>',
     label: 'Ray-like label placement',
     settings: {
-      nodeLabelingStyleItem: NodeLabelingPolicies.RAYLIKE_LEAVES
+      nodeLabelingStyleItem: RadialNodeLabelPlacement.RAY_LIKE_LEAVES
     }
   },
 

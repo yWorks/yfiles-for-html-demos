@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { ArrowStyleShapeStringValues } from 'yfiles'
+import type { ArrowStyleShapeStringValues } from '@yfiles/yfiles'
 import {
   ArrowEdgeStyle,
   ArrowStyleShape,
-  Enum,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
@@ -38,12 +37,12 @@ import {
   IEdge,
   IGraph,
   License
-} from 'yfiles'
-import type { ColorSetName } from 'demo-resources/demo-styles'
-import { applyDemoTheme, colorSets, initDemoStyles } from 'demo-resources/demo-styles'
+} from '@yfiles/yfiles'
+import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
+import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { SampleGraph } from './resources/SampleGraph'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 const basicShape = document.querySelector<HTMLSelectElement>('#basic-shape')!
 const thicknessRange = document.querySelector<HTMLInputElement>('#thickness-range')!
@@ -61,7 +60,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
 
   const graphEditorInputMode = new GraphEditorInputMode({
@@ -87,7 +85,7 @@ async function run(): Promise<void> {
   // Initialize the toolbar and style properties user interface
   initializeUI(graphComponent)
 
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 }
 
 /**
@@ -181,7 +179,7 @@ function initializeUI(graphComponent: GraphComponent): void {
   })
 
   // adjust option panel when the selection has been changed
-  graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+  graphComponent.selection.addEventListener('item-added', (evt) => {
     if (evt.item instanceof IEdge && evt.item.style instanceof ArrowEdgeStyle) {
       adjustOptionPanel(graphComponent, evt.item)
       graphComponent.graph.edgeDefaults.style = getStyleForOptionsPanel()
@@ -200,7 +198,7 @@ function applyStyleSetting(
 ): void {
   const graph = graphComponent.graph
 
-  graphComponent.selection.selectedEdges.forEach((edge) => {
+  graphComponent.selection.edges.forEach((edge) => {
     const style = edge.style
     if (style instanceof ArrowEdgeStyle) {
       adjustStyle(style)
@@ -219,13 +217,13 @@ function applyStyleSetting(
  */
 function adjustOptionPanel(graphComponent: GraphComponent, edge: IEdge): void {
   const style = edge.style as ArrowEdgeStyle
-  const shape = Enum.getName(ArrowStyleShape.$class, style.shape)
+  const shape = ArrowStyleShape[style.shape]
   const thickness = style.thickness.toFixed(0)
   const angle = String(toDegrees(style.angle).toFixed(0))
   const shaftRatio = String(style.shaftRatio)
   const cropping = String(style.sourceCropping)
   // if no element is selected, disable the options panel
-  const disabled = !graphComponent.selection.isSelected(edge)
+  const disabled = !graphComponent.selection.includes(edge)
   updatePanelState(style, shape, thickness, angle, shaftRatio, cropping, disabled)
 }
 

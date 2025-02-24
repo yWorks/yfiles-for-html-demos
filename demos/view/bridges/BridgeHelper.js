@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,65 +37,51 @@ import {
   IObstacleProvider,
   IRenderContext,
   Point
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * A custom delegating callback that implements {@link CustomCallback.createCustomBridge} differently.
  */
 export class CustomCallback extends BaseClass(IBridgeCreator) {
+  fallback
   /**
    * Creates a new instance of {@link CustomCallback}
-   * @param {!IBridgeCreator} fallback
    */
   constructor(fallback) {
     super()
     this.fallback = fallback
   }
-
   /**
    * Returns the CrossingStyle to be used.
-   * @param {!IRenderContext} context
-   * @returns {!BridgeCrossingStyle}
    */
   getCrossingStyle(context) {
     return this.fallback.getCrossingStyle(context)
   }
-
   /**
    * Returns the BridgeOrientationStyle to be used.
-   * @param {!IRenderContext} context
-   * @returns {!BridgeOrientationStyle}
    */
   getOrientationStyle(context) {
     return this.fallback.getOrientationStyle(context)
   }
-
   /**
    * Returns the width of the bridge to be used.
-   * @param {!IRenderContext} context
-   * @returns {number}
    */
   getBridgeWidth(context) {
     return this.fallback.getBridgeWidth(context)
   }
-
   /**
    * Returns the height of the bridge to be used.
-   * @param {!IRenderContext} context
-   * @returns {number}
    */
   getBridgeHeight(context) {
     return this.fallback.getBridgeHeight(context)
   }
-
   /**
    * Called by the BridgeManager if the getCrossingStyle method returns BridgeCrossingStyle.CUSTOM to
    * insert a bridge into the given general path.
-   * @param {!IRenderContext} context The given render context
-   * @param {!GeneralPath} path The general path to be used
-   * @param {!Point} startPoint The coordinates of the starting point of the bridge.
-   * @param {!Point} endPoint The coordinates of the ending point of the bridge.
-   * @param {number} gapLength The distance between the starting point and the end point.
+   * @param context The given render context
+   * @param path The general path to be used
+   * @param startPoint The coordinates of the starting point of the bridge.
+   * @param endPoint The coordinates of the ending point of the bridge.
+   * @param gapLength The distance between the starting point and the end point.
    */
   createCustomBridge(context, path, startPoint, endPoint, gapLength) {
     // first finish the last segment
@@ -106,14 +92,12 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
       const delta = endPoint.subtract(startPoint)
       const rightVector = delta.multiply(1 / gapLength)
       const upVector = new Point(rightVector.y, -rightVector.x)
-
       // get the height from the context
       const height = this.getBridgeHeight(context)
       // determine bending for our arc
       const arc = 3
       // now draw two arcs at the end and the start of the segment
       path.moveTo(startPoint.add(upVector.multiply(height)).subtract(rightVector.multiply(arc)))
-
       path.quadTo(
         startPoint.add(rightVector.multiply(arc)),
         startPoint.add(upVector.multiply(-height)).subtract(rightVector.multiply(arc))
@@ -128,27 +112,24 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
     path.moveTo(endPoint)
   }
 }
-
 /**
  * Custom {@link IObstacleProvider} implementation that returns the node style's outline
  * as an obstacle.
  * @see {@link IShapeGeometry.getOutline}
  */
 export class GroupNodeObstacleProvider extends BaseClass(IObstacleProvider) {
+  groupNode
   /**
    * Creates a new instance of {@link GroupNodeObstacleProvider}
-   * @param {!INode} groupNode
    */
   constructor(groupNode) {
     super()
     this.groupNode = groupNode
   }
-
   /**
    * Returns an obstacle for the node style's outline.
-   * @param {!IRenderContext} context The given render context
+   * @param context The given render context
    * @see Specified by {@link IObstacleProvider.getObstacles}.
-   * @returns {?GeneralPath}
    */
   getObstacles(context) {
     const style = this.groupNode.style
@@ -161,11 +142,9 @@ export class GroupNodeObstacleProvider extends BaseClass(IObstacleProvider) {
     // If the node is invisible, don't return anything (won't be painted anyway...)
     return null
   }
-
   /**
    * Uses the node style's outline as obstacle.
    * For node style renderers that don't provide a {@link IShapeGeometry}, no bridges will be created.
-   * @returns {?GeneralPath}
    */
   createPath() {
     const style = this.groupNode.style

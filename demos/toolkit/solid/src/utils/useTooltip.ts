@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,10 +34,10 @@ import {
   IEdge,
   IModelItem,
   INode,
-  Point,
   QueryItemToolTipEventArgs,
+  Point,
   TimeSpan
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { render } from 'solid-js/web'
 import { Tooltip } from '../components/Tooltip'
 
@@ -48,16 +48,17 @@ export function useTooltips(graphComponent: GraphComponent) {
   inputMode.toolTipItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
 
   // customize the tooltip's behaviour to our liking.
-  const mouseHoverInputMode = inputMode.mouseHoverInputMode
-  mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)
-  mouseHoverInputMode.delay = TimeSpan.fromMilliseconds(500)
-  mouseHoverInputMode.duration = TimeSpan.fromSeconds(5)
+  const tooltipInputMode = inputMode.toolTipInputMode
+  tooltipInputMode.toolTipLocationOffset = new Point(15, 15)
+  tooltipInputMode.delay = TimeSpan.fromMilliseconds(500)
+  tooltipInputMode.duration = TimeSpan.fromSeconds(5)
 
   // Register a listener for when a tooltip should be shown.
-  inputMode.addQueryItemToolTipListener(
+  inputMode.addEventListener(
+    'query-item-tool-tip',
     (
-      src: GraphEditorInputMode | GraphViewerInputMode,
-      evt: QueryItemToolTipEventArgs<IModelItem>
+      evt: QueryItemToolTipEventArgs<IModelItem>,
+      src: GraphEditorInputMode | GraphViewerInputMode
     ) => {
       if (evt.handled) {
         // Tooltip content has already been assigned -> nothing to do.
@@ -86,8 +87,8 @@ function createContent(item: IModelItem): HTMLElement | null {
     content = label ? `Label: "${label.text}"` : 'Label: Unlabeled'
   } else if (item instanceof IEdge) {
     // there should be only nodes and edges due to inputMode.tooltipItems
-    const sourceLabel = item.sourceNode!.labels.at(0)
-    const targetLabel = item.targetNode!.labels.at(0)
+    const sourceLabel = item.sourceNode.labels.at(0)
+    const targetLabel = item.targetNode.labels.at(0)
     content = `Connecting ${(sourceLabel && sourceLabel.text) || 'Unlabeled'} with ${
       (targetLabel && targetLabel.text) || 'Unlabeled'
     }`

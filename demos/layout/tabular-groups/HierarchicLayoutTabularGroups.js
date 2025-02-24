@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,34 +26,26 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HierarchicLayout, HierarchicLayoutData, IGraph } from 'yfiles'
-
+import { HierarchicalLayout, HierarchicalLayoutData } from '@yfiles/yfiles'
 /**
- * Creates a {@link HierarchicLayout} and the respective {@link HierarchicLayoutData} so
+ * Creates a {@link HierarchicalLayout} and the respective {@link HierarchicalLayoutData} so
  * that all groups contained in the graph a treated as tabular group nodes.
- * @param {!IGraph} graph the graph to be laid out
  * @param sorted whether the tabular group child nodes should be sorted by their label text
  * @param childDistance the distance between tabular group child nodes
- * @returns {!object} the configured hierarchic layout algorithm
- * @param {boolean} [sorted=false]
- * @param {number} [childDistance=0]
+ * @returns the configured hierarchical layout algorithm
  */
-export function createTabularGroupsHierarchicLayout(graph, sorted = false, childDistance = 0) {
-  const hl = new HierarchicLayout({
-    orthogonalRouting: true,
+export function createTabularGroupsHierarchicalLayout(sorted = false, childDistance = 0) {
+  const hl = new HierarchicalLayout({
     layoutOrientation: 'left-to-right',
     minimumLayerDistance: 50
   })
-
   // create a layout data
-  const data = new HierarchicLayoutData()
-
+  const data = new HierarchicalLayoutData()
   // defines all groups to be tabular groups
-  data.tabularGroups.delegate = () => true
-
+  data.tabularGroups = () => true
   // configure order of tabular group children, if desired
   if (sorted) {
-    data.tabularGroupChildComparers.constant = (node1, node2) => {
+    data.tabularGroupChildComparators.constant = (node1, node2) => {
       const label1 = node1.labels.at(0)
       const label2 = node2.labels.at(0)
       if (label1 && label2) {
@@ -64,21 +56,16 @@ export function createTabularGroupsHierarchicLayout(graph, sorted = false, child
       return 0
     }
   }
-
   // specify the distance between tabular group child nodes
-  hl.nodeLayoutDescriptor.tabularGroupChildDistance = childDistance
-
+  hl.defaultNodeDescriptor.tabularGroupChildDistance = childDistance
   return { layout: hl, layoutData: data }
 }
-
 /**
- * Returns a {@link HierarchicLayout} with a left-to-right layout orientation.
- * @param {!IGraph} graph the graph to be laid out
- * @returns {!HierarchicLayout} the configured hierarchic layout algorithm
+ * Returns a {@link HierarchicalLayout} with a left-to-right layout orientation.
+ * @returns the configured hierarchical layout algorithm
  */
-export function createDefaultHierarchicLayout(graph) {
-  return new HierarchicLayout({
-    orthogonalRouting: true,
+export function createDefaultHierarchicalLayout() {
+  return new HierarchicalLayout({
     layoutOrientation: 'left-to-right',
     minimumLayerDistance: 50
   })

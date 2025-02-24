@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,6 @@ import 'codemirror/addon/dialog/dialog.css'
 import 'codemirror/mode/xml/xml'
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/addon/dialog/dialog'
-
 /**
  * Editing dialog for schema graph nodes business data ({@link TreeNodesSourceDefinition}
  */
@@ -40,18 +39,15 @@ export class EditTreeNodesSourceDialog {
   dialogContainerModal
   dialogContainer
   acceptCallback
-
   nodesSourceConnector
-
   dataEditor
   idBindingInput
   templateEditor
   nameInput
-
   /**
    * Constructor for EditTreeNodesSourceDialog
-   * @param {!TreeNodesSourceDefinitionBuilderConnector} nodesSourceConnector the connector providing the business data
-   * @param {!function} acceptCallback the callback to call on accept (for updating the graph)
+   * @param nodesSourceConnector the connector providing the business data
+   * @param acceptCallback the callback to call on accept (for updating the graph)
    */
   constructor(nodesSourceConnector, acceptCallback) {
     this.acceptCallback = acceptCallback
@@ -59,16 +55,13 @@ export class EditTreeNodesSourceDialog {
     this.dialogContainer = document.querySelector('#editSourceDialog')
     this.nodesSourceConnector = nodesSourceConnector
   }
-
   /**
    * Creates the input fields for the dialog and initializes them with the {@link SourceDefinition}s
    * business data
    */
   initialize() {
     this.createHeading('Edit Nodes Source')
-
     this.nameInput = this.createInputField('Name', 'The name of the nodes source.')
-
     this.dataEditor = this.createEditorField(
       'Data',
       'The nodes business data in JSON format. Either an array of node objects or an object' +
@@ -76,7 +69,6 @@ export class EditTreeNodesSourceDialog {
         'automatically considered a root nodes source.',
       { name: 'javascript', json: true }
     )
-
     this.idBindingInput = this.createInputField(
       'ID Binding',
       'ID binding as string or function definition.'
@@ -88,13 +80,11 @@ export class EditTreeNodesSourceDialog {
         ' business data, such as the name or id properties.',
       'xml'
     )
-
     this.nameInput.value = this.nodesSourceConnector.sourceDefinition.name
     this.dataEditor.setValue(this.nodesSourceConnector.sourceDefinition.data || '')
     this.idBindingInput.value = this.nodesSourceConnector.sourceDefinition.idBinding
     this.templateEditor.setValue(this.nodesSourceConnector.sourceDefinition.template)
   }
-
   /**
    * Applies edited values to the {@link SourceDefinition}, recreates bindings
    * and calls the provided accept callback
@@ -104,56 +94,44 @@ export class EditTreeNodesSourceDialog {
     this.nodesSourceConnector.sourceDefinition.idBinding = this.idBindingInput.value
     this.nodesSourceConnector.sourceDefinition.template = this.templateEditor.getValue()
     this.nodesSourceConnector.sourceDefinition.data = this.dataEditor.getValue()
-
     try {
       this.nodesSourceConnector.applyDefinition()
-
       this.dispose()
       this.acceptCallback()
     } catch (e) {
       alert(e)
     }
   }
-
   /**
    * Sets the dialog's div to visible and adds the accept and cancel buttons
-   * @returns {!Promise}
    */
   async show() {
     // CodeMirror requires the textArea to be in the DOM and visible already when instantiating
     this.dialogContainerModal.style.removeProperty('display')
-
     return new Promise((resolve) => {
       setTimeout(() => {
         this.initialize()
-
         const buttonsContainer = document.createElement('div')
         buttonsContainer.classList.add('buttonsContainer')
-
         const cancelButton = document.createElement('button')
         cancelButton.textContent = 'Cancel'
         cancelButton.addEventListener('click', () => this.cancel())
         buttonsContainer.appendChild(cancelButton)
-
         const acceptButton = document.createElement('button')
         acceptButton.textContent = 'Accept and Update'
         acceptButton.addEventListener('click', () => this.accept())
         buttonsContainer.appendChild(acceptButton)
-
         this.dialogContainer.appendChild(buttonsContainer)
-
         resolve()
       })
     })
   }
-
   /**
    * discards/ignores entered/changed data and disposes the dialog
    */
   cancel() {
     this.dispose()
   }
-
   /**
    * Disposes the dialog by removing all children and setting the display property accordingly
    */
@@ -163,11 +141,9 @@ export class EditTreeNodesSourceDialog {
     }
     this.dialogContainerModal.style.setProperty('display', 'none')
   }
-
   /**
    * creates a simple HTMLHeadingElement
-   * @param {!string} text the text used in the heading
-   * @returns {!HTMLHeadingElement}
+   * @param text the text used in the heading
    */
   createHeading(text) {
     const heading = document.createElement('h2')
@@ -175,12 +151,10 @@ export class EditTreeNodesSourceDialog {
     this.dialogContainer.appendChild(heading)
     return heading
   }
-
   /**
    * creates a simple HTMLInputElement adorned with heading and documentation
-   * @param {!string} labelText the heading text for the input
-   * @param {!string} doc the documentation text. Can be longer as it is rendered as a HTML paragraph
-   * @returns {!HTMLInputElement}
+   * @param labelText the heading text for the input
+   * @param doc the documentation text. Can be longer as it is rendered as a HTML paragraph
    */
   createInputField(labelText, doc) {
     const label = this.createDescription(labelText, doc)
@@ -189,13 +163,11 @@ export class EditTreeNodesSourceDialog {
     label.appendChild(input)
     return input
   }
-
   /**
    * creates an CodeMirror text/code input field component adorned with heading and documentation
-   * @param {!string} labelText the heading label
-   * @param {!string} doc the documentation text. Can be longer as it is rendered as a HTML paragraph
-   * @param {!(string|object)} mode the language syntax configuration object for CodeMirror
-   * @returns {*}
+   * @param labelText the heading label
+   * @param doc the documentation text. Can be longer as it is rendered as a HTML paragraph
+   * @param mode the language syntax configuration object for CodeMirror
    */
   createEditorField(labelText, doc, mode) {
     const container = this.createDescription(labelText, doc)
@@ -206,25 +178,20 @@ export class EditTreeNodesSourceDialog {
       mode: mode
     })
   }
-
   /**
    * Creates a HTMLDivElement containing a heading and a documentation paragraph
-   * @param {!string} labelText the heading text
-   * @param {!string} doc the documentation text. Can be longer as it is rendered as a HTML paragraph
-   * @returns {!HTMLDivElement}
+   * @param labelText the heading text
+   * @param doc the documentation text. Can be longer as it is rendered as a HTML paragraph
    */
   createDescription(labelText, doc) {
     const container = document.createElement('div')
     const label = document.createElement('h3')
     label.textContent = labelText
     container.appendChild(label)
-
     const docParagraph = document.createElement('p')
     docParagraph.textContent = doc
     container.appendChild(docParagraph)
-
     this.dialogContainer.appendChild(container)
-
     return container
   }
 }

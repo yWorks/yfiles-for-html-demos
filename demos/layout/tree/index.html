@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,13 +31,13 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
     <title>Tree Layout Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
     <link rel="stylesheet" href="resources/tree-layout-demo.css" />
-
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -99,26 +97,27 @@
         </p>
         <p>
           With tree layout, each node can have a separate
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ITreeLayoutNodePlacer" target="_blank">ITreeLayoutNodePlacer</a> which is responsible for the arrangement of its
-          children in a certain style.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ISubtreePlacer" target="_blank">ISubtreePlacer</a> which is responsible for the arrangement of its children in
+          a certain style.
         </p>
 
-        <h2>Configure the Node Placers</h2>
+        <h2>Configure the Subtree Placers</h2>
         <p>
-          You can configure the node placer of the selected nodes in the right side panel. Changing
-          an option in the panel immediately updates the layout of the graph. A preview demonstrates
-          the chosen subtree style in a smaller context.
+          You can configure the subtree placer of the selected nodes in the right side panel.
+          Changing an option in the panel immediately updates the layout of the graph. A preview
+          demonstrates the chosen subtree style in a smaller context.
           <br />
         </p>
         <ul>
-          <li>Some node placers offer rotation and mirroring of the subtree.</li>
+          <li>Some subtree placers offer rotation and mirroring of the subtree.</li>
           <li>
             Toggle the <em>Assistant</em> marking for a single node by <em>double-clicking</em> on
             it. They will show their effect when their parent node has
-            <a href="https://docs.yworks.com/yfileshtml/#/api/AssistantNodePlacer" target="_blank">AssistantNodePlacer</a> assigned.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/AssistantSubtreePlacer" target="_blank">AssistantSubtreePlacer</a> assigned.
           </li>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultNodePlacer" target="_blank">DefaultNodePlacer</a> is used for nodes without an explicit assignment.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/SingleLayerSubtreePlacer" target="_blank">SingleLayerSubtreePlacer</a> is used for nodes without an explicit
+            assignment.
           </li>
         </ul>
 
@@ -126,16 +125,16 @@
         <ul>
           <li>
             <em>Default Tree</em> is a regular tree which is arranged using a combination of
-            <a href="https://docs.yworks.com/yfileshtml/#/api/LeftRightNodePlacer" target="_blank">LeftRightNodePlacer</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultNodePlacer" target="_blank">DefaultNodePlacer</a> for each
-            subtree.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/LeftRightSubtreePlacer" target="_blank">LeftRightSubtreePlacer</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/SingleLayerSubtreePlacer" target="_blank">SingleLayerSubtreePlacer</a> for
+            each subtree.
           </li>
           <li>
             <em>Wide Tree</em> has the same structure as the <em>DefaultTree</em> but is arranged
-            only using <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultNodePlacer" target="_blank">DefaultNodePlacer</a>.
+            only using <a href="https://docs.yworks.com/yfileshtml/#/api/SingleLayerSubtreePlacer" target="_blank">SingleLayerSubtreePlacer</a>.
           </li>
           <li>
-            <em>Category Tree</em> uses <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultNodePlacer" target="_blank">DefaultNodePlacer</a> to place the categories in
-            columns and arranges the nodes of each category stacked left-right.
+            <em>Category Tree</em> uses <a href="https://docs.yworks.com/yfileshtml/#/api/SingleLayerSubtreePlacer" target="_blank">SingleLayerSubtreePlacer</a> to place the
+            categories in columns and arranges the nodes of each category stacked left-right.
           </li>
           <li>
             <em>General Graph</em> is not a tree and uses the <a href="https://docs.yworks.com/yfileshtml/#/api/TreeReductionStage" target="_blank">TreeReductionStage</a> to
@@ -143,7 +142,7 @@
             routed with organic style.
           </li>
           <li>
-            <em>Large Tree</em> uses <a href="https://docs.yworks.com/yfileshtml/#/api/CompactNodePlacer" target="_blank">CompactNodePlacer</a> for some sub-trees to get a
+            <em>Large Tree</em> uses <a href="https://docs.yworks.com/yfileshtml/#/api/CompactSubtreePlacer" target="_blank">CompactSubtreePlacer</a> for some subtrees to get a
             compact layout.
           </li>
         </ul>
@@ -160,9 +159,7 @@
             deleted.
           </li>
           <li>Resize nodes to see how the layout changes.</li>
-          <li>
-            Change the order of children by adding number labels using the <code>F2</code> key.
-          </li>
+          <li>Change the order of children by adding number labels using the <kbd>F2</kbd> key.</li>
         </ul>
       </div>
     </aside>
@@ -172,24 +169,27 @@
       </div>
       <aside class="demo-main__sidebar">
         <div class="demo-sidebar__content">
-          <h2>Node Placer Settings</h2>
+          <h2>Subtree Placer Settings</h2>
 
           <div class="demo-properties__settings">
             <div class="demo-form-block">
-              <label id="select-node-placer-label" for="select-node-placer" style="display: none">
+              <label
+                id="select-subtree-placer-label"
+                for="select-subtree-placer"
+                style="display: none"
+              >
                 Type
               </label>
-              <select id="select-node-placer" class="option-element" style="display: none">
+              <select id="select-subtree-placer" class="option-element" style="display: none">
                 <option hidden="">Multiple Values</option>
-                <option selected="">DefaultNodePlacer</option>
-                <option>SimpleNodePlacer</option>
-                <option>BusNodePlacer</option>
-                <option>GridNodePlacer</option>
-                <option>DoubleLineNodePlacer</option>
-                <option>LeftRightNodePlacer</option>
-                <option>AspectRatioNodePlacer</option>
-                <option>AssistantNodePlacer</option>
-                <option>CompactNodePlacer</option>
+                <option selected="">SingleLayerSubtreePlacer</option>
+                <option>BusSubtreePlacer</option>
+                <option>MultiLayerSubtreePlacer</option>
+                <option>DoubleLayerSubtreePlacer</option>
+                <option>LeftRightSubtreePlacer</option>
+                <option>AspectRatioSubtreePlacer</option>
+                <option>AssistantSubtreePlacer</option>
+                <option>CompactSubtreePlacer</option>
               </select>
             </div>
 
@@ -219,56 +219,36 @@
               </div>
             </div>
 
-            <div id="no-node-placer-settings" class="node-placer-settings">
-              Select a node or a subset of nodes to assign a <code>NodePlacer</code> which defines
-              the layout style for its children.
+            <div id="no-subtree-placer-settings" class="subtree-placer-settings">
+              Select a node or a subset of nodes to assign a <code>SubtreePlacer</code> which
+              defines the layout style for its children.
             </div>
             <div
-              id="default-node-placer-settings"
-              class="node-placer-settings"
+              id="single-layer-subtree-placer-settings"
+              class="subtree-placer-settings"
               style="display: none"
             >
               <h2>Settings</h2>
               <div class="demo-form-block">
-                <label for="select-child-placement" class="option-label">Child Placement</label>
-                <select id="select-child-placement" class="option-element">
-                  <option hidden="">Multiple Values</option>
-                  <option>Horizontal Downward</option>
-                  <option>Horizontal Upward</option>
-                  <option>Vertical Leftward</option>
-                  <option>Vertical Rightward</option>
-                </select>
-              </div>
-              <div class="demo-form-block">
                 <label for="routing-style" class="option-label">Routing Style</label>
                 <select id="routing-style" class="option-element">
                   <option hidden="">Multiple Values</option>
-                  <option>Fork</option>
-                  <option>Fork at Root</option>
+                  <option>Orthogonal</option>
+                  <option>Orthogonal at Root</option>
                   <option>Straight-line</option>
-                  <option>Polyline</option>
+                  <option>Straight-line to Child Connector</option>
                 </select>
-              </div>
-              <div class="demo-form-block">
-                <label for="horizontal-distance" class="option-label">Horizontal Distance</label>
-                <input type="range" id="horizontal-distance" min="0" max="200" value="40" />
-                <label id="horizontal-distance-label" class="number-label">40</label>
-              </div>
-              <div class="demo-form-block">
-                <label for="vertical-distance" class="option-label">Vertical Distance</label>
-                <input type="range" id="vertical-distance" min="0" max="200" value="40" />
-                <label id="vertical-distance-label" class="number-label">40</label>
               </div>
               <div class="demo-form-block">
                 <label for="root-alignment" class="option-label">Root Alignment</label>
                 <select id="root-alignment" class="option-element">
                   <option hidden="">Multiple Values</option>
-                  <option>Leading-Offset</option>
                   <option>Leading</option>
+                  <option>Left</option>
                   <option>Center</option>
                   <option>Median</option>
+                  <option>Right</option>
                   <option>Trailing</option>
-                  <option>Trailing-Offset</option>
                   <option>Leading on Bus</option>
                   <option>Trailing on Bus</option>
                 </select>
@@ -288,50 +268,23 @@
               </div>
             </div>
             <div
-              id="simple-node-placer-settings"
-              class="node-placer-settings"
+              id="bus-subtree-placer-settings"
+              class="subtree-placer-settings"
+              style="display: none"
+            >
+              <h2>Settings</h2>
+            </div>
+            <div
+              id="multi-layer-subtree-placer-settings"
+              class="subtree-placer-settings"
               style="display: none"
             >
               <h2>Settings</h2>
               <div class="demo-form-block">
-                <label for="create-bus" class="option-label">Create Bus</label>
-                <input type="checkbox" id="create-bus" class="option-element" />
-              </div>
-              <div class="demo-form-block">
-                <label for="simple-root-node-alignment" class="option-label">Root Alignment</label>
-                <select id="simple-root-node-alignment">
-                  <option hidden="">Multiple Values</option>
-                  <option>Leading</option>
-                  <option>Left</option>
-                  <option>Center</option>
-                  <option>Center over Children</option>
-                  <option>Median</option>
-                  <option>Right</option>
-                  <option>Trailing</option>
-                </select>
-              </div>
-              <div class="demo-form-block">
-                <label for="min-channel-segment-distance" class="option-label">
-                  Minimum Channel Segment Distance
-                </label>
-                <input
-                  type="range"
-                  id="min-channel-segment-distance"
-                  min="0"
-                  max="200"
-                  value="40"
-                />
-                <label id="min-channel-segment-distance-label" class="number-label">40</label>
-              </div>
-            </div>
-            <div id="bus-node-placer-settings" class="node-placer-settings" style="display: none">
-              <h2>Settings</h2>
-            </div>
-            <div id="grid-node-placer-settings" class="node-placer-settings" style="display: none">
-              <h2>Settings</h2>
-              <div class="demo-form-block">
-                <label for="grid-node-placer-alignment" class="option-label">Root Alignment</label>
-                <select id="grid-node-placer-alignment" class="option-element">
+                <label for="multi-layer-subtree-placer-alignment" class="option-label"
+                  >Root Alignment</label
+                >
+                <select id="multi-layer-subtree-placer-alignment" class="option-element">
                   <option hidden="">Multiple Values</option>
                   <option>Leading</option>
                   <option>Left</option>
@@ -343,10 +296,10 @@
                 </select>
               </div>
               <div class="demo-form-block">
-                <label for="grid-node-placer-bus-placement" class="option-label">
+                <label for="multi-layer-subtree-placer-bus-placement" class="option-label">
                   Bus Placement
                 </label>
-                <select id="grid-node-placer-bus-placement" class="option-element">
+                <select id="multi-layer-subtree-placer-bus-placement" class="option-element">
                   <option hidden="">Multiple Values</option>
                   <option>Center</option>
                   <option>Leading</option>
@@ -355,16 +308,16 @@
               </div>
             </div>
             <div
-              id="double-line-node-placer-settings"
-              class="node-placer-settings"
+              id="double-layer-subtree-placer-settings"
+              class="subtree-placer-settings"
               style="display: none"
             >
               <h2>Settings</h2>
               <div class="demo-form-block">
-                <label for="double-line-root-node-alignment" class="option-label">
+                <label for="double-layer-root-node-alignment" class="option-label">
                   Root Alignment
                 </label>
-                <select id="double-line-root-node-alignment" class="option-element">
+                <select id="double-layer-root-node-alignment" class="option-element">
                   <option hidden="">Multiple Values</option>
                   <option>Leading</option>
                   <option>Left</option>
@@ -377,8 +330,8 @@
               </div>
             </div>
             <div
-              id="left-right-node-placer-settings"
-              class="node-placer-settings"
+              id="left-right-subtree-placer-settings"
+              class="subtree-placer-settings"
               style="display: none"
             >
               <h2>Settings</h2>
@@ -393,8 +346,8 @@
               </div>
             </div>
             <div
-              id="aspect-ratio-node-placer-settings"
-              class="node-placer-settings"
+              id="aspect-ratio-subtree-placer-settings"
+              class="subtree-placer-settings"
               style="display: none"
             >
               <h2>Settings</h2>
@@ -404,8 +357,10 @@
                 <label id="aspect-ratio-label">1</label>
               </div>
               <div class="demo-form-block">
-                <label for="fill-style" class="option-label">Fill Style</label>
-                <select id="fill-style" class="option-element">
+                <label for="child-alignment-policy" class="option-label"
+                  >Child Alignment Policy</label
+                >
+                <select id="child-alignment-policy" class="option-element">
                   <option hidden="">MultipleValues</option>
                   <option>Justify</option>
                   <option>Leading</option>
@@ -440,32 +395,34 @@
                 <label id="aspect-ratio-vertical-distance-label">40</label>
               </div>
               <div class="demo-form-block">
-                <label for="horizontal" class="option-label">Horizontal</label>
-                <input type="checkbox" id="horizontal" class="option-element" />
-              </div>
-            </div>
-            <div
-              id="assistant-node-placer-settings"
-              class="node-placer-settings"
-              style="display: none"
-            >
-              <h2>Settings</h2>
-              <div class="demo-form-block">
-                <label for="child-node-placer" class="option-label">Child Node Placer</label>
-                <select id="child-node-placer" class="option-element">
-                  <option hidden="">Multiple Values</option>
-                  <option>DefaultNodePlacer</option>
-                  <option>SimpleNodePlacer</option>
-                  <option>BusNodePlacer</option>
-                  <option>DoubleLineNodePlacer</option>
-                  <option>LeftRightNodePlacer</option>
-                  <option>AspectRatioNodePlacer</option>
+                <label for="horizontal" class="option-label">Child Arrangement</label>
+                <select id="horizontal" class="option-element">
+                  <option>Vertical</option>
+                  <option>Horizontal</option>
                 </select>
               </div>
             </div>
             <div
-              id="compact-node-placer-settings"
-              class="node-placer-settings"
+              id="assistant-subtree-placer-settings"
+              class="subtree-placer-settings"
+              style="display: none"
+            >
+              <h2>Settings</h2>
+              <div class="demo-form-block">
+                <label for="child-subtree-placer" class="option-label">Child Subtree Placer</label>
+                <select id="child-subtree-placer" class="option-element">
+                  <option hidden="">Multiple Values</option>
+                  <option>SingleLayerSubtreePlacer</option>
+                  <option>BusSubtreePlacer</option>
+                  <option>DoubleLayerSubtreePlacer</option>
+                  <option>LeftRightSubtreePlacer</option>
+                  <option>AspectRatioSubtreePlacer</option>
+                </select>
+              </div>
+            </div>
+            <div
+              id="compact-subtree-placer-settings"
+              class="subtree-placer-settings"
               style="display: none"
             >
               <h2>Settings</h2>
@@ -525,8 +482,8 @@
               </div>
             </div>
             <div
-              id="multiple-node-placer-settings"
-              class="node-placer-settings"
+              id="multiple-subtree-placer-settings"
+              class="subtree-placer-settings"
               style="display: none"
             ></div>
             <div id="rotatable-spacing" class="demo-form-block" style="display: none">
@@ -534,9 +491,9 @@
               <input type="range" id="spacing" min="0" max="500" value="20" />
               <label id="spacing-label">20</label>
             </div>
-            <div id="node-placer-description"></div>
+            <div id="subtree-placer-description"></div>
           </div>
-          <div id="previewComponent" style="display: none"></div>
+          <div id="previewComponent" style="visibility: hidden"></div>
         </div>
       </aside>
     </div>

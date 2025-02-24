@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,10 +36,10 @@ import {
   type ILabelStyle,
   type INode,
   type INodeStyle,
-  InteriorLabelModel,
+  InteriorNodeLabelModel,
   Rect,
   TreeAnalysis
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import {
   getDepth,
   getNodeData,
@@ -50,9 +50,9 @@ import {
   setNodeData
 } from './data-types'
 import { getEdgeStyle, updateStyles } from './styles/styles-support'
-import { TagChangeUndoUnit } from './interaction/TagChangeUndoUnit'
 import { layoutTree } from './mind-map-layout'
 import { SubtreePositionHandler } from './interaction/MindMapPositionHandlers'
+import { createTagChangeUndoUnit } from './interaction/TagChangeUndoUnit'
 
 /**
  * Initializes the movement of subtrees.
@@ -61,25 +61,40 @@ import { SubtreePositionHandler } from './interaction/MindMapPositionHandlers'
 export function initializeSubtrees(graphComponent: GraphComponent): void {
   const inputMode = graphComponent.inputMode as GraphEditorInputMode
   // register handlers for dragging and relocating subtrees
-  inputMode.moveInputMode.addDragStartedListener((_) => prepareRelocateSubtree(graphComponent))
-  inputMode.moveInputMode.addDraggedListener((_) => updateSubtreeStylesAndLayout(graphComponent))
-  inputMode.moveInputMode.addDragCanceledListener((_) => resetSubtree(graphComponent))
-  inputMode.moveInputMode.addDragFinishedListener((_) => relocateSubtree(graphComponent))
+  inputMode.moveSelectedItemsInputMode.addEventListener('drag-started', () => {
+    const movedNode = inputMode.moveSelectedItemsInputMode.affectedItems.at(0)
+    if (movedNode) {
+      prepareRelocateSubtree(graphComponent, movedNode as INode)
+    }
+  })
+  inputMode.moveSelectedItemsInputMode.addEventListener('dragged', () => {
+    // only nodes can be moved
+    const movedNode = inputMode.moveSelectedItemsInputMode.affectedItems.at(0)
+    if (movedNode) {
+      updateSubtreeStylesAndLayout(graphComponent, movedNode as INode)
+    }
+  })
+  inputMode.moveSelectedItemsInputMode.addEventListener('drag-canceled', () => {
+    const movedNode = inputMode.moveSelectedItemsInputMode.affectedItems.at(0)
+    if (movedNode) {
+      resetSubtree(graphComponent, movedNode as INode)
+    }
+  })
+  inputMode.moveSelectedItemsInputMode.addEventListener('drag-finished', async () => {
+    const movedNode = inputMode.moveSelectedItemsInputMode.affectedItems.at(0)
+    if (movedNode) {
+      await relocateSubtree(graphComponent, movedNode as INode)
+    }
+  })
 
   // customize the position handler to move a whole subtree and update the styles and layout
   const filteredGraph = graphComponent.graph as FilteredGraphWrapper
-  filteredGraph.decorator.nodeDecorator.positionHandlerDecorator.setImplementationWrapper(
-    (item, implementation) => {
-      return !isRoot(item) ? new SubtreePositionHandler(implementation!) : null
-    }
+  filteredGraph.decorator.nodes.positionHandler.addWrapperFactory((item, originalHandler) =>
+    !isRoot(item) && originalHandler != null
+      ? new SubtreePositionHandler(item, originalHandler)
+      : originalHandler
   )
 }
-
-/**
- * Holds the subtree's root node that is dragged.
- * When no node is currently dragged, it is reset to <code>undefined</code>.
- */
-let movedNode: INode | undefined
 
 /**
  * Holds the old node data.
@@ -90,24 +105,21 @@ let oldNodeData: NodeData
 /**
  * Holds the style of the subtree root's in-edge to be able to restore it after the drag is canceled.
  */
-let oldInEdgeStyle: IEdgeStyle | undefined
+let oldInEdgeStyle: IEdgeStyle | null
 
 /**
  * Prepares to move the selected node and its subtree.
  * Information about the subtree is stored that helps undo or reset the relocation gesture.
  */
-export function prepareRelocateSubtree(graphComponent: GraphComponent): void {
-  movedNode = graphComponent.selection.selectedNodes.at(0)
-  if (movedNode) {
-    // store the current node data to be able to undo
-    const oldData = getNodeData(movedNode)
-    oldNodeData = { ...oldData }
+export function prepareRelocateSubtree(graphComponent: GraphComponent, movedNode: INode): void {
+  // store the current node data to be able to undo
+  const oldData = getNodeData(movedNode)
+  oldNodeData = { ...oldData }
 
-    // store the style of the current in edge of the subtree root to be able to cancel the gesture
-    const inEdge = graphComponent.graph.inEdgesAt(movedNode).at(0)
-    if (inEdge) {
-      oldInEdgeStyle = inEdge.style
-    }
+  // store the style of the current in edge of the subtree root to be able to cancel the gesture
+  const inEdge = graphComponent.graph.inEdgesAt(movedNode).at(0)
+  if (inEdge) {
+    oldInEdgeStyle = inEdge.style
   }
 }
 
@@ -116,12 +128,15 @@ export function prepareRelocateSubtree(graphComponent: GraphComponent): void {
  * The styles of nodes and edges change with the position of the nodes within the tree and need to
  * be updated when these positions change during a drag.
  */
-export function updateSubtreeStylesAndLayout(graphComponent: GraphComponent): void {
+export function updateSubtreeStylesAndLayout(
+  graphComponent: GraphComponent,
+  movedNode: INode
+): void {
   const fullGraph = getFullGraph(graphComponent)
   const subtreeEdge = getInEdge(movedNode!, fullGraph)
   if (subtreeEdge) {
     // update the depths and styles according to the new potential parent of the subtree root
-    const depth = getDepth(subtreeEdge.sourceNode!)
+    const depth = getDepth(subtreeEdge.sourceNode)
     setSubtreeDepths(fullGraph, movedNode!, depth + 1)
     updateStyles(movedNode!, fullGraph)
     fullGraph.setStyle(subtreeEdge, getEdgeStyle(depth))
@@ -131,7 +146,10 @@ export function updateSubtreeStylesAndLayout(graphComponent: GraphComponent): vo
 /**
  * Relocates the subtree when a new parent candidate was found, otherwise the subtree is deleted.
  */
-export async function relocateSubtree(graphComponent: GraphComponent): Promise<void> {
+export async function relocateSubtree(
+  graphComponent: GraphComponent,
+  movedNode: INode
+): Promise<void> {
   const filteredGraph = graphComponent.graph as FilteredGraphWrapper
   const fullGraph = getFullGraph(graphComponent)
   graphComponent.selection.clear()
@@ -142,16 +160,15 @@ export async function relocateSubtree(graphComponent: GraphComponent): Promise<v
   const subtreeEdge = getInEdge(movedNode!, fullGraph)
   if (subtreeEdge) {
     // update the depths and styles according to the new parent of the subtree root
-    setSubtreeDepths(fullGraph, movedNode!, getDepth(subtreeEdge.sourceNode!) + 1)
+    setSubtreeDepths(fullGraph, movedNode!, getDepth(subtreeEdge.sourceNode) + 1)
     updateStyles(movedNode!, fullGraph)
     adjustNodeBounds(movedNode!, fullGraph)
-    collapseSubtree(subtreeEdge.sourceNode!, false, filteredGraph)
+    collapseSubtree(subtreeEdge.sourceNode, false, filteredGraph)
 
     // add an undo unit because the node data has changed
     const newNodeData = getNodeData(movedNode!)
     graphComponent.graph.undoEngine!.addUnit(
-      new TagChangeUndoUnit(
-        'Set State Label',
+      createTagChangeUndoUnit(
         'Set State Label',
         oldNodeData!,
         newNodeData,
@@ -167,13 +184,12 @@ export async function relocateSubtree(graphComponent: GraphComponent): Promise<v
     // there is no connection to the rest of the tree anymore
 
     // add an undo unit because the node data has changed during the drag
-    const newTagData = getNodeData(movedNode!)
+    const newNodeData = getNodeData(movedNode!)
     graphComponent.graph.undoEngine!.addUnit(
-      new TagChangeUndoUnit(
-        'Set State Label',
+      createTagChangeUndoUnit(
         'Set State Label',
         oldNodeData!,
-        newTagData,
+        newNodeData,
         movedNode!,
         (node: INode) => filteredGraph.nodePredicateChanged(node)
       )
@@ -187,8 +203,6 @@ export async function relocateSubtree(graphComponent: GraphComponent): Promise<v
   await layoutTree(graphComponent)
 
   compoundEdit.commit()
-
-  movedNode = undefined
 }
 
 /**
@@ -196,21 +210,20 @@ export async function relocateSubtree(graphComponent: GraphComponent): Promise<v
  * The depths and styles of the subtree nodes are restored,
  * and the subtree returns to its initial location.
  */
-export function resetSubtree(graphComponent: GraphComponent): void {
+export function resetSubtree(graphComponent: GraphComponent, movedNode: INode): void {
   graphComponent.selection.clear()
   const filteredGraph = graphComponent.graph as FilteredGraphWrapper
   const fullGraph = getFullGraph(graphComponent)
   const subtreeEdge = getInEdge(movedNode!, fullGraph)
   if (subtreeEdge) {
-    setSubtreeDepths(fullGraph, movedNode!, getDepth(subtreeEdge.sourceNode!) + 1)
+    setSubtreeDepths(fullGraph, movedNode!, getDepth(subtreeEdge.sourceNode) + 1)
     updateStyles(movedNode!, fullGraph)
     adjustNodeBounds(movedNode!, fullGraph)
-    collapseSubtree(subtreeEdge.sourceNode!, false, filteredGraph)
+    collapseSubtree(subtreeEdge.sourceNode, false, filteredGraph)
     // reset the in-edge's old style
     fullGraph.setStyle(subtreeEdge, oldInEdgeStyle!)
   }
-  movedNode = undefined
-  oldInEdgeStyle = undefined
+  oldInEdgeStyle = null
 }
 
 /**
@@ -227,7 +240,7 @@ export function collapseSubtree(
 
   // create a custom undo unit since the node data changed
   filteredGraph.undoEngine!.addUnit(
-    new TagChangeUndoUnit('Collapse/Expand', 'Collapse/Expand', oldData, newData, node, (): void =>
+    createTagChangeUndoUnit('Collapse/Expand', oldData, newData, node!, (): void =>
       filteredGraph.nodePredicateChanged()
     )
   )
@@ -284,11 +297,11 @@ export function createSibling(
   if (!isRoot(node)) {
     const inEdge = getInEdge(node, graph)
     if (inEdge) {
-      const parent = inEdge.sourceNode!
+      const parent = inEdge.sourceNode
       // create data for sibling
       const data: NodeData = { ...nodeData, collapsed: false, stateIcon: 0 }
       const sibling = graph.createNode(node.layout.toRect(), nodeStyle, data)
-      graph.addLabel(sibling, ' ', InteriorLabelModel.CENTER, labelStyle)
+      graph.addLabel(sibling, ' ', InteriorNodeLabelModel.CENTER, labelStyle)
       graph.createEdge(parent, sibling, edgeStyle)
       adjustNodeBounds(sibling, graph)
       return sibling
@@ -322,7 +335,7 @@ export function createChild(
     let balance = 0
     graph.outEdgesAt(parent).forEach((edge) => {
       if (!isCrossReference(edge)) {
-        balance += isLeft(edge.targetNode!) ? -1 : 1
+        balance += isLeft(edge.targetNode) ? -1 : 1
       }
     })
     left = balance > 0
@@ -335,7 +348,7 @@ export function createChild(
     stateIcon: 0
   }
   const node = graph.createNode(parent.layout.toRect(), nodeStyle, nodeData)
-  graph.addLabel(node, '', InteriorLabelModel.CENTER, labelStyle)
+  graph.addLabel(node, '', InteriorNodeLabelModel.CENTER, labelStyle)
   graph.createEdge(parent, node, edgeStyle)
 
   adjustNodeBounds(node, graph)
@@ -353,7 +366,7 @@ export function removeSubtree(graph: IGraph, subtreeRoot: INode): void {
   while (nodesToCheck.length > 0) {
     const node = nodesToCheck.pop()!
     for (const outEdge of graph.outEdgesAt(node).filter((edge) => !isCrossReference(edge))) {
-      nodesToCheck.push(outEdge.targetNode!)
+      nodesToCheck.push(outEdge.targetNode)
     }
     graph.remove(node)
   }
@@ -368,7 +381,7 @@ export function removeSubtree(graph: IGraph, subtreeRoot: INode): void {
 export function setSubtreeDepths(graph: IGraph, node: INode, depth: number): void {
   graph.outEdgesAt(node).forEach((edge) => {
     if (!isCrossReference(edge)) {
-      setSubtreeDepths(graph, edge.targetNode!, depth + 1)
+      setSubtreeDepths(graph, edge.targetNode, depth + 1)
     }
   })
   const nodeData = getNodeData(node)
@@ -401,6 +414,7 @@ export function getFullGraph(graphComponent: GraphComponent): IGraph {
  */
 export function adjustNodeBounds(node: INode, graph: IGraph): void {
   if (node.labels.size > 0) {
+    const edit = graph.beginEdit('Adjust Node Bounds', 'Adjust Node Bounds')
     const label = node.labels.at(0)!
     const preferredSize = label.style.renderer.getPreferredSize(label, label.style)
     graph.setLabelPreferredSize(label, preferredSize)
@@ -413,5 +427,6 @@ export function adjustNodeBounds(node: INode, graph: IGraph): void {
     } else {
       graph.setNodeLayout(node, new Rect(x, y, preferredSize.width + 10, preferredSize.height + 10))
     }
+    edit.commit()
   }
 }

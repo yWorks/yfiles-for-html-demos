@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -266,8 +266,9 @@ export default class EventView {
    */
   getLatestMessages(): Message[] {
     const r = []
-    for (let i = this.messages.length - 1; i >= 0; i--) {
-      const message = this.messages[i]
+    const messages = this.messages
+    for (let i = messages.length - 1; i > -1; --i) {
+      const message = messages[i]
       if (message.isGroup) {
         return r
       }
@@ -280,7 +281,9 @@ export default class EventView {
    * Returns the latest group.
    */
   getLatestGroup(): MessageGroup | null {
-    for (const message of this.messages) {
+    const messages = this.messages
+    for (let i = messages.length - 1; i > -1; --i) {
+      const message = messages[i]
       if (message.isGroup) {
         return message
       }

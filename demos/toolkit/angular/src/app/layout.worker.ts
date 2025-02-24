@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,29 +33,17 @@ import {
   LayoutGraph,
   License,
   OrganicEdgeRouter,
-  TreeLayout,
-  TreeReductionStage
-} from 'yfiles'
+  TreeLayout
+} from '@yfiles/yfiles'
 
 import licenseData from '../../../../../lib/license.json'
+
 License.value = licenseData
 
-function applyLayout(graph: LayoutGraph) {
+LayoutExecutorAsyncWorker.initializeWebWorker((graph: LayoutGraph) => {
   const treeLayout = new TreeLayout()
-  const treeReductionStage = new TreeReductionStage()
+  const treeReductionStage = treeLayout.treeReductionStage
   treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
-  treeReductionStage.nonTreeEdgeSelectionKey = OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
-
-  treeLayout.appendStage(treeReductionStage)
 
   treeLayout.applyLayout(graph)
-}
-
-addEventListener(
-  'message',
-  (e) => {
-    const executor = new LayoutExecutorAsyncWorker(applyLayout)
-    executor.process(e.data).then(postMessage).catch(postMessage)
-  },
-  false
-)
+})

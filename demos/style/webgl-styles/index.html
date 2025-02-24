@@ -2,12 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.6.
-     // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +31,9 @@
      //
      ////////////////////////////////////////////////////////////////////////-->
 
-    <title>WebGL2 Styles Demo [yFiles for HTML]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+    <title>WebGL Styles Demo [yFiles for HTML]</title>
     <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
@@ -41,7 +41,7 @@
     <style>
       .two-column {
         display: grid;
-        grid-template-columns: 3fr 6fr;
+        grid-template-columns: 4fr 5fr;
         align-items: center;
         column-gap: 2px;
         row-gap: 2px;
@@ -49,13 +49,13 @@
       }
 
       input[type='range'] {
-        -webkit-appearance: none;
+        appearance: none;
         width: 200px;
         height: 6px;
       }
 
       input[type='range']::-webkit-slider-thumb {
-        -webkit-appearance: none;
+        appearance: none;
         background-color: #666;
         opacity: 0.8;
         width: 6px;
@@ -141,7 +141,6 @@
       type="font/woff2"
       crossorigin="anonymous"
     />
-    <script src="../../resources/filesystem-warning.js"></script>
   </head>
   <body>
     <header class="demo-header">
@@ -155,7 +154,7 @@
         <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
         <a href="../../README.html">Demos</a>
 
-        <span>WebGL2 Styles</span>
+        <span>WebGL Styles</span>
         <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
       <div class="demo-header__right">
@@ -198,9 +197,9 @@
       <div class="demo-description__play-button">Start here</div>
 
       <div class="demo-description__content">
-        <h1>WebGL2 Styles Demo</h1>
+        <h1>WebGL Styles Demo</h1>
 
-        <p>This demo shows the available styles for nodes, edges and labels in WebGL2 rendering.</p>
+        <p>This demo shows the available styles for nodes, edges and labels in WebGL rendering.</p>
         <p>
           The initial graph displays the various node shapes in the columns and the node effects,
           edge and arrow types in the rows.
@@ -245,7 +244,7 @@
                 <option value="RECTANGLE">Rectangle</option>
                 <option value="ROUND_RECTANGLE">Rounded Rectangle</option>
                 <option value="HEXAGON">Hexagon</option>
-                <option value="HEXAGON2">Hexagon 2</option>
+                <option value="HEXAGON_STANDING">Hexagon Standing</option>
                 <option value="TRIANGLE">Triangle</option>
                 <option value="OCTAGON">Octagon</option>
                 <option value="PILL">Pill</option>
@@ -399,8 +398,8 @@
               <input id="groupNodeTabWidth" type="number" value="50" min="1" class="editor" />
               <span>Slope</span>
               <input id="groupNodeTabSlope" type="number" value="0.5" min="0" class="editor" />
-              <span>Inset</span>
-              <input id="groupNodeTabInset" type="number" value="4" min="0" class="editor" />
+              <span>Padding</span>
+              <input id="groupNodeTabPadding" type="number" value="4" min="0" class="editor" />
               <span>Corner Radius</span>
               <input id="groupNodeCornerRadius" type="number" value="4" min="0" class="editor" />
             </div>
@@ -446,9 +445,9 @@
               <span>Source arrow</span>
               <select title="Source Arrow" id="sourceArrow" class="editor">
                 <option value="NONE">None</option>
-                <option value="DEFAULT">Default</option>
-                <option value="DEFAULT_SMALL">Default, small</option>
-                <option value="DEFAULT_LARGE">Default, large</option>
+                <option value="STEALTH">Stealth</option>
+                <option value="STEALTH_SMALL">Stealth, small</option>
+                <option value="STEALTH_LARGE">Stealth, large</option>
                 <option value="POINTED">Pointed</option>
                 <option value="TRIANGLE">Triangle</option>
                 <option value="TRIANGLE_SMALL">Triangle, small</option>
@@ -457,9 +456,9 @@
               <span>Target arrow</span>
               <select title="Target Arrow" id="targetArrow" class="editor">
                 <option value="NONE">None</option>
-                <option value="DEFAULT">Default</option>
-                <option value="DEFAULT_SMALL">Default, small</option>
-                <option value="DEFAULT_LARGE">Default, large</option>
+                <option value="STEALTH">Stealth</option>
+                <option value="STEALTH_SMALL">Stealth, small</option>
+                <option value="STEALTH_LARGE">Stealth, large</option>
                 <option value="POINTED">Pointed</option>
                 <option value="TRIANGLE">Triangle</option>
                 <option value="TRIANGLE_SMALL">Triangle, small</option>
@@ -556,6 +555,27 @@
                 min="0.1"
                 max="20"
                 step="0.2"
+                class="editor"
+              />
+              <span>Horizontal Padding</span>
+              <input
+                id="horizontalPadding"
+                type="number"
+                value="6"
+                min="0.1"
+                max="10"
+                step="1"
+                class="editor"
+              />
+
+              <span>Vertical Padding</span>
+              <input
+                id="verticalPadding"
+                type="number"
+                value="4"
+                min="0.1"
+                max="10"
+                step="1"
                 class="editor"
               />
 

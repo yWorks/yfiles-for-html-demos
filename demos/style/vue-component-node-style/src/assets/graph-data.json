@@ -3,9 +3,9 @@
     "x": 0,
     "y": 0,
     "tag": {
-      "name": "Hierarchic Layout",
+      "name": "Hierarchical Layout",
       "color": "cyan",
-      "content": "Hierarchical Layout arranges graphs in a hierarchic fashion. The nodes are distributed into layers so that most of the edges point to the main layout direction. The order of the nodes within the layers ensures that the number of edge crossings is as small as possible. There are different edge routing styles available. Edges can be orthogonal, polyline or octilinear.",
+      "content": "Hierarchical Layout arranges graphs in a hierarchical fashion. The nodes are distributed into layers so that most of the edges point to the main layout direction. The order of the nodes within the layers ensures that the number of edge crossings is as small as possible. There are different edge routing styles available. Edges can be orthogonal, polyline or octilinear.",
       "image": "./layout-hierarchic.svg",
       "moreUrl": "https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout"
     }

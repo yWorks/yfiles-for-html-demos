@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,16 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { createHierarchicLayoutConfiguration } from './HierarchicLayout.js'
-import { GraphComponent } from 'yfiles'
-
-/**
- * @param {!GraphComponent} graphComponent
- * @returns {!Promise}
- */
+import { createHierarchicalLayoutConfiguration } from './HierarchicLayout'
+import { GraphComponent, LayoutExecutor } from '@yfiles/yfiles'
 export async function runLayout(graphComponent) {
-  const { layout: hierarchicLayout, layoutData: hierarchicLayoutData } =
-    createHierarchicLayoutConfiguration()
-
-  await graphComponent.morphLayout(hierarchicLayout, '1s', hierarchicLayoutData)
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
+  const { layout: hierarchicalLayout, layoutData: hierarchicalLayoutData } =
+    createHierarchicalLayoutConfiguration()
+  await graphComponent.applyLayoutAnimated(hierarchicalLayout, '1s', hierarchicalLayoutData)
 }

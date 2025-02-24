@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,46 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphViewerInputMode, License } from 'yfiles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { loadLayoutSampleGraph } from 'demo-utils/LoadLayoutFeaturesSampleGraph'
-import { createFeatureLayoutConfiguration } from './CompactTabularLayout.js'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
-
-/**
- * @returns {!Promise}
- */
+import { GraphComponent, GraphViewerInputMode, LayoutExecutor, License } from '@yfiles/yfiles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { loadLayoutSampleGraph } from '@yfiles/demo-utils/LoadLayoutFeaturesSampleGraph'
+import { createFeatureLayoutConfiguration } from './CompactTabularLayout'
 async function run() {
   License.value = await fetchLicense()
-
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   graphComponent.inputMode = new GraphViewerInputMode()
-
   // load the graph and run the layout
   await loadLayoutSampleGraph(graphComponent.graph, './sample.json')
   await runLayout(graphComponent)
-
   initializeUI(graphComponent)
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- * @returns {!Promise}
- */
 async function runLayout(graphComponent) {
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
   const { layout, layoutData } = createFeatureLayoutConfiguration(graphComponent.graph)
-  await graphComponent.morphLayout(layout, '0.5s', layoutData)
+  await graphComponent.applyLayoutAnimated(layout, '0.5s', layoutData)
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- */
 function initializeUI(graphComponent) {
   document.querySelector('#use-aspect-ratio').addEventListener('click', async () => {
     await runLayout(graphComponent)
   })
 }
-
 await run().then(finishLoading)

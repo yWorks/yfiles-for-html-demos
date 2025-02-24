@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,19 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BrowserDetection } from './BrowserDetection.js'
-
-/**
- * @typedef {Object} OptionData
- * @property {string} value
- * @property {string} text
- */
-
+import { CanvasComponent } from '@yfiles/yfiles'
+import { BrowserDetection } from './BrowserDetection'
 /**
  * Adds options to an HTMLSelectElement
- * @param {!HTMLSelectElement} selectElement the HTMLSelectElement
+ * @param selectElement the HTMLSelectElement
  * @param values the option values
- * @param {!Array.<(string|OptionData)>} undefined
  */
 export function addOptions(selectElement, ...values) {
   for (const value of values) {
@@ -54,17 +47,13 @@ export function addOptions(selectElement, ...values) {
   }
   selectElement.dispatchEvent(new Event('change'))
 }
-
 /**
  * Adds navigation buttons to an HTMLSelectElement.
- * @param {!HTMLSelectElement} selectElement The HTMLSelectElement.
+ * @param selectElement The HTMLSelectElement.
  * @param wrapAround Whether to wrap around when navigating beyond the end or beginning of the select.
  * @param wrapInDiv Whether to wrap the select and the navigation buttons into a new div element.
  * @param classes Additional classes for the navigation buttons.
  * @returns The given element for chaining other function calls.
- * @param {boolean} [wrapAround=true]
- * @param {boolean} [wrapInDiv=true]
- * @param {!Array.<string>} undefined
  */
 export function addNavigationButtons(
   selectElement,
@@ -75,7 +64,6 @@ export function addNavigationButtons(
   if (selectElement.parentElement == null) {
     throw new Error('The element must have a parent')
   }
-
   const prevButton = document.createElement('button')
   prevButton.classList.add('demo-icon-yIconPrevious', 'navigation-button', ...classes)
   prevButton.setAttribute('title', 'Previous')
@@ -87,7 +75,6 @@ export function addNavigationButtons(
       selectElement.dispatchEvent(new Event('change'))
     }
   })
-
   const nextButton = document.createElement('button')
   nextButton.classList.add('demo-icon-yIconNext', 'navigation-button', ...classes)
   nextButton.setAttribute('title', 'Next')
@@ -99,12 +86,10 @@ export function addNavigationButtons(
       selectElement.dispatchEvent(new Event('change'))
     }
   })
-
   if (wrapInDiv) {
     const wrapper = document.createElement('div')
     wrapper.className = 'navigate-select'
     selectElement.parentElement.insertBefore(wrapper, selectElement)
-
     wrapper.append(prevButton, selectElement, nextButton)
   } else {
     selectElement.parentElement.insertBefore(prevButton, selectElement)
@@ -114,7 +99,6 @@ export function addNavigationButtons(
       selectElement.parentElement.appendChild(nextButton)
     }
   }
-
   const updateDisabled = () => {
     const lastIndex = selectElement.options.length - 1
     prevButton.disabled =
@@ -122,11 +106,9 @@ export function addNavigationButtons(
     nextButton.disabled =
       selectElement.disabled || (!wrapAround && selectElement.selectedIndex === lastIndex)
   }
-
   selectElement.addEventListener('change', (_) => {
     updateDisabled()
   })
-
   const disabledObserver = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       if (mutation.attributeName === 'disabled') {
@@ -138,14 +120,12 @@ export function addNavigationButtons(
   disabledObserver.observe(selectElement, { attributes: true })
   return selectElement
 }
-
 /**
  * Finds the index of the first enabled option in the given HTMLSelectElement.
- * @param {!HTMLSelectElement} selectElement the HTMLSelectElement whose options are searched for an enabled one.
- * @param {number} fromIndex the starting index from which to search.
- * @param {boolean} wrapAround determines if the search should find first enabled option with an index less
+ * @param selectElement the HTMLSelectElement whose options are searched for an enabled one.
+ * @param fromIndex the starting index from which to search.
+ * @param wrapAround determines if the search should find first enabled option with an index less
  * than fromIndex if there is no enabled option with an index greater than fromIndex.
- * @returns {number}
  */
 function indexOfEnabled(selectElement, fromIndex, wrapAround) {
   const n = selectElement.options.length
@@ -163,14 +143,12 @@ function indexOfEnabled(selectElement, fromIndex, wrapAround) {
   }
   return -1
 }
-
 /**
  * Finds the index of the last enabled option in the given HTMLSelectElement.
- * @param {!HTMLSelectElement} selectElement the HTMLSelectElement whose options are searched for an enabled one.
- * @param {number} fromIndex the starting index from which to search.
- * @param {boolean} wrapAround determines if the search should find last enabled option with an index greater
+ * @param selectElement the HTMLSelectElement whose options are searched for an enabled one.
+ * @param fromIndex the starting index from which to search.
+ * @param wrapAround determines if the search should find last enabled option with an index greater
  *   than fromIndex if there is no enabled option with an index less than fromIndex.
- * @returns {number}
  */
 function lastIndexOfEnabled(selectElement, fromIndex, wrapAround) {
   for (let idx = fromIndex; idx > -1; --idx) {
@@ -187,10 +165,8 @@ function lastIndexOfEnabled(selectElement, fromIndex, wrapAround) {
   }
   return -1
 }
-
 /**
  * Checks whether the browser supports WebGL2 and shows a warning message if this is not supported.
- * @returns {boolean}
  */
 export function checkWebGL2Support() {
   if (!BrowserDetection.webGL2) {
@@ -205,10 +181,8 @@ export function checkWebGL2Support() {
   }
   return true
 }
-
 /**
  * Checks whether the browser supports WebGL and shows a warning message if this is not supported.
- * @returns {boolean}
  */
 export function checkWebGLSupport() {
   if (!BrowserDetection.webGL) {
@@ -220,10 +194,9 @@ export function checkWebGLSupport() {
   }
   return true
 }
-
 /**
  * Creates a div to display the no-webgl-support warnings.
- * @param {!string} innerHTML the text to be displayed
+ * @param innerHTML the text to be displayed
  */
 function createWebGLSupportWarningMessage(innerHTML) {
   const graphComponentDiv = document.querySelector('#graphComponent')
@@ -237,62 +210,49 @@ function createWebGLSupportWarningMessage(innerHTML) {
     parent.appendChild(webglDiv)
   }
 }
-
 /**
  * Binds the given command to the element specified by the given selector.
  *
  * In more detail, register a click listener that executes the command and an event listener that
  * syncs the disabled state of the command to the button.
- * @param {!string} selector
- * @param {!ICommand} command
- * @param {*} target
- * @param {*} parameter
- * @param {!string} tooltip
  */
-export function bindYFilesCommand(selector, command, target, parameter, tooltip) {
+export function bindYFilesCommand(selector, command, targetCanvas, parameter, tooltip) {
   const element = document.querySelector(selector)
   // Check whether an event listener is already registered
   if (!element || element.getAttribute('data-command-registered')) {
     return
   }
-
   // Add a click listener that executes the command
   element.addEventListener('click', () => {
-    if (command.canExecute(parameter, target)) {
-      command.execute(parameter, target)
+    if (targetCanvas.canExecuteCommand(command, parameter)) {
+      targetCanvas.executeCommand(command, parameter)
     }
   })
-
   // Add an event listener that syncs the disabled state of the command to the element
-  command.addCanExecuteChangedListener((command, evt) => {
-    if (command.canExecute(parameter, target)) {
+  targetCanvas.addEventListener('can-execute-changed', () => {
+    if (targetCanvas.canExecuteCommand(command, parameter)) {
       element.removeAttribute('disabled')
     } else {
       element.setAttribute('disabled', 'disabled')
     }
   })
-
   // Mark the element as having an event listener, and add a tooltip
   element.setAttribute('data-command-registered', '')
   element.setAttribute('title', tooltip)
 }
-
 /**
  * Disabled all UI elements matching the given selector.
  * Ignores already disabled elements.
- * @param {!Array.<string>} undefined
  */
 export function disableUIElements(...elementSelectors) {
   for (const selector of elementSelectors) {
     document.querySelectorAll(selector).forEach((element) => {
       if (!element || element.hasAttribute('disabled')) return
-
       element.setAttribute('disabled', '')
       element.dataset.disabled = ''
     })
   }
 }
-
 /**
  * Re-enables all elements which were previously disabled by {@see disableUIElements}.
  */
@@ -301,13 +261,10 @@ export function enableUIElements() {
     e.removeAttribute('disabled')
   })
 }
-
 /**
  * Displays or hides the loading indicator which is a div element with id 'loadingIndicator'.
- * @param {boolean} visible Whether to show or hide the loading indicator.
+ * @param visible Whether to show or hide the loading indicator.
  * @param message A text on the loading indicator.
- * @param {!string} [message]
- * @returns {!Promise}
  */
 export async function showLoadingIndicator(visible, message) {
   const loadingIndicator = document.querySelector('#loading-indicator')

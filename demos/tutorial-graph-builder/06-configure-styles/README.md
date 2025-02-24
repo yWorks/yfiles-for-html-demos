@@ -1,17 +1,19 @@
 <!--
  //////////////////////////////////////////////////////////////////////////////
  // @license
- // This file is part of yFiles for HTML 2.6.
+ // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # 06 Configure Styles - Tutorial: Graph Builder
 
-# Styling the graph using GraphBuilder
+<img src="../../../doc/demo-thumbnails/tutorial-graph-builder-configure-styles.webp" alt="demo-thumbnail" height="320"/>
+
+[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/06-configure-styles/).
 
 [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) supports various approaches for styling the graph elements. They range from simple default visualizations to accessing the business data for defining specific styles.
 

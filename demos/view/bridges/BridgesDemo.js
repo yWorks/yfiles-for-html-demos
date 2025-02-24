@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,87 +34,64 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphObstacleProvider,
-  HierarchicNestingPolicy,
+  HierarchicalNestingPolicy,
   Insets,
   License,
   Point,
   Rect
-} from 'yfiles'
-
-import { CustomCallback, GroupNodeObstacleProvider } from './BridgeHelper.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
-
+} from '@yfiles/yfiles'
+import { CustomCallback, GroupNodeObstacleProvider } from './BridgeHelper'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * Holds the graphComponent.
- * @type {GraphComponent}
  */
 let graphComponent
-
 /**
  * Holds the bridgeManager.
- * @type {BridgeManager}
  */
 let bridgeManager
-
 /**
  * Runs the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   const graph = graphComponent.graph
-
   // draw edges in front, so that group nodes don't hide the bridges
   graphComponent.graphModelManager.edgeGroup.toFront()
-  graphComponent.graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES
-
+  graphComponent.graphModelManager.hierarchicalNestingPolicy = HierarchicalNestingPolicy.NODES
   initDemoStyles(graph)
-
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
-
+  graphComponent.inputMode = new GraphEditorInputMode()
   configureBridges()
-
   initializeToolBarElements()
-
   createSampleGraph()
 }
-
 /**
  * Adds and configures the {@link BridgeManager}.
  */
 function configureBridges() {
   bridgeManager = new BridgeManager()
-
   // We would like to change the custom bridge rendering default,
   // this can be done by decorating the existing default callback
   bridgeManager.defaultBridgeCreator = new CustomCallback(bridgeManager.defaultBridgeCreator)
-
   // Convenience class that just queries all model item
   const provider = new GraphObstacleProvider()
-
   // We also want to query nodes for potential obstacles (disabled by default)
   provider.queryNodes = true
-
   // Register an IObstacleProvider, bridgeManager will query all registered obstacle providers
   // to determine if a bridge must be created
   bridgeManager.addObstacleProvider(provider)
   // Bind the bridge manager to the GraphComponent...
   bridgeManager.canvasComponent = graphComponent
-
   // We register a custom obstacle provider in the node's lookup of group nodes
   // that can be used by bridgeManager (through provider...)
-  graphComponent.graph.decorator.nodeDecorator.obstacleProviderDecorator.setFactory(
+  graphComponent.graph.decorator.nodes.obstacleProvider.addFactory(
     (node) => graphComponent.graph.isGroupNode(node),
     (node) => new GroupNodeObstacleProvider(node)
   )
 }
-
 /**
  * Initializes the combo boxes and the text-boxes of the toolbar.
  */
@@ -159,7 +136,6 @@ function initializeToolBarElements() {
     }
   ]
   fillComboBox(crossingStylesComboBox, crossingStylesElements)
-
   const crossingPolicyComboBox = document.querySelector('#crossing-policies')
   addNavigationButtons(crossingPolicyComboBox).addEventListener('change', () => {
     bridgeManager.bridgeCrossingPolicy = getValueFromComboBox('#crossing-policies')
@@ -184,7 +160,6 @@ function initializeToolBarElements() {
     }
   ]
   fillComboBox(crossingPolicyComboBox, crossingDeterminationElements)
-
   const bridgeOrientationComboBox = document.querySelector('#bridge-orientations')
   addNavigationButtons(bridgeOrientationComboBox).addEventListener('change', () => {
     bridgeManager.defaultBridgeOrientationStyle = getValueFromComboBox('#bridge-orientations')
@@ -225,7 +200,6 @@ function initializeToolBarElements() {
     }
   ]
   fillComboBox(bridgeOrientationComboBox, bridgeOrientationElements)
-
   document.querySelector('#bridge-width-slider').addEventListener('change', (evt) => {
     const value = evt.target.value
     bridgeManager.defaultBridgeWidth = parseInt(value)
@@ -239,11 +213,10 @@ function initializeToolBarElements() {
     document.getElementById('bridge-height-label').textContent = value
   })
 }
-
 /**
  * Fills the given combo box with the given values.
- * @param {?HTMLElement} comboBox The combo box to be filled
- * @param {!Array.<object>} content The values to be used
+ * @param comboBox The combo box to be filled
+ * @param content The values to be used
  */
 function fillComboBox(comboBox, content) {
   if (!comboBox) {
@@ -256,18 +229,15 @@ function fillComboBox(comboBox, content) {
     comboBox.appendChild(el)
   }
 }
-
 /**
  * Returns the integer value of the currently-selected element in the combo box
  * with the given ID.
- * @param {!string} selector The ID of the combo box.
- * @returns {number}
+ * @param selector The ID of the combo box.
  */
 function getValueFromComboBox(selector) {
   const comboBox = document.querySelector(selector)
   return parseInt(comboBox[comboBox.selectedIndex].value)
 }
-
 /**
  * Creates the sample graph.
  */
@@ -280,20 +250,15 @@ function createSampleGraph() {
     nodes.push(graph.createNodeAt(new Point(40, 50 + 40 * i)))
     nodes.push(graph.createNodeAt(new Point(260, 50 + 40 * i)))
   }
-
   for (let i = 0; i < nodes.length; i++) {
     graph.addLabel(nodes[i], `${i}`)
   }
-
   graph.createEdge(nodes[0], nodes[1])
-
   const p1 = graph.addPortAt(nodes[0], new Point(0, 0))
   graph.setRelativePortLocation(p1, new Point(5, 0))
-
   const p2 = graph.addPortAt(nodes[1], new Point(0, 0))
   graph.setRelativePortLocation(p2, new Point(5, 0))
   graph.createEdge(p1, p2)
-
   graph.createEdge(nodes[5], nodes[4])
   graph.createEdge(nodes[2], nodes[3])
   graph.createEdge(nodes[7], nodes[6])
@@ -301,20 +266,15 @@ function createSampleGraph() {
   graph.createEdge(nodes[7 + 8], nodes[6 + 8])
   graph.createEdge(nodes[0 + 8], nodes[1 + 8])
   graph.createEdge(nodes[5 + 8], nodes[4 + 8])
-
   const n1 = graph.createNodeAt(new Point(300, 150))
   const n2 = graph.createNodeAt(new Point(500, 150))
-
   graph.createEdge(n1, n2)
-
   const groupNode = graph.createGroupNode({
     labels: ['Group Node'],
     children: [{ layout: new Rect(400, 140, 30, 30) }]
   })
   graph.adjustGroupNodeLayout(groupNode)
-  graph.setNodeLayout(groupNode, groupNode.layout.toRect().getEnlarged(new Insets(15, 0, 15, 0)))
-
+  graph.setNodeLayout(groupNode, groupNode.layout.toRect().getEnlarged(new Insets(0, 15, 0, 15)))
   graphComponent.fitGraphBounds()
 }
-
 run().then(finishLoading)

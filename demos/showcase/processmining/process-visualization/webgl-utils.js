@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,46 +27,31 @@
  **
  ***************************************************************************/
 export class WebGLBufferData {
+  entryCount
+  pointerType
+  attributeName
+  elementSize
   dirty = true
   buffer = null
   DataType
   data = null
   attributeLocation = -1
-
-  /**
-   * @param {number} entryCount
-   * @param {!GLenum} pointerType
-   * @param {!string} attributeName
-   * @param {!GLint} elementSize
-   * @param {!object} dataType
-   */
   constructor(entryCount, pointerType, attributeName, elementSize, dataType) {
-    this.elementSize = elementSize
-    this.attributeName = attributeName
-    this.pointerType = pointerType
     this.entryCount = entryCount
+    this.pointerType = pointerType
+    this.attributeName = attributeName
+    this.elementSize = elementSize
     this.DataType = dataType
   }
-
-  /**
-   * @param {!WebGLRenderingContext} gl
-   * @param {!WebGLProgram} program
-   */
   init(gl, program) {
     this.dirty = true
     this.buffer = gl.createBuffer()
     this.data = new this.DataType(this.elementSize * this.entryCount)
     this.attributeLocation = gl.getAttribLocation(program, this.attributeName)
   }
-
   updateData() {
     this.dirty = true
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!WebGLRenderingContext} gl
-   */
   enableRendering(renderContext, gl) {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
     if (this.dirty) {
@@ -76,19 +61,9 @@ export class WebGLBufferData {
     gl.enableVertexAttribArray(this.attributeLocation)
     gl.vertexAttribPointer(this.attributeLocation, this.elementSize, this.pointerType, false, 0, 0)
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!WebGLRenderingContext} gl
-   */
   disableRendering(renderContext, gl) {
     gl.disableVertexAttribArray(this.attributeLocation)
   }
-
-  /**
-   * @param {!WebGLRenderingContext} gl
-   * @param {!WebGLProgram} program
-   */
   dispose(gl, program) {
     gl.deleteBuffer(this.buffer)
     gl.deleteProgram(program)
@@ -97,23 +72,13 @@ export class WebGLBufferData {
     this.attributeLocation = -1
   }
 }
-
 export class WebGLProgramInfo {
+  entryCount
   buffers
-
-  /**
-   * @param {number} entryCount
-   */
   constructor(entryCount) {
     this.entryCount = entryCount
     this.buffers = []
   }
-
-  /**
-   * @param {!string} attributeName
-   * @param {number} [entrySize=1]
-   * @returns {!WebGLBufferData.<Float32Array>}
-   */
   createFloatBuffer(attributeName, entrySize = 1) {
     const bufferData = new WebGLBufferData(
       this.entryCount,
@@ -125,41 +90,21 @@ export class WebGLProgramInfo {
     this.buffers.push(bufferData)
     return bufferData
   }
-
-  /**
-   * @param {!WebGLRenderingContext} gl
-   * @param {!WebGLProgram} program
-   */
   init(gl, program) {
     for (const buffer of this.buffers) {
       buffer.init(gl, program)
     }
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!WebGLRenderingContext} gl
-   */
   enableRendering(renderContext, gl) {
     for (const buffer of this.buffers) {
       buffer.enableRendering(renderContext, gl)
     }
   }
-
-  /**
-   * @param {!IRenderContext} renderContext
-   * @param {!WebGLRenderingContext} gl
-   */
   disableRendering(renderContext, gl) {
     for (const buffer of this.buffers) {
       buffer.disableRendering(renderContext, gl)
     }
   }
-
-  /**
-   * @param {!WebGLRenderingContext} gl
-   * @param {!WebGLProgram} program
-   */
   dispose(gl, program) {
     for (const buffer of this.buffers) {
       buffer.dispose(gl, program)

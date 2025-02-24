@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,13 +27,11 @@
  **
  ***************************************************************************/
 import {
-  BalloonLayout,
-  BalloonLayoutData,
   CircularLayout,
   CircularLayoutData,
   CompactDiskLayout,
   CompactDiskLayoutData,
-  CompactNodePlacer,
+  CompactSubtreePlacer,
   ComponentLayout,
   ComponentLayoutData,
   EdgeRouter,
@@ -41,45 +39,46 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  HierarchicLayout,
-  HierarchicLayoutData,
+  HierarchicalLayout,
+  HierarchicalLayoutData,
   type ILayoutAlgorithm,
   type INode,
   type LayoutData,
+  LayoutExecutor,
   License,
-  NodeTypeAwareSequencer,
   OrganicEdgeRouter,
   OrganicLayout,
   OrganicLayoutData,
   RadialLayout,
   RadialLayoutData,
+  RadialTreeLayout,
+  RadialTreeLayoutData,
   Size,
+  StraightLineEdgeRouter,
   TreeLayout,
-  TreeLayoutData,
-  TreeReductionStage
-} from 'yfiles'
+  TreeLayoutData
+} from '@yfiles/yfiles'
 import {
-  BalloonSampleData,
   CircularSampleData,
   CompactDiskSampleData,
   ComponentSampleData,
-  HierarchicSampleData,
+  HierarchicalSampleData,
   type NodeData,
   OrganicSampleData,
   RadialSampleData,
+  RadialTreeSampleData,
   type SampleData,
   TreeSampleData
 } from './resources/SampleData'
-import NodeTypePanel from 'demo-utils/NodeTypePanel'
-import type { ColorSetName } from 'demo-resources/demo-styles'
+import NodeTypePanel from '@yfiles/demo-utils/NodeTypePanel'
+import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
 import {
-  applyDemoTheme,
   colorSets,
   createDemoEdgeStyle,
   createDemoNodeStyle
-} from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from 'demo-resources/demo-page'
+} from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 
 /**
  * Type describing a sample graph and the according layout algorithm to run on it.
@@ -96,10 +95,10 @@ type Sample = {
  * Initialization of the seven samples.
  */
 const samples = [
-  createHierarchicSample(),
+  createHierarchicalSample(),
   createOrganicSample(),
   createTreeSample(),
-  createBalloonSample(),
+  createRadialTreeSample(),
   createCircularSample(),
   createRadialSample(),
   createComponentSample(),
@@ -122,7 +121,6 @@ let graphComponent: GraphComponent
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
   configureGraphComponent()
   initializeUI()
   prepareSampleList()
@@ -153,21 +151,21 @@ function getNodeType(node: INode): number {
 }
 
 /**
- * Creates and configures the {@link HierarchicLayout} and the {@link HierarchicLayoutData}
+ * Creates and configures the {@link HierarchicalLayout} and the {@link HierarchicalLayoutData}
  * such that node types are considered.
  */
-function createHierarchicSample(): Sample {
-  // create hierarchic layout - no further settings on the algorithm necessary to support types
-  const layout = new HierarchicLayout()
+function createHierarchicalSample(): Sample {
+  // create hierarchical layout - no further settings on the algorithm necessary to support types
+  const layout = new HierarchicalLayout()
 
   // the node types are specified as delegate on the nodeTypes property of the layout data
-  const layoutData = new HierarchicLayoutData({ nodeTypes: getNodeType })
+  const layoutData = new HierarchicalLayoutData({ nodeTypes: getNodeType })
 
   return {
-    name: 'Hierarchic',
+    name: 'Hierarchical',
     layout,
     layoutData,
-    sampleData: HierarchicSampleData,
+    sampleData: HierarchicalSampleData,
     directed: true
   }
 }
@@ -183,8 +181,7 @@ function createOrganicSample(): Sample {
     // on the organic layout is enabled - otherwise types have no influence
     new OrganicLayout({
       deterministic: true,
-      considerNodeSizes: true,
-      minimumNodeDistance: 30,
+      defaultMinimumNodeDistance: 30,
       starSubstructureStyle: 'circular',
       starSubstructureTypeSeparation: false,
       parallelSubstructureStyle: 'rectangular',
@@ -205,14 +202,9 @@ function createOrganicSample(): Sample {
  */
 function createTreeSample(): Sample {
   //create a tree layout including a reduction stage to support non-tree graphs too
-  const layout = new TreeLayout({ defaultNodePlacer: new CompactNodePlacer() })
-  const edgeRouter = new EdgeRouter({ scope: 'route-affected-edges' })
-  const reductionStage = new TreeReductionStage({
-    nonTreeEdgeRouter: edgeRouter,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    nonTreeEdgeSelectionKey: edgeRouter.affectedEdgesDpKey
-  })
-  layout.prependStage(reductionStage)
+  const layout = new TreeLayout({ defaultSubtreePlacer: new CompactSubtreePlacer() })
+  const reductionStage = layout.treeReductionStage
+  reductionStage.nonTreeEdgeRouter = new EdgeRouter()
 
   // the node types are specified as delegate on the nodeTypes property of the layout data
   const layoutData = new TreeLayoutData({ nodeTypes: getNodeType })
@@ -228,7 +220,6 @@ function createCircularSample(): Sample {
   //create a circular layout and specify the NodeTypeAwareSequencer as sequencer responsible
   // for the ordering on the circle - this is necessary to support node types
   const layout = new CircularLayout()
-  layout.singleCycleLayout.nodeSequencer = new NodeTypeAwareSequencer()
 
   // the node types are specified as delegate on the nodeTypes property of the layout data
   const layoutData = new CircularLayoutData({ nodeTypes: getNodeType })
@@ -256,20 +247,25 @@ function createComponentSample(): Sample {
 }
 
 /**
- * Creates and configures the {@link BalloonLayout} and the {@link BalloonLayoutData}
+ * Creates and configures the {@link RadialTreeLayout} and the {@link RadialTreeLayoutData}
  * such that node types are considered.
  */
-function createBalloonSample(): Sample {
-  //create a balloon layout including a reduction stage to support non-tree graphs too
-  const layout = new BalloonLayout()
-  const reductionStage = new TreeReductionStage()
-  reductionStage.nonTreeEdgeRouter = reductionStage.createStraightLineRouter()
-  layout.prependStage(reductionStage)
+function createRadialTreeSample(): Sample {
+  //create a radial tree layout including a reduction stage to support non-tree graphs too
+  const layout = new RadialTreeLayout()
+  const reductionStage = layout.treeReductionStage
+  reductionStage.nonTreeEdgeRouter = new StraightLineEdgeRouter()
 
   // the node types are specified as delegate on the nodeTypes property of the layout data
-  const layoutData = new BalloonLayoutData({ nodeTypes: getNodeType })
+  const layoutData = new RadialTreeLayoutData({ nodeTypes: getNodeType })
 
-  return { name: 'Balloon', layout, layoutData, sampleData: BalloonSampleData, directed: true }
+  return {
+    name: 'Radial Tree',
+    layout,
+    layoutData,
+    sampleData: RadialTreeSampleData,
+    directed: true
+  }
 }
 
 /**
@@ -310,12 +306,19 @@ function createRadialSample(): Sample {
 async function applyCurrentLayout(animate: boolean, considerTypes: boolean): Promise<void> {
   const sampleComboBox = document.querySelector<HTMLSelectElement>('#sample-combo-box')!
 
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
+
   const { layout, layoutData } = samples[sampleComboBox.selectedIndex]
-  const data = considerTypes ? layoutData : null
   if (animate) {
-    await graphComponent.morphLayout(layout, '1000ms', data)
+    if (considerTypes) {
+      await graphComponent.applyLayoutAnimated(layout, '1000ms', layoutData)
+    } else {
+      await graphComponent.applyLayoutAnimated(layout, '1000ms')
+    }
   } else {
-    graphComponent.graph.applyLayout(layout, data)
+    graphComponent.graph.applyLayout(layout)
   }
 }
 
@@ -377,7 +380,7 @@ async function arrangeGraph(animate: boolean, previewWithoutNodeTypes: boolean):
     updateLayoutPopup(true, 'Node types are <u>not considered</u>')
     // Apply the current layout that is associated with the newly loaded sample
     await applyCurrentLayout(animate, false)
-    graphComponent.fitGraphBounds()
+    await graphComponent.fitGraphBounds()
     // Add some delay
     await new Promise((resolve) => setTimeout(resolve, 2000))
     updateLayoutPopup(true, 'Node types <u>are considered</u>')
@@ -386,7 +389,7 @@ async function arrangeGraph(animate: boolean, previewWithoutNodeTypes: boolean):
   // Run a layout when considering the node types
   await applyCurrentLayout(true, true)
 
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
   updateLayoutPopup(false)
   setUIDisabled(false)
 }
@@ -395,15 +398,14 @@ async function arrangeGraph(animate: boolean, previewWithoutNodeTypes: boolean):
  * Sets up a {@link GraphEditorInputMode} and configures the defaults for the graph component.
  */
 function configureGraphComponent(): void {
-  const geim = new GraphEditorInputMode({
-    selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE
+  graphComponent.inputMode = new GraphEditorInputMode({
+    selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
+    nodeCreator: (_context, graph, location, _): INode => {
+      const node = graph.createNodeAt(location)
+      setNodeType(node, 0)
+      return node
+    }
   })
-  geim.nodeCreator = (context, graph, location, _): INode => {
-    const node = graph.createNodeAt(location)
-    setNodeType(node, 0)
-    return node
-  }
-  graphComponent.inputMode = geim
 
   graphComponent.graph.nodeDefaults.shareStyleInstance = false
   graphComponent.graph.nodeDefaults.size = new Size(40, 40)
@@ -429,15 +431,19 @@ function initializeTypePanel(): void {
   const typePanel = new NodeTypePanel(graphComponent, typeColors, colorSets)
   typePanel.nodeTypeChanged = (item, newType): void => {
     setNodeType(item, newType)
-    graphComponent.selection.clear()
   }
 
   typePanel.typeChanged = async (): Promise<void> => {
     await arrangeGraph(true, false)
   }
 
-  graphComponent.selection.addItemSelectionChangedListener(
-    () => (typePanel.currentItems = graphComponent.selection.selectedNodes.toArray())
+  graphComponent.selection.addEventListener(
+    'item-added',
+    () => (typePanel.currentItems = graphComponent.selection.nodes.toArray())
+  )
+  graphComponent.selection.addEventListener(
+    'item-removed',
+    () => (typePanel.currentItems = graphComponent.selection.nodes.toArray())
   )
 }
 

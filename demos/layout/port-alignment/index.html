@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+    <title>Port Alignment Demo [yFiles for HTML]</title>
+    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../resources/style/demo.css" />
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yworks.com/products/yfiles"
+        class="demo-header__y-logo"
+        title="Visit yFiles product details"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Port Alignment</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <input
+        type="checkbox"
+        id="toggle-port-alignment"
+        class="demo-toggle-button labeled"
+        checked
+      />
+      <label for="toggle-port-alignment" title="Align Ports"> Align Ports </label>
+      <span class="demo-separator"></span>
+      <label>
+        Minimum Port Distance:
+        <input
+          style="width: 100px; max-width: 100%; line-height: 24px; vertical-align: middle"
+          type="range"
+          value="2"
+          min="0"
+          max="15"
+          step="1"
+          id="minimum-port-distance"
+        />
+      </label>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yworks.com/products/yfiles"
+          class="demo-description__logo"
+          title="Visit yFiles product details"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Port Alignment Demo</h1>
+
+        <p>
+          This demo shows how to implement port alignment in <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a>.
+        </p>
+        <p>
+          The sample data contains edges that belong to different path groups, indicated by the
+          different edge color. The demo code aligns all source and target ports with the edge paths
+          by configuring the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/PortData#sourcePortAlignmentIds" target="_blank">sourcePortAlignmentIds</a> and
+          <a href="https://docs.yworks.com/yfileshtml/#/api/PortData#targetPortAlignmentIds" target="_blank">targetPortAlignmentIds</a> properties of the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#ports" target="_blank">PortData</a>.
+        </p>
+        <p>
+          As a result, the aligned source and target ports at every node have the same y-coordinate,
+          creating the visual effect in which the edges seem to pass through the node.
+        </p>
+        <p>
+          Port alignment is particularly useful in graphs where there are paths passing through. It
+          is less restrictive in comparison to port grouping, since the ports of the aligned edges
+          can lie on two opposite sides of a node.
+        </p>
+
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Toggle between layouts with and without port alignment with the
+            <em>Align Ports</em> button in the toolbar.
+          </li>
+          <li>
+            Adjust <em>Minimum Port Distance</em> with the slider in the toolbar and observe how
+            nodes automatically resize to meet the minimum.
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+      </div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="PortAlignmentDemo.ts" async></script>
+  </body>
+</html>

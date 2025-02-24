@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,8 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Color,
-  Enum,
   Fill,
   GraphEditorInputMode,
   GroupNodeStyle,
@@ -38,27 +36,23 @@ import {
   INode,
   Point,
   TimeSpan
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * Configures the given input mode to show tool tips for group nodes and folder nodes.
  * The tool tips show a description of the corresponding node style configuration.
- * @param {!GraphEditorInputMode} inputMode
  */
 export function configureToolTips(inputMode) {
   // Customize the tool tip's behavior to our liking.
-  const mouseHoverInputMode = inputMode.mouseHoverInputMode
-  mouseHoverInputMode.toolTipLocationOffset = new Point(30, 30)
-  mouseHoverInputMode.delay = TimeSpan.fromMilliseconds(500)
-  mouseHoverInputMode.duration = TimeSpan.fromSeconds(10)
-
+  const toolTipInputMode = inputMode.toolTipInputMode
+  toolTipInputMode.toolTipLocationOffset = new Point(30, 30)
+  toolTipInputMode.delay = TimeSpan.fromMilliseconds(500)
+  toolTipInputMode.duration = TimeSpan.fromSeconds(10)
   // Register a listener for when a tool tip should be shown.
-  inputMode.addQueryItemToolTipListener((_, evt) => {
+  inputMode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.handled) {
       // Tool tip content has already been assigned -> nothing to do.
       return
     }
-
     // Use a rich HTML element as tool tip content. Alternatively, a plain string would do as well.
     if (evt.item instanceof INode && evt.item.style instanceof GroupNodeStyle) {
       evt.toolTip = createToolTipContent(evt.item)
@@ -67,40 +61,23 @@ export function configureToolTips(inputMode) {
     }
   })
 }
-
 /**
  * The tool tip may either be a plain string or it can also be a rich HTML element. In this case, we
  * show the latter. We just extract the first label text from the given item and show it as
  * tool tip.
- * @param {!INode} node
- * @returns {!HTMLElement}
  */
 function createToolTipContent(node) {
   const style = node.style
-
   const title = document.createElement('h4')
   title.innerHTML = 'GroupNodeStyle Properties'
-
   const grid = document.createElement('div')
   grid.classList.add('tooltip-content')
-  addToToolTipGrid(
-    grid,
-    'Folder Icon',
-    Enum.getName(GroupNodeStyleIconType.$class, style.folderIcon)
-  )
-  addToToolTipGrid(grid, 'Group Icon', Enum.getName(GroupNodeStyleIconType.$class, style.groupIcon))
-  addToToolTipGrid(
-    grid,
-    'Icon Position',
-    Enum.getName(GroupNodeStyleIconPosition.$class, style.iconPosition)
-  )
+  addToToolTipGrid(grid, 'Folder Icon', GroupNodeStyleIconType[style.folderIcon])
+  addToToolTipGrid(grid, 'Group Icon', GroupNodeStyleIconType[style.groupIcon])
+  addToToolTipGrid(grid, 'Icon Position', GroupNodeStyleIconPosition[style.iconPosition])
   addSeparator(grid)
-  addToToolTipGrid(
-    grid,
-    'Tab Position',
-    Enum.getName(GroupNodeStyleTabPosition.$class, style.tabPosition)
-  )
-  addToToolTipGrid(grid, 'Tab Inset', `${style.tabInset}`)
+  addToToolTipGrid(grid, 'Tab Position', GroupNodeStyleTabPosition[style.tabPosition])
+  addToToolTipGrid(grid, 'Tab Inset', `${style.tabHeight}`)
   addToToolTipGrid(grid, 'Tab Slope', `${style.tabSlope}`)
   addToToolTipGrid(grid, 'Tab Width', `${style.tabWidth}`)
   addToToolTipGrid(grid, 'Tab Height', `${style.tabHeight}`)
@@ -108,15 +85,14 @@ function createToolTipContent(node) {
   addToToolTipGrid(grid, 'Tab Background Fill', style.tabBackgroundFill)
   addSeparator(grid)
   addToToolTipGrid(grid, 'Content Area Fill', style.contentAreaFill)
-  const insets = style.contentAreaInsets
+  const padding = style.contentAreaPadding
   addToToolTipGrid(
     grid,
     'Content Area Insets',
-    `[${insets.top} ${insets.right} ${insets.bottom} ${insets.left}]`
+    `[${padding.top} ${padding.right} ${padding.bottom} ${padding.left}]`
   )
   addSeparator(grid)
   addToToolTipGrid(grid, 'Corner Radius', `${style.cornerRadius}`)
-
   // build the tooltip container
   const toolTip = document.createElement('div')
   toolTip.classList.add('tooltip-container')
@@ -127,59 +103,25 @@ function createToolTipContent(node) {
 /**
  * Adds a property with a given key and value to the grid div element that shows properties
  * as key-value pairs.
- * @param {!HTMLDivElement} grid
- * @param {!string} key
- * @param {?(string|Fill)} value
  */
 function addToToolTipGrid(grid, key, value) {
   const keySpan = document.createElement('span')
   keySpan.innerHTML = key
   grid.appendChild(keySpan)
-
   const valueSpan = document.createElement('span')
   if (typeof value === 'string') {
     valueSpan.innerHTML = value
   } else if (value) {
     valueSpan.classList.add('color')
-    valueSpan.setAttribute('style', `background-color: ${fillToHexString(value)};`)
+    valueSpan.setAttribute('style', `background-color: ${value};`)
   } else {
     valueSpan.style.fontStyle = 'italic'
     valueSpan.innerHTML = 'null'
   }
   grid.appendChild(valueSpan)
 }
-
-/**
- * Returns the hexadecimal representation of the given solid color fill.
- * @param {!Fill} fill
- * @returns {!string}
- */
-function fillToHexString(fill) {
-  return colorToHexString(fill.color)
-}
-
-/**
- * Returns the hexadecimal representation of the given color.
- * @param {!Color} c
- * @returns {!string}
- */
-function colorToHexString(c) {
-  return '#' + (toHexString(c.r) + toHexString(c.g) + toHexString(c.b)).toUpperCase()
-}
-
-/**
- * Returns the hexadecimal representation of the given number.
- * This methods assumes a value in the range [0, 255].
- * @param {number} value
- * @returns {!string}
- */
-function toHexString(value) {
-  return (value < 16 ? '0' : '') + value.toString(16)
-}
-
 /**
  * Adds some extra spacing below the last row in the given grid.
- * @param {!HTMLDivElement} grid
  */
 function addSeparator(grid) {
   const lastValue = grid.lastElementChild

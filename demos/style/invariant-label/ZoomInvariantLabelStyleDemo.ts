@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,19 +27,18 @@
  **
  ***************************************************************************/
 import {
-  Class,
-  DefaultLabelStyle,
   GraphBuilder,
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   ILabelStyle,
+  LabelStyle,
   LayoutExecutor,
   License,
   Rect
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import {
   FitOwnerLabelStyle,
   ZoomInvariantAboveThresholdLabelStyle,
@@ -47,24 +46,22 @@ import {
   ZoomInvariantLabelStyleBase,
   ZoomInvariantOutsideRangeLabelStyle
 } from './ZoomInvariantLabelStyle'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { addNavigationButtons, addOptions, finishLoading } from 'demo-resources/demo-page'
-import type { JSONGraph } from 'demo-utils/json-model'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   graphComponent.inputMode = new GraphViewerInputMode({
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
   })
 
   initDemoStyles(graphComponent.graph)
   // For the general appearance of a label, we use the common demo defaults set above
-  const baseLabelStyle = graphComponent.graph.nodeDefaults.labels.style as DefaultLabelStyle
+  const baseLabelStyle = graphComponent.graph.nodeDefaults.labels.style as LabelStyle
   // Initially, use FIXED_BELOW_THRESHOLD mode
   setLabelStyle(graphComponent.graph, 'FIXED_BELOW_THRESHOLD', baseLabelStyle)
 
@@ -72,18 +69,15 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
+  LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
-    new HierarchicLayout({
-      orthogonalRouting: true,
+    new HierarchicalLayout({
       minimumLayerDistance: 100,
-      edgeToEdgeDistance: 100,
-      nodeToEdgeDistance: 100,
-      considerNodeLabels: true,
-      integratedEdgeLabeling: true
+      edgeDistance: 100,
+      nodeToEdgeDistance: 100
     })
   )
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
@@ -133,6 +127,9 @@ function setLabelStyle(graph: IGraph, mode: string, baseLabelStyle: ILabelStyle 
     graph.nodeDefaults.labels.style
   graph.nodeDefaults.labels.style = createLabelStyle(mode, innerLabelStyle)
   graph.edgeDefaults.labels.style = createLabelStyle(mode, innerLabelStyle)
+  // to make sure that the selection rectangle has the correct label bounds, the label style should not be shared
+  graph.nodeDefaults.labels.shareStyleInstance = false
+  graph.edgeDefaults.labels.shareStyleInstance = false
   for (const label of graph.labels) {
     graph.setStyle(label, createLabelStyle(mode, innerLabelStyle))
   }
@@ -205,9 +202,11 @@ function initializeUI(graphComponent: GraphComponent): void {
   })
 
   // shows the current zoom level in the toolbar
-  graphComponent.addZoomChangedListener(() => {
+  graphComponent.addEventListener('zoom-changed', () => {
     document.querySelector<HTMLElement>('#zoomLevel')!.textContent = graphComponent.zoom.toFixed(2)
   })
+
+  modeSelectElement.dispatchEvent(new Event('change'))
 }
 
 run().then(finishLoading)

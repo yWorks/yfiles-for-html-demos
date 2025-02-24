@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,55 +26,32 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  CenterNodesPolicy,
-  Mapper,
-  Point,
-  RadialLayout,
-  RadialLayoutData,
-  RadialLayoutEdgeRoutingStrategy
-} from 'yfiles'
-
-/**
- * @typedef {Object} CircleInfo
- * @property {Point} center
- * @property {number} radius
- */
-
+import { Point, RadialLayout, RadialLayoutData } from '@yfiles/yfiles'
 /**
  * Returns the layout callback suitable for the demo's neighborhood view.
- * @param {!function} onDone a callback that is invoked with geometry information about the circles on which
+ * @param onDone a callback that is invoked with geometry information about the circles on which
  * the nodes in the neighborhood view have been placed by the layout calculation.
- * @returns {!ApplyLayoutCallback}
  */
 export function getApplyLayoutCallback(onDone) {
   return (view, nodes) => {
-    const nodeInfos = new Mapper()
-
     // arrange the nodes in the neighborhood graph on concentric circles
-    view.neighborhoodGraph.applyLayout(
-      new RadialLayout({
-        centerNodesPolicy: CenterNodesPolicy.CUSTOM,
-        createControlPoints: true,
-        edgeRoutingStrategy: RadialLayoutEdgeRoutingStrategy.ARC
-      }),
-      new RadialLayoutData({
-        centerNodes: nodes,
-        nodeInfos
-      })
-    )
-
+    const radialLayout = new RadialLayout({
+      createControlPoints: true,
+      edgeRoutingStyle: 'arc'
+    })
+    const radialLayoutData = new RadialLayoutData({
+      centerNodes: nodes
+    })
+    view.neighborhoodGraph.applyLayout(radialLayout, radialLayoutData)
     // collect the geometry of the calculated circles
     const indices = new Set()
     const circles = []
     for (const node of view.neighborhoodGraph.nodes) {
-      const info = nodeInfos.get(node)
+      const info = radialLayoutData.nodePlacementsResult.get(node)
       if (info) {
         if (!indices.has(info.circleIndex) && info.radius > 0) {
           indices.add(info.circleIndex)
-
           const nodeCenter = node.layout.center
-
           circles.push({
             center: new Point(
               nodeCenter.x - info.centerOffset.x,
@@ -95,7 +72,6 @@ export function getApplyLayoutCallback(onDone) {
         return 0
       }
     })
-
     // report the geometry of the calculated circles to interested parties
     // the demo uses this information to show the calculated circles in the background of the
     // neighborhood view

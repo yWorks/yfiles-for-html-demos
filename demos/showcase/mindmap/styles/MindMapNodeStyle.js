@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,29 +26,25 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { NodeStyleBase, SvgVisual } from 'yfiles'
-import { getNodeData } from '../data-types.js'
-
+import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
+import { getNodeData } from '../data-types'
 /**
  * The node style used for the non-root nodes of the mind map.
  * Each node will be represented by a colored line based on its level in the mind map.
  */
 export class MindMapNodeStyle extends NodeStyleBase {
+  className
   /**
    * Creates a new instance of this style using the given class name.
-   * @param {!string} className The css class attributed to the node.
+   * @param className The css class attributed to the node.
    */
   constructor(className) {
     super()
     this.className = className
   }
-
   /**
    * Creates the visual for this node style.
    * The node will be represented by a colored line.
-   * @param {!IRenderContext} renderContext
-   * @param {!INode} node
-   * @returns {!SvgVisual}
    */
   createVisual(renderContext, node) {
     // create a container element
@@ -56,47 +52,44 @@ export class MindMapNodeStyle extends NodeStyleBase {
     this.render(renderContext, node, g)
     // move the container to the node position
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
-    return new SvgVisual(g)
+    // store the data used to create the elements with the container
+    return SvgVisual.from(g, {
+      size: node.layout.toSize(),
+      color: getNodeData(node).color
+    })
   }
-
   /**
    * Updates the node visual.
    * If the size or color of the node has changed, a new visual will be created.
-   * @param {!IRenderContext} renderContext
-   * @param {!SvgVisual} oldVisual
-   * @param {!INode} node
-   * @returns {!SvgVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const container = oldVisual.svgElement
     const nodeData = getNodeData(node)
     const nodeSize = node.layout.toSize()
-
     // check if the data used to create the visualization has changed
-    if (!nodeSize.equals(container.cache.size) || nodeData.color !== container.cache.color) {
+    if (!nodeSize.equals(oldVisual.tag.size) || nodeData.color !== oldVisual.tag.color) {
       // remove the old elements and re-render the node
       while (container.firstChild) {
         container.removeChild(container.firstChild)
       }
       this.render(renderContext, node, container)
+      // updates the cached information for the rendering
+      oldVisual.tag = {
+        size: nodeSize,
+        color: nodeData.color
+      }
     }
     // move the container to the node position
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
     return oldVisual
   }
-
   /**
-   * Creates the line svg element, adds it to the container and updates the cached information
-   * for the rendering.
-   * @param {!IRenderContext} renderContext
-   * @param {!INode} node
-   * @param {!CachedElement} container
+   * Creates the line svg element and adds it to the container.
    */
   render(renderContext, node, container) {
     const nodeData = getNodeData(node)
     const color = nodeData.color
     const size = node.layout.toSize()
-
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
     line.x1.baseVal.value = 0
     line.x2.baseVal.value = size.width
@@ -104,9 +97,6 @@ export class MindMapNodeStyle extends NodeStyleBase {
     // set the CSS class for the line
     line.setAttribute('class', `node-underline ${this.className}`)
     line.setAttribute('stroke', color)
-
     container.appendChild(line)
-    // store the data used to create the elements with the container
-    container.cache = { size, color }
   }
 }

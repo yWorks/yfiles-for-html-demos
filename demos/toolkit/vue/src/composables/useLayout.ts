@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, LayoutExecutorAsync } from 'yfiles'
+import { GraphComponent, LayoutExecutorAsync } from '@yfiles/yfiles'
 
 import { onMounted } from 'vue'
 
@@ -44,19 +44,11 @@ export function useLayout(getGraphComponent: () => GraphComponent) {
    * Runs a layout in a web worker.
    */
   function run(): Promise<void> {
-    // helper function that performs the actual message passing to the web worker
-    function webWorkerMessageHandler(data: unknown): Promise<any> {
-      return new Promise((resolve) => {
-        layoutWorker.onmessage = (e: any) => resolve(e.data)
-        layoutWorker.postMessage(data)
-      })
-    }
-
     // create an asynchronous layout executor that calculates a layout on the worker
     const executor = new LayoutExecutorAsync({
-      messageHandler: webWorkerMessageHandler,
+      messageHandler: LayoutExecutorAsync.createWebWorkerMessageHandler(layoutWorker),
       graphComponent: graphComponent,
-      duration: '1s',
+      animationDuration: '1s',
       animateViewport: true,
       easedAnimation: true
     })

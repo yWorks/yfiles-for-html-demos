@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder } from 'yfiles'
-
-/**
- * @param {!GraphComponent} graphComponent
- */
+import { GraphBuilder } from '@yfiles/yfiles'
 export function createGraph(graphComponent) {
   const data = {
     persons: [
@@ -39,13 +35,10 @@ export function createGraph(graphComponent) {
     ],
     relationships: [{ id: '0', sourceId: '0', targetId: '1' }]
   }
-
   // use the graph from the graph component, for example
   const graph = graphComponent.graph
-
   // instantiate the graph builder
   const graphBuilder = new GraphBuilder(graph)
-
   // add node and edge data
   graphBuilder.createNodesSource(data.persons, 'id')
   graphBuilder.createEdgesSource({
@@ -54,7 +47,6 @@ export function createGraph(graphComponent) {
     sourceId: 'sourceId',
     targetId: 'targetId'
   })
-
   // create the graph
   graphBuilder.buildGraph()
 }

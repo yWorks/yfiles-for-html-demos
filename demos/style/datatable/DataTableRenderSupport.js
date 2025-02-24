@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,17 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Size } from 'yfiles'
-
+import { Size } from '@yfiles/yfiles'
 /**
  * Creates the visual appearance for data tables.
  */
 export class DataTableRenderSupport {
   /**
    * Creates the visual appearance of a data table for the given size and data cache.
-   * @param {!HTMLDivElement} container The parent {@link HTMLDivElement} element for the new visualization.
-   * @param {!RenderDataCache} cache The render data cache for the data table.
-   * @param {!string} cssClass The CSS class that is added to the visual
+   * @param container The parent {@link HTMLDivElement} element for the new visualization.
+   * @param cache The render data cache for the data table.
+   * @param cssClass The CSS class that is added to the visual
    */
   render(container, cache, cssClass) {
     container.innerHTML = DataTableRenderSupport.createTableMarkup(
@@ -45,21 +44,18 @@ export class DataTableRenderSupport {
       cssClass
     )
   }
-
   /**
    * Creates the HTML text for the data table
-   * @param {!Array.<string>} names the property names of the data
-   * @param {!UserData} data the data
-   * @param {!string} cssClass the CSS class that is added to the visual
+   * @param names the property names of the data
+   * @param data the data
+   * @param cssClass the CSS class that is added to the visual
    */
   static createTableMarkup(names, data, cssClass) {
     let tableText = `<table class="${cssClass}">`
     if (names) {
       names.forEach((name) => {
         const userDatum = data[name]
-        tableText += `<tr><td>${DataTableRenderSupport.toTitleCase(
-          name
-        )}</td><td>${userDatum}</td></tr>`
+        tableText += `<tr><td>${DataTableRenderSupport.toTitleCase(name)}</td><td>${userDatum}</td></tr>`
       })
     } else {
       tableText += `<tr><td>Empty</td></tr>`
@@ -67,11 +63,8 @@ export class DataTableRenderSupport {
     tableText += '</table>'
     return tableText
   }
-
   /**
    * Converts the given string to title case.
-   * @param {!string} text
-   * @returns {!string}
    */
   static toTitleCase(text) {
     return text.replace(
@@ -79,11 +72,6 @@ export class DataTableRenderSupport {
       (txt) => txt.substring(0, 1).toUpperCase() + txt.substring(1).toLowerCase()
     )
   }
-
-  /**
-   * @param {!UserData} userData
-   * @param {!string} cssClass
-   */
   static calculateTableSize(userData, cssClass) {
     const div = document.createElement('div')
     div.style.setProperty('display', 'inline-block')
@@ -99,34 +87,22 @@ export class DataTableRenderSupport {
     return new Size(clientRect.width, clientRect.height)
   }
 }
-
 /**
  * Saves the data to speed up node/label style rendering.
  */
 export class RenderDataCache {
+  data
   propertyNames
-
-  /**
-   * @param {!UserData} data
-   */
   constructor(data) {
     this.data = data
     this.propertyNames = this.data ? Object.keys(data) : []
   }
-
   /**
    * Returns whether this data has the same visual representation as the given other data.
-   * @param {!RenderDataCache} other
-   * @returns {boolean}
    */
   hasSameVisual(other) {
     return this.data === other.data
   }
-
-  /**
-   * @param {!object} [obj]
-   * @returns {boolean}
-   */
   equals(obj) {
     return !!obj && obj instanceof RenderDataCache && this.hasSameVisual(obj)
   }

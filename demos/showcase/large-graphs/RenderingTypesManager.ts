@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,44 +26,29 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type {
-  CreateEdgeInputMode,
-  EdgeEventArgs,
-  GraphComponent,
-  IEdge,
-  IEdgeStyle,
-  IGraph,
-  IList,
-  INode,
-  INodeStyle,
-  ItemEventArgs,
-  WebGL2PolylineEdgeStyle
-} from 'yfiles'
 import {
+  type GraphComponent,
   GraphEditorInputMode,
   GraphModelManager,
+  type IEdge,
+  type IEdgeStyle,
+  type IGraph,
   IInputModeContext,
+  type IList,
+  type INode,
+  type INodeStyle,
+  InputModeItemEventArgs,
   List,
   Point,
   SelectionIndicatorManager,
-  WebGL2GraphModelManager,
-  WebGL2GraphModelManagerRenderMode,
-  WebGL2IconNodeStyle,
-  WebGL2SelectionIndicatorManager,
-  WebGL2ShapeNodeStyle
-} from 'yfiles'
+  WebGLGraphModelManager,
+  WebGLGraphModelManagerRenderMode,
+  WebGLSelectionIndicatorManager
+} from '@yfiles/yfiles'
 
-export type RenderingType = 'WebGL2' | 'SVG'
+export type RenderingType = 'WebGL' | 'SVG'
 export type NodeStyleProvider = (node: INode, graph: IGraph) => INodeStyle
-export type WebGL2NodeStyleProvider = (
-  node: INode,
-  graph: IGraph
-) => WebGL2ShapeNodeStyle | WebGL2IconNodeStyle
 export type EdgeStyleProvider = (edge: IEdge, graph: IGraph) => IEdgeStyle
-export type WebGL2PolylineEdgeStyleProvider = (
-  edge: IEdge,
-  graph: IGraph
-) => WebGL2PolylineEdgeStyle
 
 export type NodeCreatorProvider = (
   context: IInputModeContext,
@@ -76,29 +61,28 @@ export type RenderingTypeChangedListener = (newValue: RenderingType) => void
 
 /**
  * The {@link RenderingTypesManager} takes care of switching between the two rendering types
- * WebGL2 and SVG.
- * The switching takes place, when a provided threshold is reached:
- * Zoom levels lower than the SVG threshold result in WebGL2 rendering, zoom levels
- * higher than the SVG threshold result in SVG rendering.
+ * WebGL and SVG.
  *
- * It also provides listeners, that automatically set the styles for the SVG and
- * WebGL rendering types when new nodes or edges are created.
+ * The switching takes place when a provided threshold is reached:
+ * Zoom levels lower than the SVG threshold result in WebGL rendering,
+ * zoom levels higher than the SVG threshold result in SVG rendering.
+ *
+ * It also registers listeners that automatically set the styles for
+ * newly created nodes and edges using the style providers passed as
+ * constructor arguments.
  */
 export default class RenderingTypesManager {
   private readonly listeners: IList<RenderingTypeChangedListener>
 
   /**
-   * Sets the node styles if the style providers are available.
+   * Sets the style for newly created nodes using the tyle provider.
    */
-  private readonly nodeCreatedListener: (
-    inputMode: GraphEditorInputMode,
-    evt: ItemEventArgs<INode>
-  ) => void
+  private readonly nodeCreatedListener: (evt: InputModeItemEventArgs<INode>) => void
 
   /**
-   * Sets the edge styles if the style providers are available.
+   * Sets the style for newly created edges using the tyle provider.
    */
-  private readonly edgeCreatedListener: (inputMode: CreateEdgeInputMode, evt: EdgeEventArgs) => void
+  private readonly edgeCreatedListener: (evt: InputModeItemEventArgs<IEdge>) => void
 
   /**
    * Listener for zoom change events. Activates the appropriate
@@ -112,94 +96,57 @@ export default class RenderingTypesManager {
   /**
    * Instantiates the {@link RenderingTypesManager}
    * @param graphComponent the GraphComponent
-   * @param svgThreshold the zoom threshold value at which switching between WebGL2 and SVG takes
+   * @param svgThreshold the zoom threshold value at which switching between WebGL and SVG takes
    *   place
-   * @param nodeStyleProvider the style provider for rendering nodes in SVG mode
-   * @param webGL2NodeStyleProvider the style provider for rendering nodes in WebGL2 mode
-   * @param edgeStyleProvider the style provider for rendering edges in SVG mode
-   * @param webGL2EdgeStyleProvider the style provider for rendering edges in SVG mode
-   * @param nodeCreator a NodeCreator. Useful if after node generation some more processing (like
+   * @param nodeStyleProvider the style provider newly created nodes.
+   * @param edgeStyleProvider the style provider newly created edges.
+   * @param nodeCreator a NodeCreator. Useful if after node generation, some more processing (like
    *   adding a tag) is necessary
    */
   constructor(
     public readonly graphComponent: GraphComponent,
     svgThreshold = 0.3,
-    public nodeStyleProvider: NodeStyleProvider | null = null,
-    public webGL2NodeStyleProvider: WebGL2NodeStyleProvider | null = null,
-    public edgeStyleProvider: EdgeStyleProvider | null = null,
-    public webGL2EdgeStyleProvider: WebGL2PolylineEdgeStyleProvider | null = null,
+    public nodeStyleProvider: NodeStyleProvider,
+    public edgeStyleProvider: EdgeStyleProvider,
     public nodeCreator: NodeCreatorProvider | null = null
   ) {
     this.listeners = new List()
 
     this.svgThresholdValue = svgThreshold
 
-    graphComponent.graphModelManager = new WebGL2GraphModelManager({ renderMode: 'web-gl' })
-    graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
+    graphComponent.graphModelManager = new WebGLGraphModelManager({ renderMode: 'webgl' })
+    graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager()
     graphComponent.focusIndicatorManager.enabled = false
 
-    this.nodeCreatedListener = (inputMode, evt) => {
+    this.nodeCreatedListener = (evt) => {
       const node = evt.item
-
-      if (this.nodeStyleProvider !== null) {
-        this.graphComponent.graph.setStyle(
-          node,
-          this.nodeStyleProvider(node, this.graphComponent.graph)
-        )
-      }
-
-      if (this.webGL2NodeStyleProvider == null) {
-        return
-      }
-
-      this.setWebGL2NodeStyle(
-        node,
-        inputMode.graph!,
-        this.graphComponent.graphModelManager as WebGL2GraphModelManager
-      )
+      const graph = this.graphComponent.graph
+      graph.setStyle(node, this.nodeStyleProvider(node, graph))
     }
 
-    this.edgeCreatedListener = (inputMode, evt) => {
+    this.edgeCreatedListener = (evt) => {
       const edge = evt.item
-
-      if (this.edgeStyleProvider) {
-        this.graphComponent.graph.setStyle(
-          edge,
-          this.edgeStyleProvider(edge, this.graphComponent.graph)
-        )
-      }
-
-      if (this.webGL2EdgeStyleProvider == null) {
-        return
-      }
-      this.setWebGL2PolylineEdgeStyle(
-        edge,
-        inputMode.graph,
-        this.graphComponent.graphModelManager as WebGL2GraphModelManager
-      )
+      const graph = this.graphComponent.graph
+      graph.setStyle(edge, this.edgeStyleProvider(edge, graph))
     }
 
     this.zoomChangedListener = () => {
-      const isWebGLRendering = this.currentRenderingType === 'WebGL2'
+      const isWebGLRendering = this.currentRenderingType === 'WebGL'
       const zoom = this.graphComponent.zoom
-      // Make sure to switch only if the threshold is passed
       if (zoom >= this.svgThreshold && isWebGLRendering) {
         this.activateRenderingType('SVG')
         this.fireRenderingTypeChangedEvent()
       } else if (zoom < this.svgThreshold && !isWebGLRendering) {
-        this.activateRenderingType('WebGL2')
+        this.activateRenderingType('WebGL')
         this.fireRenderingTypeChangedEvent()
       }
     }
-
     this.zoomChangedListener()
   }
 
   get currentRenderingType(): RenderingType {
-    const graphModelManager = this.graphComponent.graphModelManager as WebGL2GraphModelManager
-    return graphModelManager.renderMode == WebGL2GraphModelManagerRenderMode.WEB_GL
-      ? 'WebGL2'
-      : 'SVG'
+    const graphModelManager = this.graphComponent.graphModelManager as WebGLGraphModelManager
+    return graphModelManager.renderMode == WebGLGraphModelManagerRenderMode.WEBGL ? 'WebGL' : 'SVG'
   }
 
   /**
@@ -220,18 +167,18 @@ export default class RenderingTypesManager {
   }
 
   /**
-   * Adds an event listener for zoom changes that switches back and forth between the rendering
-   * types when the SVG threshold is passed.
+   * Adds an event listener for zoom changes that switches back and forth between
+   * the rendering types when the SVG threshold is passed.
    *
    * @see {@link svgThreshold}
    */
   registerZoomChangedListener(): void {
-    this.graphComponent.addZoomChangedListener(this.zoomChangedListener)
+    this.graphComponent.addEventListener('zoom-changed', this.zoomChangedListener)
     this.zoomChangedListener()
   }
 
   private unregisterZoomChangedListener(): void {
-    this.graphComponent.removeZoomChangedListener(this.zoomChangedListener)
+    this.graphComponent.removeEventListener('zoom-changed', this.zoomChangedListener)
   }
 
   /**
@@ -244,8 +191,8 @@ export default class RenderingTypesManager {
       return
     }
 
-    inputMode.addNodeCreatedListener(this.nodeCreatedListener)
-    inputMode.createEdgeInputMode.addEdgeCreatedListener(this.edgeCreatedListener)
+    inputMode.addEventListener('node-created', this.nodeCreatedListener)
+    inputMode.createEdgeInputMode.addEventListener('edge-created', this.edgeCreatedListener)
 
     if (this.nodeCreator) {
       inputMode.nodeCreator = this.nodeCreator
@@ -258,8 +205,8 @@ export default class RenderingTypesManager {
       return
     }
 
-    inputMode.removeNodeCreatedListener(this.nodeCreatedListener)
-    inputMode.createEdgeInputMode.removeEdgeCreatedListener(this.edgeCreatedListener)
+    inputMode.removeEventListener('node-created', this.nodeCreatedListener)
+    inputMode.createEdgeInputMode.removeEventListener('edge-created', this.edgeCreatedListener)
 
     if (this.nodeCreator) {
       inputMode.nodeCreator = null
@@ -282,10 +229,10 @@ export default class RenderingTypesManager {
    * @param type The rendering type.
    */
   activateRenderingType(type: RenderingType): void {
-    const gmm = this.graphComponent.graphModelManager as WebGL2GraphModelManager
-    if (type === 'WebGL2') {
-      this.graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager()
-      gmm.renderMode = 'web-gl'
+    const gmm = this.graphComponent.graphModelManager as WebGLGraphModelManager
+    if (type === 'WebGL') {
+      this.graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager()
+      gmm.renderMode = 'webgl'
     } else {
       this.graphComponent.selectionIndicatorManager = new SelectionIndicatorManager()
       gmm.renderMode = 'svg'
@@ -293,45 +240,10 @@ export default class RenderingTypesManager {
   }
 
   /**
-   * Initializes the node styles for WebGL2 rendering.
-   */
-  initializeWebGL2NodeStyles(): void {
-    const graph = this.graphComponent.graph
-    const graphModelManager = this.graphComponent.graphModelManager as WebGL2GraphModelManager
-    if (this.webGL2NodeStyleProvider != null) {
-      for (const node of graph.nodes) {
-        this.setWebGL2NodeStyle(node, graph, graphModelManager)
-      }
-    }
-  }
-
-  private setWebGL2NodeStyle(
-    node: INode,
-    graph: IGraph,
-    graphModelManager: WebGL2GraphModelManager
-  ) {
-    const style = this.webGL2NodeStyleProvider!(node, graph)
-    if (style != null) {
-      graphModelManager.setStyle(node, style)
-    }
-  }
-
-  private setWebGL2PolylineEdgeStyle(
-    edge: IEdge,
-    graph: IGraph,
-    graphModelManager: WebGL2GraphModelManager
-  ) {
-    const style = this.webGL2EdgeStyleProvider!(edge, graph)
-    if (style != null) {
-      graphModelManager.setStyle(edge, style)
-    }
-  }
-
-  /**
    * Registers a {@link RenderingTypeChangedListener}.
    * @param listener the listener
    */
-  addRenderingTypeChangedListener(listener: RenderingTypeChangedListener): void {
+  setRenderingTypeChangedListener(listener: RenderingTypeChangedListener): void {
     this.listeners.push(listener)
   }
 

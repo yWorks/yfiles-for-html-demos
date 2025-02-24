@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,7 +30,6 @@ import {
   EdgeStyleBase,
   Font,
   FontStyle,
-  FontWeight,
   HtmlCanvasVisual,
   IBend,
   IEdge,
@@ -43,10 +42,11 @@ import {
   IRectangle,
   IRenderContext,
   LabelStyleBase,
+  Matrix,
   NodeStyleBase,
   Point,
   Size
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 export class FastNodeStyle extends NodeStyleBase {
   createVisual(renderContext: IRenderContext, node: INode): NodeCanvasVisual {
@@ -76,10 +76,10 @@ class NodeCanvasVisual extends HtmlCanvasVisual {
   }
 
   /**
-   * Draw a rectangle with a solid orange fill.
+   * Draws a rectangle with a solid orange fill.
    * @see Overrides {@link HtmlCanvasVisual.paint}
    */
-  paint(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
+  render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
     ctx.fillStyle = 'rgba(255,140,0,1)'
     const l = this.layout
     ctx.fillRect(l.x, l.y, l.width, l.height)
@@ -92,7 +92,7 @@ class NodeCanvasVisual extends HtmlCanvasVisual {
  */
 export class FastEdgeStyle extends EdgeStyleBase {
   createVisual(renderContext: IRenderContext, edge: IEdge): EdgeCanvasVisual {
-    return new EdgeCanvasVisual(edge.bends, edge.sourcePort!.location, edge.targetPort!.location)
+    return new EdgeCanvasVisual(edge.bends, edge.sourcePort.location, edge.targetPort.location)
   }
 
   isHit(inputContext: IInputModeContext, location: Point, edge: IEdge): boolean {
@@ -101,8 +101,8 @@ export class FastEdgeStyle extends EdgeStyleBase {
       return false
     }
     // but we exclude hits on the source and target node
-    const s = edge.sourceNode!
-    const t = edge.targetNode!
+    const s = edge.sourceNode
+    const t = edge.targetNode
     return (
       !s.style.renderer.getHitTestable(s, s.style).isHit(inputContext, location) &&
       !t.style.renderer.getHitTestable(t, t.style).isHit(inputContext, location)
@@ -115,8 +115,8 @@ export class FastEdgeStyle extends EdgeStyleBase {
     edge: IEdge
   ): EdgeCanvasVisual {
     oldVisual.bends = edge.bends
-    oldVisual.sourcePortLocation = edge.sourcePort!.location
-    oldVisual.targetPortLocation = edge.targetPort!.location
+    oldVisual.sourcePortLocation = edge.sourcePort.location
+    oldVisual.targetPortLocation = edge.targetPort.location
     return oldVisual
   }
 }
@@ -139,7 +139,7 @@ class EdgeCanvasVisual extends HtmlCanvasVisual {
     super()
   }
 
-  paint(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
+  render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
     // simply draw a black line from the source port location via all bends to the target port location
     ctx.strokeStyle = 'rgb(51,102,153)'
 
@@ -212,7 +212,7 @@ export class FastLabelStyle extends LabelStyleBase {
   static setFont(ctx: CanvasRenderingContext2D, font: Font): void {
     ctx.font = `${FastLabelStyle.fontStyleToString(
       font.fontStyle
-    )} ${FastLabelStyle.fontWeightToString(font.fontWeight)} ${font.fontSize}px ${font.fontFamily}`
+    )} ${font.fontWeight} ${font.fontSize}px ${font.fontFamily}`
   }
 
   static fontStyleToString(fontStyle: FontStyle): string {
@@ -226,40 +226,6 @@ export class FastLabelStyle extends LabelStyleBase {
         return 'oblique'
       case FontStyle.INHERIT:
         return 'inherit'
-    }
-  }
-
-  static fontWeightToString(fontWeight: FontWeight): string {
-    switch (fontWeight) {
-      default:
-      case FontWeight.NORMAL:
-        return 'normal'
-      case FontWeight.BOLD:
-        return 'bold'
-      case FontWeight.BOLDER:
-        return 'bolder'
-      case FontWeight.LIGHTER:
-        return 'lighter'
-      case FontWeight.INHERIT:
-        return 'inherit'
-      case FontWeight.ITEM100:
-        return '100'
-      case FontWeight.ITEM200:
-        return '200'
-      case FontWeight.ITEM300:
-        return '300'
-      case FontWeight.ITEM400:
-        return '400'
-      case FontWeight.ITEM500:
-        return '500'
-      case FontWeight.ITEM600:
-        return '600'
-      case FontWeight.ITEM700:
-        return '700'
-      case FontWeight.ITEM800:
-        return '800'
-      case FontWeight.ITEM900:
-        return '900'
     }
   }
 }
@@ -285,7 +251,7 @@ class LabelCanvasVisual extends HtmlCanvasVisual {
     super()
   }
 
-  paint(renderContext: IRenderContext, ctx: CanvasRenderingContext2D) {
+  render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D) {
     if (renderContext.zoom > this.zoomThreshold) {
       FastLabelStyle.setFont(ctx, this.font)
       const dx = this.layout.anchorX
@@ -294,7 +260,7 @@ class LabelCanvasVisual extends HtmlCanvasVisual {
       ctx.fillStyle = 'rgba(50,50,50,1)'
       ctx.textBaseline = 'bottom'
       if (this.layout.upY !== -1) {
-        const elements = this.layout.createTransform().elements
+        const elements = Matrix.createTransform(this.layout).elements
         ctx.transform(elements[0], elements[1], elements[2], elements[3], elements[4], elements[5])
         ctx.fillText(this.text, 0, this.layout.height)
       } else {

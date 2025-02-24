@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,37 +39,36 @@ import {
   PolylineEdgeStyle,
   Rect,
   SvgVisual
-} from 'yfiles'
-
+} from '@yfiles/yfiles'
 /**
  * A fast edge style. Compared to the default {@link PolylineEdgeStyle}, the edge is not cropped
  * at the node boundaries and does not support arrows.
  */
 export default class SvgEdgeStyle extends EdgeStyleBase {
+  color
+  thickness
   /**
    * Creates a new instance of this class.
-   * @param {!Color} [color] The edge color.
-   * @param {number} [thickness] The edge thickness
+   * @param [color] The edge color.
+   * @param [thickness] The edge thickness
    */
   constructor(color, thickness) {
     super()
-    this.thickness = thickness
     this.color = color
+    this.thickness = thickness
     this.color = color || Color.BLACK
     this.thickness = thickness || 1
   }
-
   /**
    * Creates the visual representation for the given edge.
-   * @param {!IRenderContext} context The render context.
-   * @param {!IEdge} edge The edge to which this style instance is assigned.
-   * @returns {!SvgVisual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param context The render context.
+   * @param edge The edge to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SvgEdgeStyle.updateVisual}
    */
   createVisual(context, edge) {
     const source = edge.sourcePort.location
     const target = edge.targetPort.location
-
     // create the path
     const pathVisual = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     pathVisual.setAttribute('d', createSvgPath(source, target, edge))
@@ -77,35 +76,28 @@ export default class SvgEdgeStyle extends EdgeStyleBase {
     const color = this.color
     pathVisual.setAttribute('stroke', `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`)
     pathVisual.setAttribute('stroke-width', `${this.thickness}`)
-
     // cache its values
-    const cacheOwner = pathVisual
-    cacheOwner['data-cache'] = new RenderDataCache(edge, source, target)
-
-    return new SvgVisual(pathVisual)
+    const cache = new RenderDataCache(edge, source, target)
+    return SvgVisual.from(pathVisual, cache)
   }
-
   /**
    * Updates the visual representation for the given edge.
-   * @param {!IRenderContext} context The render context.
-   * @param {!SvgVisual} oldVisual The visual that has been created in the call to
+   * @param context The render context.
+   * @param oldVisual The visual that has been created in the call to
    * {@link SvgEdgeStyle.createVisual}.
-   * @param {!IEdge} edge The edge to which this style instance is assigned.
-   * @returns {!SvgVisual} The visual as required by the {@link IVisualCreator.createVisual} interface.
+   * @param edge The edge to which this style instance is assigned.
+   * @returns The visual as required by the {@link IVisualCreator.createVisual} interface.
    * @see {@link SvgEdgeStyle.createVisual}
    */
   updateVisual(context, oldVisual, edge) {
     const source = edge.sourcePort.location
     const target = edge.targetPort.location
-
     // get the old path
     const pathVisual = oldVisual.svgElement
-    const cache = pathVisual['data-cache']
+    const cache = oldVisual.tag
     const oldSource = cache.source
     const oldTarget = cache.target
-
     const bendLocations = getBendLocations(edge)
-
     // Did anything change at all? If not, we can just re-use the old visual ...
     if (
       oldSource.equals(source) &&
@@ -114,19 +106,13 @@ export default class SvgEdgeStyle extends EdgeStyleBase {
     ) {
       return oldVisual
     }
-
     // ... otherwise we need to re-create the geometry and update the cache.
     pathVisual.setAttribute('d', createSvgPath(source, target, edge))
-    pathVisual['data-cache'] = new RenderDataCache(edge, source, target)
+    oldVisual.tag = new RenderDataCache(edge, source, target)
     return oldVisual
   }
-
   /**
    * Override visibility test to optimize performance.
-   * @param {!ICanvasContext} context
-   * @param {!Rect} rectangle
-   * @param {!IEdge} edge
-   * @returns {boolean}
    */
   isVisible(context, rectangle, edge) {
     // delegate the visibility test to PolylineEdgeStyle, which has an efficient implementation
@@ -135,48 +121,40 @@ export default class SvgEdgeStyle extends EdgeStyleBase {
       .isVisible(context, rectangle)
   }
 }
-
 // an edge style instance for efficient visibility testing
 const helperEdgeStyle = new PolylineEdgeStyle({
   sourceArrow: IArrow.NONE,
   targetArrow: IArrow.NONE
 })
-
 /**
- * Stores the data that is necessary to determine whether or not the visual representation of
+ * Stores the data that is necessary to determine whether the visual representation of
  * an edge has to be changed in {@link SvgEdgeStyle.updateVisual}.
  */
 class RenderDataCache {
+  source
+  target
   bendLocations
-
-  /**
-   * @param {!IEdge} edge
-   * @param {!Point} source
-   * @param {!Point} target
-   */
   constructor(edge, source, target) {
-    this.target = target
     this.source = source
+    this.target = target
     this.bendLocations = getBendLocations(edge)
   }
 }
-
 /**
  * Creates the edge path's geometry.
- * @param {!Point} source The source port location.
- * @param {!Point} target The target port location.
- * @param {!IEdge} edge The edge.
- * @returns {!string} The edge path's geometry.
+ * @param source The source port location.
+ * @param target The target port location.
+ * @param edge The edge.
+ * @returns The edge path's geometry.
  */
 function createSvgPath(source, target, edge) {
   const path = edge.style.renderer.getPathGeometry(edge, edge.style).getPath()
   return path.createSvgPathData(new Matrix())
 }
-
 /**
  * Gets a list of bend locations from an edge.
- * @param {!IEdge} edge The edge.
- * @returns {!Array.<Point>} A list of the edge's bend locations, or an empty list if there are no bends.
+ * @param edge The edge.
+ * @returns A list of the edge's bend locations, or an empty list if there are no bends.
  */
 function getBendLocations(edge) {
   const count = edge.bends.size
@@ -192,23 +170,20 @@ function getBendLocations(edge) {
     return []
   }
 }
-
 /**
  * Compares two arrays for equality.
- * @param {!Array.<Point>} a The first array.
- * @param {!Array.<Point>} b The second array.
- * @returns {boolean} `true` if both arrays have the same length and all elements of one array
+ * @param a The first array.
+ * @param b The second array.
+ * @returns `true` if both arrays have the same length and all elements of one array
  * compare equal to the respective element in the other array, `false` otherwise.
  */
 function arrayEqual(a, b) {
   if (a === b) {
     return true
   }
-
   if (a.length !== b.length) {
     return false
   }
-
   for (let i = 0; i < a.length; i++) {
     if (!a[i].equals(b[i])) {
       return false

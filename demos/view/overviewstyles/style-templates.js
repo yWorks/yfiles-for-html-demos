@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,30 +27,30 @@
  **
  ***************************************************************************/
 //language=HTML
-export const detailNodeStyleTemplate = `
-  <rect fill="#C0C0C0" width="285" height="100" transform="translate(2 2)" />
-  <rect fill="#FFFFFF" stroke="#C0C0C0" width="285" height="100" />
-  <use xlink:href="{Binding icon, Converter=orgChartConverters.addHashConverter}"
-    transform="scale(0.85) translate(15 10)" />
-  <use xlink:href="{Binding status, Converter=orgChartConverters.addHashConverter}" />
-  <use xlink:href="{Binding status, Converter=orgChartConverters.addHashConverter, Parameter=_icon}"
-    transform="translate(26 84)" />
-  <g style="font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444">
-    <text transform="translate(100 25)" data-content="{Binding name}"
-      style="font-size:16px; fill:#336699"/>
-    <text transform="translate(100 45)"
-      data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=true}"
-      style="text-transform: uppercase; font-weight: 400"/>
-    <text transform="translate(100 57)"
-      data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=false}"
-      style="text-transform: uppercase; font-weight: 400"/>
-    <text transform="translate(100 72)" data-content="{Binding email}"/>
-    <text transform="translate(100 88)" data-content="{Binding phone}"/>
-    <text transform="translate(170 88)" data-content="{Binding fax}"/>
-  </g>`
-
-export const overviewNodeStyle = `
-  <rect fill="{Binding status, Converter=orgChartConverters.colorConverter}" width="30" height="{TemplateBinding height}"/>
-  <rect fill="white" transform="translate(30 0)" width="{TemplateBinding width}" height="{TemplateBinding height}" rx="10" ry="10"/>
-  <text transform="translate(50 50)" data-content="{Binding name, Converter=orgChartConverters.overviewConverter}"
-  style="font-size:50px; font-family:Roboto,sans-serif; fill:#336699; dominant-baseline: central;"/>`
+export const detailNodeStyleTemplate = `({ layout, tag, selected, zoom }) => svg\`
+  <g>
+    <use href='#node-dropshadow' x='-10' y='-5'></use>
+    <rect fill="#FFFFFF" stroke="#C0C0C0" width="$\{layout.width}" height="$\{layout.height}"></rect>
+    <rect width="$\{layout.width}" height="5" fill='$\{tag.status === "present" ? "#76b041" :
+    tag.status === "busy" ? "#ab2346" : tag.status === "travel" ? "#a367dc" : "#c1c1c1"}'
+          class="node-background"></rect>
+    <image href="./resources/\${tag.icon}.svg" x='15' y='10' width='63.75' height='63.75'></image>
+    <image href="./resources/\${tag.status}_icon.svg" x='25' y='80' height='15' width='60'></image>
+    <g style='font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444'>
+      <text transform='translate(100 25)' style='font-size:16px; fill:#336699'>\${tag.name}</text>
+      <text x='100' y='45' font-size='10' font-family='Roboto,sans-serif'>
+        \${tag.position.toUpperCase()}
+      </text>
+      <text transform='translate(100 72)'>\${tag.email}</text>
+      <text transform='translate(100 88)'>\${tag.phone}</text>
+      <text transform='translate(170 88)'>\${tag.fax}</text>
+    </g>
+  </g>\``
+export const overviewNodeStyleTemplate = `({ layout, tag, selected, zoom }) => svg\`
+  <g>
+    <rect fill="#FFFFFF" stroke="#C0C0C0" width="$\{layout.width}" height="$\{layout.height}"></rect>
+    <rect width="15" height="\${layout.height}" fill='$\{tag.status === "present" ? "#76b041" :
+    tag.status === "busy" ? "#ab2346" : tag.status === "travel" ? "#a367dc" : "#c1c1c1"}' class="node-background"></rect>
+    <text transform='translate(30 50)' style='font-size:40px; font-family:Roboto,sans-serif; fill:#444; dominant-baseline: central;'>
+    \${tag.name.replace(/^(.)(\\S*)(.*)/, "$1.$3")}</text>
+  </g>\``

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,22 +26,28 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { ClickEventArgs, IInputModeContext, INode, IRenderContext, Point, Rect } from 'yfiles'
 import {
   BaseClass,
+  type ClickEventArgs,
   Cursor,
   HandlePositions,
-  HandleTypes,
+  type HandlesRenderTag,
+  HandleType,
   IEnumerable,
   IHandle,
   IHandleProvider,
+  type IInputModeContext,
+  type INode,
   IPoint,
   IRectangle,
+  type IRenderContext,
   IReshapeHandler,
-  IVisualTemplate,
+  ObjectRendererBase,
+  type Point,
+  type Rect,
   ReshapeHandlerHandle,
   SvgVisual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import {
   getDate,
   getFollowUpWidth,
@@ -65,22 +71,25 @@ export class ActivityNodeHandleProvider extends BaseClass(IHandleProvider) {
     super()
   }
 
-  getHandles(context: IInputModeContext): IEnumerable<IHandle> {
+  getHandles(_context: IInputModeContext): IEnumerable<IHandle> {
     // lead/follow-up duration handles
     const leadTimeHandle = new TimeHandle(this.node)
     const followUpTimeHandle = new TimeHandle(this.node, true)
 
     // activity duration handles
     const activityReshapeHandler = new ActivityNodeReshapeHandler(this.node)
-    const eastWrappedHandle = new ReshapeHandlerHandle(HandlePositions.EAST, activityReshapeHandler)
-    const westWrappedHandle = new ReshapeHandlerHandle(HandlePositions.WEST, activityReshapeHandler)
+    const rightWrappedHandle = new ReshapeHandlerHandle(
+      HandlePositions.RIGHT,
+      activityReshapeHandler
+    )
+    const leftWrappedHandle = new ReshapeHandlerHandle(HandlePositions.LEFT, activityReshapeHandler)
 
     // contains the four handles for the activity node
     return IEnumerable.from([
       leadTimeHandle,
       followUpTimeHandle,
-      eastWrappedHandle,
-      westWrappedHandle
+      rightWrappedHandle,
+      leftWrappedHandle
     ])
   }
 }
@@ -94,7 +103,7 @@ class ActivityNodeReshapeHandler extends BaseClass(IReshapeHandler, IRectangle) 
 
   constructor(private readonly node: INode) {
     super()
-    this.wrappedHandler = node.lookup(IReshapeHandler.$class)!
+    this.wrappedHandler = node.lookup(IReshapeHandler)!
   }
 
   /**
@@ -269,6 +278,10 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
     // we don't handle clicks
   }
 
+  get tag(): object | null {
+    return null
+  }
+
   /**
    * Calculates the duration of an activity based on the new location and whether the time is follow-up.
    */
@@ -315,8 +328,8 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
   /**
    * Returns the types of handles for the activity nodes.
    */
-  get type(): HandleTypes {
-    return HandleTypes.RESIZE | HandleTypes.VARIANT2
+  get type(): HandleType {
+    return HandleType.RESIZE | HandleType.CUSTOM2
   }
 
   /**
@@ -358,44 +371,59 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
 }
 
 /**
- * A handle template for {@link TimeHandle}s, so that they can look different from the normal
+ * A handle renderer for {@link TimeHandle}s, so that they can look different from the normal
  * resize handles.
  */
-export class TimeHandleTemplate extends BaseClass(IVisualTemplate) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  createVisual(context: IRenderContext, bounds: Rect, dataObject: any): SvgVisual | null {
+export class TimeHandleRenderer extends ObjectRendererBase<HandlesRenderTag, SvgVisual> {
+  protected createVisual(
+    context: IRenderContext,
+    renderTag: HandlesRenderTag | null
+  ): SvgVisual | null {
+    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const radius = 10
+    renderTag?.handles.forEach((handle) => {
+      const { x, y } = handle.location
+      if (handle instanceof TimeHandle) {
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+        const d = `M ${x} ${y} m ${radius} ${radius} h -${
+          radius * 0.5
+        } a ${radius} ${radius} 0 0 1 0 -${radius * 2} h ${radius * 0.5} z`
+        path.setAttribute('d', d)
+        path.setAttribute('fill', 'black')
+        path.setAttribute('stroke', 'white')
+        path.setAttribute('stroke-width', '5')
 
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    const d = `M ${radius} ${radius} h -${radius * 0.5} a ${radius} ${radius} 0 0 1 0 -${
-      radius * 2
-    } h ${radius * 0.5} z`
-    path.setAttribute('d', d)
-    path.setAttribute('fill', 'black')
-    path.setAttribute('stroke', 'white')
-    path.setAttribute('stroke-width', '5')
+        const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+        pattern.setAttribute('d', d)
+        patternFill.applyTo(pattern, context)
+        pattern.setAttribute('stroke', 'black')
+        pattern.setAttribute('stroke-width', '1.5')
 
-    const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    pattern.setAttribute('d', d)
-    patternFill.applyTo(pattern, context)
-    pattern.setAttribute('stroke', 'black')
-    pattern.setAttribute('stroke-width', '1.5')
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+        g.append(path, pattern)
 
-    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-    g.append(path, pattern)
-    const scale = (dataObject as TimeHandle).isFollowUpTime ? -5 / radius : 5 / radius
-    g.setAttribute('transform', `scale(${scale})`)
+        const scale = handle.isFollowUpTime ? -5 / radius : 5 / radius
+        g.setAttribute('transform', `translate(${x} ${y}) scale(${scale}) translate(${-x} ${-y})`)
+        group.append(g)
+      } else {
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+        circle.setAttribute('r', `${radius * 0.5}`)
+        circle.setAttribute('cx', `${x}`)
+        circle.setAttribute('cy', `${y}`)
+        circle.setAttribute('fill', 'silver')
+        circle.setAttribute('stroke', 'black')
+        group.append(circle)
+      }
+    })
 
-    return new SvgVisual(g)
+    return new SvgVisual(group)
   }
 
-  updateVisual(
+  protected updateVisual(
     context: IRenderContext,
     oldVisual: SvgVisual,
-    bounds: Rect,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    dataObject: any
+    renderTag: HandlesRenderTag | null
   ): SvgVisual | null {
-    return oldVisual
+    return this.createVisual(context, renderTag)
   }
 }

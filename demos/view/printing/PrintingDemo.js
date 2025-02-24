@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,55 +26,53 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, License } from 'yfiles'
-
-import PrintingSupport from 'demo-utils/PrintingSupport'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { createSampleGraph } from './samples.js'
-import { initializeExportRectangle } from './export-rectangle/export-rectangle.js'
-import { initializeOptionPanel } from './option-panel/option-panel.js'
-import { initializeToggleWebGl2RenderingButton } from './webgl-support.js'
-import { retainAspectRatio } from './aspect-ratio.js'
-
-/**
- * @returns {!Promise}
- */
+import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
+import PrintingSupport from '@yfiles/demo-utils/PrintingSupport'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createSampleGraph } from './samples'
+import { initializeExportRectangle } from './export-rectangle/export-rectangle'
+import { initializeOptionPanel } from './option-panel/option-panel'
+import { initializeToggleWebGlRenderingButton } from './webgl-support'
+import { retainAspectRatio } from './aspect-ratio'
+import { DelayedNodeStyle } from './delayed-node-style'
 async function run() {
   License.value = await fetchLicense()
-
   // initialize the main graph component
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
-  applyDemoTheme(graphComponent)
   initDemoStyles(graphComponent.graph)
   retainAspectRatio(graphComponent.graph)
-
   const printRect = initializeExportRectangle(graphComponent)
-
-  initializeOptionPanel((options) => {
+  // the styles to be used in printing support
+  const cssStyle = `
+  .demo-palette-23-node{fill:#ff6c00;stroke:#662b00;}
+  .demo-palette-25-node{fill:#76b041;stroke:#2f461a;}
+  .demo-palette-21-node{fill:#17bebb;stroke:#094c4b;}`
+  initializeOptionPanel(async (options) => {
     const rect = options.usePrintRectangle ? printRect.toRect() : undefined
-
     const printingSupport = new PrintingSupport()
+    printingSupport.fitToTile = options.fitToTile
     printingSupport.scale = options.scale
     printingSupport.margin = options.margin
     printingSupport.tiledPrinting = options.useTilePrinting
+    printingSupport.skipEmptyTiles = options.skipEmptyTiles
     printingSupport.tileWidth = options.tileWidth
     printingSupport.tileHeight = options.tileHeight
-
+    printingSupport.cssStyleSheet = cssStyle
     // start the printing process
     // this will open a new document in a separate browser window/tab and use
     // the javascript "print()" method of the browser to print the document.
-    printingSupport.printGraph(graphComponent.graph, rect)
+    await printingSupport.printGraph(graphComponent.graph, rect, () =>
+      // wait for styles to finish rendering
+      Promise.all(DelayedNodeStyle.pendingPromises)
+    )
   })
-
   // wire up the export button
-  initializeToggleWebGl2RenderingButton(graphComponent)
-
+  initializeToggleWebGlRenderingButton(graphComponent)
   // create a sample graph
   await createSampleGraph(graphComponent)
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 }
-
 void run().then(finishLoading)

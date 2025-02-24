@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,147 +26,107 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, INode } from 'yfiles'
-import { ContextMenu } from 'demo-utils/ContextMenu'
-import { getCurrentAlgorithm } from './ui-utils.js'
-import { copyAndReplaceTag, getTag } from '../demo-types.js'
-import { applyAlgorithm } from '../algorithms/algorithms.js'
-
+import { IEdge, INode } from '@yfiles/yfiles'
+import { getCurrentAlgorithm } from './ui-utils'
+import { copyAndReplaceTag, getTag } from '../demo-types'
+import { applyAlgorithm } from '../algorithms/algorithms'
 /**
  * Initializes the context menu.
- * @param {!GraphEditorInputMode} inputMode
- * @param {!GraphComponent} graphComponent
  */
 export function initializeContextMenu(inputMode, graphComponent) {
-  // Create a context menu. In this demo, we use our sample context menu implementation, but you can use any other
-  // context menu widget as well. See the Context Menu demo for more details about working with context menus.
-  const contextMenu = new ContextMenu(graphComponent)
-
-  // Add event listeners to the various events that open the context menu. These listeners then
-  // call the provided callback-function which in turn asks the current ContextMenuInputMode if a
-  // context menu should be shown at the current location.
-  contextMenu.addOpeningEventListeners(graphComponent, (location) => {
-    if (inputMode.contextMenuInputMode.shouldOpenMenu(graphComponent.toWorldFromPage(location))) {
-      contextMenu.show(location)
-    }
-  })
-
-  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
-  // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
-  inputMode.addPopulateItemContextMenuListener((_, evt) =>
-    populateContextMenu(graphComponent, contextMenu, evt)
+  inputMode.addEventListener('populate-item-context-menu', (evt) =>
+    populateContextMenu(graphComponent, evt)
   )
-
-  // Add a listener that closes the menu when the input mode requests this
-  inputMode.contextMenuInputMode.addCloseMenuListener(() => {
-    contextMenu.close()
-  })
-
-  // If the context menu closes itself, for example, because a menu item was clicked, we must inform the input mode
-  contextMenu.onClosedCallback = () => {
-    inputMode.contextMenuInputMode.menuClosed()
-  }
 }
-
 /**
  * Populates the context menu based on the item the mouse hovers over.
- * @param {!GraphComponent} graphComponent
- * @param {!ContextMenu} contextMenu
- * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args
  */
-function populateContextMenu(graphComponent, contextMenu, args) {
+function populateContextMenu(graphComponent, args) {
   updateSelection(graphComponent.selection, args.item)
-
   const currentAlgorithm = getCurrentAlgorithm()
-
   const needsStartNodes = currentAlgorithm.needsStartNodes ?? false
   const needsEndNodes = currentAlgorithm.needsEndNodes ?? false
   if (!needsStartNodes && !needsEndNodes) {
     return
   }
-
   // get the item which is located at the mouse position
   const hits = graphComponent.graphModelManager.hitElementsAt(args.queryLocation).toArray()
   // use the first hit node
-  const hitNode = hits.find((hit) => hit instanceof INode)
+  const hitNode = hits.find((hit) => hit instanceof INode) ?? null
   const selection = graphComponent.selection
   if (hitNode) {
-    selection.setSelected(hitNode, true)
+    selection.add(hitNode)
   }
-
-  const selectedNodes = selection.selectedNodes
+  const selectedNodes = selection.nodes
   if (selectedNodes.size === 0) {
     return
   }
-
-  contextMenu.clearItems()
-
+  const menuItems = []
   if (needsStartNodes) {
-    contextMenu.addMenuItem('Mark as Start Node', () => {
-      // clear previous start nodes
-      graphComponent.graph.nodes.forEach((node) => {
-        if (getTag(node).type === 'start') {
-          const tag = copyAndReplaceTag(node)
-          delete tag.type
-        }
-      })
-
-      if (!needsEndNodes) {
-        // just mark one node
-        const tag = copyAndReplaceTag(hitNode || selectedNodes.first())
-        tag.type = 'start'
-      } else {
-        selectedNodes.forEach((node) => {
-          const tag = copyAndReplaceTag(node)
-          tag.type = 'start'
+    menuItems.push({
+      label: 'Mark as Start Node',
+      action: () => {
+        // clear previous start nodes
+        graphComponent.graph.nodes.forEach((node) => {
+          if (getTag(node)?.type === 'start') {
+            const tag = copyAndReplaceTag(node)
+            delete tag.type
+          }
         })
+        if (!needsEndNodes) {
+          // just mark one node
+          const tag = copyAndReplaceTag(hitNode || selectedNodes.first())
+          tag.type = 'start'
+        } else {
+          selectedNodes.forEach((node) => {
+            const tag = copyAndReplaceTag(node)
+            tag.type = 'start'
+          })
+        }
+        applyAlgorithm(graphComponent.graph)
+        selectedNodes.clear()
       }
-
-      applyAlgorithm(graphComponent.graph)
-      selectedNodes.clear()
     })
   }
   if (needsEndNodes) {
-    contextMenu.addMenuItem('Mark as End Node', () => {
-      graphComponent.graph.nodes.forEach((node) => {
-        // clear previous end nodes
-        if (getTag(node).type === 'end') {
+    menuItems.push({
+      label: 'Mark as End Node',
+      action: () => {
+        graphComponent.graph.nodes.forEach((node) => {
+          // clear previous end nodes
+          if (getTag(node)?.type === 'end') {
+            const tag = copyAndReplaceTag(node)
+            delete tag.type
+          }
+        })
+        selectedNodes.forEach((node) => {
           const tag = copyAndReplaceTag(node)
-          delete tag.type
-        }
-      })
-
-      selectedNodes.forEach((node) => {
-        const tag = copyAndReplaceTag(node)
-        tag.type = 'end'
-      })
-      applyAlgorithm(graphComponent.graph)
+          tag.type = 'end'
+        })
+        applyAlgorithm(graphComponent.graph)
+      }
     })
   }
-
-  // finally, if the context menu has at least one entry, set the showMenu flag
-  if (contextMenu.element.childElementCount > 0) {
-    args.showMenu = true
+  // finally, if there is at least one menu item set them to the context menu
+  if (menuItems.length > 0) {
+    args.contextMenu = menuItems
   }
 }
-
 /**
  * Updates the selection when an item is right-clicked for a context menu.
- * @param {!IGraphSelection} selection
- * @param {?IModelItem} item
  */
 function updateSelection(selection, item) {
   if (!item) {
     selection.clear()
-  } else if (!selection.isSelected(item)) {
+  } else if (!selection.includes(item)) {
     selection.clear()
-    selection.setSelected(item, true)
+    selection.add(item)
   } else {
-    if (IEdge.isInstance(item)) {
-      selection.selectedNodes.clear()
+    if (item instanceof IEdge) {
+      selection.nodes.clear()
     } else {
-      selection.selectedEdges.clear()
+      selection.edges.clear()
     }
-    selection.setSelected(item, true)
+    selection.add(item)
   }
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,32 +26,32 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { IModelItem, INode, Rect } from 'yfiles'
 import {
-  DefaultGraph,
-  DefaultLabelStyle,
-  ExteriorLabelModel,
+  Command,
+  ExteriorNodeLabelModel,
+  Graph,
   GraphComponent,
   GraphEditorInputMode,
   GraphSnapContext,
-  ICommand,
   IGraph,
-  LabelSnapContext,
+  type IModelItem,
+  type INode,
+  LabelStyle,
   License,
+  NinePositionsEdgeLabelModel,
+  NinePositionsEdgeLabelModelPosition,
   Point,
   PolylineEdgeStyle,
-  ScrollBarVisibility,
-  ShapeNodeStyle,
-  Theme,
-  ThemeVariant
-} from 'yfiles'
-import { colorSets } from 'demo-resources/demo-colors'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+  type Rect,
+  ShapeNodeStyle
+} from '@yfiles/yfiles'
+import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 const graphComponents: GraphComponent[] = []
 
-const graphComponentContainer = document.getElementById('graphComponents')!
+const graphComponentsContainer = document.getElementById('graphComponents') as HTMLDivElement
 
 const colorPalettes: Record<
   string,
@@ -86,9 +86,6 @@ const colorPalettes: Record<
 
 let sharedGraph: IGraph
 
-let themeScale = 1
-let colors = Object.keys(colorPalettes)[0]
-
 async function run(): Promise<void> {
   License.value = await fetchLicense()
 
@@ -96,7 +93,7 @@ async function run(): Promise<void> {
 
   initGraphComponents()
 
-  graphComponents[0].fitGraphBounds()
+  void graphComponents[0].fitGraphBounds()
 
   selectSampleItems()
 
@@ -105,11 +102,8 @@ async function run(): Promise<void> {
 }
 
 /**
- * Creates the GraphComponents with the different themes
+ * Creates the GraphComponents with the different theme variants
  * and adds them to the document.
- *
- * This function is also called if the color or scale changes
- * to re-build the GraphComponents with the new theme.
  */
 function initGraphComponents() {
   // re-build: keep the old selection and viewport
@@ -119,39 +113,21 @@ function initGraphComponents() {
   // re-build: remove and dispose the existing GraphComponents, first
   while (graphComponents.length) {
     const graphComponent = graphComponents.pop()!
-    graphComponent.div.parentNode!.removeChild(graphComponent.div)
+    graphComponent.htmlElement.parentNode!.removeChild(graphComponent.htmlElement)
     // since we keep the graph we need to clear the reference on the old graph component
-    graphComponent.graph = new DefaultGraph()
+    graphComponent.graph = new Graph()
     graphComponent.cleanUp()
   }
 
   // one of each variant
-  for (const variant of [
-    ThemeVariant.SIMPLE_ROUND,
-    ThemeVariant.SIMPLE_SQUARE,
-    ThemeVariant.CLASSIC
-  ]) {
-    createGraphComponent(
-      new Theme({
-        variant,
-        ...colorPalettes[colors],
-        scale: themeScale
-      })
-    )
+  for (const variant of ['round', 'round-hatched', 'square', 'square-hatched'] as const) {
+    createGraphComponent(variant)
   }
-
-  // classic with default colors
-  createGraphComponent(
-    new Theme({
-      variant: 'classic',
-      scale: themeScale
-    })
-  )
 
   // re-build: restore the old viewport
   if (oldViewport) {
     for (const graphComponent of graphComponents) {
-      graphComponent.fitContent()
+      void graphComponent.fitContent()
       graphComponent.zoomTo(oldViewport)
     }
   }
@@ -159,7 +135,7 @@ function initGraphComponents() {
   // re-build: restore the old selection
   for (const selectedItem of oldSelectedItems) {
     for (const graphComponent of graphComponents) {
-      graphComponent.selection.setSelected(selectedItem, true)
+      graphComponent.selection.add(selectedItem)
     }
   }
 
@@ -169,20 +145,25 @@ function initGraphComponents() {
 /**
  * Creates a GraphComponent with the given theme and the shared graph and selection.
  */
-function createGraphComponent(theme: Theme): void {
-  const graphComponent = new GraphComponent({ theme })
-  graphComponentContainer.appendChild(graphComponent.div)
+function createGraphComponent(
+  themeVariant: 'round' | 'square' | 'round-hatched' | 'square-hatched'
+): void {
+  const graphComponent = new GraphComponent()
+  graphComponent.htmlElement.style.setProperty('--yfiles-theme-variant', themeVariant)
+  const { primaryColor, secondaryColor, backgroundColor } = colorPalettes['Blue']
+  graphComponentsContainer.style.setProperty('--yfiles-theme-primary', primaryColor)
+  graphComponentsContainer.style.setProperty('--yfiles-theme-secondary', secondaryColor)
+  graphComponentsContainer.style.setProperty('--yfiles-theme-background', backgroundColor)
+  graphComponentsContainer.appendChild(graphComponent.htmlElement)
   graphComponent.graph = sharedGraph
   graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true,
     allowReparentNodes: true,
-    snapContext: new GraphSnapContext(),
-    labelSnapContext: new LabelSnapContext()
+    snapContext: new GraphSnapContext()
   })
-  graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.ALWAYS
-  graphComponent.verticalScrollBarPolicy = ScrollBarVisibility.ALWAYS
+  graphComponent.updateContentBounds()
   graphComponents.push(graphComponent)
 }
+
 let changing = false
 
 /**
@@ -191,12 +172,12 @@ let changing = false
 function synchronizeGraphComponents(): void {
   for (const graphComponent of graphComponents) {
     const otherComponents = graphComponents.filter((g) => g !== graphComponent)
-    graphComponent.addUpdatedVisualListener(() => {
+    graphComponent.addEventListener('updated-visual', () => {
       for (const otherComponent of otherComponents) {
         otherComponent.invalidate()
       }
     })
-    graphComponent.addViewportChangedListener(() => {
+    graphComponent.addEventListener('viewport-changed', () => {
       if (!changing) {
         changing = true
         for (const otherComponent of otherComponents) {
@@ -207,9 +188,15 @@ function synchronizeGraphComponents(): void {
         changing = false
       }
     })
-    graphComponent.selection.addItemSelectionChangedListener((_, evt) => {
+    graphComponent.selection.addEventListener('item-added', (evt) => {
       for (const otherComponent of otherComponents) {
-        otherComponent.selection.setSelected(evt.item, evt.itemSelected)
+        otherComponent.selection.add(evt.item)
+      }
+    })
+
+    graphComponent.selection.addEventListener('item-removed', (evt) => {
+      for (const otherComponent of otherComponents) {
+        otherComponent.selection.remove(evt.item)
       }
     })
   }
@@ -219,23 +206,23 @@ function synchronizeGraphComponents(): void {
  * Creates a sample graph.
  */
 function createSampleGraph(): IGraph {
-  const graph = new DefaultGraph()
+  const graph = new Graph()
 
-  graph.nodeDefaults.style = new ShapeNodeStyle({ fill: '#CCCCCC', stroke: 'none' })
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({ insets: 2 })
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({ insets: 5 }).createParameter(
-    'south'
-  )
+  graph.nodeDefaults.style = new ShapeNodeStyle({ fill: '#CCCCCC', stroke: '1px black' })
+  graph.nodeDefaults.labels.style = new LabelStyle({ padding: 2 })
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.groupNodeDefaults.style = new ShapeNodeStyle({ fill: '#EEEEEE', stroke: 'none' })
-  graph.groupNodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('north')
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({ insets: 2 })
+  graph.groupNodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('top')
+  graph.groupNodeDefaults.labels.style = new LabelStyle({ padding: 2 })
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '#AAAAAA',
     targetArrow: '#AAAAAA small triangle'
   })
-  graph.edgeDefaults.labels.style = new DefaultLabelStyle({ insets: 2 })
+  graph.edgeDefaults.labels.style = new LabelStyle({ padding: 2 })
 
   const node1 = graph.createNodeAt({ location: [20, 110] })
   const node2 = graph.createNodeAt({ location: [120, 145] })
@@ -250,16 +237,23 @@ function createSampleGraph(): IGraph {
   const edge3 = graph.createEdge(node3, node4)
   const edge4 = graph.createEdge(node3, node5)
   const edge5 = graph.createEdge(node1, node5)
-  graph.setPortLocation(edge1.sourcePort!, new Point(40, 123.33))
-  graph.setPortLocation(edge1.targetPort!, new Point(100, 145))
-  graph.setPortLocation(edge2.sourcePort!, new Point(40, 96.67))
-  graph.setPortLocation(edge2.targetPort!, new Point(100, 75))
-  graph.setPortLocation(edge3.sourcePort!, new Point(140, 65))
-  graph.setPortLocation(edge3.targetPort!, new Point(200, 30))
-  graph.setPortLocation(edge4.sourcePort!, new Point(140, 85))
-  graph.setPortLocation(edge4.targetPort!, new Point(200, 90))
-  graph.setPortLocation(edge5.sourcePort!, new Point(40, 110))
-  graph.setPortLocation(edge5.targetPort!, new Point(200, 110))
+  graph.addLabel(
+    edge1,
+    'Edge',
+    new NinePositionsEdgeLabelModel().createParameter(
+      NinePositionsEdgeLabelModelPosition.TARGET_BELOW
+    )
+  )
+  graph.setPortLocation(edge1.sourcePort, new Point(40, 123.33))
+  graph.setPortLocation(edge1.targetPort, new Point(100, 145))
+  graph.setPortLocation(edge2.sourcePort, new Point(40, 96.67))
+  graph.setPortLocation(edge2.targetPort, new Point(100, 75))
+  graph.setPortLocation(edge3.sourcePort, new Point(140, 65))
+  graph.setPortLocation(edge3.targetPort, new Point(200, 30))
+  graph.setPortLocation(edge4.sourcePort, new Point(140, 85))
+  graph.setPortLocation(edge4.targetPort, new Point(200, 90))
+  graph.setPortLocation(edge5.sourcePort, new Point(40, 110))
+  graph.setPortLocation(edge5.targetPort, new Point(200, 110))
   graph.addBends(edge1, [new Point(70, 123.33), new Point(70, 145)])
   graph.addBends(edge2, [new Point(70, 96.67), new Point(70, 75)])
   graph.addBends(edge3, [new Point(170, 65), new Point(170, 30)])
@@ -283,12 +277,12 @@ function selectSampleItems(): void {
     return
   }
 
-  selection.setSelected(node, true)
+  selection.add(node)
   for (const edge of graphComponents[0].graph.edgesAt(node)) {
-    selection.setSelected(edge, true)
+    selection.add(edge)
     const opposite = edge.opposite(node) as INode
     if (opposite.labels.some()) {
-      selection.setSelected(opposite.labels.at(0)!, true)
+      selection.add(opposite.labels.at(0)!)
     }
   }
 }
@@ -303,9 +297,10 @@ function initColorButtons(): void {
     button.textContent = paletteName
     button.title = `${paletteName} Color Palette`
     button.addEventListener('click', () => {
-      colors = paletteName
-      initGraphComponents()
-      selectSampleItems()
+      const { primaryColor, secondaryColor, backgroundColor } = colorPalettes[paletteName]
+      graphComponentsContainer.style.setProperty('--yfiles-theme-primary', primaryColor)
+      graphComponentsContainer.style.setProperty('--yfiles-theme-secondary', secondaryColor)
+      graphComponentsContainer.style.setProperty('--yfiles-theme-background', backgroundColor)
     })
     toolbar.appendChild(button)
   })
@@ -315,19 +310,64 @@ function initColorButtons(): void {
  * Binds actions the buttons in the tutorial's toolbar.
  */
 function initializeUI(): void {
-  document.querySelector("[data-command='FIT_GRAPH_BOUNDS']")!.addEventListener('click', () => {
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponents[0])
-  })
+  document
+    .querySelector("[data-command='FIT_GRAPH_BOUNDS']")!
+    .addEventListener('click', async () => {
+      await graphComponents[0].fitGraphBounds()
+    })
 
   document.querySelector("[data-command='ZOOM_ORIGINAL']")!.addEventListener('click', () => {
-    ICommand.ZOOM.execute(1.0, graphComponents[0])
+    graphComponents[0].executeCommand(Command.ZOOM)
   })
 
-  document.querySelector('#scale-slider')!.addEventListener('input', (e: Event) => {
-    const target = e.target as HTMLInputElement
-    themeScale = parseFloat(target.value)
-    initGraphComponents()
+  const { defaultScale, defaultHandleOffset, defaultIndicatorOffset } = getThemeDefaults()
+  const sliders = [
+    {
+      slider: '#scale-slider',
+      label: '#scale-label',
+      cssClass: '--yfiles-theme-scale',
+      default: defaultScale
+    },
+    {
+      slider: '#handle-offset-slider',
+      label: '#handle-offset-label',
+      cssClass: '--yfiles-theme-handle-offset',
+      default: defaultHandleOffset
+    },
+    {
+      slider: '#indicator-offset-slider',
+      label: '#indicator-offset-label',
+      cssClass: '--yfiles-theme-indicator-offset',
+      default: defaultIndicatorOffset
+    }
+  ]
+  sliders.forEach((slider) => {
+    graphComponentsContainer.style.setProperty(slider.cssClass, slider.default)
+    const labelElement = document.querySelector(slider.label)!
+    labelElement.textContent = slider.default
+    const sliderElement = document.querySelector(slider.slider) as HTMLInputElement
+    sliderElement.value = slider.default
+    sliderElement.addEventListener('input', (e: Event) => {
+      const target = e.target as HTMLInputElement
+      graphComponentsContainer.style.setProperty(slider.cssClass, target.value)
+      labelElement.textContent = target.value
+    })
   })
+}
+
+function getThemeDefaults(): {
+  defaultScale: string
+  defaultHandleOffset: string
+  defaultIndicatorOffset: string
+} {
+  const tempGC = new GraphComponent()
+  document.body.appendChild(tempGC.htmlElement)
+  let computedStyle = window.getComputedStyle(tempGC.htmlElement)
+  const defaultScale = computedStyle.getPropertyValue('--yfiles-theme-scale')
+  const defaultHandleOffset = computedStyle.getPropertyValue('--yfiles-theme-handle-offset')
+  const defaultIndicatorOffset = computedStyle.getPropertyValue('--yfiles-theme-indicator-offset')
+  document.body.removeChild(tempGC.htmlElement)
+  return { defaultScale, defaultHandleOffset, defaultIndicatorOffset }
 }
 
 run().then(finishLoading)

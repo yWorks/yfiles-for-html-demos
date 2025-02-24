@@ -1,5 +1,5 @@
 {
-  "name": "vue-component-node-style-demo-for-yfiles-for-html",
+  "name": "@yfiles/vue-component-node-style-demo-for-yfiles-for-html",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -12,7 +12,7 @@
   "dependencies": {
     "vue": "^3.3.4",
     "vuetify": "^3.3.5",
-    "yfiles": "../../../lib-dev/yfiles-26.0.4+dev.tgz"
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
   },
   "devDependencies": {
     "@mdi/font": "^7.2.96",

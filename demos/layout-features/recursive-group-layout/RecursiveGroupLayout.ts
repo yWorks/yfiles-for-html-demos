@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import {
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   ILayoutAlgorithm,
   INode,
@@ -37,7 +37,7 @@ import {
   RadialLayout,
   RecursiveGroupLayout,
   RecursiveGroupLayoutData
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * Demonstrates how to run a {@link RecursiveGroupLayout} with different layouts for the group nodes.
@@ -49,31 +49,30 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
   layoutData: LayoutData
 } {
   // gets the group nodes
-  const groupNode1 = graph.nodes.find((node) => node.tag === 'Group 1')
-  const groupNode2 = graph.nodes.find((node) => node.tag === 'Group 2')
-  const groupNode3 = graph.nodes.find((node) => node.tag === 'Group 3')
-  const groupNode4 = graph.nodes.find((node) => node.tag === 'Group 4')
+  const groupNode1 = graph.nodes.find((node) => node.tag === 'Group 1')!
+  const groupNode2 = graph.nodes.find((node) => node.tag === 'Group 2')!
+  const groupNode3 = graph.nodes.find((node) => node.tag === 'Group 3')!
+  const groupNode4 = graph.nodes.find((node) => node.tag === 'Group 4')!
 
   // the RecursiveGroupLayout can use a core layout algorithm to arrange the top level hierarchy
-  const coreLayout = new HierarchicLayout()
+  const coreLayout = new HierarchicalLayout()
   const layout = new RecursiveGroupLayout({
     coreLayout
   })
 
   // assign a layout algorithm to each group node
   const mapper = new Mapper<INode, ILayoutAlgorithm>()
-  mapper.set(groupNode1, new HierarchicLayout())
-  mapper.set(groupNode2, new OrganicLayout({ minimumNodeDistance: 75 }))
+  mapper.set(groupNode1, new HierarchicalLayout())
+  mapper.set(groupNode2, new OrganicLayout({ defaultMinimumNodeDistance: 75 }))
   mapper.set(groupNode3, new RadialLayout())
   // Do not layout the children of group node 4, as they have
   // configured layout values.
-  mapper.set(groupNode4, RecursiveGroupLayout.NULL_LAYOUT)
+  mapper.set(groupNode4, RecursiveGroupLayout.FIX_CONTENT_LAYOUT)
   // Alternatively, we could also set the default value of the mapper to NULL_LAYOUT
   // mapper.defaultValue = RecursiveGroupLayout.NULL_LAYOUT
 
-  const layoutData = new RecursiveGroupLayoutData({
-    groupNodeLayouts: mapper
-  })
+  const layoutData = new RecursiveGroupLayoutData()
+  layoutData.groupNodeLayouts = mapper
 
   return { layout, layoutData }
 }

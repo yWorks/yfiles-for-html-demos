@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { ICanvasObject } from 'yfiles'
 import {
   ArrowNodeDirection,
   ArrowNodeStyle,
@@ -34,19 +33,19 @@ import {
   BaseClass,
   ClickEventArgs,
   Cursor,
-  HandleTypes,
-  ICanvasObjectDescriptor,
+  HandleType,
   IHandle,
   IInputModeContext,
   INode,
   IPoint,
   IRectangle,
   IRenderContext,
+  type IRenderTreeElement,
   IVisualCreator,
   Point,
   SvgVisual,
   SvgVisualGroup
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 /**
  * An {@link IHandle} for nodes with a {@link ArrowNodeStyle} to change the
@@ -69,7 +68,7 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
   private handleOffsetForMinAngle = 0
   private handleOffsetForMaxAngle = 0
 
-  private angleLineCanvasObject: ICanvasObject | undefined
+  private angleLineRenderTreeElement: IRenderTreeElement | undefined
 
   /**
    * Creates a new instance for the given node.
@@ -146,9 +145,9 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
 
     // add a line from the arrow tip along the arrow blade to the handle location to the view
     // this line is created and updated in the CreateVisual and UpdateVisual methods
-    this.angleLineCanvasObject = context.canvasComponent?.inputModeGroup.addChild(
-      this,
-      ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+    this.angleLineRenderTreeElement = context.canvasComponent?.renderTree.createElement(
+      context.canvasComponent?.renderTree.inputModeGroup,
+      this
     )
   }
 
@@ -193,7 +192,9 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
    */
   cancelDrag(context: IInputModeContext, originalLocation: Point): void {
     this.style.angle = this.initialAngle
-    this.angleLineCanvasObject?.remove()
+    if (this.angleLineRenderTreeElement) {
+      context.canvasComponent?.renderTree.remove(this.angleLineRenderTreeElement)
+    }
   }
 
   /**
@@ -205,15 +206,24 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
    */
   dragFinished(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
     this.handleMove(context, originalLocation, newLocation)
-    this.angleLineCanvasObject?.remove()
+    if (this.angleLineRenderTreeElement) {
+      context.canvasComponent?.renderTree.remove(this.angleLineRenderTreeElement)
+    }
   }
 
   /**
-   * Returns {@link HandleTypes.ROTATE} as handle type that determines the visualization of the
+   * Returns {@link HandleType.CUSTOM3} as handle type that determines the visualization of the
    * handle.
    */
-  get type(): HandleTypes {
-    return HandleTypes.ROTATE
+  get type(): HandleType {
+    return HandleType.CUSTOM3
+  }
+
+  /**
+   * Returns an optional tag object associated with the handle.
+   */
+  get tag(): any {
+    return null
   }
 
   /**
@@ -400,12 +410,12 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
     group.transform = context.viewTransform
 
     // line shall point from handle to arrow tip
-    const lineVisual = group.children.first()
+    const lineVisual = group.children.first() as SvgVisual
     const line = lineVisual.svgElement as SVGLineElement
 
     // synchronize first line point with handle location
     const fromWorld = this.location.toPoint()
-    const fromView = context.toViewCoordinates(fromWorld)
+    const fromView = context.worldToViewCoordinates(fromWorld)
     line.x1.baseVal.value = fromView.x
     line.y1.baseVal.value = fromView.y
 
@@ -458,7 +468,7 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
       }
     }
 
-    const toView = context.toViewCoordinates(new Point(toWorldX, toWorldY))
+    const toView = context.worldToViewCoordinates(new Point(toWorldX, toWorldY))
     line.x2.baseVal.value = toView.x
     line.y2.baseVal.value = toView.y
 

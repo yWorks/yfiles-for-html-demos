@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,46 +26,49 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, Insets, Size, SvgExport, WebGL2GraphModelManager } from 'yfiles'
-import { useWebGL2Rendering } from './webgl-support.js'
-
+import { GraphComponent, Insets, Size, SvgExport, WebGLGraphModelManager } from '@yfiles/yfiles'
+import { useWebGLRendering } from './webgl-support'
 /**
  * Exports the image on the client. This will open a dialog with a preview and the option to save the image as PNG.
- * @param {!GraphComponent} graphComponent
- * @param {number} scale
- * @param {number} margin
- * @param {!Rect} [exportRectangle]
- * @returns {!Promise.<HTMLImageElement>}
  */
-export async function exportImageClientSide(graphComponent, scale, margin, exportRectangle) {
+export async function exportImageClientSide(
+  graphComponent,
+  scale,
+  margin,
+  exportRectangle,
+  renderCompletionCallback
+) {
   // export the image and show a dialog to save the image
-  return await exportImage(graphComponent, scale, Insets.from(margin), exportRectangle)
+  return await exportImage(
+    graphComponent,
+    scale,
+    Insets.from(margin),
+    exportRectangle,
+    renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
+  )
 }
-
 /**
  * Exports the {@link IGraph} to a PNG image with the help of {@link SvgExport}.
  * The {@link SvgExport} exports an SVG element of a {@link GraphComponent}
  * which is subsequently converted to PNG.
- * @param {!GraphComponent} graphComponent
- * @param {number} [scale=1]
- * @param {*} margins
- * @param {!Rect} [exportRect]
- * @returns {!Promise.<HTMLImageElement>}
  */
-export async function exportImage(graphComponent, scale = 1, margins = Insets.from(5), exportRect) {
+export async function exportImage(
+  graphComponent,
+  scale = 1,
+  margins = Insets.from(5),
+  exportRect,
+  renderCompletionCallback
+) {
   // Create a new graph component for exporting the original SVG content
   const exportComponent = new GraphComponent()
   // ... and assign it the same graph.
   exportComponent.graph = graphComponent.graph
-  exportComponent.updateContentRect()
-
-  if (graphComponent.graphModelManager instanceof WebGL2GraphModelManager) {
-    useWebGL2Rendering(exportComponent)
+  exportComponent.updateContentBounds()
+  if (graphComponent.graphModelManager instanceof WebGLGraphModelManager) {
+    useWebGLRendering(exportComponent)
   }
-
   // Determine the bounds of the exported area
-  const targetRect = exportRect ?? exportComponent.contentRect
-
+  const targetRect = exportRect ?? exportComponent.contentBounds
   // Create the exporter class
   const exporter = new SvgExport({
     worldBounds: targetRect,
@@ -74,41 +77,32 @@ export async function exportImage(graphComponent, scale = 1, margins = Insets.fr
     encodeImagesBase64: true,
     inlineSvgImages: true
   })
-
   // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
   exporter.cssStyleSheet = null
-
   // Export the component to svg
-  const svgElement = await exporter.exportSvgAsync(exportComponent)
-
+  const svgElement = await exporter.exportSvgAsync(
+    exportComponent,
+    renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
+  )
   return renderSvgToPng(svgElement, new Size(exporter.viewWidth, exporter.viewHeight), margins)
 }
-
 /**
  * Converts the given SVG element to a PNG image.
- * @param {!SVGElement} svgElement
- * @param {!Size} size
- * @param {!Insets} margins
- * @returns {!Promise.<HTMLImageElement>}
  */
 function renderSvgToPng(svgElement, size, margins) {
   const targetCanvas = document.createElement('canvas')
   const targetContext = targetCanvas.getContext('2d')
-
   const svgString = SvgExport.exportSvgString(svgElement)
   const svgUrl = SvgExport.encodeSvgDataUrl(svgString)
-
   return new Promise((resolve) => {
     // The SVG image is now used as the source of an HTML image element,
     // which is then rendered onto a Canvas element.
-
     // An image that gets the export SVG in the Data URL format
     const svgImage = new Image()
     svgImage.onload = () => {
       targetContext.clearRect(0, 0, targetCanvas.width, targetCanvas.height)
       targetCanvas.width = size.width + (margins.left + margins.right)
       targetCanvas.height = size.height + (margins.top + margins.bottom)
-
       targetContext.drawImage(svgImage, margins.left, margins.top)
       // When the svg image has been rendered to the Canvas,
       // the raster image can be exported from the Canvas.

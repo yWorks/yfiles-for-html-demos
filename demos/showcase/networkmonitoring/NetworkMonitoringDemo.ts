@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,9 +28,6 @@
  ***************************************************************************/
 import {
   Animator,
-  Class,
-  CycleSubstructureStyle,
-  DefaultLabelStyle,
   FreeNodeLabelModel,
   GraphBuilder,
   GraphComponent,
@@ -38,17 +35,18 @@ import {
   GraphItemTypes,
   GraphViewerInputMode,
   IEdge,
-  type IModelItem,
   INode,
   Insets,
-  type ItemClickedEventArgs,
+  LabelStyle,
   LayoutExecutor,
   License,
   OrganicLayout,
+  OrganicLayoutCycleSubstructureStyle,
   OrganicLayoutStarSubstructureStyle,
   Rect,
-  Size
-} from 'yfiles'
+  Size,
+  ViewportLimitingPolicy
+} from '@yfiles/yfiles'
 
 import { Simulator } from './model/Simulator'
 import type { Connection } from './model/Connection'
@@ -60,9 +58,8 @@ import { Network } from './model/Network'
 import { initializeDeviceDetailsPopup, updateBarChart } from './device-popup'
 import { initializeToolTips } from './tooltips'
 
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 import {
   addFailureHighlight,
@@ -70,7 +67,7 @@ import {
   removeFailureHighlight
 } from './failure-highlight'
 
-Class.ensure(LayoutExecutor)
+LayoutExecutor.ensure()
 
 // This demo creates a network monitoring tool for dynamic data.
 // The mock-up model is created and updated by class Simulator.
@@ -84,8 +81,6 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
 
   const graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // we don't want to show the labels for the nodes, initially,
   // so we hide the whole group
   graphComponent.graphModelManager.nodeLabelGroup.visible = false
@@ -112,12 +107,11 @@ async function run(): Promise<void> {
   graphComponent.graph = graphBuilder.buildGraph()
   graphComponent.graph.applyLayout(
     new OrganicLayout({
-      preferredEdgeLength: 20,
+      defaultPreferredEdgeLength: 20,
       deterministic: true,
       starSubstructureStyle: OrganicLayoutStarSubstructureStyle.RADIAL,
-      cycleSubstructureStyle: CycleSubstructureStyle.CIRCULAR,
-      nodeEdgeOverlapAvoided: true,
-      considerNodeSizes: true,
+      cycleSubstructureStyle: OrganicLayoutCycleSubstructureStyle.CIRCULAR,
+      avoidNodeEdgeOverlap: true,
       compactnessFactor: 0.9
     })
   )
@@ -163,7 +157,7 @@ function createInputMode(): GraphInputMode {
 function enableRepairOnItemClick(graphInputMode: GraphInputMode): void {
   graphInputMode.clickableItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
 
-  graphInputMode.addItemClickedListener((_, evt): void => {
+  graphInputMode.addEventListener('item-clicked', (evt): void => {
     if (evt.item instanceof INode) {
       const device = getDevice(evt.item)
       if (device.failed) {
@@ -188,13 +182,12 @@ function enableRepairOnItemClick(graphInputMode: GraphInputMode): void {
 }
 
 function enableViewportLimiter(graphComponent: GraphComponent): void {
-  graphComponent.contentMargins = new Insets(50)
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds(200)
 
-  // limit scrolling to the area containing the graph
-  graphComponent.viewportLimiter.honorBothDimensions = false
-  graphComponent.viewportLimiter.bounds = graphComponent.contentRect
+  graphComponent.viewportLimiter.policy = ViewportLimitingPolicy.TOWARDS_LIMIT
+  graphComponent.viewportLimiter.viewportContentMargins = new Insets(100)
   graphComponent.maximumZoom = 3
+  graphComponent.minimumZoom = 0.2
 }
 
 function createGraphBuilder(data: Network, graphComponent: GraphComponent): GraphBuilder {
@@ -210,7 +203,7 @@ function createGraphBuilder(data: Network, graphComponent: GraphComponent): Grap
   const nodeLabelCreator = nodeCreator.createLabelBinding(
     (device) => `${device.name}\n${device.ip}`
   )
-  nodeLabelCreator.defaults.style = new DefaultLabelStyle({
+  nodeLabelCreator.defaults.style = new LabelStyle({
     backgroundStroke: null,
     backgroundFill: 'rgba(255,255,255,0.5)'
   })
@@ -238,12 +231,12 @@ function createGraphBuilder(data: Network, graphComponent: GraphComponent): Grap
 
 async function zoomToBounds(graphComponent: GraphComponent, bounds: Rect): Promise<void> {
   // Don't do anything if the failing element is visible already
-  if (graphComponent.viewport.contains(bounds) && graphComponent.zoom > 0.8) {
+  if (graphComponent.viewport.containsRectangle(bounds) && graphComponent.zoom > 0.8) {
     return
   }
 
   // Zoom to enlarged bounds, so we get an overview of the neighborhood as well
-  await graphComponent.zoomToAnimated(bounds.getEnlarged(new Insets(350)))
+  await graphComponent.zoomToAnimated(bounds.getEnlarged(350))
 }
 
 function initializeUI(graphComponent: GraphComponent, simulator: Simulator): void {

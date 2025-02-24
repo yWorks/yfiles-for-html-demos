@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,17 +38,18 @@ import {
 } from '@angular/core'
 import { GraphComponentService } from '../services/graph-component.service'
 import {
+  Command,
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  ICommand,
   IEdge,
   IModelItem,
   INode,
+  type QueryItemToolTipEventArgs,
   Point,
   Rect,
   TimeSpan
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { TooltipComponent } from '../tooltip/tooltip.component'
 import { Person } from '../person'
 
@@ -74,7 +75,7 @@ export class GraphComponentComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     // add the GraphComponent to the div of this component
     this.graphComponent = this.graphComponentService.getGraphComponent()
-    const div = this.graphComponent.div
+    const div = this.graphComponent.htmlElement
     div.style.height = '100%'
     this.graphComponentRef.nativeElement.appendChild(div)
 
@@ -92,10 +93,10 @@ export class GraphComponentComponent implements AfterViewInit {
           const targetBounds =
             item instanceof INode
               ? item.layout.toRect()
-              : Rect.add(item.sourceNode!.layout.toRect(), item.targetNode!.layout.toRect())
-          ICommand.ZOOM.execute(
-            targetBounds.getEnlarged(50 / this.graphComponent.zoom),
-            this.graphComponent
+              : Rect.add(item.sourceNode.layout.toRect(), item.targetNode.layout.toRect())
+          this.graphComponent.executeCommand(
+            Command.ZOOM,
+            targetBounds.getEnlarged(50 / this.graphComponent.zoom)
           )
         }
       })
@@ -104,15 +105,13 @@ export class GraphComponentComponent implements AfterViewInit {
   }
 
   /**
-   * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for
-   * the {@link MouseHoverInputMode.addQueryToolTipListener QueryToolTip} event of the
-   * GraphEditorInputMode using the
-   * {@link ToolTipQueryEventArgs} parameter.
-   * The {@link ToolTipQueryEventArgs} parameter provides three relevant properties:
-   * Handled, QueryLocation, and ToolTip. The Handled property is a flag which indicates
+   * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for the 'query-item-tool-tip'
+   * event of the {@link GraphViewerInputMode} using the {@link QueryItemToolTipEventArgs} parameter.
+   * The {@link QueryItemToolTipEventArgs} parameter provides three relevant properties:
+   * handled, queryLocation, and toolTip. The {@link QueryItemToolTipEventArgs.handled} property is a flag which indicates
    * whether the tooltip was already set by one of possibly several tooltip providers. The
-   * QueryLocation property contains the mouse position for the query in world coordinates.
-   * The tooltip is set by setting the ToolTip property.
+   * {@link QueryItemToolTipEventArgs.queryLocation} property contains the mouse position for the query in world coordinates.
+   * The {@link QueryItemToolTipEventArgs.toolTip} is set by setting the ToolTip property.
    */
   private initializeTooltips(): void {
     const inputMode = this.graphComponent.inputMode as GraphViewerInputMode
@@ -121,13 +120,13 @@ export class GraphComponentComponent implements AfterViewInit {
     inputMode.toolTipItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
 
     // Customize the tooltip's behavior to our liking.
-    const mouseHoverInputMode = inputMode.mouseHoverInputMode
-    mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)
-    mouseHoverInputMode.delay = TimeSpan.fromMilliseconds(500)
-    mouseHoverInputMode.duration = TimeSpan.fromSeconds(5)
+    const toolTipInputMode = inputMode.toolTipInputMode
+    toolTipInputMode.toolTipLocationOffset = new Point(15, 15)
+    toolTipInputMode.delay = TimeSpan.fromMilliseconds(500)
+    toolTipInputMode.duration = TimeSpan.fromSeconds(5)
 
     // Register a listener for when a tooltip should be shown.
-    inputMode.addQueryItemToolTipListener((_, evt) => {
+    inputMode.addEventListener('query-item-tool-tip', (evt) => {
       if (evt.handled) {
         // Tooltip content has already been assigned -> nothing to do.
         return
@@ -154,7 +153,7 @@ export class GraphComponentComponent implements AfterViewInit {
       tooltipContent = (item.tag as Person).businessUnit
     } else if (item instanceof IEdge) {
       tooltipTitle = 'Subordinate'
-      tooltipContent = (item.targetNode!.tag as Person).name
+      tooltipContent = (item.targetNode.tag as Person).name
     }
 
     // Retrieve the factory for TooltipComponents

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -42,23 +42,23 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphMLIOHandler,
-  GraphMLSupport,
   GraphViewerInputMode,
   IArrow,
   License,
   PolylineEdgeStyle,
   Rect,
-  Size,
-  StorageLocation
-} from 'yfiles'
+  Size
+} from '@yfiles/yfiles'
 
 import type { SampleDataType } from './resources/sample'
 import SampleData from './resources/sample'
-import { VueTemplateNodeStyle } from './style/VueTemplateNodeStyle'
-import { VueTemplateNodeStyleMarkupExtension } from './style/VueTemplateNodeStyleMarkupExtension'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
+import {
+  addVueTemplateNodeStyleInformation,
+  VueTemplateNodeStyle
+} from './style/VueTemplateNodeStyle'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent: GraphComponent
 
@@ -70,15 +70,13 @@ let tagTextArea: CodeMirror.EditorFromTextArea
  * Runs the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
 
   graphComponent.inputMode = new GraphViewerInputMode()
 
   initializeTextAreas()
   initializeStyles()
-  initializeIO()
   loadSampleGraph()
   initializeUI()
 }
@@ -111,28 +109,28 @@ function initializeTextAreas(): void {
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
 
-  graphComponent.selection.addItemSelectionChangedListener(() => {
-    const selectedNode = graphComponent.selection.selectedNodes.at(0)
-    if (selectedNode) {
-      if (selectedNode.style instanceof VueTemplateNodeStyle) {
-        templateTextArea.setOption('readOnly', false)
-        templateTextArea.setValue(selectedNode.style.template)
-      } else {
-        templateTextArea.setOption('readOnly', true)
-        templateTextArea.setValue('Style is not an instance of VueTemplateNodeStyle.')
-      }
-      tagTextArea.setOption('readOnly', false)
-      tagTextArea.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
-      document.querySelector<HTMLButtonElement>('#apply-template-button')!.disabled = false
-      document.querySelector<HTMLButtonElement>('#apply-tag-button')!.disabled = false
+  graphComponent.selection.addEventListener('item-added', () => {
+    const selectedNode = graphComponent.selection.nodes.at(0)!
+    if (selectedNode.style instanceof VueTemplateNodeStyle) {
+      templateTextArea.setOption('readOnly', false)
+      templateTextArea.setValue(selectedNode.style.template)
     } else {
-      templateTextArea.setOption('readOnly', 'nocursor')
-      tagTextArea.setOption('readOnly', 'nocursor')
-      templateTextArea.setValue('Select a node to edit its template.')
-      tagTextArea.setValue('Select a node to edit its tag.')
-      document.querySelector<HTMLButtonElement>('#apply-template-button')!.disabled = true
-      document.querySelector<HTMLButtonElement>('#apply-tag-button')!.disabled = true
+      templateTextArea.setOption('readOnly', true)
+      templateTextArea.setValue('Style is not an instance of VueTemplateNodeStyle.')
     }
+    tagTextArea.setOption('readOnly', false)
+    tagTextArea.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
+    document.querySelector<HTMLButtonElement>('#apply-template-button')!.disabled = false
+    document.querySelector<HTMLButtonElement>('#apply-tag-button')!.disabled = false
+  })
+
+  graphComponent.selection.addEventListener('item-removed', () => {
+    templateTextArea.setOption('readOnly', 'nocursor')
+    tagTextArea.setOption('readOnly', 'nocursor')
+    templateTextArea.setValue('Select a node to edit its template.')
+    tagTextArea.setValue('Select a node to edit its tag.')
+    document.querySelector<HTMLButtonElement>('#apply-template-button')!.disabled = true
+    document.querySelector<HTMLButtonElement>('#apply-tag-button')!.disabled = true
   })
 }
 
@@ -164,7 +162,7 @@ function initializeStyles(): void {
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="20" width="56.25" height="56.25"></image>
   <g style="font-size: 15px; font-family: Roboto,sans-serif; fill: #444">
     <text transform="translate(85 40)" style="font-size: 26px; fill: #336699">{{tag.name}}</text>
-    <svg-text :content="tag.position?.toUpperCase()" x="85" y="50" :width="layout.width - 100" :height="50" :wrapping="4" font-family="sans-serif" :font-size="14" :font-style="0" :font-weight="0" :text-decoration="0" fill="black" :opacity="1" :visible="true" :clipped="true" align="start" transform=""></svg-text>
+    <svg-text :content="tag.position?.toUpperCase()" x="85" y="50" :width="layout.width - 100" :height="50" :wrapping="4" font-family="sans-serif" :font-size="14" :font-style="0" :font-weight="500" :text-decoration="0" fill="black" :opacity="1" :visible="true" :clipped="true" align="start" transform=""></svg-text>
   </g>
 </template>
 <defs>
@@ -191,35 +189,12 @@ function initializeStyles(): void {
 /**
  * Initializes GraphML writing and reading for files containing VueTemplateNodeStyle.
  */
-function initializeIO(): void {
+function initializeIO(): GraphMLIOHandler {
   const graphmlHandler = new GraphMLIOHandler()
-  // enable serialization of the Vue template node style - without a namespace mapping, serialization will fail
-  graphmlHandler.addXamlNamespaceMapping('http://www.yworks.com/demos/yfiles-vue-node-style/3.0', {
-    VueTemplateNodeStyle: VueTemplateNodeStyleMarkupExtension
-  })
-  graphmlHandler.addNamespace(
-    'http://www.yworks.com/demos/yfiles-vue-node-style/3.0',
-    'VueTemplateNodeStyle'
-  )
-  graphmlHandler.addHandleSerializationListener((_, evt) => {
-    const item = evt.item
-    const context = evt.context
-    if (item instanceof VueTemplateNodeStyle) {
-      const vueNodeStyleMarkupExtension = new VueTemplateNodeStyleMarkupExtension()
-      vueNodeStyleMarkupExtension.template = item.template
-      context.serializeReplacement(
-        VueTemplateNodeStyleMarkupExtension.$class,
-        item,
-        vueNodeStyleMarkupExtension
-      )
-      evt.handled = true
-    }
-  })
-  new GraphMLSupport({
-    graphComponent,
-    graphMLIOHandler: graphmlHandler,
-    storageLocation: StorageLocation.FILE_SYSTEM
-  })
+
+  addVueTemplateNodeStyleInformation(graphmlHandler)
+
+  return graphmlHandler
 }
 
 /**
@@ -244,15 +219,24 @@ function loadSampleGraph(): void {
   const graph = graphBuilder.buildGraph()
   graphComponent.fitGraphBounds(30)
 
-  graphComponent.selection.setSelected(graph.nodes.last(), true)
+  graphComponent.selection.add(graph.nodes.last()!)
 }
 
 /**
  * Wires up the UI. Buttons are linked with their according actions.
  */
 function initializeUI(): void {
+  const graphMLIOHandler = initializeIO()
+  document
+    .querySelector<HTMLInputElement>('#open-file-button')!
+    .addEventListener('click', async () => {
+      await openGraphML(graphComponent, graphMLIOHandler)
+    })
+  document.querySelector<HTMLInputElement>('#save-button')!.addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'vueTemplateNodeStyle.graphml', graphMLIOHandler)
+  })
   document.querySelector('#apply-template-button')!.addEventListener('click', () => {
-    if (graphComponent.selection.selectedNodes.size === 0) {
+    if (graphComponent.selection.nodes.size === 0) {
       return
     }
     const templateText = templateTextArea.getValue()
@@ -260,10 +244,10 @@ function initializeUI(): void {
     try {
       // check if style is valid
       style.renderer
-        .getVisualCreator(graphComponent.selection.selectedNodes.first(), style)
+        .getVisualCreator(graphComponent.selection.nodes.first()!, style)
         .createVisual(graphComponent.createRenderContext())
 
-      graphComponent.selection.selectedNodes.forEach((node) => {
+      graphComponent.selection.nodes.forEach((node) => {
         graphComponent.graph.setStyle(node, style)
       })
 
@@ -278,7 +262,7 @@ function initializeUI(): void {
 
   document.querySelector('#apply-tag-button')!.addEventListener('click', () => {
     const errorArea = document.getElementById('tag-text-area-error')!
-    graphComponent.selection.selectedNodes.forEach((node) => {
+    graphComponent.selection.nodes.forEach((node) => {
       try {
         node.tag = JSON.parse(tagTextArea.getValue())
         errorArea.classList.remove('open-error')

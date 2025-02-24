@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,36 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { LayoutDescriptor } from 'yfiles'
-import {
-  HierarchicLayout,
-  LayoutExecutorAsyncWorker,
-  LayoutGraph,
-  License,
-  MinimumNodeSizeStage
-} from 'yfiles'
-
+import { HierarchicalLayout, LayoutExecutorAsyncWorker, License } from '@yfiles/yfiles'
 import licenseData from './license.json'
+
 License.value = licenseData
 
-function applyLayout(graph: LayoutGraph, layoutDescriptor: LayoutDescriptor): void {
-  if (layoutDescriptor.name === 'HierarchicLayout') {
-    // create and apply a new hierarchic layout using the given layout properties
-    // and wrap it in a MinimumNodeSizeStage
-    const layout = new MinimumNodeSizeStage(new HierarchicLayout(layoutDescriptor.properties))
+LayoutExecutorAsyncWorker.initializeWebWorker((graph, layoutDescriptor) => {
+  if (layoutDescriptor.name === 'HierarchicalLayout') {
+    // create and apply a new hierarchical layout using the given layout properties
+    const layout = new HierarchicalLayout(layoutDescriptor.properties)
     layout.applyLayout(graph)
   }
-}
-
-addEventListener(
-  'message',
-  (e) => {
-    // create a new remote layout executor
-    const executor = new LayoutExecutorAsyncWorker(applyLayout)
-    executor.process(e.data).then(postMessage).catch(postMessage)
-  },
-  false
-)
-
-// signal that the web worker thread is ready to execute
-postMessage('ready')
+})

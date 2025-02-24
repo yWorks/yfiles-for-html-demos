@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,46 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   BaseClass,
-  DefaultEdgePathCropper,
+  EdgePathCropper,
   GeneralPath,
-  GeomUtilities,
+  GeometryUtilities,
   IEdgePathCropper,
   IShapeGeometry,
   PortStyleBase,
   Rect,
   SvgVisual
-} from 'yfiles'
-
-/**
- * Augment the SvgVisual type with the data used to cache the rendering information
- * @typedef {Object} Cache
- * @property {number} size
- * @property {string} color
- */
-
-/**
- * @typedef {TaggedSvgVisual.<SVGEllipseElement,Cache>} CustomPortStyleVisual
- */
-
+} from '@yfiles/yfiles'
 /**
  * A basic port style that renders a circle.
  */
 export class CustomPortStyle extends PortStyleBase {
-  /**
-   * @param {number} [size=6]
-   */
+  size
   constructor(size = 6) {
     super()
     this.size = size
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!IPort} port
-   * @returns {!CustomPortStyleVisual}
-   */
   createVisual(context, port) {
     const ellipseElement = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     const { x, y } = port.location
@@ -78,126 +62,73 @@ export class CustomPortStyle extends PortStyleBase {
     ellipseElement.setAttribute('fill', color)
     ellipseElement.setAttribute('stroke', '#e6f8ff')
     ellipseElement.setAttribute('stroke-width', '1')
-
     const cache = { size: this.size, color }
-
     return SvgVisual.from(ellipseElement, cache)
   }
-
-  /**
-   * @param {!IRenderContext} context
-   * @param {!CustomPortStyleVisual} oldVisual
-   * @param {!IPort} port
-   * @returns {!CustomPortStyleVisual}
-   */
   updateVisual(context, oldVisual, port) {
     const { x, y } = port.location
     // get the ellipse element that needs updating from the old visual
     const ellipseElement = oldVisual.svgElement
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
-
     const color = port.tag.color ?? '#6c9f44'
     if (cache.color !== color) {
       ellipseElement.setAttribute('fill', color)
       cache.color = color
     }
-
     if (cache.size !== this.size) {
       const radius = this.size * 0.5
       ellipseElement.setAttribute('rx', String(radius))
       ellipseElement.setAttribute('ry', String(radius))
       cache.size = this.size
     }
-
     // move the visualization to the port location
     ellipseElement.setAttribute('cx', String(x))
     ellipseElement.setAttribute('cy', String(y))
-
     return oldVisual
   }
-
-  /**
-   * @param {!IInputModeContext} context
-   * @param {!Point} location
-   * @param {!IPort} port
-   * @returns {boolean}
-   */
   isHit(context, location, port) {
     // get the ellipse bounds
     const bounds = this.getBounds(context, port)
     // use a convenience function to check if the location is inside the ellipse
-    return GeomUtilities.ellipseContains(bounds, location, context.hitTestRadius)
+    return GeometryUtilities.ellipseContains(bounds, location, context.hitTestRadius)
   }
-
-  /**
-   * @param {!IPort} port
-   * @param {!Class} type
-   * @returns {*}
-   */
   lookup(port, type) {
-    if (type === IShapeGeometry.$class) {
+    if (type === IShapeGeometry) {
       // calculate the port bounds for edge cropping
       const bounds = this.getPortBounds(port)
       // the IShapeGeometry implementation for this style
       const PortShapeGeometry = class extends BaseClass(IShapeGeometry) {
-        /**
-         * @param {!Point} inner
-         * @param {!Point} outer
-         * @returns {?Point}
-         */
         getIntersection(inner, outer) {
-          return GeomUtilities.findEllipseLineIntersection(bounds, inner, outer)
+          return GeometryUtilities.getEllipseLineIntersection(bounds, inner, outer)
         }
-
-        /**
-         * @returns {?GeneralPath}
-         */
         getOutline() {
           const path = new GeneralPath()
           path.appendEllipse(bounds, false)
           return path
         }
-
-        /**
-         * @param {!Point} location
-         * @returns {boolean}
-         */
         isInside(location) {
-          return GeomUtilities.ellipseContains(bounds, location, 0)
+          return GeometryUtilities.ellipseContains(bounds, location, 0)
         }
       }
       return new PortShapeGeometry()
     }
-    if (type === IEdgePathCropper.$class) {
+    if (type === IEdgePathCropper) {
       // a custom IEdgePathCropped implementation that uses the IShapeGeometry defined above
-      const CustomEdgePathCropper = class extends DefaultEdgePathCropper {
-        /**
-         * @param {!IPort} port
-         * @returns {?IShapeGeometry}
-         */
+      const CustomEdgePathCropper = class extends EdgePathCropper {
         getPortGeometry(port) {
-          return port.lookup(IShapeGeometry.$class)
+          return port.lookup(IShapeGeometry)
         }
       }
       return new CustomEdgePathCropper({ cropAtPort: true })
     }
     return super.lookup(port, type)
   }
-
-  /**
-   * @param {!ICanvasContext} context
-   * @param {!IPort} port
-   * @returns {!Rect}
-   */
   getBounds(context, port) {
     return this.getPortBounds(port)
   }
-
   /**
    * Calculates the port's bounds.
-   * @param {!IPort} port
-   * @returns {!Rect}
    */
   getPortBounds(port) {
     const { x, y } = port.location

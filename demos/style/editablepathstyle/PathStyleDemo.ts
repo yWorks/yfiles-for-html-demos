@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,49 +28,45 @@
  ***************************************************************************/
 import {
   DashStyle,
-  EventArgs,
   GeneralPath,
   GraphComponent,
   GraphEditorInputMode,
+  GraphSnapContext,
   HandleInputMode,
   INode,
   License,
   List,
-  ModifierKeys,
-  MouseButtons,
-  NodeStyleDecorationInstaller,
+  NodeStyleIndicatorRenderer,
+  OrthogonalSnapLine,
   PathType,
   Point,
-  PointBasedSnapLine,
+  PointerButtons,
   Size,
-  SnapContext,
+  SnapConstraint,
   SnapLineOrientation,
   SnapLineSnapTypes,
-  SnapLineVisualizationType,
+  SnapReferenceVisualizationType,
   SnapResult,
-  SnapTypes,
   Stroke
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import EditablePathNodeStyle, { PathHandle, updateHandles } from './EditablePathNodeStyle'
-import { applyDemoTheme, createDemoEdgeStyle } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 let graphComponent: GraphComponent = null!
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initialize the graph
   initializeGraph()
 
   // initialize the input mode
   graphComponent.inputMode = createEditorMode()
 
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
 
   graphComponent.graph.undoEngine!.clear()
 }
@@ -91,10 +87,10 @@ function initializeGraph(): void {
   }).freeze()
 
   // Highlight the selected nodes along their outline
-  graph.decorator.nodeDecorator.selectionDecorator.setFactory(
+  graph.decorator.nodes.selectionRenderer.addFactory(
     (node) => node.style instanceof EditablePathNodeStyle,
     (node) =>
-      new NodeStyleDecorationInstaller({
+      new NodeStyleIndicatorRenderer({
         zoomPolicy: 'view-coordinates',
         margins: 0,
         nodeStyle: new EditablePathNodeStyle({
@@ -124,9 +120,7 @@ function initializeGraph(): void {
  * a {@link GraphEditorInputMode} configured to show and create path handles.
  */
 function createEditorMode(): GraphEditorInputMode {
-  const graphEditorInputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
+  const graphEditorInputMode = new GraphEditorInputMode()
 
   // add handle input to handle change shape handles
   const changeShapeHandleInputMode = new HandleInputMode({
@@ -136,11 +130,11 @@ function createEditorMode(): GraphEditorInputMode {
   graphEditorInputMode.add(changeShapeHandleInputMode)
 
   const locations: List<Point> = new List<Point>()
-  changeShapeHandleInputMode.snapContext = new SnapContext()
+  changeShapeHandleInputMode.snapContext = new GraphSnapContext()
   changeShapeHandleInputMode.snapContext.createSnapResultsModelManager(
     graphComponent
-  ).canvasObjectGroup = graphComponent.inputModeGroup
-  changeShapeHandleInputMode.snapContext.addInitializingListener((_, evt) => {
+  ).renderTreeGroup = graphComponent.renderTree.inputModeGroup
+  changeShapeHandleInputMode.snapContext.addEventListener('initializing', () => {
     locations.clear()
     if (currentNode) {
       const outline = currentNode.style.renderer
@@ -161,61 +155,75 @@ function createEditorMode(): GraphEditorInputMode {
     }
   })
 
-  changeShapeHandleInputMode.snapContext.addCollectSnapResultsListener((_, evt) => {
+  changeShapeHandleInputMode.snapContext.addEventListener('collect-snap-results', (evt) => {
     locations
       .filter((p) => Math.abs(p.x - evt.newLocation.x) < evt.snapDistance)
       .forEach((p) => {
-        const sl = new PointBasedSnapLine(
-          new Point(p.x, evt.newLocation.y),
+        const location = new Point(p.x, evt.newLocation.y)
+        const sl = new OrthogonalSnapLine(
           SnapLineOrientation.VERTICAL,
           SnapLineSnapTypes.CENTER,
-          SnapLineVisualizationType.BLANK_VARIABLE_LINE,
+          SnapReferenceVisualizationType.BLANK_VARIABLE_LINE,
           p,
-          null,
+          false,
           1 / (1 + Math.abs(p.x - evt.newLocation.x))
         )
-        evt.addSnapResult(
-          SnapResult.createSnapLineSnapResult(
-            1 / (1 + Math.abs(p.x - evt.newLocation.x)),
-            new Point(p.x - evt.newLocation.x, 0),
-            p,
-            sl,
-            new Point(p.x, evt.newLocation.y),
-            null,
-            SnapTypes.SNAPPED_X
-          )
+        const constraint = SnapConstraint.createLineConstraint(
+          location,
+          evt.newLocation,
+          evt.snapDistance,
+          new Point(0, 1)
         )
+        if (constraint) {
+          evt.addSnapResult(
+            SnapResult.createLineSnapResult(
+              constraint,
+              1 / (1 + Math.abs(p.x - evt.newLocation.x)),
+              null,
+              null,
+              location,
+              sl
+            )
+          )
+        }
       })
     locations
       .filter((p) => Math.abs(p.y - evt.newLocation.y) < evt.snapDistance)
       .forEach((p) => {
-        const sl = new PointBasedSnapLine(
-          new Point(evt.newLocation.x, p.y),
+        const location = new Point(evt.newLocation.x, p.y)
+        const sl = new OrthogonalSnapLine(
           SnapLineOrientation.HORIZONTAL,
           SnapLineSnapTypes.CENTER,
-          SnapLineVisualizationType.BLANK_VARIABLE_LINE,
+          SnapReferenceVisualizationType.BLANK_VARIABLE_LINE,
           p,
-          null,
+          false,
           1 / (1 + Math.abs(p.y - evt.newLocation.y))
         )
-        evt.addSnapResult(
-          SnapResult.createSnapLineSnapResult(
-            1 / (1 + Math.abs(p.y - evt.newLocation.y)),
-            new Point(0, p.y - evt.newLocation.y),
-            p,
-            sl,
-            new Point(evt.newLocation.x, p.y),
-            null,
-            SnapTypes.SNAPPED_Y
-          )
+        const constraint = SnapConstraint.createLineConstraint(
+          location,
+          evt.newLocation,
+          evt.snapDistance,
+          new Point(1, 0)
         )
+        if (constraint) {
+          evt.addSnapResult(
+            SnapResult.createLineSnapResult(
+              constraint,
+              1 / (1 + Math.abs(p.y - evt.newLocation.y)),
+              null,
+              null,
+              location,
+              sl
+            )
+          )
+        }
       })
   })
 
   let currentNode: INode | null = null
 
   // hide handles when a node is removed
-  graphComponent.graph.addNodeRemovedListener((_, evt) => {
+  graphComponent.graph.addEventListener('node-removed', (evt) => {
     if (evt.item === currentNode) {
       changeShapeHandleInputMode.cancel()
       changeShapeHandleInputMode.handles.clear()
@@ -224,25 +232,22 @@ function createEditorMode(): GraphEditorInputMode {
   })
 
   // deselect the control point handles using right-click on canvas
-  graphEditorInputMode.addCanvasClickedListener((_, evt) => {
-    if (evt.mouseButtons === MouseButtons.RIGHT) {
+  graphEditorInputMode.addEventListener('canvas-clicked', (evt) => {
+    if (evt.pointerButtons === PointerButtons.MOUSE_RIGHT) {
       changeShapeHandleInputMode.handles.clear()
     }
   })
 
   // select existing or add new handles on double-click on path
-  graphEditorInputMode.addItemLeftDoubleClickedListener((_, evt) => {
+  graphEditorInputMode.addEventListener('item-left-double-clicked', (evt) => {
     if (evt.item instanceof INode && evt.item.style instanceof EditablePathNodeStyle) {
       const existingHandle = evt.item.style
-        .getHandles(evt.context, evt.item)
+        .getHandles(evt.item)
         .find((handle) => handle.location.distanceTo(evt.location) < evt.context.hitTestRadius)
       if (existingHandle) {
         changeShapeHandleInputMode.handles.clear()
         // if we were clicked with the modifier presses, remove the corresponding segment instead
-        if (
-          (evt.modifiers & ModifierKeys.SHIFT) === ModifierKeys.SHIFT &&
-          existingHandle instanceof PathHandle
-        ) {
+        if (evt.shiftKey && existingHandle instanceof PathHandle) {
           existingHandle.removeSegment()
           currentNode = null
         } else {
@@ -254,8 +259,12 @@ function createEditorMode(): GraphEditorInputMode {
         changeShapeHandleInputMode.handles.clear()
         // find the closest handle, which should be the new handle...
         const createdHandle = evt.item.style
-          .getHandles(evt.context, evt.item)
-          .orderBy((handle) => handle.location.distanceTo(evt.location))
+          .getHandles(evt.item)
+          .toSorted((handle1, handle2) =>
+            Math.sign(
+              handle1.location.distanceTo(evt.location) - handle2.location.distanceTo(evt.location)
+            )
+          )
           .at(0)
         if (createdHandle) {
           changeShapeHandleInputMode.handles.clear()
@@ -272,7 +281,7 @@ function createEditorMode(): GraphEditorInputMode {
   })
 
   // remove a handle and control point on right click
-  graphEditorInputMode.addItemRightClickedListener((_, evt) => {
+  graphEditorInputMode.addEventListener('item-right-clicked', (evt) => {
     let handle = null
     if (currentNode && changeShapeHandleInputMode.handles.size > 3) {
       handle = changeShapeHandleInputMode.handles.find(
@@ -288,17 +297,17 @@ function createEditorMode(): GraphEditorInputMode {
         // reset handles to update their locations and order
         changeShapeHandleInputMode.handles.clear()
         ;(currentNode.style as EditablePathNodeStyle)
-          .getHandles(evt.context, currentNode)
+          .getHandles(currentNode)
           .forEach((handle) => changeShapeHandleInputMode.handles.add(handle))
         graphEditorInputMode.graph!.invalidateDisplays()
       }
     }
   })
 
-  graphComponent.graph.undoEngine!.addUnitUndoneListener((_, evt) => {
+  graphComponent.graph.undoEngine!.addEventListener('unit-undone', () => {
     updateHandles(currentNode, changeShapeHandleInputMode)
   })
-  graphComponent.graph.undoEngine!.addUnitRedoneListener((_, evt) => {
+  graphComponent.graph.undoEngine!.addEventListener('unit-redone', () => {
     updateHandles(currentNode, changeShapeHandleInputMode)
   })
 

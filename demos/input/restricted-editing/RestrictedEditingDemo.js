@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,47 +31,37 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  IEdge,
   IGraph,
   License
-} from 'yfiles'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import SampleData from './resources/SampleData.js'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import SampleData from './resources/SampleData'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { EdgePositionHandler } from './EdgePositionHandler'
 /**
  * Bootstraps this demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   // create the demo's graph component
   const graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   // initially disable interactive editing
   configureUserInteraction(graphComponent)
-
   // configure default styles for the demo's graph
   initDemoStyles(graphComponent.graph)
-
   // create the demo's sample graph
   createSampleGraph(graphComponent.graph)
-
   // center the demo's graph in the demo's visible area
-  graphComponent.fitGraphBounds()
-
+  await graphComponent.fitGraphBounds()
   // enable undo and redo
   graphComponent.graph.undoEngineEnabled = true
-
   // bind the demo's UI controls to their respective actions
   initializeUI(graphComponent)
 }
-
 /**
  * Creates the sample graph for this demo.
- * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
   const builder = new GraphBuilder(graph)
@@ -93,17 +83,15 @@ function createSampleGraph(graph) {
     targetId: 'tgt',
     bends: 'bends'
   })
-
   builder.buildGraph()
 }
-
 /**
  * Registers a {@link GraphEditorInputMode} instance that does not allow interactive editing of
  * the demo's graph initially.
- * @param {!GraphComponent} graphComponent the demo's main graph view.
+ * @param graphComponent the demo's main graph view.
  */
 function configureUserInteraction(graphComponent) {
-  const geim = new GraphEditorInputMode({
+  graphComponent.inputMode = new GraphEditorInputMode({
     allowAddLabel: false,
     allowAdjustGroupNodeSize: false,
     allowClipboardOperations: false,
@@ -126,18 +114,19 @@ function configureUserInteraction(graphComponent) {
     // - node resizing
     // - edge reconnection
     // - bend movement
-    showHandleItems: GraphItemTypes.NONE
+    showHandleItems: GraphItemTypes.NONE,
+    moveSelectedItemsInputMode: { enabled: false },
+    moveUnselectedItemsInputMode: { enabled: false }
   })
-  geim.moveInputMode.enabled = false
-  geim.moveLabelInputMode.enabled = false
-
-  graphComponent.inputMode = geim
+  // register position handlers on edges so that they can be moved
+  graphComponent.graph.decorator.edges.positionHandler.addFactory(
+    (edge) => new EdgePositionHandler(edge)
+  )
 }
-
 /**
  * Configures interactive editing according to the given operations value.
- * @param {!GraphComponent} graphComponent the graph view for which interactive editing is configured.
- * @param {!('none'|'moving'|'all')} operations Determines which interactive editing operations are enabled or disabled.
+ * @param graphComponent the graph view for which interactive editing is configured.
+ * @param operations Determines which interactive editing operations are enabled or disabled.
  *
  * - __none__: All interactive editing operations are disabled.
  * - __moving__: Interactive editing is disabled except for interactively moving items.
@@ -150,17 +139,16 @@ function configureEditing(graphComponent, operations) {
     const geim = graphComponent.inputMode
     allowEditing(geim, false)
     geim.showHandleItems = GraphItemTypes.BEND
-    geim.moveInputMode.enabled = true
-    geim.moveLabelInputMode.enabled = true
+    geim.moveSelectedItemsInputMode.enabled = true
+    geim.moveUnselectedItemsInputMode.enabled = true
   } else {
     allowEditing(graphComponent.inputMode, true)
   }
 }
-
 /**
  * Turns interactive editing on or off
- * @param {!GraphEditorInputMode} geim the input mode responsible for interactive editing.
- * @param {boolean} enabled if true, interactive editing is enabled; otherwise it is disabled.
+ * @param geim the input mode responsible for interactive editing.
+ * @param enabled if true, interactive editing is enabled; otherwise it is disabled.
  */
 function allowEditing(geim, enabled) {
   geim.allowAddLabel = enabled
@@ -180,23 +168,18 @@ function allowEditing(geim, enabled) {
   geim.allowReverseEdge = enabled
   geim.allowUndoOperations = enabled
   geim.allowUngroupSelection = enabled
-
   geim.deletableItems = enabled ? GraphItemTypes.ALL : GraphItemTypes.NONE
   geim.showHandleItems = enabled ? GraphItemTypes.ALL : GraphItemTypes.NONE
-
-  geim.moveInputMode.enabled = enabled
-  geim.moveLabelInputMode.enabled = enabled
+  geim.moveSelectedItemsInputMode.enabled = enabled
+  geim.moveUnselectedItemsInputMode.enabled = enabled
 }
-
 /**
  * Binds actions to the demo's UI controls.
- * @param {!GraphComponent} graphComponent
  */
 function initializeUI(graphComponent) {
   const allowEditing = document.querySelector('#allowed-editing-operations')
-  allowEditing.addEventListener('change', (evt) =>
+  allowEditing.addEventListener('change', () =>
     configureEditing(graphComponent, allowEditing.value)
   )
 }
-
 run().then(finishLoading)

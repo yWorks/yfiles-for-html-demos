@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,33 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * @typedef {number} NodeId
- */
-
-/**
- * @typedef {Object} NodeObject
- * @property {Array.<number>} loadHistory
- * @property {string} name
- * @property {string} ip
- * @property {boolean} enabled
- * @property {number} type
- * @property {number} load
- * @property {NodeId} id
- */
-
-/**
- * @typedef {Object} EdgeObject
- * @property {NodeId} source
- * @property {NodeId} target
- */
-
-/**
- * @typedef {Object} NetworkData
- * @property {Array.<NodeObject>} nodeList
- * @property {Array.<EdgeObject>} edgeList
- */
-
 export const networkData = {
   nodeList: [
     {

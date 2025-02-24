@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,18 +28,17 @@
  ***************************************************************************/
 import {
   BaseClass,
-  Class,
   ClickEventArgs,
   Cursor,
-  HandleTypes,
+  HandleType,
   IBend,
   IHandle,
   IInputModeContext,
-  ILookup,
+  InputModeContext,
   IPoint,
   MoveInputMode,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 const EPS = 1e-6
 
@@ -92,7 +91,7 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
    */
   public initializeDrag(context: IInputModeContext): void {
     this.coreHandle.initializeDrag(context)
-    if (context.parentInputMode instanceof MoveInputMode) {
+    if (context.inputMode instanceof MoveInputMode) {
       // If we are moved via MoveInputMode (happens when the whole edge is dragged)
       // We only delegate to the core handle
       return
@@ -101,8 +100,8 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
     // If we are indirectly controlled from the other control point or the bend curve point
     // those implementations put a marker in the lookup
     // If such a marker is present, we DON'T delegate to the other handle and just move ourselves.
-    const bcph = context.lookup(InnerControlPointHandle.$class)
-    const cph = context.lookup(OuterControlPointHandle.$class)
+    const bcph = context.lookup(InnerControlPointHandle)
+    const cph = context.lookup(OuterControlPointHandle)
 
     if (!bcph && !cph) {
       // We are the master handle and so we control the other one
@@ -113,23 +112,23 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
 
       let otherBend = null
       let middleBend = null
-      if (isFirstInTriplet && index < this.bend.owner!.bends.size - 1) {
+      if (isFirstInTriplet && index < this.bend.owner.bends.size - 1) {
         // We are the first of the triple and there is a potential slave handle
         // So get the slave and the middle bend
-        otherBend = this.bend.owner!.bends.get(index + 2)
-        middleBend = this.bend.owner!.bends.get(index + 1)
+        otherBend = this.bend.owner.bends.get(index + 2)
+        middleBend = this.bend.owner.bends.get(index + 1)
       } else if (index >= 3) {
         // We are the last of the triple and there is a potential slave handle
         // So get the slave and the middle bend
-        otherBend = this.bend.owner!.bends.get(index - 2)
-        middleBend = this.bend.owner!.bends.get(index - 1)
+        otherBend = this.bend.owner.bends.get(index - 2)
+        middleBend = this.bend.owner.bends.get(index - 1)
       }
       if (
         otherBend &&
         middleBend &&
         areCollinear(this.bend.location, middleBend.location, otherBend.location)
       ) {
-        this.slaveHandle = otherBend.lookup(IHandle.$class)
+        this.slaveHandle = otherBend.lookup(IHandle)
         this.middleLocation = middleBend.location.toPoint()
       }
 
@@ -138,11 +137,8 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
         // notify it that it is the slave
         // We just put ourselves in the context, so our presence serves as flag to the other handle
         // And from now on control its actions.
-        const childContext = IInputModeContext.createInputModeContext(
-          context.parentInputMode!,
-          context,
-          ILookup.createSingleLookup(this, OuterControlPointHandle.$class)
-        )
+        const childContext = new InputModeContext(context)
+        childContext.getDecoratorFor(OuterControlPointHandle).addConstant(this)
         this.slaveHandle.initializeDrag(childContext)
         this.slaveOrigin = this.slaveHandle.location.toPoint()
       }
@@ -218,8 +214,8 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
   /**
    * We use a slightly different visualization
    */
-  public get type(): HandleTypes {
-    return HandleTypes.DEFAULT | HandleTypes.VARIANT1
+  public get type(): HandleType {
+    return HandleType.MOVE2
   }
 
   /**
@@ -234,6 +230,10 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
    */
   public get location(): IPoint {
     return this.coreHandle.location
+  }
+
+  get tag(): any {
+    return null
   }
 
   /**
@@ -299,7 +299,7 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
   public initializeDrag(context: IInputModeContext): void {
     this.coreHandle.initializeDrag(context)
 
-    if (context.parentInputMode instanceof MoveInputMode) {
+    if (context.inputMode instanceof MoveInputMode) {
       // If we are moved via MoveInputMode (happens when the whole edge is dragged)
       // We only delegate to the core handle
       return
@@ -307,9 +307,9 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
 
     const index = this.bend.index
 
-    const firstBend = index > 0 ? this.bend.owner!.bends.get(index - 1) : null
+    const firstBend = index > 0 ? this.bend.owner.bends.get(index - 1) : null
     const lastBend =
-      index < this.bend.owner!.bends.size - 1 ? this.bend.owner!.bends.get(index + 1) : null
+      index < this.bend.owner.bends.size - 1 ? this.bend.owner.bends.get(index + 1) : null
 
     if (
       firstBend &&
@@ -317,13 +317,10 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
       areCollinear(firstBend.location, this.bend.location, lastBend.location)
     ) {
       // Put a marker in the context so that the slave handles can distinguish whether they are moved dependent from us, or are dragged directly
-      const childContext = IInputModeContext.createInputModeContext(
-        context.parentInputMode!,
-        context,
-        ILookup.createSingleLookup(this, InnerControlPointHandle.$class)
-      )
-      this.firstSlaveHandle = firstBend.lookup(IHandle.$class)
-      this.lastSlaveHandle = lastBend.lookup(IHandle.$class)
+      const childContext = new InputModeContext(context)
+      childContext.getDecoratorFor(InnerControlPointHandle).addConstant(this)
+      this.firstSlaveHandle = firstBend.lookup(IHandle)
+      this.lastSlaveHandle = lastBend.lookup(IHandle)
 
       if (this.firstSlaveHandle) {
         this.firstSlaveHandle.initializeDrag(childContext)
@@ -354,11 +351,8 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
    * Cancel the movement on the core handle and if present also on the slave handles
    */
   public cancelDrag(context: IInputModeContext, originalLocation: Point): void {
-    const childContext = IInputModeContext.createInputModeContext(
-      context.parentInputMode!,
-      context,
-      ILookup.createSingleLookup(this, InnerControlPointHandle.$class)
-    )
+    const childContext = new InputModeContext(context)
+    childContext.getDecoratorFor(InnerControlPointHandle).addConstant(this)
     this.coreHandle.cancelDrag(context, originalLocation)
     if (this.firstSlaveHandle) {
       this.firstSlaveHandle.cancelDrag(childContext, this.firstOrigin)
@@ -395,10 +389,14 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
     this.lastSlaveHandle = null
   }
 
+  get tag(): any {
+    return this.coreHandle.tag
+  }
+
   /**
    * Use the core handle's type
    */
-  public get type(): HandleTypes {
+  public get type(): HandleType {
     return this.coreHandle.type
   }
 
@@ -433,6 +431,3 @@ function areCollinear(p1: IPoint, p2: IPoint, p3: IPoint): boolean {
   // Use the cross product to check whether we are collinear
   return Math.abs(0.5 * (p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y))) < EPS
 }
-
-Class.fixType(InnerControlPointHandle)
-Class.fixType(OuterControlPointHandle)

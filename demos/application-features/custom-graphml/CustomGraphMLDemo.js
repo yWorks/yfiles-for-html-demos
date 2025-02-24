@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,235 +26,188 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Class,
-  DefaultLabelStyle,
   EdgePathLabelModel,
   EdgeSides,
-  ExteriorLabelModel,
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
-  GraphMLSupport,
   GroupNodeLabelModel,
   GroupNodeStyle,
-  HierarchicLayout,
+  HierarchicalLayout,
   IGraph,
   INode,
   KeyType,
+  LabelStyle,
   LayoutExecutor,
   License,
+  Mapper,
   Point,
-  Size,
-  StorageLocation,
-  ToolTipQueryEventArgs,
-  YObject
-} from 'yfiles'
-
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
+  Size
+} from '@yfiles/yfiles'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-
-/** @type {GraphComponent} */
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
+// Ensure that the LayoutExecutor class is not removed by build optimizers
+// It is needed for the 'applyLayoutAnimated' method in this demo.
+LayoutExecutor.ensure()
 let graphComponent
-
 /**
  * Symbolic name for the mapper that allows transparent access to the correct implementation even across
  * wrapped graphs.
  */
 const DATE_TIME_MAPPER_KEY = 'DateTimeMapperKey'
-
+let dateMapper
 /**
  * Bootstraps the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupingOperations: true
-  })
-
+  graphComponent.inputMode = new GraphEditorInputMode()
   // configures default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
-
   // sets up the data binding that stores the current date when a node is created
   enableDataBinding()
-
   // then build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
-
   // layout and center the graph
-  Class.ensure(LayoutExecutor)
-  graphComponent.graph.applyLayout(
-    new HierarchicLayout({ orthogonalRouting: true, minimumLayerDistance: 35 })
-  )
-  graphComponent.fitGraphBounds()
-
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+  await graphComponent.fitGraphBounds()
   // enable now the undo engine to prevent undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
-
   // enable GraphML IO
   enableGraphML()
-
   // displays tooltips for the stored data items, so that something is visible to the user
   setupTooltips()
 }
-
 /**
  * Creates nodes and edges according to the given data.
- * @param {!IGraph} graph
- * @param {!JSONGraph} graphData
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-
   graphBuilder.createNodesSource({
     data: graphData.nodeList.filter((item) => !item.isGroup),
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
-
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
-
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
-
   graphBuilder.buildGraph()
 }
-
 /**
  * Sets up simple data binding - creates an IMapper, registers it and subscribe to the node creation event
  * on the graph.
  */
 function enableDataBinding() {
   const graph = graphComponent.graph
-  // Creates a specialized IMapper instance, and registers it under a symbolic name.
-  const dateMapper = graph.mapperRegistry.createMapper(
-    INode.$class,
-    YObject.$class,
-    DATE_TIME_MAPPER_KEY
-  )
-
+  // Creates a specialized IMapper instance.
+  dateMapper = new Mapper()
   // Subscribes to the node creation event to record the node creation time.
   // Note that since this event is triggered after undo/redo, the time will
   // be updated during redo of node creations and undo of node deletions.
   // If this is unwanted behavior, you can customize the node creation itself
   // to associate this data with the element at the time of its initial creation,
   // e.g. by listening to the NodeCreated event of GraphEditorInputMode, see below
-  graph.addNodeCreatedListener((_, evt) => {
+  graph.addEventListener('node-created', (evt) => {
     // Stores the current time as node creation time.
     dateMapper.set(evt.item, new Date())
   })
 }
-
 /**
  * Enables loading and saving the graph to GraphML.
  */
 function enableGraphML() {
-  // create a new GraphMLSupport instance that handles save and load operations
-  // eslint-disable-next-line no-new
-  new GraphMLSupport({
-    graphComponent,
-    // configure to load and save to the file system
-    storageLocation: StorageLocation.FILE_SYSTEM,
-    // set a custom GraphMLIOHandler
-    graphMLIOHandler: createGraphMLIOHandler()
+  // set a custom GraphMLIOHandler
+  const graphMLIOHandler = createGraphMLIOHandler()
+  document.querySelector('#open-file-button').addEventListener('click', async () => {
+    await openGraphML(graphComponent, graphMLIOHandler)
+  })
+  document.querySelector('#save-button').addEventListener('click', async () => {
+    await saveGraphML(graphComponent, 'customGraphML.graphml', graphMLIOHandler)
   })
 }
-
 /**
  * Register input and output handlers that store the data in the mapper as GraphMLAttributes resp. can read them
  * back.
- * @returns {!GraphMLIOHandler}
  */
 function createGraphMLIOHandler() {
   // create an IOHandler that will be used for all IO operations
   const graphMLIOHandler = new GraphMLIOHandler()
-
-  const registry = graphComponent.graph.mapperRegistry
-  const dateMapper = registry.getMapper(DATE_TIME_MAPPER_KEY)
-  if (dateMapper !== null) {
-    // The OutputHandler just stores the string value of the attribute
-    // We need to provide the symbolic name of the attribute in the graphml file, the data source as an IMapper and the
-    // GraphML type of the attribute
-    graphMLIOHandler.addOutputMapper(
-      INode.$class,
-      YObject.$class,
-      DATE_TIME_MAPPER_KEY,
-      'demo',
-      dateMapper,
-      (args, e) => {
-        if (e.item instanceof Date) {
-          e.writer.writeString(JSON.stringify(e.item))
-        }
-        e.handled = true
-      },
-      KeyType.STRING
-    )
-
-    // To read back a DateTime value from a string GraphML attribute, we have to provide an additional callback method.
-    graphMLIOHandler.addInputMapper(
-      INode.$class,
-      YObject.$class,
-      (element) => GraphMLIOHandler.matchesName(element, DATE_TIME_MAPPER_KEY),
-      dateMapper,
-      (sender, e) => {
-        // The actual value is a text node that can be retrieved from the event
-        try {
-          const stringValue = e.xmlNode.textContent
-          e.result = JSON.parse(stringValue, (key, val) => new Date(val))
-        } catch (exception) {
-          if (typeof window.console !== 'undefined') {
-            window.console.log(exception)
-          }
-          e.result = new Date()
+  // The OutputHandler just stores the string value of the attribute
+  // We need to provide the symbolic name of the attribute in the graphml file, the data source as an IMapper and the
+  // GraphML type of the attribute
+  graphMLIOHandler.addOutputMapper(
+    INode,
+    Date,
+    DATE_TIME_MAPPER_KEY,
+    'demo',
+    dateMapper,
+    (context, item) => {
+      if (item) {
+        context.writer.writeString(JSON.stringify(item))
+      }
+    },
+    KeyType.STRING
+  )
+  // To read back a DateTime value from a string GraphML attribute, we have to provide an additional callback method.
+  graphMLIOHandler.addInputMapper(
+    INode,
+    Date,
+    (element) => GraphMLIOHandler.matchesName(element, DATE_TIME_MAPPER_KEY),
+    dateMapper,
+    (_, xmlNode) => {
+      // The actual value is a text node that can be retrieved from the event
+      try {
+        const stringValue = xmlNode.textContent
+        return JSON.parse(stringValue, (key, val) => new Date(val))
+      } catch (exception) {
+        if (typeof window.console !== 'undefined') {
+          console.log(exception)
         }
       }
-    )
-  }
+      return new Date()
+    }
+  )
   return graphMLIOHandler
 }
-
 /**
  * Setup tooltips that return the value that is stored in the mapper.
- * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for
- * the {@link MouseHoverInputMode.addQueryToolTipListener QueryToolTip} event of the
- * GraphEditorInputMode using the
- * {@link ToolTipQueryEventArgs} parameter.
- * The {@link ToolTipQueryEventArgs} parameter provides three relevant properties:
- * Handled, QueryLocation, and ToolTip. The Handled property is a flag which indicates
+ * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for the 'query-item-tool-tip'
+ * event of the {@link GraphEditorInputMode} using the {@link QueryItemToolTipEventArgs} parameter.
+ * The {@link QueryItemToolTipEventArgs} parameter provides three relevant properties:
+ * handled, queryLocation, and toolTip. The {@link QueryItemToolTipEventArgs.handled} property is a flag which indicates
  * whether the tooltip was already set by one of possibly several tooltip providers. The
- * QueryLocation property contains the mouse position for the query in world coordinates.
- * The tooltip is set by setting the ToolTip property.
+ * {@link QueryItemToolTipEventArgs.queryLocation} property contains the mouse position for the query in world coordinates.
+ * The {@link QueryItemToolTipEventArgs.toolTip} is set by setting the ToolTip property.
  */
 function setupTooltips() {
   const graphEditorInputMode = graphComponent.inputMode
   graphEditorInputMode.toolTipItems = GraphItemTypes.NODE
-  graphEditorInputMode.addQueryItemToolTipListener((_, evt) => {
+  graphEditorInputMode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.handled) {
       // Tooltip content has already been assigned -> nothing to do.
       return
     }
     const item = evt.item
-    if (INode.isInstance(item)) {
-      const dateMapper = graphComponent.graph.mapperRegistry.getMapper(DATE_TIME_MAPPER_KEY)
-      if (dateMapper !== null && dateMapper.get(item)) {
+    if (item instanceof INode) {
+      if (dateMapper.get(item)) {
         // Found a suitable mapper. Set the tooltip content.
         evt.toolTip = dateMapper.get(item).toLocaleString()
         // Indicate that the tooltip content has been set.
@@ -262,20 +215,17 @@ function setupTooltips() {
       }
     }
   })
-
   // Add a little offset to the tooltip such that it is not obscured by the mouse pointer.
-  graphEditorInputMode.mouseHoverInputMode.toolTipLocationOffset = new Point(20, 20)
+  graphEditorInputMode.toolTipInputMode.toolTipLocationOffset = new Point(20, 20)
 }
-
 /**
  * Initializes the defaults for the styling in this tutorial.
  *
- * @param {!IGraph} graph The graph.
+ * @param graph The graph.
  */
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
   initDemoStyles(graph)
-
   // set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#042d37',
@@ -284,22 +234,20 @@ function initTutorialDefaults(graph) {
     stroke: '2px solid #9dc6d0',
     cornerRadius: 10
   })
-  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: 'left',
     textFill: '#042d37'
   })
   graph.groupNodeDefaults.labels.layoutParameter =
     new GroupNodeLabelModel().createTabBackgroundParameter()
-
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
-    insets: 5
-  }).createParameter('south')
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 5
+  }).createParameter('bottom')
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
-
 run().then(finishLoading)

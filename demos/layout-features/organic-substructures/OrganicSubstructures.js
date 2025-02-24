@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,12 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph, ILayoutAlgorithm, LayoutData, OrganicLayout, OrganicLayoutData } from 'yfiles'
-
+import {
+  IGraph,
+  ILayoutAlgorithm,
+  LayoutData,
+  OrganicLayout,
+  OrganicLayoutData
+} from '@yfiles/yfiles'
 /**
  * Demonstrates how to run a {@link OrganicLayout} with configured sub structure styles.
- * @param {!IGraph} graph The graph to be laid out
- * @returns {!object} {{OrganicLayout, OrganicLayoutData}} the configured layout algorithm and the corresponding layout data
+ * @param graph The graph to be laid out
+ * @returns {{OrganicLayout, OrganicLayoutData}} the configured layout algorithm and the corresponding layout data
  */
 export function createFeatureLayoutConfiguration(graph) {
   const layout = new OrganicLayout({
@@ -40,6 +45,5 @@ export function createFeatureLayoutConfiguration(graph) {
     chainSubstructureStyle: 'rectangular'
   })
   const layoutData = new OrganicLayoutData()
-
   return { layout, layoutData }
 }

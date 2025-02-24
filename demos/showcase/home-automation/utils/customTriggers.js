@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,12 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { runLayout } from '../layout/runLayout.js'
-import { GraphComponent, GraphEditorInputMode, GridVisualCreator } from 'yfiles'
-
-/**
- * @param {!GraphComponent} graphComponent
- */
+import { runLayout } from '../layout/runLayout'
+import { GraphComponent, GraphEditorInputMode } from '@yfiles/yfiles'
 export async function runAutoLayout(graphComponent) {
   const layoutButton = document.querySelector('#layoutButton')
   // disable and re-enable the button before and after morphing the layout
@@ -44,11 +40,6 @@ export async function runAutoLayout(graphComponent) {
     layoutButton.removeAttribute('disabled')
   }
 }
-
-/**
- * @param {!GraphComponent} graphComponent
- * @param {!GridVisualCreator} grid
- */
 export function triggerGridDisplay(graphComponent, grid) {
   const gridButton = document.querySelector('#grid-button')
   const gcInputModeSnapContext = graphComponent.inputMode.snapContext

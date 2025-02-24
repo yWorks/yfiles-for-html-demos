@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CreateEdgeInputMode, GraphComponent, IGraph, INode, Point, YPoint } from 'yfiles'
+import {
+  BezierEdgeStyle,
+  CreateEdgeInputMode,
+  GraphComponent,
+  IGraph,
+  INode,
+  Point
+} from '@yfiles/yfiles'
 import './flowEdge.css'
 import { FlowPortRelocationHandleProvider } from './FlowPortRelocationHandleProvider'
 import { validatePortTag } from '../FlowNode/FlowNodePort'
@@ -38,12 +45,12 @@ import { FlowEdgeStyle } from './FlowEdgeStyle'
 export function configureFlowEdges(gc: GraphComponent): void {
   const { graph } = gc
 
-  graph.edgeDefaults.style = new FlowEdgeStyle()
-  graph.decorator.edgeDecorator.selectionDecorator.hideImplementation()
-  graph.decorator.edgeDecorator.highlightDecorator.hideImplementation()
-  graph.decorator.edgeDecorator.focusIndicatorDecorator.hideImplementation()
+  graph.edgeDefaults.style = new FlowEdgeStyle(new BezierEdgeStyle())
+  graph.decorator.edges.selectionRenderer.hide()
+  graph.decorator.edges.highlightRenderer.hide()
+  graph.decorator.edges.focusRenderer.hide()
 
-  graph.decorator.edgeDecorator.edgePortHandleProviderDecorator.setFactory(edge => {
+  graph.decorator.edges.portHandleProvider.addFactory((edge) => {
     return new FlowPortRelocationHandleProvider(graph, edge)
   })
 }
@@ -53,15 +60,15 @@ export function configureFlowEdges(gc: GraphComponent): void {
  */
 export function recalculateEdges(graph: IGraph, node: INode): void {
   const affectedEdges = graph.edgesAt(node)
-  affectedEdges.forEach(edge => {
-    const portTag = edge.sourcePort?.tag
+  affectedEdges.forEach((edge) => {
+    const portTag = edge.sourcePort.tag
     if (!validatePortTag(portTag)) {
       return
     }
     const fromSide = portTag.side
     const bends = getSmoothEdgeControlPoints({
-      start: edge.sourcePort!.location,
-      end: edge.targetPort!.location,
+      start: edge.sourcePort.location,
+      end: edge.targetPort.location,
       fromSide
     })
 
@@ -73,34 +80,29 @@ export function recalculateEdges(graph: IGraph, node: INode): void {
 /**
  * Modifies edge-related input mode settings.
  */
-export function configureCreateEdgeInputMode(inputMode: CreateEdgeInputMode): void {
+export function configureCreateEdgeInputMode(
+  graphComponent: GraphComponent,
+  inputMode: CreateEdgeInputMode
+): void {
   inputMode.startOverCandidateOnly = true
   inputMode.useHitItemsCandidatesOnly = false
   inputMode.allowCreateBend = false
 
-  inputMode.addEdgeCreationStartedListener(({ inputModeContext, dummyEdgeGraph, dummyEdge }) => {
-    const gc = inputModeContext?.canvasComponent
-    if (!(gc instanceof GraphComponent)) {
-      return
-    }
+  inputMode.addEventListener('edge-creation-started', (_, { previewGraph, previewEdge }) => {
     // Clear any existing selection when a new edge is being created.
     // This is for visual purposes: a node being selected affects the appearance
     // of its connected edges, which makes the graph look very "busy".
-    gc.selection.clear()
+    graphComponent.selection.clear()
 
-    dummyEdgeGraph.setStyle(dummyEdge, new FlowEdgeStyle('newEdge'))
+    previewGraph.setStyle(previewEdge, new FlowEdgeStyle(new BezierEdgeStyle(), 'newEdge'))
   })
 
-  inputMode.addEdgeCreatedListener(({ inputModeContext }, { item: edge }) => {
-    const gc = inputModeContext?.canvasComponent
-    if (!(gc instanceof GraphComponent)) {
-      return
-    }
-    gc.selection.setSelected(edge, true)
-    gc.graph.setStyle(edge, new FlowEdgeStyle())
+  inputMode.addEventListener('edge-created', ({ item: edge }, sender) => {
+    graphComponent.selection.add(edge)
+    graphComponent.graph.setStyle(edge, new FlowEdgeStyle(new BezierEdgeStyle()))
   })
 
-  inputMode.edgeCreator = (_, graph, sourcePortCandidate, targetPortCandidate, dummyEdge) => {
+  inputMode.edgeCreator = (_, graph, sourcePortCandidate, targetPortCandidate, previewEdge) => {
     // Assign ports to constants to simplify references
     let targetPort = targetPortCandidate!.port!
     let sourcePort = sourcePortCandidate.port!
@@ -122,7 +124,7 @@ export function configureCreateEdgeInputMode(inputMode: CreateEdgeInputMode): vo
       end: targetPort.location.toPoint(),
       fromSide
     })
-    const edge = graph.createEdge(sourcePort, targetPort, dummyEdge.style)
+    const edge = graph.createEdge(sourcePort, targetPort, previewEdge.style)
     graph.addBends(edge, bends)
 
     // create the edge from the source port candidate to the new node
@@ -151,14 +153,14 @@ export function getSmoothEdgeControlPoints(edge: {
   let minCPDisplacement = 36
 
   // Maximum length between the endpoint and its corresponding control point.
-  // It must be capped, or otherwise plotting edges between very distant ports
+  // It must be capped, or otherwise, plotting edges between very distant ports
   // results in bends that go very far away from the ports (in extreme cases,
   // beyond the graph viewport).
   const maxCPDisplacement = 200
 
-  const start = new YPoint(edge.start.x, edge.start.y)
-  const end = new YPoint(edge.end.x, edge.end.y)
-  const displacement = YPoint.subtract(start, end)
+  const start = new Point(edge.start.x, edge.start.y)
+  const end = new Point(edge.end.x, edge.end.y)
+  const displacement = start.subtract(end)
   const direction = { left: -1, right: 1 }[edge.fromSide]
 
   // For extremely short edges, cap the max control point displacement
@@ -199,7 +201,7 @@ export function getSmoothEdgeControlPoints(edge: {
  * Calculates the angle (in radians) between the line crossing points `a` and `b` and the horizontal line
  * passing through `a`.
  */
-function getAngle(a: YPoint, b: YPoint): number {
+function getAngle(a: Point, b: Point): number {
   const deltaY = b.y - a.y
   const deltaX = b.x - a.x
   return Math.atan2(deltaY, deltaX)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,74 +27,65 @@
  **
  ***************************************************************************/
 import {
-  ComponentArrangementStyles,
-  GenericLabeling,
-  LabelingData,
+  ComponentArrangementStyle,
+  EdgeLabelPreferredPlacement,
+  GenericLabelingData,
   OrganicLayout,
   OrganicLayoutData,
-  OrganicLayoutScope,
-  PreferredPlacementDescriptor
-} from 'yfiles'
-import { setUIDisabled } from '../ui/ui-utils.js'
-import { CentralityStage } from './CentralityStage.js'
-
+  OrganicScope
+} from '@yfiles/yfiles'
+import { setUIDisabled } from '../ui/ui-utils'
+import { CentralityStage } from './CentralityStage'
 /**
  * Runs a layout algorithm which calculates new positions and sizes for nodes, edges, and labels.
- * @param {!GraphComponent} graphComponent the graph component containing the current graph
+ * @param graphComponent the graph component containing the current graph
  * @param animated whether to morph the positions of the nodes
  * @param affectedNodes A list of nodes that are incrementally included in the layout
- * @param {boolean} [animated=false]
- * @param {!Array.<INode>} [affectedNodes]
- * @returns {!Promise}
  */
 export async function runLayout(graphComponent, animated = false, affectedNodes) {
   const { layout, layoutData } = getOrganicLayoutConfiguration(affectedNodes)
-
   setUIDisabled(true, graphComponent)
-  await graphComponent.morphLayout(layout, animated ? '0.5s' : '0s', layoutData)
+  await graphComponent.applyLayoutAnimated(layout, animated ? '0.5s' : '0s', layoutData)
   setUIDisabled(false, graphComponent)
 }
-
 /**
  * Returns a configuration of organic layout that considers centrality results and labels.
  * @param affectedNodes A list of affected nodes. If it is defined, the layout only runs on a subset of nodes.
- * @param {!Array.<INode>} [affectedNodes]
- * @returns {!object}
  */
 function getOrganicLayoutConfiguration(affectedNodes) {
   const organicLayout = new OrganicLayout({
     deterministic: true,
-    considerNodeSizes: true,
-    scope: affectedNodes ? OrganicLayoutScope.MAINLY_SUBSET : OrganicLayoutScope.ALL,
-    labelingEnabled: true,
-    labeling: new GenericLabeling({
-      placeEdgeLabels: true,
-      placeNodeLabels: false,
+    componentLayout: {
+      style: ComponentArrangementStyle.TRY_KEEP_CENTERS
+    },
+    genericLabeling: {
+      enabled: true,
+      scope: 'edge-labels',
       deterministic: true
-    })
+    }
   })
-  organicLayout.componentLayout.style =
-    ComponentArrangementStyles.NONE | ComponentArrangementStyles.MODIFIER_NO_OVERLAP
-
-  organicLayout.prependStage(new CentralityStage(organicLayout))
-
+  organicLayout.layoutStages.prepend(new CentralityStage(organicLayout))
   const organicLayoutData = new OrganicLayoutData({
     preferredEdgeLengths: (edge) =>
       edge.labels.reduce((width, label) => {
         return Math.max(label.layout.width + 50, width)
       }, 100),
-    minimumNodeDistances: 30,
-    affectedNodes: affectedNodes
+    minimumNodeDistances: 30
   })
-
-  const labelingData = new LabelingData({
-    edgeLabelPreferredPlacement: (label) => {
-      return new PreferredPlacementDescriptor({
-        sideOfEdge: label.tag === 'centrality' ? 'on-edge' : 'left-of-edge',
+  if (affectedNodes) {
+    organicLayoutData.scope.scopeModes = (node) => {
+      return affectedNodes.includes(node)
+        ? OrganicScope.INCLUDE_EXTENDED_NEIGHBORHOOD
+        : OrganicScope.FIXED
+    }
+  }
+  const labelingData = new GenericLabelingData({
+    edgeLabelPreferredPlacements: (label) => {
+      return new EdgeLabelPreferredPlacement({
+        edgeSide: label.tag === 'centrality' ? 'on-edge' : 'left-of-edge',
         distanceToEdge: 5
       })
     }
   })
-
   return { layout: organicLayout, layoutData: organicLayoutData.combineWith(labelingData) }
 }

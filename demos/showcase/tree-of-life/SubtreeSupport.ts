@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { FilteredGraphWrapper, ILabel } from 'yfiles'
+import type { FilteredGraphWrapper, ILabel } from '@yfiles/yfiles'
 import {
   GraphComponent,
   IEdge,
@@ -36,7 +36,7 @@ import {
   Subtree,
   TreeAnalysis,
   TreeAnalysisResult
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 let globalRoot: INode
 
@@ -46,7 +46,7 @@ let treeAnalysisResult: TreeAnalysisResult
 const subtrees: Map<INode, Subtree> = new Map()
 
 /**
- * Returns the global root of the tree, i.e. the node without predecessors.
+ * Returns the global root of the tree, i.e., the node without predecessors.
  */
 export function getGlobalRoot(graph: IGraph): INode {
   if (!globalRoot) {
@@ -77,7 +77,9 @@ function getTreeAnalysis(graph: IGraph): TreeAnalysisResult {
   if (treeAnalysisResult != null) {
     return treeAnalysisResult
   }
-  const treeAnalysis = new TreeAnalysis({ customRootNode: getGlobalRoot(graph) })
+  const treeAnalysis = new TreeAnalysis({
+    customRootNode: getGlobalRoot(graph)
+  })
   treeAnalysisResult = treeAnalysis.run(graph)
   return treeAnalysisResult
 }
@@ -86,8 +88,8 @@ function getTreeAnalysis(graph: IGraph): TreeAnalysisResult {
  * Highlights all items in the subtree with the given root or edge to the root.
  */
 export function highlightSubtree(item: IModelItem, graphComponent: GraphComponent): void {
-  const highlightManager = graphComponent.highlightIndicatorManager
-  highlightManager.clearHighlights()
+  const highlights = graphComponent.highlights
+  highlights.clear()
 
   if (item == null) {
     return
@@ -96,13 +98,9 @@ export function highlightSubtree(item: IModelItem, graphComponent: GraphComponen
   const graph = graphComponent.graph as FilteredGraphWrapper
   const subtreeRoot = getNode(item)
   const subtree = getSubtree(subtreeRoot, graph.wrappedGraph!)
-  subtree.nodes
-    .filter((node) => graph.contains(node))
-    .forEach((node) => highlightManager.addHighlight(node))
-  subtree.edges
-    .filter((edge) => graph.contains(edge))
-    .forEach((edge) => highlightManager.addHighlight(edge))
-  highlightManager.addHighlight(subtreeRoot.labels.first())
+  subtree.nodes.filter((node) => graph.contains(node)).forEach((node) => highlights.add(node))
+  subtree.edges.filter((edge) => graph.contains(edge)).forEach((edge) => highlights.add(edge))
+  highlights.add(subtreeRoot.labels.first()!)
 }
 
 /**
@@ -112,6 +110,6 @@ function getNode(item: IModelItem): INode {
   return item instanceof INode
     ? item
     : item instanceof IEdge
-      ? item.sourceNode!
+      ? item.sourceNode
       : ((item as ILabel).owner as INode)
 }

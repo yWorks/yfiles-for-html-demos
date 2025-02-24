@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,13 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import {
   Animator,
   BaseClass,
-  DefaultLabelStyle,
-  FreeEdgeLabelModel,
+  SmartEdgeLabelModel,
   FreeNodeLabelModel,
   type GraphComponent,
   GraphEditorInputMode,
@@ -42,32 +39,30 @@ import {
   IAnimation,
   IBoundsProvider,
   type ICanvasContext,
-  type ICanvasObject,
-  ICanvasObjectDescriptor,
   IEdge,
   type IEdgeStyle,
   type IGraph,
   type IHitTestable,
   type INode,
+  IObjectRenderer,
   type IRenderContext,
+  type IRenderTreeElement,
   IVisibilityTestable,
   IVisualCreator,
+  LabelStyle,
   Point,
+  PointerType,
   PolylineEdgeStyle,
   type Rect,
   ShapeNodeStyle,
-  SizeChangedDetectionMode,
   SvgVisual,
   type Visual
-} from 'yfiles'
+} from '@yfiles/yfiles'
 import { CustomEdgeStyle } from './07-hit-testing/CustomEdgeStyle'
-import { applyDemoTheme } from 'demo-resources/demo-styles'
 
 export function initializeLabelModel(graphComponent: GraphComponent): void {
   graphComponent.graph.edgeDefaults.labels.layoutParameter =
-    new FreeEdgeLabelModel({
-      edgeRelativeAngle: true
-    }).createDefaultParameter()
+    new SmartEdgeLabelModel().createParameterFromSource(0)
 }
 
 export function createSimpleGraph(
@@ -75,7 +70,7 @@ export function createSimpleGraph(
   opaque = true
 ): void {
   const graph = graphComponent.graph
-  const fill = opaque ? '#0b7189' : '#880b7189'
+  const fill = opaque ? '#0b7189' : '#0b718988'
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'round-rectangle',
     fill,
@@ -254,10 +249,11 @@ export function addHoverEffect(
 ): void {
   const itemHoverInputMode = inputMode.itemHoverInputMode
   itemHoverInputMode.hoverItems = GraphItemTypes.EDGE
-  let hoveredItemHighlight: ICanvasObject | null = null
+  let hoveredItemHighlight: IRenderTreeElement | null = null
 
   function addHighlight(edge: IEdge): void {
-    hoveredItemHighlight = graphComponent.inputModeGroup.addChild(
+    hoveredItemHighlight = graphComponent.renderTree.createElement(
+      graphComponent.renderTree.inputModeGroup,
       new (class extends BaseClass(IVisualCreator) {
         createVisual(context: IRenderContext): Visual | null {
           const width =
@@ -288,17 +284,22 @@ export function addHoverEffect(
   }
 
   function removeHighlight(): void {
-    hoveredItemHighlight?.remove()
-    hoveredItemHighlight = null
+    if (hoveredItemHighlight) {
+      graphComponent.renderTree.remove(hoveredItemHighlight)
+      hoveredItemHighlight = null
+    }
   }
 
-  itemHoverInputMode.addHoveredItemChangedListener((_, evt) => {
+  itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     removeHighlight()
     if (evt.item) {
       addHighlight(evt.item as IEdge)
     }
   })
-  inputMode.addItemTappedListener((_, evt) => {
+  inputMode.addEventListener('item-clicked', (evt) => {
+    if (evt.pointerType !== PointerType.TOUCH) {
+      return
+    }
     removeHighlight()
     if (evt.item instanceof IEdge) {
       addHighlight(evt.item as IEdge)
@@ -313,8 +314,8 @@ function createPathData(edge: IEdge): string {
 }
 
 export function zoomToContent(graphComponent: GraphComponent): void {
-  graphComponent.fitGraphBounds()
-  const contentRect = graphComponent.contentRect.getEnlarged(10).size
+  void graphComponent.fitGraphBounds()
+  const contentRect = graphComponent.contentBounds.getEnlarged(10).size
   const viewPort = graphComponent.viewport.size
   graphComponent.zoom = Math.min(
     viewPort.width / contentRect.width,
@@ -328,9 +329,7 @@ function getTag(edge: IEdge): Tag {
   return edge.tag as Tag
 }
 
-export class IsVisibleEdgeStyleDescriptor extends BaseClass(
-  ICanvasObjectDescriptor
-) {
+export class IsVisibleEdgeStyleRenderer extends BaseClass(IObjectRenderer) {
   getBoundsProvider(edge: IEdge): IBoundsProvider {
     return new (class extends BaseClass(IBoundsProvider) {
       getBounds(context: ICanvasContext): Rect {
@@ -382,15 +381,10 @@ export class IsVisibleEdgeStyleDescriptor extends BaseClass(
       }
     })()
   }
-
-  isDirty(context: ICanvasContext, canvasObject: ICanvasObject): boolean {
-    return true
-  }
 }
 
 export function startAnimation(graphComponent: GraphComponent): void {
-  graphComponent.sizeChangedDetection = SizeChangedDetectionMode.TIMER
-  graphComponent.addSizeChangedListener((_) => {
+  graphComponent.addEventListener('size-changed', () => {
     setTimeout(() => {
       setAnimationStartPoint(graphComponent)
       void animate()
@@ -406,6 +400,7 @@ export function startAnimation(graphComponent: GraphComponent): void {
       graphComponent.graph.nodes
     )
   }
+
   setAnimationStartPoint(graphComponent)
   setTimeout(animate, 500)
 }
@@ -438,7 +433,7 @@ function animateNodes(
 }
 
 function setAnimationStartPoint(graphComponent: GraphComponent): void {
-  const contentRect = graphComponent.contentRect
+  const contentRect = graphComponent.contentBounds
   graphComponent.viewPoint = new Point(
     contentRect.topRight.x,
     contentRect.centerY
@@ -493,8 +488,6 @@ export class BoundsVisual extends BaseClass(IVisualCreator) {
 export function initializeTutorialDefaults(
   graphComponent: GraphComponent
 ): void {
-  applyDemoTheme(graphComponent)
-
   graphComponent.focusIndicatorManager.enabled = false
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -502,11 +495,11 @@ export function initializeTutorialDefaults(
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+  graph.nodeDefaults.labels.style = new LabelStyle({
     shape: 'round-rectangle',
     textFill: '#042d37',
     backgroundFill: '#9dc6d0',
-    insets: 2,
+    padding: 2,
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
   })
   graph.edgeDefaults.style = new PolylineEdgeStyle({
@@ -516,7 +509,7 @@ export function initializeTutorialDefaults(
 
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#111d4a',
-    contentAreaInsets: 10
+    contentAreaPadding: 10
   })
 }
 
@@ -529,6 +522,6 @@ export function fitGraphBounds(
   minimumZoom = 3
 ): void {
   graphComponent.limitFitContentZoom = false
-  graphComponent.fitGraphBounds()
+  void graphComponent.fitGraphBounds()
   graphComponent.zoom = Math.min(graphComponent.zoom, minimumZoom)
 }

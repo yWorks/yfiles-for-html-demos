@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphSearch } from 'demo-utils/GraphSearch'
-import { getEntityData } from '../frauddetection/entity-data.js'
-
+import { GraphSearch } from '@yfiles/demo-utils/GraphSearch'
+import { getCompany } from './data-types'
 /**
  * Implements the custom graph search for this demo.
  * It matches the search term with the label text and the contents of the tag of the nodes.
@@ -37,15 +36,15 @@ export class CompanyOwnershipSearch extends GraphSearch {
   /**
    * Returns whether the given node is a match when searching for the given text.
    * This method searches the matching string to the labels and the tags of the nodes.
-   * @param {!INode} node The node to be examined
-   * @param {!string} text The text to be queried
-   * @returns {boolean} True if the node matches the text, false otherwise
+   * @param node The node to be examined
+   * @param text The text to be queried
+   * @returns True if the node matches the text, false otherwise
    */
   matches(node, text) {
     const lowercaseText = text.toLowerCase()
-    const entity = getEntityData(node)
+    const company = getCompany(node)
     if (
-      Object.entries(entity).some(
+      Object.entries(company).some(
         ([prop, value]) => value.toString().toLowerCase().indexOf(lowercaseText) !== -1
       )
     ) {

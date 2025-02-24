@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,21 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { IInputModeContext, INode, IPortCandidate } from 'yfiles'
 import {
   BaseClass,
-  DefaultPortCandidate,
   FreeNodePortLocationModel,
   IEnumerable,
-  IPortCandidateProvider
-} from 'yfiles'
+  type IInputModeContext,
+  type INode,
+  type IPortCandidate,
+  IPortCandidateProvider,
+  PortCandidate
+} from '@yfiles/yfiles'
 
 /**
  * A port candidate provider for defining two ports on the left and right side of the activity nodes.
  */
-export class ActivityNodePortCandidateProvider extends BaseClass<IPortCandidateProvider>(
-  IPortCandidateProvider
-) {
+export class ActivityNodePortCandidateProvider extends BaseClass(IPortCandidateProvider) {
   constructor(private node: INode) {
     super()
   }
@@ -48,22 +48,16 @@ export class ActivityNodePortCandidateProvider extends BaseClass<IPortCandidateP
   /**
    * Returns a port candidate on the right side of the node where an edge can start.
    */
-  getAllSourcePortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
-    const candidate = new DefaultPortCandidate(
-      this.node,
-      FreeNodePortLocationModel.NODE_RIGHT_ANCHORED
-    )
+  getAllSourcePortCandidates(_context: IInputModeContext): IEnumerable<IPortCandidate> {
+    const candidate = new PortCandidate(this.node, FreeNodePortLocationModel.RIGHT)
     return IEnumerable.from([candidate])
   }
 
   /**
    * Returns a port candidate on the left side of the node where an edge can end.
    */
-  getAllTargetPortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
-    const candidate = new DefaultPortCandidate(
-      this.node,
-      FreeNodePortLocationModel.NODE_LEFT_ANCHORED
-    )
+  getAllTargetPortCandidates(_context: IInputModeContext): IEnumerable<IPortCandidate> {
+    const candidate = new PortCandidate(this.node, FreeNodePortLocationModel.LEFT)
     return IEnumerable.from([candidate])
   }
 
@@ -72,7 +66,7 @@ export class ActivityNodePortCandidateProvider extends BaseClass<IPortCandidateP
    */
   getSourcePortCandidates(
     context: IInputModeContext,
-    target: IPortCandidate
+    _target: IPortCandidate
   ): IEnumerable<IPortCandidate> {
     return this.getAllSourcePortCandidates(context)
   }
@@ -82,7 +76,7 @@ export class ActivityNodePortCandidateProvider extends BaseClass<IPortCandidateP
    */
   getTargetPortCandidates(
     context: IInputModeContext,
-    source: IPortCandidate
+    _source: IPortCandidate
   ): IEnumerable<IPortCandidate> {
     return this.getAllTargetPortCandidates(context)
   }

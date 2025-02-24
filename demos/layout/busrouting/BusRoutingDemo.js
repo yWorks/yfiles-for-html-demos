@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,10 +27,10 @@
  **
  ***************************************************************************/
 import {
+  Color,
   EdgeRouter,
   EdgeRouterBusDescriptor,
   EdgeRouterData,
-  EdgeRouterScope,
   Fill,
   GraphBuilder,
   GraphComponent,
@@ -39,43 +39,36 @@ import {
   GraphSnapContext,
   IEdge,
   IGraph,
+  LayoutExecutor,
   License,
-  OrthogonalEdgeEditingContext,
   PolylineEdgeStyle,
-  SolidColorFill,
   Stroke
-} from 'yfiles'
-import SampleData from './resources/SampleData.js'
-import { applyDemoTheme, initDemoStyles } from 'demo-resources/demo-styles'
-import { fetchLicense } from 'demo-resources/fetch-license'
-import { finishLoading } from 'demo-resources/demo-page'
-
+} from '@yfiles/yfiles'
+import SampleData from './resources/SampleData'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * Provides different color fills for new edge busses in this demo.
  */
 class ColorUtil {
   fills = ColorUtil.newFills()
   index = 0
-
   /**
    * Returns a fill not yet in use.
    * @see {@link connectNodes}
-   * @returns {!Fill}
    */
   nextFill() {
     if (this.index >= this.fills.length) {
       const r = Math.floor(Math.random() * 150)
       const g = Math.floor(Math.random() * 150)
       const b = Math.floor(Math.random() * 150)
-      this.fills.push(new SolidColorFill(r, g, b))
+      this.fills.push(Fill.from(new Color(r, g, b)))
     }
-
     return this.fills[this.index++]
   }
-
   /**
    * Returns the fills already in use.
-   * @returns {!Array.<Fill>}
    */
   usedFills() {
     const copy = []
@@ -84,10 +77,8 @@ class ColorUtil {
     }
     return copy
   }
-
   /**
    * Creates an initial set of fills for new edges.
-   * @returns {!Array.<Fill>}
    */
   static newFills() {
     const fills = []
@@ -104,50 +95,34 @@ class ColorUtil {
     return fills
   }
 }
-
 /**
  * Display's the demo's graph.
- * @type {GraphComponent}
  */
 let graphComponent = null
-
 /**
  * State guard to prevent concurrent layout calculations.
- * @type {boolean}
  */
 let layoutRunning = false
-
 /**
  * Manages the different color fills for grouping edges to busses.
  */
 const colorUtil = new ColorUtil()
-
 /**
  * Runs the demo.
- * @returns {!Promise}
  */
 async function run() {
   License.value = await fetchLicense()
-
   initializeUI()
-
   graphComponent = new GraphComponent('#graphComponent')
-  applyDemoTheme(graphComponent)
-
   configureUserInteraction(graphComponent)
-
   configureGraph(graphComponent.graph)
-
   loadGraph(graphComponent.graph)
-
-  graphComponent.fitGraphBounds()
-
+  void graphComponent.fitGraphBounds()
   await routeEdges()
 }
-
 /**
  * Configures the demo's user interaction.
- * @param {!GraphComponent} graphComponent The demo's graph view.
+ * @param graphComponent The demo's graph view.
  */
 function configureUserInteraction(graphComponent) {
   // create an input mode for interactive graph editing
@@ -156,33 +131,25 @@ function configureUserInteraction(graphComponent) {
   mode.allowCreateEdge = false
   // restrict marquee selection to nodes
   mode.marqueeSelectableItems = GraphItemTypes.NODE
-  // since EdgeRouter creates and works with orthogonal edge routes,
-  // ensure interactive edge editing will keep edges orthogonal
-  mode.orthogonalEdgeEditingContext = new OrthogonalEdgeEditingContext()
   // disable interactive node resizing
   mode.showHandleItems = GraphItemTypes.BEND | GraphItemTypes.EDGE
   // turn on default snapping for graph elements
   mode.snapContext = new GraphSnapContext()
-
   graphComponent.inputMode = mode
 }
-
 /**
  * Configures default visualizations for the given graph.
- * @param {!IGraph} graph The demo's graph.
+ * @param graph The demo's graph.
  */
 function configureGraph(graph) {
   initDemoStyles(graph)
-
   // increase the default node size to 50x50 pixel
   graph.nodeDefaults.size = [50, 50]
 }
-
 /**
  * Creates a sample graph structure from the demo's sample data.
  * The sample graph will have edges in three different colors (i.e. red, brown, and blue)
  * and thus start out with three edge busses.
- * @param {!IGraph} graph
  */
 function loadGraph(graph) {
   // the style to be used for red edges
@@ -191,10 +158,8 @@ function loadGraph(graph) {
   const brown = newEdgeStyle()
   // the default style to be used for all edges that are neither red nor brown
   const blue = newEdgeStyle()
-
   // the demo's sample data
   const data = SampleData
-
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
     data: data.nodes, // array of { id: string, bounds: number[] }
@@ -218,23 +183,18 @@ function loadGraph(graph) {
   })
   builder.buildGraph()
 }
-
 /**
  * Triggers a new layout calculation for the edges associated to the given scope.
  * @param edgesToRoute Determines which edges to route. If provided only these edges are routed,
  * otherwise all edges are routed.
- * @param {?Array.<IEdge>} [edgesToRoute=null]
- * @returns {!Promise}
  */
 async function routeEdges(edgesToRoute = null) {
   // prevent concurrent layout calculations or animations
   if (layoutRunning) {
     return
   }
-
   layoutRunning = true
   disableUI(true)
-
   try {
     await routeEdgesCore(edgesToRoute)
   } finally {
@@ -242,49 +202,41 @@ async function routeEdges(edgesToRoute = null) {
     disableUI(false)
   }
 }
-
 /**
  * Routes the edges associated to the given scope and applies the result in an animated fashion.
- * @param {?Array.<IEdge>} edgesToRoute Determines which edges to route. If provided only these edges are routed,
+ * @param edgesToRoute Determines which edges to route. If provided only these edges are routed,
  * otherwise all edges are routed.
- * @returns {!Promise}
  */
 async function routeEdgesCore(edgesToRoute) {
   // configure bus structures
   const layoutData = new EdgeRouterData()
-
   if (edgesToRoute && edgesToRoute.length > 0) {
     // affected edges are all the edges created in the last connectNodes action
     // mark those edges for routing ...
-    layoutData.affectedEdges = edgesToRoute
+    layoutData.scope.edges = edgesToRoute
     // ... and assign those edges to a new edge bus
     layoutData.buses.add(new EdgeRouterBusDescriptor({ multipleBackboneSegments: false })).items =
       edgesToRoute
   } else {
     // affected edges are all edges
-
     // assign each edge to a bus depending on the edge's color
     for (const fill of colorUtil.usedFills()) {
       layoutData.buses.add(
         new EdgeRouterBusDescriptor({ multipleBackboneSegments: false })
-      ).delegate = (edge) => {
+      ).predicate = (edge) => {
         const edgeFill = edge.style.stroke.fill
         return fill.hasSameValue(edgeFill)
       }
     }
   }
-
   // the algorithm used for edge routing
   const algorithm = new EdgeRouter()
-  algorithm.scope =
-    edgesToRoute && edgesToRoute.length > 0
-      ? EdgeRouterScope.ROUTE_AFFECTED_EDGES
-      : EdgeRouterScope.ROUTE_ALL_EDGES
-
+  // Ensure that the LayoutExecutor class is not removed by build optimizers
+  // It is needed for the 'applyLayoutAnimated' method in this demo.
+  LayoutExecutor.ensure()
   // calculate the new edge routes and apply the result in an animated fashion
-  await graphComponent.morphLayout({ layout: algorithm, layoutData: layoutData })
+  await graphComponent.applyLayoutAnimated({ layout: algorithm, layoutData: layoutData })
 }
-
 /**
  * Connects all the currently selected nodes and routes the new edges.
  * All new edges will have the same color and thus will be assigned to the same edge bus.
@@ -292,39 +244,36 @@ async function routeEdgesCore(edgesToRoute) {
 async function connectNodes() {
   // prevent previously created edges from being routed as well
   const edgesToRoute = []
-
   // determine the currently selected nodes
-  const nodes = graphComponent.selection.selectedNodes.toArray()
+  const nodes = graphComponent.selection.nodes.toArray()
   const n = nodes.length
   if (n < 1) {
     return
   }
-
   // create a new style with an as-to-now unused color
   const style = newEdgeStyle()
-
   // connect the selected nodes; assign each new edge the new style
   for (let i = 0; i < n; ++i) {
     for (let j = i + 1; j < n; ++j) {
       edgesToRoute.push(graphComponent.graph.createEdge(nodes[i], nodes[j], style))
     }
   }
-
   // route the new edges and only the new edges
   await routeEdges(edgesToRoute)
 }
-
 /**
  * Creates a new edge style with an as-to-now unused color fill.
- * @returns {!PolylineEdgeStyle}
  */
 function newEdgeStyle() {
-  return new PolylineEdgeStyle({ stroke: new Stroke(colorUtil.nextFill(), 2) })
+  return new PolylineEdgeStyle({
+    stroke: new Stroke(colorUtil.nextFill(), 2),
+    // since EdgeRouter creates and works with orthogonal edge routes,
+    // ensure interactive edge editing will keep edges orthogonal
+    orthogonalEditing: true
+  })
 }
-
 /**
  * Helper function to disable UI during layout animation
- * @param {boolean} disabled
  */
 function disableUI(disabled) {
   const connect = document.querySelector('#connect')
@@ -332,7 +281,6 @@ function disableUI(disabled) {
   const layout = document.querySelector('#route')
   layout.disabled = disabled
 }
-
 /**
  * Binds actions to the buttons in the toolbar.
  */
@@ -340,5 +288,4 @@ function initializeUI() {
   document.querySelector('#route').addEventListener('click', () => routeEdges())
   document.querySelector('#connect').addEventListener('click', connectNodes)
 }
-
 run().then(finishLoading)

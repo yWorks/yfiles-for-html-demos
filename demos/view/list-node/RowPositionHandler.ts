@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.6.
- ** Copyright (c) 2000-2024 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,7 +38,7 @@ import {
   IPortLocationModelParameter,
   IPositionHandler,
   Point
-} from 'yfiles'
+} from '@yfiles/yfiles'
 
 import type { ListNodeStyle } from './ListNodeStyle'
 import type { NodeInfo, RowInfo } from './ListNodeDemo'
@@ -180,7 +180,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     for (const p of nodeInfo.rows) {
       const ports = getPortForData(this.node, p)
       ports.forEach((port) => {
-        const handle = port.lookup(IHandle.$class)!
+        const handle = port.lookup(IHandle)!
         const info = {
           info: p,
           parameter: port.locationParameter,
