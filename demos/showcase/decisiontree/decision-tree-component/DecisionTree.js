@@ -37,7 +37,8 @@ import {
   LayoutExecutor,
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
-  PolylineEdgeStyle
+  PolylineEdgeStyle,
+  Rect
 } from '@yfiles/yfiles'
 import {
   colorSets,
@@ -192,6 +193,24 @@ export default class DecisionTree {
     this.updateNodeStyles()
     this.beforeLayoutCallback?.(true, this.graphComponent)
     await this.runLayout(newNodes, animateScroll)
+    // calculate the bounding box of all new nodes
+    let nodeArea = Rect.EMPTY
+    for (const node of newNodes) {
+      nodeArea = Rect.add(nodeArea, node.layout.toRect())
+    }
+    // if there are new nodes, ensure all of them are visible
+    if (!nodeArea.isEmpty) {
+      nodeArea = nodeArea.getEnlarged(10)
+      let zoom = targetZoom
+      if (nodeArea.width * targetZoom > this.graphComponent.size.width) {
+        zoom = this.graphComponent.size.width / nodeArea.width
+      }
+      if (animateScroll) {
+        await this.graphComponent.zoomToAnimated(zoom, nodeArea.center)
+      } else {
+        this.graphComponent.zoomTo(zoom, nodeArea.center)
+      }
+    }
     this.afterLayoutCallback?.(false, this.graphComponent)
   }
   /**
@@ -451,7 +470,8 @@ export default class DecisionTree {
         graphComponent: this.graphComponent,
         layout,
         layoutData,
-        animationDuration: animated ? '0.2s' : '0s'
+        animationDuration: animated ? '0.2s' : '0s',
+        animateViewport: false
       })
       try {
         await layoutExecutor.start()

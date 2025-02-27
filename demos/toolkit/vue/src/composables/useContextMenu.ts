@@ -31,6 +31,7 @@ import {
   Command,
   GraphComponent,
   GraphEditorInputMode,
+  type GraphInputMode,
   GraphViewerInputMode,
   IEdge,
   IModelItem,
@@ -67,7 +68,7 @@ export function useContextMenu(getGraphComponent: () => GraphComponent) {
   /**
    * Registers the context menu on the current input mode.
    */
-  function register(inputMode: GraphEditorInputMode | GraphViewerInputMode): void {
+  function register(inputMode: GraphInputMode): void {
     inputMode.addEventListener(
       'populate-item-context-menu',
       (evt: PopulateItemContextMenuEventArgs<IModelItem>) => {

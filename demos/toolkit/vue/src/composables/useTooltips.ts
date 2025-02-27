@@ -30,13 +30,14 @@ import { createApp, defineComponent, onMounted } from 'vue'
 import {
   GraphComponent,
   GraphEditorInputMode,
+  type GraphInputMode,
   GraphItemTypes,
   GraphViewerInputMode,
   IEdge,
   IModelItem,
   INode,
-  QueryItemToolTipEventArgs,
   Point,
+  QueryItemToolTipEventArgs,
   TimeSpan
 } from '@yfiles/yfiles'
 import Tooltip from '@/components/Tooltip.vue'
@@ -57,7 +58,7 @@ export function useTooltips(getGraphComponent: () => GraphComponent) {
    * {@link QueryItemToolTipEventArgs.queryLocation} property contains the mouse position for the query in world coordinates.
    * The {@link QueryItemToolTipEventArgs.toolTip} is set by setting the ToolTip property.
    */
-  function register(inputMode: GraphEditorInputMode | GraphViewerInputMode): void {
+  function register(inputMode: GraphInputMode): void {
     // show tooltips only for nodes and edges
     inputMode.toolTipItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
 

@@ -20,14 +20,14 @@
     "@yfiles/yfiles": "^30.0.0+dev",
     "codemirror": "5.65.16",
     "d3": "~7.8.5",
-    "jspdf": "2.5.1",
+    "jspdf": "~3.0.0",
     "leaflet": "~1.9.4",
     "markdown-it": "13.0.2",
     "neo4j-driver": "5.14.0",
     "quill": "^2.0.0-rc.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "svg2pdf.js": "2.2.2"
+    "svg2pdf.js": "~2.4.0"
   },
   "devDependencies": {
     "@types/babel__standalone": "7.1.7",

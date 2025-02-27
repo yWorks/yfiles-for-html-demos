@@ -29,7 +29,7 @@ Click the button in the toolbar to run the layout and see the effect.
 
 ### Code Snippet
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-incremental/HierarchicIncremental.ts).
+You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-incremental/HierarchicalIncremental.ts).
 
 ### Demos
 
