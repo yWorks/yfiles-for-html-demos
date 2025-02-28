@@ -1,13 +1,17 @@
 # yFiles for HTML Demo Sources
 
-This repository contains source code demos that use the commercial [yFiles for HTML](https://www.yworks.com/yfileshtml) software programming library for the visualization of graphs, diagrams, and networks. The library itself is __*not*__ part of this repository.
+This repository contains source code demos that use the commercial [yFiles for HTML](https://www.yfiles.com/) software programming library for the visualization of graphs, diagrams, and networks. The library itself is __*not*__ part of this repository.
 
-[![yFiles for HTML Demos](./demo-grid.png)](https://live.yworks.com/yfiles-for-html)
+[![yFiles for HTML Demos](./demo-grid.png)](https://yfiles.com/demos)
 
 # Running the Demos
 
-Most of the demos are hosted [online here](https://live.yworks.com/yfiles-for-html) for everyone to play with. Developers *need* to [evaluate the library](https://www.yworks.com/products/yfiles-for-html/evaluate), instead, since it is __*not*__ part of this repository. 
+Most of the demos are hosted [online here](https://yfiles.com/demos) for everyone to play with. Developers *need* to [evaluate the library](https://www.yworks.com/products/yfiles-for-html/evaluate), instead, since it is __*not*__ part of this repository. 
 The evaluation version also contains these demos and the necessary library to execute the code, so *cloning this repository is neither necessary nor will it suffice*. 
+
+# Live Online Playground
+
+If you want to play with the library withough downloading or signing up to anything, you can play with the API on our [public online playground](https://yfiles.com/play).
 
 # License
 
