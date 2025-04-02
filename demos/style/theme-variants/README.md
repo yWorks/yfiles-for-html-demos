@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/theme-variants.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/theme-variants/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/theme-variants/).
 
 This demo shows various interaction visualization [themes](https://docs.yworks.com/yfileshtml/#/dguide/customizing_view_theming) simultaneously.
 

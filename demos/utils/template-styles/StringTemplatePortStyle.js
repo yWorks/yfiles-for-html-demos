@@ -121,7 +121,7 @@ export class StringTemplatePortStyle extends PortStyleBase {
     )
   }
   updateVisual(renderContext, oldVisual, port) {
-    return updateSVG(oldVisual, port, renderContext, (element) => {
+    return updateSVG(oldVisual, port, renderContext, this.cssClass, (element) => {
       SvgVisual.setTranslate(element, port.location.x, port.location.y)
     })
   }

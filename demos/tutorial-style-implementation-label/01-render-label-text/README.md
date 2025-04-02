@@ -15,7 +15,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-label.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-label/01-render-label-text/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-label/01-render-label-text/).
 
 yFiles for HTML comes with predefined item visualizations and lots of different shapes for labels. However, in some cases, it is required to create fully custom visualizations based on SVG. This might be the case if you need shapes that are not available out-of-the-box or domain-specific label visualizations. Also, the rendering of custom visualizations can be optimized for performance-critical applications.
 

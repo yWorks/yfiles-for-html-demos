@@ -1,6 +1,6 @@
 {
   "name": "@yfiles/demo-resources-ts",
-  "version": "30.0.0",
+  "version": "30.0.1",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
@@ -12,6 +12,6 @@
     "./tutorial.css": "./style/tutorial.css"
   },
   "dependencies": {
-    "@yfiles/yfiles": "^30.0.0+dev"
+    "@yfiles/yfiles": "^30.0.1+dev"
   }
 }

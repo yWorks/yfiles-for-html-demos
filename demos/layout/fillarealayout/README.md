@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/fill-area-layout.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/fillarealayout/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/fillarealayout/).
 
 A demo that shows how to fill free space after deleting nodes.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-graph-builder-adjacency-graph-builder.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/12-adjacency-graph-builder/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/12-adjacency-graph-builder/).
 
 In this tutorial step we show how to use [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) to build a graph from data, where the relationship information between the nodes is part of the node data entry.
 

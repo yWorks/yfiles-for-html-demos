@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-graph-builder-configure-layout.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/10-configure-layout/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/10-configure-layout/).
 
 In this tutorial step we will learn how to configure [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) to arrange the graph elements and/or adjust their size using the information stored in the dataset.
 

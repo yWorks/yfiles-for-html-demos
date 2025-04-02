@@ -11,18 +11,18 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^5.16.14",
-    "@mui/material": "^5.16.14",
+    "@mui/icons-material": "^7.0.0",
+    "@mui/material": "^7.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.1+dev.tgz"
   },
   "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "@vitejs/plugin-react": "^4.0.1",
-    "@yworks/optimizer": "^1.8.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "@yworks/optimizer": "^1.8.4",
     "typescript": "~5.7.3",
-    "vite": "~6.1.0"
+    "vite": "^6.2.0"
   }
 }

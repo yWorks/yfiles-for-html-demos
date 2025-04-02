@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/simple-theming.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/theming/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/theming/).
 
 This demo shows how to define a custom theme for the graph component by changing the `--yfiles-theme` CSS variables. A theme affects the color and look of the input handles (e.g. the handles to resize nodes), the marquee, the snap-lines, label position candidates, the graph overview marquee and also the indicators to select, highlight or focus items. The [Theming](https://docs.yworks.com/yfileshtml/#/dguide/customizing_view_theming) section of the Developers Guide explains the effects of a custom Theme in detail.
 

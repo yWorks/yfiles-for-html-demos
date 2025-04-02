@@ -90,7 +90,8 @@ export function createSVG(item, templateContext, renderContext, renderFunction, 
   const svgVisual = SvgVisual.from(groupElement, {
     templateContext,
     update,
-    cleanup
+    cleanup,
+    cssClass
   })
   if (showIndicators) {
     if (templateContext.itemSelected) {
@@ -110,7 +111,7 @@ export function createSVG(item, templateContext, renderContext, renderFunction, 
   })
   return svgVisual
 }
-export function updateSVG(oldVisual, item, renderContext, arrange) {
+export function updateSVG(oldVisual, item, renderContext, cssClass, arrange) {
   const cache = oldVisual.tag
   const templateContext = cache.templateContext
   const changeIndicators = templateContext.updateState(renderContext)
@@ -131,6 +132,15 @@ export function updateSVG(oldVisual, item, renderContext, arrange) {
     } else {
       svgElement.classList.remove('yfiles-focused')
     }
+  }
+  if (cache.cssClass !== cssClass) {
+    if (cache.cssClass) {
+      svgElement.classList.remove(cache.cssClass)
+    }
+    if (cssClass) {
+      svgElement.classList.add(cssClass)
+    }
+    cache.cssClass = cssClass
   }
   cache.update(item.tag, templateContext)
   arrange(svgElement)

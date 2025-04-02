@@ -13,9 +13,9 @@
 
 <img src="../../../doc/demo-thumbnails/drag-from-component.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/drag-from-component/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/drag-from-component/).
 
-This demo shows how to use the HTML5 Drag and Drop support to drag graph items from the component to other HTML elements.
+This demo shows how to use the HTML Drag and Drop support to drag graph items from the component to other HTML elements.
 
 ## Things to Try
 

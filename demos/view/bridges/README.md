@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/bridges.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/bridges/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/bridges/).
 
 The Bridges demo showcases the capabilities of the [BridgeManager](https://docs.yworks.com/yfileshtml/#/api/BridgeManager) class for inserting bridges into edge paths.
 

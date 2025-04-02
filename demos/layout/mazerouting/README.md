@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/maze-routing.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/mazerouting/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/mazerouting/).
 
 This demo shows how the [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter) can be used for finding routes through a maze. This algorithm tries to find the way with the fewest possible changes in direction trying to avoid possible obstacles.
 

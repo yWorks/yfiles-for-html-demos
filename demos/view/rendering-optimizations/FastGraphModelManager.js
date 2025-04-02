@@ -683,7 +683,7 @@ export const OptimizationMode = {
    */
   DYNAMIC_CANVAS_WITH_ITEM_STYLES: 5,
   /**
-   * This option exports an HTML5 canvas image of the complete graph and draws it into the graphComponent.
+   * This option exports an HTML canvas image of the complete graph and draws it into the graphComponent.
    * The item styles are used to draw the image.
    * Since the image is not dynamically re-created if the zoom level changes, this option produces bad results
    * for higher zoom levels. It is only suitable for scenarios where the graph is drawn with very low zoom levels,
@@ -1189,7 +1189,7 @@ class CanvasRenderVisual extends HtmlCanvasVisual {
     this.canvas = document.createElement('canvas')
   }
   /**
-   * Paints onto the context using HTML5 Canvas operations.
+   * Paints onto the context using HTML Canvas operations.
    * @param context The context to paint on
    * @param htmlCanvasContext The given HtmlCanvasContext
    */

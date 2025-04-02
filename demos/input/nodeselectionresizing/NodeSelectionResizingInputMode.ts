@@ -77,7 +77,7 @@ import {
   SelectionEventArgs,
   Size
 } from '@yfiles/yfiles'
-import { RectangleRenderer } from '../../utils/RectangleRenderer'
+import { RectangleRenderer } from '@yfiles/demo-utils/RectangleRenderer'
 
 /**
  * An {@link IInputMode} for reshape handles for groups of nodes. Can be added as child input

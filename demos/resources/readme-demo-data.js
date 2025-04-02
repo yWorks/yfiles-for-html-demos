@@ -3258,7 +3258,7 @@ function getDemoData() {
       category: 'input',
       distributionType: 'needs-layout',
       tags: ['interaction', 'drag and drop'],
-      keywords: ['palette', 'ports', 'labels', 'groups', 'html5', 'move', 'dnd']
+      keywords: ['palette', 'ports', 'labels', 'groups', 'html', 'move', 'dnd']
     },
     {
       id: 'graph-drag-and-drop',

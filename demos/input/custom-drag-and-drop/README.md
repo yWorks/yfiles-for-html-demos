@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/custom-drag-and-drop.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/custom-drag-and-drop/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/custom-drag-and-drop/).
 
 This demo shows how to change the color of nodes and edges using drag and drop operations.
 

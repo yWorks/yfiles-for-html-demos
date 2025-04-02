@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-hierarchical-edge-grouping.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/hierarchical-edge-grouping/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-edge-grouping/).
 
 This demo shows how to configure edge grouping for the [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
 

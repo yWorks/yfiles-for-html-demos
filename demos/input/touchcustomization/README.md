@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/touch-interaction.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/touchcustomization/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/touchcustomization/).
 
 This demo shows how a graph editor application can be optimized for touch devices.
 

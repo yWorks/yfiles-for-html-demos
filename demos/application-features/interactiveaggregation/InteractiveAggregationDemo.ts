@@ -63,7 +63,7 @@ import {
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import type { JSONGraph } from '../../utils/json-model'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 LayoutExecutor.ensure()

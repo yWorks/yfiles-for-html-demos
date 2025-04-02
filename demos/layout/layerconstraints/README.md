@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layer-constraints.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/layerconstraints/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/layerconstraints/).
 
 Shows how to use layer constraints to restrict the node layering in [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
 

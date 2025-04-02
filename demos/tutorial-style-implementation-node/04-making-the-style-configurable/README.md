@@ -15,7 +15,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-node-making-the-style-configurable.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-node/04-making-the-style-configurable/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-node/04-making-the-style-configurable/).
 
 Frequently, the visualized nodes differ in visual properties like color, dash-style, or icons, while looking generally the same. In this case, the style can define properties that let you configure certain details of the visualization, while using the same node style class.
 

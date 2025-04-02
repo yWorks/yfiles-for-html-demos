@@ -31,24 +31,8 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 import preprocess from 'svelte-preprocess'
 import optimizer from '@yworks/optimizer/rollup-plugin'
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const plugins = [svelte({ preprocess: preprocess() })]
-  if (mode === 'production') {
-    plugins.push(
-      optimizer({
-        logLevel: 'info',
-        // blacklist svelte framework api
-        blacklist: ['empty', 'dirty', 'update'],
-        shouldOptimize({ id }) {
-          // make sure not to exclude demo-utils since it is in node_modules and uses yFiles API
-          return id.includes('demo-utils') || !id.includes('node_modules')
-        }
-      })
-    )
-  }
   return {
-    plugins,
     base: './',
     server: {
       fs: {
@@ -58,6 +42,20 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       preserveSymlinks: true
-    }
+    },
+    plugins: [
+      svelte({ preprocess: preprocess() }),
+      mode === 'production'
+        ? optimizer({
+            logLevel: 'info',
+            // blacklist svelte framework api
+            blacklist: ['empty', 'dirty', 'update'],
+            shouldOptimize({ id }) {
+              // make sure not to exclude demo-utils since it is in node_modules and uses yFiles API
+              return id.includes('demo-utils') || !id.includes('node_modules')
+            }
+          })
+        : undefined
+    ]
   }
 })

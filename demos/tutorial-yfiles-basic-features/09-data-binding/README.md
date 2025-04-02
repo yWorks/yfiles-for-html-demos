@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-basic-features-data-binding.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/09-data-binding/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-yfiles-basic-features/09-data-binding/).
 
 ## How to bind arbitrary data to elements.
 

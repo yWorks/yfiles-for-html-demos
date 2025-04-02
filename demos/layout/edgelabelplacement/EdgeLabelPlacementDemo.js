@@ -58,7 +58,7 @@ import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-import { toDegrees, toRadians } from '../../utils/LegacyGeometryUtilities'
+import { toDegrees, toRadians } from '@yfiles/demo-utils/LegacyGeometryUtilities'
 /**
  * The graph component.
  */

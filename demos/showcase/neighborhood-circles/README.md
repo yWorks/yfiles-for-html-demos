@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/neighborhood-circles.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/neighborhood-circles/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/neighborhood-circles/).
 
 The Neighborhood Circles demo shows the neighborhood of selected nodes arranged on concentric circles. The concentric arrangement highlights how close the connection between a selected node and a neighbor node is.
 

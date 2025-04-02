@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/organic-substructures.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/organic-substructures/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/organic-substructures/).
 
 This demo showcases how the [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) algorithm handles substructures and node types, see [Layout of Regular Substructures](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-substructures) for more information.
 

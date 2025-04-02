@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/z-order.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/zorder/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/zorder/).
 
 This demo customizes editing gestures to keep the z-order of nodes consistent.
 

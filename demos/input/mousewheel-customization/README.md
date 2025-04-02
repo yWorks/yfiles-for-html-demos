@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/mouse-wheel-customization.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/mousewheel-customization/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/mousewheel-customization/).
 
 This demo shows how to customize and enhance the default mouse wheel behavior.
 

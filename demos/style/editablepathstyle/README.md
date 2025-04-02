@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/editable-path-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/editablepathstyle/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/editablepathstyle/).
 
 This demo shows how to use [GeneralPathNodeStyle](https://docs.yworks.com/yfileshtml/#/api/GeneralPathNodeStyle) and provide interactive editing handles for the control points of the path.
 

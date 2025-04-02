@@ -73,14 +73,11 @@ import {
 } from './ModelClasses'
 import { EditTreeNodesSourceDialog } from './EditTreeNodeSourceDialog'
 import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
-import {
-  LitNodeStyle,
-  type LitNodeStyleRenderFunction
-} from '../../style/lit-template-node-style/LitNodeStyle'
+import { LitNodeStyle, type LitNodeStyleRenderFunction } from '@yfiles/demo-utils/LitNodeStyle'
 
 // @ts-ignore Import via URL
 // eslint-disable-next-line import/no-unresolved
-import { nothing, svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import { nothing, svg } from 'lit-html'
 
 type SchemaEdge = { parentSource: string; childSource: string; childBinding: string }
 

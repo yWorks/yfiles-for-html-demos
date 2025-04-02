@@ -11,11 +11,11 @@
 -->
 # yFiles for HTML Demo Applications
 
-The [yFiles for HTML 3.0](https://www.yworks.com/products/yfiles-for-html) demos and tutorials are extensive sample applications that present the features of the yFiles for HTML diagramming library.
+The [yFiles for HTML 3.0.0.1](https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html) demos and tutorials are extensive sample applications that present the features of the yFiles for HTML diagramming library.
 
 The complete source code of all of these samples is part of the yFiles for HTML package and available at [Github](https://github.com/yWorks/yfiles-for-html-demos)
 
-To execute a specific sample, click on its card below. All of these demos are also hosted at the [yWorks homepage](https://www.yworks.com/demos/).
+To execute a specific sample, click on its card below. All of these demos are also hosted at the [yWorks homepage](https://www.yfiles.com/demos/).
 
 # [Analysis](analysis)
 

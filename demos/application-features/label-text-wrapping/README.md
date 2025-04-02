@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/label-text-wrapping.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/label-text-wrapping/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/label-text-wrapping/).
 
 This demo shows how to enable the text wrapping and trimming feature provided by the [LabelStyle](https://docs.yworks.com/yfileshtml/#/api/LabelStyle) class. The options include [wrapping](https://docs.yworks.com/yfileshtml/#/api/LabelStyle#wrapping) at character or at word bounds, both with or without ellipsis.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/graph-wizard-flowchart.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/graph-wizard-for-flowchart/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/graph-wizard-for-flowchart/).
 
 ## Graph Wizard
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/large-graphs.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/large-graphs/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/large-graphs/).
 
 This demo shows how to display large graphs with both good performance and high quality. For this, the demo uses _[WebGL](https://docs.yworks.com/yfileshtml/#/dguide/webgl2)_ rendering on small zoom levels and switches to high quality _SVG_ rendering when the user zoomed-in above a certain threshold.
 

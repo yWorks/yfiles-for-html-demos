@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/overview.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/overview/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/overview/).
 
 This demo shows how to add an overview component to the application.
 

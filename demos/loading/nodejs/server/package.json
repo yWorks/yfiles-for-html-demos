@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "express": "4.21.1",
-    "@yfiles/yfiles": "../../../../lib/yfiles-30.0.0+dev.tgz"
+    "@yfiles/yfiles": "../../../../lib/yfiles-30.0.1+dev.tgz"
   }
 }

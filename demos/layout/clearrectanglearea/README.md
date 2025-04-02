@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/clear-rectangle-area.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/clearrectanglearea/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/clearrectanglearea/).
 
 A demo that shows how to interactively move graph elements around a rectangle in a given graph so that the modifications in the graph are minimal. The rectangle can be freely moved or resized.
 

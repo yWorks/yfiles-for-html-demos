@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-edge.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-edge/01-create-a-polyline/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-edge/01-create-a-polyline/).
 
 yFiles for HTML comes with predefined edge visualizations. However, in some cases, it is required to create fully custom visualizations based on SVG. This might be the case if you need edge visualizations that are not available out-of-the-box, or domain-specific edge visualizations. Also, the rendering of custom visualizations can be optimized for performance-critical applications.
 

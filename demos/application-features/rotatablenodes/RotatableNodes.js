@@ -80,7 +80,7 @@ import {
   SvgVisualGroup,
   Visual
 } from '@yfiles/yfiles'
-import { OrientedRectangleRendererBase } from '../../utils/OrientedRectangleRendererBase'
+import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectangleRendererBase'
 class RotatableNodeSelectionRenderer extends OrientedRectangleRendererBase {
   createIndicatorElement(_context, size, _renderTag) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')

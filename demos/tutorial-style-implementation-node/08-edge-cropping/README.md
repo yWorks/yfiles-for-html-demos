@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-node-edge-cropping.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-node/08-edge-cropping/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-node/08-edge-cropping/).
 
 So far there have been no edges in the graph, but if we add one, we notice that the edge won’t start/end at the custom outline, but rather at the boundaries of the node itself.
 

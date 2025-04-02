@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/filtering.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/filtering/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/filtering/).
 
 This sample shows how to configure graph [filtering](https://docs.yworks.com/yfileshtml/#/dguide/filtering).
 

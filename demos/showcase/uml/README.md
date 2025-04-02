@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/uml-editor.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/uml/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/uml/).
 
 The UML Editor demo showcases a custom UML node style that renders an UML data set. Additional control elements are provided to conveniently add/remove entries and to create different type of UML edges as well as toggling the node's 'interface' or 'abstract' state.
 

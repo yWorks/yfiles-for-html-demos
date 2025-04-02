@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-graph-builder-create-labels-sources.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/07-create-labels-sources/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/07-create-labels-sources/).
 
 In this tutorial step, you will learn how to configure [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) in order to add labels to the visualization.
 

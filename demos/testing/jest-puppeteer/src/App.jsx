@@ -42,11 +42,7 @@ export default class App extends Component {
 
         <div className="demo-page__content">
           <div className="demo-header">
-            <a
-              href="https://www.yworks.com/products/yfiles"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://www.yfiles.com" target="_blank" rel="noopener noreferrer">
               <img src={yLogo} className="demo-header__y-logo" alt="yWorks Logo" />{' '}
             </a>
             <div className="demo-header__breadcrumb-wrapper">

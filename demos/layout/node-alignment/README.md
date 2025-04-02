@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/node-alignment.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/node-alignment/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/node-alignment/).
 
 This demo shows how to automatically align nodes in rows and columns using the [AlignmentStage](https://docs.yworks.com/yfileshtml/#/api/AlignmentStage) layout algorithm.
 

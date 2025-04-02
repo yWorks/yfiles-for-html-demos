@@ -22,7 +22,7 @@ To start the demo and run the integration tests:
 
 The demo starts with an empty graph, but graph items can be created interactively. The integration tests check this functionality by simulating node, edge and port creation gestures and verifying that the graph instance actually contains the newly created graph items.
 
-The tests run in a [puppeteer environment](https://github.com/smooth-code/jest-puppeteer) instead of the default [jsdom](https://github.com/jsdom/jsdom) environment, because yFiles for HTML needs a fully HTML5 compliant browser environment, which jsdom does not provide (in particular, jsdom lacks a complete SVG DOM implementation).
+The tests run in a [puppeteer environment](https://github.com/smooth-code/jest-puppeteer) instead of the default [jsdom](https://github.com/jsdom/jsdom) environment, because yFiles for HTML needs a common, standards-compliant browser environment, which jsdom does not provide (in particular, jsdom lacks a complete SVG DOM implementation).
 
 With puppeteer, the tests can run in a full Chrome headless environment instead.
 

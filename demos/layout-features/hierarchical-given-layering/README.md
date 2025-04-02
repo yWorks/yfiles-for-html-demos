@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-hierarchical-with-given-layering.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/hierarchical-given-layering/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-given-layering/).
 
 ## Hierarchical Layout with Given Layering
 

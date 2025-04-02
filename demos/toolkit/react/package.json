@@ -8,28 +8,30 @@
   "scripts": {
     "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "@yfiles/demo-resources": "../../resources",
     "@yfiles/demo-utils": "../../utils",
-    "react": "~19.0.0",
-    "react-dom": "~19.0.0",
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.1+dev.tgz"
   },
   "devDependencies": {
-    "@types/react": "~19.0.8",
-    "@types/react-dom": "~19.0.3",
-    "@typescript-eslint/eslint-plugin": "~8.23.0",
-    "@typescript-eslint/parser": "~8.23.0",
-    "@vitejs/plugin-react": "~4.3.4",
-    "@yworks/optimizer": "^1.8.2",
-    "eslint": "^8.57.1",
-    "eslint-config-react-app": "^7.0.1",
-    "eslint-plugin-react-refresh": "~0.4.13",
+    "@eslint/js": "^9.21.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@yworks/optimizer": "^1.8.4",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
     "fs-extra": "~11.3.0",
+    "globals": "^15.15.0",
     "typescript": "~5.7.3",
-    "vite": "6.1.2"
+    "typescript-eslint": "^8.24.1",
+    "vite": "^6.2.0"
   }
 }

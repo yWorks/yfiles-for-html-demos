@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-graph-builder-update-graph.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/11-update-graph/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/11-update-graph/).
 
 This tutorial step shows how to update the graph structure when the underlying business data has changed.
 

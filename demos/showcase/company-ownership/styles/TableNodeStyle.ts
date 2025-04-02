@@ -31,12 +31,12 @@ import { colorSets } from '@yfiles/demo-resources/demo-colors'
 import { LitNodeStyle, type LitNodeStyleProps } from '@yfiles/demo-utils/LitNodeStyle'
 
 // @ts-ignore Import via URL
-import { svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import { svg } from 'lit-html'
 import type { Company } from '../data-types'
 
 // creates the template style for the nodes
 export const tableNodeStyle = new LitNodeStyle(
-  ({ layout, tag }: LitNodeStyleProps<Company>): SVGElement => svg`<g>
+  ({ layout, tag }: LitNodeStyleProps<Company>) => svg`<g>
   <rect fill="#a4aeb3" width=${layout.width} height=${layout.height} x="1" y="1"/>
   <rect fill="#f0f0f0" stroke="#a4aeb3" width=${layout.width} height=${layout.height}/>
   <rect width=${layout.width} height="3" fill=${colorSets[predefinedColorSets.get(tag.nodeType) || 'demo-palette-51'].fill || 'white'}/>

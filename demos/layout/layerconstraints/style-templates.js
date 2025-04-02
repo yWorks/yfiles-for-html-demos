@@ -26,11 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// @ts-ignore Import via URL
-import { svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import { svg } from 'lit-html'
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
-//language =HTML
 export const constraintNodeStyle = new LitNodeStyle(
+  //language =HTML
   ({ layout, tag }) => svg`
   <g visibility=${tag.constraints ? 'visible' : 'hidden'}>
     <rect stroke="none" fill=${getBackgroundColor(tag.value)} rx="4" ry="4"

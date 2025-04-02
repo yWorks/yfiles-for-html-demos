@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/bezier-edge-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/bezieredgestyle/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/bezieredgestyle/).
 
 [BezierEdgeStyle](https://docs.yworks.com/yfileshtml/#/api/BezierEdgeStyle) allows for smooth curved edge routes. This demo shows how to use this style and interactively edit the bezier curves.
 

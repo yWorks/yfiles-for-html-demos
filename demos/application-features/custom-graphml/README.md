@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/custom-graphml.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/custom-graphml/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/custom-graphml/).
 
 This step shows how to [read and write data](https://docs.yworks.com/yfileshtml/#/dguide/customizing_io_serialization-basics) that is bound to graph elements to and from a GraphML file.
 

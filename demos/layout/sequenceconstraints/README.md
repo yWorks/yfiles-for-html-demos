@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/sequence-constraints.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/sequenceconstraints/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/sequenceconstraints/).
 
 Shows how to use sequence constraints to restrict the node sequencing in [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
 

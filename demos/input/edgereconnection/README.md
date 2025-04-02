@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/edge-reconnection.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/edgereconnection/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/edgereconnection/).
 
 This demo shows how the reconnection of edge ports can be customized and restricted.
 

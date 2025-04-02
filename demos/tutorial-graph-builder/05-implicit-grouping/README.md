@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-graph-builder-implicit-grouping.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/05-implicit-grouping/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/05-implicit-grouping/).
 
 In this tutorial step, you will learn an alternative approach to create group nodes to show hierarchy information within the business data.
 

@@ -17,7 +17,7 @@
 
 <aside class='demo-page__description'>
   <div class='demo-description__header'>
-    <a href='https://www.yworks.com/products/yfiles' class='demo-description__logo'></a>
+    <a href='https://www.yfiles.com/' class='demo-description__logo'></a>
   </div>
   <div class='demo-description__content'>
     <h1>Svelte Integration Demo</h1>
@@ -66,14 +66,14 @@
 
 <div class='demo-page-header'>
   <div class='demo-header'>
-    <a href='https://www.yworks.com/products/yfiles' target='_blank'> <img src='ylogo.svg'
+    <a href='https://www.yfiles.com/' target='_blank'> <img src='ylogo.svg'
       class='demo-header__y-logo' /> </a>
     <div class='demo-header__breadcrumb-wrapper'>
-      <a href='https://www.yworks.com/products/yfiles'
+      <a href='https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html'
         class='demo-header__breadcrumb demo-header__breadcrumb--link'
         target='_blank'>yFiles for HTML</a>
 
-      <a href='https://www.yworks.com/demos'
+      <a href='https://www.yfiles.com/demos'
         style='cursor: pointer;' target='_blank'
         class='demo-header__breadcrumb demo-header__breadcrumb--link'>Demos</a> <span class='demo-header__breadcrumb'>Svelte Integration Demo [yFiles for HTML]</span>
     </div>

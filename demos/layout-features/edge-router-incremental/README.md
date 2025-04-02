@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-edge-router-incremental.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/edge-router-incremental/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/edge-router-incremental/).
 
 This demo shows how to run the edge router algorithm on a predefined subset of edges in a graph.
 

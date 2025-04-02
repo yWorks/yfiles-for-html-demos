@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-label-preferred-size.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-label/04-preferred-size/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-label/04-preferred-size/).
 
 [LabelStyleBase](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase) provides the abstract method [getPreferredSize](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#LabelStyleBase-method-getPreferredSize) that needs to be implemented to tell the framework how large the label prefers to be.
 

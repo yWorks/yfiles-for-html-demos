@@ -134,10 +134,10 @@ function App() {
       </aside>
 
       <div className="demo-header">
-        <a href="https://www.yworks.com/products/yfiles" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.yfiles.com" target="_blank" rel="noopener noreferrer">
           <img src={yLogo} className="demo-y-logo" alt="yWorks Logo" />
         </a>
-        <a href="https://www.yworks.com/products/yfiles" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.yfiles.com" target="_blank" rel="noopener noreferrer">
           yFiles for HTML
         </a>
         <a

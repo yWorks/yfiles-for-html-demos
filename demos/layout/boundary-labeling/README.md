@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/boundary-labeling.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/boundary-labeling/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/boundary-labeling/).
 
 This demo shows how to configure the [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) algorithm for annotating a set of points on a diagram (map, technical drawing, etc.).
 

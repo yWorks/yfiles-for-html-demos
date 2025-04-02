@@ -29,7 +29,7 @@
 import {
   type InteractiveOrganicLayoutConfig,
   InteractiveOrganicLayoutHelper
-} from '../../utils/InteractiveOrganicLayoutHelper'
+} from '@yfiles/demo-utils/InteractiveOrganicLayoutHelper'
 import { type IGraph, type INode } from '@yfiles/yfiles'
 
 /**

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/clipboard-deferred-cut.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/clipboard-deferred-cut/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/clipboard-deferred-cut/).
 
 This demos shows how to implement a clipboard that grays out elements when they are cut and only removes them completely when they are pasted.
 

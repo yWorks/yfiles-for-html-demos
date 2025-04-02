@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/native-listeners.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/native-listeners/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/native-listeners/).
 
 This demo illustrates an approach on how to register native event listeners to SVG-elements on a style.
 

@@ -41,7 +41,7 @@ import {
   WebGLShapeNodeShape,
   WebGLShapeNodeStyle
 } from '@yfiles/yfiles'
-import { createLitNodeStyleFromSource } from '../../utils/LitNodeStyle'
+import { createLitNodeStyleFromSource } from '@yfiles/demo-utils/LitNodeStyle'
 
 export type Employee = {
   position?: string

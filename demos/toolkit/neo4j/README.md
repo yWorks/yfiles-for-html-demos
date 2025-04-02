@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/neo4j.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/toolkit/neo4j/).
+[You can also run this demo online](https://www.yfiles.com/demos/toolkit/neo4j/).
 
 This demo shows how to load data from a Neo4j database and display it with yFiles for HTML.
 

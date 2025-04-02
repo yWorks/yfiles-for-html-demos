@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/graph-decorator.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/graph-decorator/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/graph-decorator/).
 
 This demo shows how to use the graph decorator concept to customize the behavior and the visualization of graph items.
 

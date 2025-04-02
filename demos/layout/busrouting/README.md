@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/bus-routing.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/busrouting/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/busrouting/).
 
 This demo shows how to create bus structures using [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter).
 

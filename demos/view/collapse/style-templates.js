@@ -29,7 +29,7 @@
 // language=HTML
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
 // @ts-ignore Import via URL
-import { svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import { svg } from 'lit-html'
 export function initializeStyles(graphComponent) {
   const defs = graphComponent.svgDefsManager.defs
   const element = document.createElementNS('http://www.w3.org/2000/svg', 'defs')

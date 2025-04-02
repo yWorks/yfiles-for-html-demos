@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/map.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/map/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/map/).
 
 This demo shows how to integrate a [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) with [Leaflet](https://leafletjs.com/).
 

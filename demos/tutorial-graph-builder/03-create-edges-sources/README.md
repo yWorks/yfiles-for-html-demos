@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-graph-builder-create-edges-sources.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/03-create-edges-sources/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/03-create-edges-sources/).
 
 In this tutorial step, you will learn how to load edges from business data.
 

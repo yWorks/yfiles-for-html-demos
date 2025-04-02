@@ -484,7 +484,7 @@ function createDropShadow(): ISvgDefsCreator {
 }
 
 function createDropShadowElement(): SVGImageElement {
-  // pre-render the node's drop shadow using HTML5 canvas rendering
+  // pre-render the node's drop shadow using HTML canvas rendering
   const canvas = document.createElement('canvas')
   canvas.width = 64
   canvas.height = 64

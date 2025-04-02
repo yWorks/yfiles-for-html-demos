@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-port-port-size.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-port/02-port-size/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-port/02-port-size/).
 
 Unlike nodes, ports do not possess an intrinsic size. A port is defined merely by a point. The port style can define how large the port should be rendered. In the previous step, we used fix values that resulted in a circle with a diameter of 6. In this sample, we will add a property to the port style that allows us to customize the size of the circle.
 

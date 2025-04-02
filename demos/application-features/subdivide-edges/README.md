@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/subdivide-edges.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/subdivide-edges/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/subdivide-edges/).
 
 This demo shows how to use a custom [NodeDropInputMode](https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode) for dragging nodes from a separate panel onto an edge.
 

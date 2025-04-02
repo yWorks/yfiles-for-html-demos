@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/table-editor.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/tableeditor/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/tableeditor/).
 
 The Table Editor demo shows the support for diagrams that are organized in a tabular way, for example in a grid or a swimlane layout. Besides model items and styles for [Table](https://docs.yworks.com/yfileshtml/#/api/Table), yFiles provides dedicated editing features to add, remove, resize, and reparent rows, columns, and the table contents.
 

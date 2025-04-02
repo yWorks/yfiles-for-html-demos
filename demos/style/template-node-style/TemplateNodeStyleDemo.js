@@ -53,8 +53,8 @@ import {
 import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/StringTemplateNodeStyle'
 import SampleData from './resources/SampleData'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '../../resources/demo-ui/finish-loading'
-import { openGraphML, saveGraphML } from '../../utils/graphml-support'
+import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 import { registerTemplateStyleSerialization } from '@yfiles/demo-utils/template-styles/MarkupExtensions'
 let templateEditor
 let tagEditor

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/list-node.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/list-node/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/list-node/).
 
 This demo shows how to display a node with sections arranged in rows. The sections can be re-arranged interactively. When a section is moved, its edges are moved as well.
 

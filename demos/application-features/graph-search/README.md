@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/graph-search.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/graph-search/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/graph-search/).
 
 This demo shows an implementation of the search functionality on the nodes of a graph.
 

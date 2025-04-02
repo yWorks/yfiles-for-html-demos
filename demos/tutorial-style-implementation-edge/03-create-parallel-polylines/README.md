@@ -15,7 +15,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-edge-create-parallel-polylines.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-edge/03-create-parallel-polylines/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-edge/03-create-parallel-polylines/).
 
 Currently, the custom edge style renders a simple polyline. This is something yFiles for HTML already offers out-of-the box with [PolylineEdgeStyle](https://docs.yworks.com/yfileshtml/#/api/PolylineEdgeStyle). So let’s use something more interesting, for example two polylines running parallel.
 

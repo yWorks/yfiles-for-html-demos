@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-radial-group-layout.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/radial-group/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/radial-group/).
 
 This demo shows how to create a beautiful layout of a grouped graph using the [RadialGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout).
 

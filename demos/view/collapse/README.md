@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/collapsible-trees.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/collapse/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/collapse/).
 
 The Collapsible Tree demo shows interactive collapsing and expanding of subtrees of a graph. Using the dedicated helper classes for filtering-out parts of a graph and the tree layout algorithm, implementing such an interactive application is easy.
 

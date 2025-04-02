@@ -15,7 +15,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-node-group-node-style-behavior.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-node/12-group-node-style-behavior/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-node/12-group-node-style-behavior/).
 
 In this step, we will set a minimum size for the node style and customize how the group size is calculated when adjusting to its content. Similar to `IGroupPaddingProvider` in the previous step, we return implementations for both customizations in the `lookup` method.
 

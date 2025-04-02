@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/graph-builder.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/databinding/graphbuilder/).
+[You can also run this demo online](https://www.yfiles.com/demos/databinding/graphbuilder/).
 
 This demo interactively builds and modifies a graph from **JSON** business data using class [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder).
 

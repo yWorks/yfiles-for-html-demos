@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/template-styles.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/templatestyles/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/templatestyles/).
 
 This demo shows how to create SVG templates for nodes, labels and ports. It also shows how to customize various aspects of template styles.
 

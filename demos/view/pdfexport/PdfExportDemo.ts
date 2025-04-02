@@ -42,7 +42,7 @@ import { exportPdfClientSide } from './pdf-export-client-side'
 import { retainAspectRatio } from './aspect-ratio'
 import { downloadFile } from '@yfiles/demo-utils/file-support'
 import { loadExternalFonts } from './load-external-fonts'
-import { DelayedNodeStyle } from './delayed-node-style'
+import { DelayedNodeStyle } from './node-styles/delayed-node-style'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()

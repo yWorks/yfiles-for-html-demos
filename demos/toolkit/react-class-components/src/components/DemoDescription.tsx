@@ -35,7 +35,7 @@ export default class DemoDescription extends Component {
     return (
       <>
         <div className="demo-sidebar-header">
-          <a href="https://www.yworks.com/products/yfiles">
+          <a href="https://www.yfiles.com">
             <img src={yLogo} alt="yWorks Logo" className="demo-left-logo" />
           </a>
         </div>

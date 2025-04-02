@@ -81,7 +81,7 @@ import {
   SvgVisualGroup,
   Visual
 } from '@yfiles/yfiles'
-import { OrientedRectangleRendererBase } from '../../utils/OrientedRectangleRendererBase'
+import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectangleRendererBase'
 
 class RotatableNodeSelectionRenderer extends OrientedRectangleRendererBase<INode> {
   createIndicatorElement(_context: IRenderContext, size: ISize, _renderTag: INode): SVGElement {

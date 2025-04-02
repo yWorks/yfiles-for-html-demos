@@ -99,7 +99,7 @@ const nodeStyleTemplate = `({ layout, tag, selected, zoom }) => {
  * Creates the drop shadow element for the nodes.
  */
 function createDropShadowElement(nodeSize) {
-  // pre-render the node's drop shadow using HTML5 canvas rendering
+  // pre-render the node's drop shadow using HTML canvas rendering
   const canvas = window.document.createElement('canvas')
   canvas.width = nodeSize.width + 30
   canvas.height = nodeSize.height + 30

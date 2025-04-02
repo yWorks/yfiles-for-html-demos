@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/folding-with-layout.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/foldingwithlayout/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/foldingwithlayout/).
 
 This demo shows how to automatically trigger a layout that clears or fills the space when opening or closing groups.
 

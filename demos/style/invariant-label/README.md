@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/invariant-label-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/invariant-label/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/invariant-label/).
 
 This demo shows label styles that render the labels independent of the zoom level.
 

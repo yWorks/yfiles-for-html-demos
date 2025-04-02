@@ -40,8 +40,7 @@ import {
   Point,
   Size
 } from '@yfiles/yfiles'
-// @ts-ignore Import via URL
-import { svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import { svg } from 'lit-html'
 import { createNodeBusinessData, getCommonName } from './BusinessDataHandling'
 import { TaggedNodeClipboardHelper } from './ClipboardHelper'
 import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'

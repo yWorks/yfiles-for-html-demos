@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/orthogonal-edge-editing-customization.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/orthogonal-edge-editing-customization/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/orthogonal-edge-editing-customization/).
 
 This demo shows how to customize orthogonal edge editing.
 

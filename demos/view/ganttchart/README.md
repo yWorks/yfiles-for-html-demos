@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/gantt-chart.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/ganttchart/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/ganttchart/).
 
 The Gantt Chart demo shows how to create a Gantt component from JSON data.
 

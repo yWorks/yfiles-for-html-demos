@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-edge-custom-arrow.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-edge/12-custom-arrow/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-edge/12-custom-arrow/).
 
 This step shows how to implement a visualization of a custom arrow that fits the "parallel line" edge style.
 

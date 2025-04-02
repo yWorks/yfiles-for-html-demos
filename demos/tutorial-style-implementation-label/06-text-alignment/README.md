@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-label-text-alignment.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-label/06-text-alignment/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-label/06-text-alignment/).
 
 In this step, we will add horizontal and vertical text alignment support to the label style.
 

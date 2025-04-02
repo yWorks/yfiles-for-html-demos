@@ -57,7 +57,7 @@ import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-poi
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
-import { openGraphML, saveGraphML } from '../../utils/graphml-support'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent: GraphComponent
 

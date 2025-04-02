@@ -83,7 +83,7 @@ export default class NodeStyleDecorator extends NodeStyleBase {
     button.addEventListener('click', showToast)
     // pointerdown causes the capturing of subsequent pointer events, thus we need to disable
     // pointerdown on the current element such that the native click event is triggered furthermore
-    // this causes the input mode should to not handle any event on the button where we registered
+    // this causes the input mode to not handle any event on the button where we registered
     // a native click listener
     button.addEventListener('pointerdown', (e) => e.preventDefault())
     const decorationVisual = new SvgVisual(button)

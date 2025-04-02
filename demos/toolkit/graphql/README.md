@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/graphql.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/toolkit/graphql/).
+[You can also run this demo online](https://www.yfiles.com/demos/toolkit/graphql/).
 
 This demo shows how to load data from a [GraphQL](https://www.graphql.org/) endpoint. You can navigate through a social network while lazily fetching new data.
 

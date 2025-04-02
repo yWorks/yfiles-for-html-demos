@@ -87,9 +87,9 @@ function loadGraph() {
  */
 function initializeInputMode() {
   const mode = new GraphEditorInputMode({
-    movableSelectedItems: GraphItemTypes.NODE,
     selectableItems: GraphItemTypes.NONE,
     allowCreateBend: false,
+    allowCreateEdge: false,
     allowCreateNode: false,
     moveUnselectedItemsInputMode: { enabled: true },
     marqueeSelectionInputMode: { enabled: false },

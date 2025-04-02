@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/background-image.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/background-image/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/background-image/).
 
 This demo shows how to add a background to a graph. The background can be an image or a colored rectangle.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/simple-graph-builder.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/databinding/simplegraphbuilder/).
+[You can also run this demo online](https://www.yfiles.com/demos/databinding/simplegraphbuilder/).
 
 This demo automatically builds a graph from business data using [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder), [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) or [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder).  
 The business data is stored in arrays or in **JSON** format.

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tree-of-life.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/tree-of-life/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/tree-of-life/).
 
 This demo shows an interactive radial dendrogram visualization for the so-called _Tree of Life_.
 

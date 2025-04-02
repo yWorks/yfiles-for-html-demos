@@ -15,7 +15,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-edge-making-the-style-configurable.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-edge/05-making-the-style-configurable/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-edge/05-making-the-style-configurable/).
 
 Frequently, the visualized edges differ in visual properties like color, dash-style, or thickness, while looking generally the same. In this case, the style can define properties that let you configure certain details of the visualization, while using the same edge style class.
 

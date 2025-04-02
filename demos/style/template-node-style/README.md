@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/template-node-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/template-node-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/template-node-style/).
 
 This demo presents a node style implementation that leverages a simple data binding and templating engine to declaratively render SVG as node style.
 

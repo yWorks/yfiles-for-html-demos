@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/without-view.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/without-view/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/without-view/).
 
 This demo shows how to create a graph, run a graph analysis algorithm and calculate a layout without using a view or the [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) API.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-hierarchical-node-alignment.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/hierarchical-node-alignment/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-node-alignment/).
 
 This demo shows how to configure the [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) so that nodes on different layers that are connected by a critical (important) edge are aligned.
 

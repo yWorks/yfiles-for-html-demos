@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-hierarchical-node-port-candidates.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/hierarchical-node-port-candidates/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-node-port-candidates/).
 
 This demo shows how to use a set of [node port candidates](https://docs.yworks.com/yfileshtml/#/api/NodePortCandidates) for the [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) to define the port locations for a node as well as control how many edges can be connected to each port.
 

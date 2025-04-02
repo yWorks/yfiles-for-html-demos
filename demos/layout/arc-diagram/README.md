@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/arc-diagram.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/arc-diagram/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/arc-diagram/).
 
 This demo shows how to arrange and visualize a graph as an arc diagram.
 

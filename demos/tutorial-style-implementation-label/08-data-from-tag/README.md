@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-label-data-from-tag.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-label/08-data-from-tag/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-label/08-data-from-tag/).
 
 In the last two steps, we’ve added properties to the style to configure how the style renders a label. Now, we want to be even more versatile and change the visualization based on the data of each visualized label.
 

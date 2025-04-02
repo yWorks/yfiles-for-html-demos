@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/data-table.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/datatable/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/datatable/).
 
 This demo shows a node style and a label style that display data in a tabular fashion.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/chord-diagram-non-ribbon.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/chord-diagram-non-ribbon/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/chord-diagram-non-ribbon/).
 
 This demo shows how to create a non-ribbon chord diagram. In contrast to the normal [Chord Diagram Demo](../../showcase/chord-diagram/), these diagrams use clearly separated nodes and edges, so it can be easier to see the individual connections.
 

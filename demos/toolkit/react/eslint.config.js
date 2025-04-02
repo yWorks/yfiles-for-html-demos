@@ -26,40 +26,31 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
-/**
- * This node style changes its color after a while.
- * This is used to showcase the render completion callback of the SVG export.
- */
-export class DelayedNodeStyle extends NodeStyleBase {
-  static pendingPromises = new Set()
-  createVisual(context, node) {
-    const { x, y, width, height } = node.layout
-    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-    rect.setAttribute('x', x.toString())
-    rect.setAttribute('y', y.toString())
-    rect.setAttribute('width', width.toString())
-    rect.setAttribute('height', height.toString())
-    const promise = new Promise((resolve) => {
-      setTimeout(
-        () => {
-          rect.setAttribute('fill', 'tomato')
-          resolve()
-          DelayedNodeStyle.pendingPromises.delete(promise)
-        },
-        200 + Math.random() * 800
-      )
-    })
-    DelayedNodeStyle.pendingPromises.add(promise)
-    return new SvgVisual(rect)
-  }
-  updateVisual(context, oldVisual, node) {
-    const { x, y, width, height } = node.layout
-    const rect = oldVisual.svgElement
-    rect.setAttribute('x', x.toString())
-    rect.setAttribute('y', y.toString())
-    rect.setAttribute('width', width.toString())
-    rect.setAttribute('height', height.toString())
-    return oldVisual
-  }
-}
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
+
+export default tseslint.config(
+  { ignores: ['dist'] },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+    },
+  },
+)

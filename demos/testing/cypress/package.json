@@ -9,10 +9,10 @@
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "devDependencies": {
-    "cypress": "^13.15.0",
-    "typescript": "~5.6.3"
+    "cypress": "^14.2.0",
+    "typescript": "~5.7.3"
   },
   "dependencies": {
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.1+dev.tgz"
   }
 }

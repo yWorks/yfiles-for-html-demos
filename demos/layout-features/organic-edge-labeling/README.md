@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-organic-edge-labeling.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/organic-edge-labeling/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/organic-edge-labeling/).
 
 This demo shows how to configure the [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) for automatic edge label placement.
 

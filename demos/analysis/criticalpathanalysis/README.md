@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/critical-path-analysis.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/analysis/criticalpathanalysis/).
+[You can also run this demo online](https://www.yfiles.com/demos/analysis/criticalpathanalysis/).
 
 This demo shows how to perform critical path analysis (CPA) in project management with yFiles. Formally, this means identifying the tasks of a project that must be completed on time so that the whole project can be completed on time.
 

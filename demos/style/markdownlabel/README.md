@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/markdown-label.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/markdownlabel/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/markdownlabel/).
 
 This demo shows how to create labels using Markdown syntax.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/arrow-edge-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/arrow-edge-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/arrow-edge-style/).
 
 The [ArrowEdgeStyle](https://docs.yworks.com/yfileshtml/#/api/ArrowEdgeStyle) provides several properties to customize its shape. There are five basic [shapes](https://docs.yworks.com/yfileshtml/#/api/ArrowEdgeStyle#shape) provided.
 

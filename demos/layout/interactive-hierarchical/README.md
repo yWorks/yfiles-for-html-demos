@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/interactive-hierarchical-layout.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/interactive-hierarchical/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/interactive-hierarchical/).
 
 This demo shows the [from sketch mode](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#fromSketch) of the hierarchical layout. Each user action triggers a run of this layout style to ensure that the current state of the graph is always well-organized but remains still similar to the previous arrangement.
 

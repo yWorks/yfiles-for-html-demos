@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tabular-groups.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/tabular-groups/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/tabular-groups/).
 
 This demo shows how to configure the [tabular groups](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#tabularGroups) feature of the [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
 

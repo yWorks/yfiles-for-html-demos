@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/valid-begin-cursors.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/valid-begin-cursors/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/valid-begin-cursors/).
 
 The demo exhibits a [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) where graph editing is configured to show different cursors depending on which gesture is valid to begin at the current location considering the currently pressed modifiers.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/magnifying-glass.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/magnifying-glass/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/magnifying-glass/).
 
 This demo shows a floating magnifying glass that magnifies the cursor's surroundings. It is implemented as a specialized input mode that can be added to any of yFiles's default interactions.
 

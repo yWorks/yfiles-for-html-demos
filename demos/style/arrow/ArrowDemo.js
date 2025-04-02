@@ -210,7 +210,8 @@ function initializeInteraction(graphComponent) {
   const inputMode = new GraphEditorInputMode({
     allowCreateNode: false,
     selectableItems: 'none',
-    moveUnselectedItemsInputMode: { enabled: false }
+    focusableItems: 'none',
+    movableUnselectedItems: 'none'
   })
   inputMode.createEdgeInputMode.addEventListener('edge-creation-started', (evt) => {
     const edge = evt.item

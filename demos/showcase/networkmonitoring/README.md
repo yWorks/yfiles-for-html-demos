@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/network-monitoring.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/networkmonitoring/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/networkmonitoring/).
 
 This demo shows a basic network monitoring tool. Watch the traffic flowing through the network.
 

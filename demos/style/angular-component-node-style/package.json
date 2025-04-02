@@ -3,31 +3,33 @@
   "version": "1.0.0",
   "scripts": {
     "start": "ng serve",
-    "build": "ng build"
+    "build": "ng build",
+    "update-check": "ng update",
+    "update": "ng update --force @angular/cdk@19  @angular/cli@19  @angular/core@19  @angular/material@19"
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^16.2.12",
-    "@angular/cdk": "^16.2.12",
-    "@angular/common": "^16.2.12",
-    "@angular/compiler": "^16.2.12",
-    "@angular/core": "^16.2.12",
-    "@angular/forms": "^16.2.12",
-    "@angular/material": "^16.2.12",
-    "@angular/platform-browser": "^16.2.12",
-    "@angular/platform-browser-dynamic": "^16.2.12",
-    "@angular/router": "^16.2.12",
+    "@angular/animations": "^19.2.4",
+    "@angular/cdk": "^19.2.7",
+    "@angular/common": "^19.2.4",
+    "@angular/compiler": "^19.2.4",
+    "@angular/core": "^19.2.4",
+    "@angular/forms": "^19.2.4",
+    "@angular/material": "^19.2.7",
+    "@angular/platform-browser": "^19.2.4",
+    "@angular/platform-browser-dynamic": "^19.2.4",
+    "@angular/router": "^19.2.4",
     "rxjs": "~7.8.1",
-    "tslib": "^2.5.3",
-    "zone.js": "~0.13.1",
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
+    "tslib": "^2.8.1",
+    "zone.js": "~0.15.0",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.1+dev.tgz"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "^16.0.0",
-    "@angular-devkit/build-angular": "^16.2.10",
-    "@angular/cli": "^16.2.10",
-    "@angular/compiler-cli": "^16.2.12",
-    "@yworks/optimizer": "^1.8.1",
-    "typescript": "~5.1.6"
+    "@angular-builders/custom-webpack": "^19.0.0",
+    "@angular-devkit/build-angular": "^19.2.5",
+    "@angular/cli": "^19.2.5",
+    "@angular/compiler-cli": "^19.2.4",
+    "@yworks/optimizer": "^1.8.4",
+    "typescript": "~5.7.0"
   }
 }

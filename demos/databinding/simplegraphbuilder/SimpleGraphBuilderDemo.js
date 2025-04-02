@@ -52,7 +52,7 @@ import { nodeTemplate } from './style-templates'
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
 // @ts-ignore Import via URL
 // eslint-disable-next-line import/no-unresolved
-import { nothing, svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import { nothing, svg } from 'lit-html'
 /**
  * Specifier that indicates using a {@link GraphBuilder}.
  */

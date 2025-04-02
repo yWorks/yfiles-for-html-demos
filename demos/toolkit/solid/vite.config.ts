@@ -32,28 +32,6 @@ import optimizer from '@yworks/optimizer/rollup-plugin'
 //import devtools from 'solid-devtools/vite'
 
 export default defineConfig(({ mode }) => {
-  const plugins = [
-    /*
-     Uncomment the following line to enable solid-devtools.
-     For more info see https://github.com/thetarnav/solid-devtools/tree/main/packages/extension#readme
-     */
-    // devtools(),
-    solidPlugin()
-  ]
-
-  if (mode === 'production') {
-    plugins.push(
-      optimizer({
-        logLevel: 'info',
-        blacklist: ['template', 'render', 'effect'],
-        shouldOptimize({ id }) {
-          // make sure not to exclude demo-utils since it is in node_modules and uses yFiles API
-          return !id.includes('node_modules')
-        }
-      })
-    )
-  }
-
   return {
     base: './',
     server: {
@@ -62,6 +40,23 @@ export default defineConfig(({ mode }) => {
     resolve: {
       preserveSymlinks: true
     },
-    plugins
+    plugins: [
+      /*
+       Uncomment the following line to enable solid-devtools.
+       For more info see https://github.com/thetarnav/solid-devtools/tree/main/packages/extension#readme
+       */
+      // devtools(),
+      solidPlugin(),
+      mode === 'production'
+        ? optimizer({
+            logLevel: 'info',
+            blacklist: ['template', 'render', 'effect'],
+            shouldOptimize({ id }) {
+              // make sure not to exclude demo-utils since it is in node_modules and uses yFiles API
+              return !id.includes('node_modules')
+            }
+          })
+        : undefined
+    ]
   }
 })

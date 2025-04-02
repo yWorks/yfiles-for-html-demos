@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/sankey-diagram.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/sankey/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/sankey/).
 
 Sankey diagrams are used for visualizing flow information in which the thickness of the edges is proportional to the flow quantity. Such diagrams can be produced by means of the hierarchical layout algorithm (see [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout)).
 

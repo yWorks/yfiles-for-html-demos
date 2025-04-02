@@ -32,7 +32,7 @@ export const DemoDescription = (props: Record<string, never>) => {
   return (
     <div class={'demo-page__description'}>
       <div class={'demo-description__header'}>
-        <a href="https://www.yworks.com/products/yfiles">
+        <a href="https://www.yfiles.com">
           <div class={'demo-description__logo'} />
         </a>
       </div>

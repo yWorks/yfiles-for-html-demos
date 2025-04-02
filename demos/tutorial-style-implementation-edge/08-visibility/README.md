@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-edge-visibility.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-edge/08-visibility/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-edge/08-visibility/).
 
 yFiles for HTML will only render items that are considered visible in the viewport. Hence, performance usually only depends on the number of items that are in the visible part of the graph.
 

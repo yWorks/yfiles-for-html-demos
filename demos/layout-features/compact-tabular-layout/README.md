@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-compact-tabular-layout.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/compact-tabular-layout/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/compact-tabular-layout/).
 
 This demo shows how to configure the [TabularLayout](https://docs.yworks.com/yfileshtml/#/api/TabularLayout) to create compact drawings.
 

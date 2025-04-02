@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-label-hit-testing.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-label/09-hit-testing/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-label/09-hit-testing/).
 
 Styles not only provide a visual representation for graph items. They also offer crucial parts for interacting with said items. Hit-testing determines whether a particular item is at a given point in the canvas. It happens all the time during interaction, e.g. when selecting items, moving nodes, or creating edges.
 

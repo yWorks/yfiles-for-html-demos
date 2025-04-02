@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/arrow-node-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/arrow-node-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/arrow-node-style/).
 
 The [ArrowNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle) provides several properties to customize its shape. There are five basic [shapes](https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#shape) provided that can be rotated in four [directions](https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#direction).
 

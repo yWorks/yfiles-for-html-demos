@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/clear-marquee-area.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/clearmarqueearea/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/clearmarqueearea/).
 
 A demo that shows how to interactively move graph elements within a marquee rectangle in a given graph layout so that the modifications in the graph are minimal.
 

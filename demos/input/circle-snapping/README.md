@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/circle-snapping.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/circle-snapping/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/circle-snapping/).
 
 This demo shows how to use the **snapping feature** to support editing a radial tree layout.
 

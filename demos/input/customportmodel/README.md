@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/custom-port-location-model.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/customportmodel/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/customportmodel/).
 
 This demo shows how to create and use a custom [IPortLocationModel](https://docs.yworks.com/yfileshtml/#/api/IPortLocationModel).
 

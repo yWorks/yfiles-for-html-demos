@@ -114,23 +114,10 @@ export class GraphLayer extends Layer {
     this.graphComponent.inputMode = inputMode
   }
   /**
-   * We want leaflet to consume the interaction events.
-   */
-  preventEventPropagation(element) {
-    element.addEventListener(
-      'pointerdown',
-      (evt) => {
-        //evt.stopPropagation()
-      },
-      true
-    )
-  }
-  /**
    * @yjs:keep = animate
    */
   onAdd(map) {
     this.pane = map.getPane('overlayPane')
-    this.preventEventPropagation(this.pane)
     this.pane.appendChild(this.graphComponent.htmlElement)
     this.mapPane = map.getPane('mapPane')
     map.on(

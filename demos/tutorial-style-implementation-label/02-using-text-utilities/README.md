@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-label-using-text-utilities.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-label/02-using-text-utilities/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-label/02-using-text-utilities/).
 
 In the previous step, we’ve learned how to render the label text with the DOM api. In this step, we’ll use the utility class [TextRenderSupport](https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport) to place text more conveniently.
 

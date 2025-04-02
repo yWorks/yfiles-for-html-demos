@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/bpmn-editor.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/bpmn/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/bpmn/).
 
 An editor for Business Process Diagrams (BPMN).
 

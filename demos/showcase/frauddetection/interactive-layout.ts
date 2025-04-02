@@ -36,7 +36,7 @@ import {
   type ResultItemCollection,
   TimeSpan
 } from '@yfiles/yfiles'
-import { InteractiveOrganicLayoutHelper } from '../../utils/InteractiveOrganicLayoutHelper'
+import { InteractiveOrganicLayoutHelper } from '@yfiles/demo-utils/InteractiveOrganicLayoutHelper'
 
 /**
  * Initializes the layout algorithm, animations and interaction with the current graph.

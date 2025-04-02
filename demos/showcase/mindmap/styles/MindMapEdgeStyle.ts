@@ -55,7 +55,7 @@ export class MindMapEdgeStyle extends EdgeStyleBase<MindMapCanvasVisual> {
   }
 
   /**
-   * Creates the visual for the edge using an HTML5 canvas visual.
+   * Creates the visual for the edge using an HTML canvas visual.
    */
   createVisual(context: IRenderContext, edge: IEdge): MindMapCanvasVisual {
     return new MindMapCanvasVisual(edge, this.thicknessStart, this.thicknessEnd)
@@ -93,7 +93,7 @@ export class MindMapEdgeStyle extends EdgeStyleBase<MindMapCanvasVisual> {
 
 /**
  * Contains the actual rendering logic of the edge.
- * This class uses HTML5 canvas rendering to visualize the edge.
+ * This class uses HTML canvas rendering to visualize the edge.
  */
 class MindMapCanvasVisual extends HtmlCanvasVisual {
   // The cached path to use during updates
@@ -175,7 +175,7 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
    * Intermediate values of color components (r,g,b) and thickness (w) are computed using linear interpolation.
    * @param startColor The color of the edge at its start.
    * @param endColor The color of the edge at its end.
-   * @param ctx The HTML5 Canvas context.
+   * @param ctx The HTML Canvas context.
    */
   drawEdgePath(startColor: RGB, endColor: RGB, ctx: CanvasRenderingContext2D): void {
     const rS = startColor.r

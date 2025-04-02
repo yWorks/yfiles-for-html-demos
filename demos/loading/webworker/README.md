@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/web-worker.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/loading/webworker/).
+[You can also run this demo online](https://www.yfiles.com/demos/loading/webworker/).
 
 This demo shows how to run a layout algorithm in a Web Worker thread without blocking the UI or main thread.
 

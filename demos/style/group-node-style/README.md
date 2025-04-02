@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/group-node-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/group-node-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/group-node-style/).
 
 [GroupNodeStyle](https://docs.yworks.com/yfileshtml/#/api/GroupNodeStyle) is a style primarily intended for groups and folders, i.e., collapsed groups.
 

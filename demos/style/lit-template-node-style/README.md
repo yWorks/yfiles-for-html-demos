@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/lit-template-node-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/lit-template-node-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/lit-template-node-style/).
 
 This demo presents the LitNodeStyle that leverages the powerful data binding and conditional rendering features of the [Lit templating framework](https://lit.dev/).
 

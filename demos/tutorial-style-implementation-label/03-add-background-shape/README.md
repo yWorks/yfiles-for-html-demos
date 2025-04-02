@@ -15,7 +15,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-label-add-background-shape.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-label/03-add-background-shape/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-label/03-add-background-shape/).
 
 In many cases, it’s required to add a background to the label text. This is useful to improve contrast, add a meaningful shape or color, or simply to make the style look nicer.
 

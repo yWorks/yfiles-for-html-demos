@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/interactive-edge-routing.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/interactiveedgerouting/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/interactiveedgerouting/).
 
 The Interactive Edge Routing demo showcases [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter) 's ability to find and re-layout edge paths which are not yet ‘good’.
 

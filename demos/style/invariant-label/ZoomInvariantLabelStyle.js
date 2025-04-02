@@ -53,7 +53,7 @@ import {
   SvgVisualGroup,
   WebGLSupport
 } from '@yfiles/yfiles'
-import { OrientedRectangleRendererBase } from '../../utils/OrientedRectangleRendererBase'
+import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectangleRendererBase'
 /**
  * A label style that renders labels at the same size regardless of the zoom level.
  * The style is implemented as a wrapper for an existing label style.

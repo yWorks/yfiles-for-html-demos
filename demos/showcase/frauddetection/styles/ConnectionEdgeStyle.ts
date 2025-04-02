@@ -39,7 +39,7 @@ import {
 import { getStroke } from './graph-styles'
 
 /**
- * A very basic edge style that uses HTML5 canvas high-performance rendering.
+ * A very basic edge style that uses HTML canvas high-performance rendering.
  * Arrows are not supported by this implementation.
  */
 export class ConnectionEdgeStyle extends EdgeStyleBase {
@@ -77,7 +77,7 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
 }
 
 /**
- * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
+ * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeRenderVisual extends HtmlCanvasVisual {
   /**
@@ -89,7 +89,7 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
   }
 
   /**
-   * Paints onto the context using HTML5 Canvas operations.
+   * Paints onto the context using HTML Canvas operations.
    */
   render(context: IRenderContext, ctx: CanvasRenderingContext2D): void {
     ctx.save()

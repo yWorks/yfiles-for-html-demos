@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-graph-builder-tree-builder.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/13-tree-builder/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/13-tree-builder/).
 
 In this tutorial step we show how to use [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) to build a graph from data, where nodes and their children are already available in a tree-like format.
 

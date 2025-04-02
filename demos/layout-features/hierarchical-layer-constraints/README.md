@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-layer-constraints.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/hierarchical-layer-constraints/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-layer-constraints/).
 
 This demo shows how to customize the assignment of nodes to layers (layering) when using the [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
 

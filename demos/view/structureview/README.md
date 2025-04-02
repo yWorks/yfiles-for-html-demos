@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/structure-view.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/structureview/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/structureview/).
 
 The Structure View is a demo component that displays group and node nesting. It updates with interactive graph changes and allows for item selection within the panel.
 

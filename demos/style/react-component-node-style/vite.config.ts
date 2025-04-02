@@ -30,15 +30,15 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import optimizer from '@yworks/optimizer/rollup-plugin'
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const plugins = [react()]
-  if (mode === 'production') {
-    plugins.push(optimizer({ logLevel: 'info', blacklist: ['theme', 'mode', 'variant'] }))
-  }
   return {
     base: './',
-    plugins,
+    plugins: [
+      react(),
+      mode === 'production'
+        ? optimizer({ logLevel: 'info', blacklist: ['theme', 'mode', 'variant'] })
+        : undefined
+    ],
     build: {
       minify: false,
       chunkSizeWarningLimit: 3000

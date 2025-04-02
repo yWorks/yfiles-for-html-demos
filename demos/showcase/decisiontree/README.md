@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/decision-tree.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/decisiontree/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/decisiontree/).
 
 This demo shows how to create an interactive decision tree from a graph.
 

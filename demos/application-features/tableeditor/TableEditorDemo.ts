@@ -227,6 +227,19 @@ function configureTableEditing(): TableEditorInputMode {
   clipboard.parentNodeDetection = ParentNodeDetectionModes.PREVIOUS_PARENT
   graphComponent.clipboard = clipboard
 
+  graphInputMode.addEventListener('deleted-item', ({ item }) => {
+    console.log('GEIM: deleted item', item)
+  })
+  tableInputMode.addEventListener('deleted-item', ({ item }) => {
+    console.log('TEIM: deleted item', item)
+  })
+  tableInputMode.addEventListener('deleted-selection', (args) => {
+    console.log('TEIM: deleted selection')
+  })
+  graphInputMode.editLabelInputMode.addEventListener('label-edited', ({ item }) => {
+    console.log('GEIM.ELIM: label-edited', item)
+  })
+
   return tableInputMode
 }
 

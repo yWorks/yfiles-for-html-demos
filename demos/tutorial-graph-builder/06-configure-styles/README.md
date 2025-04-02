@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-graph-builder-configure-styles.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/06-configure-styles/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/06-configure-styles/).
 
 [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) supports various approaches for styling the graph elements. They range from simple default visualizations to accessing the business data for defining specific styles.
 

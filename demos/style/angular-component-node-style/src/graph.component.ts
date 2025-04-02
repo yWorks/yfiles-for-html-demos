@@ -42,8 +42,9 @@ import { AngularNodeComponentStyle } from './AngularComponentNodeStyle'
 import { NodeComponent } from './node.component'
 
 @Component({
-  selector: 'graph-component',
-  templateUrl: './graph.component.html'
+    selector: 'graph-component',
+    templateUrl: './graph.component.html',
+    standalone: false
 })
 export class GraphComponentComponent implements AfterViewInit {
   @ViewChild('graphComponentRef') graphComponentRef!: ElementRef

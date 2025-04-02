@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/preact.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/toolkit/preact/).
+[You can also run this demo online](https://www.yfiles.com/demos/toolkit/preact/).
 
 This demo shows how to integrate yFiles in a [Preact](https://preactjs.com/) application. It uses the ["No build tools route"](https://preactjs.com/guide/v10/getting-started#no-build-tools-route) of the preact setup for simplicity. Note that //@ts-ignore comments have to be used when importing from esm.sh URLs, as TypeScript has no way of knowing the types of these packages. The interoperability between the yFiles graph view and the preact components that is demonstrated in this demo would not change with a different configuration setup, though (e.g. Preact CLI, custom bundling pipeline).
 

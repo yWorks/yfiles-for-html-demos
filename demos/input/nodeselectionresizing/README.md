@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/node-selection-resizing.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/nodeselectionresizing/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/nodeselectionresizing/).
 
 This demo shows how to implement resizing handles for a selection of nodes. When multiple nodes are selected, dragging the reshape handles will resize the selection as a whole. This demo supports two modes:
 

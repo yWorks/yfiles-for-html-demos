@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/snapping.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/snapping/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/snapping/).
 
 This demo shows how to enable [snapping](https://docs.yworks.com/yfileshtml/#/dguide/interaction-snapping) (guide lines) for graph elements. This is provided through class [GraphSnapContext](https://docs.yworks.com/yfileshtml/#/api/GraphSnapContext).
 

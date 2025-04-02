@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/logic-gates.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/logicgates/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/logicgates/).
 
 This demo showcases yFiles for HTML to visualize a digital system with logic gates.
 

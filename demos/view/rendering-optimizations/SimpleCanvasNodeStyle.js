@@ -40,7 +40,7 @@ import {
   Visual
 } from '@yfiles/yfiles'
 /**
- * A simple HTML5 Canvas node style that draws a rectangle with a solid fill.
+ * A simple HTML Canvas node style that draws a rectangle with a solid fill.
  */
 export default class SimpleCanvasNodeStyle extends NodeStyleBase {
   color
@@ -115,7 +115,7 @@ export default class SimpleCanvasNodeStyle extends NodeStyleBase {
   }
 }
 /**
- * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
+ * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeRenderVisual extends HtmlCanvasVisual {
   layout

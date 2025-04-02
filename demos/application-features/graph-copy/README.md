@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/graph-copy.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/graph-copy/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/graph-copy/).
 
 This demo shows how to use the [GraphCopier](https://docs.yworks.com/yfileshtml/#/api/GraphCopier) to copy a graph or part of it to another graph.
 

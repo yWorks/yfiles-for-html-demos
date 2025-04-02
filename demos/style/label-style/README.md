@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/label-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/label-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/label-style/).
 
 This demo shows the most important configuration options for the built-in [LabelStyle](https://docs.yworks.com/yfileshtml/#/api/LabelStyle) class.
 

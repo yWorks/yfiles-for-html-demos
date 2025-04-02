@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/component-drag-and-drop.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/componentdraganddrop/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/componentdraganddrop/).
 
 A demo that shows how to make space for components that you can drag from a palette onto the canvas.
 

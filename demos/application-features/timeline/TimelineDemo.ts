@@ -39,7 +39,7 @@ import {
 import { type ImportNode, type Node, type TimelineData, timelineData } from './timeline-data'
 import { type TimeEntry, Timeline } from './timeline-component/Timeline'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '../../resources/demo-ui/finish-loading'
+import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 
 /**

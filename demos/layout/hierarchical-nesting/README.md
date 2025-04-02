@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/hierarchical-nesting.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/hierarchical-nesting/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/hierarchical-nesting/).
 
 This demo shows how to nicely expand and collapse sub-graphs organized in groups. Folding ('collapsed groups') can help to keep complex hierarchically organized diagrams clear and straightforward by showing only parts of the entire structure.
 

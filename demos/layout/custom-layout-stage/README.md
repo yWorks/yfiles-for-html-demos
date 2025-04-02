@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/custom-layout-stage.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/custom-layout-stage/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/custom-layout-stage/).
 
 ## Custom Layout Stage Demo
 

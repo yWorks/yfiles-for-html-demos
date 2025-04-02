@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/node-labeling.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/node-labeling/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/node-labeling/).
 
 This demo shows how to use the [GenericLabeling](https://docs.yworks.com/yfileshtml/#/api/GenericLabeling) algorithm (see also [Generic Labeling](https://docs.yworks.com/yfileshtml/#/dguide/label_placement-generic_labeling) in the Developer's Guide) to set the positions of labels. Additionally, we show how to set rules which define preferred placement positions of specific label positions using [NodeLabelCandidates](https://docs.yworks.com/yfileshtml/#/api/NodeLabelCandidates).
 

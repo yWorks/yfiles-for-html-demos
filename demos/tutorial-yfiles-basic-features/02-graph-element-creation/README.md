@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-basic-features-graph-element-creation.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/02-graph-element-creation/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-yfiles-basic-features/02-graph-element-creation/).
 
 ## How to create a graph programmatically
 

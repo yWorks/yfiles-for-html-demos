@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/port-aware-tree-builder.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/databinding/port-aware-tree-builder/).
+[You can also run this demo online](https://www.yfiles.com/demos/databinding/port-aware-tree-builder/).
 
 This demo automatically builds a graph from business data using [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder).  
 The business data is stored in **JSON** format.

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-styles.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/layoutstyles/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/layoutstyles/).
 
 This demo showcases the most used layout algorithms of yFiles, including hierarchical, organic, orthogonal, tree, circular, radial tree, and several edge routing styles.
 

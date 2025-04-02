@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-organic-substructures.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/organic-substructures/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/organic-substructures/).
 
 This demo shows the ability of [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) to consider substructures in the graph.
 

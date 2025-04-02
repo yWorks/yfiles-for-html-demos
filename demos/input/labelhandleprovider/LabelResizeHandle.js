@@ -45,7 +45,7 @@ import {
   Point,
   Size
 } from '@yfiles/yfiles'
-import { OrientedRectangleRendererBase } from '../../utils/OrientedRectangleRendererBase'
+import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectangleRendererBase'
 /**
  * A custom {@link IHandle} implementation that allows resizing a label.
  */

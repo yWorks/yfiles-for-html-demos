@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/size-constraint-provider.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/sizeconstraintprovider/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/sizeconstraintprovider/).
 
 This demo shows how resizing of nodes can be restricted.
 

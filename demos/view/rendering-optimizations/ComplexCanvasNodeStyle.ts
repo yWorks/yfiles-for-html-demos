@@ -43,7 +43,7 @@ import {
 } from '@yfiles/yfiles'
 
 /**
- * A node style for HTML5 Canvas rendering with a complex visualization. Its visual complexity is
+ * A node style for HTML Canvas rendering with a complex visualization. Its visual complexity is
  * similar to the complex SVG node style. As a result, their performance is comparable.
  */
 export default class ComplexCanvasNodeStyle extends NodeStyleBase {
@@ -250,7 +250,7 @@ function createColorSchemes(): ColorScheme[] {
 }
 
 /**
- * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
+ * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeRenderVisual extends HtmlCanvasVisual {
   /**

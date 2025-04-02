@@ -114,7 +114,7 @@ export class NodeDragInputMode extends InputModeBase {
   }
   //////////////////////////// native drag events
   /**
-   * The actual HTML5 drag has been started on the div.
+   * The actual HTML drag has been started on the div.
    * Sets the pre-rendered image which is dragged and the drag data.
    */
   onDragStarted(event) {
@@ -131,7 +131,7 @@ export class NodeDragInputMode extends InputModeBase {
     }
   }
   /**
-   * The actual HTML5 drag has been ended.
+   * The actual HTML drag has been ended.
    * Dispatch a mouse up event on the component.
    */
   onDragEnd() {

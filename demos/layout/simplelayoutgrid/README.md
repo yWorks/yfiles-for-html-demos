@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/simple-layout-grid.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/simplelayoutgrid/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/simplelayoutgrid/).
 
 This demo shows how to create a simple [LayoutGrid](https://docs.yworks.com/yfileshtml/#/api/LayoutGrid) that will be used by the hierarchical layout algorithm.
 

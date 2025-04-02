@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/basic-demo.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/loading/basic-demo/).
+[You can also run this demo online](https://www.yfiles.com/demos/loading/basic-demo/).
 
 ## Description
 

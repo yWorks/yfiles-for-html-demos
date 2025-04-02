@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-orthogonal.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/orthogonal/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/orthogonal/).
 
 This demo shows basic configuration options for the [Orthogonal Layout](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout).
 

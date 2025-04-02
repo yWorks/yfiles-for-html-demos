@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/port-candidate-provider.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/portcandidateprovider/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/portcandidateprovider/).
 
 This demo shows how edge creation can be customized by implementing the [IPortCandidateProvider](https://docs.yworks.com/yfileshtml/#/api/IPortCandidateProvider) interface.
 

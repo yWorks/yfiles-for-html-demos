@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/simple-drag-and-drop.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/drag-and-drop/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/drag-and-drop/).
 
 This demo shows how to use [NodeDropInputMode](https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode) for dragging nodes from a separate panel to drop them into the graph component.
 

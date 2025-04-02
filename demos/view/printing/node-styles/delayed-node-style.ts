@@ -33,6 +33,7 @@ import {
   SvgVisual,
   type Visual
 } from '@yfiles/yfiles'
+import './delayed-node-style.css'
 
 /**
  * This node style changes its color after a while.
@@ -43,25 +44,43 @@ export class DelayedNodeStyle extends NodeStyleBase {
 
   protected createVisual(context: IRenderContext, node: INode): Visual | null {
     const { x, y, width, height } = node.layout
+
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+    text.setAttribute('text-anchor', 'middle')
+    text.setAttribute('dominant-baseline', 'middle')
+    text.setAttribute('width', '20')
+    text.setAttribute('height', '20')
+    text.setAttribute('x', `${width * 0.5}`)
+    text.setAttribute('y', `${height * 0.5}`)
+    text.classList.add('loading-text')
+    text.textContent = '↺'
+
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-    rect.setAttribute('x', x.toString())
-    rect.setAttribute('y', y.toString())
     rect.setAttribute('width', width.toString())
     rect.setAttribute('height', height.toString())
+    rect.setAttribute('fill', '#E0E0E0')
+
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    g.appendChild(rect)
+    g.appendChild(text)
 
     const promise = new Promise<void>((resolve) => {
       setTimeout(
         () => {
-          rect.setAttribute('fill', 'tomato')
+          rect.setAttribute('fill', '#4CAF50')
+          text.classList.remove('loading-text')
+          text.textContent = ''
           resolve()
           DelayedNodeStyle.pendingPromises.delete(promise)
         },
-        200 + Math.random() * 800
+        400 + Math.random() * 800
       )
     })
     DelayedNodeStyle.pendingPromises.add(promise)
 
-    return new SvgVisual(rect)
+    SvgVisual.setTranslate(g, x, y)
+
+    return new SvgVisual(g)
   }
 
   protected updateVisual(
@@ -70,11 +89,11 @@ export class DelayedNodeStyle extends NodeStyleBase {
     node: INode
   ): Visual | null {
     const { x, y, width, height } = node.layout
-    const rect = oldVisual.svgElement as SVGRectElement
-    rect.setAttribute('x', x.toString())
-    rect.setAttribute('y', y.toString())
+    const g = oldVisual.svgElement as SVGGElement
+    const rect = g.children[0] as SVGRectElement
     rect.setAttribute('width', width.toString())
     rect.setAttribute('height', height.toString())
+    SvgVisual.setTranslate(g, x, y)
     return oldVisual
   }
 }

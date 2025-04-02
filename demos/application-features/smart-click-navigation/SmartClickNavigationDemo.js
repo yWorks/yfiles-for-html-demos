@@ -55,7 +55,6 @@ let graphComponent
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  // Conveniently store a reference to the graph that is displayed
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
   // Initializes the input mode

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/clipboard.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/clipboard/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/clipboard/).
 
 The Clipboard demo shows different ways of using [GraphClipboard](https://docs.yworks.com/yfileshtml/#/api/GraphClipboard) for Copy & Paste operations.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/arrange-objects.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/arrange-objects/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/arrange-objects/).
 
 This demo presents simple operations for aligning and distributing nodes.
 

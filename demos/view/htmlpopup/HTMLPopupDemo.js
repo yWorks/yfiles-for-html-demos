@@ -190,6 +190,8 @@ function initializeInputMode(graphComponent) {
     selectableItems: GraphItemTypes.NONE,
     marqueeSelectableItems: GraphItemTypes.NONE
   })
+  // As the selection is deactivated, the focused item is highlighted instead
+  graphComponent.focusIndicatorManager.showFocusPolicy = 'when-focused'
   mode.toolTipInputMode.toolTipLocationOffset = new Point(10, 10)
   mode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.item instanceof INode && !evt.handled) {

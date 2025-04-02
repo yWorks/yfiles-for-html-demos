@@ -42,7 +42,7 @@ import { createRoot, type Root } from 'react-dom/client'
 /**
  * The interface of the props passed to the SVG react component for rendering the label contents.
  */
-export interface ReactComponentLabelStyleProps<TTag = any> {
+export interface ReactComponentLabelStyleProps<TTag = unknown> {
   width: number
   height: number
   selected: boolean
@@ -114,7 +114,7 @@ export default class ReactComponentLabelStyle<TTag> extends LabelStyleBase<
     // graph.
     context.setDisposeCallback(
       svgVisual,
-      (_: IRenderContext, removedVisual: ReactStyleSvgVisual<any>) => {
+      (_: IRenderContext, removedVisual: ReactStyleSvgVisual<unknown>) => {
         removedVisual.tag.root.unmount()
         return null
       }

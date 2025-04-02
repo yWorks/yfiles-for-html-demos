@@ -35,9 +35,9 @@ import {
   PointerEventArgs,
   Rect
 } from '@yfiles/yfiles'
-import { fetchLicense } from '../../resources/fetch-license'
-import { finishLoading } from '../../resources/demo-ui/finish-loading'
-import { initDemoStyles } from '../../resources/demo-styles'
+import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
+import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 async function run() {
   License.value = await fetchLicense()
   // initialize the graph component

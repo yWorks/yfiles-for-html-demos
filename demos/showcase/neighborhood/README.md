@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/neighborhood-view.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/neighborhood/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/neighborhood/).
 
 The Neighborhood demo shows the neighborhood of the currently selected node alongside the graph. The neighborhood view is a filtered copy of the original graph. There are different modes for the neighborhood computation. The currently selected node is highlighted inside the neighborhood view.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/selection-styling.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/selectionstyling/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/selectionstyling/).
 
 The Selection Styling demo shows customized selection painting of nodes, edges and labels by decorating these items with a corresponding style.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/port-aware-adjacency-graph-builder.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/databinding/port-aware-adjacency-graph-builder/).
+[You can also run this demo online](https://www.yfiles.com/demos/databinding/port-aware-adjacency-graph-builder/).
 
 This demo automatically builds a graph from business data using [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder).  
 The business data is stored in **JSON** format.

@@ -307,7 +307,7 @@ function initializeInputModes() {
     })
   )
   // disable default focus indicator
-  graphComponent.graph.decorator.nodes.focusRenderer.hide()
+  graphComponent.focusIndicatorManager.enabled = false
   let currentNode = null
   // set a css class to the currently focused node that changes its background color to orange
   graphComponent.addEventListener('current-item-changed', () => {

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tree-graph-builder.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/databinding/treebuilder/).
+[You can also run this demo online](https://www.yfiles.com/demos/databinding/treebuilder/).
 
 This demo interactively builds and modifies a graph from **JSON** business data using class [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder).
 

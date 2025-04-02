@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/single-selection.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/singleselection/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/singleselection/).
 
 This demo shows how to configure [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) for single selection mode. In this mode, only one graph item can be selected at a time.
 

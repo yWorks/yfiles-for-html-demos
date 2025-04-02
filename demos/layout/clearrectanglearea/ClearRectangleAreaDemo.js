@@ -61,7 +61,7 @@ import SampleData from './resources/SampleData'
 import { createDemoGroupStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
-import { RectangleRenderer } from '../../utils/RectangleRenderer'
+import { RectangleRenderer } from '@yfiles/demo-utils/RectangleRenderer'
 // UI components
 const samplesComboBox = document.querySelector('#sample-graph-combobox')
 const clearingStrategyComboBox = document.querySelector('#clearing-strategy-combobox')

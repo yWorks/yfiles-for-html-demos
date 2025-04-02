@@ -14,10 +14,10 @@
   "dependencies": {
     "@yfiles/demo-resources": "../../resources",
     "@yfiles/demo-utils": "../../utils",
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.1+dev.tgz"
   },
   "devDependencies": {
-    "@yworks/optimizer": "^1.8.2",
+    "@yworks/optimizer": "^1.8.4",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "7.1.2",
     "html-webpack-harddisk-plugin": "2.0.0",

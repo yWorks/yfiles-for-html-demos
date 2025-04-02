@@ -49,6 +49,7 @@ export type TemplateStyleCache<TModelItem extends IModelItem> = {
   templateContext: TemplateContext<TModelItem>
   update: (newContext: any, newTemplateContext: any) => void
   cleanup: () => void
+  cssClass: string | undefined
 }
 
 export type StringTemplateStyleOptions = {
@@ -112,7 +113,14 @@ export function createSVG<TModelItem extends IModelItem>(
   renderFunction: RenderFunction,
   cssClass: string | undefined,
   arrange: (element: SVGElement) => void
-) {
+): SvgVisual & { svgElement: SVGGElement } & {
+  tag: {
+    templateContext: TemplateContext<TModelItem>
+    update: (newContext: any, templateContext: any) => void
+    cleanup: () => void
+    cssClass: string | undefined
+  }
+} {
   const showIndicators = templateContext.updateState(renderContext)
 
   const {
@@ -139,7 +147,8 @@ export function createSVG<TModelItem extends IModelItem>(
   const svgVisual = SvgVisual.from(groupElement, {
     templateContext,
     update,
-    cleanup
+    cleanup,
+    cssClass
   })
 
   if (showIndicators) {
@@ -167,6 +176,7 @@ export function updateSVG<TModelItem extends IModelItem>(
   oldVisual: TaggedSvgVisual<SVGGElement, TemplateStyleCache<TModelItem>>,
   item: TModelItem,
   renderContext: IRenderContext,
+  cssClass: string | undefined,
   arrange: (element: SVGElement) => void
 ) {
   const cache = oldVisual.tag
@@ -191,6 +201,16 @@ export function updateSVG<TModelItem extends IModelItem>(
     } else {
       svgElement.classList.remove('yfiles-focused')
     }
+  }
+
+  if (cache.cssClass !== cssClass) {
+    if (cache.cssClass) {
+      svgElement.classList.remove(cache.cssClass)
+    }
+    if (cssClass) {
+      svgElement.classList.add(cssClass)
+    }
+    cache.cssClass = cssClass
   }
 
   cache.update(item.tag, templateContext)

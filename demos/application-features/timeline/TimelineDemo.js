@@ -36,7 +36,7 @@ import {
 import { timelineData } from './timeline-data'
 import { Timeline } from './timeline-component/Timeline'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '../../resources/demo-ui/finish-loading'
+import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 /**
  * The main graph component that displays the graph.

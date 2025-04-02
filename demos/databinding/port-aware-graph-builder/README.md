@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/port-aware-graph-builder.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/databinding/port-aware-graph-builder/).
+[You can also run this demo online](https://www.yfiles.com/demos/databinding/port-aware-graph-builder/).
 
 This demo automatically builds a graph from business data using a [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder).  
 The business data is stored in **JSON** format.

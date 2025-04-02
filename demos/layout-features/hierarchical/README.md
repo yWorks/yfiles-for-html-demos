@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-hierarchical.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/hierarchical/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical/).
 
 This demo shows common configuration options for [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
 

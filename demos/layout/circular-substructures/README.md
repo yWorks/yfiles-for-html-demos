@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/circular-substructures.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/circular-substructures/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/circular-substructures/).
 
 This demo showcases how the [CircularLayout](https://docs.yworks.com/yfileshtml/#/api/CircularLayout) algorithm handles substructures and node types.
 

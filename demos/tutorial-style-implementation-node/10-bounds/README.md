@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-node-bounds.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-node/10-bounds/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-node/10-bounds/).
 
 Some functions of yFiles for HTML require the exact boundaries of the node visualization. This includes fitting the whole graph into the viewport, enabling scrollbars, or just figuring out how large an exported image should be.
 

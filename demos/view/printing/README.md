@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/printing.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/printing/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/printing/).
 
 This demo shows how to export the whole diagram or a part of it to an SVG on the client and how to print this graphic.
 

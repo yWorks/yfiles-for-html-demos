@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/graph-viewer.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/graphviewer/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/graphviewer/).
 
 The Graph Viewer demo displays several sample graphs from various domains. It allows navigating the diagram but prohibits editing.
 

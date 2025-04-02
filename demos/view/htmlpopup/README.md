@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/html-popup.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/htmlpopup/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/htmlpopup/).
 
 This demo shows HTML pop-up panels that display additional information about a clicked node or edge.
 

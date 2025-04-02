@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/rectangular-indicator.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/rectangular-indicator/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/rectangular-indicator/).
 
 This demo shows how we can apply a rectangular indicator to a graph.
 

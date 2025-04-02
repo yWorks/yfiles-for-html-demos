@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/large-tree.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/large-tree/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/large-tree/).
 
 The Large Tree Demo uses [WebGL](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) as the rendering technique to display a large tree graph in order to optimize performance.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-organic.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/organic/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/organic/).
 
 This demo shows basic configuration options for the [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout). The default behavior is modified in various ways, some of which are described below:
 

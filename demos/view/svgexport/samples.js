@@ -40,9 +40,9 @@ import {
   Rect,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
-import ImageSwitch from './resources/switch.svg'
-import ImageWorkstation from './resources/workstation.svg'
-import { DelayedNodeStyle } from './delayed-node-style'
+import ImageSwitch from './node-styles/switch.svg'
+import ImageWorkstation from './node-styles/workstation.svg'
+import { DelayedNodeStyle } from './node-styles/delayed-node-style'
 export async function createSampleGraph(graphComponent) {
   // add nodes and edges with different visualizations to demonstrate that the SVG export does not
   // depend on the styles used to visualize elements
@@ -213,9 +213,12 @@ function addBezierEdgesSample(graph) {
 }
 function addDelayedSample(graph) {
   for (let i = 0; i < 5; i++) {
-    graph.createNode({
+    const n = graph.createNode({
       layout: [300, 350 + 50 * i, 50, 50],
       style: new DelayedNodeStyle()
     })
+    if (i === 0) {
+      graph.addLabel(n, 'Delayed Rendering', ExteriorNodeLabelModel.TOP)
+    }
   }
 }

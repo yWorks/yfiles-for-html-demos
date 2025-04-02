@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-basic-features-graph-analysis.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/12-graph-analysis/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-yfiles-basic-features/12-graph-analysis/).
 
 ## How to analyze the graph structure.
 

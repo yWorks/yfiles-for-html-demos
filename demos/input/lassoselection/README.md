@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/lasso-selection.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/lassoselection/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/lassoselection/).
 
 This demo shows how to configure [LassoSelectionInputMode](https://docs.yworks.com/yfileshtml/#/api/LassoSelectionInputMode) for lasso selection mode. In this mode, graph items can be selected by dragging a lasso line around them.
 

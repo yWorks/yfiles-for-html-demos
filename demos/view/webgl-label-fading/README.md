@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/webgl-label-fading.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/webgl-label-fading/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/webgl-label-fading/).
 
 This demo shows how to achieve a simple _level of detail (LOD)_ display in [WebGL](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) rendering by fading out labels on zoom levels smaller than a chosen threshold.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/reshape-handle-provider.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/reshapehandleprovider/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/reshapehandleprovider/).
 
 This demo shows how to implement a custom [IReshapeHandleProvider](https://docs.yworks.com/yfileshtml/#/api/IReshapeHandleProvider).
 

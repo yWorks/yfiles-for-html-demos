@@ -60,7 +60,7 @@ import FastCanvasStyles from './FastCanvasStyles'
 import { DemoStyleOverviewRenderer } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
-import { openGraphML } from '../../utils/graphml-support'
+import { openGraphML } from '@yfiles/demo-utils/graphml-support'
 import { registerTemplateStyleSerialization } from '@yfiles/demo-utils/template-styles/MarkupExtensions'
 import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/StringTemplateNodeStyle'
 let graphComponent
@@ -198,6 +198,8 @@ function initializeInputMode() {
     selectableItems: GraphItemTypes.NONE,
     marqueeSelectableItems: GraphItemTypes.NONE
   })
+  // As the selection is deactivated, the focused item is highlighted instead
+  graphComponent.focusIndicatorManager.showFocusPolicy = 'always'
   // we want to enable the user to collapse and expand groups interactively, even though we
   // are just a "viewer" application
   graphViewerInputMode.navigationInputMode.allowCollapseGroup = true

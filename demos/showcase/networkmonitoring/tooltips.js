@@ -34,7 +34,7 @@ const toolTipItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
  *
  * For more information on tooltips, please see the
  * {@link https://docs.yworks.com/yfileshtml/#/dguide/interaction-support#interaction-tooltips developer's guide section about tooltips}
- * and the {@link https://www.yworks.com/demos/application-features/tooltips/ tooltips demo}.
+ * and the {@link https://www.yfiles.com/demos/application-features/tooltips/ tooltips demo}.
  *
  * @param graphInputMode The graph component.
  * @param getToolTip Provides the tooltip content for a graph item.

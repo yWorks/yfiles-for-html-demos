@@ -163,9 +163,12 @@ function configureInteraction(graphComponent: GraphComponent): void {
   const mode = new GraphViewerInputMode({
     clickableItems: GraphItemTypes.NODE,
     focusableItems: GraphItemTypes.NODE,
-    selectableItems: GraphItemTypes.NONE
+    selectableItems: GraphItemTypes.NONE,
+    marqueeSelectableItems: GraphItemTypes.NONE
   })
-  mode.marqueeSelectionInputMode.enabled = false
+
+  // As the selection is deactivated, the focused item is highlighted instead
+  graphComponent.focusIndicatorManager.showFocusPolicy = 'when-focused'
 
   mode.addEventListener('item-double-clicked', async (evt) => {
     await loadFriends(evt.item)

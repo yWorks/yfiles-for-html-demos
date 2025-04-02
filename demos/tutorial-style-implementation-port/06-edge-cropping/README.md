@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-port-edge-cropping.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-port/06-edge-cropping/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-port/06-edge-cropping/).
 
 In this tutorial step, we will add support for edge cropping at the port. Since in this example, the ports protrude from their owner node’s bounds, the edge’s arrow can be hidden behind the port.
 

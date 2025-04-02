@@ -104,7 +104,7 @@
       notAvailableNotice.innerHTML = `<div>Requires "${
         isViewerPackage ? 'layout' : 'viewer'
       }" features to run.</div>
-         <div><a href="https://www.yworks.com/demos/${demo.demoPath}">Run it online</a>
+         <div><a href="https://www.yfiles.com/demos/${demo.demoPath}">Run it online</a>
           or view the source code files.</div>`
       gridItem.appendChild(notAvailableNotice)
     }

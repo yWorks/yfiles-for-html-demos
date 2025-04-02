@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-basic-features-setting-styles.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/04-setting-styles/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-yfiles-basic-features/04-setting-styles/).
 
 ## How to influence visual appearance.
 

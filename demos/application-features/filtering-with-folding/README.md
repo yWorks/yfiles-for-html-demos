@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/filtering-with-folding.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/filtering-with-folding/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/filtering-with-folding/).
 
 This sample shows how to configure [filtering](https://docs.yworks.com/yfileshtml/#/dguide/filtering) and [folding](https://docs.yworks.com/yfileshtml/#/dguide/folding) in the same application. While both features can be used in the same graph, the order of initialization is important.
 

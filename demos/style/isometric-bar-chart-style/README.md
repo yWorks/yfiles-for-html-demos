@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/isometric-bar-chart-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/isometric-bar-chart-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/isometric-bar-chart-style/).
 
 ## Isometric Bar-Chart Augmentation
 

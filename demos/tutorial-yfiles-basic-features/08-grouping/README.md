@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-basic-features-grouping.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/08-grouping/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-yfiles-basic-features/08-grouping/).
 
 This step shows how to configure [support for grouped or hierarchically organized graphs](https://docs.yworks.com/yfileshtml/#/dguide/interaction-support#interaction-grouping).
 

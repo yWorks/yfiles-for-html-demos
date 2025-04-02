@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/level-of-detail-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/level-of-detail-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/level-of-detail-style/).
 
 This demo shows how to display different styles depending on the current zoom level in order to implement a level of detail rendering.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/css-item-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/css-item-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/css-item-style/).
 
 This demo styles and animates all graph items via CSS and the `cssClass` property on the library styles.
 

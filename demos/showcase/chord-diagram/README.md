@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/chord-diagram.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/chord-diagram/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/chord-diagram/).
 
 This demo shows how to arrange and visualize a graph as a chord diagram.
 

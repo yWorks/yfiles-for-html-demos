@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-node-create-a-custom-shape.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-node/02-create-a-custom-shape/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-node/02-create-a-custom-shape/).
 
 Currently, the custom node style renders a rectangle. This is something yFiles for HTML already offers out-of-the box with [ShapeNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle) and [RectangleNodeStyle](https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle). So let’s use something a little more interesting, for example a typical card shape with a tab in the top left corner.
 

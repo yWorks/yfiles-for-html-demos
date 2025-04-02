@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/orthogonal-edge-editing.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/orthogonal-edges/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/orthogonal-edges/).
 
 This demo shows how to enable [interactive orthogonal edge editing](https://docs.yworks.com/yfileshtml/#/dguide/interaction-orthogonal_edge_editing) by enabling [orthogonal editing](https://docs.yworks.com/yfileshtml/#/api/PolylineEdgeStyle#orthogonalEditing) on the edge style.
 

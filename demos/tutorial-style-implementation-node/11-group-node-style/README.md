@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-node-group-node-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-node/11-group-node-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-node/11-group-node-style/).
 
 Now that we’ve learned how to write a style for nodes, we will apply this knowledge to group nodes. The good thing about group node styles is that they work exactly the same way as other node styles. This means that we could use our style for group nodes without changing anything.
 

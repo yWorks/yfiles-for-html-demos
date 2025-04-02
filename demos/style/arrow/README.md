@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/arrow.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/arrow/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/arrow/).
 
 The [Arrow](https://docs.yworks.com/yfileshtml/#/api/Arrow) class provides several properties to customize arrows. It can render [ArrowType](https://docs.yworks.com/yfileshtml/#/api/ArrowType)s and visualize different arrow shapes. This demo demonstrates edges with all arrow types specified in the edge labels.
 

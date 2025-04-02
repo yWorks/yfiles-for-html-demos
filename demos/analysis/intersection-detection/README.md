@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/intersection-detection.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/analysis/intersection-detection/).
+[You can also run this demo online](https://www.yfiles.com/demos/analysis/intersection-detection/).
 
 This demo showcases how to find and highlight intersections and overlaps between graph items.
 

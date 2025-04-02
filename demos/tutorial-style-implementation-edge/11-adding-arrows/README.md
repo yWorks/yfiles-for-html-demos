@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-edge-adding-arrows.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-edge/11-adding-arrows/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-edge/11-adding-arrows/).
 
 Arrows are a decorative element that can be added to both ends of an edge to indicate its direction. They commonly take the form of arrowheads.
 

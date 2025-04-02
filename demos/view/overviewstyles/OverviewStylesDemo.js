@@ -52,7 +52,7 @@ import graphData from './graph-data.json'
 import { OverviewCanvasRenderer } from './OverviewCanvasRenderer'
 import { OverviewSvgRenderer } from './OverviewSvgRenderer'
 import { detailNodeStyleTemplate, overviewNodeStyleTemplate } from './style-templates'
-import { createLitNodeStyleFromSource } from '../../utils/LitNodeStyle'
+import { createLitNodeStyleFromSource } from '@yfiles/demo-utils/LitNodeStyle'
 /**
  * The GraphComponent
  */

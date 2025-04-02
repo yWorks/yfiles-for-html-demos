@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-basic-features-managing-viewport.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/03-managing-viewport/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-yfiles-basic-features/03-managing-viewport/).
 
 ## How to influence the viewport.
 

@@ -59,7 +59,6 @@ let graphComponent: GraphComponent
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  // Conveniently store a reference to the graph that is displayed
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
 

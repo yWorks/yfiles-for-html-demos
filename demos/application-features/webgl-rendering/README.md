@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/webgl-rendering.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/webgl-rendering/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/webgl-rendering/).
 
 This demo shows how to enable the [WebGL](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) rendering mode using [WebGLGraphModelManager](https://docs.yworks.com/yfileshtml/#/api/WebGLGraphModelManager).
 

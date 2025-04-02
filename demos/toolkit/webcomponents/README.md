@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/web-components.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/toolkit/webcomponents/).
+[You can also run this demo online](https://www.yfiles.com/demos/toolkit/webcomponents/).
 
 This demo shows how yFiles for HTML can be used with Web Components.
 

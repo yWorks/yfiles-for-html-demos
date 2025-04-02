@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/timeline.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/timeline/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/timeline/).
 
 This demo shows how to add a timeline component to the graph.
 

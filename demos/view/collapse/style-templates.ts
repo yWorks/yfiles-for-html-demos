@@ -29,7 +29,7 @@
 // language=HTML
 import { LitNodeStyle, type LitNodeStyleProps } from '@yfiles/demo-utils/LitNodeStyle'
 // @ts-ignore Import via URL
-import { svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import { svg } from 'lit-html'
 import type { GraphComponent } from '@yfiles/yfiles'
 
 export function initializeStyles(graphComponent: GraphComponent): {
@@ -50,13 +50,13 @@ export function initializeStyles(graphComponent: GraphComponent): {
   defs.appendChild(element)
 
   const templateLeafNodeStyle = new LitNodeStyle(
-    (): SVGElement => svg`
+    () => svg`
   <rect stroke="none" fill="#76b041" rx="4" ry="4" width="58" height="28" transform="translate(1 1)"/>
 `
   )
 
   const templateInnerNodeStyle = new LitNodeStyle(
-    ({ tag }: LitNodeStyleProps<{ collapsed: boolean }>): SVGElement => svg`
+    ({ tag }: LitNodeStyleProps<{ collapsed: boolean }>) => svg`
       <g>
         <rect stroke="none" fill=${tag.collapsed ? '#f26419' : '#01baff'}
               rx="4" ry="4" width="60" height="30" />

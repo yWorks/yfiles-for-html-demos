@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/multi-page-layout.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/multipage/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/multipage/).
 
 This demo shows the multi-page layout that divides a large graph into several smaller page graphs.
 

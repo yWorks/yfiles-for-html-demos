@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/webgl-precompilation.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/webgl-precompilation/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/webgl-precompilation/).
 
 This demo shows how to precompile the WebGL styles you want to use. By doing this, you can avoid seeing the fallback styles that are used to render the graph while the more elaborate and more expensive to compile styles are being loaded. Instead, a loading indicator is shown while the compilation takes place.
 

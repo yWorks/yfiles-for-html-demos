@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-hierarchical-compact-groups.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/hierarchical-compact-groups/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-compact-groups/).
 
 This demo shows how to configure the [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) and the related [Coordinate Assigner](https://docs.yworks.com/yfileshtml/#/api/DefaultCoordinateAssigner) such that group nodes are drawn in a more compact way compared to the algorithm's default settings.
 

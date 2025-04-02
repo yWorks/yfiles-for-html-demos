@@ -42,9 +42,9 @@ import {
   Rect,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
-import ImageSwitch from './resources/switch.svg'
-import ImageWorkstation from './resources/workstation.svg'
-import { DelayedNodeStyle } from './delayed-node-style'
+import ImageSwitch from './node-styles/switch.svg'
+import ImageWorkstation from './node-styles/workstation.svg'
+import { DelayedNodeStyle } from './node-styles/delayed-node-style'
 
 export type Tag = {
   type?: string
@@ -236,9 +236,12 @@ function addBezierEdgesSample(graph: IGraph): void {
 
 function addDelayedSample(graph: IGraph): void {
   for (let i = 0; i < 5; i++) {
-    graph.createNode({
+    const n = graph.createNode({
       layout: [300, 350 + 50 * i, 50, 50],
       style: new DelayedNodeStyle()
     })
+    if (i === 0) {
+      graph.addLabel(n, 'Delayed Rendering', ExteriorNodeLabelModel.TOP)
+    }
   }
 }

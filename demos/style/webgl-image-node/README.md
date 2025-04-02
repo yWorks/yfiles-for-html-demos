@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/webgl-icon-node.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/webgl-image-node/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/webgl-image-node/).
 
 This demo shows how to display images in nodes rendered with [WebGL](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) using [WebGLImageNodeStyle](https://docs.yworks.com/yfileshtml/#/api/WebGLImageNodeStyle).
 

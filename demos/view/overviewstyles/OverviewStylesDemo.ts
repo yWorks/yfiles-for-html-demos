@@ -49,13 +49,13 @@ import {
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
-import type { JSONGraph } from '../../utils/json-model'
+import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import { HtmlLabelStyle } from './HtmlLabelStyle'
 import graphData from './graph-data.json'
 import { OverviewCanvasRenderer } from './OverviewCanvasRenderer'
 import { OverviewSvgRenderer } from './OverviewSvgRenderer'
 import { detailNodeStyleTemplate, overviewNodeStyleTemplate } from './style-templates'
-import { createLitNodeStyleFromSource } from '../../utils/LitNodeStyle'
+import { createLitNodeStyleFromSource } from '@yfiles/demo-utils/LitNodeStyle'
 
 /**
  * The GraphComponent

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/drag-and-drop.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/draganddrop/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/draganddrop/).
 
 This demo shows how to enable drag and drop functionality for nodes using the classes [NodeDropInputMode](https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode), [LabelDropInputMode](https://docs.yworks.com/yfileshtml/#/api/LabelDropInputMode) and [PortDropInputMode](https://docs.yworks.com/yfileshtml/#/api/PortDropInputMode).
 

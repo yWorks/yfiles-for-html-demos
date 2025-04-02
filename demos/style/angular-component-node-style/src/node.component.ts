@@ -34,10 +34,9 @@ import { NgIf } from '@angular/common'
 import { MatIconModule } from '@angular/material/icon'
 
 @Component({
-  standalone: true,
-  imports: [MatSlideToggleModule, MatCardModule, MatButtonModule, NgIf, MatIconModule],
-  templateUrl: './node.component.html',
-  styleUrls: ['./node.component.css']
+    imports: [MatSlideToggleModule, MatCardModule, MatButtonModule, NgIf, MatIconModule],
+    templateUrl: './node.component.html',
+    styleUrls: ['./node.component.css']
 })
 export class NodeComponent {
   @Input() zoom!: number

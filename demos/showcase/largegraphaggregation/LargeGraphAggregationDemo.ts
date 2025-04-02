@@ -97,7 +97,7 @@ import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { LitNodeStyle, type LitNodeStyleProps } from '@yfiles/demo-utils/LitNodeStyle'
 
 // @ts-ignore Import via URL
-import { svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import { svg } from 'lit-html'
 
 let graphComponent: GraphComponent = null!
 
@@ -753,7 +753,7 @@ class TemporaryGroupCustomizationStage extends LayoutStageBase {
  */
 function initializeStyles(): void {
   aggregationNodeStyle = new LitNodeStyle(
-    ({ layout, tag }: LitNodeStyleProps<AggregationNodeInfo>): SVGElement => {
+    ({ layout, tag }: LitNodeStyleProps<AggregationNodeInfo>) => {
       const fillColor =
         tag.aggregate.node?.tag.c ??
         (tag.isAggregated ? 'rgba(108,145,191,0.16)' : 'rgba(108,145,191,0.13)')
@@ -835,7 +835,7 @@ function loadGraph(graph: IGraph): IGraph {
   graph.nodeDefaults.size = new Size(30, 30)
 
   const nodeStyle = new LitNodeStyle(
-    ({ layout, tag }: LitNodeStyleProps<{ c: string }>): SVGElement =>
+    ({ layout, tag }: LitNodeStyleProps<{ c: string }>) =>
       svg`<ellipse cx='${layout.width * 0.5}' cy='${layout.height * 0.5}'
     rx='${layout.width * 0.5}' ry='${layout.height * 0.5}'
     stroke='#696969' fill='${tag.c}'/>`
@@ -927,10 +927,8 @@ class ZoomToNodesLayoutExecutor extends LayoutExecutor {
     if (!this.nodes.every((node) => this.graph.contains(node))) {
       throw new Error('Cannot zoom to nodes that are not in the graph')
     }
-
-    const bounds = this.nodes
-      .map((node) => node.layout.toRect())
-      .reduce((acc: Rect, current: Rect) => Rect.add(acc, current.toRect()), Rect.EMPTY)
+    const layoutNodes = this.nodes.map((node) => this.adapter!.getLayoutNode(node)!)
+    const bounds = this.adapter!.layoutGraph.getBounds(layoutNodes)
 
     const viewportAnimation = new ViewportAnimation(
       this.graphComponent,

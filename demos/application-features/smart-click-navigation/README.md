@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/smart-click-navigation.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/smart-click-navigation/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/smart-click-navigation/).
 
 This demos shows how to navigate in a large graph, especially when only a part of the graph is visible in the viewport.
 

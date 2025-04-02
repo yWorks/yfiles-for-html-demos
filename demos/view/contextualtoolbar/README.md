@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/contextual-toolbar.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/contextualtoolbar/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/contextualtoolbar/).
 
 This demo presents a contextual toolbar that provides easy to reach controls for selected graph items.
 

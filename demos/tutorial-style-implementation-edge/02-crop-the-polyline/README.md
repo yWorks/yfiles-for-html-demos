@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-edge-crop-the-polyline.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-edge/02-crop-the-polyline/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-edge/02-crop-the-polyline/).
 
 In the previous step, we generated and displayed a SVG path for an edge. However, it looks untidy as the path extends into its adjacent nodes. The reason behind it is that the path runs up to the port of the nodes, which is often located in the center of a node.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tree-map.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/treemap/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/treemap/).
 
 Tree maps allow to visualize hierarchical data using nested rectangles, which in this case are represented by graph nodes. The size of leaf nodes in a tree map is proportional to a certain data value (i.e. weight).
 

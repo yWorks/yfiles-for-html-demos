@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/directed-edge-label-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/directed-edge-label/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/directed-edge-label/).
 
 This demo shows a custom label style which visualizes an edge label with an additional arrow which points in the direction of the edge label flow.
 

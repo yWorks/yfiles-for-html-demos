@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/edge-label-placement.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/edgelabelplacement/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/edgelabelplacement/).
 
 This demo shows how to place edge labels at the preferred location with a labeling algorithm and the [PreferredPlacementDescriptor](https://docs.yworks.com/yfileshtml/#/api/PreferredPlacementDescriptor) type.
 

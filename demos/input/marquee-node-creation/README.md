@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/marquee-node-creation.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/marquee-node-creation/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/marquee-node-creation/).
 
 This demo shows how to use [MarqueeSelectionInputMode](https://docs.yworks.com/yfileshtml/#/api/MarqueeSelectionInputMode) to create new nodes.
 

@@ -14,14 +14,14 @@
   },
   "dependencies": {
     "@yfiles/demo-resources": "../../resources",
-    "solid-js": "~1.9.4",
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
+    "solid-js": "^1.9.5",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.1+dev.tgz"
   },
   "devDependencies": {
-    "solid-devtools": "^0.30.1",
+    "solid-devtools": "^0.33.0",
     "typescript": "~5.7.3",
-    "vite": "~5.4.14",
+    "vite": "^6.2.0",
     "vite-plugin-solid": "~2.11.1",
-    "@yworks/optimizer": "^1.8.2"
+    "@yworks/optimizer": "^1.8.4"
   }
 }

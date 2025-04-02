@@ -28,8 +28,8 @@
  ***************************************************************************/
 import type { GraphComponent } from '@yfiles/yfiles'
 import { GraphBuilder, Point } from '@yfiles/yfiles'
-import { getDefaultWriterOptions, toJSON } from '../../utils/json-writer'
-import type { JSONEdge, JSONGraph, JSONPoint } from '../../utils/json-model'
+import { getDefaultWriterOptions, toJSON } from '@yfiles/demo-utils/json-writer'
+import type { JSONEdge, JSONGraph, JSONPoint } from '@yfiles/demo-utils/json-model'
 import type { JSONLabel } from '@yfiles/demo-utils/json-model'
 
 /**

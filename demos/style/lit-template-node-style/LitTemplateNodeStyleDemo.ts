@@ -141,30 +141,30 @@ function initializeTextAreas(): void {
 function initializeStyles(): void {
   const graph = graphComponent.graph
   graph.nodeDefaults.style = createLitNodeStyleFromSource(
-    '({layout, tag, selected, zoom}) => svg`\n' +
-      '<g>\n' +
-      '<rect fill="#c0c0c0" width=${layout.width} height=${layout.height} x="2" y="2"></rect>\n' +
-      '<rect fill="white" stroke="#C0C0C0" width=${layout.width} height=${layout.height}></rect>\n' +
-      "<rect width=${layout.width} height=\"2\" fill=${{present:'#55B757', busy:'#E7527C',travel:'#9945E9', unavailable:'#8D8F91'}[tag.status]}></rect>\n" +
-      '<rect fill="transparent" stroke=${selected ? \'#FF6C00\' : \'transparent\'} stroke-width="3" width=${layout.width-3} height=${layout.height-3} x="1.5" y="1.5"></rect>\n' +
-      '${zoom >= 0.5 ? svg`\n' +
-      '  <image href=${\'./resources/\' + tag.icon + \'.svg\'} x="15" y="10" width="63.75" height="63.75"></image>\n' +
-      '  <image href=${\'./resources/\' + tag.status + \'_icon.svg\'} x="25" y="80" height="15" width="60"></image>\n' +
-      '  <g style="font-family: Roboto,sans-serif; fill: #444" width="185">\n' +
-      '    <text transform="translate(90 25)" style="font-size: 16px; fill: #336699">${tag.name}</text>\n' +
-      '    <text transform="translate(90 45)" style="font-size: 9px; text-transform: uppercase">${tag.position}</text>\n' +
-      '    <text transform="translate(90 72)">${tag.email}</text>\n' +
-      '    <text transform="translate(90 88)">${tag.phone}</text>\n' +
-      '    <text transform="translate(170 88)">${tag.fax}</text>\n' +
-      '  </g>\n' +
-      '  `: svg`\n' +
-      '  <image href=${\'./resources/\' + tag.icon + \'.svg\'} x="15" y="20" width="56.25" height="56.25"></image>\n' +
-      '  <g style="font-size: 15px; font-family: Roboto,sans-serif; fill: #444" width="185">\n' +
-      '    <text transform="translate(85 60)" style="font-size: 26px; fill: #336699">${tag.name}</text>\n' +
-      '  </g>\n' +
-      '  `}\n' +
-      '</g>\n' +
-      '`'
+    `({layout, tag, selected, zoom}) => svg\`
+<g>
+<rect fill="#c0c0c0" width=$\{layout.width} height=$\{layout.height} x="2" y="2"></rect>
+<rect fill="white" stroke="#C0C0C0" width=$\{layout.width} height=$\{layout.height}></rect>
+<rect width=$\{layout.width} height="2" fill=$\{{present:'#55B757', busy:'#E7527C',travel:'#9945E9', unavailable:'#8D8F91'}[tag.status]}></rect>
+<rect fill="transparent" stroke=$\{selected ? '#FF6C00' : 'transparent'} stroke-width="3" width=$\{layout.width-3} height=$\{layout.height-3} x="1.5" y="1.5"></rect>
+$\{zoom >= 0.5 ? svg\`
+  <image href=$\{'./resources/' + tag.icon + '.svg'} x="15" y="10" width="63.75" height="63.75"></image>
+  <image href=$\{'./resources/' + tag.status + '_icon.svg'} x="25" y="80" height="15" width="60"></image>
+  <g style="font-family: Roboto,sans-serif; fill: #444" width="185">
+    <text transform="translate(90 25)" style="font-size: 16px; fill: #336699">$\{tag.name}</text>
+    <text transform="translate(90 45)" style="font-size: 9px; text-transform: uppercase">$\{tag.position}</text>
+    <text transform="translate(90 72)">$\{tag.email}</text>
+    <text transform="translate(90 88)">$\{tag.phone}</text>
+    <text transform="translate(170 88)">$\{tag.fax}</text>
+  </g>
+  \`: svg\`
+  <image href=$\{'./resources/' + tag.icon + '.svg'} x="15" y="20" width="56.25" height="56.25"></image>
+  <g style="font-size: 15px; font-family: Roboto,sans-serif; fill: #444" width="185">
+    <text transform="translate(85 60)" style="font-size: 26px; fill: #336699">$\{tag.name}</text>
+  </g>
+  \`}
+</g>
+\``
   )
 
   graph.nodeDefaults.size = new Size(290, 100)

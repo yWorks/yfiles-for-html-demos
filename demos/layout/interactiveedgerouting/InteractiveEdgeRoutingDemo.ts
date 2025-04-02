@@ -44,7 +44,7 @@ import {
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import { openGraphML, saveGraphML } from '../../utils/graphml-support'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent: GraphComponent
 

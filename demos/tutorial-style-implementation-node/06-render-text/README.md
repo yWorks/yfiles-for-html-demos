@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-node-render-text.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-node/06-render-text/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-node/06-render-text/).
 
 Not all visualisations consist of shapes and colors. Frequently, the business data stored in the `tag` property also contains textual content that should be rendered. Although yFiles for HTML offers labels for that purpose, text can also be rendered as part of the node visualization. This can be useful when users don’t need to interact with the text, or when the text should be integrated into the node visualization.
 

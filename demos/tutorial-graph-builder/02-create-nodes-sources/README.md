@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-graph-builder-create-nodes-sources.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/02-create-nodes-sources/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/02-create-nodes-sources/).
 
 In this step, you will learn how to use different data sources for nodes.
 

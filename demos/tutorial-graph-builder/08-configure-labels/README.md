@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-graph-builder-configure-labels.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/08-configure-labels/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/08-configure-labels/).
 
 In this tutorial step, you will learn how to configure [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) to place the labels of the graph elements at a desired position and configure their style.
 

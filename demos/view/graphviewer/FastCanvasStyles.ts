@@ -64,7 +64,7 @@ export class FastNodeStyle extends NodeStyleBase {
 }
 
 /**
- * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
+ * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeCanvasVisual extends HtmlCanvasVisual {
   /**
@@ -122,7 +122,7 @@ export class FastEdgeStyle extends EdgeStyleBase {
 }
 
 /**
- * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
+ * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeCanvasVisual extends HtmlCanvasVisual {
   /**

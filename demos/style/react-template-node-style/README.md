@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/react-template-node-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/react-template-node-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/react-template-node-style/).
 
 This demo presents the React Component node and label style that leverages JSX and the powerful data binding features of the [React framework](https://reactjs.org/).
 

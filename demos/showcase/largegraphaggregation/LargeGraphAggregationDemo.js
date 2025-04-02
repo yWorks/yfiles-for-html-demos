@@ -94,7 +94,7 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
 // @ts-ignore Import via URL
-import { svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import { svg } from 'lit-html'
 let graphComponent = null
 /**
  * The original graph before aggregation.
@@ -802,9 +802,8 @@ class ZoomToNodesLayoutExecutor extends LayoutExecutor {
     if (!this.nodes.every((node) => this.graph.contains(node))) {
       throw new Error('Cannot zoom to nodes that are not in the graph')
     }
-    const bounds = this.nodes
-      .map((node) => node.layout.toRect())
-      .reduce((acc, current) => Rect.add(acc, current.toRect()), Rect.EMPTY)
+    const layoutNodes = this.nodes.map((node) => this.adapter.getLayoutNode(node))
+    const bounds = this.adapter.layoutGraph.getBounds(layoutNodes)
     const viewportAnimation = new ViewportAnimation(
       this.graphComponent,
       bounds,

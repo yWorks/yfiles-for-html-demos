@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/button-input-mode.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/button-input-mode/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/button-input-mode/).
 
 This demo shows how to use a custom input mode to add temporary buttons to model items.  
 The buttons can be individually styled and placed and trigger an action on click or drag.

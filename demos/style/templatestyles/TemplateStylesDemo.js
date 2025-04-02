@@ -60,7 +60,7 @@ import {
   orgchartNodeTemplate,
   orgchartPortTemplate
 } from './style-templates'
-import { finishLoading } from '../../resources/demo-ui/finish-loading'
+import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
 import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/StringTemplateNodeStyle'
 import { StringTemplateLabelStyle } from '@yfiles/demo-utils/template-styles/StringTemplateLabelStyle'
 import { StringTemplatePortStyle } from '@yfiles/demo-utils/template-styles/StringTemplatePortStyle'

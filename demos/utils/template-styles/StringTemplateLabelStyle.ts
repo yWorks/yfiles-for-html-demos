@@ -185,7 +185,7 @@ export class StringTemplateLabelStyle extends LabelStyleBase<TemplateLabelStyleV
     oldVisual: TemplateLabelStyleVisual,
     label: ILabel
   ): TemplateLabelStyleVisual | null {
-    return updateSVG(oldVisual, label, renderContext, (element: SVGElement) => {
+    return updateSVG(oldVisual, label, renderContext, this.cssClass, (element: SVGElement) => {
       const transform = LabelStyleBase.createLayoutTransform(
         renderContext,
         label.layout,

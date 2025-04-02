@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/interactive-graph-restructuring.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/interactivegraphrestructuring/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/interactivegraphrestructuring/).
 
 A demo that shows how to interactively relocate subtrees from one parent to another.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/context-menu.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/contextmenu/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/contextmenu/).
 
 This demo shows how to add a context menu to the nodes of a graph and to the canvas background.
 

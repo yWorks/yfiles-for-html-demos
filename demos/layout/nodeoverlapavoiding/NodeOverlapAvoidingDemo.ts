@@ -111,10 +111,15 @@ function initializeInputModes(): void {
   )
 
   // use a position handler that avoids overlapping,
-  // but only apply it to the selected node and not to the children of groups
+  // but only apply it to the moved node and not to the children of groups
   graph.decorator.nodes.positionHandler.addFactory(
-    () => {
-      return !editMode.moveUnselectedItemsInputMode.isDragging
+    (node) => {
+      return (
+        (!editMode.moveUnselectedItemsInputMode.isDragging &&
+          !editMode.moveSelectedItemsInputMode.isDragging) ||
+        (editMode.moveSelectedItemsInputMode.isDragging &&
+          graphComponent.selection.nodes.first() === node)
+      )
     },
     (node: INode) => {
       // Lookup the node position handler that only handles the location of the node itself

@@ -32,7 +32,6 @@ import optimizer from '@yworks/optimizer/rollup-plugin'
 import * as fs from 'node:fs'
 import path from 'node:path'
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const plugins: Plugin[] = [
     vue(),

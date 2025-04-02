@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-tree.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/tree/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/tree/).
 
 This demo shows basic configuration options for the [Tree Layout](https://docs.yworks.com/yfileshtml/#/api/TreeLayout).
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/rectangle-node-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/rectangle-node-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/rectangle-node-style/).
 
 The [RectangleNodeStyle](https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle) class can display a variety of shapes including rectangles with rounded and cut corners, hexagons, octagons, pills, half-circles, and more.
 

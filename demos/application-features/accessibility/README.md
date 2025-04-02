@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/accessibility.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/accessibility/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/accessibility/).
 
 This demo shows how to improve accessibility with ARIA attributes and a [live region](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Live_Regions) for the graph component. Switching an element in this demo, updates the live region of the graph component with the currently selected label.
 

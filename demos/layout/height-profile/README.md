@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/height-profile.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/height-profile/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/height-profile/).
 
 This demo shows how to configure the [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) algorithm to create a height profile visualization.
 

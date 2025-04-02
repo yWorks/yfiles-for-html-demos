@@ -38,7 +38,7 @@ describe('yfiles spec', () => {
     cy.visit(
       new URL(
         'testing/application-under-test/index.html',
-        Cypress.env('testingUrl') || 'http://localhost:4241/demos-ts'
+        Cypress.env('testingUrl') || 'http://localhost:4241/demos-ts/'
       ).href
     ).then(() => {
       cy.get('.loaded').should('exist')

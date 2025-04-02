@@ -36,7 +36,7 @@ import { initializeExportRectangle } from './export-rectangle/export-rectangle'
 import { initializeOptionPanel } from './option-panel/option-panel'
 import { initializeToggleWebGlRenderingButton } from './webgl-support'
 import { retainAspectRatio } from './aspect-ratio'
-import { DelayedNodeStyle } from './delayed-node-style'
+import { DelayedNodeStyle } from './node-styles/delayed-node-style'
 async function run() {
   License.value = await fetchLicense()
   // initialize the main graph component

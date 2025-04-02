@@ -109,7 +109,7 @@ export async function createIconImageData(): Promise<void> {
   const svgSize = new Size(70, 70)
   const ctx = createCanvasContext(128, 128)
   const imageDataArray = await Promise.all(
-    deviceNames.map((device) => createUrlIcon(ctx, `./resources/${device}.svg`, svgSize))
+    deviceNames.map((device) => createUrlIcon(ctx, `./node-styles/${device}.svg`, svgSize))
   )
 
   for (let i = 0; i < deviceNames.length; i++) {

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/clustering-algorithms.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/analysis/clustering/).
+[You can also run this demo online](https://www.yfiles.com/demos/analysis/clustering/).
 
 This demo showcases a selection of clustering algorithms. The algorithms presented are the following:
 

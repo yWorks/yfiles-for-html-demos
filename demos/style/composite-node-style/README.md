@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/composite-node-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/composite-node-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/composite-node-style/).
 
 This demo shows how to combine node visualizations from several styles into one.
 

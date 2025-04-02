@@ -55,7 +55,7 @@ import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-import { openGraphML, saveGraphML } from '../../utils/graphml-support'
+import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 let graphComponent
 let overviewComponent
 /**

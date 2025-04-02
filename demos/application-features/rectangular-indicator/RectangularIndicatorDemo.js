@@ -58,7 +58,7 @@ import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
-import { RectangleRenderer } from '../../utils/RectangleRenderer'
+import { RectangleRenderer } from '@yfiles/demo-utils/RectangleRenderer'
 /**
  * Application Features - Application Features Base
  *

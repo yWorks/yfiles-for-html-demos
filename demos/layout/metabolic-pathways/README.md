@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/metabolic-pathways.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/metabolic-pathways/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/metabolic-pathways/).
 
 This demo shows how to configure the [organic layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) for visualizing metabolic pathways.
 

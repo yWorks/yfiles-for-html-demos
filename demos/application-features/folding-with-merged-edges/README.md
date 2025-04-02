@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/folding-with-merged-edges.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/folding-with-merged-edges/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/folding-with-merged-edges/).
 
 This demo shows how to enable [collapsing and expanding of group nodes](https://docs.yworks.com/yfileshtml/#/dguide/folding). This is provided through class [FoldingManager](https://docs.yworks.com/yfileshtml/#/api/FoldingManager) and its support classes. Additionally, a [MergingFoldingEdgeConverter](https://docs.yworks.com/yfileshtml/#/api/MergingFoldingEdgeConverter) is used to merge edges between group nodes.
 

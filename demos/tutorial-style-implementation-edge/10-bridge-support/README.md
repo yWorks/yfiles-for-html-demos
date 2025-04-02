@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-edge-bridge-support.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-edge/10-bridge-support/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-edge/10-bridge-support/).
 
 When there are a lot of crossing edges, especially when they are orthogonal, it can be hard to determine where an edge actually leads.
 

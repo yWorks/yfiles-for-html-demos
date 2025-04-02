@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/markup-labels.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/markup-labels/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/markup-labels/).
 
 This demo shows how to create labels with rich text features using [MarkupLabelStyle](https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle).
 

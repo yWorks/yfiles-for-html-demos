@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/events-viewer.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/events/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/events/).
 
 This demo shows the multitude of events provided by the classes [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) and [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) and the _Input Modes_.
 

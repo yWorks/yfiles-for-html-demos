@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/hierarchical-grid-components.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/hierarchical-grid-components/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/hierarchical-grid-components/).
 
 This demo shows how [grid components](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#gridComponents) in the hierarchical layout can result in much more compact arrangements.
 

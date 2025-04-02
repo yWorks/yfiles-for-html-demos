@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-label-line-wrapping.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-label/07-line-wrapping/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-label/07-line-wrapping/).
 
 So far, the label text was placed in a single line unless it contained manual line breaks. In this step, we’ll introduce automatic line wrapping to our label style. Since SVG `<text>` does not support line wrapping out-of-the-box, [TextRenderSupport](https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport) provides functionality for this purpose. The enum [TextWrapping](https://docs.yworks.com/yfileshtml/#/api/TextWrapping) can be used to specify different wrapping policies like wrapping at character, or at word boundaries.
 

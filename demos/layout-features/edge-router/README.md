@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-edgerouter.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/edge-router/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/edge-router/).
 
 This demo shows common configuration options for the (polyline) [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter).
 

@@ -30,23 +30,21 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import optimizer from '@yworks/optimizer/rollup-plugin'
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const plugins = [react()]
-  if (mode === 'production') {
-    plugins.push(
-      optimizer({
-        logLevel: 'info',
-        shouldOptimize({ id }) {
-          // make sure not to exclude demo-utils since it is in node_modules and uses yFiles API
-          return id.includes('demo-utils') || !id.includes('node_modules')
-        }
-      })
-    )
-  }
   return {
     base: './',
-    plugins,
+    plugins: [
+      react(),
+      mode === 'production'
+        ? optimizer({
+            logLevel: 'info',
+            shouldOptimize({ id }) {
+              // make sure not to exclude demo-utils since it is in node_modules and uses yFiles API
+              return id.includes('demo-utils') || !id.includes('node_modules')
+            }
+          })
+        : undefined
+    ],
     resolve: {
       preserveSymlinks: true
     }

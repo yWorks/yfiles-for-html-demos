@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-organic-constraints.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/organic-constraints/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/organic-constraints/).
 
 This demo shows how to use supplemental layout data to enforce [placement constraints](https://docs.yworks.com/yfileshtml/#/api/OrganicConstraintData) when using the [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) algorithm.
 

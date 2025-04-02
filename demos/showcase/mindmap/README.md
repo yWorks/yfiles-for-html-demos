@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/mindmap-editor.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/mindmap/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/mindmap/).
 
 This demo shows an interactive mind map application used for organizing information and showing relations between items.
 

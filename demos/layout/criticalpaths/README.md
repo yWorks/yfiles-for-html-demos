@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/critical-paths.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/criticalpaths/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/criticalpaths/).
 
 This demo shows how the hierarchical and tree layout styles emphasise important, or 'critical', paths.
 

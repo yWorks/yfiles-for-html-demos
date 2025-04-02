@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphBuilder, Point } from '@yfiles/yfiles'
-import { getDefaultWriterOptions, toJSON } from '../../utils/json-writer'
+import { getDefaultWriterOptions, toJSON } from '@yfiles/demo-utils/json-writer'
 /**
  * This file provides functions to read and write a graph to a JSON string.
  * The JSON is expected to conform to the structure outlined by {@link JSONGraph}.

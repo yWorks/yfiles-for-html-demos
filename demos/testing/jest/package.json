@@ -12,6 +12,6 @@
     "jest": "^29.7.0"
   },
   "dependencies": {
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.0+dev.tgz"
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.1+dev.tgz"
   }
 }

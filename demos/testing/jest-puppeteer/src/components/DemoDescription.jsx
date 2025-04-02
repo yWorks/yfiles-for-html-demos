@@ -35,7 +35,7 @@ export default class DemoDescription extends Component {
       <div>
         <div className="demo-description__header">
           {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
-          <a href="https://www.yworks.com/products/yfiles" className="demo-description__logo" />
+          <a href="https://www.yfiles.com" className="demo-description__logo" />
         </div>
         <div className="demo-description__content">
           <h1>Jest Puppeteer Demo</h1>
@@ -90,8 +90,8 @@ export default class DemoDescription extends Component {
             <a target="_blank" rel="noopener noreferrer" href="https://github.com/jsdom/jsdom">
               jsdom
             </a>{' '}
-            environment, because yFiles for HTML needs a fully HTML5 compliant browser environment,
-            which jsdom does not provide (in particular, jsdom lacks a complete SVG DOM
+            environment, because yFiles for HTML needs a common, standards-compliant browser
+            environment, which jsdom does not provide (in particular, jsdom lacks a complete SVG DOM
             implementation).
           </p>
           <p>With puppeteer, the tests can run in a full Chrome headless environment instead.</p>

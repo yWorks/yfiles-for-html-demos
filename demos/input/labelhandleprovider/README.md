@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/label-handle-provider.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/labelhandleprovider/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/labelhandleprovider/).
 
 This demo shows how to implement custom [IHandle](https://docs.yworks.com/yfileshtml/#/api/IHandle) s that allow interactive resizing and rotation of labels.
 

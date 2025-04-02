@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/deep-zoom.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/deep-zoom/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/deep-zoom/).
 
 This demo allows you to seamlessly zoom into the contents of deeply nested group nodes, similar to what is known as "deep zoom" for images and maps.
 

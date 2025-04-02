@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/large-graph-aggregation.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/largegraphaggregation/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/largegraphaggregation/).
 
 This demo shows how to use the smart [NodeAggregation](https://docs.yworks.com/yfileshtml/#/api/NodeAggregation) algorithm for drill down exploration of a large graph.
 

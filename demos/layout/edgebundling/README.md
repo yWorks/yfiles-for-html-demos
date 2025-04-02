@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/edge-bundling.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/edgebundling/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/edgebundling/).
 
 This demo shows how edge bundling can be applied for reducing visual cluttering in dense graphs.
 

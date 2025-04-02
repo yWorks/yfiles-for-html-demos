@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/application-under-test.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/testing/application-under-test/).
+[You can also run this demo online](https://www.yfiles.com/demos/testing/application-under-test/).
 
 This demo is a simple app that is used as the test candidate in the following testing demos:
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/webgl-animations.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/webgl-animations/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/webgl-animations/).
 
 In this demo you can try out the different WebGL animations and their settings. Animations can be used, for example, to highlight an interesting element or whole part of a graph.
 

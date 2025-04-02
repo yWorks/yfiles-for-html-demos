@@ -36,16 +36,12 @@ export const App: Component = () => {
   return (
     <div class={styles.app}>
       <div class={'demo-header'}>
-        <a href="https://www.yworks.com/products/yfiles" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.yfiles.com" target="_blank" rel="noopener noreferrer">
           {' '}
           <img src={yLogo} class={'demo-header__y-logo'} alt="yWorks Logo" />{' '}
         </a>
         <div class={'demo-header__breadcrumb-wrapper'}>
-          <a
-            href="https://www.yworks.com/products/yfiles"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://www.yfiles.com" target="_blank" rel="noopener noreferrer">
             {' '}
             yFiles for HTML{' '}
           </a>{' '}

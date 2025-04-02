@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-graph-builder-configure-tags.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/09-configure-tags/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/09-configure-tags/).
 
 By default, [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) stores each business data item in the corresponding graph element’s [tag](https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag).
 

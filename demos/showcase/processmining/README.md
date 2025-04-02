@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/process-mining.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/processmining/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/processmining/).
 
 This demo shows how to extract a graph from an event log and create an animated visualization of a process flow. The diagram shows the various steps in a processing pipeline and how entities move through the pipeline.
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/overview-styling.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/overviewstyles/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/overviewstyles/).
 
 This demo shows different ways to render and style the overview:
 

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/custom-styles.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/customstyles/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/customstyles/).
 
 This demo shows how to create custom styles for nodes, edges, labels, ports, and edge arrows. Styles can use all the powerful visualisation features of Scalable Vector Graphics (SVG).
 

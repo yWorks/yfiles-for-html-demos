@@ -165,11 +165,9 @@ export default class DecisionTree {
       }
     })
     this.graphComponent.inputMode = graphViewerInputMode
-    // disable selection, ...
+    // disable selection, focus, and highlight indicators
     this.graphComponent.selectionIndicatorManager.enabled = false
-    // ... focus, and ...
     this.graphComponent.focusIndicatorManager.enabled = false
-    // ... highlight indicators
     this.graphComponent.highlightIndicatorManager.enabled = false
   }
   /**

@@ -34,7 +34,7 @@ import { createRoot, type Root } from 'react-dom/client'
 /**
  * The interface of the props passed to the SVG react component for rendering the node contents.
  */
-export interface ReactComponentNodeStyleProps<TTag = any> {
+export interface ReactComponentNodeStyleProps<TTag = unknown> {
   width: number
   height: number
   selected: boolean
@@ -104,7 +104,7 @@ export default class ReactComponentNodeStyle<TTag> extends NodeStyleBase<
     // graph.
     context.setDisposeCallback(
       svgVisual,
-      (_: IRenderContext, removedVisual: ReactStyleSvgVisual<any>) => {
+      (_: IRenderContext, removedVisual: ReactStyleSvgVisual<unknown>) => {
         removedVisual.tag.root.unmount()
         return null
       }

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-hierarchical-incremental.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/hierarchical-incremental/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-incremental/).
 
 This demo shows how to run the hierarchical layout algorithm on a predefined subset of nodes (and edges) in a graph.
 

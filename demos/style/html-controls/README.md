@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/html-controls.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/html-controls/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/html-controls/).
 
 This demo shows how a custom HTML-based node style can be used to create interactive nodes that use HTML input elements and benefit from CSS responsiveness.
 

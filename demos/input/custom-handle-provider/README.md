@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/custom-handle-provider.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/custom-handle-provider/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/custom-handle-provider/).
 
 This demo shows how to implement custom [IHandle](https://docs.yworks.com/yfileshtml/#/api/IHandle) s and an [IHandleProvider](https://docs.yworks.com/yfileshtml/#/api/IHandleProvider). In this example, these handles make it possible to interactively change the shape of the arrows visualized using [ArrowNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle).
 

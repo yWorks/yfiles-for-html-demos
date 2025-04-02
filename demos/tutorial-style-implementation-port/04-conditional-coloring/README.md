@@ -15,7 +15,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-port-conditional-coloring.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-port/04-conditional-coloring/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-port/04-conditional-coloring/).
 
 In this example, we will fill the port shape with a color that is determined by the number of connected edges. Ports with no connections will be filled green, ports with 10 or more connections will be filled red. Values between 0 and 10 will result in the hue blended between green and red. Alternatively, the color from the port’s tag is used, if defined.
 

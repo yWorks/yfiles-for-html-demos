@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-grid.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/layoutgrid/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/layoutgrid/).
 
 This demo application lets you experience the usage of a [PartitionGrid](https://docs.yworks.com/yfileshtml/#/api/PartitionGrid) for hierarchical and organic layout calculations.
 

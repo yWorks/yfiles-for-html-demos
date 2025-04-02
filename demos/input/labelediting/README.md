@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/label-editing.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/labelediting/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/labelediting/).
 
 This demo shows customizations of the interactive label editing. In particular, it shows:
 

@@ -40,7 +40,7 @@ import {
 
 // @ts-ignore Import via URL
 // eslint-disable-next-line import/no-unresolved
-import { nothing, render, svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import { nothing, render, svg } from 'lit-html'
 
 /**
  * The interface of the props passed to the lit render function for rendering the node's SVG contents.
@@ -107,7 +107,7 @@ export class LitNodeStyle<T = any> extends NodeStyleBase<LitNodeStyleVisual<T>> 
 
     const svgVisual = SvgVisual.from(gElement, props)
 
-    render(result, gElement)
+    render(result, gElement as unknown as HTMLElement)
 
     // return an SvgVisual that uses the g element that has been rendered into
     return svgVisual
@@ -141,7 +141,7 @@ export class LitNodeStyle<T = any> extends NodeStyleBase<LitNodeStyleVisual<T>> 
     ) {
       // props have changed, re-render
       const result = this.renderFunction(props)
-      render(result, gElement)
+      render(result, gElement as unknown as HTMLElement)
       oldVisual.tag = props
     }
 

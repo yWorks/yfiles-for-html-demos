@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/edge-router-grouping.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/edgeroutergrouping/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/edgeroutergrouping/).
 
 This demo shows the possibilities of edge and port grouping using the [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter). Edge groups lead to edges sharing some segments while port groups will combine the edges only in their first segment.
 

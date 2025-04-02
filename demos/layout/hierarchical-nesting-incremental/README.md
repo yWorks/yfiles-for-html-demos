@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/hierarchical-nesting-incremental.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/hierarchical-nesting-incremental/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/hierarchical-nesting-incremental/).
 
 This demo shows how to nicely lay out the newly loaded nodes when expanding folded groups in graph.
 

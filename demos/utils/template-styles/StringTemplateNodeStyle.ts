@@ -176,7 +176,7 @@ export class StringTemplateNodeStyle extends NodeStyleBase<TemplateNodeStyleVisu
     oldVisual: TemplateNodeStyleVisual,
     node: INode
   ): TemplateNodeStyleVisual | null {
-    return updateSVG(oldVisual, node, renderContext, (element: SVGElement) => {
+    return updateSVG(oldVisual, node, renderContext, this.cssClass, (element: SVGElement) => {
       SvgVisual.setTranslate(element, node.layout.x, node.layout.y)
     })
   }

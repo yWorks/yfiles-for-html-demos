@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-basic-features-basic-interaction.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-yfiles-basic-features/06-basic-interaction/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-yfiles-basic-features/06-basic-interaction/).
 
 ## How to add basic interaction.
 

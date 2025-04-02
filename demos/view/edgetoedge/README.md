@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/edge-to-edge.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/edgetoedge/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/edgetoedge/).
 
 This demo shows edge-to-edge connections. The input mode of this demo is configured to allow edges to connect not only to nodes but also to edges.
 

@@ -37,7 +37,7 @@ let androidVersion: number = null!
 let chromeVersion: number = null!
 
 /**
- * Provides basic feature detection for HTML5 and JavaScript API that is used in the demos.
+ * Provides basic feature detection for browser API that is used in the demos.
  *
  * For productive use in your project we recommend a mature solution like
  * [Modernizer](https://modernizr.com/) instead.

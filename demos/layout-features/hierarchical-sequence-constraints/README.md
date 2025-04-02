@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-sequence-constraints.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/hierarchical-sequence-constraints/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-sequence-constraints/).
 
 This demo shows how to customize the order of the nodes in a layer (sequencing) when using [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
 

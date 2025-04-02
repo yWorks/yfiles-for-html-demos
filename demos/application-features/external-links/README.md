@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/external-links.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/external-links/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/external-links/).
 
 This demo shows how to add labels that act like external links and open in a new window.
 

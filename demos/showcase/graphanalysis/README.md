@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/graph-analysis.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/graphanalysis/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/graphanalysis/).
 
 This demo showcases a selection of algorithms to analyse the structure of a graph.
 

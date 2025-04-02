@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/simple-arrow-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/simple-arrow-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/simple-arrow-style/).
 
 This demo shows how to create a simple custom arrow for edges.
 

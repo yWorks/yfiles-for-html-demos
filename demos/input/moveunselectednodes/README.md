@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/move-unselected-nodes.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/moveunselectednodes/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/moveunselectednodes/).
 
 This demo shows a special input mode that allows you to move nodes without selecting them first.
 

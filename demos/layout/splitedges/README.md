@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/split-edges.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/splitedges/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/splitedges/).
 
 This demo shows how to use split ids to align edges outside with edges inside a group nodes in [RecursiveGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout). In [RecursiveGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout) the routing for inter-edges is sometimes not satisfactory. Inter-edges are edges that connect nodes outside of a group with nodes inside of this group. Since RecursiveGroupLayout routes these edges after the rest of the graph is arranged, they sometimes don't fit into the overall layout style.
 

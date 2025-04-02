@@ -173,7 +173,7 @@ export class StringTemplatePortStyle extends PortStyleBase<TemplatePortStyleVisu
     oldVisual: TemplatePortStyleVisual,
     port: IPort
   ): TemplatePortStyleVisual | null {
-    return updateSVG(oldVisual, port, renderContext, (element: SVGElement) => {
+    return updateSVG(oldVisual, port, renderContext, this.cssClass, (element: SVGElement) => {
       SvgVisual.setTranslate(element, port.location.x, port.location.y)
     })
   }

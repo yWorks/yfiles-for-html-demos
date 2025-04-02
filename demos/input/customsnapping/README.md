@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/custom-snapping.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/customsnapping/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/customsnapping/).
 
 This demo shows how the snapping feature can be customized.
 

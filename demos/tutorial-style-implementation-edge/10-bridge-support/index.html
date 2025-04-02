@@ -41,13 +41,13 @@
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
       <a
-        href="https://www.yworks.com/products/yfiles"
+        href="https://www.yfiles.com"
         class="demo-header__y-logo"
-        title="Visit yFiles product details"
+        title="yFiles homepage"
         target="_blank"
       ></a>
       <div class="demo-header__breadcrumb-wrapper">
-        <a href="https://www.yworks.com/products/yfiles">yFiles for HTML</a>
+        <a href="https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html">yFiles for HTML</a>
         <a href="../../README.html">Demos</a>
 
         <a href="../../README.html#tutorial-style-implementation-edge">
@@ -185,7 +185,7 @@ bridgeManager.<span class="hljs-title function_">addObstacleProvider</span>(<spa
               ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">lookup</span>(<span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>, <span class="hljs-attr">type</span>: <span class="hljs-title class_">Constructor</span>&lt;<span class="hljs-built_in">any</span>&gt;): <span class="hljs-built_in">any</span> {
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">type</span> === <span class="hljs-title class_">IObstacleProvider</span>) {
     <span class="hljs-keyword">const</span> getPath = <span class="hljs-variable language_">this</span>.<span class="hljs-property">getPath</span>.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>)
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> (<span class="hljs-keyword">class</span> <span class="hljs-title class_">extends</span> <span class="hljs-title class_">BaseClass</span>(<span class="hljs-title class_">IObstacleProvider</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-title function_">new</span> (<span class="hljs-keyword">class</span> <span class="hljs-title class_">extends</span> <span class="hljs-title class_">BaseClass</span>(<span class="hljs-title class_">IObstacleProvider</span>) {
       <span class="hljs-title function_">getObstacles</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>): <span class="hljs-title class_">GeneralPath</span> | <span class="hljs-literal">null</span> {
         <span class="hljs-keyword">return</span> <span class="hljs-title function_">getPath</span>(edge)
       }

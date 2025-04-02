@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/hierarchical-subcomponents.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/subcomponents/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/subcomponents/).
 
 This demo shows how hierarchical layout can arrange selected subcomponents of a graph with different layout styles.
 

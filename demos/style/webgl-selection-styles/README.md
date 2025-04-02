@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/webgl-selection-styles.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/webgl-selection-styles/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/webgl-selection-styles/).
 
 This demo shows the available _selection_ styles for nodes, edges, and labels in WebGL rendering.
 

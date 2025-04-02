@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/isometric-drawing.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/isometricdrawing/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/isometricdrawing/).
 
 This demo displays graphs isometrically, adding an additional dimension to the visualization. This can be used to represent characteristics of the business data as height, or just because of the beautiful looks.
 

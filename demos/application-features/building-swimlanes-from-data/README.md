@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/building-swimlanes-from-data.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/building-swimlanes-from-data/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/building-swimlanes-from-data/).
 
 This demo shows how to build a graph with swimlanes using the data stored in JSON-format.
 

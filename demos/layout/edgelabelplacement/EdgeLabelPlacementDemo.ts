@@ -65,7 +65,7 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
-import { toDegrees, toRadians } from '../../utils/LegacyGeometryUtilities'
+import { toDegrees, toRadians } from '@yfiles/demo-utils/LegacyGeometryUtilities'
 
 type EdgeLabelPlacementOption = {
   text: string

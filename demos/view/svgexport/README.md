@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/svg-export.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/view/svgexport/).
+[You can also run this demo online](https://www.yfiles.com/demos/view/svgexport/).
 
 This demo shows how to export the whole diagram or a part of it to an SVG file.
 

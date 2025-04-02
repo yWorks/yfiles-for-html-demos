@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/position-handler.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/positionhandler/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/positionhandler/).
 
 This demo shows how to customize and restrict the movement behavior of nodes.
 

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { InteractiveOrganicLayoutHelper } from '../../utils/InteractiveOrganicLayoutHelper'
+import { InteractiveOrganicLayoutHelper } from '@yfiles/demo-utils/InteractiveOrganicLayoutHelper'
 import {} from '@yfiles/yfiles'
 /**
  * Provides methods for configuring the interactive organic layout to

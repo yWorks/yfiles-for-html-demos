@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/complex-highlight.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/complex-highlight-decorator/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/complex-highlight-decorator/).
 
 Shows how to highlight a node when the mouse hovers over it. The shape of the highlight effect differs depending on the data stored in the node's tag.
 

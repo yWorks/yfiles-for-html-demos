@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/general-path-node-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/general-path-node-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/general-path-node-style/).
 
 This demo shows how to create a variety of star, polygon, and other custom node styles with [GeneralPathNodeStyle](https://docs.yworks.com/yfileshtml/#/api/GeneralPathNodeStyle).
 

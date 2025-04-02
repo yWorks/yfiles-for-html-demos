@@ -30,7 +30,7 @@ import { predefinedColorSets } from './CompanyOwnershipNodeStyles'
 import { colorSets } from '@yfiles/demo-resources/demo-colors'
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
 // @ts-ignore Import via URL
-import { svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import { svg } from 'lit-html'
 // creates the template style for the nodes
 export const tableNodeStyle = new LitNodeStyle(
   ({ layout, tag }) => svg`<g>

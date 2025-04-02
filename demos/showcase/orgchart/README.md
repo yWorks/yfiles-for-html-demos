@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/organization-chart.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/orgchart/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/orgchart/).
 
 This demo shows how to create an interactive organization chart from JSON data.
 

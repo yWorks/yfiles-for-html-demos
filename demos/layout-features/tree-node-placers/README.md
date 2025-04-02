@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-tree-node-placers.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/tree-node-placers/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/tree-node-placers/).
 
 This demo shows how to use [subtree placers](https://docs.yworks.com/yfileshtml/#/api/ISubtreePlacer) with the [Tree Layout](https://docs.yworks.com/yfileshtml/#/api/TreeLayout). A subtree placer is responsible for the arrangement of a local root node and all of its subtrees.
 

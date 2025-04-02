@@ -43,7 +43,7 @@ import {
   Visual
 } from '@yfiles/yfiles'
 /**
- * A simple label style that draws the text into the HTML5 Canvas. This
+ * A simple label style that draws the text into the HTML Canvas. This
  * implementation auto-flips the drawing of the labels, if they're upside
  * down.
  */
@@ -87,7 +87,7 @@ export default class CanvasLabelStyle extends LabelStyleBase {
   }
 }
 /**
- * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
+ * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class LabelRenderVisual extends HtmlCanvasVisual {
   text
@@ -103,11 +103,11 @@ class LabelRenderVisual extends HtmlCanvasVisual {
     this.font = font
   }
   /**
-   * Paints onto the context using HTML5 Canvas operations.
+   * Paints onto the context using HTML Canvas operations.
    * Implementations should not destroy the context's state, but should make sure to restore the state to the
    * previously active state. This is especially true for the transformation and clip.
    * @param context The render context of the {@link CanvasComponent}
-   * @param htmlCanvasContext The HTML5 Canvas context to use for rendering.
+   * @param htmlCanvasContext The HTML Canvas context to use for rendering.
    */
   render(context, htmlCanvasContext) {
     htmlCanvasContext.save()
@@ -154,7 +154,7 @@ class LabelRenderVisual extends HtmlCanvasVisual {
   }
 }
 /**
- * Sets the font on the context using HTML5 Canvas.
+ * Sets the font on the context using HTML Canvas.
  */
 function setFont(htmlCanvasContext, font) {
   htmlCanvasContext.font = `${fontStyleToString(font.fontStyle)} ${font.fontWeight} ${font.fontSize}px ${font.fontFamily}`

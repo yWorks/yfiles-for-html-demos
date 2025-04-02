@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-organic-incremental.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/organic-incremental/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/organic-incremental/).
 
 This demo shows how to run the [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) algorithm on a predefined subset of nodes in a graph.
 

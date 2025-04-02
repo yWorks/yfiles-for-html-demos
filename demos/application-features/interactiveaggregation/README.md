@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/interactive-aggregation.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/interactiveaggregation/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/interactiveaggregation/).
 
 This demo shows how to analyze a graph by aggregating groups of nodes.
 

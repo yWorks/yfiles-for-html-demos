@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tooltips.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/tooltips/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/tooltips/).
 
 This demo shows how to enable tooltips for graph items and how to customize them using CSS styling.
 

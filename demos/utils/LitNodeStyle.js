@@ -38,7 +38,7 @@ import {
 } from '@yfiles/yfiles'
 // @ts-ignore Import via URL
 // eslint-disable-next-line import/no-unresolved
-import { nothing, render, svg } from 'https://unpkg.com/lit-html@2.8.0?module'
+import { nothing, render, svg } from 'lit-html'
 /**
  * A node style which uses Lit render functions for displaying the contents of a node with SVG.
  */

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/clickable-style-decorator.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/clickable-style-decorator/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/clickable-style-decorator/).
 
 This demo illustrates an approach on how to handle clicks on specific areas of the style.
 

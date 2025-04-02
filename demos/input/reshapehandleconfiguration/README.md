@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/reshape-handle-provider-configuration.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/reshapehandleconfiguration/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/reshapehandleconfiguration/).
 
 This demo shows how resizing of nodes can be customized.
 

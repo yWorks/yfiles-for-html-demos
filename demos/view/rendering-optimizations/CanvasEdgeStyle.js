@@ -41,7 +41,7 @@ import {
 } from '@yfiles/yfiles'
 /**
  * A simple edge style that draws a line from source to target node following the
- * given bends into the HTML5 Canvas.
+ * given bends into the HTML Canvas.
  */
 export default class CanvasEdgeStyle extends EdgeStyleBase {
   color
@@ -86,7 +86,7 @@ export default class CanvasEdgeStyle extends EdgeStyleBase {
   }
 }
 /**
- * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
+ * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeRenderVisual extends HtmlCanvasVisual {
   bends
@@ -110,11 +110,11 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
     this.color = `rgba(${color.r},${color.g},${color.b},${color.a})`
   }
   /**
-   * Paints onto the context using HTML5 Canvas operations.
+   * Paints onto the context using HTML Canvas operations.
    * Implementations should not destroy the context's state, but should make sure to restore the
    * state to the previously active state. This is especially true for the transformation and clip.
    * @param context The render context of the {@link CanvasComponent}
-   * @param htmlCanvasContext The HTML5 Canvas context to use for rendering.
+   * @param htmlCanvasContext The HTML Canvas context to use for rendering.
    */
   render(context, htmlCanvasContext) {
     // simply draw a black line from the source port location via all bends to the target port location

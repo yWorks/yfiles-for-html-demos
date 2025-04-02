@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/reparent-handler.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/reparenthandler/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/reparenthandler/).
 
 This demo shows how reparenting of nodes can be customized.
 

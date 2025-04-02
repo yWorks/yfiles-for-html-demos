@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/shape-node-style.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/shape-node-style/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/shape-node-style/).
 
 This demo shows the main features of the [ShapeNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle) class, most notably its supported shapes and the shape-specific effects of [keepIntrinsicAspectRatio](https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle#keepIntrinsicAspectRatio).
 

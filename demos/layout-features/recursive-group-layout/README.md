@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-recursive-group-layout.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/recursive-group-layout/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/recursive-group-layout/).
 
 This demo shows how to use the [Recursive Group Layout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout).
 

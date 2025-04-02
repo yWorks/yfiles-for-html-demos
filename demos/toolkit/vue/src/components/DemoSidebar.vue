@@ -1,6 +1,6 @@
 <template>
   <div class="demo-sidebar-header">
-    <a href="https://www.yworks.com/products/yfiles" class="demo-left-logo" />
+    <a href="https://www.yfiles.com" class="demo-left-logo" />
   </div>
   <div class="demo-sidebar-content">
     <h1>Vue Demo</h1>

@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/graph-drag-and-drop.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/graph-drag-and-drop/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/graph-drag-and-drop/).
 
 This demo shows how to add drag and drop of graphs to an app.
 

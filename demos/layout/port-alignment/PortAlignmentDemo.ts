@@ -49,7 +49,7 @@ import {
 } from '@yfiles/yfiles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import { type ColorSetName, colorSets } from '../../resources/demo-colors'
+import { type ColorSetName, colorSets } from '@yfiles/demo-resources/demo-colors'
 import data from './resources/sample.json'
 
 let graphComponent: GraphComponent

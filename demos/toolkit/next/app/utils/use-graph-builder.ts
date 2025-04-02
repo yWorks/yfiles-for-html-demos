@@ -80,6 +80,7 @@ export function useGraphBuilder(
     graphBuilder.setData(nodesSource, data.nodesSource)
     graphBuilder.setData(edgesSource, data.edgesSource)
     graphBuilder.updateGraph()
+    graphComponent.fitGraphBounds()
     layoutSupport.scheduleLayout()
   }, [graphComponent, graphBuilder, data, nodesSource, edgesSource, layoutSupport])
 }

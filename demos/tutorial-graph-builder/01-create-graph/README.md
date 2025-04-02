@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-graph-builder.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-graph-builder/01-create-graph/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/01-create-graph/).
 
 This tutorial will guide you through configuring [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) to conveniently transfer business data into a graph that you can display, manage and explore.
 

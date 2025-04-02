@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/company-ownership.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/showcase/company-ownership/).
+[You can also run this demo online](https://www.yfiles.com/demos/showcase/company-ownership/).
 
 This demo implements an interactive viewer for exploring company ownership hierarchies.
 

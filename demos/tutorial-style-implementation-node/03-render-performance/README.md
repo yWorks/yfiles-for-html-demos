@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tutorial-style-implementation-node-render-performance.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/tutorial-style-implementation-node/03-render-performance/).
+[You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-node/03-render-performance/).
 
 Until now, we have only implemented [createVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-createVisual), which creates a new DOM element for each render frame. This is not an efficient approach and will result in performance issues for large graphs.
 

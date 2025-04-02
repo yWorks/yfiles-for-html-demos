@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { GraphComponent, SvgExport, WebGLGraphModelManager } from '@yfiles/yfiles'
 import { useWebGLRendering } from './webgl-support'
-import { DelayedNodeStyle } from './delayed-node-style'
+import { DelayedNodeStyle } from './node-styles/delayed-node-style'
 /**
  * Exports a certain area of the graph to an SVG element.
  * @param graphComponent the demo's main graph view.

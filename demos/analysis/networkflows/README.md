@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/network-flows.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/analysis/networkflows/).
+[You can also run this demo online](https://www.yfiles.com/demos/analysis/networkflows/).
 
 _Network flow_ algorithms apply to directed networks in which edges have certain capacities and a flow moves from source nodes (i.e., nodes with in-degree 0) to sink nodes (i.e., nodes with out-degree 0).
 

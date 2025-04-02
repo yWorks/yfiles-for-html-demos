@@ -42,7 +42,7 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
-import { toRadians } from '../../utils/LegacyGeometryUtilities'
+import { toRadians } from '@yfiles/demo-utils/LegacyGeometryUtilities'
 
 type Sector = {
   startAngle: number

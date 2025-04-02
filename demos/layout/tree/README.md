@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/tree-layout.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout/tree/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout/tree/).
 
 Demonstrates the tree layout style and the different ways in which this layout can arrange a node and its children.
 

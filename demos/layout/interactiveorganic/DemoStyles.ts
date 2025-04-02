@@ -43,7 +43,7 @@ import {
 } from '@yfiles/yfiles'
 
 /**
- * A very basic high-performance node style implementation that uses HTML5 Canvas rendering.
+ * A very basic high-performance node style implementation that uses HTML Canvas rendering.
  */
 export class InteractiveOrganicFastNodeStyle extends NodeStyleBase {
   createVisual(renderContext: IRenderContext, node: INode): NodeRenderVisual {
@@ -56,7 +56,7 @@ export class InteractiveOrganicFastNodeStyle extends NodeStyleBase {
 }
 
 /**
- * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
+ * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeRenderVisual extends HtmlCanvasVisual {
   /**
@@ -112,7 +112,7 @@ export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
 }
 
 /**
- * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
+ * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeRenderVisual extends HtmlCanvasVisual {
   constructor(

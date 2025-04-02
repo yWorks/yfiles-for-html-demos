@@ -41,7 +41,7 @@ import {
   WebGLShapeNodeShape,
   WebGLShapeNodeStyle
 } from '@yfiles/yfiles'
-import { createLitNodeStyleFromSource } from '../../utils/LitNodeStyle'
+import { createLitNodeStyleFromSource } from '@yfiles/demo-utils/LitNodeStyle'
 const nodeStyleTemplate = `({ layout, tag, selected, zoom }) => {
   function formatPosition(position, maxLength) {
     if (!position || position.length <= maxLength) {

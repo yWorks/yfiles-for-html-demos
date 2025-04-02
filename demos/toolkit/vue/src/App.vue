@@ -6,7 +6,7 @@
 
     <div class="demo-content">
       <div class="demo-header">
-        <a href="https://www.yworks.com/products/yfiles" target="_blank">
+        <a href="https://www.yfiles.com" target="_blank">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 113.39 113.39" class="demo-y-logo">
             <path
               d="M12.39 47.29l.1 19.3a27.74 27.74 0 0 0 13.9 23.8l16.8 9.6a27.32 27.32 0 0 0 27.5-.2L87.39 90A27.44 27.44 0 0 0 101 66.09l-.1-19.4A27.86 27.86 0 0 0 87 22.89l-16.7-9.5a27.32 27.32 0 0 0-27.5.2l-16.7 9.8a27.5 27.5 0 0 0-13.7 23.9"
@@ -22,7 +22,9 @@
             />
           </svg>
         </a>
-        <a href="https://www.yworks.com/products/yfiles" target="_blank">yFiles for HTML</a>
+        <a href="https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html" target="_blank"
+          >yFiles for HTML</a
+        >
         <a href="../../../README.html" style="cursor: pointer" target="_blank" class="demo-title">
           Demos
         </a>

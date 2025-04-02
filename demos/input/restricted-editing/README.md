@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/restricted-editing.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/input/restricted-editing/).
+[You can also run this demo online](https://www.yfiles.com/demos/input/restricted-editing/).
 
 This demos shows how to restrict interactive editing while still using [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) for its non-editing features like, e.g., click-selecting items.
 

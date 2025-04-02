@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/building-graph-from-data.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/application-features/building-graph-from-data/).
+[You can also run this demo online](https://www.yfiles.com/demos/application-features/building-graph-from-data/).
 
 This demo shows how to build a graph using the data stored in JSON-format.
 

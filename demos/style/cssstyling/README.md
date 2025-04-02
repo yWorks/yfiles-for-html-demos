@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/css-styling.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/style/cssstyling/).
+[You can also run this demo online](https://www.yfiles.com/demos/style/cssstyling/).
 
 This demo shows how to style the built-in templates and UI elements of the _yFiles for HTML_ library with CSS to match your color theme.
 

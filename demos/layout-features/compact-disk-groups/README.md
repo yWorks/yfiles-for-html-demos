@@ -13,7 +13,7 @@
 
 <img src="../../../doc/demo-thumbnails/layout-compact-disk-groups.webp" alt="demo-thumbnail" height="320"/>
 
-[You can also run this demo online](https://www.yworks.com/demos/layout-features/compact-disk-groups/).
+[You can also run this demo online](https://www.yfiles.com/demos/layout-features/compact-disk-groups/).
 
 This demo shows how to use the [CompactDiskLayout](https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayout) to arrange the content of (circular) group nodes.
 
