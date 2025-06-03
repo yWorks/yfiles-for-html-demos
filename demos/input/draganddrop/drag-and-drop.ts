@@ -36,18 +36,18 @@ import {
   FreePortLabelModel,
   GroupNodeLabelModel,
   type IEdge,
-  type ILabel,
   IEdgeStyle,
+  type ILabel,
+  IListEnumerable,
   ImageNodeStyle,
   type INode,
   type IPort,
   LabelStyle,
-  ListEnumerable,
-  ShapePortStyle,
   PolylineEdgeStyle,
   Rect,
   ShapeNodeShape,
   ShapeNodeStyle,
+  ShapePortStyle,
   SimpleEdge,
   SimpleLabel,
   SimpleNode,
@@ -88,7 +88,7 @@ function createDnDPanelItems(): DragAndDropPanelItem<INode | IEdge | ILabel | IP
     layoutParameter: new GroupNodeLabelModel().createTabBackgroundParameter(),
     style: groupLabelStyle
   })
-  groupNode.labels = new ListEnumerable([groupLabel])
+  groupNode.labels = IListEnumerable.from([groupLabel])
   itemContainer.push({ modelItem: groupNode, tooltip: 'Group Node' })
 
   const demoStyleNode = new SimpleNode({

@@ -104,6 +104,10 @@
         margin-top: 10px;
         overflow: auto;
       }
+      #queryEditorContainer .cm-editor {
+        height: 300px;
+        background-color: #fff;
+      }
     </style>
   </head>
   <body>
@@ -321,9 +325,7 @@
           <div style="padding: 10px 29px">
             <h2>Custom Cypher Query</h2>
           </div>
-          <div id="queryEditorContainer" class="editorText">
-            <textarea id="query-text-area" style="width: 100%; height: 100%"></textarea>
-          </div>
+          <div id="queryEditorContainer" class="editorText"></div>
           <div style="padding: 10px 29px">
             <button id="run-cypher-button">Run Cypher Query</button>
             <pre id="queryError"></pre>

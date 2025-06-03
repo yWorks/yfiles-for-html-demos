@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
 
-import PrintingSupport from '@yfiles/demo-utils/PrintingSupport'
+import { PrintingSupport } from '@yfiles/demo-utils/PrintingSupport'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'

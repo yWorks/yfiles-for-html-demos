@@ -55,6 +55,7 @@ import {
   ILabelModelParameter,
   ILabelOwner,
   ILabelStyle,
+  IListEnumerable,
   IModelItem,
   INode,
   InputModeBase,
@@ -70,7 +71,6 @@ import {
   LabelEventArgs,
   LabelStyle,
   LabelStyleBase,
-  ListEnumerable,
   Matrix,
   MatrixOrder,
   NodeEventArgs,
@@ -1116,7 +1116,7 @@ class ButtonRenderer extends BaseClass(
     })
     this.dummyBends = []
     this.dummyBendsBackup = []
-    this.previewEdge.bends = new ListEnumerable(this.dummyBends)
+    this.previewEdge.bends = IListEnumerable.from(this.dummyBends)
 
     this.focusedButtonStyle = new FocusLabelStyle(Stroke.from('3px #FFCF00'))
   }

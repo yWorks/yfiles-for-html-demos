@@ -217,7 +217,7 @@ class BpmnPopup {
 /**
  * Manages visibility and content of popup.
  */
-export default class BpmnPopupSupport {
+export class BpmnPopupSupport {
   private gatewayTypeBox = document.querySelector<HTMLSelectElement>('#gateway-type-box')!
   private eventTypeBox = document.querySelector<HTMLSelectElement>('#event-type-box')!
   private eventCharacteristicBox = document.querySelector<HTMLSelectElement>(

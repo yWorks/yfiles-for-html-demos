@@ -43,7 +43,7 @@ import {
  * ports of a node. If a port already has a connected edge, its
  * port candidate is marked as invalid.
  */
-export default class BluePortCandidateProvider extends PortCandidateProviderBase {
+export class BluePortCandidateProvider extends PortCandidateProviderBase {
   private readonly node: INode
 
   /**

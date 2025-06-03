@@ -35,7 +35,7 @@ import {
   SvgVisualGroup
 } from '@yfiles/yfiles'
 
-export default class RectangleVisualCreator extends BaseClass(IVisualCreator) {
+export class RectangleVisualCreator extends BaseClass(IVisualCreator) {
   constructor(
     private title: string,
     private titlePosition: 'top' | 'bottom',

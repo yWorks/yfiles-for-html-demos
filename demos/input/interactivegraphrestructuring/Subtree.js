@@ -30,7 +30,7 @@ import { IEdge, IGraph, INode, Rect } from '@yfiles/yfiles'
 /**
  * This class holds the nodes and edges of a subtree rooted at a specific node.
  */
-export default class Subtree {
+export class Subtree {
   graph
   root
   nodes

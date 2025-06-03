@@ -43,7 +43,7 @@ import {
  * A simple edge style that draws a line from source to target node following the
  * given bends into the HTML Canvas.
  */
-export default class CanvasEdgeStyle extends EdgeStyleBase {
+export class CanvasEdgeStyle extends EdgeStyleBase {
   color
   thickness
   /**

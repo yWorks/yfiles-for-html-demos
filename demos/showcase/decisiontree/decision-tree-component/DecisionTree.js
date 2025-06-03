@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   Arrow,
+  Graph,
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
@@ -64,7 +65,7 @@ const targetZoom = 2
 /**
  * A component that displays a graph as an interactive decision tree.
  */
-export default class DecisionTree {
+export class DecisionTree {
   originalGraph
   beforeLayoutCallback
   afterLayoutCallback
@@ -495,6 +496,7 @@ export default class DecisionTree {
    */
   dispose() {
     this.graphComponent.cleanUp()
+    this.graphComponent.graph = new Graph()
     this.graphComponent = null
   }
   /**

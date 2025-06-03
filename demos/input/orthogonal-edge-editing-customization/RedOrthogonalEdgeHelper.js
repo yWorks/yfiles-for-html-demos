@@ -38,7 +38,7 @@ import {
  * An {@link IOrthogonalEdgeHelper} for edges that don't have
  * orthogonal editing behavior.
  */
-export default class RedOrthogonalEdgeHelper extends BaseClass(IOrthogonalEdgeHelper) {
+export class RedOrthogonalEdgeHelper extends BaseClass(IOrthogonalEdgeHelper) {
   constructor(edge) {
     super(edge)
   }

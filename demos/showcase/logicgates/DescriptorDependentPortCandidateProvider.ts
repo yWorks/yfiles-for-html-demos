@@ -32,12 +32,12 @@ import {
   type IEnumerable,
   type IGraph,
   type IInputModeContext,
+  IListEnumerable,
   type INode,
   type IPort,
   type IPortCandidate,
   IPortCandidateProvider,
   List,
-  ListEnumerable,
   Point,
   PortCandidate,
   PortCandidateValidity,
@@ -164,7 +164,7 @@ export function createPortDescriptors(nodes: Iterable<INode>, graph?: IGraph): v
     }
 
     if (!graph && node instanceof SimpleNode) {
-      node.ports = new ListEnumerable(ports)
+      node.ports = IListEnumerable.from(ports)
     }
   }
 }

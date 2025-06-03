@@ -58,7 +58,7 @@ export var PickerLayout
 /**
  * An action managed by the {@link GraphWizardInputMode}.
  */
-export default class WizardAction {
+export class WizardAction {
   _type
   _preCondition
   _trigger

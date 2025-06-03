@@ -51,7 +51,7 @@ type SvgEdgeStyleVisual = TaggedSvgVisual<SVGPathElement, RenderDataCache>
  * A fast edge style. Compared to the default {@link PolylineEdgeStyle}, the edge is not cropped
  * at the node boundaries and does not support arrows.
  */
-export default class SvgEdgeStyle extends EdgeStyleBase<SvgEdgeStyleVisual> {
+export class SvgEdgeStyle extends EdgeStyleBase<SvgEdgeStyleVisual> {
   /**
    * Creates a new instance of this class.
    * @param [color] The edge color.

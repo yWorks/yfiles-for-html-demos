@@ -41,7 +41,7 @@ import {
   RectangleNodeStyle,
   Size
 } from '@yfiles/yfiles'
-import CornerSizeHandleProvider from './CornerSizeHandleProvider'
+import { CornerSizeHandleProvider } from './CornerSizeHandleProvider'
 import { enableSingleSelection } from './SingleSelectionHelper'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { colorSets } from '@yfiles/demo-resources/demo-colors'

@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { Exception, yfiles } from '@yfiles/yfiles'
-import { BrowserDetection } from './demo-ui/BrowserDetection'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 export const INVALID_LICENSE_MESSAGE =
   'This is an expected error caused by invalid or missing license data.'
 // Set to `true` when the dialog is open. Prevents opening of multiple error dialogs.

@@ -67,10 +67,10 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
-import NodePortCandidateProvider from './NodePortCandidateProvider'
-import EdgeReconnectionPortCandidateProvider from './EdgeReconnectionPortCandidateProvider'
-import WrappingHandle from './WrappingHandle'
-import TouchHandlesRenderer from './TouchHandlesRenderer'
+import { NodePortCandidateProvider } from './NodePortCandidateProvider'
+import { EdgeReconnectionPortCandidateProvider } from './EdgeReconnectionPortCandidateProvider'
+import { WrappingHandle } from './WrappingHandle'
+import { TouchHandlesRenderer } from './TouchHandlesRenderer'
 import { createDialContextMenu } from './DialContextMenu'
 import {
   colorSets,
@@ -80,7 +80,7 @@ import {
 } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import PortCandidateRenderer from './PortCandidateRenderer'
+import { PortCandidateRenderer } from './PortCandidateRenderer'
 let graphComponent
 async function run() {
   License.value = await fetchLicense()

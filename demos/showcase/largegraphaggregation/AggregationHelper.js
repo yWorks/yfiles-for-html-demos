@@ -31,13 +31,12 @@ import {
   FreeNodeLabelModel,
   IEdge,
   IEdgeStyle,
+  IEnumerable,
   ILabelStyle,
-  IListEnumerable,
   INode,
   INodeStyle,
   LabelStyle,
   List,
-  ListEnumerable,
   NodeAggregate,
   NodeAggregationResult,
   Point,
@@ -166,7 +165,7 @@ export class AggregationHelper {
         this.$replaceEdges(aggregationNode)
       }
     }
-    return new ListEnumerable(affectedNodes)
+    return affectedNodes
   }
   /**
    * Aggregates the `aggregate` as well as all its children recursively.
@@ -200,7 +199,7 @@ export class AggregationHelper {
     const size = 30 + Math.sqrt(aggregate.descendantWeightSum) * 4
     const layout = Rect.fromCenter(originalCenter, new Size(size, size))
     const aggregationNode = this.aggregateGraph.aggregate(
-      new ListEnumerable(nodesToAggregate),
+      nodesToAggregate,
       layout,
       this.aggregationNodeStyle
     )
@@ -262,8 +261,8 @@ export class AggregationHelper {
       .toList()
     this.aggregateGraph.separate(node)
     const nodesToAggregate = aggregate.node
-      ? new ListEnumerable(AggregationHelper.initializer(new List(), aggregate.node))
-      : IListEnumerable.EMPTY
+      ? AggregationHelper.initializer(new List(), aggregate.node)
+      : IEnumerable.EMPTY
     const aggregationNode = this.aggregateGraph.aggregate(
       nodesToAggregate,
       node.layout.toRect(),
@@ -306,7 +305,7 @@ export class AggregationHelper {
       this.$copyLabels(aggregate.node, aggregationNode)
       this.$replaceEdges(aggregationNode)
     }
-    return new ListEnumerable(affectedNodes)
+    return affectedNodes
   }
   static initializer(instance, p1) {
     instance.add(p1)

@@ -40,7 +40,7 @@ import {
 /**
  * This port candidate provider does not allow edges to start/end at a particular node.
  */
-export default class RedPortCandidateProvider extends PortCandidateProviderBase {
+export class RedPortCandidateProvider extends PortCandidateProviderBase {
   node
   /**
    * Creates a new instance of {@link BluePortCandidateProvider}.

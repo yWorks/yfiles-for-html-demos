@@ -44,10 +44,10 @@ import {
   Size
 } from '@yfiles/yfiles'
 
-import ContextualToolbar from './ContextualToolbar'
+import { ContextualToolbar } from './ContextualToolbar'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import type { JSONGraph } from '@yfiles/demo-utils/json-model'
+import type { JSONGraph, JSONNode } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 let graphComponent: GraphComponent
@@ -98,14 +98,14 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   })
   nodesSource.nodeCreator.createLabelBinding((item) => item.label)
   nodesSource.nodeCreator.styleBindings.addBinding('shape', (item) => item.tag)
-  nodesSource.nodeCreator.styleBindings.addBinding('fill', (item) => {
-    if (item.id === 0 || item.id === 4) {
-      return '#e01a4f'
-    }
-    if (item.id === 2 || item.id === 7) {
-      return '#0b7189'
-    }
-  })
+  const colorProvider = (item: JSONNode) =>
+    item.id === 0 || item.id === 4
+      ? '#DC143C'
+      : item.id === 2 || item.id === 7
+        ? '#336699'
+        : undefined
+  nodesSource.nodeCreator.styleBindings.addBinding('fill', colorProvider)
+  nodesSource.nodeCreator.styleBindings.addBinding('stroke', colorProvider)
 
   const edgesSource = graphBuilder.createEdgesSource({
     data: graphData.edgeList,
@@ -121,10 +121,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
  * Initializes the default styles.
  */
 function initializeDefaultStyles(graph: IGraph): void {
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: '#228B22',
-    stroke: '#228B22'
-  })
+  graph.nodeDefaults.style = new ShapeNodeStyle({ fill: '#228B22', stroke: '#228B22' })
   graph.nodeDefaults.size = new Size(45, 45)
   graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({

@@ -41,9 +41,9 @@ import {
   ShapeNodeStyle,
   Size
 } from '@yfiles/yfiles'
-import MoveNodesAsideStage from './MoveNodesAsideStage'
-import AlignmentStage from './AlignmentStage'
-import ZigZagEdgesStage from './ZigZagEdgesStage'
+import { MoveNodesAsideStage } from './MoveNodesAsideStage'
+import { AlignmentStage } from './AlignmentStage'
+import { ZigZagEdgesStage } from './ZigZagEdgesStage'
 import { createDemoNodeLabelStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'

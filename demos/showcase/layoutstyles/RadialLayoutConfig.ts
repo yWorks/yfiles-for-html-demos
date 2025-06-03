@@ -41,10 +41,11 @@ import {
   RadialNodeLabelPlacement
 } from '@yfiles/yfiles'
 
-import LayoutConfiguration, {
+import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  LayoutConfiguration
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -90,7 +91,7 @@ const SMOOTHNESS_ANGLE_FACTOR = 4
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const RadialLayoutConfig = (Class as any)('RadialLayoutConfig', {
+export const RadialLayoutConfig = (Class as any)('RadialLayoutConfig', {
   $extends: LayoutConfiguration,
 
   _meta: {
@@ -535,4 +536,3 @@ const RadialLayoutConfig = (Class as any)('RadialLayoutConfig', {
     }
   }
 })
-export default RadialLayoutConfig

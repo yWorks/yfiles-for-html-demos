@@ -259,9 +259,13 @@ function toSvg(graph: IGraph): string {
   exportComponent.graph = graph
   exportComponent.updateContentBounds(5)
 
-  const svgExport = new SvgExport(exportComponent.contentBounds)
-  svgExport.scale = 0.5
+  const svgExport = new SvgExport(exportComponent.contentBounds, 0.5)
   const svg = svgExport.exportSvg(exportComponent)
+
+  // Dispose of the component and remove its references to the graph
+  exportComponent.cleanUp()
+  exportComponent.graph = new Graph()
+
   const svgString = SvgExport.exportSvgString(svg)
   return SvgExport.encodeSvgDataUrl(svgString)
 }

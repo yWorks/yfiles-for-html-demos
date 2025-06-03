@@ -32,7 +32,7 @@ import { BaseClass, INode, INodeSizeConstraintProvider, Rect, Size } from '@yfil
  * nodes. Additionally, neither side of the node can become larger than
  * three times its initial size in each resizing operation.
  */
-export default class BlueSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
+export class BlueSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
   node
   constructor(node) {
     super()

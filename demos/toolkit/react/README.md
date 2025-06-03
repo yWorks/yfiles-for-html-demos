@@ -23,7 +23,7 @@ This will start the development server of the toolkit.
 
 The integrated development server of the project will automatically update the application upon code changes.
 
-There are no special caveats that you need to look out for when you load yFiles as NPM dependency as in this demo application. However, we recommend including the [@yworks/optimizer](https://www.npmjs.com/package/@yworks/optimizer) when you deploy your app for production.
+There are no special issues that you need to look out for when you load yFiles as NPM dependency as in this demo application. However, we recommend including the [@yworks/optimizer](https://www.npmjs.com/package/@yworks/optimizer) when you deploy your app for production.
 
 The optimizer will obfuscate the public API of the yFiles library files, as well as yFiles API usages in application sources.
 

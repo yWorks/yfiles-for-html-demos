@@ -50,7 +50,7 @@ const BUTTON_SIZE = 16
  * Also, there is a customized button displayed in the label at certain zoom levels that enables
  * editing of the label text.
  */
-export default class Sample1LabelStyle extends LabelStyleBase {
+export class Sample1LabelStyle extends LabelStyleBase {
   font = new Font({
     fontFamily: 'Arial',
     fontSize: 12

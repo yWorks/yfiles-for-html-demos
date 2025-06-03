@@ -32,7 +32,7 @@ import { IInputModeContext, INode, ReparentNodeHandler } from '@yfiles/yfiles'
  * Customized variant of the default {@link ReparentNodeHandler} that
  * determines the possible reparenting operations based on the node's tag.
  */
-export default class DemoReparentNodeHandler extends ReparentNodeHandler {
+export class DemoReparentNodeHandler extends ReparentNodeHandler {
   /**
    * In general, this method determines whether the current gesture that
    * can be determined through the context is a reparent gesture. In this

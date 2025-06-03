@@ -99,7 +99,7 @@ class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
  *
  * In the current implementation, the type is given by the node's tag.
  */
-export default class ComplexSvgNodeStyle extends NodeStyleBase {
+export class ComplexSvgNodeStyle extends NodeStyleBase {
   static IMAGES = [
     new SimpleSvgDefsCreator(document.querySelector('#usericon_female1')),
     new SimpleSvgDefsCreator(document.querySelector('#usericon_female2')),

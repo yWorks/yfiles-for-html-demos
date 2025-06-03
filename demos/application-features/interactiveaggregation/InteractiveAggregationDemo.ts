@@ -43,7 +43,6 @@ import {
   LabelStyle,
   LayoutExecutor,
   License,
-  ListEnumerable,
   NinePositionsEdgeLabelModel,
   OrganicLayout,
   Point,
@@ -454,11 +453,11 @@ function aggregate<TKey>(
 ): void {
   const size = graphComponent.graph.nodeDefaults.size.multiply(1 + nodes.size * 0.2)
   const layout = Rect.fromCenter(Point.ORIGIN, size)
-  aggregateGraph.aggregate(new ListEnumerable<INode>(nodes), layout, styleFactory(key))
+  aggregateGraph.aggregate(nodes, layout, styleFactory(key))
 }
 
 /**
- * Separates all nodes and runs the layout afterwards.
+ * Separates all nodes and runs the layout afterward.
  * @param nodes the nodes to separate
  */
 function separate(nodes: IEnumerable<INode>): void {

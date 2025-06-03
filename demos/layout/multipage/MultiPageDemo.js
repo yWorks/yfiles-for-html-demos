@@ -55,8 +55,8 @@ import {
   createDemoNodeStyle,
   initDemoStyles
 } from '@yfiles/demo-resources/demo-styles'
-import MultiPageIGraphBuilder from './MultiPageIGraphBuilder'
-import PageBoundsVisualCreator from './PageBoundsVisualCreator'
+import { MultiPageIGraphBuilder } from './MultiPageIGraphBuilder'
+import { PageBoundsVisualCreator } from './PageBoundsVisualCreator'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo-page'
 /**

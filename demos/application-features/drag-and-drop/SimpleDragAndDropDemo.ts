@@ -224,6 +224,7 @@ function createNodeVisual(style: INodeStyle): string {
   // the SvgExport can export the content of any GraphComponent
   const svgExport = new SvgExport(exportComponent.contentBounds)
   const svg = svgExport.exportSvg(exportComponent)
+
   const svgString = SvgExport.exportSvgString(svg)
   return SvgExport.encodeSvgDataUrl(svgString)
 }

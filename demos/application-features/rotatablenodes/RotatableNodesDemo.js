@@ -27,50 +27,38 @@
  **
  ***************************************************************************/
 import {
-  CircularLayout,
   EdgePathLabelModel,
-  EdgeRouter,
   FoldingManager,
   FreeNodePortLocationModel,
-  GeneralPath,
   GenericLayoutData,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphMLIOHandler,
   GraphSnapContext,
-  HierarchicalLayout,
-  ILayoutAlgorithm,
   INode,
   INodeStyle,
   InteriorNodeLabelModel,
   IOrientedRectangle,
   IPortCandidateProvider,
-  LayoutExecutor,
+  LayoutExecutorAsync,
   License,
-  ShapePortStyle,
-  OrganicEdgeRouter,
-  OrganicLayout,
   OrientedRectangle,
-  OrthogonalLayout,
   Point,
   PortCandidate,
-  RadialLayout,
-  RadialTreeLayout,
   Rect,
   RectangleNodeStyle,
   ShapeNodeShape,
   ShapeNodeStyle,
+  ShapePortStyle,
   SimpleNode,
   Size,
-  SnappableItems,
-  TreeLayout,
-  TreeReductionStage
+  SnappableItems
 } from '@yfiles/yfiles'
-import RotatedNodeLayoutStage from './RotatedNodeLayoutStage'
+import { RotatedNodeLayoutStage } from './RotatedNodeLayoutStage'
 import { CircleSample, SineSample } from './resources/SampleData'
-import RotationAwareGroupBoundsCalculator from './RotationAwareGroupBoundsCalculator'
-import AdjustOutlinePortInsidenessEdgePathCropper from './AdjustOutlinePortInsidenessEdgePathCropper'
+import { RotationAwareGroupBoundsCalculator } from './RotationAwareGroupBoundsCalculator'
+import { AdjustOutlinePortInsidenessEdgePathCropper } from './AdjustOutlinePortInsidenessEdgePathCropper'
 import * as RotatableNodeLabels from './RotatableNodeLabels'
 import {
   RotatableNodeLabelModelDecorator,
@@ -82,7 +70,11 @@ import {
   RotatablePortLocationModelDecoratorParameter
 } from './RotatablePorts'
 import * as RotatableNodes from './RotatableNodes'
-import { NodeRotateHandle, RotatableNodeStyleDecorator } from './RotatableNodes'
+import {
+  CachingOrientedRectangle,
+  NodeRotateHandle,
+  RotatableNodeStyleDecorator
+} from './RotatableNodes'
 import {
   createDemoEdgeLabelStyle,
   createDemoEdgeStyle,
@@ -96,12 +88,15 @@ import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 let graphComponent
 const selectLayout = document.querySelector('#select-layout')
 const selectSample = document.querySelector('#select-sample')
+const worker = new Worker(new URL('./WorkerLayout', import.meta.url), {
+  type: 'module'
+})
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
   initializeInputMode()
   initializeGraph()
-  loadGraph('sine')
+  await loadGraph('sine')
   initializeUI()
 }
 /**
@@ -343,13 +338,10 @@ function isRectangle(style) {
     (style instanceof RectangleNodeStyle && style.cornerSize === 0)
   )
 }
-// Ensure that the LayoutExecutor class is not removed by build optimizers
-// It is needed for the 'applyLayoutAnimated' method in this demo.
-LayoutExecutor.ensure()
 /**
  * Loads the graph data.
  */
-function loadGraph(sample) {
+async function loadGraph(sample) {
   const graph = graphComponent.graph
   graph.clear()
   const data = sample === 'sine' ? SineSample : CircleSample
@@ -369,30 +361,10 @@ function loadGraph(sample) {
   builder.createEdgesSource(data.edges, 'source', 'target')
   builder.buildGraph()
   // apply an initial edge routing
-  const layoutData = new GenericLayoutData()
-  layoutData.addItemMapping(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DATA_KEY).mapperFunction = (
-    node
-  ) => {
-    const style = node.style
-    return {
-      outline: getOutline(style, node),
-      orientedLayout: getOrientedLayout(style, node)
-    }
-  }
-  graphComponent.graph.applyLayout(new RotatedNodeLayoutStage(new EdgeRouter()), layoutData)
+  await applyLayout('edge-router')
   void graphComponent.fitGraphBounds()
   // clear undo-queue
   graphComponent.graph.undoEngine.clear()
-}
-function getOutline(style, node) {
-  let outline = style.renderer.getShapeGeometry(node, style).getOutline()
-  if (!outline) {
-    // style is rectangular use the oriented layout as outline
-    const layout = getOrientedLayout(style, node)
-    outline = new GeneralPath()
-    outline.appendOrientedRectangle(layout, false)
-  }
-  return outline
 }
 function getOrientedLayout(style, node) {
   return style instanceof RotatableNodeStyleDecorator
@@ -402,28 +374,33 @@ function getOrientedLayout(style, node) {
 /**
  * Runs a layout algorithm which is configured to consider node rotations.
  */
-async function applyLayout() {
-  // provide the rotated outline and layout for the layout algorithm
+async function applyLayout(selectedLayout) {
+  // provide the rotated layout for the layout algorithm
   const layoutData = new GenericLayoutData()
   layoutData.addItemMapping(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DATA_KEY).mapperFunction = (
     node
   ) => {
     const style = node.style
-    return {
-      outline: getOutline(style, node),
-      orientedLayout: getOrientedLayout(style, node)
+    let orientedLayout = getOrientedLayout(style, node)
+    if (orientedLayout instanceof CachingOrientedRectangle) {
+      // the Web Worker serialization works for OrientedRectangles out-of-the-box
+      orientedLayout = orientedLayout.cachedOrientedRect
     }
+    return orientedLayout
   }
-  // get the selected layout algorithm
-  const layout = getLayoutAlgorithm()
-  // wrap the algorithm in RotatedNodeLayoutStage to make it aware of the node rotations
-  const rotatedNodeLayout = new RotatedNodeLayoutStage(layout)
-  rotatedNodeLayout.edgeRoutingMode = getRoutingMode()
   selectLayout.disabled = true
   selectSample.disabled = true
   try {
     // apply the layout
-    await graphComponent.applyLayoutAnimated(rotatedNodeLayout, '700ms', layoutData)
+    const executor = new LayoutExecutorAsync({
+      messageHandler: LayoutExecutorAsync.createWebWorkerMessageHandler(worker),
+      graphComponent,
+      layoutDescriptor: getLayoutDescriptor(selectedLayout),
+      layoutData,
+      animationDuration: '700ms'
+    })
+    // run the Web Worker layout
+    await executor.start()
   } finally {
     selectSample.disabled = false
     selectLayout.disabled = false
@@ -432,62 +409,56 @@ async function applyLayout() {
 /**
  * Gets the layout algorithm selected by the user.
  */
-function getLayoutAlgorithm() {
+function getLayoutDescriptor(selectedLayout) {
   const graph = graphComponent.graph
-  switch (selectLayout.value) {
+  switch (selectedLayout) {
     default:
     case 'hierarchical':
-      return new HierarchicalLayout({
-        minimumLayerDistance: 50,
-        nodeDistance: 100,
-        defaultEdgeDescriptor: {
-          routingStyleDescriptor: {
-            defaultRoutingStyle: 'octilinear'
-          }
+      return {
+        name: 'HierarchicalLayout',
+        properties: {
+          minimumLayerDistance: 50,
+          nodeDistance: 100
         }
-      })
+      }
     case 'organic':
-      return new OrganicLayout({
-        defaultPreferredEdgeLength:
-          1.5 * Math.max(graph.nodeDefaults.size.width, graph.nodeDefaults.size.height)
-      })
+      return {
+        name: 'OrganicLayout',
+        properties: {
+          defaultPreferredEdgeLength:
+            1.5 * Math.max(graph.nodeDefaults.size.width, graph.nodeDefaults.size.height)
+        }
+      }
     case 'orthogonal':
-      return new OrthogonalLayout()
+      return {
+        name: 'OrthogonalLayout'
+      }
     case 'circular':
-      return new CircularLayout()
+      return {
+        name: 'CircularLayout'
+      }
     case 'tree':
-      return new TreeReductionStage({
-        coreLayout: new TreeLayout(),
-        nonTreeEdgeRouter: new OrganicEdgeRouter()
-      })
+      return {
+        name: 'TreeLayout'
+      }
     case 'radial-tree':
-      return new TreeReductionStage({
-        coreLayout: new RadialTreeLayout(),
-        nonTreeEdgeRouter: new OrganicEdgeRouter()
-      })
+      return {
+        name: 'RadialTreeLayout'
+      }
     case 'radial':
-      return new RadialLayout()
-    case 'router-polyline':
-      return new EdgeRouter()
-    case 'router-organic':
-      return new OrganicEdgeRouter({ allowEdgeNodeOverlaps: false })
+      return {
+        name: 'RadialLayout'
+      }
+    case 'edge-router':
+      return { name: 'EdgeRouter' }
+    case 'organic-edge-router':
+      return {
+        name: 'OrganicEdgeRouter',
+        properties: {
+          allowEdgeNodeOverlaps: false
+        }
+      }
   }
-}
-/**
- * Get the routing mode that suits the selected layout algorithm. Layout algorithms that place edge
- * ports in the center of the node don't need to add a routing step.
- */
-function getRoutingMode() {
-  const value = selectLayout.value
-  if (
-    value === 'hierarchical' ||
-    value === 'orthogonal' ||
-    value === 'tree' ||
-    value === 'router-polyline'
-  ) {
-    return 'shortest-straight-path-to-border'
-  }
-  return 'no-routing'
 }
 /**
  * Wires up the UI.
@@ -516,8 +487,10 @@ function initializeUI() {
   addNavigationButtons(selectSample).addEventListener('change', (e) => {
     loadGraph(e.target.value)
   })
-  addNavigationButtons(selectLayout).addEventListener('change', applyLayout)
-  document.querySelector('#layout').addEventListener('click', applyLayout)
+  addNavigationButtons(selectLayout).addEventListener('change', () =>
+    applyLayout(selectLayout.value)
+  )
+  document.querySelector('#layout').addEventListener('click', () => applyLayout(selectLayout.value))
 }
 /**
  * When loading a graph without rotatable nodes, the node styles, node label models and port

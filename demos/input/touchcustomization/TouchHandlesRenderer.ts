@@ -45,7 +45,7 @@ type SVGTaggedGElement = SVGGElement & {
 /**
  * Renders large handles for resize and move as circles.
  */
-export default class TouchHandlesRenderer extends ObjectRendererBase<HandlesRenderTag, SvgVisual> {
+export class TouchHandlesRenderer extends ObjectRendererBase<HandlesRenderTag, SvgVisual> {
   static readonly handleRadius = 15
 
   private resizeHandles = [

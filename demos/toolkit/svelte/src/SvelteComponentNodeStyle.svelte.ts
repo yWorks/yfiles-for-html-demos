@@ -28,8 +28,9 @@
  ***************************************************************************/
 import type { GraphComponent, INode, IRenderContext, Visual } from '@yfiles/yfiles'
 import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
-import type { SvelteComponent } from 'svelte'
+import { type Component, mount, unmount } from 'svelte'
 import type { Person } from './types'
+import SvgNodeComponent from './SvgNodeComponent.svelte'
 
 declare type Props = {
   item: Person
@@ -40,7 +41,7 @@ declare type Props = {
   zoom: number
 }
 
-declare type Cache = { component: SvelteComponent }
+declare type Cache = { component: ReturnType<typeof mount>; props: Props }
 
 /**
  * A node style implementation that can use a Svelte component for its
@@ -49,28 +50,28 @@ declare type Cache = { component: SvelteComponent }
  * This style is fairly specific to the component in that the props passed to
  * it are defined and collected here.
  */
-export default class SvelteComponentNodeStyle extends NodeStyleBase {
-  constructor(private component: typeof SvelteComponent) {
+export class SvelteComponentNodeStyle extends NodeStyleBase {
+  constructor(private component: typeof SvgNodeComponent) {
     super()
   }
 
   protected createVisual(context: IRenderContext, node: INode): Visual {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-    const props = createProps(context, node)
-
-    const svelteComponent = new this.component({
+    const props = $state(createProps(context, node))
+    const svelteComponent = mount(this.component, {
       target: g,
       props
     })
 
     const svgVisual = new SvgVisual(g) as SvgVisual & Cache
     svgVisual.component = svelteComponent
+    svgVisual.props = props
 
     // Remove the component when the corresponding visual is removed from the view.
     context.setDisposeCallback(
       svgVisual,
       (removeContext: IRenderContext, removedVisual: Visual, dispose: boolean) => {
-        ;(removedVisual as SvgVisual & Cache).component.$destroy()
+        unmount((removedVisual as SvgVisual & Cache).component)
         return null
       }
     )
@@ -89,7 +90,7 @@ export default class SvelteComponentNodeStyle extends NodeStyleBase {
     const newProps = createProps(context, node)
 
     // Update the component with the new props
-    oldVisual.component.$set(newProps)
+    updateProps(oldVisual.props, newProps)
 
     // Update node location if necessary
     const { x, y } = node.layout
@@ -97,7 +98,13 @@ export default class SvelteComponentNodeStyle extends NodeStyleBase {
     return oldVisual
   }
 }
-
+function updateProps(props: Props, newProps: Props) {
+  props.item = newProps.item
+  props.selected = newProps.selected
+  props.width = newProps.width
+  props.highlighted = newProps.highlighted
+  props.zoom = newProps.zoom
+}
 function createProps(context: IRenderContext, node: INode): Props {
   const selected = (context.canvasComponent as GraphComponent).selection.nodes.includes(node)
   const highlighted = (context.canvasComponent as GraphComponent).highlights.includes(node)

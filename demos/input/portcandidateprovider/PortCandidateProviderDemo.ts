@@ -37,14 +37,13 @@ import {
   License,
   ShapePortStyle,
   PortCandidateValidity,
-  Rect,
-  ShapeNodeStyle
+  Rect
 } from '@yfiles/yfiles'
 
-import OrangePortCandidateProvider from './OrangePortCandidateProvider'
-import GreenPortCandidateProvider from './GreenPortCandidateProvider'
-import BluePortCandidateProvider from './BluePortCandidateProvider'
-import RedPortCandidateProvider from './RedPortCandidateProvider'
+import { OrangePortCandidateProvider } from './OrangePortCandidateProvider'
+import { GreenPortCandidateProvider } from './GreenPortCandidateProvider'
+import { BluePortCandidateProvider } from './BluePortCandidateProvider'
+import { RedPortCandidateProvider } from './RedPortCandidateProvider'
 import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
 import {
   createDemoNodeLabelStyle,

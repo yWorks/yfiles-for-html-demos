@@ -64,7 +64,7 @@ import type { UMLNodeStyle } from './UMLNodeStyle'
 /**
  * Provides the visuals of the edge creation buttons.
  */
-export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
+export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
   private static buttons: SVGElement[]
 
   private renderer: ButtonIconRenderer

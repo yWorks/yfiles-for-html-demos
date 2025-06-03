@@ -34,15 +34,16 @@ type SolidGraphOverviewComponentProps = {
 }
 
 export const SolidGraphOverviewComponent = (props: SolidGraphOverviewComponentProps) => {
-  let overviewDiv: HTMLDivElement | undefined = undefined
+  let overviewDiv: HTMLDivElement = undefined!
   let overviewComponent: GraphOverviewComponent
 
   onMount(() => {
     overviewComponent = new GraphOverviewComponent(overviewDiv!, props.graphComponent())
   })
   onCleanup(() => {
-    overviewDiv?.removeChild(overviewComponent.htmlElement)
+    overviewDiv.removeChild(overviewComponent.htmlElement)
     overviewComponent.cleanUp()
+    overviewComponent.graphComponent = null
   })
 
   return (

@@ -44,6 +44,7 @@ export function ReactGraphOverviewComponent({ graphComponent }: ReactGraphOvervi
     return () => {
       overviewParent.removeChild(overviewComponent.htmlElement)
       overviewComponent.cleanUp()
+      overviewComponent.graphComponent = null
     }
   }, [graphComponent])
 

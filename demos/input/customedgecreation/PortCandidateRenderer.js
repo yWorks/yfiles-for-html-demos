@@ -36,7 +36,7 @@ import {
 /**
  * A port candidate renderer using colored circles as visualizations.
  */
-export default class PortCandidateRenderer extends ObjectRendererBase {
+export class PortCandidateRenderer extends ObjectRendererBase {
   validFocusedColor = '#6a6a6a'
   validNonFocusedColor = '#939393'
   /**

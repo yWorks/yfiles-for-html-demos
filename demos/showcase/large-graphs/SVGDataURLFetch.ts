@@ -30,7 +30,7 @@
  * Loads data from an URL and encodes it as an SVG Data URL
  * @param url the URL to load the data from
  */
-export default async function getSVGDataURL(url: string): Promise<string> {
+export async function getSVGDataURL(url: string): Promise<string> {
   const svgXml = await (await fetch(url)).text()
   return encodeSvgDataUrl(svgXml)
 }

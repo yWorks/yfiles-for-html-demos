@@ -77,12 +77,13 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
-import LayoutConfiguration, {
+import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  LayoutConfiguration
 } from './LayoutConfiguration'
-import HandleEdgesBetweenGroupsStage from './HandleEdgesBetweenGroupsStage'
+import { HandleEdgesBetweenGroupsStage } from './HandleEdgesBetweenGroupsStage'
 
 enum RoutingStyle {
   ORTHOGONAL,
@@ -125,7 +126,7 @@ enum PortAssignment {
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
+export const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
   $extends: LayoutConfiguration,
 
   _meta: {
@@ -1031,4 +1032,3 @@ const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
     }
   }
 })
-export default TreeLayoutConfig

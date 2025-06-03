@@ -47,10 +47,11 @@ import {
   NodeLabelPlacement
 } from '@yfiles/yfiles'
 
-import LayoutConfiguration, {
+import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  LayoutConfiguration
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -72,7 +73,7 @@ enum GroupPolicy {
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
+export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
   $extends: LayoutConfiguration,
 
   _meta: {
@@ -709,4 +710,3 @@ const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
     }
   }
 })
-export default OrthogonalLayoutConfig

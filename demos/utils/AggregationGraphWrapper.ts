@@ -418,12 +418,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
    * @throws Any of the `nodes` is not in the graph.
    * @see {@link AggregationGraphWrapper.separate}
    */
-  public aggregate(
-    nodes: IListEnumerable<INode>,
-    layout?: Rect,
-    style?: INodeStyle,
-    tag?: any
-  ): INode {
+  public aggregate(nodes: IEnumerable<INode>, layout?: Rect, style?: INodeStyle, tag?: any): INode {
     const badNode = nodes.find((node) => !this.contains(node))
     if (badNode != null) {
       throw new Error(
@@ -465,10 +460,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   /**
    * Replaces adjacent edges by new aggregation edges. Prevents duplicate edges following {@link AggregationGraphWrapper.edgeReplacementPolicy}.
    */
-  private $replaceAdjacentEdges(
-    nodes: IListEnumerable<INode>,
-    aggregationNode: AggregationNode
-  ): void {
+  private $replaceAdjacentEdges(nodes: IEnumerable<INode>, aggregationNode: AggregationNode): void {
     const edgesAreDirected = this.edgeReplacementPolicy === EdgeReplacementPolicy.DIRECTED
     const outgoingReplacementEdges = new HashMap<IPortOwner, AggregationEdge>()
     const incomingReplacementEdges = edgesAreDirected
@@ -507,7 +499,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     adjacencyType: AdjacencyTypes,
     node: INode,
     aggregationPortOwner: IPortOwner,
-    items: IListEnumerable<INode>,
+    items: IEnumerable<INode>,
     replacementEdges: IMap<IPortOwner, AggregationEdge>
   ): void {
     const adjacentEdges = this.edgesAt(node, adjacencyType).toList()

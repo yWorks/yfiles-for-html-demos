@@ -31,7 +31,7 @@ import { HashMap, IGraph, INode } from '@yfiles/yfiles'
  * A class that creates random graphs. The size of the graph and other options  may be specified.
  * These options influence the properties of the created graph.
  */
-export default class RandomGraphGenerator {
+export class RandomGraphGenerator {
   /** The callback that is responsible for creating a new node. */
   nodeCreator
   /** The node count of the graph to be generated. The default value is 30. */

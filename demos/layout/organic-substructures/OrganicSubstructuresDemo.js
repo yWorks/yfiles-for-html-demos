@@ -49,7 +49,7 @@ import {
   ShapeNodeStyle,
   Size
 } from '@yfiles/yfiles'
-import NodeTypePanel from '@yfiles/demo-utils/NodeTypePanel'
+import { NodeTypePanel } from '@yfiles/demo-utils/NodeTypePanel'
 import {
   colorSets,
   createDemoEdgeStyle,

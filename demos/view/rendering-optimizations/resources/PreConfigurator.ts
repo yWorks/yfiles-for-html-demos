@@ -31,7 +31,7 @@
  */
 import type { GraphComponent } from '@yfiles/yfiles'
 
-export default class PreConfigurator {
+export class PreConfigurator {
   private graphItemStylesSettings: HTMLElement
   private warningRadios: HTMLCollectionOf<Element>
   private graphComponent: GraphComponent

@@ -39,7 +39,7 @@ import {
  * An {@link INodeSizeConstraintProvider} that returns the size of the
  * first label as minimum size. The maximum size is not limited.
  */
-export default class GreenSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
+export class GreenSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
   constructor(private readonly node: INode) {
     super()
   }

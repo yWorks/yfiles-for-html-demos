@@ -31,7 +31,7 @@ import type { GraphMLProperty } from './GraphMLProperty'
 /**
  * Properties Panel.
  */
-export default class PropertiesPanelUI {
+export class PropertiesPanelUI {
   private graphPropertiesDiv: HTMLDivElement
   private itemPropertiesDiv: HTMLDivElement
   private itemPropertiesPanel: HTMLDivElement

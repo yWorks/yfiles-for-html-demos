@@ -47,10 +47,11 @@ import {
   SubgraphLayoutStage
 } from '@yfiles/yfiles'
 
-import LayoutConfiguration, {
+import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  LayoutConfiguration
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -80,7 +81,7 @@ enum EdgeRoutingPolicy {
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
+export const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
   $extends: LayoutConfiguration,
 
   _meta: {
@@ -970,5 +971,3 @@ const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
     }
   }
 })
-
-export default CircularLayoutConfig

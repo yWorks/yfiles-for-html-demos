@@ -58,7 +58,7 @@ import {
   createGroupNodeStyle
 } from './DragAndDropSupport'
 import TableStyles, { DemoTableStyle } from './TableStyles'
-import MyReparentHandler from './MyReparentHandler'
+import { MyReparentHandler } from './MyReparentHandler'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'

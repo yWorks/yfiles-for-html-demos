@@ -62,7 +62,7 @@ import {
 } from '@yfiles/yfiles'
 import { ColorThemes } from './ColorThemes'
 import { FlowchartNodeStyle, FlowchartNodeType } from '../flowchart/style/FlowchartStyle'
-import WizardAction, { handleMultipleSteps, PickerLayout } from './WizardAction'
+import { handleMultipleSteps, PickerLayout, WizardAction } from './WizardAction'
 import { FlowchartLayout } from '../flowchart/layout/FlowchartLayout'
 import { FlowchartLayoutData } from '../flowchart/layout/FlowchartLayoutData'
 import { GraphWizardInputMode } from './GraphWizardInputMode'
@@ -97,7 +97,7 @@ import {
  * {@link GraphEditorInputMode} is created and adjusted to replace most default creation gestures
  * by a {@link GraphWizardInputMode} that is configured to support creating flowchart diagrams.
  */
-export default class FlowchartConfiguration {
+export class FlowchartConfiguration {
   flowchartTypes = [
     FlowchartNodeType.Process,
     FlowchartNodeType.Decision,

@@ -27,7 +27,14 @@
  **
  ***************************************************************************/
 import { PaperSize } from './PaperSize'
-import { GraphComponent, Insets, Size, SvgExport, WebGLGraphModelManager } from '@yfiles/yfiles'
+import {
+  Graph,
+  GraphComponent,
+  Insets,
+  Size,
+  SvgExport,
+  WebGLGraphModelManager
+} from '@yfiles/yfiles'
 import { useWebGLRendering } from './webgl-support'
 import { hideExportDialog } from './export-dialog/export-dialog'
 /**
@@ -183,6 +190,9 @@ export async function exportSvg(
     exportComponent,
     renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
   )
+  // Dispose of the component and remove its references to the graph
+  exportComponent.cleanUp()
+  exportComponent.graph = new Graph()
   return {
     element: svgElement,
     size: new Size(exporter.viewWidth, exporter.viewHeight)

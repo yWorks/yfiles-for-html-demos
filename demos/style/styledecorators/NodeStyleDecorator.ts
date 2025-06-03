@@ -59,7 +59,7 @@ import {
  * decoration image part of the visualization. If desired, this feature can be implemented as demonstrated in
  * {@link NodeStyleDecorator.isVisible}.
  */
-export default class NodeStyleDecorator extends NodeStyleBase {
+export class NodeStyleDecorator extends NodeStyleBase {
   private readonly imageStyle = new ImageNodeStyle()
   // This dummy node is passed to the image node style to render the decoration image.
   // Its size is the size of the decoration. Its location is adjusted during each createVisual

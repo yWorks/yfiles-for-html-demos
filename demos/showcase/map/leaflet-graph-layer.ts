@@ -40,6 +40,7 @@ import {
 } from 'leaflet'
 import {
   type ArcEdgeStyle,
+  Graph,
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
@@ -192,6 +193,7 @@ export class GraphLayer extends Layer {
     this.pane = undefined
     this.mapPane = undefined
     this.graphComponent.cleanUp()
+    this.graphComponent.graph = new Graph()
     this.graphComponent.htmlElement.remove()
     return this
   }

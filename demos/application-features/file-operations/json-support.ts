@@ -29,8 +29,8 @@
 import type { GraphComponent } from '@yfiles/yfiles'
 import { GraphBuilder, Point } from '@yfiles/yfiles'
 import { getDefaultWriterOptions, toJSON } from '@yfiles/demo-utils/json-writer'
-import type { JSONEdge, JSONGraph, JSONPoint } from '@yfiles/demo-utils/json-model'
-import type { JSONLabel } from '@yfiles/demo-utils/json-model'
+import type { JSONEdge, JSONGraph, JSONLabel, JSONPoint } from '@yfiles/demo-utils/json-model'
+import { deserializeLabelModelParameter } from '@yfiles/demo-utils/label-model-serialization'
 
 /**
  * This file provides functions to read and write a graph to a JSON string.
@@ -57,10 +57,14 @@ export function readJSON(graphComponent: GraphComponent, text: string): void {
       parentId: (item) => item.parentId,
       layout: (item) => item.layout
     })
-    nodesSource.nodeCreator.createLabelsSource<JSONLabel>({
+    const nodeLabelSource = nodesSource.nodeCreator.createLabelsSource<JSONLabel>({
       data: (data) => data.labels || [],
       text: (data) => data.text
     })
+    nodeLabelSource.labelCreator.layoutParameterProvider = (labelObject: JSONLabel) =>
+      labelObject.layoutParameter != null
+        ? deserializeLabelModelParameter(labelObject.layoutParameter)
+        : undefined
 
     const groupNodesSource = graphBuilder.createGroupNodesSource({
       data: data.nodeList.filter((item) => item.isGroup === true),
@@ -68,20 +72,28 @@ export function readJSON(graphComponent: GraphComponent, text: string): void {
       parentId: (item) => item.parentId,
       layout: (item) => item.layout
     })
-    groupNodesSource.nodeCreator.createLabelsSource<JSONLabel>({
+    const groupNodeLabelSource = groupNodesSource.nodeCreator.createLabelsSource<JSONLabel>({
       data: (data) => data.labels || [],
       text: (data) => data.text
     })
+    groupNodeLabelSource.labelCreator.layoutParameterProvider = (labelObject: JSONLabel) =>
+      labelObject.layoutParameter != null
+        ? deserializeLabelModelParameter(labelObject.layoutParameter)
+        : undefined
 
     const { edgeCreator } = graphBuilder.createEdgesSource(
       data.edgeList,
       (item) => item.source,
       (item) => item.target
     )
-    edgeCreator.createLabelsSource<JSONLabel>({
+    const edgeLabelSource = edgeCreator.createLabelsSource<JSONLabel>({
       data: (data) => data.labels || [],
       text: (data) => data.text
     })
+    edgeLabelSource.labelCreator.layoutParameterProvider = (labelObject: JSONLabel) =>
+      labelObject.layoutParameter != null
+        ? deserializeLabelModelParameter(labelObject.layoutParameter)
+        : undefined
     edgeCreator.bendsProvider = (item: JSONEdge): JSONPoint[] | undefined => item.bends
 
     edgeCreator.addEventListener('edge-created', (evt) => {

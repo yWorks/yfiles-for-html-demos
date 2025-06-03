@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { WebGLVisual, Color, IEnumerable, IRenderContext, Point } from '@yfiles/yfiles'
-export default class WebglBlobVisual extends WebGLVisual {
+export class WebglBlobVisual extends WebGLVisual {
   locations
   color
   size

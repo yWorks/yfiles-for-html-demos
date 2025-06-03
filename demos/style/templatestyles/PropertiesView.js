@@ -29,7 +29,7 @@
 /**
  * Helper class for showing properties of a node in the OrgChart.
  */
-export default class PropertiesView {
+export class PropertiesView {
   element
   /**
    * Creates a new PropertiesView

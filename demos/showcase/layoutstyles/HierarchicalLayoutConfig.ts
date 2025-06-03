@@ -67,10 +67,11 @@ import {
   TreeLayout
 } from '@yfiles/yfiles'
 
-import LayoutConfiguration, {
+import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  LayoutConfiguration
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -87,7 +88,7 @@ import { TopLevelGroupToSwimlaneStage } from './TopLevelGroupToSwimlaneStage'
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const HierarchicalLayoutConfig = (Class as any)('HierarchicLayoutConfig', {
+export const HierarchicalLayoutConfig = (Class as any)('HierarchicLayoutConfig', {
   $extends: LayoutConfiguration,
 
   _meta: {
@@ -1455,4 +1456,3 @@ const HierarchicalLayoutConfig = (Class as any)('HierarchicLayoutConfig', {
     }
   }
 })
-export default HierarchicalLayoutConfig

@@ -43,7 +43,7 @@ import {
  * as ancestor of the {@link NodeTypePanel.div div element}, and use relative positioning. This implementation uses
  * an {@link ILabelModelParameter} to determine the position of the pop-up.
  */
-export default class NodeTypePanel {
+export class NodeTypePanel {
   private readonly div: HTMLElement
   private dirty = false
   private _currentItems: INode[] | null = null

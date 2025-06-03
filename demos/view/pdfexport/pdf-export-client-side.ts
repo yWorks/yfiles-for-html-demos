@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Graph,
   GraphComponent,
   type IGraph,
   Insets,
@@ -130,6 +131,10 @@ export async function exportPdf(
     exportComponent,
     renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
   )
+
+  // Dispose of the component and remove its references to the graph
+  exportComponent.cleanUp()
+  exportComponent.graph = new Graph()
 
   const size = getExportSize(paperSize, exporter)
   return convertSvgToPdf(svgElement as SVGElement, size, customFonts)

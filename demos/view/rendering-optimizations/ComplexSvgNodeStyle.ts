@@ -114,7 +114,7 @@ type ComplexSvgNodeStyleVisual = TaggedSvgVisual<SVGUseElement, Cache>
  *
  * In the current implementation, the type is given by the node's tag.
  */
-export default class ComplexSvgNodeStyle extends NodeStyleBase<ComplexSvgNodeStyleVisual> {
+export class ComplexSvgNodeStyle extends NodeStyleBase<ComplexSvgNodeStyleVisual> {
   private static readonly IMAGES = [
     new SimpleSvgDefsCreator(document.querySelector<SVGElement>('#usericon_female1')!),
     new SimpleSvgDefsCreator(document.querySelector<SVGElement>('#usericon_female2')!),

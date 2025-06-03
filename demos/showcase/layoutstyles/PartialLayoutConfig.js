@@ -42,7 +42,7 @@ import {
   PartialLayoutRoutingStyle,
   SubgraphPlacement
 } from '@yfiles/yfiles'
-import LayoutConfiguration from './LayoutConfiguration'
+import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
   Components,
@@ -64,7 +64,7 @@ export var SubgraphLayouts
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const PartialLayoutConfig = Class('PartialLayoutConfig', {
+export const PartialLayoutConfig = Class('PartialLayoutConfig', {
   $extends: LayoutConfiguration,
   _meta: {
     LayoutGroup: [
@@ -264,4 +264,3 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
   /** @type {boolean} */
   moveFixedElementsItem: false
 })
-export default PartialLayoutConfig

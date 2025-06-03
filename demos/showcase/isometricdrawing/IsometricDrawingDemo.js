@@ -69,7 +69,7 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 import IsometricData from './resources/IsometricData'
-import HeightHandleProvider from './HeightHandleProvider'
+import { HeightHandleProvider } from './HeightHandleProvider'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'

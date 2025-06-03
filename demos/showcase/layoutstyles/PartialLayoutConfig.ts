@@ -43,7 +43,7 @@ import {
   SubgraphPlacement
 } from '@yfiles/yfiles'
 
-import LayoutConfiguration from './LayoutConfiguration'
+import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
   Components,
@@ -66,7 +66,7 @@ export enum SubgraphLayouts {
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const PartialLayoutConfig = (Class as any)('PartialLayoutConfig', {
+export const PartialLayoutConfig = (Class as any)('PartialLayoutConfig', {
   $extends: LayoutConfiguration,
 
   _meta: {
@@ -287,4 +287,3 @@ const PartialLayoutConfig = (Class as any)('PartialLayoutConfig', {
   /** @type {boolean} */
   moveFixedElementsItem: false
 })
-export default PartialLayoutConfig

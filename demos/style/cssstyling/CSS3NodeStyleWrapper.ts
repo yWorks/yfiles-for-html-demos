@@ -38,7 +38,7 @@ import {
 /**
  * A wrapper for the demo node style which sets additional CSS classes on its elements.
  */
-export default class CSS3NodeStyleWrapper extends NodeStyleBase {
+export class CSS3NodeStyleWrapper extends NodeStyleBase {
   private wrapped: INodeStyle
 
   constructor(wrapped: INodeStyle) {

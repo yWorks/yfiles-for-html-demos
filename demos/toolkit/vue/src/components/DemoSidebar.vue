@@ -80,27 +80,28 @@ export default defineComponent({
   display: block;
   height: 60px;
   width: calc(2 * 60px);
-  margin-left: 20px;
+  margin-left: 16px;
   background: left center / 90% url('../assets/ylogo-text.svg') no-repeat;
 }
 
 .demo-sidebar-content {
   overflow-y: auto;
   height: calc(100% - 70px);
-  padding: 0 25px;
+  padding: 16px;
   position: absolute;
 }
 
-.demo-sidebar .demo-sidebar-content h1 {
-  font-size: 1.7em;
-  line-height: 1.5;
-  color: #343f4a;
-}
-.demo-sidebar .demo-sidebar-content h2 {
+.demo-sidebar-content h1,
+.demo-sidebar-content h2 {
   font-size: 140%;
   line-height: 130%;
   margin: 1.5ex 0 1ex;
-  color: #343f4a;
+}
+
+/* Make the first heading larger, regardless of it's level */
+.demo-sidebar-content > :first-child {
+  font-size: 170%;
+  margin-top: 0;
 }
 
 .demo-sidebar-content a,

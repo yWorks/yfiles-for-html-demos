@@ -61,7 +61,7 @@ import {
 /**
  * Provides the visuals of the edge creation buttons.
  */
-export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
+export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
   node
   static buttons
   renderer

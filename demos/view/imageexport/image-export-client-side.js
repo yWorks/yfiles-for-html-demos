@@ -26,7 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, Insets, Size, SvgExport, WebGLGraphModelManager } from '@yfiles/yfiles'
+import {
+  Graph,
+  GraphComponent,
+  Insets,
+  Size,
+  SvgExport,
+  WebGLGraphModelManager
+} from '@yfiles/yfiles'
 import { useWebGLRendering } from './webgl-support'
 /**
  * Exports the image on the client. This will open a dialog with a preview and the option to save the image as PNG.
@@ -84,6 +91,9 @@ export async function exportImage(
     exportComponent,
     renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
   )
+  // Dispose of the component and remove its references to the graph
+  exportComponent.cleanUp()
+  exportComponent.graph = new Graph()
   return renderSvgToPng(svgElement, new Size(exporter.viewWidth, exporter.viewHeight), margins)
 }
 /**

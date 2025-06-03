@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export default class PreConfigurator {
+export class PreConfigurator {
   graphItemStylesSettings
   warningRadios
   graphComponent

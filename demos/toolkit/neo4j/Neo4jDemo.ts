@@ -58,10 +58,9 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 
-import * as CodeMirror from 'codemirror'
-import 'codemirror/mode/cypher/cypher'
-import 'codemirror/lib/codemirror.css'
-
+import { basicSetup, EditorView } from 'codemirror'
+import { cypher } from '@codemirror/legacy-modes/mode/cypher'
+import { StreamLanguage } from '@codemirror/language'
 import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { createGraphBuilder } from './Neo4jGraphBuilder'
 import type { Neo4jRecord, Node, Relationship, Result } from './Neo4jUtil'
@@ -69,7 +68,7 @@ import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo-page'
 
-let editor: CodeMirror.EditorFromTextArea
+let editor: EditorView
 
 let graphComponent: GraphComponent
 
@@ -453,19 +452,22 @@ function initializeUI(): void {
   )
 
   // create cypher query editor
-  editor = CodeMirror.fromTextArea(
-    document.querySelector<HTMLTextAreaElement>('#query-text-area')!,
-    {
-      lineNumbers: true,
-      mode: 'cypher'
-    } as CodeMirror.EditorConfiguration
-  )
-  editor.setValue('MATCH (n)-[e]-(m)\nRETURN * LIMIT 150')
-
+  const editorContainer = document.querySelector<HTMLTextAreaElement>('#queryEditorContainer')!
+  editor = new EditorView({
+    parent: editorContainer,
+    extensions: [basicSetup, StreamLanguage.define(cypher)]
+  })
+  editor.dispatch({
+    changes: {
+      from: 0,
+      to: editor.state.doc.length,
+      insert: 'MATCH (n)-[e]-(m)\nRETURN * LIMIT 150'
+    }
+  })
   document
     .querySelector<HTMLButtonElement>('#run-cypher-button')!
     .addEventListener('click', async () => {
-      const query = editor.getValue()
+      const query = editor.state.doc.toString()
       let result: Result
       try {
         result = await runCypherQuery(query)

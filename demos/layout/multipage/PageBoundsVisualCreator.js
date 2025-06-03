@@ -34,7 +34,7 @@ const MARGIN = 15
 /**
  * This class renders a rectangle that represents the page.
  */
-export default class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
+export class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
   pageWidth = 0
   pageHeight = 0
   center

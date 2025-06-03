@@ -45,11 +45,11 @@ import {
   Size
 } from '@yfiles/yfiles'
 
-import Sample1GroupNodeStyle from './Sample1GroupNodeStyle'
-import Sample1LabelStyle from './Sample1LabelStyle'
-import Sample1EdgeStyle from './Sample1EdgeStyle'
-import Sample1NodeStyle from './Sample1NodeStyle'
-import Sample1PortStyle from './Sample1PortStyle'
+import { Sample1GroupNodeStyle } from './Sample1GroupNodeStyle'
+import { Sample1LabelStyle } from './Sample1LabelStyle'
+import { Sample1EdgeStyle } from './Sample1EdgeStyle'
+import { Sample1NodeStyle } from './Sample1NodeStyle'
+import { Sample1PortStyle } from './Sample1PortStyle'
 import { Sample2GroupNodeStyle, Sample2GroupNodeStyleExtension } from './Sample2GroupNodeStyle'
 import { Sample2EdgeStyle, Sample2EdgeStyleExtension } from './Sample2EdgeStyle'
 import { Sample2NodeStyle, Sample2NodeStyleExtension } from './Sample2NodeStyle'
@@ -58,7 +58,7 @@ import { applyDefaultStyles } from './style-utils'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
 import { saveGraphML } from '@yfiles/demo-utils/graphml-support'
-import Sample1CollapsibleNodeStyleDecorator from './Sample1CollapsibleNodeStyleDecorator'
+import { Sample1CollapsibleNodeStyleDecorator } from './Sample1CollapsibleNodeStyleDecorator'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()

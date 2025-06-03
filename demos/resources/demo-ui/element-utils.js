@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { CanvasComponent } from '@yfiles/yfiles'
-import { BrowserDetection } from './BrowserDetection'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 /**
  * Adds options to an HTMLSelectElement
  * @param selectElement the HTMLSelectElement

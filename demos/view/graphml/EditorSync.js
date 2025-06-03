@@ -27,13 +27,13 @@
  **
  ***************************************************************************/
 import { HashMap, IGraph, ILabelOwner, IModelItem, ParseEventArgs } from '@yfiles/yfiles'
-import * as CodeMirror from 'codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/addon/dialog/dialog.css'
-import 'codemirror/mode/xml/xml'
-import 'codemirror/addon/dialog/dialog'
-import 'codemirror/addon/search/search'
-import 'codemirror/addon/search/searchcursor'
+import { EditorState, StateEffect, StateEffectType, StateField } from '@codemirror/state'
+import { Decoration, ViewUpdate } from '@codemirror/view'
+import { basicSetup, EditorView } from 'codemirror'
+import { xml } from '@codemirror/lang-xml'
+import { lintGutter } from '@codemirror/lint'
+import { getXmlLinter } from '@yfiles/demo-resources/codeMirrorLinters'
+const xmlLinter = getXmlLinter()
 /**
  * This class handles synchronization of the GraphML editor with the view graph.
  * @yjs:keep = setValue,getValue
@@ -46,8 +46,11 @@ export class EditorSync {
   cursorActivity
   _editor = null
   _graph = null
+  markerField = null
   editorContentChangedListener
   itemSelectedListener
+  addMarker
+  removeMarker
   constructor() {
     this.contentChanged = this.onContentChanged.bind(this)
     this.cursorActivity = this.onCursorActivity.bind(this)
@@ -83,23 +86,102 @@ export class EditorSync {
    */
   initialize(masterGraph) {
     this._graph = masterGraph
-    // Initialize the CodeMirror editor
-    const textarea = document.querySelector('#xmlEditor')
-    const editor = CodeMirror.fromTextArea(textarea, {
-      lineNumbers: true,
-      mode: 'application/xml'
+    const addMarker = StateEffect.define()
+    this.addMarker = addMarker
+    const removeMarker = StateEffect.define()
+    this.removeMarker = removeMarker
+    this.markerField = StateField.define({
+      create() {
+        return {
+          decorations: Decoration.none,
+          markers: new Map()
+        }
+      },
+      update(value, tr) {
+        let { decorations, markers } = value
+        decorations = decorations.map(tr.changes)
+        for (let e of tr.effects) {
+          if (e.is(addMarker)) {
+            const marker = e.value
+            decorations = decorations.update({
+              add: [
+                Decoration.mark({
+                  class: marker.className
+                }).range(marker.from, marker.to)
+              ]
+            })
+            markers.set(marker.id, marker)
+          } else if (e.is(removeMarker)) {
+            const markerId = e.value
+            const marker = markers.get(markerId)
+            if (marker) {
+              decorations = decorations.update({
+                filter: (from, to) => !(from === marker.from && to === marker.to)
+              })
+              markers.delete(marker.id)
+            }
+          }
+        }
+        return { decorations, markers }
+      },
+      provide: (f) => EditorView.decorations.from(f, (value) => value.decorations)
     })
-    editor.on('changes', this.contentChanged)
-    editor.on('cursorActivity', this.cursorActivity)
-    this._editor = editor
+    const textArea = document.querySelector('#editorContainer')
+    const startState = EditorState.create({
+      doc: textArea.value,
+      extensions: [
+        basicSetup,
+        this.markerField,
+        xml(),
+        xmlLinter,
+        lintGutter(),
+        EditorView.updateListener.of((update) => {
+          if (update.docChanged) {
+            this.contentChanged(update)
+          }
+        }),
+        EditorView.updateListener.of((update) => {
+          if (update.selectionSet) {
+            this.cursorActivity(update)
+          }
+        })
+      ]
+    })
+    this._editor = new EditorView({
+      parent: textArea,
+      state: startState
+    })
+  }
+  /**
+   * generate a marker with the supplied parameters
+   */
+  addMarkerWrapper(from, to, id, item, cssClass = '', scrollToView = false) {
+    const effects = [
+      this.addMarker.of({
+        from: from,
+        to: to,
+        className: cssClass,
+        id: id
+      })
+    ]
+    if (scrollToView) {
+      effects.push(EditorView.scrollIntoView(from, { y: 'start' }))
+    }
+    this.editor.dispatch({
+      effects: effects
+    })
+    const newMarker = this.editor.state.field(this.markerField).markers.get(id)
+    this.itemToMarkerMap.set(item, newMarker)
+    this.markerToItemMap.set(newMarker, item)
+    return newMarker
   }
   /**
    * The editor content has been edited: dispatch an event that notifies the view, and update the markers.
    */
-  onContentChanged() {
-    const value = this.editor.getValue()
+  onContentChanged(update) {
+    const value = update.state.doc.toString()
     this.editorContentChangedListener({ value })
-    this.onCursorActivity()
+    this.onCursorActivity(update)
   }
   /**
    * The graph has been modified interactively in the view:
@@ -107,10 +189,14 @@ export class EditorSync {
    */
   onGraphModified(event) {
     // don't fire changes while replacing the content
-    this.editor.off('changes', this.contentChanged)
-    this.editor.setValue(event.graphml)
+    this.editor.dispatch({
+      changes: {
+        from: 0,
+        to: this.editor.state.doc.length,
+        insert: event.graphml
+      }
+    })
     setOutput('')
-    this.editor.on('changes', this.contentChanged)
     this.setMarkers()
     this.onItemSelected(event.selectedItem)
   }
@@ -135,13 +221,24 @@ export class EditorSync {
     // clear text in output area
     setOutput('')
   }
+  getMarkersAt(view, pos) {
+    const found = []
+    const state = view.state.field(this.markerField)
+    // Get the line start and end positions
+    state.markers.forEach((marker) => {
+      if (marker.from <= pos && marker.to >= pos) {
+        found.push(marker)
+      }
+    })
+    return found
+  }
   /**
    * When the editor cursor is moved, see if we can identify a graph item representation
    * at the current cursor position.
    */
-  onCursorActivity() {
-    const cursor = this.editor.getCursor()
-    const markers = this.editor.findMarksAt(cursor)
+  onCursorActivity(update) {
+    const cursor = update.state.selection.main.head
+    const markers = this.getMarkersAt(this.editor, cursor)
     if (markers[0]) {
       const marker = getInnermostMarker(cursor, markers)
       const item = this.markerToItemMap.get(marker)
@@ -153,11 +250,13 @@ export class EditorSync {
    */
   setMarkers() {
     this.itemToMarkerMap.values.forEach((marker) => {
-      marker.clear()
+      this.editor.dispatch({
+        effects: this.removeMarker.of(marker.id)
+      })
     })
     this.itemToMarkerMap.clear()
     this.markerToItemMap.clear()
-    const editorText = this.editor.getValue()
+    const editorText = this.editor.state.doc.toString()
     const graph = this._graph
     graph.nodes.forEach((node) => {
       this.setMarkersForItem(node, 'node', editorText)
@@ -185,12 +284,7 @@ export class EditorSync {
     // set an editor marker with the corresponding start and end indices
     const startIndex = editorText.indexOf(matches[0], 0)
     const endIndex = findMatchingTag(editorText, startIndex, tagName)
-    const marker = this.editor.markText(
-      this.editor.posFromIndex(startIndex),
-      this.editor.posFromIndex(endIndex)
-    )
-    this.itemToMarkerMap.set(item, marker)
-    this.markerToItemMap.set(marker, item)
+    this.addMarkerWrapper(startIndex, endIndex, itemId ?? '', item)
     //
     // Find Label markers (labels are not part of the core GraphML standard and have no individual IDs).
     //
@@ -235,12 +329,7 @@ export class EditorSync {
         }
         labelStartIndex += startIndex
         const labelEndIndex = labelStartIndex + labelText.length
-        const labelMarker = this.editor.markText(
-          this.editor.posFromIndex(labelStartIndex),
-          this.editor.posFromIndex(labelEndIndex)
-        )
-        this.itemToMarkerMap.set(labelItem, labelMarker)
-        this.markerToItemMap.set(labelMarker, labelItem)
+        this.addMarkerWrapper(labelStartIndex, labelEndIndex, labelText, labelItem)
         labelIndex++
         labelMatches = labelRegExp.exec(labelData)
       }
@@ -254,11 +343,7 @@ export class EditorSync {
       const options = {
         className: 'text-highlight'
       }
-      const marker = this.replaceMarker(masterItem, options)
-      if (marker) {
-        this.editor.scrollIntoView(marker.find())
-        this.editor.refresh()
-      }
+      this.replaceMarker(masterItem, options)
     }
   }
   /**
@@ -273,14 +358,19 @@ export class EditorSync {
   replaceMarker(masterItem, options) {
     if (masterItem !== null && this.itemToMarkerMap.keys.includes(masterItem)) {
       const oldMarker = this.itemToMarkerMap.get(masterItem)
-      const range = oldMarker.find()
-      if (typeof range !== 'undefined') {
+      if (typeof oldMarker !== 'undefined') {
         this.markerToItemMap.delete(oldMarker)
-        oldMarker.clear()
-        const newMarker = this.editor.markText(range.from, range.to, options)
-        this.markerToItemMap.set(newMarker, masterItem)
-        this.itemToMarkerMap.set(masterItem, newMarker)
-        return newMarker
+        this.editor.dispatch({
+          effects: this.removeMarker.of(oldMarker.id)
+        })
+        return this.addMarkerWrapper(
+          oldMarker.from,
+          oldMarker.to,
+          oldMarker.id,
+          masterItem,
+          options.className,
+          true
+        )
       }
     }
     return null
@@ -294,21 +384,16 @@ export class EditorSync {
  */
 function getInnermostMarker(position, markers) {
   let inner = markers[0]
-  let innerPos = inner.find().from
+  let innerPos = inner
   for (let i = 1; i < markers.length; i++) {
     const marker = markers[i]
-    const markerPos = marker.find().from
-    if (isGreater(markerPos, innerPos) && isGreater(position, markerPos)) {
+    const markerPos = marker
+    if ((markerPos.from | 0) > (innerPos.from | 0) && (position | 0) > (markerPos.from | 0)) {
       inner = marker
       innerPos = markerPos
     }
   }
   return inner
-}
-function isGreater(pos1, pos2) {
-  return (
-    (pos1.line | 0) > (pos2.line | 0) || (pos1.line === pos2.line && (pos1.ch | 0) >= (pos2.ch | 0))
-  )
 }
 /**
  * Finds a matching closing tag for a provided start tag (at the appropriate nesting depth).

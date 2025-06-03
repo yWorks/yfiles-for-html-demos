@@ -34,7 +34,7 @@ import type { UserData } from './UserDataFactory'
  * A label style to display data in a tabular fashion.
  * The style uses the {@link HtmlVisual} and an HTML table to render the visual
  */
-export default class DataTableLabelStyle extends LabelStyleBase {
+export class DataTableLabelStyle extends LabelStyleBase {
   private readonly renderSupport = new DataTableRenderSupport()
 
   /**

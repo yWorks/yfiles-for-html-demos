@@ -31,7 +31,7 @@ import { ConstrainedHandle, IHandle, IInputModeContext, INode, Point } from '@yf
  * A port location handle that is constrained to the layout rectangle of
  * the port's owner node.
  */
-export default class NodeLayoutPortLocationHandle extends ConstrainedHandle {
+export class NodeLayoutPortLocationHandle extends ConstrainedHandle {
   node
   /**
    * Creates a new instance of {@link NodeLayoutPortLocationHandle}.

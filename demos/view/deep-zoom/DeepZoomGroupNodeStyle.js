@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Graph,
   GraphComponent,
   Matrix,
   NodeStyleBase,
@@ -170,6 +171,7 @@ export class DeepZoomGroupNodeStyle extends NodeStyleBase {
     const svg = svgExport.exportSvg(tempGraphComponent)
     // clean up
     tempGraphComponent.cleanUp()
+    tempGraphComponent.graph = new Graph()
     tempView.dispose()
     return [svg, allBounds]
   }

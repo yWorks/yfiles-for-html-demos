@@ -55,7 +55,7 @@ export default class App extends Component {
           >
             Demos
           </a>
-          <span className="demo-title">React Class Components</span>
+          <span className="demo-title">React Class Components Demo</span>
         </div>
 
         <ReactGraphComponent />

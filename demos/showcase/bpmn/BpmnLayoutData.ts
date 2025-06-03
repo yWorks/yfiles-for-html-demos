@@ -65,7 +65,7 @@ import {
 } from './bpmn-view'
 import { BpmnLabelProfitModel, BpmnLayout } from './BpmnLayout'
 
-export default class BpmnLayoutData {
+export class BpmnLayoutData {
   private _minimumEdgeLength = 20
   private _startNodesFirst = false
   private _compactMessageFlowLayering = false

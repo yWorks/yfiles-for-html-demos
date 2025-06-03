@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import Page from './page.js'
+import { Page } from './page.js'
 import type { CanvasComponent, GraphComponent } from '@yfiles/yfiles'
 
 // provide types for the global yFiles object

@@ -52,7 +52,7 @@ import {
   Rect,
   Size
 } from '@yfiles/yfiles'
-import WizardAction from './WizardAction'
+import { WizardAction } from './WizardAction'
 import {
   checkAnd,
   checkCreatingEdge,

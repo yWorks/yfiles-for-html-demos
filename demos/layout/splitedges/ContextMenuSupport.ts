@@ -41,7 +41,7 @@ import {
   PopulateItemContextMenuEventArgs
 } from '@yfiles/yfiles'
 
-export default class ContextMenuSupport {
+export class ContextMenuSupport {
   constructor(
     private readonly graphComponent: GraphComponent,
     private readonly runLayout: () => Promise<void>

@@ -50,7 +50,7 @@ import {
   type TaggedSvgVisual
 } from '@yfiles/yfiles'
 
-import Sample1EdgeStyle from './Sample1EdgeStyle'
+import { Sample1EdgeStyle } from './Sample1EdgeStyle'
 import { SVGNS, XLINKNS } from './Namespaces'
 
 /**
@@ -63,7 +63,7 @@ type Sample1NodeStyleVisual = TaggedSvgVisual<SVGGElement, NodeRenderDataCache>
  * that uses the convenience class {@link NodeStyleBase}
  * as the base class.
  */
-export default class Sample1NodeStyle extends NodeStyleBase<Sample1NodeStyleVisual> {
+export class Sample1NodeStyle extends NodeStyleBase<Sample1NodeStyleVisual> {
   private static _fillCounter: number
 
   private nodeColor = 'rgba(0,130,180,1)'

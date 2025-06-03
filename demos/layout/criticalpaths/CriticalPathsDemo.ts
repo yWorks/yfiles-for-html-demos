@@ -44,7 +44,7 @@ import {
   TreeLayoutData
 } from '@yfiles/yfiles'
 
-import PriorityPanel from './PriorityPanel'
+import { PriorityPanel } from './PriorityPanel'
 import * as SampleData from './resources/SampleData'
 import { createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'

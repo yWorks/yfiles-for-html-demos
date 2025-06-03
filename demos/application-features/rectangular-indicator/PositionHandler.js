@@ -37,7 +37,7 @@ import {
 /**
  * A position handler that moves a given rectangle.
  */
-export default class PositionHandler extends BaseClass(IPositionHandler) {
+export class PositionHandler extends BaseClass(IPositionHandler) {
   rectangle
   offset
   constructor(rectangle) {

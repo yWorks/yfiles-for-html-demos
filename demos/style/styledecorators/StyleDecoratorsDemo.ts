@@ -43,9 +43,9 @@ import {
   SmartEdgeLabelModel
 } from '@yfiles/yfiles'
 
-import LabelStyleDecorator from './LabelStyleDecorator'
-import EdgeStyleDecorator from './EdgeStyleDecorator'
-import NodeStyleDecorator from './NodeStyleDecorator'
+import { LabelStyleDecorator } from './LabelStyleDecorator'
+import { EdgeStyleDecorator } from './EdgeStyleDecorator'
+import { NodeStyleDecorator } from './NodeStyleDecorator'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'

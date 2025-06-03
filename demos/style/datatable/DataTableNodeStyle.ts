@@ -42,7 +42,7 @@ type DataTableNodeStyleVisual = TaggedHtmlVisual<HTMLDivElement, RenderDataCache
  * This style uses the {@link HtmlVisual}s to
  * render an HTML table as the node's visualization.
  */
-export default class DataTableNodeStyle extends NodeStyleBase<DataTableNodeStyleVisual> {
+export class DataTableNodeStyle extends NodeStyleBase<DataTableNodeStyleVisual> {
   private readonly renderSupport = new DataTableRenderSupport()
 
   protected createVisual(context: IRenderContext, node: INode): DataTableNodeStyleVisual {

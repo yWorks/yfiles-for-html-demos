@@ -36,12 +36,12 @@ import {
   License,
   NodeReshapeHandleProvider
 } from '@yfiles/yfiles'
-import RenderingTypesManager from './RenderingTypesManager'
+import { RenderingTypesManager } from './RenderingTypesManager'
 import {
   HierarchicalDemoConfiguration,
   OrganicDemoConfiguration
 } from './LargeGraphDemoConfiguration'
-import OrgChartDemoConfiguration from './OrgChartDemoConfiguration'
+import { OrgChartDemoConfiguration } from './OrgChartDemoConfiguration'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   addNavigationButtons,

@@ -40,7 +40,7 @@ import {
 /**
  * An {@link IHandle} implementation that changes the height in a node's tag.
  */
-export default class HeightHandle extends BaseClass(IHandle) {
+export class HeightHandle extends BaseClass(IHandle) {
   private dragging: boolean
   private originalHeight = 0
   private node: INode

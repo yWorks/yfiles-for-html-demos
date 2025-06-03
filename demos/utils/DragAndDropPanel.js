@@ -43,7 +43,6 @@ import {
   IPortStyle,
   IStripe,
   LabelDropInputMode,
-  ListEnumerable,
   NodeDropInputMode,
   Point,
   PortDropInputMode,
@@ -310,7 +309,7 @@ export class DragAndDropPanel {
         simpleNode.tag = item.tag
         simpleNode.labels = this.copyNodeLabels ? item.labels : IListEnumerable.EMPTY
         if (item.ports.size > 0) {
-          simpleNode.ports = new ListEnumerable(item.ports)
+          simpleNode.ports = IListEnumerable.from(item.ports)
         }
         this.beginDrag(element, simpleNode)
       }

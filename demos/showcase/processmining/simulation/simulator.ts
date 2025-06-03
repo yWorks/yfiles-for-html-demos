@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { IEdge, IGraph, IListEnumerable, INode, List } from '@yfiles/yfiles'
+import type { IEdge, IGraph, INode, List } from '@yfiles/yfiles'
 import type { EventLog } from '../event-log-types'
 import { getProcessStepTag, getProcessTransitionTag, getSimulationGraph } from './simulation-graph'
 
@@ -110,10 +110,6 @@ function nextInt(max: number): number {
 /**
  * Returns a random element of the given list.
  */
-function getRandom<T>(list: IListEnumerable<T> | List<T>): T | null {
-  if (list.size > 0) {
-    return list.get(nextInt(list.size))
-  } else {
-    return null
-  }
+function getRandom<T>(list: List<T>): T | null {
+  return list.size > 0 ? list.get(nextInt(list.size)) : null
 }

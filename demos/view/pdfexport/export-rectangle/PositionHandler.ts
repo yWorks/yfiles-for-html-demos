@@ -38,7 +38,7 @@ import {
 /**
  * An {@link IPositionHandler} that manages the position of a given {@link MutableRectangle}.
  */
-export default class PositionHandler extends BaseClass(IPositionHandler) {
+export class PositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Stores the offset from the mouse event location to the handled rectangle's upper left corner.
    */

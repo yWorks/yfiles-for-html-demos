@@ -26,17 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import * as CodeMirror from 'codemirror'
-import 'codemirror/mode/xml/xml'
-import 'codemirror/mode/javascript/javascript'
-import 'codemirror/addon/search/search'
-import 'codemirror/addon/search/searchcursor'
-import 'codemirror/addon/dialog/dialog'
-import 'codemirror/addon/lint/lint'
-import 'codemirror/addon/lint/json-lint'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/addon/dialog/dialog.css'
-import 'codemirror/addon/lint/lint.css'
+import { basicSetup, EditorView } from 'codemirror'
+import { javascript } from '@codemirror/lang-javascript'
+import { lintGutter } from '@codemirror/lint'
 import {
   Arrow,
   ArrowType,
@@ -56,8 +48,15 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 import { registerTemplateStyleSerialization } from '@yfiles/demo-utils/template-styles/MarkupExtensions'
+import { StateEffect, StateField } from '@codemirror/state'
+import { xml } from '@codemirror/lang-xml'
+import { getXmlLinter, getJsonLinter } from '@yfiles/demo-resources/codeMirrorLinters'
+const xmlLinter = getXmlLinter()
+const jsonLinter = getJsonLinter()
 let templateEditor
+let setTemplateEditorEditable
 let tagEditor
+let setTagEditorEditable
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('graphComponent')
@@ -73,17 +72,51 @@ async function run() {
  * editors on selection changes.
  */
 function initializeEditors(graphComponent) {
-  templateEditor = CodeMirror.fromTextArea(document.querySelector(`#template-text-area`), {
-    lineNumbers: true,
-    mode: 'application/xml',
-    gutters: ['CodeMirror-lint-markers'],
-    lint: true
+  setTemplateEditorEditable = StateEffect.define()
+  const templateEditorEditable = StateField.define({
+    create: () => true,
+    update: (value, transaction) => {
+      for (let e of transaction.effects) {
+        if (e.is(setTemplateEditorEditable)) {
+          value = e.value
+        }
+      }
+      return value
+    }
   })
-  tagEditor = CodeMirror.fromTextArea(document.querySelector(`#tag-text-area`), {
-    lineNumbers: true,
-    mode: 'application/json',
-    gutters: ['CodeMirror-lint-markers'],
-    lint: true
+  templateEditor = new EditorView({
+    parent: document.querySelector('#templateEditorContainer'),
+    extensions: [
+      basicSetup,
+      xml(),
+      lintGutter(),
+      xmlLinter,
+      templateEditorEditable,
+      EditorView.editable.from(templateEditorEditable)
+    ]
+  })
+  setTagEditorEditable = StateEffect.define()
+  const tagEditorEditable = StateField.define({
+    create: () => true,
+    update: (value, transaction) => {
+      for (let e of transaction.effects) {
+        if (e.is(setTagEditorEditable)) {
+          value = e.value
+        }
+      }
+      return value
+    }
+  })
+  tagEditor = new EditorView({
+    parent: document.querySelector('#tagEditorContainer'),
+    extensions: [
+      basicSetup,
+      javascript(),
+      jsonLinter,
+      lintGutter(),
+      tagEditorEditable,
+      EditorView.editable.from(tagEditorEditable)
+    ]
   })
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false
@@ -92,23 +125,53 @@ function initializeEditors(graphComponent) {
     const selectedNode = graphComponent.nodes.at(0)
     if (selectedNode) {
       if (selectedNode.style instanceof StringTemplateNodeStyle) {
-        templateEditor.setOption('readOnly', false)
-        templateEditor.setValue(selectedNode.style.svgContent || '')
+        templateEditor.dispatch({
+          effects: setTemplateEditorEditable.of(true),
+          changes: {
+            from: 0,
+            to: templateEditor.state.doc.length,
+            insert: selectedNode.style.svgContent || ''
+          }
+        })
       } else {
-        templateEditor.setOption('readOnly', true)
-        templateEditor.setValue('Style is not an instance of TemplateNodeStyle.')
+        templateEditor.dispatch({
+          effects: setTemplateEditorEditable.of(false),
+          changes: {
+            from: 0,
+            to: templateEditor.state.doc.length,
+            insert: 'Style is not an instance of TemplateNodeStyle.'
+          }
+        })
       }
-      tagEditor.setOption('readOnly', false)
-      tagEditor.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
+      tagEditor.dispatch({
+        effects: setTagEditorEditable.of(true),
+        changes: {
+          from: 0,
+          to: tagEditor.state.doc.length,
+          insert: selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}'
+        }
+      })
       document.querySelector(`#apply-template-button`).disabled = false
       document.querySelector(`#apply-tag-button`).disabled = false
     }
   })
   graphComponent.selection.addEventListener('item-removed', (_, graphComponent) => {
-    templateEditor.setOption('readOnly', 'nocursor')
-    tagEditor.setOption('readOnly', 'nocursor')
-    templateEditor.setValue('Select a node to edit its template.')
-    tagEditor.setValue('Select a node to edit its tag.')
+    templateEditor.dispatch({
+      effects: setTemplateEditorEditable.of(false),
+      changes: {
+        from: 0,
+        to: templateEditor.state.doc.length,
+        insert: 'Select a node to edit its template.'
+      }
+    })
+    tagEditor.dispatch({
+      effects: setTagEditorEditable.of(false),
+      changes: {
+        from: 0,
+        to: tagEditor.state.doc.length,
+        insert: 'Select a node to edit its tag.'
+      }
+    })
     document.querySelector(`#apply-template-button`).disabled = true
     document.querySelector(`#apply-tag-button`).disabled = true
   })
@@ -233,7 +296,7 @@ function applyTemplate(graphComponent) {
     // if there are no selected nodes, there is no need to do anything
     return
   }
-  const templateText = templateEditor.getValue()
+  const templateText = templateEditor.state.doc.toString()
   try {
     const style = new StringTemplateNodeStyle(templateText)
     // check if style is valid
@@ -261,7 +324,7 @@ function applyTag(graphComponent) {
     // if there are no selected nodes, there is no need to do anything
     return
   }
-  const tagText = tagEditor.getValue()
+  const tagText = tagEditor.state.doc.toString()
   try {
     const tag = JSON.parse(tagText)
     for (const node of selectedNodes) {

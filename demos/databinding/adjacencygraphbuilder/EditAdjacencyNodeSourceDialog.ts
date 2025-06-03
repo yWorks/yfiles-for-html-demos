@@ -26,15 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import * as CodeMirror from 'codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/addon/dialog/dialog.css'
-import 'codemirror/mode/xml/xml'
-import 'codemirror/mode/javascript/javascript'
-import 'codemirror/addon/dialog/dialog'
+import { basicSetup, EditorView } from 'codemirror'
+import { xml } from '@codemirror/lang-xml'
+import { javascript } from '@codemirror/lang-javascript'
 
 import type { AdjacencyNodesSourceDefinitionBuilderConnector } from './ModelClasses'
+import { lintGutter } from '@codemirror/lint'
+import { getXmlLinter } from '../../resources/codeMirrorLinters'
 
+const xmlLinter = getXmlLinter()
 /**
  * Editing dialog for schema graph nodes business data ({@link AdjacencyNodesSourceDefinition}
  */
@@ -45,9 +45,9 @@ export class EditAdjacencyNodesSourceDialog {
 
   private readonly nodesSourceConnector: AdjacencyNodesSourceDefinitionBuilderConnector
 
-  private dataEditor: any
+  private dataEditor: EditorView | undefined
   private idBindingInput?: HTMLInputElement
-  private templateEditor: any
+  private templateEditor: EditorView | undefined
   private nameInput?: HTMLInputElement
 
   /**
@@ -78,7 +78,7 @@ export class EditAdjacencyNodesSourceDialog {
       'Data',
       'The nodes business data in JSON or JavaScript format. Either an array of node objects' +
         ' or an object with strings as keys and node objects as values.',
-      { name: 'javascript', json: true }
+      'js'
     )
 
     this.idBindingInput = this.createInputField(
@@ -94,9 +94,21 @@ export class EditAdjacencyNodesSourceDialog {
     )
 
     this.nameInput.value = this.nodesSourceConnector.sourceDefinition.name
-    this.dataEditor.setValue(this.nodesSourceConnector.sourceDefinition.data || '')
+    this.dataEditor.dispatch({
+      changes: {
+        from: 0,
+        to: this.dataEditor.state.doc.length,
+        insert: this.nodesSourceConnector.sourceDefinition.data || ''
+      }
+    })
     this.idBindingInput.value = this.nodesSourceConnector.sourceDefinition.idBinding
-    this.templateEditor.setValue(this.nodesSourceConnector.sourceDefinition.template)
+    this.templateEditor.dispatch({
+      changes: {
+        from: 0,
+        to: this.templateEditor.state.doc.length,
+        insert: this.nodesSourceConnector.sourceDefinition.template
+      }
+    })
   }
 
   /**
@@ -106,8 +118,8 @@ export class EditAdjacencyNodesSourceDialog {
   accept(): void {
     this.nodesSourceConnector.sourceDefinition.name = this.nameInput!.value
     this.nodesSourceConnector.sourceDefinition.idBinding = this.idBindingInput!.value
-    this.nodesSourceConnector.sourceDefinition.template = this.templateEditor.getValue()
-    this.nodesSourceConnector.sourceDefinition.data = this.dataEditor.getValue()
+    this.nodesSourceConnector.sourceDefinition.template = this.templateEditor!.state.doc.toString()
+    this.nodesSourceConnector.sourceDefinition.data = this.dataEditor!.state.doc.toString()
 
     try {
       this.nodesSourceConnector.applyDefinition()
@@ -197,18 +209,18 @@ export class EditAdjacencyNodesSourceDialog {
    * @param doc the documentation text. Can be longer as it is rendered as a HTML paragraph
    * @param mode the language syntax configuration object for CodeMirror
    */
-  private createEditorField(
-    labelText: string,
-    doc: string,
-    mode: string | object
-  ): CodeMirror.EditorFromTextArea {
+  private createEditorField(labelText: string, doc: string, mode: string | object): EditorView {
     const container = this.createDescription(labelText, doc)
-    const textArea = document.createElement('textarea')
-    container.appendChild(textArea)
-    return CodeMirror.fromTextArea(textArea, {
-      lineNumbers: true,
-      mode: mode
-    } as any)
+    const extensions = [basicSetup]
+    if (mode == 'js') {
+      extensions.push(javascript())
+    } else {
+      extensions.push(xml(), xmlLinter, lintGutter())
+    }
+    return new EditorView({
+      parent: container,
+      extensions: extensions
+    })
   }
 
   /**

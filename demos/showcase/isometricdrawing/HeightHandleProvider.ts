@@ -35,13 +35,13 @@ import {
   INode,
   List
 } from '@yfiles/yfiles'
-import HeightHandle from './HeightHandle'
+import { HeightHandle } from './HeightHandle'
 
 /**
  * An {@link IHandleProvider} implementation that
  * adds a {@link HeightHandle} to a node's available handles.
  */
-export default class HeightHandleProvider extends BaseClass(IHandleProvider) {
+export class HeightHandleProvider extends BaseClass(IHandleProvider) {
   private readonly node: INode
   private readonly delegateHandler: IHandleProvider
   private readonly minimumHeight: number

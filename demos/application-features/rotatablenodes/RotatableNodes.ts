@@ -1460,7 +1460,7 @@ class RotatableNodeClipboardHelper extends BaseClass(IClipboardHelper) {
  * would be enough to store just the rotation angle but then, we would have to recalculate all the
  * properties of this class very often.
  */
-class CachingOrientedRectangle extends BaseClass(IOrientedRectangle) {
+export class CachingOrientedRectangle extends BaseClass(IOrientedRectangle) {
   private _upVector: Point = new Point(0, -1)
   private _angle = 0
   cachedLayout: Rect

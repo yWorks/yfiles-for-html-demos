@@ -43,7 +43,7 @@ const HEIGHT = 4
  * A custom port style based on the {@link PortStyleBase} class.
  * The port is rendered as a circle.
  */
-export default class Sample1PortStyle extends PortStyleBase {
+export class Sample1PortStyle extends PortStyleBase {
   createVisual(context, port) {
     // create the ellipse
     const ellipse = window.document.createElementNS(SVGNS, 'ellipse')

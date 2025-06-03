@@ -42,7 +42,7 @@ import {
 /**
  * A NodeReshapeHandleProvider for purple nodes that provides different handles for corners and borders.
  */
-export default class PurpleNodeReshapeHandleProvider extends NodeReshapeHandleProvider {
+export class PurpleNodeReshapeHandleProvider extends NodeReshapeHandleProvider {
   constructor(node: INode, reshapeHandler: IReshapeHandler) {
     super(node, reshapeHandler, HandlePositions.BORDER)
   }

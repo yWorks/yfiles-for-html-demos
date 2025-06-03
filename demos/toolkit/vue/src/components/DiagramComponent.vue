@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import {
+  Graph,
   GraphComponent,
   GraphEditorInputMode,
   GraphViewerInputMode,
@@ -96,6 +97,10 @@ export default defineComponent({
         // to wait for them to finish, also.
         await nextTick()
       })
+      // Dispose of the component and remove its references to the graph
+      exportComponent.cleanUp()
+      exportComponent.graph = new Graph()
+
       downloadFile(SvgExport.exportSvgString(svg), 'graph.svg', 'image/svg+xml')
     }
 
@@ -115,7 +120,6 @@ export default defineComponent({
 <style scoped>
 .toolbar {
   position: absolute;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   top: 60px;
   left: 0;
   right: 0;

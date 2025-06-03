@@ -46,7 +46,7 @@ import { ArrowNodeStyleShaftRatioHandle } from './ArrowNodeStyleShaftRatioHandle
  * The {@link ArrowNodeStyleShaftRatioHandle} is only provided for {@link ArrowStyleShape.ARROW},
  * {@link ArrowStyleShape.DOUBLE_ARROW}, and {@link ArrowStyleShape.NOTCHED_ARROW}.
  */
-export default class ArrowNodeStyleHandleProvider extends BaseClass(IHandleProvider) {
+export class ArrowNodeStyleHandleProvider extends BaseClass(IHandleProvider) {
   node
   stylePropertyChanged
   delegateProvider

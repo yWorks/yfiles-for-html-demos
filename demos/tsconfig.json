@@ -19,7 +19,6 @@
     "**/*.ts"
   ],
   "exclude": [
-    "loading/nodejs",
     "loading/vite",
     "loading/vite-lazy-yfiles",
     "loading/webpack",
@@ -42,7 +41,6 @@
     "toolkit/react-class-components",
     "toolkit/solid",
     "toolkit/svelte",
-    "toolkit/vue",
-    "view/graphml"
+    "toolkit/vue"
   ]
 }

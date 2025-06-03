@@ -1,32 +1,48 @@
 <script lang="ts">
-  import type { FontStyleStringValues, FontWeightStringValues, TextWrappingStringValues } from '@yfiles/yfiles'
+  import type { FontStyleStringValues, TextWrappingStringValues } from '@yfiles/yfiles'
   import { Font, Size, TextMeasurePolicy, TextRenderSupport, TextWrapping } from '@yfiles/yfiles'
 
-  export let maxWidth = -1
-  export let maxHeight = -1
-  export let x = 0
-  export let y = 0
-  export let text = ''
-  export let rtl = false
-  export let fontFamily = 'serif'
-  export let textWrapping: TextWrappingStringValues = 'wrap-word'
-  export let fontSize = 12
-  export let fontStyle: FontStyleStringValues = 'normal'
-  export let fontWeight: FontWeightStringValues = 'normal'
-  export let fill = 'black'
+  let {
+    maxWidth = -1,
+    maxHeight = -1,
+    x = 0,
+    y = 0,
+    text = '',
+    rtl = false,
+    fontFamily = 'serif',
+    textWrapping = 'wrap-word',
+    fontSize = 12,
+    fontStyle = 'normal',
+    fontWeight = 'normal',
+    fill = 'black'
+  }: {
+    maxWidth: number,
+    maxHeight: number,
+    x: number,
+    y: number,
+    text: string,
+    rtl: boolean,
+    fontFamily: string,
+    textWrapping: TextWrappingStringValues,
+    fontSize: number,
+    fontStyle: FontStyleStringValues,
+    fontWeight: string,
+    fill: string
+  } = $props()
 
-  let element: SVGTextElement | SVGGElement
+  let element: SVGTextElement | SVGGElement = $state()
 
-  $: {
-    let maxSize =
-      maxWidth >= 0 || maxHeight >= 0
-        ? new Size(
-            maxWidth < 0 ? Number.MAX_VALUE : maxWidth,
-            maxHeight < 0 ? Number.MAX_VALUE : maxHeight
-          )
-        : null
-    const wrapping = TextWrapping.from(textWrapping.replaceAll('-', '_') as TextWrappingStringValues)
-    const font = new Font(fontFamily, fontSize, fontStyle, fontWeight)
+
+  let maxSize = $derived(
+    maxWidth >= 0 || maxHeight >= 0
+      ? new Size(
+        maxWidth < 0 ? Number.MAX_VALUE : maxWidth,
+        maxHeight < 0 ? Number.MAX_VALUE : maxHeight
+      )
+      : null)
+  const wrapping = $derived(TextWrapping.from(textWrapping.replaceAll('-', '_') as TextWrappingStringValues))
+  const font = $derived(new Font(fontFamily, fontSize, fontStyle, fontWeight))
+  $effect(() => {
     if (element) {
       while (element.firstElementChild !== null) {
         element.firstElementChild.remove()
@@ -41,7 +57,7 @@
         rtl
       )
     }
-  }
+  })
 </script>
 
 {#if rtl}

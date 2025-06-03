@@ -39,7 +39,7 @@ import {
  * editing is enabled for the inner segments of this edge but not for the
  * first and last one.
  */
-export default class BlueOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
+export class BlueOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   constructor(edge: IEdge) {
     super(edge)
   }

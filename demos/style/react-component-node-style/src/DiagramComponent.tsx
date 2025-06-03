@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent } from '@yfiles/yfiles'
+import { Graph, GraphComponent } from '@yfiles/yfiles'
 import React, { useLayoutEffect, useRef } from 'react'
 
 export function DiagramComponent(props: { initGraph: (graphComponent: GraphComponent) => void }) {
@@ -42,7 +42,9 @@ export function DiagramComponent(props: { initGraph: (graphComponent: GraphCompo
         if (graphComponent.htmlElement.parentElement) {
           graphComponent.htmlElement.parentElement.removeChild(graphComponent.htmlElement)
         }
+        // Dispose of the component and remove its references to the graph
         graphComponent.cleanUp()
+        graphComponent.graph = new Graph()
       }
     }
   }, [])

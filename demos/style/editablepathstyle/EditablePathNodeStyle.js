@@ -97,7 +97,7 @@ export const EDITABLE_PATH_MEMENTO_SUPPORT = new EditablePathNodeStyleMementoSup
  * A custom implementation of an {@link INodeStyle} that wraps a {@link GeneralPathNodeStyle} and
  * adds the option to change the {@link GeneralPath}.
  */
-export default class EditablePathNodeStyle extends NodeStyleBase {
+export class EditablePathNodeStyle extends NodeStyleBase {
   $path
   $pathStyle
   constructor(options) {

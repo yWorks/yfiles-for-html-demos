@@ -52,7 +52,7 @@ import {
  * a single {@link CornerSizeHandle} to change the
  * {@link RectangleNodeStyle.cornerSize} of the node style interactively.
  */
-export default class CornerSizeHandleProvider extends BaseClass(IHandleProvider) {
+export class CornerSizeHandleProvider extends BaseClass(IHandleProvider) {
   /**
    * Initializes a new instance of the provider with an optional `delegateProvider`
    * whose handles are also returned.

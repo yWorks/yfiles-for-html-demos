@@ -40,12 +40,12 @@ import {
   Size
 } from '@yfiles/yfiles'
 import './ReactGraphComponent.css'
-import yFilesLicense from '../../../../../lib/license.json'
-import ReactComponentNodeStyle from '../ReactComponentNodeStyle'
+import yFilesLicense from '../license.json'
+import { ReactComponentNodeStyle } from '../ReactComponentNodeStyle'
 import NodeTemplate from './NodeTemplate'
 
 export default class ReactGraphComponent extends Component {
-  private readonly div: RefObject<HTMLDivElement>
+  private readonly div: RefObject<HTMLDivElement | null>
   private readonly graphComponent: GraphComponent
 
   constructor(props: object) {

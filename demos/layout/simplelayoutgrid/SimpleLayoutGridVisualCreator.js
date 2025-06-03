@@ -38,7 +38,7 @@ import {
  * Visualizes the layout grid that has been used in the layout.
  * Each grid cell is visualized as an svg rectangle.
  */
-export default class SimpleLayoutGridVisualCreator extends BaseClass(IVisualCreator) {
+export class SimpleLayoutGridVisualCreator extends BaseClass(IVisualCreator) {
   /**
    * The layout grid to be visualized
    */

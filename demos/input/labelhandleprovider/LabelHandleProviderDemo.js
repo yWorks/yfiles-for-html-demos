@@ -41,7 +41,7 @@ import {
   Size,
   StyleIndicatorZoomPolicy
 } from '@yfiles/yfiles'
-import LabelHandleProvider from './LabelHandleProvider'
+import { LabelHandleProvider } from './LabelHandleProvider'
 import { createDemoNodeLabelStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'

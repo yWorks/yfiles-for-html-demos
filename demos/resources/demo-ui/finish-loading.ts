@@ -29,12 +29,14 @@
 import { CanvasComponent, Command, GraphComponent, GraphOverviewComponent } from '@yfiles/yfiles'
 import { initToolbars } from './toolbar'
 import { bindYFilesCommand } from './element-utils'
+import { enableMetaQuestSupport } from '@yfiles/demo-utils/meta-quest-support'
 
 export function finishLoading(): void {
   const graphComponent = CanvasComponent.getComponent(document.querySelector('#graphComponent'))
   if (graphComponent instanceof GraphComponent) {
     registerDefaultCommands(graphComponent)
     registerDevicePixelRatioChangeListener(graphComponent)
+    enableMetaQuestSupport(graphComponent)
   }
 
   const overviewComponent = CanvasComponent.getComponent(

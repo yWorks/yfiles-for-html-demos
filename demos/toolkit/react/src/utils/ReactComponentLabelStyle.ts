@@ -82,9 +82,7 @@ type ReactStyleSvgVisual<TTag> = TaggedSvgVisual<SVGGElement, Cache<TTag>>
  *  graph.addLabel({ owner, style, tag })
  * ```
  */
-export default class ReactComponentLabelStyle<TTag> extends LabelStyleBase<
-  ReactStyleSvgVisual<TTag>
-> {
+export class ReactComponentLabelStyle<TTag> extends LabelStyleBase<ReactStyleSvgVisual<TTag>> {
   constructor(private readonly type: RenderType<TTag>) {
     super()
   }

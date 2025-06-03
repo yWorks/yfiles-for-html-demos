@@ -40,14 +40,14 @@ import {
   StretchNodeLabelModel
 } from '@yfiles/yfiles'
 
-import LabelRotateHandle from './LabelRotateHandle'
-import LabelResizeHandle from './LabelResizeHandle'
+import { LabelRotateHandle } from './LabelRotateHandle'
+import { LabelResizeHandle } from './LabelResizeHandle'
 
 /**
  * A custom {@link IHandleProvider} implementation that returns a {@link LabelResizeHandle} for each
  * label which can be resized and a {@link LabelRotateHandle} for each label which can be rotated.
  */
-export default class LabelHandleProvider extends BaseClass(IHandleProvider) {
+export class LabelHandleProvider extends BaseClass(IHandleProvider) {
   /**
    * Creates a new instance of {@link LabelHandleProvider}.
    * @param label The given label

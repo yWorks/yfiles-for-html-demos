@@ -38,7 +38,7 @@ import {
 /**
  * A customized overview renderer with adjusted styles for nodes and edges.
  */
-export default class GraphOverviewRenderer extends BaseClass(IObjectRenderer) {
+export class GraphOverviewRenderer extends BaseClass(IObjectRenderer) {
   getBoundsProvider(renderTag) {
     return IBoundsProvider.UNBOUNDED
   }

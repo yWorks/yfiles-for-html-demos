@@ -29,7 +29,6 @@
 import {
   IEnumerable,
   IInputModeContext,
-  IListEnumerable,
   INode,
   IPortCandidate,
   IPortCandidateProvider,
@@ -43,7 +42,7 @@ import {
  * To achieve this, this class returns different port candidates for source
  * and target ports.
  */
-export default class GreenPortCandidateProvider extends PortCandidateProviderBase {
+export class GreenPortCandidateProvider extends PortCandidateProviderBase {
   node
   /**
    * Creates a new instance of {@link GreenPortCandidateProvider}.
@@ -69,7 +68,7 @@ export default class GreenPortCandidateProvider extends PortCandidateProviderBas
         source
       )
     }
-    return IListEnumerable.EMPTY
+    return IEnumerable.EMPTY
   }
   /**
    * Returns a list that contains a port candidate for each of the node's

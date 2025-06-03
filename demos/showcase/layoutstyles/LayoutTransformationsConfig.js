@@ -33,7 +33,7 @@ import {
   LayoutTransformations,
   SubgraphLayoutStage
 } from '@yfiles/yfiles'
-import LayoutConfiguration, { OperationType } from './LayoutConfiguration'
+import { LayoutConfiguration, OperationType } from './LayoutConfiguration'
 import {
   ComponentAttribute,
   Components,
@@ -47,7 +47,7 @@ import {
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const LayoutTransformationsConfig = Class('LayoutTransformationsConfig', {
+export const LayoutTransformationsConfig = Class('LayoutTransformationsConfig', {
   $extends: LayoutConfiguration,
   _meta: {
     GeneralGroup: [
@@ -269,4 +269,3 @@ const LayoutTransformationsConfig = Class('LayoutTransformationsConfig', {
     }
   }
 })
-export default LayoutTransformationsConfig

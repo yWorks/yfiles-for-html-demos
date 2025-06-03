@@ -63,7 +63,7 @@ import {
   PoolNodeStyle
 } from './bpmn-view'
 import { BpmnLabelProfitModel, BpmnLayout } from './BpmnLayout'
-export default class BpmnLayoutData {
+export class BpmnLayoutData {
   _minimumEdgeLength = 20
   _startNodesFirst = false
   _compactMessageFlowLayering = false

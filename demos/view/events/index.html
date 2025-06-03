@@ -230,18 +230,6 @@
                 </label>
               </li>
               <li
-                data-tooltip="Events dispatched by ItemHoverInputMode when the mouse enters or leaves an item."
-              >
-                <label>
-                  <input
-                    type="checkbox"
-                    data-action="ToggleEvents"
-                    data-event-kind="ItemHoverInputMode"
-                  />
-                  Item Hover Events
-                </label>
-              </li>
-              <li
                 data-tooltip="Events dispatched by an ItemDropInputMode during a drag and drop gesture."
               >
                 <label>
@@ -405,6 +393,14 @@
                 <label>
                   <input type="checkbox" data-action="ToggleEvents" data-event-kind="GraphRender" />
                   Graph Render Events
+                </label>
+              </li>
+              <li
+                data-tooltip="Events dispatched by UndoEngine when an operation was undone or redone."
+              >
+                <label>
+                  <input type="checkbox" data-action="ToggleEvents" data-event-kind="Undo" />
+                  Undo Events
                 </label>
               </li>
             </ul>

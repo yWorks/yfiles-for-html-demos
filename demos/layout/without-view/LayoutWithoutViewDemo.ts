@@ -41,7 +41,7 @@ import {
 } from '@yfiles/yfiles'
 
 async function run(): Promise<void> {
-  const response = await fetch('../../../lib/license.json')
+  const response = await fetch('./license.json')
   License.value = await response.json()
 
   // create the graph in memory

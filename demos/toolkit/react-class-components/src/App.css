@@ -99,8 +99,6 @@
   vertical-align: top;
 }
 .demo-sidebar {
-  display: flex;
-  flex-direction: column;
   width: 100%;
   box-sizing: border-box;
   background: #e0edf0;
@@ -108,21 +106,27 @@
   overflow-y: auto;
   font-family: Tahoma, Verdana, sans-serif;
   color: #343f4a;
-  padding-left: 0.2em;
 }
 .demo-sidebar.left {
   background-color: #e0edf0;
 }
-.demo-sidebar .demo-sidebar-content h1 {
-  font-size: 1.7em;
-  line-height: 1.5;
-  color: #343f4a;
+
+.demo-sidebar-content {
+  overflow-y: auto;
+  padding: 16px;
 }
-.demo-sidebar .demo-sidebar-content h2 {
+
+.demo-sidebar-content h1,
+.demo-sidebar-content h2 {
   font-size: 140%;
   line-height: 130%;
   margin: 1.5ex 0 1ex;
-  color: #343f4a;
+}
+
+/* Make the first heading larger, regardless of it's level */
+.demo-sidebar-content > :first-child {
+  font-size: 170%;
+  margin-top: 0;
 }
 
 .demo-sidebar-content::-webkit-scrollbar-thumb {

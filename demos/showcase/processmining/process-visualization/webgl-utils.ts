@@ -28,7 +28,7 @@
  ***************************************************************************/
 import type { IRenderContext } from '@yfiles/yfiles'
 
-export class WebGLBufferData<T extends BufferSource> {
+export class WebGLBufferData<T extends Float32Array> {
   private dirty = true
   private buffer: WebGLBuffer | null = null
   private readonly DataType: { new (size: number): T }

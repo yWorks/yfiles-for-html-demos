@@ -46,10 +46,11 @@ import {
   OrthogonalLayoutTreeSubstructureStyle,
   NodeLabelPlacement
 } from '@yfiles/yfiles'
-import LayoutConfiguration, {
+import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  LayoutConfiguration
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -70,7 +71,7 @@ var GroupPolicy
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
+export const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
   $extends: LayoutConfiguration,
   _meta: {
     LayoutGroup: [
@@ -646,4 +647,3 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
     }
   }
 })
-export default OrthogonalLayoutConfig

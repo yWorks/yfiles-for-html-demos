@@ -29,7 +29,7 @@
 /**
  * This class creates an event log to display messages.
  */
-export default class EventView {
+export class EventView {
   private _logElement: HTMLElement | null = null
   groupEvents = true
   messages: (Message | MessageGroup)[] = []

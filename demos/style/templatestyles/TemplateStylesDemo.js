@@ -52,7 +52,7 @@ import {
   Stroke,
   ViewportLimitingPolicy
 } from '@yfiles/yfiles'
-import PropertiesView from './PropertiesView'
+import { PropertiesView } from './PropertiesView'
 import OrgChartData from './resources/OrgChartData'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {

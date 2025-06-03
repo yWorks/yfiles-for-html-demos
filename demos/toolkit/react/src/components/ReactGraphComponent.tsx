@@ -31,7 +31,7 @@ import { ContextMenuComponent } from './ContextMenuComponent.tsx'
 import { ReactGraphOverviewComponent } from './GraphOverviewComponent.tsx'
 import { GraphData } from '../App.tsx'
 import { useMemo, useState } from 'react'
-import { Command, GraphComponent, SvgExport } from '@yfiles/yfiles'
+import { Command, Graph, GraphComponent, SvgExport } from '@yfiles/yfiles'
 import DemoToolbar from './DemoToolbar.tsx'
 import { LayoutSupport } from '../utils/LayoutSupport.ts'
 import { useTooltips } from '../utils/use-tooltips.tsx'
@@ -108,5 +108,9 @@ async function exportSvg(graphComponent: GraphComponent): Promise<void> {
     // you can wait for them to finish here, e.g. like this:
     // await new Promise((resolve) => setTimeout(resolve, 2000))
   })
+  // Dispose of the component and remove its references to the graph
+  exportComponent.cleanUp()
+  exportComponent.graph = new Graph()
+
   downloadFile(SvgExport.exportSvgString(svg), 'graph.svg')
 }

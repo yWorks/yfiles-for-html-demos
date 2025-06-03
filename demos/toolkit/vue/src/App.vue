@@ -139,12 +139,7 @@ body {
   bottom: 0;
   width: 320px;
   box-sizing: border-box;
-  background: #e0edf0;
-  z-index: 15;
   line-height: 140%;
-  overflow-y: auto;
-  color: #343f4a;
-  padding-left: 0.2em;
 }
 
 .demo-sidebar.demo-description {

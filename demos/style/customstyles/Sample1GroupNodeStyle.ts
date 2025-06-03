@@ -75,7 +75,7 @@ type Sample1GroupNodeStyleVisual = TaggedSvgVisual<SVGGElement, NodeRenderDataCa
  * example a {@link IGroupBoundsCalculator} that takes the node labels
  * into account.
  */
-export default class Sample1GroupNodeStyle extends NodeStyleBase<Sample1GroupNodeStyleVisual> {
+export class Sample1GroupNodeStyle extends NodeStyleBase<Sample1GroupNodeStyleVisual> {
   public nodeColor = 'rgba(0, 130, 180, 1)'
 
   createVisual(renderContext: IRenderContext, node: INode): Sample1GroupNodeStyleVisual {

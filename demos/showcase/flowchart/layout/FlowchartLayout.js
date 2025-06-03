@@ -1086,7 +1086,7 @@ function restoreOriginalGraph(graph) {
       const outEdge = node.outEdges.get(0)
       outPath = getPointListForEdge(outEdge)
       outPath.unshift(new Point(node.layout.center.x, node.layout.center.y))
-      node.inEdges.forEach((edge) => {
+      node.inEdges.toArray().forEach((edge) => {
         const inPath = getPointListForEdge(edge)
         inPath.pop()
         graph.changeEdge(edge, edge.source, outEdge.target)

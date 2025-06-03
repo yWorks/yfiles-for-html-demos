@@ -55,7 +55,7 @@ import {
  * in the edge's tag. An arbitrary {@link IPortStyle port style}, that can be set in the
  * constructor, is used to render the edge's bend, a
  */
-export default class EdgeStyleDecorator extends EdgeStyleBase {
+export class EdgeStyleDecorator extends EdgeStyleBase {
   bendStyle
   baseStyle
   /**

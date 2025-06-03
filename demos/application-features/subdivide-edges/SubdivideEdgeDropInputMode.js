@@ -32,10 +32,10 @@ import {
   IEdge,
   IGraph,
   IInputModeContext,
+  IListEnumerable,
   IModelItem,
   INode,
   InputModeItemEventArgs,
-  ListEnumerable,
   NodeDropInputMode,
   Point,
   Rect,
@@ -197,7 +197,7 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
     while (pathCursor.moveNext()) {
       bends.push(new SimpleBend(previewEdge, pathCursor.currentEndPoint))
     }
-    previewEdge.bends = new ListEnumerable(bends)
+    previewEdge.bends = IListEnumerable.from(bends)
     return previewEdge
   }
 }

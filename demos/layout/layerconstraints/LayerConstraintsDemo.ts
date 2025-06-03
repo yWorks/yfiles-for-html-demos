@@ -43,7 +43,7 @@ import {
   Rect,
   Size
 } from '@yfiles/yfiles'
-import RandomGraphGenerator from '@yfiles/demo-utils/RandomGraphGenerator'
+import { RandomGraphGenerator } from '@yfiles/demo-utils/RandomGraphGenerator'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { constraintNodeStyle } from './style-templates'

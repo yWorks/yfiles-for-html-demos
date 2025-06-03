@@ -50,7 +50,7 @@ import {
  * newly created nodes and edges using the style providers passed as
  * constructor arguments.
  */
-export default class RenderingTypesManager {
+export class RenderingTypesManager {
   graphComponent
   nodeStyleProvider
   edgeStyleProvider

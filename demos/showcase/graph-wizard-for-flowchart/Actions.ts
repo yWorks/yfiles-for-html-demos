@@ -53,7 +53,7 @@ import {
   Size
 } from '@yfiles/yfiles'
 import type { ButtonOptions } from './WizardAction'
-import WizardAction from './WizardAction'
+import { WizardAction } from './WizardAction'
 import type { PreCondition } from './Preconditions'
 import {
   checkAnd,

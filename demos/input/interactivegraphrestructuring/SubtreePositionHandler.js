@@ -39,13 +39,13 @@ import {
   List,
   Point
 } from '@yfiles/yfiles'
-import Subtree from './Subtree'
-import RelocateSubtreeLayoutHelper from './RelocateSubtreeLayoutHelper'
+import { Subtree } from './Subtree'
+import { RelocateSubtreeLayoutHelper } from './RelocateSubtreeLayoutHelper'
 import { EdgePositionHandler } from './EdgePositionHandler'
 /**
  * An {@link IPositionHandler} that moves a node and its subtree.
  */
-export default class SubtreePositionHandler extends BaseClass(IPositionHandler) {
+export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
   node
   nodePositionHandler
   movingNodeStyle

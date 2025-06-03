@@ -30,7 +30,7 @@ import { BaseClass, IPositionHandler, MutablePoint, Point } from '@yfiles/yfiles
 /**
  * An {@link IPositionHandler} that manages the position of a given {@link MutableRectangle}.
  */
-export default class PositionHandler extends BaseClass(IPositionHandler) {
+export class PositionHandler extends BaseClass(IPositionHandler) {
   rectangle
   /**
    * Stores the offset from the mouse event location to the handled rectangle's upper left corner.

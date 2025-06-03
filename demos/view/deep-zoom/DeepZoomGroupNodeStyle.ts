@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   type GeneralPath,
+  Graph,
   GraphComponent,
   type INode,
   type INodeStyle,
@@ -209,6 +210,7 @@ export class DeepZoomGroupNodeStyle extends NodeStyleBase<SvgVisual> {
 
     // clean up
     tempGraphComponent.cleanUp()
+    tempGraphComponent.graph = new Graph()
     tempView.dispose()
 
     return [svg, allBounds]

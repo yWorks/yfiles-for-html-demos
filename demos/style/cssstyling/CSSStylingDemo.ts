@@ -48,10 +48,10 @@ import {
 import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import CSS3NodeStyleWrapper from './CSS3NodeStyleWrapper'
+import { CSS3NodeStyleWrapper } from './CSS3NodeStyleWrapper'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
-import GraphOverviewRenderer from './GraphOverviewRenderer'
+import { GraphOverviewRenderer } from './GraphOverviewRenderer'
 
 let graphComponent: GraphComponent
 

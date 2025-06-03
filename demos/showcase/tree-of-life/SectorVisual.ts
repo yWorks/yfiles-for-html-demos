@@ -57,7 +57,7 @@ type RenderDataCache = { sectors: Sector[]; highlightedSector: Sector | undefine
 /**
  * An {@link IVisualCreator} that manages and renders the sectors.
  */
-export default class SectorVisual extends BaseClass(IVisualCreator) {
+export class SectorVisual extends BaseClass(IVisualCreator) {
   private readonly highlightColor = '#e01a4f'
 
   private center = Point.ORIGIN

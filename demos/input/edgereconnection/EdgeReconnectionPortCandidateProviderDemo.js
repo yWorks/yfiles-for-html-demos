@@ -42,10 +42,10 @@ import {
   ShapePortStyle
 } from '@yfiles/yfiles'
 import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
-import GreenEdgePortCandidateProvider from './GreenEdgePortCandidateProvider'
-import BlueEdgePortCandidateProvider from './BlueEdgePortCandidateProvider'
-import OrangeEdgePortCandidateProvider from './OrangeEdgePortCandidateProvider'
-import RedEdgePortCandidateProvider from './RedEdgePortCandidateProvider'
+import { GreenEdgePortCandidateProvider } from './GreenEdgePortCandidateProvider'
+import { BlueEdgePortCandidateProvider } from './BlueEdgePortCandidateProvider'
+import { OrangeEdgePortCandidateProvider } from './OrangeEdgePortCandidateProvider'
+import { RedEdgePortCandidateProvider } from './RedEdgePortCandidateProvider'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**

@@ -363,6 +363,9 @@ function createComponentVisual(componentGraph) {
   exportComponent.updateContentBounds(5)
   const svgExport = new SvgExport(exportComponent.contentBounds)
   const svg = svgExport.exportSvg(exportComponent)
+  // Dispose of the component and remove its references to the graph
+  exportComponent.cleanUp()
+  exportComponent.graph = new Graph()
   const svgString = SvgExport.exportSvgString(svg)
   return SvgExport.encodeSvgDataUrl(svgString)
 }

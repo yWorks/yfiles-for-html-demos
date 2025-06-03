@@ -39,9 +39,9 @@ import {
   Rect
 } from '@yfiles/yfiles'
 
-import createNewRandomUserData, { type UserData } from './UserDataFactory'
-import DataTableLabelStyle from './DataTableLabelStyle'
-import DataTableNodeStyle from './DataTableNodeStyle'
+import { createNewRandomUserData, type UserData } from './UserDataFactory'
+import { DataTableLabelStyle } from './DataTableLabelStyle'
+import { DataTableNodeStyle } from './DataTableNodeStyle'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { DataTableRenderSupport } from './DataTableRenderSupport'

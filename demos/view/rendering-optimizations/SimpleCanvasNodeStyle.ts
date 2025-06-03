@@ -43,7 +43,7 @@ import {
 /**
  * A simple HTML Canvas node style that draws a rectangle with a solid fill.
  */
-export default class SimpleCanvasNodeStyle extends NodeStyleBase {
+export class SimpleCanvasNodeStyle extends NodeStyleBase {
   constructor(private readonly color: Color) {
     super()
   }

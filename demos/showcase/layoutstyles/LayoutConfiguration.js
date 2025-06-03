@@ -48,7 +48,7 @@ import {
 /**
  * Abstract base class for configurations that can be displayed in an {@link OptionEditor}.
  */
-const LayoutConfiguration = Class('LayoutConfiguration', {
+export const LayoutConfiguration = Class('LayoutConfiguration', {
   $abstract: true,
   /**
    * A guard to prevent running multiple layout calculations at the same time.
@@ -276,7 +276,6 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
     return descriptor
   }
 })
-export default LayoutConfiguration
 /**
  * Specifies constants for the preferred placement along an edge used by layout configurations.
  */

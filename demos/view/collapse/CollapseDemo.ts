@@ -48,7 +48,7 @@ import {
   TreeLayout
 } from '@yfiles/yfiles'
 
-import CollapseAndExpandNodes from './CollapseAndExpandNodes'
+import { CollapseAndExpandNodes } from './CollapseAndExpandNodes'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'

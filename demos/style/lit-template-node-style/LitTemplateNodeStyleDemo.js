@@ -26,17 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import * as CodeMirror from 'codemirror'
-import 'codemirror/mode/xml/xml'
-import 'codemirror/mode/javascript/javascript'
-import 'codemirror/addon/search/search'
-import 'codemirror/addon/search/searchcursor'
-import 'codemirror/addon/dialog/dialog'
-import 'codemirror/addon/lint/lint'
-import 'codemirror/addon/lint/json-lint'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/addon/dialog/dialog.css'
-import 'codemirror/addon/lint/lint.css'
+import { basicSetup, EditorView } from 'codemirror'
+import { lintGutter } from '@codemirror/lint'
+import { xml } from '@codemirror/lang-xml'
+import { javascript } from '@codemirror/lang-javascript'
 import {
   GraphBuilder,
   GraphComponent,
@@ -54,9 +47,12 @@ import { registerLitNodeStyleSerialization } from './LitNodeStyleMarkupExtension
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
+import { StateEffect, StateField } from '@codemirror/state'
+import { getJsonLinter } from '@yfiles/demo-resources/codeMirrorLinters'
 let graphComponent
 let renderFunctionSourceTextArea
 let tagTextArea
+const jsonLinter = getJsonLinter()
 /**
  * Runs the demo.
  */
@@ -75,20 +71,49 @@ async function run() {
  * changed.
  */
 function initializeTextAreas() {
-  renderFunctionSourceTextArea = CodeMirror.fromTextArea(
-    document.querySelector('#template-text-area'),
-    {
-      lineNumbers: true,
-      mode: 'application/xml',
-      gutters: ['CodeMirror-lint-markers'],
-      lint: true
+  const setRenderFunctionSourceTextAreaEditable = StateEffect.define()
+  const renderFunctionSourceTextAreaEditable = StateField.define({
+    create: () => true,
+    update: (value, transaction) => {
+      for (let e of transaction.effects) {
+        if (e.is(setRenderFunctionSourceTextAreaEditable)) {
+          value = e.value
+        }
+      }
+      return value
     }
-  )
-  tagTextArea = CodeMirror.fromTextArea(document.querySelector('#tag-text-area'), {
-    lineNumbers: true,
-    mode: 'application/json',
-    gutters: ['CodeMirror-lint-markers'],
-    lint: true
+  })
+  renderFunctionSourceTextArea = new EditorView({
+    parent: document.querySelector('#templateEditorContainer'),
+    extensions: [
+      basicSetup,
+      xml(),
+      renderFunctionSourceTextAreaEditable,
+      EditorView.editable.from(renderFunctionSourceTextAreaEditable)
+    ]
+  })
+  const setTagTextAreaEditable = StateEffect.define()
+  const tagTextAreaEditable = StateField.define({
+    create: () => true,
+    update: (value, transaction) => {
+      for (let e of transaction.effects) {
+        if (e.is(setTagTextAreaEditable)) {
+          value = e.value
+        }
+      }
+      return value
+    }
+  })
+  tagTextArea = new EditorView({
+    parent: document.querySelector('#tagEditorContainer'),
+    extensions: [
+      basicSetup,
+      javascript(),
+      tagTextAreaEditable,
+      EditorView.editable.from(tagTextAreaEditable),
+      lintGutter(),
+      jsonLinter
+    ]
   })
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false
@@ -96,24 +121,52 @@ function initializeTextAreas() {
   graphComponent.selection.addEventListener('item-added', () => {
     const selectedNode = graphComponent.selection.nodes.at(0)
     if (selectedNode.style instanceof LitNodeStyle) {
-      renderFunctionSourceTextArea.setOption('readOnly', false)
-      renderFunctionSourceTextArea.setValue(selectedNode.style.renderFunction.toString())
+      renderFunctionSourceTextArea.dispatch({
+        effects: setRenderFunctionSourceTextAreaEditable.of(true),
+        changes: {
+          from: 0,
+          to: renderFunctionSourceTextArea.state.doc.length,
+          insert: selectedNode.style.renderFunction.toString()
+        }
+      })
     } else {
-      renderFunctionSourceTextArea.setOption('readOnly', true)
-      renderFunctionSourceTextArea.setValue(
-        'Style is not an instance of LitNodeStyle with attached sources.'
-      )
+      renderFunctionSourceTextArea.dispatch({
+        effects: setRenderFunctionSourceTextAreaEditable.of(false),
+        changes: {
+          from: 0,
+          to: renderFunctionSourceTextArea.state.doc.length,
+          insert: 'Style is not an instance of LitNodeStyle with attached sources.'
+        }
+      })
     }
-    tagTextArea.setOption('readOnly', false)
-    tagTextArea.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
+    tagTextArea.dispatch({
+      effects: setTagTextAreaEditable.of(true),
+      changes: {
+        from: 0,
+        to: tagTextArea.state.doc.length,
+        insert: selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}'
+      }
+    })
     document.querySelector('#apply-template-button').disabled = false
     document.querySelector('#apply-tag-button').disabled = false
   })
   graphComponent.selection.addEventListener('item-removed', () => {
-    renderFunctionSourceTextArea.setOption('readOnly', 'nocursor')
-    tagTextArea.setOption('readOnly', 'nocursor')
-    renderFunctionSourceTextArea.setValue('Select a node to edit its template.')
-    tagTextArea.setValue('Select a node to edit its tag.')
+    renderFunctionSourceTextArea.dispatch({
+      effects: setRenderFunctionSourceTextAreaEditable.of(false),
+      changes: {
+        from: 0,
+        to: renderFunctionSourceTextArea.state.doc.length,
+        insert: 'Select a node to edit its template.'
+      }
+    })
+    tagTextArea.dispatch({
+      effects: setTagTextAreaEditable.of(false),
+      changes: {
+        from: 0,
+        to: tagTextArea.state.doc.length,
+        insert: 'Select a node to edit its tag.'
+      }
+    })
     document.querySelector('#apply-template-button').disabled = true
     document.querySelector('#apply-tag-button').disabled = true
   })
@@ -208,7 +261,7 @@ function initializeUI() {
     if (graphComponent.selection.nodes.size === 0) {
       return
     }
-    const renderFunctionSource = renderFunctionSourceTextArea.getValue()
+    const renderFunctionSource = renderFunctionSourceTextArea.state.doc.toString()
     try {
       // check if style is valid
       const style = createLitNodeStyleFromSource(renderFunctionSource)
@@ -230,7 +283,7 @@ function initializeUI() {
     const errorArea = document.getElementById('tag-text-area-error')
     graphComponent.selection.nodes.forEach((node) => {
       try {
-        node.tag = JSON.parse(tagTextArea.getValue())
+        node.tag = JSON.parse(tagTextArea.state.doc.toString())
         errorArea.classList.remove('open-error')
       } catch (err) {
         errorArea.classList.add('open-error')

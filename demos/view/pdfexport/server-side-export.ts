@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { PaperSize } from './PaperSize'
 import {
+  Graph,
   GraphComponent,
   Insets,
   type Rect,
@@ -211,6 +212,11 @@ export async function exportSvg(
     exportComponent,
     renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
   )
+
+  // Dispose of the component and remove its references to the graph
+  exportComponent.cleanUp()
+  exportComponent.graph = new Graph()
+
   return {
     element: svgElement as SVGElement,
     size: new Size(exporter.viewWidth, exporter.viewHeight)

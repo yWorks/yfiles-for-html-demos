@@ -34,7 +34,7 @@ import {
   SvgVisual,
   SvgVisualGroup
 } from '@yfiles/yfiles'
-export default class RectangleVisualCreator extends BaseClass(IVisualCreator) {
+export class RectangleVisualCreator extends BaseClass(IVisualCreator) {
   title
   titlePosition
   dashed

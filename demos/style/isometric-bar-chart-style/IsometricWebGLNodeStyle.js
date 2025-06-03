@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { WebGLVisual, INode, IRenderContext, NodeStyleBase, Visual } from '@yfiles/yfiles'
-export default class IsometricWebGLNodeStyle extends NodeStyleBase {
+export class IsometricWebGLNodeStyle extends NodeStyleBase {
   createVisual(context, node) {
     return new IsometricWebGLNodeStyleVisual(node)
   }

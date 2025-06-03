@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import { serializeLabelModelParameter } from './label-model-serialization'
 /**
  * A configuration options object that writes layout information for nodes, edges, and labels.
  */
@@ -128,7 +129,8 @@ export function createLabelData(label, details = 'none') {
           upY: layout.upY,
           width: layout.width,
           height: layout.height
-        }
+        },
+        layoutParameter: serializeLabelModelParameter(label.layoutParameter)
       }
 }
 /**

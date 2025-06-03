@@ -38,7 +38,7 @@ import {
 /**
  * Creates a visual for the demo's background image.
  */
-export default class ImageVisualCreator extends BaseClass(IVisualCreator) {
+export class ImageVisualCreator extends BaseClass(IVisualCreator) {
   /**
    * Initializes a new instance of <code>ImageVisualCreator</code>.
    * @param imageRect The rectangle that defines the location and the size of the image.

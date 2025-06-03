@@ -32,7 +32,6 @@ import {
   IEdgeReconnectionPortCandidateProvider,
   IEnumerable,
   IInputModeContext,
-  IListEnumerable,
   IPortCandidate,
   List,
   PortCandidate
@@ -42,7 +41,7 @@ import {
  * dynamic NodeScaled port location model. It allows moving ports to any
  * location inside a green node.
  */
-export default class GreenEdgePortCandidateProvider extends BaseClass(
+export class GreenEdgePortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider
 ) {
   /**
@@ -53,7 +52,7 @@ export default class GreenEdgePortCandidateProvider extends BaseClass(
   getSourcePortCandidates(context) {
     const graph = context.graph
     if (graph === null) {
-      return IListEnumerable.EMPTY
+      return IEnumerable.EMPTY
     }
     const candidates = new List()
     graph.nodes.forEach((node) => {

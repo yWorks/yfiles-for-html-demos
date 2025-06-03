@@ -51,7 +51,7 @@ import {
 } from './styles/CompanyOwnershipNodeStyles'
 import { edgeLabelDefaults, getEdgeStyle } from './styles/CompanyOwnershipEdgeStyles'
 import { createLayout, createLayoutData } from './configure-layout'
-import TogglePortButtonSupport from './TogglePortButtonSupport'
+import { TogglePortButtonSupport } from './TogglePortButtonSupport'
 import { addSmartClickNavigation } from './configure-click-navigation'
 import { modifyGraph } from './prepare-smooth-animation'
 /**

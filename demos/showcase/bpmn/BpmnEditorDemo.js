@@ -77,9 +77,9 @@ import {
   Table,
   TableEditorInputMode
 } from '@yfiles/yfiles'
-import BpmnLayoutData from './BpmnLayoutData'
+import { BpmnLayoutData } from './BpmnLayoutData'
 import { BpmnLayout } from './BpmnLayout'
-import PopupSupport from './BpmnPopupSupport'
+import { BpmnPopupSupport } from './BpmnPopupSupport'
 import BpmnView, {
   ActivityNodeStyle,
   AnnotationLabelStyle,
@@ -163,7 +163,7 @@ async function run() {
   await graphComponent.fitGraphBounds()
   graphComponent.graph.undoEngine.clear()
   // initialize UI elements and interaction for the popups
-  popupSupport = new PopupSupport(graphComponent)
+  popupSupport = new BpmnPopupSupport(graphComponent)
   // bind input elements to their functionality
   initializeUI(graphMLIOHandler)
 }

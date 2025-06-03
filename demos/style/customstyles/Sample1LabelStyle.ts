@@ -58,7 +58,7 @@ type Sample1LabelStyleVisual = TaggedSvgVisual<SVGGElement, LabelRenderDataCache
  * Also, there is a customized button displayed in the label at certain zoom levels that enables
  * editing of the label text.
  */
-export default class Sample1LabelStyle extends LabelStyleBase<Sample1LabelStyleVisual> {
+export class Sample1LabelStyle extends LabelStyleBase<Sample1LabelStyleVisual> {
   private readonly font: Font = new Font({
     fontFamily: 'Arial',
     fontSize: 12

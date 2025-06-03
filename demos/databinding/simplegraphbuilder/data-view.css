@@ -39,7 +39,8 @@
   height: 30px;
 }
 
-#data-view .CodeMirror {
+#data-view .cm-editor {
   font-family: 'Consolas', 'Courier New', Courier, monospace;
   height: 300px;
+  background-color: #fff;
 }

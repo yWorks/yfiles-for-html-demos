@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, type Rect, SvgExport, WebGLGraphModelManager } from '@yfiles/yfiles'
+import { Graph, GraphComponent, type Rect, SvgExport, WebGLGraphModelManager } from '@yfiles/yfiles'
 import { useWebGLRendering } from './webgl-support'
 import { DelayedNodeStyle } from './node-styles/delayed-node-style'
 
@@ -69,8 +69,14 @@ export async function exportSvg(
 
   // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
   exporter.cssStyleSheet = null
-  return exporter.exportSvgAsync(exportComponent, () =>
+  const resultPromise = exporter.exportSvgAsync(exportComponent, () =>
     // wait for styles to finish rendering
     Promise.all(DelayedNodeStyle.pendingPromises)
   )
+  // make sure to deallocate the resources after the export is done
+  void resultPromise.then(() => {
+    exportComponent.cleanUp()
+    exportComponent.graph = new Graph()
+  })
+  return resultPromise
 }

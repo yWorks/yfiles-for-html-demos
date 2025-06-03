@@ -35,7 +35,7 @@ import {
   Size
 } from '@yfiles/yfiles'
 import { AugmentationNodeRenderer } from './AugmentationNodeRenderer'
-import IsometricWebGLNodeStyle from './IsometricWebGLNodeStyle'
+import { IsometricWebGLNodeStyle } from './IsometricWebGLNodeStyle'
 import { IsometricBarLabelNodeStyle } from './IsometricBarLabelNodeStyle'
 
 let barManager: GraphModelManager

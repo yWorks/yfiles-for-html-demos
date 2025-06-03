@@ -50,7 +50,7 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 
-import EditablePathNodeStyle, { PathHandle, updateHandles } from './EditablePathNodeStyle'
+import { EditablePathNodeStyle, PathHandle, updateHandles } from './EditablePathNodeStyle'
 import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'

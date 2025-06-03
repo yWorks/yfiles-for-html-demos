@@ -56,10 +56,11 @@ import {
   Size,
   TimeSpan
 } from '@yfiles/yfiles'
-import LayoutConfiguration, {
+import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  LayoutConfiguration
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -113,7 +114,7 @@ export var GroupLayoutPolicy
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
+export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
   $extends: LayoutConfiguration,
   _meta: {
     VisualGroup: [
@@ -1112,4 +1113,3 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     }
   }
 })
-export default OrganicLayoutConfig

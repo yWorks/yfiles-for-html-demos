@@ -58,7 +58,7 @@ type D3ChartNodeStyleVisual = TaggedSvgVisual<SVGGElement, RenderDataCache>
  * A node style that triggers the sparkline rendering and includes the result in
  * the node visualization.
  */
-export default class D3ChartNodeStyle extends NodeStyleBase<D3ChartNodeStyleVisual> {
+export class D3ChartNodeStyle extends NodeStyleBase<D3ChartNodeStyleVisual> {
   /**
    * Creates the visual for a node.
    * @see Overrides {@link NodeStyleBase.createVisual}

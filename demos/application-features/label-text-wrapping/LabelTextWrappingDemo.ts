@@ -31,6 +31,7 @@ import {
   EdgeSides,
   ExteriorNodeLabelModel,
   Font,
+  Graph,
   GraphComponent,
   GraphEditorInputMode,
   GraphModelManager,
@@ -311,7 +312,10 @@ function createGraph(): void {
  * Rebuilds the demo when the text direction changes.
  */
 function reinitializeDemo(): void {
+  // Dispose of the previous component
   graphComponent.cleanUp()
+  graphComponent.graph = new Graph()
+
   const gcContainer = document.querySelector('#graphComponent')!
   while (gcContainer.childElementCount > 0) {
     gcContainer.removeChild(gcContainer.firstElementChild as Node)

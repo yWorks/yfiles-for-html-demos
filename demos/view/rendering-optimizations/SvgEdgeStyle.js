@@ -44,7 +44,7 @@ import {
  * A fast edge style. Compared to the default {@link PolylineEdgeStyle}, the edge is not cropped
  * at the node boundaries and does not support arrows.
  */
-export default class SvgEdgeStyle extends EdgeStyleBase {
+export class SvgEdgeStyle extends EdgeStyleBase {
   color
   thickness
   /**

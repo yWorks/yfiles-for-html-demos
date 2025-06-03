@@ -37,7 +37,7 @@ import {
   License
 } from '@yfiles/yfiles'
 import GraphData from './resources/GraphData'
-import SimpleLayoutGridVisualCreator from './SimpleLayoutGridVisualCreator'
+import { SimpleLayoutGridVisualCreator } from './SimpleLayoutGridVisualCreator'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'

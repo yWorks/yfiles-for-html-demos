@@ -30,17 +30,9 @@ import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 import * as ReactDOM from 'react-dom'
 
-import * as CodeMirror from 'codemirror'
-import 'codemirror/mode/xml/xml'
-import 'codemirror/mode/javascript/javascript'
-import 'codemirror/mode/jsx/jsx.js'
-import 'codemirror/addon/search/search'
-import 'codemirror/addon/search/searchcursor'
-import 'codemirror/addon/dialog/dialog'
-import 'codemirror/addon/lint/lint'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/addon/dialog/dialog.css'
-import 'codemirror/addon/lint/lint.css'
+import { basicSetup, EditorView } from 'codemirror'
+import { javascript } from '@codemirror/lang-javascript'
+import { type Diagnostic, linter, lintGutter } from '@codemirror/lint'
 
 import {
   ExteriorNodeLabelModel,
@@ -72,12 +64,18 @@ import { ReactComponentHtmlNodeStyle } from './ReactComponentHtmlNodeStyle'
 import { ReactComponentSvgLabelStyle } from './ReactComponentSvgLabelStyle'
 import { ReactComponentSvgNodeStyle } from './ReactComponentSvgNodeStyle'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
+import { StateEffect, type StateEffectType, StateField } from '@codemirror/state'
+import { getJsonLinter } from '@yfiles/demo-resources/codeMirrorLinters'
+
+const jsonLinter = getJsonLinter()
 
 let graphComponent: GraphComponent
 
-let jsxRenderFunctionTextArea: CodeMirror.EditorFromTextArea
+let jsxRenderFunctionTextArea: EditorView
+let setJsxRenderFunctionTextAreaEditable: StateEffectType<boolean>
 
-let tagTextArea: CodeMirror.EditorFromTextArea
+let tagTextArea: EditorView
+let setTagTextAreaEditable: StateEffectType<boolean>
 
 const templateErrorArea = document.querySelector<HTMLDivElement>('#template-text-area-error')!
 const tagErrorArea = document.querySelector<HTMLDivElement>('#tag-text-area-error')!
@@ -108,24 +106,51 @@ async function run(): Promise<void> {
  * changed.
  */
 function initializeTextAreas(): void {
-  jsxRenderFunctionTextArea = CodeMirror.fromTextArea(
-    document.querySelector<HTMLTextAreaElement>('#template-text-area')!,
-    {
-      lineNumbers: true,
-      mode: 'jsx',
-      gutters: ['CodeMirror-lint-markers'],
-      lint: true
-    } as CodeMirror.EditorConfiguration
-  )
-  tagTextArea = CodeMirror.fromTextArea(
-    document.querySelector<HTMLTextAreaElement>('#tag-text-area')!,
-    {
-      lineNumbers: true,
-      mode: 'application/json',
-      gutters: ['CodeMirror-lint-markers'],
-      lint: true
-    } as CodeMirror.EditorConfiguration
-  )
+  setJsxRenderFunctionTextAreaEditable = StateEffect.define<boolean>()
+  const jsxRenderFunctionTextAreaEditable = StateField.define<boolean>({
+    create: () => true,
+    update: (value, transaction) => {
+      for (let e of transaction.effects) {
+        if (e.is(setJsxRenderFunctionTextAreaEditable)) {
+          value = e.value
+        }
+      }
+      return value
+    }
+  })
+  jsxRenderFunctionTextArea = new EditorView({
+    parent: document.querySelector<HTMLTextAreaElement>('#templateEditorContainer')!,
+    extensions: [
+      basicSetup,
+      javascript({ jsx: true }),
+      jsxRenderFunctionTextAreaEditable,
+      EditorView.editable.from(jsxRenderFunctionTextAreaEditable)
+    ]
+  })
+
+  setTagTextAreaEditable = StateEffect.define<boolean>()
+  const tagTextAreaEditable = StateField.define<boolean>({
+    create: () => true,
+    update: (value, transaction) => {
+      for (let e of transaction.effects) {
+        if (e.is(setTagTextAreaEditable)) {
+          value = e.value
+        }
+      }
+      return value
+    }
+  })
+  tagTextArea = new EditorView({
+    parent: document.querySelector<HTMLTextAreaElement>('#tagEditorContainer')!,
+    extensions: [
+      basicSetup,
+      javascript(),
+      jsonLinter,
+      lintGutter(),
+      tagTextAreaEditable,
+      EditorView.editable.from(tagTextAreaEditable)
+    ]
+  })
 
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false
@@ -170,9 +195,13 @@ function toggleHtmlSvgTemplate(event: Event) {
         label.style instanceof ReactComponentHtmlNodeStyle
     )
   ) {
-    jsxRenderFunctionTextArea.setValue(
-      isHtml ? demoHtmlNodeStyleJSXSources : demoSvgNodeStyleJSXSources
-    )
+    jsxRenderFunctionTextArea.dispatch({
+      changes: {
+        from: 0,
+        to: jsxRenderFunctionTextArea.state.doc.length,
+        insert: isHtml ? demoHtmlNodeStyleJSXSources : demoSvgNodeStyleJSXSources
+      }
+    })
   } else if (
     graphComponent.selection.labels.some(
       (label) =>
@@ -180,11 +209,21 @@ function toggleHtmlSvgTemplate(event: Event) {
         label.style instanceof ReactComponentHtmlLabelStyle
     )
   ) {
-    jsxRenderFunctionTextArea.setValue(
-      isHtml ? demoHtmlLabelStyleJSXSources : demoSvgLabelStyleJSXSources
-    )
+    jsxRenderFunctionTextArea.dispatch({
+      changes: {
+        from: 0,
+        to: jsxRenderFunctionTextArea.state.doc.length,
+        insert: isHtml ? demoHtmlLabelStyleJSXSources : demoSvgLabelStyleJSXSources
+      }
+    })
   } else {
-    jsxRenderFunctionTextArea.setValue('Style is not an instance with attached JSX sources.')
+    jsxRenderFunctionTextArea.dispatch({
+      changes: {
+        from: 0,
+        to: jsxRenderFunctionTextArea.state.doc.length,
+        insert: 'Style is not an instance with attached JSX sources.'
+      }
+    })
   }
 }
 
@@ -203,13 +242,25 @@ function onSelectionChanged() {
       selectedItem.style instanceof ReactComponentHtmlNodeStyle
   }
 
-  jsxRenderFunctionTextArea.setOption('readOnly', !jsx)
-  jsxRenderFunctionTextArea.setValue(jsx ?? 'Style is not an instance with attached JSX sources.')
+  jsxRenderFunctionTextArea.dispatch({
+    effects: setJsxRenderFunctionTextAreaEditable.of(jsx !== undefined),
+    changes: {
+      from: 0,
+      to: jsxRenderFunctionTextArea.state.doc.length,
+      insert: jsx ?? 'Style is not an instance with attached JSX sources.'
+    }
+  })
   applyTemplateButton.disabled = !jsx
   htmlTemplateToggle.disabled = !jsx
 
-  tagTextArea.setOption('readOnly', false)
-  tagTextArea.setValue(tag ? JSON.stringify(tag, null, 2) : '{}')
+  tagTextArea.dispatch({
+    effects: setTagTextAreaEditable.of(tag !== undefined),
+    changes: {
+      from: 0,
+      to: tagTextArea.state.doc.length,
+      insert: tag ? JSON.stringify(tag, null, 2) : '{}'
+    }
+  })
   applyTagButton.disabled = !selectedItem
 }
 
@@ -480,7 +531,7 @@ function initializeUI(): void {
       return
     }
     const svg = !htmlTemplateToggle.checked
-    const jsxSource = jsxRenderFunctionTextArea.getValue()
+    const jsxSource = jsxRenderFunctionTextArea.state.doc.toString()
     try {
       if (graphComponent.selection.nodes.size > 0) {
         applyJSXtoSelectedNodes(jsxSource, svg)
@@ -498,7 +549,7 @@ function initializeUI(): void {
   document.querySelector('#apply-tag-button')!.addEventListener('click', () => {
     graphComponent.selection.nodes.forEach((node) => {
       try {
-        const tag = JSON.parse(tagTextArea.getValue())
+        const tag = JSON.parse(tagTextArea.state.doc.toString())
         tagErrorArea.classList.remove('open-error')
         graphComponent.selection.forEach((item) => {
           item.tag = tag

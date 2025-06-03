@@ -41,6 +41,7 @@
   height: 100%;
 }
 
-#data-view .CodeMirror {
+#data-view .cm-editor {
   height: 100% !important;
+  background-color: #fff;
 }

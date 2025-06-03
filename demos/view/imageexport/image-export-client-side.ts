@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Graph,
   GraphComponent,
   type IGraph,
   Insets,
@@ -99,6 +100,10 @@ export async function exportImage(
     exportComponent,
     renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
   )
+
+  // Dispose of the component and remove its references to the graph
+  exportComponent.cleanUp()
+  exportComponent.graph = new Graph()
 
   return renderSvgToPng(
     svgElement as SVGElement,

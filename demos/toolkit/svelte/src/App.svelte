@@ -47,7 +47,8 @@
         rel='noopener'
         target='_blank'>Vite's support for Web Workers</a
       >. Vite's development build relies on native browser support for <a href='https://web.dev/module-workers/'
-        target='_blank'>module workers</a> and therefore currently only works in some browsers (e.g. Chrome). For
+                                                                          target='_blank'>module workers</a> and
+        therefore currently only works in some browsers (e.g. Chrome). For
         unsupported browsers, client-sided layout calculation is used as fallback.
       </li>
     </ul>
@@ -67,15 +68,15 @@
 <div class='demo-page-header'>
   <div class='demo-header'>
     <a href='https://www.yfiles.com/' target='_blank'> <img src='ylogo.svg'
-      class='demo-header__y-logo' /> </a>
+                                                            class='demo-header__y-logo' /> </a>
     <div class='demo-header__breadcrumb-wrapper'>
       <a href='https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html'
-        class='demo-header__breadcrumb demo-header__breadcrumb--link'
-        target='_blank'>yFiles for HTML</a>
+         class='demo-header__breadcrumb demo-header__breadcrumb--link'
+         target='_blank'>yFiles for HTML</a>
 
       <a href='https://www.yfiles.com/demos'
-        style='cursor: pointer;' target='_blank'
-        class='demo-header__breadcrumb demo-header__breadcrumb--link'>Demos</a> <span class='demo-header__breadcrumb'>Svelte Integration Demo [yFiles for HTML]</span>
+         style='cursor: pointer;' target='_blank'
+         class='demo-header__breadcrumb demo-header__breadcrumb--link'>Demos</a> <span class='demo-header__breadcrumb'>Svelte Integration Demo [yFiles for HTML]</span>
     </div>
   </div>
 </div>

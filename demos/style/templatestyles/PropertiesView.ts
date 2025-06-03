@@ -32,7 +32,7 @@ import type { Employee } from './TemplateStylesDemo'
 /**
  * Helper class for showing properties of a node in the OrgChart.
  */
-export default class PropertiesView {
+export class PropertiesView {
   /**
    * Creates a new PropertiesView
    * @param element The DOM element that will be filled with the properties.

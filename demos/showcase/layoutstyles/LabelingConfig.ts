@@ -50,16 +50,17 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
-import LayoutConfiguration, {
+import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  LayoutConfiguration
 } from './LayoutConfiguration'
 
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const LabelingConfig = (Class as any)('LabelingConfig', {
+export const LabelingConfig = (Class as any)('LabelingConfig', {
   $extends: LayoutConfiguration,
 
   _meta: {
@@ -343,4 +344,3 @@ const LabelingConfig = (Class as any)('LabelingConfig', {
     }
   }
 })
-export default LabelingConfig

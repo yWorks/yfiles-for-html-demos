@@ -36,6 +36,7 @@ import {
 } from '@angular/core'
 import {
   Command,
+  Graph,
   GraphComponent,
   IArrow,
   IGraph,
@@ -181,6 +182,10 @@ export class AppComponent implements AfterViewInit {
       // this callback is needed since Angular needs to finish rendering its templates
       async () => this._appRef.tick()
     )
+    // Dispose of the component and remove its references to the graph
+    exportComponent.cleanUp()
+    exportComponent.graph = new Graph()
+
     // download the result
     downloadFile(SvgExport.exportSvgString(svg), 'graph.svg', 'image/svg+xml')
   }

@@ -46,7 +46,7 @@ import { toRadians } from '@yfiles/demo-utils/LegacyGeometryUtilities'
 /**
  * An {@link IVisualCreator} that manages and renders the sectors.
  */
-export default class SectorVisual extends BaseClass(IVisualCreator) {
+export class SectorVisual extends BaseClass(IVisualCreator) {
   highlightColor = '#e01a4f'
   center = Point.ORIGIN
   radius = 100

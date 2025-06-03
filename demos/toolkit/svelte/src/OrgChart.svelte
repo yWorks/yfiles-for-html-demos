@@ -3,6 +3,7 @@
   import {
     Command,
     EventRecognizers,
+    Graph,
     GraphBuilder,
     GraphComponent,
     GraphViewerInputMode,
@@ -14,7 +15,7 @@
     Rect
   } from '@yfiles/yfiles'
   import licenseValue from '../../../../lib/license.json'
-  import SvelteComponentNodeStyle from './SvelteComponentNodeStyle'
+  import { SvelteComponentNodeStyle } from './SvelteComponentNodeStyle.svelte'
   import SvgNodeComponent from './SvgNodeComponent.svelte'
   import type { Person } from './types'
 
@@ -121,6 +122,7 @@
     // Clean up the GraphComponent after the Svelte component is destroyed
     return () => {
       graphComponent.cleanUp()
+      graphComponent.graph = new Graph()
     }
   })
 

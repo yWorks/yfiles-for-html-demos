@@ -37,9 +37,6 @@
 
     <link rel="stylesheet" href="../../resources/style/demo.css" />
 
-    <!-- a helper package needed for CodeMirror linting -->
-    <script src="https://www.yworks.com/resources/scripts/jsonlint@1.6.3.js"></script>
-
     <style>
       #graphComponent {
         background-color: #f7f7f7;
@@ -66,11 +63,13 @@
         min-height: 0;
       }
 
-      .CodeMirror {
+      .cm-editor {
         height: 100% !important;
+        background-color: #fff;
       }
 
       .error {
+        display: none;
         color: #ffffff;
         font-size: 16px;
         font-weight: bold;
@@ -78,10 +77,22 @@
         text-align: center;
         height: 0;
         box-sizing: border-box;
-        transition: all 0.2s ease-in-out;
         margin-left: 1ex;
+        transition:
+          height 0.3s ease,
+          display 0.3s ease allow-discrete;
+        &.open-error {
+          display: flex;
+          height: 1.5em;
+          background-color: #f44336;
+          padding: 2px 4px;
+        }
       }
-
+      @starting-style {
+        .error.open-error {
+          height: 0;
+        }
+      }
       #template-text-area-error {
         bottom: 250px;
       }
@@ -105,12 +116,6 @@
 
       .apply-button:disabled {
         background-color: #a0a0a0;
-      }
-
-      .open-error {
-        height: 1.5em;
-        background-color: #f44336;
-        padding: 2px 4px;
       }
     </style>
   </head>
@@ -225,9 +230,7 @@
             </button>
           </div>
           <div id="template-text-area-error" class="error">Could not compile template string!</div>
-          <div id="templateEditorContainer" class="editorText">
-            <textarea id="template-text-area" style="width: 100%; height: 100%"></textarea>
-          </div>
+          <div id="templateEditorContainer" class="editorText"></div>
 
           <div class="heading-row">
             <h2>Tag Object</h2>
@@ -240,9 +243,7 @@
             </button>
           </div>
           <div id="tag-text-area-error" class="error">Could not parse tag object!</div>
-          <div id="tagEditorContainer" class="editorText">
-            <textarea id="tag-text-area"></textarea>
-          </div>
+          <div id="tagEditorContainer" class="editorText"></div>
         </div>
       </aside>
     </div>

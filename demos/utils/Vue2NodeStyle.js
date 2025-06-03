@@ -221,7 +221,7 @@ class ObservedContext {
 /**
  * A node style which uses a Vue component to display a node.
  */
-export default class Vue2NodeStyle extends NodeStyleBase {
+export class Vue2NodeStyle extends NodeStyleBase {
   _template = ''
   _styleTag = null
   constructorFunction

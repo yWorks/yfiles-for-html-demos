@@ -14,6 +14,6 @@
     "fs-extra": "^11.3.0"
   },
   "dependencies": {
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.1+dev.tgz"
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.2+dev.tgz"
   }
 }

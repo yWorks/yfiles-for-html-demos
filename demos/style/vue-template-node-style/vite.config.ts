@@ -61,7 +61,16 @@ export default defineConfig(({ mode }) => {
             !id.includes('node_modules')
           )
         },
-        blacklist: ['getValue', 'setValue', 'focused', 'template', 'content', 'visible', 'icon']
+        blacklist: [
+          'getValue',
+          'setValue',
+          'focused',
+          'template',
+          'content',
+          'visible',
+          'icon',
+          'update'
+        ]
       })
     )
   }

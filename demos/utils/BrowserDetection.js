@@ -34,6 +34,7 @@ let supportsWebGL = null
 let supportsWebGL2 = null
 let androidVersion = null
 let chromeVersion = null
+let isMetaQuestBrowser = null
 /**
  * Provides basic feature detection for browser API that is used in the demos.
  *
@@ -41,6 +42,17 @@ let chromeVersion = null
  * [Modernizer](https://modernizr.com/) instead.
  */
 export const BrowserDetection = {
+  /**
+   * Whether the browser is the Meta Quest browser.
+   */
+  get isMetaQuestBrowser() {
+    if (isMetaQuestBrowser !== null) {
+      return isMetaQuestBrowser
+    }
+    const ua = window?.navigator?.userAgent ?? ''
+    isMetaQuestBrowser = /OculusBrowser|MetaQuest|Quest/.test(ua)
+    return isMetaQuestBrowser
+  },
   /**
    * Returns the iOS version, or 0 if it is another OS.
    *

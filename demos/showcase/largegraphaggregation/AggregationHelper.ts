@@ -31,13 +31,12 @@ import {
   FreeNodeLabelModel,
   IEdge,
   IEdgeStyle,
+  IEnumerable,
   ILabelStyle,
-  IListEnumerable,
   INode,
   INodeStyle,
   LabelStyle,
   List,
-  ListEnumerable,
   NodeAggregate,
   NodeAggregationResult,
   Point,
@@ -157,7 +156,7 @@ export class AggregationHelper {
    * @param node The node.
    * @returns The nodes affected by this operation. The created aggregation node is always the first item.
    */
-  public toggleAggregation(node: INode): IListEnumerable<INode> {
+  public toggleAggregation(node: INode): IEnumerable<INode> {
     const aggregationNodeInfo = node.tag as AggregationNodeInfo
     return aggregationNodeInfo.isAggregated ? this.separate(node) : this.aggregate(node)
   }
@@ -167,7 +166,7 @@ export class AggregationHelper {
    * @param node The node.
    * @returns The nodes affected by this operation. The created aggregation node is always the first item.
    */
-  public aggregate(node: INode): IListEnumerable<INode> {
+  public aggregate(node: INode): IEnumerable<INode> {
     const aggregationInfo = node.tag as AggregationNodeInfo
     const aggregate = aggregationInfo.aggregate
     const aggregationNode = this.aggregateRecursively(aggregate)
@@ -192,7 +191,7 @@ export class AggregationHelper {
       }
     }
 
-    return new ListEnumerable<INode>(affectedNodes)
+    return affectedNodes
   }
 
   /**
@@ -230,7 +229,7 @@ export class AggregationHelper {
     const size = 30 + Math.sqrt(aggregate.descendantWeightSum) * 4
     const layout = Rect.fromCenter(originalCenter, new Size(size, size))
     const aggregationNode = this.aggregateGraph.aggregate(
-      new ListEnumerable<INode>(nodesToAggregate),
+      nodesToAggregate,
       layout,
       this.aggregationNodeStyle
     )
@@ -289,7 +288,7 @@ export class AggregationHelper {
    * @param node The node.
    * @returns The nodes affected by this operation. The created aggregation node is always the first item.
    */
-  public separate(node: INode): IListEnumerable<INode> {
+  public separate(node: INode): IEnumerable<INode> {
     const aggregationInfo = node.tag as AggregationNodeInfo
     const aggregate = aggregationInfo.aggregate
     const aggregatedItems = this.aggregateGraph
@@ -299,8 +298,8 @@ export class AggregationHelper {
     this.aggregateGraph.separate(node)
 
     const nodesToAggregate = aggregate.node
-      ? new ListEnumerable<INode>(AggregationHelper.initializer(new List<INode>(), aggregate.node))
-      : IListEnumerable.EMPTY
+      ? AggregationHelper.initializer(new List<INode>(), aggregate.node)
+      : IEnumerable.EMPTY
     const aggregationNode = this.aggregateGraph.aggregate(
       nodesToAggregate,
       node.layout.toRect(),
@@ -349,7 +348,7 @@ export class AggregationHelper {
       this.$replaceEdges(aggregationNode)
     }
 
-    return new ListEnumerable<INode>(affectedNodes)
+    return affectedNodes
   }
 
   private static initializer(instance: List<INode>, p1: INode): List<INode> {

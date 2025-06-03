@@ -32,7 +32,7 @@ const ZIG_SIZE = 5
  * A layout stage that post-processes edge paths produced by the core layout
  * and changes all edges into a zig-zag shape, while following the original path.
  */
-export default class ZigZagEdgesStage extends LayoutStageBase {
+export class ZigZagEdgesStage extends LayoutStageBase {
   applyLayoutImpl(graph) {
     if (!this.coreLayout) {
       return

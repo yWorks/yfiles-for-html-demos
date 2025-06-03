@@ -30,6 +30,7 @@ import {
   BaseClass,
   Graph,
   GraphComponent,
+  GraphItemTypes,
   GraphModelManager,
   HtmlCanvasVisual,
   IBoundsProvider,
@@ -65,8 +66,8 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
-import SvgEdgeStyle from './SvgEdgeStyle'
-import SimpleSvgNodeStyle from './SimpleSvgNodeStyle'
+import { SvgEdgeStyle } from './SvgEdgeStyle'
+import { SimpleSvgNodeStyle } from './SimpleSvgNodeStyle'
 /**
  * A {@link GraphModelManager} implementation that uses several optimizations
  * to improve the rendering performance especially for large graphs.
@@ -1148,7 +1149,11 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     const exportComponent = new GraphComponent()
     exportComponent.graph = this.graph
     const exporter = new SvgExport(exportRect, scale)
-    return exporter.exportSvg(exportComponent)
+    const exportSvg = exporter.exportSvg(exportComponent)
+    // Dispose of the component and remove its references to the graph
+    exportComponent.cleanUp()
+    exportComponent.graph = new Graph()
+    return exportSvg
   }
   /**
    * Calculates a suitable scale for the given area, respecting {@link FastGraphModelManager.maximumCanvasSize}.
@@ -1269,29 +1274,38 @@ class MyHitTestEnumerator extends BaseClass(IHitTester) {
    * Enumerates the hits for the given location.
    * @param context The context to perform the hit
    * @param location The location in world coordinates
+   * @param filter
    */
-  enumerateHits(context, location) {
+  enumerateHits(context, location, filter = GraphItemTypes.ALL) {
     const hits = new List()
-    this.graph.nodeLabels.forEach((label) => {
-      if (label.style.renderer.getHitTestable(label, label.style).isHit(context, location)) {
-        hits.add(label)
-      }
-    })
-    this.graph.edgeLabels.forEach((label) => {
-      if (label.style.renderer.getHitTestable(label, label.style).isHit(context, location)) {
-        hits.add(label)
-      }
-    })
-    this.graph.edges.forEach((edge) => {
-      if (edge.style.renderer.getHitTestable(edge, edge.style).isHit(context, location)) {
-        hits.add(edge)
-      }
-    })
-    this.graph.nodes.forEach((node) => {
-      if (node.style.renderer.getHitTestable(node, node.style).isHit(context, location)) {
-        hits.add(node)
-      }
-    })
+    if ((GraphItemTypes.NODE_LABEL & filter) !== GraphItemTypes.NONE) {
+      this.graph.nodeLabels.forEach((label) => {
+        if (label.style.renderer.getHitTestable(label, label.style).isHit(context, location)) {
+          hits.add(label)
+        }
+      })
+    }
+    if ((GraphItemTypes.EDGE_LABEL & filter) !== GraphItemTypes.NONE) {
+      this.graph.edgeLabels.forEach((label) => {
+        if (label.style.renderer.getHitTestable(label, label.style).isHit(context, location)) {
+          hits.add(label)
+        }
+      })
+    }
+    if ((GraphItemTypes.EDGE & filter) !== GraphItemTypes.NONE) {
+      this.graph.edges.forEach((edge) => {
+        if (edge.style.renderer.getHitTestable(edge, edge.style).isHit(context, location)) {
+          hits.add(edge)
+        }
+      })
+    }
+    if ((GraphItemTypes.NODE & filter) !== GraphItemTypes.NONE) {
+      this.graph.nodes.forEach((node) => {
+        if (node.style.renderer.getHitTestable(node, node.style).isHit(context, location)) {
+          hits.add(node)
+        }
+      })
+    }
     return hits
   }
 }

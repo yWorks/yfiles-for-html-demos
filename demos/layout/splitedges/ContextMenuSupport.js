@@ -40,7 +40,7 @@ import {
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs
 } from '@yfiles/yfiles'
-export default class ContextMenuSupport {
+export class ContextMenuSupport {
   graphComponent
   runLayout
   constructor(graphComponent, runLayout) {

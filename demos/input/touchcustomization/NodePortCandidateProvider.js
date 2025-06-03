@@ -40,7 +40,7 @@ import {
 /**
  * This port candidate provider provides port candidates at each side and in the center of a node.
  */
-export default class NodePortCandidateProvider extends PortCandidateProviderBase {
+export class NodePortCandidateProvider extends PortCandidateProviderBase {
   node
   /**
    * Creates a new instance of {@link NodePortCandidateProvider}.

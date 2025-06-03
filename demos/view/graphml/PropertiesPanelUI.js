@@ -29,7 +29,7 @@
 /**
  * Properties Panel.
  */
-export default class PropertiesPanelUI {
+export class PropertiesPanelUI {
   div
   graphPropertiesDiv
   itemPropertiesDiv

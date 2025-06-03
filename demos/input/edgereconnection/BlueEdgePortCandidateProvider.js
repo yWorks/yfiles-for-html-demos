@@ -40,7 +40,7 @@ import {
  * An {@link IEdgeReconnectionPortCandidateProvider} that allows moving ports to
  * any other existing port on any node.
  */
-export default class BlueEdgePortCandidateProvider extends BaseClass(
+export class BlueEdgePortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider
 ) {
   /**

@@ -44,7 +44,7 @@ import {
 } from '@yfiles/yfiles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import ImageVisualCreator from './ImageVisualCreator'
+import { ImageVisualCreator } from './ImageVisualCreator'
 import { configureLayout } from './configure-layout'
 import { MultiPageNodeType } from './data-types'
 import { pointsData } from './resources/points-data'

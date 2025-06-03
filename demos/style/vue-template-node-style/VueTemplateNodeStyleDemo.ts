@@ -26,18 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import * as CodeMirror from 'codemirror'
-import 'codemirror/mode/xml/xml'
-import 'codemirror/mode/javascript/javascript'
-import 'codemirror/addon/search/search'
-import 'codemirror/addon/search/searchcursor'
-import 'codemirror/addon/dialog/dialog'
-import 'codemirror/addon/lint/lint'
-import 'codemirror/addon/lint/json-lint'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/addon/dialog/dialog.css'
-import 'codemirror/addon/lint/lint.css'
-
 import {
   GraphBuilder,
   GraphComponent,
@@ -59,13 +47,21 @@ import {
 import licenseData from '../../../lib/license.json'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
-
+import { basicSetup, EditorView } from 'codemirror'
+import { StateEffect, type StateEffectType, StateField } from '@codemirror/state'
+import { lintGutter } from '@codemirror/lint'
+import { javascript } from '@codemirror/lang-javascript'
+import { xml } from '@codemirror/lang-xml'
+import { getJsonLinter, getXmlLinter } from '@yfiles/demo-resources/codeMirrorLinters'
+const xmlLinter = getXmlLinter()
+const jsonLinter = getJsonLinter()
 let graphComponent: GraphComponent
 
-let templateTextArea: CodeMirror.EditorFromTextArea
+let templateEditor: EditorView
+let setTemplateEditorEditable: StateEffectType<boolean>
 
-let tagTextArea: CodeMirror.EditorFromTextArea
-
+let tagEditor: EditorView
+let setTagEditorEditable: StateEffectType<boolean>
 /**
  * Runs the demo.
  */
@@ -75,7 +71,7 @@ async function run(): Promise<void> {
 
   graphComponent.inputMode = new GraphViewerInputMode()
 
-  initializeTextAreas()
+  initializeEditors()
   initializeStyles()
   loadSampleGraph()
   initializeUI()
@@ -85,52 +81,114 @@ async function run(): Promise<void> {
  * Initializes text areas to use CodeMirror and to update when the selection in the graph has
  * changed.
  */
-function initializeTextAreas(): void {
-  templateTextArea = CodeMirror.fromTextArea(
-    document.querySelector<HTMLTextAreaElement>('#template-text-area')!,
-    {
-      lineNumbers: true,
-      mode: 'application/xml',
-      gutters: ['CodeMirror-lint-markers'],
-      lint: true
-    } as CodeMirror.EditorConfiguration
-  )
-  tagTextArea = CodeMirror.fromTextArea(
-    document.querySelector<HTMLTextAreaElement>('#tag-text-area')!,
-    {
-      lineNumbers: true,
-      mode: 'application/json',
-      gutters: ['CodeMirror-lint-markers'],
-      lint: true
-    } as CodeMirror.EditorConfiguration
-  )
+function initializeEditors(): void {
+  setTemplateEditorEditable = StateEffect.define<boolean>()
+  const templateEditorEditable = StateField.define<boolean>({
+    create: () => true,
+    update: (value, transaction) => {
+      for (let e of transaction.effects) {
+        if (e.is(setTemplateEditorEditable)) {
+          value = e.value
+        }
+      }
+      return value
+    }
+  })
+  templateEditor = new EditorView({
+    parent: document.querySelector('#templateEditorContainer')!,
+    extensions: [
+      basicSetup,
+      xml(),
+      lintGutter(),
+      xmlLinter,
+      templateEditorEditable,
+      EditorView.editable.from(templateEditorEditable)
+    ]
+  })
+
+  setTagEditorEditable = StateEffect.define<boolean>()
+  const tagEditorEditable = StateField.define<boolean>({
+    create: () => true,
+    update: (value, transaction) => {
+      for (let e of transaction.effects) {
+        if (e.is(setTagEditorEditable)) {
+          value = e.value
+        }
+      }
+      return value
+    }
+  })
+  tagEditor = new EditorView({
+    parent: document.querySelector('#tagEditorContainer')!,
+    extensions: [
+      basicSetup,
+      javascript(),
+      jsonLinter,
+      lintGutter(),
+      tagEditorEditable,
+      EditorView.editable.from(tagEditorEditable)
+    ]
+  })
 
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
 
-  graphComponent.selection.addEventListener('item-added', () => {
-    const selectedNode = graphComponent.selection.nodes.at(0)!
-    if (selectedNode.style instanceof VueTemplateNodeStyle) {
-      templateTextArea.setOption('readOnly', false)
-      templateTextArea.setValue(selectedNode.style.template)
-    } else {
-      templateTextArea.setOption('readOnly', true)
-      templateTextArea.setValue('Style is not an instance of VueTemplateNodeStyle.')
+  graphComponent.selection.addEventListener('item-added', (_, graphComponent) => {
+    const selectedNode = graphComponent.nodes.at(0)!
+    if (selectedNode) {
+      if (selectedNode.style instanceof VueTemplateNodeStyle) {
+        templateEditor.dispatch({
+          effects: setTemplateEditorEditable.of(true),
+          changes: {
+            from: 0,
+            to: templateEditor.state.doc.length,
+            insert: selectedNode.style.template
+          }
+        })
+      } else {
+        templateEditor.dispatch({
+          effects: setTemplateEditorEditable.of(false),
+          changes: {
+            from: 0,
+            to: templateEditor.state.doc.length,
+            insert: 'Style is not an instance of VueTemplateNodeStyle.'
+          }
+        })
+      }
+
+      tagEditor.dispatch({
+        effects: setTagEditorEditable.of(true),
+        changes: {
+          from: 0,
+          to: tagEditor.state.doc.length,
+          insert: selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}'
+        }
+      })
+      document.querySelector<HTMLButtonElement>(`#apply-template-button`)!.disabled = false
+      document.querySelector<HTMLButtonElement>(`#apply-tag-button`)!.disabled = false
     }
-    tagTextArea.setOption('readOnly', false)
-    tagTextArea.setValue(selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}')
-    document.querySelector<HTMLButtonElement>('#apply-template-button')!.disabled = false
-    document.querySelector<HTMLButtonElement>('#apply-tag-button')!.disabled = false
   })
 
-  graphComponent.selection.addEventListener('item-removed', () => {
-    templateTextArea.setOption('readOnly', 'nocursor')
-    tagTextArea.setOption('readOnly', 'nocursor')
-    templateTextArea.setValue('Select a node to edit its template.')
-    tagTextArea.setValue('Select a node to edit its tag.')
-    document.querySelector<HTMLButtonElement>('#apply-template-button')!.disabled = true
-    document.querySelector<HTMLButtonElement>('#apply-tag-button')!.disabled = true
+  graphComponent.selection.addEventListener('item-removed', (_, graphComponent) => {
+    templateEditor.dispatch({
+      effects: setTemplateEditorEditable.of(false),
+      changes: {
+        from: 0,
+        to: templateEditor.state.doc.length,
+        insert: 'Select a node to edit its template.'
+      }
+    })
+    tagEditor.dispatch({
+      effects: setTagEditorEditable.of(false),
+      changes: {
+        from: 0,
+        to: tagEditor.state.doc.length,
+        insert: 'Select a node to edit its tag.'
+      }
+    })
+    document.querySelector<HTMLButtonElement>(`#apply-template-button`)!.disabled = true
+    document.querySelector<HTMLButtonElement>(`#apply-tag-button`)!.disabled = true
   })
 }
 
@@ -239,7 +297,7 @@ function initializeUI(): void {
     if (graphComponent.selection.nodes.size === 0) {
       return
     }
-    const templateText = templateTextArea.getValue()
+    const templateText = templateEditor.state.doc.toString()
     const style = new VueTemplateNodeStyle(templateText)
     try {
       // check if style is valid
@@ -264,7 +322,7 @@ function initializeUI(): void {
     const errorArea = document.getElementById('tag-text-area-error')!
     graphComponent.selection.nodes.forEach((node) => {
       try {
-        node.tag = JSON.parse(tagTextArea.getValue())
+        node.tag = JSON.parse(tagEditor.state.doc.toString())
         errorArea.classList.remove('open-error')
       } catch (err) {
         errorArea.classList.add('open-error')

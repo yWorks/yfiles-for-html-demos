@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Graph,
   GraphComponent,
   IEnumerable,
   IGraph,
@@ -44,7 +45,7 @@ import { openInWindow } from './open-in-window'
  * new window, and finally, this window is printed using the browser's print
  * feature.
  */
-export default class PrintingSupport {
+export class PrintingSupport {
   /**
    * The margins around the whole printed content in page coordinates.
    */
@@ -99,11 +100,14 @@ export default class PrintingSupport {
     const exportComponent = new GraphComponent()
     // ... and assign it the same graph.
     exportComponent.graph = graph
-    return this.print(
+    await this.print(
       exportComponent,
       region,
       renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
     )
+    // Dispose of the component and remove its references to the graph
+    exportComponent.cleanUp()
+    exportComponent.graph = new Graph()
   }
   /**
    * Prints the detail of the given GraphComponent's graph that is specified by either a

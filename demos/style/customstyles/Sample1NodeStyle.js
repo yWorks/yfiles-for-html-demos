@@ -48,14 +48,14 @@ import {
   Size,
   SvgVisual
 } from '@yfiles/yfiles'
-import Sample1EdgeStyle from './Sample1EdgeStyle'
+import { Sample1EdgeStyle } from './Sample1EdgeStyle'
 import { SVGNS, XLINKNS } from './Namespaces'
 /**
  * A custom implementation of an {@link INodeStyle}
  * that uses the convenience class {@link NodeStyleBase}
  * as the base class.
  */
-export default class Sample1NodeStyle extends NodeStyleBase {
+export class Sample1NodeStyle extends NodeStyleBase {
   static _fillCounter
   nodeColor = 'rgba(0,130,180,1)'
   /**

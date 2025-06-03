@@ -44,7 +44,7 @@ import {
  * orthogonal, even if the new bend was created on the non-orthogonal first
  * or last segment.
  */
-export default class BlueBendCreator extends BaseClass(IBendCreator) {
+export class BlueBendCreator extends BaseClass(IBendCreator) {
   constructor(
     private readonly edge: IEdge,
     private readonly originalBendCreator: IBendCreator

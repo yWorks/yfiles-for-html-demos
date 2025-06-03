@@ -41,7 +41,7 @@ import {
   ShapeNodeStyle,
   Size
 } from '@yfiles/yfiles'
-import WebglBlobVisual from './WebglBlobVisual'
+import { WebglBlobVisual } from './WebglBlobVisual'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { checkWebGLSupport, finishLoading } from '@yfiles/demo-resources/demo-page'
 let graphComponent

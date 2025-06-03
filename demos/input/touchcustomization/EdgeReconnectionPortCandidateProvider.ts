@@ -43,7 +43,7 @@ import {
  * An {@link IEdgeReconnectionPortCandidateProvider} that allows moving ports to
  * any other port candidate that another node provides.
  */
-export default class EdgeReconnectionPortCandidateProvider extends BaseClass(
+export class EdgeReconnectionPortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider
 ) {
   constructor(private edge: IEdge) {

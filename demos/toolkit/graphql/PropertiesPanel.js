@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export default class PropertiesPanel {
+export class PropertiesPanel {
   element
   /**
    * Creates a new properties panel that shows the individual properties.

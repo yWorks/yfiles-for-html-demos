@@ -34,7 +34,7 @@ import {
   Rect
 } from '@yfiles/yfiles'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import MyMarqueeSelectionInputMode from './MyMarqueeSelectionInputMode'
+import { MyMarqueeSelectionInputMode } from './MyMarqueeSelectionInputMode'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 let graphComponent

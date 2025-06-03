@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { BaseClass, IRenderContext, IVisualCreator, SvgVisual, Visual } from '@yfiles/yfiles'
-export default class ImageVisualCreator extends BaseClass(IVisualCreator) {
+export class ImageVisualCreator extends BaseClass(IVisualCreator) {
   /**
    * Creates the visual for the background.
    * @param context The context that describes where the visual will be used

@@ -38,7 +38,7 @@ import {
 /**
  * Crops adjacent edges at the nodes rotated bounds for internal ports.
  */
-export default class AdjustOutlinePortInsidenessEdgePathCropper extends EdgePathCropper {
+export class AdjustOutlinePortInsidenessEdgePathCropper extends EdgePathCropper {
   /**
    * Checks whether or not the given location is inside the nodes rotated shape.
    */

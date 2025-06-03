@@ -50,12 +50,7 @@
   display: block;
   height: 60px;
   width: 120px;
-  margin-left: 20px;
-}
-
-.demo-sidebar-content {
-  overflow-y: auto;
-  padding: 0 15px 0.83em 20px;
+  margin-left: 16px;
 }
 
 .demo-sidebar-content a,

@@ -65,7 +65,7 @@ export type UserData = {
   fax: string
 }
 
-export default function createNewRandomUserData(): UserData {
+export function createNewRandomUserData(): UserData {
   const firstName = FIRST_NAMES[getRandomInt(FIRST_NAMES.length)]
   const familyName = FAMILY_NAMES[getRandomInt(FAMILY_NAMES.length)]
   const phoneNumber = getRandomInt(90000) + 10000

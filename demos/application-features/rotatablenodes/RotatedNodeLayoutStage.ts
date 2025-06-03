@@ -57,20 +57,17 @@ type Dimensions = {
  * bounding box, i.e. a rectangular box which is large enough to fully include the rotated node. The edges are
  * connected with the actual rotated shape of the node according to the {@link edgeRoutingMode}.
  */
-export default class RotatedNodeLayoutStage extends LayoutStageBase {
+export class RotatedNodeLayoutStage extends LayoutStageBase {
   /** How to connect edges from the bounding box to the actual shape. */
   public edgeRoutingMode: 'shortest-straight-path-to-border' | 'no-routing' | 'fixed-port' =
     'shortest-straight-path-to-border'
 
   /**
-   * The {@link NodeDataKey} key to register a data provider that provides the outline and
+   * The {@link NodeDataKey} key to register a data provider that provides the
    * oriented layout to this stage.
    */
-  static get ROTATED_NODE_LAYOUT_DATA_KEY(): NodeDataKey<{
-    outline: GeneralPath
-    orientedLayout: IOrientedRectangle
-  }> {
-    return new NodeDataKey('RotatedNodeLayoutStage.RotatedNodeLayoutDataKey')
+  static get ROTATED_NODE_LAYOUT_DATA_KEY(): NodeDataKey<IOrientedRectangle> {
+    return new NodeDataKey('RotatedNodeLayoutStage.RotatedNodeLayoutRectDataKey')
   }
 
   /**
@@ -88,10 +85,10 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
       return
     }
 
-    const boundsProvider = graph.context.getItemData(
+    const rectProvider = graph.context.getItemData(
       RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DATA_KEY
     )
-    if (!boundsProvider) {
+    if (!rectProvider) {
       // no provider: this stage adds nothing to the core layout
       this.coreLayout.applyLayout(graph)
       return
@@ -129,10 +126,35 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
     try {
       const originalDimensions = new Mapper<LayoutNode, Dimensions>()
       graph.nodes.forEach((node) => {
-        const { outline, orientedLayout } = boundsProvider.get(node) as {
-          outline: GeneralPath
-          orientedLayout: IOrientedRectangle
-        }
+        const orientedLayout = rectProvider.get(node) as IOrientedRectangle
+
+        // the oriented layout's corners
+        const tl = new Point(
+          orientedLayout.anchorX + orientedLayout.upX * orientedLayout.height,
+          orientedLayout.anchorY + orientedLayout.upY * orientedLayout.height
+        )
+        const tr = new Point(
+          orientedLayout.anchorX +
+            (orientedLayout.upX * orientedLayout.height -
+              orientedLayout.upY * orientedLayout.width),
+          orientedLayout.anchorY +
+            orientedLayout.upY * orientedLayout.height +
+            orientedLayout.upX * orientedLayout.width
+        )
+        const bl = new Point(orientedLayout.anchorX, orientedLayout.anchorY)
+        const br = new Point(
+          orientedLayout.anchorX - orientedLayout.upY * orientedLayout.width,
+          orientedLayout.anchorY + orientedLayout.upX * orientedLayout.width
+        )
+
+        // the outline based on the corners
+        const outline = new GeneralPath()
+        outline.moveTo(tl)
+        outline.lineTo(tr)
+        outline.lineTo(br)
+        outline.lineTo(bl)
+        outline.close()
+
         if (orientedLayout) {
           // if the current node is rotated: apply fixes
           // remember old layout and size
@@ -148,25 +170,6 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
           }
           if (this.edgeRoutingMode === 'fixed-port') {
             // EdgeRoutingMode: FixedPort: keep the ports at their current location
-
-            // The oriented layout's corners to find the best PortSide
-            const tl = new Point(
-              orientedLayout.anchorX + orientedLayout.upX * orientedLayout.height,
-              orientedLayout.anchorY + orientedLayout.upY * orientedLayout.height
-            )
-            const tr = new Point(
-              orientedLayout.anchorX +
-                (orientedLayout.upX * orientedLayout.height -
-                  orientedLayout.upY * orientedLayout.width),
-              orientedLayout.anchorY +
-                orientedLayout.upY * orientedLayout.height +
-                orientedLayout.upX * orientedLayout.width
-            )
-            const bl = new Point(orientedLayout.anchorX, orientedLayout.anchorY)
-            const br = new Point(
-              orientedLayout.anchorX - orientedLayout.upY * orientedLayout.width,
-              orientedLayout.anchorY + orientedLayout.upX * orientedLayout.width
-            )
 
             // for each out edge
             node.outEdges.forEach((edge) => {

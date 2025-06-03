@@ -39,7 +39,7 @@ import {
   SeriesParallelLayoutRoutingStyle,
   StraightLineEdgeRouter
 } from '@yfiles/yfiles'
-import LayoutConfiguration from './LayoutConfiguration'
+import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
   Components,
@@ -59,7 +59,7 @@ var NonSeriesParallelRoutingStyle
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
+export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
   $extends: LayoutConfiguration,
   _meta: {
     generalGroup: [
@@ -399,4 +399,3 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
   /** @type {number} */
   minimumEdgeLengthItem: 0
 })
-export default SeriesParallelLayoutConfig

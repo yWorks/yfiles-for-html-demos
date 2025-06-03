@@ -15,7 +15,7 @@
   "dependencies": {
     "@yfiles/demo-resources": "../../resources",
     "solid-js": "^1.9.5",
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.1+dev.tgz"
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.2+dev.tgz"
   },
   "devDependencies": {
     "solid-devtools": "^0.33.0",

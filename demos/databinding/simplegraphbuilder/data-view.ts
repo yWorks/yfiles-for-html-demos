@@ -26,14 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import * as CodeMirror from 'codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/addon/dialog/dialog.css'
-import 'codemirror/mode/javascript/javascript'
-import 'codemirror/addon/dialog/dialog'
+import { basicSetup, EditorView } from 'codemirror'
+import { javascript } from '@codemirror/lang-javascript'
 
 let container: HTMLDivElement
-let sourceDataView: CodeMirror.EditorFromTextArea
+let sourceDataView: EditorView
 
 /**
  * Initializes a data view in the element with the given selector.
@@ -43,11 +40,9 @@ function initDataView(selector: string): void {
   container = document.querySelector<HTMLDivElement>(selector)!
   const header = document.createElement('div')
   const dataContainer = document.createElement('div')
-  const textArea = document.createElement('textarea')
 
   container.appendChild(header)
   container.appendChild(dataContainer)
-  dataContainer.appendChild(textArea)
 
   container.setAttribute('class', 'demo-overlay')
   dataContainer.setAttribute('class', 'data-container')
@@ -58,11 +53,9 @@ function initDataView(selector: string): void {
   header.addEventListener('click', () => {
     container.classList.toggle('collapsed')
   })
-  const mode = { name: 'javascript', json: true }
-  sourceDataView = CodeMirror.fromTextArea(textArea, {
-    lineNumbers: true,
-    mode: mode,
-    readOnly: true
+  sourceDataView = new EditorView({
+    parent: container,
+    extensions: [basicSetup, javascript(), EditorView.editable.of(false)]
   })
 }
 
@@ -86,7 +79,13 @@ function updateDataView(nodesSource: any, groupsSource?: any, edgesSource?: any)
       editorData += `\n\n// edges source:\n${edgesData}`
     }
 
-    sourceDataView.setValue(editorData)
+    sourceDataView.dispatch({
+      changes: {
+        from: 0,
+        to: sourceDataView.state.doc.length,
+        insert: editorData
+      }
+    })
   }
 }
 

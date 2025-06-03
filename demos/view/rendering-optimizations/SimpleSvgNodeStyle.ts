@@ -53,7 +53,7 @@ type SimpleSvgNodeStyleVisual = TaggedSvgVisual<SVGRectElement, Cache>
 /**
  * A simple SVG node style consisting of one filled rect element.
  */
-export default class SimpleSvgNodeStyle extends NodeStyleBase<SimpleSvgNodeStyleVisual> {
+export class SimpleSvgNodeStyle extends NodeStyleBase<SimpleSvgNodeStyleVisual> {
   /**
    * Constructs a node style with the given color or a magenta node style if no color is defined.
    * @param color The fill color for the node.

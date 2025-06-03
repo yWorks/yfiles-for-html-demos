@@ -110,11 +110,10 @@ function initGraphComponents() {
   const oldViewport: Rect | undefined = graphComponents[0]?.viewport
   const oldSelectedItems: IModelItem[] = graphComponents[0]?.selection.toArray() ?? []
 
-  // re-build: remove and dispose the existing GraphComponents, first
+  // re-build: remove and dispose of the existing GraphComponents, first
   while (graphComponents.length) {
     const graphComponent = graphComponents.pop()!
     graphComponent.htmlElement.parentNode!.removeChild(graphComponent.htmlElement)
-    // since we keep the graph we need to clear the reference on the old graph component
     graphComponent.graph = new Graph()
     graphComponent.cleanUp()
   }

@@ -97,9 +97,5 @@ function nextInt(max) {
  * Returns a random element of the given list.
  */
 function getRandom(list) {
-  if (list.size > 0) {
-    return list.get(nextInt(list.size))
-  } else {
-    return null
-  }
+  return list.size > 0 ? list.get(nextInt(list.size)) : null
 }

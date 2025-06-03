@@ -47,7 +47,7 @@ import {
 import { graphQLQuery } from './GraphQLQuery'
 import { SocialNetworkGraphBuilder } from './SocialNetworkGraphBuilder'
 import { SocialNetworkNodeStyle } from './SocialNetworkNodeStyle'
-import PropertiesPanel from './PropertiesPanel'
+import { PropertiesPanel } from './PropertiesPanel'
 import type { Person } from './Person'
 import { copyWithFriends } from './Person'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'

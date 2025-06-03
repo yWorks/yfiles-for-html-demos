@@ -45,7 +45,7 @@ import {
  * A node style for HTML Canvas rendering with a complex visualization. Its visual complexity is
  * similar to the complex SVG node style. As a result, their performance is comparable.
  */
-export default class ComplexCanvasNodeStyle extends NodeStyleBase {
+export class ComplexCanvasNodeStyle extends NodeStyleBase {
   /**
    * Creates the visual representation for the given node.
    * @param context The render context.

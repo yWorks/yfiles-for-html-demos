@@ -30,7 +30,7 @@
  * main page object containing all methods, selectors and functionality
  * that is shared across all page objects
  */
-export default class Page {
+export class Page {
   public open(path: string) {
     return browser.url(path)
   }

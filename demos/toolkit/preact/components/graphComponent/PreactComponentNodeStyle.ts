@@ -75,7 +75,7 @@ type PreactComponentNodeStyleVisual<TTag> = TaggedSvgVisual<
  *  graph.createNode({ style, tag })
  * ```
  */
-export default class PreactComponentNodeStyle<TTag> extends NodeStyleBase<
+export class PreactComponentNodeStyle<TTag> extends NodeStyleBase<
   PreactComponentNodeStyleVisual<TTag>
 > {
   constructor(private readonly type: RenderType<TTag>) {

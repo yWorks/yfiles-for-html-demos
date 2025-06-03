@@ -29,7 +29,7 @@
 import type { INode } from '@yfiles/yfiles'
 import type { Person } from './Person'
 
-export default class PropertiesPanel {
+export class PropertiesPanel {
   /**
    * Creates a new properties panel that shows the individual properties.
    * @param element The DOM element that will be filled with the properties.

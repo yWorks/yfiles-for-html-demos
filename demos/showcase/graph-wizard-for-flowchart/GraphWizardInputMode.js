@@ -66,7 +66,7 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
-import WizardAction, { PickerLayout } from './WizardAction'
+import { PickerLayout, WizardAction } from './WizardAction'
 import {
   Button,
   ButtonInputMode,

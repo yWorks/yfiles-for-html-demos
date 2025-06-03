@@ -29,7 +29,6 @@
 import {
   FreeNodePortLocationModel,
   IEnumerable,
-  IListEnumerable,
   PortCandidate,
   PortCandidateProviderBase
 } from '@yfiles/yfiles'
@@ -58,6 +57,6 @@ export class GroupNodePortCandidateProvider extends PortCandidateProviderBase {
    * Returns an empty list.
    */
   getPortCandidates(_context) {
-    return IListEnumerable.EMPTY
+    return IEnumerable.EMPTY
   }
 }

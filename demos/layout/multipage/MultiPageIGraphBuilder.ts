@@ -59,7 +59,7 @@ import {
   ShapeNodeStyle
 } from '@yfiles/yfiles'
 
-export default class MultiPageIGraphBuilder {
+export class MultiPageIGraphBuilder {
   // initialize mappers
   layoutToViewNode: Mapper<any, any> = new Mapper()
   modelToViewPort: Mapper<any, any> = new Mapper()

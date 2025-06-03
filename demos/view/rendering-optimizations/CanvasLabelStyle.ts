@@ -48,7 +48,7 @@ import {
  * implementation auto-flips the drawing of the labels, if they're upside
  * down.
  */
-export default class CanvasLabelStyle extends LabelStyleBase {
+export class CanvasLabelStyle extends LabelStyleBase {
   private readonly font: Font = new Font('Arial', 14)
 
   /**

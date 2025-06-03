@@ -26,11 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import * as CodeMirror from 'codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/mode/css/css'
+import { basicSetup, EditorView } from 'codemirror'
+import { css } from '@codemirror/lang-css'
+import { lintGutter } from '@codemirror/lint'
+import { getCssLinter } from '@yfiles/demo-resources/codeMirrorLinters'
 
-let editor: CodeMirror.EditorFromTextArea
+const cssLinter = getCssLinter()
+
+let editor: EditorView
 
 /**
  * Initializes a data view in the element with the given selector.
@@ -39,24 +42,28 @@ let editor: CodeMirror.EditorFromTextArea
 export async function createStylesheetView(selector: string): Promise<void> {
   const container = document.querySelector(selector)!
   const dataContainer = document.createElement('div')
-  const textArea = document.createElement('textarea')
 
   container.appendChild(dataContainer)
-  dataContainer.appendChild(textArea)
 
   dataContainer.setAttribute('class', 'data-container')
 
-  editor = CodeMirror.fromTextArea(textArea, {
-    lineNumbers: true,
-    mode: { name: 'css' }
-  }) as CodeMirror.EditorFromTextArea
+  editor = new EditorView({
+    parent: dataContainer,
+    extensions: [basicSetup, css(), lintGutter(), cssLinter]
+  })
 
   let stylesheet = await fetchStylesheet()
 
   // remove the @license doc comment from the css file
   stylesheet = stylesheet.replace(/\/\*{2,}.*@license.*\*{2,}\/(\n|\r\n)/s, '')
 
-  editor.setValue(stylesheet)
+  editor.dispatch({
+    changes: {
+      from: 0,
+      to: editor.state.doc.length,
+      insert: stylesheet
+    }
+  })
 }
 
 /**
@@ -104,6 +111,6 @@ export function addStylesheet(): void {
   const head = document.head
   const newStylesheet = document.createElement('style')
   newStylesheet.setAttribute('data-item-styles', '')
-  newStylesheet.textContent = editor.getValue()
+  newStylesheet.textContent = editor.state.doc.toString()
   head.appendChild(newStylesheet)
 }

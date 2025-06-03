@@ -1,19 +1,20 @@
 {
-  "name": "@yfiles/react-class-component-demo",
+  "name": "@yfiles/react-class-components-demo",
   "version": "1.0.0",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "type": "module",
   "scripts": {
+    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "~19.0.0",
-    "react-dom": "~19.0.0",
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.1+dev.tgz"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.2+dev.tgz"
   },
   "devDependencies": {
     "@types/react": "~19.0.8",

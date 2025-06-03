@@ -53,7 +53,7 @@ import {
  * Provides utility function for collapsing and expanding nodes as well as configuring layout
  * algorithms.
  */
-export default class CollapseAndExpandNodes {
+export class CollapseAndExpandNodes {
   private nodeCollapsedMap: HashMap<INode, boolean> = new HashMap()
   private nodeVisibility: HashMap<INode, boolean> = new HashMap()
 

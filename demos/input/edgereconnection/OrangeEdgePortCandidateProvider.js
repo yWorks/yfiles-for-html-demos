@@ -42,7 +42,7 @@ import {
  * An {@link IEdgeReconnectionPortCandidateProvider} that allows moving ports to
  * any other orange node, except for the opposite port's node.
  */
-export default class OrangeEdgePortCandidateProvider extends BaseClass(
+export class OrangeEdgePortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider
 ) {
   edge

@@ -52,8 +52,8 @@ import {
 } from '@yfiles/yfiles'
 
 import SampleData from './resources/sample'
-import MapVisualCreator from './MapVisualCreator'
-import CityLabelStyle from './CityLabelStyle'
+import { MapVisualCreator } from './MapVisualCreator'
+import { CityLabelStyle } from './CityLabelStyle'
 import {
   createDemoNodeLabelStyle,
   createDemoShapeNodeStyle

@@ -32,7 +32,7 @@ import { IInputModeContext, IOrthogonalEdgeHelper, OrthogonalEdgeHelper } from '
  * An {@link OrthogonalEdgeHelper} that enables moving the
  * source/target of the edge to another port.
  */
-export default class OrangeOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
+export class OrangeOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   /**
    * Enables moving the source and target of the edge to other ports.
    * @param _inputModeContext The input mode context in which the segment is edited

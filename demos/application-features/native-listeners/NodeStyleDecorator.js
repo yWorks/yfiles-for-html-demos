@@ -49,7 +49,7 @@ import {
  * Checks like {@link IHitTestable.isHit} or {@link IMarqueeTestable.isInBox} are
  * simply delegated to the base style because the button is placed inside the node layout.
  */
-export default class NodeStyleDecorator extends NodeStyleBase {
+export class NodeStyleDecorator extends NodeStyleBase {
   baseStyle
   /**
    * Initializes a new instance of this class.

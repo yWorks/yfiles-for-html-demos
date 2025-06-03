@@ -32,7 +32,6 @@ import {
   IEdgeReconnectionPortCandidateProvider,
   IEnumerable,
   IInputModeContext,
-  IListEnumerable,
   IPortCandidate,
   List,
   PortCandidate
@@ -42,7 +41,7 @@ import {
  * dynamic NodeScaled port location model. It allows moving ports to any
  * location inside a green node.
  */
-export default class RedEdgePortCandidateProvider extends BaseClass(
+export class RedEdgePortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider
 ) {
   edge
@@ -70,6 +69,6 @@ export default class RedEdgePortCandidateProvider extends BaseClass(
    * @see Specified by {@link IEdgeReconnectionPortCandidateProvider.getTargetPortCandidates}.
    */
   getTargetPortCandidates(context) {
-    return IListEnumerable.EMPTY
+    return IEnumerable.EMPTY
   }
 }

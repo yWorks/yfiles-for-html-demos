@@ -30,6 +30,8 @@
  * This file provides the JSON data model for the {@link {import("./json-writer").toJSON} function.
  */
 
+import type { SerializedLabelModelParameter } from './label-model-serialization-types'
+
 /**
  * Represents a point.
  * This representation can be auto-converted into a yFiles {@link Point}
@@ -71,7 +73,7 @@ export type NodeID = string | number
 export type JSONLabel = {
   text: string
   layout?: JSONOrientedRectangle
-  layoutParameter?: Record<string, unknown>
+  layoutParameter?: SerializedLabelModelParameter
 }
 
 /**

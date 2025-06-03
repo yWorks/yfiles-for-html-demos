@@ -55,7 +55,7 @@ function dispose(context, removedVisual, dispose) {
  *  graph.createNode({ style, tag })
  * ```
  */
-export default class PreactComponentNodeStyle extends NodeStyleBase {
+export class PreactComponentNodeStyle extends NodeStyleBase {
   type
   constructor(type) {
     super()

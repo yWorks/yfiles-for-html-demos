@@ -35,7 +35,7 @@ import {
   Map as LeafletMap,
   TileLayer
 } from 'leaflet'
-import { GraphComponent, GraphItemTypes, GraphViewerInputMode, Point } from '@yfiles/yfiles'
+import { Graph, GraphComponent, GraphItemTypes, GraphViewerInputMode, Point } from '@yfiles/yfiles'
 import { getArcHeight } from './map-styles'
 import 'leaflet/dist/leaflet.css'
 /**
@@ -151,6 +151,7 @@ export class GraphLayer extends Layer {
     this.pane = undefined
     this.mapPane = undefined
     this.graphComponent.cleanUp()
+    this.graphComponent.graph = new Graph()
     this.graphComponent.htmlElement.remove()
     return this
   }

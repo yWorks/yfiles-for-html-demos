@@ -29,9 +29,9 @@
 import {
   BaseClass,
   FreeNodePortLocationModel,
+  IListEnumerable,
   IPortCandidateProvider,
   List,
-  ListEnumerable,
   Point,
   PortCandidate,
   PortCandidateValidity,
@@ -137,7 +137,7 @@ export function createPortDescriptors(nodes, graph) {
       }
     }
     if (!graph && node instanceof SimpleNode) {
-      node.ports = new ListEnumerable(ports)
+      node.ports = IListEnumerable.from(ports)
     }
   }
 }

@@ -49,7 +49,7 @@ import {
  * - Change the appearance of the {@link TextEditorInputMode}
  * For convenience, this implementation inherits from the predefined {@link EditLabelHelper} class.
  */
-export default class CustomEditLabelHelper extends EditLabelHelper {
+export class CustomEditLabelHelper extends EditLabelHelper {
   /**
    * Creates an instance of CustomEditLabelHelper.
    */

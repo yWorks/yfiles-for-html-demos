@@ -40,7 +40,7 @@ import {
 /**
  * A simple SVG node style consisting of one filled rect element.
  */
-export default class SimpleSvgNodeStyle extends NodeStyleBase {
+export class SimpleSvgNodeStyle extends NodeStyleBase {
   color
   /**
    * Constructs a node style with the given color or a magenta node style if no color is defined.

@@ -44,7 +44,7 @@ import {
  * {@link ConstrainedPositionHandler}, however the interface is
  * completely implemented for illustration purposes, here.
  */
-export default class GreenPositionHandler extends BaseClass(IPositionHandler) {
+export class GreenPositionHandler extends BaseClass(IPositionHandler) {
   private readonly handler: IPositionHandler
   private lastLocation: Point = null!
 

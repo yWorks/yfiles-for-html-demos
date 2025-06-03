@@ -68,7 +68,7 @@ import {
   Visual
 } from '@yfiles/yfiles'
 import type { ButtonOptions, Shortcut } from './WizardAction'
-import WizardAction, { PickerLayout } from './WizardAction'
+import { PickerLayout, WizardAction } from './WizardAction'
 import type { ButtonActionListener } from '../../input/button-input-mode/ButtonInputMode'
 import {
   Button,

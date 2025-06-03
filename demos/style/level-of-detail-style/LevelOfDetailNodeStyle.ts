@@ -29,7 +29,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { INode, INodeStyle, IRenderContext, NodeStyleBase, SvgVisual, Visual } from '@yfiles/yfiles'
 
-export default class LevelOfDetailNodeStyle extends NodeStyleBase {
+export class LevelOfDetailNodeStyle extends NodeStyleBase {
   detailThreshold: number
   intermediateThreshold: number
   detailNodeStyle: INodeStyle

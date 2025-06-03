@@ -40,7 +40,7 @@ import {
  * source/target of the edge to another port, removes bends inside the bounds
  * of the node and relocates the port to the last bend inside the node.
  */
-export default class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
+export class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   constructor(edge: IEdge) {
     super(edge)
   }

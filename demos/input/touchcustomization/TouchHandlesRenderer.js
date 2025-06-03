@@ -36,7 +36,7 @@ import {
 /**
  * Renders large handles for resize and move as circles.
  */
-export default class TouchHandlesRenderer extends ObjectRendererBase {
+export class TouchHandlesRenderer extends ObjectRendererBase {
   static handleRadius = 15
   resizeHandles = [
     HandleType.RESIZE,

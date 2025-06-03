@@ -43,7 +43,7 @@ import {
   Size
 } from '@yfiles/yfiles'
 import { colorSets, createDemoNodeLabelStyle } from '@yfiles/demo-resources/demo-styles'
-import ArrowNodeStyleHandleProvider from './ArrowNodeStyleHandleProvider'
+import { ArrowNodeStyleHandleProvider } from './ArrowNodeStyleHandleProvider'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**

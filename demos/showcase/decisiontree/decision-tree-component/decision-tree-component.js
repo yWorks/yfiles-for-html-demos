@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import DecisionTree from './DecisionTree'
+import { DecisionTree } from './DecisionTree'
 import { getRootNode, readSampleGraph, setAsRootNode } from '../editor-component/editor-component'
 import { Command } from '@yfiles/yfiles'
 import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'

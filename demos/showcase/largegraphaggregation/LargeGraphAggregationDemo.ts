@@ -49,10 +49,10 @@ import {
   IAnimation,
   IEdge,
   IEdgeStyle,
+  IEnumerable,
   IGraph,
   ILabelOwner,
   ILayoutAlgorithm,
-  IListEnumerable,
   INode,
   Insets,
   LabelStyle,
@@ -197,7 +197,7 @@ function toggleAggregationNode(node: INode): void {
   const affectedNodes = aggregationHelper.toggleAggregation(node)
 
   // set the current item to the new aggregation node (which is the first in the list)
-  graphComponent.currentItem = affectedNodes.get(0)
+  graphComponent.currentItem = affectedNodes.first()
 
   // run layout
   runLayoutOnHierarchyView(affectedNodes)
@@ -491,7 +491,7 @@ function createConfiguredAggregation(): NodeAggregation {
 /**
  * Runs a layout on the hierarchy view.
  */
-async function runLayoutOnHierarchyView(affectedNodes?: IListEnumerable<INode>): Promise<void> {
+async function runLayoutOnHierarchyView(affectedNodes?: IEnumerable<INode>): Promise<void> {
   return document.querySelector<HTMLSelectElement>('#layout-style-select')!.value === 'radial-group'
     ? runRadialGroupLayout(affectedNodes)
     : runRadialTreeLayout(affectedNodes)
@@ -500,7 +500,7 @@ async function runLayoutOnHierarchyView(affectedNodes?: IListEnumerable<INode>):
 /**
  * Runs a {@link RadialTreeLayout} where the hierarchy edges are the tree edges and original edges are bundled.
  */
-async function runRadialTreeLayout(affectedNodes?: IListEnumerable<INode>): Promise<void> {
+async function runRadialTreeLayout(affectedNodes?: IEnumerable<INode>): Promise<void> {
   switchHierarchyEdgeVisibility(graphComponent.graph, true)
 
   // create the radial tree layout
@@ -530,7 +530,7 @@ async function runRadialTreeLayout(affectedNodes?: IListEnumerable<INode>): Prom
 
   // create a layout executor that also zooms to all nodes that were affected by the last operation
   const layoutExecutor = new ZoomToNodesLayoutExecutor(
-    affectedNodes || IListEnumerable.EMPTY,
+    affectedNodes || IEnumerable.EMPTY,
     graphComponent,
     layout
   )
@@ -558,7 +558,7 @@ async function runCircularLayout(): Promise<void> {
  * This is required because the radialGroupLayout layout works on hierarchical grouping structures as
  * input and not on tree graph structures.
  */
-async function runRadialGroupLayout(affectedNodes?: IListEnumerable<INode>): Promise<void> {
+async function runRadialGroupLayout(affectedNodes?: IEnumerable<INode>): Promise<void> {
   const graph = graphComponent.graph
   switchHierarchyEdgeVisibility(graph, false)
 
@@ -612,7 +612,7 @@ async function runRadialGroupLayout(affectedNodes?: IListEnumerable<INode>): Pro
 
   // create a layout executor that also zooms to all nodes that were affected by the last operation
   const layoutExecutor = new ZoomToNodesLayoutExecutor(
-    affectedNodes || IListEnumerable.EMPTY,
+    affectedNodes || IEnumerable.EMPTY,
     graphComponent,
     new CustomRadialGroupLayoutStage()
   )
@@ -908,13 +908,9 @@ function onInfoPanelPropertiesChanged(): void {
  * A LayoutExecutor that modifies the viewport animation to zoom to a list of nodes.
  */
 class ZoomToNodesLayoutExecutor extends LayoutExecutor {
-  private nodes: IListEnumerable<INode>
+  private nodes: IEnumerable<INode>
 
-  constructor(
-    nodes: IListEnumerable<INode>,
-    graphComponent: GraphComponent,
-    layout: ILayoutAlgorithm
-  ) {
+  constructor(nodes: IEnumerable<INode>, graphComponent: GraphComponent, layout: ILayoutAlgorithm) {
     super(graphComponent, layout)
     this.nodes = nodes
   }

@@ -57,7 +57,7 @@ import {
   Rect,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
-export default class MultiPageIGraphBuilder {
+export class MultiPageIGraphBuilder {
   // initialize mappers
   layoutToViewNode = new Mapper()
   modelToViewPort = new Mapper()

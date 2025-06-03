@@ -28,6 +28,7 @@
  ***************************************************************************/
 import type { JSONEdge, JSONGraph, JSONLabel, JSONNode, JSONPoint, NodeID } from './json-model'
 import type { IEdge, IGraph, ILabel, INode } from '@yfiles/yfiles'
+import { serializeLabelModelParameter } from './label-model-serialization'
 
 export type NodeDataWriter = (data: JSONNode, node: INode, graph: IGraph) => void
 export type EdgeDataWriter = (data: JSONEdge, edge: IEdge, graph: IGraph) => void
@@ -203,7 +204,8 @@ export function createLabelData(
           upY: layout.upY,
           width: layout.width,
           height: layout.height
-        }
+        },
+        layoutParameter: serializeLabelModelParameter(label.layoutParameter)
       }
 }
 

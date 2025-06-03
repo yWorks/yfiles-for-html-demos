@@ -49,7 +49,7 @@ import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectan
 /**
  * A custom {@link IHandle} implementation that allows resizing a label.
  */
-export default class LabelResizeHandle extends BaseClass(IHandle) {
+export class LabelResizeHandle extends BaseClass(IHandle) {
   label
   symmetricResize
   sizeIndicator = null

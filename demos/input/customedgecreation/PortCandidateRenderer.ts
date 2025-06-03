@@ -37,10 +37,7 @@ import {
 /**
  * A port candidate renderer using colored circles as visualizations.
  */
-export default class PortCandidateRenderer extends ObjectRendererBase<
-  PortCandidateRenderTag,
-  SvgVisual
-> {
+export class PortCandidateRenderer extends ObjectRendererBase<PortCandidateRenderTag, SvgVisual> {
   validFocusedColor = '#6a6a6a'
   validNonFocusedColor = '#939393'
 

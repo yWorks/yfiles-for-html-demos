@@ -62,7 +62,7 @@ import {
 } from '@yfiles/yfiles'
 
 import type { CellId } from './LayoutGridVisualCreator'
-import LayoutGridVisualCreator, { generateGradientColors } from './LayoutGridVisualCreator'
+import { generateGradientColors, LayoutGridVisualCreator } from './LayoutGridVisualCreator'
 import GraphData from './resources/GraphData'
 import { createDemoGroupStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'

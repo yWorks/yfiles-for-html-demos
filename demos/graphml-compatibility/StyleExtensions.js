@@ -32,6 +32,7 @@ import {
   CollapsibleNodeStyleDecorator,
   Color,
   ExteriorNodeLabelModel,
+  ExteriorNodeLabelModelPosition,
   Fill,
   Font,
   GeneralPath,
@@ -1267,7 +1268,9 @@ class IconLabelStyleExtension extends MarkupExtension {
   set icon(value) {
     this._icon = value
   }
-  _iconPlacement = ExteriorNodeLabelModel.LEFT
+  _iconPlacement = new ExteriorNodeLabelModel({
+    margins: new Insets(0)
+  }).createParameter(ExteriorNodeLabelModelPosition.LEFT)
   get iconPlacement() {
     return this._iconPlacement
   }

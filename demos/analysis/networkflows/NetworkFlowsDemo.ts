@@ -58,7 +58,7 @@ import {
   SmartEdgeLabelModel
 } from '@yfiles/yfiles'
 
-import HTMLPopupSupport from './HTMLPopupSupport'
+import { HTMLPopupSupport } from './HTMLPopupSupport'
 import { EmptyReshapeHandleProvider, NetworkFlowInputMode } from './NetworkFlowsHelper'
 import { MinCutLine, NetworkFlowEdgeStyle, NetworkFlowNodeStyle } from './DemoStyles'
 

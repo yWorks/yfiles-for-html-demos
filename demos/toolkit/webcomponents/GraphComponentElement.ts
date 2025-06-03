@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, IGraph, IInputMode } from '@yfiles/yfiles'
+import { Graph, GraphComponent, IGraph, IInputMode } from '@yfiles/yfiles'
 
 if (window.customElements) {
   const template = document.createElement('template')
@@ -74,6 +74,7 @@ if (window.customElements) {
       // if we reconnect - we clean up the old component.
       if (this._graphComponent) {
         this._graphComponent.cleanUp()
+        this._graphComponent.graph = new Graph()
       }
 
       this._graphComponent = new GraphComponent()

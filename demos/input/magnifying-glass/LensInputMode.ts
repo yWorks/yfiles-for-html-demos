@@ -32,6 +32,7 @@ import {
   ConcurrencyController,
   delegate,
   EventArgs,
+  Graph,
   GraphComponent,
   IInputModeContext,
   InputModeBase,
@@ -252,6 +253,7 @@ export class LensInputMode extends InputModeBase {
     // clean up
     canvasComponent.overlayPanel.removeChild(this.lensGraphComponent!.htmlElement)
     this.lensGraphComponent!.cleanUp()
+    this.lensGraphComponent!.graph = new Graph()
     this.lensGraphComponent = null
 
     super.uninstall(context)

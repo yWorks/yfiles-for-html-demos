@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { GraphBuilder, Point } from '@yfiles/yfiles'
 import { getDefaultWriterOptions, toJSON } from '@yfiles/demo-utils/json-writer'
+import { deserializeLabelModelParameter } from '@yfiles/demo-utils/label-model-serialization'
 /**
  * This file provides functions to read and write a graph to a JSON string.
  * The JSON is expected to conform to the structure outlined by {@link JSONGraph}.
@@ -51,29 +52,41 @@ export function readJSON(graphComponent, text) {
       parentId: (item) => item.parentId,
       layout: (item) => item.layout
     })
-    nodesSource.nodeCreator.createLabelsSource({
+    const nodeLabelSource = nodesSource.nodeCreator.createLabelsSource({
       data: (data) => data.labels || [],
       text: (data) => data.text
     })
+    nodeLabelSource.labelCreator.layoutParameterProvider = (labelObject) =>
+      labelObject.layoutParameter != null
+        ? deserializeLabelModelParameter(labelObject.layoutParameter)
+        : undefined
     const groupNodesSource = graphBuilder.createGroupNodesSource({
       data: data.nodeList.filter((item) => item.isGroup === true),
       id: (item) => item.id,
       parentId: (item) => item.parentId,
       layout: (item) => item.layout
     })
-    groupNodesSource.nodeCreator.createLabelsSource({
+    const groupNodeLabelSource = groupNodesSource.nodeCreator.createLabelsSource({
       data: (data) => data.labels || [],
       text: (data) => data.text
     })
+    groupNodeLabelSource.labelCreator.layoutParameterProvider = (labelObject) =>
+      labelObject.layoutParameter != null
+        ? deserializeLabelModelParameter(labelObject.layoutParameter)
+        : undefined
     const { edgeCreator } = graphBuilder.createEdgesSource(
       data.edgeList,
       (item) => item.source,
       (item) => item.target
     )
-    edgeCreator.createLabelsSource({
+    const edgeLabelSource = edgeCreator.createLabelsSource({
       data: (data) => data.labels || [],
       text: (data) => data.text
     })
+    edgeLabelSource.labelCreator.layoutParameterProvider = (labelObject) =>
+      labelObject.layoutParameter != null
+        ? deserializeLabelModelParameter(labelObject.layoutParameter)
+        : undefined
     edgeCreator.bendsProvider = (item) => item.bends
     edgeCreator.addEventListener('edge-created', (evt) => {
       const dataItem = evt.dataItem

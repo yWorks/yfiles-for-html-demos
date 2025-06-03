@@ -49,10 +49,10 @@ import {
   IAnimation,
   IEdge,
   IEdgeStyle,
+  IEnumerable,
   IGraph,
   ILabelOwner,
   ILayoutAlgorithm,
-  IListEnumerable,
   INode,
   Insets,
   LabelStyle,
@@ -173,7 +173,7 @@ function toggleAggregationNode(node) {
   // toggle the aggregation
   const affectedNodes = aggregationHelper.toggleAggregation(node)
   // set the current item to the new aggregation node (which is the first in the list)
-  graphComponent.currentItem = affectedNodes.get(0)
+  graphComponent.currentItem = affectedNodes.first()
   // run layout
   runLayoutOnHierarchyView(affectedNodes)
 }
@@ -464,7 +464,7 @@ async function runRadialTreeLayout(affectedNodes) {
   })
   // create a layout executor that also zooms to all nodes that were affected by the last operation
   const layoutExecutor = new ZoomToNodesLayoutExecutor(
-    affectedNodes || IListEnumerable.EMPTY,
+    affectedNodes || IEnumerable.EMPTY,
     graphComponent,
     layout
   )
@@ -538,7 +538,7 @@ async function runRadialGroupLayout(affectedNodes) {
   }
   // create a layout executor that also zooms to all nodes that were affected by the last operation
   const layoutExecutor = new ZoomToNodesLayoutExecutor(
-    affectedNodes || IListEnumerable.EMPTY,
+    affectedNodes || IEnumerable.EMPTY,
     graphComponent,
     new CustomRadialGroupLayoutStage()
   )

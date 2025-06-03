@@ -44,7 +44,7 @@ import {
  * use relative positioning. This implementation uses a {@link ILabelModelParameter label model
  * parameter} to determine the position of the pop-up.
  */
-export default class HTMLPopupSupport {
+export class HTMLPopupSupport {
   graphComponent
   div
   labelModelParameter

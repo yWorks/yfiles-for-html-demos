@@ -55,7 +55,7 @@ import {
  * The routing of the temporarily hidden edges can be customized by specifying an
  * {@link markedEdgeRouter edge routing algorithm} for those edges.
  */
-export default class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
+export class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
   considerEdgeLabels
   markedEdgeRouter
   /**

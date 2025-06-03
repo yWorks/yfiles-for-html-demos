@@ -2,12 +2,21 @@
   import SvgText from './SvgText.svelte'
   import type { Person } from './types'
 
-  export let width = 0
-  export let height = 0
-  export let zoom = 0
-  export let selected = false
-  export let highlighted = false
-  export let item: Person
+  let {
+    width = 0,
+    height = 0,
+    zoom = 0,
+    selected = false,
+    highlighted = false,
+    item
+  }: {
+    width: number,
+    height: number,
+    zoom: number,
+    selected: boolean,
+    highlighted: boolean,
+    item: Person
+  } = $props()
 
   const zoomIntermediate = 0.4
   const zoomDetail = 0.7

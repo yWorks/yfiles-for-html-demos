@@ -66,7 +66,7 @@ const BUTTON_SIZE = 14
  * example a {@link IGroupBoundsCalculator} that takes the node labels
  * into account.
  */
-export default class Sample1GroupNodeStyle extends NodeStyleBase {
+export class Sample1GroupNodeStyle extends NodeStyleBase {
   nodeColor = 'rgba(0, 130, 180, 1)'
   createVisual(renderContext, node) {
     const g = document.createElementNS(SVGNS, 'g')

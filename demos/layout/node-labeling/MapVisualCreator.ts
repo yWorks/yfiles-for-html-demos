@@ -31,7 +31,7 @@ import { BaseClass, IRenderContext, IVisualCreator, SvgVisual, Visual } from '@y
 /**
  * This class renders the map used as background in this demo.
  */
-export default class MapVisualCreator extends BaseClass(IVisualCreator) {
+export class MapVisualCreator extends BaseClass(IVisualCreator) {
   /**
    * Creates the visual for the background map.
    * @param context The context that describes where the visual will be used

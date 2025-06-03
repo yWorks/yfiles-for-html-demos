@@ -71,7 +71,7 @@ export type RenderingTypeChangedListener = (newValue: RenderingType) => void
  * newly created nodes and edges using the style providers passed as
  * constructor arguments.
  */
-export default class RenderingTypesManager {
+export class RenderingTypesManager {
   private readonly listeners: IList<RenderingTypeChangedListener>
 
   /**

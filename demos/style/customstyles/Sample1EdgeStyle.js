@@ -45,12 +45,12 @@ import {
   SvgVisual
 } from '@yfiles/yfiles'
 import AnimatedLinearGradient from './AnimatedLinearGradient'
-import Sample1Arrow from './Sample1Arrow'
+import { Sample1Arrow } from './Sample1Arrow'
 import { SVGNS } from './Namespaces'
 /**
  * An example of a custom edge style based on {@link EdgeStyleBase}.
  */
-export default class Sample1EdgeStyle extends EdgeStyleBase {
+export class Sample1EdgeStyle extends EdgeStyleBase {
   arrows = new Sample1Arrow()
   pathThickness = 3
   /**

@@ -39,7 +39,7 @@ import {
   TabularLayoutMode,
   TabularLayoutNodeDescriptor
 } from '@yfiles/yfiles'
-import LayoutConfiguration from './LayoutConfiguration'
+import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
   Components,
@@ -73,7 +73,7 @@ var VerticalAlignments
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const TabularLayoutConfig = Class('TabularLayoutConfig', {
+export const TabularLayoutConfig = Class('TabularLayoutConfig', {
   $extends: LayoutConfiguration,
   _meta: {
     GeneralGroup: [
@@ -351,4 +351,3 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
   /** @type {number} */
   minimumColumnWidthItem: 0
 })
-export default TabularLayoutConfig

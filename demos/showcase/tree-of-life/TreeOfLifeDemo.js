@@ -41,10 +41,10 @@ import {
   IArrow,
   IEdge,
   IEdgeStyle,
+  IEnumerable,
   IGraph,
   ILabel,
   ILabelStyle,
-  IListEnumerable,
   INode,
   INodeStyle,
   LabelShape,
@@ -62,7 +62,7 @@ import {
   StyleIndicatorZoomPolicy,
   WebGLGraphModelManager
 } from '@yfiles/yfiles'
-import SectorVisual from './SectorVisual'
+import { SectorVisual } from './SectorVisual'
 import { getGlobalRoot, getSubtree, highlightSubtree } from './SubtreeSupport'
 import { initializeGraphSearch, resetGraphSearch } from './TreeOfLifeSearch'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
@@ -445,7 +445,7 @@ function prepareSmoothLayoutAnimation(graphComponent) {
     new GivenCoordinatesLayout(),
     new GivenCoordinatesLayoutData({
       nodeLocations: graphComponent.center,
-      edgePaths: IListEnumerable.EMPTY
+      edgePaths: IEnumerable.EMPTY
     })
   )
   sectorVisual.updateSectors(graphComponent.graph)

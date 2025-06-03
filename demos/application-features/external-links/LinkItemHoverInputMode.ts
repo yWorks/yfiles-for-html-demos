@@ -43,7 +43,7 @@ import {
  * text to indicate a clickable link. It is configured to only do the highlighting when the CTRL modifier is pressed
  * and when there is an external link.
  */
-export default class LinkItemHoverInputMode extends ItemHoverInputMode {
+export class LinkItemHoverInputMode extends ItemHoverInputMode {
   constructor() {
     super()
     this.priority = 54

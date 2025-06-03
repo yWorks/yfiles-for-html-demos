@@ -1,7 +1,9 @@
 <script lang="ts">
   import type { Person } from './types'
 
-  export let person: Person | null
+  let {
+    person
+  }: { person: Person | null } = $props()
 </script>
 
 <div class="demo-sidebar__content">

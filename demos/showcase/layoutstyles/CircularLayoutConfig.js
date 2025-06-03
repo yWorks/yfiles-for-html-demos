@@ -45,10 +45,11 @@ import {
   RadialNodeLabelPlacement,
   SubgraphLayoutStage
 } from '@yfiles/yfiles'
-import LayoutConfiguration, {
+import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  LayoutConfiguration
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -78,7 +79,7 @@ var EdgeRoutingPolicy
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const CircularLayoutConfig = Class('CircularLayoutConfig', {
+export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   $extends: LayoutConfiguration,
   _meta: {
     GeneralGroup: [
@@ -872,4 +873,3 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
     }
   }
 })
-export default CircularLayoutConfig

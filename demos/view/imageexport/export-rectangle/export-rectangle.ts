@@ -42,7 +42,7 @@ import {
   RectangleHandle,
   RenderMode
 } from '@yfiles/yfiles'
-import PositionHandler from './PositionHandler'
+import { PositionHandler } from './PositionHandler'
 import { RectangleRenderer } from '../../../utils/RectangleRenderer'
 
 let renderTreeElement: IRenderTreeElement

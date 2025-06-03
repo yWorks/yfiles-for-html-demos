@@ -32,7 +32,7 @@ import { DataTableRenderSupport, RenderDataCache } from './DataTableRenderSuppor
  * A label style to display data in a tabular fashion.
  * The style uses the {@link HtmlVisual} and an HTML table to render the visual
  */
-export default class DataTableLabelStyle extends LabelStyleBase {
+export class DataTableLabelStyle extends LabelStyleBase {
   renderSupport = new DataTableRenderSupport()
   /**
    * Creates the visual for the given label.

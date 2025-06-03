@@ -40,8 +40,8 @@ import {
 } from '@yfiles/yfiles'
 
 import { LimitingRectangleRenderer } from './LimitingRectangleRenderer'
-import GreenSizeConstraintProvider from './GreenSizeConstraintProvider'
-import BlueSizeConstraintProvider from './BlueSizeConstraintProvider'
+import { GreenSizeConstraintProvider } from './GreenSizeConstraintProvider'
+import { BlueSizeConstraintProvider } from './BlueSizeConstraintProvider'
 import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
 import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'

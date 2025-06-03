@@ -268,7 +268,7 @@ type DataMap = {
 /**
  * A node style which uses a Vue component to display a node.
  */
-export default class Vue2NodeStyle extends NodeStyleBase {
+export class Vue2NodeStyle extends NodeStyleBase {
   private _template = ''
   private _styleTag = null
   protected constructorFunction: any

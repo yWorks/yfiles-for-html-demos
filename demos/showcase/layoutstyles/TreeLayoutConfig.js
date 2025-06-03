@@ -75,12 +75,13 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
-import LayoutConfiguration, {
+import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  LayoutConfiguration
 } from './LayoutConfiguration'
-import HandleEdgesBetweenGroupsStage from './HandleEdgesBetweenGroupsStage'
+import { HandleEdgesBetweenGroupsStage } from './HandleEdgesBetweenGroupsStage'
 var RoutingStyle
 ;(function (RoutingStyle) {
   RoutingStyle[(RoutingStyle['ORTHOGONAL'] = 0)] = 'ORTHOGONAL'
@@ -122,7 +123,7 @@ var PortAssignment
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const TreeLayoutConfig = Class('TreeLayoutConfig', {
+export const TreeLayoutConfig = Class('TreeLayoutConfig', {
   $extends: LayoutConfiguration,
   _meta: {
     GeneralGroup: [
@@ -944,4 +945,3 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     }
   }
 })
-export default TreeLayoutConfig

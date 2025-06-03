@@ -57,7 +57,7 @@ import {
   SvgVisualGroup,
   Visual
 } from '@yfiles/yfiles'
-import ContextMenuSupport from './ContextMenuSupport'
+import { ContextMenuSupport } from './ContextMenuSupport'
 import { createDemoGroupStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'

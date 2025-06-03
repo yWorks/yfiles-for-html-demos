@@ -51,7 +51,7 @@ type Sample1PortStyleVisual = TypedSvgVisual<SVGEllipseElement>
  * A custom port style based on the {@link PortStyleBase} class.
  * The port is rendered as a circle.
  */
-export default class Sample1PortStyle extends PortStyleBase<Sample1PortStyleVisual> {
+export class Sample1PortStyle extends PortStyleBase<Sample1PortStyleVisual> {
   createVisual(context: IRenderContext, port: IPort): Sample1PortStyleVisual {
     // create the ellipse
     const ellipse = window.document.createElementNS(SVGNS, 'ellipse')

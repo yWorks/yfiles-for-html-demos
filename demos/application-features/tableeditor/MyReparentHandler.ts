@@ -38,7 +38,7 @@ import {
 /**
  * Custom {@link NodeDropInputMode} that disallows to reparent a table node.
  */
-export default class MyReparentHandler extends BaseClass(IReparentNodeHandler) {
+export class MyReparentHandler extends BaseClass(IReparentNodeHandler) {
   /**
    * Creates a new instance of MyReparentHandler.
    */

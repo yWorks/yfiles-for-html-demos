@@ -41,7 +41,7 @@ import {
  * node to be within an rectangle and delegates for other aspects to
  * another (the original) handler.
  */
-export default class OrangePositionHandler extends ConstrainedPositionHandler {
+export class OrangePositionHandler extends ConstrainedPositionHandler {
   private boundaryPositionRectangle: Rect = null!
 
   /**

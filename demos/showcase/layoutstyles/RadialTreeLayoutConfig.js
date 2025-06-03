@@ -45,10 +45,11 @@ import {
   StraightLineEdgeRouter,
   SubgraphLayoutStage
 } from '@yfiles/yfiles'
-import LayoutConfiguration, {
+import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
-  LabelPlacementSideOfEdge
+  LabelPlacementSideOfEdge,
+  LayoutConfiguration
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -78,7 +79,7 @@ export var RadialTreeRootNodePolicy
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
+export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
   $extends: LayoutConfiguration,
   _meta: {
     GeneralGroup: [
@@ -560,4 +561,3 @@ const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
     }
   }
 })
-export default RadialTreeLayoutConfig

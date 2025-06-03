@@ -45,7 +45,7 @@ import {
  * positioning. This implementation uses an {@link ILabelModelParameter} to determine the position of
  * the pop-up.
  */
-export default class PriorityPanel {
+export class PriorityPanel {
   graphComponent
   div
   dirty = false

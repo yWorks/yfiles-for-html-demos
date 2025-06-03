@@ -65,7 +65,7 @@ import {
   RadialTreeSampleData,
   TreeSampleData
 } from './resources/SampleData'
-import NodeTypePanel from '@yfiles/demo-utils/NodeTypePanel'
+import { NodeTypePanel } from '@yfiles/demo-utils/NodeTypePanel'
 import {
   colorSets,
   createDemoEdgeStyle,

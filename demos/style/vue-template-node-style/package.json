@@ -13,14 +13,16 @@
   "dependencies": {
     "@yfiles/demo-resources": "../../resources",
     "@yfiles/demo-utils": "../../utils",
-    "codemirror": "5.65.16",
+    "codemirror": "6.0.1",
+    "@codemirror/lang-javascript": "^6.2.3",
+    "@codemirror/lang-xml": "^6.1.0",
+    "fast-xml-parser": "^5.0.9",
     "vue": "^3.3.4",
     "vuetify": "^3.7.0",
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.1+dev.tgz"
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.2+dev.tgz"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.0",
-    "@types/codemirror": "~5.60.15",
     "@types/node": "^18.19.0",
     "@vitejs/plugin-vue": "^5.2.0",
     "@vue/tsconfig": "^0.7.0",

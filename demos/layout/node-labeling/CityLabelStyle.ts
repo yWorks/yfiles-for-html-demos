@@ -49,7 +49,7 @@ import {
  * This class is an example for a custom style based on the {@link LabelStyleBase}.
  * For each label, an edge is created that connects the label to its owner node.
  */
-export default class CityLabelStyle extends LabelStyleBase {
+export class CityLabelStyle extends LabelStyleBase {
   private connectorEdgeStyle = new PolylineEdgeStyle({ stroke: '#662b00' })
   private ownerPortLocation = FreeNodePortLocationModel.CENTER
   private labelPortLocation = FreeNodePortLocationModel.CENTER

@@ -135,7 +135,7 @@ export type ButtonOptions = {
 /**
  * An action managed by the {@link GraphWizardInputMode}.
  */
-export default class WizardAction {
+export class WizardAction {
   private readonly _type: string
   private readonly _preCondition: PreCondition
   private readonly _trigger: Trigger

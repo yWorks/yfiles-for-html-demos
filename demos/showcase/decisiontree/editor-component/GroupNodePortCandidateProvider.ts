@@ -30,7 +30,6 @@ import {
   FreeNodePortLocationModel,
   IEnumerable,
   type IInputModeContext,
-  IListEnumerable,
   type INode,
   type IPortCandidate,
   PortCandidate,
@@ -65,6 +64,6 @@ export class GroupNodePortCandidateProvider extends PortCandidateProviderBase {
    * Returns an empty list.
    */
   getPortCandidates(_context: IInputModeContext): IEnumerable<IPortCandidate> {
-    return IListEnumerable.EMPTY
+    return IEnumerable.EMPTY as IEnumerable<IPortCandidate>
   }
 }

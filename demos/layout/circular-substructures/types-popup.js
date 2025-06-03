@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import NodeTypePanel from '@yfiles/demo-utils/NodeTypePanel'
+import { NodeTypePanel } from '@yfiles/demo-utils/NodeTypePanel'
 import { colorSets, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 /**
  * The color sets for the eight different node types.

@@ -20,7 +20,7 @@
     "rxjs": "~7.8.1",
     "tslib": "^2.8.0",
     "zone.js": "~0.14.10",
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.1+dev.tgz"
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.2+dev.tgz"
   },
   "devDependencies": {
     "@angular-builders/custom-webpack": "~18.0.0",

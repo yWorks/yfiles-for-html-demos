@@ -30,7 +30,7 @@ import { BaseClass, IVisualCreator, SvgVisual } from '@yfiles/yfiles'
 /**
  * Creates a visual for the demo's background image.
  */
-export default class ImageVisualCreator extends BaseClass(IVisualCreator) {
+export class ImageVisualCreator extends BaseClass(IVisualCreator) {
   imageRect
   /**
    * Initializes a new instance of <code>ImageVisualCreator</code>.

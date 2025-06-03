@@ -47,7 +47,7 @@ import {
  * This class implements {@link IAnimation} and supports animating layout grid changes between
  * two layout calculations.
  */
-export default class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimation) {
+export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimation) {
   rowCount
   columnCount
   rows = []

@@ -28,9 +28,9 @@
  ***************************************************************************/
 import { GraphMLIOHandler, ILookup, MarkupExtension } from '@yfiles/yfiles'
 
-import Vue2NodeStyle from './Vue2NodeStyle'
+import { Vue2NodeStyle } from './Vue2NodeStyle'
 
-export default class Vue2NodeStyleMarkupExtension extends MarkupExtension {
+export class Vue2NodeStyleMarkupExtension extends MarkupExtension {
   private _template = ''
 
   get template(): string {

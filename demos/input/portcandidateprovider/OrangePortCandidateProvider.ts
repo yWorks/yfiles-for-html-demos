@@ -41,7 +41,7 @@ import {
  * This port candidate provider uses dynamic port candidates that allow
  * any location inside the node.
  */
-export default class OrangePortCandidateProvider extends PortCandidateProviderBase {
+export class OrangePortCandidateProvider extends PortCandidateProviderBase {
   private readonly node: INode
 
   /**

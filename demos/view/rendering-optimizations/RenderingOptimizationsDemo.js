@@ -66,17 +66,17 @@ import {
   WebGLShapeNodeStyle,
   WebGLStroke
 } from '@yfiles/yfiles'
-import ComplexCanvasNodeStyle from './ComplexCanvasNodeStyle'
-import CanvasLabelStyle from './CanvasLabelStyle'
-import CanvasEdgeStyle from './CanvasEdgeStyle'
-import SimpleCanvasNodeStyle from './SimpleCanvasNodeStyle'
-import ComplexSvgNodeStyle from './ComplexSvgNodeStyle'
-import SvgLabelStyle from './SvgLabelStyle'
+import { ComplexCanvasNodeStyle } from './ComplexCanvasNodeStyle'
+import { CanvasLabelStyle } from './CanvasLabelStyle'
+import { CanvasEdgeStyle } from './CanvasEdgeStyle'
+import { SimpleCanvasNodeStyle } from './SimpleCanvasNodeStyle'
+import { ComplexSvgNodeStyle } from './ComplexSvgNodeStyle'
+import { SvgLabelStyle } from './SvgLabelStyle'
 import { CircleNodeAnimation, CirclePanAnimation, ZoomInAndBackAnimation } from './Animations'
-import SvgEdgeStyle from './SvgEdgeStyle'
-import SimpleSvgNodeStyle from './SimpleSvgNodeStyle'
+import { SvgEdgeStyle } from './SvgEdgeStyle'
+import { SimpleSvgNodeStyle } from './SimpleSvgNodeStyle'
 import { FastGraphModelManager, OptimizationMode } from './FastGraphModelManager'
-import PreConfigurator from './resources/PreConfigurator'
+import { PreConfigurator } from './resources/PreConfigurator'
 import samples from './resources/samples'
 import { createCanvasContext, createUrlIcon } from '@yfiles/demo-utils/IconCreation'
 import { FPSMeter } from './FPSMeter'
@@ -607,7 +607,7 @@ function updateOptimizationMode() {
   const shouldUseWebGL = optimizationMode == null
   const wasUsingWebGL = graphComponent.graphModelManager instanceof WebGLGraphModelManager
   if (shouldUseWebGL) {
-    graphComponent.graphModelManager = new StyledWebGLGraphModelManager()
+    graphComponent.graphModelManager = new WebGLGraphModelManager()
     graphComponent.focusIndicatorManager.enabled = false
   } else {
     graphComponent.focusIndicatorManager.enabled = true
@@ -869,18 +869,12 @@ function updateButtonStateAtAnimation(disabled) {
   })
 }
 function setWebGLItemStyles() {
-  if (!(graphComponent.graphModelManager instanceof StyledWebGLGraphModelManager)) {
-    return
-  }
   const graph = graphComponent.graph
-  const webGLgmm = graphComponent.graphModelManager
+  const webGLStyleCache = new WebGLStyleCache()
   const webGLStyles = updateDefaultStyles(graph)
-  webGLgmm.defaultStyles = webGLStyles
+  webGLStyleCache.defaultStyles = webGLStyles
   graph.nodes.forEach((node) => {
-    const nodeStyle = webGLgmm.getDefaultNodeStyle(node)
-    if (nodeStyle != null) {
-      graph.setStyle(node, nodeStyle)
-    }
+    graph.setStyle(node, webGLStyleCache.getDefaultNodeStyle(node))
   })
   graph.edges.forEach((edge) => {
     graph.setStyle(edge, webGLStyles.edgeStyle)
@@ -1194,34 +1188,14 @@ function initializeUI(graphComponent) {
   autoRedrawCheckbox.addEventListener('change', onAutoRedrawChanged)
 }
 run().then(finishLoading)
-class StyledWebGLGraphModelManager extends WebGLGraphModelManager {
+class WebGLStyleCache {
   _defaultStyles = null
+  _webGLStyles = []
   set defaultStyles(value) {
     this._defaultStyles = value
   }
   get defaultStyles() {
     return this._defaultStyles
-  }
-  getWebGLEdgeStyle(edge) {
-    let style = super.getWebGLEdgeStyle(edge)
-    if (!style && this.defaultStyles && this.defaultStyles.edgeStyle) {
-      style = this.defaultStyles.edgeStyle
-    }
-    return style
-  }
-  getWebGLLabelStyle(label) {
-    let style = super.getWebGLLabelStyle(label)
-    if (!style && this.defaultStyles && this.defaultStyles.labelStyle) {
-      style = this.defaultStyles.labelStyle
-    }
-    return style
-  }
-  getWebGLNodeStyle(node) {
-    let style = super.getWebGLNodeStyle(node)
-    if (!style) {
-      style = this.getDefaultNodeStyle(node)
-    }
-    return style
   }
   getDefaultNodeStyle(node) {
     if (!this.defaultStyles || !this.defaultStyles.nodeStyle) {
@@ -1230,13 +1204,17 @@ class StyledWebGLGraphModelManager extends WebGLGraphModelManager {
     const webGLStyles = this.defaultStyles
     if (webGLStyles.nodeStyle instanceof WebGLImageNodeStyle && webGLStyles.nodeStyle.image) {
       // for icon styles, we must explicitly set the correct icon for each node according to the info in its tag
-      const index = Number(node.tag)
-      return new WebGLImageNodeStyle({
-        backgroundShape: webGLStyles.nodeStyle.backgroundShape,
-        backgroundFill: webGLStyles.nodeStyle.backgroundFill,
-        backgroundStroke: webGLStyles.nodeStyle.backgroundStroke,
-        image: webGLImageData[Number.isNaN(index) ? 0 : index] ?? new ImageData(1, 1)
-      })
+      let index = Number(node.tag)
+      index = Number.isNaN(index) ? 0 : index
+      if (!this._webGLStyles[index] || this._webGLStyles[index].image !== webGLImageData[index]) {
+        this._webGLStyles[index] = new WebGLImageNodeStyle({
+          backgroundShape: webGLStyles.nodeStyle.backgroundShape,
+          backgroundFill: webGLStyles.nodeStyle.backgroundFill,
+          backgroundStroke: webGLStyles.nodeStyle.backgroundStroke,
+          image: webGLImageData[index] ?? new ImageData(1, 1)
+        })
+      }
+      return this._webGLStyles[index]
     } else {
       return webGLStyles.nodeStyle
     }

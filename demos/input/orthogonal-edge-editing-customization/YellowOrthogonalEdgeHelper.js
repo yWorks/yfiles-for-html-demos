@@ -33,7 +33,7 @@ import { IShapeGeometry, OrthogonalEdgeHelper, Point } from '@yfiles/yfiles'
  * a vertical segment and vice versa.
  * The new first (last) segment may lie completely inside the edge's source (target) node.
  */
-export default class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
+export class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   /**
    * Stores if a new bend has been added when moving a segment of an orthogonal edge.
    */

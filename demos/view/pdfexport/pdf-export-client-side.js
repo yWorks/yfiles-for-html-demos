@@ -26,7 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, Insets, Size, SvgExport, WebGLGraphModelManager } from '@yfiles/yfiles'
+import {
+  Graph,
+  GraphComponent,
+  Insets,
+  Size,
+  SvgExport,
+  WebGLGraphModelManager
+} from '@yfiles/yfiles'
 import { PaperSize } from './PaperSize'
 import { useWebGLRendering } from './webgl-support'
 // The demo uses the open-source library for PDF export https://github.com/MrRio/jsPDF alongside with
@@ -97,6 +104,9 @@ export async function exportPdf(
     exportComponent,
     renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
   )
+  // Dispose of the component and remove its references to the graph
+  exportComponent.cleanUp()
+  exportComponent.graph = new Graph()
   const size = getExportSize(paperSize, exporter)
   return convertSvgToPdf(svgElement, size, customFonts)
 }

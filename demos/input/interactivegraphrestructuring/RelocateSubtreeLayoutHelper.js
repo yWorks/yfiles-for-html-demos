@@ -54,11 +54,11 @@ import {
   StraightLineEdgeRouter,
   TimeSpan
 } from '@yfiles/yfiles'
-import Subtree from './Subtree'
+import { Subtree } from './Subtree'
 /**
  * This class performs the layout and the animation while relocating a subtree.
  */
-export default class RelocateSubtreeLayoutHelper {
+export class RelocateSubtreeLayoutHelper {
   /**
    * The layout executor that will run the layout.
    */

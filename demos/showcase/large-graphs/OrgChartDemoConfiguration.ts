@@ -106,7 +106,7 @@ const nodeStyleTemplate = `({ layout, tag, selected, zoom }) => {
   </g>
 \`}`
 
-export default class OrgChartDemoConfiguration extends DemoConfiguration {
+export class OrgChartDemoConfiguration extends DemoConfiguration {
   graphResourcePath = 'resources/orgchart.json'
 
   svgThreshold = 0.25

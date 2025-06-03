@@ -34,7 +34,7 @@ import {
   ILayoutAlgorithm,
   Size
 } from '@yfiles/yfiles'
-import LayoutConfiguration from './LayoutConfiguration'
+import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
   Components,
@@ -48,7 +48,7 @@ import {
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
+export const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
   $extends: LayoutConfiguration,
   _meta: {
     LayoutGroup: [
@@ -232,4 +232,3 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
     }
   }
 })
-export default ComponentLayoutConfig

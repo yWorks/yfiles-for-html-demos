@@ -53,7 +53,7 @@ const NODE_DISTANCE = 15
  * temporarily removes non-tree edges), HideGroupNodesStage (which pretends that
  * no group nodes exist), SubgraphLayoutStage, and others.
  */
-export default class MoveNodesAsideStage extends LayoutStageBase {
+export class MoveNodesAsideStage extends LayoutStageBase {
   applyLayoutImpl(graph) {
     if (!this.coreLayout) {
       return

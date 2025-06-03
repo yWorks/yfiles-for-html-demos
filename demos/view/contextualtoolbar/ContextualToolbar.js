@@ -66,7 +66,7 @@ import '@fortawesome/fontawesome-free/js/all.min.js'
  * type {@link ShapeNodeStyle}, {@link PolylineEdgeStyle} and
  * {@link LabelStyle}.
  */
-export default class ContextualToolbar {
+export class ContextualToolbar {
   _selectedItems
   containsEdges = false
   containsNodes = false

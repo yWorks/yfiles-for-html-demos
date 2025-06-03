@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { CanvasComponent, type Command } from '@yfiles/yfiles'
-import { BrowserDetection } from './BrowserDetection'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 
 export type OptionData = { value: string; text: string }
 

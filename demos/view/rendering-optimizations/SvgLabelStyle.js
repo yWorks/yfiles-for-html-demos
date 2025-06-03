@@ -43,7 +43,7 @@ const SVG_NS = 'http://www.w3.org/2000/svg'
  * A fast label style. It only renders the text but doesn't support features like text clipping and
  * trimming that are potentially costly.
  */
-export default class SvgLabelStyle extends LabelStyleBase {
+export class SvgLabelStyle extends LabelStyleBase {
   font = new Font({ fontSize: 14 })
   /**
    * Creates the visual representation for the given label.

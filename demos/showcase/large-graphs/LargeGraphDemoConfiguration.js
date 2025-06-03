@@ -46,7 +46,7 @@ import {
   WebGLShapeNodeShape,
   WebGLShapeNodeStyle
 } from '@yfiles/yfiles'
-import getSVGDataURL from './SVGDataURLFetch'
+import { getSVGDataURL } from './SVGDataURLFetch'
 import { DemoConfiguration } from './DemoConfiguration'
 import { createDemoGroupStyle } from '@yfiles/demo-resources/demo-styles'
 class LargeGraphDemoConfiguration extends DemoConfiguration {

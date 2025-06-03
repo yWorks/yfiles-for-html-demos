@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode, IGraph, INode, License, Rect } from '@yfiles/yfiles'
-import DemoReparentNodeHandler from './DemoReparentNodeHandler'
+import { DemoReparentNodeHandler } from './DemoReparentNodeHandler'
 import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
 import {
   createDemoGroupLabelStyle,

@@ -47,7 +47,7 @@ type PortStyleTag = {
 /**
  * This class is responsible for the implementation of the toggled ports.
  */
-export default class TogglePortButtonSupport {
+export class TogglePortButtonSupport {
   /**
    * Adds the ports on the given node.
    * @param graph The given graph

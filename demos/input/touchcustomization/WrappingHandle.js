@@ -41,7 +41,7 @@ import {
  * A handle implementation that wraps another handle and overrides the handle type and cursor with
  * the ones given in the constructor. This makes it possible to use a different handle template.
  */
-export default class WrappingHandle extends BaseClass(IHandle) {
+export class WrappingHandle extends BaseClass(IHandle) {
   wrappedHandle
   handleType
   handleCursor

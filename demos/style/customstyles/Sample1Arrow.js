@@ -48,7 +48,7 @@ import { SVGNS } from './Namespaces'
 /**
  * A demo IArrow implementation that renders the arrow as a custom filled shape.
  */
-export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
+export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   anchor = Point.ORIGIN
   direction = Point.ORIGIN
   thickness = 2.0

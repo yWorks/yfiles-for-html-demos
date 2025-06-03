@@ -30,6 +30,7 @@
 import { html, useEffect, useRef } from '../../preact-loader'
 import {
   EdgesSource,
+  Graph,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
@@ -38,7 +39,7 @@ import {
   NodesSource,
   PolylineEdgeStyle
 } from '@yfiles/yfiles'
-import PreactComponentNodeStyle from './PreactComponentNodeStyle'
+import { PreactComponentNodeStyle } from './PreactComponentNodeStyle'
 import NodeTemplate from './NodeTemplate'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 LayoutExecutor.ensure()
@@ -66,6 +67,7 @@ export default (props) => {
     // return a cleanup function (like componentWillUnmount())
     return () => {
       graphComponent.cleanUp()
+      graphComponent.graph = new Graph()
     }
   }, [])
   /**

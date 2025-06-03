@@ -41,7 +41,7 @@ const color = d3.scaleLinear().range(['#1dccc2', '#2f5b88']).interpolate(d3.inte
  * A node style that triggers the sparkline rendering and includes the result in
  * the node visualization.
  */
-export default class D3ChartNodeStyle extends NodeStyleBase {
+export class D3ChartNodeStyle extends NodeStyleBase {
   /**
    * Creates the visual for a node.
    * @see Overrides {@link NodeStyleBase.createVisual}

@@ -34,7 +34,7 @@ import {
   OrganicEdgeRouter,
   OrganicEdgeRouterData
 } from '@yfiles/yfiles'
-import LayoutConfiguration from './LayoutConfiguration'
+import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
   Components,
@@ -47,7 +47,7 @@ import {
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
+export const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
   $extends: LayoutConfiguration,
   _meta: {
     LayoutGroup: [
@@ -161,4 +161,3 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
   /** @type {boolean} */
   allowMovingNodesItem: false
 })
-export default OrganicEdgeRouterConfig

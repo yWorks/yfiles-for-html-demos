@@ -35,7 +35,7 @@ import {
   ParallelEdgeRouterData
 } from '@yfiles/yfiles'
 
-import LayoutConfiguration from './LayoutConfiguration'
+import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
   Components,
@@ -56,7 +56,7 @@ enum Scope {
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const ParallelEdgeRouterConfig = (Class as any)('ParallelEdgeRouterConfig', {
+export const ParallelEdgeRouterConfig = (Class as any)('ParallelEdgeRouterConfig', {
   $extends: LayoutConfiguration,
 
   _meta: {
@@ -237,4 +237,3 @@ const ParallelEdgeRouterConfig = (Class as any)('ParallelEdgeRouterConfig', {
     }
   }
 })
-export default ParallelEdgeRouterConfig

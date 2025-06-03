@@ -37,9 +37,9 @@ import {
   Rect
 } from '@yfiles/yfiles'
 import { LimitingRectangleRenderer } from './LimitingRectangleRenderer'
-import GreenPositionHandler from './GreenPositionHandler'
-import RedPositionHandler from './RedPositionHandler'
-import OrangePositionHandler from './OrangePositionHandler'
+import { GreenPositionHandler } from './GreenPositionHandler'
+import { RedPositionHandler } from './RedPositionHandler'
+import { OrangePositionHandler } from './OrangePositionHandler'
 import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
 import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'

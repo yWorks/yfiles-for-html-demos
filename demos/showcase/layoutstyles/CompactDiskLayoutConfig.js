@@ -38,7 +38,7 @@ import {
   RecursiveGroupLayout,
   RecursiveGroupLayoutData
 } from '@yfiles/yfiles'
-import LayoutConfiguration from './LayoutConfiguration'
+import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
   Components,
@@ -57,7 +57,7 @@ var GroupLayout
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
+export const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
   $extends: LayoutConfiguration,
   _meta: {
     generalGroup: [
@@ -208,4 +208,3 @@ const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
   /** @type {RadialNodeLabelPlacement} */
   nodeLabelingStyleItem: null
 })
-export default CompactDiskLayoutConfig

@@ -54,7 +54,7 @@ type SvgLabelStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
  * A fast label style. It only renders the text but doesn't support features like text clipping and
  * trimming that are potentially costly.
  */
-export default class SvgLabelStyle extends LabelStyleBase<SvgLabelStyleVisual> {
+export class SvgLabelStyle extends LabelStyleBase<SvgLabelStyleVisual> {
   private readonly font: Font = new Font({ fontSize: 14 })
 
   /**

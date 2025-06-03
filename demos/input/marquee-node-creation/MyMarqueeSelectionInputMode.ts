@@ -46,7 +46,7 @@ import {
   SvgVisual
 } from '@yfiles/yfiles'
 
-export default class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMode {
+export class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMode {
   dummyNode: SimpleNode
 
   // determines in which quadrant the marquee is dragged

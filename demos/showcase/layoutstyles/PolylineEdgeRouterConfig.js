@@ -49,10 +49,11 @@ import {
   SequentialLayout,
   TimeSpan
 } from '@yfiles/yfiles'
-import LayoutConfiguration, {
+import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
   LabelPlacementSideOfEdge,
+  LayoutConfiguration,
   Scope
 } from './LayoutConfiguration'
 import {

@@ -166,7 +166,11 @@ async function initExport(graphComponent: GraphComponent): Promise<void> {
     const exportComponent = new GraphComponent()
     exportComponent.graph = graphComponent.graph
     const element = await exporter.exportSvgAsync(exportComponent)
+
+    // Dispose of the component and remove its references to the graph
+    exportComponent.cleanUp()
     const exportString = SvgExport.exportSvgString(element)
+
     downloadFile(exportString, 'export.svg')
   })
 }

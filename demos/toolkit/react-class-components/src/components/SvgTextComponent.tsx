@@ -42,7 +42,7 @@ type SvgTextProps = {
 }
 
 export default class SvgText extends Component<SvgTextProps> {
-  private readonly textElement: RefObject<SVGTextElement>
+  private readonly textElement: RefObject<SVGTextElement | null>
 
   constructor(props: SvgTextProps) {
     super(props)

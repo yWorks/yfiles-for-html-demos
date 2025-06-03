@@ -49,7 +49,7 @@ import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectan
 /**
  * A custom {@link IHandle} implementation that implements the functionality needed for rotating a label.
  */
-export default class LabelRotateHandle extends BaseClass(IHandle) {
+export class LabelRotateHandle extends BaseClass(IHandle) {
   label
   inputModeContext
   handleLocation = new LabelRotateHandleLivePoint(this)

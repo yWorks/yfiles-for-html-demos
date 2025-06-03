@@ -46,7 +46,7 @@ const SVG_NS = 'http://www.w3.org/2000/svg'
 /**
  * This label style decorator shows how to decorate another label style.
  */
-export default class LabelStyleDecorator extends LabelStyleBase {
+export class LabelStyleDecorator extends LabelStyleBase {
   baseStyle
   /**
    * Initializes a new instance of this class.

@@ -58,7 +58,7 @@ import {
  * decoration image part of the visualization. If desired, this feature can be implemented as demonstrated in
  * {@link NodeStyleDecorator.isVisible}.
  */
-export default class NodeStyleDecorator extends NodeStyleBase {
+export class NodeStyleDecorator extends NodeStyleBase {
   baseStyle
   imageUrl
   imageStyle = new ImageNodeStyle()

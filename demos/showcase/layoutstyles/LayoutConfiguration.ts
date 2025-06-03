@@ -72,7 +72,7 @@ type LayoutConfigurationImpl = {
 /**
  * Abstract base class for configurations that can be displayed in an {@link OptionEditor}.
  */
-const LayoutConfiguration = (Class as any)('LayoutConfiguration', {
+export const LayoutConfiguration = (Class as any)('LayoutConfiguration', {
   $abstract: true,
 
   /**
@@ -323,7 +323,6 @@ const LayoutConfiguration = (Class as any)('LayoutConfiguration', {
     return descriptor
   }
 } as LayoutConfigurationType & LayoutConfigurationImpl) as LayoutConfigurationType
-export default LayoutConfiguration
 
 /**
  * Specifies constants for the preferred placement along an edge used by layout configurations.

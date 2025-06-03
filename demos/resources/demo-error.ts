@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { Exception, yfiles } from '@yfiles/yfiles'
-import { BrowserDetection } from './demo-ui/BrowserDetection'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 
 /**
  * If an error occurs, a demo sets a failure state such that consecutive errors can no longer

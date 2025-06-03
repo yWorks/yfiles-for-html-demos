@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { Graph, GraphComponent, LayoutOrientation, License } from '@yfiles/yfiles'
 
-import FlowchartConfiguration from './FlowchartConfiguration'
+import { FlowchartConfiguration } from './FlowchartConfiguration'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { generateGraphMLIOHandler } from '../flowchart/style/generate-graphMLIO-handler'

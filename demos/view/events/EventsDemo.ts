@@ -41,8 +41,9 @@ import {
   EditLabelInputMode,
   EventArgs,
   FoldingManager,
-  FreeNodePortLocationModel,
   GraphBuilder,
+  GraphClipboard,
+  GraphClipboardEventArgs,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -95,7 +96,6 @@ import {
   PointerEventArgs,
   PopulateContextMenuEventArgs,
   PopulateItemContextMenuEventArgs,
-  PortDropInputMode,
   PortEventArgs,
   PrepareRenderContextEventArgs,
   PropertyChangedEventArgs,
@@ -104,19 +104,18 @@ import {
   QueryToolTipEventArgs,
   Rect,
   SelectionEventArgs,
-  ShapePortStyle,
   SimpleLabel,
   SimpleNode,
-  SimplePort,
   Size,
   SvgExport,
   TextEditorInputMode,
   TextEventArgs,
-  ToolTipInputMode
+  ToolTipInputMode,
+  UndoEngine
 } from '@yfiles/yfiles'
 
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import EventView from './EventView'
+import { EventView } from './EventView'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
@@ -232,6 +231,15 @@ function unregisterGraphComponentKeyEvents(): void {
  * Registers the copy clipboard events to the graphComponent.
  */
 function registerClipboardCopierEvents(): void {
+  graphComponent.clipboard.addEventListener('items-cutting', clipboardOnItemsCutting)
+  graphComponent.clipboard.addEventListener('items-cut', clipboardOnItemsCut)
+  graphComponent.clipboard.addEventListener('items-copying', clipboardOnItemsCopying)
+  graphComponent.clipboard.addEventListener('items-copied', clipboardOnItemsCopied)
+  graphComponent.clipboard.addEventListener('items-pasting', clipboardOnItemsPasting)
+  graphComponent.clipboard.addEventListener('items-pasted', clipboardOnItemsPasted)
+  graphComponent.clipboard.addEventListener('items-duplicating', clipboardOnItemsDuplicating)
+  graphComponent.clipboard.addEventListener('items-duplicated', clipboardOnItemsDuplicated)
+
   graphComponent.clipboard.toClipboardCopier.addEventListener(
     'graph-copied',
     clipboardOnGraphCopiedToClipboard
@@ -312,6 +320,15 @@ function registerClipboardCopierEvents(): void {
  * Unregisters the copy clipboard events from the graphComponent.
  */
 function unregisterClipboardCopierEvents(): void {
+  graphComponent.clipboard.removeEventListener('items-cutting', clipboardOnItemsCutting)
+  graphComponent.clipboard.removeEventListener('items-cut', clipboardOnItemsCut)
+  graphComponent.clipboard.removeEventListener('items-copying', clipboardOnItemsCopying)
+  graphComponent.clipboard.removeEventListener('items-copied', clipboardOnItemsCopied)
+  graphComponent.clipboard.removeEventListener('items-pasting', clipboardOnItemsPasting)
+  graphComponent.clipboard.removeEventListener('items-pasted', clipboardOnItemsPasted)
+  graphComponent.clipboard.removeEventListener('items-duplicating', clipboardOnItemsDuplicating)
+  graphComponent.clipboard.removeEventListener('items-duplicated', clipboardOnItemsDuplicated)
+
   graphComponent.clipboard.toClipboardCopier.removeEventListener(
     'graph-copied',
     clipboardOnGraphCopiedToClipboard
@@ -803,11 +820,8 @@ function registerItemDropInputModeEvents(): void {
   editorMode.labelDropInputMode.addEventListener('drag-left', itemInputModeOnDragLeft)
   editorMode.labelDropInputMode.addEventListener('drag-over', itemInputModeOnDragOver)
   editorMode.labelDropInputMode.addEventListener('item-created', itemInputModeOnItemCreated)
-  editorMode.portDropInputMode.addEventListener('drag-dropped', itemInputModeOnDragDropped)
-  editorMode.portDropInputMode.addEventListener('drag-entered', itemInputModeOnDragEntered)
-  editorMode.portDropInputMode.addEventListener('drag-left', itemInputModeOnDragLeft)
-  editorMode.portDropInputMode.addEventListener('drag-over', itemInputModeOnDragOver)
-  editorMode.portDropInputMode.addEventListener('item-created', itemInputModeOnItemCreated)
+  // PortDropInputMode inherits drag-dropped, drag-entered, drag-left, drag-over, item-created events from
+  // ItemDropInputMode, too
 }
 
 /**
@@ -824,11 +838,6 @@ function unregisterItemDropInputModeEvents(): void {
   editorMode.labelDropInputMode.removeEventListener('drag-left', itemInputModeOnDragLeft)
   editorMode.labelDropInputMode.removeEventListener('drag-over', itemInputModeOnDragOver)
   editorMode.labelDropInputMode.removeEventListener('item-created', itemInputModeOnItemCreated)
-  editorMode.portDropInputMode.removeEventListener('drag-dropped', itemInputModeOnDragDropped)
-  editorMode.portDropInputMode.removeEventListener('drag-entered', itemInputModeOnDragEntered)
-  editorMode.portDropInputMode.removeEventListener('drag-left', itemInputModeOnDragLeft)
-  editorMode.portDropInputMode.removeEventListener('drag-over', itemInputModeOnDragOver)
-  editorMode.portDropInputMode.removeEventListener('item-created', itemInputModeOnItemCreated)
 }
 
 /**
@@ -1403,6 +1412,26 @@ function unregisterSelectionEvents(): void {
   graphComponent.selection.removeEventListener('item-removed', onItemSelectionRemoved)
 }
 
+/**
+ * Registers event handlers for undo engine events.
+ */
+function registerUndoEvents(): void {
+  const undoEngine = graphComponent.graph.undoEngine!
+  undoEngine.addEventListener('property-changed', undoEngineOnPropertyChanged)
+  undoEngine.addEventListener('unit-redone', undoEngineOnUnitRedone)
+  undoEngine.addEventListener('unit-undone', undoEngineOnUnitUndone)
+}
+
+/**
+ * Unregisters event handlers for undo engine events.
+ */
+function unregisterUndoEvents(): void {
+  const undoEngine = graphComponent.graph.undoEngine!
+  undoEngine.removeEventListener('property-changed', undoEngineOnPropertyChanged)
+  undoEngine.removeEventListener('unit-redone', undoEngineOnUnitRedone)
+  undoEngine.removeEventListener('unit-undone', undoEngineOnUnitUndone)
+}
+
 const eventRegistration: Record<string, () => void> = {
   registerGraphComponentKeyEvents,
   unregisterGraphComponentKeyEvents,
@@ -1461,7 +1490,9 @@ const eventRegistration: Record<string, () => void> = {
   registerCreateEdgeInputModeEvents,
   unregisterCreateEdgeInputModeEvents,
   registerSelectionEvents,
-  unregisterSelectionEvents
+  unregisterSelectionEvents,
+  registerUndoEvents,
+  unregisterUndoEvents
 }
 
 /**
@@ -1790,7 +1821,7 @@ function clipboardOnGraphCopiedToClipboard(
   args: ItemCopiedEventArgs<IGraph>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph copied to Clipboard')
+  log(sender, 'Graph Copied to Clipboard')
 }
 
 /**
@@ -1802,7 +1833,7 @@ function clipboardOnNodeCopiedToClipboard(
   args: ItemCopiedEventArgs<INode>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph Item copied to Clipboard')
+  log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
@@ -1814,7 +1845,7 @@ function clipboardOnEdgeCopiedToClipboard(
   args: ItemCopiedEventArgs<IEdge>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph Item copied to Clipboard')
+  log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
@@ -1826,7 +1857,7 @@ function clipboardOnPortCopiedToClipboard(
   args: ItemCopiedEventArgs<IPort>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph Item copied to Clipboard')
+  log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
@@ -1838,7 +1869,7 @@ function clipboardOnLabelCopiedToClipboard(
   args: ItemCopiedEventArgs<ILabel>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph Item copied to Clipboard')
+  log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
@@ -1850,7 +1881,7 @@ function clipboardOnObjectCopiedToClipboard(
   args: ItemCopiedEventArgs<any>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Object copied to Clipboard')
+  log(sender, 'Object Copied to Clipboard')
 }
 
 /**
@@ -1862,7 +1893,7 @@ function clipboardOnGraphCopiedFromClipboard(
   args: ItemCopiedEventArgs<IGraph>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph copied from Clipboard')
+  log(sender, 'Graph Copied From Clipboard')
 }
 
 /**
@@ -1874,7 +1905,7 @@ function clipboardOnNodeCopiedFromClipboard(
   args: ItemCopiedEventArgs<INode>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph Item copied to Clipboard')
+  log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
@@ -1886,7 +1917,7 @@ function clipboardOnEdgeCopiedFromClipboard(
   args: ItemCopiedEventArgs<IEdge>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph Item copied to Clipboard')
+  log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
@@ -1898,7 +1929,7 @@ function clipboardOnPortCopiedFromClipboard(
   args: ItemCopiedEventArgs<IPort>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph Item copied to Clipboard')
+  log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
@@ -1910,7 +1941,7 @@ function clipboardOnLabelCopiedFromClipboard(
   args: ItemCopiedEventArgs<ILabel>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph Item copied to Clipboard')
+  log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
@@ -1922,7 +1953,7 @@ function clipboardOnObjectCopiedFromClipboard(
   args: ItemCopiedEventArgs<any>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Object copied from Clipboard')
+  log(sender, 'Object Copied From Clipboard')
 }
 
 /**
@@ -1934,7 +1965,7 @@ function clipboardOnGraphDuplicated(
   args: ItemCopiedEventArgs<IGraph>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph duplicated.')
+  log(sender, 'Graph Duplicated')
 }
 
 /**
@@ -1946,7 +1977,7 @@ function clipboardOnNodeDuplicated(
   args: ItemCopiedEventArgs<INode>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph Item duplicated')
+  log(sender, 'Graph Item Duplicated')
 }
 
 /**
@@ -1958,7 +1989,7 @@ function clipboardOnEdgeDuplicated(
   args: ItemCopiedEventArgs<IEdge>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph Item duplicated')
+  log(sender, 'Graph Item Duplicated')
 }
 
 /**
@@ -1970,7 +2001,7 @@ function clipboardOnPortDuplicated(
   args: ItemCopiedEventArgs<IPort>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph Item duplicated')
+  log(sender, 'Graph Item Duplicated')
 }
 
 /**
@@ -1982,7 +2013,7 @@ function clipboardOnLabelDuplicated(
   args: ItemCopiedEventArgs<ILabel>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Graph Item duplicated')
+  log(sender, 'Graph Item Duplicated')
 }
 
 /**
@@ -1994,7 +2025,79 @@ function clipboardOnObjectDuplicated(
   args: ItemCopiedEventArgs<ILabel>,
   sender: ClipboardGraphCopier
 ): void {
-  log(sender, 'Object duplicated')
+  log(sender, 'Object Duplicated')
+}
+
+/**
+ * Invoked before a clipboard copy operation starts.
+ * @param args An object that contains the event data.
+ * @param sender The {@link GraphClipboard} instance that is the source of the event.
+ */
+function clipboardOnItemsCopying(args: GraphClipboardEventArgs, sender: GraphClipboard): void {
+  log(sender, 'Items Copying')
+}
+
+/**
+ * Invoked after a clipboard copy operation has finished.
+ * @param args An object that contains the event data.
+ * @param sender The {@link GraphClipboard} instance that is the source of the event.
+ */
+function clipboardOnItemsCopied(args: GraphClipboardEventArgs, sender: GraphClipboard): void {
+  log(sender, 'Items Copied')
+}
+
+/**
+ * Invoked before a clipboard cut operation starts.
+ * @param args An object that contains the event data.
+ * @param sender The {@link GraphClipboard} instance that is the source of the event.
+ */
+function clipboardOnItemsCutting(args: GraphClipboardEventArgs, sender: GraphClipboard): void {
+  log(sender, 'Items Cutting')
+}
+
+/**
+ * Invoked after a clipboard cut operation has finished.
+ * @param args An object that contains the event data.
+ * @param sender The {@link GraphClipboard} instance that is the source of the event.
+ */
+function clipboardOnItemsCut(args: GraphClipboardEventArgs, sender: GraphClipboard): void {
+  log(sender, 'Items Cut')
+}
+
+/**
+ * Invoked before a clipboard paste operation starts.
+ * @param args An object that contains the event data.
+ * @param sender The {@link GraphClipboard} instance that is the source of the event.
+ */
+function clipboardOnItemsPasting(args: GraphClipboardEventArgs, sender: GraphClipboard): void {
+  log(sender, 'Items Pasting')
+}
+
+/**
+ * Invoked after a clipboard paste operation has finished.
+ * @param args An object that contains the event data.
+ * @param sender The {@link GraphClipboard} instance that is the source of the event.
+ */
+function clipboardOnItemsPasted(args: GraphClipboardEventArgs, sender: GraphClipboard): void {
+  log(sender, 'Items Pasted')
+}
+
+/**
+ * Invoked before a clipboard duplicate operation starts.
+ * @param args An object that contains the event data.
+ * @param sender The {@link GraphClipboard} instance that is the source of the event.
+ */
+function clipboardOnItemsDuplicating(args: GraphClipboardEventArgs, sender: GraphClipboard): void {
+  log(sender, 'Items Duplicating')
+}
+
+/**
+ * Invoked after a clipboard duplicate operation has finished.
+ * @param args An object that contains the event data.
+ * @param sender The {@link GraphClipboard} instance that is the source of the event.
+ */
+function clipboardOnItemsDuplicated(args: GraphClipboardEventArgs, sender: GraphClipboard): void {
+  log(sender, 'Items Duplicated')
 }
 
 /**
@@ -2015,7 +2118,12 @@ function componentOnCurrentItemChanged(
  * @param args An object that contains the event data
  */
 function componentOnKeyDown(args: KeyEventArgs, sender: GraphComponent): void {
-  logWithType(sender, `GraphComponent KeyDown: ${args.key}`, 'GraphComponentKeyDown')
+  const modifierText = getModifierText(args)
+  logWithType(
+    sender,
+    `GraphComponent KeyDown: ${args.key}${modifierText.length > 0 ? ` (modifiers: ${modifierText})` : ''}`,
+    'GraphComponentKeyDown'
+  )
 }
 
 /**
@@ -2024,7 +2132,12 @@ function componentOnKeyDown(args: KeyEventArgs, sender: GraphComponent): void {
  * @param args An object that contains the event data
  */
 function componentOnKeyUp(args: KeyEventArgs, sender: GraphComponent): void {
-  logWithType(sender, `GraphComponent KeyUp: ${args.key}`, 'GraphComponentKeyUp')
+  const modifierText = getModifierText(args)
+  logWithType(
+    sender,
+    `GraphComponent KeyUp: ${args.key}${modifierText.length > 0 ? ` (modifiers: ${modifierText})` : ''}`,
+    'GraphComponentKeyUp'
+  )
 }
 
 /**
@@ -2643,13 +2756,7 @@ function moveInputModeOnQueryPositionHandler(
  * @param args An object that contains the event data
  */
 function itemInputModeOnDragDropped(args: InputModeEventArgs, sender: DropInputMode): void {
-  let inputMode = 'NodeDropInputMode'
-  if (sender instanceof LabelDropInputMode) {
-    inputMode = 'LabelDropInputMode'
-  } else if (sender instanceof PortDropInputMode) {
-    inputMode = 'PortDropInputMode'
-  }
-  logWithType(sender, `${inputMode} DragDropped`, 'DragDropped')
+  logWithType(sender, `${getDropInputModeName(sender)} DragDropped`, 'DragDropped')
 }
 
 /**
@@ -2658,13 +2765,7 @@ function itemInputModeOnDragDropped(args: InputModeEventArgs, sender: DropInputM
  * @param args An object that contains the event data
  */
 function itemInputModeOnDragEntered(args: InputModeEventArgs, sender: DropInputMode): void {
-  let inputMode = 'NodeDropInputMode'
-  if (sender instanceof LabelDropInputMode) {
-    inputMode = 'LabelDropInputMode'
-  } else if (sender instanceof PortDropInputMode) {
-    inputMode = 'PortDropInputMode'
-  }
-  logWithType(sender, `${inputMode} DragEntered`, 'DragEntered')
+  logWithType(sender, `${getDropInputModeName(sender)} DragEntered`, 'DragEntered')
 }
 
 /**
@@ -2673,13 +2774,7 @@ function itemInputModeOnDragEntered(args: InputModeEventArgs, sender: DropInputM
  * @param args An object that contains the event data
  */
 function itemInputModeOnDragLeft(args: InputModeEventArgs, sender: DropInputMode): void {
-  let inputMode = 'NodeDropInputMode'
-  if (sender instanceof LabelDropInputMode) {
-    inputMode = 'LabelDropInputMode'
-  } else if (sender instanceof PortDropInputMode) {
-    inputMode = 'PortDropInputMode'
-  }
-  logWithType(sender, `${inputMode} DragLeft`, 'DragLeft')
+  logWithType(sender, `${getDropInputModeName(sender)} DragLeft`, 'DragLeft')
 }
 
 /**
@@ -2688,13 +2783,7 @@ function itemInputModeOnDragLeft(args: InputModeEventArgs, sender: DropInputMode
  * @param args An object that contains the event data
  */
 function itemInputModeOnDragOver(args: InputModeEventArgs, sender: DropInputMode): void {
-  let inputMode = 'NodeDropInputMode'
-  if (sender instanceof LabelDropInputMode) {
-    inputMode = 'LabelDropInputMode'
-  } else if (sender instanceof PortDropInputMode) {
-    inputMode = 'PortDropInputMode'
-  }
-  logWithType(sender, `${inputMode} DragOver`, 'DragOver')
+  logWithType(sender, `${getDropInputModeName(sender)} DragOver`, 'DragOver')
 }
 
 /**
@@ -2706,13 +2795,14 @@ function itemInputModeOnItemCreated(
   args: InputModeItemEventArgs<any>,
   sender: DropInputMode
 ): void {
-  let inputMode = 'NodeDropInputMode'
+  logWithType(sender, `${getDropInputModeName(sender)} ItemCreated`, 'ItemCreated')
+}
+
+function getDropInputModeName(sender: DropInputMode): string {
   if (sender instanceof LabelDropInputMode) {
-    inputMode = 'LabelDropInputMode'
-  } else if (sender instanceof PortDropInputMode) {
-    inputMode = 'PortDropInputMode'
+    return 'LabelDropInputMode'
   }
-  logWithType(sender, `${inputMode} ItemCreated`, 'ItemCreated')
+  return 'NodeDropInputMode'
 }
 
 /**
@@ -2841,7 +2931,8 @@ function toolTipInputModeOnQueryToolTip(
  * @param args An object that contains the event data
  */
 function clickInputModeOnClicked(args: ClickEventArgs, sender: ClickInputMode): void {
-  const details = `buttons: ${PointerButtons[args.pointerButtons]}, clicks: ${args.clickCount}`
+  let modifierText = getModifierText(args)
+  const details = `buttons: ${PointerButtons[args.pointerButtons]}, clicks: ${args.clickCount}${modifierText.length > 0 ? `, modifiers: ${modifierText})` : ''}`
   log(sender, `ClickInputMode Clicked (${details})`)
 }
 
@@ -3349,6 +3440,41 @@ function editLabelInputModeOnQueryValidateLabelText(
   log(sender, 'Validate Label Text')
 }
 
+/**
+ * Invoked when the value of the {@link UndoEngine.canUndo}, {@link UndoEngine.canRedo},
+ * {@link UndoEngine.undoName}, {@link UndoEngine.redoName}, or {@link UndoEngine.token}
+ * property changes.
+ * @param args An object that contains the name of the changed property.
+ * @param sender The {@link UndoEngine} instance that is the source of the event.
+ */
+function undoEngineOnPropertyChanged(args: PropertyChangedEventArgs, sender: UndoEngine): void {
+  log(sender, `UndoEngine Property Changed: ${args.propertyName}`)
+}
+
+/**
+ * Invoked when the undo engine undoes an edit in its queue.
+ * @param args An empty object without further data.
+ * @param sender The {@link UndoEngine} instance that is the source of the event.
+ */
+function undoEngineOnUnitUndone(args: EventArgs, sender: UndoEngine): void {
+  log(sender, 'Undo performed')
+}
+
+/**
+ * Invoked when the undo engine redoes a previously undone edit.
+ * @param args An empty object without further data.
+ * @param sender The {@link UndoEngine} instance that is the source of the event.
+ */
+function undoEngineOnUnitRedone(args: EventArgs, sender: UndoEngine): void {
+  log(sender, 'Redo performed')
+}
+
+function getModifierText(args: ClickEventArgs | KeyEventArgs): string {
+  return args.modifiers !== 0
+    ? `${args.shiftKey ? ' Shift' : ''}${args.ctrlKey ? ' Control' : ''}${args.altKey ? ' Alt' : ''}${args.metaKey ? ' Meta' : ''}`
+    : ''
+}
+
 function clearButtonClick(): any {
   eventView.clear()
 }
@@ -3376,12 +3502,13 @@ function logWithType(sender: object, message: string, type: string | null): void
   let category = 'Unknown'
   if (sender instanceof IInputMode) {
     category = 'InputMode'
-  } else if (sender instanceof CanvasComponent) {
+  } else if (sender instanceof CanvasComponent || sender instanceof GraphClipboard) {
     category = 'GraphComponent'
   } else if (
     sender instanceof IModelItem ||
     sender instanceof IGraph ||
-    sender instanceof IFoldingView
+    sender instanceof IFoldingView ||
+    sender instanceof UndoEngine
   ) {
     category = 'Graph'
   }
@@ -3398,7 +3525,7 @@ function initializeInputModes(): void {
   editorMode.itemHoverInputMode.hoverItems = GraphItemTypes.ALL
   editorMode.nodeDropInputMode.enabled = true
   editorMode.labelDropInputMode.enabled = true
-  editorMode.portDropInputMode.enabled = true
+  editorMode.labelDropInputMode.useLocationForParameter = true
   // initially, we want to disable editing orthogonal edges altogether
   editorMode.orthogonalEdgeEditingContext.enabled = false
 
@@ -3434,7 +3561,6 @@ function initializeDragAndDropPanel(): void {
   const panel = document.getElementById('drag-and-drop-panel')!
   panel.appendChild(createDraggableNode())
   panel.appendChild(createDraggableLabel())
-  panel.appendChild(createDraggablePort())
 }
 
 function createDraggableNode(): HTMLElement {
@@ -3527,69 +3653,6 @@ function createDraggableLabel(): HTMLDivElement {
     const dragSource = LabelDropInputMode.startDrag(
       div,
       simpleLabel,
-      DragDropEffects.ALL,
-      true,
-      dragPreview
-    )
-    dragSource.addEventListener('query-continue-drag', (evt) => {
-      if (evt.dropTarget === null) {
-        dragPreview.classList.remove('hidden')
-      } else {
-        dragPreview.classList.add('hidden')
-      }
-    })
-  }
-
-  img.addEventListener(
-    'pointerdown',
-    (event) => {
-      startDrag()
-      event.preventDefault()
-    },
-    false
-  )
-
-  return div
-}
-
-function createDraggablePort(): HTMLDivElement {
-  // create the port visual
-  const locationParameter = FreeNodePortLocationModel.CENTER
-  const portStyle = new ShapePortStyle({
-    fill: 'rgb(51, 102, 153)',
-    stroke: null,
-    shape: 'ellipse'
-  })
-  const exportComponent = new GraphComponent()
-  const dummyNode = exportComponent.graph.createNode(
-    new Rect(0, 0, 30, 30),
-    INodeStyle.VOID_NODE_STYLE
-  )
-  exportComponent.graph.addPort(dummyNode, locationParameter, portStyle)
-  exportComponent.contentBounds = new Rect(0, 0, 30, 30)
-  const svgExport = new SvgExport(exportComponent.contentBounds)
-  const dataUrl = SvgExport.encodeSvgDataUrl(
-    SvgExport.exportSvgString(svgExport.exportSvg(exportComponent))
-  )
-  const div = document.createElement('div')
-  div.setAttribute('style', 'width: 30px; height: 30px; margin: 0 10px; touch-action: none;')
-  div.setAttribute('title', 'Draggable Port')
-  const img = document.createElement('img')
-  img.setAttribute('style', 'width: auto; height: auto;')
-  img.setAttribute('src', dataUrl)
-  div.appendChild(img)
-
-  // register the startDrag listener
-  const startDrag = (): void => {
-    const simpleNode = new SimpleNode()
-    simpleNode.layout = new Rect(0, 0, 30, 30)
-    const simplePort = new SimplePort(simpleNode, locationParameter)
-    simplePort.style = portStyle
-    const dragPreview = document.createElement('div')
-    dragPreview.appendChild(img.cloneNode(true))
-    const dragSource = PortDropInputMode.startDrag(
-      div,
-      simplePort,
       DragDropEffects.ALL,
       true,
       dragPreview

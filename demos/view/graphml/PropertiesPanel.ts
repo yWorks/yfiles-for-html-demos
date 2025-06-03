@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { HashMap, IEdge, IModelItem, INode, IPort, KeyScope, KeyType, List } from '@yfiles/yfiles'
 import { GraphMLProperty } from './GraphMLProperty'
-import PropertiesPanelUI from './PropertiesPanelUI'
+import { PropertiesPanelUI } from './PropertiesPanelUI'
 
 /**
  * A panel that displays custom data associated with the graph and the current item.

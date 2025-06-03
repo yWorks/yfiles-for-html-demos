@@ -94,7 +94,7 @@ export function initializeInteractiveHierarchicalNestingLayout(
  * A helper class that stores geometrical information before a group node is expanded/collapsed and
  * uses that information to apply an incremental layout after the group node is expanded/collapsed.
  */
-export default class InteractiveHierarchicalNestingLayout {
+class InteractiveHierarchicalNestingLayout {
   graphComponent
   /**
    * The last group node that was collapsed/expanded.

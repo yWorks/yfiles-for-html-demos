@@ -33,6 +33,7 @@ import {
   Color,
   type Constructor,
   ExteriorNodeLabelModel,
+  ExteriorNodeLabelModelPosition,
   Fill,
   Font,
   GeneralPath,
@@ -1544,7 +1545,9 @@ class IconLabelStyleExtension extends MarkupExtension {
     this._icon = value
   }
 
-  private _iconPlacement: ILabelModelParameter = ExteriorNodeLabelModel.LEFT
+  private _iconPlacement: ILabelModelParameter = new ExteriorNodeLabelModel({
+    margins: new Insets(0)
+  }).createParameter(ExteriorNodeLabelModelPosition.LEFT)
 
   get iconPlacement(): ILabelModelParameter {
     return this._iconPlacement

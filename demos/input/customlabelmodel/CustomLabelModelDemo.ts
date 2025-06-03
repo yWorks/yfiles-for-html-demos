@@ -34,7 +34,7 @@ import {
   Rect
 } from '@yfiles/yfiles'
 
-import CustomNodeLabelModel, { CustomNodeLabelModelParameter } from './CustomNodeLabelModel'
+import { CustomNodeLabelModel, CustomNodeLabelModelParameter } from './CustomNodeLabelModel'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'

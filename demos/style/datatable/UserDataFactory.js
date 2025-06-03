@@ -53,7 +53,7 @@ const FAMILY_NAMES = [
   'Roberts'
 ]
 const UNITS = ['Development', 'Management', 'Marketing', 'R&D', 'Sales']
-export default function createNewRandomUserData() {
+export function createNewRandomUserData() {
   const firstName = FIRST_NAMES[getRandomInt(FIRST_NAMES.length)]
   const familyName = FAMILY_NAMES[getRandomInt(FAMILY_NAMES.length)]
   const phoneNumber = getRandomInt(90000) + 10000

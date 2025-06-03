@@ -73,9 +73,7 @@ type ReactStyleSvgVisual<TTag> = TaggedSvgVisual<SVGGElement, Cache<TTag>>
  *  graph.createNode({ style, tag })
  * ```
  */
-export default class ReactComponentNodeStyle<TTag> extends NodeStyleBase<
-  ReactStyleSvgVisual<TTag>
-> {
+export class ReactComponentNodeStyle<TTag> extends NodeStyleBase<ReactStyleSvgVisual<TTag>> {
   constructor(private readonly type: RenderType<TTag>) {
     super()
   }

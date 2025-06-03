@@ -37,7 +37,7 @@ import {
   Rect
 } from '@yfiles/yfiles'
 import SampleData from './D3ChartNodesData'
-import D3ChartNodeStyle from './D3ChartNodeStyle'
+import { D3ChartNodeStyle } from './D3ChartNodeStyle'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 

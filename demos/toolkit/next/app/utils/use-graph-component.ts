@@ -38,12 +38,12 @@ import {
   PolylineEdgeStyle,
   Size
 } from '@yfiles/yfiles'
-import ReactComponentNodeStyle from '../utils/ReactComponentNodeStyle'
+import { ReactComponentNodeStyle } from '../utils/ReactComponentNodeStyle'
 import NodeTemplate from '../components/NodeTemplate'
 import { useLayoutEffect, useMemo, useRef } from 'react'
 import yFilesLicense from '../../../../../lib/license.json'
 import LabelTemplate from '../components/LabelTemplate'
-import ReactComponentLabelStyle from './ReactComponentLabelStyle'
+import { ReactComponentLabelStyle } from './ReactComponentLabelStyle'
 
 function configureDefaultStyles(graph: IGraph) {
   graph.nodeDefaults.size = new Size(60, 40)

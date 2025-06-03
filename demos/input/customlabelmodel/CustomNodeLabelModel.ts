@@ -54,7 +54,7 @@ import {
  * {@link ILabelModelParameterFinder} and {@link ILabelModelParameterProvider} are also
  * implemented.
  */
-export default class CustomNodeLabelModel extends BaseClass(ILabelModel) {
+export class CustomNodeLabelModel extends BaseClass(ILabelModel) {
   /**
    * The number of discrete label positions around the border.
    *

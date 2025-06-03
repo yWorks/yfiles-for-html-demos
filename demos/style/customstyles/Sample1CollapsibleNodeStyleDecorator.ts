@@ -36,7 +36,7 @@ import {
 /**
  * Provides a customized visualization of the collapse/expand button of a group node.
  */
-export default class Sample1CollapsibleNodeStyleDecorator extends CollapsibleNodeStyleDecorator {
+export class Sample1CollapsibleNodeStyleDecorator extends CollapsibleNodeStyleDecorator {
   constructor(wrappedStyle: INodeStyle) {
     super(wrappedStyle)
   }

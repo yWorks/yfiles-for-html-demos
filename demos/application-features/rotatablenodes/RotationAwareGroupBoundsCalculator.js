@@ -40,7 +40,7 @@ import { RotatableNodeStyleDecorator } from './RotatableNodes'
  * Calculates group bounds taking the rotated layout for nodes which
  * {@link RotatableNodeStyleDecorator support rotation}.
  */
-export default class RotationAwareGroupBoundsCalculator extends BaseClass(IGroupBoundsCalculator) {
+export class RotationAwareGroupBoundsCalculator extends BaseClass(IGroupBoundsCalculator) {
   node
   constructor(node) {
     super()

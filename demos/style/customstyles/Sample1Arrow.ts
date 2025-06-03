@@ -49,7 +49,7 @@ import { SVGNS } from './Namespaces'
 /**
  * A demo IArrow implementation that renders the arrow as a custom filled shape.
  */
-export default class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
+export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   private anchor: Point = Point.ORIGIN
   private direction: Point = Point.ORIGIN
   private thickness = 2.0

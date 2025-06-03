@@ -39,7 +39,7 @@ import {
  * A position handler that prevents node movements. This implementation is
  * very simple since most methods do nothing at all.
  */
-export default class RedPositionHandler extends BaseClass(IPositionHandler) {
+export class RedPositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Returns the location of the item.
    */

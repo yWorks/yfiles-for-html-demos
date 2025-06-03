@@ -57,7 +57,7 @@ import {
  * elements must be created and that only a single layout run on the view graph is required,
  * thus, not affecting the layout animation.
  */
-export default class AlignmentStage extends LayoutStageBase {
+export class AlignmentStage extends LayoutStageBase {
   /**
    * Key to register a {@link Mapper} with the input graph where the nodes that should
    * be aligned are marked.

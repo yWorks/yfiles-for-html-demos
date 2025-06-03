@@ -33,7 +33,7 @@ import { DataTableRenderSupport, RenderDataCache } from './DataTableRenderSuppor
  * This style uses the {@link HtmlVisual}s to
  * render an HTML table as the node's visualization.
  */
-export default class DataTableNodeStyle extends NodeStyleBase {
+export class DataTableNodeStyle extends NodeStyleBase {
   renderSupport = new DataTableRenderSupport()
   createVisual(context, node) {
     // Cache the necessary data for rendering of the node

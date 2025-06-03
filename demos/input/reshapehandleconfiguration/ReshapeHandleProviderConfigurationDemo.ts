@@ -41,7 +41,7 @@ import {
   Rect
 } from '@yfiles/yfiles'
 import { LimitingRectangleRenderer } from './LimitingRectangleRenderer'
-import PurpleNodeReshapeHandleProvider from './PurpleNodeReshapeHandleProvider'
+import { PurpleNodeReshapeHandleProvider } from './PurpleNodeReshapeHandleProvider'
 import {
   ApplicationState,
   ClickableNodeReshapeHandleProvider
